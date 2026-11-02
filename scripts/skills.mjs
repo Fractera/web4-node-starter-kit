@@ -4,6 +4,8 @@
 //       OpenAI key). The folder holds SKILL.md and references/*.md; SOURCE.md and LICENSE beside them say where it came from.
 //   npm run skills -- find "<question>" [--themes "<a, b>"] [--terms "<c, d>"]
 //       what other projects did: at most three fragments, 3 KB, each with its skill, source and licence.
+//   npm run skills -- market "<English words>" [--limit 10]
+//       the open catalog skills.sh (owner 2026-11-02): the most installed skills for these words, no key needed; nothing is installed.
 //   npm run skills -- base-sync <folder> --source <name> --license <spdx> [--url <address>] [--version <v>]
 //       a licensed skill into the base shipped with every clone (node step 598): lib/agent-kit/skills/base/ + manifest.json
 //   npm run skills -- base-check   — every skill of the base may be handed out (its LICENSE, a licence from the list, only its text)
@@ -14,6 +16,7 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { markOf, skillGraph } from '../lib/agent-kit/skills/to-graph.mjs'
 import { findSkills, graphCall, graphStatus } from '../lib/agent-kit/skills/find.mjs'
+import { catalogText, findInCatalog } from '../lib/agent-kit/skills/catalog.mjs'
 import { BASE, checkBase, ledgerFile, readLedger, readManifest, shaOf, syncSkill } from '../lib/agent-kit/skills/base.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -49,6 +52,11 @@ if (cmd === 'add') {
   console.log(r.found ? r.text : 'No skill of another project is close enough to this question.')
   if (r.notice) console.log(`\n${r.notice}`)
   console.log(`===SKILLS_FOUND=== ${r.fragments.length} ${r.fragments.map((f) => `${f.source}:${f.skill}`).join(' ')}`)
+} else if (cmd === 'market') {
+  const r = await findInCatalog(positional.join(' '), { limit: Number(flag('limit')) || 10 })
+  console.log(catalogText(r))
+  console.log(r.ok ? `===SKILLS_MARKET=== ${r.found.length} ${r.found.map((s) => `${s.source}@${s.skill}`).join(' ')}` : `===SKILLS_FAIL=== ${r.error}`)
+  process.exit(r.ok ? 0 : 1)
 } else if (cmd === 'base-sync') {
   try {
     const e = syncSkill(resolve(positional[0] ?? ''), { source: flag('source'), license: flag('license'), url: flag('url') ?? '', version: flag('version') ?? '' })
@@ -118,6 +126,6 @@ if (cmd === 'add') {
   for (const f of done.failed) console.log(`  ${f}`)
   process.exit(done.failed.length ? 1 : 0)
 } else {
-  console.log('===SKILLS_FAIL=== commands: add, find, base-sync, base-check, base-load')
+  console.log('===SKILLS_FAIL=== commands: add, find, market, base-sync, base-check, base-load')
   process.exit(2)
 }
