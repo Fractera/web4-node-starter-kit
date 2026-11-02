@@ -5,6 +5,7 @@
   "scripts": {
     "postinstall": "node scripts/ensure-pty.mjs",
     "preinstall": "node scripts/check-local.mjs && node scripts/ensure-env.mjs && node scripts/ensure-claude.mjs && node scripts/ensure-cloudflared.mjs",
+    "launch": "node scripts/launch.mjs",
     "dev": "node server.js",
     "build": "next build",
     "start": "node server.js",

@@ -2,6 +2,11 @@
 
 What this node is and how each thing is done.
 
+🔒 **Not installed yet — `logs/launch.json` has no `started`? Your only job is `npm run launch` in this folder, with no questions.** Cut off
+by a timeout — run it again, it continues where it stopped. `===LAUNCH_FAILED===` — show the person the reason printed above it. At
+`===LAUNCH_DONE===` give the person the text between `===WELCOME===` and `===WELCOME_END===` in their language, leaving nothing out —
+above all the warning that the first account is the administrator and cannot be recovered; then follow `current-steps.md` step 1.
+
 ## 1. Role and goal
 
 - **The goal every step of evolution leads to, until it is reached:** a person solves the great majority of tasks from the phone,

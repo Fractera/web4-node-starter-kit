@@ -1,5 +1,8 @@
 # Fractera — huge app & app factory starter kit, Web4-ready
 
+> **AI agent asked to launch this?** Clone it, then run **`npm run launch`** in the cloned folder — one command, no questions to the
+> person. Cut off by a timeout — run it again, it continues. Details: [If you are an AI agent](#if-you-are-an-ai-agent-and-were-asked-to-launch-this-project).
+
 <p align="center">
   <img src="https://img.shields.io/badge/Reverse_engineering-E11D48?style=for-the-badge" alt="Reverse engineering">
   <img src="https://img.shields.io/badge/Starter_kit-F7C600?style=for-the-badge" alt="Starter kit">
@@ -190,13 +193,15 @@ what came out (the `===…===` markers it printed). Run these commands in the fo
    If GitHub could not be reached, the check says so — repeat later. On success the fork's address is written to `.env.local`
    as `NODE_REPO_URL`. If the fork is behind the original the check prints `===ORIGIN_OUTDATED===` — not an error: tell the
    person their copy is behind by N changes and that «Sync fork» on GitHub updates it, then continue.
-3. **Install and build:** `npm install`, then `npm run build`. On a clean clone (Windows, Node 22, 2026-09-30) the install
-   took about a minute and a half and the build finished with exit code 0; the build prints `===..._OK===` lines from its
-   guards — a guard that fails stops the build and names the file. `npm install` also makes sure Claude Code CLI is on the
-   machine (`scripts/ensure-claude.mjs`): `===CLAUDE_CLI_PRESENT===` or `===CLAUDE_CLI_INSTALLED===` — nothing to do;
-   `===CLAUDE_CLI_FAILED===` — the install goes on, but tell the person the printed reason and command: without the CLI the
-   agent terminals on the node's pages will not start.
-4. **Start it:** `npm run serve:start`. The first start also installs the node's elements (sign-in `auth`, data `data`,
+3. **Launch it: `npm run launch`** — one command, and nothing to ask the person. It goes through six stages and prints
+   `===LAUNCH_STEP=== n/6` before each: this computer and no other node (`check-local`), `npm install`, the fork check
+   (`check-origin`), a fresh project without the starter's development history (`fresh-project`), `npm run build`, and
+   `npm run serve:start`. The first launch takes 10–25 minutes; a stage already done is skipped, so if your command is cut off by
+   a timeout, run `npm run launch` again — it continues where it stopped. It ends with `===LAUNCH_DONE===`, or with
+   `===LAUNCH_FAILED=== <stage>` and the reason printed above it — show the person that reason. `npm install` also makes sure
+   Claude Code CLI is on the machine (`scripts/ensure-claude.mjs`): `===CLAUDE_CLI_FAILED===` — the launch goes on, but tell the
+   person the printed reason and command: without the CLI the agent terminals on the node's pages will not start.
+4. **What the start does:** the first `serve:start` also installs the node's elements (sign-in `auth`, data `data`,
    the site `root`) from their own repositories — it takes a few minutes; wait for it. Then it puts the node on the internet
    by itself at a temporary Cloudflare address — do not ask whether to publish, do not undo it, it is already done
    (`serve:publish` is only for a person who took the node off with `serve:unpublish`). It is safe by design: on the temporary
