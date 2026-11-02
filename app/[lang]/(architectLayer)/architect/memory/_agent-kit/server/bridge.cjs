@@ -23,6 +23,8 @@ const os = require('node:os')
 // 552-4: режимы сессии (первое слово запроса, группы навыков, ключ сессии) — один модуль ядра, общий с прибором `check:modes`.
 // Из корня узла, как `supervision.cjs`: у копий комплекта свой путь, а модуль один.
 const modes = require(path.join(process.cwd(), 'lib', 'agent-kit', 'modes.cjs'))
+// 624-1: доступная память — один модуль ядра; `os.freemem()` на macOS видит только пустые страницы (свободно 114 МБ при 79% свободной).
+const { availableMb, topApps } = require(path.join(process.cwd(), 'lib', 'free-memory.cjs'))
 
 const INIT_DEADLINE_MS = 10_000
 const CLOSE_POLICY = 1008
@@ -452,7 +454,6 @@ function rememberTasks(s, urls) {
   for (const u of urls) if (typeof u === 'string' && u) s.taskUrls.add(u)
 }
 
-const MB = 1024 * 1024
 /** Память на одну сессию (владелец 2026-10-05: «примерно 300 МБ свободной памяти на один терминал»); переменная — для прибора. */
 const perSessionMb = () => Number(process.env.AGENT_SESSION_MB) || 300
 
@@ -661,9 +662,10 @@ async function wake(element, { text, from, about, declineUrl, confirmed, taskUrl
   // 409-3: бот элемента подключён — сначала вопрос человеку в Telegram; сессия родится по кнопке «Запустить» (`confirmed`).
   // 552-4: бот и вопрос — элемента, а не ключа сессии; кнопка «Запустить» вернётся сюда с тем же текстом и тем же режимом.
   if (!confirmed && telegram.connected(element)) return telegram.askToStart(element, { text, from, about, declineUrl })
-  const freeMb = Math.floor(os.freemem() / MB)
+  const freeMb = availableMb()
   const per = perSessionMb()
-  if (freeMb < per) return { ok: false, reason: 'memory', freeMb, perSessionMb: per }
+  // 624-2: `top` — кто занимает память, чтобы совет человеку называл программы этого компьютера.
+  if (freeMb < per) return { ok: false, reason: 'memory', freeMb, perSessionMb: per, top: topApps(3) }
   // 614-1: `hold` — у сессии с ботом поручение ждёт её канал; `callerTells` — о неудаче канала человеку скажет вызывающий (кнопка Telegram).
   const r = await spawnAgent(service, undefined, undefined, text && task ? `${text}\n\n${finishRule(service)}` : '', { pass, model, hold: true, callerTells })
   if (!r.ok) return { ok: false, reason: r.reason }

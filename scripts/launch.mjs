@@ -119,7 +119,8 @@ if (readStamp().started === head && (await nodeAnswers())) {
 
 // 🔒 ПРИВЕТСТВИЕ — ГОТОВЫЙ ТЕКСТ, А НЕ ПОРУЧЕНИЕ АГЕНТУ. Слово владельца 2026-11-02: сразу после развёртывания агент приветствует
 // человека, предупреждает, что первая учётная запись — администратор и восстановить её невозможно, называет временный адрес и путь
-// «вход → свой домен → Telegram». Слабая модель пересказывает готовый текст надёжнее, чем собирает его из инструкции, — поэтому он
+// «вход → свой домен → Telegram». 624-3/624-5 (владелец 2026-11-02, тот же день): Telegram — с требованием приложения; пункт 5 — закрыть
+// установочный чат ради памяти, дальше — главный агент узла в терминале или Telegram. Слабая модель пересказывает готовый текст надёжнее, чем собирает его из инструкции, — поэтому он
 // печатается здесь, между маркерами, на двух языках; агент передаёт его человеку на языке человека, ничего не выбрасывая.
 function welcome() {
   let temporary = null
@@ -142,13 +143,17 @@ function welcome() {
 2. ВРЕМЕННЫЙ АДРЕС: ${where} — только чтобы посмотреть проект: панель там открыта для чтения любому, у кого есть ссылка,
    вход и регистрация на нём закрыты, а сам адрес меняется при перезапуске туннеля.
 3. СВОЙ ДОМЕН — когда намерения серьёзные. Например, на porkbun.com: домен .com стоит около $12 в год и продлевается по той же
-   цене (проверьте цену на сайте перед покупкой). Купите домен и оставьте этот чат Claude Code открытым — агент сам сделает
+   цене (проверьте цену на сайте перед покупкой). Купите домен и скажите об этом главному агенту узла — он сам сделает
    записи, которые свяжут проект, регистратора и Cloudflare (страница узла «Домен и хостинг → Подключение домена»).
-4. TELEGRAM-БОТ — после домена: создайте бота у @BotFather (https://t.me/BotFather) и вставьте его токен на странице узла
-   «Telegram». Дальше работать можно с телефона, голосом или текстом.
+4. TELEGRAM-БОТ — после домена. Нужно приложение Telegram на телефоне или компьютере (https://telegram.org/apps), с входом в
+   свой аккаунт: без него бота не создать. Создайте бота у @BotFather (https://t.me/BotFather) и вставьте его токен на странице
+   узла «Telegram». Дальше работать можно с телефона, голосом или текстом.
+5. ЭТОТ ЧАТ МОЖНО ЗАКРЫТЬ. Установка закончена, узел работает сам, а этот чат занимает память компьютера. Закройте его и
+   работайте дальше с главным агентом узла: в терминале (панель → «Главный агент» → «Терминал», http://localhost:24680) или
+   через Telegram-бота — как вам удобнее.
 
-После входа вы попадаете в панель управления — там та же подробная инструкция. Спрашивайте меня о чём угодно: как устроен
-проект, что в нём есть, с чего начать вашу идею.`)
+После входа вы попадаете в панель управления — там та же подробная инструкция. Спрашивайте главного агента о чём угодно: как
+устроен проект, что в нём есть, с чего начать вашу идею.`)
   console.log('')
   console.log(`Welcome to your Fractera node. The browser already shows its home page.
 
@@ -161,13 +166,17 @@ function welcome() {
 2. TEMPORARY ADDRESS: ${whereEn} — only for a look at the project: the panel there is read-only to anyone with the link,
    sign-in and registration are closed, and the address changes when the tunnel restarts.
 3. YOUR OWN DOMAIN — when you are serious. For example at porkbun.com: a .com costs about $12 a year and renews at the same
-   price (check the price on the site before buying). Buy it and keep this Claude Code chat open — the agent makes the records
-   that join the project, the registrar and Cloudflare (node page «Domain and hosting → Domain activation»).
-4. TELEGRAM BOT — after the domain: create a bot at @BotFather (https://t.me/BotFather) and paste its token on the node's
-   «Telegram» page. From then on you can work from the phone, by voice or text.
+   price (check the price on the site before buying). Buy it and tell the node's main agent — it makes the records that join
+   the project, the registrar and Cloudflare (node page «Domain and hosting → Domain activation»).
+4. TELEGRAM BOT — after the domain. You need the Telegram app on your phone or computer (https://telegram.org/apps), signed in
+   to your account: without it no bot can be made. Create a bot at @BotFather (https://t.me/BotFather) and paste its token on
+   the node's «Telegram» page. From then on you can work from the phone, by voice or text.
+5. YOU CAN CLOSE THIS CHAT. The install is finished, the node runs by itself, and this chat takes the computer's memory. Close
+   it and go on with the node's main agent: in its terminal (panel → «Main agent» → «Terminal», http://localhost:24680) or
+   through the Telegram bot — whichever you like.
 
-After sign-in you land in the control panel — the same detailed guide waits there. Ask me anything: how the project works,
-what is in it, where to start with your idea.`)
+After sign-in you land in the control panel — the same detailed guide waits there. Ask the main agent anything: how the
+project works, what is in it, where to start with your idea.`)
   console.log('===WELCOME_END===')
 }
 

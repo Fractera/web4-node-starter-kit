@@ -137,16 +137,19 @@ side, under one domain, and gives each of them the technical part that search an
 1. **Install Claude Code.** One line in a terminal, from [code.claude.com/docs/en/setup](https://code.claude.com/docs/en/setup):
    `curl -fsSL https://claude.ai/install.sh | bash` on macOS and Linux, `irm https://claude.ai/install.ps1 | iex` in Windows
    PowerShell. You need the Pro plan or higher ($20 a month), which includes Claude Code.
-2. **Fork this repository.** Create a free GitHub account, press **Fork** at the top right of this page and copy the address of
+2. **Install Telegram and sign in** — on your phone or computer, from [telegram.org/apps](https://telegram.org/apps). The node
+   talks to you through your own Telegram bot; without the app no bot can be made, and its pages lead to errors.
+3. **Fork this repository.** Create a free GitHub account, press **Fork** at the top right of this page and copy the address of
    your copy. Only your own direct fork of `github.com/Fractera/web4-node-starter-kit` installs: a clone of the original, a fork
    of someone else's fork or any other copy is refused with «You are trying to install a non-original Fractera project».
-3. **Make an empty folder for the project, open a terminal in it and run `claude`.** The node is installed into exactly this
+4. **Make an empty folder for the project, open a terminal in it and run `claude`.** The node is installed into exactly this
    folder, so name it the way you want to see it.
-4. **Paste the link to your fork and write «launch this»** (in Russian: «запусти это»).
-5. **Wait a few minutes.** The agent installs the node, checks that it works on this computer and puts it on the internet at a
+5. **Paste the link to your fork and write «launch this»** (in Russian: «запусти это»).
+6. **Wait a few minutes.** The agent installs the node, checks that it works on this computer and puts it on the internet at a
    temporary Cloudflare address. It gives you one link: «Your journey into the world of WEB4 starts here».
-6. **From then on your own main agent works with you**, mostly in Telegram, by text or by voice.
-7. **Later, buy your own domain** and connect it on the node page «Domain and hosting → Domain activation».
+7. **Close the installation chat.** The node runs by itself and the chat only takes memory. From then on your own main agent
+   works with you — in the node's terminal or, mostly, in Telegram, by text or by voice.
+8. **Later, buy your own domain** and connect it on the node page «Domain and hosting → Domain activation».
 
 Two rules: Claude Code must run on **your** computer (a cloud session installs into a machine that disappears, so the install
 refuses there), and there is **one node per computer**: new sites and apps are elements inside it, created with «Create WEB4 ITEM».
@@ -219,7 +222,9 @@ what came out (the `===…===` markers it printed). Run these commands in the fo
    the panel closes behind sign-in. A node's site lives on this computer, so it answers while the computer is on; an element
    given its own domain (on the element's page) also keeps a copy of its public pages in the person's Cloudflare Workers.
 7. **Hand over.** From now on the person works with the node itself: its pages, and the agent of each element in its
-   terminal or in Telegram. Tell them this chat is no longer needed for the node to run.
+   terminal or in Telegram. Tell them this chat is no longer needed for the node to run, and recommend closing it: it takes the
+   computer's memory, and the agents of the elements need that memory to start. Telegram needs its app on the phone or computer
+   (telegram.org/apps) — say so if they have not installed it.
 
 Do not start the server by hand (`node server.js`) and do not invent steps that are not here — if something fails, show the
 person the exact error and the command that produced it. To install again on the same computer (the first install went to a

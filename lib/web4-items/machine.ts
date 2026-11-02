@@ -6,6 +6,7 @@ import os from "node:os"
 import { listServices } from "@/lib/microservices/registry"
 import { addressOf } from "@/lib/web4-items/address-file.mjs"
 import power from "@/lib/web4-items/element-power.cjs"
+import { availableBytes } from "@/lib/free-memory.cjs"
 import { tier2Rows, type TestRow } from "@/lib/web4-items/super-node"
 
 // «ЭТОТ КОМПЬЮТЕР» В DASHBOARD (572). Владелец 2026-10-22: «У нас в проекте есть дашборд, покажи в нём технические характеристики
@@ -62,7 +63,7 @@ export async function machineFacts(): Promise<MachineFacts> {
     cpuModel: cpus[0]?.model?.trim() ?? "",
     aes: await aesFlag(),
     ramGb: gb(os.totalmem()),
-    ramFreeGb: gb(os.freemem()),
+    ramFreeGb: gb(availableBytes()), // 624-1: доступная, а не пустые страницы macOS
     diskTotalGb,
     diskFreeGb,
     uptimeHours: Math.round((os.uptime() / 3600) * 10) / 10,

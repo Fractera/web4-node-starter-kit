@@ -321,7 +321,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   // 472: Telegram-бот — и в H2A (у элементов с флагом H2A), и в «Строительстве» (у остальных).
   const kitPage = AGENT_PAGES[key]
   const agent = slot ? agentKitWidget('telegram', item, lang, slot) : kitPage
-    ? (entry ? agentKitWidget(kitPage, item, lang) : <p className="my-4 text-sm text-muted-foreground">{elementSettingsUi(lang).agentNotBorn}</p>)
+    ? (entry ? agentKitWidget(kitPage, item, lang, undefined, { terminal: `/${lang}${dir}/build/terminal`, telegram: `/${lang}${dir}/build/telegram` }) : <p className="my-4 text-sm text-muted-foreground">{elementSettingsUi(lang).agentNotBorn}</p>)
     : null
 
   // 319-5: страница GitHub — связь элемента с репозиторием владельца и выгрузка кнопкой; у нерождённого — объяснение.

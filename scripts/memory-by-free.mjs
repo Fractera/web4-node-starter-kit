@@ -16,13 +16,13 @@
 import { spawnSync } from 'node:child_process'
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
-import os from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const require = createRequire(import.meta.url)
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const power = require('../lib/web4-items/element-power.cjs')
+const { availableMb } = require('../lib/free-memory.cjs')
 const IS_WIN = process.platform === 'win32'
 const MEMORY = 'memory'
 const THRESHOLD_MB = 1024
@@ -93,7 +93,8 @@ if (!entry) {
 // Только для прибора (`--dry`): подставное состояние памяти — off · on (включена не правилом) · on-auto (включена правилом).
 const assume = dry ? opt('--assume') : undefined
 const isOn = assume ? assume !== 'off' : !power.isOff(entry)
-const free = forcedFree ?? Math.round(os.freemem() / 1048576)
+// 624-1: доступная память — на macOS `os.freemem()` видит только пустые страницы, и правило никогда не включало память.
+const free = forcedFree ?? availableMb()
 const own = isOn && forcedFree === null ? memoryOwnMb() : 0
 const effective = free + own
 const auto = assume ? assume === 'on-auto' : Boolean(entry.powerAuto)

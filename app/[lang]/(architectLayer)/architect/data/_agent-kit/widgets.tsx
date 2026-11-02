@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react'
+import { type AgentLinks, AgentNextLinks, TelegramAppNeeded } from './agent-links'
 import { AgentTerminal } from './client/agent-terminal.client'
 import { ClaudeSubscription } from './client/claude-subscription.client'
 import { TelegramChannel } from './client/telegram-channel.client'
+import { agentLinksWords } from './words/agent-links.i18n'
 import { agentTerminalWords } from './words/agent-terminal.i18n'
 import { claudeSubscriptionWords } from './words/claude-subscription.i18n'
 import { telegramChannelWords } from './words/telegram-channel.i18n'
@@ -28,16 +30,29 @@ export function openAiKeyHref(service: string, lang: string): string {
     : `/${lang}/architect/build/environment#OPENAI_API_KEY`
 }
 
-/** 552-6: `slot` — ещё один бот элемента для страницы `telegram` (`h2h` · `orders` · `work`); без него — бот H2A. */
-export function agentKitWidget(page: AgentKitPage, service: string, lang: string, slot?: string): ReactNode {
+/**
+ * 552-6: `slot` — ещё один бот элемента для страницы `telegram` (`h2h` · `orders` · `work`); без него — бот H2A.
+ * 624-4: `links` — терминал и Telegram рождённого элемента (его дерево); у служб ядра — страницы их группы.
+ */
+export function agentKitWidget(page: AgentKitPage, service: string, lang: string, slot?: string, links?: AgentLinks): ReactNode {
   switch (page) {
     case 'claude-code':
-      return <ClaudeSubscription service={service} lang={lang} words={claudeSubscriptionWords(lang)} />
+      return (
+        <>
+          <ClaudeSubscription service={service} lang={lang} words={claudeSubscriptionWords(lang)} />
+          <AgentNextLinks links={links ?? { terminal: `/${lang}/architect/${service}/terminal`, telegram: `/${lang}/architect/${service}/telegram` }} words={agentLinksWords(lang)} />
+        </>
+      )
     case 'terminal':
       return <AgentTerminal service={service} lang={lang} words={agentTerminalWords(lang)} dialogUi={appDialogUi(lang)} keyHref={openAiKeyHref(service, lang)} />
     case 'terminal-work':
       return <AgentTerminal service={service} lang={lang} words={agentTerminalWords(lang)} dialogUi={appDialogUi(lang)} keyHref={openAiKeyHref(service, lang)} mode="work" />
     case 'telegram':
-      return <TelegramChannel service={service} lang={lang} words={telegramChannelWords(lang)} slot={slot} />
+      return (
+        <>
+          <TelegramAppNeeded words={agentLinksWords(lang)} />
+          <TelegramChannel service={service} lang={lang} words={telegramChannelWords(lang)} slot={slot} />
+        </>
+      )
   }
 }

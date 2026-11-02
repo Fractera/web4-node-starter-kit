@@ -324,7 +324,7 @@ async function idleTick(service) {
         // 614-1: «включён — пишите ему» — только когда встал канал; не встал — сессия уже закрыта, человеку «Извините…».
         const ch = out.ok && typeof out.channelReady === 'function' ? await out.channelReady() : null
         if (ch && !ch.up) out = { ok: false, reason: ch.reason === 'channel' ? 'channel' : 'session-ended', waited: ch.waited }
-        const said = out.ok ? (t.onNow ?? ASK.en.onNow)(a) : out.reason === 'memory' ? t.memory(a, out.freeMb, out.perSessionMb) : out.reason === 'channel' ? (t.channelFailed ?? ASK.en.channelFailed)(a, out.waited) : t.failed(a, String(out.reason ?? 'unknown'))
+        const said = out.ok ? (t.onNow ?? ASK.en.onNow)(a) : out.reason === 'memory' ? t.memory(a, out.freeMb, out.perSessionMb, out.top) : out.reason === 'channel' ? (t.channelFailed ?? ASK.en.channelFailed)(a, out.waited) : t.failed(a, String(out.reason ?? 'unknown'))
         await tg(token, 'sendMessage', { chat_id: msg.chat.id, text: said, disable_web_page_preview: true })
         continue
       }
@@ -463,7 +463,11 @@ const ASK = {
     startedHuman: (a) => `Agent ${a} is on and got your message.`,
     declinedCalls: (a, c) => `Agent ${a} was not turned on — ${c} gets a refusal.`,
     declinedHuman: (a) => `Agent ${a} was not turned on.`,
-    memory: (a, f, n) => `Agent ${a} was not turned on: too little free memory (${f} MB free, ${n} MB needed). Press «Turn on» later.`,
+    // 624-2 (владелец 2026-11-02): кто занимает память и что закрыть; «нажмите позже» без совета — отказ, а не помощь (закон 6: консультация).
+    memory: (a, f, n, top) => `Agent ${a} was not turned on: not enough memory — ${f} MB available, ${n} MB needed.` +
+      (top?.length ? `\nUsing the most memory now: ${top.map((x) => `${x.name} — ${x.mb >= 1024 ? `${(x.mb / 1024).toFixed(1)} GB` : `${x.mb} MB`}`).join(', ')}.` : '') +
+      `\nClose what you do not need — the Claude Code installation chat, spare browser tabs — and press «Turn on» again.` +
+      `\nIf this happens often, the node is cramped on this computer: ask the main agent which computer or VPS to move to.`,
     failed: (a, r) => `Agent ${a} did not turn on: ${r}. Press «Turn on» again.`,
     declineText: (a) => `The owner of ${a} chose not to turn its agent on now.`,
     toast: 'Turning on…',
@@ -500,7 +504,10 @@ const ASK = {
     startedHuman: (a) => `Агент ${a} включён и получил ваше сообщение.`,
     declinedCalls: (a, c) => `Агент ${a} не включён — ${c} получит отказ.`,
     declinedHuman: (a) => `Агент ${a} не включён.`,
-    memory: (a, f, n) => `Агент ${a} не включён: мало свободной памяти (свободно ${f} МБ, нужно ${n} МБ). Нажмите «Включить» позже.`,
+    memory: (a, f, n, top) => `Агент ${a} не включён: не хватает памяти — доступно ${f} МБ, нужно ${n} МБ.` +
+      (top?.length ? `\nБольше всего памяти сейчас занимают: ${top.map((x) => `${x.name} — ${x.mb >= 1024 ? `${(x.mb / 1024).toFixed(1).replace('.', ',')} ГБ` : `${x.mb} МБ`}`).join(', ')}.` : '') +
+      `\nЗакройте лишнее — установочный чат Claude Code, ненужные вкладки браузера — и нажмите «Включить» ещё раз.` +
+      `\nЕсли так бывает часто, узлу тесно на этом компьютере: спросите главного агента, на какой компьютер или VPS перейти.`,
     failed: (a, r) => `Агент ${a} не включился: ${r}. Нажмите «Включить» ещё раз.`,
     declineText: (a) => `Хозяин ${a} не стал сейчас включать его агента.`,
     toast: 'Включаю…',
@@ -771,7 +778,7 @@ async function onButton(service, token, q) {
     // сообщением внизу, за ним пойдут ответ агента и «выключить агента?».
     for (const x of p.asked) await tg(token, 'sendMessage', { chat_id: x.chat, text: startedText, disable_web_page_preview: true })
   } else {
-    const why = out.reason === 'memory' ? t.memory(a, out.freeMb, out.perSessionMb) : t.failed(a, String(out.reason ?? 'unknown'))
+    const why = out.reason === 'memory' ? t.memory(a, out.freeMb, out.perSessionMb, out.top) : t.failed(a, String(out.reason ?? 'unknown'))
     await closeAsk(service, token, p, why, true, t)
   }
 }
