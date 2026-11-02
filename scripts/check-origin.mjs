@@ -18,8 +18,11 @@ import { dirname, join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 
-const ORIGINAL = 'fractera/web4'
-const ORIGINAL_URL = 'https://github.com/fractera/web4'
+// 2026-11-02 (владелец): оригинал — репозиторий со звёздами и всей историей проекта, переименованный в
+// Fractera/web4-node-starter-kit. Старые имена (fractera/web4, fractera/agi) ведут теперь на архивную копию, поэтому форк оригинала
+// называет родителя только этим именем.
+const ORIGINAL = 'fractera/web4-node-starter-kit'
+const ORIGINAL_URL = 'https://github.com/Fractera/web4-node-starter-kit'
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const RECORD = join(root, 'logs', 'origin.json')
 const ENV = join(root, '.env.local')

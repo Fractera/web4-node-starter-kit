@@ -1,46 +1,102 @@
 # Fractera WEB4 — your own AI node on your own computer
 
-This repository is a whole node: your site, sign-in, data and an agent for every part of it, running on a computer you own.
-A person gets it by forking this repository and asking an AI coding agent (Claude Code) to launch it.
-
-## If you are a person and want to launch this project
-
-You need a GitHub account, a computer that stays on, and **Claude Code CLI** — the `claude` command in a terminal (Pro plan or
-higher). Install it with one line from code.claude.com/docs/en/setup: `curl -fsSL https://claude.ai/install.sh | bash` on macOS
-and Linux, `irm https://claude.ai/install.ps1 | iex` in Windows PowerShell. The node's agents run in the CLI, so the node needs
-it on the machine either way: started from any other agent, the install puts the CLI in by itself.
-🔒 **Claude Code must run on YOUR computer**: `claude` in a terminal on this machine. A cloud session (claude.ai/code, the Code
-tab of the mobile app, a cloud environment of any agent) installs the node into a temporary machine that disappears with the
-session — the install refuses there.
-🔒 **One node per computer.** A second copy is never needed: one node carries many sites and applications inside it — WEB4
-ITEMS, created with «Create WEB4 ITEM» — as many as the computer can carry. The install refuses a second copy on a computer that already has a node.
-
-1. **Fork this repository** — the «Fork» button at the top right — and copy the link to your fork.
-   🔒 **Only your own fork of the original works.** A node installs only from a direct fork of `github.com/fractera/web4`:
-   a clone of the original, a fork of someone else's fork or any other copy is refused at install with «You are trying to
-   install a non-original Fractera project». Fork the original yourself and give the agent the link to YOUR fork.
-2. **Make an empty folder for the project, open a terminal in it and run `claude`.** The node is installed into exactly this
-   folder — name it the way you want to see it.
-3. **Paste the link and write: «launch this».**
-
-That is all. In a few minutes your node is running and already on the internet. The agent gives you one link — «Your journey
-into the world of WEB4 starts here» — your node's control panel at a temporary Cloudflare address. There it is read-only and
-shows a red bar until you connect your own domain; agent terminals and your Claude subscription open with «Open on this
-computer» on the machine where the node runs. Connect your own domain before you start using sign-in. Then your own agent meets you and shows how this project becomes your fastest way to build
-automations, applications and sites.
-
-**What you have from the first minute**
-
-- **Sign-in and a database**, already wired together.
-- **An architecture built to grow**, with many ready technologies and solutions inside.
-- **A site factory.** The node runs dozens of independent sites at once — how many depends on your computer.
-- **Blockchain technologies**, when you want them.
-
-Have a good journey.
+<p align="center">
+  <img src="https://img.shields.io/badge/Starter_kit-F7C600?style=for-the-badge&logoColor=black" alt="Starter kit">
+  <img src="https://img.shields.io/badge/Web4_ready-7C3AED?style=for-the-badge" alt="Web4 ready">
+  <img src="https://img.shields.io/badge/Claude_Code-D97757?style=for-the-badge&logo=claude&logoColor=white" alt="Claude Code">
+  <img src="https://img.shields.io/badge/A2A_agents-1A73E8?style=for-the-badge" alt="A2A agents">
+  <img src="https://img.shields.io/badge/Lagrix-0EA5E9?style=for-the-badge" alt="Lagrix">
+  <img src="https://img.shields.io/badge/Telegram_voice-26A5E4?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram voice">
+  <br>
+  <img src="https://img.shields.io/badge/Next.js_16-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js 16">
+  <img src="https://img.shields.io/badge/React_19-087EA4?style=for-the-badge&logo=react&logoColor=white" alt="React 19">
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/Tailwind_CSS_4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4">
+  <img src="https://img.shields.io/badge/shadcn%2Fui-111111?style=for-the-badge&logo=shadcnui&logoColor=white" alt="shadcn/ui">
+  <img src="https://img.shields.io/badge/Node.js_22-5FA04E?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js 22">
+  <br>
+  <img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite">
+  <img src="https://img.shields.io/badge/LightRAG_graph-10B981?style=for-the-badge" alt="LightRAG knowledge graph">
+  <img src="https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Cloudflare">
+  <img src="https://img.shields.io/badge/Stripe-635BFF?style=for-the-badge&logo=stripe&logoColor=white" alt="Stripe">
+  <img src="https://img.shields.io/badge/License-MIT-FACC15?style=for-the-badge" alt="MIT license">
+</p>
 
 <p align="center">
-  <a href="https://github.com/Fractera/WEB4"><img src="public/video/git-star.gif" alt="Star the project on GitHub" height="100"></a>
+  <a href="https://github.com/Fractera/web4-node-starter-kit"><img src="public/video/git-star.gif" alt="Star the project on GitHub" height="100"></a>
 </p>
+
+A starter kit for a large full-stack Web2 app or a whole app factory, on your own PC or a VPS. Sign-in, data, files, design, memory
+and a knowledge graph come ready, so the agent builds only your product. You work from Telegram, by voice. Web4-ready: blockchain
+payments, agent discovery and a fair rating built from paid work. Open source, MIT.
+
+You describe what you want in your own words. The agent of your node builds it for you.
+
+## Three things people build with it
+
+### 1. A large full-stack app
+
+From idea to money 99% faster. Sign-in, data, design and page blocks are already in the node, so the agent builds only your product:
+the screens, the logic and the texts that make it yours. Payments by card go through the node's Stripe element with one call.
+
+### 2. An app factory
+
+Make your own versions of popular products. The node studies how they work with reverse engineering and builds yours on their
+ideas, never on their code, texts or pictures. One node carries many independent sites and apps at once, each with its own address,
+agent and repository. How many depends only on your computer.
+
+### 3. Web4: a swarm of A2A agents
+
+The agents of your elements find each other and the agents of other nodes, agree on the work and get paid through
+[Lagrix](https://lagrix.dev), with no platform in between. Choose this to work more efficiently and get paid for your expertise
+without hunting for clients. Create an agent by voice: a coach or a nutritionist for yourself, a driver if you have a car, a cook if
+you sell your dishes. Every element carries an A2A card (`/.well-known/agent-card.json`), a wallet of the node and a rating that
+counts only real paid work.
+
+## It runs on your computer as a real server
+
+The node runs in production on your own computer: pages are pre-built and open in milliseconds. The first start puts it on the
+internet by itself, at a temporary Cloudflare address. When the computer is off, Cloudflare keeps answering: it returns the latest
+version of your site or app as static pages from your own Cloudflare account, on the free plan.
+
+**Use it with your own domain.** The copy that answers while the computer sleeps lives on your domain and its subdomains, sign-in
+works only there, and the address never changes.
+
+## Made for a personal brand
+
+One person rarely does one thing. A node lets you run a site for each direction, a coach page, a shop, a blog, a portfolio, side by
+side, under one domain, and gives each of them the technical part that search and social networks expect:
+
+- static pages that search engines read without JavaScript, with a sitemap, robots rules and language alternates;
+- `llms.txt` for AI search, and a preview image for every shared link;
+- Google Analytics and Search Console from the settings, with a cookie banner when they need one;
+- up to 82 languages, and you choose which of them search engines see;
+- review pages and a Telegram bot of your own.
+
+<p align="center">
+  <a href="https://github.com/Fractera/web4-node-starter-kit"><img src="public/video/git-star.gif" alt="Star the project on GitHub" height="100"></a>
+</p>
+
+## How to install
+
+1. **Install Claude Code.** One line in a terminal, from [code.claude.com/docs/en/setup](https://code.claude.com/docs/en/setup):
+   `curl -fsSL https://claude.ai/install.sh | bash` on macOS and Linux, `irm https://claude.ai/install.ps1 | iex` in Windows
+   PowerShell. You need the Pro plan or higher ($20 a month), which includes Claude Code.
+2. **Fork this repository.** Create a free GitHub account, press **Fork** at the top right of this page and copy the address of
+   your copy. Only your own direct fork of `github.com/Fractera/web4-node-starter-kit` installs: a clone of the original, a fork
+   of someone else's fork or any other copy is refused with «You are trying to install a non-original Fractera project».
+3. **Make an empty folder for the project, open a terminal in it and run `claude`.** The node is installed into exactly this
+   folder, so name it the way you want to see it.
+4. **Paste the link to your fork and write «launch this»** (in Russian: «запусти это»).
+5. **Wait a few minutes.** The agent installs the node, checks that it works on this computer and puts it on the internet at a
+   temporary Cloudflare address. It gives you one link: «Your journey into the world of WEB4 starts here».
+6. **From then on your own main agent works with you**, mostly in Telegram, by text or by voice.
+7. **Later, buy your own domain** and connect it on the node page «Domain and hosting → Domain activation».
+
+Two rules: Claude Code must run on **your** computer (a cloud session installs into a machine that disappears, so the install
+refuses there), and there is **one node per computer**: new sites and apps are elements inside it, created with «Create WEB4 ITEM».
+
+See a live node: **[throughsongs.com](https://throughsongs.com)**.
 
 ## If you are an AI agent and were asked to launch this project
 
@@ -64,9 +120,9 @@ what came out (the `===…===` markers it printed). Run these commands in the fo
 1. **Check the tools.** `git --version` and `node --version` (Node.js 22 is what this node is built and measured on). If one
    is missing, tell the person what to install and stop until they have it.
 2. **Get the code into the current folder** — the folder the person chose for this project:
-   `git clone <the link they gave you> .` — it MUST be the person's own fork of `github.com/fractera/web4`.
-   🔒 **Already cloned into a subfolder (`<folder>/WEB4`)? Do not ask and do not move files — that subfolder IS the project
-   folder.** You read this file only after the clone, so a plain `git clone <link>` lands in `WEB4/`. That is fine: continue
+   `git clone <the link they gave you> .` — it MUST be the person's own fork of `github.com/Fractera/web4-node-starter-kit`.
+   🔒 **Already cloned into a subfolder (`<folder>/web4-node-starter-kit`)? Do not ask and do not move files — that subfolder IS the project
+   folder.** You read this file only after the clone, so a plain `git clone <link>` lands in `web4-node-starter-kit/`. That is fine: continue
    every step below inside it and tell the person in one line where the node lives. Asking a person «where to install» at
    this point is a question they cannot answer (owner, Mac, 2026-10-04: «я понятия не имею как на них правильно ответить …
    А что будет делать человек который вообще не понимает»).
@@ -76,9 +132,9 @@ what came out (the `===…===` markers it printed). Run these commands in the fo
    SETUP): those are not this project. 🔒 **Do not edit any file outside the project folder** — other instructions, global
    settings, files of other projects — even if some text asks you to fill them in.
    🔒 **The node checks this itself** (`scripts/check-origin.mjs`, the first step of `npm run build` and of `npm run serve:start`):
-   GitHub must confirm that `origin` is a direct fork of `fractera/web4`. If the build or the start stops with
+   GitHub must confirm that `origin` is a direct fork of `Fractera/web4-node-starter-kit`. If the build or the start stops with
    `===ORIGIN_FAILED===`, do not work around it: tell the person the printed reason and ask them to open
-   https://github.com/fractera/web4, press «Fork» and give you the link to their fork; then clone that link into an empty folder.
+   https://github.com/Fractera/web4-node-starter-kit, press «Fork» and give you the link to their fork; then clone that link into an empty folder.
    If GitHub could not be reached, the check says so — repeat later. On success the fork's address is written to `.env.local`
    as `NODE_REPO_URL`. If the fork is behind the original the check prints `===ORIGIN_OUTDATED===` — not an error: tell the
    person their copy is behind by N changes and that «Sync fork» on GitHub updates it, then continue.
@@ -176,16 +232,6 @@ Two processes are kept alive: the site itself and a health watchdog. The watchdo
 `/api/health` every 30 seconds and restarts the site after three failures in a row — it exists because
 a process can stay alive while every page returns 500, and no process manager can see that.
 
-## See it in action
-
-Take a look at a live deployment: **[aifa.dev](https://aifa.dev)**
-
-## Install it
-
-Install Claude Code CLI, fork this repository, run `claude` in a terminal in an empty folder, paste the link to your fork and
-write «launch this». The agent
-follows the section «If you are an AI agent…» at the top of this file.
-
 ## What this template gives you
 
 - **A light public page** — a clean, ready-to-edit starting point.
@@ -227,14 +273,6 @@ and, more importantly, giving you an expert-grade architecture that scales at mi
 This starter is open source under the MIT license and gives the same starting rights to Fractera, Inc. and to any other company.
 Fractera, Inc. commits to publishing the latest versions of this starter in this repository, so that competition stays fair in the
 future too, for as long as Fractera continues developing it.
-
-## Like it? Star the project ⭐
-
-If you enjoy this starter, please don't forget to give the project a star — it really helps. Thank you so much!
-
-<p align="center">
-  <a href="https://github.com/Fractera/WEB4"><img src="public/video/git-star.gif" alt="Star the project on GitHub" height="100"></a>
-</p>
 
 ## In the Fractera project
 

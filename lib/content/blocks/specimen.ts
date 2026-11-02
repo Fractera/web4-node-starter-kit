@@ -871,7 +871,7 @@ export const SPECIMEN: SpecimenSection[] = [
         kind: 'promoBand',
         title: 'Your own white-label platform on Open Code',
         text: 'The sources are open. Fork the repository, raise your own instance and build products with AI — for yourself or as a business: deploying servers for clients and consulting alongside.',
-        cta: { href: 'https://github.com/Fractera/Agent-Engineering-Infrastructure', label: 'View on GitHub', icon: 'github' },
+        cta: { href: 'https://github.com/Fractera/web4-node-starter-kit', label: 'View on GitHub', icon: 'github' },
         image: '/git.png',
         alt: 'Fractera',
       },

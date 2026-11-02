@@ -45,7 +45,7 @@ What this node is and how each thing is done.
   gave away would die silently, so a failure is only named aloud (`serve:publish`, `serve:status`).
 - Ports: the core — 24680, elements — the block 24680–25679 (`lib/server-port.cjs`). A port is asked from `logs/runtime.json`, never
   remembered. 3000 and 49152+ are forbidden.
-- Installation — only from a direct fork of Fractera/WEB4 and never in a cloud session; one node per computer.
+- Installation — only from a direct fork of Fractera/web4-node-starter-kit and never in a cloud session; one node per computer.
 - People. **The owner** — one person, the creator of the project. **The architect** — the master of the node, the first registered; acts
   over the whole node. **An administrator** and the other roles — only within their organization. **An element owner** — on an app
   factory. **A visitor** — a guest of a site. The word «user» is read by its sense.
