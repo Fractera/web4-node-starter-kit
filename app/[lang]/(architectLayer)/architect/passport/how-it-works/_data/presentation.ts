@@ -119,7 +119,7 @@ const UI: Record<'en' | 'ru', PresentationWords> = {
             title: '3.1 Learn from products that already work',
             items: [
               'Name a popular site or SDK, and the node studies how it works: its pages, user flows, API and data. It handles sites, npm and Python packages, .NET and native libraries, Android apps and WASM.',
-              'The study is done by the REA tool inside the reverse engineering element, which switches on for one task and off after it.',
+              'The study is done by REA, an open tool the core keeps one copy of: the element\'s own agent runs it, and the study stays in that element\'s folder.',
               'The node takes ideas and structure and never copies foreign code, texts, pictures or design. If a site\'s rules forbid a study, you show it with screenshots, and the node studies similar sites whose rules allow it.',
             ],
           },
@@ -255,7 +255,7 @@ const UI: Record<'en' | 'ru', PresentationWords> = {
             title: '3.1 Учитесь у продуктов, которые уже работают',
             items: [
               'Назовите популярный сайт или SDK, и узел разберёт, как он устроен: страницы, пути пользователя, API и данные. Он разбирает сайты, пакеты npm и Python, библиотеки .NET и нативные, приложения Android и WASM.',
-              'Разбор делает инструмент REA внутри элемента «Реверс-инжиниринг»: элемент включается на одну задачу и выключается после неё.',
+              'Разбор делает REA — открытый инструмент, одна копия которого живёт в ядре: его запускает агент самого элемента, и разбор остаётся в папке этого элемента.',
               'Узел берёт идеи и устройство и никогда не копирует чужой код, тексты, картинки и оформление. Если правила сайта запрещают разбор, вы показываете его скриншотами, а узел разбирает похожие сайты, чьи правила это разрешают.',
             ],
           },

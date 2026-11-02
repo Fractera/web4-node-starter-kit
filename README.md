@@ -1,6 +1,7 @@
 # Fractera WEB4 — your own AI node on your own computer
 
 <p align="center">
+  <img src="https://img.shields.io/badge/Reverse_engineering-E11D48?style=for-the-badge" alt="Reverse engineering">
   <img src="https://img.shields.io/badge/Starter_kit-F7C600?style=for-the-badge&logoColor=black" alt="Starter kit">
   <img src="https://img.shields.io/badge/Web4_ready-7C3AED?style=for-the-badge" alt="Web4 ready">
   <img src="https://img.shields.io/badge/Claude_Code-D97757?style=for-the-badge&logo=claude&logoColor=white" alt="Claude Code">
@@ -26,9 +27,9 @@
   <a href="https://github.com/Fractera/web4-node-starter-kit"><img src="public/video/git-star.gif" alt="Star the project on GitHub" height="100"></a>
 </p>
 
-A starter kit for a large full-stack Web2 app or a whole app factory, on your own PC or a VPS. Sign-in, data, files, design, memory
-and a knowledge graph come ready, so the agent builds only your product. You work from Telegram, by voice. Web4-ready: blockchain
-payments, agent discovery and a fair rating built from paid work. Open source, MIT.
+Reverse-engineer any popular product and build your own: a starter kit for a large full-stack app or an app factory, on your PC
+or a VPS. Sign-in, data, design, memory and a knowledge graph come ready. Work from Telegram by voice. Web4-ready: blockchain
+payments, agent discovery, fair rating. Open source, MIT.
 
 You describe what you want in your own words. The agent of your node builds it for you.
 
