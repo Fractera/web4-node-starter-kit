@@ -7,19 +7,23 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 
 **Active steps:** none.
 
-**Last change:** 2026-10-30 — the node took over its own development from the federal layer (federal step 621): `npm run
-node:readiness`, `npm run template` with the skill `release-template`, `npm run instruction:element`, the discipline skills
-`use-development-steps` and `use-testing`, `humanizer`, `review-page`, `npm run serve:rebuild:detached`.
+**Last change:** 2026-11-02 — the repository with the stars is the original under the new name `Fractera/web4-node-starter-kit` (merge
+`6f45798`, renamed by the owner); core `929f06c` (README, `check-origin`, instruction resealed, `origin` switched), Lagrix protocol
+`d1dde06`, element lagrix `a31cb01` (live lagrix.dev: new Fork link, old 0).
 
 **Next action:** wait for the owner's task.
 
-**Queue:** the plans in `new-steps/` — 545 (the orchestra audit: 545-4, 545-5), 593 (the real pipeline test on a tinylaunch.com clone,
+**Queue:** the plans in `new-steps/` — 622 (old repository names in templates and elements), 545 (the orchestra audit: 545-4, 545-5), 593 (the real pipeline test on a tinylaunch.com clone,
 with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's word.
 
 ## The owner's latest decisions (verbatim)
 
-(none yet)
+- 2026-11-02: «мне нужно чтобы все звезды сохранились»; the merge was confirmed: «Отправить (Рекомендую)»; the owner renamed the
+  repository himself; «найди все старые названия … чтобы ссылки вели на новый проект сразу во всём проекте» → «lagrix.dev сейчас,
+  остальное — план» (plan 622).
 
 ## Measured — do not measure again
 
-(nothing yet)
+- 2026-11-02: every old name (`fractera/web4`, `fractera/agi`, any case) redirects to the ARCHIVED copy
+  `Fractera/web4-node-starter-kit-2-11-2-2026` (id 1375932938), not to the original (id 1221835075). GitHub reports a fork's parent
+  only under the new name (three real forks).
