@@ -1,23 +1,24 @@
-# Fractera WEB4 — your own AI node on your own computer
+# Fractera — huge app & app factory starter kit, Web4-ready
 
 <p align="center">
   <img src="https://img.shields.io/badge/Reverse_engineering-E11D48?style=for-the-badge" alt="Reverse engineering">
-  <img src="https://img.shields.io/badge/Starter_kit-F7C600?style=for-the-badge&logoColor=black" alt="Starter kit">
+  <img src="https://img.shields.io/badge/Starter_kit-F7C600?style=for-the-badge" alt="Starter kit">
   <img src="https://img.shields.io/badge/Web4_ready-7C3AED?style=for-the-badge" alt="Web4 ready">
-  <img src="https://img.shields.io/badge/Claude_Code-D97757?style=for-the-badge&logo=claude&logoColor=white" alt="Claude Code">
   <img src="https://img.shields.io/badge/A2A_agents-1A73E8?style=for-the-badge" alt="A2A agents">
   <img src="https://img.shields.io/badge/Lagrix-0EA5E9?style=for-the-badge" alt="Lagrix">
-  <img src="https://img.shields.io/badge/Telegram_voice-26A5E4?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram voice">
+  <br>
+  <img src="https://img.shields.io/badge/Claude_Code-D97757?style=for-the-badge&logo=claude&logoColor=white" alt="Claude Code">
+  <img src="https://img.shields.io/badge/Telegram_remote_code_controller-26A5E4?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram remote code controller">
+  <img src="https://img.shields.io/badge/LightRAG_graph-10B981?style=for-the-badge" alt="LightRAG knowledge graph">
   <br>
   <img src="https://img.shields.io/badge/Next.js_16-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js 16">
   <img src="https://img.shields.io/badge/React_19-087EA4?style=for-the-badge&logo=react&logoColor=white" alt="React 19">
   <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
   <img src="https://img.shields.io/badge/Tailwind_CSS_4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4">
   <img src="https://img.shields.io/badge/shadcn%2Fui-111111?style=for-the-badge&logo=shadcnui&logoColor=white" alt="shadcn/ui">
-  <img src="https://img.shields.io/badge/Node.js_22-5FA04E?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js 22">
   <br>
+  <img src="https://img.shields.io/badge/Node.js_22-5FA04E?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js 22">
   <img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite">
-  <img src="https://img.shields.io/badge/LightRAG_graph-10B981?style=for-the-badge" alt="LightRAG knowledge graph">
   <img src="https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Cloudflare">
   <img src="https://img.shields.io/badge/Stripe-635BFF?style=for-the-badge&logo=stripe&logoColor=white" alt="Stripe">
   <img src="https://img.shields.io/badge/License-MIT-FACC15?style=for-the-badge" alt="MIT license">
