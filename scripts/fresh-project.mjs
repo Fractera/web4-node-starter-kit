@@ -75,8 +75,10 @@ a single question they cannot answer.
 ## Substeps
 - **1-1 — the node is up.** Done by \`npm run launch\` on ${today}: packages, fork check, build, start, the browser opened on the first screen.
   Proof: \`npm run serve:status\` answers, \`===PUBLIC_URL===\` opens.
-- **1-2 — the first account.** «Sign in» on the home page, the person chooses a login and a password. The first account is the
-  architect for good and cannot be recovered — say it in the chat and keep it in front of them on the page. Later: Google or the
+- **1-2 — the first account, on this computer, before 1-3.** On localhost the panel opens without sign-in (the owner at the
+  machine), on the temporary address sign-in and registration are closed, on an own domain registration is open to everyone and
+  the first to register becomes the architect — so the person registers here, now, through «Sign in» on the home page. The first
+  account is the architect for good and cannot be recovered — say it in the chat; the register form shows it too (auth v2.4.9). Later: Google or the
   Resend magic link for the architect (skill \`use-auth-providers\`), so the password can be restored by email. Proof: the person is in
   the control panel.
 - **1-3 — the own domain.** The temporary Cloudflare address is only for a look. Serious intentions — a domain (for example porkbun.com,

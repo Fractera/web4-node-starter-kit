@@ -133,11 +133,14 @@ function welcome() {
   console.log('===WELCOME===')
   console.log(`Добро пожаловать в ваш узел Fractera. Браузер уже открыт на его главной странице.
 
-1. ВОЙДИТЕ ПЕРВЫМ. Нажмите «Войти» на главной странице и создайте первую учётную запись: придумайте логин и пароль.
+1. СОЗДАЙТЕ УЧЁТНУЮ ЗАПИСЬ АРХИТЕКТОРА СЕЙЧАС, НА ЭТОМ КОМПЬЮТЕРЕ. Здесь панель открывается и без входа — узел узнаёт
+   хозяина за клавиатурой. Но нажмите «Войти» на главной странице и создайте первую учётную запись (почта и пароль) до того,
+   как подключите свой домен: на домене регистрация открыта для всех, и первый, кто зарегистрируется, станет хозяином узла.
    ⚠ ВНИМАНИЕ: первая учётная запись навсегда становится администратором (архитектором) узла. Восстановить её пароль
-   НЕВОЗМОЖНО — запишите логин и пароль и храните их надёжно. Позже подключите вход через Google или «волшебное письмо»
+   НЕВОЗМОЖНО — запишите почту и пароль и храните их надёжно. Позже подключите вход через Google или «волшебное письмо»
    (Resend) — тогда пароль архитектора можно будет вернуть через почту.
-2. ВРЕМЕННЫЙ АДРЕС: ${where} — он только чтобы посмотреть проект: он меняется при перезапуске туннеля, и вход на нём закрыт.
+2. ВРЕМЕННЫЙ АДРЕС: ${where} — только чтобы посмотреть проект: панель там открыта для чтения любому, у кого есть ссылка,
+   вход и регистрация на нём закрыты, а сам адрес меняется при перезапуске туннеля.
 3. СВОЙ ДОМЕН — когда намерения серьёзные. Например, на porkbun.com: домен .com стоит около $12 в год и продлевается по той же
    цене (проверьте цену на сайте перед покупкой). Купите домен и оставьте этот чат Claude Code открытым — агент сам сделает
    записи, которые свяжут проект, регистратора и Cloudflare (страница узла «Домен и хостинг → Подключение домена»).
@@ -149,11 +152,14 @@ function welcome() {
   console.log('')
   console.log(`Welcome to your Fractera node. The browser already shows its home page.
 
-1. SIGN IN FIRST. Press «Sign in» on the home page and create the first account: choose a login and a password.
+1. CREATE THE ARCHITECT ACCOUNT NOW, ON THIS COMPUTER. Here the panel opens without sign-in — the node recognises the owner
+   at the keyboard. Still, press «Sign in» on the home page and create the first account (email and password) before you
+   connect your own domain: on a domain registration is open to everyone, and whoever registers first owns the node.
    ⚠ WARNING: the first account becomes the node's administrator (architect) for good. Its password CANNOT be recovered —
-   write the login and password down and keep them safe. Later connect Google or the magic-link email (Resend) sign-in —
+   write the email and password down and keep them safe. Later connect Google or the magic-link email (Resend) sign-in —
    then the architect's password can be restored by email.
-2. TEMPORARY ADDRESS: ${whereEn} — only for a look at the project: it changes when the tunnel restarts, and sign-in is closed there.
+2. TEMPORARY ADDRESS: ${whereEn} — only for a look at the project: the panel there is read-only to anyone with the link,
+   sign-in and registration are closed, and the address changes when the tunnel restarts.
 3. YOUR OWN DOMAIN — when you are serious. For example at porkbun.com: a .com costs about $12 a year and renews at the same
    price (check the price on the site before buying). Buy it and keep this Claude Code chat open — the agent makes the records
    that join the project, the registrar and Cloudflare (node page «Domain and hosting → Domain activation»).
