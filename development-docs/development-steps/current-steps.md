@@ -9,11 +9,12 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 
 **Last change:** 2026-11-02 — the repository with the stars is the original under the new name `Fractera/web4-node-starter-kit` (merge
 `6f45798`, renamed by the owner); core `929f06c` (README, `check-origin`, instruction resealed, `origin` switched), Lagrix protocol
-`d1dde06`, element lagrix `a31cb01` (live lagrix.dev: new Fork link, old 0).
+`d1dde06`, element lagrix `a31cb01` (live lagrix.dev: new Fork link, old 0); step 622 closed — templates custom v0.3.150 and
+native v0.1.33, 12 elements rolled out, pins `5e9d4b1` (`completed-steps/622.md`).
 
 **Next action:** wait for the owner's task.
 
-**Queue:** the plans in `new-steps/` — 622 (old repository names in templates and elements), 545 (the orchestra audit: 545-4, 545-5), 593 (the real pipeline test on a tinylaunch.com clone,
+**Queue:** the plans in `new-steps/` — 545 (the orchestra audit: 545-4, 545-5), 593 (the real pipeline test on a tinylaunch.com clone,
 with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's word.
 
 ## The owner's latest decisions (verbatim)
