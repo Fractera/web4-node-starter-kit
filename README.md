@@ -53,6 +53,56 @@ without hunting for clients. Create an agent by voice: a coach or a nutritionist
 you sell your dishes. Every element carries an A2A card (`/.well-known/agent-card.json`), a wallet of the node and a rating that
 counts only real paid work.
 
+## Killer features
+
+### Reverse engineering and the product quiz: one cycle
+
+Name a popular site or SDK, and the node studies how it works: its pages, user flows, API and data. It handles sites, npm and Python
+packages, .NET and native libraries, Android apps and WASM. The study is done by [REA](https://github.com/morluto/rea), an open
+tool the core keeps one copy of; the element's own agent runs it, and the study stays in that element's folder. The node takes ideas
+and structure and never copies foreign code, texts, pictures or design. If a site's rules forbid a study, you show it with
+screenshots, and the node studies similar sites whose rules allow it.
+
+Then the product quiz puts your product into plain words before any code. The element's agent asks one question at a time: who the
+product is for, what it does, what it needs. It checks what the node already has and suggests a study where one helps, with its price.
+The quiz turns into stages: stage 0 is static pages with first data, and each next stage adds one capability that works on its own.
+
+### Deep memory and a curious soul
+
+Say «remember…» to the main agent in your own words, in any language, in Telegram or in the terminal, and add a photo, a PDF or a
+voice note if you like («remember, this is my mom»). Ask «remind me about…» a month or a year later, and the answer comes with the
+date, the source and how sure the memory is; if it finds a thing, the agent sends you its file. Pictures are described in words, PDFs
+are read whole, voice notes become text.
+
+Before it builds something new, an agent looks in the node's skills base for how other projects solved the same task. The base comes
+with every copy of the node, and each skill keeps its own licence. The agent mixes what it finds with its own reasoning, says it in
+its own words and names whose skill it was.
+
+### Continuous evolution
+
+At first an agent may see a task its own way. Tell it what result you need, and it keeps that in memory or in a skill and next time
+does it your way. When an element finishes a task, it can review its own session and suggest up to three changes to its skills; it
+makes only the ones you accept. An element that lacks a capability asks the node: the main agent looks for someone who can already do
+it, and if nobody can, it asks you and, after your «yes», leads the building.
+
+### Many times less work for the model
+
+The project is split into elements, and an agent reads only its own element and its own instruction, not the whole code. Sign-in,
+data, design, blocks, settings and ready solutions are already built and shared, so the agent connects them instead of writing them
+again. Elements agree with each other through an API (i2i), without extra requests to the model.
+
+### Click, say, accept
+
+Click a block in the preview, say what to change, and the task goes to that element's agent. Every change is first built in a
+preview, and you accept it with one button, so the live version never breaks. Every element lives in its own GitHub repository, with
+history and rollback at hand.
+
+### You do not have to open the panel
+
+Connect your Telegram and tell it what you want to build. You can stay on your phone the whole time and build large projects that
+anyone can open by a link. One Claude Pro subscription ($20 a month) runs the whole node; an OpenAI key, kept on your computer, adds
+search by meaning, voice notes and the skills base.
+
 ## It runs on your computer as a real server
 
 The node runs in production on your own computer: pages are pre-built and open in milliseconds. The first start puts it on the
