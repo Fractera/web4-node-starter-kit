@@ -1,0 +1,732 @@
+// КОМАНДЫ ГЛАВНОГО АГЕНТА УЗЛА (узел, шаги 548-4 и 548-11; с 610 он живёт в корне ядра, команды — в package.json ядра). Прежде — `data/main-agent`, и зовёт их
+// своими `npm run …`: `node ../../scripts/main-agent-cli.mjs <команда>`. Файлов ядра он не читает — всё, что ему нужно знать
+// об узле и его элементах, печатают эти команды (ровно столько, сколько нужно для решения, — модель не платит за лишнее).
+//
+// Слова владельца 2026-10-19 (548-6): узел, «когда в приложении пришёл запрос на элемент», должен «во-первых создать его, во-вторых
+// передать в него техническое задание, в-третьих передать агенту внутри этого элемента начать собственный жизненный процесс»,
+// сообщить архитектору, «как он может продолжить работать в этом процессе и контролировать его», а при другом стечении
+// обстоятельств — вести элемент самому, «без личного участия».
+//
+//   contacts [<id>]          — узел постоянного размера: службы, с которыми он родился, и число рождённых элементов; с <id> —
+//                              один элемент: адрес · род · состояние · роль · как до него достучаться
+//   find <слова>             — кто в узле умеет это (поиск реестра ядра `GET /api/node/a2a?q=…&off=1`, выключенные — с пометкой)
+//   card <id>                — визитка элемента с диска: навыки и двери (589-3)
+//   needs [list|show|answer|verify] — запросы возможности элементов (589, навык handle-need)
+//   lagrix <слова>           — f2f: поиск целого элемента в сети Lagrix; сети ещё нет — ИМИТАЦИЯ (запрос по документам 17 и 20)
+//   create --role "<фраза>" (--brief "<текст>" | --brief-file <путь>) [--native] [--supervise main|architect] [--no-wake]
+//                            — новый элемент: черновик → рождение из шаблона → роль → задание в его приёмную → пробуждение агента
+//   task <id> "<текст>"      — поручение агенту элемента (живой сессии — во вход, спящему — пробуждением)
+//   state <id>               — как идёт работа элемента: роль, текущий шаг, приёмная, коммиты, надзор
+//   role <id> "<фраза>"      — назначить элементу роль (`data/node/roles.json`)
+//   supervise <id> main|architect|off [--max N] — кто ведёт элемент
+//   close <id>               — выключить агента элемента (548-20: включает поручение под надзором, выключает главный агент)
+//   trust <id> [<id> …]      — человек согласился: агент элемента работает в своей папке (604, вопрос доверия Claude Code)
+//   person                   — как связаться с архитектором из этой сессии (Telegram главного агента или терминал ядра)
+//   done [--close] [--note "<строка>"] — сказать узлу «закончил» (или закрыть свою сессию) без чтения ключей узла; `--note` — где
+//                              остановился, с неё начнётся твоя следующая сессия (595-7)
+//   telegram <id> [<ячейка> "<текст>"] — боты элемента (h2a · h2h · orders · work) или сообщение допущенным одного из них (552-6)
+//   session context|clear [<id>] · session model opus|sonnet|haiku [<id>] — заполнение контекста, очистка, смена модели сессии (620)
+//   openai-key <sk-…> [--chat <id> --message <id>] — ключ OpenAI узла: проверка дверью ядра, запись, удаление сообщения с ключом (620)
+//   transcribe <файл> [--lang xx] — голосовое человека → текст дверью распознавания ядра; нет рабочего ключа — попросить /openai_key (617)
+//   review <id> "<слова человека>" — разбор элемента по слову человека: его недовольство первой причиной, расход сессии второй (571-6)
+// 🔒 Ничего не делается само: каждую команду запускает главный агент по слову человека или по событию надзора.
+
+import { appendFileSync, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, statSync, writeFileSync } from 'node:fs'
+import { randomBytes } from 'node:crypto'
+import { spawnSync } from 'node:child_process'
+import { createRequire } from 'node:module'
+import { homedir } from 'node:os'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
+const require = createRequire(import.meta.url)
+const supervision = require('../lib/web4-items/supervision.cjs')
+const nodeType = require('../lib/web4-items/node-type.cjs')
+// 603-1: самоописание элементов — паспорт и измеренное одним модулем (что это, где живёт, где данные, двери из кода, кто зависит).
+const self = require('../lib/a2a/self-description.cjs')
+// 552-4: поручение главного агента элементу — строительный процесс; слово уже стоит (например, ответ ядра сессии рабочего процесса)
+// — остаётся своё. Мост ядра по слову будит сессию процесса (`lib/agent-kit/modes.cjs`).
+const modes = require('../lib/agent-kit/modes.cjs')
+const { simulatedF2fSearch } = await import('../lib/web4-items/lagrix-simulated.mjs')
+
+const readJson = (p, fallback = null) => { try { return JSON.parse(readFileSync(p, 'utf8')) } catch { return fallback } }
+// 548-20: элементы, чьего агента включил главный агент (`task` → «woke»), — данные узла, вне git.
+const WOKEN = join(ROOT, 'data', 'node', 'woken-by-main.json')
+function markWoken(id, on) {
+  const j = readJson(WOKEN, {})
+  if (on) j[id] = new Date().toISOString()
+  else delete j[id]
+  try { mkdirSync(dirname(WOKEN), { recursive: true }); writeFileSync(WOKEN, JSON.stringify(j, null, 2) + '\n', 'utf8') } catch { /* запись не обязательна */ }
+}
+const env = (() => {
+  const out = {}
+  try {
+    for (const line of readFileSync(join(ROOT, '.env.local'), 'utf8').split(/\r?\n/)) {
+      const m = line.match(/^([A-Z0-9_]+)=(.*)$/)
+      if (m) out[m[1]] = m[2].replace(/^["']|["']$/g, '')
+    }
+  } catch { /* нет .env.local — ключа нет */ }
+  return out
+})()
+const KEY = env.SETTINGS_SECRET ?? ''
+const LANG = env.NEXT_PUBLIC_LANG || 'en'
+const CORE = `http://localhost:${readJson(join(ROOT, 'logs', 'runtime.json'), {})?.port ?? 24680}`
+const ZONE = readJson(join(ROOT, 'logs', 'domain.json'), {})?.zone ?? ''
+const ORIGIN = ZONE ? `https://architect.${ZONE}` : CORE
+
+const fail = (msg) => { console.log(`===MAIN_AGENT_FAIL=== ${msg}`); process.exit(1) }
+const firstSentence = (t, n = 170) => {
+  const s = String(t ?? '').replace(/\s+/g, ' ').trim()
+  const cut = s.match(/^.{20,}?[.!?](?=\s|$)/)?.[0] ?? s
+  return cut.length > n ? `${cut.slice(0, cut.lastIndexOf(' ', n - 1) > 40 ? cut.lastIndexOf(' ', n - 1) : n - 1)}…` : cut
+}
+async function core(path, init = {}) {
+  const r = await fetch(`${CORE}${path}`, { ...init, headers: { 'X-Node-Key': KEY, 'Content-Type': 'application/json', ...(init.headers ?? {}) }, signal: AbortSignal.timeout(init.timeout ?? 15_000) })
+  let body = null
+  try { body = await r.json() } catch { /* не JSON */ }
+  return { status: r.status, body }
+}
+
+const registry = () => readJson(join(ROOT, 'WEB4-ITEMS-REGISTRY', 'web4-items.json'), { services: [] }).services ?? []
+const addressOf = (id) => {
+  const a = readJson(join(ROOT, 'data', 'services', id, 'address.json'), null)?.address
+  return typeof a === 'string' && /^[a-z0-9-]{1,40}$/.test(a) ? a : id
+}
+const itemDir = (id) => {
+  const e = registry().find((s) => s.id === id)
+  if (!e) return null
+  const base = join(ROOT, 'WEB4-ITEMS', e.kind === 'user' ? 'user' : 'core')
+  const byAddress = join(base, addressOf(id))
+  return existsSync(byAddress) ? byAddress : existsSync(join(base, id)) ? join(base, id) : null
+}
+const born = (id) => Boolean(registry().find((s) => s.id === id && s.kind === 'user' && s.born))
+const botOf = (id) => readJson(join(ROOT, 'data', 'services', id, 'channel', 'telegram', 'bot.json'), null)?.username ?? null
+// 589-6: у элемента без своей группы в ядре (рождённый, stripe) терминал — в дереве элемента, под `build/`.
+const ownGroup = (id) => existsSync(join(ROOT, 'app', '[lang]', '(architectLayer)', 'architect', id, 'agent-kit.json'))
+const terminalOf = (id) => born(id) || !ownGroup(id) ? `${ORIGIN}/${LANG}/${addressOf(id)}/build/terminal` : `${ORIGIN}/${LANG}/architect/${id}/terminal`
+const reachOf = (id) => {
+  const bot = botOf(id)
+  return bot ? `Telegram t.me/${bot} · terminal ${terminalOf(id)}` : `terminal ${terminalOf(id)} (no Telegram bot)`
+}
+const rolesFile = join(ROOT, 'data', 'node', 'roles.json')
+const roles = () => ({ ...readJson(join(ROOT, 'WEB4-ITEMS-REGISTRY', 'roles.json'), {}), ...readJson(rolesFile, {}) })
+const hostOf = (id) => (id === 'root' ? ZONE || 'root' : ZONE ? `${addressOf(id)}.${ZONE}` : addressOf(id))
+const selfAll = () => self.describeAll({ root: ROOT, roles: roles(), addressOf: hostOf })
+// 603-3 (разбор 2026-10-26: агент гадал, «облачное ли это по подписке»): где живут узел и его данные — одна постоянная строка.
+const MACHINE_FACT = "Everything in this node runs on this computer: each element is a process here, and the node's data lives on this computer's disk (in the data, storage, vectors, graph and memory elements). Only two things go out: copies of the public pages kept in Cloudflare, so the sites answer while the computer is off, and the texts sent to OpenAI for vectors, voice notes and the memory's parsing."
+// 603-2: порог сходства по смыслу (модель векторов элемента vectors). Замер 2026-10-26 на 13 элементах: 30 намерений — нужный элемент первым
+// у 29, его оценка от 0,239; 6 работ, которых в узле нет, — лучшая оценка до 0,193. Порог посередине, один для поиска и для проверки
+// на дубль: что `find` показал бы, на том `create` останавливается. Запас узкий — с ростом узла калибровку повторять (итог 603-2 в /code).
+const FIND_MIN = 0.21
+const DUP_MIN = FIND_MIN
+
+const [cmd, ...rest] = process.argv.slice(2)
+const flag = (name) => { const i = rest.indexOf(name); return i >= 0 ? rest[i + 1] ?? '' : null }
+const has = (name) => rest.includes(name)
+
+// 548-14 (владелец 2026-10-20: стоимость агента не растёт с ростом узла): список всех элементов больше не печатается — строка на
+// элемент делала каждое пробуждение главного агента дороже с каждым новым элементом. Постоянная часть — службы, с которыми узел
+// родился (их набор задаёт Fractera); рождённые — числом; кто делает работу — `find` (не больше пяти); один элемент — `contacts <id>`.
+if (cmd === 'contacts') {
+  const [one] = rest
+  // 603-1: прямой вопрос «что у тебя есть», «из чего ты состоишь» и перед любым рождением — все элементы, рождённые тоже, по строке.
+  // Пробуждение по-прежнему постоянного размера (548-14): этот список зовут только тогда, когда он нужен.
+  if (one === '--all') {
+    console.log(`Node ${ZONE || '(no domain yet)'} — core ${ORIGIN}. ${MACHINE_FACT}`)
+    for (const e of selfAll()) console.log(`${self.listLine(e)} — ${reachOf(e.id)}`)
+    console.log('One element in full — what it is, where its data lives, its doors, who depends on it: npm run card -- <id>')
+    process.exit(0)
+  }
+  const r = await core('/api/node/projects').catch(() => null)
+  const rows = Array.isArray(r?.body?.rows) ? r.body.rows : registry().map((s) => ({ id: s.id, custom: Boolean(s.born), service: s.id, status: 'unknown' }))
+  const role = roles()
+  const line = (x) => `- ${x.id} · ${x.service} · ${x.custom ? 'custom' : 'native'} · ${x.status} — ${role[x.id] ?? x.role ?? (firstSentence(x.description) || 'no role yet')} — ${reachOf(x.id)}`
+  if (one) {
+    const x = rows.find((y) => y.id === one || y.service === one || addressOf(y.id) === one)
+    if (!x) fail(`no element «${one}» in this node — who does a job: npm run find -- <English words>`)
+    console.log(line(x))
+    process.exit(0)
+  }
+  console.log(`Node ${ZONE || '(no domain yet)'} — core ${ORIGIN}: the registry of elements, waking agents, birth of new elements. You are its main agent (terminal ${ORIGIN}/${LANG}/architect/build/terminal).`)
+  // 553-1: тип узла — одной строкой постоянного размера (548-14: пробуждение не растёт с узлом).
+  const type = nodeType.readNodeType(ROOT)
+  console.log(`Node type: ${type} — ${type === 'factory' ? 'an app factory: hosting of projects of different owners; new custom elements are born on their own settings' : 'a single project: one owner, every element under the core\'s CONFIG'} (npm run node-type -- get)`)
+  console.log(MACHINE_FACT)
+  const bornIds = new Set(registry().filter((s) => s.born).map((s) => s.id))
+  for (const x of rows.filter((y) => !bornIds.has(y.id))) console.log(line(x))
+  console.log(`+ ${rows.filter((y) => bornIds.has(y.id)).length} element(s) born in this node — all of them by name: npm run contacts -- --all; who does a job: npm run find -- <words>; one element in full: npm run card -- <id>`)
+  process.exit(0)
+}
+
+// 579-5 (владелец 2026-10-23: в каждом кастомном элементе — свои страницы дизайна и CONFIG): где меняют оформление и настройки сайта
+// элемента. Решает его связь с общими «Дизайном» и CONFIG (`data/services/<id>/links.json`, нет файла или ключа — связь включена):
+// включена — общий элемент в ядре, выключена — страница самого элемента. Две строки, без модели.
+if (cmd === 'look') {
+  const [one] = rest
+  if (!one) fail('look <id> — where the design and the site settings of this element are changed')
+  const r = await core('/api/node/projects').catch(() => null)
+  const rows = Array.isArray(r?.body?.rows) ? r.body.rows : []
+  const x = rows.find((y) => y.id === one || y.service === one || addressOf(y.id) === one)
+  if (!x) fail(`no element «${one}» in this node — who does a job: npm run find -- <English words>`)
+  const links = readJson(join(ROOT, 'data', 'services', x.id, 'links.json'), {}) ?? {}
+  const on = (k) => links[k] !== false
+  // Главный адрес элемента — у узла (`domain.json`: свой домен), иначе корень зоны у root и поддомен у остальных.
+  const domainUrl = readJson(join(ROOT, 'data', 'services', x.id, 'domain.json'), null)?.url
+  const site = typeof domainUrl === 'string' && domainUrl ? domainUrl.replace(/\/+$/, '')
+    : x.id === 'root' && ZONE ? `https://${ZONE}` : x.service && x.service.includes('.') ? `https://${x.service}` : null
+  const shared = { design: `${ORIGIN}/${LANG}/architect/design`, config: `${ORIGIN}/${LANG}/architect/config` }
+  const own = { design: site && `${site}/${LANG}/admin/design`, config: site && `${site}/${LANG}/admin/site-settings` }
+  if (!x.custom && x.id !== 'root') {
+    console.log(`${x.id} is a native element: its look and site settings come from the shared Design (${shared.design}) and CONFIG (${shared.config}); it has no workshop of its own.`)
+    process.exit(0)
+  }
+  for (const [k, label] of [['design', 'Design (colours, fonts, shapes)'], ['config', 'Site settings (name, menu, footer, switches)']]) {
+    console.log(on(k)
+      ? `${label}: linked to the shared ${k === 'design' ? 'Design' : 'CONFIG'} — change it there: ${shared[k]} (it applies to every element that follows it)`
+      : `${label}: own — change it on the element: ${own[k] ?? '(the element has no public address yet)'}`)
+  }
+  // У root меню в ядре — папки страниц, «Опасной зоны» с выключателями связей у него нет (замер 2026-10-24: 404).
+  console.log(x.id === 'root'
+    ? 'Give the person the link; never change the values yourself.'
+    : `The switch of these links: ${ORIGIN}/${LANG}/${addressOf(x.id)}/settings/danger-zone. Give the person the link; never change the values yourself.`)
+  process.exit(0)
+}
+
+if (cmd === 'find') {
+  const words = rest.join(' ').trim()
+  if (!words) fail('find <plain words of the job>')
+  // 603-2: по смыслу, на любом языке — самоописания элементов в элементе vectors (векторы — ключом OpenAI ядра). ✗ 2026-10-26: поиск по
+  // словам не нашёл stripe на «accept money», auth на «user login», memory на «keep a voice message» — и create родил бы дубль.
+  // Нет ключа, vectors или data — по словам, как прежде (ниже).
+  const all = selfAll()
+  const hits = await self.findByMeaning(words, all, { k: 5 })
+  if (hits) {
+    const best = hits.filter((h) => h.score >= FIND_MIN).slice(0, 5)
+    if (!best.length) { console.log(`Nobody in this node does «${words}» (closest by meaning: ${hits.slice(0, 2).map((h) => `${h.id} ${h.score.toFixed(2)}`).join(', ')}). Next: npm run lagrix -- ${words}`); process.exit(0) }
+    for (const h of best) {
+      const x = all.find((y) => y.id === h.id)
+      console.log(`- ${x.id} — ${x.short || x.role || 'no description yet'}${x.on ? '' : ` · TURNED OFF (${x.offReason}) — only the architect turns it on`} · match ${h.score.toFixed(2)} — ${reachOf(x.id)}`)
+    }
+    console.log('Everything about one of them: npm run card -- <element>')
+    process.exit(0)
+  }
+  // 589-3: `off=1` — и выключенные элементы с навыками из визитки (✗ 2026-10-24: stripe «skills: —», и «нет» вышло ложным).
+  const r = await core(`/api/node/a2a?q=${encodeURIComponent(words)}&off=1`).catch((e) => fail(`the core did not answer: ${e.message}`))
+  const entries = r.body?.entries ?? []
+  // 548-6 (2026-10-20): реестр написан по-английски — «вход на сайт» не нашёл auth. Без латиницы — повтор английскими словами, не сеть.
+  if (!entries.length && !/[a-z]/i.test(words)) { console.log(`Nothing found for «${words}»: the node's registry is written in English — run npm run find again with English words (for example: sign in, remove background).`); process.exit(0) }
+  if (!entries.length) { console.log(`Nobody in this node does «${words}». Next: npm run lagrix -- ${words}`); process.exit(0) }
+  const role = roles()
+  for (const e of entries.slice(0, 5)) {
+    const id = registry().find((s) => s.id === e.address || addressOf(s.id) === e.address)?.id ?? e.address
+    const off = e.state === 'off' ? ` · TURNED OFF (${e.off || 'no reason'}) — only the architect turns it on` : ''
+    console.log(`- ${e.address} — ${role[id] ?? firstSentence(e.description)} · skills: ${(e.skills ?? []).map((s) => s.id).join(', ') || '—'}${off} — ${reachOf(id)}`)
+  }
+  console.log('Doors and what each skill does: npm run card -- <element>')
+  process.exit(0)
+}
+
+// 589-3: визитка одного элемента с диска — навыки и двери, и у выключенного тоже (его сайт молчит, визитка в папке есть).
+if (cmd === 'card') {
+  const [id] = rest
+  if (!id) fail('card <element>')
+  const e = registry().find((s) => s.id === id || addressOf(s.id) === id) ?? fail(`no element ${id} in the registry`)
+  const dir = itemDir(e.id) ?? fail(`${id}: no folder`)
+  // 603-1: самоописание — паспорт и измеренное, а не голая карточка A2A (✗ 2026-10-26: у 7 из 13 элементов в ней были только служебные
+  // навыки шаблона, а двери — только из app/api; главный агент не знал, что такое база данных узла).
+  void dir
+  const d = selfAll().find((x) => x.id === e.id)
+  if (!d) fail(`${id}: no description`)
+  console.log(self.cardText(d))
+  if (!d.on) console.log(`Only the architect turns it on: after their «yes», npm run power -- ${e.id} on`)
+  console.log(`Reach its agent: ${reachOf(e.id)}`)
+  process.exit(0)
+}
+
+if (cmd === 'lagrix') {
+  const words = rest.join(' ').trim()
+  if (!words) fail('lagrix <plain words of the element you need>')
+  const out = simulatedF2fSearch(words, { framework: 'next', country: env.NODE_COUNTRY || '', dataDir: join(ROOT, 'data', 'node') })
+  console.log(JSON.stringify(out, null, 2))
+  process.exit(0)
+}
+
+if (cmd === 'role') {
+  const [id, ...words] = rest
+  const text = words.join(' ').trim()
+  if (!id || !text) fail('role <id> "<one sentence: what this element does for the node>"')
+  if (!registry().some((s) => s.id === id)) fail(`no element ${id} in the registry`)
+  const j = readJson(rolesFile, {})
+  j[id] = text
+  mkdirSync(dirname(rolesFile), { recursive: true })
+  writeFileSync(rolesFile, JSON.stringify(j, null, 2) + '\n', 'utf8')
+  console.log(`===ROLE_OK=== ${id}: ${text}`)
+  process.exit(0)
+}
+
+if (cmd === 'supervise') {
+  const [name, by] = rest
+  if (!name || !['main', 'architect', 'off'].includes(by)) fail('supervise <id> main|architect|off [--max N]')
+  // 548-20: адрес вместо id принимался молча и заводил пустую запись надзора (✗ живой круг 2026-10-20: «supervise template main»).
+  const entry = registry().find((s) => s.id === name || s.address === name || addressOf(s.id) === name)
+  if (!entry) fail(`no element ${name} in the registry — give its id (npm run find)`)
+  const id = entry.id
+  const max = Number(flag('--max')) || supervision.DEFAULT_MAX
+  const r = supervision.set(id, by, { max, root: ROOT })
+  console.log(`===SUPERVISE_OK=== ${id}: ${by === 'off' ? 'not supervised' : by === 'main' ? `the main agent leads it, up to ${max} cycles` : 'the architect leads it'}${r ? ` (cycles so far ${r.cycles ?? 0})` : ''}`)
+  process.exit(0)
+}
+
+// 592-2: инструменты канала Telegram приходят в сессию только с результатом команды и только после того, как плагин подключился, —
+// а он подключается через 1–7 с после старта (журналы MCP главного агента 2026-10-20…24), когда первое поручение уже ушло.
+// ✗ 82309b3b (2026-10-24 18:41Z): главный агент дважды ответил на сообщение архитектора сразу текстом — «инструмента reply у меня
+// нет». Поэтому `person` ждёт канал своей сессии: плагин пишет свой pid в `bot.pid` папки бота при старте, прямо перед рукопожатием
+// MCP, и стирает при выходе (telegram 0.0.7, server.ts :78, :652, :663). Живой pid — канал встал; 12 с без него — говорим как есть.
+const sleep = (ms) => new Promise((done) => setTimeout(done, ms))
+async function channelUp(dir, capMs = 12_000) {
+  const pidFile = join(dir, 'bot.pid')
+  const until = Date.now() + capMs
+  for (;;) {
+    try {
+      const pid = Number(readFileSync(pidFile, 'utf8'))
+      if (pid > 1) {
+        process.kill(pid, 0)
+        const age = Date.now() - statSync(pidFile).mtimeMs
+        if (age < 2000) await sleep(2000 - age)
+        return true
+      }
+    } catch { /* файла нет или процесса нет — канал ещё не встал */ }
+    if (Date.now() >= until) return false
+    await sleep(250)
+  }
+}
+
+if (cmd === 'person') {
+  const tg = join(ROOT, 'data', 'services', 'build', 'channel', 'telegram')
+  const p = readJson(join(tg, 'person.json'), null)
+  // 548-20: чат архитектора живёт в access.json (allowFrom) после первого сообщения боту; person.json хранит только язык —
+  // прежняя строка печатала «chat_id (see person.json)», и главный агент не мог ответить архитектору в Telegram.
+  const allow = readJson(join(tg, 'access.json'), null)?.allowFrom
+  const chat = p?.chatId ?? p?.chat_id ?? p?.id ?? (Array.isArray(allow) && allow.length ? allow[0] : null)
+  const bot = botOf('build')
+  if (bot && !(await channelUp(tg))) console.log(`Telegram bot @${bot} is yours, but its channel did not start in this session — the architect reads you in the core's terminal ${ORIGIN}/${LANG}/architect/build/terminal: answer there and say that the bot is silent.`)
+  else if (bot && chat) console.log(`Telegram bot @${bot} is yours and its channel is up: write to the architect with the reply tool, chat_id ${chat}, language ${p?.lang ?? LANG}.`)
+  else if (bot) console.log(`Telegram bot @${bot} is yours, but the architect has not written to it yet — answer in the core's terminal ${ORIGIN}/${LANG}/architect/build/terminal.`)
+  else console.log(`No Telegram bot for the main agent: the architect reads you in the core's terminal ${ORIGIN}/${LANG}/architect/build/terminal — answer there.`)
+  process.exit(0)
+}
+
+// 548-13: «закончил» главного агента — этой командой, без чтения `.env.local` узла (✗ замерено 2026-10-20: по общему правилу
+// пробуждения «ключ из .env.local» главный агент прочитал файл ключей ядра целиком).
+if (cmd === 'done') {
+  // 595-7: `--note "<one line>"` — where you stopped and what is next; your next session starts with it (lib/agent-kit/memory/brief.cjs).
+  // Written before the core is told: `--close` ends this session.
+  const note = flag('--note')
+  if (note !== null) {
+    if (!note.trim() || note.startsWith('--')) fail('done --note "<where you stopped and what is next, one line>" [--close]')
+    const row = require('../lib/agent-kit/memory/brief.cjs').writeNote(note)
+    console.log(row ? '===NOTE_OK=== your next session starts with it' : '===NOTE_OFF=== the person switched memory off — the note is not kept')
+  }
+  const r = await core('/api/agents/done', { method: 'POST', body: JSON.stringify({ service: 'build', ...(has('--close') ? { close: true } : {}) }) }).catch((e) => fail(`the core did not answer: ${e.message}`))
+  console.log(r.body?.ok ? `===DONE_OK=== ${has('--close') ? 'closing this session' : 'the node knows you finished'}` : `===DONE_FAIL=== ${r.body?.reason ?? r.status}`)
+  process.exit(r.body?.ok ? 0 : 1)
+}
+
+// 548-20 (владелец 2026-10-20: «агент ядра мог управлять включением агентов элементов и их выключением»): выключить агента элемента
+// той же дверью, которой агент закрывает свой терминал. Включает его поручение под твоим надзором (`supervise` + `task`).
+if (cmd === 'close') {
+  const [id] = rest
+  if (!id) fail('close <id>')
+  const r = await core('/api/agents/done', { method: 'POST', body: JSON.stringify({ service: id, close: true }) }).catch((e) => fail(`the core did not answer: ${e.message}`))
+  markWoken(id, false)
+  const b = r.body ?? {}
+  console.log(b.ok ? `===CLOSE_OK=== ${id}: its agent is turned off` : b.reason === 'no-session' ? `===CLOSE_OK=== ${id}: its agent was already off` : `===CLOSE_FAIL=== ${id}: ${b.reason ?? r.status}`)
+  process.exit(b.ok || b.reason === 'no-session' ? 0 : 1)
+}
+
+// 604 (владелец 2026-10-26: «Достаточно будет просто отправить запрос … пользователи говорить да хоккей подтверждаю и всё»): человек
+// согласился в твоём чате, чтобы агент элемента работал в своей папке, — ответить на вопрос Claude Code за него тем же нажатием.
+// Только после его согласия; вопрос задаёт узел, Claude Code помнит ответ навсегда.
+if (cmd === 'trust') {
+  if (!rest.length) fail('trust <id> [<id> …]')
+  let bad = 0
+  for (const id of rest) {
+    const r = await core('/api/agents/trust', { method: 'POST', body: JSON.stringify({ service: id }) }).catch((e) => fail(`the core did not answer: ${e.message}`))
+    const b = r.body ?? {}
+    if (b.ok) console.log(`===TRUST_OK=== ${id}: its folder is trusted, the agent goes on`)
+    else { bad++; console.log(`===TRUST_FAIL=== ${id}: ${b.reason === 'not-waiting' ? 'no folder question on its screen (already answered?)' : b.reason === 'no-session' ? 'its agent is not on' : b.reason ?? r.status}`) }
+  }
+  process.exit(bad ? 1 : 0)
+}
+
+// 552-6 (владелец 2026-10-20: «если ядро решила написать человеку через Messenger она должна сумме это сделать»): боты элемента и
+// сообщение тем, кто допущен к одному из них по ссылке. Ячейки: h2a — разговор человека с агентом элемента, h2h — люди через агентов,
+// orders — заказы элемента у других агентов, work — работа элемента для других агентов.
+if (cmd === 'telegram') {
+  const [one, slot, ...words] = rest
+  if (!one) fail('telegram <id> [h2a|h2h|orders|work "<text>"]')
+  const e = registry().find((s) => s.id === one || addressOf(s.id) === one)
+  if (!e) fail(`no element ${one} in the registry`)
+  const text = words.join(' ').trim()
+  if (slot && !text) fail('telegram <id> <slot> "<text>" — the text is missing')
+  const r = await core('/api/agents/telegram', { method: 'POST', body: JSON.stringify({ service: e.id, ...(text ? { slot, text } : {}) }) }).catch((err) => fail(`the core did not answer: ${err.message}`))
+  const b = r.body ?? {}
+  if (!text) {
+    const bots = Object.entries(b.bots ?? {})
+    if (!b.ok) fail(`${one}: ${b.error ?? r.status}`)
+    if (!bots.length) console.log(`${one}: no Telegram bot is connected — the architect connects them on the element's pages Messenger → H2A / H2H → Telegram bot and Working process → A2A → Telegram`)
+    for (const [s, x] of bots) console.log(`${s.padEnd(6)} @${x.username} — ${x.people ? `${x.people} activated` : 'nobody activated yet: no one to write to'}`)
+    process.exit(0)
+  }
+  console.log(b.ok ? `===TELEGRAM_OK=== ${one} ${slot}: sent to ${b.sent}` : `===TELEGRAM_FAIL=== ${one} ${slot}: ${b.error ?? r.status}`)
+  process.exit(b.ok ? 0 : 1)
+}
+
+// 620 (владелец 2026-10-30: «нужна команда которая покажет количество текущая заполнение контекстного окна размер контекстного окна и
+// сколько осталось … команда очистки контекста … переключения на модель Opus … Sonnet … haiku»): заполнение читается из журнала сессии
+// (последний ответ модели: вход + кэш + выход) без модели и без двери; очистка и смена модели — дверь `/api/agents/session`, мост делает
+// их после конца хода, в котором ты ответил человеку. Окно — по модели: у Opus/Sonnet/Haiku 5.x и Fable 1 000 000 (навык claude-api,
+// таблица моделей; `/context` Claude Code на этой подписке — «32.4k/1m», замер 2026-10-30).
+const windowOf = (model) => (/(fable|mythos|opus-5|sonnet-5|haiku-5|opus-4-[678]|sonnet-4-6)/.test(model ?? '') ? 1_000_000 : /haiku-4-5/.test(model ?? '') ? 200_000 : null)
+const journalDir = (folder) => join(homedir(), '.claude', 'projects', folder.replace(/[:\\/]/g, '-'))
+if (cmd === 'session') {
+  const [what, ...args] = rest
+  const models = ['opus', 'sonnet', 'haiku']
+  const target = what === 'model' ? args[1] : args[0]
+  const e = target ? registry().find((s) => s.id === target || addressOf(s.id) === target) : null
+  if (target && !e) fail(`no element ${target} in the registry`)
+  const service = e ? e.id : 'build'
+  if (what === 'context') {
+    const folder = e ? itemDir(e.id) : ROOT
+    const dir = folder ? journalDir(folder) : null
+    const files = dir && existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith('.jsonl')).map((f) => ({ f, t: statSync(join(dir, f)).mtimeMs })).sort((a, b) => b.t - a.t) : []
+    if (!files.length) fail(`${service}: no session journal yet — the agent has not talked to a model in its folder`)
+    const lines = readFileSync(join(dir, files[0].f), 'utf8').split('\n')
+    let last = null
+    for (let i = lines.length - 1; i >= 0 && !last; i--) {
+      try { const row = JSON.parse(lines[i]); if (row?.type === 'assistant' && row.message?.usage) last = row } catch { /* строка не JSON */ }
+    }
+    if (!last) fail(`${service}: the session has no model answer yet — context is empty`)
+    const u = last.message.usage
+    const used = (u.input_tokens ?? 0) + (u.cache_creation_input_tokens ?? 0) + (u.cache_read_input_tokens ?? 0) + (u.output_tokens ?? 0)
+    const model = String(last.message.model ?? 'unknown')
+    const win = windowOf(model)
+    const n = (x) => x.toLocaleString('en-US').replace(/,/g, ' ')
+    const sid = files[0].f.replace('.jsonl', '').slice(0, 8)
+    console.log(win
+      ? `${service}: context ${n(used)} of ${n(win)} tokens (${Math.round((used / win) * 100)} %), ${n(Math.max(0, win - used))} left · model ${model} · session ${sid}, last answer ${String(last.timestamp ?? '').slice(0, 19)}Z`
+      : `${service}: context ${n(used)} tokens · the window of model ${model} is not known to the node · session ${sid}`)
+    process.exit(0)
+  }
+  if (what === 'clear' || (what === 'model' && models.includes(args[0]))) {
+    const r = await core('/api/agents/session', { method: 'POST', body: JSON.stringify({ service, action: what, ...(what === 'model' ? { model: args[0] } : {}) }) }).catch((err) => fail(`the core did not answer: ${err.message}`))
+    const b = r.body ?? {}
+    if (!b.ok) fail(`${service}: ${b.reason === 'no-session' ? 'its agent is not on — nothing to clear or switch' : b.reason ?? r.status}`)
+    console.log(what === 'clear'
+      ? `===SESSION_OK=== ${service}: when this turn ends the conversation starts over — memory and records stay. Answer the person first.`
+      : `===SESSION_OK=== ${service}: when this turn ends the session restarts on ${args[0]} and the same conversation goes on (a few seconds; messages wait). Answer the person first.`)
+    process.exit(0)
+  }
+  fail('session context [<id>] | session clear [<id>] | session model opus|sonnet|haiku [<id>]')
+}
+
+// 620 (владелец 2026-10-30: «нужна команда которая позволит загрузить и использовать ключ OpenAI»): ключ проверяет и пишет дверь
+// ядра `/api/architect/environment` (настоящий вызов OpenAI до записи; отказ — файл не тронут). Сообщение с ключом бот удаляет из чата
+// (Bot API deleteMessage: «Bots can delete incoming messages in private chats», не позже 48 часов) — в истории Telegram ключ не остаётся.
+// Ключ никогда не печатается.
+if (cmd === 'openai-key') {
+  const key = (rest.find((a) => a.startsWith('sk-')) ?? '').trim()
+  if (!key) fail('openai-key <sk-…> [--chat <chat_id> --message <message_id>]')
+  const chat = flag('--chat')
+  const message = flag('--message')
+  if (chat && message) {
+    const tokenLine = (() => { try { return readFileSync(join(ROOT, 'data', 'services', 'build', 'channel', 'telegram', '.env'), 'utf8').split(/\r?\n/).find((l) => l.startsWith('TELEGRAM_BOT_TOKEN=')) } catch { return null } })()
+    const token = tokenLine ? tokenLine.slice('TELEGRAM_BOT_TOKEN='.length).trim() : ''
+    const del = token
+      ? await fetch(`https://api.telegram.org/bot${token}/deleteMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chat, message_id: Number(message) }), signal: AbortSignal.timeout(15_000) }).then((r) => r.json()).catch(() => null)
+      : null
+    console.log(del?.ok ? 'the message with the key is deleted from the chat' : `the message with the key was NOT deleted (${del?.description ?? 'no bot token'}) — ask the person to delete it`)
+  }
+  const r = await fetch(`${CORE}/api/architect/environment`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ target: 'core', name: 'OPENAI_API_KEY', value: key }), signal: AbortSignal.timeout(30_000) }).catch((err) => fail(`the core did not answer: ${err.message}`))
+  const b = await r.json().catch(() => ({}))
+  console.log(b.ok
+    ? '===OPENAI_KEY_OK=== OpenAI accepted the key; the node keeps it — voice, vectors, the deep memory and translations work again'
+    : `===OPENAI_KEY_FAIL=== ${b.error === 'bad-format' ? 'this is not an OpenAI key (it starts with sk-)' : `OpenAI did not accept the key (${b.error ?? r.status})`} — the old key stays`)
+  process.exit(b.ok ? 0 : 1)
+}
+
+// 617 (владелец 2026-10-30: агент «ответил что у него нету инструментов работы с аудиозапись»): голосовое человека — те же слова, что
+// текст. Модель звук не принимает (Anthropic: «Audio input is not supported»), поэтому файл уходит двери распознавания ядра
+// `/api/transcribe` (OpenAI, ключ ядра — закон 336), язык — язык человека из `person.json`. Новый элемент не нужен: способность уже
+// живёт в ядре. Владелец 18:15 того же дня: «если у нас не введён ключ OpenAI … команду через Telegram который позволяет ввести ключ» —
+// нет рабочего ключа (нет совсем или OpenAI ответил 401) → строка агенту: попросить у человека `/openai_key`.
+if (cmd === 'transcribe') {
+  const file = rest.find((a) => !a.startsWith('--'))
+  if (!file || !existsSync(file)) fail('transcribe <path of the voice note> — download it first (download_attachment)')
+  const lang = flag('--lang') || readJson(join(ROOT, 'data', 'services', 'build', 'channel', 'telegram', 'person.json'), null)?.lang || ''
+  // Telegram кладёт голосовое как .oga (Ogg Opus); OpenAI узнаёт формат по расширению и .oga не знает — тот же контейнер называется .ogg.
+  const name = (file.split(/[\\/]/).pop() || 'voice.ogg').replace(/\.(oga|opus)$/i, '.ogg')
+  const form = new FormData()
+  form.append('audio', new Blob([readFileSync(file)]), name)
+  if (/^[a-z]{2}/i.test(lang)) form.append('language', lang.slice(0, 2).toLowerCase())
+  const r = await fetch(`${CORE}/api/transcribe`, { method: 'POST', body: form, signal: AbortSignal.timeout(120_000) }).catch((err) => fail(`the core did not answer: ${err.message}`))
+  const b = await r.json().catch(() => ({}))
+  if (b.ok) { console.log(`===TRANSCRIBE_OK=== ${b.text || '(no words in the recording)'}`); process.exit(0) }
+  if (b.reason === 'no-key' || /\(401\)/.test(String(b.error ?? ''))) {
+    console.log('===TRANSCRIBE_NO_KEY=== the node has no working OpenAI key, so it cannot hear voice notes. Tell the person, in their language: send /openai_key and the key in one message — the node checks it, keeps it and deletes the message; then send the voice note again.')
+    process.exit(1)
+  }
+  console.log(`===TRANSCRIBE_FAIL=== ${b.error ?? r.status}`)
+  process.exit(1)
+}
+
+if (cmd === 'task') {
+  const [id, ...words] = rest
+  const text = words.join(' ').trim()
+  if (!id || !text) fail('task <id> "<what the element agent must do>"')
+  if (!registry().some((s) => s.id === id)) fail(`no element ${id} in the registry`)
+  const supervised = supervision.byMain(id, ROOT)
+  const r = await core('/api/agents/wake', { method: 'POST', body: JSON.stringify({ service: id, text: modes.withWord(text, 'build'), from: 'main agent', about: firstSentence(text, 300), reason: 'main-agent-task', supervised }) }).catch((e) => fail(`the core did not answer: ${e.message}`))
+  const b = r.body ?? {}
+  // 548-20: кто включил агента — запись, а не память сессии: «закончил» будит главного агента в НОВОЙ сессии, и та не знала,
+  // включала ли она элемент сама (✗ живой круг 2026-10-20: template остался включённым). `state` печатает, `close` стирает.
+  if (b.ok && !b.pending) markWoken(id, !b.already)
+  console.log(b.ok ? (b.pending ? `===TASK_OK=== ${id}: asked its person in Telegram to turn the agent on` : b.already ? `===TASK_OK=== ${id}: pasted into its live session` : `===TASK_OK=== ${id}: its agent woke with the task`) : `===TASK_FAIL=== ${id}: ${b.reason ?? r.status}${b.freeMb ? ` (free ${b.freeMb} MB, needs ${b.perSessionMb} MB — try later)` : ''}`)
+  process.exit(b.ok ? 0 : 1)
+}
+
+// 571-6 (владелец 2026-10-30, дословно: «право управлять разбором находится у главного агента … ответ главному агенту должен запустить
+// разбор внутри того же элемента»; «причина разбора это в меньшей степени высокий расход токенов а в большей степени то что пользователь
+// может быть недоволен результатом … каждый раз когда я тебе говорю сделать а ты делаешь а ну добавляешь туда б»; «только по моему
+// слову»): разбор элемента — только по слову человека. Слова недовольства — первая причина, расход последней сессии элемента — вторая
+// (571-5: запросы, новые токены, из кэша, выход — из его журнала, без модели). Предложения элемент присылает `npm run reply-core`, ты
+// передаёшь их человеку; правки — только после его «да», тем же путём (`npm run task`).
+if (cmd === 'review') {
+  const [id, ...words] = rest
+  const said = words.filter((w) => w !== '--dry').join(' ').trim()
+  if (!id || !said) fail('review <id> "<the person\'s words: what the element does that they do not want>"')
+  const e = registry().find((s) => s.id === id || addressOf(s.id) === id)
+  if (!e) fail(`no element ${id} in the registry`)
+  let cost = 'not measured (no session journal of this element)'
+  const folder = itemDir(e.id)
+  const dir = folder ? journalDir(folder) : null
+  const last = dir && existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith('.jsonl')).map((f) => ({ f, t: statSync(join(dir, f)).mtimeMs })).sort((a, b) => b.t - a.t)[0] : null
+  if (last) {
+    // Один ответ модели пишется в журнал несколькими строками с тем же message.id — считается один раз.
+    const seen = new Map()
+    for (const line of readFileSync(join(dir, last.f), 'utf8').split('\n')) {
+      try { const row = JSON.parse(line); if (row?.type === 'assistant' && row.message?.usage && row.message.id) seen.set(row.message.id, row.message.usage) } catch { /* строка не JSON */ }
+    }
+    const sum = (k) => [...seen.values()].reduce((a, u) => a + (u[k] ?? 0), 0)
+    const n = (x) => x.toLocaleString('en-US').replace(/,/g, ' ')
+    cost = `${seen.size} requests, ${n(sum('input_tokens') + sum('cache_creation_input_tokens'))} new tokens, ${n(sum('cache_read_input_tokens'))} from cache, ${n(sum('output_tokens'))} output (session ${last.f.slice(0, 8)})`
+  }
+  const text = `Build process: review (разбор). The person is not happy with how you do the work; their words, passed on by the node's main agent: «${said}». Run skill self-review. First reason — these words: what you keep doing that they do not want, and what to change so you do only what they ask. Second reason — the cost of your last session: ${cost}. Propose at most three changes to your skills or instruction and change nothing before the person's «yes»; send the proposals to the main agent: npm run reply-core -- "<the proposals, one line each>". The main agent brings you the answer.`
+  // `--dry` — показать поручение, ничего не включая и не меняя надзор (прибор и предпросмотр).
+  if (has('--dry')) { console.log(`===REVIEW_DRY=== ${e.id}\n${modes.withWord(text, 'build')}`); process.exit(0) }
+  // Согласие человека — его слово «разбор» тебе (548-20: ядро включает элемент без нажатий в Telegram). Надзор на один цикл: элемент
+  // включается без вопроса, а его «закончил» будит тебя с предложениями. Под надзором уже — надзор не трогается.
+  if (!supervision.byMain(e.id, ROOT)) supervision.set(e.id, 'main', { max: 1, root: ROOT })
+  const r = await core('/api/agents/wake', { method: 'POST', body: JSON.stringify({ service: e.id, text: modes.withWord(text, 'build'), from: 'main agent', about: firstSentence(`Review: ${said}`, 300), reason: 'main-agent-review', supervised: true }) }).catch((err) => fail(`the core did not answer: ${err.message}`))
+  const b = r.body ?? {}
+  if (b.ok && !b.pending) markWoken(e.id, !b.already)
+  console.log(b.ok
+    ? `===REVIEW_OK=== ${e.id}: ${b.pending ? 'asked its person in Telegram to turn the agent on' : b.already ? 'pasted into its live session' : 'its agent woke with the review'} · its last session: ${cost}. Its proposals come back to you (npm run state -- ${e.id}, «Report to you»): pass them to the person and bring the answer back with npm run task.`
+    : `===REVIEW_FAIL=== ${e.id}: ${b.reason ?? r.status}`)
+  process.exit(b.ok ? 0 : 1)
+}
+
+// 589-2: запросы возможности (`lib/web4-items/needs.mjs`, навык handle-need). Список — не больше пяти открытых: стоимость пробуждения
+// не растёт с узлом (548-14). Слова запроса — данные в «».
+if (cmd === 'needs') {
+  const N = await import('../lib/web4-items/needs.mjs')
+  const [sub, id] = rest
+  // 589-3 (✗ живой прогон 2026-10-24 19:13Z): Git Bash подменяет аргумент «/api/x» на «C:/Program Files/Git/api/x», когда зовёт программу
+  // Windows (подмена путей MSYS), — в запись легла чужая дверь. Путь двери всегда от корня сайта: приставку корня Git срезаем.
+  const door = (() => {
+    const v = flag('--door')
+    const m = typeof v === 'string' ? v.replace(/\\/g, '/').match(/^[A-Za-z]:\/(?:[^/]+\/)*?(?:Git|msys64|msys2)(\/.+)$/i) : null
+    return m ? m[1] : v
+  })()
+  const line = (r) => `${r.id} · ${r.from} · ${r.stage}${r.owner ? ` · owner ${r.owner}` : ''}${r.skill ? ` · ${r.skill}` : ''} · «${r.need.slice(0, 90)}»`
+  if (!sub || sub === 'list') {
+    const open = N.listNeeds(ROOT, { open: true, limit: 5 })
+    console.log(open.length ? open.map(line).join('\n') : 'no open needs')
+    process.exit(0)
+  }
+  if (sub === 'show') {
+    const r = N.readNeed(ROOT, id) ?? fail(`no need ${id}`)
+    console.log(line(r))
+    if (r.use) console.log(`what for: «${r.use}»`)
+    console.log(r.history.map((h) => `  ${h.at.slice(0, 16)} ${h.stage}${h.note ? ` — ${h.note}` : ''}`).join('\n'))
+    process.exit(0)
+  }
+  if (sub === 'answer') {
+    const stage = ['found', 'missing', 'approved', 'building', 'ready', 'told', 'declined'].find((s) => has(`--${s}`)) ?? fail('answer <id> --found|--missing|--approved|--building|--ready|--told|--declined [--owner <id|new>] [--skill <id>] [--door <path>] [--note "…"]')
+    const owner = stage === 'found' ? flag('--found') : flag('--owner')
+    try {
+      const r = N.setStage(ROOT, id, stage, { owner: owner ?? undefined, skill: flag('--skill') ?? undefined, door: door ?? undefined }, flag('--note') ?? '')
+      console.log(`===NEED_OK=== ${line(r)}`)
+    } catch (e) { fail(e.message) }
+    process.exit(0)
+  }
+  if (sub === 'verify') {
+    // «Готово» — только когда визитка владельца называет возможность: навык или дверь (589-4). Иначе — «не построено».
+    if (flag('--skill') || door) N.setFields(ROOT, id, { skill: flag('--skill') ?? undefined, door: door ?? undefined }, 'from the report of the owner')
+    const r = N.readNeed(ROOT, id) ?? fail(`no need ${id}`)
+    const dir = r.owner ? itemDir(r.owner) : null
+    if (!dir) fail(`${id}: no owner element folder (owner: ${r.owner ?? 'none'})`)
+    const card = readJson(join(dir, 'OWN-SERVICE-PROPS', 'A2A-CARD.json'), {})
+    const ext = (card.capabilities?.extensions ?? []).find((e) => String(e?.uri).includes('/a2a/ext/node/'))?.params ?? {}
+    const skillOk = r.skill && (card.skills ?? []).some((s) => s?.id === r.skill)
+    const doorOk = r.door && (ext.doors ?? []).some((d) => d?.path === r.door)
+    if (!skillOk && !doorOk) { console.log(`===NEED_NOT_BUILT=== ${r.owner}'s card names neither skill «${r.skill ?? '—'}» nor door «${r.door ?? '—'}»`); process.exit(1) }
+    if (r.stage === 'building') N.setStage(ROOT, id, 'ready', {}, `the card of ${r.owner} names ${skillOk ? `skill ${r.skill}` : `door ${r.door}`}`)
+    console.log(`===NEED_VERIFIED=== ${r.owner}: ${skillOk ? `skill ${r.skill}` : ''}${skillOk && doorOk ? ' · ' : ''}${doorOk ? `door ${r.door}` : ''}`)
+    process.exit(0)
+  }
+  fail('needs [list] · show <id> · answer <id> … · verify <id> [--skill <id>] [--door <path>]')
+}
+
+if (cmd === 'state') {
+  const [id] = rest
+  if (!id) fail('state <id>')
+  const dir = itemDir(id)
+  if (!dir) fail(`no folder of element ${id}`)
+  const role = roles()[id]
+  const docs = join(dir, 'development-docs')
+  const step = existsSync(join(docs, 'current-step.md')) ? readFileSync(join(docs, 'current-step.md'), 'utf8').split(/\r?\n/).slice(0, 60).join('\n') : '(no development-docs/current-step.md)'
+  const intake = existsSync(join(docs, 'pre-steps')) ? readdirSync(join(docs, 'pre-steps')).filter((f) => /^\d\d-\d\d-\d{4}_/.test(f)) : []
+  const git = spawnSync('git', ['-C', dir, 'log', '--oneline', '-5'], { encoding: 'utf8', windowsHide: true })
+  const sup = supervision.read(ROOT).elements[id]
+  console.log(`Element ${id} (${addressOf(id)}) — role: ${role ?? 'none'}`)
+  console.log(`Led by: ${sup?.active ? (sup.by === 'main' ? `the main agent, cycle ${sup.cycles ?? 0} of ${sup.max}` : 'the architect') : 'the architect (no supervision record)'} · reach: ${reachOf(id)}`)
+  console.log(`Intake: ${intake.length ? intake.join(', ') : 'empty'}`)
+  // 548-20: результат проверки, которую ты поручил, — элемент сохраняет его `npm run reply-core` в своих данных.
+  const report = readJson(join(ROOT, 'data', 'services', id, 'core-report.json'), null)
+  console.log(`Report to you (npm run reply-core): ${report?.text ? `«${report.text}» (${report.at})` : 'none'}`)
+  // 589-4 (✗ живой круг 2026-10-24 20:20Z): строитель закончил запрос, главный агент по тексту надзора выключил его и закрылся — запрос
+  // остался «building», просивший и архитектор не узнали. Открытый запрос этого элемента в стадии building — первым делом.
+  const { listNeeds } = await import('../lib/web4-items/needs.mjs')
+  for (const n of listNeeds(ROOT, { open: true, limit: 20 }).filter((x) => x.owner === id && x.stage === 'building')) {
+    console.log(`BEFORE YOU CLOSE: this element builds ${n.id} for ${n.from} («${n.need.slice(0, 90)}») — skill handle-need, section 3: npm run needs -- verify ${n.id} --skill <skill> --door <path> (from the report), tell ${n.from} and the architect, then close.`)
+  }
+  const woken = readJson(WOKEN, {})[id]
+  console.log(`Turned on by you: ${woken ? `yes (${woken}) — turn it off when its job is done: npm run close -- ${id}` : 'no — leave it running'}`)
+  console.log(`Last commits:\n${(git.stdout || '(none)').trim()}`)
+  console.log(`current-step.md (first 60 lines):\n${step}`)
+  process.exit(0)
+}
+
+if (cmd === 'create') {
+  const role = (flag('--role') ?? '').trim()
+  const briefFile = flag('--brief-file')
+  const brief = (briefFile ? (existsSync(briefFile) ? readFileSync(briefFile, 'utf8') : fail(`no file ${briefFile}`)) : flag('--brief') ?? '').trim()
+  const by = flag('--supervise') ?? 'architect'
+  if (!role || !brief) fail('create --role "<one sentence>" (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--native] [--supervise main|architect] [--no-wake]')
+  if (!['main', 'architect'].includes(by)) fail('--supervise main|architect')
+
+  // 603-2: ПРОВЕРКА НА ДУБЛЬ — в коде, а не в инструкции. Владелец 2026-10-26: «в 62-й раз она будет строить память у нас будет по 60 по
+  // 100 по 1000 одинаковых элементов?». Роль и задание сравниваются по смыслу со всеми элементами узла; похожий найден — рождения нет, пока
+  // человек не скажет, что работа другая (`--different "<его слова>"`). Без поиска по смыслу — по словам роли, тем же поиском ядра, что `find`.
+  const different = (flag('--different') ?? '').trim()
+  if (!different) {
+    const all = selfAll()
+    const hits = await self.findByMeaning(`${role} ${brief.slice(0, 600)}`, all, { k: 3 })
+    if (hits) {
+      const near = hits.filter((h) => h.score >= DUP_MIN)
+      if (near.length) {
+        const x = all.find((y) => y.id === near[0].id)
+        fail(`this job looks like ${x.id} (match ${near[0].score.toFixed(2)}): ${x.short || x.role}. Look: npm run card -- ${x.id}; if it can do the job, route the person to it (skill route-to-element). Only if the person says the job is different: run again with --different "<their words why>"`)
+      }
+    } else {
+      const r = await core(`/api/node/a2a?q=${encodeURIComponent(role)}&off=1`).catch(() => null)
+      const lex = (r?.body?.entries ?? []).slice(0, 3).map((x) => x.address)
+      if (lex.length) fail(`maybe already in this node: ${lex.join(', ')} (by words: the search by meaning is unavailable). Look: npm run card -- ${lex[0]}. Only if the person says the job is different: run again with --different "<their words why>"`)
+    }
+  } else console.log(`the person says this job is different from what the node has: «${different}»`)
+
+  // 1. Черновик — тем же правилом имени, что кнопка «Создать WEB4 ITEM» (`lib/web4-items/drafts.ts`).
+  const RESERVED = new Set(['auth', 'blocks', 'build', 'config', 'data', 'design', 'hosting', 'kits', 'passport', 'root', 'admin', 'architect', 'api', 'www', 'mail', 'memory', 'telegram', 'store', 'items'])
+  const draftsFile = join(ROOT, 'data', 'web4-drafts.json')
+  const drafts = readJson(draftsFile, { drafts: [] }).drafts ?? []
+  const busy = new Set([...RESERVED, ...registry().map((s) => s.id), ...drafts.map((d) => d.id)])
+  const alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789'
+  let id = ''
+  for (let i = 0; i < 100 && (!id || busy.has(id)); i++) {
+    const b = randomBytes(5)
+    id = alphabet[b[0] % 26] + [1, 2, 3, 4].map((k) => alphabet[b[k] % 36]).join('')
+  }
+  if (busy.has(id)) fail('no free name')
+  const tmp = `${draftsFile}.${process.pid}.tmp`
+  writeFileSync(tmp, JSON.stringify({ drafts: [...drafts, { id, createdAt: new Date().toISOString() }] }, null, 2) + '\n', 'utf8')
+  renameSync(tmp, draftsFile)
+  console.log(`draft ${id} — birth starts (clone of the template, install, build: a few minutes)`)
+
+  // 2. Рождение — тот же путь, что кнопка «Родить элемент». 553-1: облик выбирает `item-birth.mjs` по типу узла.
+  const birth = spawnSync(process.execPath, [join(ROOT, 'scripts', 'item-birth.mjs'), id, ...(has('--native') ? ['--native'] : [])], { cwd: ROOT, encoding: 'utf8', windowsHide: true, timeout: 20 * 60_000 })
+  const log = `${birth.stdout ?? ''}${birth.stderr ?? ''}`
+  if (!/===BIRTH_OK===/.test(log)) fail(`birth of ${id} failed: ${log.trim().split(/\r?\n/).slice(-3).join(' | ')}`)
+  const dir = itemDir(id)
+  if (!dir) fail(`element ${id} was born but its folder is not found`)
+
+  // 3. Роль — в данные узла: по ней его найдут соседи и главный агент.
+  const rj = readJson(rolesFile, {})
+  rj[id] = role
+  mkdirSync(dirname(rolesFile), { recursive: true })
+  writeFileSync(rolesFile, JSON.stringify(rj, null, 2) + '\n', 'utf8')
+
+  // 4. Задание — в приёмную элемента, его формой (`development-docs/pre-steps/README.md`): слова в кавычках, одной строкой.
+  const now = new Date()
+  const p2 = (n) => String(n).padStart(2, '0')
+  const name = `${p2(now.getDate())}-${p2(now.getMonth() + 1)}-${now.getFullYear()}_${p2(now.getHours())}-${p2(now.getMinutes())}-${p2(now.getSeconds())}.md`
+  const off = -now.getTimezoneOffset() / 60
+  const one = brief.replace(/\s*\r?\n\s*/g, ' / ').replace(/»/g, '»»')
+  const intakeDir = join(dir, 'development-docs', 'pre-steps')
+  mkdirSync(intakeDir, { recursive: true })
+  writeFileSync(join(intakeDir, name), [
+    '# Request',
+    `- Received: ${now.getFullYear()}-${p2(now.getMonth() + 1)}-${p2(now.getDate())} ${p2(now.getHours())}:${p2(now.getMinutes())} (UTC${off >= 0 ? '+' : ''}${off})`,
+    '- From: the core\'s main agent, for the architect (node step 548-4)',
+    `- Asked: «${one}»`,
+    `- Context: the node created this element for this request. Its role: ${role} Led by: ${by === 'main' ? 'the core\'s main agent on the architect\'s behalf' : 'the architect'}.`,
+    '',
+  ].join('\n'), 'utf8')
+
+  // 5. Кто ведёт.
+  supervision.set(id, by, { root: ROOT, brief: role })
+
+  // 6. Пробуждение агента элемента — с его ролью, заданием и тем, кто его ведёт.
+  let woke = 'not woken (--no-wake)'
+  if (!has('--no-wake')) {
+    const lead = by === 'main'
+      ? 'Ведёт тебя главный агент узла по поручению архитектора: его сообщения в твоём вводе — слово твоего человека для этой работы. Три подтверждающие строки и план запиши в development-docs/current-step.md и сообщи узлу «закончил» (POST /api/agents/done) — ответ придёт сюда.'
+      : 'Ведёт тебя архитектор: три подтверждающие строки — ему, начинай после его «да».'
+    // 548-14: первая сессия коротка — ✗ замерено 2026-10-20: с «опиши себя в паспорте» и «квиз и план шага» в одном поручении агент
+    // нового элемента потратил 11 запросов модели и 850 тыс. токенов кэша на чтение своего кода, паспорта и сторожей до первого вопроса.
+    const text = `${modes.WORDS.build} Тебя создал главный агент узла под задание архитектора. Твоя роль: ${role} Задание лежит в твоей приёмной: development-docs/pre-steps/${name}. Первая сессия — коротко, по своей инструкции: назови задание, пройди порядок «Before you build a new capability» (CLAUDE.md, «Steps», 1b: поиск в узле, затем в сети), затем задай первый вопрос продуктового квиза (навык product-quiz, пункт «The first session of a new element») и остановись. Код, сторожа и скрипты до утверждения квиза не читай; паспорт опишешь в первом шаге, когда квиз утверждён. ${lead}`
+    const r = await core('/api/agents/wake', { method: 'POST', body: JSON.stringify({ service: id, text, from: 'main agent', about: role, reason: 'main-agent-create', supervised: by === 'main' }) }).catch((e) => ({ body: { ok: false, reason: e.message } }))
+    const b = r.body ?? {}
+    woke = b.ok ? (b.pending ? 'its person was asked in Telegram to turn it on' : 'its agent started with the task') : `not woken: ${b.reason}${b.freeMb ? ` (free ${b.freeMb} MB, needs ${b.perSessionMb} MB)` : ''} — run later: npm run task -- ${id} "<the same task>"`
+  }
+
+  console.log(`===ELEMENT_CREATE_OK=== ${id}`)
+  // 551-6 (владелец 2026-10-20: «отправить ссылку чтобы пользователь мог зайти … но по факту это невозможно»): ссылка — из строки рождения,
+  // которое само подключает адрес в Cloudflare и меряет ответ снаружи; не ответил — так и печатается, а не обещается.
+  const site = log.match(/===BIRTH_OK=== \S+ port \d+ url (\S+)(?: answers (\d+))?/)
+  const siteLine = !site ? 'site: not reported by the birth'
+    : site[1] === 'local' ? 'site: only on this computer — the node has no own domain'
+      : site[1] === 'none' ? 'site: NOT connected — the element page → «Internet address» → «Connect»'
+        : site[2] && Number(site[2]) < 400 ? `site: ${site[1]} — answers ${site[2]} from the internet` : `site: ${site[1]} — connected, NOT answering yet (${site[2] ?? 'no answer'})`
+  console.log(`address: ${addressOf(id)}`)
+  console.log(siteLine)
+  console.log(`role: ${role}`)
+  console.log(`task: development-docs/pre-steps/${name}`)
+  console.log(`agent: ${woke}`)
+  console.log(`led by: ${by === 'main' ? 'you (the main agent): its «done» wakes you — skill supervise-element' : 'the architect'}`)
+  console.log(`the architect continues here: terminal ${terminalOf(id)} · development documents ${ORIGIN}/${LANG}/${addressOf(id)}/build/documents/instruction · a Telegram bot is connected on ${ORIGIN}/${LANG}/${addressOf(id)}/messenger/h2a/telegram`)
+  process.exit(0)
+}
+
+fail(`unknown command «${cmd ?? ''}» — contacts | look | find | lagrix | create | task | state | role | supervise | close | trust | person | done`)

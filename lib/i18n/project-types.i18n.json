@@ -1,0 +1,710 @@
+{
+  "en": {
+    "landing": {
+      "title": "Landing page",
+      "tagline": "One page, one action",
+      "definition": "A single page with exactly one goal: to get a request or a contact. Everything on it serves that goal — the offer, the proof, the form. It never has a second goal, because two goals mean the visitor completes neither.",
+      "examples": [
+        "A product launch behind paid advertising",
+        "A service page for a lawyer, doctor or tutor",
+        "Registration for a webinar or an event",
+        "Collecting pre-orders before production"
+      ],
+      "signals": [
+        "You pay for traffic and count the cost of one request",
+        "The sale happens in a conversation, not on the site",
+        "There is one product or one service — nothing to choose between"
+      ]
+    },
+    "portfolio": {
+      "title": "Portfolio",
+      "tagline": "You are what is being chosen",
+      "definition": "A site where the thing being chosen is you: a specialist, a studio, a personal brand. What convinces is not a list of services but the work you show and the way you talk about it. So what matters most here is which projects you pick and the order in which they are seen.",
+      "examples": [
+        "A designer, photographer or film editor",
+        "A small studio: development, architecture, interiors",
+        "An expert going after larger projects than the current ones",
+        "A specialist putting together an application for a dream job"
+      ],
+      "signals": [
+        "Clients choose you by looking at past work, not by reading a price list",
+        "You want projects of a particular kind, not just any",
+        "The price is agreed in conversation, and it depends on the impression you make"
+      ]
+    },
+    "corporate": {
+      "title": "Corporate website",
+      "tagline": "Company, services, trust",
+      "definition": "A multi-page site of an organisation: directions, services, people, proof. It has no single call to action — it answers dozens of questions from different visitors.",
+      "examples": [
+        "A manufacturer or a construction company",
+        "A clinic, a law firm, an engineering bureau",
+        "A B2B supplier with a long sales cycle",
+        "The site of an institution or a foundation"
+      ],
+      "signals": [
+        "The decision is made by several people and not in one visit",
+        "You are being checked: licences, track record, cases, the team",
+        "There are several directions, and each needs its own story"
+      ]
+    },
+    "media": {
+      "title": "Media and blog",
+      "tagline": "A stream of publications",
+      "definition": "A project whose value is regular material. It grows by pages and by search traffic; its machinery is sections, authors, a feed and search.",
+      "examples": [
+        "An industry outlet or a news portal",
+        "An expert blog of a company",
+        "A personal blog with a paid subscription",
+        "A knowledge base of reference articles"
+      ],
+      "signals": [
+        "Material comes out regularly, not once",
+        "Traffic arrives from search and recommendations",
+        "The reader has to be held until the next piece"
+      ]
+    },
+    "directory": {
+      "title": "Catalogue and directory",
+      "tagline": "Many objects, filters, a map",
+      "definition": "A collection of objects of one kind with filters, search and often a map. Its value is completeness and accuracy; every object gives a page of its own.",
+      "examples": [
+        "A directory of a city's organisations",
+        "A catalogue of specialists or craftsmen",
+        "A database of properties",
+        "A listing of venues and events"
+      ],
+      "signals": [
+        "There are hundreds or thousands of objects and they are alike",
+        "People arrive asking «what is near me» or «who fits»",
+        "The data goes stale and has to be refreshed"
+      ]
+    },
+    "booking": {
+      "title": "Booking and appointments",
+      "tagline": "Time is the product",
+      "definition": "A project that sells an occupied interval: an appointment, a table, a room, a car, a hall. The core entity is not a product but the schedule of a resource.",
+      "examples": [
+        "A salon, a clinic, a barbershop",
+        "Renting flats, cars or equipment",
+        "A restaurant and its table reservations",
+        "A coach, a tutor, a consultant"
+      ],
+      "signals": [
+        "Two people cannot take the same slot",
+        "Cancellations and no-shows cost you money",
+        "The schedule today lives in a notebook, a chat or a spreadsheet"
+      ]
+    },
+    "qr-menu": {
+      "title": "Digital menu",
+      "tagline": "A table, a phone and the kitchen",
+      "definition": "A menu the guest opens on their own phone at the table. One decision defines the product: does it only show the dishes, or does it take the order and the payment? In the second case a till, a kitchen, a table number and a stop list grow onto it at once — and it stops being a shop window and becomes part of how the place runs.",
+      "examples": [
+        "A menu behind a code on the table instead of a laminated folder",
+        "Ordering and paying from the phone without waiting for a waiter",
+        "A chain's menu where prices and stop lists differ per venue",
+        "A menu for a tourist spot where half the guests read no Russian"
+      ],
+      "signals": [
+        "Prices change more often than you are willing to reprint",
+        "A guest waits for the waiter longer than they choose a dish",
+        "A dish runs out in the kitchen while the menu still offers it"
+      ]
+    },
+    "store": {
+      "title": "Online store",
+      "tagline": "Goods, cart, payment, delivery",
+      "definition": "A shop window for goods that belong to you, with a cart, payment and delivery. There is one seller — you; the buyer picks from your stock and pays on the site.",
+      "examples": [
+        "Your own clothing or cosmetics brand",
+        "A shop attached to a production line",
+        "Digital goods: files, keys, access codes",
+        "A grocery shop with city delivery"
+      ],
+      "signals": [
+        "Items repeat: the same product is sold many times",
+        "You have stock levels and they change",
+        "The order is placed on the site, even when payment happens on delivery"
+      ]
+    },
+    "learning": {
+      "title": "Courses and learning",
+      "tagline": "From lesson to result",
+      "definition": "A project where a person walks a path: lessons, assignments, progress, access. What is sold is not a file but being carried to a result.",
+      "examples": [
+        "An online school or an expert's course",
+        "Corporate training for employees",
+        "A membership club with materials",
+        "Preparation for an exam"
+      ],
+      "signals": [
+        "The material has an order, and the order matters",
+        "You can see where each person stopped",
+        "Access opens and closes rather than being granted forever"
+      ]
+    },
+    "tours": {
+      "title": "Tours marketplace",
+      "tagline": "A place, a date and the person who will show you",
+      "definition": "A platform where a traveller looks for an experience on a particular day in a particular city, and a guide receives a confirmed booking with no messaging. It rests on three things at once: geography, the calendar, and money between two sides. Separate from a marketplace and from booking — because here there is weather, a season, and an unfamiliar city.",
+      "examples": [
+        "Walks around the city led by the people who live there",
+        "A tour agency tired of running bookings through chat",
+        "The experiences of one region: mountains, sea, food",
+        "Workshops and live events for visitors"
+      ],
+      "signals": [
+        "A person searches not for a product but for \"what to see here on these dates\"",
+        "Every offer has its own host and its own schedule",
+        "A tour may not happen because of the weather, and nobody is to blame"
+      ]
+    },
+    "delivery": {
+      "title": "Delivery service",
+      "tagline": "Customer, courier and venue — three to an order",
+      "definition": "A platform where every order has three sides: the one who ordered, the one who carries it, and the one who hands it over. Everything rests on the map and the clock — where the courier is now, how long they will take, what it costs. A mistake in how orders are handed out costs more than any mistake in layout.",
+      "examples": [
+        "Hot food delivered from several venues",
+        "Groceries and goods from shops nearby",
+        "Courier delivery of documents and parcels across the city",
+        "A chain's own delivery arm, tired of somebody else's commission"
+      ],
+      "signals": [
+        "An order has someone who carries it, and that someone has to be assigned",
+        "The customer wants to watch their order move on a map",
+        "The price depends on distance, weight or the time of day"
+      ]
+    },
+    "marketplace": {
+      "title": "Marketplace",
+      "tagline": "Two sides, your platform",
+      "definition": "A platform where other people sell. You have two kinds of users — seller and buyer — and you earn on the deal between them, not on goods of your own.",
+      "examples": [
+        "A classifieds board for a city or a niche",
+        "A platform of craftsmen and customers",
+        "A shop window shared by several stores",
+        "An exchange for services or rentals"
+      ],
+      "signals": [
+        "The goods or services are not yours",
+        "Sellers must be attracted separately from buyers",
+        "There is a commission, moderation and disputes"
+      ]
+    },
+    "saas": {
+      "title": "SaaS",
+      "tagline": "A product on subscription",
+      "definition": "Software people pay for again and again. The value is the work it does instead of the user; every user has an account, a plan and their own data.",
+      "examples": [
+        "A bookkeeping or planning service",
+        "A tool for marketers, doctors or lawyers",
+        "A personal dashboard with calculations and reports",
+        "A team service with roles and permissions"
+      ],
+      "signals": [
+        "Money arrives repeatedly, not once",
+        "The user has an account and data of their own inside it",
+        "Your main risk is people not renewing, not people not buying"
+      ]
+    },
+    "crm": {
+      "title": "CRM system",
+      "tagline": "An internal system, not a website",
+      "definition": "A team's workplace: leads, deals, tasks and every conversation with a client in one place. It has no visitors — it has employees with different rights, and what matters most is not how the screen looks but how the records are shaped and by what rules a deal moves along the funnel.",
+      "examples": [
+        "A sales team losing enquiries between messengers",
+        "An agency running client projects from enquiry to delivery",
+        "A clinic or service with bookings, calls and repeat visits",
+        "A company that outgrew a spreadsheet but does not want somebody else's CRM"
+      ],
+      "signals": [
+        "Enquiries arrive from several places and some of them are lost",
+        "The manager cannot see which stage each deal is standing at",
+        "Records live in spreadsheets, and every employee has their own copy"
+      ]
+    },
+    "attestation": {
+      "title": "Certification and knowledge checks",
+      "tagline": "Not knowledge, but a record an inspector will read",
+      "definition": "A safety officer publishes the instructions, employees are examined on them, and the company gets a history: who, when, with what result. What separates it from an ordinary course is the cost of error — this record admits a person to dangerous work and defends the company at an inspection, so it must be neither lost nor rewritten after the fact.",
+      "examples": [
+        "Occupational and fire safety on a production site",
+        "Clearance for equipment and work at height",
+        "Induction on hiring and after an incident",
+        "Checking contractors before they enter the site"
+      ],
+      "signals": [
+        "The result is needed not by the person but by an inspector",
+        "The certification expires, and the expiry matters",
+        "Failed means not admitted to work, and that must happen by itself"
+      ]
+    },
+    "scheduler": {
+      "title": "Scheduled automation",
+      "tagline": "A rule and a timer instead of judgement",
+      "definition": "A service that wakes itself at the appointed hour, goes where it was told, compares what it found against a condition and sends the result. There is nothing for it to decide: where judgement is needed you want an agent, here you want a rule. The product rests on three things invisible from outside — the schedule, the behaviour on failure, and the run log.",
+      "examples": [
+        "Watching a price and reporting the moment it drops",
+        "Going through incoming mail and sending one digest a day",
+        "Collecting data from sites that offer no open access",
+        "A recurring report that assembles and sends itself"
+      ],
+      "signals": [
+        "Somebody checks the same thing by hand many times a day",
+        "The rule fits into one sentence: if this, then that",
+        "What matters is not missing the moment, not having a conversation"
+      ]
+    },
+    "ai-coach": {
+      "title": "AI coach and mentor",
+      "tagline": "It leads a person, it does not hand out lessons",
+      "definition": "A companion that remembers you between conversations: it sets goals, asks about them unprompted, and notices what you promised a week ago. What separates it from a course is that nothing is recorded in advance — the whole product is its character, its memory, and the point at which it stops and hands the person to real specialists.",
+      "examples": [
+        "A habit tracker that asks first",
+        "A career mentor for those priced out of a human coach",
+        "A weekly goal review for a founder",
+        "A trainer guiding someone to an athletic target"
+      ],
+      "signals": [
+        "The value is in the conversation, not in pre-recorded material",
+        "Past sessions must be remembered, or everything starts from zero",
+        "People drop off without reminders, and the product must do the reminding"
+      ]
+    },
+    "agents": {
+      "title": "Agentic automation",
+      "tagline": "The route is built as it goes",
+      "definition": "A system given one goal, which then decides for itself which steps will reach it: it walks through sources, reads what it finds, discards what contradicts, and assembles the rest into a document. What separates it from a schedule is that each step depends on the last — only the result is known in advance.",
+      "examples": [
+        "A market study across dozens of sources, delivered as a report",
+        "A dossier on a company or a candidate before a meeting",
+        "An industry digest with the primary sources checked",
+        "A recurring study repeated month after month"
+      ],
+      "signals": [
+        "The task does not fit one query — it takes a dozen steps",
+        "What to look for next only becomes clear from what was already found",
+        "The output is a document with conclusions, not a row of data"
+      ]
+    },
+    "competitors": {
+      "title": "Competitor intelligence",
+      "tagline": "Their moves, your decisions",
+      "definition": "A project that reads competitors' pages, social accounts and marketplaces by itself, stores what it finds and shows the movement: what changed, when and by how much. The platform's own browser does this without you walking the sites by hand.",
+      "examples": [
+        "Watching prices and assortment",
+        "Monitoring a competitor's vacancies and hiring",
+        "Tracking their publications and advertising",
+        "Collecting and digesting reviews across the market"
+      ],
+      "signals": [
+        "You already check other people's sites by hand, just irregularly",
+        "Your decision — price, assortment, wording — depends on someone else's move",
+        "You need the history of changes, not a single snapshot"
+      ]
+    },
+    "company-brain": {
+      "title": "Company brain — engineering",
+      "tagline": "All the company's knowledge in one place",
+      "definition": "A project that gathers what the company knows — documents, correspondence, tasks, the code base, people and their roles — puts it into structure, keeps it in your own database and gives it back as reports and as answers that cite their source.",
+      "examples": [
+        "A knowledge base that answers from your documents",
+        "A map of employees, roles and areas of responsibility",
+        "A digest of the code base and its changes",
+        "Regular reports for the head of the company"
+      ],
+      "signals": [
+        "Key knowledge lives in people's heads and in chats",
+        "A new employee takes weeks to get up to speed",
+        "The same question gets asked again and again"
+      ]
+    },
+    "business-brain": {
+      "title": "Company brain — business",
+      "tagline": "One answer instead of six tabs",
+      "definition": "It gathers into one place everything that turns around the customer: enquiries, correspondence, calls, deals, invoices, delivery and support tickets. Anyone asks in plain words and gets an answer that would otherwise take an hour across six systems. The price of that convenience is the company's entire commercial secrecy sitting in one place.",
+      "examples": [
+        "\"What is happening with this client and why did they ask for a discount\"",
+        "A summary on a salesperson: conversion and reasons for losing",
+        "Three years of history with a supplier",
+        "A post-mortem: why the deal fell through and what preceded it"
+      ],
+      "signals": [
+        "Answering a simple question means opening several systems",
+        "What is known about a client lives in one salesperson's head",
+        "The manager learns of a problem once it has already happened"
+      ]
+    },
+    "custom": {
+      "title": "Your own direction",
+      "tagline": "No questions prepared",
+      "definition": "A direction for what is not in the list above. There are no ready questions here and there will not be: you write them. The twenty sets beside it cover what could be foreseen; this one exists precisely for what could not — dropping in \"seven universal questions\" would bring back the very trouble that choosing a direction was meant to end.",
+      "examples": [
+        "A product unlike any of its neighbours",
+        "Your own industry, with its own words and rules",
+        "An internal tool for a single task",
+        "An idea that does not have a name yet"
+      ],
+      "signals": [
+        "None of the directions above describes what you are building",
+        "Ready-made questions would steer the conversation the wrong way",
+        "You know what you need to be asked better than we do"
+      ]
+    }
+  },
+  "ru": {
+    "landing": {
+      "title": "Посадочная страница",
+      "tagline": "Одна страница, одно действие",
+      "definition": "Одна страница, у которой ровно одна цель — получить заявку или контакт. Всё на ней подчинено этой цели: оффер, доказательства, форма. Второй цели у неё не бывает: две цели означают, что посетитель не выполнит ни одной.",
+      "examples": [
+        "Запуск продукта под платную рекламу",
+        "Страница услуги эксперта: юрист, врач, репетитор",
+        "Регистрация на вебинар или мероприятие",
+        "Сбор предзаказов до начала производства"
+      ],
+      "signals": [
+        "Вы платите за трафик и считаете стоимость одной заявки",
+        "Продажа происходит в разговоре, а не на сайте",
+        "Товар один или услуга одна — выбирать не из чего"
+      ]
+    },
+    "portfolio": {
+      "title": "Портфолио",
+      "tagline": "Продаёте себя, а не товар",
+      "definition": "Сайт, где предмет выбора — вы сами: специалист, студия или личный бренд. Убеждают не описания услуг, а показанные работы и то, как вы о них рассказываете. Поэтому здесь важнее всего отбор проектов и порядок, в котором их видят.",
+      "examples": [
+        "Дизайнер, фотограф, режиссёр монтажа",
+        "Небольшая студия: разработка, архитектура, интерьеры",
+        "Эксперт, который ищет проекты крупнее нынешних",
+        "Специалист, собирающий отклик на вакансию мечты"
+      ],
+      "signals": [
+        "Клиент выбирает вас, глядя на прошлые работы, а не читая прайс",
+        "Вам нужны проекты определённого рода, а не любые",
+        "Договариваетесь о цене в разговоре, и её размер зависит от впечатления"
+      ]
+    },
+    "corporate": {
+      "title": "Корпоративный сайт",
+      "tagline": "Компания, услуги, доверие",
+      "definition": "Многостраничный сайт организации: направления, услуги, люди, доказательства. Одной кнопки-цели у него нет — он отвечает на десятки вопросов разных посетителей.",
+      "examples": [
+        "Производственная или строительная компания",
+        "Клиника, юридическая фирма, проектное бюро",
+        "Поставщик B2B с длинным циклом сделки",
+        "Сайт учреждения или фонда"
+      ],
+      "signals": [
+        "Решение принимают несколько человек и не за один визит",
+        "Вас проверяют: лицензии, опыт, кейсы, команда",
+        "Направлений несколько, и каждому нужен свой рассказ"
+      ]
+    },
+    "media": {
+      "title": "Медиа и блог",
+      "tagline": "Поток публикаций",
+      "definition": "Проект, ценность которого — регулярные материалы. Он растёт числом страниц и поисковым трафиком; его механика — рубрики, авторы, лента и поиск.",
+      "examples": [
+        "Отраслевое издание или новостной портал",
+        "Экспертный блог компании",
+        "Личный блог с платной подпиской",
+        "База знаний из справочных статей"
+      ],
+      "signals": [
+        "Материалы выходят регулярно, а не один раз",
+        "Трафик приходит из поиска и рекомендаций",
+        "Читателя нужно удержать до следующего текста"
+      ]
+    },
+    "directory": {
+      "title": "Каталог и справочник",
+      "tagline": "Много объектов, фильтры, карта",
+      "definition": "Собрание однотипных объектов с фильтрами, поиском и часто картой. Ценность — в полноте и точности собрания; каждый объект даёт свою страницу.",
+      "examples": [
+        "Справочник организаций города",
+        "Каталог специалистов или мастеров",
+        "База объектов недвижимости",
+        "Афиша мест и событий"
+      ],
+      "signals": [
+        "Объектов сотни или тысячи, и они однотипны",
+        "Люди приходят с вопросом «что рядом» или «кто подойдёт»",
+        "Данные устаревают и требуют обновления"
+      ]
+    },
+    "booking": {
+      "title": "Запись и бронирование",
+      "tagline": "Товар — это время",
+      "definition": "Проект, где продаётся занятый интервал: приём, стол, номер, машина, зал. Главная сущность — не товар, а расписание ресурса.",
+      "examples": [
+        "Салон, клиника, барбершоп",
+        "Аренда жилья, автомобилей, оборудования",
+        "Ресторан и бронь столов",
+        "Тренер, репетитор, консультант"
+      ],
+      "signals": [
+        "Двое не могут занять одно и то же время",
+        "Отмены и неявки стоят вам денег",
+        "Расписание сегодня живёт в тетради, чате или таблице"
+      ]
+    },
+    "qr-menu": {
+      "title": "Электронное меню",
+      "tagline": "Стол, телефон и кухня",
+      "definition": "Меню, которое гость открывает со своего телефона за столом. Продукт определяется одним решением: он только показывает блюда или принимает заказ и оплату. Во втором случае к нему сразу прирастают касса, кухня, номер стола и стоп-лист — и это уже не витрина, а часть работы заведения.",
+      "examples": [
+        "Меню по коду на столе вместо папки с ламинатом",
+        "Заказ и оплата с телефона без ожидания официанта",
+        "Меню сети, где цены и стоп-листы у каждой точки свои",
+        "Меню для туристического места, где половина гостей не читает по-русски"
+      ],
+      "signals": [
+        "Цены меняются чаще, чем вы готовы печатать меню",
+        "Гость ждёт официанта дольше, чем выбирает блюдо",
+        "Блюдо кончается на кухне, а в меню оно ещё есть"
+      ]
+    },
+    "store": {
+      "title": "Интернет-магазин",
+      "tagline": "Товар, корзина, оплата, доставка",
+      "definition": "Витрина ваших собственных товаров с корзиной, оплатой и доставкой. Продавец один — вы; покупатель выбирает из вашего склада и оформляет заказ на сайте.",
+      "examples": [
+        "Свой бренд одежды или косметики",
+        "Магазин при производстве",
+        "Цифровые товары: файлы, ключи, доступы",
+        "Продуктовая лавка с доставкой по городу"
+      ],
+      "signals": [
+        "Позиции повторяются: один товар продаётся много раз",
+        "Есть остатки, и они меняются",
+        "Заказ оформляется на сайте, даже если оплата при получении"
+      ]
+    },
+    "learning": {
+      "title": "Обучение и курсы",
+      "tagline": "От урока к результату",
+      "definition": "Проект, где человек проходит путь: уроки, задания, прогресс, доступ. Продаётся не файл, а доведение до результата.",
+      "examples": [
+        "Онлайн-школа или курс эксперта",
+        "Корпоративное обучение сотрудников",
+        "Клуб с материалами по подписке",
+        "Подготовка к экзамену"
+      ],
+      "signals": [
+        "У материала есть порядок, и порядок важен",
+        "Видно, кто где остановился",
+        "Доступ открывается и закрывается, а не выдаётся навсегда"
+      ]
+    },
+    "tours": {
+      "title": "Агрегатор экскурсий",
+      "tagline": "Место, дата и человек, который проведёт",
+      "definition": "Площадка, где путешественник ищет впечатление на конкретный день в конкретном городе, а гид получает подтверждённый заказ без переписки. Держится на трёх вещах разом: география, календарь и деньги между двумя сторонами. Отдельно от маркетплейса и бронирования — потому что здесь есть погода, сезон и чужой город.",
+      "examples": [
+        "Авторские прогулки по городу от местных жителей",
+        "Экскурсионное бюро, уставшее вести брони в переписке",
+        "Впечатления одного региона: горы, море, гастрономия",
+        "Мастер-классы и живые события для приезжих"
+      ],
+      "signals": [
+        "Человек ищет не товар, а «что посмотреть здесь и в эти даты»",
+        "У каждого предложения свой ведущий и своё расписание",
+        "Экскурсия может не состояться из-за погоды, и это никто не виноват"
+      ]
+    },
+    "delivery": {
+      "title": "Сервис доставки",
+      "tagline": "Клиент, курьер и заведение — трое в одном заказе",
+      "definition": "Площадка, где у каждого заказа три стороны: тот, кто заказал, тот, кто везёт, и тот, кто отдаёт. Всё держится на карте и времени — где сейчас курьер, за сколько доедет, сколько это стоит. Ошибка в распределении заказов дороже любой ошибки в вёрстке.",
+      "examples": [
+        "Доставка готовой еды из нескольких заведений",
+        "Продукты и товары из магазинов у дома",
+        "Курьерская доставка документов и посылок по городу",
+        "Своя служба доставки сети, уставшей от чужих комиссий"
+      ],
+      "signals": [
+        "У заказа есть исполнитель, и его надо кому-то назначить",
+        "Клиент хочет видеть на карте, где едет его заказ",
+        "Стоимость зависит от расстояния, веса или времени суток"
+      ]
+    },
+    "marketplace": {
+      "title": "Маркетплейс",
+      "tagline": "Две стороны, ваша площадка",
+      "definition": "Площадка, где продают другие. У вас два типа пользователей — продавец и покупатель, — и зарабатываете вы на сделке между ними, а не на своём товаре.",
+      "examples": [
+        "Доска объявлений города или ниши",
+        "Площадка мастеров и заказчиков",
+        "Общая витрина нескольких магазинов",
+        "Биржа услуг или аренды"
+      ],
+      "signals": [
+        "Товар или услуга принадлежат не вам",
+        "Продавцов нужно привлекать отдельно от покупателей",
+        "Есть комиссия, модерация и споры"
+      ]
+    },
+    "saas": {
+      "title": "SaaS-сервис",
+      "tagline": "Продукт по подписке",
+      "definition": "Программа, за пользование которой платят регулярно. Ценность — в работе, которую она делает вместо пользователя; у каждого свой аккаунт, тариф и свои данные.",
+      "examples": [
+        "Сервис учёта или планирования",
+        "Инструмент для маркетологов, врачей, юристов",
+        "Личный кабинет с расчётами и отчётами",
+        "Сервис для команд с ролями и правами"
+      ],
+      "signals": [
+        "Деньги приходят повторно, а не один раз",
+        "У пользователя есть аккаунт и собственные данные внутри него",
+        "Главный риск — что не продлят, а не что не купят"
+      ]
+    },
+    "crm": {
+      "title": "CRM-система",
+      "tagline": "Внутренняя система, а не сайт",
+      "definition": "Рабочее место отдела: лиды, сделки, задачи и вся переписка с клиентом в одном месте. У неё нет посетителей — есть сотрудники с разными правами, и главное здесь не вид экрана, а устройство сущностей и правила перехода сделки по воронке.",
+      "examples": [
+        "Отдел продаж, теряющий заявки между мессенджерами",
+        "Агентство, ведущее проекты клиентов от заявки до сдачи",
+        "Клиника или сервис с записью, звонками и повторными визитами",
+        "Компания, переросшая таблицу, но не желающая чужую CRM"
+      ],
+      "signals": [
+        "Заявки приходят из нескольких мест, и часть теряется",
+        "Руководитель не видит, на каком этапе стоит каждая сделка",
+        "Учёт живёт в таблицах, и у каждого сотрудника своя копия"
+      ]
+    },
+    "attestation": {
+      "title": "Аттестация и проверка знаний",
+      "tagline": "Не знание, а запись, которую предъявят инспектору",
+      "definition": "Инженер по безопасности выкладывает инструкции, сотрудники сдают по ним экзамен, а предприятие получает историю: кто, когда и с каким результатом. От обычного курса отличается ценой ошибки — эта запись допускает человека к опасной работе и защищает компанию на проверке, поэтому её нельзя ни потерять, ни переписать задним числом.",
+      "examples": [
+        "Охрана труда и пожарный минимум на производстве",
+        "Допуск к оборудованию и высотным работам",
+        "Вводный инструктаж при приёме и после инцидента",
+        "Проверка знаний подрядчиков перед выходом на объект"
+      ],
+      "signals": [
+        "Результат нужен не человеку, а проверяющему",
+        "У аттестации есть срок годности, и он истекает",
+        "Не сдал — не допущен к работе, и это должно сработать само"
+      ]
+    },
+    "scheduler": {
+      "title": "Автоматизация по расписанию",
+      "tagline": "Правило и таймер вместо суждения",
+      "definition": "Служба, которая сама просыпается в назначенный час, ходит куда велено, сравнивает найденное с условием и присылает результат. Решать ей нечего: где нужно суждение — там агент, а здесь правило. Продукт держится на трёх вещах, невидимых снаружи: расписании, поведении при отказе и журнале выполнения.",
+      "examples": [
+        "Слежение за ценой и сообщение, когда она упала",
+        "Разбор входящей почты и сводка раз в день",
+        "Сбор данных с сайтов, у которых нет открытого доступа",
+        "Регулярный отчёт, который собирается и уходит сам"
+      ],
+      "signals": [
+        "Человек сегодня проверяет что-то руками по многу раз в день",
+        "Правило можно записать одной фразой «если… то…»",
+        "Важно не пропустить момент, а не поговорить"
+      ]
+    },
+    "ai-coach": {
+      "title": "AI-коуч и ментор",
+      "tagline": "Ведёт человека, а не выдаёт уроки",
+      "definition": "Собеседник, который помнит вас между разговорами: ставит цели, спрашивает о них сам и замечает, что вы обещали неделю назад. Отличается от курса тем, что ничего не отдаёт заранее записанным, — весь смысл в характере, памяти и в том, где он останавливается и передаёт человека живым специалистам.",
+      "examples": [
+        "Трекер привычек, который спрашивает первым",
+        "Карьерный ментор для тех, кому дорог живой коуч",
+        "Разбор целей недели для предпринимателя",
+        "Тренер, ведущий к спортивной цели по плану"
+      ],
+      "signals": [
+        "Ценность в разговоре, а не в записанном заранее материале",
+        "Нужно помнить прошлые сессии, иначе всё начинается с нуля",
+        "Человек бросает без напоминаний, и напоминать должен продукт"
+      ]
+    },
+    "agents": {
+      "title": "Агентная автоматизация",
+      "tagline": "Маршрут строится по ходу дела",
+      "definition": "Система, которой ставят одну цель, а она сама решает, из каких шагов её достичь: обходит источники, читает найденное, отбрасывает противоречивое и сводит остальное в документ. Отличие от расписания в том, что следующий шаг здесь зависит от предыдущего — заранее известен только результат, которого нужно добиться.",
+      "examples": [
+        "Разбор рынка по десяткам источников с готовым отчётом",
+        "Досье на компанию или кандидата перед встречей",
+        "Свод отраслевых новостей с проверкой первоисточников",
+        "Регулярное исследование, повторяемое из месяца в месяц"
+      ],
+      "signals": [
+        "Задача не раскладывается в один запрос — нужен десяток шагов",
+        "Что искать дальше, становится ясно только из уже найденного",
+        "Итог — документ с выводами, а не строка данных"
+      ]
+    },
+    "competitors": {
+      "title": "Анализ конкурентов",
+      "tagline": "Их шаги — ваши решения",
+      "definition": "Проект, который сам читает страницы конкурентов, их соцсети и площадки, складывает найденное и показывает движение: что изменилось, когда и насколько. Собственный браузер платформы делает это без ручного обхода сайтов.",
+      "examples": [
+        "Слежение за ценами и ассортиментом",
+        "Наблюдение за вакансиями и наймом конкурента",
+        "Отслеживание их публикаций и рекламы",
+        "Сбор и разбор отзывов по всему рынку"
+      ],
+      "signals": [
+        "Вы уже проверяете чужие сайты руками, просто нерегулярно",
+        "Ваше решение — цена, ассортимент, формулировка — зависит от чужого шага",
+        "Нужна история изменений, а не разовый снимок"
+      ]
+    },
+    "company-brain": {
+      "title": "Мозг компании — разработка",
+      "tagline": "Всё знание компании в одном месте",
+      "definition": "Проект, который собирает знание компании — документы, переписки, задачи, кодовую базу, людей и их роли, — приводит его в структуру, хранит в вашей базе и отдаёт отчётами и ответами со ссылкой на источник.",
+      "examples": [
+        "База знаний, отвечающая по вашим документам",
+        "Карта сотрудников, ролей и зон ответственности",
+        "Сводка по кодовой базе и её изменениям",
+        "Регулярные отчёты руководителю"
+      ],
+      "signals": [
+        "Ключевое знание держится в головах и переписках",
+        "Новый сотрудник входит в курс дела неделями",
+        "Один и тот же вопрос задают снова и снова"
+      ]
+    },
+    "business-brain": {
+      "title": "Мозг компании — бизнес",
+      "tagline": "Один ответ вместо шести вкладок",
+      "definition": "Сводит в одно место всё, что вращается вокруг клиента: заявки, переписку, звонки, сделки, счета, доставку и обращения в поддержку. Любой сотрудник спрашивает словами и получает ответ, на который иначе ушёл бы час поисков по шести системам. Цена такого удобства — вся коммерческая тайна компании в одном месте.",
+      "examples": [
+        "«Что происходит с клиентом и почему он просил скидку»",
+        "Сводка по менеджеру: конверсия и причины отказов",
+        "История отношений с поставщиком за три года",
+        "Разбор: почему сорвалась сделка и что этому предшествовало"
+      ],
+      "signals": [
+        "Ответ на простой вопрос требует открыть несколько систем",
+        "Знание о клиенте живёт в голове одного менеджера",
+        "Руководитель узнаёт о проблеме, когда она уже случилась"
+      ]
+    },
+    "custom": {
+      "title": "Своё направление",
+      "tagline": "Ни одного вопроса заранее",
+      "definition": "Направление для того, чего нет в списке выше. Готовых вопросов здесь нет и не будет: их пишете вы. Двадцать наборов рядом покрывают предугаданное, а этот существует ровно для непредугаданного — подставить сюда «универсальные семь вопросов» значило бы вернуть ту самую беду, ради которой выбор направления и появился.",
+      "examples": [
+        "Продукт, не похожий ни на один из соседних",
+        "Своя отрасль со своими словами и своими правилами",
+        "Внутренний инструмент под единственную задачу",
+        "Замысел, для которого названия ещё нет"
+      ],
+      "signals": [
+        "Ни одно из направлений выше не описывает то, что вы строите",
+        "Готовые вопросы увели бы разговор не в ту сторону",
+        "Вы знаете, о чём вас нужно спросить, лучше нас"
+      ]
+    }
+  }
+}

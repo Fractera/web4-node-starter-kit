@@ -1,0 +1,54 @@
+import "server-only"
+import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs"
+import { join } from "node:path"
+import { createAllElementRepos, type RepoResult } from "@/lib/web4-items/element-github"
+import { saveNodeMap, type NodeMapResult } from "@/lib/web4-items/node-map"
+
+// «КЛЮЧ ВПИСАН — РЕПОЗИТОРИИ СОЗДАЮТСЯ САМИ» (шаг 374-2). Слово владельца 2026-10-02: «как только вёл сразу же в его репозитории
+// создаются классические репозитории под каждой WEB4 ITEMS». Работа длится минуты (дотянуть историю обязательных элементов с
+// Fractera, выгрузить каждый), поэтому идёт в процессе ядра без ожидания ответа, а ход — в `data/node/github/repos.json`.
+// 🔒 Действие — только в ответ на человека (сохранение ключа или кнопка «Создать репозитории»): таймеров и повторов нет.
+
+const FILE = join(process.cwd(), "data", "node", "github", "repos.json")
+const g = globalThis as unknown as { __web4ReposJob?: Promise<void> | null }
+export type ReposJob = { running: boolean; retryAt?: string; pid?: number; current?: string; phase?: string | null; done?: number; total?: number; interrupted?: boolean; startedAt?: string; finishedAt?: string; results?: RepoResult[]; map?: NodeMapResult }
+
+// 🔒 «ИДЁТ» ИЗМЕРЯЕТСЯ, А НЕ ПОМНИТСЯ (378, тот же закон, что у замка развёртываний 337): работа живёт в процессе ядра, и
+// перезапуск ядра (пересборка, pm2) её убивает. Запись несёт `pid`; «идёт» — только если это тот же живой процесс и работа в нём
+// действительно идёт. Иначе — «прервано», и кнопка снова доступна. ✗ Mac 2026-10-02: «Узел создаёт репозитории (начал в 22:41)»
+// висело, хотя ядро пересобирали после старта.
+export function readReposJob(): ReposJob {
+  let job: ReposJob
+  try { job = JSON.parse(readFileSync(FILE, "utf8")) as ReposJob } catch { return { running: false } }
+  if (job.running && (job.pid !== process.pid || !g.__web4ReposJob)) return { ...job, running: false, interrupted: true }
+  return job
+}
+
+function write(job: ReposJob) {
+  mkdirSync(join(process.cwd(), "data", "node", "github"), { recursive: true })
+  const tmp = `${FILE}.${process.pid}.${Date.now()}.tmp`
+  writeFileSync(tmp, JSON.stringify(job, null, 2) + "\n", "utf8")
+  renameSync(tmp, FILE)
+}
+
+/** Запустить создание репозиториев, если оно не идёт. Возвращает сразу. */
+export function startReposJob(only?: string): ReposJob {
+  if (g.__web4ReposJob) return readReposJob()
+  const prev = readReposJob()
+  if (prev.retryAt && Date.parse(prev.retryAt) > Date.now()) return prev
+  const startedAt = new Date().toISOString()
+  write({ running: true, pid: process.pid, startedAt })
+  g.__web4ReposJob = (async () => {
+    try {
+      // 378: ход виден — какой элемент сейчас и сколько готово (владелец ждал «4 минуты» вслепую).
+      // 380: ход — какой элемент, какая фаза, уже готовые с итогом (страница показывает их живьём, пока идёт работа).
+      const r = await createAllElementRepos((current, done, total, phase, results) => write({ running: true, pid: process.pid, startedAt, current, phase, done, total, results: [...results] }), only)
+      write({ running: false, startedAt, finishedAt: new Date().toISOString(), results: r.results, retryAt: r.retryAt, map: saveNodeMap() })
+    } catch {
+      write({ running: false, startedAt, finishedAt: new Date().toISOString(), results: [] })
+    } finally {
+      g.__web4ReposJob = null
+    }
+  })()
+  return readReposJob()
+}

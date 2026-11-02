@@ -1,0 +1,23 @@
+{
+  "id": "terminal-drawer",
+  "entry": "client/terminal-drawer.client.tsx",
+  "needs": ["browser"],
+  "npmDeps": [],
+  "usedBy": [
+    "components/preview/element-preview",
+    "components/element-docs/reverse-engineering",
+    "components/element-docs/product-quiz"
+  ],
+  "en": {
+    "title": "Terminal drawer",
+    "what": "The right half of the screen with an agent's terminal and a task already in it. A button on the page opens it, Collapse closes it, and the agent's session keeps running.",
+    "how": "AgentTerminal in compact mode inside an aside. With start, the task goes with the launch: a sleeping agent gets it as its first instruction, a running one gets it in the paste window and the person sends it. Without start the text waits in the paste window. The page gives a new key for every new task, so the terminal reconnects while the session on the server stays.",
+    "value": "The Preview already split the screen this way and the owner asked for the same everywhere: one drawer for the Preview, Reverse engineering and the product quiz instead of a copy in each."
+  },
+  "ru": {
+    "title": "Ящик с терминалом",
+    "what": "Правая половина экрана с терминалом агента, в котором уже стоит задача. Открывает его кнопка на странице, закрывает «Свернуть», а сессия агента продолжает работать.",
+    "how": "AgentTerminal в узком виде внутри aside. С start задача уходит вместе с запуском: спящий агент получает её первым поручением, работающий — в окне вставки, отправляет человек. Без start текст ждёт в окне вставки. Страница даёт ящику новый key на каждую задачу: терминал подключается заново, сессия на сервере остаётся.",
+    "value": "Preview уже делил экран так, и владелец попросил то же везде: один ящик для Preview, «Реверс-инжиниринга» и продуктового квиза вместо копии в каждом."
+  }
+}

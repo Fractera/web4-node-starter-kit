@@ -1,0 +1,4 @@
+{
+  "why": "Node step 558-3 (owner 2026-10-21): outside services the main agent's automations use (a news source, a feed, an API). The core shows them in «Automated management → Tools». Keys only by variable name; values live in the core's .env.local.",
+  "services": []
+}

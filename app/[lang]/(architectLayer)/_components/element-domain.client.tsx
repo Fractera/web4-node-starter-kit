@@ -1,0 +1,156 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { CircleAlert } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import type { ElementSettingsUi } from "../_i18n/element-settings.i18n"
+import type { ElementDomainRecord, Primary } from "@/lib/web4-items/element-domain"
+
+// «ГЛАВНОЕ ЗЕРКАЛО» — ВЫБОР ИЗ ДОМЕНОВ УЗЛА (324-3). Слово владельца 2026-09-27: «вместо того чтобы вводить свой домен я тебя
+// просил сделать выпадающий список и указать какие домены уже прикреплены а какие ещё свободны и какие я могу привязать к
+// проекту». Список — та же дверь, что рисует карточки «Активации домена» (`/api/domain/list`): второго списка нет. Выбрать
+// можно только свободный домен с активной зоной; ждущий серверов имён и подключённый к другому элементу видны, но закрыты.
+// Нужного нет — «Добавить домен» ведёт на «Активацию домена». Подключение по кнопке замеряет зону заново (дверь элемента).
+
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
+
+type Listed = { name: string; state: string; holder: string | null }
+type Kind = "ready" | "waiting" | "taken" | "current"
+
+export function ElementDomain({ id, lang, ui, current: record }: { id: string; lang: string; ui: ElementSettingsUi; current: ElementDomainRecord | null }) {
+  const current = record?.domain ?? null
+  const w = ui.mirrorCard
+  const router = useRouter()
+  const [list, setList] = useState<Listed[] | null>(null)
+  const [loadFailed, setLoadFailed] = useState(false)
+  const [picked, setPicked] = useState("")
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch(`${BASE}/api/domain/list`, { cache: "no-store" })
+      .then((r) => r.json())
+      .then((j: { ok?: boolean; extra?: Listed[] }) => { if (j.ok && Array.isArray(j.extra)) setList(j.extra); else setLoadFailed(true) })
+      .catch(() => setLoadFailed(true))
+  }, [])
+
+  // 443-4: пришли по ссылке «Подключить к <id>: … Главное зеркало» — карточка встаёт в окно, когда список доменов отрисован
+  // (браузер прокручивает к якорю раньше, чем страница доросла, и карточка уезжает вниз — замерено: top 1120 px).
+  useEffect(() => {
+    if (list && window.location.hash === "#main-mirror") document.getElementById("main-mirror")?.scrollIntoView({ block: "start" })
+  }, [list])
+
+  function kind(d: Listed): Kind {
+    if (d.name === current || d.holder === id) return "current"
+    if (d.holder) return "taken"
+    return d.state === "active" ? "ready" : "waiting"
+  }
+
+  async function attach() {
+    setBusy(true)
+    setError(null)
+    try {
+      const r = await fetch(`${BASE}/api/architect/items/${id}/domain`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name: picked }) })
+      const j = (await r.json().catch(() => null)) as { ok?: boolean; error?: string } | null
+      if (j?.ok) { setPicked(""); router.refresh(); setBusy(false); return }
+      setError(w.errors[j?.error ?? ""] ?? `${w.errors.failed} ${j?.error ?? r.status}`)
+    } catch { setError(w.errors.failed) }
+    setBusy(false)
+  }
+
+  async function detach() {
+    setBusy(true)
+    setError(null)
+    try {
+      const r = await fetch(`${BASE}/api/architect/items/${id}/domain`, { method: "DELETE" })
+      const j = (await r.json().catch(() => null)) as { ok?: boolean; error?: string } | null
+      if (j?.ok) { router.refresh(); setBusy(false); return }
+      setError(w.errors[j?.error ?? ""] ?? `${w.errors.failed} ${j?.error ?? r.status}`)
+    } catch { setError(w.errors.failed) }
+    setBusy(false)
+  }
+
+  // 324-5: главный адрес — кто раздаёт сайт и кем элемент себя называет (canonical); второй отвечает 301.
+  async function choose(primary: Primary) {
+    setBusy(true)
+    setError(null)
+    try {
+      const r = await fetch(`${BASE}/api/architect/items/${id}/domain`, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ primary }) })
+      const j = (await r.json().catch(() => null)) as { ok?: boolean; error?: string } | null
+      if (j?.ok) { router.refresh(); setBusy(false); return }
+      setError(w.errors[j?.error ?? ""] ?? `${w.errors.failed} ${j?.error ?? r.status}`)
+    } catch { setError(w.errors.failed) }
+    setBusy(false)
+  }
+
+  return (
+    <div id="main-mirror" className="flex scroll-mt-24 flex-col gap-2" data-element-domain={current ?? ""}>
+      {current && (
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-sm text-foreground">{w.current} <a className="font-mono underline" href={`https://${current}`} target="_blank" rel="noopener noreferrer">{current}</a></p>
+          <Button type="button" variant="outline" size="sm" onClick={detach} disabled={busy} data-domain-detach>
+            {busy ? w.detaching : w.detach}
+          </Button>
+        </div>
+      )}
+      {record && (
+        <div className="flex flex-col gap-1.5 rounded-md border p-3" data-domain-primary={record.primary}>
+          <p className="text-sm font-medium text-foreground">{w.primaryTitle}</p>
+          <div className="flex flex-wrap gap-2">
+            {record.subdomain && (
+              <Button type="button" size="sm" variant={record.primary === "subdomain" ? "default" : "outline"} disabled={busy || record.primary === "subdomain"} onClick={() => choose("subdomain")} data-primary-subdomain>
+                <span className="font-mono">{record.subdomain}</span>
+              </Button>
+            )}
+            <Button type="button" size="sm" variant={record.primary === "domain" ? "default" : "outline"} disabled={busy || record.primary === "domain"} onClick={() => choose("domain")} data-primary-domain>
+              <span className="font-mono">{record.domain}</span>
+            </Button>
+          </div>
+          <p className="text-[length:var(--fs-small)] text-muted-foreground">{w.primaryNote.replace("{primary}", record.url.replace("https://", ""))}</p>
+        </div>
+      )}
+      {loadFailed && <p className="text-sm text-destructive">{w.loadFailed}</p>}
+      {/* 443-5 (слово владельца 2026-10-11): нет ни одного свободного домена — оранжевая карточка вместо пустого выбора. */}
+      {list && !current && !list.some((d) => kind(d) === "ready") && (
+        <div className="flex items-start gap-2 rounded-md border border-warning/50 bg-warning/10 px-3 py-2" role="status" data-domain-no-free>
+          <CircleAlert className="mt-0.5 size-4 shrink-0 text-warning" aria-hidden />
+          <p className="text-sm text-foreground">{w.noFree}</p>
+        </div>
+      )}
+      {list && list.some((d) => kind(d) === "ready" || kind(d) === "current") && (
+        <>
+          <Label htmlFor={`element-domain-${id}`}>{w.label}</Label>
+          <Select value={picked} onValueChange={setPicked}>
+            <SelectTrigger id={`element-domain-${id}`} className="w-full max-w-md" data-domain-select>
+              <SelectValue placeholder={w.placeholder} />
+            </SelectTrigger>
+            <SelectContent>
+              {list.map((d) => {
+                const k = kind(d)
+                return (
+                  <SelectItem key={d.name} value={d.name} disabled={k !== "ready"} data-domain-option={k}>
+                    <span className="font-mono">{d.name}</span>
+                    <span className="text-muted-foreground">— {w.kinds[k].replace("{by}", d.holder ?? "")}</span>
+                  </SelectItem>
+                )
+              })}
+            </SelectContent>
+          </Select>
+          <Button type="button" className="w-fit" onClick={attach} disabled={!picked || busy} data-domain-attach>
+            {busy ? w.attaching : w.attach}
+          </Button>
+        </>
+      )}
+      {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
+      <a className="w-fit text-sm font-medium text-primary underline-offset-4 hover:underline" href={`/${lang}/architect/hosting/domain?for=${encodeURIComponent(id)}#domain-add`} data-domain-add>{w.add}</a>
+      <div className="text-sm text-muted-foreground" data-domain-add-hint>
+        <p>{w.addHint}</p>
+        <ol className="mt-1 list-decimal pl-5">{w.addSteps.map((s) => <li key={s}>{s}</li>)}</ol>
+      </div>
+      <p className="text-[length:var(--fs-small)] text-muted-foreground">{w.note}</p>
+    </div>
+  )
+}

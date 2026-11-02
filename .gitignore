@@ -1,60 +1,108 @@
-# Dependencies
+# dependencies
 node_modules/
 
-# Next.js
-app/.next/
-app/out/
+# next.js
+.next/
+out/
 
-# Env files (never commit secrets)
+# env
 .env
 .env.local
 .env.*.local
 
-# Database & storage (stay on server)
-app/database.sqlite
-app/database.sqlite-shm
-app/database.sqlite-wal
-app/data/*.sqlite
-app/data/*.sqlite-shm
-app/data/*.sqlite-wal
-app/data/*
-!app/data/.gitkeep
-app/storage/*
-!app/storage/.gitkeep
+# database (root legacy + data/ folder)
+database.sqlite
+database.sqlite-shm
+database.sqlite-wal
+data/*.sqlite
+data/*.sqlite-shm
+data/*.sqlite-wal
 
-# Build artifacts
-app/dist/
-app/tsconfig.tsbuildinfo
+# user files — stay on server, not in git
+storage/*
+!storage/.gitkeep
+data/*
+!data/.gitkeep
 
-# Media service — data and uploads stay on server
-services/media/data/*.db
-services/media/data/*.db-shm
-services/media/data/*.db-wal
-services/media/storage/*
-!services/media/storage/.gitkeep
-services/media/icons/*
+# 🪦 `APP-CONFIG/app-config.json` БОЛЬШЕ НЕ ИГНОРИРУЕТСЯ (решение владельца 2026-08-15).
+#
+# Здесь он был исключён как «данные конкретного сервера». Из-за этого два соседних
+# файла настроек жили по разным правилам: `PLATFORM-CONFIG` ехал в репозиторий, а
+# `APP-CONFIG` — нет. Разные правила у одинаковых по смыслу файлов — источник
+# ошибок сам по себе: при обновлении из шаблона один затирается, другой нет, и
+# предсказать это по виду каталога невозможно.
+#
+# Секретов в обоих файлах нет и быть не может — ключи и токены живут в `.env.local`,
+# который игнорируется выше. Настройки же полезно иметь в истории: видно, кто и когда
+# менял имя сайта, и есть к чему откатиться.
 
-# Рантайм канала: настройка бота и ящик входящих рождаются на сервере.
-# Под git они срывали бы pull при каждом развёртывании.
-services/channels/config.json
-services/channels/inbox.json
-!services/media/icons/.gitkeep
+# build
+dist/
+tsconfig.tsbuildinfo
 
-# Hermes reference docs (read-only clone of NousResearch/hermes-agent — never commit)
-docs/HERMES/
-docs/HERMES-WEBUI/
-
-# Build artifacts (bridges)
-bridges/app/tsconfig.tsbuildinfo
-
-# OS
+# os
 .DS_Store
 Thumbs.db
 
-# Logs
+# logs
 *.log
 npm-debug.log*
+# Журналы pm2 (шаг 232). Папка создаётся при первом запуске сервера под pm2 и
+# принадлежит конкретной машине: у каждого человека в ней своя история падений.
+logs/
+# 🪦 ЗДЕСЬ СТОЯЛО `app/[lang]/**/_list.generated.ts` — СНЯТО 2026-08-21 (решение владельца).
+#
+# Правило было ложным дважды. Во-первых, файл всё это время лежал в git (он был
+# добавлен раньше правила), и git отслеживал его вопреки записи — а инструкция и
+# навык уверяли, что файл игнорируется. Агент видит его изменённым, читает «он в
+# .gitignore» и решает, что его правка не доехала.
+#
+# Во-вторых, по существу: список постов — это то, из чего строится страница
+# блога и карта сайта. Владелец смотрит проект НА СВОЕЙ МАШИНЕ и обязан видеть
+# архитектуру целиком сразу, а не после сборки; и доехать до сервера список
+# должен обычным путём — через GitHub, вместе с постом, который в нём назван.
+#
+# Файл порождается `node lib/parser-fs.mjs` (его же зовут `predev`/`prebuild`).
+# Добавил пост, а в списке его нет — значит генератор не запускали; сказать это
+# владельцу вслух, а не молчать.
 
-# App slot — TRANSIENT: cloned on demand at dev/deploy, never committed (pivot 2026-06-16)
-/app/*
-!/app/.gitkeep
+# swc plugin cache (build artifact)
+.swc/
+
+# Превью статических изображений: считаются на сборке (scripts/generate-image-previews.mjs)
+lib/images/previews.generated.ts
+
+# доступ к серверу: приватный ключ и known_hosts (scripts/server/*) — только на этой машине
+.fractera-ssh/
+
+# Временные файлы доставки на сервер: архив и заплата собираются в корне
+# репозитория и в него попадать не должны. ✗ 2026-08-30 `full.tar.gz` уехал в
+# коммит вместе с работой шага 50, потому что `git add -A` не разбирает, что
+# лежит рядом.
+*.tar.gz
+*.patch
+
+# Сменные блоки узла: каждый живёт в СВОЁМ репозитории, сюда их приводит
+# `npm run services:install` по версии, закреплённой в MICROSERVICES.json.
+#
+# 🔒 ПОЧЕМУ ИХ НЕТ В ЭТОМ РЕПОЗИТОРИИ. Взять чужую историю внутрь своей можно
+# двумя способами, и оба отвергнуты измерением (шаг 257): подмодуль прикалывает
+# коммит, которого `git pull` родителя не обновляет — копии расходятся молча;
+# subtree держит один код в двух историях, то есть два источника правды.
+# Здесь же дерево гостя остаётся чистым, а замена блока — строка в реестре.
+#
+# 🛑 ВЕДУЩИЙ СЛЭШ ОБЯЗАТЕЛЕН, И ОН ОПЛАЧЕН СРАЗУ ЖЕ. Без него образец
+# `microservices/` совпадает с папкой такого имени НА ЛЮБОЙ ГЛУБИНЕ, и первым же
+# делом он поймал `lib/microservices/` — библиотеку самого узла. Коммит прошёл
+# без неё, git сказал об этом подсказкой, которую легко пролистать. Это тот же
+# класс, которым проект уже платил: папка `.claude/` целиком стояла в игноре, и
+# только что написанный навык оказался вне git.
+/WEB4-ITEMS/
+
+# 315: font files copied from @fontsource packages before each build (scripts/local-fonts.mjs)
+public/fonts/
+
+# 610-4: the main agent lives in the core root; these files are written per machine by scripts/main-agent-install.mjs
+.claude/settings.local.json
+.claude/launch-tools.txt
+.claude/launch-model.txt

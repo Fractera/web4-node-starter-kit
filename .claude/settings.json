@@ -1,0 +1,44 @@
+{
+  "enableAllProjectMcpServers": true,
+  "permissions": {
+    "deny": [
+      "Read(./WEB4-ITEMS/**)",
+      "Edit(./WEB4-ITEMS/**)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/context-guard.mjs"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/context-guard.mjs"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/context-resume.mjs"
+          }
+        ]
+      }
+    ]
+  }
+}

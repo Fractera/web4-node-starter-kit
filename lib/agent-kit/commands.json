@@ -1,0 +1,149 @@
+{
+  "about": "The node's hard commands (node step 597). One list: the menu of the main agent's Telegram bot, the answer «commands» of a sleeping bot and of every agent, the lines in the prompt of every session with a person. A new command is one entry here. Owner 2026-10-25: «инструкцию о всех жёстко запрограммированных командах таких как: запомни, напомни о, включить, выключить, какие-нибудь новые инструкции которые будут появляться в будущем». A command is recognised by the PURPOSE of a message, by the model, in any language and any words (owner 2026-10-26: «анализ прямого совпадения это вариант который нельзя использовать»; «Запомни, запиши, сохрани, пометь… и так далее эти слова должны как и многие другие выражения аналогичным образом выявлять намерения пользователя»): words are examples, not a list. by: main — the node's main agent runs it; any — the agent the person writes to. menu: false — not in the bot's menu. Slash: 1–32 characters, a–z, 0–9, «_» (Telegram Bot API, setMyCommands).",
+  "commands": [
+    {
+      "id": "remember",
+      "slash": "remember",
+      "words": { "ru": ["запомни", "запиши", "сохрани", "пометь", "не забудь"], "en": ["remember", "note down", "save this", "keep this", "don't forget"] },
+      "what": {
+        "ru": "Запомни … — сохранить в глубокой памяти узла фразу, фото, PDF или голосовое",
+        "en": "Remember … — keep a phrase, a photo, a PDF or a voice note in the node's deep memory"
+      },
+      "by": "main",
+      "run": "npm run remember -- \"<the words after the command>\" [--file <path of a photo, PDF or voice note>]"
+    },
+    {
+      "id": "remind",
+      "slash": "remind",
+      "words": { "ru": ["напомни о", "что я говорил про", "вспомни", "что ты помнишь о"], "en": ["remind me about", "what did I say about", "recall"] },
+      "what": {
+        "ru": "Напомни о … — ответ из обеих памятей узла, с датой и источником",
+        "en": "Remind me about … — an answer from both memories of the node, with the date and the source"
+      },
+      "by": "main",
+      "run": "npm run remind -- \"<the question>\""
+    },
+    {
+      "id": "on",
+      "slash": "on",
+      "words": { "ru": ["включить", "включи"], "en": ["turn on"] },
+      "what": {
+        "ru": "Включить <элемент> — включить агента элемента; в боте спящего агента — включить его",
+        "en": "Turn on <element> — turn an element's agent on; in a sleeping agent's bot — turn that agent on"
+      },
+      "by": "any",
+      "run": "npm run wake -- <element id>"
+    },
+    {
+      "id": "off",
+      "slash": "off",
+      "words": { "ru": ["выключить", "выключи"], "en": ["turn off"] },
+      "what": {
+        "ru": "Выключить — выключить агента, которому пишете; «выключить <элемент>» главному агенту — агента элемента",
+        "en": "Turn off — turn off the agent you write to; «turn off <element>» to the main agent — that element's agent"
+      },
+      "by": "any",
+      "run": "npm run close -- <element id>; with no element: npm run done -- --close"
+    },
+    {
+      "id": "review",
+      "slash": "review",
+      "words": { "ru": ["разбор", "каждый раз ты добавляешь лишнее", "делай только то, что я прошу"], "en": ["review", "every time you add what I did not ask", "do only what I ask"] },
+      "what": {
+        "ru": "Разбор — скажите, что агент делает не так («каждый раз А и ещё Б — давай только А»): агент элемента разберёт свои навыки и предложит правки, решаете вы",
+        "en": "Review — say what the agent does that you do not want («every time A and also B — let it be only A»): the element's agent goes through its skills and proposes changes, you decide"
+      },
+      "by": "any",
+      "run": "npm run review -- <element id> \"<the person's words>\" — only on the person's word; the proposals come back to you, pass them on, bring their «yes» back with npm run task",
+      "menu": false
+    },
+    {
+      "id": "context",
+      "slash": "context",
+      "words": { "ru": ["сколько контекста", "заполнение контекста", "сколько осталось в окне"], "en": ["how much context", "context left", "context window"] },
+      "what": {
+        "ru": "Контекст — сколько занято в окне сессии агента, размер окна и сколько осталось",
+        "en": "Context — how much of the agent session's window is used, the window size and what is left"
+      },
+      "by": "main",
+      "run": "npm run session -- context [<element id>]"
+    },
+    {
+      "id": "prepare",
+      "slash": "prepare",
+      "words": { "ru": ["подготовь к сбросу", "подготовься к очистке", "запиши состояние перед сбросом"], "en": ["prepare to reset", "get ready to clear", "write the state before a reset"] },
+      "what": {
+        "ru": "Подготовить к сбросу — привести записи состояния в порядок, чтобы новая сессия продолжила с того же места (лёгкая замена /compact)",
+        "en": "Prepare to reset — put the state records in order so a fresh session goes on from the same place (a light /compact)"
+      },
+      "by": "any",
+      "run": "update your state record so a fresh session goes on from it — the core: development-docs/development-steps/current-steps.md (skill use-development-steps), an element: development-docs/current-step.md (skill use-development-docs); the main agent also npm run done -- --note \"<where you stopped, what is next>\"; then tell the person it is ready to clear"
+    },
+    {
+      "id": "clear",
+      "slash": "clear",
+      "words": { "ru": ["очисти контекст", "сбрось контекст", "начни с чистого листа"], "en": ["clear the context", "reset the context", "start over"] },
+      "what": {
+        "ru": "Очистить контекст — разговор с агентом начнётся заново; память узла и записи остаются",
+        "en": "Clear the context — the conversation with the agent starts over; the node's memory and records stay"
+      },
+      "by": "main",
+      "run": "npm run session -- clear [<element id>] — answer the person first: it happens when your turn ends"
+    },
+    {
+      "id": "opus",
+      "slash": "opus",
+      "words": { "ru": ["переключись на opus", "максимальная модель", "опус"], "en": ["switch to opus", "maximum model"] },
+      "what": {
+        "ru": "Opus — переключить агента на максимальную модель; разговор продолжается",
+        "en": "Opus — switch the agent to the maximum model; the conversation goes on"
+      },
+      "by": "main",
+      "run": "npm run session -- model opus [<element id>] — answer the person first: the session restarts when your turn ends"
+    },
+    {
+      "id": "sonnet",
+      "slash": "sonnet",
+      "words": { "ru": ["переключись на sonnet", "средняя модель", "сонет"], "en": ["switch to sonnet", "medium model"] },
+      "what": {
+        "ru": "Sonnet — переключить агента на среднюю модель; разговор продолжается",
+        "en": "Sonnet — switch the agent to the medium model; the conversation goes on"
+      },
+      "by": "main",
+      "run": "npm run session -- model sonnet [<element id>] — answer the person first: the session restarts when your turn ends"
+    },
+    {
+      "id": "haiku",
+      "slash": "haiku",
+      "words": { "ru": ["переключись на haiku", "экономная модель", "хайку"], "en": ["switch to haiku", "economy model"] },
+      "what": {
+        "ru": "Haiku — переключить агента на экономную модель; разговор продолжается",
+        "en": "Haiku — switch the agent to the economy model; the conversation goes on"
+      },
+      "by": "main",
+      "run": "npm run session -- model haiku [<element id>] — answer the person first: the session restarts when your turn ends"
+    },
+    {
+      "id": "openaikey",
+      "slash": "openai_key",
+      "words": { "ru": ["ключ openai", "вот ключ openai", "добавь ключ openai"], "en": ["openai key", "here is the openai key", "add the openai key"] },
+      "what": {
+        "ru": "Ключ OpenAI — пришлите /openai_key и ключ одним сообщением: узел проверит его, сохранит и удалит сообщение; ключ нужен голосу, векторам и глубокой памяти",
+        "en": "OpenAI key — send /openai_key and the key in one message: the node checks it, keeps it and deletes the message; voice, vectors and the deep memory need it"
+      },
+      "by": "main",
+      "run": "npm run openai-key -- <the key> --chat <chat_id> --message <message_id of the person's message>"
+    },
+    {
+      "id": "commands",
+      "slash": "commands",
+      "words": { "ru": ["команды"], "en": ["commands"] },
+      "what": {
+        "ru": "Команды — прислать этот список",
+        "en": "Commands — send this list"
+      },
+      "by": "any",
+      "run": "npm run commands"
+    }
+  ]
+}

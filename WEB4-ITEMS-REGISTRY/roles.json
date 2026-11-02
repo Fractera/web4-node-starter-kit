@@ -1,0 +1,13 @@
+{
+  "_": "Node step 548-10: the role of every service of the node in one sentence — what it does for the other elements. The default for every node; the node's main agent assigns roles to born elements in data/node/roles.json (outside git), which wins over this file. Read by lib/web4-items/dashboard-rows.ts (Dashboard → Projects, GET /api/node/projects) and printed by every element's npm run passport -- project.",
+  "auth": "Signs people in for every element: sessions, roles and sign-in pages; an element asks it who the visitor is (GET /api/session).",
+  "data": "Keeps the table rows of every element behind one door (REMOTE_DATA_URL/db/tables with X-Data-Secret), the deploy journal and the agent-to-agent log; its former addresses /media and /vectors pass to storage and vectors.",
+  "storage": "Keeps the files of every element (pictures, videos, documents) with a permanent address, thumbnails and site icons; elements reach it as REMOTE_DATA_URL/media with X-Data-Secret.",
+  "vectors": "Finds pieces of text by meaning for every element on a vector index; elements reach it as REMOTE_DATA_URL/vectors with X-Data-Secret.",
+  "config": "Keeps the project settings (name, texts, languages, search, header, footer) and signals elements when they change (MCP get_project_settings).",
+  "design": "Keeps the project look (colours of both themes, fonts, corners) and signals elements when it changes (MCP get_project_settings, subscribe).",
+  "graph": "The node's shared knowledge graph (LightRAG): elements store what they learn as entities and links and find it again by meaning.",
+  "root": "The project's main site on the root domain.",
+  "blocks": "A catalog of ready page blocks in one style that elements take instead of designing pages from scratch.",
+  "stripe": "The node’s payment element: meant to take card payments through the person’s Stripe account for the elements of this node (Settings → Payments → Web2); turned off until card payments are built."
+}

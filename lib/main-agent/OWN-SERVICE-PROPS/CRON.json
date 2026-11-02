@@ -1,0 +1,10 @@
+{
+  "why": "Node step 558-3 (owner 2026-10-21): what the main agent of the node CAN run on a schedule — «Automated management → Cron events» in the core. The person's schedule is NOT here: it is data, `data/cron.json` of this folder (outside git). The core server checks it once a minute (lib/main-agent-cron/); a missed run (computer off) is not caught up. The built-in event `agent-task` wakes the main agent with the entry's `message` as its task — a new scheduled job is an entry, not code.",
+  "events": [
+    {
+      "id": "agent-task",
+      "name": "Task for the main agent",
+      "description": "Wakes the main agent with the entry's own text (field «message») as its task: check something, then give the work to the element that does it (npm run task)."
+    }
+  ]
+}

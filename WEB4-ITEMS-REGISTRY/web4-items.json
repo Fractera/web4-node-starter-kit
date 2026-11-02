@@ -1,0 +1,199 @@
+{
+  "_": [
+    "СОСТАВ УЗЛА: какие элементы WEB4 в него входят и каких ИМЕННО версий.",
+    "",
+    "🔒 KIND РЕШАЕТ ПУТЬ: core → WEB4-ITEMS/core/<id>, user → WEB4-ITEMS/user/<id>. Встроенные элементы",
+    "ставит установщик узла, пользовательские подключает сам человек. Путь НЕ угадывается по имени.",
+    "",
+    "Этот файл — сущность «знает всё обо всех» из закона о блокчейн-узлах. Паспорт",
+    "службы (OWN-SERVICE-PROPS.json в её репозитории) — сущность «знает только себя».",
+    "Реестр службу не правит и только читает её паспорт.",
+    "",
+    "🔒 ВЕРСИЯ ЗАКРЕПЛЯЕТСЯ ТЕГОМ, А НЕ ВЕТКОЙ. Следуя за main, два человека,",
+    "выполнившие ОДНУ И ТУ ЖЕ команду в разные дни, получают разные узлы, и отличие",
+    "не записано нигде — самый дорогой класс отказов проекта. При закреплённом теге",
+    "состав узла виден в git diff и откатывается одной строкой.",
+    "🛑 Цена названа: исправление в службе не доезжает, пока версию здесь не подняли.",
+    "Значит подъём версии — часть закрытия шага, тронувшего службу, а не уборка.",
+    "",
+    "🔒 ПОРТ ЗДЕСЬ — ФАКТИЧЕСКИЙ, а не желаемый. Желаемый стоит в паспорте службы;",
+    "назначает узел из блока 24680-24699 и вписывает сюда тот, на котором служба",
+    "встала. Иначе две купленные службы однажды попросят один номер и подерутся молча.",
+    "",
+    "🛑 СЕКРЕТОВ ЗДЕСЬ НЕТ НИКОГДА. Файл лежит в git и уезжает каждому гостю.",
+    "Ключи живёт в .env службы, который пишет установщик и который в git не входит.",
+    "",
+    "Сторож: npm run check:microservices (порядок правил — в шапке сторожа).",
+    "",
+    "🔒 ТИП УЗЛА (553): nodeType — project («Единый проект»: один хозяин, все элементы под CONFIG ядра) или factory («Завод",
+    "приложений»: кастомные элементы рождаются самостоятельными). Нет поля — project. Меняет только npm run node-type -- set по слову",
+    "человека; тип задаёт облик НОВЫХ кастомных элементов, существующие переключаются по одному."
+  ],
+  "nodeType": "project",
+  "services": [
+    {
+      "id": "auth",
+      "repo": "https://github.com/Fractera/fractera-auth-starter.git",
+      "version": "v2.4.6",
+      "port": 24681,
+      "provides": [
+        "session",
+        "roles",
+        "sign-in-ui"
+      ],
+      "required": true,
+      "note": "Раздающая вход ровно одна. Две авторизации на узле есть отсутствие авторизации.",
+      "kind": "core",
+      "address": "auth"
+    },
+    {
+      "id": "data",
+      "repo": "https://github.com/Fractera/fractera-data-starter.git",
+      "version": "v2.1.15",
+      "port": 24682,
+      "provides": [
+        "tables",
+        "deploy-runs",
+        "a2a-log",
+        "panel-settings",
+        "service-routing"
+      ],
+      "required": true,
+      "note": "База данных узла (550): единственная дверь к таблицам; прежние адреса /media/* и /vectors/* пересылает элементам storage и vectors. Узел не открывает файл базы сам.",
+      "kind": "core",
+      "address": "data"
+    },
+    {
+      "id": "storage",
+      "repo": "https://github.com/Fractera/fractera-storage-starter.git",
+      "version": "v1.1.15",
+      "port": 24693,
+      "provides": [
+        "media"
+      ],
+      "required": true,
+      "note": "Объектное хранилище узла (550): файлы и картинки элементов, миниатюры, обрезка видео, значки сайта. Потребители зовут /media у data — та пересылает сюда.",
+      "kind": "core",
+      "address": "storage"
+    },
+    {
+      "id": "vectors",
+      "repo": "https://github.com/Fractera/fractera-vectors-starter.git",
+      "version": "v1.1.15",
+      "port": 24694,
+      "provides": [
+        "vectors"
+      ],
+      "required": true,
+      "note": "Векторное хранилище узла (550): поиск по смыслу на индексе sqlite-vec. Потребители зовут /vectors у data — та пересылает сюда.",
+      "kind": "core",
+      "address": "vectors"
+    },
+    {
+      "id": "config",
+      "repo": "https://github.com/Fractera/fractera-config-starter.git",
+      "version": "v1.2.16",
+      "provides": [
+        "project-settings"
+      ],
+      "required": true,
+      "note": "Настройки проекта отдельным элементом (299): APP/PLATFORM/DESIGN-CONFIG, режим архитектора, двери /api/settings/*. Источник настроек для всех элементов узла.",
+      "kind": "core",
+      "port": 24685,
+      "address": "config"
+    },
+    {
+      "id": "design",
+      "repo": "https://github.com/Fractera/fractera-design-starter.git",
+      "version": "v1.1.16",
+      "provides": [
+        "project-design"
+      ],
+      "required": true,
+      "note": "Дизайн проекта отдельным элементом (309): цвета светлой и тёмной темы, шрифты, текст, формы, настройки блоков. После сохранения — сигнал подписчикам, и каждая служба узла перекрашивается на лету.",
+      "kind": "core",
+      "port": 24686,
+      "address": "design"
+    },
+    {
+      "id": "graph",
+      "repo": "https://github.com/Fractera/fractera-graph-lightrag-starter.git",
+      "version": "v1.1.22",
+      "provides": [
+        "knowledge-graph"
+      ],
+      "required": true,
+      "note": "Граф знаний узла на LightRAG (540): элементы сохраняют то, что узнали, сущностями и связями и находят это по смыслу. Стандартный служебный элемент: v0.1.0 — из roman.",
+      "kind": "core",
+      "port": 24689,
+      "address": "graph"
+    },
+    {
+      "id": "cache",
+      "repo": "https://github.com/Fractera/fractera-redis-cache-starter.git",
+      "version": "v0.1.10",
+      "port": 24695,
+      "provides": [
+        "cache"
+      ],
+      "required": true,
+      "note": "Быстрое хранилище узла (560): счётчики и очереди горячих действий в Redis, итоги — в data. Пока только тело, сам Redis не подключён (macOS и Linux); включено по умолчанию (619).",
+      "kind": "core",
+      "address": "cache"
+    },
+    {
+      "id": "memory",
+      "repo": "https://github.com/Fractera/fractera-memory-starter.git",
+      "version": "v2.2.6",
+      "port": 24690,
+      "provides": [
+        "memory",
+        "remember",
+        "recall"
+      ],
+      "required": true,
+      "note": "Глубокая память узла (596): «запомни» и «напомни о» — фразы, фото, документы, голос; хранит в data, storage, vectors и в своём пространстве memory элемента graph. Включена, пока на компьютере свободно больше 1 ГБ (601); меньше — включается на задачу памяти главным агентом. Главная — лендинг глубокой памяти (602).",
+      "kind": "core",
+      "address": "memory"
+    },
+    {
+      "id": "stripe",
+      "repo": "https://github.com/Fractera/fractera-stripe-starter.git",
+      "version": "v1.3.10",
+      "port": 24691,
+      "provides": [
+        "payments"
+      ],
+      "required": true,
+      "note": "Платёжный элемент узла (573): приём оплаты картой через аккаунт Stripe владельца для элементов узла. Пока только тело: выключен паспортом (приём оплаты ещё не построен).",
+      "kind": "core",
+      "address": "stripe"
+    },
+    {
+      "id": "root",
+      "repo": "https://github.com/Fractera/fractera-root-starter.git",
+      "version": "v3.0.11",
+      "port": 24683,
+      "provides": [
+        "site"
+      ],
+      "required": false,
+      "note": "Сайт узла: что видит посетитель в корне домена. Заменяется другим репозиторием с тем же договором (OWN-SERVICE-PROPS.json), убрать нельзя.",
+      "kind": "user",
+      "address": "root"
+    },
+    {
+      "id": "blocks",
+      "repo": "https://github.com/Fractera/fractera-blocks-starter.git",
+      "version": "v1.4.12",
+      "provides": [
+        "page-blocks"
+      ],
+      "required": true,
+      "note": "Реестр блоков страниц по методологии shadcn: API (/r/*.json) и свой MCP (/mcp). Нативный элемент (605: kind core, стартует при каждом запуске).",
+      "kind": "core",
+      "port": 24684,
+      "address": "blocks"
+    }
+  ]
+}
