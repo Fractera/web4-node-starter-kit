@@ -54,8 +54,10 @@ above all the warning that the first account is the administrator and cannot be 
 - People. **The owner** — one person, the creator of the project. **The architect** — the master of the node, the first registered; acts
   over the whole node. **An administrator** and the other roles — only within their organization. **An element owner** — on an app
   factory. **A visitor** — a guest of a site. The word «user» is read by its sense.
-- Access: on this computer the architect signs in without a password; on the temporary address the control panel is read-only; on an own
-  domain — sign-in.
+- Access by address: this computer (`localhost`, `127.0.0.1`) — the owner at the keyboard opens the architect layer without sign-in; the
+  temporary address — the panel is read-only to anyone with the link, sign-in and registration are closed; an own domain — everything
+  behind sign-in, registration open to all. The node does not listen on the computer's network IP. The first registered account is the
+  architect for good, with no recovery: it is created on this computer before an own domain is connected.
 - Development runs on the Claude Code subscription. OpenAI — for vectors, voice transcription, translation and the deep memory's thinking;
   the OpenAI key is taken from the core first, otherwise from the element (`/api/architect/environment`).
 - Telegram: a bot of your own and one for every element. The person's language — the bot's `person.json`; lines of foreign agents are
@@ -259,7 +261,7 @@ above all the warning that the first account is the administrator and cannot be 
 - Site rules: a site forbids study — only the person's screenshots; inner pages — only in a test account the person confirmed; the agent
   only reads (`npm run site-rules`).
 - The architecture always runs with sign-in: the sign-in button and the personal page may be hidden, but the architect mode is reached
-  only through sign-in.
+  only through sign-in, except the owner at this computer's keyboard.
 - Commit messages and the development documents of elements — English only.
 - Development documents — in every case: step → substeps → commit → summary with the hash; a plan with substeps is agreed before code;
   the state is written on every event; a step ends with a context reset.

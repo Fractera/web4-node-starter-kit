@@ -69,5 +69,5 @@ owner has to dismiss it by hand before anything works again.
 ## 5. Before you call it seen
 
 Say **which** browser state you measured in: signed in or out, which role, which theme, which width,
-worker cleared or not. A screen verified under the dev bypass or on a bare IP is verified for the
-case that never fails — and that sentence belongs in the report, not in your head.
+worker cleared or not. A screen verified under the dev bypass or on `localhost` (where the owner at the
+keyboard is the architect) is verified for the case that never fails — and that sentence belongs in the report, not in your head.

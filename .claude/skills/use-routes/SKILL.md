@@ -108,8 +108,9 @@ route.
 - `check:content` (`route-unclassified`), `check:protected`, `check:static`, `check:seo` — each covers
   a different way a route can be misplaced.
 - `page.tsx` stays thin: declare the segment, re-export `./_components`. `check:protected` measures it.
-- Open the page as somebody who should NOT see it. A protected page that opens for a guest in `dev` or
-  on a bare IP is the bypass, not a fault — but say which mode you tested in.
+- Open the page as somebody who should NOT see it. A protected page that opens in `dev` or on
+  `localhost` is the bypass or the owner-at-the-keyboard rule, not a fault — check it on the own domain
+  and say which address you tested on.
 
 ## 🔒 Форма страницы задаётся СЛОЕМ, и слои устроены по-разному
 

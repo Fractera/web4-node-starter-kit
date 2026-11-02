@@ -80,8 +80,9 @@ Two details that were bought with a real half hour:
 **Offline covers pages already seen, and nothing else.** There is no offline page for unvisited
 addresses, deliberately: it would need words in every language. That absence is named, not forgotten.
 
-**No worker without HTTPS.** In IP mode the site is plain http and a browser registers no worker there.
-The app works fully; only offline is missing. Never report a worker as broken on a bare IP.
+**No worker outside a secure context.** `localhost` and https addresses (the temporary one, the own
+domain) are secure, so the worker registers there; any other plain-http address gets none. The app
+works fully; only offline is missing. Never report a worker as broken on such an address.
 
 ## 4. 🔒 The worker also makes your browser measurements lie
 

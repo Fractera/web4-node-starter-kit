@@ -67,9 +67,10 @@ screen, and deletion stays with `architect` because it is destructive.
 
 ## 5. The bypass, and why your test may mean nothing
 
-Authentication is bypassed in `NODE_ENV=development` **and** when `FRACTERA_IP_NODOMAIN_MODE=true` —
-and the bypass hands you `architect`. So a page tested locally or on a bare IP is tested for the case
-that never fails. Say which mode you were in; it is one sentence, and it is the difference between a
+On a node authentication is bypassed in `NODE_ENV=development`, and on `localhost` the owner at the
+keyboard opens the architect layer without signing in (`lib/auth/owner-at-machine.ts`) — both hand you
+`architect`. `FRACTERA_IP_NODOMAIN_MODE` belongs to the old server line; a node never sets it. So a page
+tested on this computer is tested for the case that never fails. Say which mode you were in; it is one sentence, and it is the difference between a
 proof and a habit.
 
 A changed role reaches a signed-in person on their next session read, not instantly. Say that too

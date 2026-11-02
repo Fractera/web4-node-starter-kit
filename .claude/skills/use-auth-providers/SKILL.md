@@ -65,9 +65,13 @@ repository, and a package installed here does not add a sign-in method.
 
 ## 5. Two facts that make a working site look broken
 
-- **In IP mode authorisation is bypassed.** Everything is visible to everyone, and you are always the
-  architect. A screen "verified" there is verified for the case that never fails — check on a domain
-  before saying a gate works (`use-roles`).
+- **On `localhost` the owner at the keyboard is the architect without signing in**, and on the
+  temporary address the panel is read-only to anyone with the link while sign-in and registration are
+  closed. A screen "verified" on either is verified for the case that never fails — check on the own
+  domain before saying a gate works (`use-roles`).
+- **Registration on the own domain is open to everyone, and the first account is the architect for
+  good.** Its password has no recovery (§2), so the person creates it on this computer before the
+  domain is connected.
 - **The session cookie belongs to the whole domain.** It is sent to every subdomain of the site,
   which is why the platform's own services check a role rather than trusting the cookie's presence
   (`use-data` §2). Nothing for you to configure — but if you ever wonder why a request "already
@@ -86,4 +90,4 @@ honestly is the correct answer today.
 
 1. A missing sign-in method was diagnosed as a missing KEY, and the owner was told which panel screen.
 2. No password field, no reset promise and no session-issuing code was added to this app.
-3. Whatever you checked, you checked on a domain — not in IP mode, where everything passes.
+3. Whatever you checked, you checked on the own domain — not on `localhost`, where the owner passes everything.

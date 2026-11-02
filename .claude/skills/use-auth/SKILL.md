@@ -79,7 +79,7 @@ description of it.
 | `lib/auth/get-session.ts` | how a session becomes `{ userId, email, roles }`: one call to `:3001/api/session` with the visitor's cookie. This is the only reader of the session in the whole app |
 | `lib/auth/require-roles.ts` | the real lock of a door: `requireRoles(req, [...])` → 401 / 403 / null, plus `groupsOf()` when the answer is "what exactly may they do" |
 | `lib/auth/require-role.ts`, `require-admin.ts` | older single-role variants of the same idea |
-| `lib/auth/auth-bypass.ts` (+ `.edge.ts`) | why a locked page opens with no login at all: bypass is on in `NODE_ENV=development` **and** when `FRACTERA_IP_NODOMAIN_MODE=true` — read from the env FILE, not only the process env |
+| `lib/auth/auth-bypass.ts` (+ `.edge.ts`) | why a locked page opens with no login at all: on a node the bypass is on only in `NODE_ENV=development`; `FRACTERA_IP_NODOMAIN_MODE` is the old server line's flag, a node never sets it (the installer leaves it empty) |
 | `lib/auth-base-server.ts` | the address of `:3001` derived from the REQUEST host — `<ip>:3001` on an IP, `auth.<apex>` on a domain |
 | `lib/runtime-urls.ts` | the same address derived in the BROWSER from `window.location`, plus `registerRedirectUrl()` which builds the sign-up link with `callbackUrl` |
 | `components/auth/access-gate.client.tsx` | the visible half: what a person is told when their role is not enough |
@@ -91,9 +91,10 @@ follows the link to `auth.<domain>/login`, a page of the auth service, **not of 
 service sets the cookie on the shared parent domain → back on your page `get-session.ts` exchanges
 that cookie for roles → your door compares them with `requireRoles`.
 
-🔒 **Two consequences that catch people out.** First: on a bare IP (`FRACTERA_IP_NODOMAIN_MODE=true`)
-and in local `dev`, the bypass hands you the `architect` role without any login — a screen that works
-for you may refuse everyone in production, so say which mode you tested in. Second: the login page is
+🔒 **Two consequences that catch people out.** First: on `localhost` the owner at the keyboard opens
+the architect layer without any login (`lib/auth/owner-at-machine.ts`), and in local `dev` the bypass
+does the same — a screen that works for you there may refuse everyone on the domain, so say which
+address you tested on. The node does not answer on the computer's network IP at all. Second: the login page is
 a different origin, so never `<Link prefetch>` it — `check:links` refuses that, because the prefetch
 fails on CORS.
 

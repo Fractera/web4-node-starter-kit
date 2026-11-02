@@ -103,9 +103,9 @@ lie; the door describing itself cannot.
 - **The data is shared with the live server, even from your laptop.** With `REMOTE_DATA_URL` from the
   downloaded `.env.local`, a local `npm run dev` reads and writes the REAL data. Deleting rows during
   an experiment deletes them for the customer too.
-- **No key at all** — `dataFetch` throws with instructions rather than pretending. On a bare IP the
-  platform runs in bypass mode and authorisation is not enforced; do not mistake that for "the door is
-  open" — on a domain it is not.
+- **No key at all** — `dataFetch` throws with instructions rather than pretending. On this computer
+  the owner at the keyboard passes the architect checks without signing in; do not mistake that for
+  "the door is open" — on the own domain it is not.
 
 ## 6. Before you call it done
 
