@@ -162,9 +162,12 @@ above all the warning that the first account is the administrator and cannot be 
 - **The first task** typed on the root home page goes to you (`/api/node/first-task`).
 - **A new product** is born three ways: the person's direct request · the product quiz · reverse engineering that turns into the
   quiz.
-- **A new product or a large capability is asked for** — no plan and no promise in the first answer. Ask one question: is there a known
-  analog (a competitor's product, a site, an SDK) to take as the base — yes → reverse engineering (`study-for-element`); then, either
-  way, the product quiz writes the brief (the element's skill `product-quiz`). A plan is given only after the quiz.
+- **A new product or a large capability is asked for** — no plan and no promise in the first answer; curiosity first. `skills_find`, then
+  a short living answer: what you tried and why your own knowledge may not be enough; the community skills worth a look — each in one
+  line: its name, the stars of its repository and its installs when known, the idea it brings; the combination you like most and why;
+  then the person's view, and whether they know an analog (a competitor's product, a site, an SDK — yes → reverse engineering,
+  `study-for-element`); offer the product quiz to weigh one variant, several or a combined one (the element's skill `product-quiz`). A
+  plan is given only after the quiz.
 - **The quiz** lives in the element's `development-docs/product/`: stages on two levels — all as a draft, only the current one in detail; a
   stage is closed by the person's words (the element's skill `product-quiz`).
 - **Reverse engineering:** REA is one copy in the core and is never edited; studies live in the element's `study/`, outside git, and are
