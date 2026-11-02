@@ -22,7 +22,7 @@
 // опрашиватель: как только терминал запущен с каналом, узел замолкает и бота читает плагин.
 
 const { spawn } = require('node:child_process')
-const { createHash, randomBytes } = require('node:crypto')
+const { randomBytes } = require('node:crypto')
 const { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } = require('node:fs')
 const os = require('node:os')
 const path = require('node:path')
@@ -146,11 +146,55 @@ function terminalWithoutChannel(service) {
  * `--debug mcp`). Первая установка в них не укладывалась — бот молчал. Путь плагина — из
  * `~/.claude/plugins/installed_plugins.json`: у каждой машины он свой. Асинхронно — сервер сайта не встаёт.
  */
-function preparePlugin(env) {
+const pluginPath = () =>
+  readJson(path.join(os.homedir(), '.claude', 'plugins', 'installed_plugins.json'), {}).plugins?.[PLUGIN]?.[0]?.installPath ?? ''
+
+/**
+ * Одна команда `claude …` асинхронно: сервер сайта не встаёт. Итог — код выхода и хвост вывода.
+ * 🛑 WINDOWS: CLI, поставленный через npm, — это `claude.cmd`, а node не запускает `.cmd` без оболочки (EINVAL после CVE-2024-27980) —
+ * оболочка только для `.cmd`, путь с пробелами в кавычках, аргументы — наши константы (как `scripts/ensure-claude.mjs`).
+ */
+function runClaude(bin, args, env) {
   return new Promise((resolve) => {
-    const reg = readJson(path.join(os.homedir(), '.claude', 'plugins', 'installed_plugins.json'), {})
-    const installPath = reg.plugins?.[PLUGIN]?.[0]?.installPath ?? ''
-    if (!installPath) return resolve({ ok: false, error: `плагин ${PLUGIN} не установлен: claude plugin install ${PLUGIN}` })
+    const shell = process.platform === 'win32' && /\.cmd$/i.test(bin)
+    let child
+    try {
+      child = spawn(shell && /\s/.test(bin) ? `"${bin}"` : bin, args, { env, windowsHide: true, shell })
+    } catch (err) {
+      return resolve({ ok: false, out: err instanceof Error ? err.message : String(err) })
+    }
+    let out = ''
+    child.stdout.on('data', (d) => { out += d })
+    child.stderr.on('data', (d) => { out += d })
+    const timer = setTimeout(() => child.kill(), 180_000)
+    child.on('close', (code) => { clearTimeout(timer); resolve({ ok: code === 0, out: out.slice(-300) }) })
+    child.on('error', (err) => { clearTimeout(timer); resolve({ ok: false, out: err.message }) })
+  })
+}
+
+/**
+ * 🛑 ПЛАГИН СТАВИТ САМ УЗЕЛ. ✗ Живой прогон на чистом Mac 2026-11-02: плагина не было, его не ставил ни установщик, ни пульт — бот
+ * писал «Агент включён и получил ваше сообщение», а ответа не было. Команды — из CLI Claude Code: `claude plugin install`, а нет
+ * каталога официальных плагинов — `claude plugin marketplace add anthropics/claude-plugins-official` и ещё раз install.
+ */
+async function installPlugin(env) {
+  const claude = resolveBin('claude', env.PATH || env.Path)
+  if (!claude) return { ok: false, error: 'claude не найден — плагин Telegram ставится им' }
+  let r = await runClaude(claude, ['plugin', 'install', PLUGIN], env)
+  if (!pluginPath()) {
+    await runClaude(claude, ['plugin', 'marketplace', 'add', 'anthropics/claude-plugins-official'], env)
+    r = await runClaude(claude, ['plugin', 'install', PLUGIN], env)
+  }
+  return pluginPath() ? { ok: true } : { ok: false, error: `плагин ${PLUGIN} не установился: ${r.out}. Вручную: claude plugin install ${PLUGIN}` }
+}
+
+async function preparePlugin(env) {
+  if (!pluginPath()) {
+    const installed = await installPlugin(env)
+    if (!installed.ok) return installed
+  }
+  return new Promise((resolve) => {
+    const installPath = pluginPath()
     if (existsSync(path.join(installPath, 'node_modules'))) return resolve({ ok: true })
     const bun = resolveBin('bun', env.PATH || env.Path)
     if (!bun) return resolve({ ok: false, error: 'bun не найден — сервер плагина Telegram запускается им' })
@@ -840,10 +884,27 @@ function startIdlePoller(service) {
 /**
  * Имя и ручка для BotFather (546, владелец 2026-10-19: «после слова Fractera название элемента»; выбор «Элемент + код узла»):
  * «Fractera-<адрес элемента>» и `Fractera_<адрес>_<код узла>_bot`. ✗ Прежде код был `Math.random` на КАЖДЫЙ запрос, а страница
- * спрашивает дверь каждые 3 с — имена бежали на глазах. Код узла постоянный (хэш папки узла и имени машины): адрес бота один на
- * весь Telegram, а `build`, `auth`, `root` есть у каждого узла. Ручка — только латиница, цифры и «_», не длиннее 32 знаков.
+ * спрашивает дверь каждые 3 с — имена бежали на глазах. Код узла постоянный: адрес бота один на весь Telegram, а `build`, `auth`,
+ * `root` есть у каждого узла. Ручка — только латиница, цифры и «_», не длиннее 32 знаков.
+ * 🛑 КОД СЛУЧАЙНЫЙ, ОДИН РАЗ НА УЗЕЛ, И ХРАНИТСЯ В `data/node-code.json` (вне git). ✗ Хэш папки и имени машины (2026-11-02): та же
+ * папка на том же компьютере после переустановки давала ту же ручку, и BotFather отвечал «username is already taken» — бот остался
+ * за прежним аккаунтом Telegram; 4 знака hex — всего 65 536 кодов на всех людей. 5 знаков base36 — 60 млн.
  */
-const NODE_CODE = createHash('sha256').update(`${ROOT}|${os.hostname()}`).digest('hex').slice(0, 4)
+const NODE_CODE = (() => {
+  const file = path.join(ROOT, 'data', 'node-code.json')
+  const kept = readJson(file, null)?.code
+  if (typeof kept === 'string' && /^[a-z0-9]{5}$/.test(kept)) return kept
+  const code = Array.from(randomBytes(5), (b) => (b % 36).toString(36)).join('')
+  try {
+    mkdirSync(path.dirname(file), { recursive: true })
+    writeFileSync(file, JSON.stringify({ code }, null, 2), { flag: 'wx' })
+    return code
+  } catch {
+    // Файл успел записать другой процесс — берём его код; не записать вовсе — код живёт до перезапуска сервера.
+    const other = readJson(file, null)?.code
+    return typeof other === 'string' && /^[a-z0-9]{5}$/.test(other) ? other : code
+  }
+})()
 const elementAddress = (service) => {
   const address = readJson(path.join(ROOT, 'data', 'services', service, 'address.json'), null)?.address
   return typeof address === 'string' && /^[a-z0-9-]{1,40}$/.test(address) ? address : service
@@ -852,7 +913,7 @@ const elementAddress = (service) => {
 /**
  * 552-6 (владелец 2026-10-20: имена ботов без слова Fractera, с режимом; ручка — «Полностью, обрезая адрес»): у элемента с группами
  * навыков имя `<Элемент>-<режим>-<ячейка>` и ручка `<адрес>_<режим>_<ячейка>_<код узла>_bot`; слова режима полностью, адрес элемента
- * обрезается, чтобы ручка была ≤ 32 знаков (`templa_workspace_orders_d897_bot`). Зовут этот модуль (бот H2A) и `telegram-slots.cjs`.
+ * обрезается, чтобы ручка была ≤ 32 знаков (`templ_workspace_orders_d897k_bot`). Зовут этот модуль (бот H2A) и `telegram-slots.cjs`.
  */
 function namedSuggestion(service, mode, cell) {
   const element = elementAddress(service)
