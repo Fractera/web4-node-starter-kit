@@ -16,13 +16,19 @@ v3.0.14 `105b1d1`, core `e59204f`, `02d065b`, `7362225`). Before that: step 624 
 native v0.1.33, 12 elements rolled out, pins `5e9d4b1` (`completed-steps/622.md`). Step 623 closed — the A2A guard lets links to files through
 (templates custom v0.3.151, native v0.1.34, 12 elements; the reply door uses it after each element's next build).
 
-**Next action:** the owner reads plans 626 and 627; then 626-1 (MiniLM-L12 on three systems — the Windows run needs the owner's
-computer) and, alongside it, 627-1 (the pilot of 100 cards).
+**Next action:** 627-1 run 2 — the marker told what nodes are for (content: images, video, voice too), two questions instead of one
+verdict (`value`, `use` + `needs`), whole folders by shallow clone with scripts read, the licence from the skill's folder; the same 100
+rows; 10 cards to the owner again (`new-steps/627/627-1.md`, «Run 2»). 626-1 waits for the owner's Windows computer.
+Run 1 of 627-1 is done (code in core, cards not committed — they are remade in run 2).
 
 **Queue:** the plans in `new-steps/` — 545 (the orchestra audit: 545-4, 545-5), 593 (the real pipeline test on a tinylaunch.com clone,
 with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's word.
 
 ## The owner's latest decisions (verbatim)
+
+- 2026-11-02 (627 after pilot run 1): storage — «У Fractera + по требованию (Рекомендую)»; scripts — «Только с отдельным «да»
+  (Рекомендую)»; the living answer — «Внести сейчас (Рекомендую)» → core `72ae8f0` (sealed `d8cf7f94803c`); on the video skills:
+  «наша платформа будет точно генерировать видео для социальной сетей и подобные навыки для генерации что видео что картинок полезное».
 
 - 2026-11-02 (plans 626, 627): «Запускай планирование в результате которого наш проект перестанет использовать OpenAI для размётки
   вектора, уберет бессмысленную работу когда в глубокой память делает записи при помощи Anthropic без вектора, и создаст граф на основе
@@ -37,6 +43,12 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
   остальное — план» (plan 622).
 
 ## Measured — do not measure again
+
+- 2026-11-02, 627-1 run 1 (100 leaderboard rows): 17 skills no longer in their repositories; 3 duplicates; 80 cards; per card 4,609
+  input tokens mean, 549 output, 4.2 s median; the API price ~$1 per 1,000 cards; 647 GitHub REST calls; whole folders median 15.4 KB,
+  mean 210 KB, max 3.43 MB, 20 of 80 with executable scripts; the git blob id computed locally equals GitHub's tree sha
+  (`find-skills`: a41bdd07…). `claude -p --bare` takes only `ANTHROPIC_API_KEY` (no subscription); without `--bare`:
+  `--tools "" --strict-mcp-config --setting-sources "" --system-prompt-file` from an empty temp folder — ~600 tokens of overhead.
 
 - 2026-11-02, Intel i7-6820HQ, 16 GB, macOS (Python 3.11, fastembed 0.9.1, onnxruntime 1.19.2): MiniLM-L12 — load 1.2–1.4 s, one
   text 27–29 ms, 100 phrases 0.6–0.8 s, 79 skill descriptions 3.5 s, RSS ~0.77–0.83 GB. onnxruntime above 1.20 has no macOS x86_64

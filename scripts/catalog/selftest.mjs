@@ -1,0 +1,82 @@
+// THE CATALOG'S HELPERS PROVE THEMSELVES (node step 627-1): `npm run catalog -- selftest`. No network, no files — only `lib.mjs`.
+import assert from 'node:assert/strict'
+import { blobShaOf, dedupeBySha, frontmatterName, installsOf, parseList, shaOf, skillPaths, urlOf, validateCard } from './lib.mjs'
+
+let checks = 0
+const check = (name, fn) => {
+  try {
+    fn()
+    checks += 1
+  } catch (err) {
+    console.log(`===CATALOG_SELFTEST_FAILED=== ${name}: ${err instanceof Error ? err.message : err}`)
+    process.exit(1)
+  }
+}
+
+check('installsOf', () => {
+  assert.equal(installsOf('1.2M'), 1_200_000)
+  assert.equal(installsOf('936.7K'), 936_700)
+  assert.equal(installsOf('141'), 141)
+  assert.equal(installsOf('x'), 0)
+})
+
+check('parseList', () => {
+  const rows = parseList('# the leaderboard\n1 | vercel-labs/skills | find-skills | 4.2M\n26 | uizze.sh | ui-taste | 924.5K\n\n')
+  assert.deepEqual(rows, [{ rank: 1, source: 'vercel-labs/skills', skill: 'find-skills', installs: 4_200_000 }])
+})
+
+check('shaOf', () => {
+  assert.match(shaOf('a'), /^[0-9a-f]{16}$/)
+  assert.equal(shaOf('same text'), shaOf('same text'))
+  assert.notEqual(shaOf('one text'), shaOf('another text'))
+})
+
+check('blobShaOf', () => {
+  // `printf 'hello\n' | git hash-object --stdin`
+  assert.equal(blobShaOf('hello\n'), 'ce013625030ba8dba906f756967f9e9ca394464a')
+})
+
+check('frontmatterName', () => {
+  assert.equal(frontmatterName('---\nname: grill-me\ndescription: x\n---\n# body'), 'grill-me')
+  assert.equal(frontmatterName('---\nname: "x y"\n---\n'), 'x y')
+  assert.equal(frontmatterName('# no frontmatter\nname: nope'), null)
+})
+
+check('skillPaths', () => {
+  const { named, all } = skillPaths(['README.md', 'skills/grill-me/SKILL.md', 'skills/tdd/SKILL.md'], 'grill-me')
+  assert.deepEqual(named, ['skills/grill-me/SKILL.md'])
+  assert.deepEqual(all, ['skills/grill-me/SKILL.md', 'skills/tdd/SKILL.md'])
+})
+
+check('dedupeBySha', () => {
+  const { keep, duplicates } = dedupeBySha([
+    { rank: 1, source: 'a/one', skill: 's', installs: 10, stars: 5, sha: 'f'.repeat(16) },
+    { rank: 2, source: 'b/two', skill: 's', installs: 20, stars: 50, sha: 'f'.repeat(16) },
+    { rank: 3, source: 'c/three', skill: 't', installs: 1, stars: 0, sha: 'e'.repeat(16) },
+  ])
+  assert.deepEqual(keep.map((r) => r.source), ['b/two', 'c/three'])
+  assert.deepEqual(duplicates, [{ id: 'a/one@s', duplicateOf: 'b/two@s' }])
+})
+
+check('urlOf', () => {
+  assert.equal(urlOf('claude-office-skills/skills', 'Twitter/X Automation'), 'https://skills.sh/claude-office-skills/skills/twitter-x-automation')
+})
+
+const good = {
+  id: 'mattpocock/skills@grill-me', source: 'mattpocock/skills', skill: 'grill-me', installs: 1_500_000, stars: 1200, licence: 'MIT',
+  url: 'https://skills.sh/mattpocock/skills/grill-me', sha: '0123456789abcdef',
+  summary: 'The skill makes the agent interview the person about a plan, one hard question at a time, until the plan holds up.',
+  tasks: ['stress-test a product plan'], tags: ['planning', 'interview'], tools: [], fractera: 'fits',
+  why: 'Pure conversation; nothing in it depends on a stack.', risks: [], markedBy: 'claude-haiku-5-5', markedAt: '2026-11-02T20:00:00.000Z',
+}
+
+check('validateCard', () => {
+  assert.deepEqual(validateCard(good), [])
+  assert.deepEqual(validateCard({ ...good, fractera: 'maybe' }), ['fractera'])
+  assert.deepEqual(validateCard({ ...good, risks: ['runs a remote script'] }), ['risks-need-not-for-node'])
+  assert.deepEqual(validateCard({ ...good, tags: ['SEO'] }), ['tags'])
+  assert.deepEqual(validateCard({ ...good, blob: 'ce013625030ba8dba906f756967f9e9ca394464a' }), [])
+  assert.deepEqual(validateCard({ ...good, blob: 'short' }), ['blob'])
+})
+
+console.log(`===CATALOG_SELFTEST_OK=== ${checks} checks`)

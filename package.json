@@ -89,6 +89,8 @@
     "evolution": "node scripts/evolution.mjs",
     "check:instruction-skills": "node scripts/check-instruction-skills.mjs",
     "skills": "node scripts/skills.mjs",
+    "catalog": "node scripts/catalog/run.mjs",
+    "check:catalog-cards": "node scripts/check-catalog-cards.mjs",
     "memory": "node scripts/memory.mjs",
     "agent:screen": "node scripts/agent-screen.mjs",
     "check:modes": "node scripts/check-modes.mjs",

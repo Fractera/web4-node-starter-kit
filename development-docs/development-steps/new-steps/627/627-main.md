@@ -32,7 +32,8 @@ ON A NODE (install and update; counts nothing)
 
 I assume that:
 - a card holds our own words and the skill's metadata, never the skill's text — so it ships with every node whatever the skill's
-  licence; the skill itself is installed into an element only after the person's yes (as in 625);
+  licence; the skill itself is installed into an element only after the person's yes (as in 625), from Fractera's store of checked
+  copies when its licence allows one (see «Decisions after pilot run 1» below);
 - the marking model runs with no tools (it reads, it cannot act); a skill marked risky or «not for the node» is never proposed;
 - the cards live in the core repository (small, readable, reviewed in diffs); the prebuilt space is a release asset (large, derived);
 - the update is run by the owner (`npm run catalog -- update`), never by a timer.
@@ -89,6 +90,29 @@ named in advance, what it rests on and what is not in it; 7 substeps.
 «Да, верно, записывай оба шага» (2026-11-02), given on the outline of substeps 627-1 … 627-6 in the conversation; 627-7 was added at
 his reminder about the instruction; the written plan is shown to him before the first line of code. The full run (627-5) needs its own
 yes with the pilot's numbers.
+
+## Decisions after pilot run 1 (2026-11-02) — they change 627-2 … 627-4
+
+The owner, verbatim: «можем ли быть уверенным мы что оставшиеся навыки продолжит существовать там же в GitHub репозитории? А ещё
+другая проблема, а вообще GitHub даст нам такой объем данных или мы попадём в блокировку?»; «мы должны быть уверены на 100% что навык
+не имеет скрытых скриптов, и не был подмен после того как модамо оценку а это значит что хранить навыки мы можем только внутри
+объектного хранилища нашего проекта, только при условии что лицензии это позволяет, при этом связывая это хранение с графом, а также
+ссылки на звезды». In the choice window: storage — «У Fractera + по требованию (Рекомендую)»; scripts — «Только с отдельным «да»
+(Рекомендую)»; the living «curiosity first» answer — «Внести сейчас (Рекомендую)» (done: core `72ae8f0`, sealed `d8cf7f94803c`).
+
+What it changes:
+- **Storage.** Fractera keeps ONE store of the checked skills — whole folders, only those whose licence allows it — linked from the
+  cards (fingerprint, git blob id, stars, installs). A node keeps the cards and the graph only (~80 MB for 5,000); a skill arrives from
+  Fractera's store after the person's yes and is installed only if its fingerprint matches the card; if the store does not answer, the
+  original on GitHub is taken — again only with the same fingerprint (no single point of failure, no substitution). A skill whose
+  licence does not allow a copy stays a card and a link.
+- **Scripts.** The marker reads a skill's scripts; the card says how many and which; a skill with scripts is never installed silently —
+  the agent says so and waits for a separate yes.
+- **What cannot be promised.** That the installed copy is exactly the checked one — yes, by its fingerprint. That a script hides no
+  harm — no reader, a person or a model, can promise that at 100 %; hence the separate yes.
+- **Size and time for 5,000 skills (from run 1):** ~1 GB of folders in Fractera's store (~0.5–0.7 GB packed), ~80 MB of graph per node;
+  fetching by shallow clones 1.5–4 h within GitHub's limits; marking with scripts 2–3 h, ~$7–10 at the API price (the subscription's
+  limits, not money).
 
 ## Not in this step
 Skills from sources that are not GitHub (for example `open.feishu.cn`, `uizze.sh`); reference files beyond `SKILL.md`; an automatic
