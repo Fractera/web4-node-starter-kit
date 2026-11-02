@@ -10,7 +10,8 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 **Last change:** 2026-11-02 — the repository with the stars is the original under the new name `Fractera/web4-node-starter-kit` (merge
 `6f45798`, renamed by the owner); core `929f06c` (README, `check-origin`, instruction resealed, `origin` switched), Lagrix protocol
 `d1dde06`, element lagrix `a31cb01` (live lagrix.dev: new Fork link, old 0); step 622 closed — templates custom v0.3.150 and
-native v0.1.33, 12 elements rolled out, pins `5e9d4b1` (`completed-steps/622.md`).
+native v0.1.33, 12 elements rolled out, pins `5e9d4b1` (`completed-steps/622.md`). Step 623 closed — the A2A guard lets links to files through
+(templates custom v0.3.151, native v0.1.34, 12 elements; the reply door uses it after each element's next build).
 
 **Next action:** wait for the owner's task.
 
