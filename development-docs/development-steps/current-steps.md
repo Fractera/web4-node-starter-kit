@@ -32,12 +32,18 @@ the live hand-off waits for the owner's next core update.
   `cards.jsonl` (1,134 cards at 07:40, growing), `mark-*.log`, `mark-log.jsonl`, `audits.json` (being written). If /tmp was wiped:
   `npm run catalog -- census` (a fresh Vercel token: `cd …/scratchpad/vercel-skills-api && npx vercel@65.9.0 env pull .env.local --yes`
   — the token lives ~12 h), then `fetch` and `sites`, all resumable.
-- **Running now** (seen by session `faa581fd` at 07:20 UTC, both survived the handoff): the old `mark --concurrency 4` (pid 43358,
-  from 01:30, only what was fetched then — ranks up to ~2,700; at rank 2,159 with 1,557 cards at 07:20, ~25 min left) and `audit --data
-  data/catalog-6000` (pid 30417, from 06:57; writes `audits.json` only at its end, ~35 min for 5,584 rows). Stopping the old run was
-  refused by the session's safety check — so it ends by itself; then `mark --concurrency 6` takes the rest (`mark-3.log`; two marks at
-  once would overwrite each other's `cards.jsonl`). The owner switched the Claude account (`/login`) during the night — the marker's
-  `claude -p` uses whichever account is logged in.
+- **Running now:** the old `mark --concurrency 4` (pid 43358, from 01:30, only what was fetched then — ranks up to ~2,700; 2,590
+  cards at 07:50). Stopping it was refused by the session's safety check — so it ends by itself; a background task of session
+  `faa581fd` waits for its end and then runs `mark --concurrency 6` over the rest (`mark-3.log`; two marks at once would overwrite each
+  other's `cards.jsonl`). **The audit is done** (07:50): `audits.json` — 2,975 of 5,584 skills have a partners' audit (Gen Agent Trust
+  Hub pass 2,803 / fail 88, Socket pass 2,643 / fail 19, Snyk pass 2,219 / warn 714 / fail 32, Runlayer fail 82); the new mark run
+  reads it, `audit --attach-only` covers the older cards. The owner switched the Claude account (`/login`) during the night — the
+  marker's `claude -p` uses whichever account is logged in.
+- **626-2 in progress alongside** (the element in scratch, nothing pushed yet):
+  `/private/tmp/claude-501/-Users-romanbolshiyanov/faa581fd-3474-473a-bbba-99276029a73e/scratchpad/embeddings-element` (born from the
+  native template v0.1.34; doors `embed`, `embed-status` by `door:add`; `npm run model` from the release `model-minilm-l12-1` that
+  is not uploaded yet — the five files staged in `…/scratchpad/model-assets`); `test:embed` and `test:embed-status` pass, the build
+  passes.
 - **To finish 627-5, in order** (each command resumes): (1) `mark` again with `--concurrency 6` until `already marked` covers all
   ≈5,334 unique skills (a usage limit stops it — run again later); (2) `audit` if `audits.json` is missing or partial, then
   `audit --attach-only --data data/catalog-6000 --cards data/catalog-6000/cards.jsonl`; (3) `sections --data data/catalog-6000 --cards
@@ -56,6 +62,10 @@ the live hand-off waits for the owner's next core update.
 with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's word.
 
 ## The owner's latest decisions (verbatim)
+
+- 2026-11-03 ~07:55 UTC, on «onnxruntime-node 1.23 не загружается на этом macOS 12 … нужно закрепить версию 1.21.0»: «check
+  potrntial windows problem» → a desk check from the package itself (Windows is not measured — his word of the same morning stands):
+  the Windows DLLs need the Visual C++ 2015–2022 runtime; the element names it when missing (README «Windows and Linux»).
 
 - 2026-11-03 07:18 UTC (the new session after the handoff): «Продолжай с HANDOFF в current-steps.md: доведи 627-5 до конца, потом
   начни 626 на этом Mac», then «go to finish non stop , i go to slepp, not call me» — 627-5 to its end, then 626 on this Mac, with
@@ -101,6 +111,12 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
   `@huggingface/transformers` 4.x pins ≥ 1.24.3, 3.8.1 pins 1.21.0. The same ONNX file gives cos 1.000000 in Node and in Python on 20
   of 20 texts; fastembed's 235 MB file against the 470 MB fp32 export — cos ≥ 0.999997. The tokenizer config says 512 tokens, the model
   was trained on 128 — the element cuts at 128 itself.
+- 2026-11-03, 626-2: `onnxruntime-node` 1.23.0's macOS x64 binary does not load on this Mac (macOS 12, Darwin 21.6): «Symbol not found:
+  __ZNSt3__18to_charsEPcS0_d … Expected in: /usr/lib/libc++.1.dylib» (`std::to_chars` for double needs macOS 13.3+) — 1.21.0 loads.
+  After the first inference `process.exit()` aborts inside 1.21.0 («libc++abi: … mutex lock failed: Invalid argument», exit 134) —
+  with dispose(), with 1 thread or 4; a natural end of the loop exits 0, and a re-raised SIGTERM ends with 143. The Windows DLLs of
+  1.21.0 import `VCRUNTIME140.dll`, `VCRUNTIME140_1.dll`, `MSVCP140.dll`, `MSVCP140_1.dll`, `d3d12.dll`, `dxgi.dll`; its postinstall
+  downloads the CUDA archive on every Linux x64 install unless `onnxruntime-node-install-cuda=skip`.
 
 - 2026-11-03, 627-5 large run (`data/catalog-6000/`): GitHub rows 5,378 → fetched 4,971, gone from their repositories 402 (7.5 %),
   repositories deleted 5; 4,762 unique by fingerprint. Sites (`well-known`, skills.sh copy, text only): 622 → 613 copied, 9 without a
