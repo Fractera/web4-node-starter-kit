@@ -46,11 +46,13 @@ the live hand-off waits for the owner's next core update.
   Fractera) lacks the `workflow` scope and GitHub refused the push (the owner's SSH key `aifa-agi` has only read there) — it comes
   back after the owner's `gh auth refresh -h github.com -s workflow`. Working copy of the element:
   `/private/tmp/claude-501/-Users-romanbolshiyanov/faa581fd-3474-473a-bbba-99276029a73e/scratchpad/embeddings-repo`.
-- **HANDOFF 2 (2026-11-03 ~08:20 UTC, the session `faa581fd` stopped by the subscription's usage limit):** the marker's `claude -p`
-  shares that limit — it may have stopped with `===CATALOG_MARK_STOPPED===` (3,401 cards at 08:14; the chained job then starts
-  `mark --concurrency 6` into `mark-3.log`, which stops the same way). After the limit resets: `ps aux | grep "run.mjs mark"` — none
-  running → `npm run catalog -- mark --data data/catalog-6000 --cards data/catalog-6000/cards.jsonl --concurrency 6` until
-  `already marked` ≈ 5,334; then the list «To finish 627-5» above. The summary's draft with placeholders is
+- **The marking now (2026-11-03 08:35 UTC):** the old run ended `===CATALOG_MARK_PARTIAL=== marked 3411 · failed 593 · already marked
+  15 · duplicates 205` — 587 of the failures were the subscription's «You've hit your 5-hour limit · resets 12pm (Atlantic/Canary)»,
+  which the marker's `LIMIT_WORDS` did not know (fixed in `scripts/catalog/mark.mjs`: «hit your … limit» is a limit; the failed rows
+  are not cards, the next run marks them). The owner switched the account (`/login`, ~08:30) — `mark --concurrency 6` (pid 12152,
+  `mark-3.log`, started 08:24 by the chained job of session `faa581fd`) runs on the new account: 3,756 cards at 08:35. If it stops:
+  `ps aux | grep "run.mjs mark"` — none running → `npm run catalog -- mark --data data/catalog-6000 --cards
+  data/catalog-6000/cards.jsonl --concurrency 6` until `already marked` ≈ 5,334; then the list «To finish 627-5» above. The summary's draft with placeholders is
   `completed-steps/627-5.md` in the working clone (NOT committed); proof 2 helper:
   `node /private/tmp/claude-501/-Users-romanbolshiyanov/faa581fd-3474-473a-bbba-99276029a73e/scratchpad/sample-cards.mjs <data> <cards>`
   (20 random cards beside their SKILL.md + 5 copies that must have no card).
@@ -81,6 +83,10 @@ the live hand-off waits for the owner's next core update.
 with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's word.
 
 ## The owner's latest decisions (verbatim)
+
+- 2026-11-03 ~08:35 UTC, after `/login` (another account) and `gh auth refresh -h github.com -s workflow` (the device code waits for
+  his browser): «? which will next step ?» → 627-5 to its end (the marking runs again), then 626-3; the three-system workflow of
+  `fractera-embeddings-starter` comes back once the token has the `workflow` scope.
 
 - 2026-11-03 ~07:55 UTC, on «onnxruntime-node 1.23 не загружается на этом macOS 12 … нужно закрепить версию 1.21.0»: «check
   potrntial windows problem» → a desk check from the package itself (Windows is not measured — his word of the same morning stands):

@@ -18,7 +18,9 @@ const HERE = dirname(fileURLToPath(import.meta.url))
 const require = createRequire(import.meta.url)
 const { resolveBin } = require('../../app/[lang]/(architectLayer)/architect/[item]/_agent-kit/server/claude-cli.cjs')
 
-const LIMIT_WORDS = /usage limit|rate limit|limit reached|429|overloaded/i
+// ✗ 2026-11-03: the subscription answered «You've hit your 5-hour limit · resets 12pm (Atlantic/Canary)» — not matched, so 587
+// rows failed in minutes instead of one stop; «hit your … limit» is a limit too.
+const LIMIT_WORDS = /usage limit|rate limit|limit reached|hit your [\w -]{0,20}limit|429|overloaded/i
 
 /** One `claude -p` call → { ok, json } or { ok: false, error }. On Windows a `claude.cmd` runs through the shell, its arguments quoted. */
 function claudeOnce(bin, sysFile, input, cwd) {
