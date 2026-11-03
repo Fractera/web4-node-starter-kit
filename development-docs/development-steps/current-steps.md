@@ -23,15 +23,12 @@ native v0.1.33, 12 elements rolled out, pins `5e9d4b1` (`completed-steps/622.md`
 `GET /api/skills/suggested`, the skill `adopt-suggested-skill`, the instruction resealed `ed81462013fc` (`completed-steps/628-main.md`);
 the live hand-off waits for the owner's next core update.
 
-**NOW (2026-11-03 ~13:40 UTC): 626-6 in progress, then step 629 (the owner's word below, «После 626-6»).** The deep memory's code
-is changed in `/private/tmp/claude-501/-Users-romanbolshiyanov/faa581fd-3474-473a-bbba-99276029a73e/scratchpad/memory-repo` (from
-`v2.2.8`, NOT committed): `node.mjs` — `vectorsOf`/`vectorOf`/`vectorModel` gone, `embeddingsUsable()` (`GET /api/embed-status`, the
-node key; `EMBEDDINGS_URL` or the registry's port; a model still loading is usable, a failed one or no answer is not);
-`said-vector.mjs`, `feedback-vector.mjs`, `fractera/objects.ts` send `text` / `query`; `objects.status().configured` = the vector
-element's `configured`; `verbs.mjs` `remember` asks `embeddingsUsable()` before `think(EXTRACT, …)` — not usable → no model call,
-`toolFailure` (vector, «подсчёт векторов»), the message row with status `failed`; `.env.example` `EMBEDDINGS_URL`; README, CLAUDE.md
-section 11. Next: `npm ci` + build, a scratch stand (embeddings + vectors v1.2.0 + data v2.2.0 + graph v1.2.0 + this memory on spare
-ports, its own registry, no OpenAI key, never the live pm2), the proofs of `new-steps/626/626-6.md`, tag, pin, summary.
+**NOW (2026-11-03 ~14:10 UTC): 626-6 closed — next step 629 (the owner's word below, «После 626-6»), then 626-7, 626-8, then
+630.** 626-6: memory `d771469` **`v2.2.9`**, pinned (`completed-steps/626-6.md`) — phrases, comments and cards go to the vector
+element as texts, `remember` calls no model when `embeddings` does not count (proven on the scratch stand `…/scratchpad/t6266`:
+ports 25611–25615, `t6266/start.sh <element>` starts one; stopped after the proof). For 629 first: the plan
+`new-steps/629/` (law in the core's section 6 + skill + the elements' instruction through a template release + one gray request live),
+shown to the owner before the instruction is resealed.
 
 **HANDOFF (2026-11-03 ~07:40 UTC, the session's context full) — the next session starts here.**
 - **Where the work lives:** a clone of this repository at
