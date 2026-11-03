@@ -218,6 +218,29 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
 
 ## The owner's latest decisions (verbatim)
 
+- 2026-11-03 ~18:50–19:10 UTC, during the node update — **a proposed step 637, a discussion, no decision yet**: «Так как в отличие от
+  всех других элементов обновление узла всегда является самым сложным и болезненным процессом, возможно пользователи инструкции
+  следует по возможности ограничивать в работе надо ядром? Я имею в виду над его строительством? Может быть имеет смысл вообще
+  запретить это? А тем кто реально нуждается в этом пусть сами разбираются как в инструкции отключить этот запрет? Я бы это сделал при
+  условии что в случае если пользователь будет создавать новые нативные и кастомные элементы а не будут обновляться без необходимости
+  делать новые сборку ядра как ты думаешь давай с тобой подискутируем на эту тему пока идёт сборка. Потому что это решение далеко не
+  для каждого а мы ведь строим проект в котором каждая домохозяйка может создать себе множество агентов?»; then: «Мне пришло в голову
+  побочка, то есть побочный эффект смотри как хорошо получается если ты в инструкции за мотивируешь разработчиков которым это
+  действительно нужно сделать пол request? Это же будет хорошим способом продвигаться в GitHub с этим репозиторием? Попробуй усилить
+  эту мысль и сделать решение под эту задачу прокомментируй». Checked the same hour: an element's birth rebuilds no core
+  (`item-birth.mjs` has no rebuild; the drafts door revalidates the layout; the top menu reads `/api/node/catalog` in the browser);
+  elements update into their other `.next-*` without stopping; the instruction today allows building the core (section 4 «Building
+  the core», mode «Build»); every core edit on a node is a future conflict of `node:update` («own work» → refusal). The repository:
+  MIT, CI `three-os` runs on every pull request, 61 stars, 11 forks, 0 issues, 0 pull requests ever. My proposal (said, not built):
+  the core's CODE is the original's — data, links, births, schedules, memory and the main agent's skills stay open; a switch «Core
+  development» (data, outside git, off) instead of editing the sealed instruction; a guard (no `serve:rebuild` outside `node:update`,
+  the main agent's edits of the core's code folders denied on the live node); two roads — «report to Fractera» (a prefilled GitHub
+  issue link, one click, for everyone) and «propose a change» (switch on: a separate working copy, the guards, a branch in the
+  person's fork, a pull request to the original by a template, the outbound A2A guard over its text); CONTRIBUTING.md, a PR template,
+  the label «via agent», authors thanked in release notes; skipping the core rebuild when an update changes only documents and skills.
+  **Open for the owner:** where the switch lives (the core's settings page or a command); the agent's road with the switch off (my
+  answer — road 1); whether the skill changes accepted at a «review» go as pull requests or stay on the node.
+
 - 2026-11-03 16:23–16:41 UTC, step 630 → 636 (all verbatim in `new-steps/636/636-main.md`): «Ты сказал что существовал календарь …
   мне предлагается сожрать какую-то заглушку так?»; «Нет восстанавливать ничего не надо прочитай и разберись как он работал просто
   создай заново … я не хочу чтобы напоминания где-то вслепую оставались которые нельзя было увидеть без интерфейса понимаешь в чем
