@@ -1,13 +1,15 @@
 ---
 name: answer-element
-description: "Work skill. An element of this node asks how the node works — the wake text «Element <id> asks about the node's architecture: «…»». Find the answer in the core's instruction by its words, read only that section, and answer the element in at most 10 lines with npm run task -- <id> \"Answer from the core to «<question>»: …\". The only case where you read a file of the core."
+description: "Work skill. An element of this node comes to you: it asks how the node works — the wake text «Element <id> asks about the node's architecture: «…»» — or it tells the architect something, an alarm of its clock first of all — «Element <id> tells the architect: «…»». A question: find the answer in the core's instruction by its words, read only that section, answer in at most 10 lines with npm run task -- <id> \"Answer from the core to «<question>»: …\" (the only case where you read a file of the core). A message: pass the element's words to the person where they read you now, naming the element."
 ---
 
-# Answer an element's question about the node
+# Answer an element — its question or its message for the architect
 
-**Process: working** — nothing changes in git: you read one section and answer.
+**Process: working** — nothing changes in git: you read one section and answer, or you pass words on.
 
 A hint, not a law: models of late 2026 work worse under rigid step-by-step instructions.
+
+## A question about the node
 
 1. Two to four English words of the question (the core's instruction is English):
    `grep -n -i "<word>" ../../CLAUDE.md | head -20` — the line numbers show the section.
@@ -17,5 +19,19 @@ A hint, not a law: models of late 2026 work worse under rigid step-by-step instr
    `npm run task -- <id> "Answer from the core to «<the question>»: …"` — the question goes in: the answer may reach a fresh
    session that never asked. Only what you read; a path or a door you did not see is not named.
 4. Nothing found → `npm run task -- <id> "Answer from the core to «<the question>»: the core's instruction does not say …; ask your architect."`
-5. Never `.env.local`, never an element's files, never a change; then `npm run done -- --close`: an element's question woke you,
-   and a running agent holds the person's memory.
+
+## A message for the architect (`tell-core`)
+
+The element's agent says «Element <id> tells the architect: «…»» — most often its clock fired a reminder the person asked for
+(node step 636; the owner: «элемент вызывает тебя главного агента и передает тебе сообщение которые ты транслируешь»).
+
+1. `npm run person` — where the architect reads you now; write there, in the person's language: the element's name and its words,
+   as given. A reminder reads as a reminder («Напоминание от памяти: …»), not as a report about the node.
+2. Nothing added: no plan, no offer, no work. The person answers about it («перенеси на завтра») — the answer goes back to the element:
+   `npm run task -- <id> "<their words>"`.
+3. The person cannot be reached (no channel) — say so to the element: `npm run task -- <id> "Answer from the core to «…»: not delivered — …"`.
+
+## Both
+
+Never `.env.local`, never an element's files, never a change. Then `npm run done -- --close` when the element woke you; inside a live
+conversation with the person — go on with it.

@@ -23,7 +23,17 @@ native v0.1.33, 12 elements rolled out, pins `5e9d4b1` (`completed-steps/622.md`
 `GET /api/skills/suggested`, the skill `adopt-suggested-skill`, the instruction resealed `ed81462013fc` (`completed-steps/628-main.md`);
 the live hand-off waits for the owner's next core update.
 
-**NOW (2026-11-03): 630 — reminders by time, in the main agent's calendar.** The owner: «Нет восстанавливать ничего не надо прочитай и
+**NOW (2026-11-03 ~16:45 UTC): 636 — only agents talk to agents, the elements' side** (`new-steps/636/636-main.md`, approved
+«Да, делай (Рекомендую)» + «Не спрашивать (Рекомендую)»). The core's half is `c6f91d6` (the law in section 6, the Cron line,
+ANTI-PATTERNS). Found before the code: (1) the wake door asks the person in Telegram whenever the woken agent has a bot — an alarm
+needs `confirmed`; (2) the elements' 5.2 sends an agent to `a2a -- find` by itself, against the core's i2i line; (3) the native
+template has NO clock — removed by the owner's 551-1 (2026-10-20, «у нативного элемента нет рабочего процесса»), brought back by his
+«Да, оба» of 2026-11-03 (the clock only — no working-process session: the native alarm goes to the build session); (4) the core shows a
+calendar only for custom elements («Working process → Process → Cron automations») and for data, storage, vectors, graph («Backup →
+Cron events»), so a native calendar page is part of 636. Order: 636-1 core → 636-2 the elements' instruction → 636-3 templates →
+636-4 the menu → 636-5 memory → 636-6 live. Template work: `npm run template -- clone` in this clone's `data/workshop/`; the rollout
+needs the elements' clones at their pins in this clone's `WEB4-ITEMS/core/` (plain `git clone`, never `services:install`).
+**630 (before 636):** reminders by time, in the main agent's calendar. The owner: «Нет восстанавливать ничего не надо прочитай и
 разберись как он работал просто создай заново суть в том что там у нас должен существовать реальный календарь в котором видно все
 напоминания … я не хочу чтобы напоминания где-то вслепую оставались которые нельзя было увидеть без интерфейса»; «Мне кажется такой
 календарь мы уже создали для каждого элемента в разделе крон» — yes: the same `cron-calendar` shows the main agent's reminders
@@ -185,6 +195,20 @@ shown to the owner before the instruction is resealed.
 with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's word.
 
 ## The owner's latest decisions (verbatim)
+
+- 2026-11-03 16:23–16:41 UTC, step 630 → 636 (all verbatim in `new-steps/636/636-main.md`): «Ты сказал что существовал календарь …
+  мне предлагается сожрать какую-то заглушку так?»; «Нет восстанавливать ничего не надо прочитай и разберись как он работал просто
+  создай заново … я не хочу чтобы напоминания где-то вслепую оставались которые нельзя было увидеть без интерфейса понимаешь в чем
+  проблема?»; «Более того этот календарь должен уметь синхронизироваться с Google календарями при необходимости», then «Мы
+  синхронизации с Google календарем делать не будем просто в разделе автоматизации можешь создать заглушку. Тому пользователю которому
+  это нужно сделать сам» (done: the stub page, `c6f91d6`; step 635 is that stub); «Я подозреваю что наша инструкция и возможно навык
+  созданный не настолько идеально как нужно …» → «В календаре того элемента», «Да, оба (Рекомендую)»; «Ты мне говоришь где должны жить
+  напоминания. Но вопрос глупый каждый элемент хранит свои Krohn события, сейчас мы говорим о памяти у которой напоминания являются её
+  собственной сутью … элемент вызывает тебя главного агента и передает тебе сообщение которые ты транслируешь понимаешь?У нас это
+  работает?»; THE LAW: «Нашей архитектуре никто не может взаимодействовать с какими-либо агентами кроме самих агентов. Если ты пытаешься
+  создать какое-то решение которое позволит обойти это правило то это катастрофическая ошибка которую нужно немедленно зафиксировать в
+  том числе и инструкции чтобы такое больше никогда не приходило никому в голову. …»; for 636 — «Да, делай (Рекомендую)», «Не спрашивать
+  (Рекомендую)».
 
 - 2026-11-03 ~18:00 UTC, after the second «Sync fork» — **an open question, deferred by the owner**: «Синхронизацию я выполнил
   честно говоря меня беспокоит одна вещь: я понял этот проект но не помню чтобы я тебе давал ключ от моего репозитория Fractera …

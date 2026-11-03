@@ -47,12 +47,20 @@ export async function POST(req: NextRequest) {
   }
   const text = typeof body.text === "string" && body.text.trim() ? body.text.slice(0, 8000) : undefined
   const str = (v: unknown, n: number) => (typeof v === "string" && v.trim() ? v.trim().slice(0, n) : undefined)
+  // 636 (владелец 2026-11-03: «Нашей архитектуре никто не может взаимодействовать с какими-либо агентами кроме самих агентов»; о вопросе
+  // «Запустить агента?» для сработавшего напоминания — «Не спрашивать (Рекомендую)»): `reason: "alarm"` — часы элемента будят СВОЕГО
+  // агента (`service` = `from`) или агент элемента говорит оркестратору (`npm run tell-core`, `service` = build). Человек уже сказал
+  // «напомни», когда ставил запись, — вопроса в Telegram нет. Будильник для чужого агента — отказ: это обход агентов.
+  const alarm = body.reason === "alarm"
+  if (alarm && str(body.from, 120) !== service && service !== "build") {
+    return NextResponse.json({ ok: false, reason: "an alarm wakes only its own agent (from = service) or the main agent (service build)" }, { status: 403, headers: HEADERS })
+  }
   // 548-6 (повторная проверка 2026-10-20): элемент, которого узел только что родил по «да» архитектора (`npm run create` главного
   // агента, reason main-agent-create), включается и с согласием на свою папку: бота у новорождённого нет, и вопрос Claude Code о
   // доверии папке висел бы молча (watchTrust зовёт человека только через бота). На этой машине папки доверены через домашнюю
   // (`~/.claude.json`), на чистой — нет. Элемент с подключённым ботом этим путём не идёт — для него остаётся вопрос в Telegram.
   const created = body.reason === "main-agent-create" && !telegramConnected(service)
-  const confirmed = (body.supervised === true && supervision.byMain(service)) || created
+  const confirmed = (body.supervised === true && supervision.byMain(service)) || created || alarm
   const out = await wake(service, { text, from: str(body.from, 120), about: str(body.about, 600), declineUrl: str(body.declineUrl, 300), ...(confirmed ? { confirmed: true } : {}) })
   console.log(`[agents/wake] ${service} reason=${String(body.reason ?? "-").slice(0, 32)} → ${out.ok ? (out.pending ? "asked in Telegram" : out.already ? "already" : "started") : out.reason}`)
   const status = out.ok ? 200 : out.reason === "memory" ? 503 : out.reason === "no-agent-kit" || out.reason === "no-agent-dir" ? 404 : 409
