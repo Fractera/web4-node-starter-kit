@@ -7,10 +7,13 @@ import { OriginNotice } from "@/components/node-state/origin-notice.client"
 import { originNoticeWords } from "@/components/node-state/origin-notice.i18n"
 import { TemporaryAddressAlarm } from "@/components/node-state/temporary-address-alarm.client"
 import { temporaryAddressAlarmWords } from "@/components/node-state/temporary-address-alarm.i18n"
+import { DeadAddressAlarm } from "@/components/node-state/dead-address-alarm.client"
+import { deadAddressAlarmWords } from "@/components/node-state/dead-address-alarm.i18n"
 import { LocalTabMark } from "@/components/node-state/local-tab-mark.client"
 import { OnlineBar } from "@/components/node-state/online-bar.client"
 import { onlineBarWords } from "@/components/node-state/online-bar.i18n"
 import { GithubTokenAlarm } from "@/components/node-state/github-token-alarm.client"
+import { NodeAlerts } from "@/components/node-state/node-alerts.client"
 import { githubTokenAlarmWords } from "@/components/node-state/github-token-alarm.i18n"
 
 // Дверь СЛОЯ АРХИТЕКТОРА (шаг 31-1, 2026-08-28).
@@ -65,8 +68,12 @@ export default async function Layout(
       {/* 386-2: на этом компьютере — полоса «в сети / не в сети» над шапкой и «Спросить у Cloudflare» (владелец 2026-10-04). */}
       <OnlineBar words={onlineBarWords(lang)} lang={lang} />
       <TemporaryAddressAlarm words={temporaryAddressAlarmWords(lang)} lang={lang} />
+      {/* 632-5: временный адрес умер — красная полоса и кнопка «Поднять новый адрес» (дверь отказывает, пока адрес жив). */}
+      <DeadAddressAlarm words={deadAddressAlarmWords(lang)} lang={lang} />
       <OriginNotice words={originNoticeWords(lang)} />
       <GithubTokenAlarm words={githubTokenAlarmWords(lang)} lang={lang} />
+      {/* 632-2: красные пункты меню, пока состояние узла не то (нет своего домена) — спрошено в браузере. */}
+      <NodeAlerts />
       {children}
     </AccessGate>
   )

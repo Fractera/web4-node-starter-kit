@@ -144,6 +144,8 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   const top = withCustom.slice(0, c + 1)
   const p = top.findIndex((m) => m.href === at(`${ARCHITECT_HOME}/passport`))
   const main = p < 0 ? [] : top.filter((_, k) => k !== p)
-  const head = p < 0 ? top : [top[p], zone(ui.zoneMain, 'main', holds(main, page)), ...inZone(main, 'main')]
+  // 632-2: тревога пункта видна и сквозь свёрнутую зону — подпись «Основное» несёт ту же тревогу, что пункт в ней («Домен и хостинг»).
+  const mainAlert = main.find((m) => m.alert)?.alert
+  const head = p < 0 ? top : [top[p], { ...zone(ui.zoneMain, 'main', holds(main, page)), ...(mainAlert ? { alert: mainAlert } : {}) }, ...inZone(main, 'main')]
   return [...head, zone(ui.zoneNative, 'native', holds(nativeZone, page)), nativeButton, ...grouped, ...customTail]
 }

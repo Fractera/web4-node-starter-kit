@@ -127,8 +127,8 @@ export function architectMenu(lang: string, currentPath: string): WorkspaceItem[
   const item = (n: MenuNode): WorkspaceItem => {
     const kids = n.kids.map(item)
     return kids.length > 0
-      ? { label: wordsOf(n.page, lang).title, href: at(n.path), active: n.path === currentPath, open: n.path === currentPath || kids.some((k) => k.active || k.open), children: kids }
-      : { label: wordsOf(n.page, lang).title, href: at(n.path), active: n.path === currentPath, ...(n.page.meta.newTab ? { newTab: true } : {}) }
+      ? { label: wordsOf(n.page, lang).title, href: at(n.path), active: n.path === currentPath, open: n.path === currentPath || kids.some((k) => k.active || k.open), children: kids, ...alertOf(n.page) }
+      : { label: wordsOf(n.page, lang).title, href: at(n.path), active: n.path === currentPath, ...(n.page.meta.newTab ? { newTab: true } : {}), ...alertOf(n.page) }
   }
 
   return pagesInOrder(TREE.map((b) => b.page)).map((group) => {
@@ -142,9 +142,13 @@ export function architectMenu(lang: string, currentPath: string): WorkspaceItem[
       active: currentPath === dir,
       open: currentPath === dir || children.some((c) => c.active || c.open),
       ...(children.length > 0 ? { children } : {}),
+      ...alertOf(group),
     }
   })
 }
+
+/** 632-2: тревога пункта из данных его страницы (`meta.alert`) — цвет включает островок `NodeAlerts`, спросив узел. */
+const alertOf = (page: WorkspacePageData): { alert?: string } => (page.meta.alert ? { alert: page.meta.alert } : {})
 
 // 🪦 ЗДЕСЬ ЖИЛА `architectGroupTabs` — ВЕРХНИЙ РЯД ИЗ ГРУПП СЛОЯ. Удалена
 // 2026-09-21 (264-4) по двум причинам сразу, и вторая важнее первой.

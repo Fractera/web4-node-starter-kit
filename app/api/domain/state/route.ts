@@ -70,5 +70,9 @@ export async function GET() {
     active: typeof domain.zone === "string" && !!domain.zone && !!domain.activatedAt && !!domain.tunnelId,
     nodeUrl: port ? `http://localhost:${port}` : null,
     quickTunnel: quick.dead === true || typeof quick.url !== "string" ? null : quick.url,
+    // 632-5: временный адрес умер (дозорный `scripts/tunnel.mjs` пишет `dead` и `deadSince` в `logs/tunnel.json`) — полоса тревоги
+    // с кнопкой «Поднять новый адрес»; мёртвый адрес наружу не отдаётся, только факт и время.
+    quickTunnelDead: quick.dead === true,
+    quickTunnelDeadSince: quick.dead === true && typeof quick.deadSince === "string" ? quick.deadSince : null,
   })
 }

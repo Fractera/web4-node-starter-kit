@@ -15,6 +15,9 @@ import deployLock from "@/lib/deploy/deploy-lock.cjs"
 import power from "@/lib/web4-items/element-power.cjs"
 import web4 from "@/lib/web4-items/element-web4.cjs"
 import elementProps from "@/lib/web4-items/element-props.cjs"
+import { TREE } from "@/app/[lang]/(architectLayer)/architect/_list.generated"
+import { wordsOf } from "@/lib/collection/types"
+import { catalogWords } from "@/lib/web4-items/catalog.i18n"
 
 // СТРОКИ ТАБЛИЦЫ «Dashboard → Проекты» (339). Слово владельца 2026-09-29: «В каждой строке: порядковый номер · служебный адрес ·
 // заголовок из мета · описание из мета · отдельно адрес если существует · выставлен на продажу в web3 · последний коммит ·
@@ -205,8 +208,18 @@ export async function projectRows(lang: string): Promise<ProjectRow[]> {
 // измерения, что у таблицы проектов: в каталог идёт только элемент, чья главная ответила; заголовок и описание — с его главной на
 // языке каталога, как есть. Карточку рисует шапка элемента (каталог раздаёт CONFIG) и островок «Все проекты» в шапке ядра.
 
-/** Запись каталога — та же форма, что `CatalogEntry` шаблона элемента (`lib/project-settings.ts`). */
-export type CatalogEntry = { id: string; title: string; description: string; href: string | null; local: string | null; kind: "custom" | "native" }
+/** Запись каталога — та же форма, что `CatalogEntry` шаблона элемента (`lib/project-settings.ts`); `off` — только в каталоге ядра (632-1). */
+export type CatalogEntry = { id: string; title: string; description: string; href: string | null; local: string | null; kind: "custom" | "native"; off?: boolean }
+
+/**
+ * 632-1: имя элемента — то же, что в левом меню: заголовок его раздела в ядре (`architect/<id>/_data`); у кастомного раздела нет — его
+ * адрес. ✗ Замерено 2026-11-03 на узле владельца: карточка брала `<title>` главной — root выходил «Что вы хотите построить?», cache —
+ * «Эталонный нативный шаблон», и владелец не нашёл root в «Кастомных элементах», хотя он там был.
+ */
+function nameOf(id: string, lang: "en" | "ru"): string {
+  const section = TREE.find((b) => b.page.meta.slug === id)
+  return section ? wordsOf(section.page, lang).title : addressOf(id)
+}
 
 /**
  * Главная элемента на ЯЗЫКЕ каталога. ✗ 553-5 (замерено 2026-10-21): общий `probe` при отказе `/<язык>` за 3 с переходит на `/`, а `/`
@@ -236,26 +249,44 @@ async function catalogProbe(port: number, lang: string): Promise<{ up: boolean; 
 // Хвост бренда в заголовке главной: «Сайт · Бренд», «Сайт | Бренд» — в карточке нужно имя сайта.
 const BRAND_TAIL = /\s+[|·–—]\s+[^|·–—]+$/
 
-async function catalogEntry(id: string, entry: RegistryEntry, custom: boolean, lang: "en" | "ru", d: NodeDomain | null): Promise<CatalogEntry | null> {
+async function catalogEntry(id: string, entry: RegistryEntry, custom: boolean, lang: "en" | "ru", d: NodeDomain | null, all: boolean): Promise<CatalogEntry | null> {
   const port = typeof entry.port === "number" ? entry.port : null
   if (port === null) return null
-  const seen = await catalogProbe(port, lang)
-  if (!seen.up) return null
+  const off = power.offOf(entry)
+  const seen = off ? { up: false, title: null, description: null } : await catalogProbe(port, lang)
   const passport = diskPassport(entry)
+  const kind = custom && !passport.native ? "custom" : "native"
+  if (!seen.up) {
+    // 632-1 (владелец 2026-11-03: «…сейчас я не вижу там Stripe»): в каталоге ядра выключенный или молчащий элемент остаётся — под своим
+    // именем, с причиной, и ведёт в свой раздел ядра, где его включают. 🔒 В каталог для CONFIG (шапки сайтов элементов, `all` = false)
+    // он не идёт: посетителю сайта выключенный платёжный элемент не нужен.
+    if (!all) return null
+    const w = catalogWords(lang)
+    return {
+      id,
+      title: nameOf(id, lang).slice(0, 160),
+      description: (off ? `${w.off}: ${power.reasonIn(off, lang)}` : w.silent).slice(0, 400),
+      href: `/${lang}/architect/${addressOf(id)}`,
+      local: null,
+      kind,
+      off: true,
+    }
+  }
   const own = domainRecord(id)
-  const title = (seen.title ?? "").replace(BRAND_TAIL, "").trim() || addressOf(id)
+  const page = (seen.title ?? "").replace(BRAND_TAIL, "").trim()
   return {
     id,
-    title: title.slice(0, 160),
-    description: (seen.description ?? passport.short ?? "").slice(0, 400),
+    title: nameOf(id, lang).slice(0, 160),
+    description: (seen.description ?? passport.short ?? page).slice(0, 400),
     href: own ? `https://${own.domain}/${lang}` : d?.zone ? `https://${serviceHost(id, d)}/${lang}` : null,
     local: `http://localhost:${port}/${lang}`,
-    kind: custom && !passport.native ? "custom" : "native",
+    kind,
   }
 }
 
-/** Карточки «Все проекты» на одном языке: root, затем кастомные (новые сверху), затем нативные в порядке реестра. */
-export async function catalogEntries(lang: "en" | "ru"): Promise<CatalogEntry[]> {
+/** Карточки «Все проекты» на одном языке: root, затем кастомные (новые сверху), затем нативные в порядке реестра.
+ *  `all` — каталог шапки ядра (632-1): и выключенные, и молчащие элементы; без него — только ответившие (каталог для CONFIG). */
+export async function catalogEntries(lang: "en" | "ru", { all = false }: { all?: boolean } = {}): Promise<CatalogEntry[]> {
   const d = nodeDomain()
   const drafts = listDrafts()
   const customIds = new Set(drafts.map((x) => x.id))
@@ -264,10 +295,10 @@ export async function catalogEntries(lang: "en" | "ru"): Promise<CatalogEntry[]>
   const root = byId.get("root")
   const jobs = [
     // 586: root — кастомный (слово владельца 2026-10-24), первым, как и прежде.
-    ...(root ? [catalogEntry("root", root, true, lang, d)] : []),
-    ...drafts.filter((x) => x.id !== "root" && byId.has(x.id)).map((x) => catalogEntry(x.id, byId.get(x.id) as RegistryEntry, true, lang, d)),
-    ...services.filter((s) => s.id !== "root" && !customIds.has(s.id)).map((s) => catalogEntry(s.id, s, false, lang, d)),
+    ...(root ? [catalogEntry("root", root, true, lang, d, all)] : []),
+    ...drafts.filter((x) => x.id !== "root" && byId.has(x.id)).map((x) => catalogEntry(x.id, byId.get(x.id) as RegistryEntry, true, lang, d, all)),
+    ...services.filter((s) => s.id !== "root" && !customIds.has(s.id)).map((s) => catalogEntry(s.id, s, false, lang, d, all)),
   ]
-  const all = await Promise.all(jobs)
-  return all.filter((e): e is CatalogEntry => e !== null)
+  const entries = await Promise.all(jobs)
+  return entries.filter((e): e is CatalogEntry => e !== null)
 }

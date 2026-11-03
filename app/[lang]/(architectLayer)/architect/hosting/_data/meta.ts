@@ -6,4 +6,6 @@ export const meta: WorkspacePageMeta = {
   // «домены хостинг ставим второй сверху под паспорт». Было 40.
   order: 15,
   icon: 'server',
+  // 632-2: красный, пока у узла нет своего домена (островок `NodeAlerts`).
+  alert: 'no-domain',
 }

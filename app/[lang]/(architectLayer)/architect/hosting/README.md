@@ -9,9 +9,13 @@ have children, which is why depth costs this project nothing.
 | Path | Role |
 |---|---|
 | `page.tsx` | thin entry: names this folder, exports metadata, renders the index |
-| `_data/` | the words of THIS page — `meta` (slug, order) + `en` (base) + `ru` |
+| `_data/` | the words of THIS page — `meta` (slug, order, `alert: 'no-domain'`) + `en` (base) + `ru` |
 | `_components/` | the working part; returns `[]` until something is built here |
 | `_list.generated.ts` | **generated** — the sections of this group. Never edit |
+
+**The red mark (632-2).** While the node has no own domain, this item, «Активация домена» and the zone «Основное» holding them
+are drawn in the warning colour: `meta.alert` puts `data-alert` on the menu item, and the island `NodeAlerts` asks `/api/domain/state`
+in the browser (law 264) and marks `<html>`; the rule is in `styles/globals.css`.
 
 ## Multilingual
 

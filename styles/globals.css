@@ -1117,3 +1117,7 @@ html[data-app-width="narrow"] { --app-w: 64rem; }
   50% { box-shadow: 0 0 0 5px color-mix(in oklab, var(--primary) 0%, transparent); }
 }
 @media (prefers-reduced-motion: reduce) { .field-pulse:placeholder-shown { animation: none; } }
+
+/* 632-2: тревога пункта левого меню — `data-alert` ставит оболочка из `meta.alert` страницы, признак на `<html>` — островок `NodeAlerts`,
+   спросив узел в браузере. Пока своего домена нет, «Домен и хостинг», «Активация домена» и зона «Основное» — цветом тревоги. */
+html[data-no-own-domain] [data-alert~="no-domain"] { color: var(--color-destructive); }

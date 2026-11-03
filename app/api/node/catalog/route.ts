@@ -17,7 +17,8 @@ export async function GET(req: NextRequest) {
   const denied = await requireRoles(req, ROLES)
   if (denied) return denied
   const lang = req.nextUrl.searchParams.get("lang") === "ru" ? "ru" : "en"
-  return NextResponse.json({ ok: true, entries: await catalogEntries(lang) }, { headers: { "Cache-Control": "no-store" } })
+  // 632-1: шапка ядра показывает и выключенные элементы (Stripe) — с причиной и ссылкой в их раздел.
+  return NextResponse.json({ ok: true, entries: await catalogEntries(lang, { all: true }) }, { headers: { "Cache-Control": "no-store" } })
 }
 
 export async function POST(req: NextRequest) {

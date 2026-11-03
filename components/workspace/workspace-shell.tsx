@@ -54,6 +54,8 @@ export type WorkspaceShellItem = {
   reload?: boolean
   /** 578-5: пункт открывается в новой вкладке (страница блоков элемента живёт на его собственном сайте). */
   newTab?: boolean
+  /** 632-2: тревога пункта (`data-alert`) — закон у поля `alert` вида `workspace`. */
+  alert?: string
 }
 export type WorkspaceShellNote = {
   tone: 'recommended' | 'advice' | 'warning'
@@ -139,13 +141,13 @@ function Item({
     // странице, и плавность ей даёт `scroll-smooth`, а не роутер.
     if (item.href.startsWith('#')) {
       return (
-        <a href={item.href} aria-current={item.active ? 'page' : undefined} className={cls}>
+        <a href={item.href} aria-current={item.active ? 'page' : undefined} data-alert={item.alert} className={cls}>
           {body}
         </a>
       )
     }
     return (
-      <NavLink reload={item.reload} newTab={item.newTab} href={item.href} aria-current={item.active ? 'page' : undefined} className={cls}>
+      <NavLink reload={item.reload} newTab={item.newTab} href={item.href} aria-current={item.active ? 'page' : undefined} data-alert={item.alert} className={cls}>
         {body}
       </NavLink>
     )
@@ -162,7 +164,7 @@ function Item({
     )
   }
   return (
-    <span aria-current={item.active ? 'page' : undefined} className={cls}>
+    <span aria-current={item.active ? 'page' : undefined} data-alert={item.alert} className={cls}>
       {body}
     </span>
   )
@@ -278,7 +280,7 @@ export function WorkspaceShell({
                 // 582 (владелец 2026-10-24): подпись зоны — «самое главное поэтому их шрифт должен быть даже больше чем шрифт верхних
                 // вкладок»: 18 px полужирным против 16 px пунктов; кнопка «Создать…» внутри зоны — 14 px.
                 <label className="mt-2 flex cursor-pointer items-center justify-between gap-2 border-t border-border px-[9px] pt-2 text-[length:var(--fs-lead)] font-semibold text-foreground transition-colors hover:text-primary [&:has(input:checked)_svg]:rotate-180" data-menu-zone={item.zoneHead.id}>
-                  <span>{item.label}</span>
+                  <span data-alert={item.alert}>{item.label}</span>
                   <input type="checkbox" className="peer sr-only" data-zone-toggle={item.zoneHead.id} defaultChecked={item.zoneHead.open} aria-label={item.label} />
                   <ChevronDown size={16} aria-hidden className="shrink-0 transition-transform duration-200" />
                 </label>
@@ -303,6 +305,7 @@ export function WorkspaceShell({
                         newTab={item.newTab}
                         href={item.href}
                         aria-current={item.active ? 'page' : undefined}
+                        data-alert={item.alert}
                         className={
                           'max-w-full truncate whitespace-nowrap border-b-2 ' +
                           (item.active ? 'border-primary' : 'border-transparent')
@@ -311,7 +314,7 @@ export function WorkspaceShell({
                         {renderItem?.(item, i) ?? item.label}
                       </NavLink>
                     ) : (
-                      <span className="truncate whitespace-nowrap">{renderItem?.(item, i) ?? item.label}</span>
+                      <span className="truncate whitespace-nowrap" data-alert={item.alert}>{renderItem?.(item, i) ?? item.label}</span>
                     )}
                     </span>
                     <ChevronDown
