@@ -1,0 +1,1011 @@
+{
+ "builtAt": "2026-11-03T10:31:43.946Z",
+ "model": "claude-sonnet-5-5",
+ "costUsd": 0.060107999999999995,
+ "sections": [
+  {
+   "name": "Content & media",
+   "skills": 419,
+   "subsections": [
+    {
+     "name": "Writing & copy",
+     "skills": 89,
+     "tags": [
+      "writing",
+      "copywriting",
+      "content",
+      "content-creation",
+      "blog",
+      "article",
+      "prose",
+      "editing",
+      "outline",
+      "readability",
+      "style-guide",
+      "content-strategy",
+      "technical-writing"
+     ]
+    },
+    {
+     "name": "Images",
+     "skills": 63,
+     "tags": [
+      "image-generation",
+      "image-editing",
+      "ai-images",
+      "image",
+      "graphics",
+      "svg",
+      "icons"
+     ]
+    },
+    {
+     "name": "Video",
+     "skills": 96,
+     "tags": [
+      "video",
+      "video-generation",
+      "ai-video",
+      "video-editing",
+      "text-to-video",
+      "image-to-video",
+      "remotion",
+      "hyperframes",
+      "ffmpeg",
+      "storyboard",
+      "youtube",
+      "subtitles",
+      "captions"
+     ]
+    },
+    {
+     "name": "Voice & audio",
+     "skills": 40,
+     "tags": [
+      "audio",
+      "text-to-speech",
+      "voice",
+      "voiceover",
+      "elevenlabs",
+      "transcription",
+      "music"
+     ]
+    },
+    {
+     "name": "Motion & animation",
+     "skills": 50,
+     "tags": [
+      "animation",
+      "motion-graphics",
+      "gsap",
+      "motion",
+      "motion-design",
+      "transitions",
+      "easing"
+     ]
+    },
+    {
+     "name": "Slides & documents",
+     "skills": 81,
+     "tags": [
+      "slides",
+      "presentation",
+      "presentations",
+      "pdf",
+      "docx",
+      "pptx",
+      "powerpoint",
+      "documents",
+      "spreadsheet",
+      "excel",
+      "ocr"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Marketing & growth",
+   "skills": 376,
+   "subsections": [
+    {
+     "name": "Marketing & strategy",
+     "skills": 61,
+     "tags": [
+      "marketing",
+      "strategy",
+      "positioning",
+      "branding",
+      "go-to-market",
+      "gtm",
+      "growth",
+      "startup"
+     ]
+    },
+    {
+     "name": "Social media",
+     "skills": 43,
+     "tags": [
+      "social-media",
+      "twitter",
+      "x",
+      "linkedin",
+      "reddit",
+      "community"
+     ]
+    },
+    {
+     "name": "Search & SEO",
+     "skills": 85,
+     "tags": [
+      "seo",
+      "keywords",
+      "keyword-research",
+      "technical-seo",
+      "sitemap",
+      "structured-data",
+      "backlinks",
+      "geo",
+      "serp",
+      "search"
+     ]
+    },
+    {
+     "name": "Advertising",
+     "skills": 67,
+     "tags": [
+      "advertising",
+      "paid-media",
+      "google-ads",
+      "paid-ads",
+      "ppc",
+      "ab-testing",
+      "conversion",
+      "landing-page"
+     ]
+    },
+    {
+     "name": "Email & outreach",
+     "skills": 70,
+     "tags": [
+      "email",
+      "outreach",
+      "gmail",
+      "lead-generation",
+      "prospecting",
+      "notifications"
+     ]
+    },
+    {
+     "name": "Analytics & reporting",
+     "skills": 50,
+     "tags": [
+      "analytics",
+      "reporting",
+      "metrics",
+      "kpi",
+      "attribution",
+      "dashboard",
+      "charts",
+      "data-visualization"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Sales & business",
+   "skills": 459,
+   "subsections": [
+    {
+     "name": "Sales & CRM",
+     "skills": 145,
+     "tags": [
+      "sales",
+      "crm",
+      "b2b",
+      "b2c",
+      "revops",
+      "salesforce",
+      "apex",
+      "sf-cli",
+      "churn",
+      "retention"
+     ]
+    },
+    {
+     "name": "Online store & payments",
+     "skills": 95,
+     "tags": [
+      "ecommerce",
+      "shopify",
+      "payments",
+      "stripe",
+      "checkout",
+      "billing",
+      "subscriptions",
+      "pricing",
+      "monetization",
+      "marketplace",
+      "inventory"
+     ]
+    },
+    {
+     "name": "Product & projects",
+     "skills": 75,
+     "tags": [
+      "product-management",
+      "project-management",
+      "requirements",
+      "prd",
+      "roadmap",
+      "prioritization",
+      "user-stories",
+      "agile",
+      "saas"
+     ]
+    },
+    {
+     "name": "Research & market",
+     "skills": 82,
+     "tags": [
+      "research",
+      "market-research",
+      "competitor-analysis",
+      "competitive-analysis",
+      "market-analysis",
+      "literature-review",
+      "citations",
+      "fact-checking"
+     ]
+    },
+    {
+     "name": "Careers & hiring",
+     "skills": 62,
+     "tags": [
+      "career",
+      "resume",
+      "interview",
+      "job-search",
+      "recruiting",
+      "hiring",
+      "portfolio",
+      "interview-prep",
+      "negotiation",
+      "compensation"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Web & frontend",
+   "skills": 475,
+   "subsections": [
+    {
+     "name": "Frameworks",
+     "skills": 197,
+     "tags": [
+      "react",
+      "nextjs",
+      "typescript",
+      "javascript",
+      "vue",
+      "angular",
+      "nuxt",
+      "vite",
+      "frontend",
+      "html",
+      "app-router",
+      "ssr"
+     ]
+    },
+    {
+     "name": "Design & UI",
+     "skills": 106,
+     "tags": [
+      "design",
+      "ui",
+      "ux",
+      "design-system",
+      "design-tokens",
+      "ui-design",
+      "ui-components",
+      "components",
+      "theming",
+      "web-design",
+      "figma",
+      "dark-mode",
+      "shadcn-ui"
+     ]
+    },
+    {
+     "name": "Styling & layout",
+     "skills": 28,
+     "tags": [
+      "css",
+      "tailwind",
+      "typography",
+      "layout",
+      "responsive",
+      "styling"
+     ]
+    },
+    {
+     "name": "Accessibility",
+     "skills": 16,
+     "tags": [
+      "accessibility",
+      "a11y",
+      "wcag"
+     ]
+    },
+    {
+     "name": "3D & graphics",
+     "skills": 56,
+     "tags": [
+      "webgl",
+      "threejs",
+      "3d",
+      "webgpu",
+      "shaders",
+      "pixijs",
+      "canvas",
+      "rendering"
+     ]
+    },
+    {
+     "name": "Web performance",
+     "skills": 46,
+     "tags": [
+      "performance",
+      "core-web-vitals",
+      "optimization",
+      "profiling",
+      "caching"
+     ]
+    },
+    {
+     "name": "CMS & sites",
+     "skills": 26,
+     "tags": [
+      "wordpress",
+      "forms",
+      "localization",
+      "i18n",
+      "web"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Mobile & apps",
+   "skills": 353,
+   "subsections": [
+    {
+     "name": "iOS & Apple",
+     "skills": 118,
+     "tags": [
+      "ios",
+      "swift",
+      "swiftui",
+      "xcode",
+      "macos",
+      "apple"
+     ]
+    },
+    {
+     "name": "Android & cross-platform",
+     "skills": 110,
+     "tags": [
+      "android",
+      "react-native",
+      "expo",
+      "flutter",
+      "dart",
+      "kotlin",
+      "mobile",
+      "maui",
+      "mobile-apps"
+     ]
+    },
+    {
+     "name": "App Store",
+     "skills": 27,
+     "tags": [
+      "app-store",
+      "app-store-connect",
+      "aso"
+     ]
+    },
+    {
+     "name": "Games",
+     "skills": 98,
+     "tags": [
+      "game-development",
+      "game-dev",
+      "gamedev",
+      "unity",
+      "godot",
+      "gdscript",
+      "game-design",
+      "game-engine"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Backend & data",
+   "skills": 449,
+   "subsections": [
+    {
+     "name": "APIs",
+     "skills": 89,
+     "tags": [
+      "api",
+      "backend",
+      "rest-api",
+      "graphql",
+      "openapi",
+      "api-design",
+      "webhooks",
+      "api-docs",
+      "api-reference",
+      "api-integration"
+     ]
+    },
+    {
+     "name": "Databases",
+     "skills": 88,
+     "tags": [
+      "database",
+      "sql",
+      "postgresql",
+      "postgres",
+      "orm",
+      "prisma",
+      "mongodb",
+      "redis",
+      "query-optimization",
+      "schema",
+      "data-modeling",
+      "clickhouse",
+      "bigquery"
+     ]
+    },
+    {
+     "name": "Languages",
+     "skills": 218,
+     "tags": [
+      "python",
+      "java",
+      "spring-boot",
+      "dotnet",
+      "csharp",
+      "golang",
+      "go",
+      "rust",
+      "php",
+      "nodejs",
+      "nestjs"
+     ]
+    },
+    {
+     "name": ".NET tools",
+     "skills": 20,
+     "tags": [
+      "aspnet-core",
+      "blazor",
+      "msbuild",
+      "nuget",
+      "mstest"
+     ]
+    },
+    {
+     "name": "Data & pipelines",
+     "skills": 34,
+     "tags": [
+      "data-pipeline",
+      "etl",
+      "data-analysis",
+      "streaming",
+      "messaging",
+      "event-driven",
+      "workers",
+      "background-jobs"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "AI & agents",
+   "skills": 410,
+   "subsections": [
+    {
+     "name": "Agents",
+     "skills": 144,
+     "tags": [
+      "agents",
+      "ai-agents",
+      "multi-agent",
+      "subagents",
+      "orchestration",
+      "agent-skills",
+      "agent-workflow",
+      "agent-memory",
+      "delegation",
+      "coding-agents"
+     ]
+    },
+    {
+     "name": "Claude & coding tools",
+     "skills": 90,
+     "tags": [
+      "claude-code",
+      "codex",
+      "copilot",
+      "skills",
+      "skill-authoring",
+      "hooks",
+      "plugins",
+      "subagents"
+     ]
+    },
+    {
+     "name": "MCP & tools",
+     "skills": 55,
+     "tags": [
+      "mcp",
+      "model-context-protocol",
+      "tool-calling",
+      "sdk",
+      "developer-tools"
+     ]
+    },
+    {
+     "name": "LLMs & prompts",
+     "skills": 53,
+     "tags": [
+      "llm",
+      "prompt-engineering",
+      "prompting",
+      "prompts",
+      "gemini",
+      "openai",
+      "evaluation",
+      "guardrails",
+      "prompt-injection"
+     ]
+    },
+    {
+     "name": "Knowledge & RAG",
+     "skills": 68,
+     "tags": [
+      "rag",
+      "embeddings",
+      "vector-search",
+      "semantic-search",
+      "knowledge-base",
+      "knowledge-graph",
+      "memory",
+      "retrieval",
+      "langchain",
+      "langgraph"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Automation & scraping",
+   "skills": 359,
+   "subsections": [
+    {
+     "name": "Automation",
+     "skills": 84,
+     "tags": [
+      "automation",
+      "workflow",
+      "n8n",
+      "cron",
+      "scheduling",
+      "productivity"
+     ]
+    },
+    {
+     "name": "Web scraping",
+     "skills": 57,
+     "tags": [
+      "web-scraping",
+      "scraping",
+      "firecrawl",
+      "web-search",
+      "data-extraction"
+     ]
+    },
+    {
+     "name": "Browser automation",
+     "skills": 59,
+     "tags": [
+      "browser-automation",
+      "playwright",
+      "browser",
+      "chrome",
+      "screenshots",
+      "ziniao"
+     ]
+    },
+    {
+     "name": "Office & team apps",
+     "skills": 159,
+     "tags": [
+      "google-workspace",
+      "google-drive",
+      "google-sheets",
+      "google-calendar",
+      "calendar",
+      "slack",
+      "feishu",
+      "lark",
+      "wecom",
+      "meetings",
+      "obsidian",
+      "notes"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Code quality & testing",
+   "skills": 396,
+   "subsections": [
+    {
+     "name": "Testing",
+     "skills": 104,
+     "tags": [
+      "testing",
+      "unit-testing",
+      "tdd",
+      "qa",
+      "e2e",
+      "pytest",
+      "vitest",
+      "coverage",
+      "regression",
+      "mocking",
+      "browser-testing"
+     ]
+    },
+    {
+     "name": "Code review",
+     "skills": 142,
+     "tags": [
+      "code-review",
+      "pull-request",
+      "pull-requests",
+      "review",
+      "code-quality",
+      "static-analysis",
+      "linting",
+      "eslint",
+      "best-practices"
+     ]
+    },
+    {
+     "name": "Refactoring & debugging",
+     "skills": 78,
+     "tags": [
+      "refactoring",
+      "debugging",
+      "troubleshooting",
+      "root-cause-analysis",
+      "diagnostics",
+      "error-handling",
+      "legacy-code"
+     ]
+    },
+    {
+     "name": "Architecture",
+     "skills": 72,
+     "tags": [
+      "architecture",
+      "design-patterns",
+      "software-design",
+      "dependency-injection",
+      "microservices",
+      "monorepo",
+      "scaffolding"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Security",
+   "skills": 312,
+   "subsections": [
+    {
+     "name": "Security & audit",
+     "skills": 126,
+     "tags": [
+      "security",
+      "audit",
+      "web-security",
+      "appsec",
+      "owasp",
+      "vulnerabilities",
+      "security-audit",
+      "supply-chain"
+     ]
+    },
+    {
+     "name": "Penetration testing",
+     "skills": 64,
+     "tags": [
+      "pentest",
+      "pentesting",
+      "penetration-testing",
+      "ctf",
+      "fuzzing",
+      "exploitation",
+      "reverse-engineering",
+      "security-testing"
+     ]
+    },
+    {
+     "name": "Login & access",
+     "skills": 79,
+     "tags": [
+      "authentication",
+      "oauth",
+      "authorization",
+      "jwt",
+      "clerk",
+      "iam",
+      "rbac",
+      "access-control",
+      "permissions",
+      "secrets",
+      "credentials"
+     ]
+    },
+    {
+     "name": "Compliance & privacy",
+     "skills": 43,
+     "tags": [
+      "compliance",
+      "governance",
+      "privacy",
+      "legal",
+      "verification",
+      "validation"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Cloud & DevOps",
+   "skills": 477,
+   "subsections": [
+    {
+     "name": "Deployment & CI/CD",
+     "skills": 71,
+     "tags": [
+      "deployment",
+      "devops",
+      "ci",
+      "ci-cd",
+      "github-actions",
+      "release",
+      "docker",
+      "containers"
+     ]
+    },
+    {
+     "name": "AWS",
+     "skills": 111,
+     "tags": [
+      "aws",
+      "lambda",
+      "s3",
+      "rds",
+      "serverless",
+      "cloud"
+     ]
+    },
+    {
+     "name": "Google Cloud",
+     "skills": 89,
+     "tags": [
+      "google-cloud",
+      "gcloud",
+      "gcp",
+      "gke",
+      "vertex-ai",
+      "firebase"
+     ]
+    },
+    {
+     "name": "Azure & other clouds",
+     "skills": 49,
+     "tags": [
+      "azure",
+      "bicep",
+      "cloudflare",
+      "huawei-cloud",
+      "hosting"
+     ]
+    },
+    {
+     "name": "Kubernetes & infrastructure",
+     "skills": 47,
+     "tags": [
+      "kubernetes",
+      "terraform",
+      "infrastructure",
+      "infrastructure-as-code",
+      "networking",
+      "dns",
+      "cloud-infrastructure"
+     ]
+    },
+    {
+     "name": "Monitoring",
+     "skills": 110,
+     "tags": [
+      "observability",
+      "monitoring",
+      "grafana",
+      "tracing",
+      "logging",
+      "logs",
+      "prometheus",
+      "opentelemetry",
+      "alerting",
+      "sentry",
+      "incident-response",
+      "sre"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Git & docs",
+   "skills": 355,
+   "subsections": [
+    {
+     "name": "Git & GitHub",
+     "skills": 94,
+     "tags": [
+      "git",
+      "github",
+      "gh-cli",
+      "version-control",
+      "branching",
+      "git-worktree",
+      "conventional-commits",
+      "changelog",
+      "release-notes"
+     ]
+    },
+    {
+     "name": "Documentation",
+     "skills": 158,
+     "tags": [
+      "documentation",
+      "markdown",
+      "readme",
+      "wiki",
+      "adr",
+      "mermaid",
+      "diagrams",
+      "specification",
+      "templates"
+     ]
+    },
+    {
+     "name": "CLI & terminal",
+     "skills": 62,
+     "tags": [
+      "cli",
+      "terminal",
+      "command-line",
+      "shell",
+      "bash",
+      "developer-workflow"
+     ]
+    },
+    {
+     "name": "Migration & upgrades",
+     "skills": 41,
+     "tags": [
+      "migration",
+      "migrations",
+      "upgrade",
+      "dependencies",
+      "deprecated",
+      "versioning",
+      "npm",
+      "cargo",
+      "maven",
+      "gradle"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Finance & crypto",
+   "skills": 196,
+   "subsections": [
+    {
+     "name": "Trading & markets",
+     "skills": 106,
+     "tags": [
+      "finance",
+      "trading",
+      "stocks",
+      "market-data",
+      "investing",
+      "backtesting",
+      "technical-analysis",
+      "forecasting",
+      "binance",
+      "okx"
+     ]
+    },
+    {
+     "name": "Crypto & blockchain",
+     "skills": 90,
+     "tags": [
+      "crypto",
+      "blockchain",
+      "solana",
+      "ethereum",
+      "smart-contracts",
+      "solidity",
+      "defi",
+      "web3",
+      "wallet",
+      "x402",
+      "goldsky"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Events & regional",
+   "skills": 180,
+   "subsections": [
+    {
+     "name": "Events",
+     "skills": 88,
+     "tags": [
+      "conference",
+      "conferences",
+      "event-planning",
+      "event-organizing",
+      "hackathon",
+      "sponsorship",
+      "travel",
+      "partnerships"
+     ]
+    },
+    {
+     "name": "Korea & China",
+     "skills": 92,
+     "tags": [
+      "korea",
+      "korean",
+      "chinese"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Other",
+   "skills": 114,
+   "subsections": [
+    {
+     "name": "Other",
+     "skills": 114,
+     "tags": []
+    }
+   ]
+  }
+ ]
+}

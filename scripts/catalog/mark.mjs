@@ -164,6 +164,14 @@ export async function markAll({ dataDir, cardsFile, limit = Infinity, concurrenc
   const { keep, duplicates } = dedupeBySha(fetched)
   writeFileSync(join(dataDir, 'duplicates.json'), `${JSON.stringify(duplicates, null, 1)}\n`)
   const cards = new Map(readJsonl(cardsFile).map((c) => [c.id, c]))
+  // ✗ 2026-11-03: a card marked while the fetch still ran stayed after its row became a copy of a more starred source fetched later
+  // (angular/skills → angular/angular, one fingerprint, two cards). One fingerprint, one card: the copy's card goes.
+  let dropped = 0
+  for (const d of duplicates) {
+    if (!cards.delete(d.id)) continue
+    dropped += 1
+    console.log(`  ${d.id}: its card dropped — now a copy of ${d.duplicateOf}`)
+  }
   // `only` — these ids are marked again whatever the cards hold (a calibration check); otherwise every skill not marked yet.
   const todo = (only ? keep.filter((r) => only.includes(`${r.source}@${r.skill}`))
     : keep.filter((r) => cards.get(`${r.source}@${r.skill}`)?.folderSha !== r.folderSha)).slice(0, limit)
@@ -176,6 +184,7 @@ export async function markAll({ dataDir, cardsFile, limit = Infinity, concurrenc
     const sorted = [...cards.values()].sort((a, b) => b.installs - a.installs || a.id.localeCompare(b.id))
     writeFileSync(cardsFile, sorted.map((c) => JSON.stringify(c)).join('\n') + '\n')
   }
+  if (dropped) save()
   const worker = async () => {
     while (!stop && next < todo.length) {
       const row = todo[next++]

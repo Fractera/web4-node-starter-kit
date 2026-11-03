@@ -46,6 +46,12 @@ the live hand-off waits for the owner's next core update.
   Fractera) lacks the `workflow` scope and GitHub refused the push (the owner's SSH key `aifa-agi` has only read there) — it comes
   back after the owner's `gh auth refresh -h github.com -s workflow`. Working copy of the element:
   `/private/tmp/claude-501/-Users-romanbolshiyanov/faa581fd-3474-473a-bbba-99276029a73e/scratchpad/embeddings-repo`.
+- **627-5 closed** (`completed-steps/627-5.md`): 5,330 cards in `lib/agent-kit/skills/catalog/cards.jsonl` (11.1 MB) and the
+  two-level tree `sections.json` — census 6,000 − not fetched 416 − duplicates 250 − refusals 4; $8.52 at the API price. The marker
+  drops a card whose row became a copy. **Defect found and fixed in the same commit:** the core's prebuild scanner
+  `scan-broken-characters` walked `data/services/embeddings/model/tokenizer.json` (36 control characters) — every node with the
+  `embeddings` element would fail its next core rebuild; `data/services` (the elements' data folders) is skipped now like
+  `data/catalog` and `data/study`. Next: the owner's survey of README and the architect pages (his message above), then 626-4.
 - ✓ **The incident below is closed** (2026-11-03 ~10:22 UTC): the owner ran the restore command; `fractera-svc-vectors` (cwd
   `~/web4-node-starter-kit/WEB4-ITEMS/core/vectors`) holds 24694 again, `/api/health` 200 with its own build of 2026-11-02, the
   watcher runs from the node, the clone's copy is gone (24687 free), `pm2 save` done by him.
@@ -101,6 +107,21 @@ the live hand-off waits for the owner's next core update.
 with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's word.
 
 ## The owner's latest decisions (verbatim)
+
+- 2026-11-03 ~10:35 UTC, «after»: «Работа с навыками однозначно достойно отдельного описания как киллер Fitch внутри readme а также на
+  страницах архитектора. . Во-первых давай зайдём издалека и проверим где мы должны в обоих документах и файле readme и в на страницах
+  архитектора казать то что у нас появился новый активный шаблон какие функции выполняет также ты же помнишь да что у этого нативного
+  шаблона есть своя домашняя страница мы её сделали? Ну и отдельно то что я думаю по поводу новой киллер фишки. В том месте сидим
+  описываем личность агента, то личность пока у тебя память краткосрочной долгосрочная и там где мы говорим о твоем исследовательском
+  навыки и природе мы не можем не рассказать о твоей новой экспертизе. – Более 5300 самых популярных навыков 2026 г. доступны нативно и
+  не употребляют токены до тех пор пока не понадобится. Используется поиск при помощи графа и только те навыки которые действительно
+  необходимо будут добавлены в проект причём не вариант проект а только те элементы которые не нуждаются. Теперь агент из коробки
+  обученна самых популярных кейсов и он может не просто использовать он может думать благодаря тем покерным которые заложены в этих
+  навыках. Хотите непрерывно эволюцию? Просто расскажите какие ресурсы нужно мониторить чтобы агент автоматически добавлял свежие навыки
+  в проект. Они будут добавлены также в граф знаний и не будут использоваться до тех пор пока не понадобится Явно. А если вы нашли новый
+  навык просто сообщите агенту или поделитесь ссылкой он добавит ваш налог к библиотеке» → routed (A, it belongs): the texts about
+  `embeddings` — 626-8; the skills catalog as the killer feature in README, the architect pages and the agent's personality — 627-7.
+  First the survey «where both documents must say it» and whether `embeddings` has its own home page, shown to him before any edit.
 
 - 2026-11-03 ~08:45 UTC: «go non stop, not ask me, i am is not here ? ok , can ? or last question ?» → yes, non-stop; the one
   question left for his return: may the live node be updated and rebuilt in 626-8 (Sync fork + `npm run serve:rebuild`) without him?

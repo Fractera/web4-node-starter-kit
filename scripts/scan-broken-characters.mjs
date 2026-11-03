@@ -53,7 +53,10 @@ const SKIP_PATH = ["data/study"]
 // 627 (2026-11-03): the skills catalog tool downloads whole folders of foreign skills into `data/catalog…` (`data/catalog`,
 // `data/catalog-6000` …) — a Chinese skill holds U+FFFD on purpose, inside its own regular expression. Foreign data, not our source:
 // skipped by the prefix of its path from the project's root.
-const SKIP_PATH_PREFIX = ["data/catalog"]
+// 626 (2026-11-03): the data folders of the installed elements (`data/services/<id>`, their SERVICE_DATA_DIR) are machine data, never
+// source — the element `embeddings` keeps its model there, and the tokenizer's 17 MB hold control characters by design (measured: 36
+// findings in `data/services/embeddings/model/tokenizer.json` would stop the core's prebuild on every node with that element).
+const SKIP_PATH_PREFIX = ["data/catalog", "data/services"]
 
 // The single detection rule (mirrors hasBrokenChar in the content emitters). Returns the codepoint
 // of the first offending char in a string, or -1. Allows tab(09)/LF(0A)/CR(0D).
