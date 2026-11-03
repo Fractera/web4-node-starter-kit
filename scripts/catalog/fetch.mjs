@@ -88,7 +88,10 @@ const escapeGlob = (p) => p.replace(/([*?[\]!#\\])/g, '\\$1')
  * escaped, never globs; a folder ends with «/». `want` — [{ path, folder }].
  */
 function materialize(repo, want) {
-  repo.patterns ??= new Set()
+  // 🛑 `sparse-checkout set` REPLACES the patterns, and git removes from the disk what is no longer listed. ✗ Measured 2026-11-03: a
+  // resumed run listed only its new folders and wiped the ones an earlier run had fetched (the marker then found no SKILL.md). The
+  // patterns already written are read first, so they only grow.
+  repo.patterns ??= new Set((git(repo.dir, ['sparse-checkout', 'list']) ?? '').split('\n').map((l) => l.trim()).filter(Boolean))
   for (const w of want) repo.patterns.add(`/${escapeGlob(w.path)}${w.folder ? '/' : ''}`)
   if (!repo.patterns.size) return true
   const input = `${[...repo.patterns].join('\n')}\n`

@@ -174,7 +174,12 @@ export async function markAll({ dataDir, cardsFile, limit = Infinity, concurrenc
   const worker = async () => {
     while (!stop && next < todo.length) {
       const row = todo[next++]
-      const text = readFileSync(join(dataDir, row.dir, row.path), 'utf8')
+      let text
+      try { text = readFileSync(join(dataDir, row.dir, row.path), 'utf8') } catch {
+        failed.push({ id: `${row.source}@${row.skill}`, error: 'its SKILL.md is not on the disk — run fetch again' })
+        console.log(`  ${row.source}@${row.skill}: FAILED — its SKILL.md is not on the disk — run fetch again`)
+        continue
+      }
       const r = await markRow(row, text, scriptsOf(row, dataDir), ctx)
       if (r.card) {
         cards.set(r.card.id, r.card)

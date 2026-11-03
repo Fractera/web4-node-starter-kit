@@ -50,6 +50,10 @@ const SKIP_FILE = /\.generated\.|package-lock\.json$|\.tsbuildinfo$/
 // уронил prebuild ядра. С 594-2 разборы лежат в папках элементов (`WEB4-ITEMS` сторож не обходит), а в ядре — браузер разбора и профили
 // тестовых учётных записей (`data/study`): страницы и файлы чужих сайтов. Путь сверяется от корня проекта, а не по имени папки.
 const SKIP_PATH = ["data/study"]
+// 627 (2026-11-03): the skills catalog tool downloads whole folders of foreign skills into `data/catalog…` (`data/catalog`,
+// `data/catalog-6000` …) — a Chinese skill holds U+FFFD on purpose, inside its own regular expression. Foreign data, not our source:
+// skipped by the prefix of its path from the project's root.
+const SKIP_PATH_PREFIX = ["data/catalog"]
 
 // The single detection rule (mirrors hasBrokenChar in the content emitters). Returns the codepoint
 // of the first offending char in a string, or -1. Allows tab(09)/LF(0A)/CR(0D).
@@ -90,6 +94,7 @@ async function* walk(dir, root = dir) {
     if (e.isDirectory()) {
       const rel = relative(root, full).split(sep).join("/")
       const skipped = SKIP_DIR.has(e.name) || SKIP_PREFIX.some(p => e.name.startsWith(p)) || SKIP_PATH.some(p => rel === p || rel.startsWith(`${p}/`))
+        || SKIP_PATH_PREFIX.some(p => rel.startsWith(p))
       if (!skipped) yield* walk(full, root)
     }
     else if (SCAN_EXT.test(e.name) && !SKIP_FILE.test(e.name)) yield full
