@@ -33,8 +33,8 @@ element is a microservice that answers its neighbours and asks them for help; to
   (`development-docs/glossary.md`).
 - **On or off.** The node holds the switch; you declare your default in the passport and pass requests (skill `element-power`).
 - **Your boundary is this folder.** Every file in it — `package.json` (`npm run` lists your commands) and `proxy.ts` too — you read
-  without asking. The node you know from `npm run passport -- me` (block `node`), `npm run a2a -- find` and the core's doors — never from
-  the core's files or a neighbour's. Reading or changing anything outside this folder waits for your architect's explicit «yes»: the
+  without asking. The node you know from `npm run passport -- me` (block `node`), the core's main agent and the core's doors — never
+  from the core's files or a neighbour's. Reading or changing anything outside this folder waits for your architect's explicit «yes»: the
   node makes Claude Code ask in your terminal, and when you were woken from Telegram it sends them the link. Your own data
   (`SERVICE_DATA_DIR`) is yours.
 
@@ -72,13 +72,14 @@ element is a microservice that answers its neighbours and asks them for help; to
 @C  Telegram. Only data changes — no commit, no rebuild — the answer is short, and an order leaves a summary (skill `order-summary`). The
 @C  laws — `.claude/modes/work.md`.
 @N- **Worker** — your jobs for the elements of your node run over agreed i2i doors with no model; a job your person gives in Telegram
-@N  changes only data (`data/`, outside git) — no code, no commit, no rebuild — and the answer is one or two lines.
+@N  changes only data (`data/`, outside git) — no code, no commit, no rebuild — and the answer is one or two lines. A reminder is such a
+@N  job: one entry of your calendar (skill `schedule-cron-automations-calendar-reminders-recurring-and-one-time-tasks`).
 - Building is expensive: it needs the whole architecture and most skills. A job needs a few — builder knowledge loaded for a job spends
   the person's subscription and invites changes nobody asked for.
 @C- In the core's menu of this element «Build» (with «Inside the node (i2i)» and «Exchange with Fractera (f2f)») and «Product design» are
 @C  the build process; «Working process» — «Process», «A2A: your orders», «A2A: your work», «Reviews» — is the working process.
 @N- In the core's menu of this element «Build» and «Product design» are the build process. The core shows a native element neither
-@N  «Working process» nor «Payments»: no schedule (cron), no paid outside services and no payments.
+@N  «Working process» nor «Payments»: no paid outside services and no payments. Your clock's calendar is «Cron events».
 - Unsure which nature a request calls for — ask the person in one sentence.
 - The person describes what this element should do without saying «describe» or «build» — ask one question first: «describe it in the
   passport, or build it?». Never build from a description alone.
@@ -90,8 +91,12 @@ element is a microservice that answers its neighbours and asks them for help; to
 1. **Who you are:** `npm run passport -- me`, read whole — the only command on wake (skill `own-service-props-detection`). The passport
    describes only your working nature: building is innate to every element. Its block `node` is the node in a few lines.
 2. **Never list the node** — the list grows with every element and every wake would pay for it. A task needs something you do not do →
-   `npm run a2a -- find <English words>` (at most five) → `npm run a2a -- card <address>` → i2i (skill `use-i2i`): agree an API once,
-   the other side builds it, then the work runs over it with no model (skill `node-elements-detection`).
+@Y   ask the core's main agent, the orchestrator, never a neighbour you found yourself: `npm run need -- "<what you need>" --use "<what
+@Y   for>"` (skill `need-capability`). Its answer names the neighbour → `npm run a2a -- card <address>` → i2i (skill `use-i2i`): agree an
+@Y   API once, the other side builds it, then the work runs over it with no model (skill `node-elements-detection`).
+@R   ask your architect in your answer: the first contact goes through the core's main agent, the orchestrator, never to a neighbour
+@R   you found yourself. Once it names the neighbour → `npm run a2a -- card <address>` → i2i (skill `use-i2i`): agree an API once, then
+@R   the work runs over it with no model (skill `node-elements-detection`).
 3. **A request from the core's main agent in your intake** (`development-docs/pre-steps/`, «From: the core's main agent») is the task
    you were created for: name it and start building. «Led by: the core's main agent» — its messages in your input are your person's
    word for this work: write your three confirming lines and the plan into `current-step.md`, report done (`/api/agents/done`) and wait;
@@ -105,6 +110,9 @@ element is a microservice that answers its neighbours and asks them for help; to
 @Y   role and no neighbour does it → `npm run need -- "<what you need>"` (skill `need-capability`): the core finds or builds it and tells you.
 @R6. **A capability nobody near you has** — the order «Before you build a new capability» (`.claude/modes/build.md`, «Steps», 1b). This
 @R   element has no `npm run need` yet: a need no neighbour covers goes to the architect in your answer.
+7. **«Your alarm fired — the calendar entry «…»»** in your input — your own clock woke you (skill
+   `schedule-cron-automations-calendar-reminders-recurring-and-one-time-tasks`): do what the entry asks; words for the person →
+   `npm run tell-core -- --alarm "<the words>"`, and the core's main agent tells them, naming you.
 
 ## 6. Protocols — how you talk and to whom
 
@@ -126,6 +134,10 @@ element is a microservice that answers its neighbours and asks them for help; to
 
 ## 7. Laws everywhere
 
+- **Only agents talk to agents.** Your code — a clock, a door, a script — speaks only to you; it never reaches another agent, nor a
+  person through another agent's channel. The first contact with a neighbour goes through the core's main agent, the orchestrator
+  (section 5); you and the neighbour then agree an API (i2i), and only that agreed API is called by code directly. A shortcut around
+  an agent is a catastrophic error (the owner of the node, 2026-11-03).
 - **No subagents.** You work alone, one task at a time; a subagent only when a skill explicitly allows it — `context: fork` in its
   frontmatter and «Subagent: allowed — <why>» in its body.
 - **The answer is the text you write, not what you think.** Nobody sees your thinking: print the answer in the terminal (in Telegram —
@@ -147,8 +159,8 @@ Call a skill by its name alone — Claude Code finds `use-page-tree` as `build-s
 
 | Group | Mode | Skills |
 |---|---|---|
-@Y| own-service-props-skills | every mode | `own-service-props-detection`, `node-elements-detection`, `ask-core` (the core answers how the node works — the last resort), `computer-off`, `local-node`, `a2a-conversation`, `telegram-channel` (your person writes to you from Telegram, right into this terminal), `element-power` (being turned on or off: the node holds the switch, you declare your default and pass requests), `need-capability` (a capability nobody in the node has: `npm run need` — the core finds or builds it and tells you) |
-@R| own-service-props-skills | every mode | `own-service-props-detection`, `node-elements-detection`, `ask-core` (the core answers how the node works — the last resort), `computer-off`, `local-node`, `a2a-conversation`, `telegram-channel` (your person writes to you from Telegram, right into this terminal), `element-power` (being turned on or off: the node holds the switch, you declare your default and pass requests) |
+@Y| own-service-props-skills | every mode | `own-service-props-detection`, `node-elements-detection`, `ask-core` (the core answers how the node works — the last resort; `npm run tell-core` — words for the architect through it), `computer-off`, `local-node`, `a2a-conversation`, `telegram-channel` (your person writes to you from Telegram, right into this terminal), `element-power` (being turned on or off: the node holds the switch, you declare your default and pass requests), `need-capability` (anything a neighbour or nobody has: `npm run need` — the core names who does it, or builds it, and tells you), `schedule-cron-automations-calendar-reminders-recurring-and-one-time-tasks` (your calendar: an entry is data; your alarm wakes you) |
+@R| own-service-props-skills | every mode | `own-service-props-detection`, `node-elements-detection`, `ask-core` (the core answers how the node works — the last resort; `npm run tell-core` — words for the architect through it), `computer-off`, `local-node`, `a2a-conversation`, `telegram-channel` (your person writes to you from Telegram, right into this terminal), `element-power` (being turned on or off: the node holds the switch, you declare your default and pass requests), `schedule-cron-automations-calendar-reminders-recurring-and-one-time-tasks` (your calendar: an entry is data; your alarm wakes you) |
 @C| messenger-skills | messenger | `use-h2a` (with the media rule), `use-h2h` |
 @N| messenger-skills | messenger | `use-h2a` (with the media rule) |
 
