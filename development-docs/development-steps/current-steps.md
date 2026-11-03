@@ -46,8 +46,23 @@ the live hand-off waits for the owner's next core update.
   Fractera) lacks the `workflow` scope and GitHub refused the push (the owner's SSH key `aifa-agi` has only read there) — it comes
   back after the owner's `gh auth refresh -h github.com -s workflow`. Working copy of the element:
   `/private/tmp/claude-501/-Users-romanbolshiyanov/faa581fd-3474-473a-bbba-99276029a73e/scratchpad/embeddings-repo`.
-- **Next:** close 627-5 when the marker ends (the list in «To finish 627-5» above); then 626-3 (the vectors element counts through
-  `embeddings`).
+- **HANDOFF 2 (2026-11-03 ~08:20 UTC, the session `faa581fd` stopped by the subscription's usage limit):** the marker's `claude -p`
+  shares that limit — it may have stopped with `===CATALOG_MARK_STOPPED===` (3,401 cards at 08:14; the chained job then starts
+  `mark --concurrency 6` into `mark-3.log`, which stops the same way). After the limit resets: `ps aux | grep "run.mjs mark"` — none
+  running → `npm run catalog -- mark --data data/catalog-6000 --cards data/catalog-6000/cards.jsonl --concurrency 6` until
+  `already marked` ≈ 5,334; then the list «To finish 627-5» above. The summary's draft with placeholders is
+  `completed-steps/627-5.md` in the working clone (NOT committed); proof 2 helper:
+  `node /private/tmp/claude-501/-Users-romanbolshiyanov/faa581fd-3474-473a-bbba-99276029a73e/scratchpad/sample-cards.mjs <data> <cards>`
+  (20 random cards beside their SKILL.md + 5 copies that must have no card).
+- **Next after 627-5: 626-3** — `Fractera/fractera-vectors-starter` cloned at `v1.1.17` into
+  `/private/tmp/claude-501/-Users-romanbolshiyanov/faa581fd-3474-473a-bbba-99276029a73e/scratchpad/vectors-repo`. Read so far:
+  `lib/data-store/context.mjs` (`embed()` calls OpenAI, `EMBED_MODEL`/`EMBED_DIMS` from env, defaults large/3072), `vectors.mjs`
+  (vec0 `FLOAT[EMBED_DIMS]`, the `model` column per row, `/vectors/status` `configured: Boolean(openAiKey())`), `app.mjs` (the store
+  `data/vectors.db` is built lazily at the first request through `globalThis` — a rejected build must be reset so the next request
+  retries). Plan: `EMBEDDINGS_URL` (derived, the neighbour rule) + `X-Node-Key` = `SETTINGS_SECRET`; model and dims from
+  `GET /api/embed-status` (it answers model/dims even while loading); a store whose rows carry another model → `data/vectors.db` renamed
+  `data/vectors.openai-<date>.db`, a new 384 index; `.env.example`: drop `EMBED_MODEL`/`EMBED_DIMS`/`APP_ENV_FILE`, add
+  `EMBEDDINGS_URL`; core `scripts/services-install.mjs` lines 368–369 (`EMBED_MODEL`/`EMBED_DIMS`) removed in the same step.
 - **To finish 627-5, in order** (each command resumes): (1) `mark` again with `--concurrency 6` until `already marked` covers all
   ≈5,334 unique skills (a usage limit stops it — run again later); (2) `audit` if `audits.json` is missing or partial, then
   `audit --attach-only --data data/catalog-6000 --cards data/catalog-6000/cards.jsonl`; (3) `sections --data data/catalog-6000 --cards
