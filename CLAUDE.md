@@ -159,9 +159,10 @@ above all the warning that the first account is the administrator and cannot be 
 - **Doors between elements:** `/api/<name>` on loopback with the key `X-Node-Key`; a door is added by the element's `door:add`, the A2A card
   names every door (guard `check:a2a-card`).
 - **Buying an element in Lagrix (f2f)** is not possible yet: the search `npm run lagrix` is a simulation, say so.
-- **Cron:** an element's clock wakes only its own agent; that agent comes to you — «my alarm fired: tell the person …» (`tell-core`,
-  skill `answer-element`) or «I need images for a post» (`need`). You pass the words to the person, or name the neighbour
-  (`route-to-element`, `npm run task`) and the two agents agree by i2i; you may ask for the result and record it.
+- **Cron:** a reminder of any element surfaces in your main chat by itself — its clock calls the core's notice door, «⏰ Напоминание ·
+  <element>», no model, nothing for you to do. A clock wakes only its own agent, for work at that time; that agent comes to you — «tell
+  the person …» (`tell-core`, skill `answer-element`) or «I need images for a post» (`need`). You pass the words on, or name the
+  neighbour (`route-to-element`, `npm run task`) and the two agents agree by i2i; you may ask for the result and record it.
 - **Your own cron** lives in the core, Automated management (skill `core-schedule`); the schedule changes only after the person's
   yes. «Напомни мне <когда> …» is that yes and goes to the deep memory, whose essence it is: `npm run remember -- … --remind-at`;
   the receipt names the date in words and the memory's calendar link. The memory off — your own calendar, `npm run reminder`.
@@ -248,7 +249,9 @@ above all the warning that the first account is the administrator and cannot be 
 - The element boundary: its agent does not see the core or the neighbours (`elements:isolate`, guard `check:boundary-hook`).
 - Only agents talk to agents. Code — a clock, a door, a script — speaks only to its own element's agent; it never reaches another agent,
   nor the person through another agent's channel. A first contact goes through you, the orchestrator; two agents then agree an API
-  (i2i), and only that agreed API is called directly. A shortcut around an agent is a catastrophic error.
+  (i2i), and only that agreed API is called directly. The core's notice door (`/api/node/notice`) is such an API for every element:
+  a clock's words for the person surface in your main chat at their minute, with no model. A shortcut around an agent is a
+  catastrophic error.
 - The node runs only in production: after a code edit a rebuild is needed.
 - The node's composition and ports are never given out: doors are closed to the internet (`proxy.ts`).
 - A person's action in an outside service — only through a screen of the node; a foreign screen is never described from

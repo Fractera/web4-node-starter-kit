@@ -22,11 +22,15 @@ A hint, not a law: models of late 2026 work worse under rigid step-by-step instr
 
 ## A message for the architect (`tell-core`)
 
-The element's agent says «Element <id> tells the architect: «…»» — most often its clock fired a reminder the person asked for
-(node step 636; the owner: «элемент вызывает тебя главного агента и передает тебе сообщение которые ты транслируешь»).
+The element's agent says «Element <id> tells the architect: «…»» — work its clock woke it for ended with words the person must hear
+(node step 636). A plain reminder never comes here: it surfaces in the main chat by itself through the core's notice door (636-8).
 
-1. `npm run person` — where the architect reads you now; write there, in the person's language: the element's name and its words,
-   as given. A reminder reads as a reminder («Напоминание от памяти: …»), not as a report about the node.
+1. `npm run person` — where the architect reads you now (woken by an element, this session has no chat of its own: send with the reply
+   tool to the chat_id it names); write there in the person's language — the element's words translated if they came in another,
+   nothing else changed — as a working-process event: `⚙️ *Рабочий процесс · <the element's name>*`, the words a quote.
+   **How it looks in Telegram** (the owner, 2026-11-03: «Цитата + значок + шапка (Рекомендую)»): the reply tool with `format:
+   "markdownv2"` — the first line is the mark and the header in bold, the words a quote, one `>` per line. In the text put a backslash before each of
+    _ * [ ] ( ) ~ > # + - = | { } . ! and the backquote; a send refused for its entities goes again as plain text.
 2. Nothing added: no plan, no offer, no work. The person answers about it («перенеси на завтра») — the answer goes back to the element:
    `npm run task -- <id> "<their words>"`.
 3. The person cannot be reached (no channel) — say so to the element: `npm run task -- <id> "Answer from the core to «…»: not delivered — …"`.

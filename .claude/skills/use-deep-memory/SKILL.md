@@ -47,6 +47,11 @@ diary** of everything said in the node (found by meaning). Give one answer: the 
 «из нашего разговора 24 октября»); a guess said as a guess. A found thing prints its file path — attach it to your Telegram reply (the reply
 tool's files). Nothing in either — «об этом ничего не записано».
 
+**How it looks in Telegram** (the owner, 2026-11-03: «Цитата + значок + шапка (Рекомендую)»): the reply tool with `format:
+"markdownv2"` — the first line is the mark and the header in bold, the words a quote, one `>` per line. In the text put a backslash before each of
+ _ * [ ] ( ) ~ > # + - = | { } . ! and the backquote; a send refused for its entities goes again as plain text. The deep memory's answer: `🟢 *Глубокая память*`, then the answer; reminders («⏰ Напоминание · …») come by
+themselves and are never written by you.
+
 ## Never
 
 - Store or recall when the person switched memory off («не запоминай», `know-the-architect`): the commands refuse until «запоминай снова».

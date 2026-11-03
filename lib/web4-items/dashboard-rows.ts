@@ -216,6 +216,9 @@ export type CatalogEntry = { id: string; title: string; description: string; hre
  * адрес. ✗ Замерено 2026-11-03 на узле владельца: карточка брала `<title>` главной — root выходил «Что вы хотите построить?», cache —
  * «Эталонный нативный шаблон», и владелец не нашёл root в «Кастомных элементах», хотя он там был.
  */
+/** 636-8: имя агента в шапке уведомления главного чата (`/api/node/notice`) — то же, что у карточки каталога. */
+export const elementName = (id: string, lang: "en" | "ru"): string => nameOf(id, lang)
+
 function nameOf(id: string, lang: "en" | "ru"): string {
   const section = TREE.find((b) => b.page.meta.slug === id)
   return section ? wordsOf(section.page, lang).title : addressOf(id)
