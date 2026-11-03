@@ -23,6 +23,21 @@ native v0.1.33, 12 elements rolled out, pins `5e9d4b1` (`completed-steps/622.md`
 `GET /api/skills/suggested`, the skill `adopt-suggested-skill`, the instruction resealed `ed81462013fc` (`completed-steps/628-main.md`);
 the live hand-off waits for the owner's next core update.
 
+**NOW (2026-11-03 ~17:50 UTC): step 632 built — core `a74d4c9`, waits for the owner's «Sync fork» (my token has only `pull` on
+`aifa-agi/web4-node-starter-kit`; the original was 5 commits ahead).** In it: `npm run node:update` (`scripts/node-update.mjs` + the
+launcher `node-update-run.mjs`, the door `/api/node/update`: GET state, POST check | update; the old `/api/node/origin` removed — its
+one reader moved), the banner (`origin-notice.client.tsx`: open your fork only while the fork is behind, «Проверить снова», «Обновить
+узел»), the top menu (`catalogEntries(lang, { all })` — the left menu's names, turned-off and silent elements with the reason, only
+in the core's own menu), the red «Домен и хостинг» (`meta.alert`, `data-alert`, island `NodeAlerts`, `styles/globals.css`), the
+dead-address banner + `POST /api/domain/new-address` (only while `logs/tunnel.json` says dead). Proven so far: a model node in scratch
+(`t632/sim`: fork with 7 commits, a node with «Fresh project», copies, ITA, generated, lock, registry state, a born element) — done
+(steps kept, registry merged, `embeddings` turned on), refused on own work (nothing touched), rollback on a failing guard byte-equal
+(two defects found and fixed there: the registry rewritten instead of restored verbatim, a trimmed `git diff` that would not apply),
+a second run «nothing to update»; the core's own catalog and menu code (jiti) give the cards and the three red items; every guard and
+`tsc` RC 0. Next: after the owner's «sync» — the live node takes 632 by `node:update` itself (the fork's copy of the script put in
+`scripts/` untracked: the script sees a copy of the fork and the merge brings it back), then the checks on the live pages, the
+summary `completed-steps/632.md`; then 629.
+
 **DONE (2026-11-03 ~16:45 UTC): the owner's node is updated.** The core runs the build of `aaf640f0` (the merge); every element on
 its pin and online — embeddings v0.1.2 (24696, turned on by `npm run power -- embeddings on`: the installer restarts only what ran
 before), vectors v1.2.0, graph v1.2.0, memory v2.2.9, data v2.2.0; stripe off by its passport; `npm run skills-base` →
