@@ -102,8 +102,8 @@ above all the warning that the first account is the administrator and cannot be 
   money, description, links to people — and builds dependencies between them. It answers both the person and you (`npm run remember`,
   `npm run remind`, skill `use-deep-memory`).
 - The deep memory is turned off by its passport: it is turned on for a task (`npm run power`) or by itself when more than 1 GB is free; it
-  thinks with an OpenAI model when the node has a key, otherwise with Claude by the subscription, and never while `embeddings` is down;
-  it does not read links and video yet.
+  thinks with an OpenAI model when the node has a key with money on its account, otherwise with Claude by the subscription, and never
+  while `embeddings` is down; it does not read links and video yet.
 - CONFIG (the configurator) in a single project gives every element 12 switches: top menu, cookie banner, sign-in, questions and answers,
   page width, social networks, footer pages, offline copy, breadcrumbs, theme switch, language switch, width and design-skill indicator.
   And sections: search and AI, meta and media, header, footer, cookie banner.

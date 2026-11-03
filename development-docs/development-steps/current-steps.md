@@ -23,7 +23,13 @@ native v0.1.33, 12 elements rolled out, pins `5e9d4b1` (`completed-steps/622.md`
 `GET /api/skills/suggested`, the skill `adopt-suggested-skill`, the instruction resealed `ed81462013fc` (`completed-steps/628-main.md`);
 the live hand-off waits for the owner's next core update.
 
-**NOW (2026-11-03 ~16:45 UTC): 636 — only agents talk to agents, the elements' side** (`new-steps/636/636-main.md`, approved
+**NOW (2026-11-03 ~20:40 UTC): 636 CLOSED** (`completed-steps/636.md`): proven live at 20:13 — «⏰ Напоминание · Глубокая память» came
+into the owner's main chat by itself, no agent woken (the memory's run log, the core's notices journal and the owner's Telegram). After
+the proof — 636-9: memory v2.2.16 `9863d94` thinks with Claude while the OpenAI account is empty (pinned; the instruction resealed
+`d0fe0a68dab1`); its live check at the owner's next sync and update: a «запомни» without the caveat «пополни счёт». Open: 637 (the
+owner's proposal: no core building on a person's node, pull requests as the developers' road — three questions wait for him), 629,
+627-2…4/6/7. The history of 636 follows.
+**636 — only agents talk to agents, the elements' side** (`new-steps/636/636-main.md`, approved
 «Да, делай (Рекомендую)» + «Не спрашивать (Рекомендую)»). The core's half is `c6f91d6` (the law in section 6, the Cron line,
 ANTI-PATTERNS). Found before the code: (1) the wake door asks the person in Telegram whenever the woken agent has a bot — an alarm
 needs `confirmed`; (2) the elements' 5.2 sends an agent to `a2a -- find` by itself, against the core's i2i line; (3) the native
