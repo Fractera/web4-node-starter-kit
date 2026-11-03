@@ -137,6 +137,21 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
 
 ## The owner's latest decisions (verbatim)
 
+- 2026-11-03 ~13:55 UTC, during 626-6 — a new step **630** (reminders by time in the deep memory and in the agent): «Пожалуйста проверь
+  что наша глубинная память поддерживает работу с Cron событиями. Это означает что я могу сказать напомни мне через неделю про день
+  рождения мамы. И это должно вызвать соответствующий процессорный и всё остальное. Это сделать нужно в отдельном шаге»; then: «Даже
+  если глубинная память умеет это делать необходимо проверить навыки насколько хорошо модели это понимает так сказать нативно в том
+  числе инструкции». **Checked the same minute (the 626-6 stand, memory with this step's code):** `POST /v1` «напомни мне через неделю
+  про день рождения мамы» → verb `recall` («начинается с вопросительного слова «напомни»», `which-verb.mjs`), «Этого я не знаю: об этом
+  ничего не записано», no model call, nothing scheduled. The table `messages_that_came_into_memory` has `event_starts_at`,
+  `event_ends_at`, `event_time_zone`, `event_all_day`, `event_repeats`, `remind_at` (+ an index) — written and read by no code. The
+  memory element has no clock (its law «no timers»; no `lib/cron` in it, nor in `embeddings`), while data, vectors and graph carry the
+  template's runner (once a minute, `data/cron.json`, built-in event `telegram-message` → `sendToOwner`, a reminder needs no code). The
+  core has its own clock (`data/cron.json`, event `agent-task`, skill `core-schedule` — «to remind» is in its description, the screen
+  «Automated management → Cron events»). Step 630 checks first how the main agent understands such a phrase natively (instruction,
+  `core-schedule`, `use-deep-memory`), then joins the memory, the clock and Telegram. Order: after 629 (not named by the owner — my
+  default, said in the reply).
+
 - 2026-11-03 ~13:30 UTC, during 626-6 — a new step **629** (the agent explains a provider's rules before a person loses the account):
   «Мне сейчас попалась информация о том что многих пользователей блокируют за нарушение пользовательского соглашения то есть тогда
   когда они начинают совершать действия запрещенные. Но ведь никто эти пользовательские соглашения давай скажем по-честному не читай и
@@ -155,9 +170,9 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
   supported countries — Russia and Belarus are not listed, «Use by persons while physically located in an unsupported region»;
   appeals — logged in at claude.ai, «Submit an appeal» (claude.ai/restricted); Claude Code legal page — OAuth for ordinary use of
   Claude Code, no routing of requests through Pro/Max credentials on behalf of other users, limits «assume ordinary, individual usage».
-  My advice — both: one law in the instruction (always loaded at the moment of a refusal) and a skill with the full map. His answers
-  in the choice window: when — «После 626-6»; where — «Ядро + элементы (Рекомендую)» (the core's law and skill, the elements' agents
-  get the law through a template release in the same step); the live proof on his account — «Одна серая просьба (Рекомендую)» (one
+  My advice — both: one law in the instruction (always loaded at the moment of a refusal) and a skill with the full map. The owner's
+  answers in the choice window: when — «После 626-6»; where — «Ядро + элементы (Рекомендую)» (the core's law and skill, the elements'
+  agents get the law through a template release in the same step); the live proof on the owner's account — «Одна серая просьба (Рекомендую)» (one
   message, no insisting, plus an ordinary request as the negative control). To bring into the plan: the integrator scenario (other
   people's agents on the owner's subscription is not permitted) and batch runs on the subscription (627-6) — an API-key option.
 
