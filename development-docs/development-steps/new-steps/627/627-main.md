@@ -117,3 +117,17 @@ What it changes:
 ## Not in this step
 Skills from sources that are not GitHub (for example `open.feishu.cn`, `uizze.sh`); reference files beyond `SKILL.md`; an automatic
 schedule; installing skills (the person's yes, 625).
+
+## Decisions of 2026-11-03 — they change 627-2, 627-3 and 627-6
+
+The owner, in the choice window, verbatim:
+- the skip-cards: «Короткий чёрный список (Рекомендую)» — the node's searchable space holds only the useful cards (3,240 of 5,330); the
+  2,090 skip-cards travel as a short list (name, reason, risks), so the agent answers «checked, here is why not» without a search; the
+  full cards stay at Fractera, so 627-6 never marks them again;
+- watching sources of skills: «По расписанию с «да» (Рекомендую)» — the person names the sources and how often, the main agent puts the
+  watch into its own schedule (`core-schedule`) only after a yes; fresh skills are marked and laid into the space, never used until a
+  task needs them (627-6 changes from «never by a timer» to «only on the person's schedule»);
+- a public search of the catalog on the landing of `embeddings`: «Пока не делать» — it comes back after 627-4 (measured: in the
+  visitor's browser it needs no server and no tokens).
+What 627-2 takes from the measurements of the same day: a card is indexed as its summary plus its tasks as pieces (one vector of the
+whole card lets a word like «Instagram» outweigh the job), with value high preferred.

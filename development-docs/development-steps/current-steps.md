@@ -123,6 +123,15 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
 
 ## The owner's latest decisions (verbatim)
 
+- 2026-11-03 ~12:00 UTC, questions during 626-5: «что будет если у нас навыки записаны на английском языке поискать их на других языках
+  например на русском или может быть даже на китайском?» (answered by a measurement, below); «Попытайся например на русском языке найти
+  навык подходящий для генерации контента в Instagram» (done on all 5,330 cards, below); «Мы можем на Лындин добавить инструмент чтобы
+  пользоваться … поисковые запросы и получить подходящий навык? … сайт публичный нам нужно чтобы это все было публично и бесплатно так
+  будет работать?» → in the choice window «Пока не делать» (a public search, in the visitor's browser, comes back after 627-2 … 4);
+  «А зачем нам вообще нужны такие навыки [«не ставить»]? Какое они несут ценность почему мы их оставили?» → «Короткий чёрный список
+  (Рекомендую)»: the node's searchable graph gets only the useful cards (3,240); the 2,090 skip-cards travel as a short list (name,
+  reason, risks) so the agent answers «checked, here is why not»; the full cards stay at Fractera for the updates (627-6). Changes 627-2/3.
+
 - 2026-11-03 ~10:35 UTC, «after»: «Работа с навыками однозначно достойно отдельного описания как киллер Fitch внутри readme а также на
   страницах архитектора. . Во-первых давай зайдём издалека и проверим где мы должны в обоих документах и файле readme и в на страницах
   архитектора казать то что у нас появился новый активный шаблон какие функции выполняет также ты же помнишь да что у этого нативного
@@ -195,6 +204,14 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
   остальное — план» (plan 622).
 
 ## Measured — do not measure again
+
+- 2026-11-03, the node's model across languages: 8 intents asked in English, Russian and Chinese against English skill descriptions —
+  right first en 8/8 (mean 0.647), zh 8/8 (0.614), ru 7/8 (0.565; «картинку нейросетью» missed, «лендинг» 0.34). The 5,330 catalog cards
+  (`skill: summary Tasks: …`) counted in 261 s on this Mac; then a question costs 17–23 ms and the comparison with all cards 7–17 ms.
+  «генерация контента для Instagram» → Instagram data skills first (the word outweighs «content»), `coreyhaines31/marketingskills@social`
+  6th; «придумать посты и сторис для инстаграма с подписями и хэштегами» → `anthropics/knowledge-work-plugins@content-creation` first.
+  For 627-2: index a card's tasks as pieces (as 626-4 did for the elements) and prefer value high. Scripts:
+  `/private/tmp/claude-501/-Users-romanbolshiyanov/faa581fd-3474-473a-bbba-99276029a73e/scratchpad/catalog-search/`.
 
 - 2026-11-03, 626-1: `onnxruntime-node` 1.24.3 … 1.31.1 ship no macOS x64 binary (arm64 only); 1.20.1 … 1.23.0 ship x64;
   `@huggingface/transformers` 4.x pins ≥ 1.24.3, 3.8.1 pins 1.21.0. The same ONNX file gives cos 1.000000 in Node and in Python on 20
