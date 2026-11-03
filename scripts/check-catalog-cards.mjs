@@ -5,7 +5,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { VERDICTS, validateCard } from './catalog/lib.mjs'
+import { USES, VALUES, validateCard } from './catalog/lib.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const FILE = process.argv[2] ?? join(ROOT, 'lib', 'agent-kit', 'skills', 'catalog', 'cards.jsonl')
@@ -18,7 +18,7 @@ if (!existsSync(FILE)) {
 const findings = []
 const ids = new Set()
 const shas = new Set()
-const verdicts = Object.fromEntries(VERDICTS.map((v) => [v, 0]))
+const count = Object.fromEntries([...VALUES.map((v) => [`value ${v}`, 0]), ...USES.map((u) => [`use ${u}`, 0])])
 const lines = readFileSync(FILE, 'utf8').split(/\r?\n/).filter((l) => l.trim())
 lines.forEach((line, i) => {
   let card
@@ -29,7 +29,8 @@ lines.forEach((line, i) => {
   if (shas.has(card.sha)) findings.push(`line ${i + 1} (${card.id}): the SKILL.md fingerprint ${card.sha} again — a duplicate`)
   ids.add(card.id)
   shas.add(card.sha)
-  if (card.fractera in verdicts) verdicts[card.fractera] += 1
+  if (`value ${card.value}` in count) count[`value ${card.value}`] += 1
+  if (`use ${card.use}` in count) count[`use ${card.use}`] += 1
 })
 
 if (findings.length) {
@@ -37,4 +38,4 @@ if (findings.length) {
   console.log(`===CATALOG_CARDS_FAILED=== ${findings.length}`)
   process.exit(1)
 }
-console.log(`===CATALOG_CARDS_OK=== ${lines.length} cards (${VERDICTS.map((v) => `${v} ${verdicts[v]}`).join(', ')})`)
+console.log(`===CATALOG_CARDS_OK=== ${lines.length} cards (${Object.entries(count).map(([k, n]) => `${k} ${n}`).join(', ')})`)

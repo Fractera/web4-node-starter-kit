@@ -2,8 +2,14 @@
 // `mark.mjs` and the guard `check-catalog-cards.mjs` call them; `selftest.mjs` proves them.
 import { createHash } from 'node:crypto'
 
-/** Does the skill fit a node as written, only for its ideas (another stack the node replaces), or not at all (or risky)? */
-export const VERDICTS = ['fits', 'ideas-only', 'not-for-node']
+// Two questions instead of one verdict (627-1 run 2; the owner, 2026-11-02: «почему-то забраковал навык в котором есть видео?»):
+/** How useful is the skill for what Fractera nodes are for — sites, apps, agents, content for social networks? */
+export const VALUES = ['high', 'some', 'none']
+/** How it is used: as written · as written with an outside service or key · only its ideas · not at all (a risk always means skip). */
+export const USES = ['install', 'install-with-service', 'ideas', 'skip']
+/** Files of a skill's folder an agent could run — the card names them, and such a skill is installed only after a separate yes. */
+export const SCRIPT_EXT = ['.sh', '.bash', '.zsh', '.py', '.js', '.mjs', '.cjs', '.ts', '.ps1', '.bat', '.cmd', '.rb', '.go', '.pl', '.php', '.exe', '.bin']
+export const isScript = (path) => SCRIPT_EXT.some((e) => String(path).toLowerCase().endsWith(e))
 
 /** «1.2M» / «936.7K» / «141» → a number of installs; anything else → 0. */
 export function installsOf(s) {
@@ -79,10 +85,18 @@ export function validateCard(c) {
   if (!texts(c.tasks, 1, 8, 160)) e.push('tasks')
   if (!texts(c.tags, 1, 10, 40) || c.tags.some((t) => t !== t.toLowerCase())) e.push('tags')
   if (!(Array.isArray(c.tools) && c.tools.length <= 25 && c.tools.every((t) => typeof t === 'string' && t.trim()))) e.push('tools')
-  if (!VERDICTS.includes(c.fractera)) e.push('fractera')
-  if (typeof c.why !== 'string' || !c.why.trim() || c.why.length > 400) e.push('why')
+  if (!Number.isInteger(c.quality) || c.quality < 1 || c.quality > 5) e.push('quality')
+  if (typeof c.qualityWhy !== 'string' || !c.qualityWhy.trim() || c.qualityWhy.length > 300) e.push('qualityWhy')
+  if (!VALUES.includes(c.value)) e.push('value')
+  if (!USES.includes(c.use)) e.push('use')
+  if (!(Array.isArray(c.needs) && c.needs.length <= 10 && c.needs.every((t) => typeof t === 'string' && t.trim()))) e.push('needs')
+  if (!Number.isInteger(c.files) || c.files < 1) e.push('files')
+  if (!(Array.isArray(c.scripts) && c.scripts.every((s) => typeof s === 'string' && s.trim()))) e.push('scripts')
+  if (c.licenceFrom !== null && !['folder', 'repository'].includes(c.licenceFrom)) e.push('licenceFrom')
+  if (c.audits !== undefined && !(Array.isArray(c.audits) && c.audits.every((a) => a && typeof a.provider === 'string' && typeof a.status === 'string'))) e.push('audits')
+  if (typeof c.why !== 'string' || !c.why.trim() || c.why.length > 500) e.push('why')
   if (!Array.isArray(c.risks) || !c.risks.every((r) => typeof r === 'string' && r.trim())) e.push('risks')
-  else if (c.risks.length && c.fractera !== 'not-for-node') e.push('risks-need-not-for-node')
+  else if (c.risks.length && c.use !== 'skip') e.push('risks-need-skip')
   if (typeof c.markedBy !== 'string' || !c.markedBy) e.push('markedBy')
   if (Number.isNaN(Date.parse(c.markedAt ?? ''))) e.push('markedAt')
   return e

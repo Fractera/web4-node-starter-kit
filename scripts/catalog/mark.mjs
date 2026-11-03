@@ -2,9 +2,11 @@
 // no settings (so no plugins and no hooks), no session file, the system prompt from a file, and an empty working folder in the system's
 // temporary directory — so no CLAUDE.md is found (measured 2026-11-02: ~600 tokens of overhead, 1.7 s). `total_cost_usd` of the answer
 // says what the same call would cost through the API; the subscription pays nothing extra, it spends its limits.
-// Resumable: a card whose id and fingerprint are already in cards.jsonl is not marked again; a usage limit stops the run — run it again.
+// Run 2: the marker reads the skill's SKILL.md AND its scripts (whole folders from fetch.mjs); the card carries the folder's files,
+// scripts, fingerprint and licence. Resumable: a card whose id and folder fingerprint are already in cards.jsonl is not marked again;
+// a usage limit stops the run — run it again.
 import { spawn } from 'node:child_process'
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { appendFileSync, existsSync, lstatSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
@@ -56,29 +58,45 @@ function marksOf(result) {
   return JSON.parse(s.slice(from, to + 1))
 }
 
-/** The card: our metadata around the model's marks. A risk always means «not-for-node» — decided here, not left to the model. */
+const list = (v, lower = false) => (Array.isArray(v) ? v.map((t) => (lower ? String(t).toLowerCase() : String(t)).trim()).filter(Boolean) : v)
+
+/** The card: our metadata around the model's marks. A risk always means `use: skip` — decided here, not left to the model. */
 function cardOf(row, text, m, markedBy) {
-  const risks = Array.isArray(m.risks) ? m.risks.map((r) => String(r).trim()).filter(Boolean) : m.risks
+  const risks = list(m.risks)
   return {
     id: `${row.source}@${row.skill}`, source: row.source, skill: row.skill, installs: row.installs, stars: row.stars ?? null,
-    licence: row.licence ?? null, url: urlOf(row.source, row.skill), sha: row.sha, blob: blobShaOf(text),
-    summary: String(m.summary ?? '').trim(),
-    tasks: Array.isArray(m.tasks) ? m.tasks.map((t) => String(t).trim()) : m.tasks,
-    tags: Array.isArray(m.tags) ? m.tags.map((t) => String(t).toLowerCase().trim()) : m.tags,
-    tools: Array.isArray(m.tools) ? m.tools.map((t) => String(t).trim()).filter(Boolean) : m.tools,
-    fractera: Array.isArray(risks) && risks.length ? 'not-for-node' : m.fractera,
+    licence: row.licence ?? null, licenceFrom: row.licenceFrom ?? null, url: urlOf(row.source, row.skill),
+    sha: row.sha, blob: row.blob ?? blobShaOf(text), folderSha: row.folderSha ?? null,
+    files: row.files ?? 1, scripts: row.scripts ?? [],
+    summary: String(m.summary ?? '').trim(), tasks: list(m.tasks), tags: list(m.tags, true), tools: list(m.tools),
+    quality: Number(m.quality), qualityWhy: String(m.qualityWhy ?? '').trim(),
+    value: m.value, use: Array.isArray(risks) && risks.length ? 'skip' : m.use, needs: list(m.needs) ?? [],
     why: String(m.why ?? '').trim(), risks, markedBy, markedAt: new Date().toISOString(),
   }
 }
 
 const readJsonl = (file) => (existsSync(file) ? readFileSync(file, 'utf8').split(/\r?\n/).filter(Boolean).map((l) => JSON.parse(l)) : [])
 
+/** The folder's scripts as strings — links are never read (a link file holds only its target's path anyway: core.symlinks=false). */
+function scriptsOf(row, dataDir) {
+  return (row.scripts ?? []).map((p) => {
+    const file = join(dataDir, row.dir, row.folder ?? '', p)
+    try {
+      if (lstatSync(file).isSymbolicLink()) return { path: p, text: '[a link — not read]' }
+      return { path: p, text: readFileSync(file, 'utf8') }
+    } catch {
+      return { path: p, text: '[could not be read]' }
+    }
+  })
+}
+
 /** Mark one row: two tries; returns { card } or { error, limit }. Every call is written to the log with its usage. */
-async function markRow(row, text, ctx) {
+async function markRow(row, text, scripts, ctx) {
   let last = 'not tried'
   for (let attempt = 1; attempt <= 2; attempt += 1) {
     const started = Date.now()
-    const r = await claudeOnce(ctx.bin, ctx.sysFile, userMessage(row, text), ctx.cwd)
+    const input = userMessage(row, text, scripts)
+    const r = await claudeOnce(ctx.bin, ctx.sysFile, input, ctx.cwd)
     const u = r.json?.usage ?? {}
     const markedBy = Object.keys(r.json?.modelUsage ?? {})[0] ?? 'haiku'
     let card = null
@@ -86,6 +104,7 @@ async function markRow(row, text, ctx) {
     if (r.ok) {
       try {
         card = cardOf(row, text, marksOf(r.json.result), markedBy)
+        if (ctx.audits) card.audits = ctx.audits[card.id] ?? []
         errors = validateCard(card)
       } catch (e) {
         errors = [e instanceof Error ? e.message : String(e)]
@@ -95,7 +114,7 @@ async function markRow(row, text, ctx) {
       id: `${row.source}@${row.skill}`, attempt, ok: r.ok && !errors.length, error: r.ok ? errors.join(', ') || undefined : r.error,
       input: (u.input_tokens ?? 0) + (u.cache_creation_input_tokens ?? 0) + (u.cache_read_input_tokens ?? 0),
       cacheRead: u.cache_read_input_tokens ?? 0, output: u.output_tokens ?? 0, ms: r.json?.duration_ms ?? Date.now() - started,
-      costUsd: r.json?.total_cost_usd ?? null, model: markedBy, chars: text.length,
+      costUsd: r.json?.total_cost_usd ?? null, model: markedBy, chars: input.length, scripts: scripts.length,
     })}\n`)
     if (r.ok && !errors.length) return { card }
     last = r.ok ? `invalid card: ${errors.join(', ')}` : r.error
@@ -104,8 +123,8 @@ async function markRow(row, text, ctx) {
   return { error: last }
 }
 
-/** Mark every unique fetched skill not yet in the cards (or, with `control`, the planted fixtures only). */
-export async function markAll({ dataDir, cardsFile, limit = Infinity, concurrency = 3, control = false }) {
+/** Mark every unique fetched skill not yet in the cards (or, with `control`, the planted fixture only). */
+export async function markAll({ dataDir, cardsFile, limit = Infinity, concurrency = 3, control = false, only = null }) {
   const bin = resolveBin('claude')
   if (!bin) throw new Error('claude is not found — the marker runs on Claude Code')
   const cwd = join(tmpdir(), 'fractera-catalog-mark')
@@ -113,23 +132,36 @@ export async function markAll({ dataDir, cardsFile, limit = Infinity, concurrenc
   const sysFile = join(cwd, 'marker-system.txt')
   writeFileSync(sysFile, SYSTEM)
   mkdirSync(dataDir, { recursive: true })
-  const ctx = { bin, sysFile, cwd, log: join(dataDir, 'mark-log.jsonl') }
+  // The partners' audits, when `npm run catalog -- audit` ran before the marking (627-5).
+  const audits = existsSync(join(dataDir, 'audits.json')) ? JSON.parse(readFileSync(join(dataDir, 'audits.json'), 'utf8')) : null
+  const ctx = { bin, sysFile, cwd, log: join(dataDir, 'mark-log.jsonl'), audits }
 
   if (control) {
     const fixture = join(HERE, 'fixtures', 'planted-risky', 'SKILL.md')
     const text = readFileSync(fixture, 'utf8')
-    const row = { rank: 0, source: 'fractera-control/planted', skill: 'planted-risky', installs: 0, stars: null, licence: null, sha: shaOf(text) }
-    const r = await markRow(row, text, ctx)
+    const row = { rank: 0, source: 'fractera-control/planted', skill: 'planted-risky', installs: 0, stars: null, licence: null,
+      licenceFrom: null, sha: shaOf(text), files: 1, scripts: [], list: [`SKILL.md ${text.length}`] }
+    const r = await markRow(row, text, [], ctx)
     const line = r.card ?? { id: `${row.source}@${row.skill}`, error: r.error }
     writeFileSync(join(dataDir, 'controls.jsonl'), `${JSON.stringify(line)}\n`)
     return { marked: r.card ? 1 : 0, failed: r.card ? [] : [line], skipped: 0, duplicates: [], stoppedByLimit: Boolean(r.limit) }
   }
 
-  const fetched = JSON.parse(readFileSync(join(dataDir, 'fetched.json'), 'utf8')).filter((r) => r.sha)
+  // The fetch may still be writing fetched.json (a large run marks what is fetched so far, then runs again): a half-written file is read
+  // again after a second, three times.
+  let fetched = null
+  for (let attempt = 1; !fetched; attempt += 1) {
+    try { fetched = JSON.parse(readFileSync(join(dataDir, 'fetched.json'), 'utf8')).filter((r) => r.sha) } catch (err) {
+      if (attempt >= 3) throw err
+      await new Promise((ok) => setTimeout(ok, 1000))
+    }
+  }
   const { keep, duplicates } = dedupeBySha(fetched)
   writeFileSync(join(dataDir, 'duplicates.json'), `${JSON.stringify(duplicates, null, 1)}\n`)
   const cards = new Map(readJsonl(cardsFile).map((c) => [c.id, c]))
-  const todo = keep.filter((r) => cards.get(`${r.source}@${r.skill}`)?.sha !== r.sha).slice(0, limit)
+  // `only` — these ids are marked again whatever the cards hold (a calibration check); otherwise every skill not marked yet.
+  const todo = (only ? keep.filter((r) => only.includes(`${r.source}@${r.skill}`))
+    : keep.filter((r) => cards.get(`${r.source}@${r.skill}`)?.folderSha !== r.folderSha)).slice(0, limit)
   const failed = []
   let stop = false
   let next = 0
@@ -142,13 +174,13 @@ export async function markAll({ dataDir, cardsFile, limit = Infinity, concurrenc
   const worker = async () => {
     while (!stop && next < todo.length) {
       const row = todo[next++]
-      const text = readFileSync(join(dataDir, row.file), 'utf8')
-      const r = await markRow(row, text, ctx)
+      const text = readFileSync(join(dataDir, row.dir, row.path), 'utf8')
+      const r = await markRow(row, text, scriptsOf(row, dataDir), ctx)
       if (r.card) {
         cards.set(r.card.id, r.card)
         marked += 1
         save()
-        console.log(`  ${r.card.id}: ${r.card.fractera}${r.card.risks.length ? ` · risks ${r.card.risks.length}` : ''}`)
+        console.log(`  ${r.card.id}: value ${r.card.value} · use ${r.card.use}${r.card.scripts.length ? ` · scripts ${r.card.scripts.length}` : ''}${r.card.risks.length ? ` · risks ${r.card.risks.length}` : ''}`)
       } else {
         failed.push({ id: `${row.source}@${row.skill}`, error: r.error })
         console.log(`  ${row.source}@${row.skill}: FAILED — ${r.error}`)

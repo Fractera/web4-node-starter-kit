@@ -1,6 +1,6 @@
 // THE CATALOG'S HELPERS PROVE THEMSELVES (node step 627-1): `npm run catalog -- selftest`. No network, no files — only `lib.mjs`.
 import assert from 'node:assert/strict'
-import { blobShaOf, dedupeBySha, frontmatterName, installsOf, parseList, shaOf, skillPaths, urlOf, validateCard } from './lib.mjs'
+import { blobShaOf, dedupeBySha, frontmatterName, installsOf, isScript, parseList, shaOf, skillPaths, urlOf, validateCard } from './lib.mjs'
 
 let checks = 0
 const check = (name, fn) => {
@@ -66,14 +66,25 @@ const good = {
   id: 'mattpocock/skills@grill-me', source: 'mattpocock/skills', skill: 'grill-me', installs: 1_500_000, stars: 1200, licence: 'MIT',
   url: 'https://skills.sh/mattpocock/skills/grill-me', sha: '0123456789abcdef',
   summary: 'The skill makes the agent interview the person about a plan, one hard question at a time, until the plan holds up.',
-  tasks: ['stress-test a product plan'], tags: ['planning', 'interview'], tools: [], fractera: 'fits',
+  tasks: ['stress-test a product plan'], tags: ['planning', 'interview'], tools: [], value: 'high', use: 'install', needs: [],
+  files: 1, scripts: [], licenceFrom: 'repository', quality: 4, qualityWhy: 'Clear steps and a stop rule; no examples.',
   why: 'Pure conversation; nothing in it depends on a stack.', risks: [], markedBy: 'claude-haiku-5-5', markedAt: '2026-11-02T20:00:00.000Z',
 }
 
+check('isScript', () => {
+  assert.equal(isScript('scripts/check-quota.sh'), true)
+  assert.equal(isScript('tools/Render.PY'), true)
+  assert.equal(isScript('references/guide.md'), false)
+})
+
 check('validateCard', () => {
   assert.deepEqual(validateCard(good), [])
-  assert.deepEqual(validateCard({ ...good, fractera: 'maybe' }), ['fractera'])
-  assert.deepEqual(validateCard({ ...good, risks: ['runs a remote script'] }), ['risks-need-not-for-node'])
+  assert.deepEqual(validateCard({ ...good, value: 'maybe' }), ['value'])
+  assert.deepEqual(validateCard({ ...good, use: 'later' }), ['use'])
+  assert.deepEqual(validateCard({ ...good, risks: ['runs a remote script'] }), ['risks-need-skip'])
+  assert.deepEqual(validateCard({ ...good, risks: ['runs a remote script'], use: 'skip' }), [])
+  assert.deepEqual(validateCard({ ...good, files: 0 }), ['files'])
+  assert.deepEqual(validateCard({ ...good, quality: 6 }), ['quality'])
   assert.deepEqual(validateCard({ ...good, tags: ['SEO'] }), ['tags'])
   assert.deepEqual(validateCard({ ...good, blob: 'ce013625030ba8dba906f756967f9e9ca394464a' }), [])
   assert.deepEqual(validateCard({ ...good, blob: 'short' }), ['blob'])

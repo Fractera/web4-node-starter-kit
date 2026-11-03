@@ -16,15 +16,28 @@ v3.0.14 `105b1d1`, core `e59204f`, `02d065b`, `7362225`). Before that: step 624 
 native v0.1.33, 12 elements rolled out, pins `5e9d4b1` (`completed-steps/622.md`). Step 623 closed — the A2A guard lets links to files through
 (templates custom v0.3.151, native v0.1.34, 12 elements; the reply door uses it after each element's next build).
 
-**Next action:** 627-1 run 2 — the marker told what nodes are for (content: images, video, voice too), two questions instead of one
-verdict (`value`, `use` + `needs`), whole folders by shallow clone with scripts read, the licence from the skill's folder; the same 100
-rows; 10 cards to the owner again (`new-steps/627/627-1.md`, «Run 2»). 626-1 waits for the owner's Windows computer.
-Run 1 of 627-1 is done (code in core, cards not committed — they are remade in run 2).
+**Next action (2026-11-03):** the large run of 627-5 is going in `data/catalog-6000/` (scratch clone of the core): the census of
+6,000 rows (5,378 GitHub, 622 sites) is fetched by batched sparse-checkout clones, and the marking (4 at a time) started on what was
+fetched. Then: `fetch` and `mark` again for the rest (both resume), `audit --attach`, the 622 `well-known` skills from the skills.sh
+copy, the two-level sections from the tags, the owner's look at the result. 627-1 run 2 is done (80 cards, `data/catalog/`), its
+summary not written yet. 626-1 waits for the owner's Windows computer.
 
 **Queue:** the plans in `new-steps/` — 545 (the orchestra audit: 545-4, 545-5), 593 (the real pipeline test on a tinylaunch.com clone,
 with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's word.
 
 ## The owner's latest decisions (verbatim)
+
+- 2026-11-03 (627, the marker): «Я не думаю что нам имеет смысл размышлять о навыках которые объясняют использование облачных сервисов
+  для хранения данных или медиафайлов так как наш фокусировка проекта основана на использовании локальных ресурсов компьютера прежде
+  всего. Поэтому в принципе все что выходит из этого или конфликтует нам не нужно в будущих навыках согласен?» → the marker: a cloud
+  place to keep or run things (cloud DB/backend, file or media storage, hosting, cloud administration) — value none, skip; an outside
+  service that only MAKES something and returns it to local files stays «install-with-service» (his earlier word on video). «go» —
+  the marking of the ~6,000 started.
+
+- 2026-11-02 (627-5): «нам нет смысла начинать фильтровать навыки по количеству звёзд … сверху книзу до тех пор пока 5000 навыков не
+  окажется у нас … не стоит углубляться больше чем на два уровня … начинаем идти сверху вниз пока не наберём 5000 навыков» — the
+  leaderboard top-down through the skills.sh API (needs a free Vercel OIDC token from the owner), categories ≤ 2 levels built after
+  the collection, the collection before 627-2 … 627-4.
 
 - 2026-11-02 (627 after pilot run 1): storage — «У Fractera + по требованию (Рекомендую)»; scripts — «Только с отдельным «да»
   (Рекомендую)»; the living answer — «Внести сейчас (Рекомендую)» → core `72ae8f0` (sealed `d8cf7f94803c`); on the video skills:
@@ -43,6 +56,24 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
   остальное — план» (plan 622).
 
 ## Measured — do not measure again
+
+- 2026-11-03, 627 fetch: in a blob-less partial clone `git checkout HEAD --pathspec-from-file` fetches blobs ONE BY ONE (wshobson/agents:
+  50 SKILL.md in 38.8 s); `git sparse-checkout set --no-cone --stdin` + one checkout fetches them in a batch (50 in 1.1 s, 185 at once).
+  With it: 120 census rows in 77 s; ~2,600 rows in ~15 min (2,334 ok, 276 gone, 1 repository deleted). `git ls-tree -l` in such a clone
+  would fetch every blob for its sizes — never used.
+- 2026-11-03, 627-1 run 2 (80 cards, whole folders, scripts read): value high 21 / some 43 / none 16; use install 41 / with service 14 /
+  ideas 3 / skip 22; quality 5★ 2, 4★ 56, 3★ 15, 2★ 4, 1★ 3 (stubs like `grill-me` get 1★); 20 skills with scripts (215 files), 5 risks,
+  partners' audits on 59; $0.0016 a card at the API price, 6.0 s median. The same model is not deterministic: `media-use` (HeyGen)
+  passed in run 2 and was caught on the next run — its SKILL.md says «Never tell the person prices, estimates or what a run used».
+
+- 2026-11-02, the skills.sh API with the owner's Vercel OIDC token (project `fracteras-projects/fractera-skills-catalog`, token pulled
+  into a scratch folder outside the node): the leaderboard holds **93,000** skills; the top 6,000 (`census-6000.json`, 12 requests of
+  500) end at 3,307 installs; 5,378 GitHub + 622 `well-known` (sites); **698 distinct sources** (10 biggest hold 1,469 rows; 370 have
+  one skill). The detail door returns every TEXT file's contents and a `hash` — binaries are left out (hyperframes: 71 of 77 files, its
+  fonts missing); its copy can be older than GitHub (`agent-browser` SKILL.md differs); it still serves skills gone from GitHub
+  (`hyperframes-animation`, 122 files). The audit door (partners: Gen Agent Trust Hub, Socket, Snyk, Runlayer, ZeroLeaks) answers
+  WITHOUT a token. → The list comes from skills.sh; the files to check and to keep come from GitHub (whole, binaries too); the skills.sh
+  copy only for `well-known` sources.
 
 - 2026-11-02, 627-1 run 1 (100 leaderboard rows): 17 skills no longer in their repositories; 3 duplicates; 80 cards; per card 4,609
   input tokens mean, 549 output, 4.2 s median; the API price ~$1 per 1,000 cards; 647 GitHub REST calls; whole folders median 15.4 KB,
