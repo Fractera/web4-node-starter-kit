@@ -31,6 +31,11 @@ backup `logs/update-2026-11-03/` (the diff, the registry, the status) → `git s
 `development-docs/development-steps/` (the fresh project) → the stripe `off` block back into the registry (uncommitted, as before) →
 `npm run prebuild` alone → `npm run services:install` (embeddings new; data, vectors, graph, memory, root to the new pins) →
 `npm run serve:rebuild` → `npm run skills-base` → checks (status, menus, embeddings, vectors `setAside`, graph model, the banner).
+Done so far (~16:00 UTC): backup in `logs/update-2026-11-03/` of the node (the diff, the registry, the status, copies of the 8 added
+files — all equal to the fork's); the merge `aaf640f0` («Update from the original Fractera …; the node keeps its own development
+steps» — 37 starter step files left out, `current-steps.md` the node's own); the stripe `off` block back (uncommitted); `npm run
+prebuild` RC 0 (`ORIGIN_OUTDATED behind 1` — my docs commit `35c3f2d` pushed after the owner's sync); `services:install` RUNNING
+(log `logs/update-2026-11-03/services-install.log` of the node). Then `serve:rebuild`, `skills-base`, the checks.
 The owner's new requests of the same hour → step 632 (after this update): the top menu's cards named by the element (root showed as
 «Что вы хотите построить?»), turned-off elements listed (Stripe), «Домен и хостинг» in red until an own domain, the banner offering
 «update the node» once the fork is synced instead of «open your fork» (a `node:update` that does what this update does by hand).
@@ -163,7 +168,10 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
   core has its own clock (`data/cron.json`, event `agent-task`, skill `core-schedule` — «to remind» is in its description, the screen
   «Automated management → Cron events»). Step 630 checks first how the main agent understands such a phrase natively (instruction,
   `core-schedule`, `use-deep-memory`), then joins the memory, the clock and Telegram. Order: after 629 (not named by the owner — my
-  default, said in the reply).
+  default, said in the reply). The owner added (~16:00 UTC): «Когда будешь ремонтировать крон события для глубокой памяти имей в виду
+  что раньше, ещё до того как мы перенесли этот репозиторий в проект когда я проектировал память и тестировал её все её кейсы включая
+  напоминания уже работали. Возможно надо проверить навыки которые требуются для активации этой функции?» — so 630 starts from the
+  former line: how reminders worked there (its skills, its code, its clock) and what the move to the node (596) left behind.
 
 - 2026-11-03 ~13:30 UTC, during 626-6 — a new step **629** (the agent explains a provider's rules before a person loses the account):
   «Мне сейчас попалась информация о том что многих пользователей блокируют за нарушение пользовательского соглашения то есть тогда
