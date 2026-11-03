@@ -63,7 +63,7 @@ export type ExternalServices = { example: boolean; services: ExternalService[] }
 // элемента; сервер элемента копирует его в data/cron.json один раз). Ядро только читает: нет data/cron.json — показывает `seed`.
 export type CronRepeat = "once" | "daily" | "weekdays" | "weekly" | "monthly" | "yearly"
 export type CronEvent = { id: string; name: string; description: string }
-export type CronSchedule = { id: string; event: string; name?: string; message?: string; time: string; repeat: CronRepeat; start: string; until?: string; enabled: boolean }
+export type CronSchedule = { id: string; event: string; name?: string; message?: string; saidAt?: string; time: string; repeat: CronRepeat; start: string; until?: string; enabled: boolean }
 export type CronRun = { slot: string; at: string; schedule: string; event: string; ok: boolean; detail?: string } // slot — «YYYY-MM-DDTHH:MM» по местным часам
 export type CronPlan = { repeatsPaused: boolean; events: CronEvent[]; schedules: CronSchedule[]; runs: CronRun[] }
 

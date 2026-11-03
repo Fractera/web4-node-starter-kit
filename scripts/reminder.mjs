@@ -35,10 +35,15 @@ if (cmd === 'add') {
   if (repeat === 'once' && at.getTime() <= Date.now()) fail(`${m[1]} ${m[2]} has already passed on this computer`)
   const plan = read()
   const id = `reminder-${Date.now().toString(36)}`
-  plan.schedules = [...(plan.schedules ?? []), { id, event: 'telegram-message', name: String(text).trim().slice(0, 60), message: String(text).trim(), time: m[2], repeat, start: m[1], enabled: true }]
+  plan.schedules = [...(plan.schedules ?? []), { id, event: 'telegram-message', name: String(text).trim().slice(0, 60), message: String(text).trim(), saidAt: new Date().toISOString(), time: m[2], repeat, start: m[1], enabled: true }]
   save(plan)
   const words = at.toLocaleString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })
+  // 630 (владелец 2026-11-03: «я не хочу чтобы напоминания где-то вслепую оставались которые нельзя было увидеть без интерфейса»): каждое
+  // напоминание видно в календаре главного агента — адрес идёт в квитанцию.
+  let port = 24680
+  try { port = JSON.parse(readFileSync(join(ROOT, 'logs', 'runtime.json'), 'utf8')).port ?? port } catch { /* порт по умолчанию */ }
   console.log(`===REMINDER_SET=== ${id} · ${m[1]} ${m[2]} (${words}) · ${repeat} · «${String(text).trim()}»`)
+  console.log(`in the calendar: http://localhost:${port}/ru/architect/build/automation/cron (Главный агент → Автоматизированное управление → Крон события)`)
 } else if (cmd === 'list') {
   const list = reminders(read())
   for (const s of list) console.log(`${s.id} · ${s.start} ${s.time} · ${s.repeat}${s.enabled ? '' : ' · off'} · «${s.message}»`)

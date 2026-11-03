@@ -18,6 +18,8 @@ export type CronRepeat = "once" | "daily" | "weekdays" | "weekly" | "monthly" | 
 export type CronEvent = { id: string; name: string; description: string }
 export type CronSchedule = {
   id: string; event: string; name?: string; message?: string
+  /** 630: когда напоминание поставлено (третье время оригинального календаря шага 148-1: сказано · должно · сработало). */
+  saidAt?: string
   time: string; repeat: CronRepeat; start: string; until?: string; enabled: boolean
 }
 export type CronPlan = { repeatsPaused: boolean; events: CronEvent[]; schedules: CronSchedule[] }

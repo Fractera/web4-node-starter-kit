@@ -21,8 +21,9 @@ The core wakes you on a clock: entries in `data/cron.json`, event `agent-task`; 
 «Напомни мне через неделю про день рождения мамы», «напомни завтра в 10», «напоминай каждый год …» — a reminder, not a question to
 the memory («напомни о …» without a time is `npm run remind`). Count the date and time yourself from today on this computer, then
 `npm run reminder -- add "<YYYY-MM-DD HH:MM>" "<the text in the person's words>" [--repeat yearly|…]` — no time named, take 09:00.
-Answer with the receipt the command prints, in words: «Напомню во вторник, 10 ноября, в 09:00: день рождения мамы. Если не так —
-поправлю». A model turning «завтра в десять» into a date is wrong about once in twenty (the former Telegram Desk) — the receipt is
+Answer with the receipt the command prints, in words, and the calendar's link it prints: «Напомню во вторник, 10 ноября, в 09:00:
+день рождения мамы — видно в календаре: <link>. Если не так — поправлю». Every reminder is visible there (Главный агент →
+Автоматизированное управление → Крон события) — never a reminder nobody can see (the owner, 2026-11-03). A model turning «завтра в десять» into a date is wrong about once in twenty (the former Telegram Desk) — the receipt is
 where the person catches it. Ambiguous («на следующей неделе», «вечером») — ask one question first. The reminder comes by the event
 `telegram-message`: the main bot sends the text, the agent is not woken, no tokens; a computer off at that minute misses it.
 `npm run reminder -- list` / `cancel <id>`. A fact inside it worth keeping (mom's birthday is 10 November) — also `npm run remember`.

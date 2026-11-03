@@ -23,6 +23,14 @@ native v0.1.33, 12 elements rolled out, pins `5e9d4b1` (`completed-steps/622.md`
 `GET /api/skills/suggested`, the skill `adopt-suggested-skill`, the instruction resealed `ed81462013fc` (`completed-steps/628-main.md`);
 the live hand-off waits for the owner's next core update.
 
+**NOW (2026-11-03): 630 — reminders by time, in the main agent's calendar.** The owner: «Нет восстанавливать ничего не надо прочитай и
+разберись как он работал просто создай заново суть в том что там у нас должен существовать реальный календарь в котором видно все
+напоминания … я не хочу чтобы напоминания где-то вслепую оставались которые нельзя было увидеть без интерфейса»; «Мне кажется такой
+календарь мы уже создали для каждого элемента в разделе крон» — yes: the same `cron-calendar` shows the main agent's reminders
+(`/architect/build/automation/cron`). The original (Fractera/fractera-telegrambot-starter `lib/schedule`, steps 148-1…3: three times
+said/due/fired, one idempotent ticker, misses recorded) was read, not restored; its third time `saidAt` is now shown. Next: the owner's
+sync → update → a test reminder in 2 minutes, seen in the calendar and in Telegram. **New step 635** — the owner: «этот календарь должен
+уметь синхронизироваться с Google календарями при необходимости» (planned after 630).
 **NOW (2026-11-03): step 626 closed (626-8: `completed-steps/626-8.md`)** — the node's vectors are its own in every text and the instruction (resealed `4071075f2caa`). Found: the owner's OpenAI key has no balance (`think-no-money`) — the owner's decision. Open: 629, 630, 627-2…4/6/7.
 **NOW (2026-11-03): 626-7 closed (`completed-steps/626-7.md`)** — skills threshold 0.45 for MiniLM in the core and memory `v2.2.10`; next in 626 — 626-8 (the release texts, MIN_SCORE / NEAR_SAID on the live diary). Before it:
 **NOW (2026-11-03 ~19:40 UTC): 633 closed (`completed-steps/633.md`)** — the soul's «A thousand hands», warmer twins and the honesty

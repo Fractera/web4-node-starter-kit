@@ -28,6 +28,7 @@ export type CronUi = {
   since: string
   until: string
   lastRun: string
+  said: string
   noTasks: string
   prevYear: string
   prevMonth: string
@@ -177,6 +178,7 @@ export function CronCalendar({ plan, lang, ui }: { plan: CronPlan; lang: string;
                               <p><span className="text-muted-foreground">{ui.event}:</span> {eventName(s.event)}</p>
                               {!s.message && eventText(s.event) && <p className="text-muted-foreground">{eventText(s.event)}</p>}
                               <p><span className="text-muted-foreground">{ui.repeatLabel}:</span> {ui.repeat[s.repeat]} · {ui.since} {s.start}{s.until ? ` · ${ui.until} ${s.until}` : ""}</p>
+                              {s.saidAt && <p><span className="text-muted-foreground">{ui.said}:</span> {new Date(s.saidAt).toLocaleString(lang)}</p>}
                               {run && <p><span className="text-muted-foreground">{ui.lastRun}:</span> {new Date(run.at).toLocaleString(lang)}{run.detail ? ` — ${run.detail}` : ""}</p>}
                             </AccordionContent>
                           </AccordionItem>
