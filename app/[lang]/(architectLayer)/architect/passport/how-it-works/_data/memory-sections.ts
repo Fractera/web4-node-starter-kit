@@ -52,8 +52,8 @@ export const MEMORY_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
         },
       ],
       card: {
-        title: 'Add your OpenAI key',
-        text: 'The key stays on your computer, in the core’s settings. Without it the memory does not search by meaning, voice notes are not turned into text, and the skills base stays closed.',
+        title: 'An OpenAI key, if you want it',
+        text: 'The key stays on your computer, in the core’s settings. Search by meaning and the skills base work without it. With it, voice notes turn into text, and the memory sorts your phrases into facts on an inexpensive OpenAI model instead of your subscription.',
         action: 'Add',
         path: '/build/environment#OPENAI_API_KEY',
       },
@@ -124,8 +124,8 @@ export const MEMORY_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
         },
       ],
       card: {
-        title: 'Добавьте ключ OpenAI',
-        text: 'Ключ хранится на вашем компьютере, в настройках ядра. Без него память не ищет по смыслу, голосовые не превращаются в текст, а база навыков закрыта.',
+        title: 'Ключ OpenAI — по желанию',
+        text: 'Ключ хранится на вашем компьютере, в настройках ядра. Поиск по смыслу и база навыков работают и без него. С ключом голосовые превращаются в текст, а память разбирает ваши фразы на факты на недорогой модели OpenAI, а не по вашей подписке.',
         action: 'Добавить',
         path: '/build/environment#OPENAI_API_KEY',
       },
