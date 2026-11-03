@@ -59,8 +59,9 @@ above all the warning that the first account is the administrator and cannot be 
   temporary address — the panel is read-only to anyone with the link, sign-in and registration are closed; an own domain — everything
   behind sign-in, registration open to all. The node does not listen on the computer's network IP. The first registered account is the
   architect for good, with no recovery: it is created on this computer before an own domain is connected.
-- Development runs on the Claude Code subscription. OpenAI — for vectors, voice transcription, translation and the deep memory's thinking;
-  the OpenAI key is taken from the core first, otherwise from the element (`/api/architect/environment`).
+- Development runs on the Claude Code subscription. Vectors are the node's own (the native element `embeddings`, on this computer, no
+  key). OpenAI — for voice transcription, translation and the deep memory's thinking when a key exists; the OpenAI key is taken from the
+  core first, otherwise from the element (`/api/architect/environment`).
 - Telegram: a bot of your own and one for every element. The person's language — the bot's `person.json`; lines of foreign agents are
   translated with a mark. Telegram needs no domain: the bot polls Telegram itself, a computer that is on and the internet are
   enough.
@@ -82,7 +83,7 @@ above all the warning that the first account is the administrator and cannot be 
 - An element is a self-contained part of the node: its own folder, repository, port, subdomain or own domain. It is a site, an app or a
   bot.
 - Native elements come with the core at the first start and serve the core and the other elements: sign-in, database, object store,
-  vector store, LightRAG graph, Redis cache, deep memory, CONFIG, Blocks, Design, Stripe.
+  vector store, embeddings (the node's vectors), LightRAG graph, Redis cache, deep memory, CONFIG, Blocks, Design, Stripe.
 - Custom elements are created by the person — for autonomous products.
 - The required auth, data and root can be replaced but not deleted. Data flows from the element to the core; an element lives without the
   core too.
@@ -93,14 +94,16 @@ above all the warning that the first account is the administrator and cannot be 
 - There are two templates — custom and native; the passport field `elementType` says which one an element comes from.
 - A native element has no working process and no payments.
 - The data layer: the only door to data is the data element (SQLite, key `X-Data-Secret`); storage and vectors stand behind it. The
-  LightRAG graph runs one operation per call and never calls a language model; vectors are computed by OpenAI.
+  LightRAG graph runs one operation per call and never calls a language model; vectors are counted by the native element `embeddings`
+  (MiniLM-L12, 384 numbers, on this computer, no key).
 - Stores are on by default, except Redis: not every app needs it. All of them except Redis have an area where backup can be ordered from
   their agent.
 - The deep memory orchestrates all stores: it keeps images, video, sound, PDF, HTML, TXT, Markdown together with a comment — location,
   money, description, links to people — and builds dependencies between them. It answers both the person and you (`npm run remember`,
   `npm run remind`, skill `use-deep-memory`).
 - The deep memory is turned off by its passport: it is turned on for a task (`npm run power`) or by itself when more than 1 GB is free; it
-  thinks with an OpenAI model; it does not read links and video yet.
+  thinks with an OpenAI model when the node has a key, otherwise with Claude by the subscription, and never while `embeddings` is down;
+  it does not read links and video yet.
 - CONFIG (the configurator) in a single project gives every element 12 switches: top menu, cookie banner, sign-in, questions and answers,
   page width, social networks, footer pages, offline copy, breadcrumbs, theme switch, language switch, width and design-skill indicator.
   And sections: search and AI, meta and media, header, footer, cookie banner.

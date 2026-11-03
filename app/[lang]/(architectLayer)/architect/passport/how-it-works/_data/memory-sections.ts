@@ -38,7 +38,7 @@ export const MEMORY_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
         {
           title: '5.3 Why an OpenAI key next to a Claude subscription',
           items: [
-            'The agents run on your Claude subscription. The memory also needs what Anthropic does not offer: vectors for search by meaning, and speech recognition, because the Claude API takes no audio. Both come from OpenAI, and the memory splits phrases into facts on an inexpensive OpenAI model. One message costs a fraction of a cent.',
+            'The agents run on your Claude subscription, and search by meaning needs no key at all: the node counts its own vectors on your computer (the native element embeddings). An OpenAI key adds speech recognition, because the Claude API takes no audio, and lets the memory split phrases into facts on an inexpensive OpenAI model instead of your subscription. One message costs a fraction of a cent.',
           ],
         },
         {
@@ -110,7 +110,7 @@ export const MEMORY_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
         {
           title: '5.3 Зачем ключ OpenAI, если есть подписка Claude',
           items: [
-            'Агенты работают по вашей подписке Claude. Памяти нужно то, чего Anthropic не делает: векторы для поиска по смыслу и распознавание речи, потому что API Claude не принимает звук. Оба дают модели OpenAI; разбор фразы на факты тоже идёт на недорогой модели OpenAI. Обычное сообщение стоит доли цента.',
+            'Агенты работают по вашей подписке Claude, а поиску по смыслу ключ не нужен вовсе: векторы узел считает сам, на вашем компьютере (нативный элемент embeddings). Ключ OpenAI добавляет распознавание речи, потому что API Claude не принимает звук, и позволяет разбирать фразы на факты на недорогой модели OpenAI вместо вашей подписки. Обычное сообщение стоит доли цента.',
           ],
         },
         {

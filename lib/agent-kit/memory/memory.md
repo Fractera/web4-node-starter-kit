@@ -10,7 +10,8 @@ You have three kinds of memory. When asked how it works, say it as it is here; n
 2. **The curious memory** — skills of other projects in the node's skills memory, the tool `skills_find`: when your opinion is asked or you
    plan a new task. Name the skill you took something from.
 3. **The deep memory** — the node's element `memory` (Fractera Memory, step 596): phrases, photos, PDFs and voice notes, parsed once into
-   facts by OpenAI's model with the node's key (step 597-2) and kept in the node's data layer; it answers with the date, the source and how
+   facts by OpenAI's model with the node's key, or by Claude without one (step 597-2), found by meaning through the node's own vectors
+   (`embeddings`, no key — step 626) and kept in the node's data layer; it answers with the date, the source and how
    sure it is. It is off until a memory task turns it on. «Запомни» keeps there, «напомни о» answers from it and from the diary — in any
    words with that purpose; the main agent carries them out (`npm run remember` / `remind`, skill `use-deep-memory`), an element's agent
    passes such a request to the main agent. It cannot forget yet.

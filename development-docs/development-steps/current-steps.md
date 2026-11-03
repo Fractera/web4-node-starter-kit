@@ -23,6 +23,7 @@ native v0.1.33, 12 elements rolled out, pins `5e9d4b1` (`completed-steps/622.md`
 `GET /api/skills/suggested`, the skill `adopt-suggested-skill`, the instruction resealed `ed81462013fc` (`completed-steps/628-main.md`);
 the live hand-off waits for the owner's next core update.
 
+**NOW (2026-11-03): step 626 closed (626-8: `completed-steps/626-8.md`)** — the node's vectors are its own in every text and the instruction (resealed `4071075f2caa`). Found: the owner's OpenAI key has no balance (`think-no-money`) — the owner's decision. Open: 629, 630, 627-2…4/6/7.
 **NOW (2026-11-03): 626-7 closed (`completed-steps/626-7.md`)** — skills threshold 0.45 for MiniLM in the core and memory `v2.2.10`; next in 626 — 626-8 (the release texts, MIN_SCORE / NEAR_SAID on the live diary). Before it:
 **NOW (2026-11-03 ~19:40 UTC): 633 closed (`completed-steps/633.md`)** — the soul's «A thousand hands», warmer twins and the honesty
 line moved to «speak with feeling when it is true … never pretend to be a human, never a lever», the skill `shape-the-need`, the

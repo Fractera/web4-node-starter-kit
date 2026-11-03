@@ -121,8 +121,8 @@ history and rollback at hand.
 ### You do not have to open the panel
 
 Connect your Telegram and tell it what you want to build. You can stay on your phone the whole time and build large projects that
-anyone can open by a link. One Claude Pro subscription ($20 a month) runs the whole node; an OpenAI key, kept on your computer, adds
-search by meaning, voice notes and the skills base.
+anyone can open by a link. One Claude Pro subscription ($20 a month) runs the whole node; search by meaning and the skills base
+work on your computer with no key; an OpenAI key, kept on your computer, adds voice notes and translations.
 
 ## It runs on your computer as a real server
 
