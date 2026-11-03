@@ -11,10 +11,11 @@ last reply stays (the summary), replies with files always; a guard fails the bui
 with stubs (31 of 31, the detached deleter, the guard's negative control), 42 core guards RC 0, 14 kit copies updated — core
 `0da184e` pushed. Next: the owner's «Sync fork» + `npm run node:update`, the live check (at most three phrases), then
 `completed-steps/639.md`.
-**Also open, uncommitted in the template workshops (`data/workshop/fractera-{custom,native}-item-starter`, on v0.3.153 / v0.1.36):**
-636-10, the owner's scenario 2 (21:22, verbatim below): `lib/cron/notice.ts` also sends a `node-notice` through the element's OWN bot
-(`sendToOwner`, detail «· own bot too»), the calendar skill says «Your calendar is your own». Not released — next: release custom
-v0.3.154 / native v0.1.37, roll out, pins.
+**636-10 DONE, the live proof waits** (the owner's scenario 2, 21:22, verbatim below; `completed-steps/636.md`, section 636-10): an
+element's own reminder comes through its own bot too («⏰ <words>») and into the main chat — templates custom v0.3.154 `d777685`,
+native v0.1.37 `88fd098`, pins `93119d9`, `80a4c92`; 13 elements released (auth v2.4.12, data v2.2.3, storage v1.1.21, vectors v1.2.4,
+embeddings v0.1.5, config v1.2.21, design v1.1.21, graph v1.2.4, cache v0.1.15, memory v2.2.18, stripe v1.3.15, root v3.0.17, blocks
+v1.4.17), the registry pins in the next core commit. Stubs 8 of 8 in both templates. One «Sync fork» brings 639 and 636-10.
 
 **HANDOFF (2026-11-03 ~21:20 UTC) — the previous session's.** The owner: «подготовь передачу вопросов к сбросу как текста».
 1. **Where things stood.** 636 closed (proven 20:13: «⏰ Напоминание · Глубокая память» came into the main chat by itself, no AI —
