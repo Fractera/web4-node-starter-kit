@@ -469,6 +469,8 @@ export default async function Page({ params }: { params: Promise<Params> }) {
     'build/i2i/api': 'api', 'build/i2i/mcp': 'mcp', 'build/i2i/catalog': 'catalog',
     'build/f2f/publish': 'publish', 'build/f2f/find': 'find', [SUBSCRIPTIONS]: 'subscriptions', 'workflow/process/cron': 'cron',
     [BACKUP_TOOLS]: 'subscriptions', 'backup/cron': 'cron',
+    // 636: календарь нативного элемента — свой раздел «Крон события».
+    'cron': 'cron',
   }
   const passportView = PASSPORT_VIEWS[key]
   // 412-2: документ элемента — текст спрашивает островок при открытии (страница предрендерена, агент правит файлы в любую минуту).
