@@ -114,11 +114,14 @@ const roles = () => ({ ...readJson(join(ROOT, 'WEB4-ITEMS-REGISTRY', 'roles.json
 const hostOf = (id) => (id === 'root' ? ZONE || 'root' : ZONE ? `${addressOf(id)}.${ZONE}` : addressOf(id))
 const selfAll = () => self.describeAll({ root: ROOT, roles: roles(), addressOf: hostOf })
 // 603-3 (разбор 2026-10-26: агент гадал, «облачное ли это по подписке»): где живут узел и его данные — одна постоянная строка.
-const MACHINE_FACT = "Everything in this node runs on this computer: each element is a process here, and the node's data lives on this computer's disk (in the data, storage, vectors, graph and memory elements). Only two things go out: copies of the public pages kept in Cloudflare, so the sites answer while the computer is off, and the texts sent to OpenAI for vectors, voice notes and the memory's parsing."
-// 603-2: порог сходства по смыслу (модель векторов элемента vectors). Замер 2026-10-26 на 13 элементах: 30 намерений — нужный элемент первым
-// у 29, его оценка от 0,239; 6 работ, которых в узле нет, — лучшая оценка до 0,193. Порог посередине, один для поиска и для проверки
-// на дубль: что `find` показал бы, на том `create` останавливается. Запас узкий — с ростом узла калибровку повторять (итог 603-2 в /code).
-const FIND_MIN = 0.21
+const MACHINE_FACT = "Everything in this node runs on this computer: each element is a process here, and the node's data lives on this computer's disk (in the data, storage, vectors, graph and memory elements). Only two things go out: copies of the public pages kept in Cloudflare, so the sites answer while the computer is off, and the texts sent to OpenAI for voice notes and, when its key is set, the memory's parsing; the vectors are counted on this computer by the embeddings element."
+// 603-2: порог сходства по смыслу, один для поиска и для проверки на дубль: что `find` показал бы, на том `create` останавливается.
+// 626-4: модель — своя модель узла (MiniLM-L12, элемент embeddings), оценка — 0,3 × целое самоописание + 0,7 × лучший его кусок
+// (`lib/a2a/self-description.cjs`). Замер 2026-11-03 на 13 элементах: 20 намерений — нужный элемент первым у 17, его оценка 0,203–0,638;
+// 6 работ, которых в узле нет, — лучшая оценка 0,205–0,304: чистого зазора нет. Порог 0,25 пропускает 19 нужных из 20 и 4 чужих из 6 —
+// дешевле лишний кандидат (агент читает его карточку, `create` просит --different), чем пропуск, после которого рождается дубль.
+// 🪦 0,21 — замер 2026-10-26 на векторах OpenAI (29 из 30 первым, зазор 0,193–0,239).
+const FIND_MIN = 0.25
 const DUP_MIN = FIND_MIN
 
 const [cmd, ...rest] = process.argv.slice(2)

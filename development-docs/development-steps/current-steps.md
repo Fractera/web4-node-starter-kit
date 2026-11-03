@@ -46,6 +46,12 @@ the live hand-off waits for the owner's next core update.
   Fractera) lacks the `workflow` scope and GitHub refused the push (the owner's SSH key `aifa-agi` has only read there) — it comes
   back after the owner's `gh auth refresh -h github.com -s workflow`. Working copy of the element:
   `/private/tmp/claude-501/-Users-romanbolshiyanov/faa581fd-3474-473a-bbba-99276029a73e/scratchpad/embeddings-repo`.
+- **626-4 closed** (`completed-steps/626-4.md`, 2026-11-03 ~11:40 UTC): the core sends texts to the vector element and counts no vector;
+  `kind()` asks the model every time and empties a ledger of another model; `npm run find` indexes an element as its whole description
+  plus pieces (0.3 × whole + 0.7 × best piece), `FIND_MIN` 0.25 (MiniLM, measured; no clean gap — see the summary); memory 10 of 10 lines
+  counted with no OpenAI key, «сколько стоило такси?» found by meaning; find 9 of 10 Russian phrasings right first. Proven on a stand in
+  scratch (`…/scratchpad/t626-root` + the three elements on spare ports — not the live node). Next: 626-5 (the graph element counts through
+  `embeddings`).
 - **The owner's text task of ~10:35 — done in its first part (2026-11-03 ~11:05 UTC):** the core README — «5,300 ready skills, no
   tokens until one is needed» after «Deep memory and a curious soul», the repositories table gains embeddings, memory, cache, stripe;
   «How it works» (`memory-sections.ts`, en + ru) — 5.4 «A curious soul: 5,300 skills of 2026», new 6.2 «Fresh skills on your

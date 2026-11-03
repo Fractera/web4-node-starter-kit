@@ -15,8 +15,8 @@
 //                               comes back. The picture is separate: the main agent deletes a fact's file and its index line.
 //   npm run memory -- off | on  the switch data/node/memory/settings.json: off — no agent writes the diary, gets the last exchange at
 //                               start or associations before a message; what is said meanwhile is never kept, not even after «on».
-//   npm run memory -- vectors   595-8б: the lines of the person and of the agents without a vector get one (OpenAI, the core's key;
-//                               kept by the node's vector element) — the meaning search in any language; «forget» deletes them too.
+//   npm run memory -- vectors   595-8б: the lines of the person and of the agents without a vector get one (626-4: counted by the node's
+//                               embeddings element, kept by its vector element) — the meaning search in any language; «forget» deletes them too.
 // Nothing runs by itself: a person or the main agent calls it.
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, statSync, unlinkSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
@@ -115,19 +115,21 @@ if (cmd === 'adopt') {
   const embed = require('../lib/agent-kit/memory/embed.cjs')
 
   if (cmd === 'vectors') {
-    // The lines of the person and of the agents that have no vector yet get one — in batches, one OpenAI call per batch.
+    // The lines of the person and of the agents that have no vector yet get one — in batches of 32; the vector element counts them through
+    // the node's embeddings element on this computer (626-4), nothing goes out.
     if (!memoryOn()) { console.log('===MEMORY_VECTORS=== memory is off — nothing is sent anywhere (npm run memory -- on)'); process.exit(0) }
+    // 626-4: the element's model first — a ledger kept for another model starts empty here, and every line is counted again (✗ measured:
+    // read before it, the OpenAI-era ledger said all lines had vectors and nothing was counted).
+    try { await embed.kind() } catch (err) { console.log(`===MEMORY_VECTORS_FAIL=== ${err instanceof Error ? err.message : String(err)}`); process.exit(1) }
     const have = embed.ledger().ids
     const todo = months().flatMap(lines).map(parse).filter((r) => r && (r.who === 'person' || r.who === 'agent') && !have[embed.rowId(r)])
     let saved = 0
-    let tokens = 0
     try {
       for (let i = 0; i < todo.length; i += 32) {
         const r = await embed.save(todo.slice(i, i + 32), { ms: 30000 })
         saved += r.saved
-        tokens += r.tokens
       }
-      console.log(`===MEMORY_VECTORS=== ${saved} line(s) got a vector (${tokens} tokens of OpenAI); ${Object.keys(embed.ledger().ids).length} line(s) have one now.`)
+      console.log(`===MEMORY_VECTORS=== ${saved} line(s) got a vector, counted on this computer; ${Object.keys(embed.ledger().ids).length} line(s) have one now.`)
     } catch (err) {
       console.log(`===MEMORY_VECTORS_FAIL=== ${saved} line(s) got a vector before: ${err instanceof Error ? err.message : String(err)}`)
       process.exit(1)
@@ -193,7 +195,7 @@ if (cmd === 'adopt') {
       (() => {
         const l = embed.ledger()
         const words = rows.filter((r) => r.who === 'person' || r.who === 'agent').length
-        return `Meaning search: ${Object.keys(l.ids).length} of ${words} line(s) of the person and the agents have a vector${l.model ? ` (${l.model}, OpenAI; kept by the node's vector element)` : ''}; the missing ones — npm run memory -- vectors.`
+        return `Meaning search: ${Object.keys(l.ids).length} of ${words} line(s) of the person and the agents have a vector${l.model ? ` (${l.model}, counted on this computer; kept by the node's vector element)` : ''}; the missing ones — npm run memory -- vectors.`
       })(),
       'Claude Code keeps its own session logs too and deletes them by itself (cleanupPeriodDays); the diary is the node\'s copy.',
       'To forget: a day — npm run memory -- forget --day <YYYY-MM-DD> · everything — forget --all · a fact of the picture — its file and index line · stop remembering — off',
