@@ -16,14 +16,22 @@ The core wakes you on a clock: entries in `data/cron.json`, event `agent-task`; 
 - The core shows it in «Automated management → Cron events».
 - No personal data in git — the schedule file is outside it.
 
-## Reminders (step 630)
+## Reminders — the deep memory's (steps 630, 636)
 
 «Напомни мне через неделю про день рождения мамы», «напомни завтра в 10», «напоминай каждый год …» — a reminder, not a question to
-the memory («напомни о …» without a time is `npm run remind`). Count the date and time yourself from today on this computer, then
-`npm run reminder -- add "<YYYY-MM-DD HH:MM>" "<the text in the person's words>" [--repeat yearly|…]` — no time named, take 09:00.
-Answer with the receipt the command prints, in words, and the calendar's link it prints: «Напомню во вторник, 10 ноября, в 09:00:
-день рождения мамы — видно в календаре: <link>. Если не так — поправлю». Every reminder is visible there (Главный агент →
-Автоматизированное управление → Крон события) — never a reminder nobody can see (the owner, 2026-11-03). A model turning «завтра в десять» into a date is wrong about once in twenty (the former Telegram Desk) — the receipt is
-where the person catches it. Ambiguous («на следующей неделе», «вечером») — ask one question first. The reminder comes by the event
-`telegram-message`: the main bot sends the text, the agent is not woken, no tokens; a computer off at that minute misses it.
-`npm run reminder -- list` / `cancel <id>`. A fact inside it worth keeping (mom's birthday is 10 November) — also `npm run remember`.
+the memory («напомни о …» without a time is `npm run remind`). A reminder is the deep memory's own essence (the owner, 2026-11-03:
+«сейчас мы говорим о памяти у которой напоминания являются её собственной сутью»), so it goes there:
+1. Count the date and time yourself from today on this computer (`date`); no time named — 09:00.
+2. `npm run remember -- "<the person's words>" --remind-at "<YYYY-MM-DD HH:MM>" [--repeat yearly|…] --remind-text "<what to remind,
+   in the person's language — «Сегодня день рождения мамы»>"`. The memory keeps the phrase (the fact: mum's birthday) and puts the
+   reminder into its own calendar; the memory element stays on while a reminder waits in it.
+3. Answer with the receipt it prints (`===REMINDER_SET===`), in words, and the calendar's link: «Напомню во вторник, 10 ноября, в 09:00:
+   день рождения мамы — видно в календаре памяти: <link>. Если не так — поправлю». A model turning «завтра в десять» into a date is
+   wrong about once in twenty (the former Telegram Desk) — the receipt is where the person catches it. Ambiguous («на следующей
+   неделе», «вечером») — ask one question first.
+4. At that minute the memory's clock wakes the memory's agent, and it tells you: «Element memory tells the architect: «…»» — pass the
+   words to the person (skill `answer-element`). Only agents talk to agents: no clock reaches your bot by itself.
+5. `===REMINDER_FAIL===` or the memory off — your own calendar instead, and say so: `npm run reminder -- add "<YYYY-MM-DD HH:MM>"
+   "<the words>" [--repeat …]` (event `telegram-message`: your bot sends the text, no agent is woken; `list` / `cancel <id>`).
+Every reminder is visible in a calendar — the memory's (Память → Крон события) or yours (Главный агент → Автоматизированное
+управление → Крон события); never a reminder nobody can see (the owner, 2026-11-03). A computer off at that minute misses it.

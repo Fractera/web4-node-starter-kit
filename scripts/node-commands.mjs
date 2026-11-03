@@ -4,6 +4,8 @@
 //   commands check [<файл>]           — список годен: имена Bot API, оба языка, кто исполняет
 //   commands menu                     — меню бота главного агента в чате каждого допущенного
 //   remember "<слова>" [--file <путь>]… — в глубокую память (элемент memory): фраза ВМЕСТЕ с её вещами одним вызовом
+//            [--remind-at "<YYYY-MM-DD HH:MM>" [--repeat once|daily|weekdays|weekly|monthly|yearly] [--remind-text "<что напомнить>"]]
+//            — 636: напоминание в срок, в календаре самой памяти (её суть); в срок часы памяти будят её агента, он — главного агента
 //   remind "<вопрос>"                 — из обеих памятей: глубокой (элемент memory, найденные вещи — файлами) и дневника (по смыслу)
 //   wake <id>                         — включить агента элемента без поручения (ноль токенов; у элемента с ботом — вопрос в его боте)
 // Владелец 2026-10-25: «инструкции обновить с требованием прослушивать эти слова и как только они появляются начинают работу с памятью
@@ -163,23 +165,41 @@ async function saveFound(base, o) {
   }
 }
 
+// 636: календарь памяти в ядре — «Память → Крон события» (узел, 636-4); порт ядра — его `logs/runtime.json`.
+function memoryCalendarLink() {
+  const e = (readJson(join(ROOT, 'WEB4-ITEMS-REGISTRY', 'web4-items.json'), { services: [] }).services ?? []).find((s) => s.id === MEMORY)
+  return `${CORE}/${LANG === 'ru' ? 'ru' : 'en'}/architect/${e?.address ?? MEMORY}/cron`
+}
+
 if (cmd === 'remember') {
   const text = words()
   const files = flags('--file').map((f) => (isAbsolute(f) ? f : resolve(process.cwd(), f)))
   if (!text && !files.length) fail('REMEMBER', 'nothing to keep — remember "<the words>" [--file <path>]')
+  // 636 (владелец узла 2026-11-03: «сейчас мы говорим о памяти у которой напоминания являются её собственной сутью»): срок — дата, которую
+  // посчитал главный агент; память кладёт фразу и запись в свой календарь, а в срок передаёт слова главному агенту (`tell-core`).
+  const at = flags('--remind-at')[0]
+  const remind = at ? { at, repeat: flags('--repeat')[0] ?? 'once', ...(flags('--remind-text')[0] ? { text: flags('--remind-text')[0] } : {}) } : null
   for (const f of files) if (!existsSync(f) || !statSync(f).isFile()) fail('REMEMBER', `no such file: ${f}`)
   if (!personMemoryOn()) fail('REMEMBER', 'the person switched the node\'s memory off («не запоминай») — nothing is kept until they say «запоминай снова» (npm run memory -- on)')
   const up = memoryUp()
   if (!up.ok) fail('REMEMBER', `the memory element did not turn on: ${up.why}`)
   const t0 = Date.now()
-  const r = await callMemory('/v1/remember', { text, from: ['build'], lang: LANG }, files)
+  const r = await callMemory('/v1/remember', { text, from: ['build'], lang: LANG, ...(remind ? { remind } : {}) }, files)
   const took = Date.now() - t0
-  const down = memoryDown(up)
   const b = r.body ?? {}
-  if (!b.ok) fail('REMEMBER', `${b.reason ?? b.refusal ?? b.error ?? `HTTP ${r.status}`}${b.text ? ` — «${String(b.text).slice(0, 300)}»` : ''} · memory element: ${down}`)
+  // 636: напоминание ждёт в календаре памяти — выключенная память его пропустит, поэтому после записи она остаётся включённой.
+  const kept = remind && b.reminder?.ok
+  const down = kept ? (up.wasOff ? 'turned on for this command and LEFT ON — a reminder waits in its calendar' : 'on — a reminder waits in its calendar') : memoryDown(up)
+  if (!b.ok) fail('REMEMBER', `${b.reason ?? b.refusal ?? b.error ?? b.what_happened ?? `HTTP ${r.status}`}${b.text ? ` — «${String(b.text).slice(0, 300)}»` : ''} · memory element: ${down}`)
+  if (remind && !kept) fail('REMINDER', `the phrase is kept, the reminder is not: ${b.reminder?.why ?? b.reminder?.error ?? 'the memory element does not know «remind» yet (memory v2.2.12)'} — set it in your own calendar: npm run reminder -- add "${at}" "<the words>"`)
   console.log(`===REMEMBER_OK=== the deep memory answered in ${seconds(took)}${files.length ? `, with ${files.length} thing(s)` : ''}`)
   console.log(String(b.text ?? '').trim())
   if (b.answer_id) console.log(`(answer ${b.answer_id})`)
+  if (kept) {
+    const x = b.reminder
+    console.log(`===REMINDER_SET=== ${x.id} · ${x.start} ${x.time} (${x.words}) · ${x.repeat} · «${x.text}»`)
+    console.log(`in the memory's calendar: ${memoryCalendarLink()} (${LANG === 'ru' ? 'Память → Крон события' : 'Memory → Cron events'}); at that minute the memory's agent tells you, and you tell the person (skill answer-element)`)
+  }
   console.log(`Memory element: ${down}.`)
   process.exit(0)
 }

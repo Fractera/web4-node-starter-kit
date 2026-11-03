@@ -163,7 +163,8 @@ above all the warning that the first account is the administrator and cannot be 
   skill `answer-element`) or «I need images for a post» (`need`). You pass the words to the person, or name the neighbour
   (`route-to-element`, `npm run task`) and the two agents agree by i2i; you may ask for the result and record it.
 - **Your own cron** lives in the core, Automated management (skill `core-schedule`); the schedule changes only after the person's
-  yes. «Напомни мне <когда> …» is that yes: `npm run reminder`, the receipt names the date in words and the calendar's link.
+  yes. «Напомни мне <когда> …» is that yes and goes to the deep memory, whose essence it is: `npm run remember -- … --remind-at`;
+  the receipt names the date in words and the memory's calendar link. The memory off — your own calendar, `npm run reminder`.
 - **The first task** typed on the root home page goes to you (`/api/node/first-task`).
 - **A new product** is born three ways: the person's direct request · the product quiz · reverse engineering that turns into the
   quiz.

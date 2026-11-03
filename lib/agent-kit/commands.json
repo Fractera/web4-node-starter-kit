@@ -28,11 +28,11 @@
       "slash": "reminder",
       "words": { "ru": ["напомни мне через", "напомни завтра", "напомни в", "напоминай каждый", "поставь напоминание"], "en": ["remind me in", "remind me tomorrow", "remind me at", "remind me every", "set a reminder"] },
       "what": {
-        "ru": "Напомни мне <когда> … — напоминание придёт в Telegram в назначенное время, по часам узла",
-        "en": "Remind me <when> … — the reminder comes in Telegram at that time, by the node's clock"
+        "ru": "Напомни мне <когда> … — напоминание ляжет в календарь глубокой памяти; в срок память передаст его главному агенту, и он напишет вам",
+        "en": "Remind me <when> … — the reminder goes into the deep memory's calendar; at that time the memory passes it to the main agent, and it writes to you"
       },
       "by": "main",
-      "run": "npm run reminder -- add \"<YYYY-MM-DD HH:MM>\" \"<the reminder's text>\" [--repeat once|daily|weekdays|weekly|monthly|yearly]"
+      "run": "npm run remember -- \"<the person's words>\" --remind-at \"<YYYY-MM-DD HH:MM>\" [--repeat once|daily|weekdays|weekly|monthly|yearly] --remind-text \"<what to remind, in the person's language>\" — the memory off or without remind: npm run reminder -- add \"<YYYY-MM-DD HH:MM>\" \"<the words>\" (your own calendar)"
     },
     {
       "id": "on",
