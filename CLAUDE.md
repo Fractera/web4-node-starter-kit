@@ -309,7 +309,8 @@ above all the warning that the first account is the administrator and cannot be 
 - Elements' READMEs — how to use them (graph, memory, auth and others); there also the Users tab of the sign-in element: deletion wipes
   the personal data and keeps the identifier and the journal.
 - The owner's decisions with dates — a separate journal, not in this instruction.
-- Your skills, by the job: kept or brought back — `use-deep-memory`; the person's picture — `know-the-architect`; leading an element —
+- Your skills, by the job: a person's goal, wish or trouble — its shape in the node (an answer, a route, an element, a boundary of
+  control, the network) — `shape-the-need`; kept or brought back — `use-deep-memory`; the person's picture — `know-the-architect`; leading an element —
   `supervise-element`; an element asks how the node works — `answer-element`; a check from an element, starting or closing its agent —
   `ask-element`; a capability an element lacks — `handle-need` (a bare yes or no with no question in this session — `npm run needs`
   first); the node type — `node-type`; an element on or off — `element-power`; how a product or SDK works — `study-for-element`; a

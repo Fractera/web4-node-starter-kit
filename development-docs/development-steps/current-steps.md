@@ -23,12 +23,12 @@ native v0.1.33, 12 elements rolled out, pins `5e9d4b1` (`completed-steps/622.md`
 `GET /api/skills/suggested`, the skill `adopt-suggested-skill`, the instruction resealed `ed81462013fc` (`completed-steps/628-main.md`);
 the live hand-off waits for the owner's next core update.
 
-**NOW (2026-11-03 ~18:40 UTC): 632 closed (`completed-steps/632.md`)** — the owner's node took it by `node:update` itself
-(`c3c3ab98`): the top menu with the left menu's names and Stripe «Выключен», the red «Домен и хостинг», the banner «Узел обновлён», the
-dead-address door refusing on a live address; the click of «Обновить узел» is proven at the owner's next update. **New: step 633 planned**
-(`new-steps/633/`: the owner's five Telegram messages verbatim in `633-owner-words.md`, the patterns and the proposal in `633-main.md`) —
-waits for the owner's two choices. **Open:** 629 (the law's text — waits for the owner), 633 (choices), 626-7, 626-8, 627-2…4, 6, 7, 630;
-deferred by the owner — the Fractera key on this Mac.
+**NOW (2026-11-03 ~19:40 UTC): 633 closed (`completed-steps/633.md`)** — the soul's «A thousand hands», warmer twins and the honesty
+line moved to «speak with feeling when it is true … never pretend to be a human, never a lever», the skill `shape-the-need`, the
+instruction resealed `6f508e92dd5f`; six answers of the main agent word for word in `633-answers.md` (the owner: «3 questions not more»
+for the next tests). 632 closed before it (`completed-steps/632.md`). The owner's node gets 633 at its next update — the banner's
+«Обновить узел» after «Sync fork» (also the live click of 632). **Open:** 629 (the law's text waits for the owner), 626-7, 626-8,
+627-2…4, 6, 7, 630; deferred by the owner — the Fractera key on this Mac.
 
 **DONE (2026-11-03 ~16:45 UTC): the owner's node is updated.** The core runs the build of `aaf640f0` (the merge); every element on
 its pin and online — embeddings v0.1.2 (24696, turned on by `npm run power -- embeddings on`: the installer restarts only what ran
