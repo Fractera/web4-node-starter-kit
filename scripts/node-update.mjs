@@ -255,6 +255,15 @@ if (!run(rebuild[0], rebuild[1], 'npm run serve:rebuild')) {
   finish('failed', { reason: 'сборка ядра не удалась — прежняя сборка возвращена и запущена; код и элементы уже новые, причина — в журнале', warnings })
 }
 stage('skills', 'база навыков узла — в граф')
+// ✗ Замерено на узле владельца 2026-11-03: сразу после сборки ядра граф ещё поднимался (крышка открывает все процессы разом), и
+// `base-load` получил тайм-аут, хотя база была на месте. Ждём, пока граф ответит (холодный старт — до 90 с), и только тогда грузим.
+const graph = (readJson(REGISTRY)?.services ?? []).find((s) => s.id === 'graph')
+if (graph?.port && !power.isOff(graph)) {
+  for (let i = 0; i < 45; i++) {
+    try { if ((await fetch(`http://127.0.0.1:${graph.port}/api/health`, { signal: AbortSignal.timeout(2000) })).ok) break } catch { /* ещё поднимается */ }
+    await new Promise((r) => setTimeout(r, 2000))
+  }
+}
 if (!run(npm, ['run', 'skills-base'], 'npm run skills-base')) warnings.push('база навыков не загрузилась: npm run skills-base')
 
 finish('done', { summary: `${forkCommits.length} изменений форка, ядро ${newHead}${warnings.length ? `; ${warnings.join('; ')}` : ''}`, changes: forkCommits.length, head: newHead, warnings })
