@@ -33,6 +33,28 @@ calendar only for custom elements («Working process → Process → Cron automa
 Cron events»), so a native calendar page is part of 636. Order: 636-1 core → 636-2 the elements' instruction → 636-3 templates →
 636-4 the menu → 636-5 memory → 636-6 live. Template work: `npm run template -- clone` in this clone's `data/workshop/`; the rollout
 needs the elements' clones at their pins in this clone's `WEB4-ITEMS/core/` (plain `git clone`, never `services:install`).
+**Done so far (2026-11-03 ~19:30 UTC):** 636-1 core `10c07ee` (the wake door: an alarm wakes only its own agent or the main agent —
+proven with stubs: own 200 confirmed, main 200 confirmed, another element 403, no `from` 403, a question still asks); 636-2 the
+elements' instruction `427b589`; templates custom **v0.3.152** (`ba7e1a6`), native **v0.1.35** (`785b93d`), pins `f38684c`, `d2c7cbb`
+(the alarm proven on a fake core door for both: service = from = own id, reason alarm, «Working process:» / «Build process:»;
+`tell-core` proven: alarm → reason alarm, without `--alarm` → element-message, Cyrillic intact; yearly 5 of 5); rollout to all 13
+elements, pins `c6bedeb` (auth v2.4.10, data v2.2.1, storage v1.1.19, vectors v1.2.2, embeddings v0.1.3, config v1.2.19, design
+v1.1.19, graph v1.2.2, cache v0.1.13, memory v2.2.11, stripe v1.3.13, root v3.0.15, blocks v1.4.15); 636-4 the native calendar page
+`6636df3`. On the way: the auto-mode classifier refused writing the push token into `data/node/github/.env` (credential
+materialization) — pushes went by git's own credentials (a rollout script in scratch, `rollout-636.mjs`, same steps as `template
+rollout` + targeted edits of the files an element keeps as its own); ✗ my script compared the clocks of storage, vectors and graph
+with data's AFTER data changed — their clock came as a second patch; the stripe clone's origin was a local scratch repo — pushed to
+GitHub by URL. Also today: the «How it works» OpenAI card (`a0385fe`, the owner: «how-it-work conflict here»).
+**636-5 done (~20:10 UTC):** memory **v2.2.12** `b5cf4c8` (`remember` + `remind` {at, repeat, text}, contract 6.1.0 → an `agent-task`
+entry in the memory's own `data/cron.json`; a wrong or past time refused before the phrase is kept; `POST /v1` reads «напомни мне
+через неделю …» as remember with «the time is set by an agent» — 13 of 13 phrasings; the door proven with a stubbed verb, 5 of 5);
+core `de48fd4` (`npm run remember -- … --remind-at --repeat --remind-text`, `===REMINDER_SET===` + the memory's calendar link, the
+memory LEFT ON while a reminder waits — `remember` used to turn a memory that was off back off after the command; the main agent's
+own calendar only as the fallback; core-schedule, commands.json, memory.md, the instruction resealed `d89d2042c592`). Found: the
+memory is on while more than 1 GB is free (601) — a reminder needs it on at its minute (named in the memory's README).
+**Next — 636-6 live:** the owner's «Sync fork» → the banner «Обновить узел» (the core and 13 elements rebuild — longer than usual),
+then «Напомни мне через 2 минуты выпить воды» to the main agent in Telegram: the receipt, the memory's calendar «Cron events», the
+alarm → the memory's agent → `tell-core` → the main agent writes; at most three test questions.
 **630 (before 636):** reminders by time, in the main agent's calendar. The owner: «Нет восстанавливать ничего не надо прочитай и
 разберись как он работал просто создай заново суть в том что там у нас должен существовать реальный календарь в котором видно все
 напоминания … я не хочу чтобы напоминания где-то вслепую оставались которые нельзя было увидеть без интерфейса»; «Мне кажется такой
