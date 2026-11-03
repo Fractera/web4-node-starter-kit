@@ -24,6 +24,17 @@
       "run": "npm run remind -- \"<the question>\""
     },
     {
+      "id": "reminder",
+      "slash": "reminder",
+      "words": { "ru": ["напомни мне через", "напомни завтра", "напомни в", "напоминай каждый", "поставь напоминание"], "en": ["remind me in", "remind me tomorrow", "remind me at", "remind me every", "set a reminder"] },
+      "what": {
+        "ru": "Напомни мне <когда> … — напоминание придёт в Telegram в назначенное время, по часам узла",
+        "en": "Remind me <when> … — the reminder comes in Telegram at that time, by the node's clock"
+      },
+      "by": "main",
+      "run": "npm run reminder -- add \"<YYYY-MM-DD HH:MM>\" \"<the reminder's text>\" [--repeat once|daily|weekdays|weekly|monthly|yearly]"
+    },
+    {
       "id": "on",
       "slash": "on",
       "words": { "ru": ["включить", "включи"], "en": ["turn on"] },

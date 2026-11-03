@@ -61,13 +61,13 @@ export type ExternalServices = { example: boolean; services: ExternalService[] }
 // 465-4 (владелец 2026-10-12: «автоматизация рабочего процесса не должна приводить к сборке проекта»): расписание человека — ДАННЫЕ,
 // `data/cron.json` элемента (вне git); в `OWN-SERVICE-PROPS/CRON.json` (git) — только каталог событий и `seed` (пример нового
 // элемента; сервер элемента копирует его в data/cron.json один раз). Ядро только читает: нет data/cron.json — показывает `seed`.
-export type CronRepeat = "once" | "daily" | "weekdays" | "weekly" | "monthly"
+export type CronRepeat = "once" | "daily" | "weekdays" | "weekly" | "monthly" | "yearly"
 export type CronEvent = { id: string; name: string; description: string }
 export type CronSchedule = { id: string; event: string; name?: string; message?: string; time: string; repeat: CronRepeat; start: string; until?: string; enabled: boolean }
 export type CronRun = { slot: string; at: string; schedule: string; event: string; ok: boolean; detail?: string } // slot — «YYYY-MM-DDTHH:MM» по местным часам
 export type CronPlan = { repeatsPaused: boolean; events: CronEvent[]; schedules: CronSchedule[]; runs: CronRun[] }
 
-const REPEATS = new Set(["once", "daily", "weekdays", "weekly", "monthly"])
+const REPEATS = new Set(["once", "daily", "weekdays", "weekly", "monthly", "yearly"])
 const RUNS_SHOWN = 2000 // последние строки журнала: календарю хватает
 
 function readCron(dir: string): CronPlan | null {

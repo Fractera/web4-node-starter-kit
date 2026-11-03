@@ -53,6 +53,8 @@ function occursOn(s: CronSchedule, day: Date): boolean {
     case "weekdays": return dow >= 1 && dow <= 5
     case "weekly": return dow === start.getDay()
     case "monthly": return day.getDate() === start.getDate()
+    // 630 (владелец 2026-11-03: «напомни мне через неделю про день рождения мамы»): день рождения повторяется раз в год.
+    case "yearly": return day.getDate() === start.getDate() && day.getMonth() === start.getMonth()
   }
 }
 

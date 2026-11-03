@@ -14,7 +14,7 @@ import { join } from "node:path"
 // ✗ Оплачено: расписание лежало в git, а текст напоминания нельзя было вписать — агент на «напомни про день рождения» написал код,
 // коммит и попросил пересобрать элемент.
 
-export type CronRepeat = "once" | "daily" | "weekdays" | "weekly" | "monthly"
+export type CronRepeat = "once" | "daily" | "weekdays" | "weekly" | "monthly" | "yearly"
 export type CronEvent = { id: string; name: string; description: string }
 export type CronSchedule = {
   id: string; event: string; name?: string; message?: string
@@ -24,8 +24,10 @@ export type CronPlan = { repeatsPaused: boolean; events: CronEvent[]; schedules:
 
 /** 558-3: встроенное событие главного агента — разбудить его текстом `message` записи как задачей. Новое поручение = запись, а не код. */
 export const AGENT_TASK = "agent-task"
+/** 630: встроенное событие — текст `message` записи уходит архитектору от бота главного агента; агент не будится, токенов ноль. */
+export const TELEGRAM_MESSAGE = "telegram-message"
 
-const REPEATS = new Set(["once", "daily", "weekdays", "weekly", "monthly"])
+const REPEATS = new Set(["once", "daily", "weekdays", "weekly", "monthly", "yearly"])
 
 /** 558-3: папка главного агента узла — `data/main-agent` под корнем ядра (сервер ядра работает из корня, как `readNodeType(process.cwd())`). */
 export const elementDir = () => join(process.cwd(), "data", "main-agent")
@@ -81,6 +83,8 @@ export function occursOn(s: CronSchedule, day: Date): boolean {
     case "weekdays": return dow >= 1 && dow <= 5
     case "weekly": return dow === start.getDay()
     case "monthly": return day.getDate() === start.getDate()
+    // 630 (владелец 2026-11-03: «напомни мне через неделю про день рождения мамы»): день рождения повторяется раз в год.
+    case "yearly": return day.getDate() === start.getDate() && day.getMonth() === start.getMonth()
   }
 }
 

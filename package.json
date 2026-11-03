@@ -66,6 +66,7 @@
     "check:architect-routes": "node scripts/check-architect-routes.mjs",
     "check:native-sections": "node scripts/check-native-sections.mjs",
     "node:update": "node scripts/node-update.mjs",
+    "reminder": "node scripts/reminder.mjs",
     "check:term-hints": "node scripts/check-term-hints.mjs",
     "check:seo-html": "node scripts/check-seo-html.mjs",
     "check:microservices": "node scripts/check-microservices.mjs",

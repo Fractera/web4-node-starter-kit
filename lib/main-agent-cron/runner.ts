@@ -1,6 +1,6 @@
 import { appendFileSync, mkdirSync, readFileSync } from "node:fs"
 import { join } from "node:path"
-import { AGENT_TASK, dueAt, elementDir, hm, readPlan, ymd, type CronSchedule } from "./due"
+import { AGENT_TASK, TELEGRAM_MESSAGE, dueAt, elementDir, hm, readPlan, ymd, type CronSchedule } from "./due"
 
 // ЧАСЫ «АВТОМАТИЗИРОВАННОГО УПРАВЛЕНИЯ» ГЛАВНОГО АГЕНТА (узел, шаг 558-3). Слово владельца 2026-10-21: «в Аргенти это будет
 // автоматизированное управление агентами или приложениями позволяет запускать агентов по определённому расписанию»; план 558 —
@@ -23,6 +23,29 @@ const EVENTS: Record<string, (s: CronSchedule) => Promise<Result>> = {
     if (typeof wake !== "function") return { ok: false, detail: "agent kits are not mounted" }
     const r = await wake("build", { text, from: "cron", confirmed: true })
     return r.ok ? { ok: true, detail: r.already ? "pasted into the live session" : "woke up" } : { ok: false, detail: r.reason ?? "wake failed" }
+  },
+  // 630 (владелец 2026-11-03: «я могу сказать напомни мне через неделю про день рождения мамы. И это должно вызвать соответствующий
+  // процессорный»): напоминание — текст записи от бота главного агента каждому, кого бот допустил (`access.json`), без пробуждения агента.
+  // Тот же приём, что событие `telegram-message` часов элемента (шаг 465-4): новое напоминание — запись, а не код.
+  [TELEGRAM_MESSAGE]: async (s) => {
+    const text = s.message?.trim()
+    if (!text) return { ok: false, detail: "no message text" }
+    const dir = join(process.cwd(), "data", "services", "build", "channel", "telegram")
+    let token = ""
+    let chats: string[] = []
+    try { token = (readFileSync(join(dir, ".env"), "utf8").match(/^TELEGRAM_BOT_TOKEN=(.+)$/m)?.[1] ?? "").trim() } catch { /* бот не подключён */ }
+    try { chats = ((JSON.parse(readFileSync(join(dir, "access.json"), "utf8")) as { allowFrom?: unknown[] }).allowFrom ?? []).map(String) } catch { /* никого */ }
+    if (!token || !chats.length) return { ok: false, detail: "the main agent's Telegram bot is not connected" }
+    let sent = 0
+    for (const chat of chats) {
+      try {
+        const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ chat_id: chat, text }), signal: AbortSignal.timeout(10_000),
+        })
+        if (((await r.json().catch(() => null)) as { ok?: boolean } | null)?.ok) sent += 1
+      } catch { /* сеть — запись в журнал ниже */ }
+    }
+    return sent ? { ok: true, detail: `sent to ${sent} chat(s)` } : { ok: false, detail: "Telegram did not take the message" }
   },
 }
 

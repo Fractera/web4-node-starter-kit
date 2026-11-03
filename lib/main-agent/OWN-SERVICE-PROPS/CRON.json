@@ -5,6 +5,11 @@
       "id": "agent-task",
       "name": "Task for the main agent",
       "description": "Wakes the main agent with the entry's own text (field «message») as its task: check something, then give the work to the element that does it (npm run task)."
+    },
+    {
+      "id": "telegram-message",
+      "name": "Reminder in Telegram",
+      "description": "Sends the entry's own text (field «message») to the architect through the main agent's Telegram bot — a reminder; the agent is not woken, no tokens (step 630)."
     }
   ]
 }
