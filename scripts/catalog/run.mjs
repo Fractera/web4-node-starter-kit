@@ -38,6 +38,11 @@ if (cmd === 'selftest') {
   const failed = rows.filter((r) => r.error)
   const gone = failed.filter((r) => /renamed or removed/.test(r.error)).length
   console.log(`===CATALOG_FETCHED=== ${rows.length - failed.length} of ${rows.length} · gone from their repositories ${gone} · other failures ${failed.length - gone}${failed.length - gone ? ' — run fetch again' : ''}`)
+} else if (cmd === 'sites') {
+  const { pullSites } = await import('./census.mjs')
+  if (!flag('token-file')) { console.log('===CATALOG_FAIL=== sites needs --token-file <the .env.local written by `vercel env pull`>'); process.exit(2) }
+  const r = await pullSites({ tokenFile: resolve(flag('token-file')), dataDir: DATA })
+  console.log(`===CATALOG_SITES=== ${r.ok} of ${r.rows} skills of sites copied from skills.sh (text files only) · ${join(DATA, 'fetched-sites.json')}`)
 } else if (cmd === 'audit') {
   const { attachAudits, pullAudits } = await import('./census.mjs')
   const r = await pullAudits({ dataDir: DATA })

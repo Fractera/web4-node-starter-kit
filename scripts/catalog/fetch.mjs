@@ -73,7 +73,7 @@ export function openRepo(source, reposDir) {
 }
 
 /** A licence file's words → its SPDX id, or «custom». */
-function spdxOf(text) {
+export function spdxOf(text) {
   const t = String(text).slice(0, 4000)
   if (/MIT License|Permission is hereby granted, free of charge/i.test(t)) return 'MIT'
   if (/Apache License/i.test(t) && /Version 2\.0/.test(t)) return 'Apache-2.0'

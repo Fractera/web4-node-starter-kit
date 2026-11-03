@@ -81,7 +81,8 @@ const texts = (v, min, max, len) =>
 export function validateCard(c) {
   if (!c || typeof c !== 'object') return ['not-an-object']
   const e = []
-  if (typeof c.id !== 'string' || c.id !== `${c.source}@${c.skill}` || !/^[\w.-]+\/[\w.-]+$/.test(c.source ?? '')) e.push('id')
+  // A source is `owner/repo` (GitHub) or a site's own name (`uizze.sh`, a `well-known` source of skills.sh).
+  if (typeof c.id !== 'string' || c.id !== `${c.source}@${c.skill}` || !/^[\w.-]+(\/[\w.-]+)?$/.test(c.source ?? '')) e.push('id')
   if (!Number.isInteger(c.installs) || c.installs < 0) e.push('installs')
   if (c.stars !== null && !Number.isInteger(c.stars)) e.push('stars')
   if (c.licence !== null && typeof c.licence !== 'string') e.push('licence')

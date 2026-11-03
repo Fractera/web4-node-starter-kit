@@ -65,7 +65,7 @@ function cardOf(row, text, m, markedBy) {
   const risks = list(m.risks)
   return {
     id: `${row.source}@${row.skill}`, source: row.source, skill: row.skill, installs: row.installs, stars: row.stars ?? null,
-    licence: row.licence ?? null, licenceFrom: row.licenceFrom ?? null, url: urlOf(row.source, row.skill),
+    licence: row.licence ?? null, licenceFrom: row.licenceFrom ?? null, url: row.url ?? urlOf(row.source, row.skill),
     sha: row.sha, blob: row.blob ?? blobShaOf(text), folderSha: row.folderSha ?? null,
     files: row.files ?? 1, scripts: row.scripts ?? [],
     summary: String(m.summary ?? '').trim(), tasks: list(m.tasks), tags: list(m.tags, true), tools: list(m.tools),
@@ -151,7 +151,10 @@ export async function markAll({ dataDir, cardsFile, limit = Infinity, concurrenc
   // again after a second, three times.
   let fetched = null
   for (let attempt = 1; !fetched; attempt += 1) {
-    try { fetched = JSON.parse(readFileSync(join(dataDir, 'fetched.json'), 'utf8')).filter((r) => r.sha) } catch (err) {
+    try {
+      const sites = existsSync(join(dataDir, 'fetched-sites.json')) ? JSON.parse(readFileSync(join(dataDir, 'fetched-sites.json'), 'utf8')) : []
+      fetched = [...JSON.parse(readFileSync(join(dataDir, 'fetched.json'), 'utf8')), ...sites].filter((r) => r.sha)
+    } catch (err) {
       if (attempt >= 3) throw err
       await new Promise((ok) => setTimeout(ok, 1000))
     }

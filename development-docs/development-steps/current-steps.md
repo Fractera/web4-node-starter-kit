@@ -68,6 +68,12 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
 
 ## Measured — do not measure again
 
+- 2026-11-03, 627-5 large run (`data/catalog-6000/`): GitHub rows 5,378 → fetched 4,971, gone from their repositories 402 (7.5 %),
+  repositories deleted 5; 4,762 unique by fingerprint. Sites (`well-known`, skills.sh copy, text only): 622 → 613 copied, 9 without a
+  SKILL.md, 12 equal to a GitHub copy → 572 new. ≈5,334 unique skills to mark. Marking runs at ~18 cards a minute with 4 at a time
+  (≈4 h for the rest). The owner's Vercel OIDC token (pulled 2026-11-02 23:06) expires 2026-11-03 11:06 UTC — `vercel env pull` in the
+  scratch folder renews it.
+
 - 2026-11-03, 627 fetch: in a blob-less partial clone `git checkout HEAD --pathspec-from-file` fetches blobs ONE BY ONE (wshobson/agents:
   50 SKILL.md in 38.8 s); `git sparse-checkout set --no-cone --stdin` + one checkout fetches them in a batch (50 in 1.1 s, 185 at once).
   With it: 120 census rows in 77 s; ~2,600 rows in ~15 min (2,334 ok, 276 gone, 1 repository deleted). `git ls-tree -l` in such a clone

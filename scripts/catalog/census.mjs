@@ -3,7 +3,7 @@
 // token: the owner's free Vercel account, `vercel link` + `vercel env pull` in a folder OUTSIDE the node; the token is read from that
 // file and never printed or stored here. Also: the partners' audits of a skill (that door answers without a token).
 // Measured 2026-11-02: 93,000 skills; the top 6,000 end at 3,307 installs; 5,378 GitHub + 622 `well-known` (sites); 698 sources.
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 
 const API = 'https://skills.sh/api/v1'
@@ -39,6 +39,44 @@ export async function pullCensus({ tokenFile, rows: wanted = 6000, outDir }) {
   return { rows: taken.length, github: github.length, wellKnown: taken.length - github.length, sources: sources.size, lastInstalls: taken.at(-1)?.installs }
 }
 
+/**
+ * The `well-known` skills (served by their own sites, not GitHub): the skills.sh copy is their only source — TEXT files only (binaries
+ * are not served, measured 2026-11-03). Written as data under `sites/` (paths with «..» or a leading «/» are refused), one row each in
+ * `fetched-sites.json`, the same shape the marker reads from `fetched.json`. A copy that equals a GitHub skill is merged by its fingerprint.
+ */
+export async function pullSites({ tokenFile, dataDir }) {
+  const token = tokenOf(tokenFile)
+  const { blobShaOf, folderShaOf, isScript, shaOf } = await import('./lib.mjs')
+  const { spdxOf } = await import('./fetch.mjs')
+  const rows = JSON.parse(readFileSync(join(dataDir, 'well-known.json'), 'utf8'))
+  const out = []
+  for (const r of rows) {
+    const res = await fetch(`${API}/skills/${r.id}`, { headers: { Authorization: `Bearer ${token}` } }).catch(() => null)
+    if (res?.status !== 200) { out.push({ rank: r.rank, source: r.source, skill: r.slug, installs: r.installs, error: `skills.sh answered ${res?.status ?? 'nothing'}` }); continue }
+    const body = await res.json()
+    const files = (body.files ?? []).filter((f) => typeof f.path === 'string' && !f.path.startsWith('/') && !f.path.split('/').includes('..'))
+    const main = files.find((f) => f.path === 'SKILL.md')
+    if (!main) { out.push({ rank: r.rank, source: r.source, skill: r.slug, installs: r.installs, error: 'no SKILL.md in the copy' }); continue }
+    const dir = join('sites', r.source.replace(/\//g, '__'))
+    for (const f of files) {
+      const file = join(dataDir, dir, r.slug, f.path)
+      mkdirSync(join(file, '..'), { recursive: true })
+      writeFileSync(file, f.contents ?? '')
+    }
+    const lic = files.find((f) => /^(licen[cs]e|copying)(\.(md|txt))?$/i.test(f.path))
+    out.push({
+      rank: r.rank, source: r.source, skill: r.slug, installs: r.installs, sourceType: 'well-known', url: r.url?.replace('https://www.', 'https://'),
+      dir, folder: r.slug, path: `${r.slug}/SKILL.md`, stars: null, licence: lic ? spdxOf(lic.contents) : null, licenceFrom: lic ? 'folder' : null,
+      sha: shaOf(main.contents), blob: blobShaOf(main.contents), chars: main.contents.length, skillsShHash: body.hash ?? null,
+      folderSha: folderShaOf(files.map((f) => [f.path, blobShaOf(f.contents ?? '')])),
+      files: files.length, bytes: files.reduce((n, f) => n + Buffer.byteLength(f.contents ?? ''), 0),
+      scripts: files.filter((f) => isScript(f.path)).map((f) => f.path), links: [], list: files.map((f) => `${f.path} ${Buffer.byteLength(f.contents ?? '')}`),
+    })
+  }
+  writeFileSync(join(dataDir, 'fetched-sites.json'), `${JSON.stringify(out, null, 1)}\n`)
+  return { rows: rows.length, ok: out.filter((x) => x.sha).length }
+}
+
 /** Write the audits of `audits.json` into cards already marked — no model call; a card without an audit gets []. */
 export function attachAudits({ dataDir, cardsFile }) {
   const audits = JSON.parse(readFileSync(join(dataDir, 'audits.json'), 'utf8'))
@@ -50,7 +88,8 @@ export function attachAudits({ dataDir, cardsFile }) {
 
 /** The partners' audits of each fetched skill → `audits.json` { "<source>@<skill>": [{ provider, status }] } — no token needed. */
 export async function pullAudits({ dataDir }) {
-  const fetched = JSON.parse(readFileSync(join(dataDir, 'fetched.json'), 'utf8')).filter((r) => r.sha)
+  const sites = existsSync(join(dataDir, 'fetched-sites.json')) ? JSON.parse(readFileSync(join(dataDir, 'fetched-sites.json'), 'utf8')) : []
+  const fetched = [...JSON.parse(readFileSync(join(dataDir, 'fetched.json'), 'utf8')), ...sites].filter((r) => r.sha)
   const out = {}
   let found = 0
   for (const r of fetched) {
