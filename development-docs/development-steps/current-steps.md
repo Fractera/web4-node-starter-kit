@@ -46,7 +46,10 @@ the live hand-off waits for the owner's next core update.
   Fractera) lacks the `workflow` scope and GitHub refused the push (the owner's SSH key `aifa-agi` has only read there) — it comes
   back after the owner's `gh auth refresh -h github.com -s workflow`. Working copy of the element:
   `/private/tmp/claude-501/-Users-romanbolshiyanov/faa581fd-3474-473a-bbba-99276029a73e/scratchpad/embeddings-repo`.
-- 🛑 **INCIDENT 2026-11-03 ~08:57 UTC — the owner's live vectors element is DOWN until he restores it.** `node
+- ✓ **The incident below is closed** (2026-11-03 ~10:22 UTC): the owner ran the restore command; `fractera-svc-vectors` (cwd
+  `~/web4-node-starter-kit/WEB4-ITEMS/core/vectors`) holds 24694 again, `/api/health` 200 with its own build of 2026-11-02, the
+  watcher runs from the node, the clone's copy is gone (24687 free), `pm2 save` done by him.
+- **INCIDENT 2026-11-03 ~08:57 UTC — the owner's live vectors element was DOWN until he restored it.** `node
   scripts/services-install.mjs --only vectors` run in THIS working clone (the 626-3 install proof) shares the machine's pm2 with the
   live node: it saw `fractera-svc-vectors` running and did `pm2 delete` + `pm2 start` of `fractera-svc-vectors` and
   `fractera-svc-vectors-watch` from the CLONE's `ecosystem.config.cjs`, then `pm2 save`. Now pm2 runs the clone's v1.2.0 copy on
