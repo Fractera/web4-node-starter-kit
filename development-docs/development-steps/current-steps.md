@@ -46,6 +46,24 @@ the live hand-off waits for the owner's next core update.
   Fractera) lacks the `workflow` scope and GitHub refused the push (the owner's SSH key `aifa-agi` has only read there) — it comes
   back after the owner's `gh auth refresh -h github.com -s workflow`. Working copy of the element:
   `/private/tmp/claude-501/-Users-romanbolshiyanov/faa581fd-3474-473a-bbba-99276029a73e/scratchpad/embeddings-repo`.
+- 🛑 **INCIDENT 2026-11-03 ~08:57 UTC — the owner's live vectors element is DOWN until he restores it.** `node
+  scripts/services-install.mjs --only vectors` run in THIS working clone (the 626-3 install proof) shares the machine's pm2 with the
+  live node: it saw `fractera-svc-vectors` running and did `pm2 delete` + `pm2 start` of `fractera-svc-vectors` and
+  `fractera-svc-vectors-watch` from the CLONE's `ecosystem.config.cjs`, then `pm2 save`. Now pm2 runs the clone's v1.2.0 copy on
+  port 24687 (cwd under /private/tmp); the live vectors v1.1.17 (port 24694, `.next-a`, files intact) is not running, so the
+  node's `/vectors/*` answers 503. The session's safety check refused every pm2 command (and then even `git diff`). **Restore —
+  the owner, in this terminal:** `! cd ~/web4-node-starter-kit && pm2 delete fractera-svc-vectors fractera-svc-vectors-watch &&
+  pm2 start ecosystem.config.cjs --only fractera-svc-vectors && pm2 start ecosystem.config.cjs --only fractera-svc-vectors-watch
+  && pm2 save`. Lesson (for `ANTI-PATTERNS.md`, «All systems»): a second checkout's `services:install` on a computer with a live
+  node restarts the live element from the clone — run it only with its own `PM2_HOME` (the embeddings install before it touched
+  nothing: no live process had that name). The clone's registry may now hold vectors port 24687 — reset it to 24694 before the
+  626-3 commit.
+- **626-3 — code done, the core commit pending:** `fractera-vectors-starter` `124f557` (**`v1.2.0`**) and `fractera-data-starter`
+  `a328054` (**`v2.2.0`**) pushed; proofs done on a spare port (see `completed-steps/626-3.md`, a draft with the placeholders
+  DATA_HASH → `a328054`, DATA_TAG → `v2.2.0`, INSTALL_PROOF → «the clone's installer: vectors v1.2.0 installed with
+  `EMBEDDINGS_URL=http://127.0.0.1:24696` derived and no `EMBED_*`; its pm2 side effect — the incident above»). Uncommitted in the
+  working clone: the registry pins (vectors `v1.2.0`, data `v2.2.0`, embeddings `v0.1.1` already committed) and
+  `scripts/services-install.mjs` without `EMBED_MODEL`/`EMBED_DIMS`.
 - **The marking now (2026-11-03 08:35 UTC):** the old run ended `===CATALOG_MARK_PARTIAL=== marked 3411 · failed 593 · already marked
   15 · duplicates 205` — 587 of the failures were the subscription's «You've hit your 5-hour limit · resets 12pm (Atlantic/Canary)»,
   which the marker's `LIMIT_WORDS` did not know (fixed in `scripts/catalog/mark.mjs`: «hit your … limit» is a limit; the failed rows
