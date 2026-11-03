@@ -72,7 +72,7 @@ I assume that:
 ## 5–6. Substeps, order, address
 | # | Result (one thing to show) | Repository | Rests on |
 |---|---|---|---|
-| 626-1 | the runtime chosen by measurement on three systems; the same text gives the same vector everywhere | scratch, no repository | — |
+| 626-1 | the runtime chosen by measurement on this Mac (Windows later — the owner, 2026-11-03); the same text gives the same vector in both runtimes | scratch, no repository | — |
 | 626-2 | `embeddings` born, installed with its model; two doors answer | new `Fractera/fractera-embeddings-starter`; core registry | 626-1 |
 | 626-3 | the vectors element counts texts through `embeddings`; the old store set aside | `Fractera/fractera-vectors-starter`; core installer | 626-2 |
 | 626-4 | the core's agents' memory and element search send texts, count nothing | core | 626-3 |
