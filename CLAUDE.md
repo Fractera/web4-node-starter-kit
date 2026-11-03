@@ -122,7 +122,8 @@ above all the warning that the first account is the administrator and cannot be 
 - Guest and role access is set separately for every route.
 - App factory and integrator: an account belongs to an app; every element has its own administration panel, other elements are not
   visible in it.
-- Every element has its own event timer: it does its task without telling you.
+- Every element has its own event timer and calendar (its «Cron» pages): it does its task without telling you; a reminder said to
+  an element lives in that element's calendar.
 - Payments. Web2: Stripe keys live only in the Stripe element. Web3: the node's wallet — create or inherit (`/api/node/wallet`); a single
   project has one wallet.
 - Capability cards, the first-contact fee and the element's description are the element's data; the description reaches the core by the
@@ -158,10 +159,11 @@ above all the warning that the first account is the administrator and cannot be 
 - **Doors between elements:** `/api/<name>` on loopback with the key `X-Node-Key`; a door is added by the element's `door:add`, the A2A card
   names every door (guard `check:a2a-card`).
 - **Buying an element in Lagrix (f2f)** is not possible yet: the search `npm run lagrix` is a simulation, say so.
-- **Cron:** an element may wake you on its timer for a related task — for example, it needs an image for a post. You pass the task to the
-  element that generates images (`npm run task`), then they talk by themselves; you may ask for the result and record it.
+- **Cron:** an element's clock wakes only its own agent; that agent comes to you (`ask-core`) — «my alarm fired: tell the person …» or
+  «I need images for a post». You pass the words to the person, or name the neighbour (`route-to-element`, `npm run task`) and the two
+  agents agree by i2i; you may ask for the result and record it.
 - **Your own cron** lives in the core, Automated management (skill `core-schedule`); the schedule changes only after the person's
-  yes.
+  yes. «Напомни мне <когда> …» is that yes: `npm run reminder`, the receipt names the date in words and the calendar's link.
 - **The first task** typed on the root home page goes to you (`/api/node/first-task`).
 - **A new product** is born three ways: the person's direct request · the product quiz · reverse engineering that turns into the
   quiz.
@@ -184,7 +186,7 @@ above all the warning that the first account is the administrator and cannot be 
 - **GitHub:** until the person agrees, everything stays on the node; after the yes you push the code to the element's repository. A new
   Fractera tag for an element — the Update button.
 - **Backup** of the native stores is done by the elements themselves; you ask them and get the answer (`npm run task`).
-- **The node's commands** are recognised by the purpose of a message, in any language and with typos: remember, remind about, turn on,
+- **The node's commands** are recognised by the purpose of a message, in any language and with typos: remember, remind about, remind at a time,
   turn off, review, commands. One list — `lib/agent-kit/commands.json` (`npm run commands`).
 - **Self-evolution.** The architecture's goal is continuous improvement, always together with the architect. Every stage of development
   ends with an offer to the architect to look, together with Claude Code, for ways to improve the instructions and skills. Earlier
@@ -243,6 +245,9 @@ above all the warning that the first account is the administrator and cannot be 
 - The person's personal data — never in git. An order (an element's work for others over a2a) leaves a summary outside git, without
   personal data (`order:save`).
 - The element boundary: its agent does not see the core or the neighbours (`elements:isolate`, guard `check:boundary-hook`).
+- Only agents talk to agents. Code — a clock, a door, a script — speaks only to its own element's agent; it never reaches another agent,
+  nor the person through another agent's channel. A first contact goes through you, the orchestrator; two agents then agree an API
+  (i2i), and only that agreed API is called directly. A shortcut around an agent is a catastrophic error.
 - The node runs only in production: after a code edit a rebuild is needed.
 - The node's composition and ports are never given out: doors are closed to the internet (`proxy.ts`).
 - A person's action in an outside service — only through a screen of the node; a foreign screen is never described from
@@ -317,7 +322,7 @@ above all the warning that the first account is the administrator and cannot be 
   `supervise-element`; an element asks how the node works — `answer-element`; a check from an element, starting or closing its agent —
   `ask-element`; a capability an element lacks — `handle-need` (a bare yes or no with no question in this session — `npm run needs`
   first); the node type — `node-type`; an element on or off — `element-power`; how a product or SDK works — `study-for-element`; a
-  skill the person heard of — `adopt-suggested-skill`; a clock — `core-schedule`; page sections and blocks — `blocks-of-the-node`; colours, fonts, menus — `design-and-settings-of-elements`;
+  skill the person heard of — `adopt-suggested-skill`; a clock and reminders — `core-schedule`; page sections and blocks — `blocks-of-the-node`; colours, fonts, menus — `design-and-settings-of-elements`;
   routing a need — `route-to-element`; a new element — `create-element`; a person stuck in someone else's interface — `help-in-browser`
   (their Chrome on this computer); a template release and its rollout to the elements — `release-template` (the elements' sealed
   instruction comes from `npm run instruction:element`).

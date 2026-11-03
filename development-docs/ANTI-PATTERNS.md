@@ -49,6 +49,11 @@ warned earlier. The section stays short: a lesson that a guard or the code now h
 - **A copy of `.ts`/`.tsx` files inside the project is code to the core's build.** A backup of a node update put in
   `logs/update-…/` (gitignored, but not outside `tsconfig`) failed `next build` with «Cannot find module» from the copy (2026-11-03): a
   backup is an archive (`tar`) or lives outside the project.
+- **Code that reaches around an agent is a catastrophic error.** 2026-11-03, step 630: to deliver an element's reminder I built a door
+  through which an element wrote into the core's calendar, and proposed a «relay» door through which an element's clock would send the
+  person a message from the main agent's bot — both bypass the agents (never shipped; the owner stopped it). The law (the instruction,
+  section 6): code speaks only to its own agent; agents talk to agents, the first contact through the orchestrator; only an API the
+  agents agreed is called directly.
 - **Search by meaning always returns the nearest neighbour.** «Nothing found» needs a similarity threshold or a filter, never a nonsense query.
 - **A probe of an element on a spare port subscribes to CONFIG and Design with its own port** and steals the live element's signals: run it
   with `CONFIG_SERVICE_URL` and `DESIGN_SERVICE_URL` empty.
