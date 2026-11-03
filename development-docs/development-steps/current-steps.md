@@ -23,6 +23,18 @@ native v0.1.33, 12 elements rolled out, pins `5e9d4b1` (`completed-steps/622.md`
 `GET /api/skills/suggested`, the skill `adopt-suggested-skill`, the instruction resealed `ed81462013fc` (`completed-steps/628-main.md`);
 the live hand-off waits for the owner's next core update.
 
+**RUNNING (2026-11-03 ~15:40 UTC): the update of the owner's node `~/web4-node-starter-kit`, by the owner's word «sync success, next
+steps will for you».** Found before it: the node is `main` = the fork's `4daa6cb2` + its own «Fresh project» commit `656ba518`, 33
+commits behind the synced fork, with 40 uncommitted files — 33 equal to the fork's files, 6 older copies of fork files, and the node's
+own state only in the registry (stripe `off.byDefault`); no dependency change (`package.json` adds a script only). The order:
+backup `logs/update-2026-11-03/` (the diff, the registry, the status) → `git stash` → `git merge origin/main` keeping the node's own
+`development-docs/development-steps/` (the fresh project) → the stripe `off` block back into the registry (uncommitted, as before) →
+`npm run prebuild` alone → `npm run services:install` (embeddings new; data, vectors, graph, memory, root to the new pins) →
+`npm run serve:rebuild` → `npm run skills-base` → checks (status, menus, embeddings, vectors `setAside`, graph model, the banner).
+The owner's new requests of the same hour → step 632 (after this update): the top menu's cards named by the element (root showed as
+«Что вы хотите построить?»), turned-off elements listed (Stripe), «Домен и хостинг» in red until an own domain, the banner offering
+«update the node» once the fork is synced instead of «open your fork» (a `node:update` that does what this update does by hand).
+
 **NOW (2026-11-03 ~14:50 UTC): 631 closed (the owner's report on the left menu, `completed-steps/631.md`): sections
 `architect/stripe` and `architect/embeddings` with their agent kits, `embeddings` in the group «Memory», the guard
 `check:native-sections`; the owner's node shows them after «Sync fork» + `npm run serve:rebuild` (which also installs `embeddings` and
