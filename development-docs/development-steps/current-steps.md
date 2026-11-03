@@ -27,10 +27,12 @@ the live hand-off waits for the owner's next core update.
 its pin and online — embeddings v0.1.2 (24696, turned on by `npm run power -- embeddings on`: the installer restarts only what ran
 before), vectors v1.2.0, graph v1.2.0, memory v2.2.9, data v2.2.0; stripe off by its passport; `npm run skills-base` →
 `===SKILLS_BASE_LOADED=== inserted 8`. Seen live (headless Chrome on localhost, `t632/live-*.png`): «Модель векторов» in «Память» after
-«Векторы», «Платежи Stripe» between «Блоки» and «Дизайн». Not done: **root stays at v3.0.13** — `git checkout` of v3.0.14 aborted on
-its own uncommitted changes (its agent's or the person's work — not touched; `serve:status` prints the pin v3.0.14, which is not what
-runs); the banner — `behindBy 1` (the docs commit `35c3f2d`); **the temporary internet address is dead since 2026-11-02 19:05**
-(`serve:status`: the name does not resolve) — a new one is `npm run serve:publish`, the owner's call (a given link changes).
+«Векторы», «Платежи Stripe» between «Блоки» and «Дизайн». **Root** first stayed at v3.0.13 (`git checkout` of v3.0.14 aborted): of its
+two changed files `root-prompt.client.tsx` was the v3.0.14 file put in by hand and `DESIGN-CONFIG/design-config.json` the live design
+(v3.0.14 does not change it) — by the owner's «fix» the copy was cleared, the design kept (backup `logs/update-2026-11-03/root-*`),
+`services:install -- --only root` → **v3.0.14**, built 14:14:55, 200. **The dead temporary address** (since 2026-11-02 19:05): by
+the owner's «Да, подними» `npm run serve:publish -- --new` → https://guns-convertible-notify-conclusions.trycloudflare.com, 200 from
+the internet. The banner — `behindBy` (my docs commits after the owner's sync).
 Mistakes on the way: the first `services:install` lost github.com's DNS for a minute (embeddings, graph, memory, root failed) — run
 again; the first `serve:rebuild` failed on the backup's `.tsx` copies inside `logs/` (the quiet build gave the old build back) — the
 copies packed into `ita.tar`, the lesson in `ANTI-PATTERNS.md`, the second rebuild RC 0.
@@ -46,6 +48,8 @@ files — all equal to the fork's); the merge `aaf640f0` («Update from the orig
 steps» — 37 starter step files left out, `current-steps.md` the node's own); the stripe `off` block back (uncommitted); `npm run
 prebuild` RC 0 (`ORIGIN_OUTDATED behind 1` — my docs commit `35c3f2d` pushed after the owner's sync); `services:install` RUNNING
 (log `logs/update-2026-11-03/services-install.log` of the node). Then `serve:rebuild`, `skills-base`, the checks.
+The owner's word on 632 (~17:10 UTC): «my choose 1» (do it now), and for the dead address: «Похоже для этого нужно делать баннер,
+который будет предупреждать об этой проблеме и кнопка которую этой проблемы будет решать?» — a substep of 632.
 The owner's new requests of the same hour → step 632 (after this update): the top menu's cards named by the element (root showed as
 «Что вы хотите построить?»), turned-off elements listed (Stripe), «Домен и хостинг» in red until an own domain, the banner offering
 «update the node» once the fork is synced instead of «open your fork» (a `node:update` that does what this update does by hand).
