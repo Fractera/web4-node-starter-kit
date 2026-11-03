@@ -42,8 +42,8 @@ the live hand-off waits for the owner's next core update.
   and show ten cards in Russian.
 - **Closed tonight:** 625, 627-1 (`daf3249`), 628 (`9e033f3`). **Ready to start:** 626 — entirely on this Mac; the owner, 2026-11-03:
   «ты там пишешь про какой-то тест на Windows отмени его пока сидим на этой машине» (626-1 and 626-8 changed). The element's repository
-  `Fractera/fractera-embeddings-starter` is created in 626-2 by the agent (`gh`, logged in as Fractera) — the owner was told he need not
-  create it. 627-2 … 627-4, 627-6, 627-7 after 626 (they need the `embeddings` element).
+  `Fractera/fractera-embeddings-starter` EXISTS — created by the owner 2026-11-03 07:14 UTC, public, empty, branch `main`; the agent's
+  access measured: `permissions` admin + push, `git push --dry-run` accepted (nothing written). 626-2 fills it, it does not create it. 627-2 … 627-4, 627-6, 627-7 after 626 (they need the `embeddings` element).
 - **Known on the way:** the marker is not deterministic on borderline skills; `quality` gathers at 4★; 402 GitHub rows are gone from
   their repositories, 5 repositories deleted; the site skills have text only (no binaries, no licence from GitHub).
 
