@@ -44,7 +44,8 @@ warned earlier. The section stays short: a lesson that a guard or the code now h
 - **A «session end» hook does not run when the bridge kills the session.** A writer that must not lose anything is the Stop hook.
 - **A second checkout on a computer with a live node shares its pm2.** `services:install` run in a clone saw the live element running
   and restarted it from the clone (`pm2 delete` + `start` + `save`) — the live element stopped serving (2026-11-03, vectors). A clone's
-  installer runs only with its own `PM2_HOME`.
+  installer runs only with its own `PM2_HOME`. The clone's core server too: at its start (`instrumentation.ts`) it runs
+  `scripts/memory-by-free.mjs`, which turns the deep memory on or off by its pm2 name — the live node's (found by reading, 631).
 - **Search by meaning always returns the nearest neighbour.** «Nothing found» needs a similarity threshold or a filter, never a nonsense query.
 - **A probe of an element on a spare port subscribes to CONFIG and Design with its own port** and steals the live element's signals: run it
   with `CONFIG_SERVICE_URL` and `DESIGN_SERVICE_URL` empty.

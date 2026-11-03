@@ -1,6 +1,6 @@
 import {
-  AppWindow, Blocks, Bot, Box, Clock, Database, LayoutDashboard, FlaskConical, Hammer, House, IdCard, KeyRound, LayoutTemplate, Package, Palette,
-  HardDrive, MemoryStick, Network, Plus, ScanSearch, Send, Zap, Server, Settings, SlidersHorizontal, Store, ToggleRight, Wrench,
+  AppWindow, Binary, Blocks, Bot, Box, Clock, CreditCard, Database, LayoutDashboard, FlaskConical, Hammer, House, IdCard, KeyRound, LayoutTemplate,
+  Package, Palette, HardDrive, MemoryStick, Network, Plus, ScanSearch, Send, Zap, Server, Settings, SlidersHorizontal, Store, ToggleRight, Wrench,
 } from 'lucide-react'
 
 // ЗНАЧКИ ЛЕВОГО МЕНЮ (шаг 288-2). Слово владельца 2026-09-24: «Слева от кнопок нужно нарисовать иконке … для корня
@@ -45,6 +45,9 @@ const ICONS = {
   zap: Zap,
   // Владелец 2026-11-02: кнопка «Главный Telegram-бот» над «Главным агентом» — значок отправки, как у Telegram.
   send: Send,
+  // 631: «Модель векторов» (embeddings, числа вместо текста) и «Платежи Stripe» (stripe).
+  binary: Binary,
+  card: CreditCard,
 } as const
 
 export type MenuIconName = keyof typeof ICONS

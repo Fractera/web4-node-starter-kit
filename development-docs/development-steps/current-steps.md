@@ -23,8 +23,12 @@ native v0.1.33, 12 elements rolled out, pins `5e9d4b1` (`completed-steps/622.md`
 `GET /api/skills/suggested`, the skill `adopt-suggested-skill`, the instruction resealed `ed81462013fc` (`completed-steps/628-main.md`);
 the live hand-off waits for the owner's next core update.
 
-**NOW (2026-11-03 ~14:10 UTC): 626-6 closed — next step 629 (the owner's word below, «После 626-6»), then 626-7, 626-8, then
-630.** 626-6: memory `d771469` **`v2.2.9`**, pinned (`completed-steps/626-6.md`) — phrases, comments and cards go to the vector
+**NOW (2026-11-03 ~14:50 UTC): 631 closed (the owner's report on the left menu, `completed-steps/631.md`): sections
+`architect/stripe` and `architect/embeddings` with their agent kits, `embeddings` in the group «Memory», the guard
+`check:native-sections`; the owner's node shows them after «Sync fork» + `npm run serve:rebuild` (which also installs `embeddings` and
+rebuilds data, vectors, graph and memory to the 626 pins — the clean slate; then `npm run skills-base` once). Next: step 629 — the plan
+`new-steps/629/629-main.md` is written (substeps 629-1 … 629-4 not yet), then 626-7, 626-8, 630.** Before 631:
+626-6 closed — 626-6: memory `d771469` **`v2.2.9`**, pinned (`completed-steps/626-6.md`) — phrases, comments and cards go to the vector
 element as texts, `remember` calls no model when `embeddings` does not count (proven on the scratch stand `…/scratchpad/t6266`:
 ports 25611–25615, `t6266/start.sh <element>` starts one; stopped after the proof). For 629 first: the plan
 `new-steps/629/` (law in the core's section 6 + skill + the elements' instruction through a template release + one gray request live),
