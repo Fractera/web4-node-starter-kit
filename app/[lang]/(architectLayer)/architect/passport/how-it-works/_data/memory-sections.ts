@@ -42,10 +42,12 @@ export const MEMORY_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
           ],
         },
         {
-          title: '5.4 A curious soul: what other projects already know',
+          title: '5.4 A curious soul: 5,300 skills of 2026',
           items: [
-            'Before it builds something new, an agent looks in the node’s [[skills base|skills-base]] for how other projects solved the same task. The base comes with every copy of the node, and each skill keeps its own licence.',
-            'When it finds something close, the agent adds that experience to its own reasoning, puts it in its own words and names whose skill it was. When nothing is close, it says so.',
+            'Every node comes with more than 5,300 of the most popular agent skills of 2026, the top 6,000 of the skills.sh leaderboard, next to its own [[skills base|skills-base]]. Fractera read each one and wrote it a card: what it does, how useful it is for a node, a quality mark from 1 to 5, its scripts, its licence and the security audits of skills.sh partners.',
+            'The cards cost no tokens until a task needs them. Before it builds something new, the agent searches them by meaning through the knowledge graph, reads the few skills that fit and reasons with the way other projects solved the same task. It puts that in its own words and names whose skill it was; when nothing is close, it says so.',
+            'A skill is installed only into the [[element|element]] that needs it, never into the whole project, and only after your “yes”. A skill with scripts waits for a separate “yes”, and a skill with a risk is never offered. Each one keeps its own licence.',
+            'Found a skill yourself? Name it or send its link, and the agent finds it, checks it and adds it to the library.',
           ],
         },
       ],
@@ -67,6 +69,12 @@ export const MEMORY_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
             'It remembers you. What you tell it about yourself and how you want things done goes into the [[basic memory|basic-memory]], and every new session starts with it.',
             'It reviews its own work. When an [[element|element]] finishes a task, it asks in Telegram whether to turn it off and offers to reply [[“review”|review]]. Then it reads its session and suggests up to three changes to its skills. It makes only the ones you accept, and writes your answer down word for word.',
             'It builds what is missing. An element that lacks a capability asks the node. The [[main agent|main-agent]] looks for someone in the node who can already do it. If nobody can, it asks you, and after your “yes” it leads the building.',
+          ],
+        },
+        {
+          title: '6.2 Fresh skills on your schedule',
+          items: [
+            'Tell the [[main agent|main-agent]] which sources of skills to watch and how often. After your “yes” it puts the watch into its own schedule, and every fresh skill is marked, laid into the knowledge graph and left alone until a task needs it.',
           ],
         },
       ],
@@ -106,10 +114,12 @@ export const MEMORY_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
           ],
         },
         {
-          title: '5.4 Любознательная душа: опыт других проектов',
+          title: '5.4 Любознательная душа: 5 300 навыков 2026 года',
           items: [
-            'Прежде чем строить новое, агент смотрит в [[базе навыков|skills-base]] узла, как ту же задачу решили другие проекты. База приходит с каждой копией узла, и у каждого навыка своя лицензия.',
-            'Если нашлось близкое, агент соединяет этот опыт со своим рассуждением, пересказывает своими словами и называет, чей это навык. Если близкого нет, он так и говорит.',
+            'С каждым узлом приходят больше 5 300 самых популярных навыков агентов 2026 года — первые 6 000 рейтинга skills.sh, рядом со своей [[базой навыков|skills-base]] узла. Fractera прочитала каждый и написала ему карточку: что он делает, чем полезен узлу, оценку качества от 1 до 5, его скрипты, лицензию и проверки безопасности партнёров skills.sh.',
+            'Пока карточки не нужны задаче, они не тратят токенов. Прежде чем строить новое, агент ищет по ним по смыслу через граф знаний, читает несколько подходящих навыков и рассуждает так, как ту же задачу решили другие проекты. Пересказывает своими словами и называет, чей это навык; если близкого нет, так и говорит.',
+            'Навык ставится только в тот [[элемент|element]], которому он нужен, а не во весь проект, и только после вашего «да». Навык со скриптами ждёт отдельного «да», а навык с риском не предлагается совсем. У каждого навыка остаётся своя лицензия.',
+            'Нашли навык сами? Назовите его или пришлите ссылку — агент найдёт его, проверит и добавит в библиотеку.',
           ],
         },
       ],
@@ -131,6 +141,12 @@ export const MEMORY_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
             'Помнит вас. То, что вы рассказываете о себе и о том, как вам нужно, попадает в [[базовую память|basic-memory]], и каждая новая сессия начинается с этого.',
             'Разбирает свою работу. Закончив задачу, агент элемента спрашивает в Telegram, выключить ли его, и предлагает ответить [[«разбор»|review]]. Тогда он перечитывает сессию и предлагает до трёх правок своих навыков. Вносит только то, на что вы ответили «да», а ваш ответ записывает дословно.',
             'Строит недостающее. Если элементу не хватает возможности, он просит её у узла. [[Главный агент|main-agent]] ищет, кто в узле это уже умеет; если никто, спрашивает вас и после «да» ведёт постройку.',
+          ],
+        },
+        {
+          title: '6.2 Свежие навыки по вашему расписанию',
+          items: [
+            'Скажите [[главному агенту|main-agent]], за какими источниками навыков следить и как часто. После вашего «да» он ставит это в своё расписание, а каждый свежий навык размечается, ложится в граф знаний и ждёт, пока не понадобится задаче.',
           ],
         },
       ],

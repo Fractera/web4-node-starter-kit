@@ -92,7 +92,7 @@
     {
       "id": "embeddings",
       "repo": "https://github.com/Fractera/fractera-embeddings-starter.git",
-      "version": "v0.1.1",
+      "version": "v0.1.2",
       "port": 24696,
       "provides": [
         "embeddings"

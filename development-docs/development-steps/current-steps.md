@@ -46,6 +46,15 @@ the live hand-off waits for the owner's next core update.
   Fractera) lacks the `workflow` scope and GitHub refused the push (the owner's SSH key `aifa-agi` has only read there) — it comes
   back after the owner's `gh auth refresh -h github.com -s workflow`. Working copy of the element:
   `/private/tmp/claude-501/-Users-romanbolshiyanov/faa581fd-3474-473a-bbba-99276029a73e/scratchpad/embeddings-repo`.
+- **The owner's text task of ~10:35 — done in its first part (2026-11-03 ~11:05 UTC):** the core README — «5,300 ready skills, no
+  tokens until one is needed» after «Deep memory and a curious soul», the repositories table gains embeddings, memory, cache, stripe;
+  «How it works» (`memory-sections.ts`, en + ru) — 5.4 «A curious soul: 5,300 skills of 2026», new 6.2 «Fresh skills on your
+  schedule» (`check-term-hints` OK, narrow `tsc` OK); the home page of `embeddings` — its own landing after the Stripe element's
+  (`widget-static-embeddings-landing`: the way of a text, real vectors of the 626-1 test with their cosine, without/with, connect,
+  under the hood; impeccable by its «Launcher unavailable» path, the binary not run), element `df03b86` **`v0.1.2`**, pinned.
+  Waits for its substeps: the lines of 5.3 and the OpenAI card on «How it works» and the README's OpenAI line (626-8, when the
+  memory and the graph count through `embeddings` live); the agent's own words in `CLAUDE.md` / `memory.md` (627-7 with 627-4 —
+  the instruction drives behaviour, so it names the catalog search when `skills_find` reads the cards).
 - **627-5 closed** (`completed-steps/627-5.md`): 5,330 cards in `lib/agent-kit/skills/catalog/cards.jsonl` (11.1 MB) and the
   two-level tree `sections.json` — census 6,000 − not fetched 416 − duplicates 250 − refusals 4; $8.52 at the API price. The marker
   drops a card whose row became a copy. **Defect found and fixed in the same commit:** the core's prebuild scanner
@@ -122,6 +131,12 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
   навык просто сообщите агенту или поделитесь ссылкой он добавит ваш налог к библиотеке» → routed (A, it belongs): the texts about
   `embeddings` — 626-8; the skills catalog as the killer feature in README, the architect pages and the agent's personality — 627-7.
   First the survey «where both documents must say it» and whether `embeddings` has its own home page, shown to him before any edit.
+  The survey shown (~10:45 UTC; `embeddings` still shows the template's «Reference native template» page, vectors and data have their
+  own); his answers in the choice window: the texts — «Сейчас, полный текст» (published now, ahead of 627-2…4: the graph search and
+  the watching of sources are not built yet — his informed word); the watching of skill sources — «По расписанию с «да» (Рекомендую)»
+  (the person names the sources and how often, the main agent puts it into its own schedule `core-schedule` only after a yes; new
+  skills are marked and laid into the graph, never used until needed — this replaces 627's «never by a timer» for 627-6); the home
+  page of `embeddings` — «Да, по образцу vectors (Рекомендую)» (element `v0.1.2`).
 
 - 2026-11-03 ~08:45 UTC: «go non stop, not ask me, i am is not here ? ok , can ? or last question ?» → yes, non-stop; the one
   question left for his return: may the live node be updated and rebuilt in 626-8 (Sync fork + `npm run serve:rebuild`) without him?

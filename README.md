@@ -79,9 +79,25 @@ voice note if you like («remember, this is my mom»). Ask «remind me about…�
 date, the source and how sure the memory is; if it finds a thing, the agent sends you its file. Pictures are described in words, PDFs
 are read whole, voice notes become text.
 
-Before it builds something new, an agent looks in the node's skills base for how other projects solved the same task. The base comes
-with every copy of the node, and each skill keeps its own licence. The agent mixes what it finds with its own reasoning, says it in
-its own words and names whose skill it was.
+Before it builds something new, an agent looks in the node's skills base and in the catalog below for how other projects solved the
+same task. The base comes with every copy of the node, and each skill keeps its own licence. The agent mixes what it finds with its own
+reasoning, says it in its own words and names whose skill it was.
+
+### 5,300 ready skills, no tokens until one is needed
+
+Every node comes with more than 5,300 of the most popular agent skills of 2026, the top 6,000 of the skills.sh leaderboard. Fractera
+read each one and wrote it a card: what it does, how useful it is for a node, whether it works as written, needs an outside service or
+is worth only its ideas, a quality mark from 1 to 5, its scripts, its licence and the security audits of skills.sh partners. The cards
+stay out of the agents' context and cost no tokens until a task needs them.
+
+When a task comes, the agent searches the cards by meaning through the node's knowledge graph and reads the few skills that fit, so it
+starts from the ways other projects already solved the same task and reasons with them. A skill is installed only into the element
+that needs it, never into the whole project, and only after your «yes». A skill with scripts waits for a separate «yes», and a skill
+with a risk is never offered.
+
+Tell the agent which sources of skills to watch and how often, and after your «yes» it adds fresh ones on that schedule: each new skill
+is marked, laid into the knowledge graph and left alone until a task needs it. Found a skill yourself? Name it or send its link, and
+the agent finds it, checks it and adds it to the library.
 
 ### Continuous evolution
 
@@ -351,9 +367,13 @@ The other repositories of the project and what they do:
 | `Fractera/fractera-data-starter` | the database; the only door to stored data (built-in `data`) |
 | `Fractera/fractera-storage-starter` | files: pictures, videos, documents (built-in `storage`, through `data`) |
 | `Fractera/fractera-vectors-starter` | vectors and similarity search (built-in `vectors`, through `data`) |
+| `Fractera/fractera-embeddings-starter` | the node's own vectors: texts into 384 numbers on this computer, no key (built-in `embeddings`) |
 | `Fractera/fractera-graph-lightrag-starter` | the knowledge graph (built-in `graph`) |
+| `Fractera/fractera-memory-starter` | the deep memory: «remember» and «remind me about» (built-in `memory`) |
 | `Fractera/fractera-config-starter` | project settings, menu, node mode (built-in `config`) |
 | `Fractera/fractera-design-starter` | the shared look of the node (built-in `design`) |
+| `Fractera/fractera-redis-cache-starter` | the fast store for counters and queues (built-in `cache`) |
+| `Fractera/fractera-stripe-starter` | card payments through the owner's Stripe account (built-in `stripe`) |
 | `Fractera/fractera-blocks-starter` | the registry of page blocks (`blocks`) |
 | `Fractera/fractera-root-starter` | the site at the root of the domain (`root`) |
 | `Fractera/fractera-custom-item-starter` | the template every new custom element is born from |
