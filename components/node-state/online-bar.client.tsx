@@ -32,6 +32,8 @@ export function OnlineBar({ words: w, lang }: { words: OnlineBarWords; lang: str
   const [asking, setAsking] = useState(false)
   const [failed, setFailed] = useState(false)
   const [open, setOpen] = useState(false)
+  // 634 (владелец 2026-11-03: «никак не могу понять где мой текущий адрес»): без своего домена полоса показывает сам временный адрес.
+  const [quick, setQuick] = useState<string | null>(null)
 
   const ask = useCallback(async () => {
     setAsking(true)
@@ -53,6 +55,10 @@ export function OnlineBar({ words: w, lang }: { words: OnlineBarWords; lang: str
     const prev = document.body.style.paddingTop
     document.body.style.paddingTop = HEIGHT
     void ask()
+    fetch(`${BASE}/api/domain/state`, { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { quickTunnel?: string | null } | null) => setQuick(typeof d?.quickTunnel === "string" ? d.quickTunnel : null))
+      .catch(() => setQuick(null))
     return () => {
       document.body.style.paddingTop = prev
     }
@@ -79,6 +85,11 @@ export function OnlineBar({ words: w, lang }: { words: OnlineBarWords; lang: str
         <button type="button" className="flex min-w-0 items-center gap-1.5 truncate" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
           {asking ? <LoaderCircle className="size-3.5 shrink-0 animate-spin" aria-hidden /> : null}
           <span className="truncate">{text}</span>
+          {state === "none" && quick ? (
+            <a href={quick} target="_blank" rel="noopener noreferrer" className="truncate font-mono underline" onClick={(e) => e.stopPropagation()} data-online-bar-quick>
+              {quick.replace(/^https:\/\//, "")}
+            </a>
+          ) : null}
           {data?.domain ? <ChevronDown className={`size-3.5 shrink-0 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden /> : null}
         </button>
         <button
