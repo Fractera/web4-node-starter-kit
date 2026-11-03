@@ -129,6 +129,7 @@ export async function relayMessagesFor(call: RelayCall, person: string): Promise
 async function send(token: string, chat: string, m: { caption: string; file: string | null; name: string }): Promise<boolean> {
   try {
     if (!m.file) {
+      // 639: остаётся — слова агентов друг другу приходят парой «спрашивает / отвечает» по итогу вызова
       const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

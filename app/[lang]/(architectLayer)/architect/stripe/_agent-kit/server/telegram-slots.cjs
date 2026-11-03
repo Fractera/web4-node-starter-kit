@@ -18,7 +18,7 @@ const path = require('node:path')
 const { serviceDir } = require('./workspace.cjs')
 const telegram = require('./telegram.cjs')
 
-const { tg, readJson, writeSecret, personLang } = telegram
+const { tg, readJson, writeSecret, personLang, sendKept, sendVanishing } = telegram
 const ROOT = process.cwd()
 
 /** Ячейка → слова имени: режим и ячейка (владелец: «template messenger H2H … template workspace work»). `h2a` — нынешний бот. */
@@ -135,7 +135,7 @@ async function send(service, slot, text) {
   if (!chats.length) return { ok: false, error: 'nobody-activated' }
   let sent = 0
   for (const chat of chats) {
-    const r = await tg(t, 'sendMessage', { chat_id: chat, text: body.slice(0, 4000), disable_web_page_preview: true })
+    const r = await sendKept(t, { chat_id: chat, text: body.slice(0, 4000), disable_web_page_preview: true }) // 639: слова ядра человеку — остаются
     if (r.ok) sent++
   }
   return sent ? { ok: true, sent } : { ok: false, error: 'telegram-refused' }
@@ -167,7 +167,7 @@ async function tick(service, slot) {
     if (answered.has(msg.chat.id)) continue
     answered.add(msg.chat.id)
     const say = ANSWER[personLang(service)] ?? ANSWER.en
-    await tg(t, 'sendMessage', { chat_id: msg.chat.id, text: say(bot) })
+    await sendVanishing(t, { chat_id: msg.chat.id, text: say(bot) }) // 639: ответ-состояние «работа с ботом строится» — исчезает
   }
 }
 

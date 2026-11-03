@@ -145,7 +145,8 @@ function progressHooks(element) {
   const file = path.join(process.cwd(), 'lib', 'agent-kit', 'progress.cjs')
   if (!existsSync(file)) return null
   const run = { type: 'command', command: process.execPath, args: [file.replace(/\\/g, '/'), process.cwd().replace(/\\/g, '/'), element], async: true, timeout: 30 }
-  return { PreToolUse: [{ matcher: '*', hooks: [run] }], PostToolUse: [{ matcher: 'mcp__plugin_telegram_telegram__reply', hooks: [run] }] }
+  // 639: UserPromptSubmit и Stop — границы хода: в ходе остаётся последний ответ в Telegram, ранние исчезают через 30 с (`progress.cjs`).
+  return { PreToolUse: [{ matcher: '*', hooks: [run] }], PostToolUse: [{ matcher: 'mcp__plugin_telegram_telegram__reply', hooks: [run] }], UserPromptSubmit: [{ hooks: [run] }], Stop: [{ hooks: [run] }] }
 }
 
 async function spawnAgent(service, notice = () => {}, wanted = () => true, firstPrompt = '', { answerTrust = false, pass = 'main', model: chosen, hold = false, callerTells = false, continueLast = false } = {}) {
@@ -208,7 +209,7 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   // процесса, — куда писать (свой бот, чат главного агента для элемента, которого он ведёт, или никуда), хук решает при событии: запись
   // «включил главный агент» появляется уже после рождения сессии.
   const progress = mode !== 'work' ? progressHooks(element) : null
-  const extra = { PreToolUse: [...(guard ? [guard] : []), ...(progress?.PreToolUse ?? [])], PostToolUse: progress?.PostToolUse ?? [] }
+  const extra = { PreToolUse: [...(guard ? [guard] : []), ...(progress?.PreToolUse ?? [])], PostToolUse: progress?.PostToolUse ?? [], UserPromptSubmit: progress?.UserPromptSubmit ?? [], Stop: progress?.Stop ?? [] }
   let hooks = memHooks
   for (const [event, list] of Object.entries(extra)) if (list.length) hooks = { ...(hooks ?? {}), [event]: [...(hooks?.[event] ?? []), ...list] }
   const mem = { ...(memDir ? { autoMemoryDirectory: memDir } : {}), ...(hooks ? { hooks } : {}) }
@@ -305,6 +306,8 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   })
   child.onExit(() => {
     session.exited(born)
+    // 639: «выключить?» и «ждёт ответа в терминале» этой сессии потеряли смысл — исчезают через 30 с
+    telegram.sessionEnded(service)
     startQueuedPass(element)
   })
   if (holdFirst) watchChannel(born, element, firstPrompt, { t0, callerTells })

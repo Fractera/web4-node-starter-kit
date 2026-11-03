@@ -71,6 +71,56 @@ function storedToken(service) {
   }
 }
 
+// 639 (владелец 2026-11-03: «сообщения которые несут промежуточные результаты могут автоматически исчезать … человеку приятно смотреть и
+// видеть только важные задачи»; «да, делай 639»): служебное сообщение узла — «включён», «уже выключен», подтверждение команды, отвеченный
+// вопрос — исчезает само через 30 с. Остаются итог, вопрос, который ещё ждёт человека, и беда, требующая его действия; вопрос исчезает,
+// когда на него ответили, его сменил новый или закрылась сессия, о которой он (`untilSessionEnds`).
+// 🔒 Правило и для будущих сообщений: каждое уходит через `sendKept` или `sendVanishing`, а строка с отправкой несёт пометку «639: остаётся»
+// или «639: исчезает» — сторож `lib/agent-kit/check.mjs` роняет сборку на отправке без пометки.
+const VANISH_MS = Number(process.env.TELEGRAM_VANISH_MS) || 30_000
+function vanish(token, chat, messageId, ms = VANISH_MS) {
+  if (!token || !messageId) return
+  const timer = setTimeout(() => { void tg(token, 'deleteMessage', { chat_id: chat, message_id: messageId }) }, ms)
+  timer.unref?.()
+}
+/** Отправить служебное сообщение, которое исчезнет само. */
+async function sendVanishing(token, params, ms = VANISH_MS) {
+  const r = await tg(token, 'sendMessage', params) // 639: исчезает — через ms
+  if (r?.ok && r.result?.message_id) vanish(token, params.chat_id, r.result.message_id, ms)
+  return r
+}
+/** Отправить итог, вопрос, который ждёт человека, или беду, требующую его действия, — сообщение остаётся. */
+async function sendKept(token, params) {
+  return tg(token, 'sendMessage', params) // 639: остаётся
+}
+
+// Вопрос, который теряет смысл с концом сессии («выключить?», «ждёт ответа в терминале»): ключ сессии → [{ via, chat, messageId, kind }].
+const mootFile = () => path.join(ROOT, 'data', 'node', 'telegram-until-session-ends.json')
+function untilSessionEnds(key, via, kind, sent) {
+  if (!sent.length) return
+  const map = readJson(mootFile(), {})
+  map[key] = [...(map[key] ?? []), ...sent.map(([chat, messageId]) => ({ via, chat, messageId, kind }))]
+  mkdirSync(path.dirname(mootFile()), { recursive: true })
+  writeFileSync(mootFile(), JSON.stringify(map, null, 2) + '\n')
+}
+/** Снять вопросы сессии `key`: все (сессия закрылась) или только вида `kind` (их сменил новый). */
+function dropUntilEnds(key, kind) {
+  const map = readJson(mootFile(), {})
+  const all = map[key] ?? []
+  const gone = kind ? all.filter((x) => x.kind === kind) : all
+  if (!gone.length) return
+  for (const x of gone) vanish(storedToken(x.via), x.chat, x.messageId)
+  const rest = all.filter((x) => !gone.includes(x))
+  if (rest.length) map[key] = rest
+  else delete map[key]
+  writeFileSync(mootFile(), JSON.stringify(map, null, 2) + '\n')
+}
+/** Сессия закрылась (`bridge.cjs`, выход процесса): её вопросы, и вопрос доверия папке тоже, исчезают через 30 с. */
+function sessionEnded(key) {
+  try { dropUntilEnds(key) } catch { /* вопрос просто останется */ }
+  try { clearTrust(key) } catch { /* то же */ }
+}
+
 async function tg(token, method, params = {}) {
   try {
     const res = await fetch(`https://api.telegram.org/bot${token}/${method}`, {
@@ -281,8 +331,8 @@ function claudeSignedIn() {
 /** Состояние словами: подписка не подключена → сначала она; иначе — активен ли терминал. */
 async function statusMessage(service) {
   const m = { ...FALLBACK, ...readJson(messagesFile(service), {}) }
-  if ((await claudeSignedIn()) === false) return m.noSubscription
-  return running(service) ? m.active : m.inactive
+  if ((await claudeSignedIn()) === false) return { text: m.noSubscription, trouble: true }
+  return { text: running(service) ? m.active : m.inactive, trouble: false }
 }
 
 // ── УЗЕЛ ЧИТАЕТ БОТА, ПОКА ТЕРМИНАЛ ВЫКЛЮЧЕН ─────────────────────────────────
@@ -335,7 +385,7 @@ async function idleTick(service) {
     }
     const d = activated ? { do: 'status' } : idleDecision(msg, service)
     if (d.do === 'list') {
-      await tg(token, 'sendMessage', { chat_id: msg.chat.id, text: await commandsText(service), disable_web_page_preview: true })
+      await sendKept(token, { chat_id: msg.chat.id, text: await commandsText(service), disable_web_page_preview: true }) // 639: список — сам ответ человеку
       continue
     }
     // 620: ключ OpenAI в чате спящего главного агента — узел сохраняет его сам и удаляет сообщение; ни агенту, ни в файлы бота ключ не идёт.
@@ -344,7 +394,7 @@ async function idleTick(service) {
       const saved = await saveOpenAiKey(d.key)
       const gone = await tg(token, 'deleteMessage', { chat_id: msg.chat.id, message_id: msg.message_id })
       const said = (saved.ok ? (t.keySaved ?? ASK.en.keySaved) : (t.keyRejected ?? ASK.en.keyRejected)(saved.error)) + (gone.ok ? '' : ` ${t.keyNotDeleted ?? ASK.en.keyNotDeleted}`)
-      await tg(token, 'sendMessage', { chat_id: msg.chat.id, text: said })
+      await sendKept(token, { chat_id: msg.chat.id, text: said }) // 639: итог (ключ принят) или беда (не принят)
       console.log(`[telegram] ${service}: ключ OpenAI из чата — ${saved.ok ? 'сохранён' : `не принят (${saved.error})`}, сообщение ${gone.ok ? 'удалено' : 'не удалено'}`)
       continue
     }
@@ -353,12 +403,12 @@ async function idleTick(service) {
       const a = shortName(named(service))
       // Владелец 2026-10-06: «выключи» выключенному агенту — не повод его включать; ответ «уже выключен».
       if (d.do === 'already-off') {
-        await tg(token, 'sendMessage', { chat_id: msg.chat.id, text: (t.alreadyOff ?? ASK.en.alreadyOff)(a) })
+        await sendVanishing(token, { chat_id: msg.chat.id, text: (t.alreadyOff ?? ASK.en.alreadyOff)(a) })
         continue
       }
       // 620: очистить контекст, показать его или подготовить к сбросу выключенному агенту — нечего: контекста нет, будить незачем.
       if (d.do === 'off-session') {
-        await tg(token, 'sendMessage', { chat_id: msg.chat.id, text: (t.offSession ?? ASK.en.offSession)(a) })
+        await sendVanishing(token, { chat_id: msg.chat.id, text: (t.offSession ?? ASK.en.offSession)(a) })
         continue
       }
       // 597-4: «включить» — само согласие человека: агент стартует без поручения (ноль токенов), вопроса с кнопками нет.
@@ -369,7 +419,9 @@ async function idleTick(service) {
         const ch = out.ok && typeof out.channelReady === 'function' ? await out.channelReady() : null
         if (ch && !ch.up) out = { ok: false, reason: ch.reason === 'channel' ? 'channel' : 'session-ended', waited: ch.waited }
         const said = out.ok ? (t.onNow ?? ASK.en.onNow)(a) : out.reason === 'memory' ? t.memory(a, out.freeMb, out.perSessionMb, out.top) : out.reason === 'channel' ? (t.channelFailed ?? ASK.en.channelFailed)(a, out.waited) : t.failed(a, String(out.reason ?? 'unknown'))
-        await tg(token, 'sendMessage', { chat_id: msg.chat.id, text: said, disable_web_page_preview: true })
+        // 639: «включён — пишите ему» исчезает; беда (память, канал) остаётся — она ждёт действия человека.
+        if (out.ok) await sendVanishing(token, { chat_id: msg.chat.id, text: said, disable_web_page_preview: true })
+        else await sendKept(token, { chat_id: msg.chat.id, text: said, disable_web_page_preview: true })
         continue
       }
       const who = [msg.from.first_name, msg.from.last_name].filter(Boolean).join(' ') || msg.from.username || sender
@@ -379,7 +431,9 @@ async function idleTick(service) {
     }
     if (answered.has(msg.chat.id)) continue
     answered.add(msg.chat.id)
-    await tg(token, 'sendMessage', { chat_id: msg.chat.id, text: await statusMessage(service), disable_web_page_preview: true })
+    // 639: «подписка не подключена» ждёт действия человека — остаётся; состояние терминала — исчезает
+    const status = await statusMessage(service)
+    await (status.trouble ? sendKept : sendVanishing)(token, { chat_id: msg.chat.id, text: status.text, disable_web_page_preview: true })
   }
 }
 
@@ -746,10 +800,12 @@ async function askToStart(service, { text, from, about, declineUrl, kind = 'call
     await tg(token, 'editMessageText', { chat_id: a.chat, message_id: a.messageId, text: `${askText(service, p.items.slice(0, -1), t)}
 
 ${t.moved ?? ASK.en.moved}`, disable_web_page_preview: true })
+    vanish(token, a.chat, a.messageId) // 639: вопрос заменён новым ниже
   }
   p.asked = []
   for (const chat of access(service).allowed) {
-    const r = await tg(token, 'sendMessage', { chat_id: chat, text: body, reply_markup: buttons(p, t), disable_web_page_preview: true })
+    // 639: вопрос ждёт человека; исчезает, когда ответили (`onButton`) или его сменил новый (выше)
+    const r = await sendKept(token, { chat_id: chat, text: body, reply_markup: buttons(p, t), disable_web_page_preview: true })
     if (r.ok && r.result?.message_id) p.asked.push({ chat, messageId: r.result.message_id })
   }
   mkdirSync(path.dirname(file), { recursive: true })
@@ -797,6 +853,7 @@ async function onButton(service, token, q) {
     await tg(token, 'answerCallbackQuery', { callback_query_id: q.id, text: declined })
     rmSync(pendingFile(service), { force: true })
     await closeAsk(service, token, p, declined, false, t)
+    for (const x of p.asked) vanish(token, x.chat, x.messageId) // 639: вопрос отвечен
     for (const it of p.items) if (it.declineUrl) await declineCaller(it.declineUrl, t.declineText(a))
     return
   }
@@ -812,7 +869,8 @@ async function onButton(service, token, q) {
     p.asked = []
     const chats = access(service).allowed
     for (const chat of chats) {
-      const r = await tg(token, 'sendMessage', { chat_id: chat, text: sorry, reply_markup: buttons(p, t), disable_web_page_preview: true })
+      // 639: беда с кнопками — ждёт человека; исчезает с ответом, как вопрос
+      const r = await sendKept(token, { chat_id: chat, text: sorry, reply_markup: buttons(p, t), disable_web_page_preview: true })
       if (r.ok && r.result?.message_id) p.asked.push({ chat, messageId: r.result.message_id })
     }
     writeFileSync(pendingFile(service), JSON.stringify(p, null, 2))
@@ -826,7 +884,8 @@ async function onButton(service, token, q) {
     for (const x of p.asked) await tg(token, 'editMessageReplyMarkup', { chat_id: x.chat, message_id: x.messageId, reply_markup: { inline_keyboard: [] } })
     // Владелец 2026-10-05: «нажатие кнопку ничего визуально не меняет» — правка сообщения наверху не видна; итог — новым
     // сообщением внизу, за ним пойдут ответ агента и «выключить агента?».
-    for (const x of p.asked) await tg(token, 'sendMessage', { chat_id: x.chat, text: startedText, disable_web_page_preview: true })
+    for (const x of p.asked) await sendVanishing(token, { chat_id: x.chat, text: startedText, disable_web_page_preview: true })
+    for (const x of p.asked) vanish(token, x.chat, x.messageId) // 639: вопрос отвечен — уходит вместе с «включён»
   } else {
     const why = out.reason === 'memory' ? t.memory(a, out.freeMb, out.perSessionMb, out.top) : t.failed(a, String(out.reason ?? 'unknown'))
     await closeAsk(service, token, p, why, true, t)
@@ -861,12 +920,16 @@ async function askToClose(service, why, { reviewed = false } = {}) {
   const full = c[why === 'timeout' ? 'timeout' : 'done'](shortName(named(service)))
   // После разбора в этой сессии — без второй строки (предложение разбора); строка «команды» (597-4) остаётся.
   const text = reviewed ? full.split('\n').filter((_, i) => i !== 1).join('\n') : full
-  let asked = 0
+  // 639: прежний вопрос «выключить?» этой сессии сменяется новым
+  dropUntilEnds(service, 'close')
+  const sent = []
   for (const chat of access(service).allowed) {
-    const r = await tg(token, 'sendMessage', { chat_id: chat, text, disable_web_page_preview: true })
-    if (r.ok) asked++
+    // 639: вопрос ждёт человека; исчезает, когда его сменил новый или сессия закрылась
+    const r = await sendKept(token, { chat_id: chat, text, disable_web_page_preview: true })
+    if (r.ok && r.result?.message_id) sent.push([chat, r.result.message_id])
   }
-  return { ok: true, asked }
+  untilSessionEnds(service, service, 'close', sent)
+  return { ok: true, asked: sent.length }
 }
 
 /**
@@ -970,12 +1033,15 @@ async function tellWaiting(service) {
   const t = await askTable(via)
   const a = shortName(named(service))
   const link = `${coreOrigin()}/${personLang(via)}${sectionPaths(service).terminal}`
-  let sent = 0
+  const shown = []
   const chats = access(via).allowed
   for (const chat of chats) {
-    const r = await tg(token, 'sendMessage', { chat_id: chat, text: (t.waitingTerminal ?? ASK.en.waitingTerminal)(a, link), disable_web_page_preview: true })
-    if (r?.ok) sent++
+    // 639: ждёт действия человека; исчезает, когда сессия закрылась
+    const r = await sendKept(token, { chat_id: chat, text: (t.waitingTerminal ?? ASK.en.waitingTerminal)(a, link), disable_web_page_preview: true })
+    if (r?.ok && r.result?.message_id) shown.push([chat, r.result.message_id])
   }
+  untilSessionEnds(service, via, 'waiting', shown)
+  const sent = shown.length
   // 592-4: строка журнала ядра — иначе о вопросе на экране и о том, дошёл ли он до человека, не знает никто, кроме Telegram.
   console.log(`[telegram] ${service}: вопрос на экране → бот ${via === service ? 'элемента' : `главного агента (${via})`}, отправлено ${sent} из ${chats.length}`)
   return { sent, via }
@@ -993,7 +1059,7 @@ async function tellChannelFailed(service, waited) {
   let sent = 0
   const chats = access(service).allowed
   for (const chat of chats) {
-    const r = await tg(token, 'sendMessage', { chat_id: chat, text, disable_web_page_preview: true })
+    const r = await sendKept(token, { chat_id: chat, text, disable_web_page_preview: true }) // 639: беда — ждёт, что человек включит агента снова
     if (r?.ok) sent++
   }
   console.log(`[telegram] ${service}: канал не встал — «Извините…» отправлено ${sent} из ${chats.length}`)
@@ -1049,22 +1115,28 @@ async function tellTrust(key) {
   const token = storedToken(MAIN_AGENT)
   const t = await askTable(MAIN_AGENT)
   const a = shortName(named(element))
-  let sent = 0
+  const asked = []
   const chats = access(MAIN_AGENT).allowed
   for (const chat of chats) {
-    const r = await tg(token, 'sendMessage', { chat_id: chat, text: (t.trustAsk ?? ASK.en.trustAsk)(a), disable_web_page_preview: true })
-    if (r?.ok) sent++
+    // 639: вопрос ждёт человека; исчезает, когда на него ответили или сессии больше нет (`clearTrust`)
+    const r = await sendKept(token, { chat_id: chat, text: (t.trustAsk ?? ASK.en.trustAsk)(a), disable_web_page_preview: true })
+    if (r?.ok && r.result?.message_id) asked.push({ chat, messageId: r.result.message_id })
   }
+  const now = trustPending()
+  if (now[key]) { now[key].asked = asked; setTrustPending(now) }
+  const sent = asked.length
   console.log(`[telegram] ${key}: вопрос доверия папке → бот главного агента, отправлено ${sent} из ${chats.length}`)
   return { sent, via: MAIN_AGENT, trust: true }
 }
 
-/** Вопрос снят (ответили или сессии больше нет). */
+/** Вопрос снят (ответили или сессии больше нет); 639: его сообщения исчезают через 30 с. */
 function clearTrust(key) {
   const map = trustPending()
   if (!(key in map)) return
+  const { via, asked } = map[key] ?? {}
   delete map[key]
   setTrustPending(map)
+  for (const x of Array.isArray(asked) ? asked : []) vanish(storedToken(via), x.chat, x.messageId)
 }
 
 /** «Да» пришло спящему боту главного агента: ответить на каждый ждущий вопрос и сказать человеку итог. */
@@ -1075,11 +1147,13 @@ async function answerTrustHere(service, token, chatId) {
     const out = typeof answer === 'function' ? await answer(key) : { ok: false, reason: 'not-mounted' }
     if (!out.ok) clearTrust(key)
     const a = shortName(named(elementOf(key)))
-    await tg(token, 'sendMessage', { chat_id: chatId, text: out.ok ? (t.trustDone ?? ASK.en.trustDone)(a) : (t.trustGone ?? ASK.en.trustGone)(a), disable_web_page_preview: true })
+    await sendVanishing(token, { chat_id: chatId, text: out.ok ? (t.trustDone ?? ASK.en.trustDone)(a) : (t.trustGone ?? ASK.en.trustGone)(a), disable_web_page_preview: true })
   }
 }
 
 module.exports = {
+  // 639: итог остаётся, служебное исчезает; вопросы закрытой сессии исчезают.
+  sendKept, sendVanishing, sessionEnded,
   // 604: доверие папке — вопросом в чате главного агента.
   tellTrust, clearTrust, trustPending, trustYes,
   // 614-1: канал разбуженной сессии не встал.

@@ -55,6 +55,7 @@ export async function sendNotice(root: string, n: { kind: NoticeKind; from: stri
   let why = ""
   for (const chat of chats) {
     try {
+      // 639: остаётся — напоминание и сообщение по расписанию не удаляются никогда (636-8)
       const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

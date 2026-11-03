@@ -5,9 +5,20 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**HANDOFF (2026-11-03 ~21:20 UTC) — the next session starts here.** The owner: «подготовь передачу вопросов к сбросу как текста».
-1. **Where things stand.** 636 closed (proven 20:13: «⏰ Напоминание · Глубокая память» came into the main chat by itself, no AI —
-   `completed-steps/636.md`). The owner's node: core `4e892082`, every element at the 636-8 pins, memory v2.2.15.
+**NOW (2026-11-03 ~22:00 UTC): 639 BUILT, the live proof waits** (`new-steps/639/639-main.md`, approved «да, делай 639»): a clean
+Telegram chat — the node's service messages disappear in 30 s, results, waiting questions and troubles stay; in a turn only the agent's
+last reply stays (the summary), replies with files always; a guard fails the build on any new Telegram send without the decision. Proven
+with stubs (31 of 31, the detached deleter, the guard's negative control), 42 core guards RC 0, 14 kit copies updated. Next: commit +
+push, the owner's «Sync fork» + `npm run node:update`, the live check (at most three phrases), then `completed-steps/639.md`.
+**Also open, uncommitted in the template workshops (`data/workshop/fractera-{custom,native}-item-starter`, on v0.3.153 / v0.1.36):**
+636-10, the owner's scenario 2 (21:22, verbatim below): `lib/cron/notice.ts` also sends a `node-notice` through the element's OWN bot
+(`sendToOwner`, detail «· own bot too»), the calendar skill says «Your calendar is your own». Not released — next: release custom
+v0.3.154 / native v0.1.37, roll out, pins.
+
+**HANDOFF (2026-11-03 ~21:20 UTC) — the previous session's.** The owner: «подготовь передачу вопросов к сбросу как текста».
+1. **Where things stood.** 636 closed (proven 20:13: «⏰ Напоминание · Глубокая память» came into the main chat by itself, no AI —
+   `completed-steps/636.md`); after it the chain element → main agent proven live twice (21:25 and the owner's own test, 21:33). The
+   owner's node: core `4c9b62dd`, every element at the 636-8 pins, memory v2.2.17.
 2. **The memory's thinking engine — DECIDED 21:10** (the owner's rule, verbatim in «The owner's latest decisions»): OpenAI when its
    account has money, the Anthropic subscription as the backup channel, the person warned once a day (memory **v2.2.17** `5628c88`,
    pinned). His node gets it at the next «Sync fork» + update; the live check: a «запомни» whose answer carries the warning once.
@@ -245,6 +256,30 @@ shown to the owner before the instruction is resealed.
 with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's word.
 
 ## The owner's latest decisions (verbatim)
+
+- 2026-11-03 21:33–21:39 UTC, **step 639** (`new-steps/639/639-main.md`): «Я сделал ещё одну проверку а именно попросил главного агента
+  поставить задачу в агента root а именно попросил поставить напоминание и это напоминание отработал отлично. Мы можем зафиксировать
+  успех. Смотри какая проблема если мы с тобой посмотрим на Ленку чата увидим очень много бессмысленных сообщений. Знаешь мне очень
+  нравится идея что сообщения которые несут в себе финального результата несут промежуточные результаты могут автоматически исчезать:
+  –агент build включен//выключен - агент build включени… - поставил задачу элементу… В общем тебе нет смысла наверно самому в ходе
+  размышлений решить какие промежуточные решения и они должны быть через 30 секунд удалены, а какие решения итоговые и должны остаться ?
+  Понимаешь или нет мой проблемы посмотри на счёт скажи что ты там видишь. Помнишь ты человеку приятно смотреть и видеть только важные
+  задачи.» → «да, делай 639» → on my list of six: «Ты хочешь зафиксировать только эти шесть записей которые достойны удаления? Я
+  расчитывал на то что ты сможешь отделить все промежуточные ответы которые уже существуют и будут создаваться позже от саммари который
+  всегда должна оставаться» → a rule, not a list (639-main.md, section 1).
+
+- 2026-11-03 21:22 UTC, **scenario 2 of the elements' clocks (636-10)**, on my plan «через главного агента … дам root поручение»: «= Это
+  единственный сценарий! Обрати внимание что у тебя не хватает понимания архитектуры! Элемент мог сам поставить себе задачу. Поэтому должна
+  обработать два сценария это первая часть а вторая часть я хочу чтобы ты обратился ещё раз к чтению архитектуры количестве души попытался
+  понять это очевидное для тебя решения или неочевидное что каждый элемент имеет право способен жить своей собственной жизнью вставить свои
+  собственные заданияотправлять уведомления через своего Telegram бота если существует если не существует то через тебя. И да если
+  существует очевидно придёт два уведомления одновременно? Пусть будет пока так» → an element's own reminder goes to the main chat
+  through the core's notice door AND through its own bot when it has one (two notices) — built in the workshops, not released.
+
+- 2026-11-03 21:18 UTC, the chain element → main agent: «Насколько я понимаю мы ещё не проверяли как другой агент будет главного агента и
+  передает ему какое-то задание … Сделай чтобы какой-нибудь агент например root получил задание это что опубликовать пост через одну
+  минуту и чтобы я получил уведомление …» → proven live 21:22–21:25:33 (root's alarm → `tell-core` → «⚙️ Рабочий процесс · root» in the
+  main chat, ~32 s) and by the owner's own test (21:33, «это напоминание отработал отлично»).
 
 - 2026-11-03 ~21:10 UTC, **the memory's thinking engine — DECIDED** (after «Тогда получается у нас все правильно работает нам не нужно
   ничего переделать нам нужно только исправить текст который несёт чепуху правильно?» and my answer that the text was true): «Это очень
