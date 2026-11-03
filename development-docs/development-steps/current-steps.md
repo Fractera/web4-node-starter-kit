@@ -46,6 +46,10 @@ the live hand-off waits for the owner's next core update.
   Fractera) lacks the `workflow` scope and GitHub refused the push (the owner's SSH key `aifa-agi` has only read there) — it comes
   back after the owner's `gh auth refresh -h github.com -s workflow`. Working copy of the element:
   `/private/tmp/claude-501/-Users-romanbolshiyanov/faa581fd-3474-473a-bbba-99276029a73e/scratchpad/embeddings-repo`.
+- **626-5 closed** (`completed-steps/626-5.md`, 2026-11-03 ~12:30 UTC): `fractera-graph-lightrag-starter` `6256212` **`v1.2.0`**, pinned
+  — LightRAG's vectors from `embeddings` (no OpenAI key), the model asked at every run, a graph of another model set aside whole
+  (`lightrag.openai-<date>/`, `spaces.openai-<date>/`), `embeddings_unavailable` → 503. Proven with the node's graph Python read-only on a
+  scratch data folder. Next: 626-6 (the deep memory sends texts; no thinking call when `embeddings` is down).
 - **626-4 closed** (`completed-steps/626-4.md`, 2026-11-03 ~11:40 UTC): the core sends texts to the vector element and counts no vector;
   `kind()` asks the model every time and empties a ledger of another model; `npm run find` indexes an element as its whole description
   plus pieces (0.3 × whole + 0.7 × best piece), `FIND_MIN` 0.25 (MiniLM, measured; no clean gap — see the summary); memory 10 of 10 lines
@@ -206,7 +210,10 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
 ## Measured — do not measure again
 
 - 2026-11-03, the node's model across languages: 8 intents asked in English, Russian and Chinese against English skill descriptions —
-  right first en 8/8 (mean 0.647), zh 8/8 (0.614), ru 7/8 (0.565; «картинку нейросетью» missed, «лендинг» 0.34). The 5,330 catalog cards
+  right first en 8/8 (mean 0.647), zh 8/8 (0.614), ru 7/8 (0.565; «картинку нейросетью» missed, «лендинг» 0.34), and — the owner asked
+  whether every language needs its own pack of vectors counted at its first question («это первый запуск на немецком языке, пожалуйста
+  подождите») — de 8/8 (0.605), es 8/8 (0.652), ja 8/8 (0.598) against the SAME English vectors: no pack per language, no wait; a
+  language outside the model's ~50 is turned into English words by the agent itself. The 5,330 catalog cards
   (`skill: summary Tasks: …`) counted in 261 s on this Mac; then a question costs 17–23 ms and the comparison with all cards 7–17 ms.
   «генерация контента для Instagram» → Instagram data skills first (the word outweighs «content»), `coreyhaines31/marketingskills@social`
   6th; «придумать посты и сторис для инстаграма с подписями и хэштегами» → `anthropics/knowledge-work-plugins@content-creation` first.

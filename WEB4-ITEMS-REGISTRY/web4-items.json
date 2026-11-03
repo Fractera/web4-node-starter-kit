@@ -131,12 +131,12 @@
     {
       "id": "graph",
       "repo": "https://github.com/Fractera/fractera-graph-lightrag-starter.git",
-      "version": "v1.1.24",
+      "version": "v1.2.0",
       "provides": [
         "knowledge-graph"
       ],
       "required": true,
-      "note": "Граф знаний узла на LightRAG (540): элементы сохраняют то, что узнали, сущностями и связями и находят это по смыслу. Стандартный служебный элемент: v0.1.0 — из roman.",
+      "note": "Граф знаний узла на LightRAG (540): элементы сохраняют то, что узнали, сущностями и связями и находят это по смыслу; векторы считает элемент embeddings на этом компьютере, ключ OpenAI не нужен (626). Стандартный служебный элемент: v0.1.0 — из roman.",
       "kind": "core",
       "port": 24689,
       "address": "graph"
