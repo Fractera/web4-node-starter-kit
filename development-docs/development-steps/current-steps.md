@@ -20,11 +20,30 @@ native v0.1.33, 12 elements rolled out, pins `5e9d4b1` (`completed-steps/622.md`
 `GET /api/skills/suggested`, the skill `adopt-suggested-skill`, the instruction resealed `ed81462013fc` (`completed-steps/628-main.md`);
 the live hand-off waits for the owner's next core update.
 
-**Next action (2026-11-03):** the large run of 627-5 is going in `data/catalog-6000/` (scratch clone of the core): the census of
-6,000 rows (5,378 GitHub, 622 sites) is fetched by batched sparse-checkout clones, and the marking (4 at a time) started on what was
-fetched. Then: `fetch` and `mark` again for the rest (both resume), `audit --attach`, the 622 `well-known` skills from the skills.sh
-copy, the two-level sections from the tags, the owner's look at the result. 627-1 run 2 is done (80 cards, `data/catalog/`), its
-summary not written yet. 626-1 waits for the owner's Windows computer.
+**HANDOFF (2026-11-03 ~07:40 UTC, the session's context full) — the next session starts here.**
+- **Where the work lives:** a clone of this repository at
+  `/private/tmp/claude-501/-Users-romanbolshiyanov/eaead2f1-881b-45c7-a9ae-9d57e3930521/scratchpad/core-upstream` (commits pushed to
+  `main` from it; the owner's node `~/web4-node-starter-kit` is his fork `aifa-agi/web4-node-starter-kit` — it gets all this by «Sync
+  fork» + `npm run serve:rebuild`). The large run's data (outside git): `data/catalog-6000/` in that clone — `census.json`, `list.txt`
+  (5,378 GitHub rows), `fetched.json` (4,971 fetched), `fetched-sites.json` (613 site skills), `repos/` (~600 MB), `sites/`,
+  `cards.jsonl` (1,134 cards at 07:40, growing), `mark-*.log`, `mark-log.jsonl`, `audits.json` (being written). If /tmp was wiped:
+  `npm run catalog -- census` (a fresh Vercel token: `cd …/scratchpad/vercel-skills-api && npx vercel@65.9.0 env pull .env.local --yes`
+  — the token lives ~12 h), then `fetch` and `sites`, all resumable.
+- **Running when the session ended** (they may have stopped with it): `npm run catalog -- mark --data data/catalog-6000 --cards
+  data/catalog-6000/cards.jsonl --concurrency 4` (~18 cards a minute; it marks only what was fetched when it started) and `npm run
+  catalog -- audit --data data/catalog-6000`. The owner switched the Claude account (`/login`) during the night — the marker's
+  `claude -p` uses whichever account is logged in.
+- **To finish 627-5, in order** (each command resumes): (1) `mark` again with `--concurrency 6` until `already marked` covers all
+  ≈5,334 unique skills (a usage limit stops it — run again later); (2) `audit` if `audits.json` is missing or partial, then
+  `audit --attach-only --data data/catalog-6000 --cards data/catalog-6000/cards.jsonl`; (3) `sections --data data/catalog-6000 --cards
+  data/catalog-6000/cards.jsonl`; (4) `report --data data/catalog-6000 --cards data/catalog-6000/cards.jsonl`; (5) copy the cards to
+  `lib/agent-kit/skills/catalog/cards.jsonl`, `npm run check:catalog-cards`, commit (≈12 MB) with the summary
+  `completed-steps/627-5.md` (the census, the fetch numbers above, verdicts, sections, cost, mistakes); (6) tell the owner the numbers
+  and show ten cards in Russian.
+- **Closed tonight:** 625, 627-1 (`daf3249`), 628 (`9e033f3`). **Waiting:** 626 (626-1 needs the owner's Windows computer); 627-2 …
+  627-4, 627-6, 627-7 after 626 (they need the `embeddings` element).
+- **Known on the way:** the marker is not deterministic on borderline skills; `quality` gathers at 4★; 402 GitHub rows are gone from
+  their repositories, 5 repositories deleted; the site skills have text only (no binaries, no licence from GitHub).
 
 **Queue:** the plans in `new-steps/` — 545 (the orchestra audit: 545-4, 545-5), 593 (the real pipeline test on a tinylaunch.com clone,
 with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's word.
