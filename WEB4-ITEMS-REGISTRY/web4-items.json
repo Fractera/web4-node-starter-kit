@@ -49,7 +49,7 @@
     {
       "id": "data",
       "repo": "https://github.com/Fractera/fractera-data-starter.git",
-      "version": "v2.1.17",
+      "version": "v2.2.0",
       "port": 24682,
       "provides": [
         "tables",
@@ -79,13 +79,13 @@
     {
       "id": "vectors",
       "repo": "https://github.com/Fractera/fractera-vectors-starter.git",
-      "version": "v1.1.17",
+      "version": "v1.2.0",
       "port": 24694,
       "provides": [
         "vectors"
       ],
       "required": true,
-      "note": "Векторное хранилище узла (550): поиск по смыслу на индексе sqlite-vec. Потребители зовут /vectors у data — та пересылает сюда.",
+      "note": "Векторное хранилище узла (550): поиск по смыслу на индексе sqlite-vec; векторы считает элемент embeddings на этом компьютере, ключ OpenAI не нужен (626). Потребители зовут /vectors у data — та пересылает сюда.",
       "kind": "core",
       "address": "vectors"
     },

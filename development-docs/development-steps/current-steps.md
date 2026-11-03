@@ -58,12 +58,9 @@ the live hand-off waits for the owner's next core update.
   node restarts the live element from the clone — run it only with its own `PM2_HOME` (the embeddings install before it touched
   nothing: no live process had that name). The clone's registry may now hold vectors port 24687 — reset it to 24694 before the
   626-3 commit.
-- **626-3 — code done, the core commit pending:** `fractera-vectors-starter` `124f557` (**`v1.2.0`**) and `fractera-data-starter`
-  `a328054` (**`v2.2.0`**) pushed; proofs done on a spare port (see `completed-steps/626-3.md`, a draft with the placeholders
-  DATA_HASH → `a328054`, DATA_TAG → `v2.2.0`, INSTALL_PROOF → «the clone's installer: vectors v1.2.0 installed with
-  `EMBEDDINGS_URL=http://127.0.0.1:24696` derived and no `EMBED_*`; its pm2 side effect — the incident above»). Uncommitted in the
-  working clone: the registry pins (vectors `v1.2.0`, data `v2.2.0`, embeddings `v0.1.1` already committed) and
-  `scripts/services-install.mjs` without `EMBED_MODEL`/`EMBED_DIMS`.
+- **626-3 closed** (`completed-steps/626-3.md`): `fractera-vectors-starter` `124f557` (**`v1.2.0`**), `fractera-data-starter`
+  `a328054` (**`v2.2.0`**), pinned in the core registry; `scripts/services-install.mjs` no longer answers `EMBED_MODEL`/`EMBED_DIMS`;
+  the lesson of the incident in `ANTI-PATTERNS.md`. Next in 626: 626-4 (the core's agents' memory and `npm run find` send texts).
 - **The marking now (2026-11-03 08:35 UTC):** the old run ended `===CATALOG_MARK_PARTIAL=== marked 3411 · failed 593 · already marked
   15 · duplicates 205` — 587 of the failures were the subscription's «You've hit your 5-hour limit · resets 12pm (Atlantic/Canary)»,
   which the marker's `LIMIT_WORDS` did not know (fixed in `scripts/catalog/mark.mjs`: «hit your … limit» is a limit; the failed rows

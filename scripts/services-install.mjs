@@ -365,8 +365,8 @@ function derivedValue(name, ctx) {
     case 'DATABASE_URL': return `file:${serviceDataDir(id)}/${id}.db`
     case 'APP_DB_PATH': return `./data/${id}.db`
     case 'ALLOWED_ORIGINS': return [nodeUrl, `http://127.0.0.1:${nodePort}`, self].join(',') // 371-7: оба вида адреса ядра
-    case 'EMBED_MODEL': return 'text-embedding-3-large'
-    case 'EMBED_DIMS': return '3072'
+    // 626-3: EMBED_MODEL / EMBED_DIMS are gone — the vectors element learns the model and size from the node's `embeddings`
+    // (its EMBEDDINGS_URL comes from the neighbour rule below).
     // 280-2a: сайт узнаёт, где живут страницы архитектора (ядро) и дверь к данным. Имена
     // не подходят под правило соседей ниже: «architect» — не элемент, а ядро; REMOTE_DATA_URL —
     // имя, которое код приложения читает как признак «данные через дверь, а не своим файлом».

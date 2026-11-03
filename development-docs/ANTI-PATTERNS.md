@@ -42,6 +42,9 @@ warned earlier. The section stays short: a lesson that a guard or the code now h
 - **A pasted `/model` saves the model as the person's default for new sessions.** Switch a node session's model by restarting it with
   `--continue --model` (`npm run session -- model …`). A session woken without a single message then resumes its folder's previous conversation.
 - **A «session end» hook does not run when the bridge kills the session.** A writer that must not lose anything is the Stop hook.
+- **A second checkout on a computer with a live node shares its pm2.** `services:install` run in a clone saw the live element running
+  and restarted it from the clone (`pm2 delete` + `start` + `save`) — the live element stopped serving (2026-11-03, vectors). A clone's
+  installer runs only with its own `PM2_HOME`.
 - **Search by meaning always returns the nearest neighbour.** «Nothing found» needs a similarity threshold or a filter, never a nonsense query.
 - **A probe of an element on a spare port subscribes to CONFIG and Design with its own port** and steals the live element's signals: run it
   with `CONFIG_SERVICE_URL` and `DESIGN_SERVICE_URL` empty.
