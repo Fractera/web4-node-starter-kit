@@ -23,6 +23,16 @@ native v0.1.33, 12 elements rolled out, pins `5e9d4b1` (`completed-steps/622.md`
 `GET /api/skills/suggested`, the skill `adopt-suggested-skill`, the instruction resealed `ed81462013fc` (`completed-steps/628-main.md`);
 the live hand-off waits for the owner's next core update.
 
+**NOW (2026-11-03 ~13:40 UTC): 626-6 in progress, then step 629 (the owner's word below, «После 626-6»).** The deep memory's code
+is changed in `/private/tmp/claude-501/-Users-romanbolshiyanov/faa581fd-3474-473a-bbba-99276029a73e/scratchpad/memory-repo` (from
+`v2.2.8`, NOT committed): `node.mjs` — `vectorsOf`/`vectorOf`/`vectorModel` gone, `embeddingsUsable()` (`GET /api/embed-status`, the
+node key; `EMBEDDINGS_URL` or the registry's port; a model still loading is usable, a failed one or no answer is not);
+`said-vector.mjs`, `feedback-vector.mjs`, `fractera/objects.ts` send `text` / `query`; `objects.status().configured` = the vector
+element's `configured`; `verbs.mjs` `remember` asks `embeddingsUsable()` before `think(EXTRACT, …)` — not usable → no model call,
+`toolFailure` (vector, «подсчёт векторов»), the message row with status `failed`; `.env.example` `EMBEDDINGS_URL`; README, CLAUDE.md
+section 11. Next: `npm ci` + build, a scratch stand (embeddings + vectors v1.2.0 + data v2.2.0 + graph v1.2.0 + this memory on spare
+ports, its own registry, no OpenAI key, never the live pm2), the proofs of `new-steps/626/626-6.md`, tag, pin, summary.
+
 **HANDOFF (2026-11-03 ~07:40 UTC, the session's context full) — the next session starts here.**
 - **Where the work lives:** a clone of this repository at
   `/private/tmp/claude-501/-Users-romanbolshiyanov/eaead2f1-881b-45c7-a9ae-9d57e3930521/scratchpad/core-upstream` (commits pushed to
@@ -126,6 +136,30 @@ the live hand-off waits for the owner's next core update.
 with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's word.
 
 ## The owner's latest decisions (verbatim)
+
+- 2026-11-03 ~13:30 UTC, during 626-6 — a new step **629** (the agent explains a provider's rules before a person loses the account):
+  «Мне сейчас попалась информация о том что многих пользователей блокируют за нарушение пользовательского соглашения то есть тогда
+  когда они начинают совершать действия запрещенные. Но ведь никто эти пользовательские соглашения давай скажем по-честному не читай и
+  когда модель говорит неправильно сформулированы вопрос что-то вроде я не могу вам в этом помочь например я не буду помогать вам
+  обходить капчу то любая под Повторная попытка настоятельно требовать может привести к блокировке аккаунта? Если это так то получается
+  что многие пользователи получают бан и со своего невежества. Я бы хотел чтобы наши инструкция помогала пользователю более явно
+  понимать возможные нарушения. Но как это сделать? Если пользователь пишет запрещенные действия и получает автоматически запрет то как
+  расширить этот ответ советами почему вот именно сейчас тоже нужно превратить подобные действия и каким последствиям ты может
+  перевести? Потому что даже я человек который пользуется активно разработкой более года до сих пор не знал о том что вот так просто
+  можно потерять аккаунт и деньги не возвращаются. Скажи как ты посоветуешь обновить инструкцию с этой целью? Это добавление информации
+  в инструкцию? Или создание навыка? Или и то и другое? Сделай пожалуйста это очень важно». Answered from the primary sources (read
+  2026-11-03): Usage Policy (effective 2026-11-12) — «encountering a block does not by itself indicate a violation», «Intentionally
+  bypass or interfere with … guardrails … (e.g., jailbreaking or prompt injection)», «we may warn you or throttle, limit, suspend, or
+  terminate your access»; Consumer Terms (effective 2025-10-08) — «all payments are non-refundable», on termination for breach «you will
+  not be entitled to any refund», automated access only by an API key or where explicitly permitted, no account sharing, 18+;
+  supported countries — Russia and Belarus are not listed, «Use by persons while physically located in an unsupported region»;
+  appeals — logged in at claude.ai, «Submit an appeal» (claude.ai/restricted); Claude Code legal page — OAuth for ordinary use of
+  Claude Code, no routing of requests through Pro/Max credentials on behalf of other users, limits «assume ordinary, individual usage».
+  My advice — both: one law in the instruction (always loaded at the moment of a refusal) and a skill with the full map. His answers
+  in the choice window: when — «После 626-6»; where — «Ядро + элементы (Рекомендую)» (the core's law and skill, the elements' agents
+  get the law through a template release in the same step); the live proof on his account — «Одна серая просьба (Рекомендую)» (one
+  message, no insisting, plus an ordinary request as the negative control). To bring into the plan: the integrator scenario (other
+  people's agents on the owner's subscription is not permitted) and batch runs on the subscription (627-6) — an API-key option.
 
 - 2026-11-03 ~12:00 UTC, questions during 626-5: «что будет если у нас навыки записаны на английском языке поискать их на других языках
   например на русском или может быть даже на китайском?» (answered by a measurement, below); «Попытайся например на русском языке найти
