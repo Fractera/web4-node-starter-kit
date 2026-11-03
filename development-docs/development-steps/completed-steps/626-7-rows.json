@@ -1,0 +1,532 @@
+[
+  {
+    "side": "in",
+    "want": "humanizer",
+    "q": "make this text sound less like AI wrote it",
+    "at": {
+      "0.3": [
+        "humanizer",
+        "copywriting",
+        "copy-editing"
+      ],
+      "0.35": [
+        "humanizer",
+        "copywriting",
+        "copy-editing"
+      ],
+      "0.4": [
+        "humanizer",
+        "copywriting",
+        "copy-editing"
+      ],
+      "0.45": [
+        "humanizer",
+        "copywriting",
+        "copy-editing"
+      ],
+      "0.5": [
+        "humanizer",
+        "design-taste-frontend",
+        "copywriting"
+      ],
+      "0.55": [
+        "humanizer",
+        "copywriting"
+      ],
+      "0.6": [
+        "humanizer"
+      ]
+    }
+  },
+  {
+    "side": "in",
+    "want": "humanizer",
+    "q": "remove AI writing patterns from my blog post",
+    "at": {
+      "0.3": [
+        "humanizer",
+        "copywriting",
+        "design-taste-frontend"
+      ],
+      "0.35": [
+        "humanizer",
+        "copywriting",
+        "design-taste-frontend"
+      ],
+      "0.4": [
+        "humanizer",
+        "copywriting",
+        "design-taste-frontend"
+      ],
+      "0.45": [
+        "humanizer",
+        "copy-editing",
+        "copywriting"
+      ],
+      "0.5": [
+        "humanizer",
+        "copy-editing"
+      ],
+      "0.55": [
+        "humanizer",
+        "copy-editing"
+      ],
+      "0.6": [
+        "humanizer"
+      ]
+    }
+  },
+  {
+    "side": "in",
+    "want": "copy-editing",
+    "q": "proofread and tighten my landing page copy",
+    "at": {
+      "0.3": [
+        "copywriting"
+      ],
+      "0.35": [
+        "copywriting"
+      ],
+      "0.4": [
+        "copywriting"
+      ],
+      "0.45": [
+        "copywriting"
+      ],
+      "0.5": [
+        "copywriting"
+      ],
+      "0.55": [
+        "copywriting",
+        "copy-editing"
+      ],
+      "0.6": []
+    }
+  },
+  {
+    "side": "in",
+    "want": "copy-editing",
+    "q": "edit this paragraph for clarity and grammar",
+    "at": {
+      "0.3": [
+        "copy-editing",
+        "impeccable",
+        "copywriting"
+      ],
+      "0.35": [
+        "copy-editing",
+        "impeccable",
+        "copywriting"
+      ],
+      "0.4": [
+        "copy-editing",
+        "impeccable",
+        "copywriting"
+      ],
+      "0.45": [
+        "copy-editing",
+        "impeccable",
+        "copywriting"
+      ],
+      "0.5": [
+        "copy-editing",
+        "impeccable",
+        "copywriting"
+      ],
+      "0.55": [
+        "copy-editing",
+        "impeccable"
+      ],
+      "0.6": []
+    }
+  },
+  {
+    "side": "in",
+    "want": "copywriting",
+    "q": "write a selling headline for my landing page",
+    "at": {
+      "0.3": [
+        "design-taste-frontend",
+        "copywriting"
+      ],
+      "0.35": [
+        "design-taste-frontend",
+        "copywriting"
+      ],
+      "0.4": [
+        "design-taste-frontend",
+        "copywriting"
+      ],
+      "0.45": [
+        "design-taste-frontend",
+        "copywriting",
+        "copy-editing"
+      ],
+      "0.5": [
+        "design-taste-frontend",
+        "copywriting"
+      ],
+      "0.55": [],
+      "0.6": []
+    }
+  },
+  {
+    "side": "in",
+    "want": "copywriting",
+    "q": "Напиши продающий заголовок для лендинга",
+    "at": {
+      "0.3": [
+        "copywriting"
+      ],
+      "0.35": [
+        "copywriting"
+      ],
+      "0.4": [
+        "copywriting"
+      ],
+      "0.45": [
+        "copywriting"
+      ],
+      "0.5": [
+        "copywriting"
+      ],
+      "0.55": [
+        "copywriting"
+      ],
+      "0.6": []
+    }
+  },
+  {
+    "side": "in",
+    "want": "google-maps-platform",
+    "q": "show a map with store locations on my website",
+    "at": {
+      "0.3": [
+        "google-maps-platform",
+        "impeccable",
+        "design-taste-frontend"
+      ],
+      "0.35": [
+        "google-maps-platform",
+        "impeccable"
+      ],
+      "0.4": [
+        "google-maps-platform"
+      ],
+      "0.45": [
+        "google-maps-platform"
+      ],
+      "0.5": [],
+      "0.55": [],
+      "0.6": []
+    }
+  },
+  {
+    "side": "in",
+    "want": "google-maps-platform",
+    "q": "geocode addresses and calculate routes between them",
+    "at": {
+      "0.3": [
+        "impeccable",
+        "google-maps-platform"
+      ],
+      "0.35": [
+        "impeccable",
+        "google-maps-platform"
+      ],
+      "0.4": [
+        "impeccable",
+        "google-maps-platform",
+        "reverse-engineer-anything"
+      ],
+      "0.45": [
+        "impeccable"
+      ],
+      "0.5": [],
+      "0.55": [],
+      "0.6": []
+    }
+  },
+  {
+    "side": "in",
+    "want": "design-taste-frontend",
+    "q": "make my frontend design look less generic and more tasteful",
+    "at": {
+      "0.3": [
+        "design-taste-frontend"
+      ],
+      "0.35": [
+        "design-taste-frontend"
+      ],
+      "0.4": [
+        "design-taste-frontend"
+      ],
+      "0.45": [
+        "design-taste-frontend"
+      ],
+      "0.5": [
+        "design-taste-frontend"
+      ],
+      "0.55": [
+        "design-taste-frontend"
+      ],
+      "0.6": [
+        "design-taste-frontend"
+      ]
+    }
+  },
+  {
+    "side": "in",
+    "want": "reverse-engineer-anything",
+    "q": "figure out how this competitor app works and rebuild its logic",
+    "at": {
+      "0.3": [
+        "reverse-engineer-anything",
+        "impeccable"
+      ],
+      "0.35": [
+        "reverse-engineer-anything",
+        "impeccable"
+      ],
+      "0.4": [
+        "reverse-engineer-anything",
+        "impeccable"
+      ],
+      "0.45": [
+        "reverse-engineer-anything",
+        "impeccable"
+      ],
+      "0.5": [
+        "impeccable"
+      ],
+      "0.55": [],
+      "0.6": []
+    }
+  },
+  {
+    "side": "in",
+    "want": "reverse-engineer-anything",
+    "q": "Как разобрать устройство чужого сервиса и повторить его",
+    "at": {
+      "0.3": [
+        "impeccable",
+        "reverse-engineer-anything"
+      ],
+      "0.35": [
+        "impeccable",
+        "reverse-engineer-anything"
+      ],
+      "0.4": [
+        "impeccable",
+        "reverse-engineer-anything"
+      ],
+      "0.45": [
+        "impeccable",
+        "reverse-engineer-anything"
+      ],
+      "0.5": [
+        "reverse-engineer-anything",
+        "impeccable"
+      ],
+      "0.55": [],
+      "0.6": []
+    }
+  },
+  {
+    "side": "in",
+    "want": "stripe-best-practices",
+    "q": "accept card payments with Stripe checkout and webhooks",
+    "at": {
+      "0.3": [
+        "stripe-best-practices"
+      ],
+      "0.35": [
+        "stripe-best-practices"
+      ],
+      "0.4": [
+        "stripe-best-practices"
+      ],
+      "0.45": [
+        "stripe-best-practices"
+      ],
+      "0.5": [
+        "stripe-best-practices"
+      ],
+      "0.55": [
+        "stripe-best-practices"
+      ],
+      "0.6": [
+        "stripe-best-practices"
+      ]
+    }
+  },
+  {
+    "side": "out",
+    "want": "",
+    "q": "bake sourdough bread at home",
+    "at": {
+      "0.3": [
+        "design-taste-frontend"
+      ],
+      "0.35": [],
+      "0.4": [],
+      "0.45": [],
+      "0.5": [],
+      "0.55": [],
+      "0.6": []
+    }
+  },
+  {
+    "side": "out",
+    "want": "",
+    "q": "fix a leaking kitchen faucet",
+    "at": {
+      "0.3": [
+        "reverse-engineer-anything",
+        "impeccable",
+        "design-taste-frontend"
+      ],
+      "0.35": [
+        "design-taste-frontend"
+      ],
+      "0.4": [],
+      "0.45": [],
+      "0.5": [],
+      "0.55": [],
+      "0.6": []
+    }
+  },
+  {
+    "side": "out",
+    "want": "",
+    "q": "train for a marathon in 12 weeks",
+    "at": {
+      "0.3": [
+        "impeccable"
+      ],
+      "0.35": [],
+      "0.4": [],
+      "0.45": [],
+      "0.5": [],
+      "0.55": [],
+      "0.6": []
+    }
+  },
+  {
+    "side": "out",
+    "want": "",
+    "q": "translate a legal contract from German",
+    "at": {
+      "0.3": [
+        "impeccable",
+        "copywriting",
+        "copy-editing"
+      ],
+      "0.35": [
+        "impeccable",
+        "humanizer"
+      ],
+      "0.4": [],
+      "0.45": [],
+      "0.5": [],
+      "0.55": [],
+      "0.6": []
+    }
+  },
+  {
+    "side": "out",
+    "want": "",
+    "q": "care for orchids in winter",
+    "at": {
+      "0.3": [],
+      "0.35": [],
+      "0.4": [],
+      "0.45": [],
+      "0.5": [],
+      "0.55": [],
+      "0.6": []
+    }
+  },
+  {
+    "side": "out",
+    "want": "",
+    "q": "file my taxes as a freelancer",
+    "at": {
+      "0.3": [
+        "stripe-best-practices",
+        "copywriting"
+      ],
+      "0.35": [
+        "stripe-best-practices"
+      ],
+      "0.4": [
+        "stripe-best-practices"
+      ],
+      "0.45": [],
+      "0.5": [],
+      "0.55": [],
+      "0.6": []
+    }
+  },
+  {
+    "side": "out",
+    "want": "",
+    "q": "learn guitar chords for beginners",
+    "at": {
+      "0.3": [
+        "stripe-best-practices",
+        "impeccable"
+      ],
+      "0.35": [
+        "stripe-best-practices",
+        "impeccable",
+        "design-taste-frontend"
+      ],
+      "0.4": [],
+      "0.45": [],
+      "0.5": [],
+      "0.55": [],
+      "0.6": []
+    }
+  },
+  {
+    "side": "out",
+    "want": "",
+    "q": "choose a reliable used car",
+    "at": {
+      "0.3": [
+        "impeccable"
+      ],
+      "0.35": [
+        "impeccable"
+      ],
+      "0.4": [
+        "impeccable"
+      ],
+      "0.45": [
+        "impeccable"
+      ],
+      "0.5": [
+        "impeccable"
+      ],
+      "0.55": [
+        "impeccable"
+      ],
+      "0.6": []
+    }
+  },
+  {
+    "side": "out",
+    "want": "",
+    "q": "Как вырастить помидоры на балконе",
+    "at": {
+      "0.3": [],
+      "0.35": [],
+      "0.4": [],
+      "0.45": [],
+      "0.5": [],
+      "0.55": [],
+      "0.6": []
+    }
+  }
+]

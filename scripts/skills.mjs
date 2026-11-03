@@ -151,8 +151,9 @@ if (cmd === 'add') {
     console.log(`===SKILLS_BASE_LOAD_FAIL=== the graph element does not answer (${st.status || st.error}) — it is not running or not installed; load later: npm run skills -- base-load`)
     process.exit(1)
   }
-  if (st.body.installed === false || st.body.keyFound === false) {
-    console.log(`===SKILLS_BASE_LOAD_FAIL=== ${st.body.installed === false ? 'the Python part of the graph is not installed (npm run graph:python in the graph element)' : 'no OpenAI key on the node — the graph computes the vectors with it: save the key on the node\'s screen'}; then: npm run skills -- base-load`)
+  // 626-7: the graph counts its vectors through the node's `embeddings` element (graph v1.2.0 names it in `embeddings`), not an OpenAI key.
+  if (st.body.installed === false || st.body.embeddings?.ready === false) {
+    console.log(`===SKILLS_BASE_LOAD_FAIL=== ${st.body.installed === false ? 'the Python part of the graph is not installed (npm run graph:python in the graph element)' : 'the node\'s embeddings element does not count vectors now (npm run power -- embeddings on)'}; then: npm run skills -- base-load`)
     process.exit(1)
   }
   let ledger = readLedger(ROOT)
