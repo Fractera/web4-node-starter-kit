@@ -5,21 +5,13 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**HANDOFF (2026-11-03 ~20:55 UTC) — the next session starts here.** The owner: «подготовь передачу вопросов к сбросу как текста».
+**HANDOFF (2026-11-03 ~21:20 UTC) — the next session starts here.** The owner: «подготовь передачу вопросов к сбросу как текста».
 1. **Where things stand.** 636 closed (proven 20:13: «⏰ Напоминание · Глубокая память» came into the main chat by itself, no AI —
    `completed-steps/636.md`). The owner's node: core `4e892082`, every element at the 636-8 pins, memory v2.2.15.
-2. **The open question — decide WITH the owner, never alone.** The deep memory has two models: vectors (search by meaning) — the node's
-   own `embeddings` (MiniLM), no OpenAI, done in 626; and thinking (a phrase → facts) — a language model, OpenAI `gpt-6-luna` by his
-   decision of 2026-10-26 (597-2). The node's OpenAI account is empty, so «запомни» keeps the words whole (found by meaning) with no
-   facts, and the main agent adds «пополни счёт» to every receipt. I released memory v2.2.16 (Claude Sonnet by the subscription while
-   the account is empty) WITHOUT asking; the owner: «использование Anthropic это было преступной заглушкой которую ты создал однажды в
-   пьяном угаре. Потому что это хуже чем ничего»; «Какой к чёртовой матери Опен Аиды надо мной издеваешься? Мы его убрали» — he holds
-   that OpenAI is gone from the node. The core's pin is back on v2.2.15; v2.2.16 stays an unpinned tag. First say in ONE line that
-   vectors are ours and facts need a language model; then he chooses: (a) no facts without OpenAI money — the words kept whole, the
-   main agent says so once, not after every receipt; (b) Claude by the subscription (v2.2.16); (c) a local language model on the
-   computer, like `embeddings` but one that writes — a new step, 1–3 GB of memory, slower, measured first; (d) top up OpenAI. His own
-   words: 2026-11-02 20:40 «самый дорогую часть мы можем пройти на связке модель Anthropic плюс собственная модель на компьютере?»,
-   21:03 «уберет бессмысленную работу когда в глубокой память делает записи при помощи Anthropic без вектора».
+2. **The memory's thinking engine — DECIDED 21:10** (the owner's rule, verbatim in «The owner's latest decisions»): OpenAI when its
+   account has money, the Anthropic subscription as the backup channel, the person warned once a day (memory **v2.2.17** `5628c88`,
+   pinned). His node gets it at the next «Sync fork» + update; the live check: a «запомни» whose answer carries the warning once.
+   A new step **638** (`new-steps/638/638-main.md`): every working process of the node on this rule — planned, not started.
 3. **Also waiting for him:** 637 (no core building on a person's node; pull requests as the developers' road — where the switch lives,
    the agent's road with it off, whether skill changes accepted at a review go as pull requests); 629 (the law's text); 627-2…4, 6, 7.
 4. **Rules of this machine learned today:** push with plain `git push` (the auto-mode classifier refused writing a token file and
@@ -253,6 +245,17 @@ shown to the owner before the instruction is resealed.
 with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's word.
 
 ## The owner's latest decisions (verbatim)
+
+- 2026-11-03 ~21:10 UTC, **the memory's thinking engine — DECIDED** (after «Тогда получается у нас все правильно работает нам не нужно
+  ничего переделать нам нужно только исправить текст который несёт чепуху правильно?» and my answer that the text was true): «Это очень
+  хорошее правило: если у нас оплачено подписка OpenAI то мы разбираем рабочие проекты с помощью этой модели если у нас подписка не
+  оплачена то мы используем резервную копию это модель Anthropic по подписке. В будущем мы должны запланировать с тобой шаг в котором все
+  рабочие процессы перенесём на этот сценарий прямо сейчас можешь это запланировать потому что это синхронизируется с требованиями по
+  использованию и правила использования и другим правилам регулятора написанных на сайте Anthropic что рабочие процессы мы не должны
+  делать по подписке а значит это будет первые кейс в нашем проекте тема правильно реализуем задачу. И тогда информационное окно
+  правильно говорит что у вас нету оплаченный подписки OpenAI, используются резервный канал – подписка Anthropic. Будьте внимательны это
+  может привести к блокировкам при частным использовании.? Правильно друг друга поняли» → yes: memory v2.2.16's fallback stands, with
+  that warning once a day (memory v2.2.17); a new step **638** — every working process of the node on this rule (planned, not started).
 
 - 2026-11-03 ~19:20–19:40 UTC, the live run of 636 (the owner: «Привет ты спишь? Напомни мне через одну минуту выключить чайник» →
   the receipt came, the reminder did not; «about remainder - error , check»). Found: the memory's clock fired at 19:18:01, its agent
