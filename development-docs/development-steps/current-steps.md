@@ -5,17 +5,15 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW (2026-11-03 ~22:00 UTC): 639 BUILT, the live proof waits** (`new-steps/639/639-main.md`, approved «да, делай 639»): a clean
-Telegram chat — the node's service messages disappear in 30 s, results, waiting questions and troubles stay; in a turn only the agent's
-last reply stays (the summary), replies with files always; a guard fails the build on any new Telegram send without the decision. Proven
-with stubs (31 of 31, the detached deleter, the guard's negative control), 42 core guards RC 0, 14 kit copies updated — core
-`0da184e` pushed. Next: the owner's «Sync fork» + `npm run node:update`, the live check (at most three phrases), then
-`completed-steps/639.md`.
-**636-10 DONE, the live proof waits** (the owner's scenario 2, 21:22, verbatim below; `completed-steps/636.md`, section 636-10): an
-element's own reminder comes through its own bot too («⏰ <words>») and into the main chat — templates custom v0.3.154 `d777685`,
-native v0.1.37 `88fd098`, pins `93119d9`, `80a4c92`; 13 elements released (auth v2.4.12, data v2.2.3, storage v1.1.21, vectors v1.2.4,
-embeddings v0.1.5, config v1.2.21, design v1.1.21, graph v1.2.4, cache v0.1.15, memory v2.2.18, stripe v1.3.15, root v3.0.17, blocks
-v1.4.17), the registry pins in the next core commit. Stubs 8 of 8 in both templates. One «Sync fork» brings 639 and 636-10.
+**NOW (2026-11-03 ~22:40 UTC): 639 CLOSED** (`completed-steps/639.md`): a clean Telegram chat, live on the owner's node (core
+`dfaa3c65`, built 22:22) — the owner, 22:36: «looking correct»; the turn hooks fire for Telegram messages (`UserPromptSubmit` opened
+the turn 29.5 s before its reply, `Stop` closed it). **636-10 done** (`completed-steps/636.md`, section 636-10): an element's own
+reminder also through its own bot — templates custom v0.3.154 / native v0.1.37, 13 elements, registry pins core `4f04b5e`, live on
+the node; its live check needs an element with its own bot (on the owner's node only the main agent has one). The plans of closed
+steps were removed from `new-steps/` (626, 632, 633, 636, 639; 633's owner words → `completed-steps/633-owner-words.md`).
+**Open:** 627 (627-2, 627-3, 627-4, 627-6, 627-7), 629 (the law's text waits for the owner), 637 (the owner's proposal — three
+questions wait for him, no plan file yet), 638 (planned — the inventory 638-1 first), 545 (545-4, 545-5), 593 (not started), 603
+(603-5); found on the way — `scripts/check-boundary-hook.mjs` 2 of 18 (the same before 639, not in `prebuild`).
 
 **HANDOFF (2026-11-03 ~21:20 UTC) — the previous session's.** The owner: «подготовь передачу вопросов к сбросу как текста».
 1. **Where things stood.** 636 closed (proven 20:13: «⏰ Напоминание · Глубокая память» came into the main chat by itself, no AI —
@@ -34,7 +32,7 @@ v1.4.17), the registry pins in the next core commit. Stubs 8 of 8 in both templa
    switch a model or an engine (OpenAI, Anthropic, local) without his word.
 
 **Active steps:** the group «The node without OpenAI vectors» — 626, local vectors: the native element `embeddings`
-(`new-steps/626/`), and 627, the skills catalog graph shipped ready with every node (`new-steps/627/`). Planned and approved in the
+(closed: `completed-steps/626-1.md` … `626-8.md`), and 627, the skills catalog graph shipped ready with every node (`new-steps/627/`). Planned and approved in the
 conversation on 2026-11-02. **626-1 closed 2026-11-03** (`completed-steps/626-1.md`, measured while the 627-5 marker ran): the element
 runs the model in its own Node process — `@huggingface/transformers` 3.8.1 + `onnxruntime-node` 1.21.0, fastembed's file
 `model_optimized.onnx` (235 MB, sha256 `634d0f66…6e659a99`), 128 tokens, mean pooling, normalized. **626-2 closed** — the element
@@ -57,7 +55,7 @@ the proof — 636-9: memory v2.2.16 `9863d94` thinks with Claude while the OpenA
 `d0fe0a68dab1`); its live check at the owner's next sync and update: a «запомни» without the caveat «пополни счёт». Open: 637 (the
 owner's proposal: no core building on a person's node, pull requests as the developers' road — three questions wait for him), 629,
 627-2…4/6/7. The history of 636 follows.
-**636 — only agents talk to agents, the elements' side** (`new-steps/636/636-main.md`, approved
+**636 — only agents talk to agents, the elements' side** (the plan — in git, deleted when 639 closed; approved
 «Да, делай (Рекомендую)» + «Не спрашивать (Рекомендую)»). The core's half is `c6f91d6` (the law in section 6, the Cron line,
 ANTI-PATTERNS). Found before the code: (1) the wake door asks the person in Telegram whenever the woken agent has a bot — an alarm
 needs `confirmed`; (2) the elements' 5.2 sends an agent to `a2a -- find` by itself, against the core's i2i line; (3) the native
@@ -259,7 +257,7 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
 
 ## The owner's latest decisions (verbatim)
 
-- 2026-11-03 21:33–21:39 UTC, **step 639** (`new-steps/639/639-main.md`): «Я сделал ещё одну проверку а именно попросил главного агента
+- 2026-11-03 21:33–21:39 UTC, **step 639** (`completed-steps/639.md`): «Я сделал ещё одну проверку а именно попросил главного агента
   поставить задачу в агента root а именно попросил поставить напоминание и это напоминание отработал отлично. Мы можем зафиксировать
   успех. Смотри какая проблема если мы с тобой посмотрим на Ленку чата увидим очень много бессмысленных сообщений. Знаешь мне очень
   нравится идея что сообщения которые несут в себе финального результата несут промежуточные результаты могут автоматически исчезать:
@@ -344,7 +342,7 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
   **Open for the owner:** where the switch lives (the core's settings page or a command); the agent's road with the switch off (my
   answer — road 1); whether the skill changes accepted at a «review» go as pull requests or stay on the node.
 
-- 2026-11-03 16:23–16:41 UTC, step 630 → 636 (all verbatim in `new-steps/636/636-main.md`): «Ты сказал что существовал календарь …
+- 2026-11-03 16:23–16:41 UTC, step 630 → 636 (all verbatim in 636's plan — in git, deleted when 639 closed): «Ты сказал что существовал календарь …
   мне предлагается сожрать какую-то заглушку так?»; «Нет восстанавливать ничего не надо прочитай и разберись как он работал просто
   создай заново … я не хочу чтобы напоминания где-то вслепую оставались которые нельзя было увидеть без интерфейса понимаешь в чем
   проблема?»; «Более того этот календарь должен уметь синхронизироваться с Google календарями при необходимости», then «Мы
