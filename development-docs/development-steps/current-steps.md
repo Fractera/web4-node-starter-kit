@@ -84,6 +84,10 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
 
 ## The owner's latest decisions (verbatim)
 
+- 2026-11-03 ~08:45 UTC: «go non stop, not ask me, i am is not here ? ok , can ? or last question ?» → yes, non-stop; the one
+  question left for his return: may the live node be updated and rebuilt in 626-8 (Sync fork + `npm run serve:rebuild`) without him?
+  No answer — everything up to the live rebuild is done, the rebuild waits for him.
+
 - 2026-11-03 ~08:35 UTC, after `/login` (another account) and `gh auth refresh -h github.com -s workflow` (the device code waits for
   his browser): «? which will next step ?» → 627-5 to its end (the marking runs again), then 626-3; the three-system workflow of
   `fractera-embeddings-starter` comes back once the token has the `workflow` scope.
@@ -136,6 +140,9 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
   `@huggingface/transformers` 4.x pins ≥ 1.24.3, 3.8.1 pins 1.21.0. The same ONNX file gives cos 1.000000 in Node and in Python on 20
   of 20 texts; fastembed's 235 MB file against the 470 MB fp32 export — cos ≥ 0.999997. The tokenizer config says 512 tokens, the model
   was trained on 128 — the element cuts at 128 itself.
+- 2026-11-03, 626-2, GitHub Actions on `fractera-embeddings-starter` `6c9543b`: the pinned model counted by `onnxruntime-node`
+  1.21.0 on Linux x64, Windows x64 and macOS arm64 gives the 626-1 vectors of the owner's Intel Mac — min cos 1.000000 on 20 of
+  20 texts on each (run 41605131482); the template build passes on all three (run 41605131482's neighbour 41605131551).
 - 2026-11-03, 626-2: `onnxruntime-node` 1.23.0's macOS x64 binary does not load on this Mac (macOS 12, Darwin 21.6): «Symbol not found:
   __ZNSt3__18to_charsEPcS0_d … Expected in: /usr/lib/libc++.1.dylib» (`std::to_chars` for double needs macOS 13.3+) — 1.21.0 loads.
   After the first inference `process.exit()` aborts inside 1.21.0 («libc++abi: … mutex lock failed: Invalid argument», exit 134) —
