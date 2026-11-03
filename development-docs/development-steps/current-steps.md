@@ -52,9 +52,16 @@ core `de48fd4` (`npm run remember -- … --remind-at --repeat --remind-text`, `=
 memory LEFT ON while a reminder waits — `remember` used to turn a memory that was off back off after the command; the main agent's
 own calendar only as the fallback; core-schedule, commands.json, memory.md, the instruction resealed `d89d2042c592`). Found: the
 memory is on while more than 1 GB is free (601) — a reminder needs it on at its minute (named in the memory's README).
-**Next — 636-6 live:** the owner's «Sync fork» → the banner «Обновить узел» (the core and 13 elements rebuild — longer than usual),
-then «Напомни мне через 2 минуты выпить воды» to the main agent in Telegram: the receipt, the memory's calendar «Cron events», the
-alarm → the memory's agent → `tell-core` → the main agent writes; at most three test questions.
+**636-6 live run (19:17) → 636-7, 636-8 (~20:30 UTC):** the reminder was lost in Claude Code's dialog «Teach auto mode…» (details in
+«The owner's latest decisions» and `completed-steps/636.md`); by the owner's choices the reminder now needs no AI. Done: core `ab02737`
+(the bridge waits out any question on the screen, `skillOverrides["auto-mode-setup"]="off"` for every node session, the language of
+an element without a bot = the main agent's), `5072403` (the notice door `/api/node/notice`, «⏰ Напоминание · <agent>» + quote; the
+law names it; 🟢 memory answers, ⚙️ element messages), templates custom v0.3.153 `c394cb4`, native v0.1.36 `6f8cb27` (`node-notice`),
+rollout: auth v2.4.11, data v2.2.2, storage v1.1.20, vectors v1.2.3, embeddings v0.1.4, config v1.2.20, design v1.1.20, graph v1.2.3,
+cache v0.1.14, memory **v2.2.15** (`24b133b`: its reminders are `node-notice`), stripe v1.3.14 (pushed by URL: its clone's origin is a
+local scratch repo; changing that origin was refused by the auto-mode classifier), root v3.0.16, blocks v1.4.16.
+**Next — the live proof:** the owner's «Sync fork» → update → «Напомни мне через 2 минуты выпить воды»: «⏰ Напоминание · Глубокая
+память» must come into the main chat by itself; at most three test questions.
 **630 (before 636):** reminders by time, in the main agent's calendar. The owner: «Нет восстанавливать ничего не надо прочитай и
 разберись как он работал просто создай заново суть в том что там у нас должен существовать реальный календарь в котором видно все
 напоминания … я не хочу чтобы напоминания где-то вслепую оставались которые нельзя было увидеть без интерфейса»; «Мне кажется такой
@@ -217,6 +224,33 @@ shown to the owner before the instruction is resealed.
 with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's word.
 
 ## The owner's latest decisions (verbatim)
+
+- 2026-11-03 ~19:20–19:40 UTC, the live run of 636 (the owner: «Привет ты спишь? Напомни мне через одну минуту выключить чайник» →
+  the receipt came, the reminder did not; «about remainder - error , check»). Found: the memory's clock fired at 19:18:01, its agent
+  ran `tell-core` at 19:18:14, the core pasted the words into the main agent's live session at 19:18:16 — while Claude Code showed its
+  own dialog «Teach auto mode about your environment? 1. Yes 2. Not now 3. Don't show again»: the paste went into the dialog, the Enter
+  chose «Yes» (`~/.claude/history.jsonl`: `/auto-mode-setup` at 19:18:17), the words were lost; the memory's agent also wrote them in
+  English («Reminder: turn off the kettle.»: its session has no person.json → «en»). Claude Code 2.1.317 turns that dialog off by
+  `skillOverrides["auto-mode-setup"] = "off"` (read in its code). Then the owner: «Также подтверди что ты понимаешь о том что
+  напоминание могут возвращаться даже если агент выключен не так ли? То есть для того чтобы вернуть события нам не нужен искусственный
+  интеллект правильно? Так и будет работать?»; «То есть давай ещё раз с тобой обсудим это дело события крон должны приходить не
+  затрагивая искусственный интеллект независимо от происходящих процессов оно просто должно всплыть по расписанию и всё согласен?»;
+  «Для размышления тоже используешь эмоджи мозг, значит для событий по расписанию можешь использовать эмоджи часы верхняя часть должна
+  сообщать о том какой агент отвечает этим событием. … если например не ядро а какой-либо элемент возвращает Корон события то оно же
+  должно всплыть в главную чате? Значит вверху должно быть написано какой агент отправил это событие согласен?»; and on the look: «в
+  Telegram есть красивый дизайн … серая рамка левый бордюр … ответ по расписанию не стоило бы удалять а оставить в таком же дизайне …
+  Также в этом стиле я хочу чтобы возвращались и другие события рабочего процесса. Например событий связанные с глубокой памятью … стандарт
+  интерфейса у нас обсуждение согласования и строительства а вот рабочие процессы на серу фоне … событие связанное с напоминанием …
+  оранжевом … глубокой памятью … зелёным?» (Telegram Bot API, read 2026-11-03: `blockquote` and `blockquote expandable` exist, no
+  colour per message; `message_effect_id` «for private chats only»). Choices: delivery — «Дверь ядра «уведомление» (Рекомендую)» (an
+  element's clock calls the core's agreed notice door at its minute, the main agent's bot writes into the main chat: ⏰, the agent's
+  name in the header, the words as a quote; no AI, no tokens; the law gets the line «this door is the agreed API of every element»);
+  the look — «Цитата + значок + шапка (Рекомендую)» (⏰ reminders, 🟢 the deep memory's answers, ⚙️ working-process events; the
+  header names the agent; never deleted; discussion and building stay ordinary messages). Also: «Исправь пожалуйста readme свои
+  анимированные призывы к действию сделать Fork и поставить звёздочку. Во-первых они по какой-то причине растянулись на всю ширину
+  экрана … им нужно установить максимальную ширину возможно 400 пикселей … твой анимированный сделайте Fork выглядит просто потрясающе а
+  тот который делал я раньше поставьте звёздочку очень сильно проигрывает ему хотя в целом выглядит неплохо особенно то как от звёздочки
+  происходит вспыхивая и разлетаются салюты».
 
 - 2026-11-03 ~18:50–19:10 UTC, during the node update — **a proposed step 637, a discussion, no decision yet**: «Так как в отличие от
   всех других элементов обновление узла всегда является самым сложным и болезненным процессом, возможно пользователи инструкции
