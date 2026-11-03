@@ -7,7 +7,10 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 
 **Active steps:** the group «The node without OpenAI vectors» — 626, local vectors: the native element `embeddings`
 (`new-steps/626/`), and 627, the skills catalog graph shipped ready with every node (`new-steps/627/`). Planned and approved in the
-conversation on 2026-11-02; no code yet.
+conversation on 2026-11-02. **626-1 closed 2026-11-03** (`completed-steps/626-1.md`, measured while the 627-5 marker ran): the element
+runs the model in its own Node process — `@huggingface/transformers` 3.8.1 + `onnxruntime-node` 1.21.0, fastembed's file
+`model_optimized.onnx` (235 MB, sha256 `634d0f66…6e659a99`), 128 tokens, mean pooling, normalized; ~0.6 GB after load. Next in 626: 626-2
+after 627-5 closes.
 
 **Last change:** 2026-11-02 — plans 626 and 627 written; step 625 recorded as closed after the fact (`completed-steps/625.md`: root
 v3.0.14 `105b1d1`, core `e59204f`, `02d065b`, `7362225`). Before that: step 624 closed (`completed-steps/624.md`): real available memory on macOS (`lib/free-memory.cjs`), the refusal names what uses memory, quick links on the subscription page, the Telegram app requirement in README, the agent kit and the launch welcome, «close this chat» after the install. Before that: 2026-11-02 12:30 — the core rebuild failed at 12:10 on the type check of the template workshop clones in `data/workshop/` (their own `@/` alias); `data` excluded in `tsconfig.json` (core `8b704c77`), rebuilt detached — `===REBUILD_RC=0===`, `/api/health` builtAt 12:20:45Z, 25 of 25 processes online. Before that: 2026-11-02 — the repository with the stars is the original under the new name `Fractera/web4-node-starter-kit` (merge
@@ -29,9 +32,11 @@ the live hand-off waits for the owner's next core update.
   `cards.jsonl` (1,134 cards at 07:40, growing), `mark-*.log`, `mark-log.jsonl`, `audits.json` (being written). If /tmp was wiped:
   `npm run catalog -- census` (a fresh Vercel token: `cd …/scratchpad/vercel-skills-api && npx vercel@65.9.0 env pull .env.local --yes`
   — the token lives ~12 h), then `fetch` and `sites`, all resumable.
-- **Running when the session ended** (they may have stopped with it): `npm run catalog -- mark --data data/catalog-6000 --cards
-  data/catalog-6000/cards.jsonl --concurrency 4` (~18 cards a minute; it marks only what was fetched when it started) and `npm run
-  catalog -- audit --data data/catalog-6000`. The owner switched the Claude account (`/login`) during the night — the marker's
+- **Running now** (seen by session `faa581fd` at 07:20 UTC, both survived the handoff): the old `mark --concurrency 4` (pid 43358,
+  from 01:30, only what was fetched then — ranks up to ~2,700; at rank 2,159 with 1,557 cards at 07:20, ~25 min left) and `audit --data
+  data/catalog-6000` (pid 30417, from 06:57; writes `audits.json` only at its end, ~35 min for 5,584 rows). Stopping the old run was
+  refused by the session's safety check — so it ends by itself; then `mark --concurrency 6` takes the rest (`mark-3.log`; two marks at
+  once would overwrite each other's `cards.jsonl`). The owner switched the Claude account (`/login`) during the night — the marker's
   `claude -p` uses whichever account is logged in.
 - **To finish 627-5, in order** (each command resumes): (1) `mark` again with `--concurrency 6` until `already marked` covers all
   ≈5,334 unique skills (a usage limit stops it — run again later); (2) `audit` if `audits.json` is missing or partial, then
@@ -52,6 +57,9 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
 
 ## The owner's latest decisions (verbatim)
 
+- 2026-11-03 07:18 UTC (the new session after the handoff): «Продолжай с HANDOFF в current-steps.md: доведи 627-5 до конца, потом
+  начни 626 на этом Mac», then «go to finish non stop , i go to slepp, not call me» — 627-5 to its end, then 626 on this Mac, with
+  no questions; every event is written here.
 - 2026-11-03 (night): «go to finish non stop , not ask me i go to sleep» — 627 (the large run) and 628 (a skill the person
   suggests) are carried to the end without questions; every event is written here.
 - 2026-11-03 (628): the person names a skill heard of in an ad («replica-skill») — find it, judge it, add it to the project marked
@@ -88,6 +96,11 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
   остальное — план» (plan 622).
 
 ## Measured — do not measure again
+
+- 2026-11-03, 626-1: `onnxruntime-node` 1.24.3 … 1.31.1 ship no macOS x64 binary (arm64 only); 1.20.1 … 1.23.0 ship x64;
+  `@huggingface/transformers` 4.x pins ≥ 1.24.3, 3.8.1 pins 1.21.0. The same ONNX file gives cos 1.000000 in Node and in Python on 20
+  of 20 texts; fastembed's 235 MB file against the 470 MB fp32 export — cos ≥ 0.999997. The tokenizer config says 512 tokens, the model
+  was trained on 128 — the element cuts at 128 itself.
 
 - 2026-11-03, 627-5 large run (`data/catalog-6000/`): GitHub rows 5,378 → fetched 4,971, gone from their repositories 402 (7.5 %),
   repositories deleted 5; 4,762 unique by fingerprint. Sites (`well-known`, skills.sh copy, text only): 622 → 613 copied, 9 without a
