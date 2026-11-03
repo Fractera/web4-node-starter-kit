@@ -233,13 +233,21 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   // 590-5: у сессии строительства — свой проход (`main` · `design` · `texts`): свои вендорные навыки, файл законов прохода, модель.
   // 594-4: у прохода study — сервер MCP REA на эту сессию (`modes.mcpArgs`); перед `--settings`: `--mcp-config` забирает список значений.
   const mcp = typeof modes.mcpArgs === 'function' ? modes.mcpArgs(cwd, mode, path.join(process.cwd(), 'data', 'node', 'agent-prompts'), service, pass) : []
-  if (modes.hasGroups(cwd)) args = [...args, ...mcp, '--settings', JSON.stringify({ ...modes.modeSettings(cwd, mode, plug, pass), ...mem }), ...modes.promptArgs(cwd, mode, path.join(process.cwd(), 'data', 'node', 'agent-prompts'), service, pass)]
+  // 636-7 (✗ 2026-11-03 19:18 на узле владельца): после первого ответа Claude Code показывает свой диалог «Teach auto mode about your
+  // environment?», вставка узла попадает в него, и Enter выбирает «Yes». Claude Code 2.1.317 не показывает его, когда
+  // `skillOverrides["auto-mode-setup"]` равно "off" (прочитано в его коде) — у каждой сессии узла.
+  const NO_SETUP = { 'auto-mode-setup': 'off' }
+  if (modes.hasGroups(cwd)) {
+    const settings = { ...modes.modeSettings(cwd, mode, plug, pass), ...mem }
+    settings.skillOverrides = { ...(settings.skillOverrides ?? {}), ...NO_SETUP }
+    args = [...args, ...mcp, '--settings', JSON.stringify(settings), ...modes.promptArgs(cwd, mode, path.join(process.cwd(), 'data', 'node', 'agent-prompts'), service, pass)]
+  }
   else {
     // 595-4: the skills memory (skills_find) also for the main agent and an element of the old template; the soul's
     // --append-system-prompt-file below always follows, so the list flag never eats the first task (548-13).
     if (mcp.length) args = [...args, ...mcp]
     // 595-5: one --settings per session; 614-2: it always says whether the Telegram plugin runs in it.
-    args = [...args, '--settings', JSON.stringify({ enabledPlugins: plug, ...mem })]
+    args = [...args, '--settings', JSON.stringify({ enabledPlugins: plug, ...mem, skillOverrides: NO_SETUP })]
   }
   // 591: душа узла (`lib/agent-kit/soul.md`) — в системной подсказке каждой сессии: у элемента с группами её кладёт `promptArgs`
   // первой, у остальных (главный агент, элемент старого шаблона) — здесь, одна.
@@ -422,6 +430,17 @@ function watchAsk(s) {
 function promptOnScreen(buffer) {
   const tail = plainScreen(buffer.slice(-4000))
   return /Do you want to /.test(tail) && /(tell Claude what to do differently|Yes, and don't ask again|1\. ?Yes)/.test(tail)
+}
+
+/**
+ * 636-7: стоит ли на экране ЛЮБОЙ вопрос — разрешение, доверие папке или диалог самого Claude Code с вариантами («Enter to confirm ·
+ * Esc to cancel»). ✗ 2026-11-03 19:18: вставка узла ушла в диалог «Teach auto mode…», Enter выбрал «Yes», слова пропали. Вставка в
+ * живую сессию ждёт, пока вопрос не уйдёт; не ушёл — не вставляется (`pasteWhenReady`, `ready`).
+ */
+function questionOnScreen(buffer) {
+  if (promptOnScreen(buffer) || trustOnScreen(buffer)) return true
+  const tail = plainScreen(buffer.slice(-3000))
+  return /Enter to confirm/.test(tail) && /Esc to (cancel|exit|go back)/.test(tail)
 }
 function watchPrompt(s) {
   if (!s.taskUrls || s.taskUrls.size === 0) return
@@ -654,7 +673,7 @@ async function wake(element, { text, from, about, declineUrl, confirmed, taskUrl
       return { ok: true, queued: pass, running: live.pass ?? 'main' }
     }
     rememberTasks(live, urls)
-    if (text && task) pasteWhenReady(live, text, { quietMs: 500 })
+    if (text && task) pasteWhenReady(live, text, { quietMs: 500, ready: () => !questionOnScreen(live.buffer) })
     // 615-6: вставка узла (надзор, запрос элемента) в живую сессию главного агента — после неё человеку положен доклад (`done` сторожит).
     if (text && task && from && modes.baseOf(service) === MAIN_AGENT) live.nodePasteAt = Date.now()
     return { ok: true, already: true }

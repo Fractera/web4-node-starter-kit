@@ -411,6 +411,12 @@ const LANG_CODE = /^[a-z]{2,3}(-[A-Za-z0-9]{2,8})?$/
 function personLang(service) {
   const p = readJson(personFile(service), null)
   if (p && typeof p.lang === 'string' && LANG_CODE.test(p.lang)) return p.lang
+  // 636-7 (✗ 2026-11-03: у памяти нет своего бота, её сессия решила «en» и написала напоминание по-английски): у элемента без своего
+  // бота человек тот же, что у главного агента, — его язык.
+  if (service !== 'build') {
+    const m = readJson(personFile('build'), null)
+    if (m && typeof m.lang === 'string' && LANG_CODE.test(m.lang)) return m.lang
+  }
   try { return /[а-яё]/i.test(readFileSync(messagesFile(service), 'utf8')) ? 'ru' : 'en' } catch { return 'en' }
 }
 
