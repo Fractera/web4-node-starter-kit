@@ -28,7 +28,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Fractera/web4-node-starter-kit/fork"><img src="public/video/git-fork.gif" alt="Fork the project on GitHub" height="100"></a>
+  <a href="https://github.com/Fractera/web4-node-starter-kit/fork"><img src="public/video/git-fork.gif" alt="Fork the project on GitHub" width="400"></a>
 </p>
 
 Reverse-engineer any popular product and build your own: a starter kit for a large full-stack app or an app factory, on your PC
@@ -145,7 +145,7 @@ side, under one domain, and gives each of them the technical part that search an
 - review pages and a Telegram bot of your own.
 
 <p align="center">
-  <a href="https://github.com/Fractera/web4-node-starter-kit"><img src="public/video/git-star.gif" alt="Star the project on GitHub" height="100"></a>
+  <a href="https://github.com/Fractera/web4-node-starter-kit"><img src="public/video/git-star.gif" alt="Star the project on GitHub" width="400"></a>
 </p>
 
 ## How to install
