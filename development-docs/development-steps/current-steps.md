@@ -184,6 +184,18 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
 
 ## The owner's latest decisions (verbatim)
 
+- 2026-11-03 ~18:00 UTC, after the second «Sync fork» — **an open question, deferred by the owner**: «Синхронизацию я выполнил
+  честно говоря меня беспокоит одна вещь: я понял этот проект но не помню чтобы я тебе давал ключ от моего репозитория Fractera …
+  я хочу быть уверенным в том что каждый новый репозитории который приезжает пользователю может писать только в себя и не может
+  дотянуться до Fractera а то ведь кто угодно исправит мой проект?» Found the same minute (read-only): this Mac is signed in to GitHub
+  as **Fractera** twice — the GitHub CLI (`gh`, token in the keychain, scopes `repo`, `workflow`, …) and git's `osxkeychain`
+  (github.com → Fractera); the SSH key is `aifa-agi`. Push rights to `web4-node-starter-kit`, `fractera-vectors-starter`,
+  `fractera-memory-starter`: only `Fractera` (admin) and `bolshiyanov`; `aifa-agi` has none; `main` is not protected. Another
+  person's node has no Fractera key — GitHub refuses its pushes. The weak spot is this Mac: every native element of the live node has
+  `origin` = a Fractera starter with no `pushurl`, so a `git push` by an element agent here would write into the starter every new node
+  installs. Proposed (not decided): the installer disables `pushurl` of native clones on every node; on this Mac — remove the
+  osxkeychain entry or `gh auth logout` after development. The owner: «not need now , later will remember».
+
 - 2026-11-03 ~13:55 UTC, during 626-6 — a new step **630** (reminders by time in the deep memory and in the agent): «Пожалуйста проверь
   что наша глубинная память поддерживает работу с Cron событиями. Это означает что я могу сказать напомни мне через неделю про день
   рождения мамы. И это должно вызвать соответствующий процессорный и всё остальное. Это сделать нужно в отдельном шаге»; then: «Даже
