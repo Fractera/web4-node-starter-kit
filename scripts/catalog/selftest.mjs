@@ -1,6 +1,6 @@
 // THE CATALOG'S HELPERS PROVE THEMSELVES (node step 627-1): `npm run catalog -- selftest`. No network, no files — only `lib.mjs`.
 import assert from 'node:assert/strict'
-import { blobShaOf, dedupeBySha, frontmatterName, installsOf, isScript, parseList, shaOf, skillPaths, urlOf, validateCard } from './lib.mjs'
+import { blobShaOf, blobShaOfBuffer, dedupeBySha, folderShaOf, frontmatterName, installsOf, isScript, parseList, shaOf, skillPaths, urlOf, validateCard } from './lib.mjs'
 
 let checks = 0
 const check = (name, fn) => {
@@ -34,6 +34,9 @@ check('shaOf', () => {
 check('blobShaOf', () => {
   // `printf 'hello\n' | git hash-object --stdin`
   assert.equal(blobShaOf('hello\n'), 'ce013625030ba8dba906f756967f9e9ca394464a')
+  assert.equal(blobShaOfBuffer(Buffer.from('hello\n')), 'ce013625030ba8dba906f756967f9e9ca394464a')
+  assert.equal(folderShaOf([['b', '2'], ['a', '1']]), folderShaOf([['a', '1'], ['b', '2']]))
+  assert.notEqual(folderShaOf([['a', '1']]), folderShaOf([['a', '2']]))
 })
 
 check('frontmatterName', () => {

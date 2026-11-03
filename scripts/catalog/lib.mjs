@@ -35,6 +35,13 @@ export const shaOf = (text) => createHash('sha256').update(String(text)).digest(
 /** git's own blob id of a text — the `sha` GitHub lists in a repository tree, so an update sees a change without downloading (627-6). */
 export const blobShaOf = (text) => createHash('sha1').update(`blob ${Buffer.byteLength(String(text))}\0`).update(String(text)).digest('hex')
 
+/** The same id for any file as bytes (images, fonts, archives) — read as text they would change (628-3: a folder checked again). */
+export const blobShaOfBuffer = (buf) => createHash('sha1').update(`blob ${buf.length}\0`).update(buf).digest('hex')
+
+/** A folder's fingerprint: sha256 of the sorted «relative path \0 git blob id» lines, 16 hex — the same whether the ids come from
+ *  git's tree (fetch) or are counted from the disk (adopt-hand). */
+export const folderShaOf = (pairs) => createHash('sha256').update(pairs.map(([rel, blob]) => `${rel}\0${blob}`).sort().join('\n')).digest('hex').slice(0, 16)
+
 /** The `name` of a SKILL.md frontmatter, or null. */
 export function frontmatterName(text) {
   const fm = /^---\r?\n([\s\S]*?)\r?\n---/.exec(String(text))

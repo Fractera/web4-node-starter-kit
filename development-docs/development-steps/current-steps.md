@@ -16,6 +16,10 @@ v3.0.14 `105b1d1`, core `e59204f`, `02d065b`, `7362225`). Before that: step 624 
 native v0.1.33, 12 elements rolled out, pins `5e9d4b1` (`completed-steps/622.md`). Step 623 closed — the A2A guard lets links to files through
 (templates custom v0.3.151, native v0.1.34, 12 elements; the reply door uses it after each element's next build).
 
+**Step 628 closed (2026-11-03):** a skill the person suggests — `npm run skills -- adopt`, `adopt-hand`, the door
+`GET /api/skills/suggested`, the skill `adopt-suggested-skill`, the instruction resealed `ed81462013fc` (`completed-steps/628-main.md`);
+the live hand-off waits for the owner's next core update.
+
 **Next action (2026-11-03):** the large run of 627-5 is going in `data/catalog-6000/` (scratch clone of the core): the census of
 6,000 rows (5,378 GitHub, 622 sites) is fetched by batched sparse-checkout clones, and the marking (4 at a time) started on what was
 fetched. Then: `fetch` and `mark` again for the rest (both resume), `audit --attach`, the 622 `well-known` skills from the skills.sh
@@ -26,6 +30,13 @@ summary not written yet. 626-1 waits for the owner's Windows computer.
 with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's word.
 
 ## The owner's latest decisions (verbatim)
+
+- 2026-11-03 (night): «go to finish non stop , not ask me i go to sleep» — 627 (the large run) and 628 (a skill the person
+  suggests) are carried to the end without questions; every event is written here.
+- 2026-11-03 (628): the person names a skill heard of in an ad («replica-skill») — find it, judge it, add it to the project marked
+  «by the person's suggestion»; «уточни пожалуйста видели ли ты рекламу этого навыка не можешь ли дать ссылку на этот ролик или пост?
+  Если ты посчитаешь нужным потому что можно найти навыки которых много с похожим названием»; who installs — «Агент элемента
+  (Рекомендую)»: the main agent finds, judges and gets the yes, the element's own agent installs and commits.
 
 - 2026-11-03 (627, the marker): «Я не думаю что нам имеет смысл размышлять о навыках которые объясняют использование облачных сервисов
   для хранения данных или медиафайлов так как наш фокусировка проекта основана на использовании локальных ресурсов компьютера прежде

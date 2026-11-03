@@ -7,24 +7,35 @@
 // git marks as links (mode 120000) are never read — a folder cannot make us read the owner's own files.
 // The folder's fingerprint is made of git's blob ids of all its files — GitHub lists the same ids, so a later check needs no download.
 import { spawnSync } from 'node:child_process'
-import { createHash } from 'node:crypto'
 import { existsSync, lstatSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { frontmatterName, isScript, parseList, shaOf, skillPaths } from './lib.mjs'
+import { folderShaOf, frontmatterName, isScript, parseList, shaOf, skillPaths } from './lib.mjs'
 
 const pause = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms)
 const run = (cmd, args, opts = {}) => spawnSync(cmd, args, { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024, windowsHide: true, ...opts })
 
-/** `gh api <path>` → JSON or null; a failed call is tried three times, a 404 is an answer. */
-function gh(path) {
+let ghWorks = null
+
+/**
+ * GitHub's REST answer for `path` → JSON or null; a failed call is tried three times, a 404 is an answer. Through `gh` when it is
+ * installed and logged in (5,000 calls an hour); otherwise (628-1: a person's node may have no `gh`) the public API through `curl` —
+ * 60 calls an hour without a login, enough for one suggested skill.
+ */
+export function gh(path) {
+  ghWorks ??= run('gh', ['auth', 'status']).status === 0
   for (let attempt = 1; attempt <= 3; attempt += 1) {
-    const r = run('gh', ['api', path])
+    const r = ghWorks
+      ? run('gh', ['api', path])
+      : run('curl', ['-sS', '-f', '-H', 'Accept: application/vnd.github+json', '-H', 'User-Agent: fractera-node', `https://api.github.com/${path}`])
     if (r.status === 0) { try { return JSON.parse(r.stdout) } catch { return null } }
-    if (/HTTP 404|Not Found/i.test(r.stderr ?? '')) return null
+    if (/HTTP 404|Not Found|returned error: 404/i.test(r.stderr ?? '')) return null
     pause(1000 * attempt)
   }
   return null
 }
+
+/** For the proof of 628-1: read the facts as a node without `gh` would. */
+export function useCurlForGitHub() { ghWorks = false }
 
 let lastGitError = ''
 
@@ -40,7 +51,7 @@ function git(dir, args, tries = 1) {
 }
 
 /** The repository: meta from the API, a blob-less shallow clone, its tree with modes, blob ids and sizes. */
-function openRepo(source, reposDir) {
+export function openRepo(source, reposDir) {
   const meta = gh(`repos/${source}`)
   if (!meta) return { error: 'repository not found' }
   const dir = join(reposDir, source.replace('/', '__'))
@@ -120,7 +131,7 @@ function rowOf(r, repo, path, outDir) {
     licence: lic ? spdxOf(readFileSync(join(repo.dir, lic.path), 'utf8')) : repo.licence,
     licenceFrom: lic ? 'folder' : repo.licence ? 'repository' : null,
     sha: shaOf(text), blob: main.blob, chars: text.length,
-    folderSha: createHash('sha256').update(inFolder.map((e) => `${rel(e.path)}\0${e.blob}`).sort().join('\n')).digest('hex').slice(0, 16),
+    folderSha: folderShaOf(inFolder.map((e) => [rel(e.path), e.blob])),
     files: inFolder.length, bytes: inFolder.reduce((n, e) => n + e.size, 0),
     scripts: inFolder.filter((e) => e.mode !== '120000' && (e.mode === '100755' || isScript(e.path))).map((e) => rel(e.path)),
     links: inFolder.filter((e) => e.mode === '120000').map((e) => rel(e.path)),

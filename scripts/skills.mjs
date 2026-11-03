@@ -10,7 +10,15 @@
 //       a licensed skill into the base shipped with every clone (node step 598): lib/agent-kit/skills/base/ + manifest.json
 //   npm run skills -- base-check   — every skill of the base may be handed out (its LICENSE, a licence from the list, only its text)
 //   npm run skills -- base-load    — the base into this node's graph, once: a ledger (data/node/skills-base.json) keeps what is loaded
+//   npm run skills -- adopt "<name or link>" [--pick <owner/repo>] [--skill <name>] [--all] [--said "<the person's words>"]
+//       a skill the person heard of (node step 628): candidates by name — several answer to it → ask the person for the link where they
+//       saw it; a link or --pick → the repository's trust signals and every skill judged by the catalog's marker, into
+//       data/node/skills/suggested/ (outside git). Skill `adopt-suggested-skill`.
+//   npm run skills -- adopt-hand <owner/repo@skill> --to <element> [--send] [--said "<words>"]
+//       the approved, still unchanged checked copy packed with its SOURCE.md («suggested by the person») for the element's own agent;
+//       --send gives it the task (npm run task); the agent takes it from GET /api/skills/suggested and commits it.
 // Nothing runs by itself: a person or an agent calls it (the node's installer calls base-load at the end of a full installation).
+import { spawnSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -57,6 +65,63 @@ if (cmd === 'add') {
   console.log(catalogText(r))
   console.log(r.ok ? `===SKILLS_MARKET=== ${r.found.length} ${r.found.map((s) => `${s.source}@${s.skill}`).join(' ')}` : `===SKILLS_FAIL=== ${r.error}`)
   process.exit(r.ok ? 0 : 1)
+} else if (cmd === 'adopt') {
+  const { findCandidates, judgeRepository, parseLink } = await import('./catalog/adopt.mjs')
+  const query = positional[0]
+  if (!query) {
+    console.log('===SKILLS_FAIL=== usage: npm run skills -- adopt "<name or link>" [--pick <owner/repo>] [--skill <name>] [--all] [--said "<words>"]')
+    process.exit(2)
+  }
+  const link = parseLink(query)
+  let source = flag('pick') ?? link?.source
+  const skill = flag('skill') ?? link?.skill ?? null
+  const installs = new Map()
+  if (!source) {
+    const found = await findCandidates(query, ROOT)
+    if (!found.length) {
+      console.log(`===SKILLS_ADOPT_NONE=== nothing answers to «${query}» in the node's catalog, skills.sh or GitHub — ask the person for the link where they saw it`)
+      process.exit(0)
+    }
+    const exact = found.filter((c) => c.exact)
+    const clear = exact.length === 1 && found.every((c) => c === exact[0] || (c.stars ?? 0) * 20 < (exact[0].stars ?? 0))
+    if (!clear) {
+      for (const c of found) console.log(`  ${c.source} · ★${c.stars ?? '—'} · installs ${c.installs || '—'} · last update ${c.pushed?.slice(0, 10) ?? '—'} · ${c.skills.length ? `skills: ${c.skills.slice(0, 6).join(', ')}` : ''} ${c.description ? `— ${String(c.description).slice(0, 90)}` : ''} [${c.from.join(', ')}]`)
+      console.log(`===SKILLS_ADOPT_CANDIDATES=== ${found.length} repositories answer to «${query}» — ask the person where they heard of it (a link to the ad, the post or the repository), then: npm run skills -- adopt "${query}" --pick <owner/repo>`)
+      process.exit(0)
+    }
+    source = exact[0].source
+    const others = found.filter((c) => c !== exact[0])
+    if (others.length) console.log(`Also answering to «${query}» (far fewer stars — say so to the person): ${others.map((c) => `${c.source} ★${c.stars ?? '—'}`).join(', ')}`)
+  }
+  const r = await judgeRepository(source, { root: ROOT, skill, all: rest.includes('--all'), installs, said: flag('said') ?? '' })
+  if (r.error) { console.log(`===SKILLS_ADOPT_FAIL=== ${r.error}`); process.exit(1) }
+  if (r.tooMany) {
+    console.log(`  ${r.tooMany.join(', ')}`)
+    console.log(`===SKILLS_ADOPT_MANY=== ${source} holds ${r.tooMany.length} skills — ask the person which (--skill <name>) or judge them all (--all)`)
+    process.exit(0)
+  }
+  const t = r.trust
+  console.log(t ? `Trust: ★${t.stars}, created ${t.created}, last update ${t.pushed}, ${t.commits} commit${t.commits === 1 ? '' : 's'}, licence ${t.licence ?? 'none'}${t.flags.length ? ` — ${t.flags.join('; ')}` : ''}` : 'Trust: the repository facts did not load')
+  for (const c of r.cards) {
+    const near = r.overlaps[c.id] ?? []
+    console.log(`  ${c.skill} · value ${c.value} · use ${c.use}${c.needs.length ? ` (needs ${c.needs.join(', ')})` : ''} · quality ${c.quality}/5${c.scripts.length ? ` · scripts ${c.scripts.length}` : ''}${c.risks.length ? ` · RISKS: ${c.risks.join('; ')}` : ''}${near.length ? ` · the node already has: ${near.join(', ')}` : ''}`)
+    console.log(`      ${c.summary.split(/(?<=\.)\s/)[0]} — ${c.why}`)
+  }
+  console.log(`===SKILLS_ADOPT_JUDGED=== ${source}: ${r.cards.length} skills · ${r.dir} · hand one after the person's yes: npm run skills -- adopt-hand ${source}@<skill> --to <element> --send`)
+} else if (cmd === 'adopt-hand') {
+  const { handSkill } = await import('./catalog/adopt.mjs')
+  const id = positional[0]
+  const to = flag('to')
+  if (!id || !to) {
+    console.log('===SKILLS_FAIL=== usage: npm run skills -- adopt-hand <owner/repo@skill> --to <element> [--send] [--said "<words>"]')
+    process.exit(2)
+  }
+  const r = handSkill(id, { root: ROOT, to, said: flag('said') ?? '' })
+  if (r.error) { console.log(`===SKILLS_ADOPT_HAND_FAIL=== ${r.error}`); process.exit(1) }
+  console.log(r.task)
+  const send = rest.includes('--send')
+  if (send) spawnSync(process.execPath, [join(ROOT, 'scripts', 'main-agent-cli.mjs'), 'task', to, r.task], { stdio: 'inherit' })
+  console.log(`===SKILLS_ADOPT_HANDED=== ${id} → ${to} · ${r.archive} · sha256 ${r.sha256}${send ? ' · the task was given' : ' · not given yet: add --send'}`)
 } else if (cmd === 'base-sync') {
   try {
     const e = syncSkill(resolve(positional[0] ?? ''), { source: flag('source'), license: flag('license'), url: flag('url') ?? '', version: flag('version') ?? '' })
@@ -126,6 +191,6 @@ if (cmd === 'add') {
   for (const f of done.failed) console.log(`  ${f}`)
   process.exit(done.failed.length ? 1 : 0)
 } else {
-  console.log('===SKILLS_FAIL=== commands: add, find, market, base-sync, base-check, base-load')
+  console.log('===SKILLS_FAIL=== commands: add, find, market, adopt, adopt-hand, base-sync, base-check, base-load')
   process.exit(2)
 }
