@@ -46,6 +46,9 @@ warned earlier. The section stays short: a lesson that a guard or the code now h
   and restarted it from the clone (`pm2 delete` + `start` + `save`) — the live element stopped serving (2026-11-03, vectors). A clone's
   installer runs only with its own `PM2_HOME`. The clone's core server too: at its start (`instrumentation.ts`) it runs
   `scripts/memory-by-free.mjs`, which turns the deep memory on or off by its pm2 name — the live node's (found by reading, 631).
+- **A copy of `.ts`/`.tsx` files inside the project is code to the core's build.** A backup of a node update put in
+  `logs/update-…/` (gitignored, but not outside `tsconfig`) failed `next build` with «Cannot find module» from the copy (2026-11-03): a
+  backup is an archive (`tar`) or lives outside the project.
 - **Search by meaning always returns the nearest neighbour.** «Nothing found» needs a similarity threshold or a filter, never a nonsense query.
 - **A probe of an element on a spare port subscribes to CONFIG and Design with its own port** and steals the live element's signals: run it
   with `CONFIG_SERVICE_URL` and `DESIGN_SERVICE_URL` empty.

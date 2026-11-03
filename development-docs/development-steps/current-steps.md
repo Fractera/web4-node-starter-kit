@@ -23,8 +23,18 @@ native v0.1.33, 12 elements rolled out, pins `5e9d4b1` (`completed-steps/622.md`
 `GET /api/skills/suggested`, the skill `adopt-suggested-skill`, the instruction resealed `ed81462013fc` (`completed-steps/628-main.md`);
 the live hand-off waits for the owner's next core update.
 
-**RUNNING (2026-11-03 ~15:40 UTC): the update of the owner's node `~/web4-node-starter-kit`, by the owner's word «sync success, next
-steps will for you».** Found before it: the node is `main` = the fork's `4daa6cb2` + its own «Fresh project» commit `656ba518`, 33
+**DONE (2026-11-03 ~16:45 UTC): the owner's node is updated.** The core runs the build of `aaf640f0` (the merge); every element on
+its pin and online — embeddings v0.1.2 (24696, turned on by `npm run power -- embeddings on`: the installer restarts only what ran
+before), vectors v1.2.0, graph v1.2.0, memory v2.2.9, data v2.2.0; stripe off by its passport; `npm run skills-base` →
+`===SKILLS_BASE_LOADED=== inserted 8`. Seen live (headless Chrome on localhost, `t632/live-*.png`): «Модель векторов» in «Память» after
+«Векторы», «Платежи Stripe» between «Блоки» and «Дизайн». Not done: **root stays at v3.0.13** — `git checkout` of v3.0.14 aborted on
+its own uncommitted changes (its agent's or the person's work — not touched; `serve:status` prints the pin v3.0.14, which is not what
+runs); the banner — `behindBy 1` (the docs commit `35c3f2d`); **the temporary internet address is dead since 2026-11-02 19:05**
+(`serve:status`: the name does not resolve) — a new one is `npm run serve:publish`, the owner's call (a given link changes).
+Mistakes on the way: the first `services:install` lost github.com's DNS for a minute (embeddings, graph, memory, root failed) — run
+again; the first `serve:rebuild` failed on the backup's `.tsx` copies inside `logs/` (the quiet build gave the old build back) — the
+copies packed into `ita.tar`, the lesson in `ANTI-PATTERNS.md`, the second rebuild RC 0.
+**History of the update (it was RUNNING from ~15:40 UTC), by the owner's word «sync success, next steps will for you».** Found before it: the node is `main` = the fork's `4daa6cb2` + its own «Fresh project» commit `656ba518`, 33
 commits behind the synced fork, with 40 uncommitted files — 33 equal to the fork's files, 6 older copies of fork files, and the node's
 own state only in the registry (stripe `off.byDefault`); no dependency change (`package.json` adds a script only). The order:
 backup `logs/update-2026-11-03/` (the diff, the registry, the status) → `git stash` → `git merge origin/main` keeping the node's own
