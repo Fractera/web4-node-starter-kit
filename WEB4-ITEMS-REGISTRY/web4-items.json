@@ -90,6 +90,19 @@
       "address": "vectors"
     },
     {
+      "id": "embeddings",
+      "repo": "https://github.com/Fractera/fractera-embeddings-starter.git",
+      "version": "v0.1.1",
+      "port": 24696,
+      "provides": [
+        "embeddings"
+      ],
+      "required": true,
+      "note": "Векторы узла (626): тексты превращаются в 384 числа локальной многоязычной моделью paraphrase-multilingual-MiniLM-L12-v2 на этом компьютере — без ключа и без интернета; файлы модели — из релиза элемента, сверены по sha256. Резидентный процесс: ~0.8 ГБ после загрузки, до ~1.0 ГБ на пачке из 100 текстов.",
+      "kind": "core",
+      "address": "embeddings"
+    },
+    {
       "id": "config",
       "repo": "https://github.com/Fractera/fractera-config-starter.git",
       "version": "v1.2.18",

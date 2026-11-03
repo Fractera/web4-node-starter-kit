@@ -9,8 +9,8 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 (`new-steps/626/`), and 627, the skills catalog graph shipped ready with every node (`new-steps/627/`). Planned and approved in the
 conversation on 2026-11-02. **626-1 closed 2026-11-03** (`completed-steps/626-1.md`, measured while the 627-5 marker ran): the element
 runs the model in its own Node process — `@huggingface/transformers` 3.8.1 + `onnxruntime-node` 1.21.0, fastembed's file
-`model_optimized.onnx` (235 MB, sha256 `634d0f66…6e659a99`), 128 tokens, mean pooling, normalized; ~0.6 GB after load. Next in 626: 626-2
-after 627-5 closes.
+`model_optimized.onnx` (235 MB, sha256 `634d0f66…6e659a99`), 128 tokens, mean pooling, normalized. **626-2 closed** — the element
+`embeddings` `v0.1.1` (~0.8 GB resident, ~1.0 GB at a 100-text batch). Next in 626: 626-3 after 627-5 closes.
 
 **Last change:** 2026-11-02 — plans 626 and 627 written; step 625 recorded as closed after the fact (`completed-steps/625.md`: root
 v3.0.14 `105b1d1`, core `e59204f`, `02d065b`, `7362225`). Before that: step 624 closed (`completed-steps/624.md`): real available memory on macOS (`lib/free-memory.cjs`), the refusal names what uses memory, quick links on the subscription page, the Telegram app requirement in README, the agent kit and the launch welcome, «close this chat» after the install. Before that: 2026-11-02 12:30 — the core rebuild failed at 12:10 on the type check of the template workshop clones in `data/workshop/` (their own `@/` alias); `data` excluded in `tsconfig.json` (core `8b704c77`), rebuilt detached — `===REBUILD_RC=0===`, `/api/health` builtAt 12:20:45Z, 25 of 25 processes online. Before that: 2026-11-02 — the repository with the stars is the original under the new name `Fractera/web4-node-starter-kit` (merge
@@ -39,11 +39,15 @@ the live hand-off waits for the owner's next core update.
   Hub pass 2,803 / fail 88, Socket pass 2,643 / fail 19, Snyk pass 2,219 / warn 714 / fail 32, Runlayer fail 82); the new mark run
   reads it, `audit --attach-only` covers the older cards. The owner switched the Claude account (`/login`) during the night — the
   marker's `claude -p` uses whichever account is logged in.
-- **626-2 in progress alongside** (the element in scratch, nothing pushed yet):
-  `/private/tmp/claude-501/-Users-romanbolshiyanov/faa581fd-3474-473a-bbba-99276029a73e/scratchpad/embeddings-element` (born from the
-  native template v0.1.34; doors `embed`, `embed-status` by `door:add`; `npm run model` from the release `model-minilm-l12-1` that
-  is not uploaded yet — the five files staged in `…/scratchpad/model-assets`); `test:embed` and `test:embed-status` pass, the build
-  passes.
+- **626-2 closed** (`completed-steps/626-2.md`): `Fractera/fractera-embeddings-starter` — birth `7189c09`, `f39c5fa` (`v0.1.0`),
+  `2bc604e` (**`v0.1.1`**), release `model-minilm-l12-1` (five pinned files; download measured 224 MB in 32 s); the core registry
+  entry `embeddings` `v0.1.1`, port 24696 — proven by the core's own installer in the working clone (the element installed there
+  stays: `WEB4-ITEMS/core/embeddings`, not running). The repo has NO `.github/workflows/three-os.yml`: the `gh` token (account
+  Fractera) lacks the `workflow` scope and GitHub refused the push (the owner's SSH key `aifa-agi` has only read there) — it comes
+  back after the owner's `gh auth refresh -h github.com -s workflow`. Working copy of the element:
+  `/private/tmp/claude-501/-Users-romanbolshiyanov/faa581fd-3474-473a-bbba-99276029a73e/scratchpad/embeddings-repo`.
+- **Next:** close 627-5 when the marker ends (the list in «To finish 627-5» above); then 626-3 (the vectors element counts through
+  `embeddings`).
 - **To finish 627-5, in order** (each command resumes): (1) `mark` again with `--concurrency 6` until `already marked` covers all
   ≈5,334 unique skills (a usage limit stops it — run again later); (2) `audit` if `audits.json` is missing or partial, then
   `audit --attach-only --data data/catalog-6000 --cards data/catalog-6000/cards.jsonl`; (3) `sections --data data/catalog-6000 --cards
