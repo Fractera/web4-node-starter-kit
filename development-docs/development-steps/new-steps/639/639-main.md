@@ -25,7 +25,7 @@ Retold: not a list but a rule that also holds for messages written later. Two ki
 Kept by design (unchanged): the scheduled notices of the core's notice door (⏰ 🟢 ⚙️, 636-8 — never deleted) and the A2A pairs «asks /
 answers» (408-5 — the record of a call, sent at its result).
 
-## 2. How it is built (core, uncommitted at the time of writing → see «Where it lives»)
+## 2. How it is built (core `0da184e`)
 
 - `kits/_agent-kit/core/server/telegram.cjs` (master; 14 copies by `npm run agent-kit:update`): `sendKept` and `sendVanishing` are the only
   two senders; `vanish` deletes a message after `TELEGRAM_VANISH_MS` (30 000). Classified: «on — write to it» vanishes, a start failure

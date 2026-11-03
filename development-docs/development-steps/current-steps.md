@@ -8,8 +8,9 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 **NOW (2026-11-03 ~22:00 UTC): 639 BUILT, the live proof waits** (`new-steps/639/639-main.md`, approved «да, делай 639»): a clean
 Telegram chat — the node's service messages disappear in 30 s, results, waiting questions and troubles stay; in a turn only the agent's
 last reply stays (the summary), replies with files always; a guard fails the build on any new Telegram send without the decision. Proven
-with stubs (31 of 31, the detached deleter, the guard's negative control), 42 core guards RC 0, 14 kit copies updated. Next: commit +
-push, the owner's «Sync fork» + `npm run node:update`, the live check (at most three phrases), then `completed-steps/639.md`.
+with stubs (31 of 31, the detached deleter, the guard's negative control), 42 core guards RC 0, 14 kit copies updated — core
+`0da184e` pushed. Next: the owner's «Sync fork» + `npm run node:update`, the live check (at most three phrases), then
+`completed-steps/639.md`.
 **Also open, uncommitted in the template workshops (`data/workshop/fractera-{custom,native}-item-starter`, on v0.3.153 / v0.1.36):**
 636-10, the owner's scenario 2 (21:22, verbatim below): `lib/cron/notice.ts` also sends a `node-notice` through the element's OWN bot
 (`sendToOwner`, detail «· own bot too»), the calendar skill says «Your calendar is your own». Not released — next: release custom
