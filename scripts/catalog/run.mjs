@@ -45,9 +45,12 @@ if (cmd === 'selftest') {
   console.log(`===CATALOG_SITES=== ${r.ok} of ${r.rows} skills of sites copied from skills.sh (text files only) · ${join(DATA, 'fetched-sites.json')}`)
 } else if (cmd === 'audit') {
   const { attachAudits, pullAudits } = await import('./census.mjs')
-  const r = await pullAudits({ dataDir: DATA })
-  console.log(`===CATALOG_AUDITED=== ${r.audited} of ${r.skills} skills have a partners' audit · ${join(DATA, 'audits.json')}`)
-  if (rest.includes('--attach')) {
+  // --attach-only: write the audits already pulled into the cards (a long run pulls them once, while it marks).
+  if (!rest.includes('--attach-only')) {
+    const r = await pullAudits({ dataDir: DATA })
+    console.log(`===CATALOG_AUDITED=== ${r.audited} of ${r.skills} skills have a partners' audit · ${join(DATA, 'audits.json')}`)
+  }
+  if (rest.includes('--attach') || rest.includes('--attach-only')) {
     const a = attachAudits({ dataDir: DATA, cardsFile: CARDS })
     console.log(`  written into ${a.cards} cards, ${a.withAudit} with an audit`)
   }
@@ -60,6 +63,11 @@ if (cmd === 'selftest') {
   if (r.stoppedByLimit) console.log(`===CATALOG_MARK_STOPPED=== the subscription's usage limit — run mark again later; ${tail}`)
   else console.log(`${r.failed.length ? '===CATALOG_MARK_PARTIAL===' : '===CATALOG_MARKED==='} ${control ? 'control · ' : ''}${tail}`)
   process.exit(r.failed.length ? 1 : 0)
+} else if (cmd === 'sections') {
+  const { buildSections } = await import('./sections.mjs')
+  const r = buildSections({ cardsFile: CARDS, dataDir: DATA })
+  for (const s of r.sections) console.log(`  ${s.name} — ${s.skills}: ${s.subsections.map((x) => `${x.name} ${x.skills}`).join(', ')}`)
+  console.log(`===CATALOG_SECTIONS=== ${r.sections.length} sections, two levels · ${r.model} · $${r.costUsd ?? '?'} at the API price · ${join(DATA, 'sections.json')}`)
 } else if (cmd === 'report') {
   const { report } = await import('./report.mjs')
   console.log(report(DATA, CARDS))
