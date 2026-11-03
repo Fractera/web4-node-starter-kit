@@ -168,7 +168,8 @@ async function saveFound(base, o) {
 // 636: календарь памяти в ядре — «Память → Крон события» (узел, 636-4); порт ядра — его `logs/runtime.json`.
 function memoryCalendarLink() {
   const e = (readJson(join(ROOT, 'WEB4-ITEMS-REGISTRY', 'web4-items.json'), { services: [] }).services ?? []).find((s) => s.id === MEMORY)
-  return `${CORE}/${LANG === 'ru' ? 'ru' : 'en'}/architect/${e?.address ?? MEMORY}/cron`
+  // Адрес страницы элемента у ядра — без слова architect (`/ru/architect/<x>` уводит на `/ru/<x>`, замерено 2026-11-03).
+  return `${CORE}/${LANG === 'ru' ? 'ru' : 'en'}/${e?.address ?? MEMORY}/cron`
 }
 
 if (cmd === 'remember') {
@@ -190,9 +191,13 @@ if (cmd === 'remember') {
   // 636: напоминание ждёт в календаре памяти — выключенная память его пропустит, поэтому после записи она остаётся включённой.
   const kept = remind && b.reminder?.ok
   const down = kept ? (up.wasOff ? 'turned on for this command and LEFT ON — a reminder waits in its calendar' : 'on — a reminder waits in its calendar') : memoryDown(up)
-  if (!b.ok) fail('REMEMBER', `${b.reason ?? b.refusal ?? b.error ?? b.what_happened ?? `HTTP ${r.status}`}${b.text ? ` — «${String(b.text).slice(0, 300)}»` : ''} · memory element: ${down}`)
-  if (remind && !kept) fail('REMINDER', `the phrase is kept, the reminder is not: ${b.reminder?.why ?? b.reminder?.error ?? 'the memory element does not know «remind» yet (memory v2.2.12)'} — set it in your own calendar: npm run reminder -- add "${at}" "<the words>"`)
-  console.log(`===REMEMBER_OK=== the deep memory answered in ${seconds(took)}${files.length ? `, with ${files.length} thing(s)` : ''}`)
+  // 636: память сохранила фразу целиком, но не смогла её разобрать (например, `think-no-money`) — напоминание стоит, отказ разбора
+  // называется ниже словами самой памяти.
+  if (!b.ok && !kept) fail('REMEMBER', `${b.reason ?? b.refusal ?? b.error ?? b.what_happened ?? `HTTP ${r.status}`}${b.text ? ` — «${String(b.text).slice(0, 300)}»` : ''} · memory element: ${down}`)
+  if (remind && !kept) fail('REMINDER', `the phrase is kept, the reminder is not: ${b.reminder?.why ?? b.reminder?.error ?? 'the memory element does not know «remind» yet (memory v2.2.13)'} — set it in your own calendar: npm run reminder -- add "${at}" "<the words>"`)
+  console.log(b.ok
+    ? `===REMEMBER_OK=== the deep memory answered in ${seconds(took)}${files.length ? `, with ${files.length} thing(s)` : ''}`
+    : `===REMEMBER_PARTIAL=== the deep memory kept the words, not all of the rest (${b.refusal ?? b.error ?? 'see below'}) — tell the person both, in ${seconds(took)}`)
   console.log(String(b.text ?? '').trim())
   if (b.answer_id) console.log(`(answer ${b.answer_id})`)
   if (kept) {
