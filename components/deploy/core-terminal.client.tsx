@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { LiveLog } from "@/app/[lang]/(architectLayer)/_components/live-log.client"
 import { Button } from "@/components/ui/button"
+import { FailureNote, type FailureCause, type FailureWords } from "./failure-note.client"
 
 // ТЕРМИНАЛ ЯДРА НА ДОСКЕ РАЗВЁРТЫВАНИЙ (узел, шаги 642-2, 642-3). Владелец 2026-11-04: «от каждого элементом и в том числе ребро в
 // случае запуска развёртывания вниз открывалось подобное решение».
@@ -28,6 +29,8 @@ export type CoreTerminalWords = {
   updateFailed: string
   reload: string
   stages: Record<string, string>
+  /** 642-4 */
+  failure: FailureWords
 }
 
 type Phase = "running" | "done" | "failed"
@@ -47,6 +50,8 @@ export function CoreTerminal({ words, mode, since }: { words: CoreTerminalWords;
   const [phase, setPhase] = useState<Phase>("running")
   const [source, setSource] = useState<"core" | "reader" | "none">("core")
   const [stage, setStage] = useState<string | null>(null)
+  const [cause, setCause] = useState<FailureCause>(null)
+  const [retried, setRetried] = useState(false)
   const down = useRef(false)
 
   useEffect(() => {
@@ -55,24 +60,32 @@ export function CoreTerminal({ words, mode, since }: { words: CoreTerminalWords;
     const finished = (at?: string) => !!at && Date.parse(at) >= since - 5000
     const tick = async () => {
       if (mode === "rebuild") {
-        const b = await json<{ core?: { deploy: { state: string; finishedAt?: string } | null; log: string[] } }>(`${BASE}/api/node/deploy?progress=1&core=1`)
+        const b = await json<{ core?: { deploy: { state: string; finishedAt?: string; cause?: FailureCause; retried?: boolean } | null; log: string[] } }>(`${BASE}/api/node/deploy?progress=1&core=1`)
         if (stop) return
         if (b?.core) {
           setSource("core")
           if (b.core.log?.length) setLines(b.core.log)
           const d = b.core.deploy
-          if (d && (d.state === "done" || d.state === "failed") && finished(d.finishedAt)) setPhase(d.state)
+          if (d && (d.state === "done" || d.state === "failed") && finished(d.finishedAt)) {
+            setCause(d.cause ?? null)
+            setRetried(!!d.retried)
+            setPhase(d.state)
+          }
           return
         }
       } else {
-        const b = await json<{ update: { state: string; stage?: string; finishedAt?: string } | null; log: string[] }>(`${BASE}/api/node/update?tail=1`)
+        const b = await json<{ update: { state: string; stage?: string; finishedAt?: string; cause?: FailureCause } | null; log: string[] }>(`${BASE}/api/node/update?tail=1`)
         if (stop) return
         if (b) {
           setSource("core")
           if (b.log?.length) setLines(b.log)
           if (b.update?.stage) setStage(b.update.stage)
           const u = b.update
-          if (u && (u.state === "done" || u.state === "failed" || u.state === "interrupted") && finished(u.finishedAt)) setPhase(u.state === "done" ? "done" : "failed")
+          if (u && (u.state === "done" || u.state === "failed" || u.state === "interrupted") && finished(u.finishedAt)) {
+            setCause(u.cause ?? null)
+            setRetried(!!b.log?.some((l) => l.startsWith("↻ Повторяю один раз")))
+            setPhase(u.state === "done" ? "done" : "failed")
+          }
           return
         }
       }
@@ -104,6 +117,8 @@ export function CoreTerminal({ words, mode, since }: { words: CoreTerminalWords;
     <div className="flex flex-col gap-2" data-core-terminal={phase} data-core-terminal-source={source}>
       <LiveLog title={title} lines={lines.length ? lines : ["…"]} done={phase !== "running"} failed={phase === "failed"} />
       {source === "reader" && phase === "running" && <p className="text-xs text-muted-foreground">{words.fromReader}</p>}
+      {/* Ядро ответило — значит, прежняя сборка работает: это проверено самим ответом. */}
+      {phase === "failed" && <FailureNote words={words.failure} cause={cause} previousUp={true} retried={retried} target={mode === "update" ? "update" : "core"} />}
       {phase !== "running" && down.current && (
         <Button variant="outline" size="sm" className="self-start" onClick={() => window.location.reload()} data-core-terminal-reload>{words.reload}</Button>
       )}

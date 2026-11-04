@@ -9,6 +9,7 @@ import { H2 } from "@/components/ui/typography"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import { LiveLog } from "@/app/[lang]/(architectLayer)/_components/live-log.client"
 import { CoreDeploy, type CoreDeployState, type CoreDeployWords } from "./core-deploy.client"
+import { FailureNote, type FailureCause, type FailureWords } from "./failure-note.client"
 
 // ДАШБОРД РАЗВЁРТЫВАНИЙ (280-11b).
 //
@@ -59,6 +60,8 @@ export type DeployBoardWords = {
   deployedOk: string
   deployedFailed: string
   hideLog: string
+  /** 642-4: итог упавшего развёртывания */
+  failure: FailureWords
 }
 
 type Element = {
@@ -76,7 +79,7 @@ type Deployment = {
   running: boolean
   current: string | null
   queue: string[]
-  results: { id: string; ok: boolean; seconds: number; note: string }[]
+  results: { id: string; ok: boolean; seconds: number; note: string; cause?: FailureCause; previousUp?: boolean | null; retried?: string }[]
   finishedAt: string | null
 }
 type State = { core: { commit: string | null; builtAt: string | null; deploy?: CoreDeployState; log?: string[] }; elements: Element[]; deployment: Deployment | null }
@@ -282,6 +285,9 @@ export function DeployBoard({ words, lang, dialogUi }: { words: DeployBoardWords
                   done={!!result && !now}
                   failed={!!result && !now && !result.ok}
                 />
+                {result && !now && !result.ok && (
+                  <FailureNote words={words.failure} cause={result.cause ?? null} previousUp={result.previousUp ?? null} retried={!!result.retried} target={e.id} />
+                )}
                 {result && !now && (
                   <Button variant="ghost" size="sm" className="self-start" onClick={() => setHidden((was) => new Set([...was, e.id]))}>{words.hideLog}</Button>
                 )}

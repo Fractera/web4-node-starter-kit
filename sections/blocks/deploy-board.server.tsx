@@ -7,7 +7,7 @@ import { originNoticeWords } from '@/components/node-state/origin-notice.i18n'
 // ДАШБОРД РАЗВЁРТЫВАНИЙ (280-11b): элементы узла, что ждёт развёртывания, кнопка у каждого и «всё».
 // Слова берутся здесь, на сервере, и уходят островку пропсами.
 // The core terminal's words (`terminal`) are added below, with the update's stages.
-const WORDS: Record<string, Omit<DeployBoardWords, 'coreDeploy'> & { coreDeploy: Omit<CoreDeployWords, 'terminal'> }> = {
+const WORDS: Record<string, Omit<DeployBoardWords, 'coreDeploy' | 'failure'> & { coreDeploy: Omit<CoreDeployWords, 'terminal'> }> = {
   en: {
     intro: 'A deployment rebuilds a part of your project so that it shows what you have saved — design, settings, a new version. Saving alone does not change what visitors see.',
     what: 'Deploy once after a series of changes, not after each one: every element is rebuilt in a neighbour folder while the old build keeps serving, then switched in a few seconds. One element takes about two minutes; elements are deployed one after another.',
@@ -122,6 +122,46 @@ const WORDS: Record<string, Omit<DeployBoardWords, 'coreDeploy'> & { coreDeploy:
   },
 }
 
+// 642-4: итог упавшего развёртывания — причина простыми словами, прежняя версия, повтор, разбор с главным агентом.
+const FAILURE = {
+  en: {
+    causes: {
+      memory: 'Not enough memory for the build.',
+      network: 'The network broke off during the build (npm or a download).',
+      types: 'A type error in the code — the build stopped at the check.',
+      guard: 'A build guard refused the build.',
+      seo: 'The language signals of the built pages contradict each other — the site was not published.',
+      unknown: 'The build failed; its cause is not one of the known ones — see the last lines.',
+    },
+    where: 'Where: {detail}',
+    previousUp: 'The previous version is back and working (it answers).',
+    previousDown: 'The previous version does NOT answer — ask the main agent at once.',
+    retried: 'It was a passing cause, so the build was tried once more — and failed again. No more automatic tries.',
+    debug: 'Work it out with the main agent',
+    debugSent: 'Passed to the main agent: it will find the cause, give the element\'s agent the fix if it is in its code, and write to you in Telegram.',
+    debugPending: 'The main agent is asleep — it was asked in Telegram to turn on; it will take the task then.',
+    debugRefused: 'The main agent did not take it (not enough memory or not running) — write to it in Telegram.',
+  },
+  ru: {
+    causes: {
+      memory: 'Не хватило памяти на сборку.',
+      network: 'Во время сборки оборвалась сеть (npm или загрузка).',
+      types: 'Ошибка типов в коде — сборка остановилась на проверке.',
+      guard: 'Сторож сборки не пропустил её.',
+      seo: 'Языковые сигналы собранных страниц противоречат друг другу — сайт не выложен.',
+      unknown: 'Сборка не удалась, и причина не из известных — смотрите последние строки.',
+    },
+    where: 'Где: {detail}',
+    previousUp: 'Прежняя версия возвращена и работает (отвечает).',
+    previousDown: 'Прежняя версия НЕ отвечает — сразу позовите главного агента.',
+    retried: 'Причина была проходящей, поэтому сборка была повторена один раз — и снова не удалась. Больше автоматических попыток нет.',
+    debug: 'Разобрать с главным агентом',
+    debugSent: 'Передано главному агенту: он найдёт причину, если она в коде элемента — поручит починку агенту элемента, и напишет вам в Telegram.',
+    debugPending: 'Главный агент спит — его попросили включиться в Telegram; задачу он возьмёт тогда.',
+    debugRefused: 'Главный агент не взял задачу (мало памяти или он не запущен) — напишите ему в Telegram.',
+  },
+}
+
 // 642-2: слова терминала ядра; этапы обновления — те же, что у полосы обновления.
 const TERMINAL = {
   en: {
@@ -150,6 +190,7 @@ const TERMINAL = {
 
 export const deployBoard: SectionRenderer<'deployBoard'> = (b, { key: k }) => {
   const words = WORDS[b.lang] ?? WORDS.en
-  const terminal = { ...(TERMINAL[b.lang as 'en' | 'ru'] ?? TERMINAL.en), stages: originNoticeWords(b.lang).stages }
-  return <DeployBoard key={k} words={{ ...words, coreDeploy: { ...words.coreDeploy, terminal } }} lang={b.lang} dialogUi={appDialogUi(b.lang)} />
+  const failure = FAILURE[b.lang as 'en' | 'ru'] ?? FAILURE.en
+  const terminal = { ...(TERMINAL[b.lang as 'en' | 'ru'] ?? TERMINAL.en), stages: originNoticeWords(b.lang).stages, failure }
+  return <DeployBoard key={k} words={{ ...words, failure, coreDeploy: { ...words.coreDeploy, terminal } }} lang={b.lang} dialogUi={appDialogUi(b.lang)} />
 }

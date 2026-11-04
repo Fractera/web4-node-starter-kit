@@ -21,6 +21,9 @@ import deployLock from '../lib/deploy/deploy-lock.cjs'
 const { closeLid, openLid, backupNext, restoreNext, dropBackup, itemsAside, itemsBack, redrawCore } = createRequire(import.meta.url)('../lib/deploy/quiet-build.cjs')
 // 642-2: чтец сборки — журнал сборки ядра этому компьютеру, пока крышка закрыта (`lib/deploy/build-reader.cjs`).
 const { startReader, stopReader } = createRequire(import.meta.url)('../lib/deploy/build-reader.cjs')
+// 642-4: причина отказа; проходящая (память, сеть) — один повтор `next build`, названный до него. Причина читается из журнала, куда
+// пишет запустивший (кнопка, обновление узла); из терминала журнала нет — повтора нет.
+const { causeOf } = createRequire(import.meta.url)('../lib/deploy/build-failure.cjs')
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const root = path.join(here, '..')
@@ -630,16 +633,31 @@ async function rebuild() {
   // ядра (`itemsAside`): сборка ядра не должна зависеть от числа элементов. Возврат — всегда, и после отказа.
   const npm = process.platform === "win32" ? "npm.cmd" : "npm"
   let build = spawnSync(npm, ["run", "prebuild"], { cwd: root, stdio: "inherit", shell: isWindows })
-  if (build.status === 0) {
+  const nextBuild = () => {
     let aside = false
     try {
       aside = itemsAside(root)
-      build = spawnSync(isWindows ? "npx.cmd" : "npx", ["next", "build"], { cwd: root, stdio: "inherit", shell: isWindows })
+      return spawnSync(isWindows ? "npx.cmd" : "npx", ["next", "build"], { cwd: root, stdio: "inherit", shell: isWindows })
     } catch (e) {
       console.error(`Элементы не вынесены из папки ядра: ${e instanceof Error ? e.message : e}`)
-      build = { status: 1 }
+      return { status: 1 }
     } finally {
       if (aside) itemsBack(root)
+    }
+  }
+  if (build.status === 0) {
+    build = nextBuild()
+    const logFile = process.env.FRACTERA_BUILD_LOG
+    if (build.status !== 0 && logFile) {
+      let tail = []
+      try { tail = readFileSync(logFile, "utf8").split(/\r?\n/).slice(-400) } catch { /* журнала нет — причины нет */ }
+      const cause = causeOf(tail)
+      if (cause?.passing) {
+        const pause = Number(process.env.FRACTERA_RETRY_PAUSE_MS) || 20_000
+        console.log(`\n↻ Повторяю один раз: ${cause.kind === "memory" ? "не хватило памяти" : "оборвалась сеть"} (${cause.detail}). Жду ${Math.round(pause / 1000)} с и собираю снова — попытка 2 из 2. Узел остаётся остановленным ещё на одну сборку.`)
+        spawnSync(process.execPath, ["-e", `setTimeout(()=>{}, ${pause})`])
+        build = nextBuild()
+      }
     }
   }
   // 🛑 Код выхода берётся у самой сборки. ✗ оплачено в 232-1: конвейер (| tail)

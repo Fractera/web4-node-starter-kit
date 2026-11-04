@@ -9,7 +9,8 @@
 // 🛑 Окружение очищается: родитель — сервер Next ядра, и метка `__NEXT_PROCESSED_ENV` заставила бы сборку не читать свой `.env.local`
 // (ANTI-PATTERNS, «Процесс, запущенный из сервера Next…»).
 import { spawn } from "node:child_process"
-import { mkdirSync, openSync, writeFileSync } from "node:fs"
+import { mkdirSync, openSync, readFileSync, writeFileSync } from "node:fs"
+import { createRequire } from "node:module"
 import { dirname, join } from "node:path"
 
 const ROOT = process.cwd()
@@ -28,5 +29,12 @@ const out = openSync(LOG, "w")
 env.FRACTERA_BUILD_LOG = LOG
 env.FRACTERA_BUILD_WHAT = "core"
 const child = spawn(process.execPath, [join(ROOT, "scripts", "serve.mjs"), "rebuild"], { cwd: ROOT, env, stdio: ["ignore", out, out], windowsHide: true })
-child.on("exit", (code) => write({ state: code === 0 ? "done" : "failed", rc: code, finishedAt: new Date().toISOString() }))
+// 642-4: отказ — с причиной простыми словами (`lib/deploy/build-failure.cjs`) и отметкой повтора, если он был.
+const { causeOf } = createRequire(import.meta.url)("../lib/deploy/build-failure.cjs")
+child.on("exit", (code) => {
+  let lines = []
+  try { lines = readFileSync(LOG, "utf8").split(/\r?\n/) } catch { /* журнала нет */ }
+  const retried = lines.some((l) => l.startsWith("↻ Повторяю один раз"))
+  write({ state: code === 0 ? "done" : "failed", rc: code, finishedAt: new Date().toISOString(), ...(code === 0 ? {} : { cause: causeOf(lines) }), ...(retried ? { retried: true } : {}) })
+})
 child.on("error", (e) => write({ state: "failed", rc: null, error: String(e), finishedAt: new Date().toISOString() }))

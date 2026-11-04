@@ -138,16 +138,49 @@ export async function GET(req: NextRequest) {
   )
 }
 
+// 642-4: «Разобрать с главным агентом» — слово человека главному агенту об упавшем развёртывании (как его сообщение в Telegram).
+// Закон «только агенты говорят с агентами» (636): агента элемента эта дверь не будит — задачу ему даёт главный агент (`npm run task`).
+// Тот же вход, что у часов главного агента (`confirmed`: человек уже решил, нажав кнопку).
+type Wake = (service: string, opts: { text?: string; from?: string; about?: string; confirmed?: boolean }) => Promise<{ ok: boolean; reason?: string; already?: boolean; pending?: boolean }>
+async function debugWithMainAgent(target: string) {
+  const isCore = target === "core" || target === "update"
+  if (!isCore && !/^[a-z][a-z0-9-]{0,31}$/.test(target)) return NextResponse.json({ ok: false, reason: "bad-target" }, { status: 400 })
+  const wake = (globalThis as { __web4AgentWake?: Wake }).__web4AgentWake
+  if (typeof wake !== "function") return NextResponse.json({ ok: false, reason: "agent kits are not mounted" }, { status: 503 })
+  const lines = target === "core" ? liveLog.tail(join(ROOT, "logs", "core-deploy.log"), 60)
+    : target === "update" ? liveLog.tail(join(ROOT, "logs", "node-update.log"), 60)
+    : liveLog.tail(liveLog.logPath(ROOT, "deploy", target), 60)
+  const result = isCore ? null : (deployLock.readState()?.results ?? []).filter((r: { id: string }) => r.id === target).pop() as { cause?: { kind: string; detail?: string }; previousUp?: boolean | null } | undefined
+  const cause = target === "core" ? (readCoreDeploy() as { cause?: { kind: string; detail?: string } } | null)?.cause : result?.cause
+  const what = target === "core" ? "the core's build" : target === "update" ? "the node update" : `the deployment of element «${target}»`
+  const text = [
+    `The person pressed «Разобрать с главным агентом» on the deploy board: ${what} failed.`,
+    cause ? `Cause found by the node: ${cause.kind}${cause.detail ? ` — ${cause.detail}` : ""}.` : "No known cause was found.",
+    result && result.previousUp !== undefined ? `The element's previous version ${result.previousUp ? "answers" : "does NOT answer"}.` : "",
+    "The last lines of its log:",
+    "```",
+    ...lines,
+    "```",
+    isCore
+      ? "Find the cause and tell the person in plain words. The core's own code is fixed upstream by Fractera, not here; the node stays on its previous build."
+      : `Find the cause. A fault in the element's code is its own agent's work: give it the task with npm run task -- ${target} "<what to fix, with these lines>" — never edit its code yourself. When it reports the fix, tell the person to press «Развернуть» again. Tell the person in plain words what you found.`,
+  ].filter(Boolean).join("\n")
+  const r = await wake("build", { text, from: "deploy board", about: `${what} failed`, confirmed: true })
+  return NextResponse.json({ ok: r.ok, ...(r.pending ? { pending: true } : {}), ...(r.ok ? {} : { reason: r.reason }) }, { status: r.ok ? 200 : 503 })
+}
+
 export async function POST(req: NextRequest) {
   const denied = await requireRoles(req, ROLES)
   if (denied) return denied
-  if (deployLock.isRunning()) return NextResponse.json({ ok: false, reason: "already-running" }, { status: 409 })
-  let body: { ids?: unknown; rollback?: unknown; core?: unknown } = {}
+  let body: { ids?: unknown; rollback?: unknown; core?: unknown; debug?: unknown } = {}
   try {
-    body = (await req.json()) as { ids?: unknown; rollback?: unknown; core?: unknown }
+    body = (await req.json()) as { ids?: unknown; rollback?: unknown; core?: unknown; debug?: unknown }
   } catch {
     return NextResponse.json({ ok: false, reason: "bad-json" }, { status: 400 })
   }
+  // Разбор — и во время другого развёртывания; всё остальное — одно развёртывание за раз.
+  if (typeof body.debug === "string") return debugWithMainAgent(body.debug)
+  if (deployLock.isRunning()) return NextResponse.json({ ok: false, reason: "already-running" }, { status: 409 })
   // 555: «Развернуть» ядра — `serve:rebuild` при закрытой крышке, вне дерева процессов ядра. Сборка остановит и этот сервер: ответ
   // уходит сразу, итог страница прочтёт, когда ядро поднимется (`core.deploy`). Подсказку об открытых терминалах показывает окно кнопки.
   if (body.core === true) {

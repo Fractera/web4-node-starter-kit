@@ -26,6 +26,8 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const require = createRequire(import.meta.url)
+// 642-4: причина отказа простыми словами.
+const { causeOf } = require('../lib/deploy/build-failure.cjs')
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const IS_WIN = process.platform === 'win32'
 const STATE = join(ROOT, 'data', 'node', 'node-update.json')
@@ -51,6 +53,10 @@ const write = (s) => {
 }
 const stage = (name, words) => { current = name; write({ state: 'running' }); say(`\n── ${words}`) }
 function finish(state, extra = {}) {
+  // 642-4: отказ — с причиной простыми словами по своему журналу (`FRACTERA_BUILD_LOG` — его ставит запуск по кнопке).
+  if (state !== 'done' && process.env.FRACTERA_BUILD_LOG) {
+    try { extra = { ...extra, cause: causeOf(readFileSync(process.env.FRACTERA_BUILD_LOG, 'utf8').split(/\r?\n/)) } } catch { /* журнала нет */ }
+  }
   write({ state, ...extra, finishedAt: new Date().toISOString() })
   say(`===NODE_UPDATE_${state.toUpperCase()}=== ${extra.summary ?? extra.reason ?? ''}`)
   process.exit(state === 'done' ? 0 : 1)

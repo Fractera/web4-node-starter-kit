@@ -20,6 +20,9 @@ import { createRequire } from 'node:module'
 const { startStaticCopy } = createRequire(import.meta.url)('../lib/web4-items/static-copy-start.cjs')
 const { pendingPreview } = createRequire(import.meta.url)('../lib/deploy/preview-lock.cjs')
 const liveLog = createRequire(import.meta.url)('../lib/deploy/live-log.cjs')
+// 642-4: причина отказа простыми словами; проходящая (память, сеть) — один повтор, названный до него.
+const { causeOf } = createRequire(import.meta.url)('../lib/deploy/build-failure.cjs')
+const RETRY_PAUSE_MS = Number(process.env.FRACTERA_RETRY_PAUSE_MS) || 20_000
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const STATE = join(ROOT, 'logs', 'deploy-state.json')
@@ -68,18 +71,39 @@ for (const id of ids) {
   // 353-3: ход — в `logs/deploy-<id>.log` по мере работы (установщик пишет туда же сборку); страница читает его хвост.
   const live = liveLog.logPath(ROOT, 'deploy', id)
   liveLog.startLog(live, `▶ ${new Date().toISOString()} — развёртывание ${id} начато`)
-  const r = liveLog.runLive(process.execPath, [join(ROOT, 'scripts', 'services-install.mjs'), '--only', id, '--rebuild'], {
+  const install = () => liveLog.runLive(process.execPath, [join(ROOT, 'scripts', 'services-install.mjs'), '--only', id, '--rebuild'], {
     cwd: ROOT, windowsHide: true, env: { ...process.env, FRACTERA_LIVE_LOG: live },
   }, live)
-  const out = r.out
+  let r = install()
+  let out = r.out
+  let ok = r.rc === 0 && !/ОШИБКА/.test(out)
+  let cause = causeOf(out, { failed: !ok })
+  let retried = null
+  if (!ok && cause?.passing) {
+    // Повтор — один и названный: человек видит, почему, до того как он начнётся.
+    retried = cause
+    appendFileSync(live, `↻ Повторяю один раз: ${cause.kind === 'memory' ? 'не хватило памяти' : 'оборвалась сеть'} (${cause.detail}). Жду ${Math.round(RETRY_PAUSE_MS / 1000)} с и собираю снова — попытка 2 из 2.\n`)
+    spawnSync(process.execPath, ['-e', `setTimeout(()=>{}, ${RETRY_PAUSE_MS})`])
+    r = install()
+    out = `${out}\n${r.out}`
+    ok = r.rc === 0 && !/ОШИБКА/.test(r.out)
+    cause = causeOf(r.out, { failed: !ok })
+  }
   appendFileSync(LOG, `\n=== ${new Date().toISOString()} ${id}\n${out}`)
-  const ok = r.rc === 0 && !/ОШИБКА/.test(out)
-  appendFileSync(live, ok ? '■ готово\n' : '■ не удалось — работает прежняя версия\n')
+  // Отказ: работает ли прежняя версия — проверяется ответом процесса, а не предполагается.
+  let previousUp = null
+  if (!ok) {
+    const port = known.find((s) => s.id === id)?.port
+    previousUp = port ? await fetch(`http://127.0.0.1:${port}/`, { signal: AbortSignal.timeout(5000), redirect: 'manual' }).then((x) => x.status < 500).catch(() => false) : null
+  }
+  appendFileSync(live, ok ? '■ готово\n' : `■ не удалось — ${previousUp === false ? 'прежняя версия НЕ отвечает' : 'работает прежняя версия'}\n`)
   state.results.push({
     id,
     ok,
     seconds: Math.round((Date.now() - t0) / 1000),
     note: (out.match(/собран[^\n]*|ОШИБКА[^\n]*|прежняя сборка[^\n]*/g) || []).join(' · ').slice(0, 300),
+    ...(ok ? {} : { cause, previousUp }),
+    ...(retried ? { retried: retried.kind } : {}),
   })
   save()
   // 287: журнал развёртываний — откат берёт из него последнюю УСПЕШНУЮ версию элемента.

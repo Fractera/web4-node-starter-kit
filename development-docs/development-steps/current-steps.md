@@ -36,8 +36,15 @@ Sonnet bench, then him.
 **NOW-2 (2026-11-04 ~14:10 UTC) — the owner paused the skills tests for a side task: step 642, the deploy board live** (verbatim
 in `new-steps/642/642-main.md`): a terminal under each element and the core during deployment, and a failure that says what happens
 next. Found: `LiveLog` and the door's live log exist (353-3) but the board never asks for them; the core's page is down while the lid
-is closed (553), so a small build reader on a local port is needed. Plan 642-1…642-4 written, **waiting for the owner's yes**. Then
-back to 640 (Sync + update, phrase 3 on the Sonnet bench first).
+is closed (553), so a small build reader on a local port is needed. The owner ~14:15: «Да, делай (Рекомендую)». **Built, all four (core `5c3ca01` + the next commit):** 642-1 the element's
+terminal under its row; 642-2 the build reader `127.0.0.1:25680` while the lid is closed (`lib/deploy/build-reader.cjs`,
+`scripts/build-reader.mjs`); 642-3 the update's terminal through its stages; 642-4 the cause in plain words
+(`lib/deploy/build-failure.cjs`), one named retry for memory/network (elements and `next build`), the previous version checked by its
+answer, «Разобрать с главным агентом» → the main agent (`POST /api/node/deploy {debug}`, never the element's agent directly). Probes
+(scratchpad `p641/dom/probe-642-*.mjs`, `p642r/`, `p642d/`, `p642f/`): board 10/10, core+update 12/12, failure 6/6, the real reader
+7/7, the real deploy-elements 4/4, causes on real failures 8/8, 641 14/14. **Not proven yet — live:** the owner's Sync + update brings
+it to his node (that update still runs the old board), then one element deployed from the board and, on his yes, one core rebuild
+(~10 min) watched through the reader. Then back to 640 (phrase 3 on the Sonnet bench first).
 
 **Before (2026-11-04 ~04:30 UTC) — 629-2 CLOSED** (`completed-steps/629-2.md`, seal `e3a792e3f76c`; the owner: «да, запечатай» after
 the lines and their Russian reading). **629-4 CLOSED** (`completed-steps/629-4.md`, 09:31 UTC on Opus: the gray request → rule, price, lawful way; the
