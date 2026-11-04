@@ -164,8 +164,9 @@ side, under one domain, and gives each of them the technical part that search an
 4. **Make an empty folder for the project, open a terminal in it and run `claude`.** The node is installed into exactly this
    folder, so name it the way you want to see it.
 5. **Paste the link to your fork and write «launch this»** (in Russian: «запусти это»).
-6. **Wait a few minutes.** The agent installs the node, checks that it works on this computer and puts it on the internet at a
-   temporary Cloudflare address. It gives you one link: «Your journey into the world of WEB4 starts here».
+6. **Wait 10–25 minutes and watch the stages.** The agent tells you each of about twenty stages as it goes — the packages, the
+   build, every element of the node, the temporary Cloudflare address. At the end it gives you what matters now: your Claude Code
+   subscription, Telegram, the bot, the terminal, the temporary public link and your own domain — and says goodbye.
 7. **Close the installation chat.** The node runs by itself and the chat only takes memory. From then on your own main agent
    works with you — in the node's terminal or, mostly, in Telegram, by text or by voice.
 8. **Later, buy your own domain** and connect it on the node page «Domain and hosting → Domain activation».
@@ -179,10 +180,14 @@ See a live node: **[throughsongs.com](https://throughsongs.com)**.
 
 The person pasted a link to this repository (or to their fork of it) and asked you to run it. Do this, in order:
 
-🔒 **Keep the person informed — the install takes minutes, and a still cursor looks like a hang.** Before every long command
-(`npm install` ≈ 1–2 min, `npm run build` ≈ 4–5 min, the first `npm run serve:start` ≈ 5–15 min — it downloads and builds the
-node's elements; longer on an older computer) write ONE line: what starts now and roughly how long it takes. After it, ONE line:
-what came out (the `===…===` markers it printed). Run these commands in the foreground and do not hide their output in a file.
+🔒 **Keep the person informed — the install takes 10–25 minutes, and a still cursor looks like a hang.** `npm run launch` prints
+about twenty lines `===PROGRESS=== k/N <Russian> (<minutes>) · <English> (<minutes>)` — the local check, the packages, the fork,
+the build (checks, compile, pages), every element of the node one by one, the start, the temporary address, the pages. Relay EACH
+one to the person as it appears, in ONE short line of their language, with its k/N: «7/23 — сборка: готовлю страницы». Nothing
+else from the output unless it fails. Where your harness can follow a background command (Claude Code: run `npm run launch` in
+the background and watch its output with the Monitor tool for `===PROGRESS===|===LAUNCH_`), do that — the person sees every line
+the minute it is printed. Otherwise run it in the foreground; when a run ends or is cut off, relay the progress lines it printed and
+run it again.
 
 0. **Stop if you run in a cloud session — before cloning anything.** If the environment variable `CLAUDE_CODE_REMOTE` is
    `true` (Claude Code sets it in every cloud session — code.claude.com/docs/en/env-vars), or you otherwise run on a remote or
@@ -216,7 +221,7 @@ what came out (the `===…===` markers it printed). Run these commands in the fo
    as `NODE_REPO_URL`. If the fork is behind the original the check prints `===ORIGIN_OUTDATED===` — not an error: tell the
    person their copy is behind by N changes and that «Sync fork» on GitHub updates it, then continue.
 3. **Launch it: `npm run launch`** — one command, and nothing to ask the person. It goes through six stages and prints
-   `===LAUNCH_STEP=== n/6` before each: this computer and no other node (`check-local`), `npm install`, the fork check
+   `===LAUNCH_STEP=== n/6` before each (the `===PROGRESS===` lines above are finer): this computer and no other node (`check-local`), `npm install`, the fork check
    (`check-origin`), a fresh project without the starter's development history (`fresh-project`), `npm run build`, and
    `npm run serve:start`. The first launch takes 10–25 minutes; a stage already done is skipped, so if your command is cut off by
    a timeout, run `npm run launch` again — it continues where it stopped. It ends with `===LAUNCH_DONE===`, or with
@@ -231,19 +236,13 @@ what came out (the `===…===` markers it printed). Run these commands in the fo
    domain, GitHub, creating or deleting elements, deploys, uploads, paid AI calls) is refused by the node itself
    (`proxy.ts`, `reason: "temporary-address"`); those screens offer «Open on this computer», which opens the same page at
    `http://localhost:24680` on this machine, where everything works.
-5. **Give the person ONE link** — the line after `===PUBLIC_URL===`, with the words the start prints: «Your journey into the
-   world of WEB4 starts here: <link>» (in Russian: «Здесь начинается ваше путешествие в мире WEB4: <link>»). It opens the node's
-   control panel on the internet. The lines under `===ADDRESSES===` are a reference for this computer — do not hand them out
-   as the result. Say plainly in one sentence: the address is temporary and changes when the tunnel restarts; connect your
-   own domain before using sign-in.
-6. **Their own domain comes later, from the panel:** «Domain and hosting → Domain activation» (their domain added to a free
-   Cloudflare account, a Cloudflare key the page helps to create). Do not offer it during the install. With their own domain
-   the panel closes behind sign-in. A node's site lives on this computer, so it answers while the computer is on; an element
-   given its own domain (on the element's page) also keeps a copy of its public pages in the person's Cloudflare Workers.
-7. **Hand over.** From now on the person works with the node itself: its pages, and the agent of each element in its
-   terminal or in Telegram. Tell them this chat is no longer needed for the node to run, and recommend closing it: it takes the
-   computer's memory, and the agents of the elements need that memory to start. Telegram needs its app on the phone or computer
-   (telegram.org/apps) — say so if they have not installed it.
+5. **The closing words — then you are done.** At `===LAUNCH_DONE===` give the person the text between `===WELCOME===` and
+   `===WELCOME_END===` in their language, whole, adding nothing: no link of your own (not the `===PUBLIC_URL===` line, not the
+   `===ADDRESSES===` block, not a bare `http://localhost:24680`), no advice, no summary of the install. The text names what matters
+   now — the Claude Code subscription (required), Telegram on the phone and this computer, the bot, the terminal — then the
+   temporary public link, the own domain and that registration is restricted until the own domain, and ends with your farewell:
+   from then on the person works with the node's main agent in the terminal or in Telegram, which have every instruction this
+   project needs. You have none of them — do not offer to build anything.
 
 Do not start the server by hand (`node server.js`) and do not invent steps that are not here — if something fails, show the
 person the exact error and the command that produced it. To install again on the same computer (the first install went to a
