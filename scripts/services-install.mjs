@@ -1208,6 +1208,12 @@ if (!ONLY) {
     say(`\n  база навыков узла → граф: ${line}`)
   }
 }
+// 627-3: каталог навыков — готовым файлом из релиза ядра; модель сверяется с элементом embeddings, если он отвечает.
+if (!ONLY) {
+  const r = spawnSync(process.execPath, [join(ROOT, 'scripts', 'skills.mjs'), 'catalog-install'], { cwd: ROOT, encoding: 'utf8', windowsHide: true, timeout: 900_000 })
+  const line = String(r.stdout ?? '').split(/\r?\n/).find((l) => l.startsWith('===SKILLS_CATALOG')) ?? `код ${r.status}${r.error ? ` ${r.error.message}` : ''}`
+  say(`\n  каталог навыков узла: ${line}`)
+}
 say('\n🛑 После установки узлу нужна ПЕРЕСБОРКА: npm run serve:rebuild — значения')
 say('   NEXT_PUBLIC_* запекаются в сборку, и без неё правка не применится.')
 say('===SERVICES_INSTALL_OK===')

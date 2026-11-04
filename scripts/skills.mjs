@@ -17,7 +17,10 @@
 //   npm run skills -- adopt-hand <owner/repo@skill> --to <element> [--send] [--said "<words>"]
 //       the approved, still unchanged checked copy packed with its SOURCE.md («suggested by the person») for the element's own agent;
 //       --send gives it the task (npm run task); the agent takes it from GET /api/skills/suggested and commits it.
-// Nothing runs by itself: a person or an agent calls it (the node's installer calls base-load at the end of a full installation).
+//   npm run skills -- catalog-install — the skills catalog (node step 627-3): the release named in lib/agent-kit/skills/catalog/release.json
+//       downloaded, sha256 and model checked, into data/node/skills-catalog/; nothing is counted. The same vectors in place — no download.
+// Nothing runs by itself: a person or an agent calls it (the node's installer calls base-load and catalog-install at the end of a full
+// installation, the node's update calls both after the core's rebuild).
 import { spawnSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
@@ -191,7 +194,12 @@ if (cmd === 'add') {
   for (const c of done.changed) console.log(`  ${c}: changed since it was loaded — not inserted again (the graph keeps the old version; it cannot forget yet)`)
   for (const f of done.failed) console.log(`  ${f}`)
   process.exit(done.failed.length ? 1 : 0)
+} else if (cmd === 'catalog-install') {
+  const { installCatalog } = await import('../lib/agent-kit/skills/catalog-index.mjs')
+  const r = await installCatalog(ROOT)
+  if (!r.ok) { console.log(`===SKILLS_CATALOG_FAIL=== ${r.reason}; again later: npm run skills-catalog`); process.exit(1) }
+  console.log(`===SKILLS_CATALOG_OK=== ${r.already ? 'already in place' : 'taken'}: ${r.cards} cards, ${r.rows} pieces · data/node/skills-catalog`)
 } else {
-  console.log('===SKILLS_FAIL=== commands: add, find, market, adopt, adopt-hand, base-sync, base-check, base-load')
+  console.log('===SKILLS_FAIL=== commands: add, find, market, adopt, adopt-hand, base-sync, base-check, base-load, catalog-install')
   process.exit(2)
 }

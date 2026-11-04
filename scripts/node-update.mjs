@@ -265,5 +265,7 @@ if (graph?.port && !power.isOff(graph)) {
   }
 }
 if (!run(npm, ['run', 'skills-base'], 'npm run skills-base')) warnings.push('база навыков не загрузилась: npm run skills-base')
+// 627-3: каталог навыков — готовым файлом из релиза ядра (release.json); те же векторы на месте — ничего не скачивается.
+if (!run(npm, ['run', 'skills-catalog'], 'npm run skills-catalog')) warnings.push('каталог навыков не загрузился: npm run skills-catalog')
 
 finish('done', { summary: `${forkCommits.length} изменений форка, ядро ${newHead}${warnings.length ? `; ${warnings.join('; ')}` : ''}`, changes: forkCommits.length, head: newHead, warnings })

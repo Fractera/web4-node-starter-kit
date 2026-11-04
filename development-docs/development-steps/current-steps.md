@@ -14,8 +14,12 @@ steps were removed from `new-steps/` (626, 632, 633, 636, 639; 633's owner words
 **627-2 CLOSED (2026-11-04 ~00:55 UTC)** (`completed-steps/627-2.md`): the catalog is a file of vectors (3,240 cards, 17,145 pieces,
 threshold 0.60, 24 ms a search), released `skills-catalog-2026-11-04` (24.5 MB, sha256 `db13566e…`, `release.json`); the store
 `Fractera/fractera-skills-store` `0f46db1b8003` (2,397 skills). The owner allowed `gh release` in `~/.claude/settings.json`. The LightRAG
-space `skills-catalog` (246 MB) waits on his node for his word to remove it. **Next: 627-3** — the core downloads the release at install
-and update, checks sha256 and model, unpacks into `data/node/skills-catalog/` (no graph door — the owner's «Файл векторов»).
+space `skills-catalog` removed by his word («да, удаляй и делай 627-3», 2026-11-04 ~01:00). **627-3 built:** `installCatalog`
+(`lib/agent-kit/skills/catalog-index.mjs`), `npm run skills-catalog`, called by `node-update.mjs` after `skills-base` and by
+`services-install.mjs`; proven on a temporary node 9 of 9 (fresh, again — no download, wrong sha256 / changed file / another model —
+refused, the old copy intact, the real GitHub release in 4.4 s, answers from the local file). The store's working tree moved out of
+the core clone (`…/eaead2f1-…/scratchpad/skills-store`). Live: at the owner's next Sync + update — the update's line
+`===SKILLS_CATALOG_OK=== taken`.
 **Open:** 627 (627-3, 627-4, 627-6, 627-7), 629 (the law's text waits for the owner), 637 (the owner's proposal — three
 questions wait for him, no plan file yet), 638 (planned — the inventory 638-1 first), 545 (545-4, 545-5), 593 (not started), 603
 (603-5); found on the way — `scripts/check-boundary-hook.mjs` 2 of 18 (the same before 639, not in `prebuild`).
