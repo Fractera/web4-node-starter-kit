@@ -24,8 +24,11 @@ gave fewer than seven after two rephrasings and the word search, or at the perso
 **~13:09–13:13 the owner's update from the deploy board:** `===NODE_UPDATE_DONE=== 5 изменений форка, ядро 997a824b` (640-5 and the
 seal in it; skills base «already 8», catalog «already in place: 3240 cards»; `check:instruction` OK on his node). He found the core
 button still live after the start → **641-4** fixed (in `completed-steps/641.md`, reopened and closed again). **Waiting for the owner:**
-one live question on Opus (640-5 plane 2): «хочу писать посты в стиле блогера, который мне нравится — какой навык?». Then phrase 3,
-the catalog skill into root, the verdict.
+one live question on Opus (640-5 plane 2). **~13:22 it FAILED** (session `4a516939`): the agent passed «brand voice» and three
+rephrasings, the catalog gave seven noisy cards, the agent said «готового навыка … среди проверенных нет»; the owner: «fatal error».
+→ **640-5b** (in `640-5.md`): rephrasings always in the mean, themes out of the catalog; the live call → brand-voice the first catalog
+card. **Waiting for the owner:** Sync + update again, then the same live question once more. Then phrase 3, the catalog skill into root,
+the verdict.
 
 **Before (2026-11-04 ~04:30 UTC) — 629-2 CLOSED** (`completed-steps/629-2.md`, seal `e3a792e3f76c`; the owner: «да, запечатай» after
 the lines and their Russian reading). **629-4 CLOSED** (`completed-steps/629-4.md`, 09:31 UTC on Opus: the gray request → rule, price, lawful way; the

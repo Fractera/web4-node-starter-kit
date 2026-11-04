@@ -80,7 +80,7 @@ if (cmd === 'add') {
     process.exit(r.ok ? 0 : 1)
   }
   const { catalogFileText, findInCatalogFile } = await import('../lib/agent-kit/skills/catalog-index.mjs')
-  const r = await findInCatalogFile(ROOT, { query: positional.join(' '), terms: [flag('themes'), flag('terms')].filter(Boolean).join(','), rephrasings: (flag('again') ?? '').split('|'), n: Number(flag('limit')) || undefined })
+  const r = await findInCatalogFile(ROOT, { query: positional.join(' '), terms: flag('terms') ?? '', rephrasings: (flag('again') ?? '').split('|'), n: Number(flag('limit')) || undefined })
   console.log(catalogFileText(r))
   console.log(r.ok ? `===SKILLS_MARKET=== ${r.found.length} ${r.found.map((s) => s.id).join(' ')}` : `===SKILLS_FAIL=== ${r.error}`)
   process.exit(r.ok ? 0 : 1)
