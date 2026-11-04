@@ -33,6 +33,12 @@ card. The owner ~13:35: «Уже второй раз ты мне врёшь. С�
 the owner:** Sync + update (640-5c, 640-6 to his node). Then phrase 3, the catalog skill into root, the verdict — each first on the
 Sonnet bench, then him.
 
+**~14:52–14:56 UTC the owner's update from the deploy board:** `===NODE_UPDATE_DONE=== 8 изменений форка, ядро f71198b1` (642, 641-5 not yet:
+his fork was 1 behind). Live sample of 642-2 (`p642live/samples.txt`): the core silent 14:54:15–14:55:56, **the build reader answered
+the whole time** (0 lines — this run was started by the old runner, which passes no log), the core back 14:56:16, the reader gone
+(stopped before the lid opened, no `build-reader.json` left). **~14:55 the owner saved step 643** (the first meeting: name, style,
+language, the modes' advice) — `new-steps/643-…md`, not planned, his message cut off at «В любом случае».
+
 **~14:40 UTC the owner:** the banner «Узел обновлён» has no «Проверить снова» — he synced the fork twice (his fork = `3af4ac8`), the node
 kept its check of 13:10 → **641-5** fixed («Проверить снова» in that state too; summary in `completed-steps/641.md`). His words:
 «Ты сейчас начинаешь какую-то новую разработку вместо того чтобы посмотреть куда делось то что было раньше» — look at what was before
