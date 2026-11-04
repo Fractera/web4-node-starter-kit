@@ -17,7 +17,7 @@ domain question → no warning). Left in 629: 629-3 (the elements' line — show
 они устанавливаются архитектуры и потом работают мы ещё не проверяли то есть сейчас я хочу полностью закончить работу с навыкамии хочу
 чтобы ты мне подтвердила что литература полностью готова к запуску на одного пользователя». Found while reading: **a catalog skill has
 no install path** — `skills_find` proposes, but nothing fetches it from `Fractera/fractera-skills-store` (or GitHub by the same
-fingerprint) into an element; only 628's `adopt-hand` (a suggested skill) exists. → a plan for the owner (step 640).
+fingerprint) into an element; only 628's `adopt-hand` (a suggested skill) exists. → the plan `new-steps/640/` (4 substeps) waits for the owner's yes.
 
 **Before (2026-11-04 ~03:40 UTC) — the owner's «go to fininsh non stop» done as far as his word allows.** The owner's node: core
 `2c56165e` (the sealed instruction `8e98168ac810`, the skills catalog, memory v2.2.19, the soul with «Wit — the detective's spark», the
