@@ -33,6 +33,12 @@ card. The owner ~13:35: «Уже второй раз ты мне врёшь. С�
 the owner:** Sync + update (640-5c, 640-6 to his node). Then phrase 3, the catalog skill into root, the verdict — each first on the
 Sonnet bench, then him.
 
+**NOW-5 (2026-11-04 ~16:20–16:50 UTC) — 629-3 DONE, 629 CLOSED** (`completed-steps/629-3.md`, `629-main.md`): templates custom v0.3.155, native v0.1.38, 13 elements at their next patch, pinned; the owner's node takes them at his next Sync + update. Was: The law + «Never recommend an Anthropic API key» are in
+`lib/instructions/element/element-instruction.src.md` §7 (unlabeled — every template and element; the plan's «@T» was wrong: @T is
+templates only). Road (as 636): the scratch core clone's `data/workshop` (custom v0.3.154, native v0.1.37) and `WEB4-ITEMS` (13 clean
+clones at their pins) → `instruction:element templates` / `element` → template releases, each element's next patch tag pushed by plain
+git → pins in this core's registry → the owner's sync + update moves his elements. Before each push: the element's guards.
+
 **NOW-4 (2026-11-04 ~16:00 UTC) — the owner: «640 succes to close, 642 - to close, go to» 629-3, 638, 637, 627-6.** 640 CLOSED
 (`completed-steps/640-main.md` with the verdict, 640-4, 640-5), 642 CLOSED (`completed-steps/642.md`); their plans deleted in that
 commit. **~16:05 his answers (verbatim choices):** 629-3 — «Да, с запретом ключа (Рекомендую)» (the law line + «Never recommend an Anthropic API
