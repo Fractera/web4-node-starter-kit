@@ -24,6 +24,9 @@ for (const k of Object.keys(env)) if (/^(__NEXT|NEXT_|AGI_|WEB4_COMMIT)/.test(k)
 mkdirSync(dirname(LOG), { recursive: true })
 write({ state: "running" })
 const out = openSync(LOG, "w")
+// 642-2: чтец сборки показывает этот журнал странице, пока ядро остановлено.
+env.FRACTERA_BUILD_LOG = LOG
+env.FRACTERA_BUILD_WHAT = "core"
 const child = spawn(process.execPath, [join(ROOT, "scripts", "serve.mjs"), "rebuild"], { cwd: ROOT, env, stdio: ["ignore", out, out], windowsHide: true })
 child.on("exit", (code) => write({ state: code === 0 ? "done" : "failed", rc: code, finishedAt: new Date().toISOString() }))
 child.on("error", (e) => write({ state: "failed", rc: null, error: String(e), finishedAt: new Date().toISOString() }))

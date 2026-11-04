@@ -49,12 +49,12 @@ function update(): UpdateState | null {
   return s
 }
 
-async function body() {
+async function body(lines = 8) {
   const rec = readJson<{ verdict?: string; url?: string; version?: { behindBy?: number; checkedAt?: string } }>(join(ROOT, "logs", "origin.json"))
   const fork = rec?.verdict === "fork"
   const nodeBehind = fork ? Number((await sh("git", ["rev-list", "--count", "HEAD..origin/main"], 15_000)).out.trim()) || 0 : 0
   let log: string[] = []
-  try { log = readFileSync(LOG, "utf8").replace(/\r/g, "").split("\n").filter(Boolean).slice(-8) } catch { /* обновления ещё не было */ }
+  try { log = readFileSync(LOG, "utf8").replace(/\r/g, "").split("\n").filter(Boolean).slice(-lines) } catch { /* обновления ещё не было */ }
   return {
     ok: true,
     fork,
@@ -70,7 +70,8 @@ async function body() {
 export async function GET(req: NextRequest) {
   const denied = await requireRoles(req, ROLES)
   if (denied) return denied
-  return NextResponse.json(await body(), { headers: { "Cache-Control": "no-store" } })
+  // 642-3: `?tail=1` — 200 строк журнала для терминала доски развёртываний.
+  return NextResponse.json(await body(req.nextUrl.searchParams.get("tail") ? 200 : 8), { headers: { "Cache-Control": "no-store" } })
 }
 
 export async function POST(req: NextRequest) {

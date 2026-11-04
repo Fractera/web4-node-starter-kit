@@ -7,16 +7,17 @@ import { Spinner } from "@/components/ui/spinner"
 // которого внутри идут какие-то движения процессы я бы хотя бы понимал что что-то происходит». Растёт со строками до 400 px, дальше
 // прокручивается и держится на последней строке. Строки даёт тот, кто его показывает (хвост журнала из двери); сам ящик ничего
 // не спрашивает.
-export function LiveLog({ title, lines }: { title: string; lines: string[] }) {
+// 642-1: `done` — работа кончилась: без вращения, заголовок — итог (`failed` — красным), ящик остаётся со своими строками.
+export function LiveLog({ title, lines, done, failed }: { title: string; lines: string[]; done?: boolean; failed?: boolean }) {
   const ref = useRef<HTMLPreElement>(null)
   useEffect(() => {
     const el = ref.current
     if (el) el.scrollTop = el.scrollHeight
   }, [lines])
   return (
-    <div className="flex flex-col gap-2" role="status" data-live-log>
-      <p className="flex items-center gap-2 text-sm font-medium text-foreground">
-        <Spinner />
+    <div className="flex flex-col gap-2" role="status" data-live-log={done ? (failed ? "failed" : "done") : "running"}>
+      <p className={`flex items-center gap-2 text-sm font-medium ${failed ? "text-destructive" : "text-foreground"}`}>
+        {!done && <Spinner />}
         {title}
       </p>
       <pre

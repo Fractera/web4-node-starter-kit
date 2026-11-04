@@ -117,8 +117,10 @@ export async function GET(req: NextRequest) {
   // 353-3: `?progress=1` — только ход и журнал, без состояния кода элементов (git на каждый элемент): страница спрашивает раз в
   // секунду, пока идёт работа, и не должна нагружать машину, которая в это время собирает.
   if (req.nextUrl.searchParams.get("progress")) {
+    // 642-2: `&core=1` — итог и хвост журнала сборки ядра (страница читает его, пока ядро ещё отвечает, и после).
+    const core = req.nextUrl.searchParams.get("core") ? { core: { deploy: readCoreDeploy(), log: liveLog.tail(join(ROOT, "logs", "core-deploy.log"), 200) } } : {}
     return NextResponse.json(
-      { ok: true, deployment: deployLock.readState(), ...(logId ? { log: liveLog.tail(liveLog.logPath(ROOT, "deploy", logId)) } : {}) },
+      { ok: true, deployment: deployLock.readState(), ...core, ...(logId ? { log: liveLog.tail(liveLog.logPath(ROOT, "deploy", logId)) } : {}) },
       { headers: { "Cache-Control": "no-store" } },
     )
   }

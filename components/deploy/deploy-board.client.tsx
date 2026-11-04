@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { H2 } from "@/components/ui/typography"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
+import { LiveLog } from "@/app/[lang]/(architectLayer)/_components/live-log.client"
 import { CoreDeploy, type CoreDeployState, type CoreDeployWords } from "./core-deploy.client"
 
 // ДАШБОРД РАЗВЁРТЫВАНИЙ (280-11b).
@@ -52,6 +53,12 @@ export type DeployBoardWords = {
   openFork: string
   nodeUpdating: string
   nothingWaiting: string
+  /** 642-1: терминал под строкой — `{id}`; итог — `{id}`, `{s}` */
+  deployingNow: string
+  starting: string
+  deployedOk: string
+  deployedFailed: string
+  hideLog: string
 }
 
 type Element = {
@@ -108,11 +115,50 @@ export function DeployBoard({ words, lang, dialogUi }: { words: DeployBoardWords
   }, [load])
 
   const running = typeof state === "object" && !!state.deployment?.running
+  const current = typeof state === "object" ? state.deployment?.current ?? null : null
+
+  // 642-1 (владелец 2026-11-04: «развёртывание проходит совершенно вслепую … терминала высотой например в 400 пикселей … с фокусировкой
+  // на последнюю строчку»): пока идёт развёртывание — раз в секунду ход и хвост журнала того, что разворачивается сейчас (дверь 353-3,
+  // `?progress=1&log=`, без git по каждому элементу); кончилось — полное состояние. Строки каждого элемента остаются под его строкой.
+  const [logs, setLogs] = useState<Record<string, string[]>>({})
+  const [hidden, setHidden] = useState<Set<string>>(new Set())
+  const readLog = useCallback(async (id: string) => {
+    try {
+      const r = await fetch(`${DOOR}?progress=1&log=${encodeURIComponent(id)}`, { cache: "no-store" })
+      if (!r.ok) return null
+      const b = (await r.json()) as { deployment: Deployment | null; log?: string[] }
+      if (b.log && b.log.length) setLogs((was) => ({ ...was, [id]: b.log as string[] }))
+      return b.deployment
+    } catch {
+      return null
+    }
+  }, [])
   useEffect(() => {
-    if (!running) return
+    if (!running || !current) return
+    let stop = false
+    const tick = async () => {
+      const d = await readLog(current)
+      if (stop || !d) return
+      setState((was) => (typeof was === "object" ? { ...was, deployment: d } : was))
+      // Элемент сменился или работа кончилась: последние строки прежнего — одним чтением, затем полное состояние.
+      if (!d.running || d.current !== current) {
+        await readLog(current)
+        load()
+      }
+    }
+    void tick()
+    const t = setInterval(() => void tick(), 1000)
+    return () => {
+      stop = true
+      clearInterval(t)
+    }
+  }, [running, current, readLog, load])
+  // Работа идёт, но элемент ещё не назван (первые секунды) — полное состояние, как до 642.
+  useEffect(() => {
+    if (!running || current) return
     const t = setInterval(load, 3000)
     return () => clearInterval(t)
-  }, [running, load])
+  }, [running, current, load])
 
   // 641-4: идущее обновление узла — его этап спрашивается раз в 5 с, пока страница ещё отвечает.
   const forkUpdating = fork?.update?.state === "running"
@@ -131,6 +177,9 @@ export function DeployBoard({ words, lang, dialogUi }: { words: DeployBoardWords
 
   async function deploy(ids: string[]) {
     setRefused(false)
+    // 353-3: нажатие видно сразу — терминал открывается до ответа двери.
+    setHidden((was) => new Set([...was].filter((x) => !ids.includes(x))))
+    setLogs((was) => ({ ...was, ...Object.fromEntries(ids.map((x) => [x, [words.starting]])) }))
     const r = await fetch(DOOR, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ids }) })
     if (r.status === 409) setRefused(true)
     setTimeout(load, 800)
@@ -182,8 +231,12 @@ export function DeployBoard({ words, lang, dialogUi }: { words: DeployBoardWords
       <div className="divide-y divide-border rounded-lg border border-border">
         {state.elements.map((e) => {
           const queued = running && dep?.queue.includes(e.id) && dep.current !== e.id && !dep.results.some((r) => r.id === e.id)
+          const lines = logs[e.id]
+          const result = dep?.results.find((r) => r.id === e.id)
+          const now = running && dep?.current === e.id
           return (
-            <div key={e.id} className="flex flex-wrap items-center gap-3 px-4 py-3 text-sm" data-deploy-row={e.id}>
+            <div key={e.id} className="flex flex-col gap-3 px-4 py-3 text-sm" data-deploy-row={e.id}>
+            <div className="flex flex-wrap items-center gap-3">
               <span className="min-w-20 font-medium text-foreground">{e.id}</span>
               <span className="text-muted-foreground">{words.version}: {e.version ?? "—"}</span>
               <span className="text-muted-foreground">{words.built}: {when(e.builtAt, lang)}</span>
@@ -220,6 +273,20 @@ export function DeployBoard({ words, lang, dialogUi }: { words: DeployBoardWords
                   {words.deployOne}
                 </Button>
               </span>
+            </div>
+            {lines && !hidden.has(e.id) && (now || result) && (
+              <div className="flex flex-col gap-2" data-deploy-log={e.id}>
+                <LiveLog
+                  title={result && !now ? (result.ok ? words.deployedOk : words.deployedFailed).replace("{id}", e.id).replace("{s}", String(result.seconds)) : words.deployingNow.replace("{id}", e.id)}
+                  lines={lines}
+                  done={!!result && !now}
+                  failed={!!result && !now && !result.ok}
+                />
+                {result && !now && (
+                  <Button variant="ghost" size="sm" className="self-start" onClick={() => setHidden((was) => new Set([...was, e.id]))}>{words.hideLog}</Button>
+                )}
+              </div>
+            )}
             </div>
           )
         })}

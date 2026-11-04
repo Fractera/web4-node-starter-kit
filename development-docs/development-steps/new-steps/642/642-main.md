@@ -64,7 +64,7 @@ Stages 1–7 present; every substep names what is built, done, two proofs from d
 and what is not in it.
 
 ## 9. The owner's approval
-— (waiting)
+2026-11-04 ~14:15 UTC, in the choice window on the four substeps: «Да, делай (Рекомендую)». The core's live rebuild (about 10 minutes of downtime) only on his yes right before it.
 
 ## Not in this step
 A core build without downtime; showing the core's terminal through the internet during the build; an agent that fixes the core's own

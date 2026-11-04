@@ -8,6 +8,8 @@ import { join } from 'node:path'
 const ROOT = process.cwd()
 mkdirSync(join(ROOT, 'logs'), { recursive: true })
 const out = openSync(join(ROOT, 'logs', 'node-update.log'), 'w')
-const child = spawn(process.execPath, [join(ROOT, 'scripts', 'node-update.mjs')], { cwd: ROOT, stdio: ['ignore', out, out], windowsHide: true })
+// 642-3: сборка ядра внутри обновления отдаёт этот же журнал чтецу сборки (`lib/deploy/build-reader.cjs`), пока ядро остановлено.
+const env = { ...process.env, FRACTERA_BUILD_LOG: join(ROOT, 'logs', 'node-update.log'), FRACTERA_BUILD_WHAT: 'update' }
+const child = spawn(process.execPath, [join(ROOT, 'scripts', 'node-update.mjs')], { cwd: ROOT, env, stdio: ['ignore', out, out], windowsHide: true })
 child.on('exit', (code) => process.exit(code ?? 1))
 child.on('error', () => process.exit(1))

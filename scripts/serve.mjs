@@ -19,6 +19,8 @@ import paths from '../lib/web4-items/paths.cjs'
 import deployLock from '../lib/deploy/deploy-lock.cjs'
 // 553: сборка ядра при «закрытой крышке» — все процессы узла, кроме туннеля, на время сборки остановлены.
 const { closeLid, openLid, backupNext, restoreNext, dropBackup, itemsAside, itemsBack, redrawCore } = createRequire(import.meta.url)('../lib/deploy/quiet-build.cjs')
+// 642-2: чтец сборки — журнал сборки ядра этому компьютеру, пока крышка закрыта (`lib/deploy/build-reader.cjs`).
+const { startReader, stopReader } = createRequire(import.meta.url)('../lib/deploy/build-reader.cjs')
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const root = path.join(here, '..')
@@ -616,10 +618,14 @@ async function rebuild() {
   // затем все процессы узла, кроме туннеля, остановлены: вся память — сборке; снаружи Cloudflare отдаёт копии страниц. Итог любой —
   // процессы поднимаются; упала — возвращается прежняя сборка.
   // Прежняя оборванная сборка оставила узел остановленным — сначала поднять его (список — в data/node/quiet-build.json).
+  stopReader(root)
   openLid(root)
   console.log("Собираю сайт заново. На время сборки узел остановлен: пульт и сайты этого компьютера не отвечают, в интернете — копии страниц.")
   const backedUp = backupNext(root)
   closeLid(root)
+  // 642-2: журнал этой сборки — тот файл, куда её вывод пишет запустивший (кнопка ядра, обновление узла); из терминала — только этап.
+  startReader(root, { log: process.env.FRACTERA_BUILD_LOG, what: process.env.FRACTERA_BUILD_WHAT || "core" })
+  process.on("exit", () => stopReader(root))
   // 553: сторожа `prebuild` — с элементами на месте (часть из них сверяет элементы), затем `next build` — с элементами ВНЕ папки
   // ядра (`itemsAside`): сборка ядра не должна зависеть от числа элементов. Возврат — всегда, и после отказа.
   const npm = process.platform === "win32" ? "npm.cmd" : "npm"
@@ -641,6 +647,7 @@ async function rebuild() {
   if (build.status !== 0) {
     // Упавшая сборка стирает статику прежней (ANTI-PATTERNS «Оборванная сборка ядра…») — прежняя возвращается из копии.
     if (backedUp) restoreNext(root)
+    stopReader(root)
     openLid(root)
     console.error(`\nСборка НЕ УДАЛАСЬ — ${backedUp ? "возвращена прежняя сборка, узел запущен снова" : "копии прежней сборки не было, узел запущен снова"}. Ошибки выше.`)
     process.exit(1)
@@ -661,6 +668,7 @@ async function rebuild() {
   })
   if (seo.status !== 0) {
     if (backedUp) restoreNext(root)
+    stopReader(root)
     openLid(root)
     console.error("\nСборка собралась, но языковые сигналы в ней противоречат друг другу —")
     console.error("сайт НЕ выложен: возвращена прежняя сборка, узел запущен снова. Разбор выше.")
@@ -672,6 +680,7 @@ async function rebuild() {
   waitDeploy()
   console.log("\nСборка готова, запускаю узел…")
   // Ядро в списке остановленных — `pm2 start` поднимает его уже на новой сборке; узел без «крышки» — прежний перезапуск.
+  stopReader(root)
   if (!openLid(root).includes("fractera-web4")) pm2run(["restart", "fractera-web4"], { quiet: true })
   dropBackup(root)
   // 557: страницы собраны без элементов (они были вынесены) — перерисовать их, когда ядро поднялось и элементы на месте.

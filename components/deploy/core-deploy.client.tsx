@@ -5,6 +5,7 @@ import { Rocket } from "lucide-react"
 import { AppDialog } from "@/components/dialog/app-dialog.client"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import { Button } from "@/components/ui/button"
+import { CoreTerminal, type CoreTerminalWords } from "./core-terminal.client"
 
 // «РАЗВЕРНУТЬ» ЯДРА (узел, шаг 555). Слово владельца 2026-10-21: «нажатие эту кнопки автоматически приводит к подсказке проверьте какие
 // терминалы сейчас открыты для этого нажмите на кнопку в правом верхнем меню если на нём есть оранжевая метка вы увидите список активных
@@ -40,6 +41,8 @@ export type CoreDeployWords = {
   updateTitle: string
   updateStarted: string
   updateRefused: string
+  /** 642-2: терминал под карточкой ядра */
+  terminal: CoreTerminalWords
 }
 export type CoreDeployState = { state: "running" | "done" | "failed" | "interrupted"; startedAt?: string; finishedAt?: string; rc?: number | null } | null
 type Session = { id: string; name: string; since: string | null }
@@ -55,6 +58,10 @@ export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkCha
   const [sessions, setSessions] = useState<Session[] | null>(null)
   const [note, setNote] = useState<string | null>(null)
   const [begun, setBegun] = useState(false)
+  // 642-2: когда запуск принят — терминал под карточкой; `since` отделяет итог этого запуска от прежнего.
+  const [since, setSince] = useState(0)
+  // Режим запоминается в момент запуска: к концу обновления форк уже не впереди, и `update` стал бы false посреди работы.
+  const [began, setBegan] = useState<"update" | "rebuild">("rebuild")
   const when = (s?: string) => (s ? new Date(s).toLocaleString(lang) : "—")
 
   async function loadSessions() {
@@ -77,6 +84,8 @@ export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkCha
     setOpen(false)
     setNote(r?.ok ? (update ? words.updateStarted : words.started) : (update ? words.updateRefused : words.refused))
     if (r?.ok) {
+      setSince(Date.now())
+      setBegan(update ? "update" : "rebuild")
       setBegun(true)
       onStarted?.()
     }
@@ -99,9 +108,13 @@ export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkCha
           </Button>
         )}
         {lastLine && !begun && <span className="text-muted-foreground">{lastLine}</span>}
-        {note && <span className="text-foreground" data-core-deploy-note>{note}</span>}
+        {note && !begun && <span className="text-foreground" data-core-deploy-note>{note}</span>}
       </div>
-      {last?.state === "failed" && log.length > 0 && (
+      {begun && <CoreTerminal words={words.terminal} mode={began} since={since} />}
+      {/* 642-3: страница открыта, когда обновление узла уже идёт (форк, элементы — ядро ещё отвечает) */}
+      {!begun && inProgress && <CoreTerminal words={words.terminal} mode="update" since={0} />}
+      {!begun && !inProgress && last?.state === "running" && <CoreTerminal words={words.terminal} mode="rebuild" since={0} />}
+      {last?.state === "failed" && log.length > 0 && !begun && (
         <pre className="max-h-48 overflow-auto rounded-md border border-border bg-muted/40 p-2 text-xs whitespace-pre-wrap">{log.join("\n")}</pre>
       )}
       {open && (

@@ -1,10 +1,13 @@
 import type { SectionRenderer } from '@/sections/contract'
 import { DeployBoard, type DeployBoardWords } from '@/components/deploy/deploy-board.client'
+import type { CoreDeployWords } from '@/components/deploy/core-deploy.client'
 import { appDialogUi } from '@/components/dialog/app-dialog.i18n'
+import { originNoticeWords } from '@/components/node-state/origin-notice.i18n'
 
 // ДАШБОРД РАЗВЁРТЫВАНИЙ (280-11b): элементы узла, что ждёт развёртывания, кнопка у каждого и «всё».
 // Слова берутся здесь, на сервере, и уходят островку пропсами.
-const WORDS: Record<string, DeployBoardWords> = {
+// The core terminal's words (`terminal`) are added below, with the update's stages.
+const WORDS: Record<string, Omit<DeployBoardWords, 'coreDeploy'> & { coreDeploy: Omit<CoreDeployWords, 'terminal'> }> = {
   en: {
     intro: 'A deployment rebuilds a part of your project so that it shows what you have saved — design, settings, a new version. Saving alone does not change what visitors see.',
     what: 'Deploy once after a series of changes, not after each one: every element is rebuilt in a neighbour folder while the old build keeps serving, then switched in a few seconds. One element takes about two minutes; elements are deployed one after another.',
@@ -55,6 +58,11 @@ const WORDS: Record<string, DeployBoardWords> = {
     openFork: 'Open your fork',
     nodeUpdating: 'The node is updating — stage «{stage}».',
     nothingWaiting: 'Nothing waits: the element is up to date',
+    deployingNow: 'Deploying {id}…',
+    starting: 'Starting…',
+    deployedOk: '{id} is deployed ({s} s).',
+    deployedFailed: '{id} was not deployed — the previous version keeps working.',
+    hideLog: 'Hide',
   },
   ru: {
     intro: 'Развёртывание пересобирает часть проекта, чтобы она показала сохранённое: оформление, настройки, новую версию. Само сохранение того, что видят посетители, не меняет.',
@@ -106,9 +114,42 @@ const WORDS: Record<string, DeployBoardWords> = {
     openFork: 'Открыть ваш форк',
     nodeUpdating: 'Узел обновляется — этап «{stage}».',
     nothingWaiting: 'Ждать нечего: элемент актуален',
+    deployingNow: 'Разворачиваю {id}…',
+    starting: 'Запускаю…',
+    deployedOk: '{id} развёрнут ({s} с).',
+    deployedFailed: '{id} не развернулся — работает прежняя версия.',
+    hideLog: 'Скрыть',
   },
 }
 
-export const deployBoard: SectionRenderer<'deployBoard'> = (b, { key: k }) => (
-  <DeployBoard key={k} words={WORDS[b.lang] ?? WORDS.en} lang={b.lang} dialogUi={appDialogUi(b.lang)} />
-)
+// 642-2: слова терминала ядра; этапы обновления — те же, что у полосы обновления.
+const TERMINAL = {
+  en: {
+    building: 'The core is building. The node is stopped for the build; the lines below are the build itself.',
+    updating: 'The node is updating — stage «{stage}».',
+    fromReader: 'The core is stopped for the build: these lines come from the build reader on this computer.',
+    silent: 'The core is starting… (the build log is shown only on this computer)',
+    done: 'The core is built and running.',
+    failed: 'The core build failed — the previous build is back and working. The cause is in the last lines.',
+    updateDone: 'The node is updated.',
+    updateFailed: 'The update did not finish — the node keeps working on the previous build. The cause is in the last lines.',
+    reload: 'Reload the page',
+  },
+  ru: {
+    building: 'Ядро собирается. На время сборки узел остановлен; ниже — сама сборка.',
+    updating: 'Узел обновляется — этап «{stage}».',
+    fromReader: 'Ядро остановлено на время сборки: эти строки даёт чтец сборки на этом компьютере.',
+    silent: 'Ядро поднимается… (журнал сборки виден только на этом компьютере)',
+    done: 'Ядро собрано и работает.',
+    failed: 'Сборка ядра не удалась — прежняя сборка возвращена и работает. Причина — в последних строках.',
+    updateDone: 'Узел обновлён.',
+    updateFailed: 'Обновление не закончилось — узел работает на прежней сборке. Причина — в последних строках.',
+    reload: 'Обновить страницу',
+  },
+}
+
+export const deployBoard: SectionRenderer<'deployBoard'> = (b, { key: k }) => {
+  const words = WORDS[b.lang] ?? WORDS.en
+  const terminal = { ...(TERMINAL[b.lang as 'en' | 'ru'] ?? TERMINAL.en), stages: originNoticeWords(b.lang).stages }
+  return <DeployBoard key={k} words={{ ...words, coreDeploy: { ...words.coreDeploy, terminal } }} lang={b.lang} dialogUi={appDialogUi(b.lang)} />
+}
