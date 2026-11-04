@@ -5,6 +5,14 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-9 (2026-11-04 ~21:25 UTC) — 646, one-file fix, code `ad533d76`, proof pending his update.** The owner, on the temporary address
+after Sync: «если я нажимаю проверить снова … этот баннер просто исчезает как будто нажимаю кнопку скрыть … у меня нет никакой
+возможности при помощи кнопки обновить сборку». Measured: POST `/api/node/update` {action:check} on the trycloudflare address → 403
+`{"ok":false,"reason":"temporary-address"}`; `origin-notice.client.tsx` did `setD(body)` → no `fork` → `return null`. On localhost the
+same POST → 200, `behindBy 0`, `nodeBehind 10`. Fix: a non-ok answer keeps the state and names the reason; on a temporary hostname
+«Открыть на этом компьютере» (`OpenOnThisComputerButton`) instead of «Проверить снова». Proof to take: after his Sync + update, the
+built chunk holds the new words; on the trycloudflare address the banner stays and offers the button (his eyes — no Chrome here).
+
 **NOW-8 (2026-11-04 ~21:00 UTC) — 645 PLANNED AND APPROVED** (`new-steps/645/`): the owner's fresh install (his fork
 `aifa-agi/web4-node-starter-kit`, node `~/web4-node-starter-kit`, core 168eb378 after `node:update`) → six substeps: right drawers 40 px
 under the online bar · core drawer and site drawer: «Как это работает», «Подписка Claude Code», «Терминал», «Активация Telegram», then
