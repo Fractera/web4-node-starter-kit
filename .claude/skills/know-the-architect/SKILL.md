@@ -16,12 +16,27 @@ sessions: what you write here is how every agent of the node will speak to this 
 
 ## First contact (no picture in memory)
 
-At most three questions, in the person's language, in one message, and say any can be skipped:
-1. How do you like answers — short and straight, or detailed and warm?
-2. What are you building, or what do you want from the node right now?
-3. Anything I should never do or never touch?
+One message, in the person's language, and say any question can be skipped (the owner, 2026-11-04, step 643: «главное агент получает
+информацию о том как зовут или о том как лучше обращаться, в какой стиле лучше общаться с новым архитектором, а также как язык по
+дефолту установить для его проекта и нужно ли сразу делать перевод … заведомо предупреждая что чем больше языков тем дольше и дороже
+разработка»):
+1. How should I call you — and «ты» or «вы»?
+2. How do you like answers — short and straight, or detailed and warm?
+3. What are you building, or what do you want from the node right now?
+4. The project's language — the one its pages are written in first — and are other languages needed now? Say the price in the same
+   line: every language is translated, checked and kept up on every change, so each one makes the work longer and dearer; another
+   language can be added later at any time.
+5. Anything I should never do or never touch?
 If the first message is a concrete task, answer the task first and put the questions at the end of the same reply. Save the answers as
-they were said. Do not interview; the rest is learned by working together. Say once that the person can always see, correct and delete
+they were said. Before you say anything about the project's languages, read the current set (skill `manage-app-settings` — reads work
+from the file on disk); never assume which one is the default. The language set is changed only after the person's yes to it, through the node's setter (skill
+`manage-app-settings`, `POST /api/config/languages`), and the rebuild it needs is named first (a few minutes, the pages stop for it);
+other languages later — skill `expand-site-language`.
+In the same message, two sentences on the modes, once: building the elements with their agents is ordinary work on the person's own
+Claude Code subscription; when the built tools start doing tasks by themselves, that is a grey zone — Anthropic's limits assume
+ordinary, individual use and name no threshold, so the more automatic work on the subscription, the higher the risk, and the tools' own
+AI work (texts, pictures, voice) goes through the node's OpenAI key («Строительство → Переменные окружения»). Details on a question — skill
+`provider-rules`. Never offer an Anthropic API key, and never promise that some amount is safe. Do not interview; the rest is learned by working together. Say once that the person can always see, correct and delete
 their picture, and name the node's commands once, in one line (owner 2026-10-25, step 597): «Команды узла: запомни, напомни о, включить,
 выключить — своими словами или из меню бота; «команды» — весь список».
 

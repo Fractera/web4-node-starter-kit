@@ -36,7 +36,9 @@ Sonnet bench, then him.
 **NOW-3 (2026-11-04 ~15:25 UTC) — step 643 approved** (the first meeting: name, address, style, the project's language with its price,
 the two modes in the welcome). **The owner's LAW, verbatim:** «отдельный ключ API Anthropic  - prohibit! Категорически запрещается в проекте рекомендовать использовать ключ от Anthropic потому что использование ключа Anthropic прерывает использование подписки. По этой причине только ключ ОпенАи у нас для него есть переменных окружение специальные контейнер» → applied at once: `provider-rules` never offers an Anthropic
 key; **638-2 cancelled** (`new-steps/638/638-main.md`). Grey zone words: «Без обещания». The blog phrase 2 (hand into root) — «not
-now». Next: 643-1…643-3, each proven on the Sonnet bench first.
+now». **643 CLOSED** (`completed-steps/643.md`): five questions at the first contact, the welcome's point 6, and the brief's
+first-meeting line (Sonnet: before — no question; after — five; with a picture — none). Waiting for the owner: the next task; 640-4
+phrase 2 (hand into root) when he says; 642 live (one element and, on his yes, a core rebuild).
 
 **~14:52–14:56 UTC the owner's update from the deploy board:** `===NODE_UPDATE_DONE=== 8 изменений форка, ядро f71198b1` (642, 641-5 not yet:
 his fork was 1 behind). Live sample of 642-2 (`p642live/samples.txt`): the core silent 14:54:15–14:55:56, **the build reader answered

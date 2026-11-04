@@ -122,6 +122,10 @@ if (readStamp().started === head && (await nodeAnswers())) {
 // «вход → свой домен → Telegram». 624-3/624-5 (владелец 2026-11-02, тот же день): Telegram — с требованием приложения; пункт 5 — закрыть
 // установочный чат ради памяти, дальше — главный агент узла в терминале или Telegram. Слабая модель пересказывает готовый текст надёжнее, чем собирает его из инструкции, — поэтому он
 // печатается здесь, между маркерами, на двух языках; агент передаёт его человеку на языке человека, ничего не выбрасывая.
+// 643-2 (владелец 2026-11-04): пункт 6 — режимы и подписка, «Без обещания»; каждое утверждение — по источникам `provider-rules`
+// («an end user … signing in to the unmodified Claude Code binary with their own Claude subscription»; лимиты «assume ordinary,
+// individual usage»; «warn you or throttle, limit, suspend, or terminate»; «all payments are non-refundable»). Ключ Anthropic не
+// предлагается никогда — закон владельца того же дня: ИИ-работа инструментов — ключ OpenAI.
 function welcome() {
   let temporary = null
   try {
@@ -151,6 +155,12 @@ function welcome() {
 5. ЭТОТ ЧАТ МОЖНО ЗАКРЫТЬ. Установка закончена, узел работает сам, а этот чат занимает память компьютера. Закройте его и
    работайте дальше с главным агентом узла: в терминале (панель → «Главный агент» → «Терминал», http://localhost:24680) или
    через Telegram-бота — как вам удобнее.
+6. РЕЖИМЫ РАБОТЫ И ВАША ПОДПИСКА. Строительство — вы строите элементы (самостоятельные части проекта) вместе с их агентами:
+   это обычная работа в Claude Code по вашей собственной подписке, так Anthropic и разрешает. Workflow — построенные
+   инструменты сами выполняют задачи, по расписанию или в чатах с агентами. Это серая зона: правила Anthropic рассчитывают
+   подписку на обычное личное использование и не называют порога — чем больше автоматической работы на подписке, тем выше
+   риск (предупреждение, ограничения, закрытие аккаунта без возврата денег). Поэтому собственная ИИ-работа инструментов
+   (тексты, картинки, голос) идёт через ключ OpenAI — его вставляют в панели: «Строительство → Переменные окружения».
 
 После входа вы попадаете в панель управления — там та же подробная инструкция. Спрашивайте главного агента о чём угодно: как
 устроен проект, что в нём есть, с чего начать вашу идею.`)
@@ -174,6 +184,12 @@ function welcome() {
 5. YOU CAN CLOSE THIS CHAT. The install is finished, the node runs by itself, and this chat takes the computer's memory. Close
    it and go on with the node's main agent: in its terminal (panel → «Main agent» → «Terminal», http://localhost:24680) or
    through the Telegram bot — whichever you like.
+6. WORK MODES AND YOUR SUBSCRIPTION. Building — you build the elements (the project's independent parts) with their agents:
+   this is ordinary work in Claude Code on your own subscription, the case Anthropic permits. Workflow — the built tools do
+   tasks by themselves, on a schedule or in the agents' chats. This is a grey zone: Anthropic's rules expect the subscription
+   for ordinary, individual use and name no threshold — the more automatic work on the subscription, the higher the risk (a
+   warning, limits, the account closed with no refund). So the tools' own AI work (texts, pictures, voice) goes through an
+   OpenAI key — it is pasted in the panel: «Build → Environment variables».
 
 After sign-in you land in the control panel — the same detailed guide waits there. Ask the main agent anything: how the
 project works, what is in it, where to start with your idea.`)
