@@ -86,12 +86,15 @@ export function DeployBoard({ words, lang, dialogUi }: { words: DeployBoardWords
   const [fork, setFork] = useState<Fork | null>(null)
 
   // 641-3: отставание узла от форка — та же дверь, что у полосы обновления, один запрос без сети.
-  useEffect(() => {
+  const loadFork = useCallback(() => {
     fetch(`${BASE}/api/node/update`, { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((b: Fork | null) => setFork(b))
       .catch(() => setFork(null))
   }, [])
+  useEffect(() => {
+    loadFork()
+  }, [loadFork])
 
   const load = useCallback(() => {
     fetch(DOOR, { cache: "no-store" })
@@ -110,6 +113,14 @@ export function DeployBoard({ words, lang, dialogUi }: { words: DeployBoardWords
     const t = setInterval(load, 3000)
     return () => clearInterval(t)
   }, [running, load])
+
+  // 641-4: идущее обновление узла — его этап спрашивается раз в 5 с, пока страница ещё отвечает.
+  const forkUpdating = fork?.update?.state === "running"
+  useEffect(() => {
+    if (!forkUpdating) return
+    const t = setInterval(loadFork, 5000)
+    return () => clearInterval(t)
+  }, [forkUpdating, loadFork])
 
   async function rollbackTo(id: string) {
     setRefused(false)
@@ -153,7 +164,7 @@ export function DeployBoard({ words, lang, dialogUi }: { words: DeployBoardWords
           </span>
         )}
         {updating && <span className="text-foreground" data-core-updating>{words.nodeUpdating.replace("{stage}", fork?.update?.stage ?? "")}</span>}
-        <CoreDeploy words={words.coreDeploy} dialogUi={dialogUi} last={state.core.deploy ?? null} log={state.core.log ?? []} lang={lang} disabled={running || updating} forkChanges={forkChanges} />
+        <CoreDeploy words={words.coreDeploy} dialogUi={dialogUi} last={state.core.deploy ?? null} log={state.core.log ?? []} lang={lang} disabled={running || updating} forkChanges={forkChanges} inProgress={updating} onStarted={() => { loadFork(); setTimeout(load, 800) }} />
       </section>
 
       <p className="text-muted-foreground text-sm">{words.intro}</p>

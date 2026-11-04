@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button"
 // «Развернуть» → `POST /api/node/deploy { core: true }`: сборка при закрытой крышке, страница перестаёт отвечать на её время.
 // 641-3: когда форк принёс изменения, та же кнопка с тем же окном — «Обновить узел из форка» → `POST /api/node/update { action: "update" }`
 // (`scripts/node-update.mjs`: форк, элементы, сборка ядра, навыки); пересборка того, что уже на диске, изменений форка не забирает.
+// 641-4 (владелец 2026-11-04: «когда я закрыл модель окно то я все ещё вижу: обновить узел из Fork.? Хотя вверху написано что очевидно
+// запущено сборка … она меня путает»): после принятого запуска кнопки нет — только строка «началось», до перезагрузки страницы.
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
@@ -42,13 +44,17 @@ export type CoreDeployWords = {
 export type CoreDeployState = { state: "running" | "done" | "failed" | "interrupted"; startedAt?: string; finishedAt?: string; rc?: number | null } | null
 type Session = { id: string; name: string; since: string | null }
 
-export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkChanges = 0 }: {
+export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkChanges = 0, onStarted, inProgress }: {
   words: CoreDeployWords; dialogUi: AppDialogUi; last: CoreDeployState; log: string[]; lang: string; disabled?: boolean; forkChanges?: number
+  /** 641-4: запуск принят — доска спрашивает состояние заново; `inProgress` — обновление узла уже идёт (страница открыта заново) */
+  onStarted?: () => void
+  inProgress?: boolean
 }) {
   const update = forkChanges > 0
   const [open, setOpen] = useState(false)
   const [sessions, setSessions] = useState<Session[] | null>(null)
   const [note, setNote] = useState<string | null>(null)
+  const [begun, setBegun] = useState(false)
   const when = (s?: string) => (s ? new Date(s).toLocaleString(lang) : "—")
 
   async function loadSessions() {
@@ -70,6 +76,10 @@ export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkCha
       : await fetch(`${BASE}/api/node/deploy`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ core: true }) }).catch(() => null)
     setOpen(false)
     setNote(r?.ok ? (update ? words.updateStarted : words.started) : (update ? words.updateRefused : words.refused))
+    if (r?.ok) {
+      setBegun(true)
+      onStarted?.()
+    }
   }
 
   const lastLine =
@@ -82,11 +92,13 @@ export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkCha
   return (
     <div className="flex w-full flex-col gap-2" data-core-deploy={last?.state ?? "none"}>
       <div className="flex flex-wrap items-center gap-3">
-        <Button onClick={() => { setOpen(true); setSessions(null); void loadSessions() }} disabled={disabled || last?.state === "running"} data-core-deploy-open={update ? "update" : "rebuild"}>
-          <Rocket className="mr-2 size-4" aria-hidden />
-          {update ? words.updateButton.replace("{n}", String(forkChanges)) : words.button}
-        </Button>
-        {lastLine && <span className="text-muted-foreground">{lastLine}</span>}
+        {!begun && !inProgress && (
+          <Button onClick={() => { setOpen(true); setSessions(null); void loadSessions() }} disabled={disabled || last?.state === "running"} data-core-deploy-open={update ? "update" : "rebuild"}>
+            <Rocket className="mr-2 size-4" aria-hidden />
+            {update ? words.updateButton.replace("{n}", String(forkChanges)) : words.button}
+          </Button>
+        )}
+        {lastLine && !begun && <span className="text-muted-foreground">{lastLine}</span>}
         {note && <span className="text-foreground" data-core-deploy-note>{note}</span>}
       </div>
       {last?.state === "failed" && log.length > 0 && (

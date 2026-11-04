@@ -21,8 +21,11 @@ changed it (verbatim in 640-5.md): seven instead of three, at least two or three
 replay before/after in the scratchpad `p642/before.txt`, `after.txt`: brand-voice MISSING ×3 → #2, #2, #6; social control #1; «remind
 me…» 0 cards. **The owner ~13:30: «да, запечатай»** on the shown line (CLAUDE.md section 1: skills.sh by itself when the catalog
 gave fewer than seven after two rephrasings and the word search, or at the person's word) → seal `72eed396d4b8`; the tool texts follow.
-**Waiting for the owner:** Sync + update, then one live question on Opus (plane 2): «хочу писать посты в стиле блогера, который мне
-нравится — какой навык?». Then phrase 3, the catalog skill into root, the verdict.
+**~13:09–13:13 the owner's update from the deploy board:** `===NODE_UPDATE_DONE=== 5 изменений форка, ядро 997a824b` (640-5 and the
+seal in it; skills base «already 8», catalog «already in place: 3240 cards»; `check:instruction` OK on his node). He found the core
+button still live after the start → **641-4** fixed (in `completed-steps/641.md`, reopened and closed again). **Waiting for the owner:**
+one live question on Opus (640-5 plane 2): «хочу писать посты в стиле блогера, который мне нравится — какой навык?». Then phrase 3,
+the catalog skill into root, the verdict.
 
 **Before (2026-11-04 ~04:30 UTC) — 629-2 CLOSED** (`completed-steps/629-2.md`, seal `e3a792e3f76c`; the owner: «да, запечатай» after
 the lines and their Russian reading). **629-4 CLOSED** (`completed-steps/629-4.md`, 09:31 UTC on Opus: the gray request → rule, price, lawful way; the
