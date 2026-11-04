@@ -33,6 +33,12 @@ card. The owner ~13:35: «Уже второй раз ты мне врёшь. С�
 the owner:** Sync + update (640-5c, 640-6 to his node). Then phrase 3, the catalog skill into root, the verdict — each first on the
 Sonnet bench, then him.
 
+**NOW-2 (2026-11-04 ~14:10 UTC) — the owner paused the skills tests for a side task: step 642, the deploy board live** (verbatim
+in `new-steps/642/642-main.md`): a terminal under each element and the core during deployment, and a failure that says what happens
+next. Found: `LiveLog` and the door's live log exist (353-3) but the board never asks for them; the core's page is down while the lid
+is closed (553), so a small build reader on a local port is needed. Plan 642-1…642-4 written, **waiting for the owner's yes**. Then
+back to 640 (Sync + update, phrase 3 on the Sonnet bench first).
+
 **Before (2026-11-04 ~04:30 UTC) — 629-2 CLOSED** (`completed-steps/629-2.md`, seal `e3a792e3f76c`; the owner: «да, запечатай» after
 the lines and their Russian reading). **629-4 CLOSED** (`completed-steps/629-4.md`, 09:31 UTC on Opus: the gray request → rule, price, lawful way; the
 domain question → no warning). Left in 629: 629-3 (the elements' line — shown to the owner before its seal). **The owner's new request (~04:20, verbatim):** «Вчера мы работали над навыками которые приходят
