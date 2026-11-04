@@ -43,6 +43,9 @@ The owner: «go to next task» → 627-6.
 - 2026-11-04 ~02:35 UTC, on 627-6 in the choice window: the scope — «skip this part» (627-6 is not run now); the engine when it runs —
   «Подписка, как в 627-5» (`claude -p` Haiku on the owner's subscription). → 627-7: README and `memory.md` updated (not sealed); the two
   CLAUDE.md lines wait for the owner's yes to seal.
+- 2026-11-04 ~02:45 UTC, the owner's Telegram test on Opus («я хочу вести блог и публиковать в соцсети контент…») → a new element
+  «Контент-студия», catalog skills with stars, the analog question and the quiz: «now looking great». **627-3 and 627-4 CLOSED**
+  (`completed-steps/627-3.md`, `627-4.md`). Open in 627: 627-6 (skipped by the owner for now), 627-7 (the two sealed lines).
 **Open:** 627 (627-3, 627-4, 627-6, 627-7), 629 (the law's text waits for the owner), 637 (the owner's proposal — three
 questions wait for him, no plan file yet), 638 (planned — the inventory 638-1 first), 545 (545-4, 545-5), 593 (not started), 603
 (603-5); found on the way — `scripts/check-boundary-hook.mjs` 2 of 18 (the same before 639, not in `prebuild`).
