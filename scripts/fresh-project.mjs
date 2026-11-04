@@ -8,6 +8,9 @@
 // 🔒 ТОЛЬКО В ФОРКЕ И ОДИН РАЗ. Признак форка — запись `check-origin` (`logs/origin.json`, verdict `fork`): у оригинала и у машины
 // автора (verdict `author`) история — своя и не трогается. Метка `logs/fresh-project.json` — сделано; повтор ничего не меняет.
 // Чистятся только планы и итоги; README папок остаются, `current-steps.md` получает первый шаг нового проекта.
+// 644-1 (владелец 2026-11-04: «при установке новой версии не должно быть каких-либо Хвостов которые мы с тобой наработали»): строки
+// `CANCELLED.md` — отмены стартера, его же правило «It arrives in a new node with this node's own entries only»; шапка и заголовок
+// таблицы остаются. `TRANSLATION-DEBT.md` не трогается: его раздел о шаге 255 — знание о продукте (почему в нём два языка), а не шаги.
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
@@ -65,6 +68,20 @@ first task. Ask nothing the node can find out itself.
 - none yet
 `, 'utf8')
 
+// CANCELLED.md: всё до разделителя заголовка таблицы — как есть, строки таблицы — прочь.
+const CANCELLED = path.join(root, 'development-docs', 'CANCELLED.md')
+if (existsSync(CANCELLED)) {
+  const lines = readFileSync(CANCELLED, 'utf8').split('\n')
+  const sep = lines.findIndex((l) => /^\|(\s*-+\s*\|)+\s*$/.test(l))
+  if (sep >= 0) {
+    const rows = lines.slice(sep + 1).filter((l) => l.startsWith('|')).length
+    if (rows) {
+      writeFileSync(CANCELLED, [...lines.slice(0, sep + 1), '', '*Nothing cancelled in this node yet.*', ''].join('\n'), 'utf8')
+      removed.push(`CANCELLED.md: ${rows} row(s) of the starter`)
+    }
+  }
+}
+
 mkdirSync(path.join(STEPS, 'new-steps'), { recursive: true })
 writeFileSync(path.join(STEPS, 'new-steps', PLAN), `# 1 — The first launch: node up, Claude Code sign-in, a Telegram bot, the first task
 
@@ -102,6 +119,6 @@ writeFileSync(MARK, JSON.stringify({ at: new Date().toISOString(), removed }, nu
 const git = (...args) => spawnSync('git', ['-C', root, ...args], { encoding: 'utf8', windowsHide: true })
 const named = git('config', 'user.email').stdout.trim() !== ''
 const identity = named ? [] : ['-c', 'user.name=Fractera node', '-c', 'user.email=node@localhost']
-git('add', '-A', '--', 'development-docs/development-steps')
-const commit = git(...identity, 'commit', '-m', 'Fresh project: start without the starter development history; step 1 is the first launch', '--', 'development-docs/development-steps')
+git('add', '-A', '--', 'development-docs/development-steps', 'development-docs/CANCELLED.md')
+const commit = git(...identity, 'commit', '-m', 'Fresh project: start without the starter development history; step 1 is the first launch', '--', 'development-docs/development-steps', 'development-docs/CANCELLED.md')
 console.log(`===FRESH_OK=== removed ${removed.length} starter step files; step 1 written${commit.status === 0 ? ', committed' : ' (not committed: ' + (commit.stderr || commit.stdout).trim().split('\n')[0] + ')'}`)
