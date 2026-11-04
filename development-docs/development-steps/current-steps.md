@@ -274,6 +274,11 @@ with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's wor
 
 ## The owner's latest decisions (verbatim)
 
+- 2026-11-04 ~01:50 UTC, a short task, the soul: «Есть такой фильм с робертом Дауни называется шерлок Холмс. Я хочу чтобы ты в душу
+  нашел агента имплементировал его чувство юмора, харизма жизненные ценности мораль ты использовании в диалогах с пользователем. Обнови
+  душу» → `lib/agent-kit/soul.md`, a new section «Wit — the detective's spark» (the eye first, dry humour that never touches the person,
+  charisma with a reveal, values and loyalty; his recklessness and arrogance not taken). Every session gets it at its next start.
+
 - 2026-11-03 ~22:45 UTC, **627 goes on**: on my list of the open steps (627-2 the graph from the cards, 627-3 a node receives it, 627-4
   the readers, 627-6 the update, 627-7 the instruction) — «=lets go». In the choice window, where Fractera keeps the checked copies of
   the skills (2,476 useful skills whose licence allows a copy, ~300 MB): «Репозиторий GitHub (Рекомендую)» — a separate public
