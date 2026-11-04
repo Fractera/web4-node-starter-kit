@@ -5,6 +5,18 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-11 (2026-11-04 ~22:55 UTC) — 647 code pushed (`74753475`, `999a3f54`, `23a752f5`, seal `0e818b5c6ddb`), proof pending his
+update.** The owner asked for eyes in every node after two broken drawers shown to him («второй вариант у нас должен приезжать
+автоматически с каждым новым развёртыванием у наших гостей»; plan in `new-steps/647/647-main.md`, «да, начинай 647»). **Measured:**
+Playwright 1.64.1 cannot install its Chromium on macOS 12 («does not support chromium-headless-shell on mac12»), drives the installed
+Chrome 150 headless. **Seen with eyes (lab copy in the scratchpad):** the account drawer on localhost — full height, title and ✕ at y 41
+under the 30 px bar, «виден», five items, no console errors (645-1 redo proven); the temporary address banner — stays, «Открыть на этом
+компьютере», no «Проверить снова» (646 proven); the panel scrolls itself to the content on load (`--top` added). **Defect on the way, not
+fixed:** on the temporary address «Обновить сборку ядра» is active though its page is read-only. **The tunnel died ~22:21 UTC**
+(cause not established); at the owner's «у меня не открываются больше страниц» — `serve:publish -- --new` →
+https://sections-horn-endorsement-wines.trycloudflare.com. Next: his Sync + `node:update` → `===EYES_OK===` in its npm install,
+`npm run eyes` in his node; then step 648 (templates and elements), then the fresh install of 645.
+
 **NOW-10 (2026-11-04 ~21:40 UTC) — 645-1 REOPENED and redone `91c68209`.** The owner, verbatim: «Ты сломал выдвижной ящик, и теперь у нас
 дырка сверху. Это неправильное решение будем его исправлять прежде всего верни высоту выдвижного ящика какая она была во-вторых речь идёт о
 внутреннем отступ они о внешнем то есть отступи в котором вниз сместятся строки а они сам контейнер. Ну и сдвиг вниз 40 пикселей оказался
