@@ -33,6 +33,10 @@ card. The owner ~13:35: «Уже второй раз ты мне врёшь. С�
 the owner:** Sync + update (640-5c, 640-6 to his node). Then phrase 3, the catalog skill into root, the verdict — each first on the
 Sonnet bench, then him.
 
+**NOW-4 (2026-11-04 ~16:00 UTC) — the owner: «640 succes to close, 642 - to close, go to» 629-3, 638, 637, 627-6.** 640 CLOSED
+(`completed-steps/640-main.md` with the verdict, 640-4, 640-5), 642 CLOSED (`completed-steps/642.md`); their plans deleted in that
+commit. Next: the four waiting for his decision.
+
 **NOW-3 (2026-11-04 ~15:25 UTC) — step 643 approved** (the first meeting: name, address, style, the project's language with its price,
 the two modes in the welcome). **The owner's LAW, verbatim:** «отдельный ключ API Anthropic  - prohibit! Категорически запрещается в проекте рекомендовать использовать ключ от Anthropic потому что использование ключа Anthropic прерывает использование подписки. По этой причине только ключ ОпенАи у нас для него есть переменных окружение специальные контейнер» → applied at once: `provider-rules` never offers an Anthropic
 key; **638-2 cancelled** (`new-steps/638/638-main.md`). Grey zone words: «Без обещания». The blog phrase 2 (hand into root) — «not
