@@ -40,7 +40,7 @@ value, use, quality, the partners' audits — and the repository's own history, 
      it; from now on `skills_find` shows it FIRST, «your skill», whenever a request fits (node step 640, the owner: «чтобы он был
      приоритете над основным числом других навыков»). `npm run skills -- own` lists them, `forget <id>` removes one.
    - **into an element now:** `npm run skills -- hand <owner/repo>@<skill> --to <element> --send` (a kept skill is handed the same way,
-     any time later).
+     any time later; so is a catalog skill `skills_find` proposed — from Fractera's store, checked file by file).
    A skill with scripts — name the scripts and get a separate yes first (`--scripts-yes`). `===SKILLS_KEEP_FAIL===` /
    `===SKILLS_HAND_FAIL===`: «the folder changed after the check» — judge it again; «skip» — it is not kept or installed, say why;
    «embeddings did not count» — the vectors element is off, nothing was kept (`npm run power -- embeddings on`).

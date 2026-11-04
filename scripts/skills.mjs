@@ -19,7 +19,9 @@
 //       (data/node/skills/own/, outside git) with its vectors — searched FIRST by skills_find; no element gets it yet.
 //   npm run skills -- own · forget <owner/repo@skill> — the kept skills; one forgotten (its folder, card and vectors).
 //   npm run skills -- hand <owner/repo@skill> --to <element> [--send] [--said "<words>"] [--scripts-yes]   (628's adopt-hand)
-//       the still unchanged checked copy packed with its SOURCE.md for the element's own agent — an own skill or a judged suggestion;
+//       the still unchanged checked copy packed with its SOURCE.md for the element's own agent — an own skill, a judged suggestion, or a
+//       catalog skill (640-3: Fractera's store, every blob checked; GitHub as the backup by the card's fingerprint; no copyable licence —
+//       the card and its link only);
 //       --send gives it the task (npm run task); the agent takes it from GET /api/skills/suggested and commits it.
 //   npm run skills -- catalog-install — the skills catalog (node step 627-3): the release named in lib/agent-kit/skills/catalog/release.json
 //       downloaded, sha256 and model checked, into data/node/skills-catalog/; nothing is counted. The same vectors in place — no download.

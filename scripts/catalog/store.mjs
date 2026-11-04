@@ -18,7 +18,7 @@ export const sourceDir = (source) => String(source).replace(/\//g, '__')
 const git = (dir, ...args) => spawnSync('git', ['-C', dir, ...args], { encoding: 'buffer', maxBuffer: 64 * 1024 * 1024 })
 
 /** The root files of the source repository that carry its licence (the partial clone fetches their blobs on demand). */
-function licenceFiles(clone) {
+export function licenceFiles(clone) {
   const ls = git(clone, 'ls-tree', '--name-only', 'HEAD')
   if (ls.status !== 0) return []
   return ls.stdout.toString('utf8').split('\n').filter((n) => /^(LICEN[CS]E|COPYING|NOTICE)(\.(md|txt|rst))?$/i.test(n))
