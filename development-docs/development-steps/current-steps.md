@@ -9,8 +9,14 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 — «Синхронизировать форк» + «Обновить сборку ядра» → the deploy board; the core first there, «Обновить узел из форка (N)»; «Развернуть»
 inactive on an up-to-date element. Next: the owner's Sync + update (from the deploy board's core card), then 640-4. **~10:20 UTC the owner: «sync ok» → `npm run
 node:update` started on his node (target core `4cf30b3`).** Done ~10:35: `===NODE_UPDATE_DONE=== 12 изменений форка, ядро 39e8c419`,
-the core answers 200, the new words in the build («Синхронизировать форк», «Обновить узел из форка»), «Ваши WEB4 ITEMS» gone. Next: 640-4
-(the owner's three phrases on Opus).
+the core answers 200, the new words in the build («Синхронизировать форк», «Обновить узел из форка»), «Ваши WEB4 ITEMS» gone.
+
+**640-4 live, ~12:39–12:48 UTC (session `1201d3ee`):** phrase 1 passed (social judged, kept on «Да»); phrase 2 passed (`social` first,
+«Ты его уже сохранил, он твой»). Phrase 3 (hand into root) not yet asked. **Defect found:** for «in the style of a blogger» the catalog
+missed `affaan-m/ecc@brand-voice`, and the agent went to skills.sh. The owner, ~13:00: «check skill finding problem». Causes measured:
+`mcp.mjs` gives the catalog only `query`, not the agent's terms; `n = 3` cut the card at #6 and #12 although it was above 0.60. With the
+terms (mean fusion) it is #1 and #2, and the social control stays. → **substep 640-5** (`new-steps/640/640-5.md`), waiting for the
+owner's yes. After it: phrase 3 and the catalog skill into root, then the verdict.
 
 **Before (2026-11-04 ~04:30 UTC) — 629-2 CLOSED** (`completed-steps/629-2.md`, seal `e3a792e3f76c`; the owner: «да, запечатай» after
 the lines and their Russian reading). **629-4 CLOSED** (`completed-steps/629-4.md`, 09:31 UTC on Opus: the gray request → rule, price, lawful way; the
