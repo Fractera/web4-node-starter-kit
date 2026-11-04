@@ -10,6 +10,7 @@
 //                                                               a card per unique skill by Claude Haiku
 //   npm run catalog -- report                                   the numbers, the controls, 10 cards for the owner
 import { spawnSync } from 'node:child_process'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -68,6 +69,49 @@ if (cmd === 'selftest') {
   const r = buildSections({ cardsFile: CARDS, dataDir: DATA })
   for (const s of r.sections) console.log(`  ${s.name} — ${s.skills}: ${s.subsections.map((x) => `${x.name} ${x.skills}`).join(', ')}`)
   console.log(`===CATALOG_SECTIONS=== ${r.sections.length} sections, two levels · ${r.model} · $${r.costUsd ?? '?'} at the API price · ${join(DATA, 'sections.json')}`)
+} else if (cmd === 'build') {
+  // 627-2: the useful cards' pieces counted by the embeddings of the node `--node <its root>` into a file of vectors; the skip list.
+  const { buildIndex, writeSkipList, readCards } = await import('./build.mjs')
+  if (!flag('node')) { console.log('===CATALOG_FAIL=== build needs --node <the root of the node whose embeddings count the vectors>'); process.exit(2) }
+  const skip = writeSkipList(readCards(CARDS), join(dirname(CARDS), 'skip.json'))
+  const r = await buildIndex({ nodeRoot: resolve(flag('node')), cardsFile: CARDS, outDir: join(DATA, 'index') })
+  console.log(`===CATALOG_BUILT=== ${r.cards} cards · ${r.rows} pieces · ${r.model} ${r.dims} · ${r.seconds.toFixed(0)} s · skip list ${skip} · ${join(DATA, 'index')}`)
+} else if (cmd === 'pack') {
+  const { packIndex } = await import('./build.mjs')
+  const r = packIndex({ indexDir: join(DATA, 'index'), outDir: flag('out') ? resolve(flag('out')) : join(DATA, 'release') })
+  writeFileSync(`${r.file}.json`, `${JSON.stringify(r, null, 2)}\n`)
+  console.log(`===CATALOG_PACKED=== ${r.file} · ${(r.size / 1e6).toFixed(1)} MB · sha256 ${r.sha256} · ${r.manifest.cards} cards, ${r.manifest.model} ${r.manifest.dims}`)
+} else if (cmd === 'store') {
+  // 627-2: Fractera's store of checked skills — a working tree of its repository (`--out`), pushed by hand after a look.
+  const { buildStore } = await import('./store.mjs')
+  if (!flag('out')) { console.log('===CATALOG_FAIL=== store needs --out <the working tree of the store repository>'); process.exit(2) }
+  const r = buildStore({ cardsFile: CARDS, dataDir: DATA, storeDir: resolve(flag('out')) })
+  for (const x of r.refused) console.log(`  refused ${x}`)
+  console.log(`===CATALOG_STORE=== ${r.skills.length} skills from ${r.sources} sources · refused ${r.refused.length} · ${resolve(flag('out'))}`)
+} else if (cmd === 'threshold') {
+  const { measure } = await import('./threshold.mjs')
+  if (!flag('node')) { console.log('===CATALOG_FAIL=== threshold needs --node <the root of the node that holds the space>'); process.exit(2) }
+  const rows = await measure({ nodeRoot: resolve(flag('node')), cardsFile: CARDS, indexDir: join(DATA, 'index'), thresholds: flag('at') ? flag('at').split(',').map(Number) : undefined })
+  writeFileSync(join(DATA, 'threshold.json'), `${JSON.stringify(rows, null, 2)}\n`)
+  console.log(`===CATALOG_THRESHOLD=== ${rows.length} thresholds · ${join(DATA, 'threshold.json')}`)
+} else if (cmd === 'release') {
+  // 627-2: the packed space as a release asset of the core (gh's own login), then release.json beside the cards names it and the store.
+  const packed = JSON.parse(readFileSync(`${resolve(flag('file') ?? '')}.json`, 'utf8'))
+  const tag = flag('tag')
+  const repo = flag('repo') ?? 'Fractera/web4-node-starter-kit'
+  const store = flag('store') // <owner/repo>@<commit>
+  if (!tag || !store) { console.log('===CATALOG_FAIL=== release needs --file <packed .tar.gz> --tag skills-catalog-YYYY-MM-DD --store <owner/repo>@<commit>'); process.exit(2) }
+  const name = packed.file.split(/[\\/]/).pop()
+  const gh = spawnSync('gh', ['release', 'create', tag, packed.file, '--repo', repo, '--title', `Skills catalog ${tag.slice(-10)}`, '--notes',
+    `The skills catalog as a file of vectors (node step 627): ${packed.manifest.cards} skill cards marked once by Fractera, vectors by ${packed.manifest.model} (${packed.manifest.dims}). A node downloads it at install and update and counts nothing. sha256 ${packed.sha256}.`], { encoding: 'utf8' })
+  if (gh.status !== 0) { console.log(`===CATALOG_FAIL=== gh release create: ${gh.stderr.trim()}`); process.exit(1) }
+  const view = JSON.parse(spawnSync('gh', ['release', 'view', tag, '--repo', repo, '--json', 'assets'], { encoding: 'utf8' }).stdout)
+  const asset = view.assets.find((a) => a.name === name)
+  if (!asset || asset.size !== packed.size) { console.log(`===CATALOG_FAIL=== the asset on GitHub is not the packed file (${asset?.size} ≠ ${packed.size})`); process.exit(1) }
+  const [storeRepo, storeCommit] = store.split('@')
+  const release = { about: 'The graph space a node takes ready (node step 627-3) and the store of checked skills (627-2).', tag, asset: name, url: asset.url, size: packed.size, sha256: packed.sha256, ...packed.manifest, store: { repo: storeRepo, commit: storeCommit, manifest: `https://raw.githubusercontent.com/${storeRepo}/${storeCommit}/manifest.json` } }
+  writeFileSync(join(dirname(CARDS), 'release.json'), `${JSON.stringify(release, null, 2)}\n`)
+  console.log(`===CATALOG_RELEASED=== ${asset.url} · ${(packed.size / 1e6).toFixed(1)} MB · release.json written`)
 } else if (cmd === 'report') {
   const { report } = await import('./report.mjs')
   console.log(report(DATA, CARDS))

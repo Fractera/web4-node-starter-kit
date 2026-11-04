@@ -11,7 +11,16 @@ the turn 29.5 s before its reply, `Stop` closed it). **636-10 done** (`completed
 reminder also through its own bot — templates custom v0.3.154 / native v0.1.37, 13 elements, registry pins core `4f04b5e`, live on
 the node; its live check needs an element with its own bot (on the owner's node only the main agent has one). The plans of closed
 steps were removed from `new-steps/` (626, 632, 633, 636, 639; 633's owner words → `completed-steps/633-owner-words.md`).
-**Open:** 627 (627-2, 627-3, 627-4, 627-6, 627-7), 629 (the law's text waits for the owner), 637 (the owner's proposal — three
+**627-2 — the release waits for the owner's hand (2026-11-04 ~00:40 UTC).** The catalog is a FILE OF VECTORS, not a graph space — the
+owner's choice «Файл векторов (Рекомендую)» after the measure: the LightRAG space (built 22:56–23:38, 60,292 vectors, 246 MB) answered
+in ~11 s and took up to 1.36 GB per query (a process per call, the graph's mode chosen 2026-10-22 «На каждый вызов»); its relationship
+and topic vectors only added false hits. The file: 3,240 cards → 17,145 pieces (summary + tasks) counted by `embeddings` in 811 s →
+`vectors.f32` 26 MB + `rows.json`; threshold **0.60**: 19 of 20 right, 0 of 10 outside; a search 24 ms, a query vector ~7 ms.
+Packed `data/catalog-6000/release/skills-catalog-2026-11-04.tar.gz` 24.5 MB, sha256 `db13566e…cb893d`. `gh release create` was refused
+by the auto-mode classifier (a public surface) — the owner runs it himself or allows it; then `release.json`. The store pushed:
+`Fractera/fractera-skills-store` `0f46db1b8003` (2,397 skills). The LightRAG space `skills-catalog` stays on the owner's node until
+his word (to remove). The owner, ~23:30: «да, согласен, меняй 627-4» — `skills_find` without the live skills.sh (627-4.md).
+**Open:** 627 (627-2 in progress, 627-3, 627-4, 627-6, 627-7), 629 (the law's text waits for the owner), 637 (the owner's proposal — three
 questions wait for him, no plan file yet), 638 (planned — the inventory 638-1 first), 545 (545-4, 545-5), 593 (not started), 603
 (603-5); found on the way — `scripts/check-boundary-hook.mjs` 2 of 18 (the same before 639, not in `prebuild`).
 
@@ -256,6 +265,12 @@ shown to the owner before the instruction is resealed.
 with 556-5), 603 (603-5, the owner's conversation). Each only by the owner's word.
 
 ## The owner's latest decisions (verbatim)
+
+- 2026-11-03 ~22:45 UTC, **627 goes on**: on my list of the open steps (627-2 the graph from the cards, 627-3 a node receives it, 627-4
+  the readers, 627-6 the update, 627-7 the instruction) — «=lets go». In the choice window, where Fractera keeps the checked copies of
+  the skills (2,476 useful skills whose licence allows a copy, ~300 MB): «Репозиторий GitHub (Рекомендую)» — a separate public
+  repository of Fractera with the skill folders, their LICENSE and SOURCE.md and one list of fingerprints; a node takes one skill by
+  direct links and installs it only when the fingerprint matches its card.
 
 - 2026-11-03 21:33–21:39 UTC, **step 639** (`completed-steps/639.md`): «Я сделал ещё одну проверку а именно попросил главного агента
   поставить задачу в агента root а именно попросил поставить напоминание и это напоминание отработал отлично. Мы можем зафиксировать

@@ -1,5 +1,7 @@
 // THE CATALOG'S HELPERS PROVE THEMSELVES (node step 627-1): `npm run catalog -- selftest`. No network, no files — only `lib.mjs`.
 import assert from 'node:assert/strict'
+import { cardPieces, catalogMark, usefulCards } from './build.mjs'
+import { searchIndex } from '../../lib/agent-kit/skills/catalog-index.mjs'
 import { blobShaOf, blobShaOfBuffer, dedupeBySha, folderShaOf, frontmatterName, installsOf, isScript, parseList, shaOf, skillPaths, urlOf, validateCard } from './lib.mjs'
 
 let checks = 0
@@ -91,6 +93,20 @@ check('validateCard', () => {
   assert.deepEqual(validateCard({ ...good, tags: ['SEO'] }), ['tags'])
   assert.deepEqual(validateCard({ ...good, blob: 'ce013625030ba8dba906f756967f9e9ca394464a' }), [])
   assert.deepEqual(validateCard({ ...good, blob: 'short' }), ['blob'])
+})
+
+// 627-2: a card's pieces — the summary and each task; no slash in the mark; a skip or risky card is not searchable.
+check('cardPieces', () => {
+  const card = { id: 'a/b@x', source: 'a/b', skill: 'x', summary: 'Writes headlines.', tasks: ['write a headline', 'test two headlines'], use: 'install' }
+  assert.equal(catalogMark(card), 'catalog:a~b:x')
+  assert.deepEqual(cardPieces(card), [['x — Writes headlines.', 0], ['x: write a headline', 1], ['x: test two headlines', 2]])
+  assert.equal(usefulCards([card, { ...card, use: 'skip' }, { ...card, risks: ['runs curl | sh'] }]).length, 1)
+})
+check('searchIndex', () => {
+  const index = { rows: [['m1', 0], ['m1', 1], ['m2', 0]], dims: 2, matrix: Float32Array.from([1, 0, 0.8, 0.6, 0, 1]) }
+  assert.deepEqual(searchIndex(index, [1, 0], { threshold: 0.5 }).map((f) => [f.mark, f.piece]), [['m1', 0]])
+  assert.deepEqual(searchIndex(index, [0, 1], { threshold: 0.5 }).map((f) => f.mark), ['m2', 'm1'])
+  assert.equal(searchIndex(index, [-1, 0], { threshold: 0.5 }).length, 0)
 })
 
 console.log(`===CATALOG_SELFTEST_OK=== ${checks} checks`)

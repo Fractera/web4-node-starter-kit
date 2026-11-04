@@ -131,3 +131,22 @@ The owner, in the choice window, verbatim:
   visitor's browser it needs no server and no tokens).
 What 627-2 takes from the measurements of the same day: a card is indexed as its summary plus its tasks as pieces (one vector of the
 whole card lets a word like «Instagram» outweigh the job), with value high preferred.
+
+## Decisions of 2026-11-03 evening — the store
+
+The owner, ~22:45 UTC: «=lets go» on the remaining substeps (627-2, 627-3, 627-4, 627-6, 627-7). Where Fractera keeps the checked
+copies, in the choice window: «Репозиторий GitHub (Рекомендую)» — a separate public repository of Fractera: the folders of the useful
+skills whose licence allows a copy (2,476, ~300 MB measured from the fetched folders), each with its LICENSE and SOURCE.md, and one
+manifest of fingerprints; git keeps every version; a node takes one skill by direct links and installs it only when the folder's
+fingerprint equals its card's.
+
+The owner, ~23:30 UTC, on the live skills.sh after the graph: «да, согласен, меняй 627-4» — `skills_find` asks only the checked
+sources (the base, the catalog space); skills.sh only on the person's explicit request, named «not checked by Fractera»; skills.sh
+stays Fractera's input for growing the catalog (627-6: the next 5,000 rows).
+
+The owner, 2026-11-03 ~23:50 UTC, on «почти всё это время уходит на загрузку каталога в 246 МБ при каждом запросе»: «Мы для чего с
+тобой делали граф? … Чтобы мгновенно отвечать любыми затратами»; told his own choice of 2026-10-22 («На каждый вызов (Рекомендую)», a
+resident graph held ~190 MB) and the measure (11 s, 1.36 GB a query; pieces alone 19/20 and 0/10 at 0.60) — in the choice window:
+«Файл векторов (Рекомендую)». The catalog travels as `vectors.f32` + `rows.json` + `manifest.json` (627-2), the core searches it
+itself (`lib/agent-kit/skills/catalog-index.mjs`); 627-3 becomes: download, check sha256 and model, unpack into `data/node/` — no graph
+door. The shared graph and the memory keep the per-call mode.
