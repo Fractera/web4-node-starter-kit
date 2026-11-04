@@ -108,7 +108,8 @@ a single question they cannot answer.
   architecture — skill \`explain-this-project\`.
 
 ## Closing
-Close each substep with its own file in \`completed-steps/\` and the step with \`1-main.md\`; then this plan leaves \`new-steps/\`.
+Close each substep with its own file in \`completed-steps/\` and the step with \`1-main.md\`; then this plan leaves \`new-steps/\`
+in the same commit. The form of both — skill \`use-development-steps\`, \`references/closed-step-example.md\` (a closed 1-2 and 1-main).
 `, 'utf8')
 
 mkdirSync(path.dirname(MARK), { recursive: true })
