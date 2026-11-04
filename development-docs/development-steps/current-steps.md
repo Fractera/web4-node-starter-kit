@@ -6,8 +6,8 @@ start of a long or irreversible operation (before it), a changed next action. Th
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
 **NOW (2026-11-04 ~04:30 UTC) — 629-2 CLOSED** (`completed-steps/629-2.md`, seal `e3a792e3f76c`; the owner: «да, запечатай» after
-the lines and their Russian reading). Next in 629: 629-4 (the live gray request — rests only on 629-2), 629-3 (the elements' line —
-shown to the owner before its seal). **The owner's new request (~04:20, verbatim):** «Вчера мы работали над навыками которые приходят
+the lines and their Russian reading). **629-4 CLOSED** (`completed-steps/629-4.md`, 09:31 UTC on Opus: the gray request → rule, price, lawful way; the
+domain question → no warning). Left in 629: 629-3 (the elements' line — shown to the owner before its seal). **The owner's new request (~04:20, verbatim):** «Вчера мы работали над навыками которые приходят
 вместе с каждым новым стартовым шаблоном. В числе этих заданий было одно которое я отменил. Сегодня я его могу сформировать речь идёт о
 том как новые навыки попадают на хранилище а затем и в использовании при необходимости. Речь только о том кейсе когда пользователь
 говорит например смотри наш интересный навык может быть мы будем его использовать или что-то в этом роде должна запускаться какая-то
