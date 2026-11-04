@@ -32,7 +32,14 @@ Sync + update, then the main agent in Telegram «хочу постить в со
 memory v2.2.19 and the soul arrived): `app/api/skills/catalog/route.ts` — «'query' does not exist in type '{ n?: number }'» (TypeScript
 inferred `findInCatalogFile`'s options from the `.mjs` default). Fixed with JSDoc types; narrow `tsc` over the door: the old version 2
 errors, the fixed 0. Cause of the miss: my guards for 627-4 ran without a type check — the chain from `check-menu-icons` has no `tsc`.
-Next: the owner's Sync + update again.
+Next: the owner's Sync + update again. **Done 02:20:** core `e7cdc559` built, the door answers live (200 social first; 401 without the
+key). The owner's Telegram test «хочу постить в соцсети и блоги» (02:10, session `bf484705`) — no `skills_find`, no skill, an
+interview instead: the session ran on **Claude Haiku 5.5** — the owner's choice on the start button («it was my choose»); the good
+session of 22:26 (Paybis: `skills_find`, architecture) ran on Opus 5.5; the soul (with «A thousand hands», `shape-the-need`) was in
+the prompt (`data/node/agent-prompts/build.md`). Two instruction lines proposed for 627-7 (`skills_find` + `shape-the-need` before the
+first question, the first answer brings the shape: a new element, catalog skills, an analog to study) — wait for the owner's word to
+seal (`…/faa581fd-…/scratchpad/claude-md-627-7-proposal.diff` holds the first version). The tool's description now says «call it FIRST».
+The owner: «go to next task» → 627-6.
 **Open:** 627 (627-3, 627-4, 627-6, 627-7), 629 (the law's text waits for the owner), 637 (the owner's proposal — three
 questions wait for him, no plan file yet), 638 (planned — the inventory 638-1 first), 545 (545-4, 545-5), 593 (not started), 603
 (603-5); found on the way — `scripts/check-boundary-hook.mjs` 2 of 18 (the same before 639, not in `prebuild`).
