@@ -5,7 +5,21 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW (2026-11-04 ~03:40 UTC) — the owner's «go to fininsh non stop» done as far as his word allows.** The owner's node: core
+**NOW (2026-11-04 ~04:30 UTC) — 629-2 CLOSED** (`completed-steps/629-2.md`, seal `e3a792e3f76c`; the owner: «да, запечатай» after
+the lines and their Russian reading). Next in 629: 629-4 (the live gray request — rests only on 629-2), 629-3 (the elements' line —
+shown to the owner before its seal). **The owner's new request (~04:20, verbatim):** «Вчера мы работали над навыками которые приходят
+вместе с каждым новым стартовым шаблоном. В числе этих заданий было одно которое я отменил. Сегодня я его могу сформировать речь идёт о
+том как новые навыки попадают на хранилище а затем и в использовании при необходимости. Речь только о том кейсе когда пользователь
+говорит например смотри наш интересный навык может быть мы будем его использовать или что-то в этом роде должна запускаться какая-то
+цепочка которая позволит этот навык установить в хранилище навыков внутри собственного узла и потом в дальнейшем использовать его как
+обычный навык архива натов. Одновременно с этим его стоит разместить каким-то образом чтобы он был приоритете над основным числом других
+навыков. Также я хочу чтобы ты в рамках отдельного шага проверил устанавливаться потому что мы проверяли как науки обнаруживаются ну как
+они устанавливаются архитектуры и потом работают мы ещё не проверяли то есть сейчас я хочу полностью закончить работу с навыкамии хочу
+чтобы ты мне подтвердила что литература полностью готова к запуску на одного пользователя». Found while reading: **a catalog skill has
+no install path** — `skills_find` proposes, but nothing fetches it from `Fractera/fractera-skills-store` (or GitHub by the same
+fingerprint) into an element; only 628's `adopt-hand` (a suggested skill) exists. → a plan for the owner (step 640).
+
+**Before (2026-11-04 ~03:40 UTC) — the owner's «go to fininsh non stop» done as far as his word allows.** The owner's node: core
 `2c56165e` (the sealed instruction `8e98168ac810`, the skills catalog, memory v2.2.19, the soul with «Wit — the detective's spark», the
 boundary hook fix). Closed today: 639, 627-2, 627-3, 627-4, 627-7, 629-1; 638-1 (the inventory) written. **Waiting for the owner:**
 629-2 (the two law lines word for word in `new-steps/629/629-2.md` → seal), then 629-3 (the elements) and 629-4 (one gray request);

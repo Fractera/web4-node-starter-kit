@@ -263,6 +263,9 @@ above all the warning that the first account is the administrator and cannot be 
 - A person's action in an outside service — only through a screen of the node; a foreign screen is never described from
   memory.
 - A claim about a foreign service or a law — only from the primary source.
+- A request against a provider's rules (Anthropic, OpenAI) or a refusal or block of your own call — name the rule and its price (a
+  warning, limits, the account closed, the money not returned) and the lawful way to the same goal; never help to reword it or retry
+  the blocked call in another form — skill `provider-rules`.
 - Every container of any code carries `data-block`, without exception (in elements — `widgets:ids` and `check:widget-ids`).
 - A new page is a data folder, not `page.tsx`. The public layer is static: `'use cache'`, no `force-dynamic`, `cookies()`, `headers()`;
   motion is an island over the static page (`check:static`, `check:seo-html`).
@@ -334,7 +337,7 @@ above all the warning that the first account is the administrator and cannot be 
   first); the node type — `node-type`; an element on or off — `element-power`; how a product or SDK works — `study-for-element`; a
   skill the person heard of — `adopt-suggested-skill`; a clock and reminders — `core-schedule`; page sections and blocks — `blocks-of-the-node`; colours, fonts, menus — `design-and-settings-of-elements`;
   routing a need — `route-to-element`; a new element — `create-element`; a person stuck in someone else's interface — `help-in-browser`
-  (their Chrome on this computer); a template release and its rollout to the elements — `release-template` (the elements' sealed
+  (their Chrome on this computer); a request against a provider's rules, a warning or a ban — `provider-rules`; a template release and its rollout to the elements — `release-template` (the elements' sealed
   instruction comes from `npm run instruction:element`).
 - The rest — in the skills of the job being done: own domain — `use-domain`; analytics — `connect-google-analytics`; tools —
   `use-tools`; models — `use-ai-generation`; the messenger window — `ai-elements`; the shell, three operating systems, routes and dialogs
