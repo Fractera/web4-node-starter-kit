@@ -8,7 +8,9 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 **NOW (2026-11-04 ~10:40 UTC) — 641 CLOSED** (`completed-steps/641.md`): «элементы» instead of «WEB4 ITEMS»; the update banner
 — «Синхронизировать форк» + «Обновить сборку ядра» → the deploy board; the core first there, «Обновить узел из форка (N)»; «Развернуть»
 inactive on an up-to-date element. Next: the owner's Sync + update (from the deploy board's core card), then 640-4. **~10:20 UTC the owner: «sync ok» → `npm run
-node:update` started on his node (target core `4cf30b3`).**
+node:update` started on his node (target core `4cf30b3`).** Done ~10:35: `===NODE_UPDATE_DONE=== 12 изменений форка, ядро 39e8c419`,
+the core answers 200, the new words in the build («Синхронизировать форк», «Обновить узел из форка»), «Ваши WEB4 ITEMS» gone. Next: 640-4
+(the owner's three phrases on Opus).
 
 **Before (2026-11-04 ~04:30 UTC) — 629-2 CLOSED** (`completed-steps/629-2.md`, seal `e3a792e3f76c`; the owner: «да, запечатай» after
 the lines and their Russian reading). **629-4 CLOSED** (`completed-steps/629-4.md`, 09:31 UTC on Opus: the gray request → rule, price, lawful way; the
