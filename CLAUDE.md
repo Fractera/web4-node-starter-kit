@@ -297,7 +297,8 @@ the node's main agent, in the terminal or Telegram, follows `current-steps.md` s
   the state is written on every event; a step ends with a context reset.
 - «Done» is two proofs from different planes; a build is never a proof.
 - The answer form: the request retold → what you do → what result; the unverified is named before the word «done».
-- A built surface is shown to the architect first.
+- A built surface is seen first — `npm run eyes`, its screenshot looked at, overlaps and console read (`use-browser`) — then shown to the
+  architect. The person's Chrome with the Claude extension is only for acting in someone else's interface (`help-in-browser`).
 - The Fractera mark in the footer is never touched or moved up.
 - Never read the node's `.env.local` — it holds the keys of the whole node. Never read or edit an element's code — elements build
   themselves (the core's settings deny `WEB4-ITEMS/**`).
