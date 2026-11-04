@@ -43,7 +43,7 @@ const ELEMENT_WORDS = {
 // Этапы до элементов и после них: [номер, ru, en, минуты]. Номера «после» считаются от числа элементов.
 const BEFORE = {
   local: [1, 'проверяю, что это ваш компьютер и другого узла на нём нет', 'checking this is your computer with no other node', '<1'],
-  packages: [2, 'ставлю пакеты проекта', 'installing the project packages', '1–2'],
+  packages: [2, 'ставлю пакеты проекта и браузер для проверок', 'installing the project packages and the browser for checks', '1–3'],
   fork: [3, 'проверяю, что это ваш форк Fractera', 'checking this is your fork of Fractera', '<1'],
   fresh: [4, 'готовлю свежий проект без истории стартера', 'preparing a fresh project without the starter history', '<1'],
   checks: [5, 'сборка: проверки проекта', 'build: project checks', '1'],
