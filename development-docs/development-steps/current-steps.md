@@ -10,7 +10,7 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 under the online bar · core drawer and site drawer: «Как это работает», «Подписка Claude Code», «Терминал», «Активация Telegram», then
 «Группа страниц архитектора» · `===PROGRESS===` ~21 lines · the owner's closing words (old item 6 and the first-account warning removed —
 «Убрать оба») · README. Work: dev clones `~/fractera-dev/web4-node-starter-kit`, `~/fractera-dev/fractera-root-starter`, commits straight
-to `main` («коммиты прямо в main»). Next: 645-1.
+to `main` («коммиты прямо в main»). **645-1 DONE `a8a7a51a`, 645-2 DONE `cc047462`** (the owner's node rebuilt with them ~21:25 UTC; its four files equal the fork after his next Sync). Next: 645-3 (root-starter drawer, edited, not tagged), then 645-4 (`scripts/progress.mjs` written, launch wired; services-install and serve not yet).
 
 **NOW (2026-11-04 ~10:40 UTC) — 641 CLOSED** (`completed-steps/641.md`): «элементы» instead of «WEB4 ITEMS»; the update banner
 — «Синхронизировать форк» + «Обновить сборку ядра» → the deploy board; the core first there, «Обновить узел из форка (N)»; «Развернуть»
