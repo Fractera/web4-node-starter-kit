@@ -27,7 +27,7 @@ export function DrawerPanel({
     <Sheet open={open} onOpenChange={(o) => { if (!o) close(side); }}>
       {/* Page drawers sit BELOW the header (top-14) so the full-height account drawer
           (step 161) reads as taller. */}
-      <SheetContent side={side} className="w-72 p-0 gap-0 top-14 bottom-0 h-auto">
+      <SheetContent side={side} barInset={false} className="w-72 p-0 gap-0 top-14 bottom-0 h-auto">
         <SheetHeader className="border-b border-border">
           <SheetTitle>{title}</SheetTitle>
         </SheetHeader>
