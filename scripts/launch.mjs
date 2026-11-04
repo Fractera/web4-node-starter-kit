@@ -15,8 +15,9 @@
 import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
-import { spawnSync } from 'node:child_process'
+import { spawn, spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
+import { PROGRESS_ENV, progress } from './progress.mjs'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const root = path.join(here, '..')
@@ -24,6 +25,8 @@ const isWindows = process.platform === 'win32'
 const npm = isWindows ? 'npm.cmd' : 'npm'
 const STAMP = path.join(root, 'logs', 'launch.json')
 const TOTAL = 6
+// 645-4: дочерние процессы (`services-install`, `serve start`) печатают свои `===PROGRESS===` только под этой меткой.
+process.env[PROGRESS_ENV] = '1'
 
 function readStamp() {
   try { return JSON.parse(readFileSync(STAMP, 'utf8')) } catch { return {} }
@@ -56,6 +59,32 @@ function npmRun(...args) {
   return spawnSync(npm, args, { cwd: root, stdio: 'inherit', shell: isWindows, windowsHide: true }).status === 0
 }
 
+// 645-4: та же команда, но её вывод читается построчно — сборка печатает этапы проверок, компиляции и страниц, и каждый первый раз
+// становится строкой `===PROGRESS===`. Вывод идёт человеку целиком, как прежде.
+function npmRunWatched(watch, ...args) {
+  return new Promise((resolve) => {
+    const child = spawn(npm, args, { cwd: root, stdio: ['inherit', 'pipe', 'pipe'], shell: isWindows, windowsHide: true })
+    const seen = new Set()
+    const feed = (stream, out) => {
+      let buf = ''
+      stream.on('data', (chunk) => {
+        out.write(chunk)
+        buf += chunk.toString()
+        let i
+        while ((i = buf.indexOf('\n')) >= 0) {
+          const line = buf.slice(0, i)
+          buf = buf.slice(i + 1)
+          for (const [re, stage] of watch) if (!seen.has(stage) && re.test(line)) { seen.add(stage); progress(stage) }
+        }
+      })
+    }
+    feed(child.stdout, process.stdout)
+    feed(child.stderr, process.stderr)
+    child.on('error', () => resolve(false))
+    child.on('close', (code) => resolve(code === 0))
+  })
+}
+
 function lockHash() {
   try { return createHash('sha256').update(readFileSync(path.join(root, 'package-lock.json'))).digest('hex').slice(0, 16) } catch { return null }
 }
@@ -81,9 +110,11 @@ console.log('Installing and starting the Fractera node. No questions; the first 
 console.log('Если команда оборвалась по таймауту — запустите `npm run launch` снова: она продолжит с места обрыва.')
 
 step(1, 'это компьютер человека и на нём нет другого узла', 'local computer, no other node')
+progress('local')
 if (!node('check-local.mjs')) fail('check-local')
 
 step(2, 'пакеты проекта (npm install, 1–2 минуты)', 'packages (npm install, 1–2 min)')
+progress('packages')
 const lock = lockHash()
 if (readStamp().deps === lock && existsSync(path.join(root, 'node_modules'))) {
   console.log('пакеты уже стоят — пропускаю')
@@ -93,17 +124,22 @@ if (readStamp().deps === lock && existsSync(path.join(root, 'node_modules'))) {
 }
 
 step(3, 'это ваш форк оригинала Fractera', 'your fork of the Fractera original')
+progress('fork')
 if (!node('ensure-env.mjs') || !node('check-origin.mjs')) fail('check-origin')
 
 step(4, 'свежий проект: без истории разработки стартера', 'fresh project: without the starter history')
+progress('fresh')
 if (!node('fresh-project.mjs')) fail('fresh-project')
 
 step(5, 'сборка узла (npm run build, 4–5 минут)', 'build (npm run build, 4–5 min)')
 const head = gitHead()
 if (head && readStamp().build === head && existsSync(path.join(root, '.next', 'BUILD_ID'))) {
   console.log('сборка этой версии уже есть — пропускаю')
+  progress('pages', 'уже собрано')
 } else {
-  if (!npmRun('run', 'build')) fail('npm run build')
+  progress('checks')
+  const watch = [[/Creating an optimized production build/, 'compile'], [/Generating static pages/, 'pages']]
+  if (!(await npmRunWatched(watch, 'run', 'build'))) fail('npm run build')
   writeStamp({ build: head, buildAt: new Date().toISOString() })
 }
 
@@ -111,6 +147,7 @@ step(6, 'запуск узла и выход в интернет (первый �
 // Узел уже отвечает на эту сборку — не перезапускать: `serve:start` поднял бы процессы заново ради ничего; адреса даёт `serve:status`.
 if (readStamp().started === head && (await nodeAnswers())) {
   console.log('узел уже работает — показываю адреса')
+  progress('warm', 'узел уже работает')
   if (!node('serve.mjs', 'status')) fail('serve:status')
 } else {
   if (!node('serve.mjs', 'start')) fail('serve:start')

@@ -44,6 +44,7 @@ import elementProps from '../lib/web4-items/element-props.cjs'
 import { addressOf } from '../lib/web4-items/address-file.mjs'
 import { elementLanguages } from '../lib/web4-items/element-languages.mjs'
 import { dropStaleTypes } from '../lib/deploy/stale-types.mjs'
+import { progressElement } from './progress.mjs'
 
 const require = createRequire(import.meta.url)
 const { isFree, PORT_BLOCK_START, PORT_BLOCK_END, blockPorts, isBlockPort } = require('../lib/server-port.cjs')
@@ -614,11 +615,14 @@ function currentDist(stamp) {
   return first.startsWith('.next') ? first : '.next'
 }
 
+let elementNo = 0
 for (const entry of registry.services) {
   if (ONLY && entry.id !== ONLY) continue
   let builtDist = null
   const dir = entryDir(entry)
   say(`\n── ${entry.id} — ${entry.born ? 'рождённый' : entry.version}`)
+  // 645-4: под `npm run launch` — строка `===PROGRESS===` на каждый элемент («элемент 7 из 13: граф знаний»).
+  progressElement(++elementNo, entry.id)
 
   // 🔒 РОЖДЁННЫЙ ЭЛЕМЕНТ (319-1) — САМОСТОЯТЕЛЬНЫЙ ПРОЕКТ, А НЕ КОПИЯ НА ТЕГЕ FRACTERA. Его код пишет агент элемента, и
   // установщик его НЕ клонирует, НЕ тянет и НЕ переводит на тег: иначе следующая установка (или `serve.mjs ensureElements`)

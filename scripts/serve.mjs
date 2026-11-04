@@ -17,6 +17,7 @@ import os from 'node:os'
 import { createRequire } from 'node:module'
 import paths from '../lib/web4-items/paths.cjs'
 import deployLock from '../lib/deploy/deploy-lock.cjs'
+import { PROGRESS_ENV, progress } from './progress.mjs'
 // 553: сборка ядра при «закрытой крышке» — все процессы узла, кроме туннеля, на время сборки остановлены.
 const { closeLid, openLid, backupNext, restoreNext, dropBackup, itemsAside, itemsBack, redrawCore } = createRequire(import.meta.url)('../lib/deploy/quiet-build.cjs')
 // 642-2: чтец сборки — журнал сборки ядра этому компьютеру, пока крышка закрыта (`lib/deploy/build-reader.cjs`).
@@ -124,6 +125,10 @@ async function start() {
   // 372-3: этот запуск ставит элементы сам — значит это первая установка (браузер откроется один раз, в конце).
   const freshInstall = missingElements().length > 0
   ensureElements()
+  // 645-4: три последних этапа первой установки — строки `===PROGRESS===` (только под `npm run launch`).
+  progress('start')
+  // Процессы узла (pm2) метку не наследуют: иначе `node:update` и `services:install` из панели печатали бы строки установки.
+  delete process.env[PROGRESS_ENV]
   ensurePm2()
   // 372: бит запуска spawn-helper терминала (macOS/Linux) — и для узлов, поставленных до этой правки.
   spawnSync(process.execPath, [path.join(here, 'ensure-pty.mjs')], { stdio: 'inherit', windowsHide: true })
@@ -160,10 +165,14 @@ async function start() {
   // Свой домен подключён — узел уже в интернете постоянным адресом, и временный открыл бы пульт без входа зря.
   let ownDomain = null
   try { ownDomain = JSON.parse(readFileSync(path.join(root, 'logs', 'domain.json'), 'utf8')).hostname || null } catch { /* домена нет */ }
-  if (!ownDomain && !readTunnel()?.unpublished) await publish({ quietPrice: true })
+  if (!ownDomain && !readTunnel()?.unpublished) {
+    progress('tunnel')
+    await publish({ quietPrice: true })
+  }
   // 🪦 551-5 «при первом запуске рождаются два платёжных кастомных элемента» снято шагом 573-2 (владелец 2026-10-22: «платёжный шлюз в
   // страйп сделать нативного элементом доступным по умолчанию … По умолчанию … он остается выключен»): Stripe — нативный элемент реестра,
   // его ставит установщик выключенным; второй платёжный элемент владелец удаляет сам.
+  progress('warm')
   await refreshPages(url)
   await printAddresses(url, freshInstall)
 }
