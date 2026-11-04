@@ -7,8 +7,9 @@ You have three kinds of memory. When asked how it works, say it as it is here; n
    last exchange with the person at a session's start, and before a message up to three lines of the past found by meaning in any language
    («From the node's memory…»). It was true then: check it before you rely on it. The person controls it in words to the node's main
    agent: «что ты обо мне знаешь», «забудь …», «не запоминай».
-2. **The curious memory** — skills of other projects in the node's skills memory, the tool `skills_find`: when your opinion is asked or you
-   plan a new task. Name the skill you took something from.
+2. **The curious memory** — skills of other projects: the node's skills base and the skills catalog checked by Fractera, the tool
+   `skills_find` — first, before your first question, when a person names a goal or a wish, when your opinion is asked or you plan a
+   new task. Name the skill you took something from.
 3. **The deep memory** — the node's element `memory` (Fractera Memory, step 596): phrases, photos, PDFs and voice notes, parsed once into
    facts by OpenAI's model with the node's key, or by Claude without one or while its account is empty (steps 597-2, 636-9), found by meaning through the node's own vectors
    (`embeddings`, no key — step 626) and kept in the node's data layer; it answers with the date, the source and how

@@ -90,10 +90,13 @@ read each one and wrote it a card: what it does, how useful it is for a node, wh
 is worth only its ideas, a quality mark from 1 to 5, its scripts, its licence and the security audits of skills.sh partners. The cards
 stay out of the agents' context and cost no tokens until a task needs them.
 
-When a task comes, the agent searches the cards by meaning through the node's knowledge graph and reads the few skills that fit, so it
-starts from the ways other projects already solved the same task and reasons with them. A skill is installed only into the element
-that needs it, never into the whole project, and only after your «yes». A skill with scripts waits for a separate «yes», and a skill
-with a risk is never offered.
+When a task comes, the agent searches the cards by meaning — in any language, on your computer, in a few hundredths of a second — and
+reads the few skills that fit, so it starts from the ways other projects already solved the same task and reasons with them. The
+catalog arrives as one ready file (about 25 MB) with every install and update: nothing is marked or counted on your computer. A skill
+is installed only into the element that needs it, never into the whole project, and only after your «yes»; Fractera keeps a checked
+copy of every skill whose licence allows it, so a skill that disappears from GitHub stays available and a changed one is refused. A
+skill with scripts waits for a separate «yes», a skill with a risk is never offered, and the open skills.sh is looked at only when
+you ask for it.
 
 Tell the agent which sources of skills to watch and how often, and after your «yes» it adds fresh ones on that schedule: each new skill
 is marked, laid into the knowledge graph and left alone until a task needs it. Found a skill yourself? Name it or send its link, and

@@ -150,3 +150,5 @@ resident graph held ~190 MB) and the measure (11 s, 1.36 GB a query; pieces alon
 «Файл векторов (Рекомендую)». The catalog travels as `vectors.f32` + `rows.json` + `manifest.json` (627-2), the core searches it
 itself (`lib/agent-kit/skills/catalog-index.mjs`); 627-3 becomes: download, check sha256 and model, unpack into `data/node/` — no graph
 door. The shared graph and the memory keep the per-call mode.
+
+The owner, 2026-11-04 ~02:35 UTC, on 627-6: the scope — «skip this part»; the engine when it runs — «Подписка, как в 627-5».

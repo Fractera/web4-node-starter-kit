@@ -40,6 +40,9 @@ the prompt (`data/node/agent-prompts/build.md`). Two instruction lines proposed 
 first question, the first answer brings the shape: a new element, catalog skills, an analog to study) — wait for the owner's word to
 seal (`…/faa581fd-…/scratchpad/claude-md-627-7-proposal.diff` holds the first version). The tool's description now says «call it FIRST».
 The owner: «go to next task» → 627-6.
+- 2026-11-04 ~02:35 UTC, on 627-6 in the choice window: the scope — «skip this part» (627-6 is not run now); the engine when it runs —
+  «Подписка, как в 627-5» (`claude -p` Haiku on the owner's subscription). → 627-7: README and `memory.md` updated (not sealed); the two
+  CLAUDE.md lines wait for the owner's yes to seal.
 **Open:** 627 (627-3, 627-4, 627-6, 627-7), 629 (the law's text waits for the owner), 637 (the owner's proposal — three
 questions wait for him, no plan file yet), 638 (planned — the inventory 638-1 first), 545 (545-4, 545-5), 593 (not started), 603
 (603-5); found on the way — `scripts/check-boundary-hook.mjs` 2 of 18 (the same before 639, not in `prebuild`).
