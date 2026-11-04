@@ -154,87 +154,65 @@ if (readStamp().started === head && (await nodeAnswers())) {
   writeStamp({ started: head, startedAt: new Date().toISOString() })
 }
 
-// 🔒 ПРИВЕТСТВИЕ — ГОТОВЫЙ ТЕКСТ, А НЕ ПОРУЧЕНИЕ АГЕНТУ. Слово владельца 2026-11-02: сразу после развёртывания агент приветствует
-// человека, предупреждает, что первая учётная запись — администратор и восстановить её невозможно, называет временный адрес и путь
-// «вход → свой домен → Telegram». 624-3/624-5 (владелец 2026-11-02, тот же день): Telegram — с требованием приложения; пункт 5 — закрыть
-// установочный чат ради памяти, дальше — главный агент узла в терминале или Telegram. Слабая модель пересказывает готовый текст надёжнее, чем собирает его из инструкции, — поэтому он
-// печатается здесь, между маркерами, на двух языках; агент передаёт его человеку на языке человека, ничего не выбрасывая.
-// 643-2 (владелец 2026-11-04): пункт 6 — режимы и подписка, «Без обещания»; каждое утверждение — по источникам `provider-rules`
-// («an end user … signing in to the unmodified Claude Code binary with their own Claude subscription»; лимиты «assume ordinary,
-// individual usage»; «warn you or throttle, limit, suspend, or terminate»; «all payments are non-refundable»). Ключ Anthropic не
-// предлагается никогда — закон владельца того же дня: ИИ-работа инструментов — ключ OpenAI.
+// 🔒 ПРОЩАНИЕ АГЕНТА УСТАНОВКИ — ГОТОВЫЙ ТЕКСТ, А НЕ ПОРУЧЕНИЕ АГЕНТУ. Слабая модель пересказывает готовый текст надёжнее, чем
+// собирает его из инструкции, — поэтому он печатается здесь, между маркерами, на двух языках; агент передаёт его человеку на языке
+// человека, ничего не выбрасывая и не добавляя.
+//
+// 645-5, владелец 2026-11-04, после первой установки глазами нового человека: «ты даешь мне ссылку на страницу из которой невозможно
+// создать учетную запись … Вместо этого ты должна сказал: остается главное: – подключите вашу подписку … (обязательно) – Если вы ещё не
+// используете Telegram установите на свой телефон и на этот компьютер … (рекомендуется) – создайте Telegram бота и начните работу в
+// чате (рекомендуется) – если вы не используете Telegram перейдите на работу через терминал»; о временном адресе — «это достаточно на
+// первое время, тогда рекомендуется как можно раньше подключить домен» и «до переезда на собственный домен регистрация ограничена»;
+// прощание — его словами. 🪦 Прежние пункты 624 (учётная запись архитектора, домен, Telegram, закрыть чат) и 643-2 (режимы работы и
+// подписка, ключ OpenAI) сняты его ответом «Убрать оба»: эти сведения живут на страницах панели («Подписка», «Как это работает»).
+//
+// 🔒 ВСЕ ССЫЛКИ — НА ЭТОМ КОМПЬЮТЕРЕ, КРОМЕ ДВУХ. Подписка, Telegram-бот, терминал и домен меняют узел — на временном адресе панель
+// только для чтения (`proxy.ts`, `temporary-address`), поэтому они ведут на `localhost` ядра. Временный адрес — то, что видит интернет;
+// telegram.org — приложение.
 function welcome() {
   let temporary = null
   try {
     const t = JSON.parse(readFileSync(path.join(root, 'logs', 'tunnel.json'), 'utf8'))
     temporary = t?.url && !t.dead ? t.url : null
   } catch { /* туннеля нет — адрес только на этом компьютере */ }
-  const where = temporary ?? 'адрес выше (===PUBLIC_URL===)'
-  const whereEn = temporary ?? 'the address above (===PUBLIC_URL===)'
+  let port = 24680
+  try { port = JSON.parse(readFileSync(path.join(root, 'logs', 'runtime.json'), 'utf8')).port || port } catch { /* порт по умолчанию */ }
+  const core = `http://localhost:${port}`
+  const ru = (p) => `${core}/ru/${p}`
+  const en = (p) => `${core}/en/${p}`
   console.log('')
   console.log('===WELCOME===')
-  console.log(`Добро пожаловать в ваш узел Fractera. Браузер уже открыт на его главной странице.
-
-1. СОЗДАЙТЕ УЧЁТНУЮ ЗАПИСЬ АРХИТЕКТОРА СЕЙЧАС, НА ЭТОМ КОМПЬЮТЕРЕ. Здесь панель открывается и без входа — узел узнаёт
-   хозяина за клавиатурой. Но нажмите «Войти» на главной странице и создайте первую учётную запись (почта и пароль) до того,
-   как подключите свой домен: на домене регистрация открыта для всех, и первый, кто зарегистрируется, станет хозяином узла.
-   ⚠ ВНИМАНИЕ: первая учётная запись навсегда становится администратором (архитектором) узла. Восстановить её пароль
-   НЕВОЗМОЖНО — запишите почту и пароль и храните их надёжно. Позже подключите вход через Google или «волшебное письмо»
-   (Resend) — тогда пароль архитектора можно будет вернуть через почту.
-2. ВРЕМЕННЫЙ АДРЕС: ${where} — только чтобы посмотреть проект: панель там открыта для чтения любому, у кого есть ссылка,
-   вход и регистрация на нём закрыты, а сам адрес меняется при перезапуске туннеля.
-3. СВОЙ ДОМЕН — когда намерения серьёзные. Например, на porkbun.com: домен .com стоит около $12 в год и продлевается по той же
-   цене (проверьте цену на сайте перед покупкой). Купите домен и скажите об этом главному агенту узла — он сам сделает
-   записи, которые свяжут проект, регистратора и Cloudflare (страница узла «Домен и хостинг → Подключение домена»).
-4. TELEGRAM-БОТ — после домена. Нужно приложение Telegram на телефоне или компьютере (https://telegram.org/apps), с входом в
-   свой аккаунт: без него бота не создать. Создайте бота у @BotFather (https://t.me/BotFather) и вставьте его токен на странице
-   узла «Telegram». Дальше работать можно с телефона, голосом или текстом.
-5. ЭТОТ ЧАТ МОЖНО ЗАКРЫТЬ. Установка закончена, узел работает сам, а этот чат занимает память компьютера. Закройте его и
-   работайте дальше с главным агентом узла: в терминале (панель → «Главный агент» → «Терминал», http://localhost:24680) или
-   через Telegram-бота — как вам удобнее.
-6. РЕЖИМЫ РАБОТЫ И ВАША ПОДПИСКА. Строительство — вы строите элементы (самостоятельные части проекта) вместе с их агентами:
-   это обычная работа в Claude Code по вашей собственной подписке, так Anthropic и разрешает. Workflow — построенные
-   инструменты сами выполняют задачи, по расписанию или в чатах с агентами. Это серая зона: правила Anthropic рассчитывают
-   подписку на обычное личное использование и не называют порога — чем больше автоматической работы на подписке, тем выше
-   риск (предупреждение, ограничения, закрытие аккаунта без возврата денег). Поэтому собственная ИИ-работа инструментов
-   (тексты, картинки, голос) идёт через ключ OpenAI — его вставляют в панели: «Строительство → Переменные окружения».
-
-После входа вы попадаете в панель управления — там та же подробная инструкция. Спрашивайте главного агента о чём угодно: как
-устроен проект, что в нём есть, с чего начать вашу идею.`)
+  console.log(`Узел Fractera установлен и работает. Остаётся главное:
+– Подключите вашу подписку Claude Code (обязательно): ${ru('build/subscription')}
+– Если вы ещё не пользуетесь Telegram, установите его на телефон и на этот компьютер (рекомендуется): https://telegram.org/apps
+– Создайте Telegram-бота и начните работу в чате (рекомендуется): ${ru('build/telegram')}
+– Если вы не пользуетесь Telegram, работайте через терминал: ${ru('build/terminal')}
+${temporary ? `
+Вам выдана временная публичная ссылка — по ней ваш проект виден из интернета, на первое время этого достаточно: ${temporary}
+Рекомендуется как можно раньше подключить свой домен: ${ru('hosting/domain')}
+До переезда на собственный домен регистрация ограничена.
+` : ''}
+На этом моя миссия в этом проекте заканчивается. Я не смогу помочь вам с разработкой этого проекта, так как у меня нет необходимых
+инструкций. Сейчас рекомендуется идти либо в терминал, либо в Telegram (рекомендуется): эти каналы обладают всеми необходимыми
+инструкциями и помогут вам создать проект вашей мечты. Рад был вам помочь — теперь вы можете меня выключить.`)
   console.log('')
-  console.log(`Welcome to your Fractera node. The browser already shows its home page.
-
-1. CREATE THE ARCHITECT ACCOUNT NOW, ON THIS COMPUTER. Here the panel opens without sign-in — the node recognises the owner
-   at the keyboard. Still, press «Sign in» on the home page and create the first account (email and password) before you
-   connect your own domain: on a domain registration is open to everyone, and whoever registers first owns the node.
-   ⚠ WARNING: the first account becomes the node's administrator (architect) for good. Its password CANNOT be recovered —
-   write the email and password down and keep them safe. Later connect Google or the magic-link email (Resend) sign-in —
-   then the architect's password can be restored by email.
-2. TEMPORARY ADDRESS: ${whereEn} — only for a look at the project: the panel there is read-only to anyone with the link,
-   sign-in and registration are closed, and the address changes when the tunnel restarts.
-3. YOUR OWN DOMAIN — when you are serious. For example at porkbun.com: a .com costs about $12 a year and renews at the same
-   price (check the price on the site before buying). Buy it and tell the node's main agent — it makes the records that join
-   the project, the registrar and Cloudflare (node page «Domain and hosting → Domain activation»).
-4. TELEGRAM BOT — after the domain. You need the Telegram app on your phone or computer (https://telegram.org/apps), signed in
-   to your account: without it no bot can be made. Create a bot at @BotFather (https://t.me/BotFather) and paste its token on
-   the node's «Telegram» page. From then on you can work from the phone, by voice or text.
-5. YOU CAN CLOSE THIS CHAT. The install is finished, the node runs by itself, and this chat takes the computer's memory. Close
-   it and go on with the node's main agent: in its terminal (panel → «Main agent» → «Terminal», http://localhost:24680) or
-   through the Telegram bot — whichever you like.
-6. WORK MODES AND YOUR SUBSCRIPTION. Building — you build the elements (the project's independent parts) with their agents:
-   this is ordinary work in Claude Code on your own subscription, the case Anthropic permits. Workflow — the built tools do
-   tasks by themselves, on a schedule or in the agents' chats. This is a grey zone: Anthropic's rules expect the subscription
-   for ordinary, individual use and name no threshold — the more automatic work on the subscription, the higher the risk (a
-   warning, limits, the account closed with no refund). So the tools' own AI work (texts, pictures, voice) goes through an
-   OpenAI key — it is pasted in the panel: «Build → Environment variables».
-
-After sign-in you land in the control panel — the same detailed guide waits there. Ask the main agent anything: how the
-project works, what is in it, where to start with your idea.`)
+  console.log(`The Fractera node is installed and running. What matters now:
+– Connect your Claude Code subscription (required): ${en('build/subscription')}
+– If you do not use Telegram yet, install it on your phone and on this computer (recommended): https://telegram.org/apps
+– Create a Telegram bot and start working in the chat (recommended): ${en('build/telegram')}
+– If you do not use Telegram, work through the terminal: ${en('build/terminal')}
+${temporary ? `
+You have a temporary public link — it makes your project visible from the internet, and that is enough for a start: ${temporary}
+Connect your own domain as early as you can: ${en('hosting/domain')}
+Until you move to your own domain, registration is restricted.
+` : ''}
+This is where my mission in this project ends. I cannot help you develop this project: I do not have the instructions for it. Go on
+in the terminal or in Telegram (recommended): these channels have every instruction needed and will help you build the project of
+your dreams. Glad to have helped — you can switch me off now.`)
   console.log('===WELCOME_END===')
 }
-
 welcome()
 console.log('')
 console.log('===LAUNCH_DONE===')
-console.log('Передайте человеку текст между ===WELCOME=== и ===WELCOME_END=== на его языке, ничего не выбрасывая.')
-console.log('Give the person the text between ===WELCOME=== and ===WELCOME_END=== in their language, leaving nothing out.')
+console.log('Передайте человеку текст между ===WELCOME=== и ===WELCOME_END=== на его языке, ничего не выбрасывая и не добавляя. Ваша работа на этом окончена.')
+console.log('Give the person the text between ===WELCOME=== and ===WELCOME_END=== in their language, leaving nothing out and adding nothing. Your work ends here.')

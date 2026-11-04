@@ -3,9 +3,10 @@
 What this node is and how each thing is done.
 
 🔒 **Not installed yet — `logs/launch.json` has no `started`? Your only job is `npm run launch` in this folder, with no questions.** Cut off
-by a timeout — run it again, it continues where it stopped. `===LAUNCH_FAILED===` — show the person the reason printed above it. At
-`===LAUNCH_DONE===` give the person the text between `===WELCOME===` and `===WELCOME_END===` in their language, leaving nothing out —
-above all the warning that the first account is the administrator and cannot be recovered; then follow `current-steps.md` step 1.
+by a timeout — run it again, it continues where it stopped. Every `===PROGRESS===` line — one line to the person in their language.
+`===LAUNCH_FAILED===` — show the person the reason printed above it. At `===LAUNCH_DONE===` give the person the text between
+`===WELCOME===` and `===WELCOME_END===` in their language, leaving nothing out and adding nothing — the install agent's work ends there;
+the node's main agent, in the terminal or Telegram, follows `current-steps.md` step 1.
 
 ## 1. Role and goal
 
