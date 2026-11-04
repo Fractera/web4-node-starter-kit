@@ -35,7 +35,11 @@ Sonnet bench, then him.
 
 **NOW-4 (2026-11-04 ~16:00 UTC) — the owner: «640 succes to close, 642 - to close, go to» 629-3, 638, 637, 627-6.** 640 CLOSED
 (`completed-steps/640-main.md` with the verdict, 640-4, 640-5), 642 CLOSED (`completed-steps/642.md`); their plans deleted in that
-commit. Next: the four waiting for his decision.
+commit. **~16:05 his answers (verbatim choices):** 629-3 — «Да, с запретом ключа (Рекомендую)» (the law line + «Never recommend an Anthropic API
+key: the project's AI work goes through the node's OpenAI key.»), rolled out to the templates and every element; 638 — «Оставить как
+есть» → **638 CLOSED** (`completed-steps/638-main.md`); 637 — the switch «Разработка ядра» «На странице настроек (Рекомендую)»,
+with the road «сообщить в Fractera» when it is off; 627-6 — «Пока ничего». Next: **629-3 rollout** (a long operation: the templates'
+releases and every element — skill `release-template`), then 637's plan.
 
 **NOW-3 (2026-11-04 ~15:25 UTC) — step 643 approved** (the first meeting: name, address, style, the project's language with its price,
 the two modes in the welcome). **The owner's LAW, verbatim:** «отдельный ключ API Anthropic  - prohibit! Категорически запрещается в проекте рекомендовать использовать ключ от Anthropic потому что использование ключа Anthropic прерывает использование подписки. По этой причине только ключ ОпенАи у нас для него есть переменных окружение специальные контейнер» → applied at once: `provider-rules` never offers an Anthropic
@@ -92,7 +96,7 @@ update, then three phrases in Telegram on Opus: (1) «смотри, интере
 `2c56165e` (the sealed instruction `8e98168ac810`, the skills catalog, memory v2.2.19, the soul with «Wit — the detective's spark», the
 boundary hook fix). Closed today: 639, 627-2, 627-3, 627-4, 627-7, 629-1; 638-1 (the inventory) written. **Waiting for the owner:**
 629-2 (the two law lines word for word in `new-steps/629/629-2.md` → seal), then 629-3 (the elements) and 629-4 (one gray request);
-638 (to be planned again: the owner banned an Anthropic key on 2026-11-04 — 638-2 cancelled); 637 (three questions); 545-4/5, 593,
+638 (closed 2026-11-04: «Оставить как есть»); 637 (three questions); 545-4/5, 593,
 603-5 (his live conversations); 627-6 (skipped by him; the subscription when it runs).
 
 **NOW (2026-11-03 ~22:40 UTC): 639 CLOSED** (`completed-steps/639.md`): a clean Telegram chat, live on the owner's node (core
