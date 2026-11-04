@@ -10,7 +10,15 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 under the online bar · core drawer and site drawer: «Как это работает», «Подписка Claude Code», «Терминал», «Активация Telegram», then
 «Группа страниц архитектора» · `===PROGRESS===` ~21 lines · the owner's closing words (old item 6 and the first-account warning removed —
 «Убрать оба») · README. Work: dev clones `~/fractera-dev/web4-node-starter-kit`, `~/fractera-dev/fractera-root-starter`, commits straight
-to `main` («коммиты прямо в main»). **645-1 DONE `a8a7a51a`, 645-2 DONE `cc047462`** (the owner's node rebuilt with them ~21:25 UTC; its four files equal the fork after his next Sync). Next: 645-3 (root-starter drawer, edited, not tagged), then 645-4 (`scripts/progress.mjs` written, launch wired; services-install and serve not yet).
+to `main` («коммиты прямо в main»). **645-1 DONE `a8a7a51a`, 645-2 DONE `cc047462`, 645-3 DONE** (root `f0534d5` tag v3.0.19, pin `99f5b1cb`; the owner's node has root
+v3.0.19 installed). **Code pushed, proof pending the live install:** 645-4 `d39287d8` (`===PROGRESS===` 23 lines for 13 elements; dry
+run of the module shown, flag stays out of pm2), 645-5 `90281106` (closing words; rendered on the owner's node — all 10 links 200; seal
+`5e5f25b10cb1`, FAIL before the seal as the negative control), 645-6 `a8242ba4` (README). Core guards run one by one in the dev clone (its
+prebuild refuses: `===NODE_EXISTS===`, one node per computer): links, steps, encoding, instruction, skills, dialogs, routes, menus,
+shell-kits, content, static, protected — all OK. **Measured:** this computer's SSH key is `aifa-agi` (read-only on Fractera); dev clones
+push over HTTPS with `gh` (Fractera) as a repo-local credential helper. **Next — the live fresh install:** the owner syncs
+`aifa-agi/web4-node-starter-kit`; with his yes `npm run serve:remove -- --yes` in `~/web4-node-starter-kit`; a NEW Claude Code
+session in an empty folder, the fork link, «запусти это» — the README path of a new person; then 645-4/5/6 closed with that log.
 
 **NOW (2026-11-04 ~10:40 UTC) — 641 CLOSED** (`completed-steps/641.md`): «элементы» instead of «WEB4 ITEMS»; the update banner
 — «Синхронизировать форк» + «Обновить сборку ядра» → the deploy board; the core first there, «Обновить узел из форка (N)»; «Развернуть»
