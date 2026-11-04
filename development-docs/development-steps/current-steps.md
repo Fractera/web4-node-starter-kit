@@ -33,6 +33,12 @@ card. The owner ~13:35: «Уже второй раз ты мне врёшь. С�
 the owner:** Sync + update (640-5c, 640-6 to his node). Then phrase 3, the catalog skill into root, the verdict — each first on the
 Sonnet bench, then him.
 
+**NOW-7 (2026-11-04 ~18:10 UTC) — 644 CLOSED** (`completed-steps/644-main.md`): a fresh install starts at step 1 with no starter rows;
+the closing pattern in `use-development-steps/references/`; the protocols in the panel's first-contact glossary, `GLOSSARY.md` agrees
+with CLAUDE.md §7. **Next: the owner's fresh install** — he moves (or deletes) `~/web4-node-starter-kit` and finds aifa.dev; asked:
+which folder is aifa.dev, move or delete, install from the fork; and which Telegram identifier repeated (the node code is random
+per node since `e59204f`, his `xq6dz`; the bot token per node in `data/services/build/channel/telegram`).
+
 **NOW-6 (2026-11-04 ~16:40 UTC) — the owner's mail: «Run failed» letters and «Possible valid secrets detected».** Measured with `gh`:
 since 2026-11-03, 100 runs of three-os in the core — 85 green, 13 failed: 11 «The job was not acquired by Runner of type hosted even
 after multiple attempts» (GitHub has no macOS arm64 runner; Linux and Windows green), 2 real (`efd13ce`, `e60dd5e`, ~00:50 UTC, «Ecmascript

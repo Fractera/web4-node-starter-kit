@@ -1,28 +1,15 @@
 # Glossary
 
-> The term map of this project: one place where a word means one thing, so two documents cannot define
-> it differently. Edited as a file — **there is no glossary page in the panel**; the line that used to
-> promise one (/service/glossary) described a page deleted together with the old admin.
+> The term map of building this project: one place where a word means one thing, so two documents cannot define it differently.
 >
-> A term belongs here when more than one document or more than one part of the code uses it.
-> Everything else is explained where it lives.
-
-## Product — the unit of work inside one server
-
-One server carries many products: a landing page today, a store tomorrow, a company brain next month.
-Each one is a **dossier** — `PRODUCTS-CONFIG/<id>.json`, one file holding everything that product is.
-
-| Term | What it means |
-|---|---|
-| **product** | one of the things this server carries. Has an `id` that never changes and means nothing (`p1`, `p2`), a title the owner may rename freely, a structure, a surface and an address |
-| **dossier** (`PRODUCTS-CONFIG/<id>.json`) | one file holding EVERYTHING that product is: the record, the intake questions and answers, the use cases with their confirmations, the steps, the pages plan, the phase and the history. Beside it `registry.json` hands out permanent ids and nothing else, and `<id>.quiz.jsonl` is the Quiz transcript — raw material, not state |
-| **structure** | one of the twelve directions the owner picks first (`store`, `landing`, `company-brain`, …). Decides the seven opening questions and the default surface. Not a file type, not an architecture |
-| **surface** | where the product lives: `public` — its own address · `private` — a tab in the control panel · `headless` — channels and schedule only, no screen at all |
-| **the four roots** | pages · logic · tables · use cases. Derived from the record, never invented — **and they are your boundary**: working on a use case of a product you write inside them and nowhere else |
-| **pages plan** (`PAGES.md`) | what the product SHOULD have, proposed from its use cases. Not an inventory: what exists is counted from the folders and never stored |
-
-**Layer terms below are about ONE product's inside; product terms above are about which product you are in.
-Both questions have to be answered before code — the second one first.**
+> **The words of the node itself are defined once, elsewhere — not here.** Node, core, architect, main agent, element (native and
+> custom), passport, skill, the memories, review, super-node, integrator, Web4 ready and the protocols i2i, a2a, f2f, H2H, H2A live in
+> the panel's first-contact glossary (the «basics» of `app/[lang]/(architectLayer)/_i18n/architect-home.i18n.ts`, both languages,
+> guarded by `check:term-hints`), and the instruction's section 7 names them in one line each. CLAUDE.md §7: «The glossary at the
+> entrance of the control panel is the only source of definitions». Never define one of those words in this file.
+>
+> This file keeps the words of building: the layers of an application, the three kinds of translation, project memory, development
+> modes, build and working process. A term belongs here when more than one document or part of the code uses it.
 
 ## Layers of the application — the terms every document reuses
 
@@ -210,3 +197,12 @@ from the platform's own development repository that has no meaning inside your p
 
 A glossary describing a subsystem that does not exist is worse than an empty one: the next session builds
 by it. If you meet those words in an old document or an old commit, they are history, not instructions.
+
+## 🪦 Removed 2026-11-04 (node step 644) — the «product» model and a wrong line about the panel
+
+This file opened with «Product — the unit of work inside one server»: products as dossiers `PRODUCTS-CONFIG/<id>.json` with
+structures, surfaces and «the four roots». The folder and its mechanism are deleted (`scripts/config-schemas.shared.mjs`: «Вместе с
+папкой удалён и механизм: config/products-config*»); today each product is an element of the node. Its header also said «there is no
+glossary page in the panel» — against CLAUDE.md §7, which names the panel's first-contact glossary as the only source of definitions.
+Both are history; the text is in git.
+
