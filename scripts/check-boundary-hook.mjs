@@ -63,6 +63,9 @@ const SAMPLES = [
   ['548-14: многоточие в заметке', 'allow', write('development-docs/current-step.md', 'Waiting for the core... then the door.')],
   ['тело heredoc исполняет node — путь к .env.local ядра', 'ask', bash(`node <<'EOF'\nrequire('fs').readFileSync('${fwd(ROOT)}/.env.local')\nEOF`)],
   ['тело heredoc идёт в файл, но называет ядро абсолютным путём', 'ask', bash(`cat > scripts/x.mjs <<'EOF'\nreadFileSync('${fwd(ROOT)}/.env.local')\nEOF`)],
+  // 2026-11-04: an absolute macOS/Linux path in a plain command; a URL's path and a regular expression stay harmless.
+  ['абсолютный путь ядра в простой команде', 'ask', bash(`cat ${fwd(ROOT)}/.env.local`)],
+  ['путь адреса и регулярное выражение — не пути', 'allow', bash("curl -s https://api.github.com/repos/x/y && node -e \"console.log(/^a\\/b$/.test('a/b'))\"")],
   ['cat heredoc в трубу node — тело есть скрипт', 'ask', bash("cat <<'EOF' | node --input-type=module\nimport x from '../../../lib/stripe/stripe.mjs'\nEOF")],
   ['heredoc без закрывающей строки — тело остаётся командой', 'ask', bash("cat > x.mjs <<'EOF'\nimport a from '../../../lib/a.mjs'")],
   ['имя файла heredoc с подстановкой $OUT — тело остаётся командой', 'ask', bash("cat > \"$OUT/x.mjs\" <<'EOF'\nimport a from '../../../lib/a.mjs'\nEOF")],

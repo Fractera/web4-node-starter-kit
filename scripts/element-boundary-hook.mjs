@@ -49,6 +49,11 @@ function pathsIn(text, cwd) {
   const t = String(text ?? '')
   for (const m of t.matchAll(/(?<![\w:/])([a-zA-Z]:[\\/][^\s"'`|&;<>()]*)/g)) out.push(m[1])
   for (const m of t.matchAll(/(?<![\w:./-])(\/[a-zA-Z]\/[^\s"'`|&;<>()]*)/g)) out.push(m[1])
+  // ✗ 2026-11-04: an absolute path of macOS and Linux (`/Users/…`, `/home/…`) was not a path here at all — the hook was written on
+  // Windows; `readFileSync('/Users/<you>/<node>/.env.local')` passed, inside a heredoc or not (check:boundary-hook, 2 of 18). Any
+  // `/…` that does not follow a letter, a colon, a dot, a slash or a dash; only the ones under the home or the node count (`outside`),
+  // so a regular expression or a URL's path stays harmless.
+  for (const m of t.matchAll(/(?<![\w:./~-])(\/[^\s"'`|&;<>()]+)/g)) out.push(m[1])
   for (const m of t.matchAll(/(?:~|\$HOME|\$\{HOME\}|%USERPROFILE%)([\\/][^\s"'`|&;<>()]*)/g)) out.push(HOME + m[1])
   // 548-14: `..` — путь, только если перед ним нет точки: многоточие «wait...» читалось как родительская папка, и агент
   // переписывал свою заметку, пока не убрал многоточие (замерено 2026-10-20, template).

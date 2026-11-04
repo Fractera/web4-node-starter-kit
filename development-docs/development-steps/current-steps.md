@@ -49,6 +49,10 @@ The owner: «go to next task» → 627-6.
 - 2026-11-04 ~02:55 UTC, on the two instruction lines: «да, запечатай» → **627-7 CLOSED** (`completed-steps/627-7.md`, seal
   `8e98168ac810`). Open in 627: only 627-6 (skipped for now; the engine when it runs — the subscription). The owner's node gets the lines
   at the next Sync + update.
+- 2026-11-04 ~03:10 UTC, the owner: «sync ok , go to fininsh non stop». **Fixed (found in 639): the element boundary hook saw no
+  macOS/Linux absolute path** (`/Users/…`, `/home/…`) — only `C:\…`, `/c/…`, `~`; an element agent's `cat /Users/…/<node>/.env.local`
+  passed on a Mac. A generic `/…` pattern (only paths under the home or the node count); samples 20 of 20 (two new), the old hook 3 of
+  20 failed (negative control); the replay of the elements' calls — no new asks.
 **Open:** 627 (627-3, 627-4, 627-6, 627-7), 629 (the law's text waits for the owner), 637 (the owner's proposal — three
 questions wait for him, no plan file yet), 638 (planned — the inventory 638-1 first), 545 (545-4, 545-5), 593 (not started), 603
 (603-5); found on the way — `scripts/check-boundary-hook.mjs` 2 of 18 (the same before 639, not in `prebuild`).
