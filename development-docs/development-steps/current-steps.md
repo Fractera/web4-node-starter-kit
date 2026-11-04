@@ -5,6 +5,12 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-13 (2026-11-04 ~23:35 UTC) — 648 CLOSED** (`completed-steps/648-main.md`): root v3.0.20 and template custom v0.3.156 have
+`npm run eyes` (one browser in the core), skill `use-eyes`, updated `use-tests-before-dev-finish` and `connect-own-domain`, the
+element instruction §7 line (custom + root); pinned; root v3.0.20 is installed on the owner's node and its own `npm run eyes` works.
+**Open:** 645-4/5/6 — the live fresh install (his yes to `serve:remove`); native template and elements (not ordered); the defect
+«Обновить сборку ядра» active on the temporary address.
+
 **NOW-12 (2026-11-04 ~23:15 UTC) — 647 CLOSED, 646 CLOSED, 645-1 CLOSED** (`completed-steps/647-main.md`, `646.md`, `645-1.md`). The owner
 updated his node himself (`7 изменений форка, ядро a36702d3`): `===EYES_OK=== chrome 150` in its npm install, `npm run eyes` works in it.
 **Open:** 645-4/5/6 — the live fresh install (his yes to `serve:remove`); step 648 — eyes, skills and the instruction line into the
