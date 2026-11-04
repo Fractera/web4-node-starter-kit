@@ -1,4 +1,4 @@
-# 638 — Every working process on a paid API; the subscription only as the backup channel (planned, not started)
+# 638 — Every working process on a paid API; the subscription only as the backup channel (638-1 inventory done; 638-2 waits for the owner)
 
 ## 1. Retelling and decisions
 
