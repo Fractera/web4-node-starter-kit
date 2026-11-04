@@ -11,6 +11,11 @@ export type OriginNoticeWords = {
   rebuildNothing: string
   check: string
   checking: string
+  /** 646: on the temporary address the check and the update are refused — they run on this computer. */
+  checkHere: string
+  openHere: string
+  /** 646: the door refused the check for another reason — `{reason}`. */
+  checkRefused: string
   running: string
   failed: string
   refused: string
@@ -30,6 +35,9 @@ const DICT: Record<"en" | "ru", OriginNoticeWords> = {
     rebuildNothing: "Nothing to take: this node is on its fork's version",
     check: "Check again",
     checking: "Checking…",
+    checkHere: "Checking the fork and updating the node work only on this computer — the panel here is read-only.",
+    openHere: "Open on this computer",
+    checkRefused: "The check was refused: {reason}",
     running: "The node is updating — stage «{stage}». While the core builds, these pages do not answer: open this page again in a few minutes.",
     failed: "The update did not go through: {reason}",
     refused: "The update did not start: {reason}",
@@ -47,6 +55,9 @@ const DICT: Record<"en" | "ru", OriginNoticeWords> = {
     rebuildNothing: "Забирать нечего: узел на версии своего форка",
     check: "Проверить снова",
     checking: "Проверяю…",
+    checkHere: "Проверить форк и обновить узел можно только на этом компьютере — здесь пульт работает только на чтение.",
+    openHere: "Открыть на этом компьютере",
+    checkRefused: "Проверка не выполнена: {reason}",
     running: "Узел обновляется — этап «{stage}». Пока собирается ядро, эти страницы не отвечают: откройте эту страницу снова через несколько минут.",
     failed: "Обновление не прошло: {reason}",
     refused: "Обновление не начато: {reason}",

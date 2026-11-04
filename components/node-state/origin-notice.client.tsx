@@ -4,6 +4,8 @@ import { useEffect, useState } from "react"
 import { ExternalLink, RefreshCw, TriangleAlert } from "lucide-react"
 import type { OriginNoticeWords } from "./origin-notice.i18n"
 import { useSnooze } from "./snooze"
+import { OpenOnThisComputerButton } from "./open-on-this-computer.client"
+import { isTemporaryHostname } from "@/lib/auth/temporary-address"
 
 // ПОЛОСА «ВЕРСИЯ УСТАРЕЛА» НАД СЛОЕМ АРХИТЕКТОРА (шаги 368, 632-4). Слово владельца 2026-10-01: «никакой запрет представить не будем,
 // но … будем выводить уведомления что … ваша версия уже устарела … или продолжите». Владелец 2026-11-03: «синхронизацию я уже
@@ -20,6 +22,10 @@ import { useSnooze } from "./snooze"
 // обновлён» 641-2 дал «Синхронизировать форк», но не «Проверить снова» — человек синхронизировал форк на GitHub, а сказать узлу
 // «посмотри ещё раз» было нечем, и полоса стояла на отметке прошлой проверки. Теперь «Проверить снова» — в каждом состоянии, кроме
 // идущего обновления: одно нажатие возвращает полосу к «Форк синхронизирован: N изменений» с активной «Обновить сборку ядра».
+// 646 (владелец 2026-11-04, по временному адресу: «если я нажимаю проверить снова … этот баннер просто исчезает как будто нажимаю кнопку
+// скрыть»): ✗ дверь на временном адресе отказывает (403 `temporary-address`, `proxy.ts`), а полоса брала тело отказа за состояние —
+// без `fork` она гасла. Теперь отказ состояние не трогает и назван словами; на временном адресе вместо «Проверить снова» —
+// «Открыть на этом компьютере»: проверка и обновление идут только там.
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
@@ -31,10 +37,13 @@ const fill = (s: string, v: Record<string, string | number>) => s.replace(/\{(\w
 export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: string }) {
   const [d, setD] = useState<Body | null>(null)
   const [busy, setBusy] = useState<"check" | null>(null)
+  const [refused, setRefused] = useState<string | null>(null)
+  const [onTemporary, setOnTemporary] = useState(false)
   const done = d?.update?.state === "done" && (d.update.changes ?? 0) > 0 ? d.update : null
   const { hidden, snooze } = useSnooze(`node-update-done-${done?.finishedAt ?? ""}`)
 
   useEffect(() => {
+    setOnTemporary(isTemporaryHostname(window.location.hostname))
     fetch(`${BASE}/api/node/update`, { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((b: Body | null) => setD(b))
@@ -45,8 +54,9 @@ export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: 
     setBusy("check")
     try {
       const r = await fetch(`${BASE}/api/node/update`, { method: "POST", cache: "no-store", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "check" }) })
-      const b = (await r.json().catch(() => null)) as Body | null
-      if (b) setD(b)
+      const b = (await r.json().catch(() => null)) as (Body & { reason?: string }) | null
+      if (r.ok && b?.fork !== undefined) { setD(b); setRefused(null) }
+      else setRefused(b?.reason ?? `HTTP ${r.status}`)
     } finally {
       setBusy(null)
     }
@@ -77,7 +87,10 @@ export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: 
   return (
     <div className="mx-4 mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-md border border-warning/50 bg-warning/10 px-3 py-2 text-sm text-foreground" role="status" data-origin-outdated={d.behindBy} data-node-behind={d.nodeBehind} data-node-update={u?.state ?? "none"}>
       <TriangleAlert className="size-4 shrink-0 text-warning" aria-hidden />
-      <span className="flex-1">{text}</span>
+      <span className="flex-1">
+        {text}
+        {onTemporary ? <span className="block text-muted-foreground">{words.checkHere}</span> : refused ? <span className="block text-destructive">{fill(words.checkRefused, { reason: refused })}</span> : null}
+      </span>
       {d.repo && !running && (
         <a href={d.repo} target="_blank" rel="noopener noreferrer" className={forkBehind ? "inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 font-medium text-primary-foreground" : "inline-flex items-center gap-1 underline"} data-node-update-sync>
           {words.sync}
@@ -93,7 +106,8 @@ export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: 
           {words.rebuild}
         </button>
       ))}
-      {canCheck && (
+      {onTemporary && <OpenOnThisComputerButton open={words.openHere} />}
+      {canCheck && !onTemporary && (
         <button type="button" onClick={() => void check()} disabled={busy !== null} className="inline-flex items-center gap-1 underline disabled:opacity-60" data-node-update-check>
           <RefreshCw className="size-3" aria-hidden />
           {busy === "check" ? words.checking : words.check}
