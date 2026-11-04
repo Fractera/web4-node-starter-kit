@@ -33,6 +33,15 @@ card. The owner ~13:35: «Уже второй раз ты мне врёшь. С�
 the owner:** Sync + update (640-5c, 640-6 to his node). Then phrase 3, the catalog skill into root, the verdict — each first on the
 Sonnet bench, then him.
 
+**NOW-6 (2026-11-04 ~16:40 UTC) — the owner's mail: «Run failed» letters and «Possible valid secrets detected».** Measured with `gh`:
+since 2026-11-03, 100 runs of three-os in the core — 85 green, 13 failed: 11 «The job was not acquired by Runner of type hosted even
+after multiple attempts» (GitHub has no macOS arm64 runner; Linux and Windows green), 2 real (`efd13ce`, `e60dd5e`, ~00:50 UTC, «Ecmascript
+file had an error» on all three — fixed by the next commit, nobody looked). The secrets: 2 alerts in `fractera-skills-store`,
+`samber__developer-relations-skills/docs-code-sample-standards` (`references/audit-checklist.md:60`, `evals/evals.json:155`) — teaching
+examples («Cindermoor Pay», a fake `sk_live_` key), not ours. The owner: «go» → (WAITS for the `workflow` scope of the push credential — `gh auth refresh -h github.com -s workflow` by the owner; the patch in the scratchpad `three-os-macos-nightly.patch`) the core's three-os: push → Linux + Windows; all three
+nightly, on tags, on pull requests; concurrency per ref; `use-development-steps` §5: the CI run of every pushed commit read and acted on;
+both secret alerts resolved as false positives. The elements' and templates' workflows — at their next rollout.
+
 **NOW-5 (2026-11-04 ~16:20–16:50 UTC) — 629-3 DONE, 629 CLOSED** (`completed-steps/629-3.md`, `629-main.md`): templates custom v0.3.155, native v0.1.38, 13 elements at their next patch, pinned; the owner's node takes them at his next Sync + update. Was: The law + «Never recommend an Anthropic API key» are in
 `lib/instructions/element/element-instruction.src.md` §7 (unlabeled — every template and element; the plan's «@T» was wrong: @T is
 templates only). Road (as 636): the scratch core clone's `data/workshop` (custom v0.3.154, native v0.1.37) and `WEB4-ITEMS` (13 clean

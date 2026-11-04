@@ -80,6 +80,11 @@ A step with substeps lives in `new-steps/<N>/`. Eight stages, in order, each lea
 1. Two proofs from DIFFERENT planes, one with a negative control — skill `use-testing`. A build log is never a proof.
 2. The commit in the repository where the work lives, English message; in the core — only your own paths (the node's state and someone
    else's staged work stay out); the push; `main == origin/main` checked for every touched repository.
+   **Then the CI run of that commit** (`gh run list -R <repo> -L 5`, `gh run view <id>`): green — or its cause named in one line and
+   acted on. A runner not acquired («The job was not acquired by Runner …», GitHub's capacity) is GitHub's, not the code's; a failed
+   guard or build is yours — fixed in the next commit, before the person hears of it. The same for every element and template a rollout
+   pushed. The owner, 2026-11-04, on 13 «Run failed» letters nobody had looked at: «Разве ты не можешь получать информацию из GitHub о
+   этих ошибках и как ты реагировать на них?»
 3. The summary `completed-steps/<N>-<k>.md`: the hash and repository · what was done and how · the two proofs verbatim · **mistakes**
    (a step without them reads like work that never happened) · **evolution of skills** (nothing to improve — one written line).
 4. `current-steps.md` in the same operation.
