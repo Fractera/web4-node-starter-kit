@@ -5,6 +5,13 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-8 (2026-11-04 ~21:00 UTC) — 645 PLANNED AND APPROVED** (`new-steps/645/`): the owner's fresh install (his fork
+`aifa-agi/web4-node-starter-kit`, node `~/web4-node-starter-kit`, core 168eb378 after `node:update`) → six substeps: right drawers 40 px
+under the online bar · core drawer and site drawer: «Как это работает», «Подписка Claude Code», «Терминал», «Активация Telegram», then
+«Группа страниц архитектора» · `===PROGRESS===` ~21 lines · the owner's closing words (old item 6 and the first-account warning removed —
+«Убрать оба») · README. Work: dev clones `~/fractera-dev/web4-node-starter-kit`, `~/fractera-dev/fractera-root-starter`, commits straight
+to `main` («коммиты прямо в main»). Next: 645-1.
+
 **NOW (2026-11-04 ~10:40 UTC) — 641 CLOSED** (`completed-steps/641.md`): «элементы» instead of «WEB4 ITEMS»; the update banner
 — «Синхронизировать форк» + «Обновить сборку ядра» → the deploy board; the core first there, «Обновить узел из форка (N)»; «Развернуть»
 inactive on an up-to-date element. Next: the owner's Sync + update (from the deploy board's core card), then 640-4. **~10:20 UTC the owner: «sync ok» → `npm run
