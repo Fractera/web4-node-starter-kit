@@ -5,6 +5,13 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW (2026-11-04 ~03:40 UTC) — the owner's «go to fininsh non stop» done as far as his word allows.** The owner's node: core
+`2c56165e` (the sealed instruction `8e98168ac810`, the skills catalog, memory v2.2.19, the soul with «Wit — the detective's spark», the
+boundary hook fix). Closed today: 639, 627-2, 627-3, 627-4, 627-7, 629-1; 638-1 (the inventory) written. **Waiting for the owner:**
+629-2 (the two law lines word for word in `new-steps/629/629-2.md` → seal), then 629-3 (the elements) and 629-4 (one gray request);
+638-2 (an Anthropic API key, woken sessions on it, A2A only on a key — `new-steps/638/638-1.md`); 637 (three questions); 545-4/5, 593,
+603-5 (his live conversations); 627-6 (skipped by him; the subscription when it runs).
+
 **NOW (2026-11-03 ~22:40 UTC): 639 CLOSED** (`completed-steps/639.md`): a clean Telegram chat, live on the owner's node (core
 `dfaa3c65`, built 22:22) — the owner, 22:36: «looking correct»; the turn hooks fire for Telegram messages (`UserPromptSubmit` opened
 the turn 29.5 s before its reply, `Stop` closed it). **636-10 done** (`completed-steps/636.md`, section 636-10): an element's own
