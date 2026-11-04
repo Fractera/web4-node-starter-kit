@@ -1,0 +1,22 @@
+{
+  "about": "The skills catalog as a file of vectors a node takes ready (node step 627-3) and the store of checked skills (627-2).",
+  "tag": "skills-catalog-2026-11-04",
+  "asset": "skills-catalog-2026-11-04.tar.gz",
+  "url": "https://github.com/Fractera/web4-node-starter-kit/releases/download/skills-catalog-2026-11-04/skills-catalog-2026-11-04.tar.gz",
+  "size": 24493543,
+  "sha256": "db13566eb8f3c373acc84277face433474e767f01a1d6b7f40ac466a49cb893d",
+  "name": "skills-catalog",
+  "model": "paraphrase-multilingual-MiniLM-L12-v2",
+  "dims": 384,
+  "rows": 17145,
+  "cards": 3240,
+  "skip": 2090,
+  "builtAt": "2026-11-04T00:32:06.717Z",
+  "cardsSha": "ac24723e55e3b25b596ebc89893ed15577cef7e380645807ce4a3fd49a456347",
+  "vectorsSha": "df779f221c1b29cd175c4ab02b56dfe4dc5cf910a5669bc79a6963aff7ea6dca",
+  "store": {
+    "repo": "Fractera/fractera-skills-store",
+    "commit": "0f46db1b8003af92894244cf90944422c82c262d",
+    "manifest": "https://raw.githubusercontent.com/Fractera/fractera-skills-store/0f46db1b8003af92894244cf90944422c82c262d/manifest.json"
+  }
+}

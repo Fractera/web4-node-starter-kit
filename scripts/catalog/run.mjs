@@ -109,7 +109,7 @@ if (cmd === 'selftest') {
   const asset = view.assets.find((a) => a.name === name)
   if (!asset || asset.size !== packed.size) { console.log(`===CATALOG_FAIL=== the asset on GitHub is not the packed file (${asset?.size} ≠ ${packed.size})`); process.exit(1) }
   const [storeRepo, storeCommit] = store.split('@')
-  const release = { about: 'The graph space a node takes ready (node step 627-3) and the store of checked skills (627-2).', tag, asset: name, url: asset.url, size: packed.size, sha256: packed.sha256, ...packed.manifest, store: { repo: storeRepo, commit: storeCommit, manifest: `https://raw.githubusercontent.com/${storeRepo}/${storeCommit}/manifest.json` } }
+  const release = { about: 'The skills catalog as a file of vectors a node takes ready (node step 627-3) and the store of checked skills (627-2).', tag, asset: name, url: asset.url, size: packed.size, sha256: packed.sha256, ...packed.manifest, store: { repo: storeRepo, commit: storeCommit, manifest: `https://raw.githubusercontent.com/${storeRepo}/${storeCommit}/manifest.json` } }
   writeFileSync(join(dirname(CARDS), 'release.json'), `${JSON.stringify(release, null, 2)}\n`)
   console.log(`===CATALOG_RELEASED=== ${asset.url} · ${(packed.size / 1e6).toFixed(1)} MB · release.json written`)
 } else if (cmd === 'report') {

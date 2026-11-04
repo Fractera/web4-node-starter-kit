@@ -11,16 +11,12 @@ the turn 29.5 s before its reply, `Stop` closed it). **636-10 done** (`completed
 reminder also through its own bot — templates custom v0.3.154 / native v0.1.37, 13 elements, registry pins core `4f04b5e`, live on
 the node; its live check needs an element with its own bot (on the owner's node only the main agent has one). The plans of closed
 steps were removed from `new-steps/` (626, 632, 633, 636, 639; 633's owner words → `completed-steps/633-owner-words.md`).
-**627-2 — the release waits for the owner's hand (2026-11-04 ~00:40 UTC).** The catalog is a FILE OF VECTORS, not a graph space — the
-owner's choice «Файл векторов (Рекомендую)» after the measure: the LightRAG space (built 22:56–23:38, 60,292 vectors, 246 MB) answered
-in ~11 s and took up to 1.36 GB per query (a process per call, the graph's mode chosen 2026-10-22 «На каждый вызов»); its relationship
-and topic vectors only added false hits. The file: 3,240 cards → 17,145 pieces (summary + tasks) counted by `embeddings` in 811 s →
-`vectors.f32` 26 MB + `rows.json`; threshold **0.60**: 19 of 20 right, 0 of 10 outside; a search 24 ms, a query vector ~7 ms.
-Packed `data/catalog-6000/release/skills-catalog-2026-11-04.tar.gz` 24.5 MB, sha256 `db13566e…cb893d`. `gh release create` was refused
-by the auto-mode classifier (a public surface) — the owner runs it himself or allows it; then `release.json`. The store pushed:
-`Fractera/fractera-skills-store` `0f46db1b8003` (2,397 skills). The LightRAG space `skills-catalog` stays on the owner's node until
-his word (to remove). The owner, ~23:30: «да, согласен, меняй 627-4» — `skills_find` without the live skills.sh (627-4.md).
-**Open:** 627 (627-2 in progress, 627-3, 627-4, 627-6, 627-7), 629 (the law's text waits for the owner), 637 (the owner's proposal — three
+**627-2 CLOSED (2026-11-04 ~00:55 UTC)** (`completed-steps/627-2.md`): the catalog is a file of vectors (3,240 cards, 17,145 pieces,
+threshold 0.60, 24 ms a search), released `skills-catalog-2026-11-04` (24.5 MB, sha256 `db13566e…`, `release.json`); the store
+`Fractera/fractera-skills-store` `0f46db1b8003` (2,397 skills). The owner allowed `gh release` in `~/.claude/settings.json`. The LightRAG
+space `skills-catalog` (246 MB) waits on his node for his word to remove it. **Next: 627-3** — the core downloads the release at install
+and update, checks sha256 and model, unpacks into `data/node/skills-catalog/` (no graph door — the owner's «Файл векторов»).
+**Open:** 627 (627-3, 627-4, 627-6, 627-7), 629 (the law's text waits for the owner), 637 (the owner's proposal — three
 questions wait for him, no plan file yet), 638 (planned — the inventory 638-1 first), 545 (545-4, 545-5), 593 (not started), 603
 (603-5); found on the way — `scripts/check-boundary-hook.mjs` 2 of 18 (the same before 639, not in `prebuild`).
 
