@@ -19,9 +19,10 @@ terms (mean fusion) it is #1 and #2, and the social control stays. → **substep
 changed it (verbatim in 640-5.md): seven instead of three, at least two or three rephrasings, then another way, then skills.sh, «Делай
 это в первую очередь»; no catalog counted again. **Built (code pushed, see git log):** passes sentence+terms → rephrasings → words;
 replay before/after in the scratchpad `p642/before.txt`, `after.txt`: brand-voice MISSING ×3 → #2, #2, #6; social control #1; «remind
-me…» 0 cards. **Waiting for the owner:** (a) Sync + update, then one live question on Opus (plane 2); (b) his word on the sealed
-CLAUDE.md line 37 if skills.sh is to be looked at without asking (the exact line shown to him). Then phrase 3, the catalog skill into
-root, the verdict.
+me…» 0 cards. **The owner ~13:30: «да, запечатай»** on the shown line (CLAUDE.md section 1: skills.sh by itself when the catalog
+gave fewer than seven after two rephrasings and the word search, or at the person's word) → seal `72eed396d4b8`; the tool texts follow.
+**Waiting for the owner:** Sync + update, then one live question on Opus (plane 2): «хочу писать посты в стиле блогера, который мне
+нравится — какой навык?». Then phrase 3, the catalog skill into root, the verdict.
 
 **Before (2026-11-04 ~04:30 UTC) — 629-2 CLOSED** (`completed-steps/629-2.md`, seal `e3a792e3f76c`; the owner: «да, запечатай» after
 the lines and their Russian reading). **629-4 CLOSED** (`completed-steps/629-4.md`, 09:31 UTC on Opus: the gray request → rule, price, lawful way; the

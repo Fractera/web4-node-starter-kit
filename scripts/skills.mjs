@@ -5,7 +5,8 @@
 //   npm run skills -- find "<question>" [--themes "<a, b>"] [--terms "<c, d>"]
 //       what other projects did: at most three fragments, 3 KB, each with its skill, source and licence.
 //   npm run skills -- market "<the task, any language>" [--terms "<a, b>"] [--again "<s1> | <s2>"] [--limit 7] — the skills catalog checked by Fractera (627-4); --live: the open
-//       skills.sh, only when the person asked for it — its skills are not checked; nothing is installed.
+//       skills.sh, at the person's word or when the checked catalog gave fewer than seven after two rephrasings — its skills are not
+//       checked; nothing is installed.
 //   npm run skills -- base-sync <folder> --source <name> --license <spdx> [--url <address>] [--version <v>]
 //       a licensed skill into the base shipped with every clone (node step 598): lib/agent-kit/skills/base/ + manifest.json
 //   npm run skills -- base-check   — every skill of the base may be handed out (its LICENSE, a licence from the list, only its text)
@@ -70,10 +71,11 @@ if (cmd === 'add') {
   if (r.notice) console.log(`\n${r.notice}`)
   console.log(`===SKILLS_FOUND=== ${r.fragments.length} ${r.fragments.map((f) => `${f.source}:${f.skill}`).join(' ')}`)
 } else if (cmd === 'market') {
-  // 627-4: the checked catalog by meaning; --live — the open skills.sh, only when the person asked for it, named «not checked».
+  // 627-4: the checked catalog by meaning; --live — the open skills.sh (at the person's word, or after the catalog gave fewer than seven
+  // with two rephrasings and the word search — 640-5), named «not checked».
   if (rest.includes('--live')) {
     const r = await findInCatalog(positional.join(' '), { limit: Number(flag('limit')) || 10 })
-    console.log(`NOT CHECKED BY FRACTERA — the open skills.sh, asked because the person asked for it:\n${catalogText(r)}`)
+    console.log(`NOT CHECKED BY FRACTERA — the open skills.sh:\n${catalogText(r)}`)
     console.log(r.ok ? `===SKILLS_MARKET_LIVE=== ${r.found.length} ${r.found.map((s) => `${s.source}@${s.skill}`).join(' ')}` : `===SKILLS_FAIL=== ${r.error}`)
     process.exit(r.ok ? 0 : 1)
   }
