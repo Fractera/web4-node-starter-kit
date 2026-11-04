@@ -4,7 +4,7 @@
 //       OpenAI key). The folder holds SKILL.md and references/*.md; SOURCE.md and LICENSE beside them say where it came from.
 //   npm run skills -- find "<question>" [--themes "<a, b>"] [--terms "<c, d>"]
 //       what other projects did: at most three fragments, 3 KB, each with its skill, source and licence.
-//   npm run skills -- market "<the task, any language>" [--limit 5] — the skills catalog checked by Fractera (627-4); --live: the open
+//   npm run skills -- market "<the task, any language>" [--terms "<a, b>"] [--again "<s1> | <s2>"] [--limit 7] — the skills catalog checked by Fractera (627-4); --live: the open
 //       skills.sh, only when the person asked for it — its skills are not checked; nothing is installed.
 //   npm run skills -- base-sync <folder> --source <name> --license <spdx> [--url <address>] [--version <v>]
 //       a licensed skill into the base shipped with every clone (node step 598): lib/agent-kit/skills/base/ + manifest.json
@@ -78,7 +78,7 @@ if (cmd === 'add') {
     process.exit(r.ok ? 0 : 1)
   }
   const { catalogFileText, findInCatalogFile } = await import('../lib/agent-kit/skills/catalog-index.mjs')
-  const r = await findInCatalogFile(ROOT, { query: positional.join(' '), n: Number(flag('limit')) || 5 })
+  const r = await findInCatalogFile(ROOT, { query: positional.join(' '), terms: [flag('themes'), flag('terms')].filter(Boolean).join(','), rephrasings: (flag('again') ?? '').split('|'), n: Number(flag('limit')) || undefined })
   console.log(catalogFileText(r))
   console.log(r.ok ? `===SKILLS_MARKET=== ${r.found.length} ${r.found.map((s) => s.id).join(' ')}` : `===SKILLS_FAIL=== ${r.error}`)
   process.exit(r.ok ? 0 : 1)

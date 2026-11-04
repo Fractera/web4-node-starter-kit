@@ -15,8 +15,13 @@ the core answers 200, the new words in the build («Синхронизирова
 «Ты его уже сохранил, он твой»). Phrase 3 (hand into root) not yet asked. **Defect found:** for «in the style of a blogger» the catalog
 missed `affaan-m/ecc@brand-voice`, and the agent went to skills.sh. The owner, ~13:00: «check skill finding problem». Causes measured:
 `mcp.mjs` gives the catalog only `query`, not the agent's terms; `n = 3` cut the card at #6 and #12 although it was above 0.60. With the
-terms (mean fusion) it is #1 and #2, and the social control stays. → **substep 640-5** (`new-steps/640/640-5.md`), waiting for the
-owner's yes. After it: phrase 3 and the catalog skill into root, then the verdict.
+terms (mean fusion) it is #1 and #2, and the social control stays. → **substep 640-5** (`new-steps/640/640-5.md`). The owner ~13:10
+changed it (verbatim in 640-5.md): seven instead of three, at least two or three rephrasings, then another way, then skills.sh, «Делай
+это в первую очередь»; no catalog counted again. **Built (code pushed, see git log):** passes sentence+terms → rephrasings → words;
+replay before/after in the scratchpad `p642/before.txt`, `after.txt`: brand-voice MISSING ×3 → #2, #2, #6; social control #1; «remind
+me…» 0 cards. **Waiting for the owner:** (a) Sync + update, then one live question on Opus (plane 2); (b) his word on the sealed
+CLAUDE.md line 37 if skills.sh is to be looked at without asking (the exact line shown to him). Then phrase 3, the catalog skill into
+root, the verdict.
 
 **Before (2026-11-04 ~04:30 UTC) — 629-2 CLOSED** (`completed-steps/629-2.md`, seal `e3a792e3f76c`; the owner: «да, запечатай» after
 the lines and their Russian reading). **629-4 CLOSED** (`completed-steps/629-4.md`, 09:31 UTC on Opus: the gray request → rule, price, lawful way; the
