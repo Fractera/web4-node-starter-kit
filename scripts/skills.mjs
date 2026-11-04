@@ -4,8 +4,8 @@
 //       OpenAI key). The folder holds SKILL.md and references/*.md; SOURCE.md and LICENSE beside them say where it came from.
 //   npm run skills -- find "<question>" [--themes "<a, b>"] [--terms "<c, d>"]
 //       what other projects did: at most three fragments, 3 KB, each with its skill, source and licence.
-//   npm run skills -- market "<English words>" [--limit 10]
-//       the open catalog skills.sh (owner 2026-11-02): the most installed skills for these words, no key needed; nothing is installed.
+//   npm run skills -- market "<the task, any language>" [--limit 5] — the skills catalog checked by Fractera (627-4); --live: the open
+//       skills.sh, only when the person asked for it — its skills are not checked; nothing is installed.
 //   npm run skills -- base-sync <folder> --source <name> --license <spdx> [--url <address>] [--version <v>]
 //       a licensed skill into the base shipped with every clone (node step 598): lib/agent-kit/skills/base/ + manifest.json
 //   npm run skills -- base-check   — every skill of the base may be handed out (its LICENSE, a licence from the list, only its text)
@@ -64,9 +64,17 @@ if (cmd === 'add') {
   if (r.notice) console.log(`\n${r.notice}`)
   console.log(`===SKILLS_FOUND=== ${r.fragments.length} ${r.fragments.map((f) => `${f.source}:${f.skill}`).join(' ')}`)
 } else if (cmd === 'market') {
-  const r = await findInCatalog(positional.join(' '), { limit: Number(flag('limit')) || 10 })
-  console.log(catalogText(r))
-  console.log(r.ok ? `===SKILLS_MARKET=== ${r.found.length} ${r.found.map((s) => `${s.source}@${s.skill}`).join(' ')}` : `===SKILLS_FAIL=== ${r.error}`)
+  // 627-4: the checked catalog by meaning; --live — the open skills.sh, only when the person asked for it, named «not checked».
+  if (rest.includes('--live')) {
+    const r = await findInCatalog(positional.join(' '), { limit: Number(flag('limit')) || 10 })
+    console.log(`NOT CHECKED BY FRACTERA — the open skills.sh, asked because the person asked for it:\n${catalogText(r)}`)
+    console.log(r.ok ? `===SKILLS_MARKET_LIVE=== ${r.found.length} ${r.found.map((s) => `${s.source}@${s.skill}`).join(' ')}` : `===SKILLS_FAIL=== ${r.error}`)
+    process.exit(r.ok ? 0 : 1)
+  }
+  const { catalogFileText, findInCatalogFile } = await import('../lib/agent-kit/skills/catalog-index.mjs')
+  const r = await findInCatalogFile(ROOT, { query: positional.join(' '), n: Number(flag('limit')) || 5 })
+  console.log(catalogFileText(r))
+  console.log(r.ok ? `===SKILLS_MARKET=== ${r.found.length} ${r.found.map((s) => s.id).join(' ')}` : `===SKILLS_FAIL=== ${r.error}`)
   process.exit(r.ok ? 0 : 1)
 } else if (cmd === 'adopt') {
   const { findCandidates, judgeRepository, parseLink } = await import('./catalog/adopt.mjs')
