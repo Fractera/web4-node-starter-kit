@@ -17,7 +17,13 @@ domain question → no warning). Left in 629: 629-3 (the elements' line — show
 они устанавливаются архитектуры и потом работают мы ещё не проверяли то есть сейчас я хочу полностью закончить работу с навыкамии хочу
 чтобы ты мне подтвердила что литература полностью готова к запуску на одного пользователя». Found while reading: **a catalog skill has
 no install path** — `skills_find` proposes, but nothing fetches it from `Fractera/fractera-skills-store` (or GitHub by the same
-fingerprint) into an element; only 628's `adopt-hand` (a suggested skill) exists. → the plan `new-steps/640/` (4 substeps) waits for the owner's yes.
+fingerprint) into an element; only 628's `adopt-hand` (a suggested skill) exists. → step 640, the owner's yes ~09:50 («Да, делай (Рекомендую)»). **640-1, 640-2, 640-3 CLOSED** (core `6658203`, `f408ffd`, `8bdd8f9`):
+`npm run skills -- keep / own / forget / hand`; the own index searched first at 0.45 (the catalog 0.60); a catalog skill handed from
+Fractera's store file by file, GitHub as the backup, both by the card's fingerprint. **Next: 640-4 live** — the owner's «Sync fork» +
+update, then three phrases in Telegram on Opus: (1) «смотри, интересный навык https://github.com/coreyhaines31/marketingskills/tree/main/skills/social
+— может пригодится» → judged, kept; (2) «хочу вести блог и публиковать в соцсети контент» → `social` first, «ваш навык»; (3) «поставь
+его в root и набросай с ним первый пост для блога» → `hand … --send`, root's agent installs and uses it. Then the catalog skill
+`coreyhaines31/marketingskills@copywriting` into root by the main agent's command, and the verdict «ready for one person».
 
 **Before (2026-11-04 ~03:40 UTC) — the owner's «go to fininsh non stop» done as far as his word allows.** The owner's node: core
 `2c56165e` (the sealed instruction `8e98168ac810`, the skills catalog, memory v2.2.19, the soul with «Wit — the detective's spark», the
