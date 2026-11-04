@@ -33,6 +33,11 @@ card. The owner ~13:35: «Уже второй раз ты мне врёшь. С�
 the owner:** Sync + update (640-5c, 640-6 to his node). Then phrase 3, the catalog skill into root, the verdict — each first on the
 Sonnet bench, then him.
 
+**~14:40 UTC the owner:** the banner «Узел обновлён» has no «Проверить снова» — he synced the fork twice (his fork = `3af4ac8`), the node
+kept its check of 13:10 → **641-5** fixed («Проверить снова» in that state too; summary in `completed-steps/641.md`). His words:
+«Ты сейчас начинаешь какую-то новую разработку вместо того чтобы посмотреть куда делось то что было раньше» — look at what was before
+first, add nothing new unasked.
+
 **NOW-2 (2026-11-04 ~14:10 UTC) — the owner paused the skills tests for a side task: step 642, the deploy board live** (verbatim
 in `new-steps/642/642-main.md`): a terminal under each element and the core during deployment, and a failure that says what happens
 next. Found: `LiveLog` and the door's live log exist (353-3) but the board never asks for them; the core's page is down while the lid

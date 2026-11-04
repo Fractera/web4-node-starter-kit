@@ -16,6 +16,10 @@ import { useSnooze } from "./snooze"
 // баннер должен получить кнопку обновить сборку ядра. Эта кнопка не активна до сих пор синхронизации не прошла … должна отправлять на
 // вкладку развёртывание». В каждом состоянии: «Синхронизировать форк» — форк человека на GitHub; «Обновить сборку ядра» — вкладка
 // «Развёртывание» (там карточка ядра запускает обновление из форка), активна только когда форк синхронизирован и узел от него отстаёт.
+// 641-5 (владелец 2026-11-04: «я уже дважды все синхронизировал Fork … сейчас как будто ты откатил его назад»): ✗ в состоянии «Узел
+// обновлён» 641-2 дал «Синхронизировать форк», но не «Проверить снова» — человек синхронизировал форк на GitHub, а сказать узлу
+// «посмотри ещё раз» было нечем, и полоса стояла на отметке прошлой проверки. Теперь «Проверить снова» — в каждом состоянии, кроме
+// идущего обновления: одно нажатие возвращает полосу к «Форк синхронизирован: N изменений» с активной «Обновить сборку ядра».
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
@@ -65,7 +69,6 @@ export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: 
     text = fill(words.nodeBehind, { n: d.nodeBehind })
   } else if (done && !hidden) {
     text = fill(words.done, { summary: done.summary ?? "" })
-    canCheck = false
   }
   if (!text) return null
   const forkBehind = d.behindBy > 0
@@ -96,7 +99,7 @@ export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: 
           {busy === "check" ? words.checking : words.check}
         </button>
       )}
-      {done && !hidden && !canCheck && (
+      {done && !hidden && !forkBehind && d.nodeBehind === 0 && (
         <button type="button" onClick={snooze} className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground">
           {words.hide}
         </button>
