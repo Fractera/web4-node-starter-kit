@@ -2,40 +2,37 @@ import type { ShellLink as DrawerLink } from "@/components/shell/shell-types"
 import { wordsOf, type WorkspacePageData } from "@/lib/collection/types"
 import { ARCHITECT_HOME } from "@/app/[lang]/(architectLayer)/_lib/architect-menu"
 import { ARCHITECT_LAYER_ROLES } from "@/lib/roles"
-import { data as messenger } from "@/app/[lang]/(architectLayer)/architect/build/messenger/_data"
-import { data as h2h } from "@/app/[lang]/(architectLayer)/architect/build/messenger/h2h/_data"
-import { data as h2a } from "@/app/[lang]/(architectLayer)/architect/build/messenger/h2a/_data"
-import { data as orders } from "@/app/[lang]/(architectLayer)/architect/build/workflow/a2a-orders/_data"
-import { data as work } from "@/app/[lang]/(architectLayer)/architect/build/workflow/a2a-work/_data"
-import { data as reviews } from "@/app/[lang]/(architectLayer)/architect/build/workflow/reviews/_data"
+import { topMenuUi } from "@/components/menu/top/top-menu.i18n"
+import { data as howItWorks } from "@/app/[lang]/(architectLayer)/architect/passport/how-it-works/_data"
+import { data as subscription } from "@/app/[lang]/(architectLayer)/architect/build/subscription/_data"
+import { data as terminal } from "@/app/[lang]/(architectLayer)/architect/build/terminal/_data"
+import { data as telegram } from "@/app/[lang]/(architectLayer)/architect/build/telegram/_data"
 
-// СВОИ ПУНКТЫ ЯЩИКА КАБИНЕТА ЯДРА (528-4).
+// СВОИ ПУНКТЫ ЯЩИКА КАБИНЕТА ЯДРА.
 //
-// Владелец 2026-10-18: «нам сюда нужно в рабочее пространство добавить А2а Ваши заказы А2а Ваша работа Оставить отзывы»; и о «Главном
-// агенте»: «добраться до этих страниц можно двумя способами: первые открыть левое меню … А второй способ попасть туда же это если нажать
-// на кнопку личный кабинет и выдвинуть правый ящик … открывать будет одни и те же страницы».
+// 645-2. Владелец 2026-11-04, после первой установки глазами нового человека: «в нём сейчас огромное количество мусора который мы
+// ещё не используем: нужно скрыть все вкладки, а вместо них создать: – как это работает – подписка Cloud Code – терминал – активация
+// Telegram». Четыре пункта ведут на страницы, которые уже есть в ядре; пятым остаётся «Группа страниц архитектора»
+// (`lib/shell/core-shell-data.ts`, ответ владельца «Оставить пятым»). Тот же набор — в ящике сайта (`fractera-root-starter`, 645-3).
 //
-// 🔒 ЯЩИК ЯДРА — ОБОЛОЧКА ПРОЕКТА, И ЕЁ ДАННЫЕ ПРИХОДЯТ ОТ САЙТА (285-3): пункты «Группа страниц архитектора» и «Пользователи» отдаёт
-// root (`/api/shell/<язык>`, его `lib/menu/account-links.ts`). Этот файл — только то, что знает одно ядро: пять сводных страниц
-// «Главного агента». Шапка ядра (`components/menu/top/top-menu.server.tsx`) ставит их перед пунктами сайта.
-// 🪦 До 528-4 здесь стоял пункт «Группа страниц архитектора» (268) — копия пункта root, которую не читал никто: шапка ядра с 285-3
-// берёт ящик у сайта, и этот файл не был импортирован ни разу (замерено поиском 2026-10-18).
+// 🪦 СКРЫТО, НЕ УДАЛЕНО (645-2): пять сводных страниц «Главного агента» из 528-4 — H2H и H2A мессенджер, A2A ваши заказы,
+// A2A ваша работа, отзывы (`build/messenger/h2h`, `build/messenger/h2a`, `build/workflow/a2a-orders`, `build/workflow/a2a-work`,
+// `build/workflow/reviews`). Страницы живы и открываются из левого меню группы; вернуть в ящик — строкой сюда, по слову владельца.
 //
-// 🔒 АДРЕС И ПОДПИСЬ — У САМОЙ СТРАНИЦЫ (её `_data`), роли — у слоя: копия разошлась бы с дверью, которую открывает пункт.
+// 🔒 АДРЕС И ПОДПИСЬ — У САМОЙ СТРАНИЦЫ (её `_data`), роли — у слоя: копия разошлась бы с дверью, которую открывает пункт. Одно
+// исключение — Telegram: страница зовётся «Telegram-бот», а пункт ящика — словами владельца «Активация Telegram» (`top-menu.i18n.ts`).
 // Видимость — вежливость, а не защита: замок стоит на слое архитектора.
 const page = (lang: string, path: string, p: WorkspacePageData, label?: string): DrawerLink => ({
-  href: `/${lang}${ARCHITECT_HOME}/build/${path}`,
+  href: `/${lang}${ARCHITECT_HOME}/${path}`,
   label: label ?? wordsOf(p, lang).title,
   roles: ARCHITECT_LAYER_ROLES,
 })
 
 export function accountLinks(lang: string): DrawerLink[] {
-  const m = wordsOf(messenger, lang).title
   return [
-    page(lang, "messenger/h2h", h2h, `${wordsOf(h2h, lang).title} ${m}`),
-    page(lang, "messenger/h2a", h2a, `${wordsOf(h2a, lang).title} ${m}`),
-    page(lang, "workflow/a2a-orders", orders),
-    page(lang, "workflow/a2a-work", work),
-    page(lang, "workflow/reviews", reviews),
+    page(lang, "passport/how-it-works", howItWorks),
+    page(lang, "build/subscription", subscription),
+    page(lang, "build/terminal", terminal),
+    page(lang, "build/telegram", telegram, topMenuUi(lang).telegramActivation),
   ]
 }

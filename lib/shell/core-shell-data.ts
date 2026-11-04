@@ -37,7 +37,8 @@ export function coreShellData(lang: string): ShellData {
     account: {
       side: appShellAuthSide() ?? "right",
       labels: { signIn: acc.signIn, account: acc.account, signOut: acc.signOut },
-      // Пять страниц «Главного агента» (528-4) и вход в группу страниц архитектора — на нём список «что ждёт архитектора» (356-1).
+      // 645-2: четыре пункта владельца (как это работает, подписка, терминал, Telegram) и пятым — вход в группу страниц архитектора;
+      // на нём список «что ждёт архитектора» (356-1).
       links: [
         ...accountLinks(lang).map((l) => ({ href: l.href, label: l.label, ...(l.roles ? { roles: [...l.roles] } : {}) })),
         { href: `/${lang}/architect`, label: top.architectGroup, roles: [...ARCHITECT_LAYER_ROLES] },
