@@ -5,6 +5,15 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-10 (2026-11-04 ~21:40 UTC) — 645-1 REOPENED and redone `91c68209`.** The owner, verbatim: «Ты сломал выдвижной ящик, и теперь у нас
+дырка сверху. Это неправильное решение будем его исправлять прежде всего верни высоту выдвижного ящика какая она была во-вторых речь идёт о
+внутреннем отступ они о внешнем то есть отступи в котором вниз сместятся строки а они сам контейнер. Ну и сдвиг вниз 40 пикселей оказался
+очень большим изменим его на 25.» Now: right drawers `inset-y-0 h-full` again, `pt-[25px]` after the drawer's own classes (the account
+drawer's `p-0` keeps it), ✕ at `top-[41px]`; `drawer-panel` (already under the header, `top-14`) `barInset={false}`. His node: 646 and the
+rest of 645 arrived by `node:update` (`===NODE_UPDATE_DONE=== 12 изменений форка, ядро 8ab21c0e`, run by me — his button had not
+started it: no record after 20:23, his clicks were on the temporary address); the two drawer files copied in, `serve:rebuild` started
+~21:40. Then: his eyes on the drawer and on the banner (646), then the fresh install (needs his yes to `serve:remove`).
+
 **NOW-9 (2026-11-04 ~21:25 UTC) — 646, one-file fix, code `ad533d76`, proof pending his update.** The owner, on the temporary address
 after Sync: «если я нажимаю проверить снова … этот баннер просто исчезает как будто нажимаю кнопку скрыть … у меня нет никакой
 возможности при помощи кнопки обновить сборку». Measured: POST `/api/node/update` {action:check} on the trycloudflare address → 403
