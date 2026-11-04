@@ -1,6 +1,6 @@
 # 643 — The first meeting after the first launch: name, how to address, style, the project's language, and how to stay unblocked
 
-**Status: planned 2026-11-04 ~15:20 UTC, waiting for the owner's yes.** Saved first: The owner, 2026-11-04 ~14:55 UTC: «это очевидно должен быть отдельно самостоятельный шаг прямо сейчас
+**Status: planned 2026-11-04 ~15:20 UTC, approved ~15:25.** Saved first: The owner, 2026-11-04 ~14:55 UTC: «это очевидно должен быть отдельно самостоятельный шаг прямо сейчас
 ничего тестировать просто … сохранения когда идёт время мы его обработаем».
 
 ## The owner's words, verbatim (2026-11-04 ~14:55 UTC)
@@ -46,7 +46,14 @@ I assume that:
   «via an Anthropic API Key or where we otherwise explicitly permit it»; the plans' limits «assume ordinary, individual usage». The
   owner's «не значительное количество подобных действий обычно не приводит к каким-либо санкций» has no primary source — written as a
   fact it would break the 629 law; the proposed words: «Anthropic не называет порога: чем больше автоматической работы на подписке, тем
-  выше риск; надёжный путь — ключ API (шаг 638)».
+  выше риск».
+
+**The owner's answers, 2026-11-04 ~15:25 UTC, in the choice window (verbatim):**
+- on the end «В любом случае…» and on the API key: «отдельный ключ API Anthropic  - prohibit! Категорически запрещается в проекте рекомендовать использовать ключ от Anthropic потому что использование ключа Anthropic прерывает использование подписки. По этой причине только ключ ОпенАи у нас для него есть переменных окружение специальные контейнер»;
+- on the grey zone: «Без обещания (Рекомендую)»;
+- on the plan: «Да, делай (Рекомендую)».
+→ applied at once as a law (it changes a skill): `provider-rules` never offers an Anthropic key; 638-2 (an Anthropic key for woken
+sessions) is cancelled.
 
 ## 2. What is reused
 `scripts/launch.mjs` (`welcome()`), `.claude/skills/know-the-architect/SKILL.md` («First contact»), `.claude/skills/provider-rules/
@@ -78,7 +85,7 @@ In this folder: `643-1.md` … `643-3.md`.
 Stages 1–7 present; each substep names what is built, done, two proofs (one with a negative control), what it rests on, what is not in it.
 
 ## 9. The owner's approval
-— (waiting)
+2026-11-04 ~15:25 UTC: «Да, делай (Рекомендую)» (with the two answers above).
 
 ## To decide when the step is taken
 - The end of his message «В любом случае…».

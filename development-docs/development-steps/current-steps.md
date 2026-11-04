@@ -33,6 +33,11 @@ card. The owner ~13:35: «Уже второй раз ты мне врёшь. С�
 the owner:** Sync + update (640-5c, 640-6 to his node). Then phrase 3, the catalog skill into root, the verdict — each first on the
 Sonnet bench, then him.
 
+**NOW-3 (2026-11-04 ~15:25 UTC) — step 643 approved** (the first meeting: name, address, style, the project's language with its price,
+the two modes in the welcome). **The owner's LAW, verbatim:** «отдельный ключ API Anthropic  - prohibit! Категорически запрещается в проекте рекомендовать использовать ключ от Anthropic потому что использование ключа Anthropic прерывает использование подписки. По этой причине только ключ ОпенАи у нас для него есть переменных окружение специальные контейнер» → applied at once: `provider-rules` never offers an Anthropic
+key; **638-2 cancelled** (`new-steps/638/638-main.md`). Grey zone words: «Без обещания». The blog phrase 2 (hand into root) — «not
+now». Next: 643-1…643-3, each proven on the Sonnet bench first.
+
 **~14:52–14:56 UTC the owner's update from the deploy board:** `===NODE_UPDATE_DONE=== 8 изменений форка, ядро f71198b1` (642, 641-5 not yet:
 his fork was 1 behind). Live sample of 642-2 (`p642live/samples.txt`): the core silent 14:54:15–14:55:56, **the build reader answered
 the whole time** (0 lines — this run was started by the old runner, which passes no log), the core back 14:56:16, the reader gone
@@ -81,7 +86,7 @@ update, then three phrases in Telegram on Opus: (1) «смотри, интере
 `2c56165e` (the sealed instruction `8e98168ac810`, the skills catalog, memory v2.2.19, the soul with «Wit — the detective's spark», the
 boundary hook fix). Closed today: 639, 627-2, 627-3, 627-4, 627-7, 629-1; 638-1 (the inventory) written. **Waiting for the owner:**
 629-2 (the two law lines word for word in `new-steps/629/629-2.md` → seal), then 629-3 (the elements) and 629-4 (one gray request);
-638-2 (an Anthropic API key, woken sessions on it, A2A only on a key — `new-steps/638/638-1.md`); 637 (three questions); 545-4/5, 593,
+638 (to be planned again: the owner banned an Anthropic key on 2026-11-04 — 638-2 cancelled); 637 (three questions); 545-4/5, 593,
 603-5 (his live conversations); 627-6 (skipped by him; the subscription when it runs).
 
 **NOW (2026-11-03 ~22:40 UTC): 639 CLOSED** (`completed-steps/639.md`): a clean Telegram chat, live on the owner's node (core

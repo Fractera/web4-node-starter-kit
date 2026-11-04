@@ -32,7 +32,10 @@ agent, a job — working process), the engine today, the API way, the price. Kno
   owner's subscription is not permitted), `agent-task` alarms, supervision, needs, `ask-core` / `tell-core`.
 
 ## 4. Substeps (to be agreed after 638-1)
-- **638-2** — an Anthropic API key in the core's environment page beside OpenAI's, checked by a real call; one rule in one module for
+**🛑 638-2 as written below is CANCELLED** — the owner, 2026-11-04 ~15:25 UTC (in 643's choice window): «отдельный ключ API Anthropic  - prohibit! Категорически запрещается в проекте рекомендовать использовать ключ от Anthropic потому что использование ключа Anthropic прерывает использование подписки. По этой причине только ключ ОпенАи у нас для него есть переменных окружение специальные контейнер». No Anthropic
+key is offered or wired in the project; the automatic work of the built tools goes through the node's OpenAI key. 638 is to be planned
+again from this decision when the owner takes it.
+- ~~**638-2**~~ — an Anthropic API key in the core's environment page beside OpenAI's, checked by a real call; one rule in one module for
   every automated call: an API key with money → that API; otherwise the subscription as the backup channel and the daily warning.
 - **638-3** — the processes of the inventory moved to the rule one by one, each with its proof.
 - **638-4** — the law in both instructions (together with 629's law: name the rule and its price before a person loses the account);

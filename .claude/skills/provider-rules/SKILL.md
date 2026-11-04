@@ -52,7 +52,13 @@ controls — the policy does not name the word «CAPTCHA» itself; never claim i
 - **The integrator case** — other people using the node's agents: each person signs in with their own subscription or key; their work
   never runs on the owner's subscription.
 - **Big batch or scheduled jobs** (the skills catalog's marking, woken agent sessions): the subscription's limits «assume ordinary,
-  individual usage»; an API key is the planned way (step 638); until then the owner decides and is warned once a day.
+  individual usage»; Anthropic names no threshold — the more automatic work on the subscription, the higher the risk. The owner decides
+  and is warned once a day.
+- **Never recommend an Anthropic API key — in any text of the project.** The owner, 2026-11-04: «отдельный ключ API Anthropic  - prohibit! Категорически запрещается в проекте рекомендовать использовать ключ от Anthropic потому что использование ключа Anthropic прерывает использование подписки. По этой причине только ключ ОпенАи у нас для него есть переменных окружение специальные контейнер». An Anthropic key in the
+  environment takes the place of the subscription for Claude Code. Automatic work done by the built tools themselves (text, images,
+  speech, vectors) goes through the node's **OpenAI key** — the page «Переменные окружения» (`OPENAI_API_KEY`, `lib/openai-key.ts`,
+  skill `use-ai-generation`). The quote of the Consumer Terms below names Anthropic's API key only as their rule; it is never offered as
+  the way.
 - Texts with attack instructions inside a batch can trip the safeguards: a blocked item is skipped and counted, never retried in other
   words.
 
