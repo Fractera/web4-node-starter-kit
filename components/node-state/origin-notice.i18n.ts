@@ -1,13 +1,16 @@
 // СЛОВА ПОЛОСЫ «ВЕРСИЯ УСТАРЕЛА» (шаги 368, 632-4). `en` основа, `ru` перевод; выбирает сервер и передаёт острову пропсом.
-// 632-4 (владелец 2026-11-03): после «Sync fork» полоса предлагает «Обновить узел», а «открыть форк» — только пока форк отстаёт.
+// 632-4 (владелец 2026-11-03): после «Sync fork» полоса предлагает обновление. 641-2 (владелец 2026-11-04): «кроме кнопки скрыть должно
+// быть кнопка синхронизировать … если уже синхронизировано но не обновлено этот баннер должен получить кнопку обновить сборку ядра. Эта
+// кнопка не активна до сих пор синхронизации не прошла … должна отправлять на вкладку развёртывание».
 export type OriginNoticeWords = {
   forkBehind: string
-  openFork: string
+  sync: string
   nodeBehind: string
-  update: string
+  rebuild: string
+  rebuildWaitSync: string
+  rebuildNothing: string
   check: string
   checking: string
-  starting: string
   running: string
   failed: string
   refused: string
@@ -19,13 +22,14 @@ export type OriginNoticeWords = {
 
 const DICT: Record<"en" | "ru", OriginNoticeWords> = {
   en: {
-    forkBehind: "The original Fractera has {n} new changes that your fork does not have yet. Open your fork, press «Sync fork», then «Check again». Everything keeps working as it is.",
-    openFork: "Open your fork",
-    nodeBehind: "Your fork is synced: {n} changes are waiting for this node. «Update the node» takes them, puts the elements on their new versions and rebuilds the core — about 10–15 minutes; while the core builds, the node is stopped and these pages do not answer.",
-    update: "Update the node",
+    forkBehind: "The original Fractera has {n} new changes that your fork does not have yet. Press «Sync the fork», on GitHub press «Sync fork», then «Check again» here. Everything keeps working as it is.",
+    sync: "Sync the fork",
+    nodeBehind: "Your fork is synced: {n} changes are waiting for this node. «Update the core build» opens the Deployments tab: there the node takes them from the fork, puts the elements on their new versions and rebuilds the core — about 10–15 minutes.",
+    rebuild: "Update the core build",
+    rebuildWaitSync: "Sync the fork first, then «Check again»",
+    rebuildNothing: "Nothing to take: this node is on its fork's version",
     check: "Check again",
     checking: "Checking…",
-    starting: "Starting…",
     running: "The node is updating — stage «{stage}». While the core builds, these pages do not answer: open this page again in a few minutes.",
     failed: "The update did not go through: {reason}",
     refused: "The update did not start: {reason}",
@@ -35,13 +39,14 @@ const DICT: Record<"en" | "ru", OriginNoticeWords> = {
     stages: { check: "check", fetch: "taking the fork", backup: "backup", local: "local changes", merge: "merge", registry: "registry", deps: "dependencies", guards: "build guards", elements: "elements", core: "core build", skills: "skills base" },
   },
   ru: {
-    forkBehind: "В оригинале Fractera {n} новых изменений, которых пока нет в вашем форке. Откройте форк, нажмите «Sync fork», затем «Проверить снова». Всё продолжает работать как есть.",
-    openFork: "Открыть ваш форк",
-    nodeBehind: "Форк синхронизирован: {n} изменений ждут этот узел. «Обновить узел» заберёт их, поставит элементы на новые версии и пересоберёт ядро — около 10–15 минут; пока собирается ядро, узел остановлен и эти страницы не отвечают.",
-    update: "Обновить узел",
+    forkBehind: "В оригинале Fractera {n} новых изменений, которых пока нет в вашем форке. Нажмите «Синхронизировать форк», на GitHub — «Sync fork», затем здесь «Проверить снова». Всё продолжает работать как есть.",
+    sync: "Синхронизировать форк",
+    nodeBehind: "Форк синхронизирован: {n} изменений ждут этот узел. «Обновить сборку ядра» откроет вкладку «Развёртывание»: там узел заберёт их из форка, поставит элементы на новые версии и пересоберёт ядро — около 10–15 минут.",
+    rebuild: "Обновить сборку ядра",
+    rebuildWaitSync: "Сначала синхронизируйте форк, затем «Проверить снова»",
+    rebuildNothing: "Забирать нечего: узел на версии своего форка",
     check: "Проверить снова",
     checking: "Проверяю…",
-    starting: "Запускаю…",
     running: "Узел обновляется — этап «{stage}». Пока собирается ядро, эти страницы не отвечают: откройте эту страницу снова через несколько минут.",
     failed: "Обновление не прошло: {reason}",
     refused: "Обновление не начато: {reason}",

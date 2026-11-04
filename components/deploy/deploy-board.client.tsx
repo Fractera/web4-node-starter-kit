@@ -5,6 +5,7 @@ import { Rocket } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
+import { H2 } from "@/components/ui/typography"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import { CoreDeploy, type CoreDeployState, type CoreDeployWords } from "./core-deploy.client"
 
@@ -46,6 +47,11 @@ export type DeployBoardWords = {
   codeChanges: string
   /** 555: кнопка «Развернуть» ядра и её окно */
   coreDeploy: CoreDeployWords
+  /** 641-3: карточка ядра — `{n}` изменений оригинала нет в форке; ссылка на форк; идущее обновление `{stage}`; подсказка неактивной кнопки */
+  forkBehind: string
+  openFork: string
+  nodeUpdating: string
+  nothingWaiting: string
 }
 
 type Element = {
@@ -68,6 +74,8 @@ type Deployment = {
 }
 type State = { core: { commit: string | null; builtAt: string | null; deploy?: CoreDeployState; log?: string[] }; elements: Element[]; deployment: Deployment | null }
 
+type Fork = { behindBy: number; nodeBehind: number; repo: string | null; update: { state: string; stage?: string } | null }
+
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 const DOOR = `${BASE}/api/node/deploy`
 const when = (iso: string | null, lang: string) => (iso ? new Date(iso).toLocaleString(lang) : "—")
@@ -75,6 +83,15 @@ const when = (iso: string | null, lang: string) => (iso ? new Date(iso).toLocale
 export function DeployBoard({ words, lang, dialogUi }: { words: DeployBoardWords; lang: string; dialogUi: AppDialogUi }) {
   const [state, setState] = useState<State | "loading" | "failed">("loading")
   const [refused, setRefused] = useState(false)
+  const [fork, setFork] = useState<Fork | null>(null)
+
+  // 641-3: отставание узла от форка — та же дверь, что у полосы обновления, один запрос без сети.
+  useEffect(() => {
+    fetch(`${BASE}/api/node/update`, { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((b: Fork | null) => setFork(b))
+      .catch(() => setFork(null))
+  }, [])
 
   const load = useCallback(() => {
     fetch(DOOR, { cache: "no-store" })
@@ -112,15 +129,38 @@ export function DeployBoard({ words, lang, dialogUi }: { words: DeployBoardWords
   if (state === "failed") return <p className="text-muted-foreground text-sm">{words.unavailable}</p>
 
   const installed = state.elements.filter((e) => e.installed)
+  // 641-3 (владелец 2026-11-04: «непонятно наличие кнопки развернуть если процессор актуален»): разворачивается только то, что ждёт.
+  const waiting = installed.filter((e) => e.pending)
   const dep = state.deployment
+  const forkChanges = fork && fork.behindBy === 0 ? fork.nodeBehind : 0
+  const updating = fork?.update?.state === "running"
 
   return (
     <div className="flex flex-col gap-4" data-deploy-board>
+      {/* 641-3 (владелец 2026-11-04): «самый важный раздел развернуть ядро находится почему-то внизу, его нужно как минимум поднять вверх
+          но ещё и значительно выделить». */}
+      <section className="flex flex-col gap-2 rounded-lg border-2 border-primary/60 bg-primary/5 px-4 py-4 text-sm" data-deploy-row="core">
+        <div className="flex flex-wrap items-baseline gap-3">
+          <H2 variant="ui">{words.core}</H2>
+          <span className="text-muted-foreground">{words.version}: {state.core.commit ?? "—"}</span>
+          <span className="text-muted-foreground">{words.built}: {when(state.core.builtAt, lang)}</span>
+        </div>
+        <span className="text-muted-foreground">{words.coreNote}</span>
+        {fork && fork.behindBy > 0 && (
+          <span className="text-foreground" data-core-fork-behind={fork.behindBy}>
+            {words.forkBehind.replace("{n}", String(fork.behindBy))}{" "}
+            {fork.repo && <a href={fork.repo} target="_blank" rel="noopener noreferrer" className="underline">{words.openFork}</a>}
+          </span>
+        )}
+        {updating && <span className="text-foreground" data-core-updating>{words.nodeUpdating.replace("{stage}", fork?.update?.stage ?? "")}</span>}
+        <CoreDeploy words={words.coreDeploy} dialogUi={dialogUi} last={state.core.deploy ?? null} log={state.core.log ?? []} lang={lang} disabled={running || updating} forkChanges={forkChanges} />
+      </section>
+
       <p className="text-muted-foreground text-sm">{words.intro}</p>
       <p className="text-muted-foreground text-sm">{words.what}</p>
 
       <div className="flex flex-wrap items-center gap-3">
-        <Button onClick={() => deploy(installed.map((e) => e.id))} disabled={running} data-deploy-all>
+        <Button onClick={() => deploy(waiting.map((e) => e.id))} disabled={running || waiting.length === 0} title={waiting.length === 0 ? words.nothingWaiting : undefined} data-deploy-all={waiting.length}>
           {running ? <Spinner className="mr-2" /> : <Rocket className="mr-2 size-4" aria-hidden />}
           {words.deployAll}
         </Button>
@@ -165,20 +205,13 @@ export function DeployBoard({ words, lang, dialogUi }: { words: DeployBoardWords
                     {words.rollback.replace("{version}", e.previous.version)}
                   </Button>
                 )}
-                <Button variant="outline" size="sm" onClick={() => deploy([e.id])} disabled={running || !e.installed}>
+                <Button variant="outline" size="sm" onClick={() => deploy([e.id])} disabled={running || !e.installed || !e.pending} title={e.installed && !e.pending ? words.nothingWaiting : undefined} data-deploy-one={e.pending ? "on" : "off"}>
                   {words.deployOne}
                 </Button>
               </span>
             </div>
           )
         })}
-        <div className="flex flex-wrap items-center gap-3 px-4 py-3 text-sm" data-deploy-row="core">
-          <span className="min-w-20 font-medium text-foreground">{words.core}</span>
-          <span className="text-muted-foreground">{words.version}: {state.core.commit ?? "—"}</span>
-          <span className="text-muted-foreground">{words.built}: {when(state.core.builtAt, lang)}</span>
-          <span className="w-full text-muted-foreground">{words.coreNote}</span>
-          <CoreDeploy words={words.coreDeploy} dialogUi={dialogUi} last={state.core.deploy ?? null} log={state.core.log ?? []} lang={lang} disabled={running} />
-        </div>
       </div>
 
       {dep && !dep.running && dep.results.length > 0 && (

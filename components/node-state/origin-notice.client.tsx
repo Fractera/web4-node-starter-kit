@@ -10,9 +10,12 @@ import { useSnooze } from "./snooze"
 // выполнил наверно было бы логично здесь поставить вторую кнопку запустить развёртывание? И убрать кнопку открыть Fork?»
 // ✗ До 632 полоса читала только отметку `check-origin` (пишется при сборке): после «Sync fork» она по-прежнему звала в форк, где
 // синхронизировать было уже нечего, а узел сам ничего не забирает.
-// Теперь два отставания: форка от оригинала (→ «Открыть ваш форк») и узла от форка (→ «Обновить узел», `scripts/node-update.mjs`);
-// «Проверить снова» спрашивает GitHub и забирает форк — сеть только по кнопке. Источник — дверь `/api/node/update`, один запрос при
-// открытии, таймеров нет: идущее обновление видно, когда человек откроет страницу снова.
+// Два отставания: форка от оригинала и узла от форка; «Проверить снова» спрашивает GitHub и забирает форк — сеть только по кнопке.
+// Источник — дверь `/api/node/update`, один запрос при открытии, таймеров нет.
+// 641-2 (владелец 2026-11-04): «кроме кнопки скрыть должно быть кнопка синхронизировать … если уже синхронизировано но не обновлено этот
+// баннер должен получить кнопку обновить сборку ядра. Эта кнопка не активна до сих пор синхронизации не прошла … должна отправлять на
+// вкладку развёртывание». В каждом состоянии: «Синхронизировать форк» — форк человека на GitHub; «Обновить сборку ядра» — вкладка
+// «Развёртывание» (там карточка ядра запускает обновление из форка), активна только когда форк синхронизирован и узел от него отстаёт.
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
@@ -21,9 +24,9 @@ type Body = { fork: boolean; behindBy: number; nodeBehind: number; repo: string 
 
 const fill = (s: string, v: Record<string, string | number>) => s.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ""))
 
-export function OriginNotice({ words }: { words: OriginNoticeWords }) {
+export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: string }) {
   const [d, setD] = useState<Body | null>(null)
-  const [busy, setBusy] = useState<"check" | "update" | null>(null)
+  const [busy, setBusy] = useState<"check" | null>(null)
   const done = d?.update?.state === "done" && (d.update.changes ?? 0) > 0 ? d.update : null
   const { hidden, snooze } = useSnooze(`node-update-done-${done?.finishedAt ?? ""}`)
 
@@ -34,13 +37,12 @@ export function OriginNotice({ words }: { words: OriginNoticeWords }) {
       .catch(() => setD(null))
   }, [])
 
-  const act = async (action: "check" | "update") => {
-    setBusy(action)
+  const check = async () => {
+    setBusy("check")
     try {
-      const r = await fetch(`${BASE}/api/node/update`, { method: "POST", cache: "no-store", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action }) })
-      const b = (await r.json().catch(() => null)) as (Body & { started?: boolean }) | null
-      if (action === "update" && b?.started && d) setD({ ...d, update: { state: "running", stage: "check" } })
-      else if (action === "check" && b) setD(b)
+      const r = await fetch(`${BASE}/api/node/update`, { method: "POST", cache: "no-store", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "check" }) })
+      const b = (await r.json().catch(() => null)) as Body | null
+      if (b) setD(b)
     } finally {
       setBusy(null)
     }
@@ -50,44 +52,46 @@ export function OriginNotice({ words }: { words: OriginNoticeWords }) {
   const u = d.update
   const stage = words.stages[u?.stage ?? ""] ?? u?.stage ?? ""
   let text: string | null = null
-  let fork = false
-  let canUpdate = false
   let canCheck = true
-  if (u?.state === "running") {
+  const running = u?.state === "running"
+  if (running) {
     text = fill(words.running, { stage })
     canCheck = false
   } else if (u && (u.state === "failed" || u.state === "refused" || u.state === "interrupted")) {
     text = fill(words[u.state as "failed" | "refused" | "interrupted"], { stage, reason: u.reason ?? "" })
-    canUpdate = d.nodeBehind > 0 && d.behindBy === 0
   } else if (d.behindBy > 0) {
     text = fill(words.forkBehind, { n: d.behindBy })
-    fork = true
   } else if (d.nodeBehind > 0) {
     text = fill(words.nodeBehind, { n: d.nodeBehind })
-    canUpdate = true
   } else if (done && !hidden) {
     text = fill(words.done, { summary: done.summary ?? "" })
     canCheck = false
   }
   if (!text) return null
+  const forkBehind = d.behindBy > 0
+  const canRebuild = !forkBehind && d.nodeBehind > 0
 
   return (
     <div className="mx-4 mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-md border border-warning/50 bg-warning/10 px-3 py-2 text-sm text-foreground" role="status" data-origin-outdated={d.behindBy} data-node-behind={d.nodeBehind} data-node-update={u?.state ?? "none"}>
       <TriangleAlert className="size-4 shrink-0 text-warning" aria-hidden />
       <span className="flex-1">{text}</span>
-      {fork && d.repo && (
-        <a href={d.repo} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 underline">
-          {words.openFork}
+      {d.repo && !running && (
+        <a href={d.repo} target="_blank" rel="noopener noreferrer" className={forkBehind ? "inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 font-medium text-primary-foreground" : "inline-flex items-center gap-1 underline"} data-node-update-sync>
+          {words.sync}
           <ExternalLink className="size-3" aria-hidden />
         </a>
       )}
-      {canUpdate && (
-        <button type="button" onClick={() => act("update")} disabled={busy !== null} className="rounded-md bg-primary px-3 py-1.5 font-medium text-primary-foreground disabled:opacity-60" data-node-update-start>
-          {busy === "update" ? words.starting : words.update}
+      {!running && (canRebuild ? (
+        <a href={`${BASE}/${lang}/build/deployments`} className="rounded-md bg-primary px-3 py-1.5 font-medium text-primary-foreground" data-node-update-rebuild="on">
+          {words.rebuild}
+        </a>
+      ) : (
+        <button type="button" disabled title={forkBehind ? words.rebuildWaitSync : words.rebuildNothing} className="rounded-md border border-border px-3 py-1.5 font-medium text-muted-foreground opacity-60" data-node-update-rebuild="off">
+          {words.rebuild}
         </button>
-      )}
+      ))}
       {canCheck && (
-        <button type="button" onClick={() => act("check")} disabled={busy !== null} className="inline-flex items-center gap-1 underline disabled:opacity-60" data-node-update-check>
+        <button type="button" onClick={() => void check()} disabled={busy !== null} className="inline-flex items-center gap-1 underline disabled:opacity-60" data-node-update-check>
           <RefreshCw className="size-3" aria-hidden />
           {busy === "check" ? words.checking : words.check}
         </button>

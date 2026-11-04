@@ -1249,8 +1249,8 @@ export const SPECIMEN: SpecimenSection[] = [
   },
   {
     kind: 'projectsBoard',
-    when: 'The projects table of the node: every WEB4 ITEM, native and custom, with its service address, meta title and description, own domain, last commit, measured state, number of commits, a link to the site and a link to its page in the core. Filters native/custom and a search by address and description; asked in the browser, the page stays prerendered.',
-    whenRu: 'Таблица проектов узла: каждый WEB4 ITEM, нативный и кастомный, со служебным адресом, заголовком и описанием из мета, своим доменом, последним коммитом, измеренным состоянием, числом коммитов, ссылкой на сайт и на его страницу в ядре. Отбор нативные/кастомные и поиск по адресу и описанию; спрашивается в браузере, страница остаётся предрендеренной.',
+    when: 'The projects table of the node: every element, native and custom, with its service address, meta title and description, own domain, last commit, measured state, number of commits, a link to the site and a link to its page in the core. Filters native/custom and a search by address and description; asked in the browser, the page stays prerendered.',
+    whenRu: 'Таблица проектов узла: каждый элемент, нативный и кастомный, со служебным адресом, заголовком и описанием из мета, своим доменом, последним коммитом, измеренным состоянием, числом коммитов, ссылкой на сайт и на его страницу в ядре. Отбор нативные/кастомные и поиск по адресу и описанию; спрашивается в браузере, страница остаётся предрендеренной.',
     blocks: [{ kind: 'projectsBoard', lang: 'en' }],
   },
   {

@@ -74,7 +74,7 @@ export function updateElement(id: string): UpdateResult {
     return { ok: false, error: "merge-failed" }
   }
   const task = [
-    `Fractera released ${e.version} of this WEB4 ITEM, and merging it into your history stopped on conflicts in ${files.length} file(s):`,
+    `Fractera released ${e.version} of this element, and merging it into your history stopped on conflicts in ${files.length} file(s):`,
     ...files.map((f) => `- ${f}`),
     "The merge is left open in this folder. Resolve every conflict keeping the owner's changes and taking Fractera's fixes, run the element's checks, then commit the merge (git commit --no-edit). Tell the person what you kept from each side; the new version goes live with «Deploy».",
   ].join("\n")

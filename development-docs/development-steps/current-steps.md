@@ -5,7 +5,11 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW (2026-11-04 ~04:30 UTC) — 629-2 CLOSED** (`completed-steps/629-2.md`, seal `e3a792e3f76c`; the owner: «да, запечатай» after
+**NOW (2026-11-04 ~10:40 UTC) — 641 CLOSED** (`completed-steps/641.md`): «элементы» instead of «WEB4 ITEMS»; the update banner
+— «Синхронизировать форк» + «Обновить сборку ядра» → the deploy board; the core first there, «Обновить узел из форка (N)»; «Развернуть»
+inactive on an up-to-date element. Next: the owner's Sync + update (from the deploy board's core card), then 640-4.
+
+**Before (2026-11-04 ~04:30 UTC) — 629-2 CLOSED** (`completed-steps/629-2.md`, seal `e3a792e3f76c`; the owner: «да, запечатай» after
 the lines and their Russian reading). **629-4 CLOSED** (`completed-steps/629-4.md`, 09:31 UTC on Opus: the gray request → rule, price, lawful way; the
 domain question → no warning). Left in 629: 629-3 (the elements' line — shown to the owner before its seal). **The owner's new request (~04:20, verbatim):** «Вчера мы работали над навыками которые приходят
 вместе с каждым новым стартовым шаблоном. В числе этих заданий было одно которое я отменил. Сегодня я его могу сформировать речь идёт о

@@ -116,7 +116,7 @@ const DICT: Record<string, GithubWords> = {
     keySteps: [
       "Sign in to GitHub and open the link below — it creates a classic token. If a list of tokens opens, press «Generate new token» and choose «Generate new token (classic)» — not the fine-grained one.",
       "Note — any name, e.g. «fractera node»; Expiration — the term you want.",
-      "Tick two boxes: «repo» (the node creates a private repository for every WEB4 ITEM and writes to it) and «workflow» (elements carry GitHub Actions files in .github/workflows — without this box GitHub refuses them). Nothing else is needed.",
+      "Tick two boxes: «repo» (the node creates a private repository for every element and writes to it) and «workflow» (elements carry GitHub Actions files in .github/workflows — without this box GitHub refuses them). Nothing else is needed.",
       "Press «Generate token» at the bottom, copy the token — it starts with ghp_ — and paste it here.",
     ],
     keyLabel: "GitHub token",
@@ -193,7 +193,7 @@ const DICT: Record<string, GithubWords> = {
     keySteps: [
       "Войдите в GitHub и откройте ссылку ниже — она создаёт классический токен. Если открылся список токенов, нажмите «Generate new token» и выберите «Generate new token (classic)» — не тонкий токен.",
       "Note — любое имя, например «fractera node»; Expiration — нужный срок.",
-      "Отметьте две галочки: «repo» (узел создаёт приватный репозиторий каждому WEB4 ITEM и пишет в него) и «workflow» (в элементах есть файлы GitHub Actions в .github/workflows — без этой галочки GitHub их не примет). Больше ничего не нужно.",
+      "Отметьте две галочки: «repo» (узел создаёт приватный репозиторий каждому элементу и пишет в него) и «workflow» (в элементах есть файлы GitHub Actions в .github/workflows — без этой галочки GitHub их не примет). Больше ничего не нужно.",
       "Внизу нажмите «Generate token», скопируйте токен — он начинается с ghp_ — и вставьте сюда.",
       "Выберите срок, который готовы продлевать, создайте токен и вставьте его сюда.",
     ],

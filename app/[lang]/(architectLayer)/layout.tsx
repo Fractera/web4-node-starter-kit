@@ -70,7 +70,7 @@ export default async function Layout(
       <TemporaryAddressAlarm words={temporaryAddressAlarmWords(lang)} lang={lang} />
       {/* 632-5: временный адрес умер — красная полоса и кнопка «Поднять новый адрес» (дверь отказывает, пока адрес жив). */}
       <DeadAddressAlarm words={deadAddressAlarmWords(lang)} lang={lang} />
-      <OriginNotice words={originNoticeWords(lang)} />
+      <OriginNotice words={originNoticeWords(lang)} lang={lang} />
       <GithubTokenAlarm words={githubTokenAlarmWords(lang)} lang={lang} />
       {/* 632-2: красные пункты меню, пока состояние узла не то (нет своего домена) — спрошено в браузере. */}
       <NodeAlerts />

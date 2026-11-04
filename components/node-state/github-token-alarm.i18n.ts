@@ -4,18 +4,18 @@ export type GithubTokenAlarmWords = { lead: string; why: string; connect: string
 
 const DICT: Record<"en" | "ru", GithubTokenAlarmWords> = {
   en: {
-    lead: "Your WEB4 ITEMS are kept only on this computer.",
-    why: "Every change is saved in each item's own history here, but nowhere else: if this computer breaks, the work is gone. Add a GitHub token and create a private repository for every WEB4 ITEM in your account — the whole history goes there; the project can then be restored on any computer, and any item can be handed over on its own.",
+    lead: "Your elements are kept only on this computer.",
+    why: "Every change is saved in each element's own history here, but nowhere else: if this computer breaks, the work is gone. Add a GitHub token and create a private repository for every element in your account — the whole history goes there; the project can then be restored on any computer, and any element can be handed over on its own.",
     connect: "Add a GitHub token",
-    leadSome: "{n} WEB4 ITEM(S) are not saved to GitHub yet:",
-    whySome: "Their work lives only on this computer. Give each a good name first if you want (the repository takes the item's name), then press «Create and upload» in its row.",
+    leadSome: "{n} element(s) are not saved to GitHub yet:",
+    whySome: "Their work lives only on this computer. Give each a good name first if you want (the repository takes the element's name), then press «Create and upload» in its row.",
     open: "Open GitHub",
     hide: "Don't show again",
     hideTitle: "Hide on this computer for one day",
   },
   ru: {
-    lead: "Ваши WEB4 ITEMS хранятся только на этом компьютере.",
-    why: "Каждая правка сохраняется в истории своего элемента здесь, но больше нигде: если компьютер сломается, работа пропадёт. Добавьте токен GitHub и создайте в своём аккаунте приватный репозиторий каждому WEB4 ITEM — туда уедет вся история; тогда проект можно восстановить на любом компьютере, а любой элемент — передать отдельно.",
+    lead: "Ваши элементы хранятся только на этом компьютере.",
+    why: "Каждая правка сохраняется в истории своего элемента здесь, но больше нигде: если компьютер сломается, работа пропадёт. Добавьте токен GitHub и создайте в своём аккаунте приватный репозиторий каждому элементу — туда уедет вся история; тогда проект можно восстановить на любом компьютере, а любой элемент — передать отдельно.",
     connect: "Добавить токен GitHub",
     leadSome: "Не сохранены в GitHub ({n}):",
     whySome: "Их работа живёт только на этом компьютере. Если хотите, сначала дайте элементу хорошее имя (репозиторий получит имя элемента), затем нажмите «Создать и выгрузить» в его строке.",

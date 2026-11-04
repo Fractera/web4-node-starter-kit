@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button"
 // терминалов зайдите поочерёдно выключите их при необходимости дождитесь завершения разработки после этого вы выполните развёртывания».
 // Окно показывает ту же подсказку и сам список открытых терминалов (`/api/agents/sessions`, та же оранжевая метка) с «Закрыть» у каждого.
 // «Развернуть» → `POST /api/node/deploy { core: true }`: сборка при закрытой крышке, страница перестаёт отвечать на её время.
+// 641-3: когда форк принёс изменения, та же кнопка с тем же окном — «Обновить узел из форка» → `POST /api/node/update { action: "update" }`
+// (`scripts/node-update.mjs`: форк, элементы, сборка ядра, навыки); пересборка того, что уже на диске, изменений форка не забирает.
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
@@ -31,13 +33,19 @@ export type CoreDeployWords = {
   lastFailed: string
   lastRunning: string
   lastInterrupted: string
+  /** 641-3: `{n}` — изменений форка ждут узел */
+  updateButton: string
+  updateTitle: string
+  updateStarted: string
+  updateRefused: string
 }
 export type CoreDeployState = { state: "running" | "done" | "failed" | "interrupted"; startedAt?: string; finishedAt?: string; rc?: number | null } | null
 type Session = { id: string; name: string; since: string | null }
 
-export function CoreDeploy({ words, dialogUi, last, log, lang, disabled }: {
-  words: CoreDeployWords; dialogUi: AppDialogUi; last: CoreDeployState; log: string[]; lang: string; disabled?: boolean
+export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkChanges = 0 }: {
+  words: CoreDeployWords; dialogUi: AppDialogUi; last: CoreDeployState; log: string[]; lang: string; disabled?: boolean; forkChanges?: number
 }) {
+  const update = forkChanges > 0
   const [open, setOpen] = useState(false)
   const [sessions, setSessions] = useState<Session[] | null>(null)
   const [note, setNote] = useState<string | null>(null)
@@ -57,9 +65,11 @@ export function CoreDeploy({ words, dialogUi, last, log, lang, disabled }: {
     void loadSessions()
   }
   async function start() {
-    const r = await fetch(`${BASE}/api/node/deploy`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ core: true }) }).catch(() => null)
+    const r = update
+      ? await fetch(`${BASE}/api/node/update`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "update" }) }).catch(() => null)
+      : await fetch(`${BASE}/api/node/deploy`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ core: true }) }).catch(() => null)
     setOpen(false)
-    setNote(r?.ok ? words.started : words.refused)
+    setNote(r?.ok ? (update ? words.updateStarted : words.started) : (update ? words.updateRefused : words.refused))
   }
 
   const lastLine =
@@ -72,9 +82,9 @@ export function CoreDeploy({ words, dialogUi, last, log, lang, disabled }: {
   return (
     <div className="flex w-full flex-col gap-2" data-core-deploy={last?.state ?? "none"}>
       <div className="flex flex-wrap items-center gap-3">
-        <Button size="sm" variant="outline" onClick={() => { setOpen(true); setSessions(null); void loadSessions() }} disabled={disabled || last?.state === "running"} data-core-deploy-open>
+        <Button onClick={() => { setOpen(true); setSessions(null); void loadSessions() }} disabled={disabled || last?.state === "running"} data-core-deploy-open={update ? "update" : "rebuild"}>
           <Rocket className="mr-2 size-4" aria-hidden />
-          {words.button}
+          {update ? words.updateButton.replace("{n}", String(forkChanges)) : words.button}
         </Button>
         {lastLine && <span className="text-muted-foreground">{lastLine}</span>}
         {note && <span className="text-foreground" data-core-deploy-note>{note}</span>}
@@ -86,7 +96,7 @@ export function CoreDeploy({ words, dialogUi, last, log, lang, disabled }: {
         <AppDialog
           open
           onOpenChange={(o) => { if (!o) setOpen(false) }}
-          title={words.title}
+          title={update ? words.updateTitle : words.title}
           ui={dialogUi}
           size="md"
           footer={

@@ -365,7 +365,7 @@ export async function createElementRepo(id: string, token: string, login: string
   const name = repoName(id)
   const full = `${login}/${name}`
   phase?.("create")
-  const made = await gh(token, "POST", "/user/repos", { name, private: true, auto_init: false, description: `WEB4 ITEM «${id}» of a Fractera node` })
+  const made = await gh(token, "POST", "/user/repos", { name, private: true, auto_init: false, description: `Element «${id}» of a Fractera node` })
   const created = made.status === 201
   if (!created) {
     const said = typeof made.body?.message === "string" ? made.body.message.slice(0, 300) : `HTTP ${made.status}`
