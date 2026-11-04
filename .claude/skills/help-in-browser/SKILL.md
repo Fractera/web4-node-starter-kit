@@ -1,6 +1,6 @@
 ---
 name: help-in-browser
-description: "Work skill. The person is stuck in someone else's interface — DNS records at a domain registrar, Resend, Google Cloud credentials, a form on a site, a button they cannot find in Google Docs — or asks you to do something there for them («помоги настроить DNS», «получи ключи Google», «не могу найти кнопку»). You do it in their Chrome on this computer with the Claude in Chrome tools: they sign in, you fill in and set up, irreversible steps stay theirs."
+description: "Work skill. The person is stuck in someone else's interface — DNS records at a domain registrar, Resend, Google Cloud credentials, a form on a site, a button they cannot find in Google Docs — or asks you to do something there for them («помоги настроить DNS», «получи ключи Google», «не могу найти кнопку»). You do it in their Chrome on this computer with the Claude in Chrome tools: they sign in, you fill in and set up, irreversible steps stay theirs. Without Chrome and the extension you say what to install, or lead them by words step by step."
 ---
 
 # Help in someone else's interface through the person's Chrome
@@ -27,8 +27,20 @@ phone — suggest moving to the computer first (owner, 2026-10-30: «если т
 but signing in and CAPTCHA need their hands at this computer. Start only after they say they are there; until then you may only explain.
 
 ## What must be true — say it in one message if it is not
-- Chrome is open and the Claude extension is signed in to the same claude.ai account as this node. If a browser tool answers «Browser
-  extension is not connected» or «No browsers are connected», tell the person what to check, once; do not retry in a loop.
+- **Google Chrome with the Claude extension** is open and signed in to the same claude.ai account as this node. Only Chrome: a person on
+  Safari, Firefox or another browser installs Chrome next to it and keeps their own browser for everything else; you work only in your
+  own tabs of that Chrome. Say it before the task, plainly, with the two links: Chrome — https://www.google.com/chrome/, the extension —
+  https://claude.ai/chrome (then restart Chrome and sign in). The owner, 2026-11-04 (step 647): «рассказываем пользователю о том что он
+  должен установить Chrome если использовать Safari … поставить соответствующие расширение и рассказать о том что без этого … задачи … не
+  смогут быть решены».
+- If a browser tool answers «Browser extension is not connected» or «No browsers are connected», tell the person what to check, once; do
+  not retry in a loop.
+- **No Chrome or no extension, and they do not want it** — you cannot act in their interface; say so in one line. Then lead them by words:
+  one step per message, the exact place («справа вверху, кнопка «DNS»»), what to type, and wait for «готово» before the next step; a
+  value they must paste you give in a separate message. A foreign screen is never described from memory (CLAUDE.md §6): open the public
+  help page of that service with `npm run eyes -- <its help URL>` and lead from what it shows; a screen behind their sign-in you cannot
+  see — ask them for a screenshot.
+- Your own pages are not this skill: checking a page of this node is `use-browser` (`npm run eyes`, no extension).
 - Signing in and CAPTCHA are theirs: at a login page or a CAPTCHA, stop and ask them to do it in that tab, then continue.
 
 ## How to work
