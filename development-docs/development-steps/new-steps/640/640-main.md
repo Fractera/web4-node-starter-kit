@@ -64,7 +64,8 @@ Stages 1–7 present; every substep names what is built, done, two proofs from d
 on and what is not in it; 4 substeps.
 
 ## 9. The owner's approval
-Waiting — shown in the choice window.
+2026-11-04 ~09:50 UTC, in the choice window on the four substeps and the hole found (a catalog skill has no install path): «Да, делай
+(Рекомендую)».
 
 ## Not in this step
 627-6 (Fractera's catalog update); new skills shipped with the templates; any change to the sealed instruction (the skill

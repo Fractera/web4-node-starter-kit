@@ -1,6 +1,6 @@
 ---
 name: adopt-suggested-skill
-description: "Build process. The person names a skill they heard of — in an ad, a post, a video, from a friend («I heard about replica-skill») — or gives its link: find it, judge it the catalog's way, answer with curiosity, and after their yes hand the checked copy to the element's own agent, marked «suggested by the person»."
+description: "Build process. The person names a skill they heard of — in an ad, a post, a video, from a friend («I heard about replica-skill») — or gives its link: find it, judge it the catalog's way, answer with curiosity, and after their yes keep it in the node's own skills «for later» (searched first) or hand the checked copy to the element's own agent now, marked «suggested by the person». Also when they say «смотри, интересный навык, может пригодится»."
 ---
 
 # A skill the person suggests
@@ -34,10 +34,17 @@ value, use, quality, the partners' audits — and the repository's own history, 
    - what the node already has («the node already has: …») — say plainly when the skill repeats it;
    - what is not taken and why: risks (named), a cloud place to keep or run things («against the node's local-first rule»), no value;
    - your recommendation — which skills, into which element — and the question.
-3. **After their yes**, for each approved skill: `npm run skills -- adopt-hand <owner/repo>@<skill> --to <element> --send`. A skill
-   with scripts — name the scripts and get a separate yes first. `===SKILLS_ADOPT_HAND_FAIL===`: «the folder changed after the check» —
-   judge it again; «skip» — it is not installed, say why.
-4. **Tell them** where it went: the element's agent takes the checked copy from the core, installs it with its `SOURCE.md` («Origin:
+3. **After their yes** — two roads, by their words:
+   - **«for later»** («смотри, интересный навык, может пригодится», no element named, no task now): `npm run skills -- keep
+     <owner/repo>@<skill> --said "<their words>"` — the checked folder goes into the node's own skills with its vectors, no element gets
+     it; from now on `skills_find` shows it FIRST, «your skill», whenever a request fits (node step 640, the owner: «чтобы он был
+     приоритете над основным числом других навыков»). `npm run skills -- own` lists them, `forget <id>` removes one.
+   - **into an element now:** `npm run skills -- hand <owner/repo>@<skill> --to <element> --send` (a kept skill is handed the same way,
+     any time later).
+   A skill with scripts — name the scripts and get a separate yes first (`--scripts-yes`). `===SKILLS_KEEP_FAIL===` /
+   `===SKILLS_HAND_FAIL===`: «the folder changed after the check» — judge it again; «skip» — it is not kept or installed, say why;
+   «embeddings did not count» — the vectors element is off, nothing was kept (`npm run power -- embeddings on`).
+4. **Tell them** where it went: kept — «it is in the node's own skills, I will offer it first when it fits»; handed — the element's agent takes the checked copy from the core, installs it with its `SOURCE.md` («Origin:
    suggested by the person») and commits; its report comes back to you (`npm run state -- <element>`).
 
 ## Never

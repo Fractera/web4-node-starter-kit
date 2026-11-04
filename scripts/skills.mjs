@@ -14,8 +14,12 @@
 //       a skill the person heard of (node step 628): candidates by name — several answer to it → ask the person for the link where they
 //       saw it; a link or --pick → the repository's trust signals and every skill judged by the catalog's marker, into
 //       data/node/skills/suggested/ (outside git). Skill `adopt-suggested-skill`.
-//   npm run skills -- adopt-hand <owner/repo@skill> --to <element> [--send] [--said "<words>"]
-//       the approved, still unchanged checked copy packed with its SOURCE.md («suggested by the person») for the element's own agent;
+//   npm run skills -- keep <owner/repo@skill> [--said "<words>"] [--scripts-yes]
+//       the person liked a judged skill «for later» (node step 640): its checked folder into the node's own skills
+//       (data/node/skills/own/, outside git) with its vectors — searched FIRST by skills_find; no element gets it yet.
+//   npm run skills -- own · forget <owner/repo@skill> — the kept skills; one forgotten (its folder, card and vectors).
+//   npm run skills -- hand <owner/repo@skill> --to <element> [--send] [--said "<words>"] [--scripts-yes]   (628's adopt-hand)
+//       the still unchanged checked copy packed with its SOURCE.md for the element's own agent — an own skill or a judged suggestion;
 //       --send gives it the task (npm run task); the agent takes it from GET /api/skills/suggested and commits it.
 //   npm run skills -- catalog-install — the skills catalog (node step 627-3): the release named in lib/agent-kit/skills/catalog/release.json
 //       downloaded, sha256 and model checked, into data/node/skills-catalog/; nothing is counted. The same vectors in place — no download.
@@ -118,21 +122,38 @@ if (cmd === 'add') {
     console.log(`  ${c.skill} · value ${c.value} · use ${c.use}${c.needs.length ? ` (needs ${c.needs.join(', ')})` : ''} · quality ${c.quality}/5${c.scripts.length ? ` · scripts ${c.scripts.length}` : ''}${c.risks.length ? ` · RISKS: ${c.risks.join('; ')}` : ''}${near.length ? ` · the node already has: ${near.join(', ')}` : ''}`)
     console.log(`      ${c.summary.split(/(?<=\.)\s/)[0]} — ${c.why}`)
   }
-  console.log(`===SKILLS_ADOPT_JUDGED=== ${source}: ${r.cards.length} skills · ${r.dir} · hand one after the person's yes: npm run skills -- adopt-hand ${source}@<skill> --to <element> --send`)
-} else if (cmd === 'adopt-hand') {
+  console.log(`===SKILLS_ADOPT_JUDGED=== ${source}: ${r.cards.length} skills · ${r.dir} · after the person's yes — for later: npm run skills -- keep ${source}@<skill>; into an element now: npm run skills -- hand ${source}@<skill> --to <element> --send`)
+} else if (cmd === 'keep') {
+  const { keepSkill } = await import('./catalog/adopt.mjs')
+  const id = positional[0]
+  if (!id) { console.log('===SKILLS_FAIL=== usage: npm run skills -- keep <owner/repo@skill> [--said "<words>"] [--scripts-yes]'); process.exit(2) }
+  const r = await keepSkill(id, { root: ROOT, said: flag('said') ?? '', scriptsYes: rest.includes('--scripts-yes') })
+  if (r.error) { console.log(`===SKILLS_KEEP_FAIL=== ${r.error}`); process.exit(1) }
+  console.log(`===SKILLS_KEPT=== ${r.entry.id} — the node's own skills (${r.rows} pieces in the own index) · ${r.folder} · skills_find shows it first when a request fits; into an element: npm run skills -- hand ${r.entry.id} --to <element> --send`)
+} else if (cmd === 'own') {
+  const { readOwn } = await import('../lib/agent-kit/skills/own.mjs')
+  const all = readOwn(ROOT)
+  for (const k of all) console.log(`- ${k.id} — kept ${String(k.keptAt).slice(0, 10)}${k.said ? ` («${k.said}»)` : ''} · ${k.value} value, ${k.use} · ${k.summary.split(/(?<=\.)\s/)[0]}`)
+  console.log(`===SKILLS_OWN=== ${all.length}${all.length ? ` ${all.map((k) => k.id).join(' ')}` : ' — nothing kept yet'}`)
+} else if (cmd === 'forget') {
+  const { forgetSkill } = await import('./catalog/adopt.mjs')
+  const r = await forgetSkill(positional[0] ?? '', { root: ROOT })
+  if (r.error) { console.log(`===SKILLS_FORGET_FAIL=== ${r.error}`); process.exit(1) }
+  console.log(`===SKILLS_FORGOTTEN=== ${positional[0]} · ${r.left} own skill(s) left`)
+} else if (cmd === 'hand' || cmd === 'adopt-hand') {
   const { handSkill } = await import('./catalog/adopt.mjs')
   const id = positional[0]
   const to = flag('to')
   if (!id || !to) {
-    console.log('===SKILLS_FAIL=== usage: npm run skills -- adopt-hand <owner/repo@skill> --to <element> [--send] [--said "<words>"]')
+    console.log('===SKILLS_FAIL=== usage: npm run skills -- hand <owner/repo@skill> --to <element> [--send] [--said "<words>"] [--scripts-yes]')
     process.exit(2)
   }
-  const r = handSkill(id, { root: ROOT, to, said: flag('said') ?? '' })
-  if (r.error) { console.log(`===SKILLS_ADOPT_HAND_FAIL=== ${r.error}`); process.exit(1) }
+  const r = await handSkill(id, { root: ROOT, to, said: flag('said') ?? '', scriptsYes: rest.includes('--scripts-yes') })
+  if (r.error) { console.log(`===SKILLS_HAND_FAIL=== ${r.error}`); process.exit(1) }
   console.log(r.task)
   const send = rest.includes('--send')
   if (send) spawnSync(process.execPath, [join(ROOT, 'scripts', 'main-agent-cli.mjs'), 'task', to, r.task], { stdio: 'inherit' })
-  console.log(`===SKILLS_ADOPT_HANDED=== ${id} → ${to} · ${r.archive} · sha256 ${r.sha256}${send ? ' · the task was given' : ' · not given yet: add --send'}`)
+  console.log(`===SKILLS_HANDED=== ${id} (${r.from}) → ${to} · ${r.archive} · sha256 ${r.sha256}${send ? ' · the task was given' : ' · not given yet: add --send'}`)
 } else if (cmd === 'base-sync') {
   try {
     const e = syncSkill(resolve(positional[0] ?? ''), { source: flag('source'), license: flag('license'), url: flag('url') ?? '', version: flag('version') ?? '' })
@@ -208,6 +229,6 @@ if (cmd === 'add') {
   if (!r.ok) { console.log(`===SKILLS_CATALOG_FAIL=== ${r.reason}; again later: npm run skills-catalog`); process.exit(1) }
   console.log(`===SKILLS_CATALOG_OK=== ${r.already ? 'already in place' : 'taken'}: ${r.cards} cards, ${r.rows} pieces · data/node/skills-catalog`)
 } else {
-  console.log('===SKILLS_FAIL=== commands: add, find, market, adopt, adopt-hand, base-sync, base-check, base-load, catalog-install')
+  console.log('===SKILLS_FAIL=== commands: add, find, market, adopt, keep, own, forget, hand, base-sync, base-check, base-load, catalog-install')
   process.exit(2)
 }

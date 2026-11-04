@@ -5,14 +5,15 @@
 // The judging is the catalog's own (627): whole folders, scripts read, risks, value, use, quality, the partners' audits.
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { appendFileSync, cpSync, existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
-import { join, relative, sep } from 'node:path'
+import { appendFileSync, cpSync, existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs'
+import { basename, dirname, join, relative, sep } from 'node:path'
 import { pullAudits } from './census.mjs'
 import { fetchList, gh, openRepo } from './fetch.mjs'
 import { blobShaOfBuffer, folderShaOf } from './lib.mjs'
 import { markAll } from './mark.mjs'
 import { findInCatalog } from '../../lib/agent-kit/skills/catalog.mjs'
 import { archivePathOf, idOf, repoDirOf, suggestedDir } from '../../lib/agent-kit/skills/suggested.mjs'
+import { ownDir, readOwn, writeOwn } from '../../lib/agent-kit/skills/own.mjs'
 
 const readJsonl = (file) => (existsSync(file) ? readFileSync(file, 'utf8').split(/\r?\n/).filter(Boolean).map((l) => JSON.parse(l)) : [])
 const readJson = (file, fallback) => { try { return JSON.parse(readFileSync(file, 'utf8')) } catch { return fallback } }
@@ -164,7 +165,7 @@ function pairsOf(folder) {
 }
 
 /** The project's SOURCE.md of a foreign skill (as `.claude/skills/humanizer/SOURCE.md`), with the person's origin line. */
-function sourceMd(card, row, judgement, said) {
+function sourceMd(card, row, judgement, said, keptAt = null) {
   const scripts = card.scripts.length ? `; scripts: ${card.scripts.map((s) => `\`${s}\``).join(', ')} — installed after the person's separate yes` : ''
   const audits = (card.audits ?? []).map((a) => `${a.provider} ${a.status}`).join(', ') || 'none published'
   return [
@@ -172,53 +173,134 @@ function sourceMd(card, row, judgement, said) {
     `- **What:** \`${card.skill}\` by ${card.source.split('/')[0]}, ${card.licence ?? 'no licence named'}: ${card.summary.split(/(?<=\.)\s/)[0]}`,
     `- **From:** https://github.com/${card.source} — folder \`${row.folder || '.'}\`, commit \`${judgement.commit}\` (${String(judgement.commitDate).slice(0, 10)}), folder fingerprint \`${row.folderSha}\`.`,
     `- **Taken:** the whole folder — ${card.files} file${card.files === 1 ? '' : 's'}${scripts}.`,
-    `- **Origin:** suggested by the person, ${new Date().toISOString().slice(0, 10)}${said ? `: «${said}»` : ''}. Judged by the node: value ${card.value}, use ${card.use}${card.needs.length ? ` (needs ${card.needs.join(', ')})` : ''}, quality ${card.quality}/5, risks ${card.risks.length ? card.risks.join('; ') : 'none found'}; partners' audits: ${audits}.`,
+    `- **Origin:** suggested by the person, ${new Date().toISOString().slice(0, 10)}${said ? `: «${said}»` : ''}${keptAt ? `; kept in the node's own skills ${keptAt.slice(0, 10)}` : ''}. Judged by the node: value ${card.value}, use ${card.use}${card.needs.length ? ` (needs ${card.needs.join(', ')})` : ''}, quality ${card.quality}/5, risks ${card.risks.length ? card.risks.join('; ') : 'none found'}; partners' audits: ${audits}.`,
     `- **Trust:** ${judgement.trust ? `${judgement.trust.stars} stars, created ${judgement.trust.created}, last update ${judgement.trust.pushed}, ${judgement.trust.commits} commits${judgement.trust.flags.length ? ` — ${judgement.trust.flags.join('; ')}` : ''}` : 'not read'}.`,
     `- **Why here:** ${card.why}`,
     '- **Update:** suggest it again (`npm run skills -- adopt <link>`) and hand the new checked copy; never edit by hand.', '',
   ].join('\n')
 }
 
-/** Pack one approved skill for the element's own agent — only if its folder is still exactly the checked one. */
-export function handSkill(id, { root, to, said = '' }) {
+/** A judged skill's checked copy — only if its folder is still exactly the one the marker read. → { card, row, folder, judgement, source } */
+function judgedCopy(id, root) {
   const [sourceAsGiven, skill] = String(id).split('@')
   const source = String(sourceAsGiven ?? '').toLowerCase()
   if (!source || !skill) return { error: 'the id is <owner/repo>@<skill>' }
   const dir = repoDirOf(root, source)
-  const card = readJsonl(join(dir, 'cards.jsonl')).find((c) => c.id.toLowerCase() === id.toLowerCase())
+  const card = readJsonl(join(dir, 'cards.jsonl')).find((c) => c.id.toLowerCase() === String(id).toLowerCase())
   if (!card) return { error: `${id} is not judged — npm run skills -- adopt <link> first` }
   if (card.use === 'skip') return { error: `${id} is «skip»: ${card.why}${card.risks.length ? ` Risks: ${card.risks.join('; ')}` : ''}` }
-  const row = readJson(join(dir, 'fetched.json'), []).find((r) => `${r.source}@${r.skill}`.toLowerCase() === id.toLowerCase())
+  const row = readJson(join(dir, 'fetched.json'), []).find((r) => `${r.source}@${r.skill}`.toLowerCase() === String(id).toLowerCase())
   if (!row?.folderSha) return { error: `${id}: its fetched folder is missing — judge it again` }
   const folder = join(dir, row.dir, row.folder ?? '')
   const now = folderShaOf(pairsOf(folder))
   if (now !== row.folderSha) return { error: `the folder changed after the check (${now} ≠ ${row.folderSha}) — judge it again` }
-  const judgement = readJson(join(dir, 'judgement.json'), {})
-  const handDir = join(dir, 'hand')
-  const stage = join(handDir, card.skill)
+  return { card, row, folder, source, judgement: readJson(join(dir, 'judgement.json'), {}) }
+}
+
+// ── 640-1: KEEP — the person liked a skill «for later»: it goes into the node's own skills, not into an element ─────────────────────
+// The folder is kept exactly as checked (`own/<owner>__<repo>/<skill>/`), its SOURCE.md beside it (`<skill>.source.md`) — so the kept
+// copy's fingerprint can be checked again at every hand-over; the card and its vectors join the own index (`lib/agent-kit/skills/own.mjs`).
+const ownFolderOf = (root, source, skill) => join(ownDir(root), String(source).toLowerCase().replace('/', '__'), skill)
+
+/** Keep a judged skill in the node's own skills. → { entry, rows, folder } | { error } */
+export async function keepSkill(id, { root, said = '', scriptsYes = false, embed } = {}) {
+  const c = judgedCopy(id, root)
+  if (c.error) return c
+  const { card, row, folder, source, judgement } = c
+  if (card.scripts.length && !scriptsYes) return { error: `${id} holds scripts (${card.scripts.join(', ')}) — kept only after the person's separate yes to them: add --scripts-yes` }
+  const words = said || judgement.said || ''
+  const at = new Date().toISOString()
+  const entry = { ...card, id: `${source}@${card.skill}`, own: true, keptAt: at, said: words, folderSha: row.folderSha, folder: row.folder || '.', commit: judgement.commit ?? null, trust: judgement.trust ?? null }
+  const cards = [...readOwn(root).filter((k) => k.id.toLowerCase() !== entry.id.toLowerCase()), entry]
+  // The vectors first: the embeddings element down — nothing is copied and the store stays as it was.
+  const to = ownFolderOf(root, source, card.skill)
+  const stage = `${to}.new-${process.pid}`
   rmSync(stage, { recursive: true, force: true })
-  mkdirSync(handDir, { recursive: true })
+  mkdirSync(dirname(to), { recursive: true })
   cpSync(folder, stage, { recursive: true, verbatimSymlinks: true })
+  let r
+  try {
+    r = await writeOwn(root, cards, embed ? { embed } : {})
+  } catch (e) {
+    rmSync(stage, { recursive: true, force: true })
+    return { error: `the node's embeddings did not count the skill (${e instanceof Error ? e.message : e}) — nothing kept; npm run power -- embeddings on` }
+  }
+  rmSync(to, { recursive: true, force: true })
+  renameSync(stage, to)
+  writeFileSync(`${to}.source.md`, sourceMd(card, row, judgement, words, at))
+  appendFileSync(join(suggestedDir(root), 'ledger.jsonl'), `${JSON.stringify({ at, source, skill: card.skill, event: 'kept', folderSha: row.folderSha })}\n`)
+  return { entry, rows: r.rows, folder: to }
+}
+
+/** Forget a kept skill: its folder, its SOURCE.md, its card and its rows. → { left } | { error } */
+export async function forgetSkill(id, { root, embed } = {}) {
+  const all = readOwn(root)
+  const entry = all.find((k) => k.id.toLowerCase() === String(id).toLowerCase())
+  if (!entry) return { error: `${id} is not among the node's own skills (npm run skills -- own)` }
+  const left = all.filter((k) => k !== entry)
+  await writeOwn(root, left, embed ? { embed } : {})
+  const to = ownFolderOf(root, entry.source, entry.skill)
+  rmSync(to, { recursive: true, force: true })
+  rmSync(`${to}.source.md`, { force: true })
+  appendFileSync(join(suggestedDir(root), 'ledger.jsonl'), `${JSON.stringify({ at: new Date().toISOString(), source: entry.source, skill: entry.skill, event: 'forgotten' })}\n`)
+  return { left: left.length }
+}
+
+// ── HAND — the checked copy to the element's own agent (628; 640-3 widens it to every skill skills_find can propose) ────────────────
+/** Pack a staged folder with its SOURCE.md into the door's archive and write the element agent's task. */
+function packForElement({ root, to, card, folderSha, stage, sourceText, origin }) {
   if (existsSync(join(stage, 'SOURCE.md'))) cpSync(join(stage, 'SOURCE.md'), join(stage, 'SOURCE.original.md'))
-  writeFileSync(join(stage, 'SOURCE.md'), sourceMd(card, row, judgement, said || judgement.said || ''))
-  const archive = archivePathOf(root, idOf(source, card.skill))
-  const tar = spawnSync('tar', ['-czf', archive, '-C', handDir, card.skill], { encoding: 'utf8' })
+  writeFileSync(join(stage, 'SOURCE.md'), sourceText)
+  const doorId = idOf(card.source.toLowerCase(), card.skill)
+  const archive = archivePathOf(root, doorId)
+  mkdirSync(dirname(archive), { recursive: true })
+  const tar = spawnSync('tar', ['-czf', archive, '-C', dirname(stage), basename(stage)], { encoding: 'utf8' })
+  rmSync(stage, { recursive: true, force: true })
   if (tar.status !== 0) return { error: `tar failed: ${tar.stderr}` }
   const sha256 = createHash('sha256').update(readFileSync(archive)).digest('hex')
   const port = readJson(join(root, 'logs', 'runtime.json'), {})?.port ?? 24680
-  const doorId = idOf(source, card.skill)
+  const scripts = card.scripts ?? []
   const task = [
-    `Build process: install a skill the person suggested and approved — \`${card.skill}\` from ${card.source}. The node judged it`,
-    `(value ${card.value}, use ${card.use}, quality ${card.quality}/5) and checked its folder (fingerprint ${row.folderSha}).`,
+    `Build process: install a skill — \`${card.skill}\` from ${card.source}, ${origin.what}. The node judged it`,
+    `(value ${card.value}, use ${card.use}, quality ${card.quality}/5) and checked its folder (fingerprint ${folderSha}).`,
     `1. Download the checked copy from the core (your node key is SETTINGS_SECRET in your .env.local):`,
     `   curl -sf -H "X-Node-Key: <SETTINGS_SECRET>" "http://127.0.0.1:${port}/api/skills/suggested?id=${doorId}" -o ${card.skill}.tar.gz`,
     `2. Check it: its sha256 must be ${sha256} — any other value: stop and report it.`,
     `3. Unpack it into .claude/skills/ (tar -xzf ${card.skill}.tar.gz -C .claude/skills/): it makes .claude/skills/${card.skill}/ with`,
-    `   SOURCE.md («Origin: suggested by the person»). Change nothing in it; delete the archive.`,
-    card.scripts.length ? `4. It holds scripts (${card.scripts.join(', ')}): the person said a separate yes to them; never run them while installing.` : '4. It holds no scripts.',
-    `5. Commit: «Skill ${card.skill} from ${card.source} — suggested by the person, checked by the node (${row.folderSha})».`,
+    `   SOURCE.md («Origin: ${origin.line}»). Change nothing in it; delete the archive.`,
+    scripts.length ? `4. It holds scripts (${scripts.join(', ')}): the person said a separate yes to them; never run them while installing.` : '4. It holds no scripts.',
+    `5. Commit: «Skill ${card.skill} from ${card.source} — ${origin.commit} (${folderSha})».`,
     `6. Report: npm run reply-core -- "installed ${card.skill}, commit <hash>".`,
   ].join('\n')
-  appendFileSync(join(suggestedDir(root), 'ledger.jsonl'), `${JSON.stringify({ at: new Date().toISOString(), source, skill: card.skill, event: 'handed', to, sha256, folderSha: row.folderSha })}\n`)
+  appendFileSync(join(suggestedDir(root), 'ledger.jsonl'), `${JSON.stringify({ at: new Date().toISOString(), source: card.source, skill: card.skill, event: 'handed', from: origin.from, to, sha256, folderSha })}\n`)
   return { archive, sha256, task, card }
+}
+
+/** Hand one skill to an element's own agent — only a copy whose folder is still exactly the checked one. Own skills first, then a
+ * judged suggestion (628). → { archive, sha256, task, card, from } | { error } */
+export async function handSkill(id, { root, to, said = '', scriptsYes = false } = {}) {
+  const kept = readOwn(root).find((k) => k.id.toLowerCase() === String(id).toLowerCase())
+  if (kept) {
+    const folder = ownFolderOf(root, kept.source, kept.skill)
+    if (!existsSync(folder)) return { error: `${id}: its kept folder is missing — keep it again (npm run skills -- adopt <link>, then keep)` }
+    const now = folderShaOf(pairsOf(folder))
+    if (now !== kept.folderSha) return { error: `the kept folder changed after the check (${now} ≠ ${kept.folderSha}) — forget it and keep it again` }
+    if (kept.scripts?.length && !scriptsYes) return { error: `${id} holds scripts (${kept.scripts.join(', ')}) — installed only after the person's separate yes: add --scripts-yes` }
+    const stage = join(dirname(archivePathOf(root, idOf(kept.source, kept.skill))), kept.skill)
+    rmSync(stage, { recursive: true, force: true })
+    mkdirSync(dirname(stage), { recursive: true })
+    cpSync(folder, stage, { recursive: true, verbatimSymlinks: true })
+    const r = packForElement({ root, to, card: kept, folderSha: kept.folderSha, stage, sourceText: readFileSync(`${folder}.source.md`, 'utf8'), origin: { from: 'own', what: 'one of the node\'s own skills (the person kept it)', line: 'suggested by the person, kept in the node\'s own skills', commit: 'kept by the person, checked by the node' } })
+    return r.error ? r : { ...r, from: 'own' }
+  }
+  const c = judgedCopy(id, root)
+  if (c.error) return c
+  const { card, row, folder, source, judgement } = c
+  if (card.scripts.length && !scriptsYes) return { error: `${id} holds scripts (${card.scripts.join(', ')}) — installed only after the person's separate yes: add --scripts-yes` }
+  const stage = join(dirname(archivePathOf(root, idOf(source, card.skill))), card.skill)
+  rmSync(stage, { recursive: true, force: true })
+  mkdirSync(dirname(stage), { recursive: true })
+  cpSync(folder, stage, { recursive: true, verbatimSymlinks: true })
+  const r = packForElement({ root, to, card: { ...card, source }, folderSha: row.folderSha, stage, sourceText: sourceMd(card, row, judgement, said || judgement.said || ''), origin: { from: 'suggested', what: 'suggested by the person and approved', line: 'suggested by the person', commit: 'suggested by the person, checked by the node' } })
+  return r.error ? r : { ...r, from: 'suggested' }
 }
