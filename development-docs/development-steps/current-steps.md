@@ -27,8 +27,11 @@ button still live after the start → **641-4** fixed (in `completed-steps/641.m
 one live question on Opus (640-5 plane 2). **~13:22 it FAILED** (session `4a516939`): the agent passed «brand voice» and three
 rephrasings, the catalog gave seven noisy cards, the agent said «готового навыка … среди проверенных нет»; the owner: «fatal error».
 → **640-5b** (in `640-5.md`): rephrasings always in the mean, themes out of the catalog; the live call → brand-voice the first catalog
-card. **Waiting for the owner:** Sync + update again, then the same live question once more. Then phrase 3, the catalog skill into root,
-the verdict.
+card. The owner ~13:35: «Уже второй раз ты мне врёшь. Сделай какие-нибудь тесты» → 640-5c (wide 18/20, held-out 10/12). The owner
+~13:50: tests on **Sonnet**; for each of the seven — what I like in it, then advice (the strongest, or an own skill from several) →
+**640-6 done** (`completed-steps/640-6.md`): the Sonnet bench `p646/` (isolated, nothing reaches Telegram) — 5 of 5. **Waiting for
+the owner:** Sync + update (640-5c, 640-6 to his node). Then phrase 3, the catalog skill into root, the verdict — each first on the
+Sonnet bench, then him.
 
 **Before (2026-11-04 ~04:30 UTC) — 629-2 CLOSED** (`completed-steps/629-2.md`, seal `e3a792e3f76c`; the owner: «да, запечатай» after
 the lines and their Russian reading). **629-4 CLOSED** (`completed-steps/629-4.md`, 09:31 UTC on Opus: the gray request → rule, price, lawful way; the
