@@ -28,6 +28,11 @@ named «NOT CHECKED BY FRACTERA»; skip-cards named in the question come back «
 verdict, «как починить кран» → nothing, «lark-mail … newsletter?» → three e-mail skills + lark-mail «checked and not proposed»;
 memory on a stub door 5 of 5. The catalog is already in the owner's `data/node/skills-catalog` (installed by `installCatalog`). Live:
 Sync + update, then the main agent in Telegram «хочу постить в соцсети и блоги».
+**✗ 2026-11-04 ~02:10 UTC, the owner's update failed at the core's build** (the old build restored, the node runs; code, elements,
+memory v2.2.19 and the soul arrived): `app/api/skills/catalog/route.ts` — «'query' does not exist in type '{ n?: number }'» (TypeScript
+inferred `findInCatalogFile`'s options from the `.mjs` default). Fixed with JSDoc types; narrow `tsc` over the door: the old version 2
+errors, the fixed 0. Cause of the miss: my guards for 627-4 ran without a type check — the chain from `check-menu-icons` has no `tsc`.
+Next: the owner's Sync + update again.
 **Open:** 627 (627-3, 627-4, 627-6, 627-7), 629 (the law's text waits for the owner), 637 (the owner's proposal — three
 questions wait for him, no plan file yet), 638 (planned — the inventory 638-1 first), 545 (545-4, 545-5), 593 (not started), 603
 (603-5); found on the way — `scripts/check-boundary-hook.mjs` 2 of 18 (the same before 639, not in `prebuild`).

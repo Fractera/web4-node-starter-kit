@@ -28,6 +28,6 @@ export async function POST(req: NextRequest) {
   if (!query) return NextResponse.json({ ok: false, error: "query must be a non-empty string" }, { status: 400, headers: HEADERS })
   const n = Number.isInteger(body?.n) && (body!.n as number) > 0 && (body!.n as number) <= 10 ? (body!.n as number) : 3
   const r = await findInCatalogFile(process.cwd(), { query, n })
-  const found = r.ok ? r.found.map((c: Record<string, unknown>) => ({ id: c.id, skill: c.skill, source: c.source, summary: c.summary, value: c.value, use: c.use, why: c.why, licence: c.licence, stars: c.stars, installs: c.installs, scripts: Array.isArray(c.scripts) ? c.scripts.length : 0, url: c.url, score: c.score })) : []
+  const found = r.ok ? r.found.map((c) => ({ id: c.id, skill: c.skill, source: c.source, summary: c.summary, value: c.value, use: c.use, why: c.why, licence: c.licence, stars: c.stars, installs: c.installs, scripts: Array.isArray(c.scripts) ? c.scripts.length : 0, url: c.url, score: c.score })) : []
   return NextResponse.json({ ok: r.ok, ...(r.ok ? {} : { error: r.error }), found, skipped: r.ok ? r.skipped : [] }, { status: r.ok ? 200 : 503, headers: HEADERS })
 }
