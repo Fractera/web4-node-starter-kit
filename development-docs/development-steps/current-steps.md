@@ -5,7 +5,19 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-21 (2026-11-05, new session) — 654-1, 654-2, 656 and 657 CLOSED; next 654-3 (vectors)** (`new-steps/654/`).
+**NOW-21 (2026-11-05, new session) — 654-1, 654-2, 656 and 657 CLOSED; 654-3 (vectors) BUILT, in delivery** (`new-steps/654/`).
+**654-3 (a new session after `/clear`; the owner pasted «Дальше по плану — 654-3 (векторы: у каждого элемента свои коллекции)»):**
+measured first on the owner's node (read only): vectors v1.2.7, index `partitioned`, 3 records (`memory-said--root` 2,
+`memory-objects--root` 1 — no `memory-<agent>`, no `self-*`), names under `el/` 0. Built in `~/fractera-dev/fractera-vectors-starter`
+(uncommitted until the release): `vectors.mjs` — an element's collection `faq` kept as `el/<id>/faq`, its record `x` as `el/<id>/x`,
+answers by its own names; a search without a collection reads each of its own collections (merged by score); another's `DELETE` → 404;
+`status` counts its own, no `setAside`; a name beginning `el/` from an element on any door, and from the node on a write → 400
+`reserved-prefix`; the node otherwise as before. `app.mjs` — the element key opens `/vectors/*` and `/capabilities`. README «Whose
+vectors», `CLAUDE.md` §11. Lab (this session's scratchpad `654-3/lab-654-3.mjs`, three runs) → `===LAB_654_3_PARTITIONED_OK===`,
+`_FLAT_OK`, `_SCAN_OK`, 38 checks each; the lab's own control — the separation broken on purpose → 21 checks red, the file restored.
+prebuild 0, `tsc` 0, `next build` 0. **Released:** vectors `6c9f2e9` tag v1.2.8 (the push got GitHub's «Internal Server Error» twice,
+the branch and the tag went through separately; `main == origin/main`); the core pins v1.2.8. **Next:** CI of both green → fork →
+`node:update` → `node --env-file=<core>/.env.local ~/fractera-dev/_tools/proof-654-3.mjs <core>`.
 The owner: «Продолжи разработку Fractera по current-steps.md ядра, блок NOW-20: спланируй шаг 654, разделение элементов внутри хранилищ
 (база, файлы, векторы, граф) для режима завода приложений». The plan in one line each: (1) each element's own key `ELEMENT_KEY = <id>.<HMAC
 of DATA_SECRET>` and its own database file; (2) storage: owner and visibility, a private file only on `?private=1` — the memory's files

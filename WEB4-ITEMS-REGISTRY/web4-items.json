@@ -79,7 +79,7 @@
     {
       "id": "vectors",
       "repo": "https://github.com/Fractera/fractera-vectors-starter.git",
-      "version": "v1.2.7",
+      "version": "v1.2.8",
       "port": 24694,
       "provides": [
         "vectors"
