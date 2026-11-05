@@ -31,6 +31,11 @@ OpenAI (Рекомендую)». Core `6a77b62e` (pushed): `lib/node-menu-mode.t
 routes). The core's lab `next dev` does not run in the clone (Turbopack: `node_modules` is a symlink to the live node's; webpack: old
 import errors `authUrl` of `lib/microservices/urls`) — the build is proven by CI (`npm run build` on three OS). **Next:** CI green → fork →
 `node:update` → `PW_PATH=… node ~/fractera-dev/_tools/eyes-657.cjs http://localhost:24680 <scratchpad>`; then 654-3.
+**657 delivered once** (CI 42051113642, `node:update` → `ядро 2c6250bf`): eyes passed the compact default, the full mode, one «you are
+here», the OpenAI row in view; **a defect:** the switch's `router.refresh()` applied «Компактная» not in 181 s (the server served it at
+once — curl) → the switch now reloads the page. **The owner's additions (verbatim in `657-main.md`):** a separator between «Основное» and
+the elements in compact, «Основное» closed by default, element names in capitals, a Switch with the changing text. Core `d296ebd0`
+(pushed, CI pending at writing) → fork → `node:update` → `eyes-657.cjs` again.
 **The owner, 2026-11-05 during the delivery of 654-2, verbatim (a new task, step 657 — queued, planned first):** «Изменить интерфейс
 левого меню ядра так как он сейчас выглядит слишком перегруженным а наш фокус: пользователь должен работать только через Telegram»!
 нужно на вкладке основное добавить кнопку настройка: Рекомендуемый режим минимальные настройки по умолчанию, полные для глубокого
