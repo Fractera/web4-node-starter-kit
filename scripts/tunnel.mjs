@@ -44,6 +44,8 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import os from 'node:os'
+import dns from 'node:dns'
+import https from 'node:https'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const root = path.join(here, '..')
@@ -57,6 +59,16 @@ const isWindows = process.platform === 'win32'
 const INTERVAL_MS = Number(process.env.FRACTERA_TUNNEL_INTERVAL_MS) || 60000
 const TIMEOUT_MS = Number(process.env.FRACTERA_TUNNEL_TIMEOUT_MS) || 15000
 const FAILURES_BEFORE_VERDICT = Number(process.env.FRACTERA_TUNNEL_FAILURES) || 3
+// 🔒 НОВОЕ ИМЯ ЕЩЁ НЕ РАЗОШЛОСЬ ≠ ТУННЕЛЬ МЁРТВ (узел, шаг 651-2). ✗ Измерено 2026-11-05 на машине владельца: адрес родился в 09:44:44,
+// имя этой машины не резолвило его до 09:51:40 (около 7 минут), а три неудачи дали приговор «мёртв» уже в 09:47:53 — владелец открыл
+// новую ссылку и прочитал на ней же, что она умерла: «когда я перешёл по этой ссылке и попал на эту же страницу то снова увидел
+// информацию о том что у нас проблема с доменом». Пока адрес ни разу не ответил, «имя не резолвится» в этот срок не считается неудачей.
+const BIRTH_GRACE_MS = Number(process.env.FRACTERA_TUNNEL_BIRTH_GRACE_MS) || 10 * 60000
+// 🔒 КЭШ DNS ЭТОЙ МАШИНЫ ≠ CLOUDFLARE (651-2). ✗ Измерено 2026-11-05 10:01: дозорный второй раз вынес «мёртв» живому адресу —
+// системный резолвер macOS (им пользуются `fetch` и `curl`) не знал имя, а DNS 1.1.1.1, 8.8.8.8 и точки доступа 172.20.10.1 знали,
+// и `/api/health` через адрес Cloudflare ответил 200. «Имя не резолвится» от системы переспрашивается у публичного DNS, и туннель
+// пробуется по найденному им адресу; приговор — только если имя не знает и он.
+const PUBLIC_DNS = (process.env.FRACTERA_TUNNEL_PUBLIC_DNS || '1.1.1.1,8.8.8.8').split(',').map((x) => x.trim()).filter(Boolean)
 
 // Внешняя точка, не зависящая от НАШЕГО туннеля. Нужна ровно для одного
 // различения: «туннель мёртв» против «у человека нет интернета».
@@ -143,6 +155,8 @@ let deadSince = null
 let everOk = false
 let checking = false
 let nextCheckAt = 0
+let bornAt = 0
+let viaPublicNoted = false
 
 async function ask(url) {
   const controller = new AbortController()
@@ -164,6 +178,26 @@ async function ask(url) {
   }
 }
 
+/** 651-2: та же проба в обход кэша DNS машины — имя спрашивается у публичного DNS, соединение идёт на найденный адрес. */
+async function askViaPublicDns(url) {
+  const u = new URL(url)
+  const resolver = new dns.promises.Resolver({ timeout: 5000, tries: 1 })
+  resolver.setServers(PUBLIC_DNS)
+  let ip = null
+  try { [ip] = await resolver.resolve4(u.hostname) } catch { ip = null }
+  if (!ip) return { ok: false, status: 'имя не резолвится' }
+  const lookup = (_h, o, cb) => (o && o.all ? cb(null, [{ address: ip, family: 4 }]) : cb(null, ip, 4))
+  return new Promise((resolve) => {
+    const req = https.request(u, { method: 'GET', lookup, timeout: TIMEOUT_MS }, (res) => {
+      res.resume()
+      resolve({ ok: res.statusCode >= 200 && res.statusCode < 300, status: res.statusCode, ip })
+    })
+    req.on('timeout', () => { req.destroy(); resolve({ ok: false, status: 'таймаут' }) })
+    req.on('error', (e) => resolve({ ok: false, status: `соединения нет (${e.code || e.message})` }))
+    req.end()
+  })
+}
+
 async function internetAlive() {
   const { ok } = await ask(INTERNET_PROBE)
   return ok
@@ -182,7 +216,16 @@ async function tick() {
 
   checking = true
   try {
-    const { ok, status } = await ask(target)
+    let { ok, status } = await ask(target)
+    if (!ok && status === 'имя не резолвится') {
+      const pub = await askViaPublicDns(target)
+      if (pub.ok && !viaPublicNoted) log(`DNS этой машины не знает имя, а публичный DNS знает (${pub.ip}) и туннель отвечает ${pub.status} — туннель жив, устарел кэш DNS машины`)
+      viaPublicNoted = pub.ok
+      ok = pub.ok
+      status = pub.ok ? pub.status : pub.status === 'имя не резолвится' ? status : `${pub.status} (по публичному DNS)`
+    } else if (ok) {
+      viaPublicNoted = false
+    }
 
     if (ok) {
       patchState({ lastCheckAt: new Date().toISOString(), lastOk: true })
@@ -213,6 +256,11 @@ async function tick() {
     // приговор.
     if (!(await internetAlive())) {
       log(`связи нет вовсе (проверял ${INTERNET_PROBE}) — туннель не сужу, счётчик неудач стоит на ${failures}`)
+      return
+    }
+
+    if (!everOk && status === 'имя не резолвится' && Date.now() - bornAt < BIRTH_GRACE_MS) {
+      log(`новое имя ещё не разошлось по DNS (${Math.round((Date.now() - bornAt) / 1000)} с после рождения) — не сужу, жду до ${Math.round(BIRTH_GRACE_MS / 60000)} мин`)
       return
     }
 
@@ -294,6 +342,8 @@ function scan(chunk) {
     saveAddress(match[0])
     failures = 0
     dead = false
+    everOk = false
+    bornAt = Date.now()
     // Первая проба — не сразу: туннель только что поднялся, и мгновенный опрос
     // застал бы его за установкой соединения.
     nextCheckAt = Date.now() + INTERVAL_MS / 2

@@ -2,6 +2,7 @@
 // 632-4 (владелец 2026-11-03): после «Sync fork» полоса предлагает обновление. 641-2 (владелец 2026-11-04): «кроме кнопки скрыть должно
 // быть кнопка синхронизировать … если уже синхронизировано но не обновлено этот баннер должен получить кнопку обновить сборку ядра. Эта
 // кнопка не активна до сих пор синхронизации не прошла … должна отправлять на вкладку развёртывание».
+// 651-1 (владелец 2026-11-05: «отсутствует баннер … Он всегда существовал в нём было три кнопки … куда он исчез и почему?»): `even`.
 export type OriginNoticeWords = {
   forkBehind: string
   sync: string
@@ -21,6 +22,10 @@ export type OriginNoticeWords = {
   refused: string
   interrupted: string
   done: string
+  /** 651-1: nothing is behind by the last mark — a quiet line, so «Check again» is never out of reach. `{date}` — the mark's time. */
+  even: string
+  /** 651-1: the fork was never compared with the original. */
+  evenNever: string
   hide: string
   stages: Record<string, string>
 }
@@ -43,6 +48,8 @@ const DICT: Record<"en" | "ru", OriginNoticeWords> = {
     refused: "The update did not start: {reason}",
     interrupted: "The update was interrupted at stage «{stage}» (the computer was off or the process stopped). Check again and start it once more.",
     done: "The node is updated: {summary}",
+    even: "The node matches the original Fractera as of {date}. The node does not ask GitHub by itself: press «Check again» to see whether there are new changes.",
+    evenNever: "The fork has not been compared with the original Fractera yet: press «Check again».",
     hide: "Hide",
     stages: { check: "check", fetch: "taking the fork", backup: "backup", local: "local changes", merge: "merge", registry: "registry", deps: "dependencies", guards: "build guards", elements: "elements", core: "core build", skills: "skills base" },
   },
@@ -63,6 +70,8 @@ const DICT: Record<"en" | "ru", OriginNoticeWords> = {
     refused: "Обновление не начато: {reason}",
     interrupted: "Обновление прервано на этапе «{stage}» (компьютер выключался или процесс остановлен). Проверьте снова и запустите ещё раз.",
     done: "Узел обновлён: {summary}",
+    even: "Узел совпадает с оригиналом Fractera на {date}. Сам узел GitHub не спрашивает: нажмите «Проверить снова», чтобы узнать, есть ли новые изменения.",
+    evenNever: "Форк ещё не сравнивался с оригиналом Fractera: нажмите «Проверить снова».",
     hide: "Скрыть",
     stages: { check: "проверка", fetch: "забираю форк", backup: "копия несохранённого", local: "разбор несохранённого", merge: "слияние", registry: "реестр", deps: "зависимости", guards: "сторожа сборки", elements: "элементы", core: "сборка ядра", skills: "база навыков" },
   },

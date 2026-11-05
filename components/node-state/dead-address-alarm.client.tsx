@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { ExternalLink, Siren } from "lucide-react"
 import type { DeadAddressAlarmWords } from "./dead-address-alarm.i18n"
+import { isTemporaryHostname } from "@/lib/auth/temporary-address"
 
 // ПОЛОСА «ВРЕМЕННЫЙ АДРЕС УМЕР» НАД СЛОЕМ АРХИТЕКТОРА (узел, шаг 632-5). Владелец 2026-11-03: «Похоже для этого нужно делать баннер,
 // который будет предупреждать об этой проблеме и кнопка которую этой проблемы будет решать?» ✗ Замерено в тот же день: адрес был мёртв
@@ -10,6 +11,9 @@ import type { DeadAddressAlarmWords } from "./dead-address-alarm.i18n"
 // адреса `null`, и полоса «временный адрес» просто исчезала.
 // Источник — `/api/domain/state` (`quickTunnelDead`, `quickTunnelDeadSince`): один запрос при открытии, таймеров нет. Кнопка — дверь
 // `POST /api/domain/new-address` (только при мёртвом адресе). Не сворачивается: это поломка, а не справка. Свой домен — полосы нет.
+// 651-2 (владелец 2026-11-05: «когда я перешёл по этой ссылке и попал на эту же страницу то снова увидел информацию о том что у нас
+// проблема с доменом»): страница, пришедшая по временному адресу, сама доказывает, что быстрый туннель узла жив — мёртвый адрес её
+// не отдал бы, а копии страниц живут в Cloudflare Workers, не на trycloudflare. Там полосы нет, как бы ни отстал дозорный.
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
@@ -21,6 +25,7 @@ export function DeadAddressAlarm({ words, lang }: { words: DeadAddressAlarmWords
   const [result, setResult] = useState<{ url?: string; error?: string } | null>(null)
 
   useEffect(() => {
+    if (isTemporaryHostname(window.location.hostname)) return
     fetch(`${BASE}/api/domain/state`, { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d: { active?: boolean; quickTunnelDead?: boolean; quickTunnelDeadSince?: string | null } | null) =>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { ExternalLink, RefreshCw, TriangleAlert } from "lucide-react"
+import { CircleCheck, ExternalLink, RefreshCw, TriangleAlert } from "lucide-react"
 import type { OriginNoticeWords } from "./origin-notice.i18n"
 import { useSnooze } from "./snooze"
 import { OpenOnThisComputerButton } from "./open-on-this-computer.client"
@@ -26,11 +26,15 @@ import { isTemporaryHostname } from "@/lib/auth/temporary-address"
 // скрыть»): ✗ дверь на временном адресе отказывает (403 `temporary-address`, `proxy.ts`), а полоса брала тело отказа за состояние —
 // без `fork` она гасла. Теперь отказ состояние не трогает и назван словами; на временном адресе вместо «Проверить снова» —
 // «Открыть на этом компьютере»: проверка и обновление идут только там.
+// 651-1 (владелец 2026-11-05: «отсутствует баннер который показывает информацию о том что проект отстает. Он всегда существовал в нём
+// было три кнопки … куда он исчез и почему?»): ✗ когда по отметке ничего не отстаёт и записи обновления нет (свежая установка), полоса
+// возвращала `null` — и вместе с ней пропадала «Проверить снова», единственный способ спросить GitHub. Форк ушёл вперёд на 2 коммита,
+// а сказать узлу было нечем. Теперь это состояние — тихая строка «совпадает на <время отметки>» с теми же кнопками; «Скрыть» — на сутки.
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
 type Update = { state: string; stage?: string; summary?: string; reason?: string; changes?: number; finishedAt?: string }
-type Body = { fork: boolean; behindBy: number; nodeBehind: number; repo: string | null; update: Update | null }
+type Body = { fork: boolean; behindBy: number; nodeBehind: number; repo: string | null; update: Update | null; checkedAt?: string | null }
 
 const fill = (s: string, v: Record<string, string | number>) => s.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ""))
 
@@ -41,6 +45,7 @@ export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: 
   const [onTemporary, setOnTemporary] = useState(false)
   const done = d?.update?.state === "done" && (d.update.changes ?? 0) > 0 ? d.update : null
   const { hidden, snooze } = useSnooze(`node-update-done-${done?.finishedAt ?? ""}`)
+  const evenSnooze = useSnooze(`node-even-${d?.checkedAt ?? ""}`)
 
   useEffect(() => {
     setOnTemporary(isTemporaryHostname(window.location.hostname))
@@ -67,6 +72,7 @@ export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: 
   const stage = words.stages[u?.stage ?? ""] ?? u?.stage ?? ""
   let text: string | null = null
   let canCheck = true
+  let even = false
   const running = u?.state === "running"
   if (running) {
     text = fill(words.running, { stage })
@@ -79,14 +85,17 @@ export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: 
     text = fill(words.nodeBehind, { n: d.nodeBehind })
   } else if (done && !hidden) {
     text = fill(words.done, { summary: done.summary ?? "" })
+  } else if (!evenSnooze.hidden) {
+    even = true
+    text = d.checkedAt ? fill(words.even, { date: new Date(d.checkedAt).toLocaleString(lang) }) : words.evenNever
   }
   if (!text) return null
   const forkBehind = d.behindBy > 0
   const canRebuild = !forkBehind && d.nodeBehind > 0
 
   return (
-    <div className="mx-4 mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-md border border-warning/50 bg-warning/10 px-3 py-2 text-sm text-foreground" role="status" data-origin-outdated={d.behindBy} data-node-behind={d.nodeBehind} data-node-update={u?.state ?? "none"}>
-      <TriangleAlert className="size-4 shrink-0 text-warning" aria-hidden />
+    <div className={even ? "mx-4 mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground" : "mx-4 mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-md border border-warning/50 bg-warning/10 px-3 py-2 text-sm text-foreground"} role="status" data-origin-outdated={d.behindBy} data-node-behind={d.nodeBehind} data-node-update={u?.state ?? "none"} data-origin-even={even ? "true" : undefined}>
+      {even ? <CircleCheck className="size-4 shrink-0 text-primary" aria-hidden /> : <TriangleAlert className="size-4 shrink-0 text-warning" aria-hidden />}
       <span className="flex-1">
         {text}
         {onTemporary ? <span className="block text-muted-foreground">{words.checkHere}</span> : refused ? <span className="block text-destructive">{fill(words.checkRefused, { reason: refused })}</span> : null}
@@ -113,8 +122,8 @@ export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: 
           {busy === "check" ? words.checking : words.check}
         </button>
       )}
-      {done && !hidden && !forkBehind && d.nodeBehind === 0 && (
-        <button type="button" onClick={snooze} className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground">
+      {(even || (done && !hidden && !forkBehind && d.nodeBehind === 0)) && (
+        <button type="button" onClick={even ? evenSnooze.snooze : snooze} className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground">
           {words.hide}
         </button>
       )}

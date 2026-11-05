@@ -5,6 +5,17 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-15 (2026-11-05 ~10:10 UTC) — 651 in delivery: the lost banner and the false «address dead».** The owner, verbatim: «по какой-то
+причине отсутствует баннер который показывает информацию о том что проект отстает. Он всегда существовал в нём было три кнопки … куда он
+исчез и почему?»; «когда я перешёл по этой ссылке и попал на эту же страницу то снова увидел информацию о том что у нас проблема с
+доменом»; to the plan 651-1/2 — «to do both». **Measured:** `logs/origin.json` of his fresh node `behindBy: 0` from 2026-11-04 23:46, no
+`node-update.json` → `OriginNotice` returned null and took «Проверить снова» with it, while Fractera was 2 commits ahead. The tunnel:
+born 09:44:44, «имя не резолвится» from 09:45, verdict 09:47:53, cleared 09:51:40; again «dead» 10:00:23 while 1.1.1.1, 8.8.8.8 and
+the hotspot DNS 172.20.10.1 resolved it and `/api/health` via 104.16.231.132 answered 200 — the macOS resolver's stale cache.
+**Defect on the way, not fixed:** `check-i18n` fails on the original too — two dictionaries of `administration/users` listed, files
+absent. **Next:** push 651, his fork synced (fast-forward), `node:update`, eyes on his panel; the watchdog's new code starts with the
+next tunnel start (a restart gives a new address).
+
 **NOW-14 (2026-11-05) — 649 CLOSED** (`completed-steps/649-main.md`): root v3.0.21 (`5171bc0`) — the fourth card «integrator» and
 the column by the footer's width button (1280 / 1024, was 760); custom v0.3.157 (`67be1de`) — `landing-agent` on `var(--app-w)`; both —
 `check-layout` rule `bare-widget-without-column`; core `5f3e19da` — skill `integrator`, `CLAUDE.md` §4/§8 resealed, the soul's «The
