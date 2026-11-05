@@ -8,7 +8,7 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 **NOW-18 (2026-11-05) — 650-1 CLOSED** (`completed-steps/650-1.md`): memory v2.2.21 `df27be7` (contract 7.0.0) on the owner's node —
 each element its own space, the main agent all, proven on the doors (B: «Этого я не знаю», B's file 404) and in the stores (rows,
 `memory-said--root` vs `memory-said`, graph `memory-root` vs `memory`); core `f325f6b0`. The owner: «focus only to memory , not to claude
-rules now» — 650-2's skills and `CLAUDE.md` are out. **650-3 CLOSED** (`completed-steps/650-3.md`): Blocks v1.4.19 `88b4956` — `block-access-map`, seen light, dark and 390 px; pinned. **Next:** 650-4 (the pages: memory, graph, vectors landings, «Как это работает» §5, README).
+rules now» — 650-2's skills and `CLAUDE.md` are out. **650-3 CLOSED** (`completed-steps/650-3.md`): Blocks v1.4.19 `88b4956` — `block-access-map`, seen light, dark and 390 px; pinned. **Next:** 650-4, re-planned by the owner's word «ты обязан взять образец landing для платёжной системы stripe … Все страницы должны быть в одном стиле … как оформление так и текстов» (`new-steps/650/650-4.md`): memory + `spaces`; embeddings checked; graph and vectors rebuilt after the Stripe sample + `spaces`; humanizer over every text.
 **Left on his node:** the proof phrases and `anna-650.txt` — removed only at his word.
 
 **NOW-17 (2026-11-05) — 650 planned, waits for the owner's yes** (`new-steps/650/`: `650-main.md`, `650-1.md`, `650-2.md`). The owner,
