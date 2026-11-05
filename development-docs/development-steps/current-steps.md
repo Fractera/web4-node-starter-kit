@@ -5,113 +5,32 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-21 (2026-11-05/06, night) — 654-1 … 654-6, 656 and 657 CLOSED; 654-7 and 658 RELEASED, CI green (storage 42128771294, vectors 42128778327, data 42128786768, graph 42128793718, memory 42128800413, root 42129214604, core a258cfac 42128960275 and 4878f154 42129298411); NOT delivered — the fork stands at `820654ff`, waiting for the owner's «Sync fork» to `4878f154`; then `node:update`, the live eyes of 654-7 (en + ru landings) and of root's six cards, 654-7 and 654 closed (plans of 654 deleted with 654-main), 658's live answers of the main agent (one session, named first), 658 closed. `djlgb` removal waits for his yes.** Before: next 654-7 (the pages and the words), then 658
-(`new-steps/654/`, `new-steps/658/`). The owner, ~19:10 UTC: «go to finish non stop , not call me i sleep».
-**654-6 CLOSED** (`completed-steps/654-6.md`): template `3fa23dc` v0.3.158 + `4b0f953` v0.3.159 (the passport's data link names
-`X-Element-Key (ELEMENT_KEY)` — the owner's question «каждый элемент имеет свой файл Json … Ты это принимал в расчёт» found that the wake line
-said DATA_SECRET), root `7923f2d` v3.0.23 + `0650517` v3.0.24, core `c9663a07` + `820654ff`; CI green; `node:update` → `ядро 42998b9e`;
-`proof-654-6.mjs` root → `===PROOF_654_6_OK===` (root: ELEMENT_KEY yes, DATA_SECRET no, «element root» in all four stores, `node-type get`
-names nobody, the seed image through the temporary address 200); across → `===PROOF_654_6_OK===` with **the temporary element `djlgb`**
-(port 24687, born from v0.3.159): it never sees root's markers in any store, the node key sees both. **Waits for the owner's yes:** removing
-`djlgb` by «Удалить насовсем». **654-7 BUILT:** the landings' «spaces» and «connect» texts (storage, vectors, graph, memory, en and ru: each element its own key and its own space, the main agent all, «the doors apart, not the disk»; the examples on `X-Element-Key`/`ELEMENT_KEY`; the lock rows), data's three key lines; the memory card's graph link; the vectors README `node-elements`; the core — `CLAUDE.md` §3 resealed (`8039f24455eb`, the owner's word «Строка в CLAUDE.md и навыки»), README + its Mermaid, «Как это работает» §5.5, skills `use-data` («Whose data it is») and `use-deep-memory` («Whose memory»). Words: the old phrases (shared library, node key in the examples) before 1–2 per landing, now 0; lab eyes (built clones on 2566x, en): #spaces at 1440 light/dark and 390 — found, 0 console errors, no overflow, in all four; data's top lines — 0 errors. `check-i18n` fails the same at HEAD in every native element (6 dictionaries of pages they do not have) — pre-existing, not in prebuild. **Released:** storage `d3a4ab1` v1.1.26, vectors `3640585` v1.2.9, data `c90f2bf` v2.2.6, graph `1ac2560` v1.2.8, memory `9db4a6f` v2.2.26; core `98e30fd4` (pins, `CLAUDE.md` §3 + seal, README, «Как это работает» 5.5, skills); CI running. **The delivery waits for the owner's «Sync fork»** (he sleeps; my push to the fork is refused by the session's permission mode). **658 BUILT** (while he sleeps): skills `content-factory` and `own-agents`; `CLAUDE.md` §1 (the two ways), §3 (`socials-ai` — «social profile links from a phrase»), §4 (two scenario lines), §8 (pointers), resealed `f0789256e9a8`; `shape-the-need` points to both; README «Six things people build with it» (the integrator added — it was missing since 649); root `65e6186` v3.0.25 — six cards in two rows (`content` Megaphone, `personal` Target, `lg:grid-cols-3`), the swarm card's «a coach or a nutritionist for yourself» moved to the sixth. Lab: `check-instruction-skills` with each new skill folder hidden → red, back → green; card parity en/ru (ids equal; ru `personal` removed → red; no guard checks it — `check-i18n` is red at HEAD for 6 dictionaries in every template element); root lab eyes — 1440 light/dark 6 cards 3+3, 390 one per row, 0 console errors, a chosen card puts its chip and story. **Was:** step 658 is built in the dev clones (skills `content-factory`, `own-agents`, the `CLAUDE.md` lines, root's six cards, the README) so ONE sync delivers 654-7 and 658; then `node:update` → the live eyes of 654-7 → 654-7 and 654 closed (the plans of 654 deleted with 654-main's summary) → 658's live proofs. **Was next:** 654-7 (`new-steps/654/654-7.md`) — the landings of storage, vectors, graph, memory (and data's
-key lines), «Как это работает» §5.5 and the kit README, the `CLAUDE.md` §3 line (resealed), the skills `use-data` and `use-deep-memory`;
-owed to it: the vectors README «`self-*`» line, the memory's card names no graph link.
-**654-4 + 654-5 CLOSED** (`completed-steps/654-4.md`, `654-5.md`): graph `17f98e2` v1.2.7, memory `25b1332` v2.2.25, core `338e513a`; CI
-green; the owner synced the fork («sync was complited»); `node:update` → `===NODE_UPDATE_DONE=== 5 изменений форка, ядро 47745734`;
-`_tools/proof-654-45.mjs` graph → `===PROOF_654_45_OK===` (X-Node-Key 401; B never finds A's entity; A's `memory-root` is its own; the shared
-graph 1092 entities unchanged; the skills search found 3); memory → 11 of 12 green, the 12th my too-broad rows check — the read-only row
-listing shows the phrase only in `blocks`, root only its own question. **Decided on the way:** an element's graph space is
-`el-<id>.<name>` (the plan's `--` would collide — a registry id may hold `--`); a read never makes a space folder. **Left in the memory by
-the proofs (cannot be deleted by API yet):** two proof questions and answers in the main agent's space `node`, one question in root's, the
-phrase in blocks' (+ graph space `memory-blocks`). **654-6 BUILT** (the owner: «go»): the custom template (`lib/fractera/store-key.mjs` — the element's own `ELEMENT_KEY` first, `DATA_SECRET` only where it is absent; `data-service.ts`, `remote-client.ts`, the media routes and `by-name.ts` on it, no visitor cookie to a store; `media-proxy` gets the key and `?private=1` (it had none — 502); the seed scripts; `knowledge.ts` rewritten to the graph doors by `GRAPH_URL` (was the dead `/service/rag`); `.env.example` — `ELEMENT_KEY` (`# kind: element-key`), `GRAPH_URL`, no `DATA_SECRET`; `npm run stores` (`scripts/stores.mjs`); skill `use-own-stores` + its row in `.claude/modes/build.md`; README «Your stores») — the same files into root (they equal template v0.3.157 there, measured). The core: `lib/element-key.cjs` + `scripts/check-element-key.mjs` in prebuild; the installer's kind `element-key` and `MASTER_KEYS` (DATA_SECRET never carried over undeclared); `npm run node-type -- get` names custom elements holding the node's data key (live before: `root`). Labs: installer `===LAB_654_6_INSTALLER_OK===` (9); `stores.mjs` against the live stores with root's key → «element root» in all four. prebuild (after `git add`), `tsc`, `next build` 0 in template and root (a JSDoc type on `storeHeaders` fixed the first tsc 2). **Released:** template `3fa23dc` v0.3.158, root `7923f2d` v3.0.23, core `c9663a07` (pins + installer); CI green (template 42089570123, root 42089610007, core 42089689859); the owner synced the fork («sync ok»). **The owner, before the delivery, verbatim:** «Я хочу чтобы ты на всякий случай взял анализы ту ситуацию каким образом элементы общаются с ядром как они друг о друге узнают и может быть это как-то может или должно повлиять а может и нет на то что мы делаем? Ты понимаешь о чем я говорю о том что каждый элемент имеет свой файл Json который рассказывает о его собственных свойствах? Ты это принимал в расчёт может быть какие-то записи надо делать?» **Measured — he is right:** the element's first command on every wake (`npm run passport -- me`) prints its links from `OWN-SERVICE-PROPS/A2A-CARD.json` `consumes`; the template's and root's link to data said «key X-Data-Secret (DATA_SECRET)», «/api/*» and «never a database file of its own» — false after 654-6. Fixed: «/db/*, /media/*, /vectors/* … key X-Element-Key (ELEMENT_KEY) — its own tables (its own database file in the data element), its own files and vector collections, never a neighbour's»; the skill `use-own-stores` tells the agent to add `graph` / `memory` to `calls` and a `consumes` line when its code starts to use them. Not changed (true as they are): `OWN-SERVICE-PROPS.json` `calls` (auth, data, config, design), the natives' cards (they keep DATA_SECRET), the registry (keys are computed, never stored). **Owed to 654-7:** the memory's card names no graph link. → template `4b0f953` v0.3.159 and root `0650517` v3.0.24 with the card, pinned by core `820654ff`; CI green (template 42090967737, root 42091002667, core 42091035989); the owner synced the fork again («sync ok»); `node:update` → `===NODE_UPDATE_DONE=== 3 изменений форка, ядро 42998b9e`, root v3.0.24 rebuilt (25 variables). **Proof 1 (root) → `===PROOF_654_6_OK===`:** root's env names — ELEMENT_KEY and GRAPH_URL present, DATA_SECRET absent; `npm run stores -- --probe` → «element root» in all four stores, markers written, read back, removed; `node-type get` → no custom element holds the node's data key (before: root); the seed image through the temporary address on root's own key → 200, 22901 bytes; root's home (eyes, 1440) — 0 console errors. The owner, 2026-11-05 ~19:10 UTC, verbatim: «go to finish non stop , not call me i sleep» — the temporary element's removal still waits for his yes (the approved plan). **Now:** the temporary element by `npm run create … --no-wake`, then `proof-654-6.mjs <core> across <id>`. **Next:** CI → the owner's «Sync fork» → `node:update` (root rebuilt on its own key) → proof 1 on root → the temporary second element by `npm run create … --no-wake` (born from v0.3.158) → proof 2 across the two → its removal by «Удалить насовсем» only with the owner's yes. **Then:** 654-6's own plan (`new-steps/654/654-6.md`): the installer's `ELEMENT_KEY`, the custom
-template's store helpers on it, root rolled out, a temporary second custom element (the owner's «Временный второй элемент»; removal
-by «Удалить насовсем» needs his yes).
-**654-3 CLOSED** (`completed-steps/654-3.md`): vectors `6c9f2e9` v1.2.8 (an element's names kept under `el/<id>/` and answered by its
-own names, a search without a collection reads only its own collections, another's `DELETE` 404, a name beginning `el/` → 400
-`reserved-prefix` from an element on every door and from the node on a write), core `dd192f10`; CI green (vectors 42060950724, core
-42061320999); the owner synced the fork himself («2 confirmed» — the session's permission mode refused my push to `aifa-agi`);
-`node:update` → `===NODE_UPDATE_DONE=== 2 изменений форка, ядро 59e7a833`; `_tools/proof-654-3.mjs` → `===PROOF_654_3_OK===` (B finds
-nothing of A's with or without a collection; the memory's phrase found by the node key as before). **Owed to 654-7:** the vectors README
-says «`self-*` stay where they are» — they are record ids in the collection `node-elements`. **The skill line** (`use-development-steps`
-§5.2: no run at all for a pushed commit → `gh workflow run <file> -R <repo> --ref main`, never an empty commit) — the owner, 16:40 UTC:
-«need your solution, best choose» → added (a row in `lib/main-agent/owner-decisions-on-skill-changes.md`). **The order — the owner, the
-window, 16:46 UTC:** «4+5, затем 6 и 7 (Рекомендую)». **A new task — the owner, 16:40 UTC («one more for next after finish base»,
-«Переноси в план»), routed by his word «Отдельный шаг 658 (Рекомендую)»:** the root page's fifth use case «content factory» and sixth
-«own agents for personal effectiveness», the cards in two rows; where the instruction, the soul, README and the main agent's skills
-describe and serve them — his words verbatim in `new-steps/658/658-main.md`; planned now, built after 654. **658 APPROVED** (`new-steps/658/`,
-core `1e62c327`, CI 42072695014; the owner, the window ~17:45 UTC: «Да, душа без строки (Рекомендую)»): 658-1 skill `content-factory` + `CLAUDE.md` §1/§4/§8 lines and §3's true word for `socials-ai` (it proposes
-profile LINKS, it does not post — measured); 658-2 skill `own-agents` + its lines; 658-3 root's six cards in two rows (`lg:grid-cols-3`);
-658-4 the core README «Six things people build with it» (the integrator is missing there since 649 — measured). **Next:** 654-4 + 654-5 —
-graph `X-Element-Key` and `X-Data-Secret` (`X-Node-Key` no longer opens it), the memory door's space by the caller's key, the core's and
-the memory's graph calls on `X-Data-Secret` — ONE `node:update` (654-main §3: the skills search and the memory must not lose the graph
-between two updates). **Delivery:** if the session's permission mode refuses the push to `aifa-agi`, ask the owner to press «Sync fork».
-The owner: «Продолжи разработку Fractera по current-steps.md ядра, блок NOW-20: спланируй шаг 654, разделение элементов внутри хранилищ
-(база, файлы, векторы, граф) для режима завода приложений». The plan in one line each: (1) each element's own key `ELEMENT_KEY = <id>.<HMAC
-of DATA_SECRET>` and its own database file; (2) storage: owner and visibility, a private file only on `?private=1` — the memory's files
-stop leaking through every public route at once; (3) vectors: the element's own collections; (4) graph: the element's own space, the node by
-`DATA_SECRET`, `SETTINGS_SECRET` no longer opens it; (5) the memory door: the space is the caller's key; (6) the installer, the custom
-template and root on their own key only, proven with a real second element; (7) the pages and words. **The owner's answers (the window, verbatim):** «Да, начинай 654-1 (Рекомендую)»; keys — «DATA_SECRET сейчас, другой — 655
-(Рекомендую)»; node types — «В обоих типах (Рекомендую)»; also — «Временный второй элемент, Строка в CLAUDE.md и навыки» (wiping an
-element's spaces on its deletion — not chosen). **Now:** 654-1 — the key in the shared lock `auth.mjs`, the element's own database in
-`fractera-data-starter` (clones in `~/fractera-dev/`), then the lab proofs, the release and its delivery.
-**654-1 CLOSED:** data v2.2.5 `3ff1184`, storage v1.1.24 `f77fe6a`, vectors v1.2.7 `fa55bb3` (CI green), core pins `60aed71c`, state
-`579d00c4`; on the owner's node by `node:update` (`===NODE_UPDATE_DONE=== 7 изменений форка, ядро 70396686`); `_tools/proof-654-1.mjs`
-→ `===PROOF_654_1_OK===` (root's table not seen by blocks, `?space=root` for the node, ATTACH 400, a swapped id 401, the key reaches the
-storage and vectors locks through data's forward); regression: memory journal 200, a seed image through the temporary address 200.
-Left on the node: empty `WEB4-ITEMS/core/data/data/elements/root.db` and `blocks.db` (the data process keeps them open).
-**656 CLOSED** (`completed-steps/656.md`, memory `16c4213` v2.2.23 inside v2.2.24): eyes on the owner's node — section `remind` in place,
-0 console errors, no overflow at 390; «календар|calendar» 0 → 7. **654-2 CLOSED** (`completed-steps/654-2.md`): storage `dc72fe0`
-v1.1.25, memory `57bad88` v2.2.24, CI green, core pins `54e0bf68`; `node:update` → `===NODE_UPDATE_DONE=== 4 изменений форка, ядро
-8ff02189`; `_tools/proof-654-2.mjs` → `===PROOF_654_2_OK===`: **the memory's `anna-650.txt` through the temporary address → 404 (was
-200)**, a seed image → 200; the memory's log «1 file(s) of the memory marked private». **Next:** the plan of 657 to the owner (his new
-task), then 654-3 (vectors). **657 APPROVED, built** (`new-steps/657/`): «Да, начинай 657 сейчас (Рекомендую)»; «Один на весь узел (Рекомендую)»; «До поля ключа
-OpenAI (Рекомендую)». Core `6a77b62e` (pushed): `lib/node-menu-mode.ts`, door `/api/node/menu-mode`, the switch
-`_components/menu-mode-switch.client.tsx`, `draft-menu.tsx` (compact / full, the shortcuts), words en/ru; tsc 0, 12 guards green (97
-routes). The core's lab `next dev` does not run in the clone (Turbopack: `node_modules` is a symlink to the live node's; webpack: old
-import errors `authUrl` of `lib/microservices/urls`) — the build is proven by CI (`npm run build` on three OS). **Next:** CI green → fork →
-`node:update` → `PW_PATH=… node ~/fractera-dev/_tools/eyes-657.cjs http://localhost:24680 <scratchpad>`; then 654-3.
-**657 CLOSED** (`completed-steps/657-1.md`, `657-2.md`): core `6a77b62e`, `d296ebd0`, CI green; on the owner's node `ядро 0a209edf`;
-`eyes-657.cjs` → `===EYES_657_OK===`; the door through the temporary address → 403, the file unchanged. **Seen, not changed:** the page's
-top bar still offers «Нативные элементы» / «Кастомные элементы» dropdowns in the compact mode — the owner, 2026-11-05 16:40 UTC: «not
-need» — they stay.
-**The owner, 2026-11-05 during the delivery of 654-2, verbatim (a new task, step 657 — queued, planned first):** «Изменить интерфейс
-левого меню ядра так как он сейчас выглядит слишком перегруженным а наш фокус: пользователь должен работать только через Telegram»!
-нужно на вкладке основное добавить кнопку настройка: Рекомендуемый режим минимальные настройки по умолчанию, полные для глубокого
-управления настройки. Если пользователь переводит режим в компактные настройки то у него : – скрываются вкладка нативные элементы
-вместе со всеми элементами. Вкладка кастомные элементы исчезает как раздел а все элементы остаются прямо в корне – для каждого
-кастомного элемента остается только название, при нажатии на которые открывается страница живой сайт. – Также для кастомных
-элементов исчезает кнопка добавить новый кастомные элемент так как она должна быть доступна только в режиме полных настройках в
-компактном режиме её надо скрыть – Также в упрощенном интерфейсе нужно скрыть полностью вкладку главной агент Также для обоих режимов
-в вкладке основное выше чем кнопка главный Telegram бот добавить кнопки: – – подписка Cloud Code – – терминал А ниже чем вкладка
-Telegram бот добавить – – OpenAI APi key вкладка которая откроет переменное окружение и прокрутит вниз до области ввода ключа Telegram».
-Not 654's capability (the core's menu, not the stores) — a new step **657**, its plan before any code.
-**The owner, 2026-11-05 during 654-1, verbatim:** «Смотрю описание для глубокой памяти то есть landing и увидел промах проверь глубокая
-память имеет работать с календарем и там это нигде не описано». **Checked — he is right:** the memory landing (`fractera-memory-starter`
-`app/[lang]/(publicLayer)/_data/en.json`, `ru.json`, v2.2.22) uses «Remind me about…» / «Напомни о…» only as RECALL (what was said);
-the reminder at a time and the memory's own calendar (636: `remember` with `remind` → `data/cron.json` event `node-notice` → «⏰» in the
-main chat at its minute, the core's «Memory → Cron events») appear nowhere on the page; README §«A reminder at a time» has it. Not 654's
-capability (a shared page is not kinship). **Routed by the owner:** «Шаг 656 сразу после 654-1 (Рекомендую)» → plan
-`new-steps/656-memory-landing-tells-reminders-and-its-calendar.md`; its memory release rides with 654-2's in one `node:update`.
-**Defect found on the way (fixed in 654-1, data/storage/vectors `auth.mjs`):** `isSchemaRoute` compared the path case-sensitively while
-the router (`express-shim.mjs` `compile`) matches segments case-insensitively — `POST /DB/migrate` reached the arbitrary-SQL handler as
-the data class, so a privileged session cookie could run it; now the path is lower-cased first.
-**Measured now on the owner's node (read-only, keys never printed; scripts in this session's scratchpad `654/`):**
-- **A private file of the memory is public on the internet.** Every template-born element has the public route `/api/media/<id>/file`
-  (`proxy.ts` opens it for page images) that streams ANY stored file with the shared `DATA_SECRET`: the memory's `anna-650.txt` (space
-  `root`) → 200, 97 bytes on loopback through root and blocks, and **200 through the temporary address
-  `https://around-come-cameras-addition.trycloudflare.com/api/media/<id>/file` with no session**; an unknown id → 404. The ids are not
-  secret to an element: storage `GET /media` with the shared key lists all 4 records (no owner column: `id,name,title,description,url,…`).
-- With the shared keys: graph `space: memory-root` → 200 `found: true` (6 entities); vectors search WITHOUT `collection` → the memory's
-  `memory-said--root`, `memory-objects--root`; the shared database holds 7 tables (`a2a_log`, `a2a_pinned`, `deploy_runs`,
-  `messages_that_came_into_memory` 13 rows, `…__links` 9, `…__registry` 0, `panel_settings`) — no table of root.
-- **The custom template's own store helpers:** `lib/db/index.ts` (when `REMOTE_DATA_URL` is set) runs its `SCHEMA` (`products`,
-  `site_settings`, `development_steps`, `tgdesk_*`, `fact_*`, `task_current`) and `DROP_LEGACY` (~60 `DROP TABLE IF EXISTS`) in the ONE
-  shared database — two custom elements would share one `products` table; nobody imports `@/lib/db` in the template yet (lazy, so no
-  tables on the node). `lib/fractera/knowledge.ts` (the graph helper) calls data `/service/rag/*` → **503 «did not answer: Failed to parse
-  URL from /query»** — the template has no working way to the graph element (`/api/graph-insert|query`, `X-Node-Key`).
-- The installer (`scripts/services-install.mjs` `sharedSecret`) writes every `# kind: secret` variable as the node's one value; every
-  element's `.env.example` (custom and all natives) declares `DATA_SECRET` and `SETTINGS_SECRET`; the live node is `nodeType: project`
-  with one custom element (root) and stripe off.
+**NOW-21 (2026-11-06, morning) — 654 CLOSED (`completed-steps/654-main.md`, 654-1 … 654-7; its plans deleted); 656 and 657 CLOSED; 658
+DELIVERED, its live answers owed; 659 found and planned (the owner's «fix it»).** The owner, 2026-11-06, verbatim: «fix it | sync was
+complited» (on the two findings of 654-7) and «Да» на удаление djlgb (порт 24687) кнопкой «Удалить насовсем».= yyes»; the night before,
+~19:10 UTC 2026-11-05: «go to finish non stop , not call me i sleep».
+- **Delivered:** the fork synced to `a250897d`; `npm run node:update` → `===NODE_UPDATE_DONE=== 5 изменений форка, ядро d9d48e05`: root
+  v3.0.25, storage v1.1.26, vectors v1.2.9, data v2.2.6, graph v1.2.8, memory v2.2.26.
+- **`djlgb` removed** by «Удалить насовсем»: pm2, tunnel, registry, draft, data, logs, folder — ok; port 24687 silent. Left: empty
+  `data/elements/djlgb.db`, `root.db`, `blocks.db` in the data element; the proof questions in the memory (no door deletes them yet).
+- **654-7 proven live** (`completed-steps/654-7.md`): the four store landings' «spaces», en and ru, light, dark and 390 — console errors 0,
+  no overflow; data's key lines; the old words found 0 on ten live pages and found in storage v1.1.23 (negative control).
+- **658 on the node:** root's six cards (`http://localhost:24683/en`, `/ru`) — 1440: 6 cards in rows 3+3, the last two «Create a content
+  factory» | «Create your own agents» (ru «Создать контент-завод» | «Создать своих агентов»); 390: one per row; console errors 0, no
+  overflow; choosing «Создать своих агентов» → the chip «Выбранное задание: Создать своих агентов» and its story under the cards
+  (screenshot looked at). **Owed:** the main agent's live answer to each new card's task — one session on the subscription, named to the
+  owner before the delivery; negative control: the integrator card's task → `integrator`; the README's view on GitHub; then
+  `completed-steps/658-1.md` … `658-4.md` + `658-main.md`, `new-steps/658/` deleted in the same commit.
+- **659 — the owner's «fix it»** (`new-steps/659/659-main.md`): (a) `scripts/check-i18n.mjs` of every element (one copy: the custom
+  template, root, every native) lists six dictionaries that exist only in the core → `===I18N_FAILED=== проблемных словарей: 6` in each;
+  (b) no guard compares a page's `_data/<lang>.json` across languages — ru without root's card `personal` passed `check-lang-delivery`
+  and `check-content`. Lab done (scratchpad `659/`): the guard `check-data-langs` → `===DATA_LANGS_OK===` in all ten cloned element
+  repositories (after one decision — a key blank on its side may be absent on the other: `keywords: ""` only in en on five template
+  pages); four negative controls on a copy of root's cards — «в en 6, здесь 5 — нет personal», an id, an emptied title, a block's
+  `kind` — each `===DATA_LANGS_FAILED===`, exit 1. **Before the first commit:** the scope named to the owner and his yes (skill
+  `release-template`).
+- **Next:** the core commit of this state → 658's live answers → 658 closed → 659's scope to the owner → releases, CI, pins → his «Sync
+  fork» → `node:update` → 659's proofs.
 
 **NOW-20 (2026-11-05, late) — HANDOFF to a new context window. Read this block first.** The owner, verbatim: «Ты дал мне четыре ссылки
 на элементы памяти но ведь это не полный список? Например здесь отсутствует объектное хранилище которое используется в глубинной памяти»;
