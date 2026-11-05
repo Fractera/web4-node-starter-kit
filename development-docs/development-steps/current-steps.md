@@ -15,6 +15,16 @@ template and root on their own key only, proven with a real second element; (7) 
 (Рекомендую)»; node types — «В обоих типах (Рекомендую)»; also — «Временный второй элемент, Строка в CLAUDE.md и навыки» (wiping an
 element's spaces on its deletion — not chosen). **Now:** 654-1 — the key in the shared lock `auth.mjs`, the element's own database in
 `fractera-data-starter` (clones in `~/fractera-dev/`), then the lab proofs, the release and its delivery.
+**The owner, 2026-11-05 during 654-1, verbatim:** «Смотрю описание для глубокой памяти то есть landing и увидел промах проверь глубокая
+память имеет работать с календарем и там это нигде не описано». **Checked — he is right:** the memory landing (`fractera-memory-starter`
+`app/[lang]/(publicLayer)/_data/en.json`, `ru.json`, v2.2.22) uses «Remind me about…» / «Напомни о…» only as RECALL (what was said);
+the reminder at a time and the memory's own calendar (636: `remember` with `remind` → `data/cron.json` event `node-notice` → «⏰» in the
+main chat at its minute, the core's «Memory → Cron events») appear nowhere on the page; README §«A reminder at a time» has it. Not 654's
+capability (a shared page is not kinship). **Routed by the owner:** «Шаг 656 сразу после 654-1 (Рекомендую)» → plan
+`new-steps/656-memory-landing-tells-reminders-and-its-calendar.md`; its memory release rides with 654-2's in one `node:update`.
+**Defect found on the way (fixed in 654-1, data/storage/vectors `auth.mjs`):** `isSchemaRoute` compared the path case-sensitively while
+the router (`express-shim.mjs` `compile`) matches segments case-insensitively — `POST /DB/migrate` reached the arbitrary-SQL handler as
+the data class, so a privileged session cookie could run it; now the path is lower-cased first.
 **Measured now on the owner's node (read-only, keys never printed; scripts in this session's scratchpad `654/`):**
 - **A private file of the memory is public on the internet.** Every template-born element has the public route `/api/media/<id>/file`
   (`proxy.ts` opens it for page images) that streams ANY stored file with the shared `DATA_SECRET`: the memory's `anna-650.txt` (space
