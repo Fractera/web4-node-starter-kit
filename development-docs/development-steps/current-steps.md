@@ -5,7 +5,7 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-21 (2026-11-05, new session) — 654-1 CLOSED (`completed-steps/654-1.md`); next 656, then 654-2** (`new-steps/654/`, `new-steps/656-…`).
+**NOW-21 (2026-11-05, new session) — 654-1 CLOSED; 656 BUILT (waits for the joint delivery); 654-2 in work** (`new-steps/654/`, `new-steps/656-…`).
 The owner: «Продолжи разработку Fractera по current-steps.md ядра, блок NOW-20: спланируй шаг 654, разделение элементов внутри хранилищ
 (база, файлы, векторы, граф) для режима завода приложений». The plan in one line each: (1) each element's own key `ELEMENT_KEY = <id>.<HMAC
 of DATA_SECRET>` and its own database file; (2) storage: owner and visibility, a private file only on `?private=1` — the memory's files
@@ -19,9 +19,12 @@ element's spaces on its deletion — not chosen). **Now:** 654-1 — the key in 
 `579d00c4`; on the owner's node by `node:update` (`===NODE_UPDATE_DONE=== 7 изменений форка, ядро 70396686`); `_tools/proof-654-1.mjs`
 → `===PROOF_654_1_OK===` (root's table not seen by blocks, `?space=root` for the node, ATTACH 400, a swapped id 401, the key reaches the
 storage and vectors locks through data's forward); regression: memory journal 200, a seed image through the temporary address 200.
-Left on the node: empty `WEB4-ITEMS/core/data/data/elements/root.db` and `blocks.db` (the data process keeps them open). **Next: 656**
-(texts drafted in this session's head, not in a file yet: a section `remind` after `spaces` in the `Agent` view, a row in `solves`,
-the `talk` list, the route's note «stays on while a reminder waits», description and keywords), **then 654-2.**
+Left on the node: empty `WEB4-ITEMS/core/data/data/elements/root.db` and `blocks.db` (the data process keeps them open).
+**656 built:** memory `16c4213` tag v2.2.23 (pushed, CI pending at writing) — section `remind` after `spaces` (Agent view), a row in
+`solves`, the `talk` list, the route's note, description, keywords; lab eyes (`next dev` 25657 with `NEXT_PUBLIC_SUPPORTED_LANGUAGES=en,ru`):
+sections in order, 0 console errors at 1440 and 390, light and dark, no overflow at 390; «календар|calendar» on the page 0 → 7 (both
+languages); prebuild 0, tsc 0, next build 0. NOT pinned: by the owner's choice it reaches the node with 654-2's memory release; closed
+after the eyes on the owner's node. **Now: 654-2** (storage owner + visibility, `?private=1`, the memory marks its files private).
 **The owner, 2026-11-05 during 654-1, verbatim:** «Смотрю описание для глубокой памяти то есть landing и увидел промах проверь глубокая
 память имеет работать с календарем и там это нигде не описано». **Checked — he is right:** the memory landing (`fractera-memory-starter`
 `app/[lang]/(publicLayer)/_data/en.json`, `ru.json`, v2.2.22) uses «Remind me about…» / «Напомни о…» only as RECALL (what was said);
