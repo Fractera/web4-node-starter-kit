@@ -5,6 +5,36 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-20 (2026-11-05, late) — HANDOFF to a new context window. Read this block first.** The owner, verbatim: «Ты дал мне четыре ссылки
+на элементы памяти но ведь это не полный список? Например здесь отсутствует объектное хранилище которое используется в глубинной памяти»;
+then: «почему ты проверяешь связь только с глубинной памятью? Мы с тобой говорили что в режиме завод приложений например все эти элементы
+памяти должны работать соответствующим образом. А значит в том числе объектное хранилище должно быть обновлено не только для
+использования глубинной памятью но и для использования просто внутри элемента … Подготовься к переезду на новое контекстное окно».
+- **The new requirement (next step, number 654, not planned yet):** per-element isolation INSIDE the stores — data (database), storage
+  (files), vectors, graph — for an element's own direct use, not only through the deep memory; it is what the app factory needs. Plan it
+  first (skill `use-development-steps`, the owner's yes before code).
+- **Measured, do not measure again:** every custom element's `.env` holds the node's shared `DATA_SECRET` and `SETTINGS_SECRET`; the data
+  layer (`lib/data-store/auth.mjs`, one file for data, storage, vectors) lets the secret run any SQL (`/db/migrate`), `x-agent-identity`
+  is self-declared; storage `GET /media` lists every file of every element; vectors search any `collection`; graph any `space`; the
+  memory's door separates spaces (650-1) but the stores behind it do not. An element's agent is Claude Code with a shell
+  (`--permission-mode auto`), its boundary is «ask» rules plus a hook on named paths (`scripts/element-isolate.mjs`) — a `curl` with
+  its own key names none. Templates: custom elements born from `fractera-custom-item-starter`; natives each their own repo.
+- **Done in 650 (live on the owner's node):** memory v2.2.22 (spaces, landing), Blocks v1.4.19 (`block-access-map`), vectors v1.2.6, graph
+  v1.2.6, embeddings v0.1.7 — all pinned; core `86832388`/`e6df84e3`. **Released, NOT pinned yet:** storage v1.1.23 `9803808` (landing
+  after the Stripe sample, lab-checked: prebuild 0, tsc 0, sections in order, 0 console errors, no overflow at 390). **Not done:** the data
+  element's landing (old style); the family's accent colour (memory/vectors black, graph/embeddings/… blue — «Дизайн» has no decision).
+- **How work was done (reuse):** dev clones in `~/fractera-dev/<repo>` (push with `gh` token as Fractera: `git -c credential.helper=
+  -c 'credential.helper=!gh auth git-credential' push https://github.com/Fractera/<repo>.git HEAD:refs/heads/main refs/tags/<tag>`);
+  the owner's fork `aifa-agi/web4-node-starter-kit` fast-forwarded over ssh (`git@github.com:aifa-agi/…`, key of aifa-agi); then
+  `npm run node:update` in `~/web4-node-starter-kit`. A block into an element: a temporary `.env.local` (the `SETTINGS_SECRET` line copied
+  by redirect from the core's `.env.local`, never printed, + `NODE_DOMAIN_FILE=<core>/data/x.json`), `node scripts/blocks.mjs add <block>`,
+  the file removed. Proof and eyes scripts: `~/fractera-dev/_tools/` (`proof-650.mjs`, `objects-650.mjs` — run with `node
+  --env-file=<core>/.env.local`; `page-shot.cjs`, `overflow.cjs` — `PW_PATH=<core>/node_modules/playwright`, system Chrome). Labs: `npx
+  next dev --port 2565x` in a clone after `node lib/parser-fs.mjs` and `node scripts/generate-image-previews.mjs`; never a lab
+  `services:install` (shares the live pm2).
+- **Open for the owner:** remove the proof phrases and `anna-650.txt` from memory (space `root`)?; the accent colour; 650-2 (skills and
+  `CLAUDE.md` lines, the factory caveat); 653 (the member's channel without a shell).
+
 **NOW-19 (2026-11-05) — 650 CLOSED (650-1, 650-3, 650-4; 650-2's skills and `CLAUDE.md` left out by the owner's word «not to claude
 rules now»)** — `completed-steps/650-1.md`, `650-3.md`, `650-4.md`. Memory spaces live on the owner's node (memory v2.2.22), the block
 `block-access-map` (Blocks v1.4.19), the four memory landings after the Stripe sample (vectors, graph v1.2.6, embeddings v0.1.7), core
