@@ -19,8 +19,8 @@ says «`self-*` stay where they are» — they are record ids in the collection 
 window, 16:46 UTC:** «4+5, затем 6 и 7 (Рекомендую)». **A new task — the owner, 16:40 UTC («one more for next after finish base»,
 «Переноси в план»), routed by his word «Отдельный шаг 658 (Рекомендую)»:** the root page's fifth use case «content factory» and sixth
 «own agents for personal effectiveness», the cards in two rows; where the instruction, the soul, README and the main agent's skills
-describe and serve them — his words verbatim in `new-steps/658/658-main.md`; planned now, built after 654. **658 PLANNED** (`new-steps/658/`,
-waits for the owner's yes): 658-1 skill `content-factory` + `CLAUDE.md` §1/§4/§8 lines and §3's true word for `socials-ai` (it proposes
+describe and serve them — his words verbatim in `new-steps/658/658-main.md`; planned now, built after 654. **658 APPROVED** (`new-steps/658/`,
+core `1e62c327`, CI 42072695014; the owner, the window ~17:45 UTC: «Да, душа без строки (Рекомендую)»): 658-1 skill `content-factory` + `CLAUDE.md` §1/§4/§8 lines and §3's true word for `socials-ai` (it proposes
 profile LINKS, it does not post — measured); 658-2 skill `own-agents` + its lines; 658-3 root's six cards in two rows (`lg:grid-cols-3`);
 658-4 the core README «Six things people build with it» (the integrator is missing there since 649 — measured). **Next:** 654-4 + 654-5 —
 graph `X-Element-Key` and `X-Data-Secret` (`X-Node-Key` no longer opens it), the memory door's space by the caller's key, the core's and

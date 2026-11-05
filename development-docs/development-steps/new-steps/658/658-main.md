@@ -1,4 +1,4 @@
-# 658 — six ways to use a node: the content factory and own agents beside the four (plan, waits for the owner's yes)
+# 658 — six ways to use a node: the content factory and own agents beside the four (plan, approved 2026-11-05; built after 654)
 
 ## 1. Retelling and decisions
 
@@ -149,4 +149,6 @@ template; the element instruction; Lagrix pages.
 
 ## 9. The owner's approval
 
-Waits for his answer in the window.
+2026-11-05 ~17:45 UTC, in the choice window (the plan of four substeps, the decisions D1–D7, what is not in it), verbatim: «Да, душа
+без строки (Рекомендую)» — the plan as written, D2 as written (the soul gets no line). Built after 654 closes (his order «4+5, затем 6 и
+7 (Рекомендую)»).
