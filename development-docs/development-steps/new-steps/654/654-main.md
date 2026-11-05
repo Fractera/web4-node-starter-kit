@@ -1,4 +1,4 @@
-# 654 — each element's own space inside the stores: data, storage, vectors, graph (plan, waits for the owner's yes)
+# 654 — each element's own space inside the stores: data, storage, vectors, graph (plan, approved 2026-11-05)
 
 ## 1. Retelling and decisions
 
@@ -22,11 +22,11 @@ keeps for root is served to anyone on the internet by any element's public route
   `ELEMENT_KEY = <id>.<mac>`, the mac an HMAC-SHA256 of the node's `DATA_SECRET` over the element id. The installer computes it; each store
   checks it by itself (no list to keep, no call to the core — an element and a store live without the core). An element key opens only
   that element's space; the master key opens the whole node as today (the core, the native elements, the main agent).
-- **D2 (mine, for the owner):** the master key of the memory family becomes `DATA_SECRET` alone — it already is the key of data, storage
+- **D2 (decided by the owner, §9):** the master key of the memory family becomes `DATA_SECRET` alone — it already is the key of data, storage
   and vectors; the graph and the memory door, which today open with `SETTINGS_SECRET`, move to it. Custom elements stop receiving
   `DATA_SECRET`. `SETTINGS_SECRET` stays shared for settings, design, blocks, the embeddings and the doors of the core and of elements:
   taking it from custom elements touches every such door, not the stores — proposed as step 655.
-- **D3 (mine, for the owner):** the separation works in both node types, not only in the app factory. In a single project two elements
+- **D3 (decided by the owner, §9):** the separation works in both node types, not only in the app factory. In a single project two elements
   share data through an agreed API (i2i, CLAUDE.md §4 «i2i», §6 «Only agents talk to agents»), never through one table; one behaviour,
   no branch by the node type.
 - **D4 (mine):** a stored file has an owner and a visibility. A page image stays public (an element's admin upload is public by default,
@@ -131,4 +131,10 @@ the Stripe sample.
 
 ## 9. The owner's approval
 
-(waiting)
+2026-11-05, in the choice window, verbatim:
+- the plan, 7 substeps — «Да, начинай 654-1 (Рекомендую)»;
+- which keys leave custom elements — «DATA_SECRET сейчас, другой — 655 (Рекомендую)» (D2 as written);
+- the node types — «В обоих типах (Рекомендую)» (D3 as written);
+- what else goes into 654 — «Временный второй элемент, Строка в CLAUDE.md и навыки»: 654-6 proves with a temporary second custom
+  element, removed after the proof by «Удалить насовсем» with his yes; 654-7 writes the `CLAUDE.md` §3 line (resealed) and the skills
+  `use-data`, `use-deep-memory`. Not chosen: wiping an element's spaces when the element is deleted — stays «proposed next».

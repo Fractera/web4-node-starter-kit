@@ -5,15 +5,16 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-21 (2026-11-05, new session) — 654 PLANNED, waits for the owner's yes** (`new-steps/654/`: `654-main.md`, `654-1` … `654-7`).
+**NOW-21 (2026-11-05, new session) — 654 APPROVED, 654-1 in work** (`new-steps/654/`: `654-main.md`, `654-1` … `654-7`).
 The owner: «Продолжи разработку Fractera по current-steps.md ядра, блок NOW-20: спланируй шаг 654, разделение элементов внутри хранилищ
 (база, файлы, векторы, граф) для режима завода приложений». The plan in one line each: (1) each element's own key `ELEMENT_KEY = <id>.<HMAC
 of DATA_SECRET>` and its own database file; (2) storage: owner and visibility, a private file only on `?private=1` — the memory's files
 stop leaking through every public route at once; (3) vectors: the element's own collections; (4) graph: the element's own space, the node by
 `DATA_SECRET`, `SETTINGS_SECRET` no longer opens it; (5) the memory door: the space is the caller's key; (6) the installer, the custom
-template and root on their own key only, proven with a real second element; (7) the pages and words. **Asked of the owner (the window):**
-D2 the scope (the memory family's key `DATA_SECRET` leaves custom elements; `SETTINGS_SECRET` → step 655), D3 both node types, the
-temporary second element for 654-6, `CLAUDE.md` and skills lines. **Next:** his answers verbatim into `654-main.md` §9, then 654-1.
+template and root on their own key only, proven with a real second element; (7) the pages and words. **The owner's answers (the window, verbatim):** «Да, начинай 654-1 (Рекомендую)»; keys — «DATA_SECRET сейчас, другой — 655
+(Рекомендую)»; node types — «В обоих типах (Рекомендую)»; also — «Временный второй элемент, Строка в CLAUDE.md и навыки» (wiping an
+element's spaces on its deletion — not chosen). **Now:** 654-1 — the key in the shared lock `auth.mjs`, the element's own database in
+`fractera-data-starter` (clones in `~/fractera-dev/`), then the lab proofs, the release and its delivery.
 **Measured now on the owner's node (read-only, keys never printed; scripts in this session's scratchpad `654/`):**
 - **A private file of the memory is public on the internet.** Every template-born element has the public route `/api/media/<id>/file`
   (`proxy.ts` opens it for page images) that streams ANY stored file with the shared `DATA_SECRET`: the memory's `anna-650.txt` (space
