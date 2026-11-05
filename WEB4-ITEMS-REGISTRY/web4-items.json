@@ -198,7 +198,7 @@
     {
       "id": "blocks",
       "repo": "https://github.com/Fractera/fractera-blocks-starter.git",
-      "version": "v1.4.18",
+      "version": "v1.4.19",
       "provides": [
         "page-blocks"
       ],
