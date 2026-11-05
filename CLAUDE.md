@@ -171,6 +171,8 @@ the node's main agent, in the terminal or Telegram, follows `current-steps.md` s
   yes. «Напомни мне <когда> …» is that yes and goes to the deep memory, whose essence it is: `npm run remember -- … --remind-at`;
   the receipt names the date in words and the memory's calendar link. The memory off — your own calendar, `npm run reminder`.
 - **The first task** typed on the root home page goes to you (`/api/node/first-task`).
+- **The integrator:** one architect gives every person of a family or a team an element of their own; the person talks to its agent
+  from Telegram, on their own Claude subscription — skill `integrator`.
 - **A new product** is born three ways: the person's direct request · the product quiz · reverse engineering that turns into the
   quiz.
 - **A new product or a large capability is asked for** — no plan and no promise in the first answer; curiosity first. `skills_find`, then
@@ -339,7 +341,7 @@ the node's main agent, in the terminal or Telegram, follows `current-steps.md` s
   `ask-element`; a capability an element lacks — `handle-need` (a bare yes or no with no question in this session — `npm run needs`
   first); the node type — `node-type`; an element on or off — `element-power`; how a product or SDK works — `study-for-element`; a
   skill the person heard of — `adopt-suggested-skill`; a clock and reminders — `core-schedule`; page sections and blocks — `blocks-of-the-node`; colours, fonts, menus — `design-and-settings-of-elements`;
-  routing a need — `route-to-element`; a new element — `create-element`; a person stuck in someone else's interface — `help-in-browser`
+  routing a need — `route-to-element`; a new element — `create-element`; people near the architect, a family or a team — `integrator`; a person stuck in someone else's interface — `help-in-browser`
   (their Chrome on this computer); a request against a provider's rules, a warning or a ban — `provider-rules`; a template release and its rollout to the elements — `release-template` (the elements' sealed
   instruction comes from `npm run instruction:element`).
 - The rest — in the skills of the job being done: own domain — `use-domain`; analytics — `connect-google-analytics`; tools —

@@ -5,6 +5,17 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-14 (2026-11-05) — 649 in release: the integrator and the page column.** The owner, verbatim: «стартовом шаблоне root создать
+четвёртую вкладку интегратора агентов. Описать его в существующем стиле»; «если хочешь где-нибудь это закрепи … это мой самый желанный
+сценарий работы проекта»; «у нас внизу в подвале есть кнопка сделать экран шире и сделать экран уже она не используется а должна. И
+сейчас лента в центральной странице выглядит очень узкой … мы должны быть уверены что мы это можем исправить как в рут так и в стандартном
+кастомным шаблоне»; to the plan of 649-1…4 — «go». **Measured:** the root home column was 760 px at 1440 (`max-w-[760px]`, a bare page —
+`check-layout` never saw it); after the fix 1280 / 1024 by the footer button, four cards 303 / 239 px; the custom home is the centred
+reference title (no limit), its `landing-agent` has no words in the template and renders nothing. All agents of a node run on one
+Claude login of the machine (`claude-cli.cjs`) — the integrator's «own subscription» has no mechanism yet: proposed as step 650, not
+ordered. Minors' elements — the owner's decision, not taken. **Next:** root v3.0.21 and custom v0.3.157 tagged and pushed, pinned
+here, then the summary `completed-steps/649-main.md`.
+
 **NOW-13 (2026-11-04 ~23:35 UTC) — 648 CLOSED** (`completed-steps/648-main.md`): root v3.0.20 and template custom v0.3.156 have
 `npm run eyes` (one browser in the core), skill `use-eyes`, updated `use-tests-before-dev-finish` and `connect-own-domain`, the
 element instruction §7 line (custom + root); pinned; root v3.0.20 is installed on the owner's node and its own `npm run eyes` works.
