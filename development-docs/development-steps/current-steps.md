@@ -5,19 +5,19 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-21 (2026-11-05, new session) — 654-1, 654-2, 656 and 657 CLOSED; 654-3 (vectors) BUILT, in delivery** (`new-steps/654/`).
-**654-3 (a new session after `/clear`; the owner pasted «Дальше по плану — 654-3 (векторы: у каждого элемента свои коллекции)»):**
-measured first on the owner's node (read only): vectors v1.2.7, index `partitioned`, 3 records (`memory-said--root` 2,
-`memory-objects--root` 1 — no `memory-<agent>`, no `self-*`), names under `el/` 0. Built in `~/fractera-dev/fractera-vectors-starter`
-(uncommitted until the release): `vectors.mjs` — an element's collection `faq` kept as `el/<id>/faq`, its record `x` as `el/<id>/x`,
-answers by its own names; a search without a collection reads each of its own collections (merged by score); another's `DELETE` → 404;
-`status` counts its own, no `setAside`; a name beginning `el/` from an element on any door, and from the node on a write → 400
-`reserved-prefix`; the node otherwise as before. `app.mjs` — the element key opens `/vectors/*` and `/capabilities`. README «Whose
-vectors», `CLAUDE.md` §11. Lab (this session's scratchpad `654-3/lab-654-3.mjs`, three runs) → `===LAB_654_3_PARTITIONED_OK===`,
-`_FLAT_OK`, `_SCAN_OK`, 38 checks each; the lab's own control — the separation broken on purpose → 21 checks red, the file restored.
-prebuild 0, `tsc` 0, `next build` 0. **Released:** vectors `6c9f2e9` tag v1.2.8 (the push got GitHub's «Internal Server Error» twice,
-the branch and the tag went through separately; `main == origin/main`); the core pins v1.2.8. **Next:** CI of both green → fork →
-`node:update` → `node --env-file=<core>/.env.local ~/fractera-dev/_tools/proof-654-3.mjs <core>`.
+**NOW-21 (2026-11-05, new session) — 654-1, 654-2, 654-3, 656 and 657 CLOSED; next 654-4 + 654-5 (graph and the memory door,
+one delivery)** (`new-steps/654/`).
+**654-3 CLOSED** (`completed-steps/654-3.md`): vectors `6c9f2e9` v1.2.8 (an element's names kept under `el/<id>/` and answered by its
+own names, a search without a collection reads only its own collections, another's `DELETE` 404, a name beginning `el/` → 400
+`reserved-prefix` from an element on every door and from the node on a write), core `dd192f10`; CI green (vectors 42060950724, core
+42061320999); the owner synced the fork himself («2 confirmed» — the session's permission mode refused my push to `aifa-agi`);
+`node:update` → `===NODE_UPDATE_DONE=== 2 изменений форка, ядро 59e7a833`; `_tools/proof-654-3.mjs` → `===PROOF_654_3_OK===` (B finds
+nothing of A's with or without a collection; the memory's phrase found by the node key as before). **Owed to 654-7:** the vectors README
+says «`self-*` stay where they are» — they are record ids in the collection `node-elements`. **Proposed to the owner, not applied:** a
+line in `use-development-steps` §5.2 — a pushed commit with no CI run → `gh workflow run <file> --ref main`. **Next:** 654-4 + 654-5 —
+graph `X-Element-Key` and `X-Data-Secret` (`X-Node-Key` no longer opens it), the memory door's space by the caller's key, the core's and
+the memory's graph calls on `X-Data-Secret` — ONE `node:update` (654-main §3: the skills search and the memory must not lose the graph
+between two updates). **Delivery:** if the session's permission mode refuses the push to `aifa-agi`, ask the owner to press «Sync fork».
 The owner: «Продолжи разработку Fractera по current-steps.md ядра, блок NOW-20: спланируй шаг 654, разделение элементов внутри хранилищ
 (база, файлы, векторы, граф) для режима завода приложений». The plan in one line each: (1) each element's own key `ELEMENT_KEY = <id>.<HMAC
 of DATA_SECRET>` and its own database file; (2) storage: owner and visibility, a private file only on `?private=1` — the memory's files
