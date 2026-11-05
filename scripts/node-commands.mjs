@@ -38,6 +38,9 @@ const env = (() => {
   return out
 })()
 const KEY = env.SETTINGS_SECRET ?? ''
+// 654-5: the deep memory's door opens with the node data key (the main agent: every space) or an element's own key — the node key
+// opens it no more. The core's own doors (`/api/agents/wake`) keep `KEY`.
+const DATA_KEY = env.DATA_SECRET ?? ''
 const CORE = `http://localhost:${readJson(join(ROOT, 'logs', 'runtime.json'), {})?.port ?? 24680}`
 const TG = join(ROOT, 'data', 'services', 'build', 'channel', 'telegram')
 // Язык человека — тот же, что у Telegram главного агента (411), иначе язык узла.
@@ -133,9 +136,9 @@ async function callMemory(path, body, files = []) {
     const form = new FormData()
     form.append('payload', JSON.stringify(body))
     for (const f of files) form.append('files', new Blob([readFileSync(f)]), basename(f))
-    init = { method: 'POST', headers: { 'X-Node-Key': KEY }, body: form }
+    init = { method: 'POST', headers: { 'X-Data-Secret': DATA_KEY }, body: form }
   } else {
-    init = { method: 'POST', headers: { 'X-Node-Key': KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+    init = { method: 'POST', headers: { 'X-Data-Secret': DATA_KEY, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
   }
   try {
     const r = await fetch(`${base}${path}`, { ...init, signal: AbortSignal.timeout(600_000) })
@@ -153,7 +156,7 @@ const EXT_OF_MIME = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '
 async function saveFound(base, o) {
   try {
     // 650-1 (memory v2.2.21, contract 7.0.0): the file door names its caller — the main agent reads every space.
-    const r = await fetch(`${base}/v1/objects/${encodeURIComponent(o.id)}/file?source=build`, { headers: { 'X-Node-Key': KEY }, signal: AbortSignal.timeout(60_000) })
+    const r = await fetch(`${base}/v1/objects/${encodeURIComponent(o.id)}/file?source=build`, { headers: { 'X-Data-Secret': DATA_KEY }, signal: AbortSignal.timeout(60_000) })
     if (!r.ok) return { why: `HTTP ${r.status}` }
     const mime = String(o.mime || r.headers.get('content-type') || '').split(';')[0].trim()
     const ext = extname(String(o.name || '')).toLowerCase() || EXT_OF_MIME[mime] || '.bin'

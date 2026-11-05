@@ -5,8 +5,23 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-21 (2026-11-05, new session) — 654-1, 654-2, 654-3, 656 and 657 CLOSED; next 654-4 + 654-5 (graph and the memory door,
-one delivery)** (`new-steps/654/`).
+**NOW-21 (2026-11-05, new session) — 654-1, 654-2, 654-3, 656 and 657 CLOSED; 654-4 + 654-5 BUILT, in release** (`new-steps/654/`).
+**654-4 + 654-5 (the owner: «context good, continue»):** graph (`~/fractera-dev/fractera-graph-lightrag-starter`): `lib/graph/whose.mjs`
+(the caller by the store keys — `X-Data-Secret` the node, `X-Element-Key` an element; `X-Node-Key` refused on the three graph doors only,
+`lib/node-key.ts` stays for the others), an element's space `el-<id>` / `el-<id>.<name>` — **a decision on the way: the plan's
+`el-<id>--<name>` would collide (a registry id may hold `--`: element `a`'s space `b` = element `a--b`'s home), so the dot**; the node never
+writes under `el-`; `graph.py`: the space rule widened (`fullmatch`), a query of a space nobody wrote answers found false and makes no
+folder (measured: the node's empty `spaces/memory` was made by a read); `graph-status` with an element key counts its own spaces;
+`lib/element-key.mjs` + `scripts/check-element-key.mjs` in prebuild; card doors `X-Element-Key`; README, `CLAUDE.md` §11. Memory
+(`fractera-memory-starter`): `door.mjs` `callerKey` / `callerOf(from, element)` (an element key's space is its id, `from` optional,
+another's → 403 `space-not-yours`; `X-Node-Key` → 401), `node.mjs` `graphCall` on `X-Data-Secret` (embeddings stays `X-Node-Key`),
+contract 8.0.0, words, card doors, README, `CLAUDE.md` §11. Core (uncommitted): `find.mjs` `nodeAccess` → `DATA_SECRET`,
+`node-commands.mjs` memory calls → `X-Data-Secret`, `passport.mjs` `KEYS` + `X-Element-Key`. Labs (scratchpad `654-3/`):
+`lab-654-4.mjs` (real `graph.py` runs) `===LAB_654_4_OK===` 26 checks, control (an element key read as the node) → red;
+`lab-654-5.mjs` (the door via jiti) `===LAB_654_5_OK===` 24 checks, control → 11 red. prebuild, `tsc`, `next build` 0 in both. **Released:**
+graph `17f98e2` v1.2.7, memory `25b1332` v2.2.25 (`main == origin/main`); the core's pins and code in the next commit. **Next:** CI →
+the owner's «Sync fork» → `node:update` → `node --env-file=<core>/.env.local ~/fractera-dev/_tools/proof-654-45.mjs <core>` (graph,
+then memory; the memory must be on).
 **654-3 CLOSED** (`completed-steps/654-3.md`): vectors `6c9f2e9` v1.2.8 (an element's names kept under `el/<id>/` and answered by its
 own names, a search without a collection reads only its own collections, another's `DELETE` 404, a name beginning `el/` → 400
 `reserved-prefix` from an element on every door and from the node on a write), core `dd192f10`; CI green (vectors 42060950724, core
