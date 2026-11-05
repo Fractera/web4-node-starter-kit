@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
 
 const require = createRequire(import.meta.url)
-const { TYPES, readNodeType, writeNodeType, mismatches, ownWallets } = require('../lib/web4-items/node-type.cjs')
+const { TYPES, readNodeType, writeNodeType, mismatches, ownWallets, withNodeKey } = require('../lib/web4-items/node-type.cjs')
 
 // Корень узла — от расположения скрипта: команду зовёт и главный агент из своей папки (data/main-agent).
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -28,6 +28,13 @@ function report() {
   // 553-6: единый проект — кошелёк один, кошелёк узла.
   const wallets = type === 'project' ? ownWallets(ROOT) : []
   if (wallets.length) console.log(`own wallets: ${wallets.join(', ')} — the node is a single project; remove each on its Settings → Payments → Web3 page`)
+  // 654-6: whose stores are kept apart — a custom element that still holds the node's data key opens every element's space.
+  const keyed = withNodeKey(ROOT)
+  if (!keyed.length) console.log('stores: every custom element opens them with its own key (none holds the node\'s data key)')
+  else {
+    console.log('stores: custom elements that still hold the node\'s data key (born from a template before 654-6) — their key opens every element\'s space; they take their own key with the custom template\'s update:')
+    for (const x of keyed) console.log(`- ${x.id}${x.address !== x.id ? ` (${x.address})` : ''}${x.elementKey ? ' · has its own key too' : ''}`)
+  }
   const odd = mismatches(type, ROOT)
   if (!odd.length) {
     console.log('every born custom element already follows this type')

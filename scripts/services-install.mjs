@@ -18,6 +18,8 @@
 //   secret  — генерирует случайное и кладёт в ОБА конца;
 //   foreign — чужой ключ: НЕ выдумывает, называет вслух и говорит, что без него
 //             не заработает.
+//   element-key — собственный ключ элемента `<id>.<mac>` (шаг 654-6): HMAC общего DATA_SECRET узла над id элемента;
+//             хранилища узла открывают по нему только место этого элемента.
 // Род объявлен в `.env.example` блока строкой `# kind:` над переменной. Блок,
 // который спросили, нельзя заполнить неверно.
 //
@@ -45,6 +47,8 @@ import { addressOf } from '../lib/web4-items/address-file.mjs'
 import { elementLanguages } from '../lib/web4-items/element-languages.mjs'
 import { dropStaleTypes } from '../lib/deploy/stale-types.mjs'
 import { progressElement } from './progress.mjs'
+// 654-6: the element's own key — the core's copy of the stores' function (its test vector: scripts/check-element-key.mjs).
+const { elementKeyOf } = createRequire(import.meta.url)('../lib/element-key.cjs')
 
 const require = createRequire(import.meta.url)
 const { isFree, PORT_BLOCK_START, PORT_BLOCK_END, blockPorts, isBlockPort } = require('../lib/server-port.cjs')
@@ -289,6 +293,9 @@ async function assignPort(entry, desired, installedHere) {
   )
 }
 
+// 654-6: keys of the whole node that an element keeps only while its `.env.example` declares them.
+const MASTER_KEYS = new Set(['DATA_SECRET'])
+
 // ── Разбор `.env.example` блока: имя переменной плюс РОД ─────────────────────
 function parseExample(text) {
   const vars = []
@@ -299,7 +306,7 @@ function parseExample(text) {
     // дотягивается до них дверью элемента, а не раздаёт свои при установке.
     // `own` — настройка самого элемента: значение по умолчанию он пишет в свой пример, и
     // однажды изменённое (человеком или ядром через дверь элемента) переживает переустановку.
-    const k = line.match(/^#\s*kind:\s*(derived|secret|foreign|own)\s*$/)
+    const k = line.match(/^#\s*kind:\s*(derived|secret|foreign|own|element-key)\s*$/)
     if (k) { kind = k[1]; continue }
     const v = line.match(/^([A-Z_][A-Z0-9_]*)=(.*)$/)
     if (v) {
@@ -889,6 +896,10 @@ for (const entry of registry.services) {
   for (const v of vars) {
     if (v.kind === 'secret') {
       lines.push(`${v.name}=${sharedSecret(v.name)}`)
+    } else if (v.kind === 'element-key') {
+      // 654-6: the element's own key — made from the node's DATA_SECRET (the same one every native element holds), never stored by the
+      // node: it is computed again at every install, so a new DATA_SECRET gives every element its new key.
+      lines.push(`${v.name}=${elementKeyOf(entry.id, sharedSecret('DATA_SECRET')) ?? ''}`)
     } else if (v.kind === 'own') {
       const kept = readEnvFile(join(dir, envName)).get(v.name)
       // 324-9: набор языков, выбранный на странице «Настройки сайта» элемента (его APP-CONFIG → `languages`), сильнее
@@ -930,6 +941,12 @@ for (const entry of registry.services) {
   // объявленных и молча стёрла ключи Google — вход через Google выключился, экран показал «не задано».
   const written = new Set(lines.map((l) => l.split('=')[0]))
   for (const [name, value] of readEnvFile(join(dir, envName))) {
+    // 🔒 654-6: THE NODE'S MASTER KEY IS NEVER CARRIED OVER. `DATA_SECRET` opens every element's space in every store; an element whose
+    // `.env.example` no longer declares it (the custom template since 654-6 declares ELEMENT_KEY instead) loses it at this install —
+    // ✗ without this line the carry-over above would keep the old value alive, and the separation would only look done. An element
+    // born from an older template still declares it and keeps it until its owner takes the template update (`npm run node-type -- get`
+    // names such elements).
+    if (MASTER_KEYS.has(name)) continue
     if (!written.has(name) && value.trim() !== '') lines.push(`${name}=${value}`)
   }
 
