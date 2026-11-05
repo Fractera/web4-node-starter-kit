@@ -27,7 +27,8 @@ languages); prebuild 0, tsc 0, next build 0. NOT pinned: by the owner's choice i
 after the eyes on the owner's node. **654-2 built:** storage `dc72fe0` v1.1.25 (owner, visibility, `?private=1`, element doors),
 memory `57bad88` v2.2.24 (uploads private, reads `?private=1`, `markOwnPrivate` at start and at the next door call; carries 656);
 lab `scratchpad/654/lab-654-2.mjs` `===LAB_654_2_OK===` (31 checks, an OLD media.db read as node/public); prebuild 0, tsc 0, next build
-0 in both; pushed, CI pending at writing; core pins storage v1.1.25, memory v2.2.24. **Next:** CI green → core push → fork → `node:update`
+0 in both; pushed, CI green (storage 42047565172, memory 42047577678); core pins `54e0bf68`. **Now (long operation, started):** core
+push → fork → `node:update` (log `scratchpad/654/node-update-654-2.log`); then
 → `_tools/proof-654-2.mjs` and the 656 eyes on the owner's node (`http://127.0.0.1:24690/ru#remind`).
 **The owner, 2026-11-05 during 654-1, verbatim:** «Смотрю описание для глубокой памяти то есть landing и увидел промах проверь глубокая
 память имеет работать с календарем и там это нигде не описано». **Checked — he is right:** the memory landing (`fractera-memory-starter`
