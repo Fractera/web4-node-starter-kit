@@ -5,7 +5,7 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-21 (2026-11-05, new session) — 654-1 … 654-6, 656 and 657 CLOSED; next 654-7 (the pages and the words), then 658**
+**NOW-21 (2026-11-05/06, night) — 654-1 … 654-6, 656 and 657 CLOSED; 654-7 and 658 RELEASED, CI green (storage 42128771294, vectors 42128778327, data 42128786768, graph 42128793718, memory 42128800413, root 42129214604, core a258cfac 42128960275 and 4878f154 42129298411); NOT delivered — the fork stands at `820654ff`, waiting for the owner's «Sync fork» to `4878f154`; then `node:update`, the live eyes of 654-7 (en + ru landings) and of root's six cards, 654-7 and 654 closed (plans of 654 deleted with 654-main), 658's live answers of the main agent (one session, named first), 658 closed. `djlgb` removal waits for his yes.** Before: next 654-7 (the pages and the words), then 658
 (`new-steps/654/`, `new-steps/658/`). The owner, ~19:10 UTC: «go to finish non stop , not call me i sleep».
 **654-6 CLOSED** (`completed-steps/654-6.md`): template `3fa23dc` v0.3.158 + `4b0f953` v0.3.159 (the passport's data link names
 `X-Element-Key (ELEMENT_KEY)` — the owner's question «каждый элемент имеет свой файл Json … Ты это принимал в расчёт» found that the wake line
