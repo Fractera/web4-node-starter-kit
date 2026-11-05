@@ -5,6 +5,16 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-17 (2026-11-05) — 650 planned, waits for the owner's yes** (`new-steps/650/`: `650-main.md`, `650-1.md`, `650-2.md`). The owner,
+verbatim: «нам нужно сделать разделение глубины памяти по элементам чтобы главное агент была доступна вся память, а каждому элементу
+только своему … Это решаемо задачи надёжная? … чтобы записи матери не были доступны сыну например»; to writing the plan — «go». 650 is
+the memory only (spaces: each element its own, the main agent all); the member's channel without a shell is step 653. **Measured:**
+the memory's door lets in anyone with `SETTINGS_SECRET` or `DATA_SECRET`, and the GET verbs (`journal`, `DELETE journal`, `sources`,
+`signals`, `objects/{id}`) take no caller at all; the data layer runs any SQL for `DATA_SECRET`; every custom element has both keys in
+its `.env`; an element's agent runs with `--permission-mode auto`, its boundary is «ask» rules and a hook on named paths — a `curl` with
+its own key names none. Hence D4: no per-element keys; between people the guarantee is 653. **Open for the owner:** D3 («забудь всё» of
+the main agent — the space `node` only).
+
 **NOW-16 (2026-11-05) — 652 CLOSED** (`completed-steps/652-main.md`, core `f7d39614`, `9fd0c437`): `check-i18n` green and sees the
 node-state dictionaries; no 403 in the panel's console on the temporary address (`/api/node/place` reads, `/api/node/attention` answers
 «nothing waits»); root v3.0.22 released, reverted (`838b378`), pinned nowhere. **Now:** step 650 talked over with the owner — the
