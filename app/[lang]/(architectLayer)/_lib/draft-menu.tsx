@@ -9,7 +9,10 @@ import { BUILT_IN_STATIC, MEMORY_GROUP, builtInDraft, builtInIds } from '@/lib/w
 import { hasDoc } from '@/lib/web4-items/element-docs'
 import { web4DraftsUi } from '../_i18n/web4-drafts.i18n'
 import { CreateDraftButton } from '../_components/create-draft-button.client'
+import { MenuModeSwitch } from '../_components/menu-mode-switch.client'
+import type { MenuMode } from '@/lib/node-menu-mode'
 import { ARCHITECT_HOME } from './architect-menu'
+import { MAIN_AGENT } from './main-agent-scheme'
 
 // ЧЕРНОВИКИ И КНОПКА «СОЗДАТЬ МИКРОСЕРВИС» В ЛЕВОМ МЕНЮ (314-1). Слово владельца: «в левом меню после кнопки дизайн
 // добавляем кнопку создать микро service». Меню слоя собирается из папок при сборке; черновики — данные узла, поэтому их
@@ -35,8 +38,18 @@ const inZone = (items: WorkspaceItem[], id: string): WorkspaceItem[] => items.ma
 const holds = (items: WorkspaceItem[], path: string): boolean =>
   items.some((m) => !!m.active || !!m.open || (!!m.href && (path === m.href || path.startsWith(`${m.href}/`))))
 
-/** Меню слоя с кнопкой и группами черновиков, вставленными за «Дизайном». */
-export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: string): WorkspaceItem[] {
+/** Пункт меню по адресу — в любой глубине дерева (657-2: подпись ярлыка берётся у самой страницы). */
+function findByHref(items: WorkspaceItem[], href: string): WorkspaceItem | undefined {
+  for (const m of items) {
+    if (m.href === href) return m
+    const deeper = m.children ? findByHref(m.children, href) : undefined
+    if (deeper) return deeper
+  }
+  return undefined
+}
+
+/** Меню слоя с кнопкой и группами черновиков, вставленными за «Дизайном»; 657: в режиме `compact` — короткое меню. */
+export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: string, mode: MenuMode = 'full'): WorkspaceItem[] {
   const ui = web4DraftsUi(lang)
   const l = treeLang(lang)
   const at = (path: string) => `/${lang}${path}`
@@ -143,9 +156,32 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   // список не рукописный: новый пункт верхнего уровня сам уходит в неё. Нет Паспорта — меню как было.
   const top = withCustom.slice(0, c + 1)
   const p = top.findIndex((m) => m.href === at(`${ARCHITECT_HOME}/passport`))
-  const main = p < 0 ? [] : top.filter((_, k) => k !== p)
+  if (p < 0) return [...top, zone(ui.zoneNative, 'native', holds(nativeZone, page)), nativeButton, ...grouped, ...customTail]
+  // 657 (владелец 2026-11-05: «наш фокус: пользователь должен работать только через Telegram»): режим меню узла. `compact` (по
+  // умолчанию) — без «Нативных элементов», без «Главного агента», кастомные элементы — в корне меню одним названием, ведущим на
+  // «Живой сайт», без кнопок создания; `full` — меню как было. Страницы, которых нет в меню, открываются по своему адресу.
+  const compact = mode === 'compact'
+  // 657-2: в обоих режимах — «Подписка Claude Code» и «Терминал» над «Главным Telegram-ботом», «OpenAI API key» под ним; это страницы
+  // «Главного агента → Строительство». В полном режиме отметку «вы здесь» несёт пункт дерева, ярлык — нет: она не стоит в двух местах.
+  // Подпись ярлыка — у самой страницы (`label` — запасная); у ключа OpenAI подпись своя: страница называется «Переменные окружения».
+  const shortcut = (rel: string, label: string | null, icon: string, hash = ''): WorkspaceItem => {
+    const path = `${ARCHITECT_HOME}/${MAIN_AGENT}/${rel}`
+    return { label: label ?? findByHref(menu, at(path))?.label ?? rel, icon, href: `${at(path)}${hash}`, active: compact && currentPath === path }
+  }
+  const before = [shortcut('subscription', null, 'card'), shortcut('terminal', null, 'window')]
+  const after = shortcut('environment', ui.openAiKey, 'key', '#OPENAI_API_KEY')
+  const words = { title: ui.menuMode, compact: ui.menuModeCompact, full: ui.menuModeFull, failed: ui.menuModeFailed, readOnly: ui.menuModeReadOnly }
+  const switchRow: WorkspaceItem = { label: ui.menuMode, node: <MenuModeSwitch mode={mode} words={words} /> }
+  const mainItems = top.filter((m, k) => k !== p && !(compact && m.href === at(`${ARCHITECT_HOME}/${MAIN_AGENT}`)))
+  const tg = mainItems.findIndex((m) => m.href === at(`${ARCHITECT_HOME}/main-telegram`))
+  const main = [switchRow, ...(tg < 0 ? [...mainItems, ...before, after] : [...mainItems.slice(0, tg), ...before, mainItems[tg], after, ...mainItems.slice(tg + 1)])]
   // 632-2: тревога пункта видна и сквозь свёрнутую зону — подпись «Основное» несёт ту же тревогу, что пункт в ней («Домен и хостинг»).
   const mainAlert = main.find((m) => m.alert)?.alert
-  const head = p < 0 ? top : [top[p], { ...zone(ui.zoneMain, 'main', holds(main, page)), ...(mainAlert ? { alert: mainAlert } : {}) }, ...inZone(main, 'main')]
-  return [...head, zone(ui.zoneNative, 'native', holds(nativeZone, page)), nativeButton, ...grouped, ...customTail]
+  const head = [top[p], { ...zone(ui.zoneMain, 'main', holds(main, page)), ...(mainAlert ? { alert: mainAlert } : {}) }, ...inZone(main, 'main')]
+  if (!compact) return [...head, zone(ui.zoneNative, 'native', holds(nativeZone, page)), nativeButton, ...grouped, ...customTail]
+  // Короткое меню: root и кастомные элементы — первым уровнем, только название, щелчок — их «Живой сайт» (`preview` дерева).
+  const named = [...rootTree, ...customs].map((t): WorkspaceItem => ({ label: t.label, icon: t.icon, href: `${t.href}/preview`, active: !!t.open }))
+  // То, что стоит в меню после «Дизайна» и не является элементом, остаётся (сегодня там пусто).
+  const tail = menu.slice(cut).filter((m) => !(m.href && builtIn.has(m.href)))
+  return [...head, ...named, ...tail]
 }

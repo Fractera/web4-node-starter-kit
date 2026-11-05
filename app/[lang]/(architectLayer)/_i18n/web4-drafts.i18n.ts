@@ -69,6 +69,14 @@ export type Web4DraftsUi = {
   nativeDraftIntro: string
   nativeBirthText: string
   zoneMain: string
+  /** 657 (владелец 2026-11-05: «Рекомендуемый режим минимальные настройки по умолчанию, полные для глубокого управления»): строка
+   *  «Настройка» первой в «Основном», два режима меню, отказ записи, пункт «OpenAI API key» (ведёт к строке ключа окружения ядра). */
+  menuMode: string
+  menuModeCompact: string
+  menuModeFull: string
+  menuModeFailed: string
+  menuModeReadOnly: string
+  openAiKey: string
 }
 
 const DICT: Record<string, Web4DraftsUi> = {
@@ -79,6 +87,12 @@ const DICT: Record<string, Web4DraftsUi> = {
     zoneNative: "Native elements",
     zoneCustom: "Custom elements",
     zoneMain: "Main",
+    menuMode: "Settings",
+    menuModeCompact: "Compact",
+    menuModeFull: "Full",
+    menuModeFailed: "Not saved — try again",
+    menuModeReadOnly: "Read-only on the temporary address",
+    openAiKey: "OpenAI API key",
     createNative: "Create a native element",
     nativeDraftIntro: "A native element is a service that any custom element of this node can use. Sign-in, memory, data, design and blocks are already installed. Here you can create a shared service of your own, such as a content factory or email marketing, and every element will be able to use it.\n\nA native element is born from the Fractera native template. It is not sold and is not shown to the network: it works only inside this node.",
     nativeBirthText: "The node downloads the native element template, gives this draft its own copy, a port, a build and a process. It takes about three minutes and a lot of memory; the page may be closed — the birth goes on.",
@@ -139,6 +153,12 @@ const DICT: Record<string, Web4DraftsUi> = {
     zoneNative: "Нативные элементы",
     zoneCustom: "Кастомные элементы",
     zoneMain: "Основное",
+    menuMode: "Настройка",
+    menuModeCompact: "Компактная",
+    menuModeFull: "Полная",
+    menuModeFailed: "Не сохранилось — попробуйте ещё раз",
+    menuModeReadOnly: "На временном адресе — только чтение",
+    openAiKey: "OpenAI API key",
     createNative: "Создать нативный элемент",
     nativeDraftIntro: "Нативный элемент — служба, которой пользуется любой кастомный элемент узла. Авторизация, память, данные, дизайн и блоки уже установлены. Здесь вы можете создать свою общую службу, например контент-завод или email-маркетинг, и её смогут использовать все элементы.\n\nНативный элемент рождается из нативного шаблона Fractera. Его не продают и не показывают сети: он работает только внутри этого узла.",
     nativeBirthText: "Узел скачает шаблон нативного элемента и даст черновику свою копию, порт, сборку и процесс. Это около трёх минут и много памяти; страницу можно закрыть — рождение продолжится.",

@@ -7,6 +7,7 @@ import type { Block, WorkspaceItem } from '@/lib/content/blocks/types'
 import { architectLayerUi } from '../_i18n/architect-layer.i18n'
 import { architectMenu, ARCHITECT_HOME } from './architect-menu'
 import { withDrafts } from './draft-menu'
+import { readMenuMode } from '@/lib/node-menu-mode'
 import { OwnerBand } from '../_components/owner-band.client'
 
 // ОБОЛОЧКА СТРАНИЦЫ СЛОЯ АРХИТЕКТОРА (236-2).
@@ -76,7 +77,8 @@ export function ArchitectPage({
     {
       kind: 'workspace',
       menuTitle: ui.menuTitle,
-      menu: withDrafts(architectMenu(lang, path), lang, path),
+      // 657: режим меню узла — компактный по умолчанию (`lib/node-menu-mode.ts`).
+      menu: withDrafts(architectMenu(lang, path), lang, path, readMenuMode()),
       tabs,
       title,
       // 🔒 «РАЗДЕЛ НА МЕСТЕ, СОДЕРЖИМОЕ ПРИДЁТ» ГОВОРИТСЯ ТОЛЬКО ПУСТОМУ РАЗДЕЛУ.
