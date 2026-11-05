@@ -13,7 +13,10 @@ the memory's door lets in anyone with `SETTINGS_SECRET` or `DATA_SECRET`, and th
 `signals`, `objects/{id}`) take no caller at all; the data layer runs any SQL for `DATA_SECRET`; every custom element has both keys in
 its `.env`; an element's agent runs with `--permission-mode auto`, its boundary is «ask» rules and a hook on named paths — a `curl` with
 its own key names none. Hence D4: no per-element keys; between people the guarantee is 653. **Open for the owner:** D3 («забудь всё» of
-the main agent — the space `node` only).
+the main agent — the space `node` only). **Added by the owner:** «Текущее обновление памяти нужно подробно расписать на всех лендингах
+… схематически изобразите как память администратора доступно семь а внутри элементы доступны только свою пространство» → 650-3 (a new
+block `block-access-map` in Blocks — the catalogue has no containment scheme) and 650-4 (memory, graph, vectors landings, «Как это
+работает» §5, the kit README with a Mermaid scheme), after 650-1/2.
 
 **NOW-16 (2026-11-05) — 652 CLOSED** (`completed-steps/652-main.md`, core `f7d39614`, `9fd0c437`): `check-i18n` green and sees the
 node-state dictionaries; no 403 in the panel's console on the temporary address (`/api/node/place` reads, `/api/node/attention` answers

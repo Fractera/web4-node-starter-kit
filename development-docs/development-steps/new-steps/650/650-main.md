@@ -46,13 +46,18 @@ I assume that the space of a call is the first segment of `from` (an element id 
   recall, journal, sources, signals, an object and its file, feedback, forget.
 - In the stores the phrase lies in A's own row space, vector collection and graph space — not in the shared ones.
 - The main agent's «запомни» / «напомни о» work as before.
+- Every page about a memory (the deep memory, the graph and the vectors landings, the core's «Как это работает», the kit's README)
+  shows the scheme «the architect's main agent sees every space, each element only its own» (the owner's addition, 650-3/4).
 
 ## 5–6. Substeps, order, address
 1. `650-1.md` — spaces in the memory element: `Fractera/fractera-memory-starter` `main` → tag v2.2.21.
 2. `650-2.md` — the core: its memory calls name `build`, the answers name the space; skills `integrator`, `use-deep-memory`; `CLAUDE.md`
    by the owner's word: `Fractera/web4-node-starter-kit` `main`, the pin memory v2.2.21.
-Delivery: both pushed → the fork `aifa-agi` fast-forwarded → `npm run node:update` on the owner's node → the proofs of 650-1 and 650-2
-there → `completed-steps/650-main.md` with the hashes.
+3. `650-3.md` — the block `block-access-map` in the shared catalogue: `Fractera/fractera-blocks-starter`.
+4. `650-4.md` — the pages: the memory, graph and vectors landings, the core's «Как это работает» §5, the kit's README.
+Delivery: 650-1 and 650-2 pushed → the fork `aifa-agi` fast-forwarded → `npm run node:update` on the owner's node → their proofs there;
+then 650-3 (the block) and 650-4 (the pages take it, their elements rebuilt by `node:update`) — the pages describe what already works
+→ `completed-steps/650-main.md` with the hashes.
 
 ## 8. Acceptance of this plan
 Every substep has its file; each result can be shown; two planes per substep, one with a negative control; the address of the code is
