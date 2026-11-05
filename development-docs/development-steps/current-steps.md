@@ -24,7 +24,11 @@ Left on the node: empty `WEB4-ITEMS/core/data/data/elements/root.db` and `blocks
 `solves`, the `talk` list, the route's note, description, keywords; lab eyes (`next dev` 25657 with `NEXT_PUBLIC_SUPPORTED_LANGUAGES=en,ru`):
 sections in order, 0 console errors at 1440 and 390, light and dark, no overflow at 390; «календар|calendar» on the page 0 → 7 (both
 languages); prebuild 0, tsc 0, next build 0. NOT pinned: by the owner's choice it reaches the node with 654-2's memory release; closed
-after the eyes on the owner's node. **Now: 654-2** (storage owner + visibility, `?private=1`, the memory marks its files private).
+after the eyes on the owner's node. **654-2 built:** storage `dc72fe0` v1.1.25 (owner, visibility, `?private=1`, element doors),
+memory `57bad88` v2.2.24 (uploads private, reads `?private=1`, `markOwnPrivate` at start and at the next door call; carries 656);
+lab `scratchpad/654/lab-654-2.mjs` `===LAB_654_2_OK===` (31 checks, an OLD media.db read as node/public); prebuild 0, tsc 0, next build
+0 in both; pushed, CI pending at writing; core pins storage v1.1.25, memory v2.2.24. **Next:** CI green → core push → fork → `node:update`
+→ `_tools/proof-654-2.mjs` and the 656 eyes on the owner's node (`http://127.0.0.1:24690/ru#remind`).
 **The owner, 2026-11-05 during 654-1, verbatim:** «Смотрю описание для глубокой памяти то есть landing и увидел промах проверь глубокая
 память имеет работать с календарем и там это нигде не описано». **Checked — he is right:** the memory landing (`fractera-memory-starter`
 `app/[lang]/(publicLayer)/_data/en.json`, `ru.json`, v2.2.22) uses «Remind me about…» / «Напомни о…» only as RECALL (what was said);
