@@ -5,16 +5,13 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-14 (2026-11-05) — 649 in release: the integrator and the page column.** The owner, verbatim: «стартовом шаблоне root создать
-четвёртую вкладку интегратора агентов. Описать его в существующем стиле»; «если хочешь где-нибудь это закрепи … это мой самый желанный
-сценарий работы проекта»; «у нас внизу в подвале есть кнопка сделать экран шире и сделать экран уже она не используется а должна. И
-сейчас лента в центральной странице выглядит очень узкой … мы должны быть уверены что мы это можем исправить как в рут так и в стандартном
-кастомным шаблоне»; to the plan of 649-1…4 — «go». **Measured:** the root home column was 760 px at 1440 (`max-w-[760px]`, a bare page —
-`check-layout` never saw it); after the fix 1280 / 1024 by the footer button, four cards 303 / 239 px; the custom home is the centred
-reference title (no limit), its `landing-agent` has no words in the template and renders nothing. All agents of a node run on one
-Claude login of the machine (`claude-cli.cjs`) — the integrator's «own subscription» has no mechanism yet: proposed as step 650, not
-ordered. Minors' elements — the owner's decision, not taken. **Next:** root v3.0.21 and custom v0.3.157 tagged and pushed, pinned
-here, then the summary `completed-steps/649-main.md`.
+**NOW-14 (2026-11-05) — 649 CLOSED** (`completed-steps/649-main.md`): root v3.0.21 (`5171bc0`) — the fourth card «integrator» and
+the column by the footer's width button (1280 / 1024, was 760); custom v0.3.157 (`67be1de`) — `landing-agent` on `var(--app-w)`; both —
+`check-layout` rule `bare-widget-without-column`; core `5f3e19da` — skill `integrator`, `CLAUDE.md` §4/§8 resealed, the soul's «The
+creator's dream», pins; CI three-os green on all three. **Open:** step 650 — an own Claude login per element (proposed, not ordered:
+today every agent of a node runs on the machine's one login, so the integrator cannot run lawfully on Claude); a minor's element — the
+owner's decision; 645-4/5/6 — the fresh install on aifa-agi/web4-node-starter-kit passed launch 1–6 with no question (2026-11-05, not
+yet recorded as their proof); native template and elements (not ordered); «Обновить сборку ядра» active on the temporary address.
 
 **NOW-13 (2026-11-04 ~23:35 UTC) — 648 CLOSED** (`completed-steps/648-main.md`): root v3.0.20 and template custom v0.3.156 have
 `npm run eyes` (one browser in the core), skill `use-eyes`, updated `use-tests-before-dev-finish` and `connect-own-domain`, the
