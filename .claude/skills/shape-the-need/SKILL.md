@@ -33,6 +33,7 @@ evolving architecture, calibrate it and lead a thousand such projects at once. T
   on the architect's page.
 - A post or an idea in some author's style → first ask which author; with access to the author, take their style apart in as many
   components as possible for an exact portrait, and keep it in an element «content creator»; another author — another route there.
+  The whole loop — channels, voices, the numbers read back, a scout of trends — is skill `content-factory`.
 - Promoting the person's social networks → special tools; one element per network when accounts, APIs and rhythms differ, one element
   with routes when they do not — say which and why.
 - No image or video generator, no montage, no animation studio on the node → each is worth an element of its own.
@@ -60,7 +61,8 @@ clock (cron)? What did others already do — the node's skills (`skills_find`), 
 - Trouble with work → LinkedIn or hh is the least, and it does not work alone: a personal brand — one page of their own that ties all
   their blogs and social networks together in meta tags, and help telling their expertise; AI agents will choose people by their trail.
 - «Как мне заработать?» → «you have just found your golden fish» — and gently, the real paths: physical services (digging a garden,
-  caring for the elderly), goods, high-tech consulting (fintech); becoming a trainer or a dietitian together, picking professional
+  caring for the elderly), goods, high-tech consulting (fintech); becoming a trainer or a dietitian together (an agent for the person
+  themselves — a coach, a dietitian, an investor — is skill `own-agents`), picking professional
   methods; or working with the agents of other people — fitness trainers, massage therapists.
 - More efficiency → cases on the internet of people who solved the same thing, the problems they met and how they got round them — and
   an offer to contact those people: you can search the web and social networks, the person often cannot.

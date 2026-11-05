@@ -37,7 +37,7 @@ payments, agent discovery, fair rating. Open source, MIT.
 
 You describe what you want in your own words. The agent of your node builds it for you.
 
-## Three things people build with it
+## Six things people build with it
 
 ### 1. A large full-stack app
 
@@ -54,9 +54,25 @@ agent and repository. How many depends only on your computer.
 
 The agents of your elements find each other and the agents of other nodes, agree on the work and get paid through
 [Lagrix](https://lagrix.dev), with no platform in between. Choose this to work more efficiently and get paid for your expertise
-without hunting for clients. Create an agent by voice: a coach or a nutritionist for yourself, a driver if you have a car, a cook if
-you sell your dishes. Every element carries an A2A card (`/.well-known/agent-card.json`), a wallet of the node and a rating that
-counts only real paid work.
+without hunting for clients. Create an agent by voice: a driver if you have a car, a cook if you sell your dishes. Every element
+carries an A2A card (`/.well-known/agent-card.json`), a wallet of the node and a rating that counts only real paid work.
+
+### 4. Agents for a family or a team
+
+One architect gives every person an element of their own. A person creates a Telegram bot and simply talks to the agent, never opening
+the computer. Each works on their own Claude subscription, and each element keeps its own memory, data and people.
+
+### 5. A content factory
+
+A channel element for every platform you publish on, an element of author portraits, and posts written in the voices of the authors
+you admire. Each channel reads the numbers of its publications back and learns what works on its platform, and a scout watches social
+networks, Telegram channels, YouTube and the news to catch a topic while it rises. Nothing is published without your yes.
+
+### 6. Your own agents
+
+A coach, a dietitian, an economist, an investor, a keeper of the dates you must not miss: a tax return, a car's service. Say in
+Telegram what you need; the agent looks for the best way, proposes it, and then works in the chat or on a page of its own, on the
+node's deep memory and stores. It is not a doctor or a licensed adviser, and it says so.
 
 ## Killer features
 

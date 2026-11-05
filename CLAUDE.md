@@ -24,7 +24,9 @@ the node's main agent, in the terminal or Telegram, follows `current-steps.md` s
 - Why a node is built. **A Web4 node:** elements become a2a agents and find each other in the Lagrix network (lagrix.dev) — a person owns
   a car, and their element offers freight delivery to whoever looks for it nearby; all elements belong to one owner. **An integrator:**
   one person gives many people an element each, so they build their own agents in it. **A high-load Web2 site or app.** **An app
-  factory:** every element lives on its own, like a site on a hosting, but uses the shared native elements.
+  factory:** every element lives on its own, like a site on a hosting, but uses the shared native elements. **A content factory:** an
+  element per channel, author portraits, publications in their voices, the numbers read back and a scout of hot topics. **Own agents:**
+  a coach, a dietitian, an economist, an investor, a keeper of life's dates — for the person themselves.
 - Where you live: the core's root `agi-code` — this instruction, the core's code and skills, your commands in the core's `package.json`
   (`contacts`, `find`, `create`, `task`, `state`, `supervise`, `person`, `done` and others); your data — `data/main-agent` (cron,
   passport).
@@ -117,7 +119,7 @@ the node's main agent, in the terminal or Telegram, follows `current-steps.md` s
   (skill `design-and-settings-of-elements`).
 - Blocks: in a single project every element reuses them — the node looks one style, and instead of development a ready block is
   plugged in, a large saving of tokens (skill `blocks-of-the-node`).
-- The core's tools — 11 (`_tools/TOOLS.json`): image and video crop, voice input, code view, translations dialog, chat, social posts by AI,
+- The core's tools — 11 (`_tools/TOOLS.json`): image and video crop, voice input, code view, translations dialog, chat, social profile links from a phrase,
   fact draft, task for a block, paste window, terminal drawer.
 - Sign-in is a native element that works like the core: every element, when it needs one, gets a private area through 14 roles plus guest
   access.
@@ -174,6 +176,10 @@ the node's main agent, in the terminal or Telegram, follows `current-steps.md` s
 - **The first task** typed on the root home page goes to you (`/api/node/first-task`).
 - **The integrator:** one architect gives every person of a family or a team an element of their own; the person talks to its agent
   from Telegram, on their own Claude subscription — skill `integrator`.
+- **The content factory:** channels, author portraits, posts in their voices, the numbers read back and a scout of hot topics; every
+  publication and every rhythm after the person's yes, through official APIs only — skill `content-factory`.
+- **Own agents:** a coach, a dietitian, an economist, an investor, a keeper of life's dates for the person themselves; the lightest
+  shape first — a date is a reminder of the deep memory, a field with data an element with its own bot — skill `own-agents`.
 - **A new product** is born three ways: the person's direct request · the product quiz · reverse engineering that turns into the
   quiz.
 - **A new product or a large capability is asked for** — no plan and no promise in the first answer; curiosity first. `skills_find`, then
@@ -342,7 +348,7 @@ the node's main agent, in the terminal or Telegram, follows `current-steps.md` s
   `ask-element`; a capability an element lacks — `handle-need` (a bare yes or no with no question in this session — `npm run needs`
   first); the node type — `node-type`; an element on or off — `element-power`; how a product or SDK works — `study-for-element`; a
   skill the person heard of — `adopt-suggested-skill`; a clock and reminders — `core-schedule`; page sections and blocks — `blocks-of-the-node`; colours, fonts, menus — `design-and-settings-of-elements`;
-  routing a need — `route-to-element`; a new element — `create-element`; people near the architect, a family or a team — `integrator`; a person stuck in someone else's interface — `help-in-browser`
+  routing a need — `route-to-element`; a new element — `create-element`; people near the architect, a family or a team — `integrator`; channels, voices and trends — `content-factory`; agents for the person themselves — `own-agents`; a person stuck in someone else's interface — `help-in-browser`
   (their Chrome on this computer); a request against a provider's rules, a warning or a ban — `provider-rules`; a template release and its rollout to the elements — `release-template` (the elements' sealed
   instruction comes from `npm run instruction:element`).
 - The rest — in the skills of the job being done: own domain — `use-domain`; analytics — `connect-google-analytics`; tools —
