@@ -5,12 +5,12 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-19 (2026-11-05) — 650-4 in delivery.** The four memory landings after the Stripe sample, one family: memory v2.2.22 `81aa0a7`
-(+ `spaces`); vectors v1.2.6 `f186c2f` and graph v1.2.6 `f136c07` rebuilt (widget copied from the sample, `bare`, en/ru in the sample's
-order; graph keeps the words of the page the owner approved on 2026-10-19 and draws its metrics, cards and FAQ as catalogue blocks);
-embeddings v0.1.7 `a2bf0e3` (ru titles aligned: «Подключите свой элемент», «Что под капотом»). Each: prebuild 0, `tsc` 0, eyes in the
-lab (sections in order, 0 console errors, no overflow at 390). The core: «Как это работает» part 5.5, README paragraph + Mermaid; all
-four pinned. **Next:** push, fork, `node:update`, eyes on the owner's node, summary.
+**NOW-19 (2026-11-05) — 650 CLOSED (650-1, 650-3, 650-4; 650-2's skills and `CLAUDE.md` left out by the owner's word «not to claude
+rules now»)** — `completed-steps/650-1.md`, `650-3.md`, `650-4.md`. Memory spaces live on the owner's node (memory v2.2.22), the block
+`block-access-map` (Blocks v1.4.19), the four memory landings after the Stripe sample (vectors, graph v1.2.6, embeddings v0.1.7), core
+`86832388`. **Open for the owner:** the accent colour of the family (memory and vectors black, graph and embeddings blue — «Дизайн» has
+no colour decision); the proof phrases and `anna-650.txt` left in memory; 650-2 (skills, `CLAUDE.md`, the factory caveat: shared keys);
+step 653 (the member's channel without a shell); `check:block-cards` does not hold slot limits.
 
 **NOW-18 (2026-11-05) — 650-1 CLOSED** (`completed-steps/650-1.md`): memory v2.2.21 `df27be7` (contract 7.0.0) on the owner's node —
 each element its own space, the main agent all, proven on the doors (B: «Этого я не знаю», B's file 404) and in the stores (rows,
