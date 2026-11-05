@@ -25,8 +25,12 @@ Left on the node: empty `WEB4-ITEMS/core/data/data/elements/root.db` and `blocks
 v1.1.25, memory `57bad88` v2.2.24, CI green, core pins `54e0bf68`; `node:update` → `===NODE_UPDATE_DONE=== 4 изменений форка, ядро
 8ff02189`; `_tools/proof-654-2.mjs` → `===PROOF_654_2_OK===`: **the memory's `anna-650.txt` through the temporary address → 404 (was
 200)**, a seed image → 200; the memory's log «1 file(s) of the memory marked private». **Next:** the plan of 657 to the owner (his new
-task), then 654-3 (vectors). **657 APPROVED, in work** (`new-steps/657/`): «Да, начинай 657 сейчас (Рекомендую)»; «Один на весь узел (Рекомендую)»; «До поля ключа
-OpenAI (Рекомендую)». Then 654-3.
+task), then 654-3 (vectors). **657 APPROVED, built** (`new-steps/657/`): «Да, начинай 657 сейчас (Рекомендую)»; «Один на весь узел (Рекомендую)»; «До поля ключа
+OpenAI (Рекомендую)». Core `6a77b62e` (pushed): `lib/node-menu-mode.ts`, door `/api/node/menu-mode`, the switch
+`_components/menu-mode-switch.client.tsx`, `draft-menu.tsx` (compact / full, the shortcuts), words en/ru; tsc 0, 12 guards green (97
+routes). The core's lab `next dev` does not run in the clone (Turbopack: `node_modules` is a symlink to the live node's; webpack: old
+import errors `authUrl` of `lib/microservices/urls`) — the build is proven by CI (`npm run build` on three OS). **Next:** CI green → fork →
+`node:update` → `PW_PATH=… node ~/fractera-dev/_tools/eyes-657.cjs http://localhost:24680 <scratchpad>`; then 654-3.
 **The owner, 2026-11-05 during the delivery of 654-2, verbatim (a new task, step 657 — queued, planned first):** «Изменить интерфейс
 левого меню ядра так как он сейчас выглядит слишком перегруженным а наш фокус: пользователь должен работать только через Telegram»!
 нужно на вкладке основное добавить кнопку настройка: Рекомендуемый режим минимальные настройки по умолчанию, полные для глубокого
