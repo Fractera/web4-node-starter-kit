@@ -22,7 +22,11 @@ type Session = { service: string; running?: boolean; startedAt?: string }
 type Entry = { id: string; kind?: string; born?: unknown }
 
 export async function GET(req: NextRequest) {
-  if (isTemporaryPublicAddress(req)) return NextResponse.json({ ok: false, reason: "temporary-address" }, { status: 403 })
+  // 652-2 (2026-11-05): на временном адресе по-прежнему ничего не показывается — терминалы и предпросмотры не для ссылки, которую
+  // пересылают, — но ответ «ничего не ждёт», а не 403: отказ печатал красную строку в консоль на каждой странице пульта. ✗ Правка
+  // оболочки (`components/shell`, копия сайта) была бы ровнее, но `node:update` сверяет копию ядра со СТАРЫМ сайтом до установки
+  // элементов и откатил бы обновление на каждом узле.
+  if (isTemporaryPublicAddress(req)) return NextResponse.json({ ok: true, terminals: [], previews: [], temporary: true }, noStore)
   const denied = await requireRoles(req, ["architect", "admin"])
   if (denied) return denied
   const langParam = req.nextUrl.searchParams.get("lang") ?? "en"
