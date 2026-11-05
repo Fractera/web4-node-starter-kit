@@ -1,5 +1,14 @@
 // СЛОВА ПОЛОСЫ «ВРЕМЕННЫЙ АДРЕС УМЕР» (шаг 632-5). `en` основа, `ru` перевод; выбирает сервер и передаёт острову пропсом.
-export type DeadAddressAlarmWords = { lead: string; body: string; raise: string; raising: string; raised: string; failed: string; note: string; connect: string }
+export type DeadAddressAlarmWords = {
+  lead: string
+  body: string
+  raise: string
+  raising: string
+  raised: string
+  failed: string
+  note: string
+  connect: string
+}
 
 const DICT: Record<"en" | "ru", DeadAddressAlarmWords> = {
   en: {

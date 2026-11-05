@@ -1,6 +1,15 @@
 // СЛОВА ТРЕВОЖНОЙ ПОЛОСЫ «РАБОТА НЕ СОХРАНЯЕТСЯ В GITHUB» (шаг 374-9). `en` основа, `ru` перевод; выбирает сервер и передаёт
 // острову пропсом.
-export type GithubTokenAlarmWords = { lead: string; why: string; connect: string; leadSome: string; whySome: string; open: string; hide: string; hideTitle: string }
+export type GithubTokenAlarmWords = {
+  lead: string
+  why: string
+  connect: string
+  leadSome: string
+  whySome: string
+  open: string
+  hide: string
+  hideTitle: string
+}
 
 const DICT: Record<"en" | "ru", GithubTokenAlarmWords> = {
   en: {

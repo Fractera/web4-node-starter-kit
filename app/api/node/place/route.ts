@@ -21,19 +21,21 @@ export const dynamic = "force-dynamic"
 const ROLES = ["architect", "admin"] as const
 const noStore = { headers: { "Cache-Control": "no-store" } }
 
-async function guard(req: NextRequest) {
-  if (isTemporaryPublicAddress(req)) return NextResponse.json({ ok: false, error: "temporary-address" }, { status: 403 })
+// 652-2 (2026-11-05): ✗ замок временного адреса стоял и на чтении — пульт там открыт на просмотр, а виджет получал 403 и красную
+// строку в консоли на каждой странице. Читать можно, менять — нет: `write`.
+async function guard(req: NextRequest, write: boolean) {
+  if (write && isTemporaryPublicAddress(req)) return NextResponse.json({ ok: false, error: "temporary-address" }, { status: 403 })
   return requireRoles(req, ROLES)
 }
 
 export async function GET(req: NextRequest) {
-  const denied = await guard(req)
+  const denied = await guard(req, false)
   if (denied) return denied
   return NextResponse.json({ ok: true, place: readPlace() }, noStore)
 }
 
 export async function POST(req: NextRequest) {
-  const denied = await guard(req)
+  const denied = await guard(req, true)
   if (denied) return denied
   const body = (await req.json().catch(() => null)) as { place?: unknown } | null
   const saved = writePlace(body?.place)

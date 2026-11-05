@@ -68,9 +68,17 @@ const FILES = [
   // 🪦 ЗДЕСЬ СТОЯЛ `architect-build.i18n.ts` — словарь макета из трёх разделов,
   // удалён в 254 вместе с самим макетом.
   // 🪦 ДЕВЯТЬ ТОВАРНЫХ СЛОВАРЕЙ УДАЛЕНЫ ВМЕСТЕ С МАГАЗИНОМ (230-3, 2026-09-18).
-  // Страницы четырёх слоёв прав.
-  ["app/[lang]/(protectedLayer)/(admin)/administration/users/_data/ui.i18n.ts", "AdministrationUsersUi", 2],
-  ["app/[lang]/(protectedLayer)/(admin)/administration/users/_widgets/dynamic/users-table/ui.i18n.ts", "UsersTableUi", 2],
+  // 🪦 ЗДЕСЬ СТОЯЛИ ДВА СЛОВАРЯ СТРАНИЦЫ «ПОЛЬЗОВАТЕЛИ» (`(protectedLayer)/(admin)/administration/users`): папки слоёв прав в ядре
+  // больше нет, и сторож падал «НЕТ ФАЙЛА» на любом узле (узел, шаг 652-1, 2026-11-05).
+  // Полосы состояния узла над слоем архитектора (652-1): ✗ до этого шага сторож их не видел — в 651 слова полосы «версия устарела»
+  // менялись мимо него.
+  ["components/node-state/node-state.i18n.ts", "NodeStateWords", 2],
+  ["components/node-state/node-place.i18n.ts", "NodePlaceWords", 2],
+  ["components/node-state/online-bar.i18n.ts", "OnlineBarWords", 2],
+  ["components/node-state/origin-notice.i18n.ts", "OriginNoticeWords", 2],
+  ["components/node-state/dead-address-alarm.i18n.ts", "DeadAddressAlarmWords", 2],
+  ["components/node-state/temporary-address-alarm.i18n.ts", "TemporaryAddressAlarmWords", 2],
+  ["components/node-state/github-token-alarm.i18n.ts", "GithubTokenAlarmWords", 2],
 ]
 /**
  * ВТОРАЯ ФОРМА СЛОВАРЯ — ЯЗЫКОВЫЕ ЯЧЕЙКИ (шаг 508).

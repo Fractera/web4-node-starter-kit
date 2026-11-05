@@ -5,6 +5,13 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-16 (2026-11-05) — 652 in delivery: the two findings of 651.** The owner, verbatim: «to do 1 and 2 , after we going to speach
+about 650». 652-1: `check-i18n` listed two dictionaries of the removed `(protectedLayer)` — gone; the seven `components/node-state`
+dictionaries added (three one-line types written out, the guard reads only the multi-line form); negative control `ru.even` removed →
+«не хватает: ru.even». 652-2: `/api/node/place` refused even GET on the temporary address (403 in the console) — reading allowed, the
+write lock kept, the widget's choice disabled there. **Next:** push, fork fast-forward, `node:update`, eyes on the temporary address;
+then step 650 is talked over with the owner.
+
 **NOW-15 (2026-11-05 ~10:30 UTC) — 651 CLOSED** (`completed-steps/651-main.md`, core `6d2e46ea`): the banner keeps a quiet line
 «Узел совпадает с оригиналом на <mark>» with its buttons; the tunnel watchdog gives a newborn name 10 minutes and asks public DNS before
 a verdict; the alarm is not shown on the temporary address. Delivered to the owner's node (fork fast-forwarded, `node:update` → core

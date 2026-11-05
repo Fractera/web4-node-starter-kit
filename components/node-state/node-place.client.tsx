@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Small } from "@/components/ui/typography"
 import type { NodePlaceWords } from "@/components/node-state/node-place.i18n"
+import { isTemporaryHostname } from "@/lib/auth/temporary-address"
 
 // ЭКРАН ОБЪЯВЛЕНИЯ: ГДЕ СТОИТ УЗЕЛ (276-3).
 //
@@ -22,6 +23,9 @@ export function NodePlace({ lang, words }: { lang: string; words: NodePlaceWords
   const [state, setState] = useState<State>("asking")
   const [kind, setKind] = useState<Kind>("unknown")
   const [changedAt, setChangedAt] = useState<string | null>(null)
+  // 652-2: на временном адресе пульт только для просмотра — дверь отдаёт ответ, но не принимает выбор.
+  const [readOnly, setReadOnly] = useState(false)
+  useEffect(() => setReadOnly(isTemporaryHostname(window.location.hostname)), [])
 
   useEffect(() => {
     let alive = true
@@ -90,10 +94,10 @@ export function NodePlace({ lang, words }: { lang: string; words: NodePlaceWords
       <p className="text-foreground text-sm font-medium">{words.title}</p>
       <p className="text-foreground text-sm">{current}</p>
       <div className="flex flex-wrap gap-3">
-        <Button variant={kind === "home" ? "default" : "outline"} disabled={state === "saving"} onClick={() => choose("home")}>
+        <Button variant={kind === "home" ? "default" : "outline"} disabled={state === "saving" || readOnly} onClick={() => choose("home")}>
           {words.chooseHome}
         </Button>
-        <Button variant={kind === "server" ? "default" : "outline"} disabled={state === "saving"} onClick={() => choose("server")}>
+        <Button variant={kind === "server" ? "default" : "outline"} disabled={state === "saving" || readOnly} onClick={() => choose("server")}>
           {words.chooseServer}
         </Button>
       </div>

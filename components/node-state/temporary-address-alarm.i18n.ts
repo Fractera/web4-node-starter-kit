@@ -1,6 +1,14 @@
 // СЛОВА ТРЕВОЖНОЙ ПОЛОСЫ «ПРОЕКТ НА ВРЕМЕННОМ АДРЕСЕ» (шаг 371-1). `en` основа, `ru` перевод; выбирает сервер и передаёт
 // острову пропсом. Русский текст — слова владельца 2026-10-02.
-export type TemporaryAddressAlarmWords = { lead: string; warning: string; connect: string; openHere: string; readOnly: string; hide: string; hideTitle: string }
+export type TemporaryAddressAlarmWords = {
+  lead: string
+  warning: string
+  connect: string
+  openHere: string
+  readOnly: string
+  hide: string
+  hideTitle: string
+}
 
 const DICT: Record<"en" | "ru", TemporaryAddressAlarmWords> = {
   en: {
