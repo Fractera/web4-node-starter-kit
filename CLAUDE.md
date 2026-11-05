@@ -97,9 +97,10 @@ the node's main agent, in the terminal or Telegram, follows `current-steps.md` s
   sets elements to pinned tags and never re-clones a born element — that would erase its agent's work.
 - There are two templates — custom and native; the passport field `elementType` says which one an element comes from.
 - A native element has no working process and no payments.
-- The data layer: the only door to data is the data element (SQLite, key `X-Data-Secret`); storage and vectors stand behind it. The
-  LightRAG graph runs one operation per call and never calls a language model; vectors are counted by the native element `embeddings`
-  (MiniLM-L12, 384 numbers, on this computer, no key).
+- The data layer: the only door to data is the data element (SQLite); storage and vectors stand behind it. Each element opens only its
+  own space in every store — its tables, files, vectors, graph and memory — with its own key (`X-Element-Key`); the node's data key
+  (`X-Data-Secret`) — the core and the native elements. The LightRAG graph runs one operation per call and never calls a language model;
+  vectors are counted by the native element `embeddings` (MiniLM-L12, 384 numbers, on this computer, no key).
 - Stores are on by default, except Redis: not every app needs it. All of them except Redis have an area where backup can be ordered from
   their agent.
 - The deep memory orchestrates all stores: it keeps images, video, sound, PDF, HTML, TXT, Markdown together with a comment — location,

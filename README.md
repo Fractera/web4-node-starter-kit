@@ -79,16 +79,17 @@ voice note if you like («remember, this is my mom»). Ask «remind me about…�
 date, the source and how sure the memory is; if it finds a thing, the agent sends you its file. Pictures are described in words, PDFs
 are read whole, voice notes become text.
 
-Each element remembers only its own. What is said through an element lands in that element's space, and only that element finds it
-again; the main agent of the node reads every space. On a family node mom's phrases never reach her son's element, and the architect,
-who owns the computer, sees everything.
+Each element keeps only its own, in every store of the node: its tables, files, vectors, graph and memory, opened with its own key.
+What is said or kept through an element lands in that element's space, and only that element finds it again; the main agent of the
+node reads every space. On a family node mom's phrases and files never reach her son's element, and the architect, who owns the
+computer, sees everything. The stores keep the doors apart, not the disk: all elements run as one user of the computer.
 
 ```mermaid
 flowchart TB
-  main["The main agent of the node: reads every space"]
-  main --> mom["Mom's element: only its own"]
-  main --> son["Son's element: only its own"]
-  main --> site["Your site: only its own"]
+  main["The main agent of the node: reads every space of every store"]
+  main --> mom["Mom's element: only its own, in every store"]
+  main --> son["Son's element: only its own, in every store"]
+  main --> site["Your site: only its own, in every store"]
 ```
 
 Before it builds something new, an agent looks in the node's skills base and in the catalog below for how other projects solved the

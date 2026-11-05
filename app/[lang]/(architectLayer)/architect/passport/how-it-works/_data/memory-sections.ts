@@ -51,11 +51,11 @@ export const MEMORY_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
           ],
         },
         {
-          title: '5.5 Each element remembers only its own',
+          title: '5.5 Each element keeps only its own',
           items: [
-            'The deep memory keeps a space for every [[element|element]]: what was said through it lands in its space, and only that element finds it again, whether it asks to remind, opens the journal or a file.',
-            'The main agent reads every space. What you kept before the spaces came stays with it.',
-            'On a family node mom’s phrases never reach her son’s element. The spaces decide what the memory answers; the computer and its disk are yours.',
+            'Every [[element|element]] has its own space in every store of the node — its tables, files, vectors, graph and memory — and opens it with its own key: what was said or kept through it, only that element finds again, whether it asks to remind, opens the journal or a file.',
+            'The main agent reads every space with the node’s data key. What you kept before the spaces came stays with it.',
+            'On a family node mom’s phrases and files never reach her son’s element. The stores keep the doors apart, not the disk: all elements run as one user of your computer, and the computer is yours.',
           ],
         },
       ],
@@ -131,11 +131,11 @@ export const MEMORY_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
           ],
         },
         {
-          title: '5.5 Каждый элемент помнит только своё',
+          title: '5.5 Каждый элемент хранит только своё',
           items: [
-            'Глубокая память держит пространство для каждого [[элемента|element]]: сказанное через него попадает в его пространство, и найти это снова может только он сам, о чём бы ни спросил: напомнить, открыть журнал или файл.',
-            'Главный агент читает все пространства. Всё, что вы сохранили до появления пространств, осталось у него.',
-            'На семейном узле фразы мамы никогда не попадут в элемент сына. Пространства решают, что память ответит; компьютер и его диск ваши.',
+            'У каждого [[элемента|element]] своё пространство в каждом хранилище узла — его таблицы, файлы, векторы, граф и память, — и открывает он его своим ключом: сказанное или сохранённое через него найти снова может только он сам, о чём бы ни спросил: напомнить, открыть журнал или файл.',
+            'Главный агент читает все пространства ключом данных узла. Всё, что вы сохранили до появления пространств, осталось у него.',
+            'На семейном узле фразы и файлы мамы никогда не попадут в элемент сына. Хранилища разделяют двери, а не диск: все элементы работают от одного пользователя вашего компьютера, и компьютер ваш.',
           ],
         },
       ],

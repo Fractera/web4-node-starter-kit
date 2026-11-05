@@ -39,9 +39,17 @@ worth keeping.
 time. `DATA_SECRET` (server) / `DATA_API_KEY` (your machine) come from `.env.local`, which the panel
 generates — Admin → Env Variables → download.
 
+🔒 **Whose data it is (node step 654).** The core is the node: its `DATA_SECRET` opens every space of
+every store. Each element opens only its own space with its own key `X-Element-Key` (`ELEMENT_KEY`,
+written by the installer): its tables in its own database file, its files, vector collections, graph
+spaces and memory — never a neighbour's. The node reads one element's space by name: data
+`?space=<id>`, storage `?owner=<id>`, vectors `el/<id>/<name>`, graph `el-<id>` and `el-<id>.<name>`,
+memory `from`/`?source=<id>`. An element's agent asks `npm run stores` before it speaks of its stores.
+
 🔒 **Two layers already have a written helper — use them instead of raw calls:**
-`lib/fractera/vectors.ts` (`remember`, `recall`, `forget`, `vectorStatus`) and
-`lib/fractera/knowledge.ts` (`ask`, `learn`, `knowledgeDocuments`, `knowledgeReady`). Maps have no
+`lib/fractera/vectors.ts` (`remember`, `recall`, `forget`, `vectorStatus`); the graph — the core's
+`graphCall` (`lib/agent-kit/skills/find.mjs`, the node data key; the core's own
+`lib/fractera/knowledge.ts` still asks the retired `/service/rag` — do not build on it). Maps have no
 helper yet: there you call the door directly, and writing the first helper is welcome.
 
 ## 2. 🔒 Two permission classes — and what a refusal means

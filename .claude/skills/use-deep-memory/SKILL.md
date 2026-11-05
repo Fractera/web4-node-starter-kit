@@ -52,6 +52,12 @@ tool's files). Nothing in either — «об этом ничего не запи�
  _ * [ ] ( ) ~ > # + - = | { } . ! and the backquote; a send refused for its entities goes again as plain text. The deep memory's answer: `🟢 *Глубокая память*`, then the answer; reminders («⏰ Напоминание · …») come by
 themselves and are never written by you.
 
+## Whose memory
+
+Every element keeps its own space in the memory and in every store behind it, opened with its own key (node step 654): an element never
+finds what was said through another. You, the main agent, read every space with the node's data key and say whose each finding is;
+what you keep yourself goes into the space `node`.
+
 ## Never
 
 - Store or recall when the person switched memory off («не запоминай», `know-the-architect`): the commands refuse until «запоминай снова».
