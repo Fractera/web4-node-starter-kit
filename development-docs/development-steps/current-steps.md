@@ -5,7 +5,7 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-21 (2026-11-05, new session) — 654-1 CLOSED; 656 BUILT (waits for the joint delivery); 654-2 in work** (`new-steps/654/`, `new-steps/656-…`).
+**NOW-21 (2026-11-05, new session) — 654-1, 654-2 and 656 CLOSED; step 657 (the core's left menu) being planned; then 654-3** (`new-steps/654/`).
 The owner: «Продолжи разработку Fractera по current-steps.md ядра, блок NOW-20: спланируй шаг 654, разделение элементов внутри хранилищ
 (база, файлы, векторы, граф) для режима завода приложений». The plan in one line each: (1) each element's own key `ELEMENT_KEY = <id>.<HMAC
 of DATA_SECRET>` and its own database file; (2) storage: owner and visibility, a private file only on `?private=1` — the memory's files
@@ -20,16 +20,12 @@ element's spaces on its deletion — not chosen). **Now:** 654-1 — the key in 
 → `===PROOF_654_1_OK===` (root's table not seen by blocks, `?space=root` for the node, ATTACH 400, a swapped id 401, the key reaches the
 storage and vectors locks through data's forward); regression: memory journal 200, a seed image through the temporary address 200.
 Left on the node: empty `WEB4-ITEMS/core/data/data/elements/root.db` and `blocks.db` (the data process keeps them open).
-**656 built:** memory `16c4213` tag v2.2.23 (pushed, CI pending at writing) — section `remind` after `spaces` (Agent view), a row in
-`solves`, the `talk` list, the route's note, description, keywords; lab eyes (`next dev` 25657 with `NEXT_PUBLIC_SUPPORTED_LANGUAGES=en,ru`):
-sections in order, 0 console errors at 1440 and 390, light and dark, no overflow at 390; «календар|calendar» on the page 0 → 7 (both
-languages); prebuild 0, tsc 0, next build 0. NOT pinned: by the owner's choice it reaches the node with 654-2's memory release; closed
-after the eyes on the owner's node. **654-2 built:** storage `dc72fe0` v1.1.25 (owner, visibility, `?private=1`, element doors),
-memory `57bad88` v2.2.24 (uploads private, reads `?private=1`, `markOwnPrivate` at start and at the next door call; carries 656);
-lab `scratchpad/654/lab-654-2.mjs` `===LAB_654_2_OK===` (31 checks, an OLD media.db read as node/public); prebuild 0, tsc 0, next build
-0 in both; pushed, CI green (storage 42047565172, memory 42047577678); core pins `54e0bf68`. **Now (long operation, started):** core
-push → fork → `node:update` (log `scratchpad/654/node-update-654-2.log`); then
-→ `_tools/proof-654-2.mjs` and the 656 eyes on the owner's node (`http://127.0.0.1:24690/ru#remind`).
+**656 CLOSED** (`completed-steps/656.md`, memory `16c4213` v2.2.23 inside v2.2.24): eyes on the owner's node — section `remind` in place,
+0 console errors, no overflow at 390; «календар|calendar» 0 → 7. **654-2 CLOSED** (`completed-steps/654-2.md`): storage `dc72fe0`
+v1.1.25, memory `57bad88` v2.2.24, CI green, core pins `54e0bf68`; `node:update` → `===NODE_UPDATE_DONE=== 4 изменений форка, ядро
+8ff02189`; `_tools/proof-654-2.mjs` → `===PROOF_654_2_OK===`: **the memory's `anna-650.txt` through the temporary address → 404 (was
+200)**, a seed image → 200; the memory's log «1 file(s) of the memory marked private». **Next:** the plan of 657 to the owner (his new
+task), then 654-3 (vectors).
 **The owner, 2026-11-05 during the delivery of 654-2, verbatim (a new task, step 657 — queued, planned first):** «Изменить интерфейс
 левого меню ядра так как он сейчас выглядит слишком перегруженным а наш фокус: пользователь должен работать только через Telegram»!
 нужно на вкладке основное добавить кнопку настройка: Рекомендуемый режим минимальные настройки по умолчанию, полные для глубокого
