@@ -75,3 +75,12 @@ owner's word).
 
 2026-11-05, in the choice window, verbatim: the plan — «Да, начинай 657 сейчас (Рекомендую)»; where the mode lives — «Один на весь узел
 (Рекомендую)»; the OpenAI button — «До поля ключа OpenAI (Рекомендую)».
+
+**The owner's additions, 2026-11-05 during the build, verbatim:** «Между секции основное и кастомными элементами в компактной
+настройках должен быть сепаратор как между паспортом и основной. По умолчанию вкладка основное закрыта а настройка в положении компактные.
+Название элементов приведи к верхнему регистру чтобы все было заглавными буквами. Название кнопок компактной или полное выполни в виде
+свеч переключателя слева и текста который меняется справа или компактная или полная». Taken into 657-1 (the same capability): a separator
+line between «Основное» and the elements in the compact mode; «Основное» closed by default (it opens only on a page of its own, as every
+zone); the elements' names in capitals; the two buttons become one switch with the text «Компактная» / «Полная» on its right.
+**A defect of 657 found by the eyes:** the switch's `router.refresh()` applied «Полная» in 1 s but «Компактная» not in 181 s, while the
+server served the new mode at once (measured with curl: the HTML right after each POST) — the switch reloads the page instead.

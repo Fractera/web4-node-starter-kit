@@ -178,10 +178,19 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   // 632-2: тревога пункта видна и сквозь свёрнутую зону — подпись «Основное» несёт ту же тревогу, что пункт в ней («Домен и хостинг»).
   const mainAlert = main.find((m) => m.alert)?.alert
   const head = [top[p], { ...zone(ui.zoneMain, 'main', holds(main, page)), ...(mainAlert ? { alert: mainAlert } : {}) }, ...inZone(main, 'main')]
-  if (!compact) return [...head, zone(ui.zoneNative, 'native', holds(nativeZone, page)), nativeButton, ...grouped, ...customTail]
+  // 657 (владелец 2026-11-05: «Название элементов приведи к верхнему регистру чтобы все было заглавными буквами»): названия элементов —
+  // заглавными в обоих режимах; подписи зон, подзона «Память» и кнопки создания — как были.
+  const upper = (m: WorkspaceItem): WorkspaceItem => (m.zoneHead || m.node ? m : { ...m, label: m.label.toLocaleUpperCase(lang) })
+  if (!compact) {
+    const tail = customTail.map((m) => (m.zone === 'custom' ? upper(m) : m))
+    return [...head, zone(ui.zoneNative, 'native', holds(nativeZone, page)), nativeButton, ...grouped.map(upper), ...tail]
+  }
   // Короткое меню: root и кастомные элементы — первым уровнем, только название, щелчок — их «Живой сайт» (`preview` дерева).
-  const named = [...rootTree, ...customs].map((t): WorkspaceItem => ({ label: t.label, icon: t.icon, href: `${t.href}/preview`, active: !!t.open }))
+  const named = [...rootTree, ...customs].map((t): WorkspaceItem => upper({ label: t.label, icon: t.icon, href: `${t.href}/preview`, active: !!t.open }))
+  // «Между секции основное и кастомными элементами в компактной настройках должен быть сепаратор как между паспортом и основной»: та же
+  // черта, что над подписью зоны, — без подписи и без переключателя.
+  const separator: WorkspaceItem = { label: '', node: <div data-block="mmsep" aria-hidden className="mt-2 border-t border-border" /> }
   // То, что стоит в меню после «Дизайна» и не является элементом, остаётся (сегодня там пусто).
   const tail = menu.slice(cut).filter((m) => !(m.href && builtIn.has(m.href)))
-  return [...head, ...named, ...tail]
+  return [...head, ...(named.length > 0 ? [separator, ...named] : []), ...tail]
 }
