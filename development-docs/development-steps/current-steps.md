@@ -5,6 +5,14 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-19 (2026-11-05) — 650-4 in work.** Memory v2.2.22 `81aa0a7` (tag pushed, not pinned yet): landing section `spaces` «Whose memory
+it is» / «Чья это память» with `block-access-map` (installed by the element's `npm run blocks -- add`, a temporary `.env.local` with the
+node key copied by redirect and removed), four paragraphs checked against the code (✗ caught on the way: «each finding names the
+element» is not true — the answer text does not name it, so the page does not say it); prebuild 0 after `widgets:ids`; negative control —
+ru without the section → `===PAGE_SEQUENCE_FAILED===`; seen ru/en 1440 light+dark and 390, 0 console errors. **Next:** vectors and
+graph landings rebuilt after the Stripe sample (+ `spaces`), embeddings checked, then pins memory v2.2.22 + vectors + graph and one
+`node:update`.
+
 **NOW-18 (2026-11-05) — 650-1 CLOSED** (`completed-steps/650-1.md`): memory v2.2.21 `df27be7` (contract 7.0.0) on the owner's node —
 each element its own space, the main agent all, proven on the doors (B: «Этого я не знаю», B's file 404) and in the stores (rows,
 `memory-said--root` vs `memory-said`, graph `memory-root` vs `memory`); core `f325f6b0`. The owner: «focus only to memory , not to claude
