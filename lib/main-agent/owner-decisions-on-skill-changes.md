@@ -32,3 +32,4 @@ shown here as reverted is not proposed again; if the reason is new, name the ent
 
 | Date | Signal (from the digest or the meter) | Proposal | The architect's answer (verbatim) | Commit |
 |---|---|---|---|---|
+| 2026-11-05 | 654-3: GitHub lost the event of a pushed core commit (`dd192f10`), no CI run came | `use-development-steps` §5.2 — no run at all for a pushed commit → start it by hand, `gh workflow run <file> -R <repo> --ref main`; never an empty commit | «need your solution, best choose» — the choice left to me; taken: the line added | this commit |

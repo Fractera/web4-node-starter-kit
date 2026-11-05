@@ -83,7 +83,8 @@ A step with substeps lives in `new-steps/<N>/`. Eight stages, in order, each lea
    **Then the CI run of that commit**, where the repository has one (`.github/workflows/`) and `gh` is signed in (`gh run list -R
    <repo> -L 5`, `gh run view <id>`): green — or its cause named in one line and
    acted on. A runner not acquired («The job was not acquired by Runner …», GitHub's capacity) is GitHub's, not the code's; a failed
-   guard or build is yours — fixed in the next commit, before the person hears of it. The same for every element and template a rollout
+   guard or build is yours — fixed in the next commit, before the person hears of it. No run at all for the pushed commit (GitHub lost
+   the push's event) — start it by hand, `gh workflow run <file> -R <repo> --ref main`; never an empty commit. The same for every element and template a rollout
    pushed. The owner, 2026-11-04, on 13 «Run failed» letters nobody had looked at: «Разве ты не можешь получать информацию из GitHub о
    этих ошибках и как ты реагировать на них?»
 3. The summary `completed-steps/<N>-<k>.md`: the hash and repository · what was done and how · the two proofs verbatim · **mistakes**

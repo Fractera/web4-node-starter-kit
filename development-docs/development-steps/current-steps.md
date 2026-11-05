@@ -13,8 +13,13 @@ own names, a search without a collection reads only its own collections, another
 42061320999); the owner synced the fork himself («2 confirmed» — the session's permission mode refused my push to `aifa-agi`);
 `node:update` → `===NODE_UPDATE_DONE=== 2 изменений форка, ядро 59e7a833`; `_tools/proof-654-3.mjs` → `===PROOF_654_3_OK===` (B finds
 nothing of A's with or without a collection; the memory's phrase found by the node key as before). **Owed to 654-7:** the vectors README
-says «`self-*` stay where they are» — they are record ids in the collection `node-elements`. **Proposed to the owner, not applied:** a
-line in `use-development-steps` §5.2 — a pushed commit with no CI run → `gh workflow run <file> --ref main`. **Next:** 654-4 + 654-5 —
+says «`self-*` stay where they are» — they are record ids in the collection `node-elements`. **The skill line** (`use-development-steps`
+§5.2: no run at all for a pushed commit → `gh workflow run <file> -R <repo> --ref main`, never an empty commit) — the owner, 16:40 UTC:
+«need your solution, best choose» → added (a row in `lib/main-agent/owner-decisions-on-skill-changes.md`). **The order — the owner, the
+window, 16:46 UTC:** «4+5, затем 6 и 7 (Рекомендую)». **A new task — the owner, 16:40 UTC («one more for next after finish base»,
+«Переноси в план»), routed by his word «Отдельный шаг 658 (Рекомендую)»:** the root page's fifth use case «content factory» and sixth
+«own agents for personal effectiveness», the cards in two rows; where the instruction, the soul, README and the main agent's skills
+describe and serve them — his words verbatim in `new-steps/658/658-main.md`; planned now, built after 654. **Next:** 654-4 + 654-5 —
 graph `X-Element-Key` and `X-Data-Secret` (`X-Node-Key` no longer opens it), the memory door's space by the caller's key, the core's and
 the memory's graph calls on `X-Data-Secret` — ONE `node:update` (654-main §3: the skills search and the memory must not lose the graph
 between two updates). **Delivery:** if the session's permission mode refuses the push to `aifa-agi`, ask the owner to press «Sync fork».
@@ -45,7 +50,8 @@ import errors `authUrl` of `lib/microservices/urls`) — the build is proven by 
 `node:update` → `PW_PATH=… node ~/fractera-dev/_tools/eyes-657.cjs http://localhost:24680 <scratchpad>`; then 654-3.
 **657 CLOSED** (`completed-steps/657-1.md`, `657-2.md`): core `6a77b62e`, `d296ebd0`, CI green; on the owner's node `ядро 0a209edf`;
 `eyes-657.cjs` → `===EYES_657_OK===`; the door through the temporary address → 403, the file unchanged. **Seen, not changed:** the page's
-top bar still offers «Нативные элементы» / «Кастомные элементы» dropdowns in the compact mode — asked of the owner.
+top bar still offers «Нативные элементы» / «Кастомные элементы» dropdowns in the compact mode — the owner, 2026-11-05 16:40 UTC: «not
+need» — they stay.
 **The owner, 2026-11-05 during the delivery of 654-2, verbatim (a new task, step 657 — queued, planned first):** «Изменить интерфейс
 левого меню ядра так как он сейчас выглядит слишком перегруженным а наш фокус: пользователь должен работать только через Telegram»!
 нужно на вкладке основное добавить кнопку настройка: Рекомендуемый режим минимальные настройки по умолчанию, полные для глубокого
