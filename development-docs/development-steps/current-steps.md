@@ -5,7 +5,7 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-21 (2026-11-05, new session) — 654-1, 654-2 and 656 CLOSED; step 657 (the core's left menu) being planned; then 654-3** (`new-steps/654/`).
+**NOW-21 (2026-11-05, new session) — 654-1, 654-2, 656 and 657 CLOSED; next 654-3 (vectors)** (`new-steps/654/`).
 The owner: «Продолжи разработку Fractera по current-steps.md ядра, блок NOW-20: спланируй шаг 654, разделение элементов внутри хранилищ
 (база, файлы, векторы, граф) для режима завода приложений». The plan in one line each: (1) each element's own key `ELEMENT_KEY = <id>.<HMAC
 of DATA_SECRET>` and its own database file; (2) storage: owner and visibility, a private file only on `?private=1` — the memory's files
@@ -31,11 +31,9 @@ OpenAI (Рекомендую)». Core `6a77b62e` (pushed): `lib/node-menu-mode.t
 routes). The core's lab `next dev` does not run in the clone (Turbopack: `node_modules` is a symlink to the live node's; webpack: old
 import errors `authUrl` of `lib/microservices/urls`) — the build is proven by CI (`npm run build` on three OS). **Next:** CI green → fork →
 `node:update` → `PW_PATH=… node ~/fractera-dev/_tools/eyes-657.cjs http://localhost:24680 <scratchpad>`; then 654-3.
-**657 delivered once** (CI 42051113642, `node:update` → `ядро 2c6250bf`): eyes passed the compact default, the full mode, one «you are
-here», the OpenAI row in view; **a defect:** the switch's `router.refresh()` applied «Компактная» not in 181 s (the server served it at
-once — curl) → the switch now reloads the page. **The owner's additions (verbatim in `657-main.md`):** a separator between «Основное» and
-the elements in compact, «Основное» closed by default, element names in capitals, a Switch with the changing text. Core `d296ebd0`
-(pushed, CI pending at writing) → fork → `node:update` → `eyes-657.cjs` again.
+**657 CLOSED** (`completed-steps/657-1.md`, `657-2.md`): core `6a77b62e`, `d296ebd0`, CI green; on the owner's node `ядро 0a209edf`;
+`eyes-657.cjs` → `===EYES_657_OK===`; the door through the temporary address → 403, the file unchanged. **Seen, not changed:** the page's
+top bar still offers «Нативные элементы» / «Кастомные элементы» dropdowns in the compact mode — asked of the owner.
 **The owner, 2026-11-05 during the delivery of 654-2, verbatim (a new task, step 657 — queued, planned first):** «Изменить интерфейс
 левого меню ядра так как он сейчас выглядит слишком перегруженным а наш фокус: пользователь должен работать только через Telegram»!
 нужно на вкладке основное добавить кнопку настройка: Рекомендуемый режим минимальные настройки по умолчанию, полные для глубокого
