@@ -5,7 +5,7 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-21 (2026-11-05, new session) — 654 APPROVED, 654-1 in work** (`new-steps/654/`: `654-main.md`, `654-1` … `654-7`).
+**NOW-21 (2026-11-05, new session) — 654-1 CLOSED (`completed-steps/654-1.md`); next 656, then 654-2** (`new-steps/654/`, `new-steps/656-…`).
 The owner: «Продолжи разработку Fractera по current-steps.md ядра, блок NOW-20: спланируй шаг 654, разделение элементов внутри хранилищ
 (база, файлы, векторы, граф) для режима завода приложений». The plan in one line each: (1) each element's own key `ELEMENT_KEY = <id>.<HMAC
 of DATA_SECRET>` and its own database file; (2) storage: owner and visibility, a private file only on `?private=1` — the memory's files
@@ -15,12 +15,13 @@ template and root on their own key only, proven with a real second element; (7) 
 (Рекомендую)»; node types — «В обоих типах (Рекомендую)»; also — «Временный второй элемент, Строка в CLAUDE.md и навыки» (wiping an
 element's spaces on its deletion — not chosen). **Now:** 654-1 — the key in the shared lock `auth.mjs`, the element's own database in
 `fractera-data-starter` (clones in `~/fractera-dev/`), then the lab proofs, the release and its delivery.
-**654-1 built and lab-proven:** lab in-process (scratchpad `654/lab-654-1.mjs`, production lock, lab secret) `===LAB_654_1_OK===` (42
-checks), storage/vectors `===LAB_storage_OK===`, `===LAB_vectors_OK===`; prebuild 0, tsc 0, next build 0 in all three clones. Commits:
-data `3ff1184` v2.2.5, storage `f77fe6a` v1.1.24 (carries the 650-4 landing of v1.1.23), vectors `fa55bb3` v1.2.7 — pushed, CI
-three-os green (runs 42040783406, 42040794315, 42040806544); core pin `60aed71c`. **Now (long operation, started 2026-11-05):** core
-pushed, fork `aifa-agi` fast-forwarded, `npm run node:update` on the owner's node (rebuilds data, storage, vectors, then the core with
-the closed lid); log `scratchpad/654/node-update-654-1.log`; then `node --env-file=<core>/.env.local _tools/proof-654-1.mjs <core>`.
+**654-1 CLOSED:** data v2.2.5 `3ff1184`, storage v1.1.24 `f77fe6a`, vectors v1.2.7 `fa55bb3` (CI green), core pins `60aed71c`, state
+`579d00c4`; on the owner's node by `node:update` (`===NODE_UPDATE_DONE=== 7 изменений форка, ядро 70396686`); `_tools/proof-654-1.mjs`
+→ `===PROOF_654_1_OK===` (root's table not seen by blocks, `?space=root` for the node, ATTACH 400, a swapped id 401, the key reaches the
+storage and vectors locks through data's forward); regression: memory journal 200, a seed image through the temporary address 200.
+Left on the node: empty `WEB4-ITEMS/core/data/data/elements/root.db` and `blocks.db` (the data process keeps them open). **Next: 656**
+(texts drafted in this session's head, not in a file yet: a section `remind` after `spaces` in the `Agent` view, a row in `solves`,
+the `talk` list, the route's note «stays on while a reminder waits», description and keywords), **then 654-2.**
 **The owner, 2026-11-05 during 654-1, verbatim:** «Смотрю описание для глубокой памяти то есть landing и увидел промах проверь глубокая
 память имеет работать с календарем и там это нигде не описано». **Checked — he is right:** the memory landing (`fractera-memory-starter`
 `app/[lang]/(publicLayer)/_data/en.json`, `ru.json`, v2.2.22) uses «Remind me about…» / «Напомни о…» only as RECALL (what was said);
