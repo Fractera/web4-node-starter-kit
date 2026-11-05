@@ -152,7 +152,8 @@ const EXT_OF_MIME = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '
 /** Файл найденной вещи — на диск данных главного агента; путь или причина отказа. */
 async function saveFound(base, o) {
   try {
-    const r = await fetch(`${base}/v1/objects/${encodeURIComponent(o.id)}/file`, { headers: { 'X-Node-Key': KEY }, signal: AbortSignal.timeout(60_000) })
+    // 650-1 (memory v2.2.21, contract 7.0.0): the file door names its caller — the main agent reads every space.
+    const r = await fetch(`${base}/v1/objects/${encodeURIComponent(o.id)}/file?source=build`, { headers: { 'X-Node-Key': KEY }, signal: AbortSignal.timeout(60_000) })
     if (!r.ok) return { why: `HTTP ${r.status}` }
     const mime = String(o.mime || r.headers.get('content-type') || '').split(';')[0].trim()
     const ext = extname(String(o.name || '')).toLowerCase() || EXT_OF_MIME[mime] || '.bin'

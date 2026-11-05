@@ -5,6 +5,14 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-18 (2026-11-05) — 650-1 in delivery.** The owner, verbatim: «go to do it. focus only to memory , not to claude rules now» —
+650-2's skills and `CLAUDE.md` lines are left out; D3 taken as proposed (no objection). Memory v2.2.21 `df27be7` (contract 7.0.0):
+`lib/memory/space.mjs` (AsyncLocalStorage, the door sets the caller's space), the column `space` (late, `NOT NULL DEFAULT 'node'`),
+collections `<name>--<element>`, graph `memory-<element>`, label index and journal per space, `?source=` on GET/DELETE. **Measured in
+the lab:** 18 unit checks of `space.mjs` incl. two parallel calls; SQLite shapes (old row → `node`, son sees only his, a link and a
+nested id of another space → nothing); prebuild exit 0, `tsc` 0, `next build` 0. The core: `node-commands.mjs` names `?source=build`
+on the object file, pin memory v2.2.21. **Next:** push, fork, `node:update`, the live proof of 650-1 on the owner's node.
+
 **NOW-17 (2026-11-05) — 650 planned, waits for the owner's yes** (`new-steps/650/`: `650-main.md`, `650-1.md`, `650-2.md`). The owner,
 verbatim: «нам нужно сделать разделение глубины памяти по элементам чтобы главное агент была доступна вся память, а каждому элементу
 только своему … Это решаемо задачи надёжная? … чтобы записи матери не были доступны сыну например»; to writing the plan — «go». 650 is
