@@ -25,7 +25,7 @@ Left on the node: empty `WEB4-ITEMS/core/data/data/elements/root.db` and `blocks
 v1.1.25, memory `57bad88` v2.2.24, CI green, core pins `54e0bf68`; `node:update` → `===NODE_UPDATE_DONE=== 4 изменений форка, ядро
 8ff02189`; `_tools/proof-654-2.mjs` → `===PROOF_654_2_OK===`: **the memory's `anna-650.txt` through the temporary address → 404 (was
 200)**, a seed image → 200; the memory's log «1 file(s) of the memory marked private». **Next:** the plan of 657 to the owner (his new
-task), then 654-3 (vectors).
+task), then 654-3 (vectors). **657 planned** (`new-steps/657/`: 657-1 the menu mode, 657-2 the three shortcuts) — waits for his yes.
 **The owner, 2026-11-05 during the delivery of 654-2, verbatim (a new task, step 657 — queued, planned first):** «Изменить интерфейс
 левого меню ядра так как он сейчас выглядит слишком перегруженным а наш фокус: пользователь должен работать только через Telegram»!
 нужно на вкладке основное добавить кнопку настройка: Рекомендуемый режим минимальные настройки по умолчанию, полные для глубокого
