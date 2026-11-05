@@ -50,6 +50,14 @@ export const MEMORY_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
             'Found a skill yourself? Name it or send its link, and the agent finds it, checks it and adds it to the library.',
           ],
         },
+        {
+          title: '5.5 Each element remembers only its own',
+          items: [
+            'The deep memory keeps a space for every [[element|element]]: what was said through it lands in its space, and only that element finds it again, whether it asks to remind, opens the journal or a file.',
+            'The main agent reads every space. What you kept before the spaces came stays with it.',
+            'On a family node mom’s phrases never reach her son’s element. The spaces decide what the memory answers; the computer and its disk are yours.',
+          ],
+        },
       ],
       card: {
         title: 'An OpenAI key, if you want it',
@@ -120,6 +128,14 @@ export const MEMORY_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
             'Пока карточки не нужны задаче, они не тратят токенов. Прежде чем строить новое, агент ищет по ним по смыслу через граф знаний, читает несколько подходящих навыков и рассуждает так, как ту же задачу решили другие проекты. Пересказывает своими словами и называет, чей это навык; если близкого нет, так и говорит.',
             'Навык ставится только в тот [[элемент|element]], которому он нужен, а не во весь проект, и только после вашего «да». Навык со скриптами ждёт отдельного «да», а навык с риском не предлагается совсем. У каждого навыка остаётся своя лицензия.',
             'Нашли навык сами? Назовите его или пришлите ссылку — агент найдёт его, проверит и добавит в библиотеку.',
+          ],
+        },
+        {
+          title: '5.5 Каждый элемент помнит только своё',
+          items: [
+            'Глубокая память держит пространство для каждого [[элемента|element]]: сказанное через него попадает в его пространство, и найти это снова может только он сам, о чём бы ни спросил: напомнить, открыть журнал или файл.',
+            'Главный агент читает все пространства. Всё, что вы сохранили до появления пространств, осталось у него.',
+            'На семейном узле фразы мамы никогда не попадут в элемент сына. Пространства решают, что память ответит; компьютер и его диск ваши.',
           ],
         },
       ],

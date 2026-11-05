@@ -79,7 +79,7 @@
     {
       "id": "vectors",
       "repo": "https://github.com/Fractera/fractera-vectors-starter.git",
-      "version": "v1.2.5",
+      "version": "v1.2.6",
       "port": 24694,
       "provides": [
         "vectors"
@@ -92,7 +92,7 @@
     {
       "id": "embeddings",
       "repo": "https://github.com/Fractera/fractera-embeddings-starter.git",
-      "version": "v0.1.6",
+      "version": "v0.1.7",
       "port": 24696,
       "provides": [
         "embeddings"
@@ -131,7 +131,7 @@
     {
       "id": "graph",
       "repo": "https://github.com/Fractera/fractera-graph-lightrag-starter.git",
-      "version": "v1.2.5",
+      "version": "v1.2.6",
       "provides": [
         "knowledge-graph"
       ],
@@ -157,7 +157,7 @@
     {
       "id": "memory",
       "repo": "https://github.com/Fractera/fractera-memory-starter.git",
-      "version": "v2.2.21",
+      "version": "v2.2.22",
       "port": 24690,
       "provides": [
         "memory",

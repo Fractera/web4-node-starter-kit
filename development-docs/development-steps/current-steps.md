@@ -5,13 +5,12 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-19 (2026-11-05) — 650-4 in work.** Memory v2.2.22 `81aa0a7` (tag pushed, not pinned yet): landing section `spaces` «Whose memory
-it is» / «Чья это память» with `block-access-map` (installed by the element's `npm run blocks -- add`, a temporary `.env.local` with the
-node key copied by redirect and removed), four paragraphs checked against the code (✗ caught on the way: «each finding names the
-element» is not true — the answer text does not name it, so the page does not say it); prebuild 0 after `widgets:ids`; negative control —
-ru without the section → `===PAGE_SEQUENCE_FAILED===`; seen ru/en 1440 light+dark and 390, 0 console errors. **Next:** vectors and
-graph landings rebuilt after the Stripe sample (+ `spaces`), embeddings checked, then pins memory v2.2.22 + vectors + graph and one
-`node:update`.
+**NOW-19 (2026-11-05) — 650-4 in delivery.** The four memory landings after the Stripe sample, one family: memory v2.2.22 `81aa0a7`
+(+ `spaces`); vectors v1.2.6 `f186c2f` and graph v1.2.6 `f136c07` rebuilt (widget copied from the sample, `bare`, en/ru in the sample's
+order; graph keeps the words of the page the owner approved on 2026-10-19 and draws its metrics, cards and FAQ as catalogue blocks);
+embeddings v0.1.7 `a2bf0e3` (ru titles aligned: «Подключите свой элемент», «Что под капотом»). Each: prebuild 0, `tsc` 0, eyes in the
+lab (sections in order, 0 console errors, no overflow at 390). The core: «Как это работает» part 5.5, README paragraph + Mermaid; all
+four pinned. **Next:** push, fork, `node:update`, eyes on the owner's node, summary.
 
 **NOW-18 (2026-11-05) — 650-1 CLOSED** (`completed-steps/650-1.md`): memory v2.2.21 `df27be7` (contract 7.0.0) on the owner's node —
 each element its own space, the main agent all, proven on the doors (B: «Этого я не знаю», B's file 404) and in the stores (rows,
