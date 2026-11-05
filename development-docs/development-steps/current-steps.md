@@ -5,6 +5,33 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-21 (2026-11-05, new session) — 654 PLANNED, waits for the owner's yes** (`new-steps/654/`: `654-main.md`, `654-1` … `654-7`).
+The owner: «Продолжи разработку Fractera по current-steps.md ядра, блок NOW-20: спланируй шаг 654, разделение элементов внутри хранилищ
+(база, файлы, векторы, граф) для режима завода приложений». The plan in one line each: (1) each element's own key `ELEMENT_KEY = <id>.<HMAC
+of DATA_SECRET>` and its own database file; (2) storage: owner and visibility, a private file only on `?private=1` — the memory's files
+stop leaking through every public route at once; (3) vectors: the element's own collections; (4) graph: the element's own space, the node by
+`DATA_SECRET`, `SETTINGS_SECRET` no longer opens it; (5) the memory door: the space is the caller's key; (6) the installer, the custom
+template and root on their own key only, proven with a real second element; (7) the pages and words. **Asked of the owner (the window):**
+D2 the scope (the memory family's key `DATA_SECRET` leaves custom elements; `SETTINGS_SECRET` → step 655), D3 both node types, the
+temporary second element for 654-6, `CLAUDE.md` and skills lines. **Next:** his answers verbatim into `654-main.md` §9, then 654-1.
+**Measured now on the owner's node (read-only, keys never printed; scripts in this session's scratchpad `654/`):**
+- **A private file of the memory is public on the internet.** Every template-born element has the public route `/api/media/<id>/file`
+  (`proxy.ts` opens it for page images) that streams ANY stored file with the shared `DATA_SECRET`: the memory's `anna-650.txt` (space
+  `root`) → 200, 97 bytes on loopback through root and blocks, and **200 through the temporary address
+  `https://around-come-cameras-addition.trycloudflare.com/api/media/<id>/file` with no session**; an unknown id → 404. The ids are not
+  secret to an element: storage `GET /media` with the shared key lists all 4 records (no owner column: `id,name,title,description,url,…`).
+- With the shared keys: graph `space: memory-root` → 200 `found: true` (6 entities); vectors search WITHOUT `collection` → the memory's
+  `memory-said--root`, `memory-objects--root`; the shared database holds 7 tables (`a2a_log`, `a2a_pinned`, `deploy_runs`,
+  `messages_that_came_into_memory` 13 rows, `…__links` 9, `…__registry` 0, `panel_settings`) — no table of root.
+- **The custom template's own store helpers:** `lib/db/index.ts` (when `REMOTE_DATA_URL` is set) runs its `SCHEMA` (`products`,
+  `site_settings`, `development_steps`, `tgdesk_*`, `fact_*`, `task_current`) and `DROP_LEGACY` (~60 `DROP TABLE IF EXISTS`) in the ONE
+  shared database — two custom elements would share one `products` table; nobody imports `@/lib/db` in the template yet (lazy, so no
+  tables on the node). `lib/fractera/knowledge.ts` (the graph helper) calls data `/service/rag/*` → **503 «did not answer: Failed to parse
+  URL from /query»** — the template has no working way to the graph element (`/api/graph-insert|query`, `X-Node-Key`).
+- The installer (`scripts/services-install.mjs` `sharedSecret`) writes every `# kind: secret` variable as the node's one value; every
+  element's `.env.example` (custom and all natives) declares `DATA_SECRET` and `SETTINGS_SECRET`; the live node is `nodeType: project`
+  with one custom element (root) and stripe off.
+
 **NOW-20 (2026-11-05, late) — HANDOFF to a new context window. Read this block first.** The owner, verbatim: «Ты дал мне четыре ссылки
 на элементы памяти но ведь это не полный список? Например здесь отсутствует объектное хранилище которое используется в глубинной памяти»;
 then: «почему ты проверяешь связь только с глубинной памятью? Мы с тобой говорили что в режиме завод приложений например все эти элементы
