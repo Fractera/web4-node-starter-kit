@@ -1,4 +1,4 @@
-# 657 — the core's left menu: a compact mode by default (Telegram first) and a full one; three shortcuts in «Основное» (plan)
+# 657 — the core's left menu: a compact mode by default (Telegram first) and a full one; three shortcuts in «Основное» (plan, approved 2026-11-05)
 
 ## 1. Retelling and decisions
 
@@ -18,7 +18,7 @@ today). Compact: no «Нативные элементы» zone and none of its e
 at the menu's first level, each by its name only, opening its «Живой сайт»; no «Создать кастомный элемент» button; no «Главный агент».
 Both modes: «Подписка Claude Code» and «Терминал» above «Главный Telegram-бот», «OpenAI API key» below it.
 
-- **D1 (mine, for the owner):** the mode is the node's — one per node, `data/node/menu.json`, compact when there is no file; the door
+- **D1 (decided by the owner, §9):** the mode is the node's — one per node, `data/node/menu.json`, compact when there is no file; the door
   `GET/POST /api/node/menu-mode` (roles architect/admin, the same gate as `/api/node/type`) writes it and redraws the layer. The architect
   sees the same menu on the computer and on the phone.
 - **D2 (mine):** the «Настройка» row is the first row of «Основное» — two buttons «Компактная · Полная», the current one marked; on the
@@ -29,7 +29,7 @@ Both modes: «Подписка Claude Code» and «Терминал» above «Г
   `/architect/build/terminal`, `/architect/build/environment#OPENAI_API_KEY` (the environment page already scrolls to a row named in the
   address and outlines it — 318-2). In the full mode the «you are here» mark stands in one place only (the tree's item), never two.
 - **I assume that** «прокрутит вниз до области ввода ключа Telegram» means the OpenAI key field: the button is «OpenAI API key», and the
-  environment page has no Telegram key (the bot's token is entered on «Главный Telegram-бот») — asked in the window.
+  environment page has no Telegram key (the bot's token is entered on «Главный Telegram-бот») — confirmed by the owner (§9).
 
 ## 2. What is reused (paths that open)
 
@@ -73,4 +73,5 @@ owner's word).
 
 ## 9. The owner's approval
 
-(waiting)
+2026-11-05, in the choice window, verbatim: the plan — «Да, начинай 657 сейчас (Рекомендую)»; where the mode lives — «Один на весь узел
+(Рекомендую)»; the OpenAI button — «До поля ключа OpenAI (Рекомендую)».
