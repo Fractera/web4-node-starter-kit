@@ -5,12 +5,13 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-16 (2026-11-05) — 652 in delivery: the two findings of 651.** The owner, verbatim: «to do 1 and 2 , after we going to speach
-about 650». 652-1: `check-i18n` listed two dictionaries of the removed `(protectedLayer)` — gone; the seven `components/node-state`
-dictionaries added (three one-line types written out, the guard reads only the multi-line form); negative control `ru.even` removed →
-«не хватает: ru.even». 652-2: `/api/node/place` refused even GET on the temporary address (403 in the console) — reading allowed, the
-write lock kept, the widget's choice disabled there. **Next:** push, fork fast-forward, `node:update`, eyes on the temporary address;
-then step 650 is talked over with the owner.
+**NOW-16 (2026-11-05) — 652 CLOSED** (`completed-steps/652-main.md`, core `f7d39614`, `9fd0c437`): `check-i18n` green and sees the
+node-state dictionaries; no 403 in the panel's console on the temporary address (`/api/node/place` reads, `/api/node/attention` answers
+«nothing waits»); root v3.0.22 released, reverted (`838b378`), pinned nowhere. **Now:** step 650 talked over with the owner — the
+proposal (not decided): working processes of an integrator element by the element's OpenAI key → the node's key → the person's own
+Claude login (Pro/Max or a Team seat) → no answer, never the architect's login; a person boundary in the deep memory (today one memory,
+«ИСТОЧНИК НЕ ФИЛЬТРУЕТ ПОИСК», the owner 2026-09-16); the memory's Claude backup off for integrator elements. **Owed:** a shell change
+cannot ride with its core copy through `node:update`.
 
 **NOW-15 (2026-11-05 ~10:30 UTC) — 651 CLOSED** (`completed-steps/651-main.md`, core `6d2e46ea`): the banner keeps a quiet line
 «Узел совпадает с оригиналом на <mark>» with its buttons; the tunnel watchdog gives a newborn name 10 minutes and asks public DNS before
