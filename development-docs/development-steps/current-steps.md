@@ -10,6 +10,10 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   `660-main.md`, `661-main.md`, written 2026-11-06 from the evidence in NOW-21; their plans deleted in the same commit). Node now at
   `ядро 43f6093a`; final pins: root v3.0.27, custom v0.3.162, native v0.1.42, auth v2.4.16, data v2.2.9, storage v1.1.29, vectors
   v1.2.12, embeddings v0.1.10, config v1.2.24, design v1.1.24, graph v1.2.11, cache v0.1.21, memory v2.2.29, stripe v1.3.19, blocks v1.4.22.
+- **NEXT (2026-11-06 evening): the owner deletes the test node on this computer and installs from a clean slate** (his words: «могу удалить
+  весь проект и проверить установку с чистого листа? А потом продолжить при необходимости»). Everything is on Fractera: core `c83f948c`,
+  every element at its pinned tag (659–664 closed, 662-7 with the Claude figure animation). In a new session: read this block, then follow
+  his report of the clean install (launch steps, the memory check of 663-7, the landings, the animation, «Все проекты» tabs).
 - **The owner, 2026-11-06, verbatim (on the CLAUDE.md §3 line «Stores are on by default, except Redis» vs 619):** «as default turn of
   both Stripe + Redis» → step 664: cache (Redis) off by default like Stripe — its passport `power.default: off` with a reason, its
   landing and README, the native template's words, `CLAUDE.md` §3 (resealed by this word), skill `element-power`. **664 CLOSED** (`completed-steps/664.md`):
