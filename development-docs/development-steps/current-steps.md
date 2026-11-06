@@ -10,6 +10,12 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   `660-main.md`, `661-main.md`, written 2026-11-06 from the evidence in NOW-21; their plans deleted in the same commit). Node now at
   `ядро 43f6093a`; final pins: root v3.0.27, custom v0.3.162, native v0.1.42, auth v2.4.16, data v2.2.9, storage v1.1.29, vectors
   v1.2.12, embeddings v0.1.10, config v1.2.24, design v1.1.24, graph v1.2.11, cache v0.1.21, memory v2.2.29, stripe v1.3.19, blocks v1.4.22.
+- **662-7 IN PROGRESS (2026-11-06, the owner: «go» on «Blocks formats into Design» + «this sections not have full wight … regenerate image
+  like this»):** built and committed to `main` of the 13 landing repos WITHOUT tags (the starter's pins unchanged): `BuilderWide` (text +
+  `builder-art.tsx`, an exploded isometric SVG from `~/fractera-dev/_tools/662/make-builder-art.py`), `FaqWide` (2 columns, FAQPage JSON-LD),
+  `CreditsWide` (GitHub button) via `_tools/662/patch-widget-2.mjs`; self-titled lone blocks skip the section H2; Design: block-cards/card/
+  flow/metrics copied from graph + registry, data: numbers, flow in «tool», «parts» cards. tsc 0 in all; lab shots OK (vectors builder/faq/
+  credits, design numbers/tool/parts, console 0). **Next:** prebuild all → tags → CI (ubuntu+windows) → core pins → done (no node needed).
 - **663 CLOSED** (`completed-steps/663-main.md`; plans deleted). **The owner, 2026-11-06, verbatim:** «Я тебе что сказал чтоб мне на
   компьютере нужны эти папки? Я сейчас делаю стартовую сборку проекта для того чтобы передать её другим пользователем а на этом
   компьютере я все удалю через полчаса как только ты закончишь» — the local node is a test machine being retired; nothing local is
