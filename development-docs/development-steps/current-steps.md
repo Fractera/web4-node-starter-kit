@@ -12,8 +12,13 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   v1.2.12, embeddings v0.1.10, config v1.2.24, design v1.1.24, graph v1.2.11, cache v0.1.21, memory v2.2.29, stripe v1.3.19, blocks v1.4.22.
 - **662 APPROVED** — the owner: «Да пожалуйста ещё сделай лейбл в качестве отдельного раздела является ли этот элемент по умолчанию
   включён, или выключен …» (the power label joins 662-2 as a shared landing section, fed by the passport field of 663-1). Plan
-  `new-steps/662/662-main.md`. **Next action: 662-1** — measure how the top menu is built in the core, root, both templates and each
-  element; why «Платежи Stripe» in the top menu opens the architect page (Stripe is off by the node — likely the cause, or the 307 path).
+  `new-steps/662/662-main.md`. **662-1 MEASURED (2026-11-06), plan `new-steps/662/662-1.md`:** on the owner's node no element's header
+  has a menu at all (logo + «Личный кабинет»); the core's header has the catalog. Causes: (1) no own domain → the core writes `href: null`
+  in every card and elements keep only public `href` → no tab, ever, on this node; (2) the catalog for CONFIG counts only elements that
+  answered at the push — 12/8/12/7 cards across the last `node:update` pushes; (3) CONFIG's subscribers lack root, design, graph, cache,
+  memory, stripe (they start while CONFIG restarts, subscribe once, no retries), blocks sits on the trial port 25679, deleted djlgb still
+  there. Stripe's item → `/ru/architect/stripe` by 632-1 (an off element has no site). **Next:** the owner's choice for an off element's
+  item (asked), then build 662-1.
 - **663 PLANNED with the owner's decisions** (`new-steps/663/663-main.md`): the passport `power: { default, switch: never|manual|auto,
   wakeOnCall }`; `npm run load`; free > 1 GB — nothing, 1–0.5 GB — a proposal and the owner's yes, < 0.5 GB — `auto` off by itself with a
   message (the owner: «if free memory is more then 1gb - с сообщением ваm if less 0.5 gb = auto»); waking 2 minutes before a calendar
