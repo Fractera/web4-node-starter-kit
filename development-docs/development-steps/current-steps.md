@@ -42,7 +42,7 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   compared with the PINNED tag's `components/shell` (`git ls-tree`/`git show`, fetching the tag by the pin's repo); own work over a tag
   or no tag → the installed folder, as before. Proven on the node's real root folder (scratchpad `662/guard`): pin v3.0.28 + the new
   kit → `===SHELL_KITS_OK===`; the old kit → FAILED (negative); pin v3.0.27 + the new kit → FAILED (negative, the old path).
-  Then a second «Sync fork» → `node:update`. **Next:** scratchpad `662/header.cjs`
+  The owner, verbatim: «sync ok» — the second `node:update` STARTED. **Next:** scratchpad `662/header.cjs`
   over the core and all 12 running elements (expected: «Все проекты» with 13 cards; Stripe marked «выключен» for the architect);
   CONFIG's `subscribers.json` names every element on its own port; then 662-1's summary and 662-2. Found, not in 662-1: CONFIG has no
   `unsubscribe` — a deleted element (djlgb) stays a dead subscriber.
