@@ -42,7 +42,9 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   later» — description, homepage, topics on the 15 repos; (2) «ты неправильно в каждом репозитории построил верхнее меню. Тебе было дано
   задание построить верхнее меню такой же как на странице архитектора в которой состоит из двух разделов нативные элементы и кастомные
   элементы … возможно ты просто сделаешь функцию который выполнитсяа потом удалишь её?» → 662-5: the element header — two tabs «Нативные
-  элементы» / «Кастомные элементы» like the core's, one patch over 15 repos by a throwaway script. Not done of the owner's list: «formats of Blocks moved into
+  элементы» / «Кастомные элементы» like the core's, one patch over 15 repos by a throwaway script. **Done:** GitHub — description, homepage https://<element>.fractera.ai
+  (root → root.fractera.ai until fractera.ai), topics on all 15 (memory kept its 13 + 7 = 20, GitHub's limit). 662-5 released (auth v2.4.19 …
+  vectors v1.2.15, lab: two tabs, Stripe marked), CI green, pinned. **Next:** «Sync fork» → `node:update` → eyes (662-2/3/4/5) → 663 plan. Not done of the owner's list: «formats of Blocks moved into
   Design» (Design got the tool section and FAQ only). Was — the shared landing sections (`faq`, `builder`, `tool`, the power label, the stores' backup line):
   measure the landing widget of the templates first, then its plan file `662-2.md`.
 - **663 PLANNED with the owner's decisions** (`new-steps/663/663-main.md`): the passport `power: { default, switch: never|manual|auto,
