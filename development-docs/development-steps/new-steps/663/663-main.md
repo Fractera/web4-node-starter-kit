@@ -17,6 +17,10 @@ below 0.5 GB — an `auto` element is turned off by itself, with a message. «go
 (Рекомендую)» (never: auth, data, root, storage; manual: stripe; auto + wake on call: embeddings, graph, memory, vectors, cache, config,
 design, blocks, every custom element); the watchers — «Включить в 663 (Рекомендую)» (one shared health watcher instead of one per element).
 
+**The owner, 2026-11-06, added (verbatim in `663-7.md`):** «… компьютер у которого 4 ГБ оперативной памяти прямо на таком компьютере
+лучше даже не начинать установку … шесть или 8 ГБ нужно предупредить … Если это сделать невозможно то лучше прервать установку … 16 ГБ …
+если её меньше 3 ГБ то порекомендовать … ограничить … Это все в рамках этого же задания добавляет в план».
+
 ## 2. Measured (2026-11-06, the owner's Mac 16 GB, `ядро 35c3f965`)
 - Available 5485 MB (`lib/free-memory.cjs`, macOS free + inactive + speculative). The node: **2054 MB in 28 processes** (`pm2 jlist`):
   the core 164, 13 elements 72–121 MB each, **13 health watchers ~51 MB each (~660 MB, a third of the node)**, the tunnel 51.
@@ -49,8 +53,9 @@ design, blocks, every custom element); the watchers — «Включить в 66
 | 4 | waking: the calendar 2 minutes ahead and the gatekeeper on a call | `663-4.md` |
 | 5 | the words: skill `element-power`, `CLAUDE.md` lines (the owner's word) | `663-5.md` |
 | 6 | one shared health watcher instead of 13 | `663-6.md` |
+| 7 | the installer weighs the computer: < 6 GB refuse, 6–12 GB ask to close apps, ≥ 12 GB warn below 3 GB free | `663-7.md` |
 
-Order: 6 → 1 → 2 → 3 → 4 → 5 (the watcher first: the gatekeeper and the rule must know which processes exist). Repositories: the core
+Order: 6 → 7 → 1 → 2 → 3 → 4 → 5 (the watcher first: the gatekeeper and the rule must know which processes exist). Repositories: the core
 (`Fractera/web4-node-starter-kit`, main) for 2–6; the 15 element repositories for 1; one delivery — one «Sync fork».
 
 ## 5. How it is proven (named in advance)

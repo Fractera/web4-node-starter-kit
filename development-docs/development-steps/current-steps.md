@@ -10,48 +10,18 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   `660-main.md`, `661-main.md`, written 2026-11-06 from the evidence in NOW-21; their plans deleted in the same commit). Node now at
   `ядро 43f6093a`; final pins: root v3.0.27, custom v0.3.162, native v0.1.42, auth v2.4.16, data v2.2.9, storage v1.1.29, vectors
   v1.2.12, embeddings v0.1.10, config v1.2.24, design v1.1.24, graph v1.2.11, cache v0.1.21, memory v2.2.29, stripe v1.3.19, blocks v1.4.22.
-- **662 APPROVED** — the owner: «Да пожалуйста ещё сделай лейбл в качестве отдельного раздела является ли этот элемент по умолчанию
-  включён, или выключен …» (the power label joins 662-2 as a shared landing section, fed by the passport field of 663-1). Plan
-  `new-steps/662/662-main.md`. **662-1 CLOSED** (`completed-steps/662-1.md`; the owner's choice «Метка + включение»): on the node
-  (`ядро 84d6839a`, after four «Sync fork») every element's header has «Все проекты» — guest 12 cards, the architect 13 with «Платежи
-  Stripe ВЫКЛЮЧЕН» → its switch `…/stripe/settings/danger-zone`; CONFIG's subscribers — every element on its own port. A birth proven by
-  the owner: «success!» (his new element's card appeared). Open: CONFIG has no `unsubscribe`
-  (djlgb stays a dead subscriber). The owner asked (2026-11-06) for a checklist of 662 — given: 662-1 done, 662-2, 662-3, 662-4, 663
-  not started. **The owner, 2026-11-06, verbatim:** «Пожалуйста сгруппировать по несколько задач за раз. Я сейчас протестирую рождение нового
-  элемента и проверю появилась кнопка или нет» → 662-2, 662-3 and 662-4 built together, one release per repository, one «Sync fork».
-  **The owner, 2026-11-06, the window, verbatim: «Go, всё одной доставкой (Рекомендую)»** — 662-2/3/4 approved as one delivery
-  (block-faq on every landing, the builder section, the power label, the stores' backup line; auth, data, embeddings, graph, design,
-  CONFIG, blocks words; root's carousel). Measured: landings are catalogue blocks in `_data/<lang>.json`, `block-faq` already in every
-  element's `components/blocks`. **BUILT, uncommitted (2026-11-06), tools `~/fractera-dev/_tools/662/`:** `patch-widget.mjs` — every
-  landing widget's Generic draws catalogue blocks through `renderBlocks` (block-faq, block-flow), `builder` → the Agent view (13 repos);
-  `content.mjs` + `add-sections.mjs` — power (after route), tool (design, config: after solves, link to /<lang>/architect/colors|basics),
-  extras (auth «guests», embeddings «compare» table vs text-embedding-3-small from OpenAI's guide, graph «heart» + block-flow of a
-  search from arXiv 2410.05779), builder + FAQ (+ backup Q for data, storage, vectors, graph, memory) before credits — in 13 landings;
-  blocks — `landing-hero.tsx` (split hero + steps card), builder and power cards in `body.i18n.ts`; root — the carousel in
-  `root-prompt.client.tsx` (3 s, held/text/deselected/reduced-motion pause, arrows `prev`/`next` words in `_data`). tsc 0 in blocks and
-  root. **Lab proven** (`next dev`, scratchpad `662/lab.sh`, `eyes-landing.cjs`): all 13 landings, blocks and root —
-  en/ru, light, dark, 390, console 0, no overflow, the new sections in place (one FAQ heading — Generic skips its H2 for a lone
-  block-faq); root's carousel (`662/carousel.cjs`, 1440 and 390): swarm → 3.5 s fullstack → 6.7 s factory; held 4.5 s → stays;
-  next/prev; the card in view. Found and fixed on the way: FAQ must close the page (the custom template's guard) → FAQ last everywhere;
-  releasing a held card was a click that deselected it; a «visible» check mid-scroll. **Released:** auth `ad8566b` v2.4.18, blocks
-  `cf8f06d` v1.4.24, config `2d06813` v1.2.27, custom `ab4775e` v0.3.164, data `505fee4` v2.2.11, design `bb64502` v1.1.26, embeddings
-  `6cca141` v0.1.12, graph `7f69863` v1.2.13, memory `29a5931` v2.2.31, native `86a6d03` v0.1.44, cache `c5aa3a8` v0.1.23, root
-  `0e80ddc` v3.0.29, storage `f647287` v1.1.31, stripe `224373d` v1.3.21, vectors `2e1e85c` v1.2.14. **CI three-os green on all 15** (auth 42231633579 … vectors 42231731494); pinned. The owner: «sync ok» → `node:update` running; then «go to 663 after check» (2026-11-06, verbatim).
-  `node:update` → `===NODE_UPDATE_DONE=== 7 изменений форка, ядро 35c3f965` (662-2/3/4 on the node; eyes owed). **The owner, 2026-11-06,
-  verbatim:** (1) GitHub repos «to do itnow , for domain you must use <element>.fractera.ai just now, but replay to fractera.ai will today
-  later» — description, homepage, topics on the 15 repos; (2) «ты неправильно в каждом репозитории построил верхнее меню. Тебе было дано
-  задание построить верхнее меню такой же как на странице архитектора в которой состоит из двух разделов нативные элементы и кастомные
-  элементы … возможно ты просто сделаешь функцию который выполнитсяа потом удалишь её?» → 662-5: the element header — two tabs «Нативные
-  элементы» / «Кастомные элементы» like the core's, one patch over 15 repos by a throwaway script. **Done:** GitHub — description, homepage https://<element>.fractera.ai
-  (root → root.fractera.ai until fractera.ai), topics on all 15 (memory kept its 13 + 7 = 20, GitHub's limit). 662-5 released (auth v2.4.19 …
-  vectors v1.2.15, lab: two tabs, Stripe marked), CI green, pinned. **Next:** «Sync fork» → `node:update` → eyes (662-2/3/4/5) → 663 plan. Not done of the owner's list: «formats of Blocks moved into
-  Design» (Design got the tool section and FAQ only). Was — the shared landing sections (`faq`, `builder`, `tool`, the power label, the stores' backup line):
-  measure the landing widget of the templates first, then its plan file `662-2.md`.
+- **662 CLOSED** (`completed-steps/662-1.md`, `662-main.md`; plans deleted): on the owner's node (`ядро 9d8c5b93`) every element's header has
+  the core's two tabs, Stripe marked off → its switch (architect only); every landing has the power label, «your own builder», FAQ last
+  (+ backups for the stores), the per-element sections; blocks' first screen; root's carousel — eyes and timer tests green. GitHub
+  descriptions/homepages <element>.fractera.ai/topics on all 15 (root → fractera.ai later today, the owner's word). Open: «Blocks formats
+  into Design» not done.
 - **663 PLANNED in full** (`new-steps/663/663-main.md`, `663-1.md` … `663-6.md`; measured 2026-11-06: available 5485 MB, the node 2054 MB
   in 28 processes, 13 health watchers ~51 MB each ≈ 660 MB; an element's clock ticks inside its own server — asleep, no calendar; calls
   go straight to the port). **The owner, 2026-11-06, the window, verbatim:** waking — «Привратник (Рекомендую)»; classes — «Да, так
   (Рекомендую)» (never: auth, data, root, storage; manual: stripe; auto + wake on call: embeddings, graph, memory, vectors, cache, config,
-  design, blocks, custom); watchers — «Включить в 663 (Рекомендую)». Earlier: «go to 663 after check». Order 6 → 1 → 2 → 3 → 4 → 5.
+  design, blocks, custom); watchers — «Включить в 663 (Рекомендую)». Earlier: «go to 663 after check». Order 6 → 7 → 1 → 2 → 3 → 4 → 5. **663-7 added by the owner (2026-11-06):** the installer refuses < 6 GB, asks to close the browser and
+  apps on 6–8 GB (abort if impossible), warns on 16 GB when < 3 GB free — `launch.mjs` step 1, `===LAUNCH_ASK===` (the instruction's
+  install block, his word).
 - **Open findings for the owner:** `CLAUDE.md` §3 «Stores are on by default, except Redis» contradicts step 619 (every native on except
   Stripe) — sealed, needs his word; the soul is 1392 words now (the owner asked for lighter; the identity lines added ~120); root does not
   carry the template's `widget-static-custom-landing` (its home is the agent's screen — by design).
