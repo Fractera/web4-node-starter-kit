@@ -10,8 +10,9 @@
 // Поэтому каждый этап, который уже сделан, пропускается по своей метке в `logs/launch.json`, и повторный `npm run launch`
 // продолжает с места обрыва. Метка пишется только после успеха этапа: оборванная установка или сборка повторяется целиком.
 //
-// 🔒 НИЧЕГО НЕ СПРАШИВАЕТ. Отказ (облачная сессия, второй узел, не форк) печатает причину своим маркером и `===LAUNCH_FAILED===`;
-// агент показывает человеку эту причину, а не придумывает шаги.
+// 🔒 НИЧЕГО НЕ СПРАШИВАЕТ — кроме одного: памяти 5–12 ГБ (663-7) — `===LAUNCH_ASK===`, закрыть ли браузер и другие приложения.
+// Отказ (облачная сессия, второй узел, не форк, память меньше 5 ГБ) печатает причину своим маркером и `===LAUNCH_FAILED===`; агент
+// показывает человеку эту причину, а не придумывает шаги.
 import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
@@ -112,6 +113,16 @@ console.log('Если команда оборвалась по таймауту 
 step(1, 'это компьютер человека и на нём нет другого узла', 'local computer, no other node')
 progress('local')
 if (!node('check-local.mjs')) fail('check-local')
+// 663-7 (владелец 2026-11-06: «4 ГБ … лучше даже не начинать установку … шесть или 8 ГБ нужно предупредить … закрыть браузер … Если это
+// сделать невозможно то лучше прервать установку … 16 ГБ … меньше 3 ГБ … порекомендовать … ограничить»): память компьютера до всего
+// остального. Ответ человека «готово» (`--memory-ok`) запоминается в отметке запуска — повтор после обрыва не спрашивает снова.
+{
+  const ok = process.argv.includes('--memory-ok') || readStamp().memoryOk === true
+  if (process.argv.includes('--memory-ok')) writeStamp({ memoryOk: true })
+  const mem = spawnSync(process.execPath, [path.join(here, 'check-memory.mjs'), ...(ok ? ['--memory-ok'] : [])], { cwd: root, stdio: 'inherit', windowsHide: true })
+  if (mem.status === 2) process.exit(2) // ===LAUNCH_ASK=== напечатан: агент передаёт слова человеку и ждёт его одного слова
+  if (mem.status !== 0) fail('check-memory')
+}
 
 step(2, 'пакеты проекта (npm install, 1–2 минуты)', 'packages (npm install, 1–2 min)')
 progress('packages')

@@ -36,6 +36,16 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   design, blocks, custom); watchers — «Включить в 663 (Рекомендую)». Earlier: «go to 663 after check». Order 6 → 7 → 1 → 2 → 3 → 4 → 5. **663-7 added by the owner (2026-11-06):** the installer refuses < 6 GB, asks to close the browser and
   apps on 6–8 GB (abort if impossible), warns on 16 GB when < 3 GB free — `launch.mjs` step 1, `===LAUNCH_ASK===` (the instruction's
   install block, his word).
+  **663-6 BUILT and lab-proven (2026-11-06):** `scripts/health-watch.mjs` mode `FRACTERA_WATCH_SERVICE=*` (per-element counters, only pm2
+  `online` elements, skips one younger than the cooldown), `ecosystem.config.cjs` → one `fractera-elements-watch`,
+  `lib/web4-items/elements-watch.cjs` (`dropLegacyWatchers`, `ensureElementsWatch`) used by `serve.mjs` start, `services-install.mjs`
+  end, `element-power.mjs`, `item-birth.mjs`; per-element `-watch` names removed from preview/move/import/installer loops. Lab
+  (scratchpad `663/watchlab`, a pm2 element `fractera-svc-labx` answering 500 on a flag): healthy 8 s → no restart; sick → 3 failures →
+  restart, healthy again; stopped → not touched (negative control). **663-7 BUILT and lab-proven:** `scripts/check-memory.mjs` (step 1 of
+  `launch.mjs`; `LIMITS` in `lib/free-memory.cjs`): 4096 → exit 1 `===MEMORY_FAILED===`; 8192 → exit 2 `===LAUNCH_ASK===`; 8192
+  `--memory-ok` → OK (stamped `memoryOk` in `logs/launch.json`); 16384 free 2500 → the warning + OK; 16384 free 6000 → OK silently; the
+  real Mac → OK. `CLAUDE.md` install block: «one question at most», `===LAUNCH_ASK===` handling — resealed by the owner's word
+  («нужно куда-то в инструкцию добавить проверку»), `===INSTRUCTION_OK===`, `===SOUL_OK===`.
 - **Open findings for the owner:** `CLAUDE.md` §3 «Stores are on by default, except Redis» contradicts step 619 (every native on except
   Stripe) — sealed, needs his word; the soul is 1392 words now (the owner asked for lighter; the identity lines added ~120); root does not
   carry the template's `widget-static-custom-landing` (its home is the agent's screen — by design).

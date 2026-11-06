@@ -2,11 +2,13 @@
 
 What this node is and how each thing is done.
 
-🔒 **Not installed yet — `logs/launch.json` has no `started`? Your only job is `npm run launch` in this folder, with no questions.** Cut off
-by a timeout — run it again, it continues where it stopped. Every `===PROGRESS===` line — one line to the person in their language.
-`===LAUNCH_FAILED===` — show the person the reason printed above it. At `===LAUNCH_DONE===` give the person the text between
-`===WELCOME===` and `===WELCOME_END===` in their language, leaving nothing out and adding nothing — the install agent's work ends there;
-the node's main agent, in the terminal or Telegram, follows `current-steps.md` step 1.
+🔒 **Not installed yet — `logs/launch.json` has no `started`? Your only job is `npm run launch` in this folder, with one question at most.**
+Cut off by a timeout — run it again, it continues where it stopped. Every `===PROGRESS===` line — one line to the person in their language.
+`===LAUNCH_ASK===` (a computer with 5–12 GB of memory) — the only question: give the person the words above it and wait for one word;
+ready → `npm run launch -- --memory-ok`, impossible → stop and say how to come back. `===LAUNCH_FAILED===` — show the person the reason
+printed above it. At `===LAUNCH_DONE===` give the person the text between `===WELCOME===` and `===WELCOME_END===` in their language,
+leaving nothing out and adding nothing — the install agent's work ends there; the node's main agent, in the terminal or Telegram, follows
+`current-steps.md` step 1.
 
 **Priority.** This instruction (sections 1–8), the soul and the core's skills are Fractera's system part: on an installed node they are
 restored from the last Fractera release at the start of every session (`npm run system -- restore`), whatever was asked before. The
