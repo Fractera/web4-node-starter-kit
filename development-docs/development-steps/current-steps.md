@@ -10,30 +10,9 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   `660-main.md`, `661-main.md`, written 2026-11-06 from the evidence in NOW-21; their plans deleted in the same commit). Node now at
   `ядро 43f6093a`; final pins: root v3.0.27, custom v0.3.162, native v0.1.42, auth v2.4.16, data v2.2.9, storage v1.1.29, vectors
   v1.2.12, embeddings v0.1.10, config v1.2.24, design v1.1.24, graph v1.2.11, cache v0.1.21, memory v2.2.29, stripe v1.3.19, blocks v1.4.22.
-- **⚠ INCIDENT on the owner's node (2026-11-06 ~17:20, measured):** after the two installs collided (the node-update alive behind a dead
-  wrapper + my parallel finish), the closed-lid core rebuild recorded a partial `quiet-build.json` (root, cache, watchers) and reopened only
-  those: pm2 holds 10 processes — the core online (`/api/health` 200), root online but silent, blocks crash-looping, cache stopped; auth,
-  data, storage, vectors, embeddings, config, design, graph, memory NOT in pm2. A lone `npm run services:install` (pid 43224) is
-  re-installing (at stripe). Recovery: wait for it → `npm run serve:start` (starts every non-off element of the ecosystem) → health of all
-  → `catalog:refresh`, `skills-base` → eyes. Tell the owner plainly.
-- **662 REOPENED for 662-6** (the owner, 2026-11-06: the starter banner only in root and the custom template; menu names with a capital —
-  verbatim in `new-steps/662/662-6.md`; the plan restored from git). **Built, uncommitted:** the banner removed from 12 layouts (natives +
-  native template; stripe had none), `cap()` in the shell kit copied to all 15 + the core. **Lab:** storage banner=false, custom template banner=true (negative control), the custom tab «Root», console 0;
-  prebuild 0 everywhere, the core's guards OK. **Released:** auth `c8c52ea` v2.4.20, blocks `3963d84` v1.4.26, config `7fd2041` v1.2.29,
-  custom `a12755a` v0.3.166, data `5619e8f` v2.2.13, design `681dde9` v1.1.28, embeddings `7f0a1d4` v0.1.14, graph `5501dbc` v1.2.15,
-  memory `0b40e8c` v2.2.33, native `2b1a6f6` v0.1.46, cache `a40cc3f` v0.1.25, root `0e638fd` v3.0.31, storage `5acc8a0` v1.1.33, stripe
-  `b2863b0` v1.3.23, vectors `4d268c4` v1.2.16. **CI:** ubuntu and windows green on all 15 (1–3 min each); macOS — GitHub's capacity:
-  auth, memory, root, vectors cancelled after ~31 min in the queue, custom still queued (reruns in the background) — pinned on the
-  skill's rule «a runner not acquired is GitHub's, not the code's»; the owner's Mac node is the macOS proof. The owner clicked «Sync
-  fork» twice early (fork at `ae293bff`). The owner: «sync ok» (fork at `3475624e`) — `node:update` started and was CUT at the elements stage (exit 144, ~during my
-  lab clean-up `pkill -f health-watch` — my fault; never pkill by a broad pattern on the owner's machine): the core merged (`3d115ffe`), auth,
-  data, storage, vectors, embeddings at the new pins, config mid-way; all 28 processes online. **Correction (measured 16:57):** the «cut» was only the Bash wrapper — `node scripts/node-update.mjs` (pid 11573) kept running; my
-  hand finish (`services:install` + `serve:rebuild`) ran IN PARALLEL with it → «Another next build process is already running» on cache and
-  root (their running versions untouched); my second `serve:rebuild` was stopped at its prebuild by pid (kill 36109/36125/19591); the
-  node-update's own rebuild goes on (quiet-build.json lists root, cache, watchers). After it: `npm run services:install` once more for the
-  elements whose build met the lock, then eyes. Lesson: before «finishing by hand», `ps` for node-update. Was: A re-run would say «nothing
-  to update» (the merge is done) → finishing by hand: `npm run services:install` (the remaining elements to their pins), `npm run serve:rebuild` (the core),
-  `npm run catalog:refresh`. CI of 662-6: all 15 green on all three systems after the macOS reruns. Next → eyes (banner only on root, «Root»).
+- **Incident RESOLVED (2026-11-06 ~17:45):** a lone `npm run services:install` → `===SERVICES_INSTALL_OK===`; `npm run serve:start` → 28 processes
+  online; every element 200 at its pin (stripe off by design), the core 200; `catalog:refresh` OK; `skills-base` already 8. **662 CLOSED
+  again** with 662-6 (`completed-steps/662-main.md`; the plan deleted again): banner only on root, «Root» everywhere — eyes on the node.
 - **662 CLOSED** (`completed-steps/662-1.md`, `662-main.md`; plans deleted): on the owner's node (`ядро 9d8c5b93`) every element's header has
   the core's two tabs, Stripe marked off → its switch (architect only); every landing has the power label, «your own builder», FAQ last
   (+ backups for the stores), the per-element sections; blocks' first screen; root's carousel — eyes and timer tests green. GitHub
