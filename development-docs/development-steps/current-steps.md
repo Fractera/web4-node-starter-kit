@@ -29,7 +29,14 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   search from arXiv 2410.05779), builder + FAQ (+ backup Q for data, storage, vectors, graph, memory) before credits — in 13 landings;
   blocks — `landing-hero.tsx` (split hero + steps card), builder and power cards in `body.i18n.ts`; root — the carousel in
   `root-prompt.client.tsx` (3 s, held/text/deselected/reduced-motion pause, arrows `prev`/`next` words in `_data`). tsc 0 in blocks and
-  root. **Next:** prebuild in all, lab eyes, release, CI, pins, «Sync fork». Not done of the owner's list: «formats of Blocks moved into
+  root. **Lab proven** (`next dev`, scratchpad `662/lab.sh`, `eyes-landing.cjs`): all 13 landings, blocks and root —
+  en/ru, light, dark, 390, console 0, no overflow, the new sections in place (one FAQ heading — Generic skips its H2 for a lone
+  block-faq); root's carousel (`662/carousel.cjs`, 1440 and 390): swarm → 3.5 s fullstack → 6.7 s factory; held 4.5 s → stays;
+  next/prev; the card in view. Found and fixed on the way: FAQ must close the page (the custom template's guard) → FAQ last everywhere;
+  releasing a held card was a click that deselected it; a «visible» check mid-scroll. **Released:** auth `ad8566b` v2.4.18, blocks
+  `cf8f06d` v1.4.24, config `2d06813` v1.2.27, custom `ab4775e` v0.3.164, data `505fee4` v2.2.11, design `bb64502` v1.1.26, embeddings
+  `6cca141` v0.1.12, graph `7f69863` v1.2.13, memory `29a5931` v2.2.31, native `86a6d03` v0.1.44, cache `c5aa3a8` v0.1.23, root
+  `0e80ddc` v3.0.29, storage `f647287` v1.1.31, stripe `224373d` v1.3.21, vectors `2e1e85c` v1.2.14. **Next:** CI → pins → «Sync fork». Not done of the owner's list: «formats of Blocks moved into
   Design» (Design got the tool section and FAQ only). Was — the shared landing sections (`faq`, `builder`, `tool`, the power label, the stores' backup line):
   measure the landing widget of the templates first, then its plan file `662-2.md`.
 - **663 PLANNED with the owner's decisions** (`new-steps/663/663-main.md`): the passport `power: { default, switch: never|manual|auto,
