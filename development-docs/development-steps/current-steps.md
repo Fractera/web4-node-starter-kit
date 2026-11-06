@@ -5,6 +5,9 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-30 — 667 and 668 CLOSED on the owner's node (core `79682d7f`): the theme blue everywhere again, the new figure live. Open: 666's bot
+path (his node has no Telegram bot yet).**
+
 **NOW-29 — 667 RELEASED (`completed-steps/667.md`), 13 repositories at their next patch, pinned with this commit; CI of the 13 checked
 before the push. NEXT: the owner syncs (668 + 667 in one sync) → `npm run node:update` → his node: blue again (668) and the figure (667).**
 
