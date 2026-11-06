@@ -5,6 +5,9 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-29 — 667 RELEASED (`completed-steps/667.md`), 13 repositories at their next patch, pinned with this commit; CI of the 13 checked
+before the push. NEXT: the owner syncs (668 + 667 in one sync) → `npm run node:update` → his node: blue again (668) and the figure (667).**
+
 **NOW-28 (2026-11-06, late night) — 668 RELEASED (`completed-steps/668.md`): the theme wiped to `{}` by the update's warm-ups.** «Дизайн»
 gets seeded with the project theme (site, else core) and wiped element files get it back (services-install 6а); warm-ups run without
 CONFIG/Design addresses. **NEXT:** the owner syncs → `npm run node:update` → his node blue again (eyes); then back to 667 (the figure).
