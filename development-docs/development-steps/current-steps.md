@@ -6,7 +6,7 @@ start of a long or irreversible operation (before it), a changed next action. Th
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
 **NOW-21 (2026-11-06, morning) — 654 CLOSED (`completed-steps/654-main.md`, 654-1 … 654-7; its plans deleted); 656, 657 and 658 CLOSED
-(`completed-steps/658-main.md`); 659 found and planned (the owner's «fix it») — its scope waits for his yes.** The owner, 2026-11-06, verbatim: «fix it | sync was
+(`completed-steps/658-main.md`); 659 APPROVED («Все 15 сейчас (Рекомендую)»), being built.** The owner, 2026-11-06, verbatim: «fix it | sync was
 complited» (on the two findings of 654-7) and «Да» на удаление djlgb (порт 24687) кнопкой «Удалить насовсем».= yyes»; the night before,
 ~19:10 UTC 2026-11-05: «go to finish non stop , not call me i sleep».
 - **Delivered:** the fork synced to `a250897d`; `npm run node:update` → `===NODE_UPDATE_DONE=== 5 изменений форка, ядро d9d48e05`: root
@@ -25,9 +25,24 @@ complited» (on the two findings of 654-7) and «Да» на удаление dj
   and `check-content`. Lab done (scratchpad `659/`): the guard `check-data-langs` → `===DATA_LANGS_OK===` in all ten cloned element
   repositories (after one decision — a key blank on its side may be absent on the other: `keywords: ""` only in en on five template
   pages); four negative controls on a copy of root's cards — «в en 6, здесь 5 — нет personal», an id, an emptied title, a block's
-  `kind` — each `===DATA_LANGS_FAILED===`, exit 1. **Before the first commit:** the scope named to the owner and his yes (skill
-  `release-template`).
-- **Next:** 659's scope to the owner (one question) → releases, CI, pins → his «Sync fork» → `node:update` → 659's proofs.
+  `kind` — each `===DATA_LANGS_FAILED===`, exit 1. **All fifteen repositories measured** (the five missing cloned: native template
+  v0.1.38, auth v2.4.13, config v1.2.22, design v1.1.22, cache v0.1.16 — the same `check-i18n`): the fixed list → `===I18N_OK===` in all
+  15; the guard → OK in 12, **FAILED in auth (1 file), config (2), design (2): only `bid` differs — ru's blocks carry other addresses
+  than en's**, against `check-block-ids`' own rule «у одного блока на разных языках один `bid`» (it applies it only on `--fix`, it never
+  compares) — the fix: ru's `bid` = en's at the same position and kind. Every repository has one `prebuild` anchor `check-content`, the
+  script `check:i18n` and the `use-languages` guards line; trees clean. **The owner, 2026-11-06, the window, verbatim: «Все 15 сейчас
+  (Рекомендую)»** — both templates, root and the twelve natives; ru's `bid` in auth, config, design aligned to en's.
+- **659 RELEASED** (scratchpad `659/apply.mjs` over each clone at its pinned tag; then `check-i18n` `===I18N_OK===` in all 15, the guard
+  and `check-block-ids` OK in all 15, the full `prebuild` exit 0 in the nine clones with dependencies, no other file changed): custom
+  template `35e2a94` v0.3.160, native template `5163e63` v0.1.39, root `4026bbd` v3.0.26, auth `3fc2ed0` v2.4.14 (8 ru bids), data
+  `45b376b` v2.2.7, storage `a2986f1` v1.1.27, vectors `0398a6f` v1.2.10, embeddings `6fe6f93` v0.1.8, config `244698d` v1.2.23 (26),
+  design `ac56ada` v1.1.23 (20), graph `f127d36` v1.2.9, cache `3bebb35` v0.1.17, memory `6738d44` v2.2.27, stripe `097696e` v1.3.17,
+  blocks `d7d52e1` v1.4.20. **CI three-os green on all 15** (custom 42135700768, native 42135709831, root 42135719535, auth
+  42135730084, data 42135740185, storage 42135748630, vectors 42135760581, embeddings 42135767554, config 42135777873, graph
+  42135799055, design 42135789502, cache 42135808794, memory 42135819072, stripe 42135827534, blocks 42135836952); the core pins them.
+  The node before the delivery (`~/fractera-dev/_tools/proof-659.mjs`): all 13 — `check-i18n` FAILED (6), no `check-data-langs`; health
+  200 except stripe — off by the node since 2026-11-05 («Turn it on after you enter your Stripe keys»).
+- **Next:** his «Sync fork» (he is asleep — waits) → `node:update` → `proof-659.mjs` → 659 closed. Meanwhile — step 660 (below).
 
 **NOW-20 (2026-11-05, late) — HANDOFF to a new context window. Read this block first.** The owner, verbatim: «Ты дал мне четыре ссылки
 на элементы памяти но ведь это не полный список? Например здесь отсутствует объектное хранилище которое используется в глубинной памяти»;

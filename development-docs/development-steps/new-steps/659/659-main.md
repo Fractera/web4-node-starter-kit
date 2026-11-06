@@ -73,3 +73,10 @@ delivery for both: the owner's «Sync fork» → `node:update` → the proofs.
 
 `check-i18n` in `prebuild` (D2); the count rule of `check-i18n` itself; the core's own pages (no `_data/<lang>.json` there — measured: 0
 files); translating the template's empty `keywords`.
+
+## 8. The owner's approval
+
+2026-11-06, in the choice window, verbatim: «Все 15 сейчас (Рекомендую)» — the question named the fifteen repositories, the six
+dictionaries out of `check-i18n`, `check-data-langs` in `prebuild`, ru's `bid` in auth, config and design aligned to en's (found by the
+lab: only `bid` differs there, against `check-block-ids`' own rule «у одного блока на разных языках один `bid`»), and thirteen elements
+rebuilt by `node:update`. Not chosen: templates and root now with the natives at their next release; the guard without `bid`.
