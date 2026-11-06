@@ -22,7 +22,15 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   **The owner, 2026-11-06, the window, verbatim: «Go, всё одной доставкой (Рекомендую)»** — 662-2/3/4 approved as one delivery
   (block-faq on every landing, the builder section, the power label, the stores' backup line; auth, data, embeddings, graph, design,
   CONFIG, blocks words; root's carousel). Measured: landings are catalogue blocks in `_data/<lang>.json`, `block-faq` already in every
-  element's `components/blocks`. **BUILDING** — the shared landing sections (`faq`, `builder`, `tool`, the power label, the stores' backup line):
+  element's `components/blocks`. **BUILT, uncommitted (2026-11-06), tools `~/fractera-dev/_tools/662/`:** `patch-widget.mjs` — every
+  landing widget's Generic draws catalogue blocks through `renderBlocks` (block-faq, block-flow), `builder` → the Agent view (13 repos);
+  `content.mjs` + `add-sections.mjs` — power (after route), tool (design, config: after solves, link to /<lang>/architect/colors|basics),
+  extras (auth «guests», embeddings «compare» table vs text-embedding-3-small from OpenAI's guide, graph «heart» + block-flow of a
+  search from arXiv 2410.05779), builder + FAQ (+ backup Q for data, storage, vectors, graph, memory) before credits — in 13 landings;
+  blocks — `landing-hero.tsx` (split hero + steps card), builder and power cards in `body.i18n.ts`; root — the carousel in
+  `root-prompt.client.tsx` (3 s, held/text/deselected/reduced-motion pause, arrows `prev`/`next` words in `_data`). tsc 0 in blocks and
+  root. **Next:** prebuild in all, lab eyes, release, CI, pins, «Sync fork». Not done of the owner's list: «formats of Blocks moved into
+  Design» (Design got the tool section and FAQ only). Was — the shared landing sections (`faq`, `builder`, `tool`, the power label, the stores' backup line):
   measure the landing widget of the templates first, then its plan file `662-2.md`.
 - **663 PLANNED with the owner's decisions** (`new-steps/663/663-main.md`): the passport `power: { default, switch: never|manual|auto,
   wakeOnCall }`; `npm run load`; free > 1 GB — nothing, 1–0.5 GB — a proposal and the owner's yes, < 0.5 GB — `auto` off by itself with a
