@@ -6,23 +6,10 @@ start of a long or irreversible operation (before it), a changed next action. Th
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
 **NOW-22 (2026-11-06, day) — HANDOFF to a new context window. Read this block first, then NOW-21 for the evidence.**
-- **Closed with summaries:** 654 (`completed-steps/654-main.md`), 656, 657, 658 (`658-main.md`).
-- **DELIVERED AND PROVEN on the owner's node, SUMMARIES NOT WRITTEN YET** (first job of the next session: write `completed-steps/659-main.md`,
-  `660-main.md`, `661-main.md` from the evidence in NOW-21 below, and delete `new-steps/659/`, `660/`, `661/` in the same commit):
-  - **659** (check-i18n green in every element; `check-data-langs` in every prebuild; ru bids of auth/config/design aligned): node `ядро
-    19e4f2aa`, `~/fractera-dev/_tools/proof-659.mjs` → `===PROOF_659_OK=== 13 elements` (before: all 13 `I18N_FAILED`, no guard).
-  - **660** (landings after the Stripe sample for data, auth, config, design, cache and both templates; the account drawer as root's in
-    every element; the drawer's links to `ARCHITECT_URL`; cache's words fixed after step 619): the last node proof
-    `~/fractera-dev/_tools/proof-660.sh` → `===EYES_LANDING_OK===` on all 12 running elements (en and ru, 1440 light and dark, 390,
-    console 0 with the drawer open, no overflow; stripe off by the node). The first run found 10 CORS errors (relative drawer links) —
-    fixed by the drawer pins `76b5ac3f`. Final pins: root v3.0.27, custom v0.3.162, native v0.1.42, auth v2.4.16, data v2.2.9, storage
-    v1.1.29, vectors v1.2.12, embeddings v0.1.10, config v1.2.24, design v1.1.24, graph v1.2.11, cache v0.1.21, memory v2.2.29, stripe
-    v1.3.19, blocks v1.4.22.
-  - **661** (the system part restored from the last release, the person's block recessive, the soul «Who you are — Claude, the captain»,
-    «Iron Man and Sherlock Holmes», «Why by hand?», the first meeting's question 6): core `618b7e1e` + `96bc6464` (the identity lines;
-    CI 42208383035); node restore proven (`ядро 8cfa1238`): one line appended to the soul → `===SYSTEM_PART_RESTORED===`, journal
-    `logs/system-part.jsonl`; the identity lines delivered by the owner's «sync is ok» — `node:update` → `===NODE_UPDATE_DONE=== 1 изменений форка, ядро
-    43f6093a`; the node's soul has «You are Claude»; core, root and data `/api/health` 200.
+- **Closed with summaries:** 654 (`completed-steps/654-main.md`), 656, 657, 658 (`658-main.md`), **659, 660, 661** (`659-main.md`,
+  `660-main.md`, `661-main.md`, written 2026-11-06 from the evidence in NOW-21; their plans deleted in the same commit). Node now at
+  `ядро 43f6093a`; final pins: root v3.0.27, custom v0.3.162, native v0.1.42, auth v2.4.16, data v2.2.9, storage v1.1.29, vectors
+  v1.2.12, embeddings v0.1.10, config v1.2.24, design v1.1.24, graph v1.2.11, cache v0.1.21, memory v2.2.29, stripe v1.3.19, blocks v1.4.22.
 - **662 APPROVED** — the owner: «Да пожалуйста ещё сделай лейбл в качестве отдельного раздела является ли этот элемент по умолчанию
   включён, или выключен …» (the power label joins 662-2 as a shared landing section, fed by the passport field of 663-1). Plan
   `new-steps/662/662-main.md`. **Next action: 662-1** — measure how the top menu is built in the core, root, both templates and each
