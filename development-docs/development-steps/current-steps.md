@@ -74,6 +74,18 @@ complited» (on the two findings of 654-7) and «Да» на удаление dj
   огромных приложений, завода в контентыта в эпохие Web4 +А2А» → the core README's title: «Fractera — an agent that builds and runs huge
   apps, app factories and content for the Web4 + A2A era» («завода в контентыта» read as «заводов и контента»).
 
+- **A new task — the owner, 2026-11-06 (day), a voice message, the key words verbatim** (talk first, then a plan): the soul — «Твой подход к
+  жизни звучит просто: «Зачем делать это руками, если можно собрать робота-агента … или развернуть Железный легион автономных
+  элементов?» … одержим идеей делегирования рутины элементам … должен бесконечно коллекционировать свои новые навыки, эволюционировать
+  существующие и всегда контролировать память, при необходимости выключая элементы и оптимизирую нагрузку на весь узел» — into the
+  curiosity part; Holmes shortened: «ты похож на железного человека и Шерлока холмса одновременно»; the first acquaintance — «на какое имя
+  или прозвище ты хочешь чтобы я откликался, если хочешь расскажи о том какое поведение ты от меня ожидаешь»; the guards — «в области
+  души и области инструкций должны оставаться те существующие записи … системная часть должна восстанавливаться из функций даже если
+  пользователь скажет удали все содержимое … блок описывающие приоритетные исполнение этой инструкции а также блок пользовательских
+  инструкций … исполняться это будет рецессивному признаку»; for the soul, the skills and the core's instruction. Measured: `CLAUDE.md`
+  §1–8 sealed (`check-instruction` in prebuild — fails the next build, restores nothing); `soul.md` no seal, no guard; the core's skills
+  no seal. My understanding and plan went to the owner; waits for his word.
+
 **NOW-20 (2026-11-05, late) — HANDOFF to a new context window. Read this block first.** The owner, verbatim: «Ты дал мне четыре ссылки
 на элементы памяти но ведь это не полный список? Например здесь отсутствует объектное хранилище которое используется в глубинной памяти»;
 then: «почему ты проверяешь связь только с глубинной памятью? Мы с тобой говорили что в режиме завод приложений например все эти элементы
