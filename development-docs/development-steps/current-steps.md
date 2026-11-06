@@ -10,24 +10,14 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   `660-main.md`, `661-main.md`, written 2026-11-06 from the evidence in NOW-21; their plans deleted in the same commit). Node now at
   `ядро 43f6093a`; final pins: root v3.0.27, custom v0.3.162, native v0.1.42, auth v2.4.16, data v2.2.9, storage v1.1.29, vectors
   v1.2.12, embeddings v0.1.10, config v1.2.24, design v1.1.24, graph v1.2.11, cache v0.1.21, memory v2.2.29, stripe v1.3.19, blocks v1.4.22.
-- **662-7 IN PROGRESS (2026-11-06, the owner: «go» on «Blocks formats into Design» + «this sections not have full wight … regenerate image
-  like this»):** built and committed to `main` of the 13 landing repos WITHOUT tags (the starter's pins unchanged): `BuilderWide` (text +
-  `builder-art.tsx`, an exploded isometric SVG from `~/fractera-dev/_tools/662/make-builder-art.py`), `FaqWide` (2 columns, FAQPage JSON-LD),
-  `CreditsWide` (GitHub button) via `_tools/662/patch-widget-2.mjs`; self-titled lone blocks skip the section H2; Design: block-cards/card/
-  flow/metrics copied from graph + registry, data: numbers, flow in «tool», «parts» cards. tsc 0 in all; lab shots OK (vectors builder/faq/
-  credits, design numbers/tool/parts, console 0). **Next:** prebuild all → tags → CI (ubuntu+windows) → core pins → done (no node needed).
-  **The owner, 2026-11-06, verbatim (three reference frames: a coral box figure with arms, legs, two eye slots, callouts A BODY, B LEGS,
-  C ARMS, D EYES, E MOUTH on a dark grid):** «to do animation for claude in image : … фигурка Claude сначала создается из отдельных
-  элементов потом разворачивается лицоМ к камере затем подпрыгивает с подпружиненным. Начинается это анимация с того что отдельные элементы
-  анимированы прилетают сразу сторон сделай вместо статических … такую анимацию которую должна прокручиваться в тот момент когда попадает в
-  фокус» → replace the static `builder-art.tsx` with a Claude figure (body, 2 arms, 4 legs, 2 eye slots) whose parts fly in from the sides,
-  assemble, turn to face the camera, then a springy jump; plays when the section enters the viewport (IntersectionObserver island, CSS
-  keyframes, reduced-motion → the final frame). **The owner's clarification, verbatim:** «эффектность для анимации должно быть просто
-  потрясающе это не просто так микро анимация анимация с хорошим качеством обрати внимание сначала прилетает элементы потом к каждому
-  элементу руки ноги головами отрисовываются линии и анимирована на них появляется текст затем все эти элементы соединяются в едино фигурка
-  становится целостной затем эта фигурка разворачивается лицом к камере приседает подпрыгивает продолжительность около 1 секунды» → a
-  CSS-3D figure (cuboids with hatched faces on a grid floor), WAAPI timeline: fly-in → callout lines drawn to each part with typed labels
-  → parts join → turn to camera → squat + jump (~1 s); built now, released with 662-7 in one wave.
+- **662-7 RELEASED (2026-11-06):** full-width builder / FAQ (two columns, FAQPage JSON-LD) / open source (GitHub button) on all 13
+  landings; the builder's picture = the Claude figure animation (`builder-figure.client.tsx` + `figure-parts.tsx`, sources in
+  `~/fractera-dev/_tools/662/figure/`): parts fly in → callout lines drawn with typed words (A КОРПУС, D ГЛАЗА, C РУКИ, B НОГИ, E РОТ ×0)
+  → parts join with a spring → turn to camera → crouch + jump (~1 s), on entering the viewport, the last frame for reduced motion.
+  Measured on the way: Chrome flattens a preserve-3d subtree whose opacity is animated (even held at 1) — no opacity on 3D nodes. Design:
+  block-cards/card/flow/metrics + numbers, a flow in «tool», «parts» cards. Lab frames 1440 and 390, console 0. Tags: auth v2.4.22,
+  config v1.2.31, custom v0.3.168, data v2.2.15, design v1.1.30, embeddings v0.1.16, graph v1.2.17, memory v2.2.35, native v0.1.48, cache
+  v0.1.27, storage v1.1.35, stripe v1.3.26 (v1.3.25 lacked widget ids — CI caught it), vectors v1.2.18; CI ubuntu+windows green; pinned.
 - **663 CLOSED** (`completed-steps/663-main.md`; plans deleted). **The owner, 2026-11-06, verbatim:** «Я тебе что сказал чтоб мне на
   компьютере нужны эти папки? Я сейчас делаю стартовую сборку проекта для того чтобы передать её другим пользователем а на этом
   компьютере я все удалю через полчаса как только ты закончишь» — the local node is a test machine being retired; nothing local is
