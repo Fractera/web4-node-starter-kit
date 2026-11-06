@@ -59,7 +59,13 @@ complited» (on the two findings of 654-7) and «Да» на удаление dj
   `181116d` v1.3.18, blocks `d70d4a3` v1.4.21; **CI three-os green on all 14** (data 42197943675, auth 42197953761, config
   42197965543, design 42197977759, cache 42197987716, custom 42198002874, storage 42198016324, vectors 42198032754, embeddings
   42198044630, graph 42198058383, memory 42198070765, stripe 42198082579, blocks 42198095518, native 42198128025); the core pins them. Root unchanged (its drawer since 645-3,
-  its home is the agent's screen). **The owner, 2026-11-06 (day), verbatim: «sync was complited»** — the fork at `febeb731` (659's pins,
+  its home is the agent's screen). **Found after the pins, fixed:** the cache's landing (v0.1.18) repeated its README's stale «off by
+  default» — step 619 (the owner 2026-10-30: «… По умолчанию отключены остаются только: – страйп Все остальные по умолчанию активны»)
+  removed `power.default off`, and cache runs on the node (`element:power cache status` → on); the native template's row said the same.
+  Fixed: cache `6540c4a` v0.1.19 (the landing: it starts with the node, what it is meant for, the engine by the owner's word) and `bdeaa96`
+  v0.1.20 (README), native template `9d0e3a6` v0.1.41; CI green (42200924607, 42200973935, 42200935395); pinned. The core's
+  `CLAUDE.md` §3 «Stores are on by default, except Redis» contradicts 619 too — sealed, told to the owner. **The owner, 2026-11-06 (day),
+  verbatim: «sync was complited»** — the fork at `febeb731` (659's pins,
   not 660's: its CI was still running) → `node:update` for 659 started; 660's pins need one more «Sync fork». **Next:** CI → the core's pins → his «Sync fork» (660) → `node:update` → proofs on the
   node (659: `proof-659.mjs`; 660: eyes on every element's home and drawer) → summaries.
 
