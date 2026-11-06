@@ -14,8 +14,8 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   включён, или выключен …» (the power label joins 662-2 as a shared landing section, fed by the passport field of 663-1). Plan
   `new-steps/662/662-main.md`. **662-1 CLOSED** (`completed-steps/662-1.md`; the owner's choice «Метка + включение»): on the node
   (`ядро 84d6839a`, after four «Sync fork») every element's header has «Все проекты» — guest 12 cards, the architect 13 with «Платежи
-  Stripe ВЫКЛЮЧЕН» → its switch `…/stripe/settings/danger-zone`; CONFIG's subscribers — every element on its own port. Not proven: a
-  newly born element appearing by itself (a birth is the owner's action — check at the next one). Open: CONFIG has no `unsubscribe`
+  Stripe ВЫКЛЮЧЕН» → its switch `…/stripe/settings/danger-zone`; CONFIG's subscribers — every element on its own port. A birth proven by
+  the owner: «success!» (his new element's card appeared). Open: CONFIG has no `unsubscribe`
   (djlgb stays a dead subscriber). The owner asked (2026-11-06) for a checklist of 662 — given: 662-1 done, 662-2, 662-3, 662-4, 663
   not started. **The owner, 2026-11-06, verbatim:** «Пожалуйста сгруппировать по несколько задач за раз. Я сейчас протестирую рождение нового
   элемента и проверю появилась кнопка или нет» → 662-2, 662-3 and 662-4 built together, one release per repository, one «Sync fork».
