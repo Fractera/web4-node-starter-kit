@@ -5,8 +5,8 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-21 (2026-11-06, morning) — 654 CLOSED (`completed-steps/654-main.md`, 654-1 … 654-7; its plans deleted); 656 and 657 CLOSED; 658
-DELIVERED, its live answers owed; 659 found and planned (the owner's «fix it»).** The owner, 2026-11-06, verbatim: «fix it | sync was
+**NOW-21 (2026-11-06, morning) — 654 CLOSED (`completed-steps/654-main.md`, 654-1 … 654-7; its plans deleted); 656, 657 and 658 CLOSED
+(`completed-steps/658-main.md`); 659 found and planned (the owner's «fix it») — its scope waits for his yes.** The owner, 2026-11-06, verbatim: «fix it | sync was
 complited» (on the two findings of 654-7) and «Да» на удаление djlgb (порт 24687) кнопкой «Удалить насовсем».= yyes»; the night before,
 ~19:10 UTC 2026-11-05: «go to finish non stop , not call me i sleep».
 - **Delivered:** the fork synced to `a250897d`; `npm run node:update` → `===NODE_UPDATE_DONE=== 5 изменений форка, ядро d9d48e05`: root
@@ -15,12 +15,10 @@ complited» (on the two findings of 654-7) and «Да» на удаление dj
   `data/elements/djlgb.db`, `root.db`, `blocks.db` in the data element; the proof questions in the memory (no door deletes them yet).
 - **654-7 proven live** (`completed-steps/654-7.md`): the four store landings' «spaces», en and ru, light, dark and 390 — console errors 0,
   no overflow; data's key lines; the old words found 0 on ten live pages and found in storage v1.1.23 (negative control).
-- **658 on the node:** root's six cards (`http://localhost:24683/en`, `/ru`) — 1440: 6 cards in rows 3+3, the last two «Create a content
-  factory» | «Create your own agents» (ru «Создать контент-завод» | «Создать своих агентов»); 390: one per row; console errors 0, no
-  overflow; choosing «Создать своих агентов» → the chip «Выбранное задание: Создать своих агентов» and its story under the cards
-  (screenshot looked at). **Owed:** the main agent's live answer to each new card's task — one session on the subscription, named to the
-  owner before the delivery; negative control: the integrator card's task → `integrator`; the README's view on GitHub; then
-  `completed-steps/658-1.md` … `658-4.md` + `658-main.md`, `new-steps/658/` deleted in the same commit.
+- **658 CLOSED** (`completed-steps/658-1.md` … `658-4.md`, `658-main.md`; plans deleted): root's six cards on the node, en and ru, light,
+  dark and 390, the chosen card's chip and story; the README on GitHub; the main agent's live answers on a bench of the node's own files
+  (scratchpad `658-live/`, seven Opus runs, ~$1.67 by Claude Code's count): content card → `content-factory`, own-agents card →
+  `own-agents`, tax → a reminder and no element, dietitian → an element with its bot, integrator card and «жена и сын» → `integrator`.
 - **659 — the owner's «fix it»** (`new-steps/659/659-main.md`): (a) `scripts/check-i18n.mjs` of every element (one copy: the custom
   template, root, every native) lists six dictionaries that exist only in the core → `===I18N_FAILED=== проблемных словарей: 6` in each;
   (b) no guard compares a page's `_data/<lang>.json` across languages — ru without root's card `personal` passed `check-lang-delivery`
@@ -29,8 +27,7 @@ complited» (on the two findings of 654-7) and «Да» на удаление dj
   pages); four negative controls on a copy of root's cards — «в en 6, здесь 5 — нет personal», an id, an emptied title, a block's
   `kind` — each `===DATA_LANGS_FAILED===`, exit 1. **Before the first commit:** the scope named to the owner and his yes (skill
   `release-template`).
-- **Next:** the core commit of this state → 658's live answers → 658 closed → 659's scope to the owner → releases, CI, pins → his «Sync
-  fork» → `node:update` → 659's proofs.
+- **Next:** 659's scope to the owner (one question) → releases, CI, pins → his «Sync fork» → `node:update` → 659's proofs.
 
 **NOW-20 (2026-11-05, late) — HANDOFF to a new context window. Read this block first.** The owner, verbatim: «Ты дал мне четыре ссылки
 на элементы памяти но ведь это не полный список? Например здесь отсутствует объектное хранилище которое используется в глубинной памяти»;
