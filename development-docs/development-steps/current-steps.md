@@ -53,7 +53,8 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   `8ac7c15` v0.1.26, root `e18b311` v3.0.32, storage `0238d24` v1.1.34, stripe `f88b950` v1.3.24, vectors `025147d` v1.2.17 — the passport
   `power`, `embeddings` in calls, the landing power label by class; ubuntu+windows CI green on all 15 (auth 42263543230 … vectors
   42263650967); pinned. The owner: «sync ok» (fork at `c938f5ee`); before: 28 processes, 1661 MB, 12 per-element watchers = 603 MB; nothing else running —
-  `node:update` STARTED (watch the process 11xxx itself, not its wrapper) → on the node:
+  first `node:update` → `===NODE_UPDATE_REFUSED===` (DESIGN-CONFIG/design-config.json emptied to «{}» at 16:48 during
+  the collided installs); the owner, the window, verbatim: «Вернуть из git (Рекомендую)» → restored from git, `node:update` STARTED (pid 8321) → on the node:
   `npm run load`, pm2 before/after (watchers 13 → 1, the gatekeeper), labels on landings → 663 summary.
 - **Open findings for the owner:** `CLAUDE.md` §3 «Stores are on by default, except Redis» contradicts step 619 (every native on except
   Stripe) — sealed, needs his word; the soul is 1392 words now (the owner asked for lighter; the identity lines added ~120); root does not
