@@ -43,6 +43,10 @@ complited» (on the two findings of 654-7) and «Да» на удаление dj
   The node before the delivery (`~/fractera-dev/_tools/proof-659.mjs`): all 13 — `check-i18n` FAILED (6), no `check-data-langs`; health
   200 except stripe — off by the node since 2026-11-05 («Turn it on after you enter your Stripe keys»).
 - **Next:** his «Sync fork» (he is asleep — waits) → `node:update` → `proof-659.mjs` → 659 closed. Meanwhile — step 660 (below).
+- **660 OPENED** by the owner's voice message, 2026-11-06, verbatim in `new-steps/660/660-main.md` («… в своей главной странице Эмили стиль
+  и дизайн как у новых таких как страйп, голубиная память … Правобережном ящике меню должна иметь такие же вкладки как в элементе root //
+  go to finish non stop . i go to sleep»). Measured, no code yet: landings missing in data, auth, config, design, cache and both
+  templates; the drawer `lib/menu/account-links.ts` is root's (645-3) only. **Next:** 660-1 (the drawer), then 660-2 (the landings).
 
 **NOW-20 (2026-11-05, late) — HANDOFF to a new context window. Read this block first.** The owner, verbatim: «Ты дал мне четыре ссылки
 на элементы памяти но ведь это не полный список? Например здесь отсутствует объектное хранилище которое используется в глубинной памяти»;
