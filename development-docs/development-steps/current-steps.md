@@ -45,7 +45,9 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   `launch.mjs`; `LIMITS` in `lib/free-memory.cjs`): 4096 → exit 1 `===MEMORY_FAILED===`; 8192 → exit 2 `===LAUNCH_ASK===`; 8192
   `--memory-ok` → OK (stamped `memoryOk` in `logs/launch.json`); 16384 free 2500 → the warning + OK; 16384 free 6000 → OK silently; the
   real Mac → OK. `CLAUDE.md` install block: «one question at most», `===LAUNCH_ASK===` handling — resealed by the owner's word
-  («нужно куда-то в инструкцию добавить проверку»), `===INSTRUCTION_OK===`, `===SOUL_OK===`.
+  («нужно куда-то в инструкцию добавить проверку»), `===INSTRUCTION_OK===`, `===SOUL_OK===`. Commits: most of 663-6 rode in `9eb880a8` under a «state:» message (my `git commit -a`
+  during uncommitted code — broken alone: `elements-watch.cjs` missing), completed by `8bcddf4f` (663-6 + 663-7); main is whole at
+  `8bcddf4f`, the fork never took `9eb880a8` (it sits at `3475624e`). Rule for the rest of the step: commit only named paths, never `-a`.
 - **Open findings for the owner:** `CLAUDE.md` §3 «Stores are on by default, except Redis» contradicts step 619 (every native on except
   Stripe) — sealed, needs his word; the soul is 1392 words now (the owner asked for lighter; the identity lines added ~120); root does not
   carry the template's `widget-static-custom-landing` (its home is the agent's screen — by design).
