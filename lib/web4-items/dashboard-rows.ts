@@ -275,7 +275,9 @@ async function catalogEntry(id: string, entry: RegistryEntry, custom: boolean, l
         id,
         title: nameOf(id, lang).slice(0, 160),
         description: (off ? `${w.off}: ${power.reasonIn(off, lang)}` : w.silent).slice(0, 400),
-        href: `/${lang}/architect/${addressOf(id)}`,
+        // 662-1: выключенный — прямо к включателю («Опасная зона» → «Включение элемента»). ✗ Замерено на узле владельца 2026-11-06:
+        // главная раздела Stripe в ядре включателя не показывает — «клик ведёт в раздел со включателем» не выполнялся.
+        href: off ? `/${lang}/architect/${addressOf(id)}/settings/danger-zone` : `/${lang}/architect/${addressOf(id)}`,
         local: null,
         kind,
         off: true,

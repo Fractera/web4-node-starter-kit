@@ -48,8 +48,15 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   was sent by the OLD core server (the core is rebuilt last, step 8). `npm run catalog:refresh` from the new core → **CONFIG refused
   the whole catalog: `bad-href:en[11]`** (Stripe's core path; CONFIG's door also dropped `off` and `mark`) — my lab never passed the
   catalog through CONFIG's door. Fixed: config `775d800` v1.2.26 (`catalog-store.mjs`: `off`, `mark`, a core path only with `off`;
-  tested: the off path ok; a path without off, off + https, a mark of 41 — refused), CI 42218587222 green; pinned. The owner: «sync ok» (fork at `261b208`) — the third `node:update` STARTED; then
-  `npm run catalog:refresh` → `menu-eyes.cjs` on every element. Also owed: the install's catalog
+  tested: the off path ok; a path without off, off + https, a mark of 41 — refused), CI 42218587222 green; pinned. The owner: «sync ok» (fork at `261b208`) → `===NODE_UPDATE_DONE=== 3 изменений форка, ядро f244d6d8`;
+  `npm run catalog:refresh` → `13 en, 13 ru → принят`, the core's signal reached data, auth, vectors, storage, embeddings, config,
+  cache, root, design, graph, memory, blocks (djlgb: dead); CONFIG's subscribers now every element on its own port (blocks 24684).
+  **Proven on the node** (`menu-eyes.cjs`, ru, 1440): all 12 running elements — the tab «Все проекты»; guest 12 cards without Stripe,
+  architect 13 with «Платежи Stripe ВЫКЛЮЧЕН» → `http://localhost:24680/ru/architect/stripe`; console 0 (guest: the mocked 401). The
+  core's header 13 cards, Stripe «выключен». **Found:** that link opens Stripe's core home, which has NO switch — the switch is on
+  `…/settings/danger-zone` («Включение элемента»). Fixed in the core (uncommitted → committed next): an off card links to
+  `/<lang>/architect/<address>/settings/danger-zone`; CONFIG v1.2.26 accepts it (tested). Needs one more «Sync fork» + `node:update`
+  + `catalog:refresh`. Not proven yet: a newly born element appearing by itself (a birth is the owner's action). Also owed: the install's catalog
   push should come from the NEW core (after step 8), not the old one. **Next:** scratchpad `662/header.cjs`
   over the core and all 12 running elements (expected: «Все проекты» with 13 cards; Stripe marked «выключен» for the architect);
   CONFIG's `subscribers.json` names every element on its own port; then 662-1's summary and 662-2. Found, not in 662-1: CONFIG has no
