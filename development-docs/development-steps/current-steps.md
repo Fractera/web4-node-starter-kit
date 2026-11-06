@@ -46,8 +46,14 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   off; 400 → lab-emb then lab-cache asleep, lab-data (never) untouched; 1700 → both back; 100 → «перешёл черту» alarm; 700 with nothing
   sleepable → «подходит к пределу»; calendar: woken 1.5 min ahead only the rule-asleep one, no repeat, the rule 6 min after; gatekeeper:
   a call to asleep lab-emb → 200 in 1.2 s (woke 1.1 s), never-port not held, without it → refused. Lab hygiene: the replica's
-  `ensureElementsWatch` started `fractera-elements-watch` in the owner's pm2 twice — removed by name after checking its cwd. Element
-  repos: 15 passports carry `power` (+ `embeddings` in calls of vectors, graph, memory), uncommitted.
+  `ensureElementsWatch` started `fractera-elements-watch` in the owner's pm2 twice — removed by name after checking its cwd. Core commits: `908db625` (only the
+  removal of memory-by-free.mjs — a failed `git add` let the commit through), completed by `f27841bf`. Element repos (663-1): auth
+  `54935c7` v2.4.21, blocks `53c8c9f` v1.4.27, config `0450823` v1.2.30, custom `a335a18` v0.3.167, data `598e1bf` v2.2.14, design
+  `495bb95` v1.1.29, embeddings `bf04529` v0.1.15, graph `b4e7f6a` v1.2.16, memory `4079ea6` v2.2.34, native `8a1501c` v0.1.47, cache
+  `8ac7c15` v0.1.26, root `e18b311` v3.0.32, storage `0238d24` v1.1.34, stripe `f88b950` v1.3.24, vectors `025147d` v1.2.17 — the passport
+  `power`, `embeddings` in calls, the landing power label by class; ubuntu+windows CI green on all 15 (auth 42263543230 … vectors
+  42263650967); pinned. **Next:** «готово к Sync» → his click → `node:update` (ps first; no hand finish in parallel) → on the node:
+  `npm run load`, pm2 before/after (watchers 13 → 1, the gatekeeper), labels on landings → 663 summary.
 - **Open findings for the owner:** `CLAUDE.md` §3 «Stores are on by default, except Redis» contradicts step 619 (every native on except
   Stripe) — sealed, needs his word; the soul is 1392 words now (the owner asked for lighter; the identity lines added ~120); root does not
   carry the template's `widget-static-custom-landing` (its home is the agent's screen — by design).
