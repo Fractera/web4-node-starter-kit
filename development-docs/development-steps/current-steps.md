@@ -21,8 +21,12 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   skill's rule «a runner not acquired is GitHub's, not the code's»; the owner's Mac node is the macOS proof. The owner clicked «Sync
   fork» twice early (fork at `ae293bff`). The owner: «sync ok» (fork at `3475624e`) — `node:update` started and was CUT at the elements stage (exit 144, ~during my
   lab clean-up `pkill -f health-watch` — my fault; never pkill by a broad pattern on the owner's machine): the core merged (`3d115ffe`), auth,
-  data, storage, vectors, embeddings at the new pins, config mid-way; all 28 processes online. A re-run would say «nothing to update» (the
-  merge is done) → finishing by hand: `npm run services:install` (the remaining elements to their pins), `npm run serve:rebuild` (the core),
+  data, storage, vectors, embeddings at the new pins, config mid-way; all 28 processes online. **Correction (measured 16:57):** the «cut» was only the Bash wrapper — `node scripts/node-update.mjs` (pid 11573) kept running; my
+  hand finish (`services:install` + `serve:rebuild`) ran IN PARALLEL with it → «Another next build process is already running» on cache and
+  root (their running versions untouched); my second `serve:rebuild` was stopped at its prebuild by pid (kill 36109/36125/19591); the
+  node-update's own rebuild goes on (quiet-build.json lists root, cache, watchers). After it: `npm run services:install` once more for the
+  elements whose build met the lock, then eyes. Lesson: before «finishing by hand», `ps` for node-update. Was: A re-run would say «nothing
+  to update» (the merge is done) → finishing by hand: `npm run services:install` (the remaining elements to their pins), `npm run serve:rebuild` (the core),
   `npm run catalog:refresh`. CI of 662-6: all 15 green on all three systems after the macOS reruns. Next → eyes (banner only on root, «Root»).
 - **662 CLOSED** (`completed-steps/662-1.md`, `662-main.md`; plans deleted): on the owner's node (`ядро 9d8c5b93`) every element's header has
   the core's two tabs, Stripe marked off → its switch (architect only); every landing has the power label, «your own builder», FAQ last
