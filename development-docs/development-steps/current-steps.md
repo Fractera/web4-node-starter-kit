@@ -47,10 +47,11 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   vectors v1.2.15, lab: two tabs, Stripe marked), CI green, pinned. **Next:** «Sync fork» → `node:update` → eyes (662-2/3/4/5) → 663 plan. Not done of the owner's list: «formats of Blocks moved into
   Design» (Design got the tool section and FAQ only). Was — the shared landing sections (`faq`, `builder`, `tool`, the power label, the stores' backup line):
   measure the landing widget of the templates first, then its plan file `662-2.md`.
-- **663 PLANNED with the owner's decisions** (`new-steps/663/663-main.md`): the passport `power: { default, switch: never|manual|auto,
-  wakeOnCall }`; `npm run load`; free > 1 GB — nothing, 1–0.5 GB — a proposal and the owner's yes, < 0.5 GB — `auto` off by itself with a
-  message (the owner: «if free memory is more then 1gb - с сообщением ваm if less 0.5 gb = auto»); waking 2 minutes before a calendar
-  entry and on a call; the alarm at the limit. Built after 662.
+- **663 PLANNED in full** (`new-steps/663/663-main.md`, `663-1.md` … `663-6.md`; measured 2026-11-06: available 5485 MB, the node 2054 MB
+  in 28 processes, 13 health watchers ~51 MB each ≈ 660 MB; an element's clock ticks inside its own server — asleep, no calendar; calls
+  go straight to the port). **The owner, 2026-11-06, the window, verbatim:** waking — «Привратник (Рекомендую)»; classes — «Да, так
+  (Рекомендую)» (never: auth, data, root, storage; manual: stripe; auto + wake on call: embeddings, graph, memory, vectors, cache, config,
+  design, blocks, custom); watchers — «Включить в 663 (Рекомендую)». Earlier: «go to 663 after check». Order 6 → 1 → 2 → 3 → 4 → 5.
 - **Open findings for the owner:** `CLAUDE.md` §3 «Stores are on by default, except Redis» contradicts step 619 (every native on except
   Stripe) — sealed, needs his word; the soul is 1392 words now (the owner asked for lighter; the identity lines added ~120); root does not
   carry the template's `widget-static-custom-landing` (its home is the agent's screen — by design).
