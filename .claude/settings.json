@@ -35,7 +35,22 @@
         "hooks": [
           {
             "type": "command",
+            "command": "node scripts/system-part.mjs restore --hook"
+          },
+          {
+            "type": "command",
             "command": "node .claude/hooks/context-resume.mjs"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/system-part.mjs guard"
           }
         ]
       }

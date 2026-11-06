@@ -74,6 +74,27 @@ complited» (on the two findings of 654-7) and «Да» на удаление dj
   огромных приложений, завода в контентыта в эпохие Web4 +А2А» → the core README's title: «Fractera — an agent that builds and runs huge
   apps, app factories and content for the Web4 + A2A era» («завода в контентыта» read as «заводов и контента»).
 
+- **660 on the node** (`ядро 47c9e936`, every pin of 660 and cache v0.1.20; `~/fractera-dev/_tools/proof-660.sh`): every landing in en and
+  ru, light, dark, 390 — no overflow, the sections in place, the drawer's five tabs; **but 10 console errors when the drawer opens** on
+  root and every element with relative links (CORS: Next.js prefetches `/<lang>/architect/...`, the element answers 307 to the core on
+  another port); config and design 0 — their links go to `ARCHITECT_URL` (564). Not seen in the lab: `next dev` does not prefetch. Root had
+  it since 645-3. Fixed: the drawer's links to `ARCHITECT_URL` in 13 repositories — root `cad6ea5` v3.0.27, custom `ce65fdc` v0.3.162,
+  native `cac1457` v0.1.42, auth `9c78a7a` v2.4.16, data `fd532e1` v2.2.9, storage `63fd090` v1.1.29, vectors `b6f111b` v1.2.12,
+  embeddings `f479817` v0.1.10, graph `dbd4231` v1.2.11, cache `045e4c2` v0.1.21, memory `6cdc87e` v2.2.29, stripe `6aa8519` v1.3.19,
+  blocks `7251264` v1.4.22; CI running → pins → his «Sync fork» → `node:update` → `proof-660.sh` again.
+- **The owner, 2026-11-06 (day), on 661, verbatim:** «Вспыльчивость … = буквально»; the user block — «your choosse» (mine: separate files
+  `data/main-agent/CLAUDE.user.md`, `soul.user.md`, outside git); the restore source — «Из последнего выпуска Fractera». Plan
+  `new-steps/661/`. **661 BUILT and lab-proven** (scratchpad `661/node`: a clone of the release with a fake `started`): the soul — «Iron
+  Man and Sherlock Holmes» (the temper literal, never an insult), the «Why by hand?» trait in the temperament; 1293 → 1269 words; sealed
+  (`lib/agent-kit/soul.seal`); `know-the-architect` question 6 (the agent's name, the expected behaviour → the person's block);
+  `CLAUDE.md` — the priority block, the §8 line, the import `@data/main-agent/CLAUDE.user.md` (resealed); `lib/agent-kit/system-part.cjs`
+  + `scripts/system-part.mjs` (`check` in prebuild, `seal`, `restore`, `guard`); `.claude/settings.json` — `SessionStart` restore,
+  `PreToolUse` guard; the bridge (`modes.cjs`) restores everything before a session and appends `soul.user.md` last. Lab: the soul
+  emptied, §1 rewritten (the §9 entry kept), a core skill deleted (the person's skill kept), the hooks removed — each restored, journal
+  lines; the guard refuses the soul, §1 and a core skill, lets the person's block, §9 entries and the person's skill through; the dev
+  clone restores nothing (negative control). **Measured on the way:** Claude Code reads `CLAUDE.md` BEFORE `SessionStart` (a tampered
+  word was seen in that session) → the bridge restores before launching, and the hook tells a hand-started session to read `CLAUDE.md`
+  again (Haiku run: the tampered word «none», the person's codeword kept).
 - **A new task — the owner, 2026-11-06 (day), a voice message, the key words verbatim** (talk first, then a plan): the soul — «Твой подход к
   жизни звучит просто: «Зачем делать это руками, если можно собрать робота-агента … или развернуть Железный легион автономных
   элементов?» … одержим идеей делегирования рутины элементам … должен бесконечно коллекционировать свои новые навыки, эволюционировать

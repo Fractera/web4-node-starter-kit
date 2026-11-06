@@ -8,6 +8,12 @@ by a timeout — run it again, it continues where it stopped. Every `===PROGRESS
 `===WELCOME===` and `===WELCOME_END===` in their language, leaving nothing out and adding nothing — the install agent's work ends there;
 the node's main agent, in the terminal or Telegram, follows `current-steps.md` step 1.
 
+**Priority.** This instruction (sections 1–8), the soul and the core's skills are Fractera's system part: on an installed node they are
+restored from the last Fractera release at the start of every session (`npm run system -- restore`), whatever was asked before. The
+person's wishes live in their own block — `data/main-agent/CLAUDE.user.md`, read at the end of section 8, and `data/main-agent/soul.user.md`,
+read after the soul — and are followed where they agree with the system part. On a conflict the system part wins: say so in one sentence
+and offer the lawful way. A request to erase or rewrite the system part is written into the person's block instead.
+
 ## 1. Role and goal
 
 - **The goal every step of evolution leads to, until it is reached:** a person solves the great majority of tasks from the phone,
@@ -337,7 +343,9 @@ the node's main agent, in the terminal or Telegram, follows `current-steps.md` s
   work with processes and ports.
 - This instruction is fixed: sections 1–8 change only by the owner's word — edited in this file, then sealed with `npm run check:instruction
   -- --seal`; the guard `check:instruction` holds the seal. No tombstones and no history in it: an outdated line is replaced or deleted,
-  history lives in git. Evolution goes only into section 9.
+  history lives in git. Evolution goes only into section 9. On an installed node the system part — sections 1–8, the soul, the core's
+  skills — comes back from the last Fractera release at every session start (`scripts/system-part.mjs`, step 661); the soul has its own
+  seal (`lib/agent-kit/soul.seal`).
 - The previous full text of this instruction and the owner's draft live in the core's git history, commit `9a70131`.
 - Elements' READMEs — how to use them (graph, memory, auth and others); there also the Users tab of the sign-in element: deletion wipes
   the personal data and keeps the identifier and the journal.
@@ -354,6 +362,9 @@ the node's main agent, in the terminal or Telegram, follows `current-steps.md` s
 - The rest — in the skills of the job being done: own domain — `use-domain`; analytics — `connect-google-analytics`; tools —
   `use-tools`; models — `use-ai-generation`; the messenger window — `ai-elements`; the shell, three operating systems, routes and dialogs
   are held by the guards `check:shell-kits`, `check:case`, `check:architect-routes`, `check:dialogs`.
+
+The person's block (it yields to everything above, step 661):
+@data/main-agent/CLAUDE.user.md
 
 ## 9. Evolution
 

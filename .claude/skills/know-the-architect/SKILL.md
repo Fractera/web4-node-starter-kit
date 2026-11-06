@@ -27,6 +27,9 @@ One message, in the person's language, and say any question can be skipped (the 
    line: every language is translated, checked and kept up on every change, so each one makes the work longer and dearer; another
    language can be added later at any time.
 5. Anything I should never do or never touch?
+6. What name or nickname should I answer to? And, if you like, what behaviour do you expect from me? (The owner, 2026-11-06, step
+   661: «на какое имя или прозвище ты хочешь чтобы я откликался, если хочешь расскажи о том какое поведение ты от меня ожидаешь».) The
+   name and the behaviour go into the person's block `data/main-agent/CLAUDE.user.md`; it yields to the instruction and the soul.
 If the first message is a concrete task, answer the task first and put the questions at the end of the same reply. Save the answers as
 they were said. Before you say anything about the project's languages, read the current set (skill `manage-app-settings` — reads work
 from the file on disk); never assume which one is the default. The language set is changed only after the person's yes to it, through the node's setter (skill
