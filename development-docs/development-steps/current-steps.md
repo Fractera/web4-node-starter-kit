@@ -17,8 +17,26 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   in every card and elements keep only public `href` → no tab, ever, on this node; (2) the catalog for CONFIG counts only elements that
   answered at the push — 12/8/12/7 cards across the last `node:update` pushes; (3) CONFIG's subscribers lack root, design, graph, cache,
   memory, stripe (they start while CONFIG restarts, subscribe once, no retries), blocks sits on the trial port 25679, deleted djlgb still
-  there. Stripe's item → `/ru/architect/stripe` by 632-1 (an off element has no site). **Next:** the owner's choice for an off element's
-  item (asked), then build 662-1.
+  there. Stripe's item → `/ru/architect/stripe` by 632-1 (an off element has no site). The owner, 2026-11-06, the window, verbatim: «Метка + включение (Рекомендую)» (an off element: the mark «выключен», a click to its
+  core section; hidden from an element site's visitors). **662-1 BUILT, uncommitted (2026-11-06):** core — `lib/web4-items/dashboard-rows.ts` (the CONFIG catalog lists every
+  registry element; off → `off`, `mark`, the core path; busy → its addresses), `catalog.i18n.ts` (`mark`), `catalog-push.ts`
+  (`signalTheRest`: POST `/api/settings/changed` to every on element CONFIG missed), `catalog-notify.cjs` + `services-install.mjs`
+  (`waitAll`), `components/architect/all-projects.client.tsx` (mark), the shell kit copy; the 15 element repositories — one patch
+  (scratchpad `662/element.patch`): the shell kit (`ShellChild.roles`, `mark`, children filtered by role), `lib/project-settings.ts`
+  (`local` when no public href, off → `ARCHITECT_URL` + path), `lib/menu/catalog-group.ts` (off → roles architect + mark),
+  `app/api/settings/changed/route.ts` (re-subscribe on a signal). tsc 0 in root and the core. **Lab proven** (custom template `next dev`, the node's root copy + an off
+  Stripe, scratchpad `662/menu-eyes.cjs`): before — the tab with only Stripe (8 null-href cards dropped); after — guest 8 cards (no
+  Stripe), architect 9 with «ВЫКЛЮЧЕН» → `http://localhost:24680/ru/architect/stripe`, en «OFF»; console 0 (guest: the mocked 401 only).
+  prebuild 0 in 14 clones (stripe has no deps), the core's guards 41 OK. **Released:** auth `6c0e9bd` v2.4.17, blocks `97bac48`
+  v1.4.23, config `2399924` v1.2.25, custom `9fbd814` v0.3.163, data `64c61d0` v2.2.10, design `4a87dea` v1.1.25, embeddings
+  `8219c81` v0.1.11, graph `f6945d9` v1.2.12, memory `81b562f` v2.2.30, native `7fb47c9` v0.1.43, cache `402fc85` v0.1.22, root
+  `d8fb57b` v3.0.28, storage `0b4cb1c` v1.1.30, stripe `5831c9d` v1.3.20, vectors `dacf97e` v1.2.13. **CI three-os green on all 15** (auth 42213390451, blocks 42213395718,
+  config 42213402179, custom 42213407957, data 42213414095, design 42213419865, embeddings 42213425710, graph 42213431692, memory
+  42213435703, native 42213441716, cache 42213447483, root 42213452357, storage 42213457275, stripe 42213462010, vectors 42213467689);
+  the core's code and pins committed together. **Next:** the owner's «Sync fork» → `npm run node:update` → scratchpad `662/header.cjs`
+  over the core and all 12 running elements (expected: «Все проекты» with 13 cards; Stripe marked «выключен» for the architect);
+  CONFIG's `subscribers.json` names every element on its own port; then 662-1's summary and 662-2. Found, not in 662-1: CONFIG has no
+  `unsubscribe` — a deleted element (djlgb) stays a dead subscriber.
 - **663 PLANNED with the owner's decisions** (`new-steps/663/663-main.md`): the passport `power: { default, switch: never|manual|auto,
   wakeOnCall }`; `npm run load`; free > 1 GB — nothing, 1–0.5 GB — a proposal and the owner's yes, < 0.5 GB — `auto` off by itself with a
   message (the owner: «if free memory is more then 1gb - с сообщением ваm if less 0.5 gb = auto»); waking 2 minutes before a calendar

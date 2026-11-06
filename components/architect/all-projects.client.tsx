@@ -12,7 +12,7 @@ import type { ShellGroup } from "@/components/shell/shell-types"
 // 🔒 СОСТАВ УЗЛА НЕ ЗАПЕКАЕТСЯ В СБОРКУ ЯДРА (закон 264 «число о машине — спрашивать в браузере»): новый элемент появляется в
 // списке при следующем открытии страницы, без пересборки ядра. Пока ответа нет или элементов нет — вкладок нет.
 
-type Entry = { id: string; title: string; description: string; href: string | null; local: string | null; kind?: "custom" | "native" }
+type Entry = { id: string; title: string; description: string; href: string | null; local: string | null; kind?: "custom" | "native"; mark?: string }
 
 /** Одна вкладка-выпадашка из записей каталога; пустой список — вкладки нет вовсе. */
 function groupOf(slug: string, label: string, list: Entry[]): ShellGroup | null {
@@ -25,7 +25,7 @@ function groupOf(slug: string, label: string, list: Entry[]): ShellGroup | null 
     roles: "public",
     catalog: true,
     // Своего домена у узла нет — карточка ведёт на элемент на этом компьютере.
-    children: list.map((e) => ({ slug: e.id, title: e.title, href: e.href ?? e.local ?? "#", ...(e.description ? { description: e.description } : {}) })),
+    children: list.map((e) => ({ slug: e.id, title: e.title, href: e.href ?? e.local ?? "#", ...(e.description ? { description: e.description } : {}), ...(e.mark ? { mark: e.mark } : {}) })),
   }
 }
 

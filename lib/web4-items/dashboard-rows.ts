@@ -209,7 +209,7 @@ export async function projectRows(lang: string): Promise<ProjectRow[]> {
 // языке каталога, как есть. Карточку рисует шапка элемента (каталог раздаёт CONFIG) и островок «Все проекты» в шапке ядра.
 
 /** Запись каталога — та же форма, что `CatalogEntry` шаблона элемента (`lib/project-settings.ts`); `off` — только в каталоге ядра (632-1). */
-export type CatalogEntry = { id: string; title: string; description: string; href: string | null; local: string | null; kind: "custom" | "native"; off?: boolean }
+export type CatalogEntry = { id: string; title: string; description: string; href: string | null; local: string | null; kind: "custom" | "native"; off?: boolean; mark?: string }
 
 /**
  * 632-1: имя элемента — то же, что в левом меню: заголовок его раздела в ядре (`architect/<id>/_data`); у кастомного раздела нет — его
@@ -259,29 +259,44 @@ async function catalogEntry(id: string, entry: RegistryEntry, custom: boolean, l
   const seen = off ? { up: false, title: null, description: null } : await catalogProbe(port, lang)
   const passport = diskPassport(entry)
   const kind = custom && !passport.native ? "custom" : "native"
+  const own = domainRecord(id)
+  const href = own ? `https://${own.domain}/${lang}` : d?.zone ? `https://${serviceHost(id, d)}/${lang}` : null
   if (!seen.up) {
-    // 632-1 (владелец 2026-11-03: «…сейчас я не вижу там Stripe»): в каталоге ядра выключенный или молчащий элемент остаётся — под своим
-    // именем, с причиной, и ведёт в свой раздел ядра, где его включают. 🔒 В каталог для CONFIG (шапки сайтов элементов, `all` = false)
-    // он не идёт: посетителю сайта выключенный платёжный элемент не нужен.
-    if (!all) return null
+    // 632-1 (владелец 2026-11-03: «…сейчас я не вижу там Stripe»): выключенный или молчащий элемент остаётся — под своим именем, с
+    // причиной, и ведёт в свой раздел ядра, где его включают.
+    // 662-1 (владелец 2026-11-06: «когда пользователи добавляют элементы они автоматически появляются в меню»; выбор «Метка +
+    // включение»): в каталог для CONFIG теперь идут ВСЕ элементы реестра. ✗ Замерено: он брал только ответивших в ту секунду —
+    // при `node:update` вышло 12, 8, 12, 7 карточек. Выключенный — с меткой и путём в раздел ядра (шапка элемента показывает его
+    // только архитектору и ставит перед путём `ARCHITECT_URL`); включённый, но занятый перезапуском — обычной карточкой со своими
+    // адресами и описанием из паспорта.
     const w = catalogWords(lang)
+    if (off || all) {
+      return {
+        id,
+        title: nameOf(id, lang).slice(0, 160),
+        description: (off ? `${w.off}: ${power.reasonIn(off, lang)}` : w.silent).slice(0, 400),
+        href: `/${lang}/architect/${addressOf(id)}`,
+        local: null,
+        kind,
+        off: true,
+        ...(off ? { mark: w.mark } : {}),
+      }
+    }
     return {
       id,
       title: nameOf(id, lang).slice(0, 160),
-      description: (off ? `${w.off}: ${power.reasonIn(off, lang)}` : w.silent).slice(0, 400),
-      href: `/${lang}/architect/${addressOf(id)}`,
-      local: null,
+      description: (passport.short ?? "").slice(0, 400),
+      href,
+      local: `http://localhost:${port}/${lang}`,
       kind,
-      off: true,
     }
   }
-  const own = domainRecord(id)
   const page = (seen.title ?? "").replace(BRAND_TAIL, "").trim()
   return {
     id,
     title: nameOf(id, lang).slice(0, 160),
     description: (seen.description ?? passport.short ?? page).slice(0, 400),
-    href: own ? `https://${own.domain}/${lang}` : d?.zone ? `https://${serviceHost(id, d)}/${lang}` : null,
+    href,
     local: `http://localhost:${port}/${lang}`,
     kind,
   }

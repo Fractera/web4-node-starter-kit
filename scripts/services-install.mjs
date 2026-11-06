@@ -1215,7 +1215,7 @@ spawnSync(process.execPath, [join(ROOT, 'scripts', 'element-isolate.mjs')], { cw
 if (!ONLY) {
   let coreUp = false
   try { coreUp = (await fetch(`http://localhost:${JSON.parse(readFileSync(join(ROOT, 'logs', 'runtime.json'), 'utf8')).port ?? 24680}/api/health`, { signal: AbortSignal.timeout(5000) })).ok } catch { /* ядро не запущено */ }
-  if (coreUp) await require('../lib/web4-items/catalog-notify.cjs').notifyCatalog('install', ROOT)
+  if (coreUp) await require('../lib/web4-items/catalog-notify.cjs').notifyCatalog('install', ROOT, { waitAll: true })
 }
 // 598-2: база навыков узла (lib/agent-kit/skills/base) — в общий граф один раз: только то, чего в учёте графа ещё нет. Мягкий шаг:
 // на свежей машине граф ещё не запущен и ключа OpenAI нет — строка, и базу загрузит главный агент (npm run skills-base), когда
