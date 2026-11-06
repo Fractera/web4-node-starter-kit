@@ -10,15 +10,11 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   `660-main.md`, `661-main.md`, written 2026-11-06 from the evidence in NOW-21; their plans deleted in the same commit). Node now at
   `ядро 43f6093a`; final pins: root v3.0.27, custom v0.3.162, native v0.1.42, auth v2.4.16, data v2.2.9, storage v1.1.29, vectors
   v1.2.12, embeddings v0.1.10, config v1.2.24, design v1.1.24, graph v1.2.11, cache v0.1.21, memory v2.2.29, stripe v1.3.19, blocks v1.4.22.
-- **⚠ INCIDENT, PART 2 (measured 2026-11-06 ~18:25):** the 663 `node:update` → `===NODE_UPDATE_FAILED=== сборка ядра не удалась` because
-  `~/web4-node-starter-kit-WEB4-ITEMS-aside` (16 GB) exists: during the 16:55 collision the node-update's closed-lid rebuild moved the
-  REAL `WEB4-ITEMS` aside, my parallel `services:install` found none and CLONED FRESH elements, and `itemsBack` could not return the
-  real ones. Since then the node runs on fresh clones: the element-folder data of vectors (10.3 MB vs 92 KB — `data/vectors.db`), data
-  (2.3 MB vs 112 KB — journals, `data/elements/*.db`), storage (296 vs 168 KB), root (8 vs 4 KB) lie in the aside folder; the data under
-  the core's `data/services` (auth accounts, graph 14 MB, embeddings model) was never moved. Now: 17 processes online, all 200, the old
-  core build. The 663 elements and the shared watcher are live. **Recovery (asks the owner's yes):** stop the elements → rename the live
-  `WEB4-ITEMS` to `WEB4-ITEMS-fresh-<time>` (kept) → rename the aside back to `WEB4-ITEMS` → `services:install` (to the pins, data kept)
-  → `serve:rebuild` → health, `npm run load`, vectors.db size, eyes.
+- **663 CLOSED** (`completed-steps/663-main.md`; plans deleted). **The owner, 2026-11-06, verbatim:** «Я тебе что сказал чтоб мне на
+  компьютере нужны эти папки? Я сейчас делаю стартовую сборку проекта для того чтобы передать её другим пользователем а на этом
+  компьютере я все удалю через полчаса как только ты закончишь» — the local node is a test machine being retired; nothing local is
+  restored. The deliverable is `Fractera/web4-node-starter-kit` main + the 15 element repos, CI green. Owed by his word only: the
+  `CLAUDE.md` §3 Redis/Stripe line; «Blocks formats into Design» (662).
 - **Incident RESOLVED (2026-11-06 ~17:45):** a lone `npm run services:install` → `===SERVICES_INSTALL_OK===`; `npm run serve:start` → 28 processes
   online; every element 200 at its pin (stripe off by design), the core 200; `catalog:refresh` OK; `skills-base` already 8. **662 CLOSED
   again** with 662-6 (`completed-steps/662-main.md`; the plan deleted again): banner only on root, «Root» everywhere — eyes on the node.
