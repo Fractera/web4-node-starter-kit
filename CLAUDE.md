@@ -111,8 +111,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   own space in every store — its tables, files, vectors, graph and memory — with its own key (`X-Element-Key`); the node's data key
   (`X-Data-Secret`) — the core and the native elements. The LightRAG graph runs one operation per call and never calls a language model;
   vectors are counted by the native element `embeddings` (MiniLM-L12, 384 numbers, on this computer, no key).
-- Stores are on by default, except Redis: not every app needs it. All of them except Redis have an area where backup can be ordered from
-  their agent.
+- Native elements are on by default, except Stripe (until its keys) and the Redis cache (not every app needs it). Every store except
+  Redis has an area where backup can be ordered from its agent.
 - The deep memory orchestrates all stores: it keeps images, video, sound, PDF, HTML, TXT, Markdown together with a comment — location,
   money, description, links to people — and builds dependencies between them. It answers both the person and you (`npm run remember`,
   `npm run remind`, skill `use-deep-memory`).

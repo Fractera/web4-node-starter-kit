@@ -20,6 +20,8 @@ more than 1 GB is free.
 
 - **never** — auth, data, root, storage: the node never turns them off («данные и авторизацию категорически запрещено включать и отключать»).
 - **manual** — stripe (off by default until its keys): only a person's word.
+- Off by default (the owner, 2026-11-06: «as default turn of both Stripe + Redis»): stripe and cache. Cache, once a person turns it on,
+  is an `auto` element below.
 - **auto** + `wakeOnCall` — embeddings, graph, memory, vectors, cache, config, design, blocks, every custom element: the rule may put them to sleep.
 
 ## The load — `npm run load`
