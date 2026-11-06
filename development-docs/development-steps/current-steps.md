@@ -22,7 +22,12 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   анимированы прилетают сразу сторон сделай вместо статических … такую анимацию которую должна прокручиваться в тот момент когда попадает в
   фокус» → replace the static `builder-art.tsx` with a Claude figure (body, 2 arms, 4 legs, 2 eye slots) whose parts fly in from the sides,
   assemble, turn to face the camera, then a springy jump; plays when the section enters the viewport (IntersectionObserver island, CSS
-  keyframes, reduced-motion → the final frame). Not started (usage limit).
+  keyframes, reduced-motion → the final frame). **The owner's clarification, verbatim:** «эффектность для анимации должно быть просто
+  потрясающе это не просто так микро анимация анимация с хорошим качеством обрати внимание сначала прилетает элементы потом к каждому
+  элементу руки ноги головами отрисовываются линии и анимирована на них появляется текст затем все эти элементы соединяются в едино фигурка
+  становится целостной затем эта фигурка разворачивается лицом к камере приседает подпрыгивает продолжительность около 1 секунды» → a
+  CSS-3D figure (cuboids with hatched faces on a grid floor), WAAPI timeline: fly-in → callout lines drawn to each part with typed labels
+  → parts join → turn to camera → squat + jump (~1 s); built now, released with 662-7 in one wave.
 - **663 CLOSED** (`completed-steps/663-main.md`; plans deleted). **The owner, 2026-11-06, verbatim:** «Я тебе что сказал чтоб мне на
   компьютере нужны эти папки? Я сейчас делаю стартовую сборку проекта для того чтобы передать её другим пользователем а на этом
   компьютере я все удалю через полчаса как только ты закончишь» — the local node is a test machine being retired; nothing local is
