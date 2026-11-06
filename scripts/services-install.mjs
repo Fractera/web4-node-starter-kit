@@ -1175,7 +1175,7 @@ if (running.length > 0) {
   const watch = require('../lib/web4-items/elements-watch.cjs')
   const legacy = watch.dropLegacyWatchers(ROOT)
   if (legacy.length) say(`  личные сторожа прежней версии убраны (${legacy.length}) — их заменяет один ${watch.NAME}`)
-  if (watch.ensureElementsWatch(ROOT)) say(`  запущен ${watch.NAME} — один сторож здоровья на все элементы`)
+  if (watch.ensureElementsWatch(ROOT)) say(`  запущены ${watch.NAME} (один сторож здоровья на все элементы) и ${watch.GATEKEEPER} (привратник спящих)`)
 }
 // Старая папка сборки удаляется после перезапуска. Windows отпускает файлы убитого процесса не сразу
 // (✗ измерено 2026-09-24: rmSync сразу после pm2 delete уронил установщик до pm2 save) — несколько
