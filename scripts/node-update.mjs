@@ -20,7 +20,7 @@
 // state running → done | refused | failed, stage, summary | reason.
 // 🛑 Только в форке (`logs/origin.json` verdict `fork`): у оригинала и у машины автора история своя.
 import { spawnSync } from 'node:child_process'
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, rmdirSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -217,6 +217,11 @@ const added = git(['diff', '--cached', '--name-only', '--diff-filter=A', oldHead
 for (const p of added.filter((x) => !/(^|\/)(README\.md|\.gitkeep)$/.test(x))) {
   git(['rm', '-q', '--cached', '--', p])
   rmSync(join(ROOT, p), { force: true })
+  // 666: и папка плана, которая от этого опустела (✗ 2026-11-06: на узле владельца осталась пустая `new-steps/666/`); папки первого
+  // уровня (`new-steps/`, `completed-steps/` …) остаются всегда.
+  for (let d = dirname(join(ROOT, p)); dirname(d).startsWith(join(ROOT, STEPS)) && dirname(d) !== join(ROOT, STEPS).replace(/[\\/]$/, ''); d = dirname(d)) {
+    try { if (readdirSync(d).length) break; rmdirSync(d) } catch { break }
+  }
 }
 // Свои файлы узла — как были до слияния (их в узле нет у оригинала — значит, и брать нечего).
 for (const p of NODE_OWN) {

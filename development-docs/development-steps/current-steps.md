@@ -5,6 +5,13 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-26 (2026-11-06, night) — the owner's node UPDATED (`===NODE_UPDATE_DONE===`, core `87d0e8b4`, all 13 elements at their 666
+tags); 665 CLOSED on his node; 666 proven live except the bot.** 665: the typed reply and «Продолжить» on `localhost:24683/ru` with the
+real core, the task written and then deleted (no first task left). 666: the main agent started from the terminal page with no message —
+`--effort medium`, workflows and ultracode off, no Agent/Workflow; stopped, the record reset. **Owed:** the bot path (Opus → efforts →
+Ultracode → «Продолжить» → «выключить») — his node has no Telegram bot yet (his step 1-4). Pushed after the update (arrives with the next
+sync, no need to bother him now): `node-update.mjs` prunes the plan folders it empties. Left for the owner: the empty `~/fractera-node`.
+
 **NOW-25 (2026-11-06, night) — the owner synced; his `npm run node:update` REFUSED at the merge and rolled back** («слияние
 (development-docs/CANCELLED.md) не прошёл — узел возвращён как был», 21:36, the node untouched, backup `logs/node-update/2026-11-06T21-36-45-125Z`).
 Cause — my 665 row in the starter's `CANCELLED.md` (a fresh node keeps its own). Fixed in 666-5: the row taken back, `node-update.mjs` keeps
