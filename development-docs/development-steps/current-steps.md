@@ -17,7 +17,9 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   Stripe ВЫКЛЮЧЕН» → its switch `…/stripe/settings/danger-zone`; CONFIG's subscribers — every element on its own port. Not proven: a
   newly born element appearing by itself (a birth is the owner's action — check at the next one). Open: CONFIG has no `unsubscribe`
   (djlgb stays a dead subscriber). The owner asked (2026-11-06) for a checklist of 662 — given: 662-1 done, 662-2, 662-3, 662-4, 663
-  not started. **Next: 662-2** — the shared landing sections (`faq`, `builder`, `tool`, the power label, the stores' backup line):
+  not started. **The owner, 2026-11-06, verbatim:** «Пожалуйста сгруппировать по несколько задач за раз. Я сейчас протестирую рождение нового
+  элемента и проверю появилась кнопка или нет» → 662-2, 662-3 and 662-4 built together, one release per repository, one «Sync fork».
+  **Next: 662-2+3+4** — the shared landing sections (`faq`, `builder`, `tool`, the power label, the stores' backup line):
   measure the landing widget of the templates first, then its plan file `662-2.md`.
 - **663 PLANNED with the owner's decisions** (`new-steps/663/663-main.md`): the passport `power: { default, switch: never|manual|auto,
   wakeOnCall }`; `npm run load`; free > 1 GB — nothing, 1–0.5 GB — a proposal and the owner's yes, < 0.5 GB — `auto` off by itself with a
