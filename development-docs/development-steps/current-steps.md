@@ -21,9 +21,8 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   - **661** (the system part restored from the last release, the person's block recessive, the soul «Who you are — Claude, the captain»,
     «Iron Man and Sherlock Holmes», «Why by hand?», the first meeting's question 6): core `618b7e1e` + `96bc6464` (the identity lines;
     CI 42208383035); node restore proven (`ядро 8cfa1238`): one line appended to the soul → `===SYSTEM_PART_RESTORED===`, journal
-    `logs/system-part.jsonl`; the identity lines delivered by the owner's «sync is ok» — `node:update` was STILL RUNNING at the handoff
-    (the node's core already at `43f6093a`, its soul has «You are Claude»): check it ended (`ps aux | grep node-update`, `git log -1` in
-    `~/web4-node-starter-kit`) and that root and the elements answer.
+    `logs/system-part.jsonl`; the identity lines delivered by the owner's «sync is ok» — `node:update` → `===NODE_UPDATE_DONE=== 1 изменений форка, ядро
+    43f6093a`; the node's soul has «You are Claude»; core, root and data `/api/health` 200.
 - **662 APPROVED** — the owner: «Да пожалуйста ещё сделай лейбл в качестве отдельного раздела является ли этот элемент по умолчанию
   включён, или выключен …» (the power label joins 662-2 as a shared landing section, fed by the passport field of 663-1). Plan
   `new-steps/662/662-main.md`. **Next action: 662-1** — measure how the top menu is built in the core, root, both templates and each
