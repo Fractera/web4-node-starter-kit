@@ -14,6 +14,10 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   весь проект и проверить установку с чистого листа? А потом продолжить при необходимости»). Everything is on Fractera: core `c83f948c`,
   every element at its pinned tag (659–664 closed, 662-7 with the Claude figure animation). In a new session: read this block, then follow
   his report of the clean install (launch steps, the memory check of 663-7, the landings, the animation, «Все проекты» tabs).
+  **The owner, verbatim: «removing it is your work , to do it all step by step , finaly clear own memmory for absolutly clear install and
+  tests»** → REMOVAL STARTED (2026-11-06): `serve:stop`, `pm2 delete all`, `pm2 save` (empty dump — check-local reads pm2 live + dump),
+  delete `~/web4-node-starter-kit` and `~/web4-node-starter-kit-WEB4-ITEMS-aside`, clear Claude's memory of the node and of this home
+  project (a copy kept outside Claude's paths: `~/fractera-dev/_tools/memory-backup/`). `~/fractera-dev` stays (dev clones).
 - **The owner, 2026-11-06, verbatim (on the CLAUDE.md §3 line «Stores are on by default, except Redis» vs 619):** «as default turn of
   both Stripe + Redis» → step 664: cache (Redis) off by default like Stripe — its passport `power.default: off` with a reason, its
   landing and README, the native template's words, `CLAUDE.md` §3 (resealed by this word), skill `element-power`. **664 CLOSED** (`completed-steps/664.md`):
