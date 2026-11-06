@@ -5,7 +5,8 @@
 // управления» главного агента раз в минуту по `data/main-agent/data/cron.json`; без записей они ничего не делают.
 // 601 (владелец 2026-10-26: «Если свободной памяти больше чем 1 ГБ я хочу чтобы навык глубокой памяти был включён всегда»; когда мерить —
 // «При запуске узла и после сборки»): ядро стартует ровно в эти моменты (`pm2 resurrect` при входе, `serve start`, конец пересборки), и
-// при старте один раз зовёт `scripts/memory-by-free.mjs` — вне своего дерева процессов (`spawn-free.mjs`) и с чистым окружением.
+// при старте один раз зовёт правило нагрузки `scripts/load-rule.mjs` (663-3, владелец 2026-11-06: пороги 1 ГБ и 0,5 ГБ; прежнее правило
+// одной глубокой памяти `memory-by-free.mjs` вошло в него) — вне своего дерева процессов (`spawn-free.mjs`) и с чистым окружением.
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs") return
   const { startMainAgentCron } = await import("./lib/main-agent-cron/runner")
@@ -35,12 +36,12 @@ async function startMemoryByFree() {
   try {
     const child = spawn(
       process.execPath,
-      [path.join(root, "scripts", "spawn-free.mjs"), path.join(root, "scripts", "memory-by-free.mjs"), "--settle", "60"],
+      [path.join(root, "scripts", "spawn-free.mjs"), path.join(root, "scripts", "load-rule.mjs"), "--settle", "60", "--why", "start"],
       { cwd: root, env: env as NodeJS.ProcessEnv, detached: true, windowsHide: true, stdio: "ignore" },
     )
     child.unref()
-    console.log("[memory] через 60 с узел измерит свободную память и решит, включать ли глубокую память (порог 1 ГБ)")
+    console.log("[load] через 60 с узел измерит свободную память: больше 1 ГБ — ничего, 1–0,5 ГБ — предложение, меньше 0,5 ГБ — усыпит выключаемые (663-3)")
   } catch (e) {
-    console.warn(`[memory] замер свободной памяти не запущен: ${e instanceof Error ? e.message : String(e)}`)
+    console.warn(`[load] замер свободной памяти не запущен: ${e instanceof Error ? e.message : String(e)}`)
   }
 }

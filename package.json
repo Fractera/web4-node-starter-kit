@@ -134,7 +134,8 @@
     "session": "node scripts/main-agent-cli.mjs session",
     "openai-key": "node scripts/main-agent-cli.mjs openai-key",
     "transcribe": "node scripts/main-agent-cli.mjs transcribe",
-    "review": "node scripts/main-agent-cli.mjs review"
+    "review": "node scripts/main-agent-cli.mjs review",
+    "load": "node scripts/load.mjs"
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.55",

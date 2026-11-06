@@ -3,6 +3,7 @@ import { join } from "node:path"
 import { AGENT_TASK, TELEGRAM_MESSAGE, dueAt, elementDir, hm, readPlan, ymd, type CronSchedule } from "./due"
 import { noticeLang, sendNotice } from "./notice"
 import { noticeWords } from "./notice.i18n"
+import calendarWake from "@/lib/web4-items/calendar-wake.cjs"
 
 // ЧАСЫ «АВТОМАТИЗИРОВАННОГО УПРАВЛЕНИЯ» ГЛАВНОГО АГЕНТА (узел, шаг 558-3). Слово владельца 2026-10-21: «в Аргенти это будет
 // автоматизированное управление агентами или приложениями позволяет запускать агентов по определённому расписанию»; план 558 —
@@ -93,6 +94,14 @@ export function startMainAgentCron() {
     const from = Math.max(last + MINUTE, now - (CATCH_UP - 1) * MINUTE)
     last = now
     for (let t = from; t <= now; t += MINUTE) await checkMinute(new Date(t))
+    // 663-4 (владелец 2026-11-06: «пробудить нужный элемент чтобы в нём отработало Krohn события … за 2 минуты»): тот же тик будит
+    // усыплённый правилом нагрузки элемент перед его записью календаря (`lib/web4-items/calendar-wake.cjs`).
+    try {
+      const did = calendarWake.calendarWakeTick(process.cwd(), new Date())
+      if (did.length) console.log(`[calendar-wake] ${did.join(" ")}`)
+    } catch (e) {
+      console.warn(`[calendar-wake] ${(e as Error).message}`)
+    }
   }
   const first = setTimeout(() => {
     void tick()

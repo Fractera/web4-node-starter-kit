@@ -37,6 +37,17 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   («нужно куда-то в инструкцию добавить проверку»), `===INSTRUCTION_OK===`, `===SOUL_OK===`. Commits: most of 663-6 rode in `9eb880a8` under a «state:» message (my `git commit -a`
   during uncommitted code — broken alone: `elements-watch.cjs` missing), completed by `8bcddf4f` (663-6 + 663-7); main is whole at
   `8bcddf4f`, the fork never took `9eb880a8` (it sits at `3475624e`). Rule for the rest of the step: commit only named paths, never `-a`.
+  **663-1/2/3/4/5 BUILT and lab-proven (2026-11-06), core uncommitted → committed next:** passport `power` rule (`lib/a2a/passport.mjs`
+  `powerProblems`, STANDARD.md; `element-props.cjs` now passes the whole `power` — ✗ it passed only `default: off`, the core never saw a
+  class); `npm run load` (`scripts/load.mjs`, `lib/web4-items/element-calendar.cjs`); the rule `scripts/load-rule.mjs` (replaces
+  `memory-by-free.mjs`, removed; `instrumentation.ts` start, `modes.cjs` before every session; notice kind `load`; `element-power
+  --by-rule`); the calendar wake `lib/web4-items/calendar-wake.cjs` in the core's minute tick; the gatekeeper `scripts/gatekeeper.mjs` +
+  ecosystem app; skill `element-power` rewritten. Labs (scratchpad `663/rulelab`, `663/calab`): 1500 → nothing; 800 → proposal, nothing
+  off; 400 → lab-emb then lab-cache asleep, lab-data (never) untouched; 1700 → both back; 100 → «перешёл черту» alarm; 700 with nothing
+  sleepable → «подходит к пределу»; calendar: woken 1.5 min ahead only the rule-asleep one, no repeat, the rule 6 min after; gatekeeper:
+  a call to asleep lab-emb → 200 in 1.2 s (woke 1.1 s), never-port not held, without it → refused. Lab hygiene: the replica's
+  `ensureElementsWatch` started `fractera-elements-watch` in the owner's pm2 twice — removed by name after checking its cwd. Element
+  repos: 15 passports carry `power` (+ `embeddings` in calls of vectors, graph, memory), uncommitted.
 - **Open findings for the owner:** `CLAUDE.md` §3 «Stores are on by default, except Redis» contradicts step 619 (every native on except
   Stripe) — sealed, needs his word; the soul is 1392 words now (the owner asked for lighter; the identity lines added ~120); root does not
   carry the template's `widget-static-custom-landing` (its home is the agent's screen — by design).

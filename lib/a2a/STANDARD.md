@@ -47,6 +47,12 @@ Declared in `capabilities.extensions[]` as `{ uri, description, required: false,
 Levels of the node and the operations find · get · contribute are described in the step plan; contribute writes into another
 element's catalog and the receiver checks it, records origin and version, and answers accepted · pending · refused.
 
+## Power — `power` in `OWN-SERVICE-PROPS.json` (node step 663-1)
+
+`{ "default": "on"|"off", "switch": "never"|"manual"|"auto", "wakeOnCall": true|false, "reason": "…" | { "en": "…", … } }` — on or off
+by default; never — the node never turns it off (auth, data, root, storage); manual — only a person's word (stripe); auto — the load rule
+may put it to sleep and `wakeOnCall` lets a call wake it. No field — manual. `reason` is required when `default` is off.
+
 ## Guard — `node scripts/check-passport.mjs <element dir>`
 
 A2A required fields of the card and of every skill; extension shape; every door's skill exists; output example on every

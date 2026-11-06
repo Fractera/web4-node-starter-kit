@@ -89,6 +89,25 @@ function serviceApps() {
   // 663-6 (владелец 2026-11-06: «Включить в 663 (Рекомендую)»): ОДИН сторож на все элементы вместо `fractera-svc-<id>-watch` у
   // каждого — тот же файл и то же терпение, ~50 МБ вместо ~660 МБ (13 × ~51, замерено на его Mac). Сторожит только запущенные
   // (`online`) элементы, реестр и pm2 перечитывает на каждом обходе.
+  // 663-4 (владелец 2026-11-06: «Привратник (Рекомендую)»): привратник спящих элементов — слушает порты усыплённых правилом нагрузки
+  // элементов с `wakeOnCall` и будит их первым вызовом (`scripts/gatekeeper.mjs`, ~50 МБ).
+  if (apps.length > 0) {
+    apps.push({
+      name: 'fractera-gatekeeper',
+      script: path.join(root, 'scripts', 'gatekeeper.mjs'),
+      cwd: root,
+      instances: 1,
+      exec_mode: 'fork',
+      watch: false,
+      autorestart: true,
+      min_uptime: 20000,
+      max_restarts: 10,
+      out_file: path.join(root, 'logs', 'gatekeeper.log'),
+      error_file: path.join(root, 'logs', 'gatekeeper.log'),
+      merge_logs: true,
+      time: true,
+    })
+  }
   if (apps.length > 0) {
     apps.push({
       name: 'fractera-elements-watch',

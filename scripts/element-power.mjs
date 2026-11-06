@@ -26,7 +26,12 @@ function childEnv() {
 }
 const pm2 = (args) => spawnSync(IS_WIN ? 'pm2.cmd' : 'pm2', args, { cwd: ROOT, shell: IS_WIN, windowsHide: true, env: childEnv(), encoding: 'utf8' })
 
-const [id, action, ...rest] = process.argv.slice(2)
+// 663-3: `--by-rule` (и `--mb <число>`) — зовёт правило нагрузки: признак `byRule`, не выбор человека.
+const argv = process.argv.slice(2)
+const byRule = argv.includes('--by-rule')
+const mbAt = argv.indexOf('--mb')
+const ruleMb = mbAt >= 0 ? Number(argv[mbAt + 1]) : null
+const [id, action, ...rest] = argv.filter((a, i) => a !== '--by-rule' && !(mbAt >= 0 && (i === mbAt || i === mbAt + 1)))
 if (!id || !['off', 'on', 'status'].includes(action ?? '')) {
   say('usage: npm run element:power -- <id> off "<reason>" | on | status')
   process.exit(2)
@@ -44,7 +49,7 @@ if (action === 'status') {
 }
 
 if (action === 'off') {
-  try { power.setOff(id, rest.join(' '), ROOT) } catch (e) { say(`===POWER_FAILED=== ${e.message}`); process.exit(1) }
+  try { power.setOff(id, rest.join(' '), ROOT, { byRule, mb: ruleMb }) } catch (e) { say(`===POWER_FAILED=== ${e.message}`); process.exit(1) }
   for (const n of [...names, `fractera-svc-${id}-watch`]) pm2(['delete', n]) // the legacy personal watcher too, if an older node still has it
   pm2(['save'])
   // 563-3, moved by 594-2: the study browser lives in the core (scripts/study-browser.mjs, data/study/browser/state.json) and remembers
@@ -64,7 +69,7 @@ if (action === 'off') {
 }
 
 // on
-power.setOn(id, ROOT)
+power.setOn(id, ROOT, { byRule })
 const r = pm2(['start', join(ROOT, 'ecosystem.config.cjs'), '--only', names.join(',')])
 if (r.status !== 0) { say(`===POWER_FAILED=== pm2 start: ${(r.stderr || r.stdout || '').trim().split('\n').pop()}`); process.exit(1) }
 watch.ensureElementsWatch(ROOT)
