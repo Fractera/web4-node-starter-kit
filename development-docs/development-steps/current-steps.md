@@ -12,7 +12,14 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   v1.2.12, embeddings v0.1.10, config v1.2.24, design v1.1.24, graph v1.2.11, cache v0.1.21, memory v2.2.29, stripe v1.3.19, blocks v1.4.22.
 - **662 REOPENED for 662-6** (the owner, 2026-11-06: the starter banner only in root and the custom template; menu names with a capital —
   verbatim in `new-steps/662/662-6.md`; the plan restored from git). **Built, uncommitted:** the banner removed from 12 layouts (natives +
-  native template; stripe had none), `cap()` in the shell kit copied to all 15 + the core. **Next:** lab, release, CI, pins, «Sync fork».
+  native template; stripe had none), `cap()` in the shell kit copied to all 15 + the core. **Lab:** storage banner=false, custom template banner=true (negative control), the custom tab «Root», console 0;
+  prebuild 0 everywhere, the core's guards OK. **Released:** auth `c8c52ea` v2.4.20, blocks `3963d84` v1.4.26, config `7fd2041` v1.2.29,
+  custom `a12755a` v0.3.166, data `5619e8f` v2.2.13, design `681dde9` v1.1.28, embeddings `7f0a1d4` v0.1.14, graph `5501dbc` v1.2.15,
+  memory `0b40e8c` v2.2.33, native `2b1a6f6` v0.1.46, cache `a40cc3f` v0.1.25, root `0e638fd` v3.0.31, storage `5acc8a0` v1.1.33, stripe
+  `b2863b0` v1.3.23, vectors `4d268c4` v1.2.16. **CI:** ubuntu and windows green on all 15 (1–3 min each); macOS — GitHub's capacity:
+  auth, memory, root, vectors cancelled after ~31 min in the queue, custom still queued (reruns in the background) — pinned on the
+  skill's rule «a runner not acquired is GitHub's, not the code's»; the owner's Mac node is the macOS proof. The owner clicked «Sync
+  fork» twice early (fork at `ae293bff`). **Next:** «готово к Sync» → his click → `node:update` → eyes (banner only on root, «Root»).
 - **662 CLOSED** (`completed-steps/662-1.md`, `662-main.md`; plans deleted): on the owner's node (`ядро 9d8c5b93`) every element's header has
   the core's two tabs, Stripe marked off → its switch (architect only); every landing has the power label, «your own builder», FAQ last
   (+ backups for the stores), the per-element sections; blocks' first screen; root's carousel — eyes and timer tests green. GitHub
