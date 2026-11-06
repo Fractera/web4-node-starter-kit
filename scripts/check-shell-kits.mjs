@@ -10,6 +10,7 @@
 // 🛑 Сайта с оболочкой ещё нет (узел до сайта v1.7.x) — сторож молчит об этом вслух и не падает.
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
+import { spawnSync } from 'node:child_process'
 
 const ROOT = process.cwd()
 const reg = JSON.parse(readFileSync(join(ROOT, 'WEB4-ITEMS-REGISTRY', 'web4-items.json'), 'utf8'))
@@ -31,13 +32,37 @@ function files(dir) {
 }
 const read = (p) => readFileSync(p, 'utf8').replace(/\r\n/g, '\n')
 
-function compare(copy) {
-  const want = files(siteShell)
+// Источник вида сайта: установленная папка — по умолчанию.
+const installedSite = () => ({ list: () => files(siteShell), read: (f) => read(join(siteShell, f)), label: 'сайт' })
+
+// 662-1: ✗ замерено на узле владельца 2026-11-06 — `node:update` проверяет ядро (шаг 6) ДО того, как ставит элементы на закрепления
+// (шаг 7): выпуск, где оболочка меняется у сайта и ядра вместе, откатывался «ядро не совпадает с сайтом» — сверка шла с сайтом
+// прежней версии. Сайт стоит ровно на теге выпуска, а закрепление реестра другое — ядро сверяется с оболочкой ЗАКРЕПЛЁННОГО тега
+// (её прочтёт установка сразу после сторожей). Своя работа поверх тега или тег не достаётся — прежняя сверка с установленной папкой.
+function pinnedSite() {
+  if (!root?.version || !root.repo) return null
+  const dir = dirOf(root)
+  const g = (...a) => spawnSync('git', ['-C', dir, ...a], { encoding: 'utf8', windowsHide: true })
+  const at = g('describe', '--tags', '--exact-match', 'HEAD')
+  if (at.status !== 0 || at.stdout.trim() === root.version) return null
+  if (g('rev-parse', '-q', '--verify', `${root.version}^{commit}`).status !== 0) g('fetch', '--quiet', '--tags', root.repo)
+  const ls = g('ls-tree', '-r', '--name-only', root.version, '--', 'components/shell')
+  if (ls.status !== 0 || !ls.stdout.trim()) return null
+  const list = ls.stdout.trim().split('\n').map((p) => p.replace(/^components\/shell\//, '')).sort()
+  return {
+    list: () => list,
+    read: (f) => g('show', `${root.version}:components/shell/${f}`).stdout.replace(/\r\n/g, '\n'),
+    label: `сайт ${root.version} (закрепление; установлен ${at.stdout.trim()})`,
+  }
+}
+
+function compare(copy, site = installedSite()) {
+  const want = site.list()
   const have = existsSync(copy) ? files(copy) : []
   const diff = []
   for (const f of want) {
     if (!have.includes(f)) diff.push(`нет ${f}`)
-    else if (read(join(siteShell, f)) !== read(join(copy, f))) diff.push(`отличается ${f}`)
+    else if (site.read(f) !== read(join(copy, f))) diff.push(`отличается ${f}`)
   }
   for (const f of have) if (!want.includes(f)) diff.push(`лишний ${f}`)
   return diff
@@ -50,12 +75,13 @@ if (!siteShell || !existsSync(join(siteShell, 'shell-types.ts'))) {
 }
 
 let errors = 0
-const core = compare(join(ROOT, 'components', 'shell'))
+const coreSite = pinnedSite() ?? installedSite()
+const core = compare(join(ROOT, 'components', 'shell'), coreSite)
 if (core.length) {
   errors++
-  console.log('  ✗ ОШИБКА ядро: components/shell не совпадает с сайтом — npm run shell-kit:add -- .')
+  console.log(`  ✗ ОШИБКА ядро: components/shell не совпадает с ${coreSite.label} — npm run shell-kit:add -- .`)
   for (const d of core.slice(0, 12)) console.log(`      ${d}`)
-} else console.log('  ✓ ядро — копия сайта')
+} else console.log(`  ✓ ядро — копия: ${coreSite.label}`)
 
 for (const s of reg.services ?? []) {
   if (s.id === 'root') continue
