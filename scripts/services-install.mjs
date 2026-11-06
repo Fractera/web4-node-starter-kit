@@ -791,7 +791,8 @@ for (const entry of registry.services) {
     // файлы, и Windows не даёт их удалить. Повторная установка на живом узле была
     // невозможна вовсе. Цена названа: служба молчит, пока идёт установка; в конце
     // её поднимает шаг 8, а после отказа — та же ветка ниже (`stoppedByInstaller`).
-    for (const suffix of ['-watch', '']) {
+    // 663-6: личного сторожа у элемента больше нет — общий (`fractera-elements-watch`) остановленный элемент не трогает.
+    for (const suffix of ['']) {
       const name = `fractera-svc-${entry.id}${suffix}`
       if (runningAtStart.includes(name) && run(pm2cmd, ['stop', name], ROOT, { quiet: true }).rc === 0) {
         stoppedByInstaller.add(name)
@@ -1006,7 +1007,7 @@ for (const entry of registry.services) {
       // зависимостей. ✗ Измерено 2026-09-23 дважды: сборка на Windows падала `EBUSY rmdir` на
       // `.next/standalone` — работающий сервер держит свои файлы, — и уже СТЕРЕВ сервер, не
       // записывала новый. Служба жила из памяти до первого перезапуска, после него — вход мёртв.
-      for (const suffix of ['-watch', '']) {
+      for (const suffix of ['']) {
         const name = `fractera-svc-${entry.id}${suffix}`
         if (runningAtStart.includes(name) && !stoppedByInstaller.has(name) &&
             run(pm2cmd, ['stop', name], ROOT, { quiet: true }).rc === 0) {
@@ -1155,7 +1156,7 @@ const running = runningAtStart
 
 const refreshed = []
 for (const s of summary) {
-  for (const suffix of ['', '-watch']) {
+  for (const suffix of ['']) {
     const name = `fractera-svc-${s.id}${suffix}`
     if (!running.includes(name)) continue
     run(pm2cmd, ['delete', name], ROOT, { quiet: true })
@@ -1168,6 +1169,13 @@ for (const s of summary) {
 for (const name of stoppedByInstaller) {
   if (refreshed.includes(name)) continue
   if (run(pm2cmd, ['start', name], ROOT, { quiet: true }).rc === 0) refreshed.push(name)
+}
+// 663-6: один сторож на все элементы — личные сторожа прежних версий убираются, общий поднимается, если не запущен.
+if (running.length > 0) {
+  const watch = require('../lib/web4-items/elements-watch.cjs')
+  const legacy = watch.dropLegacyWatchers(ROOT)
+  if (legacy.length) say(`  личные сторожа прежней версии убраны (${legacy.length}) — их заменяет один ${watch.NAME}`)
+  if (watch.ensureElementsWatch(ROOT)) say(`  запущен ${watch.NAME} — один сторож здоровья на все элементы`)
 }
 // Старая папка сборки удаляется после перезапуска. Windows отпускает файлы убитого процесса не сразу
 // (✗ измерено 2026-09-24: rmSync сразу после pm2 delete уронил установщик до pm2 save) — несколько

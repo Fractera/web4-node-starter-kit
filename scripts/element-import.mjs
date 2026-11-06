@@ -126,7 +126,8 @@ if (!existsSync(rootPassport) && !existsSync(folderPassport)) {
 
 // 4. Смена папок при остановленной службе.
 save('swapping')
-const names = [`fractera-svc-${id}`, `fractera-svc-${id}-watch`]
+// 663-6: one shared watcher (`fractera-elements-watch`, lib/web4-items/elements-watch.cjs) instead of `fractera-svc-<id>-watch`. A stopped element is not watched.
+const names = [`fractera-svc-${id}`]
 for (const n of names) pm2(['stop', n])
 const trash = join(paths.ITEMS_DIR, '.replaced', `${id}-${Date.now()}`)
 mkdirSync(dirname(trash), { recursive: true })

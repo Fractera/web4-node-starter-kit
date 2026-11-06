@@ -148,6 +148,71 @@ async function tick() {
   }
 }
 
+// ── 663-6: ОДИН СТОРОЖ НА ВСЕ ЭЛЕМЕНТЫ (`FRACTERA_WATCH_SERVICE=*`). Владелец 2026-11-06: «Включить в 663 (Рекомендую)» — замерено на
+// его Mac: 13 сторожей по ~51 МБ, ~660 МБ, треть веса узла. Терпение то же самое (три неудачи подряд, таймаут, пауза после
+// перезапуска), но у каждого элемента свой счётчик. Сторожит только то, что pm2 держит `online`: остановленный установщиком, переносом
+// или заменой элемент (`stopped`) и выключенный (его в pm2 нет) не трогаются — прежде для этого останавливали его личного сторожа.
+// Только что запущенный (`pm_uptime` моложе паузы) — тоже: он ещё поднимается. Реестр и pm2 читаются на каждом обходе — рождённый
+// элемент сторожится без перезапуска сторожа.
+const ALL = WATCH_SERVICE === '*'
+const each = new Map() // id → { failures, restarts, nextCheckAfter }
+
+function onlineServices() {
+  const r = spawnSync(pm2, ['jlist'], { encoding: 'utf8', shell: isWindows, windowsHide: true })
+  try {
+    const list = JSON.parse(r.stdout.slice(r.stdout.indexOf('[')))
+    return new Map(list.filter((a) => /^fractera-svc-/.test(a.name) && !/-watch$/.test(a.name) && a.pm2_env?.status === 'online').map((a) => [a.name.slice('fractera-svc-'.length), a.pm2_env.pm_uptime || 0]))
+  } catch {
+    return null
+  }
+}
+
+function serviceUrl(entry) {
+  try {
+    const stamp = JSON.parse(readFileSync(path.join(paths.itemDir(entry.id, entry.kind), '.install-stamp.json'), 'utf8'))
+    return entry.port && stamp?.health ? `http://127.0.0.1:${entry.port}${stamp.health}` : null
+  } catch {
+    return null
+  }
+}
+
+async function tickAll() {
+  const online = onlineServices()
+  if (!online) return log('pm2 не ответил — обход пропущен')
+  let services = []
+  try { services = JSON.parse(readFileSync(paths.REGISTRY_FILE, 'utf8')).services || [] } catch { return }
+  const now = Date.now()
+  await Promise.all(services.map(async (entry) => {
+    const startedAt = online.get(entry.id)
+    if (startedAt === undefined) { each.delete(entry.id); return }
+    const st = each.get(entry.id) ?? { failures: 0, restarts: 0, nextCheckAfter: 0 }
+    each.set(entry.id, st)
+    if (now - startedAt < COOLDOWN_MS || now < st.nextCheckAfter) return
+    const url = serviceUrl(entry)
+    if (!url) return
+    const { ok, status } = await probe(url)
+    if (ok) {
+      if (st.failures > 0) log(`${entry.id}: снова отвечает — счётчик неудач сброшен с ${st.failures}`)
+      st.failures = 0
+      return
+    }
+    st.failures += 1
+    log(`${entry.id}: неудача ${st.failures}/${FAILURES_BEFORE_RESTART}: ${url} → ${status}`)
+    if (st.failures < FAILURES_BEFORE_RESTART) return
+    st.failures = 0
+    st.restarts += 1
+    log(`${entry.id}: процесс жив, но не отвечает — перезапускаю (№${st.restarts} за жизнь сторожа)`)
+    const r = spawnSync(pm2, ['restart', `fractera-svc-${entry.id}`], { encoding: 'utf8', shell: isWindows, windowsHide: true })
+    if (r.error || r.status !== 0) log(`${entry.id}: перезапуск НЕ УДАЛСЯ: ${r.error?.message || r.stderr?.trim() || 'код ' + r.status}`)
+    else st.nextCheckAfter = Date.now() + COOLDOWN_MS
+  }))
+}
+
+if (ALL) {
+  log(`сторож пущен для всех элементов узла: каждые ${INTERVAL_MS / 1000} с, терпение ${FAILURES_BEFORE_RESTART} неудачи подряд, ` +
+    `таймаут ответа ${TIMEOUT_MS / 1000} с, пауза после запуска и перезапуска ${COOLDOWN_MS / 1000} с`)
+  setInterval(() => { tickAll().catch((error) => log(`ошибка внутри обхода: ${error.message}`)) }, INTERVAL_MS)
+} else {
 log(
   `сторож пущен для ${WATCH_SERVICE ? 'блока «' + WATCH_SERVICE + '»' : 'узла'}: ` +
     `каждые ${INTERVAL_MS / 1000} с, терпение ${FAILURES_BEFORE_RESTART} неудачи подряд, ` +
@@ -160,3 +225,4 @@ nextCheckAfter = Date.now() + COOLDOWN_MS / 2
 setInterval(() => {
   tick().catch((error) => log(`ошибка внутри проверки: ${error.message}`))
 }, INTERVAL_MS)
+}

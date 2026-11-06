@@ -224,7 +224,8 @@ writeFileSync(stampFile, JSON.stringify({
 const listed = spawnSync(pm2, ['jlist'], { cwd: ROOT, encoding: 'utf8', shell: IS_WIN, windowsHide: true })
 let names = []
 try { names = JSON.parse(listed.stdout.slice(listed.stdout.indexOf('['))).map((a) => a.name) } catch { /* pm2 молчит */ }
-for (const suffix of ['', '-watch']) {
+// 663-6: one shared watcher (`fractera-elements-watch`, lib/web4-items/elements-watch.cjs) instead of `fractera-svc-<id>-watch`.
+for (const suffix of ['']) {
   const name = `fractera-svc-${id}${suffix}`
   if (!names.includes(name)) continue
   // 🛑 pm2 передаёт новому процессу окружение ТОГО, КТО ЕГО ЗОВЁТ. «Принять» зовёт дверь ядра — сервер Next; без чистки элемент

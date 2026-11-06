@@ -235,7 +235,8 @@ const pm2 = (args) => spawnSync(IS_WIN ? 'pm2.cmd' : 'pm2', args, { cwd: ROOT, e
     process.exit(0)
   }
 }
-for (const name of [`fractera-svc-${id}`, `fractera-svc-${id}-watch`]) {
+// 663-6: one shared watcher (`fractera-elements-watch`, lib/web4-items/elements-watch.cjs) instead of `fractera-svc-<id>-watch`.
+for (const name of [`fractera-svc-${id}`]) {
   const r = pm2(['start', 'ecosystem.config.cjs', '--only', name])
   if (r.status !== 0) {
     say(`запуск ${name} не удался — повтор: pm2 start ecosystem.config.cjs --only ${name}`)
@@ -243,6 +244,7 @@ for (const name of [`fractera-svc-${id}`, `fractera-svc-${id}-watch`]) {
     process.exit(1)
   }
 }
+require('../lib/web4-items/elements-watch.cjs').ensureElementsWatch(ROOT)
 pm2(['save'])
 stage('запущен в pm2, жду ответа элемента')
 

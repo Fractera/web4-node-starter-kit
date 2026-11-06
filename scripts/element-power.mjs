@@ -33,7 +33,9 @@ if (!id || !['off', 'on', 'status'].includes(action ?? '')) {
 }
 const entry = (power.readRegistry(ROOT).services || []).find((s) => s.id === id)
 if (!entry) { say(`===POWER_FAILED=== unknown element «${id}»`); process.exit(1) }
-const names = [`fractera-svc-${id}`, `fractera-svc-${id}-watch`]
+// 663-6: one shared watcher (`fractera-elements-watch`, lib/web4-items/elements-watch.cjs) instead of `fractera-svc-<id>-watch`.
+const names = [`fractera-svc-${id}`]
+const watch = require('../lib/web4-items/elements-watch.cjs')
 
 if (action === 'status') {
   const off = power.offOf(entry)
@@ -43,7 +45,7 @@ if (action === 'status') {
 
 if (action === 'off') {
   try { power.setOff(id, rest.join(' '), ROOT) } catch (e) { say(`===POWER_FAILED=== ${e.message}`); process.exit(1) }
-  for (const n of names) pm2(['delete', n])
+  for (const n of [...names, `fractera-svc-${id}-watch`]) pm2(['delete', n]) // the legacy personal watcher too, if an older node still has it
   pm2(['save'])
   // 563-3, moved by 594-2: the study browser lives in the core (scripts/study-browser.mjs, data/study/browser/state.json) and remembers
   // the element that started it. Turning that element off stops it too: a browser left alone holds hundreds of MB (9 processes,
@@ -65,6 +67,7 @@ if (action === 'off') {
 power.setOn(id, ROOT)
 const r = pm2(['start', join(ROOT, 'ecosystem.config.cjs'), '--only', names.join(',')])
 if (r.status !== 0) { say(`===POWER_FAILED=== pm2 start: ${(r.stderr || r.stdout || '').trim().split('\n').pop()}`); process.exit(1) }
+watch.ensureElementsWatch(ROOT)
 const health = require('../lib/web4-items/element-props.cjs').readElementProps(require('../lib/web4-items/paths.cjs').entryDir(entry))?.health?.path ?? '/'
 let answered = 0
 for (let i = 0; i < 60 && !answered; i++) {

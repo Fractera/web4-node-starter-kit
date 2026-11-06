@@ -67,7 +67,8 @@ if (preview && (preview.state === 'ready' || (preview.state === 'building' && al
 
 save({ state: 'moving', from: source, to: target })
 say(`перенос ${source} → ${target}`)
-const names = [`fractera-svc-${id}-watch`, `fractera-svc-${id}`]
+// 663-6: one shared watcher (`fractera-elements-watch`, lib/web4-items/elements-watch.cjs) instead of `fractera-svc-<id>-watch`. A stopped element is not watched.
+const names = [`fractera-svc-${id}`]
 const wasOnline = new Set(
   (() => { try { return JSON.parse(run(['jlist']).stdout || '[]') } catch { return [] } })()
     .filter((p) => names.includes(p.name) && p.pm2_env?.status === 'online').map((p) => p.name),
@@ -116,7 +117,7 @@ for (const n of names) run(['delete', n])
 // 567: выключенный элемент после переноса не поднимается — его нет в ecosystem.
 const offNow = elementPower.isOffById(id, ROOT)
 if (offNow) say(`«${id}» выключен — после переноса не запускаю`)
-for (const n of offNow ? [] : [`fractera-svc-${id}`, `fractera-svc-${id}-watch`]) {
+for (const n of offNow ? [] : [`fractera-svc-${id}`]) {
   if (wasOnline.size === 0 || wasOnline.has(n)) {
     const r = run(['start', 'ecosystem.config.cjs', '--only', n])
     say(`pm2 start ${n}: ${r.status === 0 ? 'ok' : (r.stderr || r.stdout).trim().slice(-200)}`)

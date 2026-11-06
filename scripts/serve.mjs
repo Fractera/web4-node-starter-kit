@@ -145,6 +145,8 @@ async function start() {
       if (off) console.log(`  ${s.id}: выключен (${power.reasonIn(off, 'ru')}) — не запускаю`)
     }
   }
+  // 663-6: личные сторожа элементов прежних версий — из pm2 (их заменил один `fractera-elements-watch`, он в списке выше).
+  require('../lib/web4-items/elements-watch.cjs').dropLegacyWatchers(root)
   const result = pm2run(['start', ecosystem, '--only', names.join(',')])
   if (result.status !== 0) {
     console.error('Запустить не удалось. Журнал: logs/web4-err.log')
@@ -412,7 +414,8 @@ async function reportServices(apps) {
 
   for (const s of services) {
     const proc = apps.find((a) => a.name === `fractera-svc-${s.id}`)
-    const watch = apps.find((a) => a.name === `fractera-svc-${s.id}-watch`)
+    // 663-6: сторож у всех элементов один — `fractera-elements-watch`.
+    const watch = apps.find((a) => a.name === 'fractera-elements-watch')
 
     let stamp = null
     try {

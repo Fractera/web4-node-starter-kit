@@ -85,8 +85,13 @@ function serviceApps() {
       },
     })
 
+  }
+  // 663-6 (владелец 2026-11-06: «Включить в 663 (Рекомендую)»): ОДИН сторож на все элементы вместо `fractera-svc-<id>-watch` у
+  // каждого — тот же файл и то же терпение, ~50 МБ вместо ~660 МБ (13 × ~51, замерено на его Mac). Сторожит только запущенные
+  // (`online`) элементы, реестр и pm2 перечитывает на каждом обходе.
+  if (apps.length > 0) {
     apps.push({
-      name: `fractera-svc-${s.id}-watch`,
+      name: 'fractera-elements-watch',
       script: path.join(root, 'scripts', 'health-watch.mjs'),
       cwd: root,
       instances: 1,
@@ -95,20 +100,15 @@ function serviceApps() {
       autorestart: true,
       min_uptime: 20000,
       max_restarts: 10,
-      out_file: path.join(root, 'logs', `svc-${s.id}-watch.log`),
-      error_file: path.join(root, 'logs', `svc-${s.id}-watch.log`),
+      out_file: path.join(root, 'logs', 'elements-watch.log'),
+      error_file: path.join(root, 'logs', 'elements-watch.log'),
       merge_logs: true,
       time: true,
       env: {
-        // Сторож в режиме службы: спрашивает НЕ сайт узла, а дверь этого блока,
-        // и перезапускает именно его.
-        FRACTERA_WATCH_SERVICE: s.id,
-        FRACTERA_APP_NAME: `fractera-svc-${s.id}`,
+        FRACTERA_WATCH_SERVICE: '*',
         FRACTERA_HEALTH_INTERVAL_MS: '30000',
         FRACTERA_HEALTH_FAILURES: '3',
-        // Службе не нужно компилировать страницы: она собрана. Пауза короче, чем
-        // у узла, но не нулевая — после перезапуска ей нужны секунды, чтобы
-        // открыть базу и встать на порт.
+        // Элемент собран: после запуска ему нужны секунды, чтобы открыть базу и встать на порт (как у прежних сторожей).
         FRACTERA_HEALTH_COOLDOWN_MS: '30000',
       },
     })
