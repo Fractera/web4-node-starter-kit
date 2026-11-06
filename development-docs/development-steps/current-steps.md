@@ -33,7 +33,7 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   `d8fb57b` v3.0.28, storage `0b4cb1c` v1.1.30, stripe `5831c9d` v1.3.20, vectors `dacf97e` v1.2.13. **CI three-os green on all 15** (auth 42213390451, blocks 42213395718,
   config 42213402179, custom 42213407957, data 42213414095, design 42213419865, embeddings 42213425710, graph 42213431692, memory
   42213435703, native 42213441716, cache 42213447483, root 42213452357, storage 42213457275, stripe 42213462010, vectors 42213467689);
-  the core's code and pins committed together. **Next:** the owner's «Sync fork» → `npm run node:update` → scratchpad `662/header.cjs`
+  the core's code and pins committed together — core `77d263f1`, CI 42214576305 green. **Next:** the owner's «Sync fork» → `npm run node:update` → scratchpad `662/header.cjs`
   over the core and all 12 running elements (expected: «Все проекты» with 13 cards; Stripe marked «выключен» for the architect);
   CONFIG's `subscribers.json` names every element on its own port; then 662-1's summary and 662-2. Found, not in 662-1: CONFIG has no
   `unsubscribe` — a deleted element (djlgb) stays a dead subscriber.
