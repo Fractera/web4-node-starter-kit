@@ -5,6 +5,45 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-22 (2026-11-06, day) — HANDOFF to a new context window. Read this block first, then NOW-21 for the evidence.**
+- **Closed with summaries:** 654 (`completed-steps/654-main.md`), 656, 657, 658 (`658-main.md`).
+- **DELIVERED AND PROVEN on the owner's node, SUMMARIES NOT WRITTEN YET** (first job of the next session: write `completed-steps/659-main.md`,
+  `660-main.md`, `661-main.md` from the evidence in NOW-21 below, and delete `new-steps/659/`, `660/`, `661/` in the same commit):
+  - **659** (check-i18n green in every element; `check-data-langs` in every prebuild; ru bids of auth/config/design aligned): node `ядро
+    19e4f2aa`, `~/fractera-dev/_tools/proof-659.mjs` → `===PROOF_659_OK=== 13 elements` (before: all 13 `I18N_FAILED`, no guard).
+  - **660** (landings after the Stripe sample for data, auth, config, design, cache and both templates; the account drawer as root's in
+    every element; the drawer's links to `ARCHITECT_URL`; cache's words fixed after step 619): the last node proof
+    `~/fractera-dev/_tools/proof-660.sh` → `===EYES_LANDING_OK===` on all 12 running elements (en and ru, 1440 light and dark, 390,
+    console 0 with the drawer open, no overflow; stripe off by the node). The first run found 10 CORS errors (relative drawer links) —
+    fixed by the drawer pins `76b5ac3f`. Final pins: root v3.0.27, custom v0.3.162, native v0.1.42, auth v2.4.16, data v2.2.9, storage
+    v1.1.29, vectors v1.2.12, embeddings v0.1.10, config v1.2.24, design v1.1.24, graph v1.2.11, cache v0.1.21, memory v2.2.29, stripe
+    v1.3.19, blocks v1.4.22.
+  - **661** (the system part restored from the last release, the person's block recessive, the soul «Who you are — Claude, the captain»,
+    «Iron Man and Sherlock Holmes», «Why by hand?», the first meeting's question 6): core `618b7e1e` + `96bc6464` (the identity lines;
+    CI 42208383035); node restore proven (`ядро 8cfa1238`): one line appended to the soul → `===SYSTEM_PART_RESTORED===`, journal
+    `logs/system-part.jsonl`; the identity lines delivered by the owner's «sync is ok» — `node:update` was STILL RUNNING at the handoff
+    (the node's core already at `43f6093a`, its soul has «You are Claude»): check it ended (`ps aux | grep node-update`, `git log -1` in
+    `~/web4-node-starter-kit`) and that root and the elements answer.
+- **662 APPROVED** — the owner: «Да пожалуйста ещё сделай лейбл в качестве отдельного раздела является ли этот элемент по умолчанию
+  включён, или выключен …» (the power label joins 662-2 as a shared landing section, fed by the passport field of 663-1). Plan
+  `new-steps/662/662-main.md`. **Next action: 662-1** — measure how the top menu is built in the core, root, both templates and each
+  element; why «Платежи Stripe» in the top menu opens the architect page (Stripe is off by the node — likely the cause, or the 307 path).
+- **663 PLANNED with the owner's decisions** (`new-steps/663/663-main.md`): the passport `power: { default, switch: never|manual|auto,
+  wakeOnCall }`; `npm run load`; free > 1 GB — nothing, 1–0.5 GB — a proposal and the owner's yes, < 0.5 GB — `auto` off by itself with a
+  message (the owner: «if free memory is more then 1gb - с сообщением ваm if less 0.5 gb = auto»); waking 2 minutes before a calendar
+  entry and on a call; the alarm at the limit. Built after 662.
+- **Open findings for the owner:** `CLAUDE.md` §3 «Stores are on by default, except Redis» contradicts step 619 (every native on except
+  Stripe) — sealed, needs his word; the soul is 1392 words now (the owner asked for lighter; the identity lines added ~120); root does not
+  carry the template's `widget-static-custom-landing` (its home is the agent's screen — by design).
+- **Tools (outside the scratchpad):** `~/fractera-dev/_tools/ci-wait.sh <repo>:<sha> …` (CI three-os), `eyes-landing.cjs` (one landing,
+  6 views + the drawer), `proof-659.mjs`, `proof-660.sh` (every element of the node), `660-landing/` (`make-landing.mjs` — the storage
+  landing widget under an element's name; `build-data.mjs` + `specs/*.mjs` — en/ru page data from one spec; `lab.sh` — `next dev` lab
+  with en,ru; `apply.mjs`, `check-data-langs.mjs` of 659). All 15 element repositories are cloned in `~/fractera-dev/` with `node_modules`
+  in most.
+- **Laws of this work:** my push to the `aifa-agi` fork is refused by the permission mode — ask the owner for «Sync fork»; never read a
+  node `.env.local` (names only); the lab never runs `services:install`; prebuild of the custom template has newer guards (the hero opens
+  a page, the width ribbon `var(--app-w)`); production prefetch shows errors `next dev` does not — the node proof is the real one.
+
 **NOW-21 (2026-11-06, morning) — 654 CLOSED (`completed-steps/654-main.md`, 654-1 … 654-7; its plans deleted); 656, 657 and 658 CLOSED
 (`completed-steps/658-main.md`); 659 APPROVED («Все 15 сейчас (Рекомендую)»), being built.** The owner, 2026-11-06, verbatim: «fix it | sync was
 complited» (on the two findings of 654-7) and «Да» на удаление djlgb (порт 24687) кнопкой «Удалить насовсем».= yyes»; the night before,
