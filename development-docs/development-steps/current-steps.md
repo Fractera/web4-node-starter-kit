@@ -5,6 +5,29 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-23 (2026-11-06, evening) — the owner's clean install is up; 665 RELEASED; 666 IN WORK. Read this block first.**
+- **The clean install:** the owner's fork `aifa-agi/web4-node-starter-kit` (a direct fork, `===ORIGIN_OK===`), `npm run launch` in
+  `~/web4-node-starter-kit` 19:50–20:16 UTC, `===LAUNCH_DONE===`, 23/23 progress lines, no failure. Dev clones stay in `~/fractera-dev`.
+- **The owner's rule for delivering the core, verbatim:** «каждый раз когда ты закончишь разработку ядра ты меня попросишь синхронизировать
+  в моем репозитории изменения которые ты заранее отправишь в Fractera а я сделаю синхронизацию сам после чего ты сможешь запустить сборку
+  ядра». So: push to Fractera → ask him to press «Sync fork» on aifa-agi → `npm run node:update` on his node. Never sync it myself.
+- **Cancelled by the owner:** the browser build chat on root (AI SDK chat, model and effort pickers, sign-in inside the page, uploads, the
+  build-chat skill) — `CANCELLED.md` 2026-11-06. In force instead: 665.
+- **665 RELEASED** (`completed-steps/665.md`): root `9665b45` v3.0.33 — the typed reply without a model and «Continue» to the subscription;
+  the carousel stops at the first press. Lab eyes ru/en, CI three OS green, pinned in the core. **Owed:** the check on his node after the sync.
+- **666 IN WORK** (`new-steps/666/666-main.md`): in Telegram, Opus → a second list of efforts (low … max and ultracode); ultracode → a
+  vanishing warning with «Продолжить» / «Выбрать другую модель»; a confirmed ultracode session is the one place where subagents are
+  allowed; «выключить» resets the effort to medium and turns workflows off, the closing words say so. Ultracode only in Telegram for now.
+  The owner, verbatim: «Таким образом в текущем варианте максимальный режим ультра кот у нас будет доступен только в Telegram. Если
+  понадобится другие варианты мы обсудим это позже»; «Продолжай без остановки до самого завершения меня ты не найдёшь если у тебя
+  останутся какие-то вопросы пожалуйста руководствуйся принципами максимального качества решения».
+- **Measured — do not measure again (Claude Code 2.1.319, read in its own code):** ultracode = «standing dynamic-workflow orchestration at
+  any effort level»; on by `--effort ultracode`, the settings key `ultracode` (`--settings`, this session only), `/effort ultracode on|off`
+  or the word «ultracode» in a prompt (setting `workflowKeywordTriggerEnabled`, default true). It needs dynamic workflows
+  (`enableWorkflows`; default ON on every plan except Pro — `defaultOn: plan !== "pro"`; off by `disableWorkflows` or
+  `CLAUDE_CODE_DISABLE_WORKFLOWS`) and a model with the `xhigh` effort. The tool is `Workflow`. The main agent's session has
+  `--tools Bash,Read,Write,Edit,Glob,Grep,Skill` (no Agent, no Workflow); element sessions get Claude Code's default tools.
+
 **NOW-22 (2026-11-06, day) — HANDOFF to a new context window. Read this block first, then NOW-21 for the evidence.**
 - **Closed with summaries:** 654 (`completed-steps/654-main.md`), 656, 657, 658 (`658-main.md`), **659, 660, 661** (`659-main.md`,
   `660-main.md`, `661-main.md`, written 2026-11-06 from the evidence in NOW-21; their plans deleted in the same commit). Node now at
