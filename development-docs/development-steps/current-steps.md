@@ -5,6 +5,13 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-25 (2026-11-06, night) — the owner synced; his `npm run node:update` REFUSED at the merge and rolled back** («слияние
+(development-docs/CANCELLED.md) не прошёл — узел возвращён как был», 21:36, the node untouched, backup `logs/node-update/2026-11-06T21-36-45-125Z`).
+Cause — my 665 row in the starter's `CANCELLED.md` (a fresh node keeps its own). Fixed in 666-5: the row taken back, `node-update.mjs` keeps
+the node's own `CANCELLED.md`; the merge lab proves the old script merges today's fork clean. **NEXT: the owner syncs once more → `npm run
+node:update` on his node → the checks of 665 and 666 below.** The owner also asked to read ANTI-PATTERNS (current + the 493-line version
+`537a509a`) before such work — kept in Claude's memory with today's lessons.
+
 **NOW-24 (2026-11-06, night) — 666 RELEASED (`completed-steps/666.md`, plan kept in `new-steps/666/` until the node check).** All 15
 element repositories at their next patch (custom v0.3.169 … blocks v1.4.28), every prebuild green; the core pins them, its agent kit
 (14 copies) carries the effort list, ultracode and the closing words; `CLAUDE.md` §6/§8 resealed (`c465540a8b61`). Labs A/A1b/A2/B and

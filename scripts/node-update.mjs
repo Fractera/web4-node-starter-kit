@@ -34,6 +34,10 @@ const STATE = join(ROOT, 'data', 'node', 'node-update.json')
 const REGISTRY_REL = 'WEB4-ITEMS-REGISTRY/web4-items.json'
 const REGISTRY = join(ROOT, REGISTRY_REL)
 const STEPS = 'development-docs/development-steps/'
+// 666: файлы, которые у узла свои целиком (свежий проект, `scripts/fresh-project.mjs`): его текущие шаги и его отмены. ✗ 2026-11-06: строка,
+// дописанная в `CANCELLED.md` оригинала, остановила обновление узла владельца конфликтом («слияние (development-docs/CANCELLED.md) не
+// прошёл»), хотя закон самого файла — «It arrives in a new node with this node's own entries only».
+const NODE_OWN = [`${STEPS}current-steps.md`, 'development-docs/CANCELLED.md']
 const FORK = 'origin/main'
 const GENERATED = /(^|\/)_list\.generated\.ts$/
 // Поля записи реестра, которые принадлежат форку: закрепление и описание. Всё остальное в записи — состояние узла.
@@ -199,7 +203,7 @@ stage('merge', `сливаю форк: ${forkCommits.length} изменений`
 const merged = git(['merge', '--no-edit', FORK])
 if (!merged.ok) {
   const conflicts = git(['diff', '--name-only', '--diff-filter=U']).out.split('\n').filter(Boolean)
-  const foreign = conflicts.filter((p) => !p.startsWith(STEPS) && p !== REGISTRY_REL)
+  const foreign = conflicts.filter((p) => !p.startsWith(STEPS) && p !== REGISTRY_REL && !NODE_OWN.includes(p))
   if (!conflicts.length || foreign.length) rollback(`слияние (${foreign.slice(0, 6).join(', ') || merged.err.slice(0, 200)})`)
   for (const p of conflicts) {
     if (p === REGISTRY_REL) git(['checkout', '-q', '--theirs', '--', p])
@@ -214,10 +218,14 @@ for (const p of added.filter((x) => !/(^|\/)(README\.md|\.gitkeep)$/.test(x))) {
   git(['rm', '-q', '--cached', '--', p])
   rmSync(join(ROOT, p), { force: true })
 }
-if (git(['diff', '--cached', '--quiet', oldHead, '--', `${STEPS}current-steps.md`]).ok === false) git(['checkout', '-q', oldHead, '--', `${STEPS}current-steps.md`])
+// Свои файлы узла — как были до слияния (их в узле нет у оригинала — значит, и брать нечего).
+for (const p of NODE_OWN) {
+  if (git(['cat-file', '-e', `${oldHead}:${p}`]).ok && git(['diff', '--cached', '--quiet', oldHead, '--', p]).ok === false) git(['checkout', '-q', oldHead, '--', p])
+}
 if (git(['rev-parse', '-q', '--verify', 'MERGE_HEAD']).ok) {
   must(git(['commit', '-q', '--no-edit', '-m', `Update from the original Fractera (${forkCommits.length} changes of the synced fork); the node keeps its own development steps`]), 'git commit')
-} else if (added.length) {
+} else if (git(['diff', '--cached', '--quiet']).ok === false) {
+  // 666: и перемотка без слияния (у узла нет своих коммитов) — возврат своих файлов узла тоже записывается, а не остаётся в индексе.
   must(git(['commit', '-q', '-m', 'The node keeps its own development steps after the update']), 'git commit')
 }
 const newHead = must(git(['rev-parse', '--short', 'HEAD']), 'git rev-parse')
