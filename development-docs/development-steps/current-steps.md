@@ -36,7 +36,13 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   releasing a held card was a click that deselected it; a «visible» check mid-scroll. **Released:** auth `ad8566b` v2.4.18, blocks
   `cf8f06d` v1.4.24, config `2d06813` v1.2.27, custom `ab4775e` v0.3.164, data `505fee4` v2.2.11, design `bb64502` v1.1.26, embeddings
   `6cca141` v0.1.12, graph `7f69863` v1.2.13, memory `29a5931` v2.2.31, native `86a6d03` v0.1.44, cache `c5aa3a8` v0.1.23, root
-  `0e80ddc` v3.0.29, storage `f647287` v1.1.31, stripe `224373d` v1.3.21, vectors `2e1e85c` v1.2.14. **CI three-os green on all 15** (auth 42231633579 … vectors 42231731494); pinned. The owner: «sync ok» → `node:update` running; then «go to 663 after check» (2026-11-06, verbatim). Not done of the owner's list: «formats of Blocks moved into
+  `0e80ddc` v3.0.29, storage `f647287` v1.1.31, stripe `224373d` v1.3.21, vectors `2e1e85c` v1.2.14. **CI three-os green on all 15** (auth 42231633579 … vectors 42231731494); pinned. The owner: «sync ok» → `node:update` running; then «go to 663 after check» (2026-11-06, verbatim).
+  `node:update` → `===NODE_UPDATE_DONE=== 7 изменений форка, ядро 35c3f965` (662-2/3/4 on the node; eyes owed). **The owner, 2026-11-06,
+  verbatim:** (1) GitHub repos «to do itnow , for domain you must use <element>.fractera.ai just now, but replay to fractera.ai will today
+  later» — description, homepage, topics on the 15 repos; (2) «ты неправильно в каждом репозитории построил верхнее меню. Тебе было дано
+  задание построить верхнее меню такой же как на странице архитектора в которой состоит из двух разделов нативные элементы и кастомные
+  элементы … возможно ты просто сделаешь функцию который выполнитсяа потом удалишь её?» → 662-5: the element header — two tabs «Нативные
+  элементы» / «Кастомные элементы» like the core's, one patch over 15 repos by a throwaway script. Not done of the owner's list: «formats of Blocks moved into
   Design» (Design got the tool section and FAQ only). Was — the shared landing sections (`faq`, `builder`, `tool`, the power label, the stores' backup line):
   measure the landing widget of the templates first, then its plan file `662-2.md`.
 - **663 PLANNED with the owner's decisions** (`new-steps/663/663-main.md`): the passport `power: { default, switch: never|manual|auto,
