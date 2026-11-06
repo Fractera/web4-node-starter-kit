@@ -11,12 +11,12 @@
 // печатается в журнал и в сам терминал: молча пропавший терминал читается как «сломали вход в подписку».
 // Измерено 2026-09-22: у `node-pty@1.1.0` готовые сборки есть под Windows и macOS, под Linux — нет.
 
-const { existsSync, readFileSync, readdirSync, statSync, unlinkSync, writeFileSync } = require('node:fs')
+const { existsSync, mkdirSync, readFileSync, readdirSync, statSync, unlinkSync, writeFileSync } = require('node:fs')
 const path = require('node:path')
 const { redeemTicket } = require('./ticket.cjs')
 const session = require('./session.cjs')
 const { serviceDir } = require('./workspace.cjs')
-const { claudeBin, resolveBin } = require('./claude-cli.cjs')
+const { claudeBin, claudeEfforts, resolveBin } = require('./claude-cli.cjs')
 const telegram = require('./telegram.cjs')
 const { channelLaunch } = telegram
 const os = require('node:os')
@@ -149,7 +149,46 @@ function progressHooks(element) {
   return { PreToolUse: [{ matcher: '*', hooks: [run] }], PostToolUse: [{ matcher: 'mcp__plugin_telegram_telegram__reply', hooks: [run] }], UserPromptSubmit: [{ hooks: [run] }], Stop: [{ hooks: [run] }] }
 }
 
-async function spawnAgent(service, notice = () => {}, wanted = () => true, firstPrompt = '', { answerTrust = false, pass = 'main', model: chosen, hold = false, callerTells = false, continueLast = false } = {}) {
+// ── 666: УСИЛИЯ СЕССИИ И ULTRACODE ─────────────────────────────────────────────────────────────────────────────────────────────────
+// Владелец 2026-11-06: «если пользователь выбрал опус то следом должен выпасть второй список … усилия … включая ультра код»; «После того как
+// пользователь подтвердил что он собирается оставить режим ultracode ты вынужден отменить запрет в архитектуре на использование суб агентов»;
+// «когда пользователь говорит выключить … переключаешь архитектуру в режим усилия Medium, и отключаешь режим workFlow».
+// Замерено на Claude Code 2.1.319 (его код и запуск настоящего TUI без запроса, план 666): ultracode — «standing dynamic-workflow
+// orchestration at any effort level»; ему нужны dynamic workflows (`enableWorkflows`; на Pro они по умолчанию ВЫКЛЮЧЕНЫ, на прочих
+// подписках включены) и модель с уровнем xhigh. `--model opus --effort max --settings {"enableWorkflows":true,"ultracode":true}` →
+// «◈ max · ultracode»; без `enableWorkflows` на Pro — «◈ max» без ultracode; `--effort ultracode` один — xhigh без ultracode.
+// 🔒 Поэтому КАЖДАЯ сессия узла несёт усилия явно (medium, если человек не выбрал другие) и `enableWorkflows: false, ultracode: false` —
+// рабочие процессы есть только у сессии, где человек подтвердил ultracode в Telegram; что бы ни лежало в настройках Claude Code человека,
+// сессию узла решают флаги запуска. У папки со своим списком инструментов (главный агент) ultracode добавляет `Agent,Workflow`.
+const EFFORTS = ['low', 'medium', 'high', 'xhigh', 'max']
+const DEFAULT_EFFORT = 'medium'
+const SUBAGENT_TOOLS = ['Agent', 'Workflow']
+const modeFile = (element) => path.join(process.cwd(), 'data', 'services', element, 'session-mode.json')
+/** Запись режима сессии элемента: с чем родилась (`spawnAgent`) и что после её конца — снова medium без рабочих процессов. */
+function writeMode(element, rec) {
+  try {
+    mkdirSync(path.dirname(modeFile(element)), { recursive: true })
+    writeFileSync(modeFile(element), JSON.stringify({ ...rec, at: new Date().toISOString() }, null, 2) + '\n', 'utf8')
+  } catch { /* запись — сведение, не условие запуска */ }
+}
+const resetMode = (element, why) => writeMode(element, { running: false, effort: DEFAULT_EFFORT, ultracode: false, workflows: false, why })
+/** Через сколько после старта проверяется, что Claude Code показал ultracode; переменная — для прибора. */
+const ultraCheckMs = () => Number(process.env.AGENT_ULTRA_CHECK_MS) || 30_000
+/** Отметка ultracode в системной подсказке сессии: тот же файл подсказки, что уже собрали `promptArgs`/`soulArgs`, — без новых флагов. */
+function markUltracode(args) {
+  let text = ''
+  try { text = readFileSync(path.join(process.cwd(), 'lib', 'agent-kit', 'ultracode.md'), 'utf8').replace(/\r\n/g, '\n').trim() } catch { return args }
+  text = text.replace('{at}', new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC')
+  const i = args.indexOf('--append-system-prompt-file')
+  if (i >= 0 && args[i + 1]) {
+    try { writeFileSync(args[i + 1], `${readFileSync(args[i + 1], 'utf8')}\n\n${text}\n`, 'utf8'); return args } catch { /* ниже — строкой */ }
+  }
+  const j = args.indexOf('--append-system-prompt')
+  if (j >= 0 && typeof args[j + 1] === 'string') return [...args.slice(0, j + 1), `${args[j + 1]}\n\n${text}`, ...args.slice(j + 2)]
+  return [...args, '--append-system-prompt', text]
+}
+
+async function spawnAgent(service, notice = () => {}, wanted = () => true, firstPrompt = '', { answerTrust = false, pass = 'main', model: chosen, effort: chosenEffort, ultracode = false, hold = false, callerTells = false, continueLast = false } = {}) {
   if (!pty) {
     notice(`[терминал недоступен: node-pty не загружен — ${ptyLoadError}]`)
     return { ok: false, reason: 'pty-unavailable' }
@@ -165,6 +204,10 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
     notice(`[папка агента не найдена: службы «${String(service ?? '').slice(0, 40)}» нет в реестре узла или на диске]`)
     return { ok: false, reason: 'no-agent-dir' }
   }
+  // 666: ultracode — только подтверждённый человеком в Telegram и никогда у сессии рабочего процесса; его усилия — max («с максимальной
+  // эффективностью размышлений»). Иначе — выбранные усилия или medium.
+  const ultra = ultracode === true && mode !== 'work'
+  const effort = ultra ? 'max' : EFFORTS.includes(chosenEffort) ? chosenEffort : DEFAULT_EFFORT
   // 🛑 АГЕНТ ЗАПУСКАЕТСЯ ФАЙЛОМ `claude`, А НЕ НАБИРАЕТСЯ В ОБОЛОЧКЕ. ✗ Оплачено владельцем 2026-09-22:
   // на вопросе о доверии он нажал Enter, выбор по умолчанию был «No, exit», `claude` вышел — а оболочка
   // `cmd.exe` осталась жить, индикатор горел «Работает», и слова человека уходили в командную строку
@@ -217,7 +260,9 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   if (existsSync(ownData) && !args.includes(ownData)) args = ['--add-dir', ownData, ...(args.length ? args : ['--permission-mode', 'auto'])]
   // 569-3: свои встроенные инструменты папки агента (`.claude/launch-tools.txt`, `lib/agent-kit/modes.cjs`). 🛑 `--tools` забирает СПИСОК
   // значений, как `--add-dir`: первым, и за ним всегда другой флаг — иначе съел бы первое поручение.
-  const tools = typeof modes.launchTools === 'function' ? modes.launchTools(cwd) : null
+  const own = typeof modes.launchTools === 'function' ? modes.launchTools(cwd) : null
+  // 666: у подтверждённого ultracode список инструментов папки получает субагентов и рабочие процессы — без них ему нечем работать.
+  const tools = own && ultra ? [...new Set([...own.split(','), ...SUBAGENT_TOOLS])].join(',') : own
   if (tools) args = ['--tools', tools, ...(args.length ? args : ['--permission-mode', 'auto'])]
   // 548-20 (✗ 2026-10-20: Telegram молчал у разбуженных сессий): у Claude Code ОДИН на машину кэш неудачных подключений MCP
   // (`~/.claude/mcp-needs-auth-cache.json`, ключ — имя сервера, 15 минут). Плагин канала включён у человека глобально и стартует в
@@ -239,7 +284,8 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   // `skillOverrides["auto-mode-setup"]` равно "off" (прочитано в его коде) — у каждой сессии узла.
   const NO_SETUP = { 'auto-mode-setup': 'off' }
   if (modes.hasGroups(cwd)) {
-    const settings = { ...modes.modeSettings(cwd, mode, plug, pass), ...mem }
+    // 666: рабочие процессы и ultracode — только у подтверждённого ultracode; у всех остальных сессий явно выключены.
+    const settings = { ...modes.modeSettings(cwd, mode, plug, pass), ...mem, enableWorkflows: ultra, ultracode: ultra }
     settings.skillOverrides = { ...(settings.skillOverrides ?? {}), ...NO_SETUP }
     args = [...args, ...mcp, '--settings', JSON.stringify(settings), ...modes.promptArgs(cwd, mode, path.join(process.cwd(), 'data', 'node', 'agent-prompts'), service, pass)]
   }
@@ -248,11 +294,13 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
     // --append-system-prompt-file below always follows, so the list flag never eats the first task (548-13).
     if (mcp.length) args = [...args, ...mcp]
     // 595-5: one --settings per session; 614-2: it always says whether the Telegram plugin runs in it.
-    args = [...args, '--settings', JSON.stringify({ enabledPlugins: plug, ...mem, skillOverrides: NO_SETUP })]
+    args = [...args, '--settings', JSON.stringify({ enabledPlugins: plug, ...mem, skillOverrides: NO_SETUP, enableWorkflows: ultra, ultracode: ultra })]
   }
   // 591: душа узла (`lib/agent-kit/soul.md`) — в системной подсказке каждой сессии: у элемента с группами её кладёт `promptArgs`
   // первой, у остальных (главный агент, элемент старого шаблона) — здесь, одна.
   if (!modes.hasGroups(cwd) && typeof modes.soulArgs === 'function') args = [...args, ...modes.soulArgs(path.join(process.cwd(), 'data', 'node', 'agent-prompts'), service)]
+  // 666: сессия подтверждённого ultracode знает это из своей подсказки: запрет на субагентов снят только в ней (`lib/agent-kit/ultracode.md`).
+  if (ultra) args = markUltracode(args)
   // 426 (✗ 2026-10-07: первое сообщение из Telegram пропало целиком — вставка по «3 с тишины» ушла раньше, чем Claude Code начал
   // принимать ввод, пока грузился плагин каналов): первое поручение новой сессии — аргументом запуска. `claude "<запрос>"` в
   // интерактивном режиме берёт его первым, когда готов, — момент готовности не угадывается. Многострочный текст с кавычками и
@@ -260,8 +308,15 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   // 551-7: поручение, начатое с «-», `claude` прочёл бы флагом — пробел впереди оставляет его текстом.
   // 570: модель по роду работы (`lib/agent-kit/modes.cjs` `launchModel`) — один флаг с одним значением, до поручения.
   // 611: модель с кнопки Telegram сильнее модели папки и рода работы — только из закрытого списка.
-  const model = ['opus', 'sonnet', 'haiku'].includes(chosen) ? chosen : typeof modes.launchModel === 'function' ? modes.launchModel(cwd, mode, pass) : null
+  // 666: ultracode — всегда Opus; усилия — всегда явным флагом, чтобы сессию узла не решали настройки Claude Code человека.
+  const model = ultra ? 'opus' : ['opus', 'sonnet', 'haiku'].includes(chosen) ? chosen : typeof modes.launchModel === 'function' ? modes.launchModel(cwd, mode, pass) : null
   if (model) args = [...args, '--model', model]
+  // 666: только уровень, который знает Claude Code этой машины (`claude --help`); у старого CLI без `--effort` флаг не передаётся —
+  // с незнакомым флагом не запустилась бы ни одна сессия. Незнакомый уровень — ближайший ниже из знакомых.
+  const levels = claudeEfforts(bin)
+  const effortArg = levels === null ? null : levels.includes(effort) ? effort : EFFORTS.slice(0, EFFORTS.indexOf(effort) + 1).reverse().find((e) => levels.includes(e)) ?? null
+  if (effortArg) args = [...args, '--effort', effortArg]
+  else console.log(`[agents] ${service}: этот Claude Code не знает --effort ${effort} — сессия на своих усилиях по умолчанию`)
   // 620: смена модели командой сессии — тот же разговор (`--continue`: последний разговор этой папки) на другой модели.
   if (continueLast) args = [...args, '--continue']
   // 590-5: команда элемента `npm run pass` узнаёт проход своей сессии из окружения и не переключает сессию на тот же проход.
@@ -290,6 +345,21 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   const born = session.register({ service, pid: child.pid, proc: child, cwd, channel: viaChannel })
   born.taskUrls = new Set()
   born.pass = pass
+  // 666: с чем родилась сессия — Telegram называет это человеку («Режим: Opus · max · ultracode»), запись — для узла и агента.
+  born.mode = { model: model ?? null, effort: effortArg ?? 'default', ultracode: ultra }
+  if (mode !== 'work') writeMode(element, { running: true, service, model: model ?? null, effort: effortArg ?? 'default', ultracode: ultra, workflows: ultra })
+  // 666: человек выбрал ultracode, прочитав о цене, — правда о нём обязательна. Claude Code показывает его в строке состояния («◈ max ·
+  // ultracode», замер 2.1.319); через 30 с его нет на экране — в журнал и человеку: агент работает на Opus без рабочих процессов
+  // (старый Claude Code или политика организации). Одна проверка на сессию, не опрос.
+  if (ultra) {
+    const t = setTimeout(() => {
+      if (session.current(service) !== born) return
+      const seen = /ultracode/i.test(String(born.buffer).replace(/\x1b\[[0-9;?]*[ -/]*[@-~]/g, ''))
+      console.log(`[agents] ${service}: ultracode ${seen ? 'на экране Claude Code' : 'НЕ показан Claude Code за 30 с'}`)
+      if (!seen) void telegram.tellUltraMissing(element).catch(() => {})
+    }, ultraCheckMs())
+    t.unref?.()
+  }
   // 615-6: кто родил сессию — человек (страница терминала, кнопка или «включить» Telegram) или узел (`wake` с `from`, ставит `wake`).
   born.byPerson = true
   // 551-7: запуск со страницы с задачей из ссылки — вопрос доверия папке отвечает мост; согласие — нажатие, которое привело сюда.
@@ -306,6 +376,8 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   })
   child.onExit(() => {
     session.exited(born)
+    // 666: сессии нет — следующая родится на medium без рабочих процессов, если человек снова не выберет другое.
+    if (mode !== 'work') resetMode(element, 'session-ended')
     // 639: «выключить?» и «ждёт ответа в терминале» этой сессии потеряли смысл — исчезают через 30 с
     telegram.sessionEnded(service)
     startQueuedPass(element)
@@ -649,7 +721,7 @@ function freshPid(file, since) {
  * РАЗБУДИТЬ АГЕНТА СЛУЖБЫ БЕЗ БРАУЗЕРА (409-1). Сессия жива — только вставить текст. Свободной памяти меньше нормы на сессию —
  * отказ с цифрами, ничего не рождается (задача ждёт). Открытая потом страница терминала видит этот же экран.
  */
-async function wake(element, { text, from, about, declineUrl, confirmed, taskUrls = [], model, callerTells = false } = {}) {
+async function wake(element, { text, from, about, declineUrl, confirmed, taskUrls = [], model, effort, ultracode = false, callerTells = false } = {}) {
   const urls = [declineUrl, ...taskUrls].filter(Boolean)
   // 552-4 (владелец 2026-10-20: «каждый из этих процессов может отправлять первое слово»): у элемента с группами навыков запрос
   // идёт в сессию своего процесса по первому слову; слова нет — строительство, и это пишется в журнал узла. Ключ сессии
@@ -689,7 +761,8 @@ async function wake(element, { text, from, about, declineUrl, confirmed, taskUrl
   // 624-2: `top` — кто занимает память, чтобы совет человеку называл программы этого компьютера.
   if (freeMb < per) return { ok: false, reason: 'memory', freeMb, perSessionMb: per, top: topApps(3) }
   // 614-1: `hold` — у сессии с ботом поручение ждёт её канал; `callerTells` — о неудаче канала человеку скажет вызывающий (кнопка Telegram).
-  const r = await spawnAgent(service, undefined, undefined, text && task ? `${text}\n\n${finishRule(service)}` : '', { pass, model, hold: true, callerTells })
+  // 666: усилия и ultracode — с кнопок Telegram (`telegram.cjs` `onButton`); ultracode рождается только с подтверждением человека.
+  const r = await spawnAgent(service, undefined, undefined, text && task ? `${text}\n\n${finishRule(service)}` : '', { pass, model, effort, ultracode: ultracode === true && Boolean(confirmed), hold: true, callerTells })
   if (!r.ok) return { ok: false, reason: r.reason }
   rememberTasks(r.session, urls)
   // 615-6: пробуждение с `from` — узел (надзор, задача главного агента, другой агент); без `from` — человек (кнопка, «включить»).
@@ -706,7 +779,7 @@ async function wake(element, { text, from, about, declineUrl, confirmed, taskUrl
     timer.unref?.()
   }
   // 614-1: функция, а не обещание — дверь `/api/agents/wake` отдаёт этот ответ в JSON, и функция в нём просто пропадает.
-  return { ok: true, started: true, freeMb, perSessionMb: per, ...(born.channelReady ? { channelReady: () => born.channelReady } : {}) }
+  return { ok: true, started: true, freeMb, perSessionMb: per, mode: born.mode, ...(born.channelReady ? { channelReady: () => born.channelReady } : {}) }
 }
 
 const wakeTimeoutMs = () => Number(process.env.AGENT_WAKE_TIMEOUT_MS) || 60 * 60 * 1000
@@ -762,7 +835,14 @@ async function done(service, { close = false, reviewed = false } = {}) {
   }
   // 552-4 (владелец 2026-10-20: «Узел закрывает её сам»): сессия рабочего процесса закрывается по «закончил», без вопроса.
   if (close || modes.modeOfKey(service) === 'work') {
-    const t = setTimeout(() => { if (session.current(service) === live) session.stop(service, 'closed-by-agent') }, 1500)
+    // 666: «выключить» — после остановки процесса (запись режима сбрасывает его выход) человеку слова владельца: контекст сброшен, усилия
+    // medium, рабочие процессы выключены. У сессии рабочего процесса бота нет — ей некому.
+    const words = close && modes.modeOfKey(service) !== 'work'
+    const t = setTimeout(() => {
+      if (session.current(service) !== live) return
+      session.stop(service, 'closed-by-agent')
+      if (words) void telegram.tellClosed(service).catch(() => {})
+    }, 1500)
     t.unref?.()
     return { ok: true, closing: true }
   }

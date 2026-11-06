@@ -411,6 +411,11 @@ async function idleTick(service) {
         await sendVanishing(token, { chat_id: msg.chat.id, text: (t.offSession ?? ASK.en.offSession)(a) })
         continue
       }
+      // 666: «/opus» спящему агенту — список усилий; запрос, если он уже ждёт, едет с ним.
+      if (d.do === 'effort') {
+        await askEffort(service)
+        continue
+      }
       // 597-4: «включить» — само согласие человека: агент стартует без поручения (ноль токенов), вопроса с кнопками нет.
       // 620: «/opus», «/sonnet», «/haiku» спящему агенту — то же согласие, сразу на этой модели (как кнопки 611).
       if (d.do === 'start') {
@@ -418,7 +423,7 @@ async function idleTick(service) {
         // 614-1: «включён — пишите ему» — только когда встал канал; не встал — сессия уже закрыта, человеку «Извините…».
         const ch = out.ok && typeof out.channelReady === 'function' ? await out.channelReady() : null
         if (ch && !ch.up) out = { ok: false, reason: ch.reason === 'channel' ? 'channel' : 'session-ended', waited: ch.waited }
-        const said = out.ok ? (t.onNow ?? ASK.en.onNow)(a) : out.reason === 'memory' ? t.memory(a, out.freeMb, out.perSessionMb, out.top) : out.reason === 'channel' ? (t.channelFailed ?? ASK.en.channelFailed)(a, out.waited) : t.failed(a, String(out.reason ?? 'unknown'))
+        const said = out.ok ? `${(t.onNow ?? ASK.en.onNow)(a)}${modeLine(out, t)}` : out.reason === 'memory' ? t.memory(a, out.freeMb, out.perSessionMb, out.top) : out.reason === 'channel' ? (t.channelFailed ?? ASK.en.channelFailed)(a, out.waited) : t.failed(a, String(out.reason ?? 'unknown'))
         // 639: «включён — пишите ему» исчезает; беда (память, канал) остаётся — она ждёт действия человека.
         if (out.ok) await sendVanishing(token, { chat_id: msg.chat.id, text: said, disable_web_page_preview: true })
         else await sendKept(token, { chat_id: msg.chat.id, text: said, disable_web_page_preview: true })
@@ -562,6 +567,16 @@ const ASK = {
     goCalls: 'Turn on and answer', goHuman: 'Turn on and pass',
     // 611 (owner 2026-10-30): three buttons — the model of the session is chosen by the person.
     goMax: 'Turn on — maximum model (Opus)', goMid: 'Turn on — medium model (Sonnet)', goEco: 'Turn on — economy model (Haiku)',
+    // 666 (owner 2026-11-06): Opus → the effort of the session; ultracode → a warning with two buttons.
+    effortAsk: (a) => `Agent ${a} — the Opus model. Which effort should it work with?`,
+    fxLow: 'Low', fxMedium: 'Medium (default)', fxHigh: 'High', fxXhigh: 'Very high (xhigh)', fxMax: 'Maximum (max)',
+    fxUltra: 'Ultracode — workflows with subagents',
+    back: 'Choose another model',
+    ultraWarn: 'Warning! Ultracode runs workflows with many subagents that Claude Code Agent manages automatically, with maximum thinking effort. This can lead to extremely high token use.',
+    ultraGo: 'Continue',
+    modeIs: (m) => `Mode: ${m}.`,
+    offEmpty: (a) => `Agent ${a} is off. Turn it on?`,
+    ultraMissing: (a) => `Ultracode did not turn on for agent ${a}: Claude Code on this computer did not show it — it needs a fresh Claude Code and workflows allowed for your account. The agent works on Opus · max without workflows.`,
     noCalls: (c) => `Not now — ${c} gets a refusal`, noHuman: 'Not now',
     startedCalls: (a, c) => `Agent ${a} is on and answering ${c}.`,
     startedHuman: (a) => `Agent ${a} is on and got your message.`,
@@ -603,6 +618,18 @@ const ASK = {
     yourMessage: (q) => `Ваше сообщение: «${q}»`,
     goCalls: 'Включить и ответить', goHuman: 'Включить и передать',
     goMax: 'Включить — максимальная модель (Opus)', goMid: 'Включить — средняя модель (Sonnet)', goEco: 'Включить — экономная модель (Haiku)',
+    // 666: слова владельца предупреждения — «внимания ультра кот запускает рабочие процессы с множеством суб агентов которые автоматикой
+    // Claude Code Agent с максимальной эффективностью размышлений. Это может привести к экстремально высоким расходам токенов»; кнопки —
+    // «продолжить», «выбрать другую модель».
+    effortAsk: (a) => `Агент ${a} — модель Opus. С какими усилиями ей работать?`,
+    fxLow: 'Низкие — low', fxMedium: 'Средние — medium (по умолчанию)', fxHigh: 'Высокие — high', fxXhigh: 'Очень высокие — xhigh', fxMax: 'Максимальные — max',
+    fxUltra: 'Ultracode — рабочие процессы с субагентами',
+    back: 'Выбрать другую модель',
+    ultraWarn: 'Внимание! Ultracode запускает рабочие процессы с множеством субагентов, которыми Claude Code Agent управляет автоматически, с максимальной эффективностью размышлений. Это может привести к экстремально высоким расходам токенов.',
+    ultraGo: 'Продолжить',
+    modeIs: (m) => `Режим: ${m}.`,
+    offEmpty: (a) => `Агент ${a} выключен. Включить его?`,
+    ultraMissing: (a) => `Ultracode у агента ${a} не включился: Claude Code на этом компьютере его не показал — нужна свежая версия Claude Code и разрешённые для вашей учётной записи рабочие процессы. Агент работает на Opus · max без рабочих процессов.`,
     noCalls: (c) => `Не сейчас — ${c} получит отказ`, noHuman: 'Не сейчас',
     startedCalls: (a, c) => `Агент ${a} включён и отвечает ${c}.`,
     startedHuman: (a) => `Агент ${a} включён и получил ваше сообщение.`,
@@ -692,7 +719,9 @@ function idleDecision(msg, service) {
     const bare = cmds ? cmds.bareOf(text) : null
     if (bare === 'commands') return { do: 'list' }
     if (bare === 'on') return { do: 'start' }
-    if (['opus', 'sonnet', 'haiku'].includes(bare)) return { do: 'start', model: bare }
+    // 666: Opus всегда ведёт к выбору усилий — и кнопкой, и голым «/opus» спящему агенту.
+    if (bare === 'opus') return { do: 'effort' }
+    if (['sonnet', 'haiku'].includes(bare)) return { do: 'start', model: bare }
     if (['clear', 'context', 'prepare'].includes(bare)) return { do: 'off-session' }
     if (bare === 'off' || OFF_WORDS.test(text)) return { do: 'already-off' }
     // A slash command of the node's list with words («/remember …») is a message; any other slash — the status, as before.
@@ -757,7 +786,8 @@ function askText(service, items, t) {
     for (const it of calls) lines.push(t.fromLine(shortName(it.from) || '?', cutText(it.about, 200)))
   }
   // Только сообщения человека — вопрос первой строкой, его сообщение под ним; есть вопросы агентов — вопрос о включении в конце.
-  if (!calls.length) lines.push(t.offHuman(a))
+  // 666: запроса нет вовсе (голый «/opus», затем «Выбрать другую модель») — просто «включить его?».
+  if (!calls.length) lines.push(human.length ? t.offHuman(a) : (t.offEmpty ?? ASK.en.offEmpty)(a))
   for (const it of human) lines.push(t.yourMessage(cutText(it.about, 300)))
   if (calls.length) lines.push(t.offCalls(a))
   if (folderTrusted(service) === false) lines.push(t.trustLine ?? ASK.en.trustLine)
@@ -765,7 +795,8 @@ function askText(service, items, t) {
 }
 
 const buttons = (p, t) => {
-  const human = allHuman(p.items)
+  // 666: без запроса («/opus») отказывать некому — «Не сейчас», как человеку.
+  const human = allHuman(p.items) || p.items.length === 0
   return {
     // 611 (владелец 2026-10-30: «включить с максимальной моделью – включить со средней моделью – включить сэкономлю моделью»): модель
     // сессии — с кнопки; по одной кнопке в строке, длинные подписи. Старая кнопка `…:go` в прежних сообщениях — модель по умолчанию.
@@ -776,6 +807,61 @@ const buttons = (p, t) => {
       [{ text: human ? t.noHuman : t.noCalls(callersOf(p.items)), callback_data: `wake:${p.id}:no` }],
     ],
   }
+}
+
+// ── 666: УСИЛИЯ ПОСЛЕ OPUS И ULTRACODE ──────────────────────────────────────────────────────────────────────────────────────────────
+// Владелец 2026-11-06: «если пользователь выбрал опус то следом должен выпасть второй список в котором пользователь должен выбрать усилия с
+// которым это модель будет работать и там должны быть все режимы включая ультра код»; «В случае выбора ультра кот пользователю нужно вывести
+// исчезающие предупреждение … Дальше две кнопки продолжить выбрать другую модель»; «максимальный режим ультра кот у нас будет доступен только
+// в Telegram». Уровни — те, что принимает `claude --effort` (2.1.319: low, medium, high, xhigh, max); ultracode — Opus на max с рабочими
+// процессами (`bridge.cjs`). Каждый шаг — новое сообщение внизу переписки, прежнее теряет кнопки и исчезает (639): вопрос ждёт человека и
+// уходит, когда на него ответили. Кнопки работают, пока агент спит: проснувшегося читает плагин канала, а он чужие кнопки выбрасывает.
+const EFFORTS = ['low', 'medium', 'high', 'xhigh', 'max']
+const FX_WORD = { low: 'fxLow', medium: 'fxMedium', high: 'fxHigh', xhigh: 'fxXhigh', max: 'fxMax' }
+const effortButtons = (p, t) => ({
+  inline_keyboard: [
+    ...EFFORTS.map((e) => [{ text: t[FX_WORD[e]] ?? ASK.en[FX_WORD[e]], callback_data: `wake:${p.id}:fx:${e}` }]),
+    [{ text: t.fxUltra ?? ASK.en.fxUltra, callback_data: `wake:${p.id}:fx:ultracode` }],
+    [{ text: t.back ?? ASK.en.back, callback_data: `wake:${p.id}:back` }],
+  ],
+})
+const ultraButtons = (p, t) => ({
+  inline_keyboard: [
+    [{ text: t.ultraGo ?? ASK.en.ultraGo, callback_data: `wake:${p.id}:uc:go` }],
+    [{ text: t.back ?? ASK.en.back, callback_data: `wake:${p.id}:back` }],
+  ],
+})
+const cap = (s) => (s ? s[0].toUpperCase() + s.slice(1) : s)
+/** «Opus · max · ultracode» — с чем включилась сессия (её возвращает `wake`); нет сведений — пусто. */
+function modeLine(out, t) {
+  const m = out?.mode
+  if (!m?.model) return ''
+  return `\n${(t.modeIs ?? ASK.en.modeIs)([cap(m.model), m.effort, m.ultracode ? 'ultracode' : ''].filter(Boolean).join(' · '))}`
+}
+
+/** Следующий шаг вопроса — новым сообщением внизу во всех допущенных чатах; у прежних сообщений вопроса кнопки сняты, они исчезают. */
+async function moveAsk(service, token, p, text, markup) {
+  for (const x of p.asked) {
+    await tg(token, 'editMessageReplyMarkup', { chat_id: x.chat, message_id: x.messageId, reply_markup: { inline_keyboard: [] } })
+    vanish(token, x.chat, x.messageId) // 639: на вопрос ответили — его сменил следующий шаг
+  }
+  p.asked = []
+  for (const chat of access(service).allowed) {
+    // 639: остаётся — вопрос ждёт человека; исчезает, когда ответили (`onButton`) или его сменил новый
+    const r = await sendKept(token, { chat_id: chat, text, reply_markup: markup, disable_web_page_preview: true })
+    if (r.ok && r.result?.message_id) p.asked.push({ chat, messageId: r.result.message_id })
+  }
+  mkdirSync(path.dirname(pendingFile(service)), { recursive: true })
+  writeFileSync(pendingFile(service), JSON.stringify(p, null, 2))
+}
+
+/** Голый «/opus» спящему агенту: список усилий. Ждущий запрос (сообщения, вопросы агентов) остаётся и уедет агенту при включении. */
+async function askEffort(service) {
+  const token = storedToken(service)
+  const p = readJson(pendingFile(service), null) ?? { id: randomBytes(6).toString('hex'), createdAt: new Date().toISOString(), items: [], asked: [] }
+  const t = await askTable(service)
+  await moveAsk(service, token, p, t.effortAsk(shortName(named(service))), effortButtons(p, t))
+  return { ok: true, pending: true, asked: p.asked.length }
 }
 
 let starter = null
@@ -838,7 +924,8 @@ async function declineCaller(url, text) {
 /** Нажатие кнопки вопроса. Только допущенный и только действующий запрос. */
 async function onButton(service, token, q) {
   const sender = String(q.from?.id ?? '')
-  const m = /^wake:([0-9a-f]+):(go|no)(?::(opus|sonnet|haiku))?$/.exec(String(q.data ?? ''))
+  // 666: go:<модель> · fx:<усилия|ultracode> · uc:go · back · no. Старые кнопки (`…:go`, `…:go:opus`) по-прежнему законны.
+  const m = /^wake:([0-9a-f]+):(go|no|fx|uc|back)(?::([a-z]+))?$/.exec(String(q.data ?? ''))
   const p = readJson(pendingFile(service), null)
   if (!access(service).allowed.includes(sender) || !m || !p || p.id !== m[1]) {
     await tg(token, 'answerCallbackQuery', { callback_query_id: q.id })
@@ -847,7 +934,27 @@ async function onButton(service, token, q) {
   const t = await askTable(service)
   const a = shortName(named(service))
   const c = callersOf(p.items)
-  const human = allHuman(p.items)
+  const human = allHuman(p.items) || p.items.length === 0
+  // 666: шаги вопроса без запуска — следующий вопрос новым сообщением внизу.
+  const step = m[2] === 'back' ? [askText(service, p.items, t), buttons(p, t)]
+    : m[2] === 'go' && m[3] === 'opus' ? [t.effortAsk(a), effortButtons(p, t)]
+      : m[2] === 'fx' && m[3] === 'ultracode' ? [t.ultraWarn ?? ASK.en.ultraWarn, ultraButtons(p, t)]
+        : null
+  if (step) {
+    await tg(token, 'answerCallbackQuery', { callback_query_id: q.id })
+    await moveAsk(service, token, p, step[0], step[1])
+    return
+  }
+  // С чем включить: Sonnet и Haiku — сразу (усилия medium), Opus — с выбранными усилиями, ultracode — только после «Продолжить».
+  const choice = m[2] === 'go' && (!m[3] || ['sonnet', 'haiku'].includes(m[3])) ? { model: m[3] }
+    : m[2] === 'fx' && EFFORTS.includes(m[3]) ? { model: 'opus', effort: m[3] }
+      : m[2] === 'uc' && m[3] === 'go' ? { model: 'opus', ultracode: true }
+        : m[2] === 'no' ? {}
+          : null
+  if (!choice) {
+    await tg(token, 'answerCallbackQuery', { callback_query_id: q.id })
+    return
+  }
   if (m[2] === 'no') {
     const declined = human ? t.declinedHuman(a) : t.declinedCalls(a, c)
     await tg(token, 'answerCallbackQuery', { callback_query_id: q.id, text: declined })
@@ -859,7 +966,7 @@ async function onButton(service, token, q) {
   }
   await tg(token, 'answerCallbackQuery', { callback_query_id: q.id, text: t.toast })
   const text = p.items.map((it) => it.text).filter(Boolean).join('\n\n')
-  const out = typeof starter === 'function' ? await starter(service, { text: text || undefined, taskUrls: p.items.map((it) => it.declineUrl).filter(Boolean), model: m[3] }) : { ok: false, reason: 'no-starter' }
+  const out = typeof starter === 'function' ? await starter(service, { text: text || undefined, taskUrls: p.items.map((it) => it.declineUrl).filter(Boolean), ...choice }) : { ok: false, reason: 'no-starter' }
   // 614-1: «получил ваше сообщение» — только когда встал канал и поручение ушло в сессию. Не встал — сессия уже закрыта, запрос остаётся
   // (`pending.json`), кнопки переезжают под «Извините…» внизу переписки: нажмёт ещё раз — агент получит то же сообщение.
   const ch = out.ok && typeof out.channelReady === 'function' ? await out.channelReady() : null
@@ -879,7 +986,8 @@ async function onButton(service, token, q) {
   }
   if (out.ok) {
     rmSync(pendingFile(service), { force: true })
-    const startedText = human ? t.startedHuman(a) : t.startedCalls(a, c)
+    // 666: без запроса — «включён, пишите ему»; строка режима говорит, с чем он включился.
+    const startedText = `${p.items.length === 0 ? (t.onNow ?? ASK.en.onNow)(a) : human ? t.startedHuman(a) : t.startedCalls(a, c)}${modeLine(out, t)}`
     // Владелец 2026-10-06: фраза не дублируется — у вопроса только снимаются кнопки, итог идёт одним сообщением ниже.
     for (const x of p.asked) await tg(token, 'editMessageReplyMarkup', { chat_id: x.chat, message_id: x.messageId, reply_markup: { inline_keyboard: [] } })
     // Владелец 2026-10-05: «нажатие кнопку ничего визуально не меняет» — правка сообщения наверху не видна; итог — новым
@@ -905,11 +1013,15 @@ const CLOSE = {
   en: {
     done: (a) => `Agent ${a} has finished. Turn it off? Reply «off» — the agent will turn itself off.\nReply «review» if you first want the agent to suggest how to improve its skills.\nReply «commands» — I will send the list of the node's commands.`,
     timeout: (a) => `Agent ${a} has been on for 60 minutes. Turn it off? Reply «off» — the agent will turn itself off.\nReply «review» if you first want the agent to suggest how to improve its skills.\nReply «commands» — I will send the list of the node's commands.`,
+    // 666: the node's closing words after «off» — the session is gone, the next one starts at medium with workflows off.
+    closed: () => 'The agent has finished its work: the context is reset, the effort is back at Medium, workflows are off.',
   },
   ru: {
     // 410-3: «разбор» — агент перед выключением предлагает, как улучшить свои навыки (навык self-review элемента).
     done: (a) => `Агент ${a} закончил. Выключить его? Ответьте «выключить» — агент выключится сам.\nОтветьте «разбор», если хотите, чтобы сначала агент предложил, как улучшить свои навыки.\nОтветьте «команды» — пришлю список команд узла.`,
     timeout: (a) => `Агент ${a} работает уже 60 минут. Выключить его? Ответьте «выключить» — агент выключится сам.\nОтветьте «разбор», если хотите, чтобы сначала агент предложил, как улучшить свои навыки.\nОтветьте «команды» — пришлю список команд узла.`,
+    // 666, слова владельца: «агент завершил работу, контекст сброшен усилия восстановлено в положении Medium рабочие процессы отключены».
+    closed: () => 'Агент завершил работу, контекст сброшен, усилия восстановлены в положении Medium, рабочие процессы отключены.',
   },
 }
 
@@ -930,6 +1042,36 @@ async function askToClose(service, why, { reviewed = false } = {}) {
   }
   untilSessionEnds(service, service, 'close', sent)
   return { ok: true, asked: sent.length }
+}
+
+/** 666: ultracode подтверждён человеком, но Claude Code его не показал (`bridge.cjs`, проверка через 30 с) — правда человеку. */
+async function tellUltraMissing(service) {
+  if (!connected(service)) return { ok: true, sent: 0, reason: 'no-telegram' }
+  const token = storedToken(service)
+  const t = await askTable(service)
+  let sent = 0
+  for (const chat of access(service).allowed) {
+    const r = await sendKept(token, { chat_id: chat, text: (t.ultraMissing ?? ASK.en.ultraMissing)(shortName(named(service))), disable_web_page_preview: true }) // 639: остаётся — беда, которую человек должен знать
+    if (r.ok) sent++
+  }
+  return { ok: true, sent }
+}
+
+/**
+ * 666 (владелец 2026-11-06: «когда пользователь говорит выключить одновременно с этим действием ты переключаешь архитектуру в режим усилия
+ * Medium, и отключаешь режим workFlow. О чем сообщаешь закрывающем сообщении»): после «выключить» (`done` с `close`) — слова владельца ботом
+ * этой сессии, без модели. Итог сессии — остаётся (639). Бота нет — некому, ничего не шлётся.
+ */
+async function tellClosed(service) {
+  if (!connected(service)) return { ok: true, sent: 0, reason: 'no-telegram' }
+  const token = storedToken(service)
+  const c = await closeTable(service)
+  let sent = 0
+  for (const chat of access(service).allowed) {
+    const r = await sendKept(token, { chat_id: chat, text: (c.closed ?? CLOSE.en.closed)(), disable_web_page_preview: true }) // 639: остаётся — итог сессии
+    if (r.ok) sent++
+  }
+  return { ok: true, sent }
 }
 
 /**
@@ -1164,4 +1306,6 @@ module.exports = {
   running, channelState, startIdlePoller, connected, askToStart, setStarter, askToClose, personLang, setPersonLang, tellWaiting,
   // 597-4: the sleeping bot's decision — exported for the probe that checks it without a bot.
   idleDecision, thingOf,
+  // 666: the effort after Opus, ultracode, the closing words — `onButton` and `askEffort` exported for the probe with a stub Bot API.
+  EFFORTS, onButton, askEffort, tellClosed, tellUltraMissing,
 }

@@ -155,6 +155,14 @@ folder»** in that service's terminal (↓ then Enter). Nobody can answer it fro
 - **The token never leaves the machine**: doors return its last four characters only.
 - **Every child process from a background service gets `windowsHide: true`.**
 - **A node restart or rebuild ends the sessions** — the agent is started again by a person.
+- **Every session carries its effort and its workflows explicitly** (666): `--effort <low|medium|high|xhigh|max>` — medium unless the
+  person chose another — and `--settings` with `enableWorkflows: false, ultracode: false`. The person's own Claude Code settings never
+  decide a node session (on Pro dynamic workflows are off by default, on other plans on — measured in Claude Code 2.1.319).
+- **Ultracode only from Telegram, only confirmed** (666): Opus → the effort list → Ultracode → the warning → «Продолжить» starts
+  `--model opus --effort max --settings {"enableWorkflows":true,"ultracode":true}`; a folder with `.claude/launch-tools.txt` gets
+  `Agent,Workflow`; `lib/agent-kit/ultracode.md` goes into the session's prompt file. `--effort ultracode` alone is not used: on Pro it
+  gives xhigh with no ultracode. `data/services/<id>/session-mode.json` says what the session runs with; its exit writes medium, workflows
+  off. «выключить» (`done` with `close`) → after the stop, the owner's closing words through the session's own bot.
 - Telegram channels are an Anthropic research preview: flags may change.
 
 ## When the bot is silent

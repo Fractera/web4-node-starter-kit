@@ -106,8 +106,8 @@
       "slash": "opus",
       "words": { "ru": ["переключись на opus", "максимальная модель", "опус"], "en": ["switch to opus", "maximum model"] },
       "what": {
-        "ru": "Opus — переключить агента на максимальную модель; разговор продолжается",
-        "en": "Opus — switch the agent to the maximum model; the conversation goes on"
+        "ru": "Opus — переключить агента на максимальную модель; разговор продолжается. Выключенному агенту — включить его на Opus с выбором усилий, вплоть до ultracode",
+        "en": "Opus — switch the agent to the maximum model; the conversation goes on. To an agent that is off — turn it on with Opus and a choice of effort, up to ultracode"
       },
       "by": "main",
       "run": "npm run session -- model opus [<element id>] — answer the person first: the session restarts when your turn ends"

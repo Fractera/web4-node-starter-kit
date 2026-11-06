@@ -1,13 +1,11 @@
 ---
 name: use-dynamic-workflows
 description: >
-  Waves of agents instead of one — how the owner switches that on, what it is allowed to be pointed at,
-  and what it costs. Load it when the owner says "use a workflow", "ultracode", "run this in parallel",
-  "can several agents do this at once", or when a job in front of you is hundreds of near-identical
-  units (every dictionary, every content page, one sweep across every route). The thing you cannot see
-  from inside a session: the agents a workflow spawns run on THIS machine with THIS session's
-  permissions, and they edit files auto-approved — so the only thing standing between a fan-out and a
-  large, tidy, expensive wrong answer is a command that judges each unit without you.
+  Waves of agents instead of one — what a dynamic workflow is, what it may be pointed at, and what it costs. On the node it runs
+  only in a session the person confirmed as ultracode in Telegram (skill ultracode-session, which sends you here by path). Read it
+  there before the first wave, or when the owner asks how workflows work. The thing you cannot see from inside a session: the agents
+  a workflow spawns run on THIS machine with THIS session's permissions, and they edit files auto-approved — so the only thing
+  standing between a fan-out and a large, tidy, expensive wrong answer is a command that judges each unit without you.
 ---
 
 # use-dynamic-workflows
@@ -15,8 +13,9 @@ description: >
 > Informational, not binding. **Know a better way for the case in front of you — do it your way and
 > say so.** You are trusted with the creative work on this project.
 
-**Off by default, and that is the correct state for most projects.** The law in `CLAUDE.md` (*How we build*)
-locks multi-agent work; this is the one sanctioned door out of it, and the door has two locks.
+**Off in every session of the node, and that is the correct state for most work.** The law in `CLAUDE.md` §6 forbids subagents; the
+one door out is a session the person confirmed as ultracode in Telegram (Opus → Ultracode → the warning → «Продолжить», node step 666,
+skill `ultracode-session`). Nobody opens that door from inside a session — not you, not a task, not the size of a job.
 
 ---
 
@@ -30,8 +29,10 @@ loop, the branching and the intermediate results: the first wave runs, its resul
 second wave is — verification, summary, another fan-out — and only the final answer reaches the
 conversation.
 
-Switched on, it is triggered by saying **"use a workflow"** or the keyword `ultracode`. `/workflows`
-shows every phase live, its agent count and its token total, and lets the owner pause or stop.
+Ultracode (Claude Code 2.1.319) is the standing form of it: «standing dynamic-workflow orchestration at any effort level» — a
+substantive task becomes a workflow by default. It needs dynamic workflows (`enableWorkflows`, OFF by default on Pro) and a model with
+the `xhigh` effort. The node starts it with flags, for one session: `--model opus --effort max --settings
+{"enableWorkflows":true,"ultracode":true}`; every other session gets `enableWorkflows: false, ultracode: false`.
 
 ## 2. 🔒 Where it runs — read this before promising anything
 
@@ -41,7 +42,7 @@ coordinates. The agents it spawns run **inside the existing session, on the mach
 on**, with the same permission mode, the same tool allowlist and the same sandboxing as any other call.
 
 So the honest answer to "what will it touch?" is: **exactly what this session can already touch, only by
-up to sixteen agents at once instead of one.** If the session can reach the server, so can they.
+many agents at once instead of one.** If the session can reach the server, so can they.
 
 - **Subagents always run in `acceptEdits`**, whatever the session's mode is: file edits are
   auto-approved. Shell, web and MCP calls outside the allowlist still prompt.
@@ -58,7 +59,8 @@ No: architecture, the client/server boundary, debugging a build. There, proving 
 than producing it, and more agents produce more work to review, not less.
 
 **Name the guard before the wave.** Cannot say which command judges the output — then it is not a
-workflow, it is a fan-out with a hope attached.
+workflow, it is a fan-out with a hope attached. In an ultracode session this rule still stands: say to the person «this one is better
+done by one mind» when it is.
 
 ## 4. 🔒 The failure mode: not a wrong answer, a plausible one at scale
 
@@ -72,8 +74,7 @@ Multiply that by a fan-out and you have the real risk. This is why §3 is a rule
 
 ## 5. Cost — the test is the owner's own last week
 
-Availability is not the question, affordability is: workflows are on every paid plan, so nothing stops a
-run from starting. What stops it is the limit hit halfway through.
+What stops a run is not availability but the limit hit halfway through.
 
 - an ordinary single-agent session already reaches the limit before the work is done → a workflow will
   not fit;
@@ -84,26 +85,19 @@ not finished, and every agent that started after it runs again — including the
 does not survive leaving the CLI. Hence: **many small agents preserve far more progress than a few long
 ones.**
 
-What the product gives instead of a promise: `/workflows` shows each agent's tokens live and can stop the
-run; a `Large workflow` warning appears past 25 agents or ~1.5M projected tokens (advisory, it pauses
-nothing); a size guideline in `/config` aims the planner (`small` <5, `medium` <15 default, `large` <50)
-behind hard caps of 16 at once and 1,000 per run. **Price a big job by running one slice first** — one
-directory, not the repository. Plan numbers change; the last-week test does not.
+What the product gives instead of a promise: `/workflows` shows each agent's tokens live and can stop the run; a «Large workflow»
+warning is advisory and pauses nothing; the size guideline aims the planner — `small` <5 agents (the default on Pro), `medium` <10 (the
+default elsewhere), `large` <50; how many run at once is Claude Code's own limit (`CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`). **Price a
+big job by running one slice first** — one directory, not the repository. Plan numbers change; the last-week test does not.
 
-## 6. 🔒 Two locks on the door
+## 6. 🔒 One door, opened by the person
 
-**Confirmed user cases.** The panel refuses to switch this on until the product dossier holds
-cases the owner has confirmed (`PRODUCTS-CONFIG/<id>.json`, `cases[].confirmed` — see `use-use-cases`).
-The reason is not bureaucracy: a workflow is an amplifier, and an amplifier pointed at a
-guess produces a large, tidy, expensive wrong thing. The most costly outcome available in this product is
-a hundred agents building carefully in the wrong direction. Cases are what point it.
-
-**The owner's own judgement about cost** (§5). The panel cannot see the plan's limits; only the owner can.
+**The person's choice in Telegram** — Opus → Ultracode → the warning «Ultracode запускает рабочие процессы с множеством субагентов …
+Это может привести к экстремально высоким расходам токенов» → «Продолжить». The warning is the price said aloud; the press is the
+person's judgement about cost, which no panel and no agent can make for them. «Выбрать другую модель» closes the door again.
 
 ## 7. Once it is on
 
-- **Say it on the task itself.** Nothing about a task authorises a workflow by itself — not its size, not
-  "independent parts", not "faster in parallel". That stays true from the law in `CLAUDE.md`.
 - **The owner approves the plan before it runs.** The prompt lists the planned phases, `View raw script`
   shows the script. That is the last cheap moment to notice the wrong direction.
 - **The session stays free while it runs**, but cannot steer mid-run (§2).
@@ -111,8 +105,7 @@ a hundred agents building carefully in the wrong direction. Cases are what point
   every branch then repeats the same orchestration; that, not the size of one run, is where a workflow
   repays its setup.
 
-## 8. When to switch it back off
+## 8. When it switches back off
 
-After the campaign that justified it. This is not a setting to leave on: with it on, every large request
-carries the question "should this fan out?", and for most work here the answer is no — one mind holding
-the whole picture, and one build to prove it.
+At «выключить»: the node stops the session, the next one starts at medium with workflows off, and the person hears it in the node's
+closing words. A model switch in the middle of the conversation also ends it. Ultracode is never carried into another session.

@@ -58,4 +58,24 @@ function claudeAuthState() {
   }
 }
 
-module.exports = { claudeBin, claudeAuthState, extraBins, resolveBin }
+/**
+ * 666: уровни `--effort`, которые знает Claude Code этой машины, — из его собственной справки (2.1.319: «(low, medium, high, xhigh,
+ * max)»). `null` — флага нет вовсе: старый CLI с `--effort` не запустился бы, и узел флаг не передаёт. Спрашивается один раз на процесс.
+ */
+const effortCache = new Map()
+function claudeEfforts(bin = claudeBin()) {
+  if (effortCache.has(bin)) return effortCache.get(bin)
+  let help = ''
+  try {
+    const out = spawnSync(bin, ['--help'], { encoding: 'utf8', timeout: 15_000, windowsHide: true })
+    help = `${out.stdout ?? ''}${out.stderr ?? ''}`
+  } catch { /* справки нет — ниже: не запоминать */ }
+  // Справка не пришла (сбой, таймаут) — ответ «не знаю» не запоминается: следующий запуск спросит снова.
+  if (!/--help|Usage|Options/i.test(help)) return null
+  const m = /--effort <level>[\s\S]{0,240}?\(([a-z][a-z, ]*)\)/.exec(help)
+  const levels = /--effort\b/.test(help) ? (m ? m[1].split(/\s*,\s*/).filter(Boolean) : ['low', 'medium', 'high']) : null
+  effortCache.set(bin, levels)
+  return levels
+}
+
+module.exports = { claudeBin, claudeAuthState, claudeEfforts, extraBins, resolveBin }

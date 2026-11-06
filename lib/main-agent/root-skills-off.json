@@ -11,7 +11,7 @@
     "use-agentic-rag": "LightRAG service of the previous line; the graph is the graph element",
     "use-vector-memory": "the vectors element does it",
     "use-object-storage": "the storage element does it",
-    "use-dynamic-workflows": "waves of agents; subagents are forbidden",
+    "use-dynamic-workflows": "waves of agents; read by path only in a session confirmed as ultracode (skill ultracode-session, step 666)",
     "find-skills": "installs skills globally; foreign skills go into the project with SOURCE.md",
     "skill-creator": "only a sample for writing a skill; its runs are forbidden",
     "extract-design-system": "the Design element does it",

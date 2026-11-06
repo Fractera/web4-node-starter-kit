@@ -5,6 +5,14 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-24 (2026-11-06, night) — 666 RELEASED (`completed-steps/666.md`, plan kept in `new-steps/666/` until the node check).** All 15
+element repositories at their next patch (custom v0.3.169 … blocks v1.4.28), every prebuild green; the core pins them, its agent kit
+(14 copies) carries the effort list, ultracode and the closing words; `CLAUDE.md` §6/§8 resealed (`c465540a8b61`). Labs A/A1b/A2/B and
+zero-token TUI probes in `completed-steps/666.md`. **NEXT: the owner presses «Sync fork» on aifa-agi** (his rule) → on his node
+`npm run node:update` → then on his node: 665 (send on `http://localhost:24683/ru`, the typed reply, «Продолжить», `data/node/first-task.json`)
+and 666 (his bot: Opus → effort list → Ultracode → warning → «Продолжить» → «Режим: Opus · max · ultracode»; «выключить» → the closing
+words). Left for the owner: the empty folder `~/fractera-node` (a lab used a trusted path; the safety check refused my `rmdir`).
+
 **NOW-23 (2026-11-06, evening) — the owner's clean install is up; 665 RELEASED; 666 IN WORK. Read this block first.**
 - **The clean install:** the owner's fork `aifa-agi/web4-node-starter-kit` (a direct fork, `===ORIGIN_OK===`), `npm run launch` in
   `~/web4-node-starter-kit` 19:50–20:16 UTC, `===LAUNCH_DONE===`, 23/23 progress lines, no failure. Dev clones stay in `~/fractera-dev`.

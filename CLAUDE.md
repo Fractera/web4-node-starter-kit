@@ -262,7 +262,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 ## 6. Laws everywhere
 
 - The code base architecture is fixed from birth: you work strictly within the existing patterns; create — yes, invent — no.
-- Subagents are forbidden, except in a skill with the line «Subagent: allowed».
+- Subagents are forbidden, except in a skill with the line «Subagent: allowed» and in a session the person confirmed as ultracode in
+  Telegram (Opus → Ultracode → «Продолжить»): only there workflows and subagents run, until «выключить» — skill `ultracode-session`.
 - The model by kind of work: Haiku — a simple action, Sonnet — text, Opus — code.
 - Behaviour nobody ordered is never built: timers, polling, self-updating, automatic links — only by the architect's word.
 - The machine lacks power — a consultation on moving to a stronger computer, never a refusal.
@@ -359,7 +360,7 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   first); the node type — `node-type`; an element on or off — `element-power`; how a product or SDK works — `study-for-element`; a
   skill the person heard of — `adopt-suggested-skill`; a clock and reminders — `core-schedule`; page sections and blocks — `blocks-of-the-node`; colours, fonts, menus — `design-and-settings-of-elements`;
   routing a need — `route-to-element`; a new element — `create-element`; people near the architect, a family or a team — `integrator`; channels, voices and trends — `content-factory`; agents for the person themselves — `own-agents`; a person stuck in someone else's interface — `help-in-browser`
-  (their Chrome on this computer); a request against a provider's rules, a warning or a ban — `provider-rules`; a template release and its rollout to the elements — `release-template` (the elements' sealed
+  (their Chrome on this computer); a request against a provider's rules, a warning or a ban — `provider-rules`; a session confirmed as ultracode — `ultracode-session`; a template release and its rollout to the elements — `release-template` (the elements' sealed
   instruction comes from `npm run instruction:element`).
 - The rest — in the skills of the job being done: own domain — `use-domain`; analytics — `connect-google-analytics`; tools —
   `use-tools`; models — `use-ai-generation`; the messenger window — `ai-elements`; the shell, three operating systems, routes and dialogs
