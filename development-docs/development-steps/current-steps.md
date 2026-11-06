@@ -19,7 +19,7 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   `b2863b0` v1.3.23, vectors `4d268c4` v1.2.16. **CI:** ubuntu and windows green on all 15 (1–3 min each); macOS — GitHub's capacity:
   auth, memory, root, vectors cancelled after ~31 min in the queue, custom still queued (reruns in the background) — pinned on the
   skill's rule «a runner not acquired is GitHub's, not the code's»; the owner's Mac node is the macOS proof. The owner clicked «Sync
-  fork» twice early (fork at `ae293bff`). **Next:** «готово к Sync» → his click → `node:update` → eyes (banner only on root, «Root»).
+  fork» twice early (fork at `ae293bff`). The owner: «sync ok» (fork at `3475624e`) — `node:update` STARTED; next → eyes (banner only on root, «Root»).
 - **662 CLOSED** (`completed-steps/662-1.md`, `662-main.md`; plans deleted): on the owner's node (`ядро 9d8c5b93`) every element's header has
   the core's two tabs, Stripe marked off → its switch (architect only); every landing has the power label, «your own builder», FAQ last
   (+ backups for the stores), the per-element sections; blocks' first screen; root's carousel — eyes and timer tests green. GitHub
