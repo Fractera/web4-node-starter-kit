@@ -12,55 +12,13 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   v1.2.12, embeddings v0.1.10, config v1.2.24, design v1.1.24, graph v1.2.11, cache v0.1.21, memory v2.2.29, stripe v1.3.19, blocks v1.4.22.
 - **662 APPROVED** — the owner: «Да пожалуйста ещё сделай лейбл в качестве отдельного раздела является ли этот элемент по умолчанию
   включён, или выключен …» (the power label joins 662-2 as a shared landing section, fed by the passport field of 663-1). Plan
-  `new-steps/662/662-main.md`. **662-1 MEASURED (2026-11-06), plan `new-steps/662/662-1.md`:** on the owner's node no element's header
-  has a menu at all (logo + «Личный кабинет»); the core's header has the catalog. Causes: (1) no own domain → the core writes `href: null`
-  in every card and elements keep only public `href` → no tab, ever, on this node; (2) the catalog for CONFIG counts only elements that
-  answered at the push — 12/8/12/7 cards across the last `node:update` pushes; (3) CONFIG's subscribers lack root, design, graph, cache,
-  memory, stripe (they start while CONFIG restarts, subscribe once, no retries), blocks sits on the trial port 25679, deleted djlgb still
-  there. Stripe's item → `/ru/architect/stripe` by 632-1 (an off element has no site). The owner, 2026-11-06, the window, verbatim: «Метка + включение (Рекомендую)» (an off element: the mark «выключен», a click to its
-  core section; hidden from an element site's visitors). **662-1 BUILT, uncommitted (2026-11-06):** core — `lib/web4-items/dashboard-rows.ts` (the CONFIG catalog lists every
-  registry element; off → `off`, `mark`, the core path; busy → its addresses), `catalog.i18n.ts` (`mark`), `catalog-push.ts`
-  (`signalTheRest`: POST `/api/settings/changed` to every on element CONFIG missed), `catalog-notify.cjs` + `services-install.mjs`
-  (`waitAll`), `components/architect/all-projects.client.tsx` (mark), the shell kit copy; the 15 element repositories — one patch
-  (scratchpad `662/element.patch`): the shell kit (`ShellChild.roles`, `mark`, children filtered by role), `lib/project-settings.ts`
-  (`local` when no public href, off → `ARCHITECT_URL` + path), `lib/menu/catalog-group.ts` (off → roles architect + mark),
-  `app/api/settings/changed/route.ts` (re-subscribe on a signal). tsc 0 in root and the core. **Lab proven** (custom template `next dev`, the node's root copy + an off
-  Stripe, scratchpad `662/menu-eyes.cjs`): before — the tab with only Stripe (8 null-href cards dropped); after — guest 8 cards (no
-  Stripe), architect 9 with «ВЫКЛЮЧЕН» → `http://localhost:24680/ru/architect/stripe`, en «OFF»; console 0 (guest: the mocked 401 only).
-  prebuild 0 in 14 clones (stripe has no deps), the core's guards 41 OK. **Released:** auth `6c0e9bd` v2.4.17, blocks `97bac48`
-  v1.4.23, config `2399924` v1.2.25, custom `9fbd814` v0.3.163, data `64c61d0` v2.2.10, design `4a87dea` v1.1.25, embeddings
-  `8219c81` v0.1.11, graph `f6945d9` v1.2.12, memory `81b562f` v2.2.30, native `7fb47c9` v0.1.43, cache `402fc85` v0.1.22, root
-  `d8fb57b` v3.0.28, storage `0b4cb1c` v1.1.30, stripe `5831c9d` v1.3.20, vectors `dacf97e` v1.2.13. **CI three-os green on all 15** (auth 42213390451, blocks 42213395718,
-  config 42213402179, custom 42213407957, data 42213414095, design 42213419865, embeddings 42213425710, graph 42213431692, memory
-  42213435703, native 42213441716, cache 42213447483, root 42213452357, storage 42213457275, stripe 42213462010, vectors 42213467689);
-  the core's code and pins committed together — core `77d263f1`, CI 42214576305 green. **The owner, 2026-11-06, verbatim: «sync is ook»** — the fork at `382d4ec3`; `node:update` → `===NODE_UPDATE_FAILED=== сторожа сборки` — rolled back,
-  the node as it was (`ядро 43f6093a`, copy `logs/node-update/2026-11-06T12-07-57-479Z`). **Cause (a defect of the order, found now):**
-  `node:update` runs the core's guards (step 6) BEFORE the elements go to their pins (step 7); `check-shell-kits` compared the core's
-  new kit with the INSTALLED root v3.0.27 → «ядро: components/shell не совпадает с сайтом». Any release that changes the shell kit of
-  root and the core together would fail the same way. **Fixed in the guard** (it runs from the merged tree, `node-update.mjs` itself
-  does not re-run after the merge): when the installed root sits exactly on a tag and the registry pins another one, the core is
-  compared with the PINNED tag's `components/shell` (`git ls-tree`/`git show`, fetching the tag by the pin's repo); own work over a tag
-  or no tag → the installed folder, as before. Proven on the node's real root folder (scratchpad `662/guard`): pin v3.0.28 + the new
-  kit → `===SHELL_KITS_OK===`; the old kit → FAILED (negative); pin v3.0.27 + the new kit → FAILED (negative, the old path).
-  The owner, verbatim: «sync ok» — the second `node:update` →
-  `===NODE_UPDATE_DONE=== 9 изменений форка, ядро 7731f388` (the guard: «ядро — копия: сайт v3.0.28 (закрепление; установлен v3.0.27)»).
-  On the node every element now HAS the tab «Все проекты» (root, data, blocks — `menu-eyes.cjs`), but 7–8 cards: the install's catalog
-  was sent by the OLD core server (the core is rebuilt last, step 8). `npm run catalog:refresh` from the new core → **CONFIG refused
-  the whole catalog: `bad-href:en[11]`** (Stripe's core path; CONFIG's door also dropped `off` and `mark`) — my lab never passed the
-  catalog through CONFIG's door. Fixed: config `775d800` v1.2.26 (`catalog-store.mjs`: `off`, `mark`, a core path only with `off`;
-  tested: the off path ok; a path without off, off + https, a mark of 41 — refused), CI 42218587222 green; pinned. The owner: «sync ok» (fork at `261b208`) → `===NODE_UPDATE_DONE=== 3 изменений форка, ядро f244d6d8`;
-  `npm run catalog:refresh` → `13 en, 13 ru → принят`, the core's signal reached data, auth, vectors, storage, embeddings, config,
-  cache, root, design, graph, memory, blocks (djlgb: dead); CONFIG's subscribers now every element on its own port (blocks 24684).
-  **Proven on the node** (`menu-eyes.cjs`, ru, 1440): all 12 running elements — the tab «Все проекты»; guest 12 cards without Stripe,
-  architect 13 with «Платежи Stripe ВЫКЛЮЧЕН» → `http://localhost:24680/ru/architect/stripe`; console 0 (guest: the mocked 401). The
-  core's header 13 cards, Stripe «выключен». **Found:** that link opens Stripe's core home, which has NO switch — the switch is on
-  `…/settings/danger-zone` («Включение элемента»). Fixed in the core (uncommitted → committed next): an off card links to
-  `/<lang>/architect/<address>/settings/danger-zone`; CONFIG v1.2.26 accepts it (tested). Needs one more «Sync fork» + `node:update`
-  + `catalog:refresh`. Not proven yet: a newly born element appearing by itself (a birth is the owner's action). Also owed: the install's catalog
-  push should come from the NEW core (after step 8), not the old one. **Next:** scratchpad `662/header.cjs`
-  over the core and all 12 running elements (expected: «Все проекты» with 13 cards; Stripe marked «выключен» for the architect);
-  CONFIG's `subscribers.json` names every element on its own port; then 662-1's summary and 662-2. Found, not in 662-1: CONFIG has no
-  `unsubscribe` — a deleted element (djlgb) stays a dead subscriber.
+  `new-steps/662/662-main.md`. **662-1 CLOSED** (`completed-steps/662-1.md`; the owner's choice «Метка + включение»): on the node
+  (`ядро 84d6839a`, after four «Sync fork») every element's header has «Все проекты» — guest 12 cards, the architect 13 with «Платежи
+  Stripe ВЫКЛЮЧЕН» → its switch `…/stripe/settings/danger-zone`; CONFIG's subscribers — every element on its own port. Not proven: a
+  newly born element appearing by itself (a birth is the owner's action — check at the next one). Open: CONFIG has no `unsubscribe`
+  (djlgb stays a dead subscriber). The owner asked (2026-11-06) for a checklist of 662 — given: 662-1 done, 662-2, 662-3, 662-4, 663
+  not started. **Next: 662-2** — the shared landing sections (`faq`, `builder`, `tool`, the power label, the stores' backup line):
+  measure the landing widget of the templates first, then its plan file `662-2.md`.
 - **663 PLANNED with the owner's decisions** (`new-steps/663/663-main.md`): the passport `power: { default, switch: never|manual|auto,
   wakeOnCall }`; `npm run load`; free > 1 GB — nothing, 1–0.5 GB — a proposal and the owner's yes, < 0.5 GB — `auto` off by itself with a
   message (the owner: «if free memory is more then 1gb - с сообщением ваm if less 0.5 gb = auto»); waking 2 minutes before a calendar
