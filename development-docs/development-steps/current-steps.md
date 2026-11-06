@@ -10,6 +10,12 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   `660-main.md`, `661-main.md`, written 2026-11-06 from the evidence in NOW-21; their plans deleted in the same commit). Node now at
   `ядро 43f6093a`; final pins: root v3.0.27, custom v0.3.162, native v0.1.42, auth v2.4.16, data v2.2.9, storage v1.1.29, vectors
   v1.2.12, embeddings v0.1.10, config v1.2.24, design v1.1.24, graph v1.2.11, cache v0.1.21, memory v2.2.29, stripe v1.3.19, blocks v1.4.22.
+- **⚠ INCIDENT on the owner's node (2026-11-06 ~17:20, measured):** after the two installs collided (the node-update alive behind a dead
+  wrapper + my parallel finish), the closed-lid core rebuild recorded a partial `quiet-build.json` (root, cache, watchers) and reopened only
+  those: pm2 holds 10 processes — the core online (`/api/health` 200), root online but silent, blocks crash-looping, cache stopped; auth,
+  data, storage, vectors, embeddings, config, design, graph, memory NOT in pm2. A lone `npm run services:install` (pid 43224) is
+  re-installing (at stripe). Recovery: wait for it → `npm run serve:start` (starts every non-off element of the ecosystem) → health of all
+  → `catalog:refresh`, `skills-base` → eyes. Tell the owner plainly.
 - **662 REOPENED for 662-6** (the owner, 2026-11-06: the starter banner only in root and the custom template; menu names with a capital —
   verbatim in `new-steps/662/662-6.md`; the plan restored from git). **Built, uncommitted:** the banner removed from 12 layouts (natives +
   native template; stripe had none), `cap()` in the shell kit copied to all 15 + the core. **Lab:** storage banner=false, custom template banner=true (negative control), the custom tab «Root», console 0;
