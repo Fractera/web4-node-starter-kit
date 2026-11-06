@@ -48,8 +48,8 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   was sent by the OLD core server (the core is rebuilt last, step 8). `npm run catalog:refresh` from the new core → **CONFIG refused
   the whole catalog: `bad-href:en[11]`** (Stripe's core path; CONFIG's door also dropped `off` and `mark`) — my lab never passed the
   catalog through CONFIG's door. Fixed: config `775d800` v1.2.26 (`catalog-store.mjs`: `off`, `mark`, a core path only with `off`;
-  tested: the off path ok; a path without off, off + https, a mark of 41 — refused), CI 42218587222 green; pinned. **Next:** the
-  owner's «Sync fork» → `node:update` → `npm run catalog:refresh` → `menu-eyes.cjs` on every element. Also owed: the install's catalog
+  tested: the off path ok; a path without off, off + https, a mark of 41 — refused), CI 42218587222 green; pinned. The owner: «sync ok» (fork at `261b208`) — the third `node:update` STARTED; then
+  `npm run catalog:refresh` → `menu-eyes.cjs` on every element. Also owed: the install's catalog
   push should come from the NEW core (after step 8), not the old one. **Next:** scratchpad `662/header.cjs`
   over the core and all 12 running elements (expected: «Все проекты» with 13 cards; Stripe marked «выключен» for the architect);
   CONFIG's `subscribers.json` names every element on its own port; then 662-1's summary and 662-2. Found, not in 662-1: CONFIG has no
