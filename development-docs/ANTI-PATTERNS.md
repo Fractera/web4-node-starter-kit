@@ -56,7 +56,8 @@ warned earlier. The section stays short: a lesson that a guard or the code now h
   agents agreed is called directly.
 - **Search by meaning always returns the nearest neighbour.** «Nothing found» needs a similarity threshold or a filter, never a nonsense query.
 - **A probe of an element on a spare port subscribes to CONFIG and Design with its own port** and steals the live element's signals: run it
-  with `CONFIG_SERVICE_URL` and `DESIGN_SERVICE_URL` empty.
+  with `CONFIG_SERVICE_URL` and `DESIGN_SERVICE_URL` empty. The installer's warm-up is such a probe (2026-11-06: it also pulled the design
+  from a «Дизайн» with no decisions and stripped every element's theme to `{}` — 13 files, one per install step). Guard: `warmUp` env, step 668.
 - **A document that names a path is checked from the place that reads it.** A path inside a file a hook reads is relative to that file, not to
   the process; a relative data path of a standalone server ends up inside the build and dies with the next build — data paths are absolute.
 

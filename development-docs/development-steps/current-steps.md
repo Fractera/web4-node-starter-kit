@@ -5,6 +5,25 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-28 (2026-11-06, late night) — 668 RELEASED (`completed-steps/668.md`): the theme wiped to `{}` by the update's warm-ups.** «Дизайн»
+gets seeded with the project theme (site, else core) and wiped element files get it back (services-install 6а); warm-ups run without
+CONFIG/Design addresses. **NEXT:** the owner syncs → `npm run node:update` → his node blue again (eyes); then back to 667 (the figure).
+
+**NOW-27 (2026-11-06, late night) — 667 IN WORK: the Claude figure animation of the 13 landings (662-7).** The owner, verbatim:
+«Измени мне анимацию которая находится на каждом элементе это анимация Клот Code. Несколько дефектов: Во-первых он появляется слева направо
+это неправильно он должен появляться справа налево но оставаться в том же самом положении как находится сейчас. Во вторых позиционироваться
+он должен быть с то есть сейчас он смотрит налево должен смотреть направо. В-третьих: сноски ноги и рот пересекаются это неправильно сноска
+рот должно быть выше а сноска нос должна быть ниже. В четвёртых поворачиваться он должен почасовой стрелке а сейчас он поворачивается против
+часовой стрелки. В пятых после того как он подпрыгивает нужно сделать увеличение и выравнивания его по центру окна а сейчас он стоит по левому
+краю и слишком мелкий». Read in the code (`_tools/662/figure/`, 13 identical copies): the body flies in from the left (`from` x −560);
+`START rotateY(-34deg)` makes it look left AND turn counter-clockwise (seen from above) — `+34deg` fixes both; the legs line (anchor
+low) goes up to its label while the mouth line (anchor higher) goes down to the last label — they cross; the figure stays at x 236 of
+680 at scale 1. «нос» read as «ноги» (there is no nose callout). Plan: all parts from the right, start turned right, mouth label above
+legs, a sixth phase — the figure to the centre and ×1.5 (a flat «camera» wrapper that carries the perspective, so the 3D look does not
+change), the last frame for the server and reduce motion. Lab: the native template built from its dev clone on a spare port with
+CONFIG/DESIGN URLs empty, frames of every phase. Then the same two files into the 13 repositories, their prebuild, tags, CI, pins.
+Running in parallel: the owner's third sync → `npm run node:update` (c3282fd1).
+
 **NOW-26 (2026-11-06, night) — the owner's node UPDATED (`===NODE_UPDATE_DONE===`, core `87d0e8b4`, all 13 elements at their 666
 tags); 665 CLOSED on his node; 666 proven live except the bot.** 665: the typed reply and «Продолжить» on `localhost:24683/ru` with the
 real core, the task written and then deleted (no first task left). 666: the main agent started from the terminal page with no message —
