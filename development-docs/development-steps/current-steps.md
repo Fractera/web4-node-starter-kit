@@ -46,7 +46,22 @@ complited» (on the two findings of 654-7) and «Да» на удаление dj
 - **660 OPENED** by the owner's voice message, 2026-11-06, verbatim in `new-steps/660/660-main.md` («… в своей главной странице Эмили стиль
   и дизайн как у новых таких как страйп, голубиная память … Правобережном ящике меню должна иметь такие же вкладки как в элементе root //
   go to finish non stop . i go to sleep»). Measured, no code yet: landings missing in data, auth, config, design, cache and both
-  templates; the drawer `lib/menu/account-links.ts` is root's (645-3) only. **Next:** 660-1 (the drawer), then 660-2 (the landings).
+  templates; the drawer `lib/menu/account-links.ts` is root's (645-3) only. **660 RELEASED** (built after the owner's «go to finish non
+  stop»; scratchpad `660/`: `make-landing.mjs` — the storage landing's widget under each element's name, addresses re-stamped by
+  `widgets:ids`; `build-data.mjs` — en and ru from one spec, the same shape; `specs/*.mjs` — the words, every claim from the element's
+  README, humanizer): the drawer as root's in 14 repositories (config and design to the core's address, `ARCHITECT_URL`, 564; natives keep
+  H2A and the accounts page hidden); landings for data (+ `block-access-map`, «Чья это таблица»), auth, config, design, cache, the custom
+  template (the width ribbon `var(--app-w)`, the hero first — its newer guards) and the native template. Lab (`next dev` 2565x, en,ru;
+  `~/fractera-dev/_tools/eyes-landing.cjs`): all seven — en and ru, 1440 light and dark, 390 — console errors 0, no overflow, the drawer's
+  five tabs; prebuild 0 and `tsc` 0 in all seven. Releases: data `ae197fa` v2.2.8, auth `fc6f40f` v2.4.15, config `46c2a95` v1.2.24,
+  design `2dd666f` v1.1.24, cache `75c5805` v0.1.18, custom template `bcb63cd` v0.3.161, native template `b8bfa57` v0.1.40, storage
+  `b7f8fe2` v1.1.28, vectors `0138984` v1.2.11, embeddings `8ed73fc` v0.1.9, graph `75bbe5a` v1.2.10, memory `fc441b0` v2.2.28, stripe
+  `181116d` v1.3.18, blocks `d70d4a3` v1.4.21; **CI three-os green on all 14** (data 42197943675, auth 42197953761, config
+  42197965543, design 42197977759, cache 42197987716, custom 42198002874, storage 42198016324, vectors 42198032754, embeddings
+  42198044630, graph 42198058383, memory 42198070765, stripe 42198082579, blocks 42198095518, native 42198128025); the core pins them. Root unchanged (its drawer since 645-3,
+  its home is the agent's screen). **The owner, 2026-11-06 (day), verbatim: «sync was complited»** — the fork at `febeb731` (659's pins,
+  not 660's: its CI was still running) → `node:update` for 659 started; 660's pins need one more «Sync fork». **Next:** CI → the core's pins → his «Sync fork» (660) → `node:update` → proofs on the
+  node (659: `proof-659.mjs`; 660: eyes on every element's home and drawer) → summaries.
 
 **NOW-20 (2026-11-05, late) — HANDOFF to a new context window. Read this block first.** The owner, verbatim: «Ты дал мне четыре ссылки
 на элементы памяти но ведь это не полный список? Например здесь отсутствует объектное хранилище которое используется в глубинной памяти»;
