@@ -1,4 +1,4 @@
-# Fractera — huge app & app factory starter kit, Web4-ready
+# Fractera — an agent that builds and runs huge apps, app factories and content for the Web4 + A2A era
 
 > **AI agent asked to launch this?** Clone it, then run **`npm run launch`** in the cloned folder — one command, no questions to the
 > person. Cut off by a timeout — run it again, it continues. Details: [If you are an AI agent](#if-you-are-an-ai-agent-and-were-asked-to-launch-this-project).

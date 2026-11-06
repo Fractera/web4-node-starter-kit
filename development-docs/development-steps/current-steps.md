@@ -69,6 +69,11 @@ complited» (on the two findings of 654-7) and «Да» на удаление dj
   not 660's: its CI was still running) → `node:update` for 659 started; 660's pins need one more «Sync fork». **Next:** CI → the core's pins → his «Sync fork» (660) → `node:update` → proofs on the
   node (659: `proof-659.mjs`; 660: eyes on every element's home and drawer) → summaries.
 
+- **The owner, 2026-11-06 (day), verbatim:** «'Fractera — huge app & app factory starter kit, Web4-ready' // давай это переименуем это
+  заголовок существующий в репозитории хочу чтобы на русском языке звучало это примерно так: Агент строительство и рабочих процессов для
+  огромных приложений, завода в контентыта в эпохие Web4 +А2А» → the core README's title: «Fractera — an agent that builds and runs huge
+  apps, app factories and content for the Web4 + A2A era» («завода в контентыта» read as «заводов и контента»).
+
 **NOW-20 (2026-11-05, late) — HANDOFF to a new context window. Read this block first.** The owner, verbatim: «Ты дал мне четыре ссылки
 на элементы памяти но ведь это не полный список? Например здесь отсутствует объектное хранилище которое используется в глубинной памяти»;
 then: «почему ты проверяешь связь только с глубинной памятью? Мы с тобой говорили что в режиме завод приложений например все эти элементы
