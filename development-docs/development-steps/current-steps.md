@@ -16,6 +16,13 @@ hour would be lost?» — that is written now. How the steps are planned, proven
   `CreditsWide` (GitHub button) via `_tools/662/patch-widget-2.mjs`; self-titled lone blocks skip the section H2; Design: block-cards/card/
   flow/metrics copied from graph + registry, data: numbers, flow in «tool», «parts» cards. tsc 0 in all; lab shots OK (vectors builder/faq/
   credits, design numbers/tool/parts, console 0). **Next:** prebuild all → tags → CI (ubuntu+windows) → core pins → done (no node needed).
+  **The owner, 2026-11-06, verbatim (three reference frames: a coral box figure with arms, legs, two eye slots, callouts A BODY, B LEGS,
+  C ARMS, D EYES, E MOUTH on a dark grid):** «to do animation for claude in image : … фигурка Claude сначала создается из отдельных
+  элементов потом разворачивается лицоМ к камере затем подпрыгивает с подпружиненным. Начинается это анимация с того что отдельные элементы
+  анимированы прилетают сразу сторон сделай вместо статических … такую анимацию которую должна прокручиваться в тот момент когда попадает в
+  фокус» → replace the static `builder-art.tsx` with a Claude figure (body, 2 arms, 4 legs, 2 eye slots) whose parts fly in from the sides,
+  assemble, turn to face the camera, then a springy jump; plays when the section enters the viewport (IntersectionObserver island, CSS
+  keyframes, reduced-motion → the final frame). Not started (usage limit).
 - **663 CLOSED** (`completed-steps/663-main.md`; plans deleted). **The owner, 2026-11-06, verbatim:** «Я тебе что сказал чтоб мне на
   компьютере нужны эти папки? Я сейчас делаю стартовую сборку проекта для того чтобы передать её другим пользователем а на этом
   компьютере я все удалю через полчаса как только ты закончишь» — the local node is a test machine being retired; nothing local is
