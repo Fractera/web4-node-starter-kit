@@ -9,8 +9,9 @@ import { useRouter } from "next/navigation"
 // раз в 3 с, пока вкладка видна, и при возвращении на неё. Отпечаток сменился — дверь перерисовывает слой, страница обновляется на месте
 // (`router.refresh()`), шапка «Кастомные элементы» спрашивает каталог заново (событие `node:menu-changed`).
 // 🔒 ПРОВЕРКА ГЛАЗОМ, А НЕ ВЕРОЙ. ✗ Замерено 2026-11-05 (`menu-mode-switch.client.tsx`): `router.refresh()` после перерисовки двери однажды
-// не принёс нового меню. Поэтому островок сверяет ссылки меню с именами; не сошлось за две проверки — страница перезагружается, но только
-// когда человек ничего не печатает и это не терминал (перезагрузка оборвала бы ввод).
+// не принёс нового меню; 2026-11-07 на узле владельца — первое переименование пришло, обратное нет. Поэтому островок сверяет ссылки меню с
+// именами: не сошлось — ещё один `router.refresh()`, не сошлось снова — страница перезагружается, но только когда человек ничего не
+// печатает и это не терминал (перезагрузка оборвала бы ввод).
 // Таймер — по слову владельца выше; цена — один короткий запрос раз в 3 с и только при открытой видимой вкладке архитектора.
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
@@ -33,7 +34,8 @@ function shown(entries: Entry[]): boolean {
   const segOf = (a: HTMLAnchorElement) => new URL(a.href, window.location.href).pathname.split("/architect/")[1]?.split("/")[0] ?? ""
   return entries.filter((e) => !e.native).every((e) => {
     const name = e.name.toLocaleLowerCase()
-    return links.some((a) => segOf(a) === e.address && (a.textContent ?? "").toLocaleLowerCase().includes(name))
+    // Точное совпадение: ✗ замерено 2026-11-07 на узле владельца — «includes» принял «АВТОРЫ 2» за «Авторы», и меню осталось старым.
+    return links.some((a) => segOf(a) === e.address && (a.textContent ?? "").trim().toLocaleLowerCase() === name)
   })
 }
 
@@ -66,7 +68,8 @@ export function MenuLive() {
         }
         if (stale) {
           if (shown(stale)) stale = null
-          else if (++checks >= 2 && !editing() && !onTerminal()) window.location.reload()
+          else if (++checks === 1) router.refresh()
+          else if (!editing() && !onTerminal()) window.location.reload()
         }
       } catch { /* узел не ответил — меню остаётся как есть */ } finally {
         busy = false

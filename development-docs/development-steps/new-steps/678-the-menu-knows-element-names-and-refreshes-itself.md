@@ -20,6 +20,12 @@
 `card` live (a name set, removed → the passport's, an unknown id refused). OWED — the second plane: the owner's fork sync →
 `npm run node:update` → `npm run eyes` on his node: the nine names in the menu, then a `rename` seen without a reload.
 
+**Measured on the owner's node (core `bcb05a6b`, 2026-11-07 23:42 UTC):** `npm run eyes` — the left menu shows ROOT, YOUTUBE, INSTAGRAM,
+LINKEDIN, X, МЕДИА, КЛИП, ДОЗОР, БЛОГ, АВТОРЫ (was `Jfi92` …); console clean. Live in Chrome with a page mark: `rename jfi92 «Авторы 2»` →
+within 8 s the left menu «АВТОРЫ 2» and the header «Авторы 2», the mark kept (no reload). ✗ The rename back: the server rendered «АВТОРЫ»,
+the page kept «АВТОРЫ 2» — `router.refresh()` did not bring it, and the island's check passed by `includes`. Fixed: an exact match, a
+second refresh, then a reload (not while typing, not on a terminal). Re-proof after the next update.
+
 ## Substeps
 | # | Result | Proof |
 |---|---|---|
