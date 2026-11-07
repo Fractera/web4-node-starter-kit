@@ -1,0 +1,55 @@
+{
+  "_": "Node step 670-3 (owner 2026-11-07: «Какие тогда ещё в будущем это элемент может решать задачи? А куда это описать?»): the AREA of every service of the node — the field it is the natural home for — and the jobs it MAY GROW INTO (not built until a skill of its card says so). The main agent's map of the hands, beside roles.json: a new kind of job whose area an element owns becomes a route there, built by that element's own agent, instead of a new element. The default for every node; the main agent writes born elements' areas into data/node/areas.json (outside git, wins field by field) with npm run role -- <id> --area … --grows … or npm run create -- … --area … --grows …. Read by scripts/main-agent-cli.mjs (card, find).",
+  "auth": {
+    "area": "Who a person is and what they may open: accounts, sign-in, sessions, roles and access of every element.",
+    "growsInto": ["sign-in with another provider", "invitations and team accounts", "two-step sign-in", "a journal of who opened what"]
+  },
+  "data": {
+    "area": "The records every element keeps as table rows, and the node's own journals and settings tables.",
+    "growsInto": ["reports over the node's tables", "exports and imports of records", "cleanups of old rows"]
+  },
+  "storage": {
+    "area": "Files of every element kept as files: pictures, videos and documents, their stable addresses, previews and icon sets.",
+    "growsInto": ["new image formats and sizes", "video posters and trimming", "previews of documents"]
+  },
+  "vectors": {
+    "area": "Finding texts by meaning: collections of vectors any element fills and asks.",
+    "growsInto": ["similar items for a site", "search by meaning over a site's pages", "finding duplicates by meaning"]
+  },
+  "embeddings": {
+    "area": "Turning texts into vectors on this computer, with no key and no internet.",
+    "growsInto": ["another local multilingual model"]
+  },
+  "config": {
+    "area": "What the project is and which features it shows: its name, menus, switches, search and agent identity.",
+    "growsInto": ["a new feature switch for every element", "settings per language"]
+  },
+  "design": {
+    "area": "How the project looks: colours, fonts, shapes, the design skill of every element.",
+    "growsInto": ["a new theme", "a brand palette taken from a logo"]
+  },
+  "graph": {
+    "area": "Knowledge as things and links between them, shared by the elements: who and what is connected to what.",
+    "growsInto": ["a map of people and projects", "documents linked by topic"]
+  },
+  "cache": {
+    "area": "Fast counters and queues kept in memory for busy actions, before they reach the database.",
+    "growsInto": ["limits on how often someone may act", "counters of views and likes", "queues of jobs"]
+  },
+  "memory": {
+    "area": "What the person told the node to keep: phrases, photos, documents, voice notes, and reminders at a time.",
+    "growsInto": ["dates of the person's life and their reminders", "a diary by voice", "answers across kept documents"]
+  },
+  "stripe": {
+    "area": "Taking money through Stripe: payments, checkout, subscriptions, invoices and refunds.",
+    "growsInto": ["subscriptions to a service", "one-time payment for an order", "refunds"]
+  },
+  "root": {
+    "area": "The project's main public site on the root domain and the first screen where a person gives the node a task.",
+    "growsInto": ["landing pages of the project", "the project's blog", "a help desk for visitors"]
+  },
+  "blocks": {
+    "area": "Reusable sections of pages, kept as code that the elements' agents plug in.",
+    "growsInto": ["a new kind of block", "a gallery of block previews"]
+  }
+}

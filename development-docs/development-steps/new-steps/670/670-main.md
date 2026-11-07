@@ -92,7 +92,7 @@ Address: this clone, `Fractera/web4-node-starter-kit` main; push + CI per subste
 |---|---|---|
 | 670-1 ✅ | the gatekeeper wakes an asleep element on an i2i call — proven on the owner's node, cold start measured | — |
 | 670-2 ✅ | `task --work [--skill <id>]`: a neighbour's job wakes the worker session, naming which of its agents; its «done» wakes the main agent | — |
-| 670-3 | the core's map gets each element's area and «may grow into» (`areas.json`); `role`, `create`, `card` carry it | — |
+| 670-3 ✅ | the core's map gets each element's area and «may grow into» (`areas.json`); `role`, `create`, `card` carry it | — |
 | 670-4 | `find` reads the area, says «does it / its area / nobody» and why; the false storage hit measured away | 670-3 |
 | 670-5 | the law: CLAUDE.md §4 «A request comes», the soul's curiosity line, `shape-the-need` with both examples | 670-2..4 |
 | 670-6 | the Lagrix rung as a contract (a2a + f2f, simulated, shape test, paid only where it pays) + the a2a inbound plan | — |

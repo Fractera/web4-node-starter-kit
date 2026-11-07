@@ -24,8 +24,10 @@ the sealed lines of CLAUDE.md and the soul still go to him before the seal. Cont
 Found: the instruction's «a port is asked from `logs/runtime.json`» — that file has only the core's port (elements: registry,
 `serve:status`) → into 670-5's window. **670-2 CLOSED** (`completed-steps/670-2.md`): `task --work [--skill] [--dry]`; a worker's «done» now wakes the main agent
 (`lib/web4-items/jobs.cjs` + `mount.cjs`; before: 0 wakes, after: 1 — fake kits on the real module). Pre-existing here: `check:modes`
-fails on a clean HEAD of this workshop (no element with groups it expects) — not ours. **NEXT:** 670-3 — `areas.json` + `role --area
---grows`, `create --area --grows`, `card` prints the area. Work in THIS clone; never run installers or the core server from this clone (it shares the
+fails on a clean HEAD of this workshop (no element with groups it expects) — not ours. **670-3 CLOSED** (`completed-steps/670-3.md`): `WEB4-ITEMS-REGISTRY/areas.json` (13 elements) + `data/node/areas.json`; `role
+--area --grows`, `create --area --grows`, `card` prints «Its area … may grow into (not built yet …)». **NEXT:** 670-4 — `find` reads
+the area: pieces tagged by kind, «does it now / its area covers it / weak / nobody», a measurement table before/after (storage's area
+names «videos» — watch the YouTube intent). Work in THIS clone; never run installers or the core server from this clone (it shares the
 live node's pm2 — ANTI-PATTERNS).
 
 **NOW-31 (2026-11-07) — 669 CLOSED on the owner's node (core `23451197`): the figure of the 13 landings without the eyes callout** (the

@@ -18,7 +18,8 @@
 //   task <id> "<текст>" [--work [--skill <навык>]] [--dry] — поручение агенту элемента (живой сессии — во вход, спящему —
 //                              пробуждением); `--work` — работа его рабочему процессу, не строителю (670-2)
 //   state <id>               — как идёт работа элемента: роль, текущий шаг, приёмная, коммиты, надзор
-//   role <id> "<фраза>"      — назначить элементу роль (`data/node/roles.json`)
+//   role <id> ["<фраза>"] [--area "<поле>"] [--grows "<работа>; …"] — роль элемента (`data/node/roles.json`) и его область
+//                              с тем, во что он может вырасти (`data/node/areas.json`, 670-3)
 //   supervise <id> main|architect|off [--max N] — кто ведёт элемент
 //   close <id>               — выключить агента элемента (548-20: включает поручение под надзором, выключает главный агент)
 //   trust <id> [<id> …]      — человек согласился: агент элемента работает в своей папке (604, вопрос доверия Claude Code)
@@ -115,7 +116,43 @@ const reachOf = (id) => {
 const rolesFile = join(ROOT, 'data', 'node', 'roles.json')
 const roles = () => ({ ...readJson(join(ROOT, 'WEB4-ITEMS-REGISTRY', 'roles.json'), {}), ...readJson(rolesFile, {}) })
 const hostOf = (id) => (id === 'root' ? ZONE || 'root' : ZONE ? `${addressOf(id)}.${ZONE}` : addressOf(id))
-const selfAll = () => self.describeAll({ root: ROOT, roles: roles(), addressOf: hostOf })
+// 670-3 (владелец 2026-11-07: «Какие тогда ещё в будущем это элемент может решать задачи? А куда это описать?»): область элемента и то,
+// во что он может вырасти, — карта главного агента рядом с ролями: по умолчанию узла `WEB4-ITEMS-REGISTRY/areas.json`, своё узла
+// `data/node/areas.json` (вне git; побеждает по полям). Роли остаются строками — их читают `dashboard-rows.ts` и `passport -- project`.
+const areasFile = join(ROOT, 'data', 'node', 'areas.json')
+const areas = () => {
+  const base = readJson(join(ROOT, 'WEB4-ITEMS-REGISTRY', 'areas.json'), {})
+  const own = readJson(areasFile, {})
+  const out = {}
+  for (const id of new Set([...Object.keys(base), ...Object.keys(own)])) {
+    if (id === '_') continue
+    const pick = (x) => (x && typeof x === 'object' && !Array.isArray(x) ? x : {})
+    out[id] = { ...pick(base[id]), ...pick(own[id]) }
+  }
+  return out
+}
+/** `--area` и `--grows` → проверенная правка области (до любой записи) или отказ. */
+function areaPatch(area, grows) {
+  const out = {}
+  if (area !== null) {
+    const a = String(area).replace(/\s+/g, ' ').trim()
+    if (!a || a.length > 300) fail('--area: one sentence of the field this element is the natural home for, 1–300 characters')
+    out.area = a
+  }
+  if (grows !== null) {
+    const g = String(grows).split(';').map((s) => s.replace(/\s+/g, ' ').trim()).filter(Boolean)
+    if (!g.length || g.length > 12 || g.some((s) => s.length > 120)) fail('--grows: 1–12 jobs it may grow into, separated by «;», each up to 120 characters')
+    out.growsInto = g
+  }
+  return out
+}
+function writeArea(id, patch) {
+  const j = readJson(areasFile, {})
+  j[id] = { ...(j[id] && typeof j[id] === 'object' ? j[id] : {}), ...patch }
+  mkdirSync(dirname(areasFile), { recursive: true })
+  writeFileSync(areasFile, JSON.stringify(j, null, 2) + '\n', 'utf8')
+}
+const selfAll = () => self.describeAll({ root: ROOT, roles: roles(), areas: areas(), addressOf: hostOf })
 // 603-3 (разбор 2026-10-26: агент гадал, «облачное ли это по подписке»): где живут узел и его данные — одна постоянная строка.
 const MACHINE_FACT = "Everything in this node runs on this computer: each element is a process here, and the node's data lives on this computer's disk (in the data, storage, vectors, graph and memory elements). Only two things go out: copies of the public pages kept in Cloudflare, so the sites answer while the computer is off, and the texts sent to OpenAI for voice notes and, when its key is set, the memory's parsing; the vectors are counted on this computer by the embeddings element."
 // 603-2: порог сходства по смыслу, один для поиска и для проверки на дубль: что `find` показал бы, на том `create` останавливается.
@@ -259,15 +296,23 @@ if (cmd === 'lagrix') {
 }
 
 if (cmd === 'role') {
-  const [id, ...words] = rest
+  // 670-3: `--area` / `--grows` — область элемента в карте главного агента; роль можно не менять.
+  const skip = new Set(rest.flatMap((w, i) => (w === '--area' || w === '--grows' ? [i, i + 1] : [])))
+  const [id, ...words] = rest.filter((_, i) => !skip.has(i))
   const text = words.join(' ').trim()
-  if (!id || !text) fail('role <id> "<one sentence: what this element does for the node>"')
+  const area = flag('--area')
+  const grows = flag('--grows')
+  if (!id || (!text && area === null && grows === null)) fail('role <id> ["<one sentence: what this element does for the node>"] [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"]')
   if (!registry().some((s) => s.id === id)) fail(`no element ${id} in the registry`)
-  const j = readJson(rolesFile, {})
-  j[id] = text
-  mkdirSync(dirname(rolesFile), { recursive: true })
-  writeFileSync(rolesFile, JSON.stringify(j, null, 2) + '\n', 'utf8')
-  console.log(`===ROLE_OK=== ${id}: ${text}`)
+  const patch = areaPatch(area, grows)
+  if (text) {
+    const j = readJson(rolesFile, {})
+    j[id] = text
+    mkdirSync(dirname(rolesFile), { recursive: true })
+    writeFileSync(rolesFile, JSON.stringify(j, null, 2) + '\n', 'utf8')
+  }
+  if (Object.keys(patch).length) writeArea(id, patch)
+  console.log(`===ROLE_OK=== ${id}: ${text || '(role unchanged)'}${patch.area ? ` · area: ${patch.area}` : ''}${patch.growsInto ? ` · may grow into: ${patch.growsInto.join('; ')}` : ''}`)
   process.exit(0)
 }
 
@@ -657,8 +702,10 @@ if (cmd === 'create') {
   const briefFile = flag('--brief-file')
   const brief = (briefFile ? (existsSync(briefFile) ? readFileSync(briefFile, 'utf8') : fail(`no file ${briefFile}`)) : flag('--brief') ?? '').trim()
   const by = flag('--supervise') ?? 'architect'
-  if (!role || !brief) fail('create --role "<one sentence>" (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--native] [--supervise main|architect] [--no-wake]')
+  if (!role || !brief) fail('create --role "<one sentence>" (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--native] [--supervise main|architect] [--no-wake]')
   if (!['main', 'architect'].includes(by)) fail('--supervise main|architect')
+  // 670-3: область нового элемента — проверяется до рождения, пишется вместе с ролью.
+  const newArea = areaPatch(flag('--area'), flag('--grows'))
 
   // 603-2: ПРОВЕРКА НА ДУБЛЬ — в коде, а не в инструкции. Владелец 2026-10-26: «в 62-й раз она будет строить память у нас будет по 60 по
   // 100 по 1000 одинаковых элементов?». Роль и задание сравниваются по смыслу со всеми элементами узла; похожий найден — рождения нет, пока
@@ -709,6 +756,7 @@ if (cmd === 'create') {
   rj[id] = role
   mkdirSync(dirname(rolesFile), { recursive: true })
   writeFileSync(rolesFile, JSON.stringify(rj, null, 2) + '\n', 'utf8')
+  if (Object.keys(newArea).length) writeArea(id, newArea)
 
   // 4. Задание — в приёмную элемента, его формой (`development-docs/pre-steps/README.md`): слова в кавычках, одной строкой.
   const now = new Date()
@@ -723,7 +771,7 @@ if (cmd === 'create') {
     `- Received: ${now.getFullYear()}-${p2(now.getMonth() + 1)}-${p2(now.getDate())} ${p2(now.getHours())}:${p2(now.getMinutes())} (UTC${off >= 0 ? '+' : ''}${off})`,
     '- From: the core\'s main agent, for the architect (node step 548-4)',
     `- Asked: «${one}»`,
-    `- Context: the node created this element for this request. Its role: ${role} Led by: ${by === 'main' ? 'the core\'s main agent on the architect\'s behalf' : 'the architect'}.`,
+    `- Context: the node created this element for this request. Its role: ${role}${newArea.area ? ` Its area — the field the node will send it new jobs of: ${newArea.area}` : ''}${newArea.growsInto ? ` It may grow into: ${newArea.growsInto.join('; ')}.` : ''} Led by: ${by === 'main' ? 'the core\'s main agent on the architect\'s behalf' : 'the architect'}.`,
     '',
   ].join('\n'), 'utf8')
 
