@@ -5,20 +5,15 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-34 (2026-11-07, ~17:30 UTC) — step 675 IN WORK, alone, start to end: the terminal shows the core build, the main agent comes back by itself.**
-Plan `new-steps/675-the-terminal-shows-the-core-build-and-the-agent-returns.md` (the owner's words verbatim in its §1). His approval,
-verbatim: «чтобы ты не искал меня и сам полностью от начало до конца его выполнил при необходимости один или несколько раз сделал
-синхронизацию»; mid-work: «not call , not ask , to do to finish non stop , i am not is here , see you later», «start without me», «select
-best choosse». The fork sync is done by me in his Chrome (signed in as aifa-agi; gh `Fractera` only reads the fork — measured). Code
-done in the workshop: `lib/deploy/agent-return.cjs` + `scripts/agent-return.mjs` (note before `closeLid`, wake `core-back` after a good
-build, the waiter for an update), `serve.mjs rebuild`, `/api/agents/session` `status`, `/api/agents/wake` `core-back`, bridge `wake`
-`continueLast`; `components/deploy/core-terminal.i18n.ts`, `CoreTerminal` `onEnd`/`noReload`, kit `core-build-watch.client.tsx`,
-`?start=1`; 14 copies updated (`check:agent-kits` 14 legal). Proven so far: the fake-core script (running → 1 wake core-back; asleep → 0;
-failed update → 0, record dropped; done update → wake; core silent → not noted; the OLD core answers 400 to `status` → the bridge's
-`session-mode.json`); `tsc` clean; the guards one by one OK (`check:api` caught a 13-word name — fixed). The first update that delivers
-675 runs the OLD `node-update.mjs` but the NEW `serve.mjs` → the waiter does the return. NEXT: commit + push → CI → Sync fork (Chrome) →
-the detached `node:update` on the node (ends this session) → the session comes back by itself (`logs/agent-return.log` on the node) →
-UI proof with `npm run eyes` on a sleeping kit terminal (a running update record + the reader) → summaries 675-1, 675-2, the plan deleted.
+**NOW-34 (2026-11-07, ~17:45 UTC) — step 675 CLOSED** (`completed-steps/675-1.md`, `675-2.md`; code `51413e25`, CI green windows +
+ubuntu; the plan deleted with the summaries). Done alone after the owner's «start without me», «select best choosse»: the fork synced by me
+in his Chrome (aifa-agi, 1 commit) → the detached `node:update` → `===NODE_UPDATE_DONE=== 1 изменений форка, ядро b3e1c098` → the
+main agent came back by itself in the same conversation (`logs/agent-return.log` 17:32:03 `===AGENT_RETURN===`) → `npm run eyes` on the
+sleeping `blocks` terminal: no build → start card; running update → build view, no start button; done → «Close and start the agent» +
+«Close»; failed → «Close» only; `?start=1` → the agent started (closed after). Owed (not in 675): the terminal drawer
+(`_tools/terminal-drawer`) does not pass the build words yet; elements' own terminals in their repositories; `agent-terminal.client.tsx`
+is over 250 lines since before. Still open from NOW-33: 674's node check is now DONE (`session-mode.json` opus, effort high, at 17:32:03 —
+written by the core-back wake) → `completed-steps/674.md` owed; then 673-5, the exam on Opus high.
 
 **NOW-33 (2026-11-07, evening) — 673 APPROVED («да, утверждаю, начинай», pushes to Fractera allowed for the whole step): thinking Fractera without examples. 673-1 IN WORK.** Plan:
 `new-steps/673/673-main.md` + `673-1` … `673-5` (forces and method in `shape-the-need` and at the end of `skills_find`'s answer ·
