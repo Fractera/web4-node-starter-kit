@@ -29,8 +29,11 @@ fails on a clean HEAD of this workshop (no element with groups it expects) — n
 layout 2 (wholes in `node-elements-whole`; the live node re-indexes by itself at its next `find`), `whyOf` reason on every candidate.
 Measured 35 intents: right first 17/22 (was 14), area jobs 4/5 (was 2); storage 0.38 for YouTube stays (no score separates description
 matches: real 0.30–0.57, false 0.29–0.38) — labelled «matches only its description»; the decision moves to the card + 670-5's law,
-checked live in 670-7. **NEXT:** 670-6 (Lagrix contract + a2a plan), then 670-8 (caller retry), then 670-5 (the law — lines to the
-owner before the seal). Work in THIS clone; never run installers or the core server from this clone (it shares the
+checked live in 670-7. **670-6 CLOSED** (`completed-steps/670-6.md`): `lagrixSearch` a2a + f2f, `contractProblems`,
+guard `check:lagrix-contract` in `prebuild`; the a2a plan `new-steps/672-a2a-inbound-order-served-by-the-element-door.md` (docs 17, 27,
+04 read); finding: an outside order is served by the element's DOOR, never a Claude session on the owner's subscription
+(`provider-rules`). **NEXT:** 670-8 (the caller waits through a cold start), then 670-5 (the law — lines to the owner before the
+seal). Work in THIS clone; never run installers or the core server from this clone (it shares the
 live node's pm2 — ANTI-PATTERNS).
 
 **NOW-31 (2026-11-07) — 669 CLOSED on the owner's node (core `23451197`): the figure of the 13 landings without the eyes callout** (the

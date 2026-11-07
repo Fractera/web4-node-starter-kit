@@ -53,6 +53,17 @@ element's catalog and the receiver checks it, records origin and version, and an
 by default; never — the node never turns it off (auth, data, root, storage); manual — only a person's word (stripe); auto — the load rule
 may put it to sleep and `wakeOnCall` lets a call wake it. No field — manual. `reason` is required when `default` is off.
 
+## An outside order and the Lagrix rung (node step 670-6)
+
+- **Inbound a2a order — a plan, not code yet:** `development-docs/development-steps/new-steps/672-a2a-inbound-order-served-by-the-element-door.md`
+  — announcement (Lagrix doc 17 §17.1) → search → agreement over the encrypted channel = the knock on `a2aEndpoint` → the gatekeeper
+  wakes a sleeping element, the endpoint answers with an A2A Task at once → escrow lock (doc 04, doc 27) → the element's DOOR serves the
+  order (a model through the node's OpenAI key when needed); a Claude Code session never works for an outside customer (skill
+  `provider-rules`) → delivery, acceptance, receipt.
+- **The Lagrix rung — one contract for both kinds:** `lagrixSearch` in `lib/web4-items/lagrix-simulated.mjs` answers `a2a` (buy the
+  result of work) and `f2f` (take a whole element) in one shape, `mode: "simulation"` until the network is live; the guard
+  `scripts/check-lagrix-contract.mjs` (in `prebuild`) holds the shape, and the live adapter must pass it unchanged.
+
 ## Guard — `node scripts/check-passport.mjs <element dir>`
 
 A2A required fields of the card and of every skill; extension shape; every door's skill exists; output example on every

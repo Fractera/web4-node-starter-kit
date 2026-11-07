@@ -42,6 +42,11 @@ Old addresses `connectors/{catalog,api,mcp}`, `build/{api,mcp,catalog}` and `web
 - **Never in an F2F card or a deal:** keys, tokens, passwords, personal data, storage contents; a counterparty is an agent's address,
   never a person's name, e-mail or phone.
 - **The node works without Lagrix.** i2i never needs it; only paid a2a deals and f2f exchanges go through it.
+- **i2i works today; a2a is a plan** (owner 2026-11-07: «i2i we can use just now , but a2a it must discribed for feature»). A neighbour's
+  job → `npm run task -- <id> --work [--skill <id>]` (670-2). An outside order → `new-steps/672-…` (not built): the element's door
+  serves it, never a Claude session on the owner's subscription (skill `provider-rules`). The Lagrix search answers a2a and f2f in one
+  contract (`npm run lagrix`, simulated; guard `check:lagrix-contract`) — called only when nobody in the node does it and the person
+  decides to buy or build (a live search will cost $0.01 a list, doc 17 §17.8).
 - **No invented numbers.** Until an element is connected to Lagrix the rating card shows «—» for every value
   (`components/element-docs/lagrix-rating.tsx`, words `_i18n/lagrix-rating.i18n.ts`).
 - **Core change = question first.** The menu is shared by every element; moving or renaming a page changes all of them — name it to
@@ -53,5 +58,5 @@ Old addresses `connectors/{catalog,api,mcp}`, `build/{api,mcp,catalog}` and `web
 - Sections: `app/[lang]/(architectLayer)/architect/[item]/_sections/a2a/README.md` (the deal fields Lagrix will need) and
   `…/_sections/m2m/README.md` (where the f2f tabs went).
 - Lagrix: `https://github.com/lagrix-dev/lagrix` — README «Two protocols at the start», escrow (doc 04), API (12), discovery and
-  reputation (17), governance (18), F2F draft (20).
+  reputation (17), governance (18), F2F draft (20), the life of a deal (27).
 - Element side: template `CLAUDE.md` «4. Process» and the element's skill `a2a-conversation` (i2i first).

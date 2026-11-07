@@ -52,7 +52,7 @@ const self = require('../lib/a2a/self-description.cjs')
 // 552-4: поручение главного агента элементу — строительный процесс; слово уже стоит (например, ответ ядра сессии рабочего процесса)
 // — остаётся своё. Мост ядра по слову будит сессию процесса (`lib/agent-kit/modes.cjs`).
 const modes = require('../lib/agent-kit/modes.cjs')
-const { simulatedF2fSearch } = await import('../lib/web4-items/lagrix-simulated.mjs')
+const { lagrixSearch } = await import('../lib/web4-items/lagrix-simulated.mjs')
 
 const readJson = (p, fallback = null) => { try { return JSON.parse(readFileSync(p, 'utf8')) } catch { return fallback } }
 // 548-20: элементы, чьего агента включил главный агент (`task` → «woke»), — данные узла, вне git.
@@ -292,9 +292,12 @@ if (cmd === 'card') {
 }
 
 if (cmd === 'lagrix') {
+  // 670-6: ступень Lagrix — оба вида одним контрактом: a2a (купить РЕЗУЛЬТАТ работы у чужого агента) и f2f (взять ЦЕЛЫЙ элемент); сегодня —
+  // имитация (`mode: simulation`), и человеку говорится именно так. Звать — когда в узле никого нет и решается «купить или строить».
   const words = rest.join(' ').trim()
-  if (!words) fail('lagrix <plain words of the element you need>')
-  const out = simulatedF2fSearch(words, { framework: 'next', country: env.NODE_COUNTRY || '', dataDir: join(ROOT, 'data', 'node') })
+  if (!words) fail('lagrix <plain words of the work or the element you need>')
+  const out = lagrixSearch(words, { framework: 'next', country: env.NODE_COUNTRY || '', dataDir: join(ROOT, 'data', 'node') })
+  for (const [p, a] of Object.entries(out.answers)) console.log(`${p}: ${a.say} Next: ${a.next}`)
   console.log(JSON.stringify(out, null, 2))
   process.exit(0)
 }
