@@ -32,6 +32,8 @@ export function installMainAgent(root) {
   writeFileSync(join(root, '.claude', 'launch-tools.txt'), `${process.platform === 'win32' ? 'Bash,PowerShell,Read,Write,Edit,Glob,Grep,Skill' : 'Bash,Read,Write,Edit,Glob,Grep,Skill'}\n`, 'utf8')
   // 🪦 570 «главный агент — sonnet» снято владельцем 2026-10-30 (шаг 610): «Opus — он строит ядро (Рекомендую)».
   writeFileSync(join(root, '.claude', 'launch-model.txt'), 'opus\n', 'utf8')
+  // 674, владелец 2026-11-07: «На соннет не будем работать по дефолту устанавливай opus effort high» — свои усилия главного агента.
+  writeFileSync(join(root, '.claude', 'launch-effort.txt'), 'high\n', 'utf8')
   const file = join(root, '.claude', 'settings.local.json')
   let s = {}
   try { s = JSON.parse(readFileSync(file, 'utf8')) } catch { /* нет файла — начинаем с пустого */ }

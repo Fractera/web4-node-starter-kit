@@ -106,3 +106,4 @@ public/fonts/
 .claude/settings.local.json
 .claude/launch-tools.txt
 .claude/launch-model.txt
+.claude/launch-effort.txt

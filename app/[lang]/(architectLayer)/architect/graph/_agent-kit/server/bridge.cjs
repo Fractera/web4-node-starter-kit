@@ -157,7 +157,8 @@ function progressHooks(element) {
 // orchestration at any effort level»; ему нужны dynamic workflows (`enableWorkflows`; на Pro они по умолчанию ВЫКЛЮЧЕНЫ, на прочих
 // подписках включены) и модель с уровнем xhigh. `--model opus --effort max --settings {"enableWorkflows":true,"ultracode":true}` →
 // «◈ max · ultracode»; без `enableWorkflows` на Pro — «◈ max» без ultracode; `--effort ultracode` один — xhigh без ultracode.
-// 🔒 Поэтому КАЖДАЯ сессия узла несёт усилия явно (medium, если человек не выбрал другие) и `enableWorkflows: false, ultracode: false` —
+// 🔒 Поэтому КАЖДАЯ сессия узла несёт усилия явно (свои усилия папки из `.claude/launch-effort.txt` — у главного агента high, шаг 674 —
+// иначе medium, если человек не выбрал другие) и `enableWorkflows: false, ultracode: false` —
 // рабочие процессы есть только у сессии, где человек подтвердил ultracode в Telegram; что бы ни лежало в настройках Claude Code человека,
 // сессию узла решают флаги запуска. У папки со своим списком инструментов (главный агент) ultracode добавляет `Agent,Workflow`.
 const EFFORTS = ['low', 'medium', 'high', 'xhigh', 'max']
@@ -205,9 +206,11 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
     return { ok: false, reason: 'no-agent-dir' }
   }
   // 666: ultracode — только подтверждённый человеком в Telegram и никогда у сессии рабочего процесса; его усилия — max («с максимальной
-  // эффективностью размышлений»). Иначе — выбранные усилия или medium.
+  // эффективностью размышлений»). Иначе — выбранные усилия, свои усилия папки (674: `.claude/launch-effort.txt`, у главного агента
+  // high — и при смене модели) или medium.
   const ultra = ultracode === true && mode !== 'work'
-  const effort = ultra ? 'max' : EFFORTS.includes(chosenEffort) ? chosenEffort : DEFAULT_EFFORT
+  const ownEffort = typeof modes.launchEffort === 'function' ? modes.launchEffort(cwd) : null
+  const effort = ultra ? 'max' : EFFORTS.includes(chosenEffort) ? chosenEffort : (ownEffort ?? DEFAULT_EFFORT)
   // 🛑 АГЕНТ ЗАПУСКАЕТСЯ ФАЙЛОМ `claude`, А НЕ НАБИРАЕТСЯ В ОБОЛОЧКЕ. ✗ Оплачено владельцем 2026-09-22:
   // на вопросе о доверии он нажал Enter, выбор по умолчанию был «No, exit», `claude` вышел — а оболочка
   // `cmd.exe` осталась жить, индикатор горел «Работает», и слова человека уходили в командную строку
