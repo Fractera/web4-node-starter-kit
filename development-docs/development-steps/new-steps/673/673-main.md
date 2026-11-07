@@ -72,7 +72,7 @@ Address: this clone, `Fractera/web4-node-starter-kit` main; push + CI per subste
 | 673-1 ✅ | the forces and the method in `shape-the-need`, and in short at the end of every `skills_find` answer; the exam set seeded | 670 |
 | 673-2 ✅ | every case into the exam set; `check:shape-examples` keeps the shaping path case-free | 673-1 |
 | 673-3 ✅ | the domain skills give facts, not shapes; 670-9's case lines out | 673-1, 673-2 |
-| 673-4 | the sealed lines without cases — shown verbatim, sealed after the owner's word | 673-2 |
+| 673-4 ✅ | the sealed lines without cases — shown verbatim, sealed after the owner's word («y») | 673-2 |
 | 673-5 | the exam: the owner's cold questions on the node's default (Opus, effort high), from the set and his own | 673-1..4, 674, the release on his node |
 
 Not in 673: the element templates (671); how-to skills; the commands list; a per-message model switch.
@@ -90,3 +90,4 @@ in it; one result per substep; the address is named; the live runs are priced.
 the owner's «why» stays, how-to skills out; the exam named by nothing; §1's description of what a node is built for stays unless he
 says otherwise; 670-9 not synced), what is not included, the price, and the question «Утверждаешь 673 вместе с коммитами и пушем в
 Fractera на весь шаг?» — so commits and pushes to Fractera are allowed for the whole of 673.
+2026-11-07, on the five sealed lines shown before and after (CLAUDE.md §1, §4 ×3, the soul), verbatim: «y» → 673-4, sealed.

@@ -25,9 +25,10 @@ got none); the exam set `development-docs/exams/shape-of-a-need.md` seeded (21 c
 (`completed-steps/673-2.md`): `check:shape-examples` in prebuild — release OK, a spoiled copy FAIL (3), the release before FAIL (13).
 **673-3 CLOSED** (`completed-steps/673-3.md`): `content-factory`, `own-agents`,
 `integrator` = facts of their field, no shape, no request in their descriptions; 670-9's lines gone; the guard covers them (the old
-three flagged 6 times); exam cases 22–27. NEXT: 673-4 — the sealed lines shown to the owner verbatim (CLAUDE.md §1 content factory,
-§4 «A request comes», «Own agents», «The integrator»; the soul's «Every example of the creator…»), his word, the seals → release (push
-done per substep; his sync → `node:update`) → 673-5.
+three flagged 6 times); exam cases 22–27. **673-4 CLOSED** (`completed-steps/673-4.md`): the owner, verbatim: «y» → CLAUDE.md §1, §4
+(the integrator, own agents, «A request comes» — the fork is the law) and the soul without cases; sealed (instruction `51139db80cdd`,
+soul), both refused the text before the reseal. NEXT: his «Sync fork» on aifa-agi (it carries 670-9, 673-1…4, 674) → `node:update`
+(detached, ends the session) → the fresh session: 674's node check (`session-mode.json` effort high) → 673-5, the exam on Opus high.
 
 **NOW-32 (2026-11-07, afternoon) — 670 APPROVED («да, подтверждаю план, начинай»), from the owner's node (this Mac): «an order finds its hand» — waking on an order
 (i2i now, a2a on paper), new element or a route in an existing one, the accumulator of an element's agents, the order «who already solved
