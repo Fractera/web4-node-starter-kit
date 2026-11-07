@@ -34,11 +34,12 @@ guard `check:lagrix-contract` in `prebuild`; the a2a plan `new-steps/672-a2a-inb
 04 read); finding: an outside order is served by the element's DOOR, never a Claude session on the owner's subscription
 (`provider-rules`). **670-8 CLOSED** (`completed-steps/670-8.md`): way 1 (the caller waits);
 no i2i door caller exists in the core (read) → its code is item 3 of `new-steps/671-templates-carry-the-order-chain-to-every-element.md`
-(the element side, queued). **670-5 IN WORK:** the skills are edited and committed (`shape-the-need` §2a «Which hand» with
-both of the owner's examples, `create-element`, `route-to-element`, `handle-need`, `element-power`); the sealed lines — CLAUDE.md §2
-Ports + Three protocols, §4 Supervision + «A request comes», the soul's sentence — are drafted in `new-steps/670/670-5-lines.md` and
-SHOWN to the owner; **WAITING for his word** → apply, `npm run check:instruction -- --seal`, `npm run system -- seal`, guards, summary,
-commit. Then 670-7 (his fork sync → `node:update` → live checks, priced). Work in THIS clone; never run installers or the core server from this clone (it shares the
+(the element side, queued). **670-5 CLOSED** (`completed-steps/670-5.md`): the lines shown; the owner, verbatim: «continue»
+(read with «your choose in the all process» as the word to seal); CLAUDE.md sealed `7eee9afe78b7`, the soul sealed; guards OK. The
+system part reaches a node from `origin/main` of its fork (`scripts/system-part.mjs`) — no tag needed. CI of `e8f79a96` green (three
+systems, the Lagrix guard in prebuild). **NEXT: 670-7** — the owner presses «Sync fork» for aifa-agi/web4-node-starter-kit on GitHub
+(the core's gh account `Fractera` only reads it) → on his node `npm run node:update` (written here BEFORE it starts) → `find` on the
+two examples, `npm run lagrix`, `task --work --dry`, then the two cold questions to a fresh main-agent session (priced). Work in THIS clone; never run installers or the core server from this clone (it shares the
 live node's pm2 — ANTI-PATTERNS).
 
 **NOW-31 (2026-11-07) — 669 CLOSED on the owner's node (core `23451197`): the figure of the 13 landings without the eyes callout** (the

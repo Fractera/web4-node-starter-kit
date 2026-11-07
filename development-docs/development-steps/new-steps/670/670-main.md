@@ -94,7 +94,7 @@ Address: this clone, `Fractera/web4-node-starter-kit` main; push + CI per subste
 | 670-2 ✅ | `task --work [--skill <id>]`: a neighbour's job wakes the worker session, naming which of its agents; its «done» wakes the main agent | — |
 | 670-3 ✅ | the core's map gets each element's area and «may grow into» (`areas.json`); `role`, `create`, `card` carry it | — |
 | 670-4 ✅ | `find` reads the area and says why (skill / area / only description); storage for YouTube labelled «only its description» — no score separates it (measured) | 670-3 |
-| 670-5 | the law: CLAUDE.md §4 «A request comes», the soul's curiosity line, `shape-the-need` with both examples | 670-2..4 |
+| 670-5 ✅ | the law: CLAUDE.md §2, §4 «A request comes», the soul's curiosity line (sealed), `shape-the-need` §2a with both examples | 670-2..4 |
 | 670-6 ✅ | the Lagrix rung as a contract (a2a + f2f, simulated, guard in prebuild, paid only where it pays) + the a2a plan `new-steps/672-…` | — |
 | 670-7 | on the owner's node: update, the two examples asked cold by 545-4's method, verdicts recorded | 670-1..6 |
 | 670-8 ✅ | (added from 670-1) no call lost during a cold start — decided: the caller waits; no i2i caller in the core → the code goes to 671 | 670-1 |

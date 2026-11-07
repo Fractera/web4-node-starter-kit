@@ -1,4 +1,4 @@
-# 670-5 — the lines of the sealed system part, waiting for the owner's word (shown to him 2026-11-07)
+# 670-5 — the lines of the sealed system part (shown to the owner 2026-11-07; APPLIED and sealed after his «continue»)
 
 Sections 1–8 of `CLAUDE.md` and the soul change only by the owner's word; after his yes: apply, `npm run check:instruction -- --seal`,
 `npm run system -- seal`, guards, commit.

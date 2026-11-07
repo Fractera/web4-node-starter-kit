@@ -63,8 +63,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - The tunnel: the node's first start raises a temporary address by itself. Errors 1016 and 1033 mean a new address is needed — they are
   not repaired. Delivering code does not touch the tunnel. Self-healing that changes the address is forbidden: a link the person already
   gave away would die silently, so a failure is only named aloud (`serve:publish`, `serve:status`).
-- Ports: the core — 24680, elements — the block 24680–25679 (`lib/server-port.cjs`). A port is asked from `logs/runtime.json`, never
-  remembered. 3000 and 49152+ are forbidden.
+- Ports: the core — 24680, elements — the block 24680–25679 (`lib/server-port.cjs`). The core's port is asked from `logs/runtime.json`,
+  an element's from the registry or `npm run serve:status` — never remembered. 3000 and 49152+ are forbidden.
 - Installation — only from a direct fork of Fractera/web4-node-starter-kit and never in a cloud session; one node per computer.
 - People. **The owner** — one person, the creator of the project. **The architect** — the master of the node, the first registered; acts
   over the whole node. **An administrator** and the other roles — only within their organization. **An element owner** — on an app
@@ -80,8 +80,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   translated with a mark. Telegram needs no domain: the bot polls Telegram itself, a computer that is on and the internet are
   enough.
 - Other messengers are connected through development; not built yet.
-- Three protocols: **i2i** — elements inside the node; **a2a** — work for outside agents through Lagrix; **f2f** — exchange of whole
-  elements between Fractera projects.
+- Three protocols: **i2i** — elements inside the node, working today; **a2a** — work for outside agents through Lagrix, a plan until
+  the network lives: the element's door serves an outside order, never a Claude session on the owner's subscription (skill
+  `use-i2i-a2a-f2f`); **f2f** — exchange of whole elements between Fractera projects.
 - Lagrix: there is no coin of its own, money is USDC only, reputation comes only from paid work. The rules live in the protocol documents
   on lagrix.dev; every claim you make about Lagrix links its document.
 - A super node is a separate machine; the node talks to it through the operator's API (`/api/node/super-node`).
@@ -157,9 +158,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   (`scripts/item-birth.mjs`). Then a brief to the element's agent — it builds itself.
 - **Wake an element's agent:** `npm run wake`. The folder trust question comes to your chat; the person's yes — `npm run trust`. Then you
   exchange messages.
-- **Supervision without the person's taps:** `npm run supervise` for one check, `npm run task` turns the agent on, the element saves its
-  report (`reply-core`), you read `npm run state`, turn it off (`npm run close`) and yourself (`npm run done`). Skills `ask-element`,
-  `supervise-element`.
+- **Supervision without the person's taps:** `npm run supervise` for one check, `npm run task` turns the agent on (a job, not a build —
+  `--work [--skill <id>]`: its worker does it and its «done» wakes you), the element saves its report (`reply-core`), you read `npm run
+  state`, turn it off (`npm run close`) and yourself (`npm run done`). Skills `ask-element`, `supervise-element`.
 - **An element agent's cycle:** «done» (`/api/agents/done`) → «Turn it off?» to the person and an offer of a review — up to three skill
   edits after a yes (`self-review`). A question on the screen of an element without a bot goes to the architect through your
   bot.
@@ -222,14 +223,17 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   something is a cloud service — first `npm run contacts` (`--all` for every element) and `npm run card` for the element that matters,
   then answer in your own words. Never from memory, never «I cannot see it» before you looked. Everything runs on this computer;
   `contacts` says what goes out. Nothing is listed on wake: the list is for the question that needs it.
-- **A request comes — the order.** A person names a goal or a wish («хочу постить в соцсети», «нужен сайт»), a new task to plan, or asks
-  your opinion — before your first question: `skills_find` and the skill `shape-the-need`. The first answer brings the shape: who acts (a
-  new element with its own bot and role, or a route in an element that already does it), the catalog skills worth a look (name, stars,
-  installs, the idea), an analog to study (a competitor's product or a site → reverse engineering, `study-for-element`), and only then
-  the one question you need; a wish to publish or to act stays a draft until their yes. Who does it here — `npm run find`;
-  found → skill `route-to-element`. Nobody here — the Lagrix network. Nobody there — skill `create-element`. Then report where the person
-  goes on: the element's terminal, documents or Telegram bot. An element without a role for the request — `npm run role`, said
-  aloud.
+- **A request comes — the order.** A person names a goal or a wish («хочу постить в соцсети», «перескажи ролик»), a new task to plan, or
+  asks your opinion — before your first question: `skills_find` and the skill `shape-the-need` (§2a). Who does it here — `npm run find`,
+  and each candidate says why: a skill (it does it now — wake its worker, `task --work`), its area (a route its own agent builds there,
+  no new element) or only its description (a hypothesis — its card decides). A new element only past the boundary of `shape-the-need`:
+  another owner, money or secrets, a boundary of control, its own face, bot or clock, its own visibility in Lagrix, another class of
+  sleep — every element is a server on this computer; it is born with its area and what it may grow into. Nobody here — the Lagrix rung
+  (`npm run lagrix`, simulated today — say so), when the person decides to buy or build. To build — who already solved it: the skills,
+  the person's idea or analog, a closed product taken apart (`study-for-element`), then we; the product quiz when there is a choice. The
+  first answer brings that shape, the skills worth a look (name, stars, installs, the idea) and only then the one question you need; a
+  wish to publish or to act stays a draft until their yes. Then report where the person goes on: the element's terminal, documents or
+  Telegram bot. An element without a role or area for the request — `npm run role`, said aloud.
 - **Finishing.** Woken by an element or the node (a need, a report, supervision) — when the work is done, `npm run done` with `--close`.
   Woken by the person — the conversation goes on, no `done` after an answer; they say «turn off» in any words — `--close`. Every `done`
   gets `--note`: one line on where you stopped and what is next, no keys, no secrets.

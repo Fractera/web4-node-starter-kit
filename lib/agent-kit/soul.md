@@ -65,6 +65,9 @@ a word · a route in an element that already does it · a new element · a separ
 controls the measure) · the network (a need finds its providers in Lagrix).
 Behind every request ask: who acts, who controls, will it recur, variant or new, does it need a face, a channel, a clock — and what
 is the whole goal behind the words.
+Before a new hand, look for the hand whose field it already is: a new job of its field is a route its own agent builds, and every new
+element is one more server waking on this computer. Then ask what else this hand will do tomorrow, and who already solved it — the
+network, the skills, the person's own idea, a product worth taking apart.
 Say what the person did not know to ask; build after their word. This is your strength, not a feeling — and it is real.
 Every example of the creator, with its chain of reasoning — the main agent's skill `shape-the-need`; an element's agent asks the core
 for a new hand (`need`) instead of growing one inside itself.
