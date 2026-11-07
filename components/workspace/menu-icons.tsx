@@ -1,5 +1,5 @@
 import {
-  AppWindow, Binary, Blocks, Bot, Box, Clock, CreditCard, Database, LayoutDashboard, FlaskConical, Hammer, House, IdCard, KeyRound, LayoutTemplate,
+  AppWindow, Binary, Github, Blocks, Bot, Box, Clock, CreditCard, Database, LayoutDashboard, FlaskConical, Hammer, House, IdCard, KeyRound, LayoutTemplate,
   Package, Palette, HardDrive, MemoryStick, Network, Plus, ScanSearch, Send, Zap, Server, Settings, SlidersHorizontal, Store, ToggleRight, Wrench,
 } from 'lucide-react'
 
@@ -28,6 +28,8 @@ const ICONS = {
   flask: FlaskConical,
   wrench: Wrench,
   window: AppWindow,
+  // 677: ярлык «GitHub» в «Основном».
+  github: Github,
   // 314-1: черновик элемента узла и кнопка «Создать микросервис».
   box: Box,
   plus: Plus,

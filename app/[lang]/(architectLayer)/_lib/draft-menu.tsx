@@ -164,11 +164,14 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   // 657-2: в обоих режимах — «Подписка Claude Code» и «Терминал» над «Главным Telegram-ботом», «OpenAI API key» под ним; это страницы
   // «Главного агента → Строительство». В полном режиме отметку «вы здесь» несёт пункт дерева, ярлык — нет: она не стоит в двух местах.
   // Подпись ярлыка — у самой страницы (`label` — запасная); у ключа OpenAI подпись своя: страница называется «Переменные окружения».
-  const shortcut = (rel: string, label: string | null, icon: string, hash = ''): WorkspaceItem => {
+  const shortcut = (rel: string, label: string | null, icon: string, hash = '', alert?: string): WorkspaceItem => {
     const path = `${ARCHITECT_HOME}/${MAIN_AGENT}/${rel}`
-    return { label: label ?? findByHref(menu, at(path))?.label ?? rel, icon, href: `${at(path)}${hash}`, active: compact && currentPath === path }
+    return { label: label ?? findByHref(menu, at(path))?.label ?? rel, icon, href: `${at(path)}${hash}`, active: compact && currentPath === path, ...(alert ? { alert } : {}) }
   }
-  const before = [shortcut('subscription', null, 'card'), shortcut('terminal', null, 'window')]
+  // 677 (владелец 2026-11-07: «добавить кнопку … доступные в компактном и в обычном режиме это кнопка GitHub … найти это непросто поэтому
+  // этот важный процесс вынести вверх. Также подсвечивать его красным если репозитории не подключён»): первым ярлыком — «GitHub»
+  // «Строительства» главного агента; красный — пока узел не работает со своим репозиторием (`no-github`, островок `NodeAlerts`).
+  const before = [shortcut('github', null, 'github', '', 'no-github'), shortcut('subscription', null, 'card'), shortcut('terminal', null, 'window')]
   const after = shortcut('environment', ui.openAiKey, 'key', '#OPENAI_API_KEY')
   const words = { title: ui.menuMode, compact: ui.menuModeCompact, full: ui.menuModeFull, failed: ui.menuModeFailed, readOnly: ui.menuModeReadOnly }
   const switchRow: WorkspaceItem = { label: ui.menuMode, node: <MenuModeSwitch mode={mode} words={words} /> }
@@ -176,7 +179,8 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   const tg = mainItems.findIndex((m) => m.href === at(`${ARCHITECT_HOME}/main-telegram`))
   const main = [switchRow, ...(tg < 0 ? [...mainItems, ...before, after] : [...mainItems.slice(0, tg), ...before, mainItems[tg], after, ...mainItems.slice(tg + 1)])]
   // 632-2: тревога пункта видна и сквозь свёрнутую зону — подпись «Основное» несёт ту же тревогу, что пункт в ней («Домен и хостинг»).
-  const mainAlert = main.find((m) => m.alert)?.alert
+  // 677: тревог в зоне может быть несколько — подпись несёт все (`data-alert` — список слов, правило CSS — `~=`).
+  const mainAlert = [...new Set(main.flatMap((m) => (m.alert ? m.alert.split(' ') : [])))].join(' ') || undefined
   const head = [top[p], { ...zone(ui.zoneMain, 'main', holds(main, page)), ...(mainAlert ? { alert: mainAlert } : {}) }, ...inZone(main, 'main')]
   // 657 (владелец 2026-11-05: «Название элементов приведи к верхнему регистру чтобы все было заглавными буквами»): названия элементов —
   // заглавными в обоих режимах; подписи зон, подзона «Память» и кнопки создания — как были.

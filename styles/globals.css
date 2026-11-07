@@ -1121,3 +1121,5 @@ html[data-app-width="narrow"] { --app-w: 64rem; }
 /* 632-2: тревога пункта левого меню — `data-alert` ставит оболочка из `meta.alert` страницы, признак на `<html>` — островок `NodeAlerts`,
    спросив узел в браузере. Пока своего домена нет, «Домен и хостинг», «Активация домена» и зона «Основное» — цветом тревоги. */
 html[data-no-own-domain] [data-alert~="no-domain"] { color: var(--color-destructive); }
+/* 677: ярлык «GitHub» — узел не работает со своим репозиторием. */
+html[data-no-github] [data-alert~="no-github"] { color: var(--color-destructive); }
