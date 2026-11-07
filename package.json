@@ -107,6 +107,7 @@
     "contacts": "node scripts/main-agent-cli.mjs contacts",
     "find": "node scripts/main-agent-cli.mjs find",
     "card": "node scripts/main-agent-cli.mjs card",
+    "rename": "node scripts/main-agent-cli.mjs rename",
     "needs": "node scripts/main-agent-cli.mjs needs",
     "lagrix": "node scripts/main-agent-cli.mjs lagrix",
     "create": "node scripts/main-agent-cli.mjs create",

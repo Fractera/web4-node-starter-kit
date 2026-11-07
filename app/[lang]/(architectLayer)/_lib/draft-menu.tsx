@@ -2,6 +2,7 @@ import "server-only"
 import type { WorkspaceItem } from '@/lib/content/blocks/types'
 import { listDrafts } from '@/lib/web4-items/drafts'
 import { addressOf } from '@/lib/web4-items/element-address'
+import { elementDisplayName } from '@/lib/web4-items/element-name'
 import { ITEM_TREE, treeLang, treeVisible, type TreePage } from '@/lib/web4-items/item-tree'
 import { elementPassport, hasCatalog, isNativeElement } from '@/lib/a2a/element-passport'
 import { treeContextOf } from '@/lib/web4-items/tree-context'
@@ -104,7 +105,8 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
     const children = shownOf(ITEM_TREE).map((s) => node(s, dir))
     return {
       native,
-      label: slug,
+      // 678-1: подпись — имя элемента для людей (имя ядра → паспорт → адрес); путь остаётся по адресу.
+      label: elementDisplayName(d.id),
       icon: 'box',
       href: at(dir),
       active: currentPath === dir,

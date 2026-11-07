@@ -5,6 +5,11 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-40 (2026-11-07, ~23:15 UTC) — 678 CODED, proof owed on the owner's node** (`new-steps/678-…md`). The owner: «to do all and fix
+all» — the menu names of the elements and a live menu. One display name in the core (`lib/web4-items/name-file.cjs`, `data/services/<id>/
+name.json` → passport `name` → address) read by the left menu, the header catalog, the notice door and `card`; `npm run create --
+--name`, `npm run rename`; the island `MenuLive` + door `/api/node/menu-stamp`. Next: his fork sync → `npm run node:update` → eyes.
+
 **NOW-39 (2026-11-07, ~22:40 UTC) — 673 CLOSED** (`completed-steps/673-main.md`, `completed-steps/673-5.md`; the plan deleted): the
 exam on Opus high — one question, the owner's own (a personal brand across networks and a blog), session `0ba0bad6` on his node —
 **Pass, with remarks**: the goal, `find` with reasons, the fork with a pick, one question, nothing without a yes; cases 19, 7, 22, 2/6,

@@ -8,6 +8,7 @@ import { listServices } from "@/lib/microservices/registry"
 type RegistryEntry = ReturnType<typeof listServices>[number]
 import { listDrafts } from "@/lib/web4-items/drafts"
 import { addressOf } from "@/lib/web4-items/address-file.mjs"
+import { elementDisplayName } from "@/lib/web4-items/element-name"
 import { domainRecord } from "@/lib/web4-items/element-domain"
 import { birthState } from "@/lib/web4-items/birth"
 import paths from "@/lib/web4-items/paths.cjs"
@@ -213,7 +214,7 @@ export type CatalogEntry = { id: string; title: string; description: string; hre
 
 /**
  * 632-1: имя элемента — то же, что в левом меню: заголовок его раздела в ядре (`architect/<id>/_data`); у кастомного раздела нет — его
- * адрес. ✗ Замерено 2026-11-03 на узле владельца: карточка брала `<title>` главной — root выходил «Что вы хотите построить?», cache —
+ * имя для людей (678-1). ✗ Замерено 2026-11-03 на узле владельца: карточка брала `<title>` главной — root выходил «Что вы хотите построить?», cache —
  * «Эталонный нативный шаблон», и владелец не нашёл root в «Кастомных элементах», хотя он там был.
  */
 /** 636-8: имя агента в шапке уведомления главного чата (`/api/node/notice`) — то же, что у карточки каталога. */
@@ -221,7 +222,8 @@ export const elementName = (id: string, lang: "en" | "ru"): string => nameOf(id,
 
 function nameOf(id: string, lang: "en" | "ru"): string {
   const section = TREE.find((b) => b.page.meta.slug === id)
-  return section ? wordsOf(section.page, lang).title : addressOf(id)
+  // 678-1: у кастомного раздела нет — имя элемента для людей (имя ядра → паспорт → адрес), то же, что в левом меню.
+  return section ? wordsOf(section.page, lang).title : elementDisplayName(id)
 }
 
 /**

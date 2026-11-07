@@ -42,10 +42,12 @@ The owner of Fractera, 2026-10-23: «не всегда в наш проект п
    Custom by default. Native (`--native`) only for a job of the node itself that is never sold and never leaves it.
 4. **Create.** Write the task into a file in this folder (no shell quoting of the person's words), then:
    ```
-   npm run create -- --role "<one sentence>" --area "<the field>" --grows "<a job>; <another>" --brief-file task-<words>.md [--supervise main] [--native]
+   npm run create -- --role "<one sentence>" --name "<the name the person sees in the menu>" --area "<the field>" --grows "<a job>; <another>" --brief-file task-<words>.md [--supervise main] [--native]
    ```
    Birth takes a few minutes (template clone, install, build, then the address in Cloudflare is connected and checked from the
-   internet). It prints `===ELEMENT_CREATE_OK=== <id>`, `address:` and `site:`.
+   internet). It prints `===ELEMENT_CREATE_OK=== <id>`, `address:`, `name:` and `site:`. The name is the core's (node step 678): the
+   menu and the header show it within seconds, no reload; a later name — `npm run rename -- <id> "<name>"`, never a task to the
+   element's agent.
 5. **Report** to the person from those lines: the element's id and address; the site link only when the `site:` line says it
    «answers … from the internet» — otherwise say what the line says (only on this computer, not connected, not answering yet) and
    never send a link that does not open (owner of the node, 2026-10-20); that its agent started with the task (or why not —

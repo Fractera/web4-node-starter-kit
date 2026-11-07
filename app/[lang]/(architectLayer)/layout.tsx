@@ -14,6 +14,7 @@ import { OnlineBar } from "@/components/node-state/online-bar.client"
 import { onlineBarWords } from "@/components/node-state/online-bar.i18n"
 import { GithubTokenAlarm } from "@/components/node-state/github-token-alarm.client"
 import { NodeAlerts } from "@/components/node-state/node-alerts.client"
+import { MenuLive } from "@/components/node-state/menu-live.client"
 import { githubTokenAlarmWords } from "@/components/node-state/github-token-alarm.i18n"
 
 // Дверь СЛОЯ АРХИТЕКТОРА (шаг 31-1, 2026-08-28).
@@ -74,6 +75,8 @@ export default async function Layout(
       <GithubTokenAlarm words={githubTokenAlarmWords(lang)} lang={lang} />
       {/* 632-2: красные пункты меню, пока состояние узла не то (нет своего домена) — спрошено в браузере. */}
       <NodeAlerts />
+      {/* 678-3: левое меню и шапка элементов узнают о новом элементе и его имени сами, без перезагрузки страницы. */}
+      <MenuLive />
       {children}
     </AccessGate>
   )

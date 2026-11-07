@@ -49,6 +49,7 @@ const jobs = require('../lib/web4-items/jobs.cjs')
 const nodeType = require('../lib/web4-items/node-type.cjs')
 // 603-1: самоописание элементов — паспорт и измеренное одним модулем (что это, где живёт, где данные, двери из кода, кто зависит).
 const self = require('../lib/a2a/self-description.cjs')
+const nameFile = require('../lib/web4-items/name-file.cjs')
 // 552-4: поручение главного агента элементу — строительный процесс; слово уже стоит (например, ответ ядра сессии рабочего процесса)
 // — остаётся своё. Мост ядра по слову будит сессию процесса (`lib/agent-kit/modes.cjs`).
 const modes = require('../lib/agent-kit/modes.cjs')
@@ -288,6 +289,17 @@ if (cmd === 'card') {
   console.log(self.cardText(d))
   if (!d.on) console.log(`Only the architect turns it on: after their «yes», npm run power -- ${e.id} on`)
   console.log(`Reach its agent: ${reachOf(e.id)}`)
+  process.exit(0)
+}
+
+if (cmd === 'rename') {
+  // 678-2: имя элемента для людей — в данные ядра; id и адрес не меняются. Открытая панель архитектора видит его сама (678-3).
+  const [id, ...words] = rest
+  const name = words.join(' ').trim()
+  if (!id) fail('rename <element> "<the name people see in the menu>" (an empty name takes it back to the passport or the address)')
+  const e = registry().find((s) => s.id === id || addressOf(s.id) === id) ?? fail(`no element ${id} in the registry`)
+  const wrote = nameFile.writeName(e.id, name, ROOT)
+  console.log(`===RENAME_OK=== ${e.id}: ${wrote ? `«${wrote}»` : 'own name removed'} — the open architect pages show it within seconds, no reload`)
   process.exit(0)
 }
 
@@ -709,7 +721,7 @@ if (cmd === 'create') {
   const briefFile = flag('--brief-file')
   const brief = (briefFile ? (existsSync(briefFile) ? readFileSync(briefFile, 'utf8') : fail(`no file ${briefFile}`)) : flag('--brief') ?? '').trim()
   const by = flag('--supervise') ?? 'architect'
-  if (!role || !brief) fail('create --role "<one sentence>" (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--native] [--supervise main|architect] [--no-wake]')
+  if (!role || !brief) fail('create --role "<one sentence>" [--name "<the name people see in the menu>"] (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--native] [--supervise main|architect] [--no-wake]')
   if (!['main', 'architect'].includes(by)) fail('--supervise main|architect')
   // 670-3: область нового элемента — проверяется до рождения, пишется вместе с ролью.
   const newArea = areaPatch(flag('--area'), flag('--grows'))
@@ -764,6 +776,9 @@ if (cmd === 'create') {
   mkdirSync(dirname(rolesFile), { recursive: true })
   writeFileSync(rolesFile, JSON.stringify(rj, null, 2) + '\n', 'utf8')
   if (Object.keys(newArea).length) writeArea(id, newArea)
+  // 678-2: имя для людей — в данные ядра (`name-file.cjs`): меню, шапка и `card` покажут его, а не случайный адрес.
+  const display = (flag('--name') ?? '').trim()
+  if (display) nameFile.writeName(id, display, ROOT)
 
   // 4. Задание — в приёмную элемента, его формой (`development-docs/pre-steps/README.md`): слова в кавычках, одной строкой.
   const now = new Date()
@@ -808,6 +823,7 @@ if (cmd === 'create') {
       : site[1] === 'none' ? 'site: NOT connected — the element page → «Internet address» → «Connect»'
         : site[2] && Number(site[2]) < 400 ? `site: ${site[1]} — answers ${site[2]} from the internet` : `site: ${site[1]} — connected, NOT answering yet (${site[2] ?? 'no answer'})`
   console.log(`address: ${addressOf(id)}`)
+  console.log(`name: ${nameFile.ownName(id, ROOT) ?? `none — give it one: npm run rename -- ${id} "<name>"`}`)
   console.log(siteLine)
   console.log(`role: ${role}`)
   console.log(`task: development-docs/pre-steps/${name}`)
@@ -817,4 +833,4 @@ if (cmd === 'create') {
   process.exit(0)
 }
 
-fail(`unknown command «${cmd ?? ''}» — contacts | look | find | lagrix | create | task | state | role | supervise | close | trust | person | done`)
+fail(`unknown command «${cmd ?? ''}» — contacts | look | find | lagrix | create | rename | task | state | role | supervise | close | trust | person | done`)

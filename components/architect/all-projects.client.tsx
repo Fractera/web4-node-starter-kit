@@ -10,7 +10,7 @@ import type { ShellGroup } from "@/components/shell/shell-types"
 // Вид — мега-меню оболочки (как у сайтов элементов), данные — дверь ядра `/api/node/catalog` в браузере; поле `kind` каталога
 // решает, в какой вкладке элемент.
 // 🔒 СОСТАВ УЗЛА НЕ ЗАПЕКАЕТСЯ В СБОРКУ ЯДРА (закон 264 «число о машине — спрашивать в браузере»): новый элемент появляется в
-// списке при следующем открытии страницы, без пересборки ядра. Пока ответа нет или элементов нет — вкладок нет.
+// списке без пересборки ядра — при открытии страницы и по событию `node:menu-changed` (678-3). Пока ответа нет или элементов нет — вкладок нет.
 
 type Entry = { id: string; title: string; description: string; href: string | null; local: string | null; kind?: "custom" | "native"; mark?: string }
 
@@ -31,6 +31,13 @@ function groupOf(slug: string, label: string, list: Entry[]): ShellGroup | null 
 
 export function AllProjects({ lang, nativeLabel, customLabel, menuLabel }: { lang: string; nativeLabel: string; customLabel: string; menuLabel: string }) {
   const [entries, setEntries] = useState<Entry[] | null>(null)
+  // 678-3: островок `MenuLive` увидел новый элемент или новое имя — каталог спрашивается заново, без перезагрузки страницы.
+  const [round, setRound] = useState(0)
+  useEffect(() => {
+    const again = () => setRound((n) => n + 1)
+    window.addEventListener("node:menu-changed", again)
+    return () => window.removeEventListener("node:menu-changed", again)
+  }, [])
 
   useEffect(() => {
     let alive = true
@@ -39,7 +46,7 @@ export function AllProjects({ lang, nativeLabel, customLabel, menuLabel }: { lan
       .then((b: { entries?: Entry[] } | null) => { if (alive) setEntries(Array.isArray(b?.entries) ? b.entries : []) })
       .catch(() => { if (alive) setEntries([]) })
     return () => { alive = false }
-  }, [lang])
+  }, [lang, round])
 
   if (!entries || entries.length === 0) return null
   // Нативные первыми — как в каталоге и в левом меню; всё, что не помечено кастомным, относится к нативным.
