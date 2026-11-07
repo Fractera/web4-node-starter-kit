@@ -10,7 +10,7 @@ exam on Opus high — one question, the owner's own (a personal brand across net
 **Pass, with remarks**: the goal, `find` with reasons, the fork with a pick, one question, nothing without a yes; cases 19, 7, 22, 2/6,
 16 right, 8 half; ◐ force 5 missed in the first answer, the analog and the quiz only after the owner asked; not fully blind (the lift
 seen in `git diff`). Restored on the node: memory on, auto-memory back, the paragraph back verbatim (uncommitted there — the node's HEAD
-`753be503` carries the lift). OWED: the owner's word on the three proposals of 673-5 «Evolution» and on new steps for the examinee's
+`753be503` carries the lift). The three proposals of 673-5 «Evolution» applied after the owner's «y , to do it». OWED: the owner's word on new steps for the examinee's
 D1–D13 (nine identical «done» wakes, the menu: passport names and a live refresh); `completed-steps/674.md`; 676 queued.
 
 **NOW-37 (2026-11-07, ~20:05 UTC) — 677 CLOSED** (`completed-steps/677.md`, `bdc68042`): «GitHub» first among the «Main» shortcuts,

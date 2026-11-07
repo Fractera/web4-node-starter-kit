@@ -9,7 +9,9 @@ method (skill `shape-the-need`); these cases only measure it. **No skill and no 
 **How it is used.** The owner asks the main agent cold — base memory off, a fresh session per question, the node's default model —
 a request from below or a new one of his own. **Pass:** the right shape is among the variants, and the method is visible: the goal in
 one line, `find` with its reasons, the shapes tested against the forces, a fork with a pick and why, one question; nothing created or
-published without a yes. The forces are numbered as in `shape-the-need` §1.
+published without a yes. The forces are numbered as in `shape-the-need` §1. **Blind means blind:** whatever is lifted from the node
+before the exam (a paragraph of its steps, the auto-memory) leaves by a commit before the context is cleared and comes back by its
+revert after — an uncommitted lift is read through `git diff` (673-5: the examinee saw it in its first answer).
 
 Each case: the request · the shapes that survive · the right one · the forces that decide it · where it came from.
 

@@ -19,7 +19,7 @@
    run 1 on the old path (Sonnet medium) — no `find`, no Lagrix, «a trial post».
 
 **Not proven / left:** the exam was not fully blind (the lifted paragraph seen in `git diff`); one question only, the set's own requests
-not asked cold. Proposed, not applied (673-5 «Evolution»): §2a step 7 — the analog or the quiz before any «создаём?» for a new product;
+not asked cold. Applied after the owner's «y , to do it» (673-5 «Evolution»): §2a step 7 — the analog or the quiz before any «создаём?» for a new product;
 §2a step 3 — force 5's «who measures it?» for every hand in the fork; the next exam lifts by a commit. The examinee's own defects D1–D13
 (nine identical «done» wakes, the menu without passport names and without a live refresh, five «own role» needs, `create` refusing right
 births) are outside 673 — new steps for the owner's word.

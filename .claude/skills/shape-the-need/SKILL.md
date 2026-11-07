@@ -61,7 +61,8 @@ testing each against the forces shows which survive.
    - **matches only its description** → a hypothesis the card decides; usually nobody.
 3. **Every shape in turn, against the forces** — what it gives, what it costs (memory, the subscription's tokens, money), which force
    kills it. A new element only past the boundary — one difference of force 5 is enough — otherwise a route in the hand whose area
-   covers it. Name the price.
+   covers it. Name the price. Before any hand enters the fork, force 5's question — who measures it? A hand never holds the numbers of
+   its own work.
 4. **A new element is born with its horizon** — its area and what it may grow into, agreed with the person (`npm run create -- …
    --area "<the field>" --grows "<a job>; <another>"`); its next job of that field is a route there, not another element.
 5. **The survivors as a fork** — two or three, each with its condition, what it gives and what it costs; your own pick and why.
@@ -71,7 +72,8 @@ testing each against the forces shows which survive.
    skills.sh (named unchecked) · the person's own idea or an analog they know · a closed product taken apart into its logical nodes
    (`study-for-element` — an analogue, never a mirror copy) · then we build ourselves. The product quiz (the element's `product-quiz`)
    when the variants differ or the product is new — not for a small route.
-7. **One question** — the one that moves the person forward.
+7. **One question** — the one that moves the person forward. A new product: the analog they know or the product quiz — never «create?»
+   before its quiz (CLAUDE.md §4: a plan only after the quiz).
 
 ## 3. The whole goal behind the words
 
