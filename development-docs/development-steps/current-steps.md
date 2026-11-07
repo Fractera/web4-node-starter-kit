@@ -16,9 +16,14 @@ storage 0.34, «пересказ ролика YouTube» → storage 0.38 (both f
 session (`modes.withWord(text, 'build')`), there is no way to hand a neighbour a job for its `<id>--work` session; the gatekeeper is online
 (36 MB); no A2A endpoint exists in code (only `STANDARD.md`, guards); his temporary address is dead (not touched — his word first).
 Also verbatim: «Смотри lagrix прямо сейчас ещё не создан … этот шаг лучше сразу закрепить чтобы в будущем … подключили без сильных
-конфликтов» → 670-6. Plan and substep files: `new-steps/670/` (670-1 … 670-7). **NEXT:** 670-1 — on his node `blocks` is put to sleep
-by the rule (`npm run power -- blocks off --by-rule`) and called on its port; stripe is the negative control; then the summary. After
-670-1 — propose a context reset before the code substeps.
+конфликтов» → 670-6. Plan and substep files: `new-steps/670/` (670-1 … 670-8), plan commit `c1d41c88`.
+**670-1 CLOSED** (`completed-steps/670-1.md`): blocks asleep by the rule → port held by the gatekeeper in 0.6 s → call 1 HTTP 200 after
+2.96 s (cold start 2.9 s) → on; stripe (off by the person) refused. Measured: a second call 1 s into the cold start → `ECONNREFUSED` at
+once → **670-8 created, waits for the owner's choice** (the caller retries — recommended — or the gatekeeper proxies forever).
+Found: the instruction's «a port is asked from `logs/runtime.json`» — that file has only the core's port (elements: registry,
+`serve:status`) → into 670-5's window. **NEXT:** context reset (proposed to the owner), then 670-2 in a fresh session: `task --work
+[--skill] [--dry]` in `scripts/main-agent-cli.mjs` of THIS clone; never run installers or the core server from this clone (it shares the
+live node's pm2 — ANTI-PATTERNS).
 
 **NOW-31 (2026-11-07) — 669 CLOSED on the owner's node (core `23451197`): the figure of the 13 landings without the eyes callout** (the
 owner: «сноска на глаза пересекается с сноской на руки. Убери полностью»); seen live on auth and data — four callouts, console 0.

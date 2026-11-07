@@ -90,13 +90,14 @@ Address: this clone, `Fractera/web4-node-starter-kit` main; push + CI per subste
 
 | # | Result | Rests on |
 |---|---|---|
-| 670-1 | the gatekeeper wakes an asleep element on an i2i call — proven on the owner's node, cold start measured | — |
+| 670-1 ✅ | the gatekeeper wakes an asleep element on an i2i call — proven on the owner's node, cold start measured | — |
 | 670-2 | `task --work [--skill <id>]`: a neighbour's job wakes the worker session, naming which of its agents | — |
 | 670-3 | the core's map gets each element's area and «may grow into» (`areas.json`); `role`, `create`, `card` carry it | — |
 | 670-4 | `find` reads the area, says «does it / its area / nobody» and why; the false storage hit measured away | 670-3 |
 | 670-5 | the law: CLAUDE.md §4 «A request comes», the soul's curiosity line, `shape-the-need` with both examples | 670-2..4 |
 | 670-6 | the Lagrix rung as a contract (a2a + f2f, simulated, shape test, paid only where it pays) + the a2a inbound plan | — |
 | 670-7 | on the owner's node: update, the two examples asked cold by 545-4's method, verdicts recorded | 670-1..6 |
+| 670-8 | (added from 670-1) no call lost during a cold start — the caller waits or the gatekeeper proxies; decision first | 670-1 |
 
 Not in 670: the element side (templates: `build.md` «Before you build a new capability», the element instruction mirror) — proposed
 as 671 after 670-7; per-agent Telegram bots; queueing an order when memory is short; any a2a code.
