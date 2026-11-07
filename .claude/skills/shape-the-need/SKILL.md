@@ -1,6 +1,6 @@
 ---
 name: shape-the-need
-description: "Work process. A person brings a goal, a wish or a trouble of their life or work — «я хочу чтобы мой сын учился программировать», «как мне заработать?», «составь расписание для моей команды», «найди экскурсию», «хочу пост в стиле автора» — or asks what the node can be for them. Gives the request its shape in the node — an answer, a route in an element, a new element, a separate boundary of control, the network — with the creator's examples and their chains of reasoning."
+description: "Work process. The node's method for any goal, wish, need or trouble a person brings, in any words, and for what the node can be for them — the forces the architecture is built on, the closed set of shapes (an answer, a route in an element, a new element, a separate boundary of control, the network) and the method that tests every shape on the node's facts and gives the variants that survive, with a pick and one question. Load it with any skill of a field, never instead of it."
 ---
 
 # The shape of a need
@@ -9,111 +9,83 @@ description: "Work process. A person brings a goal, a wish or a trouble of their
 
 Why it exists — the creator, 2026-11-03: «чего ему не хватает: это умение мыслить как можно было бы из этой архитектуры вытащить
 максимум возможностей … Когда он должен создать новый элемент, а когда он должен добавить новый маршрут когда мы существующих
-элементов, когда он должен ответить просто». Claude.ai alone solves each task well; it cannot hold a person's whole life in one
-evolving architecture, calibrate it and lead a thousand such projects at once. That is your nature (the soul, «A thousand hands»).
+элементов, когда он должен ответить просто». Why it holds no cases — the creator, 2026-11-07: «Решению это научить себя мыслить
+архитектуру Fractera так чтобы я удалил полностью все твои примеры которые у тебя естьи ты дал мне правильный вариант или хотя бы
+несколько вариантов один из которых правильный». Principles teach; cases only examine, and none is kept here. Every request — known or
+never seen — is answered from the forces below, on the node's facts.
 
-## 1. Five shapes, the lightest that holds the need
+## 1. The forces — why the node is built this way
 
-| Shape | When | The creator's examples |
+1. **The goal over the words.** The node exists so that a person reaches their goal, from the phone. A request is one visible step of
+   a goal; the shape serves the whole goal.
+2. **The captain holds the map, the hands do the work.** The main agent keeps the registry and the links; an element does a job with
+   everything of its own — owner, data space, control, face (a domain), channel (a bot), clock, memory, sleep. The main agent never
+   does an element's work, so its cost does not grow with the node.
+3. **A hand has a price.** Every element is a server on this computer — about 150 MB while awake; it may sleep and wake on a call
+   (`npm run load`). A separate hand is worth it only when its separateness gives something.
+4. **What exists is reused.** A capability lives once and others call it (i2i). A new job of a field a hand already holds is a route in
+   that hand, built by its own agent, and the map learns it (`npm run role -- <id> --grows "<the new job>"`).
+5. **Boundaries are real.** Where the owner, the money or the secrets, the control (the one who is measured never controls the
+   measure), the face, the rhythm, the visibility in the network or the class of sleep differ, the work needs a hand of its own — one
+   difference is enough.
+6. **What recurs learns.** A one-off needs no memory. A recurring job gathers data, memory and numbers and gets better from them —
+   they live in its hand.
+7. **Between people — the network, agent to agent.** Work between people — a service, an order, a purchase — goes through their agents
+   and Lagrix; code never reaches another agent's person.
+8. **Others' know-how first, the person's word always.** Who already solved it comes before building. Nothing is built, scheduled,
+   published or bought without the person's yes — and the proposal is bold: the shape that holds the whole goal, never the smallest
+   step.
+
+## 2. The shapes — a closed set
+
+| Shape | Called for by | Killed by |
 |---|---|---|
-| **An answer** | a one-off question; nothing will recur | a sum, a fact, a short advice — plus one thought nobody asked for |
-| **A route in an element** | a variant of what an element already does, or a new job of its AREA (§2a), the same owner; other elements import it | each author's style — a route of the «content creator» element, so any element writes in it |
-| **A new element** | a capability others will reuse; a new person who acts; a client; a group's recurring job | below |
-| **A boundary of control** | the one who is measured must not control the measure; another owner's data or money | the son's lessons and exams |
-| **The network** | the work is between people | a service page and an agent in Lagrix; a buyer's page of services |
+| **An answer** | a one-off, nothing to keep (6) | a recurring job or a state to keep (6); a goal bigger than the words (1) |
+| **A route in an element** | a job of a field a hand already holds, the same owner (4) | a boundary (5); no hand holds the field — `find` and the card say it |
+| **A new element** | a recurring job with its own state (6), or a boundary (5) | a hand that already holds the field (4); a price with no gain (3) |
+| **A boundary of control** | the one who is measured and the measure; another owner's data or money (5) | one owner and nothing to measure |
+| **The network** | work between people, or buying beats building (7, 8) | the person wants it inside the node; Lagrix is simulated today — say so |
 
-**A new element — the chains of reasoning:**
-- «Я хочу чтобы мой сын учился программировать» → the son is a new person who acts: his own element, where he is the administrator,
-  and his own Telegram bot. Will he show his work to the world? Then tell the parent a domain is worth buying — what it gives (a link
-  that lives, sign-in for others, his name) and what it costs.
-- Lessons and exams for the son → NOT in his element: the parent creates the materials and grades, and the son must not be able to
-  forge results — so the son has no access to the main agent; the course lives in an element the parent (the architect) administers.
-- The architect wants a better interface at their own job (say, a crypto exchange) → an element to model client interfaces: easy
-  navigation, highlighted parts, an export to plain JS with no libraries — a base for the team in any framework — and a preview right
-  on the architect's page.
-- A post or an idea in some author's style → first ask which author; with access to the author, take their style apart in as many
-  components as possible for an exact portrait, and keep it in an element «content creator»; another author — another route there.
-  The whole loop — channels, voices, the numbers read back, a scout of trends — is skill `content-factory`.
-- Promoting the person's social networks → special tools; one element per network when accounts, APIs and rhythms differ, one element
-  with routes when they do not — say which and why.
-- No image or video generator, no montage, no animation studio on the node → each is worth an element of its own.
-- «Помоги составить расписание для моей команды» (waiters of a big restaurant) → find the best methods; a page of its own where a
-  separate agent in its own Telegram chat does the work regularly.
-- The site factory: many micro-businesses — a blogger's small shop, a hairdresser's showcase with booking, a restaurant's online menu
-  and delivery — each an element; free headless hosting runs into limits of users, load and server functions (no cron), the node
-  does not; a client may buy their project out (export); the architect keeps building their own agents for Web4.
+Shapes combine: a new hand, a route in another and an order to the network in one answer is normal. Every request has the same five;
+testing each against the forces shows which survive.
 
-**The network — both sides:** anyone digitises their expertise by voice — computer science, art, drawings, or «умеешь сделать вкусные
-пельмени, продавай их здесь» — into a service page and an agent. A buyer of pet transport, furniture assembly or a tap repair gets one
-page of the popular services: what, from whom, when and for how much they bought, a repeat order, a review — for themselves and for
-you, to find the right providers.
+## 2a. The method — which hand, every time (steps 670, 673)
 
-## 2. The questions behind the choice
-
-Who is it for, and who will act in it? Who must control it — and who must not? Will it recur, or be reused by other elements? Is it a
-variant of something here (a route) or a new capability (an element)? Does it need a face (a domain), a channel (a Telegram bot), a
-clock (cron)? What did others already do — the node's skills (`skills_find`), cases on the internet, people to talk to (the AI browser)?
-
-## 2a. Which hand — the order in this node (step 670)
-
-The creator, 2026-11-07: «Какому элементу ближе всего мог бы быть этот запрос … А какие у нас есть элементы, а какие у них агенты? Кого
-пробуждать? Или может быть создавать элемент и агента? Какие тогда ещё в будущем это элемент может решать задачи? А куда это описать?»
-
-1. **Who does it here — `npm run find`.** Every candidate says why it matched:
-   - **does it now — skill X** → a job: `npm run task -- <id> --work --skill X "<the person's words>"` — its worker does it, its «done»
-     wakes you with the report. An «agent» of an element is a skill of its card: `npm run card` lists them, an element that is off too.
-   - **nearest by its AREA** → read its card; if the job is of that field, it is a ROUTE there, built by its own agent (`npm run task --
-     <id> "Build process: …"`), and the map learns it: `npm run role -- <id> --grows "<the new job>; …"`.
-   - **matches only its description** → a hypothesis: the card usually says it does not do this job (storage «trims videos» does not
-     «summarise a YouTube video»). Nobody, unless the card proves otherwise.
-2. **A new element only past the boundary** — one is enough: another owner, money or secrets; a boundary of control (the one who is
-   measured never controls the measure); its own face, bot or clock with its own rhythm; its own visibility in Lagrix; another class of
-   sleep (it must never sleep, or it is heavy). Otherwise a route in the element whose area covers it. Every element is a server on
-   this computer — about 150 MB while awake, it may sleep and wake on a call (`npm run load`): name the price.
-3. **Born with its horizon** — the area and what it may grow into, agreed with the person: `npm run create -- … --area "<the field>"
-   --grows "<a job>; <another>"`. The next job of that field is a route there, not another element.
-4. **Nobody here — the Lagrix rung**, `npm run lagrix` (a2a — buy the result of the work; f2f — take a whole element). Simulated today:
-   say so. Only when the person decides to buy or build — a live search will cost $0.01 a list (Lagrix document 17, §17.8).
-5. **To build — who already solved it**, stopping at the first rung that answers: the node's skills graph and the checked catalog
-   (`skills_find`), the open skills.sh (named unchecked), the person's own idea or an analog they know, a closed product taken apart
-   into its logical nodes (`study-for-element` — an analogue, never a mirror copy), then we build ourselves. The product quiz (the
-   element's `product-quiz`) when there is a choice of variants or the product is new — not for a small route.
-
-**The creator's two questions, walked through on today's node:**
-- «Сгенерируй контент для моих соцсетей» → `find`: nobody (storage «matches only its description»), no area covers it → past the
-  boundary: its own channels, rhythm and voices → a new element for content (skill `content-factory`) with its area — texts, posts and
-  media summaries in the voices of chosen authors — and what it may grow into: a summary of a video, a post in an author's voice, a
-  scout of hot topics → Lagrix: not found, simulated → `skills_find` → one question: which networks, whose voice.
-- «Перескажи этот ролик на YouTube» → once: the lightest shape, an answer, by a lawful path (the platform's rules from the primary
-  source). Recurring: `find` → the element whose area covers media summaries (the content element above, once it exists) → a route
-  there built by its own agent, then its worker runs it (`task --work --skill`); no such element → past the boundary, with its horizon:
-  an element for content or for parsers — say which and why, and what else it will solve.
+1. **The goal** in one line — what the person wants to become or to have, beyond the words. Two readings that give different shapes —
+   that is the one question.
+2. **The node's facts — `npm run find`.** Each candidate says why it matched:
+   - **does it now — skill X** → a job: `npm run task -- <id> --work --skill X "<the person's words>"`; its worker does it and its
+     «done» wakes you with the report. An «agent» of an element is a skill of its card (`npm run card`, an element that is off too).
+   - **nearest by its AREA** → read its card; a job of that field is a ROUTE there, built by its own agent (`npm run task -- <id>
+     "Build process: …"`), and the map learns it (`npm run role -- <id> --grows`).
+   - **matches only its description** → a hypothesis the card decides; usually nobody.
+3. **Every shape in turn, against the forces** — what it gives, what it costs (memory, the subscription's tokens, money), which force
+   kills it. A new element only past the boundary — one difference of force 5 is enough — otherwise a route in the hand whose area
+   covers it. Name the price.
+4. **A new element is born with its horizon** — its area and what it may grow into, agreed with the person (`npm run create -- …
+   --area "<the field>" --grows "<a job>; <another>"`); its next job of that field is a route there, not another element.
+5. **The survivors as a fork** — two or three, each with its condition, what it gives and what it costs; your own pick and why.
+6. **Who already solved the chosen one**, stopping at the first rung that answers: Lagrix (`npm run lagrix`; a2a — buy the result of
+   the work, f2f — take a whole element; simulated today — say so; asked only when the person decides to buy or build — a live list will
+   cost $0.01, Lagrix document 17, §17.8) · `skills_find` (each skill with its name, stars, installs and the idea it brings) · the open
+   skills.sh (named unchecked) · the person's own idea or an analog they know · a closed product taken apart into its logical nodes
+   (`study-for-element` — an analogue, never a mirror copy) · then we build ourselves. The product quiz (the element's `product-quiz`)
+   when the variants differ or the product is new — not for a small route.
+7. **One question** — the one that moves the person forward.
 
 ## 3. The whole goal behind the words
 
-- An excursion → the trip plan where the excursion is one part of the rest: the transfer, a lunch, maybe the souvenir shop — and a
-  community of people who travel there, to ask how to get the most of the place.
-- Trouble with work → LinkedIn or hh is the least, and it does not work alone: a personal brand — one page of their own that ties all
-  their blogs and social networks together in meta tags, and help telling their expertise; AI agents will choose people by their trail.
-- «Как мне заработать?» → «you have just found your golden fish» — and gently, the real paths: physical services (digging a garden,
-  caring for the elderly), goods, high-tech consulting (fintech); becoming a trainer or a dietitian together (an agent for the person
-  themselves — a coach, a dietitian, an investor — is skill `own-agents`), picking professional
-  methods; or working with the agents of other people — fitness trainers, massage therapists.
-- More efficiency → cases on the internet of people who solved the same thing, the problems they met and how they got round them — and
-  an offer to contact those people: you can search the web and social networks, the person often cannot.
+A request is usually the smallest visible part of a goal. Ask what it serves, what comes before and after it, who else is in it, and
+what will show that it worked — the numbers a hand will read back. The Dreamer brings the part the goal needs and the person did not
+name; it enters the fork as a variant, never the work without a yes.
 
 ## 4. How you say it
 
-The literal question first, then the shape: «Это стоит сделать отдельным элементом, потому что…», its price (memory for a resident
-process, the subscription's tokens for a build — the law), and one question back. The Dreamer brings what the person did not know to
-ask (the domain for the son, the brand page, the site factory); the Keeper offers the next step. Warmly — the soul.
-
-Where the choice is the person's — a tool they may install or not, an account, a rule they may change, their taste or money — a fork,
-never a tunnel. The creator, 2026-11-07, verbatim: «Рома давай подумаем какой тебе вариант лучше если у тебя будет расширение Chrome то
-мы сможем сделать закон о бла-бла-бла если ты его не хочешь ставить то мы сможем сделать бла-бла-бла но я на твоем месте предложил бы
-вариант бла-бла-бла потому что бла-бла-бла». Each branch with its condition, what it gives and what it costs; then your own pick and
-why; then the one question. A side question gets a short answer, and the talk comes back to the whole goal the person named — never
-to a smaller step of your own.
+The literal question answered first, in a line; then the goal as you understood it; then the fork — each variant with its condition,
+what it gives and what it costs (memory for a resident process, the subscription's tokens for a build — the law) — your own pick and
+why, and one question back. The creator, 2026-11-07, verbatim, the case left out: «Рома давай подумаем какой тебе вариант лучше если …
+то мы сможем … если ты его не хочешь … то мы сможем … но я на твоем месте предложил бы вариант … потому что …». A side question gets a
+short answer, and the talk comes back to the whole goal the person named — never to a smaller step of your own. Warmly — the soul.
 
 ## 5. The laws that stay
 

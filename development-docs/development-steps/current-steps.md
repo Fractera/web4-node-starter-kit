@@ -11,10 +11,18 @@ every case into `development-docs/exams/shape-of-a-need.md` + guard `check:shape
 670-9's case lines out · the sealed lines without cases after his word · the exam on Sonnet medium = 670-7's run 2). The owner's words
 are in 673-main §1; on the direction, verbatim: «Вот это мне уже начинает нравиться»; to the substeps: «да, утверждаю, начинай». The sync of
 670-9 is on hold (it would ship a case patch). The owner on the model, verbatim: «На соннет не будем работать по дефолту устанавливай
-opus effort high» → **step 674 IN WORK** (`new-steps/674-the-main-agent-starts-on-opus-at-effort-high.md`): the main agent's model is
-already opus on every node (`main-agent-install` writes `.claude/launch-model.txt`); its effort — `.claude/launch-effort.txt` «high»
-the same way, read by the bridge when nobody chose an effort; elements keep medium; 673-5's exam runs on that default. NEXT: 674 →
-673-1 → 673-2 → 673-3 → 673-4 (his word on the sealed lines) → release → 673-5.
+opus effort high» → **step 674 RELEASED** (`5744785c`, plan `new-steps/674-the-main-agent-starts-on-opus-at-effort-high.md`): the
+main agent's model was already opus on every node (`main-agent-install` writes `.claude/launch-model.txt`); its effort now
+`.claude/launch-effort.txt` «high» the same way (`modes.launchEffort`), taken by the bridge when nobody chose an effort, also after a
+model switch; elements keep medium; the kit master + 14 copies updated (`check:agent-kits` 14 legal, 0 debts). Proven: launchEffort
+with the file «high», without → null, a stray word → null; the node's release before has no launchEffort. Delivery: `node:update` →
+`services-install` → `element-isolate` → `installMainAgent` writes the file. Owed: the node check after his sync (the main agent's
+`session-mode.json` at its next start: `effort: high`; an element's stays medium), then `completed-steps/674.md` and the plan
+deleted. 673-5's exam runs on that default. CI of `5744785c` green (windows, ubuntu). **673-1 CLOSED** (`completed-steps/673-1.md`):
+`shape-the-need` = forces, the closed set of shapes, the method (§2a kept under its number), no case (0 case lines, the release before
+5); the method closes EVERY `skills_find` answer (`METHOD` — 670-9 had it only when the catalog found cards: the book request, 0 cards,
+got none); the exam set `development-docs/exams/shape-of-a-need.md` seeded (21 cases), named by nothing. NEXT: 673-2 (the guard
+`check:shape-examples`) → 673-3 → 673-4 (his word on the sealed lines) → release → 673-5.
 
 **NOW-32 (2026-11-07, afternoon) — 670 APPROVED («да, подтверждаю план, начинай»), from the owner's node (this Mac): «an order finds its hand» — waking on an order
 (i2i now, a2a on paper), new element or a route in an existing one, the accumulator of an element's agents, the order «who already solved
