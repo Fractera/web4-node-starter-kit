@@ -21,8 +21,10 @@ with the file «high», without → null, a stray word → null; the node's rele
 deleted. 673-5's exam runs on that default. CI of `5744785c` green (windows, ubuntu). **673-1 CLOSED** (`completed-steps/673-1.md`):
 `shape-the-need` = forces, the closed set of shapes, the method (§2a kept under its number), no case (0 case lines, the release before
 5); the method closes EVERY `skills_find` answer (`METHOD` — 670-9 had it only when the catalog found cards: the book request, 0 cards,
-got none); the exam set `development-docs/exams/shape-of-a-need.md` seeded (21 cases), named by nothing. NEXT: 673-2 (the guard
-`check:shape-examples`) → 673-3 → 673-4 (his word on the sealed lines) → release → 673-5.
+got none); the exam set `development-docs/exams/shape-of-a-need.md` seeded (21 cases), named by nothing. **673-2 CLOSED**
+(`completed-steps/673-2.md`): `check:shape-examples` in prebuild — release OK, a spoiled copy FAIL (3), the release before FAIL (13).
+NEXT: 673-3 (the skills of a field give facts, not shapes; the guard covers them) → 673-4 (his word on the sealed lines) → release →
+673-5.
 
 **NOW-32 (2026-11-07, afternoon) — 670 APPROVED («да, подтверждаю план, начинай»), from the owner's node (this Mac): «an order finds its hand» — waking on an order
 (i2i now, a2a on paper), new element or a route in an existing one, the accumulator of an element's agents, the order «who already solved

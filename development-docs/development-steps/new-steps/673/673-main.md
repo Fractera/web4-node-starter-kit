@@ -70,7 +70,7 @@ Address: this clone, `Fractera/web4-node-starter-kit` main; push + CI per subste
 | # | Result | Rests on |
 |---|---|---|
 | 673-1 ✅ | the forces and the method in `shape-the-need`, and in short at the end of every `skills_find` answer; the exam set seeded | 670 |
-| 673-2 | every case into the exam set; `check:shape-examples` keeps the shaping path case-free | 673-1 |
+| 673-2 ✅ | every case into the exam set; `check:shape-examples` keeps the shaping path case-free | 673-1 |
 | 673-3 | the domain skills give facts, not shapes; 670-9's case lines out | 673-1, 673-2 |
 | 673-4 | the sealed lines without cases — shown verbatim, sealed after the owner's word | 673-2 |
 | 673-5 | the exam: the owner's cold questions on the node's default (Opus, effort high), from the set and his own | 673-1..4, 674, the release on his node |
