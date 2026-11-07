@@ -97,7 +97,7 @@ Address: this clone, `Fractera/web4-node-starter-kit` main; push + CI per subste
 | 670-5 | the law: CLAUDE.md §4 «A request comes», the soul's curiosity line, `shape-the-need` with both examples | 670-2..4 |
 | 670-6 ✅ | the Lagrix rung as a contract (a2a + f2f, simulated, guard in prebuild, paid only where it pays) + the a2a plan `new-steps/672-…` | — |
 | 670-7 | on the owner's node: update, the two examples asked cold by 545-4's method, verdicts recorded | 670-1..6 |
-| 670-8 | (added from 670-1) no call lost during a cold start — the caller waits or the gatekeeper proxies; decision first | 670-1 |
+| 670-8 ✅ | (added from 670-1) no call lost during a cold start — decided: the caller waits; no i2i caller in the core → the code goes to 671 | 670-1 |
 
 Not in 670: the element side (templates: `build.md` «Before you build a new capability», the element instruction mirror) — proposed
 as 671 after 670-7; per-agent Telegram bots; queueing an order when memory is short; any a2a code.

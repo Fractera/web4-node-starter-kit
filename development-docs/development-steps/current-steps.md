@@ -32,8 +32,11 @@ matches: real 0.30–0.57, false 0.29–0.38) — labelled «matches only its de
 checked live in 670-7. **670-6 CLOSED** (`completed-steps/670-6.md`): `lagrixSearch` a2a + f2f, `contractProblems`,
 guard `check:lagrix-contract` in `prebuild`; the a2a plan `new-steps/672-a2a-inbound-order-served-by-the-element-door.md` (docs 17, 27,
 04 read); finding: an outside order is served by the element's DOOR, never a Claude session on the owner's subscription
-(`provider-rules`). **NEXT:** 670-8 (the caller waits through a cold start), then 670-5 (the law — lines to the owner before the
-seal). Work in THIS clone; never run installers or the core server from this clone (it shares the
+(`provider-rules`). **670-8 CLOSED** (`completed-steps/670-8.md`): way 1 (the caller waits);
+no i2i door caller exists in the core (read) → its code is item 3 of `new-steps/671-templates-carry-the-order-chain-to-every-element.md`
+(the element side, queued). **NEXT:** 670-5 — the law: draft CLAUDE.md §4 «A request comes — the order» + the soul's curiosity
+sentence, show the owner verbatim BEFORE the seal; `shape-the-need`, `create-element`, `route-to-element`, `handle-need`,
+`element-power` edits. Work in THIS clone; never run installers or the core server from this clone (it shares the
 live node's pm2 — ANTI-PATTERNS).
 
 **NOW-31 (2026-11-07) — 669 CLOSED on the owner's node (core `23451197`): the figure of the 13 landings without the eyes callout** (the
