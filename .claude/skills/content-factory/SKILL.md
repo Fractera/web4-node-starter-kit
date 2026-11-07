@@ -13,6 +13,21 @@ Node step 658; the owner, 2026-11-05: «обычно пользователи и
 Claude.ai alone writes a good post. A node holds the whole loop: every channel with its own agent and rhythm, the voices of the authors
 the person admires, the numbers of every publication, and a scout that sees a topic rise before others. Each publication teaches the next.
 
+## First — which hand (step 670)
+The first answer walks the order of CLAUDE.md §4 «A request comes» (skill `shape-the-need` §2a) before the order below:
+1. `npm run find` with its reasons; an element nearest by its AREA is read by its card — root may grow into «the project's blog»: when
+   the texts deserve a home on the person's own domain, that is a route there, built by root's own agent.
+2. The boundary — a channel with its own account, bot and rhythm, and the author portraits every channel reuses, are elements,
+   proposed with their area and what they may grow into; each is about 150 MB while awake (`npm run load`).
+3. Lagrix — `npm run lagrix`, simulated today: say so.
+4. `skills_find` — every skill with its name, stars and installs and the idea it brings.
+5. A fork, never one line: a single post — right here, nothing built; a series that grows post by post — the route and the elements
+   above; your own pick and why; then one question.
+
+A series of publications recurs: never «a trial post first», never the main agent writing the posts with a skill of its own — the
+posts are the elements' work, the main agent holds the map (670-7, run 1: «один пробный пост», «свой собственный навык» — the owner:
+«очень очень слабо»).
+
 ## The order — one link at a time, each after the person's yes
 1. **The channels and the goal**, in the person's words: which networks, blogs, boards, forums; what the publications are for.
 2. **The channels** — one element per channel when accounts, APIs and rhythms differ; one element with routes when they do not
