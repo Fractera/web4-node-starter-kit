@@ -5,6 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-37 (2026-11-07, ~20:05 UTC) — 677 CLOSED** (`completed-steps/677.md`, `bdc68042`): «GitHub» first among the «Main» shortcuts,
+red while the binding is not own; proven on the owner's node `3a23da39` (order, link, colour own → normal, flagged → #ef4444). The seal
+of §4/§8 (`35bed0eadf22`) reached the node with the update. OWED: 676 queued; `completed-steps/674.md`; 673-5, the exam on Opus high.
+
 **NOW-36 (2026-11-07, ~19:30 UTC) — 675-4 CLOSED** (`completed-steps/675-4.md`; `562313c3`, `4e35fbde`, CI green; the owner's node on
 `83fe64ea`): the owner's defect (only «Start the agent» during a build) — found by a watcher (16 s: core stopped, reader not up), the
 reader starts before `closeLid`, silence = a build, the bare build waits for its verdict; three watcher runs: 2 → 0 → 0 start frames, the
