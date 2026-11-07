@@ -19,8 +19,10 @@ changes without its agent knowing.
 
 1. `npm run find -- <the job in plain English words>` — the registry's candidates, at most five, each with its role and how to reach
    its agent (`npm run contacts -- <id>` — one element again). Never list the whole node: it grows.
-2. Pick the element whose role covers the job. Two fit — ask the person one question about how they differ, then record one role
-   for each (`npm run role`).
+2. Pick the element whose role covers the job — each candidate says why it matched (670-4): **does it now — skill X** (route the job
+   there); **nearest by its AREA** (its card confirms → a route its own agent builds there; then `npm run role -- <id> --grows "<the
+   job>"`); **matches only its description** (read its card — usually it does not do this job: nobody). Two fit — ask the person one
+   question about how they differ, then record one role for each (`npm run role`).
 3. Answer with the element and how to reach its agent, as `find` prints it:
    > «Это делает элемент **auth** — вход и роли для всех элементов. Его агент: Telegram t.me/<bot>, терминал <link>. Там его
    > среда разработки — напишите ему.»

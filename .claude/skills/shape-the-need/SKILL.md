@@ -17,7 +17,7 @@ evolving architecture, calibrate it and lead a thousand such projects at once. T
 | Shape | When | The creator's examples |
 |---|---|---|
 | **An answer** | a one-off question; nothing will recur | a sum, a fact, a short advice — plus one thought nobody asked for |
-| **A route in an element** | a variant of what an element already does, the same owner; other elements import it | each author's style — a route of the «content creator» element, so any element writes in it |
+| **A route in an element** | a variant of what an element already does, or a new job of its AREA (§2a), the same owner; other elements import it | each author's style — a route of the «content creator» element, so any element writes in it |
 | **A new element** | a capability others will reuse; a new person who acts; a client; a group's recurring job | below |
 | **A boundary of control** | the one who is measured must not control the measure; another owner's data or money | the son's lessons and exams |
 | **The network** | the work is between people | a service page and an agent in Lagrix; a buyer's page of services |
@@ -53,6 +53,41 @@ you, to find the right providers.
 Who is it for, and who will act in it? Who must control it — and who must not? Will it recur, or be reused by other elements? Is it a
 variant of something here (a route) or a new capability (an element)? Does it need a face (a domain), a channel (a Telegram bot), a
 clock (cron)? What did others already do — the node's skills (`skills_find`), cases on the internet, people to talk to (the AI browser)?
+
+## 2a. Which hand — the order in this node (step 670)
+
+The creator, 2026-11-07: «Какому элементу ближе всего мог бы быть этот запрос … А какие у нас есть элементы, а какие у них агенты? Кого
+пробуждать? Или может быть создавать элемент и агента? Какие тогда ещё в будущем это элемент может решать задачи? А куда это описать?»
+
+1. **Who does it here — `npm run find`.** Every candidate says why it matched:
+   - **does it now — skill X** → a job: `npm run task -- <id> --work --skill X "<the person's words>"` — its worker does it, its «done»
+     wakes you with the report. An «agent» of an element is a skill of its card: `npm run card` lists them, an element that is off too.
+   - **nearest by its AREA** → read its card; if the job is of that field, it is a ROUTE there, built by its own agent (`npm run task --
+     <id> "Build process: …"`), and the map learns it: `npm run role -- <id> --grows "<the new job>; …"`.
+   - **matches only its description** → a hypothesis: the card usually says it does not do this job (storage «trims videos» does not
+     «summarise a YouTube video»). Nobody, unless the card proves otherwise.
+2. **A new element only past the boundary** — one is enough: another owner, money or secrets; a boundary of control (the one who is
+   measured never controls the measure); its own face, bot or clock with its own rhythm; its own visibility in Lagrix; another class of
+   sleep (it must never sleep, or it is heavy). Otherwise a route in the element whose area covers it. Every element is a server on
+   this computer — about 150 MB while awake, it may sleep and wake on a call (`npm run load`): name the price.
+3. **Born with its horizon** — the area and what it may grow into, agreed with the person: `npm run create -- … --area "<the field>"
+   --grows "<a job>; <another>"`. The next job of that field is a route there, not another element.
+4. **Nobody here — the Lagrix rung**, `npm run lagrix` (a2a — buy the result of the work; f2f — take a whole element). Simulated today:
+   say so. Only when the person decides to buy or build — a live search will cost $0.01 a list (Lagrix document 17, §17.8).
+5. **To build — who already solved it**, stopping at the first rung that answers: the node's skills graph and the checked catalog
+   (`skills_find`), the open skills.sh (named unchecked), the person's own idea or an analog they know, a closed product taken apart
+   into its logical nodes (`study-for-element` — an analogue, never a mirror copy), then we build ourselves. The product quiz (the
+   element's `product-quiz`) when there is a choice of variants or the product is new — not for a small route.
+
+**The creator's two questions, walked through on today's node:**
+- «Сгенерируй контент для моих соцсетей» → `find`: nobody (storage «matches only its description»), no area covers it → past the
+  boundary: its own channels, rhythm and voices → a new element for content (skill `content-factory`) with its area — texts, posts and
+  media summaries in the voices of chosen authors — and what it may grow into: a summary of a video, a post in an author's voice, a
+  scout of hot topics → Lagrix: not found, simulated → `skills_find` → one question: which networks, whose voice.
+- «Перескажи этот ролик на YouTube» → once: the lightest shape, an answer, by a lawful path (the platform's rules from the primary
+  source). Recurring: `find` → the element whose area covers media summaries (the content element above, once it exists) → a route
+  there built by its own agent, then its worker runs it (`task --work --skill`); no such element → past the boundary, with its horizon:
+  an element for content or for parsers — say which and why, and what else it will solve.
 
 ## 3. The whole goal behind the words
 

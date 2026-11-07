@@ -34,9 +34,11 @@ guard `check:lagrix-contract` in `prebuild`; the a2a plan `new-steps/672-a2a-inb
 04 read); finding: an outside order is served by the element's DOOR, never a Claude session on the owner's subscription
 (`provider-rules`). **670-8 CLOSED** (`completed-steps/670-8.md`): way 1 (the caller waits);
 no i2i door caller exists in the core (read) → its code is item 3 of `new-steps/671-templates-carry-the-order-chain-to-every-element.md`
-(the element side, queued). **NEXT:** 670-5 — the law: draft CLAUDE.md §4 «A request comes — the order» + the soul's curiosity
-sentence, show the owner verbatim BEFORE the seal; `shape-the-need`, `create-element`, `route-to-element`, `handle-need`,
-`element-power` edits. Work in THIS clone; never run installers or the core server from this clone (it shares the
+(the element side, queued). **670-5 IN WORK:** the skills are edited and committed (`shape-the-need` §2a «Which hand» with
+both of the owner's examples, `create-element`, `route-to-element`, `handle-need`, `element-power`); the sealed lines — CLAUDE.md §2
+Ports + Three protocols, §4 Supervision + «A request comes», the soul's sentence — are drafted in `new-steps/670/670-5-lines.md` and
+SHOWN to the owner; **WAITING for his word** → apply, `npm run check:instruction -- --seal`, `npm run system -- seal`, guards, summary,
+commit. Then 670-7 (his fork sync → `node:update` → live checks, priced). Work in THIS clone; never run installers or the core server from this clone (it shares the
 live node's pm2 — ANTI-PATTERNS).
 
 **NOW-31 (2026-11-07) — 669 CLOSED on the owner's node (core `23451197`): the figure of the 13 landings without the eyes callout** (the

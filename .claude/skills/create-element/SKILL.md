@@ -25,19 +25,24 @@ The owner of Fractera, 2026-10-23: «не всегда в наш проект п
 
 ## The order
 
-1. **The node.** `npm run find -- <English words>` found nobody whose role covers it.
-2. **The network (f2f).** `npm run lagrix -- <English words>`. Today the answer is simulated and always empty — tell the person so in
-   one line: «в сети Lagrix подходящих элементов не найдено (поиск в сети пока имитируется)».
-3. **Agree three things with the person:**
+1. **The node.** `npm run find -- <English words>` found nobody whose skill or AREA covers it (a candidate that «matches only its
+   description» is not one — its card decides), and the job is past the boundary of `shape-the-need` §2a — otherwise it is a route in
+   the element whose area covers it, built by its own agent.
+2. **The network.** `npm run lagrix -- <English words>` — a2a (an agent that sells the result of the work) and f2f (a whole element),
+   one contract (670-6). Today both are simulated and always empty — tell the person so in one line: «в сети Lagrix подходящих агентов
+   и элементов не найдено (поиск в сети пока имитируется)».
+3. **Agree four things with the person:**
    - the **role** — one sentence, what the element will do for the node («Removes the background from product photos and
      returns a PNG link.»);
+   - the **area** — the field it will be the home for, and 2–5 jobs it may grow into (`--area`, `--grows`): the next job of that field
+     becomes a route there, not another element;
    - the **task** — the person's words first, verbatim, then your restatement and what «done» will look like;
    - **who leads it** — the architect (default: they work with its agent in its terminal or Telegram) or you (`supervise
      main`: its «done» wakes you, skill `supervise-element`, at most 10 cycles).
    Custom by default. Native (`--native`) only for a job of the node itself that is never sold and never leaves it.
 4. **Create.** Write the task into a file in this folder (no shell quoting of the person's words), then:
    ```
-   npm run create -- --role "<one sentence>" --brief-file task-<words>.md [--supervise main] [--native]
+   npm run create -- --role "<one sentence>" --area "<the field>" --grows "<a job>; <another>" --brief-file task-<words>.md [--supervise main] [--native]
    ```
    Birth takes a few minutes (template clone, install, build, then the address in Cloudflare is connected and checked from the
    internet). It prints `===ELEMENT_CREATE_OK=== <id>`, `address:` and `site:`.

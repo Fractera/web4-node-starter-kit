@@ -21,7 +21,8 @@ A hint, not a law. Owner of the node, 2026-10-24: «Получив на уров
    **Found in a TURNED OFF element** — it is still found, never «missing»: building it again would make a double. Add to the answer
    «it is turned off now; the architect is asked to turn it on», and ask the architect once (`npm run person`, as below) «Turn on <x>
    for <from>?» — on yes, `npm run power -- <x> on` (skill element-power).
-3. Nobody does it → **missing**: pick the element whose role it belongs to (`--owner <element>`), or `new` when none fits;
+3. Nobody does it → **missing**: pick the element whose role it belongs to — the one `find` names «nearest by its AREA» when its card
+   confirms the field (670-4) — (`--owner <element>`), or `new` only past the boundary of `shape-the-need` §2a;
    `npm run needs -- answer <need> --missing --owner <x> --note "<why there>"`. Then:
    - ask the architect once, where they read you: `npm run person` — your Telegram bot and their chat_id (an element woke you, so this
      session has no chat of its own: send with the reply tool to that chat_id), otherwise the core's terminal. «<from> needs «<need>»
