@@ -5,6 +5,13 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-36 (2026-11-07, ~18:47 UTC) — DEFECT reported by the owner, verbatim:** «когда я тебе дал задание а потом отошел подошел через минуту
+на браузере уже не было ничего кроме голубой кнопки запустить агента. Нажатие на эту кнопку привело к тому что экран браузер полностью
+исчез и вместо него осталось иконка релод». 675-2 was proven only with fake records while the core was alive — never during a real build.
+FOUND by the watcher (core-deploy build 18:47–18:51, the owner's node): the build terminal showed «Start the agent · The connection to the node was lost» 18:47:15–18:47:32 — the core was stopped, the reader not up yet (`startReader` ran AFTER `closeLid`, ~16 s of pm2 stops); from 18:47:32 the build view, after it the page reloaded into the returned agent. FIX 675-4: the reader starts before `closeLid`; the watch treats «core and reader both silent» as a build (text `buildSilent`, no start button); the bare build ends with the verdict of the record that covered the silent moment. NEXT: commit, push, CI, sync, update with the watcher again, then a «Deploy core» build with the watcher — 0 frames with the start button. (Earlier:) a detached watcher (scratchpad `watch/watch.mjs`, Playwright + system Chrome) holds `/en/architect/build/terminal` (live) and
+`/blocks/terminal` (asleep) open, logs state + console + shots every 8 s; then a detached `core-deploy.mjs`. After the return: read
+`watch/log.txt` and the shots, find the cause, fix, prove it the same way. The §4 seal still waits for the owner.
+
 **NOW-35 (2026-11-07, ~18:45 UTC) — 675-3 CLOSED** (`completed-steps/675-3.md`, code `9b36b3ac`, CI green): the owner's «b» — every
 agent the build stopped comes back (live: «Deploy core» build, `===AGENT_RETURN=== главный: вернулся · элементы вернулись: blocks`),
 skill `core-build-return`. OWED: the sealed line of CLAUDE.md §4 «Building the core» (+ §8 naming the skill) — shown to the owner, waits

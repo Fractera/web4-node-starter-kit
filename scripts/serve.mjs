@@ -642,10 +642,13 @@ async function rebuild() {
   const buildWhat = process.env.FRACTERA_BUILD_WHAT || "core"
   const buildSince = Date.now()
   const agentBack = await agentReturn.noteBefore(root, buildWhat)
-  closeLid(root)
   // 642-2: журнал этой сборки — тот файл, куда её вывод пишет запустивший (кнопка ядра, обновление узла); из терминала — только этап.
+  // 675-4: чтец — ДО закрытой крышки. ✗ Снято наблюдателем 2026-11-07: остановка процессов узла идёт ~16 с, и всё это время ни ядро,
+  // ни чтец не отвечали — терминал агента рисовал «Запустить агента» (владелец: «на браузере уже не было ничего кроме голубой кнопки
+  // запустить агента»). Чтец не мешает живому ядру: страница спрашивает его, только когда ядро молчит.
   startReader(root, { log: process.env.FRACTERA_BUILD_LOG, what: process.env.FRACTERA_BUILD_WHAT || "core" })
   process.on("exit", () => stopReader(root))
+  closeLid(root)
   // 553: сторожа `prebuild` — с элементами на месте (часть из них сверяет элементы), затем `next build` — с элементами ВНЕ папки
   // ядра (`itemsAside`): сборка ядра не должна зависеть от числа элементов. Возврат — всегда, и после отказа.
   const npm = process.platform === "win32" ? "npm.cmd" : "npm"

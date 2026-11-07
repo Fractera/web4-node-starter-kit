@@ -34,7 +34,11 @@ async function json<T>(url: string, ms = 4000): Promise<T | null> {
   }
 }
 
-/** Какая сборка идёт сейчас: запись ядра, а ядро молчит — чтец. Ничего — `null`. */
+/**
+ * Какая сборка идёт сейчас: запись ядра, а ядро молчит — чтец. Молчат оба — тоже «сборка» (675-4): ✗ снято наблюдателем 2026-11-07 —
+ * между остановкой ядра и подъёмом чтеца ~16 с страница рисовала «Запустить агента», а кнопка при мёртвом ядре никуда не ведёт.
+ * Ядро отвечает и сборки нет — `null`.
+ */
 async function detect(): Promise<Build | null> {
   const u = await json<{ update: Rec | null }>(`${BASE}/api/node/update?tail=1`)
   if (u) {
@@ -44,9 +48,8 @@ async function detect(): Promise<Build | null> {
     return c?.state === "running" ? { mode: "rebuild", since: Date.parse(c.startedAt ?? "") || Date.now() } : null
   }
   const r = local() ? await json<{ what?: string; startedAt?: string }>(READER, 2500) : null
-  if (!r) return null
-  const since = (Date.parse(r.startedAt ?? "") || Date.now()) - 60 * 60_000 // запись обновления началась раньше чтеца
-  return { mode: r.what === "update" ? "update" : "bare", since }
+  if (r?.what === "update") return { mode: "update", since: (Date.parse(r.startedAt ?? "") || Date.now()) - 60 * 60_000 } // запись обновления началась раньше чтеца
+  return { mode: "bare", since: Date.now() }
 }
 
 export function CoreBuildWatch({ active, words, build: terminalWords, sessionUrl, children }: { active: boolean; words: AgentTerminalWords; build?: CoreTerminalWords; sessionUrl: string; children: ReactNode }) {
@@ -72,7 +75,13 @@ export function CoreBuildWatch({ active, words, build: terminalWords, sessionUrl
       const r = await json<{ lines?: string[] }>(READER, 2500)
       if (stop) return
       if (r) { if (r.lines?.length) setLines(r.lines); return }
-      if (await json(`${BASE}/api/node/update?tail=1`)) setEnd("back")
+      const u = await json<{ update: Rec | null }>(`${BASE}/api/node/update?tail=1`)
+      if (!u || stop) return
+      // Ядро ответило: итог — у записи, которая шла, когда ядро замолчало (кнопка «Развернуть ядро», обновление); нет такой — «ядро снова отвечает».
+      const d = await json<{ core?: { deploy: Rec | null } }>(`${BASE}/api/node/deploy?progress=1&core=1`)
+      const covers = (x?: Rec | null) => Boolean(x?.finishedAt && Date.parse(x.startedAt ?? "") <= build.since && Date.parse(x.finishedAt) >= build.since - 5000)
+      const rec = [u.update, d?.core?.deploy].find(covers)
+      if (!stop) setEnd(rec?.state === "done" ? "done" : rec && rec.state !== "running" ? "failed" : "back")
     }, 1500)
     return () => { stop = true; clearInterval(t) }
   }, [build, end])
@@ -104,7 +113,7 @@ export function CoreBuildWatch({ active, words, build: terminalWords, sessionUrl
       </div>
       {!end && <p className="text-muted-foreground text-sm">{words.buildNoStart}</p>}
       {build.mode === "bare"
-        ? <LiveLog title={end ? words.buildBack : terminalWords.building} lines={lines.length ? lines : ["…"]} done={Boolean(end)} failed={false} />
+        ? <LiveLog title={end === "done" ? terminalWords.done : end === "failed" ? terminalWords.failed : end ? words.buildBack : lines.length ? terminalWords.building : words.buildSilent} lines={lines.length ? lines : ["…"]} done={Boolean(end)} failed={end === "failed"} />
         : <CoreTerminal words={terminalWords} mode={build.mode} since={build.since} noReload onEnd={setEnd} />}
       {woke && <p className="text-sm" data-core-build-woke>{words.buildWoke}</p>}
       {end && !woke && (

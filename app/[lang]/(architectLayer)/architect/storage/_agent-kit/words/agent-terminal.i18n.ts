@@ -47,6 +47,8 @@ export type AgentTerminalWords = {
   buildEnded: string
   /** голая `serve:rebuild`: конец без вердикта */
   buildBack: string
+  /** 675-4: молчат и ядро, и чтец */
+  buildSilent: string
   buildCloseStart: string
   buildClose: string
   buildWoke: string
@@ -94,6 +96,7 @@ const DICT: Record<string, AgentTerminalWords> = {
     buildNoStart: "The build has stopped the node, the agent's session too. Do not start the agent until the build ends: it would be stopped again.",
     buildEnded: "The core build has ended",
     buildBack: "The core answers again.",
+    buildSilent: "The core does not answer — a build or a restart is under way. The page waits for it.",
     buildCloseStart: "Close and start the agent",
     buildClose: "Close",
     buildWoke: "The agent came back by itself, in the same conversation — connecting…",
@@ -139,6 +142,7 @@ const DICT: Record<string, AgentTerminalWords> = {
     buildNoStart: "Сборка остановила узел, а вместе с ним и сессию агента. Не запускайте агента, пока сборка не закончится: она остановит его снова.",
     buildEnded: "Сборка ядра закончилась",
     buildBack: "Ядро снова отвечает.",
+    buildSilent: "Ядро не отвечает — идёт сборка или перезапуск. Страница ждёт его.",
     buildCloseStart: "Закрыть и запустить агента",
     buildClose: "Закрыть",
     buildWoke: "Агент вернулся сам, в тот же разговор, — подключаюсь…",
