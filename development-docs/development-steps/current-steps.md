@@ -5,17 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-35 (2026-11-07, ~18:00 UTC) — 675-3 IN WORK (675 reopened by the owner's choice).** I offered: a compact skill + one sealed line
-in §4, and for the element agents the build stops — A nothing · B return all who ran · C the main agent decides with a list (my pick).
-The owner, verbatim: «b». Read as: the skill and the §4 line (its text shown before the seal) + variant B. Also queued 676 (his own core
-development survives a Fractera update — his words verbatim, `46420bd0`); found and said: no element template carries a terminal — all
-agent terminals live in the core, so «the element repositories» item of 675 was my mistake. Code: `/api/agents/session` status returns
-`sessions` (key, byPerson); `agent-return.cjs` records all, wakes the element agents first, then the main agent with who came back / did
-not (memory) / which `--work` sessions were not continued; the wake door's `core-back` accepts only a service listed in the record;
-skill `.claude/skills/core-build-return`. Proven on a fake core: order blocks(from node) > graph > build, graph refused (memory) named,
-`root--work` named not woken, the record gone, an unlisted service refused; 675-1's tests still pass. NEXT: commit + push → CI → sync →
-start the `blocks` agent → detached update → the return of both (agent-return.log) → `completed-steps/675-3.md` → the §4 line to the
-owner before the seal.
+**NOW-35 (2026-11-07, ~18:45 UTC) — 675-3 CLOSED** (`completed-steps/675-3.md`, code `9b36b3ac`, CI green): the owner's «b» — every
+agent the build stopped comes back (live: «Deploy core» build, `===AGENT_RETURN=== главный: вернулся · элементы вернулись: blocks`),
+skill `core-build-return`. OWED: the sealed line of CLAUDE.md §4 «Building the core» (+ §8 naming the skill) — shown to the owner, waits
+for his word; 676 queued; 674's `completed-steps/674.md`; 673-5, the exam on Opus high.
 
 **NOW-34 (2026-11-07, ~17:45 UTC) — step 675 CLOSED** (`completed-steps/675-1.md`, `675-2.md`; code `51413e25`, CI green windows +
 ubuntu; the plan deleted with the summaries). Done alone after the owner's «start without me», «select best choosse»: the fork synced by me
