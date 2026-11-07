@@ -15,7 +15,8 @@
 //   lagrix <слова>           — f2f: поиск целого элемента в сети Lagrix; сети ещё нет — ИМИТАЦИЯ (запрос по документам 17 и 20)
 //   create --role "<фраза>" (--brief "<текст>" | --brief-file <путь>) [--native] [--supervise main|architect] [--no-wake]
 //                            — новый элемент: черновик → рождение из шаблона → роль → задание в его приёмную → пробуждение агента
-//   task <id> "<текст>"      — поручение агенту элемента (живой сессии — во вход, спящему — пробуждением)
+//   task <id> "<текст>" [--work [--skill <навык>]] [--dry] — поручение агенту элемента (живой сессии — во вход, спящему —
+//                              пробуждением); `--work` — работа его рабочему процессу, не строителю (670-2)
 //   state <id>               — как идёт работа элемента: роль, текущий шаг, приёмная, коммиты, надзор
 //   role <id> "<фраза>"      — назначить элементу роль (`data/node/roles.json`)
 //   supervise <id> main|architect|off [--max N] — кто ведёт элемент
@@ -42,6 +43,8 @@ import { fileURLToPath } from 'node:url'
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const require = createRequire(import.meta.url)
 const supervision = require('../lib/web4-items/supervision.cjs')
+// 670-2: поручение рабочему процессу элемента — запись, которую его «закончил» забирает и будит тебя с отчётом.
+const jobs = require('../lib/web4-items/jobs.cjs')
 const nodeType = require('../lib/web4-items/node-type.cjs')
 // 603-1: самоописание элементов — паспорт и измеренное одним модулем (что это, где живёт, где данные, двери из кода, кто зависит).
 const self = require('../lib/a2a/self-description.cjs')
@@ -485,17 +488,44 @@ if (cmd === 'transcribe') {
 }
 
 if (cmd === 'task') {
-  const [id, ...words] = rest
-  const text = words.join(' ').trim()
-  if (!id || !text) fail('task <id> "<what the element agent must do>"')
+  // 670-2 (владелец 2026-11-07: «i2i we can use just now»): работа для элемента будит его РАБОЧИЙ процесс — `--work`, сессия `<id>--work`
+  // у элемента с группами навыков (552-4), — а не строителя; `--skill` называет, какой из его агентов (навык карточки) её делает; `--dry`
+  // печатает пробуждение и ничего не будит. ✗ Замер 2026-11-07: `task` всегда ставил «Build process:» — любая работа поднимала строителя
+  // со всеми навыками строительства. «Закончил» рабочей сессии будит тебя с её отчётом (`lib/web4-items/jobs.cjs`, событие, не таймер).
+  const work = has('--work')
+  const dry = has('--dry')
+  const skill = flag('--skill')
+  const skip = new Set(rest.flatMap((w, i) => (w === '--work' || w === '--dry' ? [i] : w === '--skill' ? [i, i + 1] : [])))
+  const [id, ...words] = rest.filter((_, i) => !skip.has(i))
+  const said = words.join(' ').trim()
+  if (!id || !said) fail('task <id> "<what the element agent must do>" [--work [--skill <skill id>]] [--dry]')
   if (!registry().some((s) => s.id === id)) fail(`no element ${id} in the registry`)
-  const supervised = supervision.byMain(id, ROOT)
-  const r = await core('/api/agents/wake', { method: 'POST', body: JSON.stringify({ service: id, text: modes.withWord(text, 'build'), from: 'main agent', about: firstSentence(text, 300), reason: 'main-agent-task', supervised }) }).catch((e) => fail(`the core did not answer: ${e.message}`))
+  if (skill !== null && !work) fail('--skill names which of the element\'s agents does a job — use it with --work')
+  let text = said
+  if (skill !== null) {
+    const d = selfAll().find((x) => x.id === id)
+    const own = (d?.ownSkills ?? []).map((k) => k.id)
+    const shared = d?.commonSkills ?? []
+    if (!skill || ![...own, ...shared].includes(skill)) fail(`${id} has no skill «${skill}» — its own: ${own.join(', ') || 'none'}; the shared frame: ${shared.join(', ') || 'none'} (npm run card -- ${id})`)
+    text = `skill ${skill} — ${said}`
+  }
+  const grouped = modes.hasGroups(itemDir(id))
+  const session = work && grouped ? modes.sessionKey(id, 'work') : id
+  const body = { service: id, text: modes.withWord(text, work ? 'work' : 'build'), from: 'main agent', about: firstSentence(said, 300), reason: work ? 'main-agent-job' : 'main-agent-task', supervised: supervision.byMain(id, ROOT) }
+  if (dry) {
+    console.log(`===TASK_DRY=== ${id} → session ${session}${work && !grouped ? ' (this element has no skill groups: one session, the job goes into it with its word)' : ''}\n${body.text}`)
+    process.exit(0)
+  }
+  if (work) jobs.set(session, { about: body.about, skill }, ROOT)
+  const r = await core('/api/agents/wake', { method: 'POST', body: JSON.stringify(body) }).catch((e) => { if (work) jobs.take(session, ROOT); fail(`the core did not answer: ${e.message}`) })
   const b = r.body ?? {}
+  if (!b.ok && work) jobs.take(session, ROOT)
   // 548-20: кто включил агента — запись, а не память сессии: «закончил» будит главного агента в НОВОЙ сессии, и та не знала,
   // включала ли она элемент сама (✗ живой круг 2026-10-20: template остался включённым). `state` печатает, `close` стирает.
-  if (b.ok && !b.pending) markWoken(id, !b.already)
-  console.log(b.ok ? (b.pending ? `===TASK_OK=== ${id}: asked its person in Telegram to turn the agent on` : b.already ? `===TASK_OK=== ${id}: pasted into its live session` : `===TASK_OK=== ${id}: its agent woke with the task`) : `===TASK_FAIL=== ${id}: ${b.reason ?? r.status}${b.freeMb ? ` (free ${b.freeMb} MB, needs ${b.perSessionMb} MB — try later)` : ''}`)
+  // 670-2: рабочая сессия закрывается сама своим «закончил» (552-4) — её не отмечаем.
+  if (b.ok && !b.pending && !work) markWoken(id, !b.already)
+  const its = work ? `its worker (${session})` : 'its agent'
+  console.log(b.ok ? (b.pending ? `===TASK_OK=== ${id}: asked its person in Telegram to turn ${work ? 'its worker' : 'the agent'} on` : b.already ? `===TASK_OK=== ${id}: pasted into the live session ${session}` : `===TASK_OK=== ${id}: ${its} woke with the ${work ? 'job' : 'task'}${work ? ' — its «done» wakes you with its report (npm run state)' : ''}`) : `===TASK_FAIL=== ${id}: ${b.reason ?? r.status}${b.freeMb ? ` (free ${b.freeMb} MB, needs ${b.perSessionMb} MB — try later)` : ''}`)
   process.exit(b.ok ? 0 : 1)
 }
 

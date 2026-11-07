@@ -91,7 +91,7 @@ Address: this clone, `Fractera/web4-node-starter-kit` main; push + CI per subste
 | # | Result | Rests on |
 |---|---|---|
 | 670-1 ✅ | the gatekeeper wakes an asleep element on an i2i call — proven on the owner's node, cold start measured | — |
-| 670-2 | `task --work [--skill <id>]`: a neighbour's job wakes the worker session, naming which of its agents | — |
+| 670-2 ✅ | `task --work [--skill <id>]`: a neighbour's job wakes the worker session, naming which of its agents; its «done» wakes the main agent | — |
 | 670-3 | the core's map gets each element's area and «may grow into» (`areas.json`); `role`, `create`, `card` carry it | — |
 | 670-4 | `find` reads the area, says «does it / its area / nobody» and why; the false storage hit measured away | 670-3 |
 | 670-5 | the law: CLAUDE.md §4 «A request comes», the soul's curiosity line, `shape-the-need` with both examples | 670-2..4 |
@@ -113,3 +113,7 @@ Decisions taken with it: an agent inside an element = a working role (a skill of
 accumulator, the main agent reads it with `card`; the element's area lives in the core's map beside `roles.json`; no separate
 instruction and no separate skill — the soul gets the character, CLAUDE.md the order, `shape-the-need` the depth, the code what must
 always happen; the new lines of CLAUDE.md and the soul are shown to him verbatim before the seal.
+2026-11-07, after 670-1, asked to choose the way of 670-8, verbatim: «your choose in the all process» → every choice inside 670 is
+mine, written with its reason in the substep it belongs to (670-8: the caller waits). Kept as his word, not as my choice: the sealed
+system part — the new lines of CLAUDE.md §1–8 and of the soul are shown to him before the seal, because the instruction itself says they
+change only by the owner's word; live runs are named with their price when they run.

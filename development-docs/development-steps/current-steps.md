@@ -19,10 +19,13 @@ Also verbatim: «Смотри lagrix прямо сейчас ещё не соз�
 конфликтов» → 670-6. Plan and substep files: `new-steps/670/` (670-1 … 670-8), plan commit `c1d41c88`.
 **670-1 CLOSED** (`completed-steps/670-1.md`): blocks asleep by the rule → port held by the gatekeeper in 0.6 s → call 1 HTTP 200 after
 2.96 s (cold start 2.9 s) → on; stripe (off by the person) refused. Measured: a second call 1 s into the cold start → `ECONNREFUSED` at
-once → **670-8 created, waits for the owner's choice** (the caller retries — recommended — or the gatekeeper proxies forever).
+once → 670-8 created. The owner, verbatim: «your choose in the all process» → choices inside 670 are mine (670-8: the caller waits);
+the sealed lines of CLAUDE.md and the soul still go to him before the seal. Context measured 232 538 of 1 000 000 — no reset needed yet.
 Found: the instruction's «a port is asked from `logs/runtime.json`» — that file has only the core's port (elements: registry,
-`serve:status`) → into 670-5's window. **NEXT:** context reset (proposed to the owner), then 670-2 in a fresh session: `task --work
-[--skill] [--dry]` in `scripts/main-agent-cli.mjs` of THIS clone; never run installers or the core server from this clone (it shares the
+`serve:status`) → into 670-5's window. **670-2 CLOSED** (`completed-steps/670-2.md`): `task --work [--skill] [--dry]`; a worker's «done» now wakes the main agent
+(`lib/web4-items/jobs.cjs` + `mount.cjs`; before: 0 wakes, after: 1 — fake kits on the real module). Pre-existing here: `check:modes`
+fails on a clean HEAD of this workshop (no element with groups it expects) — not ours. **NEXT:** 670-3 — `areas.json` + `role --area
+--grows`, `create --area --grows`, `card` prints the area. Work in THIS clone; never run installers or the core server from this clone (it shares the
 live node's pm2 — ANTI-PATTERNS).
 
 **NOW-31 (2026-11-07) — 669 CLOSED on the owner's node (core `23451197`): the figure of the 13 landings without the eyes callout** (the

@@ -29,5 +29,7 @@ changes without its agent knowing.
 ## Not here
 
 - Nobody in the node fits → skill `create-element` (the network first, then a new element).
-- The person wants you to do it anyway — say once why the element's agent should do it, then pass the task with
-  `npm run task -- <id> "<the person's words>"` and tell the person it went there.
+- The person wants you to do it anyway — say once why the element's agent should do it, then pass it on and tell the person it went
+  there. **A job** (the element's work, only data changes) → `npm run task -- <id> --work [--skill <one of its skills from npm run card>]
+  "<the person's words>"`: its worker does it, not its builder, and its «done» wakes you with the report (`npm run state -- <id>`).
+  **A change of its code** → `npm run task -- <id> "<the person's words>"` (its builder). `--dry` shows what would be sent.

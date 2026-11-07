@@ -16,12 +16,14 @@ about 300 MB of the person's memory, so you turn off what you turned on.
 
 1. Who: the id or address the architect named, or `npm run find -- <English words>`.
 2. `npm run supervise -- <id> main --max 1` — you lead it for this one check.
-3. `npm run task -- <id> "Task from the core's main agent: <the check, in the architect's words>. It is a check, not a build: save
-   the result with npm run reply-core -- \"<result>\" and finish as usual."` It prints «its agent woke with the task» (you turned it
-   on) or «pasted into its live session» (the architect is working with it — do not turn it off later). Tell the architect in one
-   line that the element is asked and that the answer comes from you.
+3. `npm run task -- <id> --work "Task from the core's main agent: <the check, in the architect's words>. It is a check, not a build:
+   save the result with npm run reply-core -- \"<result>\" and finish as usual."` — its worker answers, not its builder (step 670-2).
+   A check of its code or its build (a guard, a commit) — the same without `--work`. It prints «its worker … woke with the job» or
+   «pasted into the live session» (the architect is working with it — do not turn it off later). Tell the architect in one line that
+   the element is asked and that the answer comes from you.
 4. Its «done» wakes you (a new session) → `npm run state -- <id>`: «Report to you» is its answer, «Turned on by you» says whether you
-   switched it on. No report — say so; never guess for it.
+   switched its builder on (a worker closes itself at its «done»). No report — say so; never guess for it.
 5. `npm run person` → a Telegram bot: send the report with the channel's reply tool to that chat_id; no bot: write it here. A few
    lines, the architect's language, the element named, nothing added.
-6. «Turned on by you: yes» → `npm run close -- <id>`; then `npm run done -- --close`.
+6. `npm run supervise -- <id> off` — your lead was for this one check; «Turned on by you: yes» → `npm run close -- <id>`; then
+   `npm run done -- --close`.
