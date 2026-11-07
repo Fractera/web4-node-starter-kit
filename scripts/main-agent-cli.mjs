@@ -161,6 +161,10 @@ const MACHINE_FACT = "Everything in this node runs on this computer: each elemen
 // 6 работ, которых в узле нет, — лучшая оценка 0,205–0,304: чистого зазора нет. Порог 0,25 пропускает 19 нужных из 20 и 4 чужих из 6 —
 // дешевле лишний кандидат (агент читает его карточку, `create` просит --different), чем пропуск, после которого рождается дубль.
 // 🪦 0,21 — замер 2026-10-26 на векторах OpenAI (29 из 30 первым, зазор 0,193–0,239).
+// 670-4, замер 2026-11-07 на узле владельца (35 намерений, `completed-steps/670-4.md`): с областью элементов одним куском нужный элемент
+// первым у 17 из 22 (было 14), работа из области — у 4 из 5 (было 2); у работ, которых нет, — те же ложные кандидаты по словам описания
+// (storage 0,38 на «пересказ ролика YouTube»), а у верных совпадений по описанию 0,30–0,57: порог по оценке их не разделяет, порог 0,40
+// терял три верных. Порог прежний; строка кандидата называет ПРИЧИНУ (`whyOf`: навык · область · только описание) — решает карточка.
 const FIND_MIN = 0.25
 const DUP_MIN = FIND_MIN
 
@@ -249,7 +253,7 @@ if (cmd === 'find') {
     if (!best.length) { console.log(`Nobody in this node does «${words}» (closest by meaning: ${hits.slice(0, 2).map((h) => `${h.id} ${h.score.toFixed(2)}`).join(', ')}). Next: npm run lagrix -- ${words}`); process.exit(0) }
     for (const h of best) {
       const x = all.find((y) => y.id === h.id)
-      console.log(`- ${x.id} — ${x.short || x.role || 'no description yet'}${x.on ? '' : ` · TURNED OFF (${x.offReason}) — only the architect turns it on`} · match ${h.score.toFixed(2)} — ${reachOf(x.id)}`)
+      console.log(`- ${x.id} — ${x.short || x.role || 'no description yet'}${x.on ? '' : ` · TURNED OFF (${x.offReason}) — only the architect turns it on`} · ${self.whyOf(h)} · match ${h.score.toFixed(2)} — ${reachOf(x.id)}`)
     }
     console.log('Everything about one of them: npm run card -- <element>')
     process.exit(0)
@@ -718,7 +722,7 @@ if (cmd === 'create') {
       const near = hits.filter((h) => h.score >= DUP_MIN)
       if (near.length) {
         const x = all.find((y) => y.id === near[0].id)
-        fail(`this job looks like ${x.id} (match ${near[0].score.toFixed(2)}): ${x.short || x.role}. Look: npm run card -- ${x.id}; if it can do the job, route the person to it (skill route-to-element). Only if the person says the job is different: run again with --different "<their words why>"`)
+        fail(`this job looks like ${x.id} (match ${near[0].score.toFixed(2)}; ${self.whyOf(near[0])}): ${x.short || x.role}. Look: npm run card -- ${x.id}; if it can do the job, route the person to it (skill route-to-element)${near[0].best?.kind === 'area' ? ' — its area covers this job: a route its own agent builds there, not a new element' : ''}. Only if the person says the job is different: run again with --different "<their words why>"`)
       }
     } else {
       const r = await core(`/api/node/a2a?q=${encodeURIComponent(role)}&off=1`).catch(() => null)
