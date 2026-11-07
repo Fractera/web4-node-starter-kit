@@ -79,9 +79,12 @@ export function CoreBuildWatch({ active, words, build: terminalWords, sessionUrl
       if (!u || stop) return
       // Ядро ответило: итог — у записи, которая шла, когда ядро замолчало (кнопка «Развернуть ядро», обновление); нет такой — «ядро снова отвечает».
       const d = await json<{ core?: { deploy: Rec | null } }>(`${BASE}/api/node/deploy?progress=1&core=1`)
-      const covers = (x?: Rec | null) => Boolean(x?.finishedAt && Date.parse(x.startedAt ?? "") <= build.since && Date.parse(x.finishedAt) >= build.since - 5000)
+      // ✗ Снято наблюдателем 2026-11-07: ядро отвечает раньше, чем сборка пишет итог (сначала возвращаются агенты) — запись ещё «running»,
+      // и страница говорила «ядро снова отвечает» вместо вердикта. Идущая запись — ждать её итога.
+      const covers = (x?: Rec | null) => Boolean(x && Date.parse(x.startedAt ?? "") <= build.since && (x.state === "running" || Date.parse(x.finishedAt ?? "") >= build.since - 5000))
       const rec = [u.update, d?.core?.deploy].find(covers)
-      if (!stop) setEnd(rec?.state === "done" ? "done" : rec && rec.state !== "running" ? "failed" : "back")
+      if (stop || rec?.state === "running") return
+      setEnd(rec?.state === "done" ? "done" : rec ? "failed" : "back")
     }, 1500)
     return () => { stop = true; clearInterval(t) }
   }, [build, end])
