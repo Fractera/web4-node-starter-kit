@@ -5,11 +5,13 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-38 (2026-11-07, ~20:15 UTC) — 673-5 RUNNING, the exam on Opus high.** The owner, verbatim: «экзамен 673-5 на Opus high». Prepared
-on his node: base memory off, the «Also in work» paragraph lifted from the node's `current-steps.md`, the Claude Code auto-memory moved to
-`~/Desktop/exam-673-5-memory-aside/`, the judge's file `~/Desktop/ТЕСТ-673-5 — прочитай после экзамена.md` (restore steps, where the
-transcripts are, how to judge), then `npm run session -- clear`. He asks cold, one question per fresh session; after it he sends «прочитай
-ТЕСТ-673-5» and the session restores everything and judges against `development-docs/exams/shape-of-a-need.md`.
+**NOW-39 (2026-11-07, ~22:40 UTC) — 673 CLOSED** (`completed-steps/673-main.md`, `completed-steps/673-5.md`; the plan deleted): the
+exam on Opus high — one question, the owner's own (a personal brand across networks and a blog), session `0ba0bad6` on his node —
+**Pass, with remarks**: the goal, `find` with reasons, the fork with a pick, one question, nothing without a yes; cases 19, 7, 22, 2/6,
+16 right, 8 half; ◐ force 5 missed in the first answer, the analog and the quiz only after the owner asked; not fully blind (the lift
+seen in `git diff`). Restored on the node: memory on, auto-memory back, the paragraph back verbatim (uncommitted there — the node's HEAD
+`753be503` carries the lift). OWED: the owner's word on the three proposals of 673-5 «Evolution» and on new steps for the examinee's
+D1–D13 (nine identical «done» wakes, the menu: passport names and a live refresh); `completed-steps/674.md`; 676 queued.
 
 **NOW-37 (2026-11-07, ~20:05 UTC) — 677 CLOSED** (`completed-steps/677.md`, `bdc68042`): «GitHub» first among the «Main» shortcuts,
 red while the binding is not own; proven on the owner's node `3a23da39` (order, link, colour own → normal, flagged → #ef4444). The seal
