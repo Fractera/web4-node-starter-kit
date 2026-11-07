@@ -91,6 +91,30 @@ Each case: the request · the shapes that survive · the right one · the forces
     after reading the site's own terms; without the extension the person pastes or screenshots the texts; open blogs the agent reads
     itself where `site-rules` allows; the pick and why. Forces 8, 1. Source: the owner's words and the main agent's reply, 2026-11-07.
 
+## Cases removed from the skills of a field (673-3)
+
+22. **A scout of rising topics** — watching networks, Telegram channels, video and news portals for a topic that rises, and proposing a
+    publication in trend. Right: a hand with its own clock (force 6) that proposes to the channel that fits; official APIs and feeds
+    only. Source: `content-factory`, «The order» 6. (Its other prescriptions are cases 2, 6, 7, 8 and 19.)
+23. **A date of the person's life to remember** — a tax declaration, a car's service, a document that expires. Right: a reminder of
+    the deep memory at that time (`npm run remember -- … --remind-at`), no element — the capability exists (force 4) and nothing
+    recurs beyond the date (force 6). Source: `own-agents`, «The order» 2.
+24. **A field of the person's life with data and a rhythm** — meals, training, a budget, a portfolio, a car's service book. Right: an
+    element of its own with its own bot; a page of its own only when the work needs a view (a chart of weight, a budget table, a
+    portfolio), otherwise Telegram alone. Forces 6, 5. Source: `own-agents`, «The order» 2 and 4.
+25. **Several people near the architect.** Right: one element each, never one element for many — an element's memory, bot and data
+    are one person's. Force 5. Source: `integrator`, «The order» 1.
+26. **What to propose to people near the architect** — the owner's list: a deep memory · a personal coach · household expenses ·
+    selling services (rides, help at home, home cooking to order) · ordering services of other people through Lagrix · learning a
+    foreign language, programming, AI — each a custom element of its own. Forces 5, 6, 7. Source: `integrator`, «What to propose».
+27. **Requests the old descriptions named** (recognition — each must reach the method with its field's facts): «хочу себе тренера»,
+    «агент-диетолог», «веди мой бюджет», «помоги инвестировать», «напоминай про налоговую и ТО машины», «повысить свою
+    эффективность», «own agents», «Создать своих агентов» (a card of the root page); «контент-завод», «вести соцсети», «посты
+    голосами авторов», «публиковать в Telegram и YouTube», «отслеживать тренды», «content factory», «grow my channels», «Создать
+    контент-завод» (a card of the root page); «для жены», «для сына», «для моей команды», «чтобы мама тоже могла», «one node for the
+    whole family»; and of `shape-the-need`: «я хочу чтобы мой сын учился программировать», «как мне заработать?», «составь расписание
+    для моей команды», «найди экскурсию», «хочу пост в стиле автора». Source: the descriptions before 673-1 and 673-3.
+
 ## Cases added by the main agent — to be confirmed by the owner
 
 21. **«Переведи мою книгу на английский»** (shown to the owner 2026-11-07 as a request with no case). `find`: nobody (auth 0.24,

@@ -19,8 +19,14 @@ import { join, relative, resolve } from 'node:path'
 const i = process.argv.indexOf('--root')
 const ROOT = i > 0 ? resolve(process.argv[i + 1]) : resolve(import.meta.dirname, '..')
 
-// The files that decide which shape a need takes. 673-3 adds the skills of a field once they give facts, not shapes.
-const SKILLS = ['shape-the-need']
+// The files that decide which shape a need takes: the method, and (673-3) the skills of a field, which give facts, not shapes.
+const METHOD_SKILL = 'shape-the-need'
+const FIELD_SKILLS = ['content-factory', 'own-agents', 'integrator']
+const SKILLS = [METHOD_SKILL, ...FIELD_SKILLS]
+// A skill of a field never names the shape itself — the method decides it on the node's facts (673-3).
+const FIELD_RULES = [
+  [/\b(?:an element of its own|one element (?:per|each|for)|each is a(?:n)? (?:custom )?element|is a custom element|no element)\b/i, 'a skill of a field names the shape — the method decides it'],
+]
 const TOOL = join('lib', 'agent-kit', 'skills', 'catalog-index.mjs')
 
 const RULES = [
@@ -30,16 +36,16 @@ const RULES = [
 ]
 
 const problems = []
-function check(label, text) {
+function check(label, text, rules = RULES) {
   text.split('\n').forEach((line, n) => {
-    for (const [rule, why] of RULES) if (rule.test(line)) problems.push(`${label}:${n + 1}: ${why} — ${line.trim().slice(0, 90)}`)
+    for (const [rule, why] of rules) if (rule.test(line)) problems.push(`${label}:${n + 1}: ${why} — ${line.trim().slice(0, 90)}`)
   })
 }
 
 for (const name of SKILLS) {
   const file = join(ROOT, '.claude', 'skills', name, 'SKILL.md')
   if (!existsSync(file)) { problems.push(`.claude/skills/${name}/SKILL.md: missing`); continue }
-  check(`.claude/skills/${name}/SKILL.md`, readFileSync(file, 'utf8'))
+  check(`.claude/skills/${name}/SKILL.md`, readFileSync(file, 'utf8'), FIELD_SKILLS.includes(name) ? [...RULES, ...FIELD_RULES] : RULES)
 }
 const toolFile = join(ROOT, TOOL)
 if (!existsSync(toolFile)) problems.push(`${TOOL}: missing`)
