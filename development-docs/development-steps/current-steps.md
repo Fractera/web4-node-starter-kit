@@ -5,6 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-31 (2026-11-07) — 669 RELEASED (`completed-steps/669.md`): the eyes callout removed from the figure of the 13 landings** (the owner:
+«сноска на глаза пересекается с сноской на руки. Убери полностью»). 13 repositories at their next patch, pinned with this commit. NEXT:
+the owner syncs → `npm run node:update` → the figure with four callouts on his node.
+
 **NOW-30 — 667 and 668 CLOSED on the owner's node (core `79682d7f`): the theme blue everywhere again, the new figure live. Open: 666's bot
 path (his node has no Telegram bot yet).**
 

@@ -34,7 +34,7 @@
     {
       "id": "auth",
       "repo": "https://github.com/Fractera/fractera-auth-starter.git",
-      "version": "v2.4.24",
+      "version": "v2.4.25",
       "port": 24681,
       "provides": [
         "session",
@@ -49,7 +49,7 @@
     {
       "id": "data",
       "repo": "https://github.com/Fractera/fractera-data-starter.git",
-      "version": "v2.2.17",
+      "version": "v2.2.18",
       "port": 24682,
       "provides": [
         "tables",
@@ -66,7 +66,7 @@
     {
       "id": "storage",
       "repo": "https://github.com/Fractera/fractera-storage-starter.git",
-      "version": "v1.1.37",
+      "version": "v1.1.38",
       "port": 24693,
       "provides": [
         "media"
@@ -79,7 +79,7 @@
     {
       "id": "vectors",
       "repo": "https://github.com/Fractera/fractera-vectors-starter.git",
-      "version": "v1.2.20",
+      "version": "v1.2.21",
       "port": 24694,
       "provides": [
         "vectors"
@@ -92,7 +92,7 @@
     {
       "id": "embeddings",
       "repo": "https://github.com/Fractera/fractera-embeddings-starter.git",
-      "version": "v0.1.18",
+      "version": "v0.1.19",
       "port": 24696,
       "provides": [
         "embeddings"
@@ -105,7 +105,7 @@
     {
       "id": "config",
       "repo": "https://github.com/Fractera/fractera-config-starter.git",
-      "version": "v1.2.33",
+      "version": "v1.2.34",
       "provides": [
         "project-settings"
       ],
@@ -118,7 +118,7 @@
     {
       "id": "design",
       "repo": "https://github.com/Fractera/fractera-design-starter.git",
-      "version": "v1.1.32",
+      "version": "v1.1.33",
       "provides": [
         "project-design"
       ],
@@ -131,7 +131,7 @@
     {
       "id": "graph",
       "repo": "https://github.com/Fractera/fractera-graph-lightrag-starter.git",
-      "version": "v1.2.19",
+      "version": "v1.2.20",
       "provides": [
         "knowledge-graph"
       ],
@@ -144,7 +144,7 @@
     {
       "id": "cache",
       "repo": "https://github.com/Fractera/fractera-redis-cache-starter.git",
-      "version": "v0.1.30",
+      "version": "v0.1.31",
       "port": 24695,
       "provides": [
         "cache"
@@ -157,7 +157,7 @@
     {
       "id": "memory",
       "repo": "https://github.com/Fractera/fractera-memory-starter.git",
-      "version": "v2.2.37",
+      "version": "v2.2.38",
       "port": 24690,
       "provides": [
         "memory",
@@ -172,7 +172,7 @@
     {
       "id": "stripe",
       "repo": "https://github.com/Fractera/fractera-stripe-starter.git",
-      "version": "v1.3.28",
+      "version": "v1.3.29",
       "port": 24691,
       "provides": [
         "payments"
