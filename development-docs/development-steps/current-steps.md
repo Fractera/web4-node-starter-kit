@@ -37,9 +37,17 @@ no i2i door caller exists in the core (read) → its code is item 3 of `new-step
 (the element side, queued). **670-5 CLOSED** (`completed-steps/670-5.md`): the lines shown; the owner, verbatim: «continue»
 (read with «your choose in the all process» as the word to seal); CLAUDE.md sealed `7eee9afe78b7`, the soul sealed; guards OK. The
 system part reaches a node from `origin/main` of its fork (`scripts/system-part.mjs`) — no tag needed. CI of `e8f79a96` green (three
-systems, the Lagrix guard in prebuild). **NEXT: 670-7** — the owner presses «Sync fork» for aifa-agi/web4-node-starter-kit on GitHub
-(the core's gh account `Fractera` only reads it) → on his node `npm run node:update` (written here BEFORE it starts) → `find` on the
-two examples, `npm run lagrix`, `task --work --dry`, then the two cold questions to a fresh main-agent session (priced). Work in THIS clone; never run installers or the core server from this clone (it shares the
+systems, the Lagrix guard in prebuild). **NEXT: 670-7, in this order.** (1) The owner presses «Sync fork» on
+github.com/aifa-agi/web4-node-starter-kit (measured 2026-11-07: 10 commits behind Fractera, 0 ahead — a clean fast-forward; the core's
+gh account `Fractera` only reads it). (2) The update on his node, DETACHED (it rebuilds the core and so ends the main agent's session):
+his button «Обновить узел», or from the node `node scripts/spawn-free.mjs scripts/node-update-run.mjs` with a cleaned environment;
+log `logs/node-update.log`, result `data/node/node-update.json` (`done`). (3) The FRESH main-agent session after the rebuild runs the free
+node-side proofs: `npm run find -- "пересказ ролика YouTube"` and «сгенерировать контент для соцсетей» (reasons on each line, the live
+index migrates to layout 2 by itself), `npm run card -- memory` (its area), `npm run lagrix -- "youtube video summary"` (a2a + f2f),
+`npm run task -- root --work --skill help-desk --dry "…"`, `npm run check:lagrix-contract`. (4) The owner asks that fresh session the two
+questions (545-4's method — not a cold `claude -p`); then «сверь с 670-7»: the verdicts against `new-steps/670/670-7.md`'s expected
+answers → `completed-steps/670-7.md` → close 670 (`670-main.md` summary into `completed-steps/`, `new-steps/670/` deleted in the same
+commit, NOW-32 rewritten) → offer the owner the review (skill `self-review`). Work in THIS clone; never run installers or the core server from this clone (it shares the
 live node's pm2 — ANTI-PATTERNS).
 
 **NOW-31 (2026-11-07) — 669 CLOSED on the owner's node (core `23451197`): the figure of the 13 landings without the eyes callout** (the
