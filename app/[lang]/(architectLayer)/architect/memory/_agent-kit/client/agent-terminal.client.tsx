@@ -10,6 +10,8 @@ import { TerminalPasteDialog } from "@/_tools/terminal-paste/client/terminal-pas
 import type { AgentTerminalWords } from "../words/agent-terminal.i18n"
 import { createMouseFilter, MOUSE_OFF } from "./mouse-filter.mjs"
 import { type XtermHandle, XtermTerminal } from "./xterm-terminal.client"
+import type { CoreTerminalWords } from "@/components/deploy/core-terminal.client"
+import { CoreBuildWatch } from "./core-build-watch.client"
 
 // ТЕРМИНАЛ АГЕНТА УЗЛА: СПИТ ДО ЗАПУСКА, ЖИВЁТ ПРИ УХОДЕ, ОСТАНАВЛИВАЕТСЯ КНОПКОЙ (267-1).
 //
@@ -32,7 +34,8 @@ type State = "checking" | "sleeping" | "connecting" | "running" | "stopped" | "o
 // сессии и сокета — из её ответа (`<id>--work`, `lib/agent-kit/modes.cjs`), а не собирается здесь второй раз.
 // 556-9: `startTask` — задача кнопкой «Начать …» на странице ядра (ящик `_tools/terminal-drawer`): то же, что ссылка `?paste=` (551-7) —
 // спящему терминалу она уходит первым поручением, работающему — окном вставки, отправляет человек.
-export function AgentTerminal({ service, lang, words, dialogUi, initialPaste, keyHref, compact = false, mode, startTask }: { service: string; lang: string; words: AgentTerminalWords; dialogUi: AppDialogUi; initialPaste?: string; keyHref?: string; compact?: boolean; mode?: "work"; startTask?: string }) {
+// 675-2: `build` — слова терминала сборки ядра: пока идёт сборка, он стоит вместо карточки запуска (`CoreBuildWatch`).
+export function AgentTerminal({ service, lang, words, build, dialogUi, initialPaste, keyHref, compact = false, mode, startTask }: { service: string; lang: string; words: AgentTerminalWords; build?: CoreTerminalWords; dialogUi: AppDialogUi; initialPaste?: string; keyHref?: string; compact?: boolean; mode?: "work"; startTask?: string }) {
   const api = `${BASE}/${lang}/architect/${service}/agent-api`
   const sessionUrl = `${api}/session${mode === "work" ? "?mode=work" : ""}`
   const keyRef = useRef(service)
@@ -62,6 +65,16 @@ export function AgentTerminal({ service, lang, words, dialogUi, initialPaste, ke
   // Задача ушла с запуском, а сессия ещё не подтвердилась: отказ запуска (код 1008) возвращает её в окно вставки — не теряется.
   const taskPendingRef = useRef<string | null>(null)
   const [taskAtStart, setTaskAtStart] = useState(false)
+
+  // 675-2: «Закрыть и запустить агента» после сборки ядра — страница заново, с `?start=1`: спящий терминал запускается сам.
+  const startAskedRef = useRef(false)
+  useEffect(() => {
+    const url = new URL(window.location.href)
+    if (url.searchParams.get("start") !== "1") return
+    startAskedRef.current = true
+    url.searchParams.delete("start")
+    window.history.replaceState(null, "", url.pathname + url.search + url.hash)
+  }, [])
 
   useEffect(() => {
     const incoming = pasteFromSearch(window.location.search)
@@ -195,6 +208,7 @@ export function AgentTerminal({ service, lang, words, dialogUi, initialPaste, ke
             setPasteOpen(true)
           }
         } else if (task !== null) await connect(true, task)
+        else if (startAskedRef.current) await connect(true)
         else setState("sleeping")
       } catch {
         if (!cancelled) setState("offline")
@@ -293,6 +307,7 @@ export function AgentTerminal({ service, lang, words, dialogUi, initialPaste, ke
       </details>
 
       {!live && (
+        <CoreBuildWatch active={state !== "checking"} words={words} build={build} sessionUrl={sessionUrl}>
         <div className="flex flex-col gap-3 rounded-lg border border-border border-dashed bg-muted/40 p-5 text-muted-foreground">
           <div className="flex items-center gap-2 font-medium text-foreground">
             <Moon className="size-4" aria-hidden />
@@ -307,6 +322,7 @@ export function AgentTerminal({ service, lang, words, dialogUi, initialPaste, ke
             </Button>
           </div>
         </div>
+        </CoreBuildWatch>
       )}
 
       {live && (

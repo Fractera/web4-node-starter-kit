@@ -45,7 +45,8 @@ async function json<T>(url: string, ms = 4000): Promise<T | null> {
   }
 }
 
-export function CoreTerminal({ words, mode, since }: { words: CoreTerminalWords; mode: "rebuild" | "update"; since: number }) {
+// 675-2: `onEnd` — итог сборки тому, кто терминал показал (терминал агента рисует свои кнопки); `noReload` — без своей кнопки.
+export function CoreTerminal({ words, mode, since, onEnd, noReload = false }: { words: CoreTerminalWords; mode: "rebuild" | "update"; since: number; onEnd?: (phase: "done" | "failed") => void; noReload?: boolean }) {
   const [lines, setLines] = useState<string[]>([])
   const [phase, setPhase] = useState<Phase>("running")
   const [source, setSource] = useState<"core" | "reader" | "none">("core")
@@ -106,6 +107,10 @@ export function CoreTerminal({ words, mode, since }: { words: CoreTerminalWords;
     }
   }, [mode, phase, since])
 
+  const ended = useRef(onEnd)
+  ended.current = onEnd
+  useEffect(() => { if (phase !== "running") ended.current?.(phase) }, [phase])
+
   const stageName = stage ? words.stages[stage] ?? stage : ""
   const title =
     phase === "done" ? (mode === "update" ? words.updateDone : words.done)
@@ -114,12 +119,12 @@ export function CoreTerminal({ words, mode, since }: { words: CoreTerminalWords;
     : mode === "update" ? words.updating.replace("{stage}", stageName)
     : words.building
   return (
-    <div className="flex flex-col gap-2" data-core-terminal={phase} data-core-terminal-source={source}>
+    <div className="flex flex-col gap-2" data-block="core-terminal" data-core-terminal={phase} data-core-terminal-source={source}>
       <LiveLog title={title} lines={lines.length ? lines : ["…"]} done={phase !== "running"} failed={phase === "failed"} />
       {source === "reader" && phase === "running" && <p className="text-xs text-muted-foreground">{words.fromReader}</p>}
       {/* Ядро ответило — значит, прежняя сборка работает: это проверено самим ответом. */}
       {phase === "failed" && <FailureNote words={words.failure} cause={cause} previousUp={true} retried={retried} target={mode === "update" ? "update" : "core"} />}
-      {phase !== "running" && down.current && (
+      {phase !== "running" && down.current && !noReload && (
         <Button variant="outline" size="sm" className="self-start" onClick={() => window.location.reload()} data-core-terminal-reload>{words.reload}</Button>
       )}
     </div>

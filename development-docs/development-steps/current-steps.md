@@ -5,6 +5,21 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-34 (2026-11-07, ~17:30 UTC) — step 675 IN WORK, alone, start to end: the terminal shows the core build, the main agent comes back by itself.**
+Plan `new-steps/675-the-terminal-shows-the-core-build-and-the-agent-returns.md` (the owner's words verbatim in its §1). His approval,
+verbatim: «чтобы ты не искал меня и сам полностью от начало до конца его выполнил при необходимости один или несколько раз сделал
+синхронизацию»; mid-work: «not call , not ask , to do to finish non stop , i am not is here , see you later», «start without me», «select
+best choosse». The fork sync is done by me in his Chrome (signed in as aifa-agi; gh `Fractera` only reads the fork — measured). Code
+done in the workshop: `lib/deploy/agent-return.cjs` + `scripts/agent-return.mjs` (note before `closeLid`, wake `core-back` after a good
+build, the waiter for an update), `serve.mjs rebuild`, `/api/agents/session` `status`, `/api/agents/wake` `core-back`, bridge `wake`
+`continueLast`; `components/deploy/core-terminal.i18n.ts`, `CoreTerminal` `onEnd`/`noReload`, kit `core-build-watch.client.tsx`,
+`?start=1`; 14 copies updated (`check:agent-kits` 14 legal). Proven so far: the fake-core script (running → 1 wake core-back; asleep → 0;
+failed update → 0, record dropped; done update → wake; core silent → not noted; the OLD core answers 400 to `status` → the bridge's
+`session-mode.json`); `tsc` clean; the guards one by one OK (`check:api` caught a 13-word name — fixed). The first update that delivers
+675 runs the OLD `node-update.mjs` but the NEW `serve.mjs` → the waiter does the return. NEXT: commit + push → CI → Sync fork (Chrome) →
+the detached `node:update` on the node (ends this session) → the session comes back by itself (`logs/agent-return.log` on the node) →
+UI proof with `npm run eyes` on a sleeping kit terminal (a running update record + the reader) → summaries 675-1, 675-2, the plan deleted.
+
 **NOW-33 (2026-11-07, evening) — 673 APPROVED («да, утверждаю, начинай», pushes to Fractera allowed for the whole step): thinking Fractera without examples. 673-1 IN WORK.** Plan:
 `new-steps/673/673-main.md` + `673-1` … `673-5` (forces and method in `shape-the-need` and at the end of `skills_find`'s answer ·
 every case into `development-docs/exams/shape-of-a-need.md` + guard `check:shape-examples` · domain skills give facts, not shapes,
@@ -27,7 +42,13 @@ got none); the exam set `development-docs/exams/shape-of-a-need.md` seeded (21 c
 `integrator` = facts of their field, no shape, no request in their descriptions; 670-9's lines gone; the guard covers them (the old
 three flagged 6 times); exam cases 22–27. **673-4 CLOSED** (`completed-steps/673-4.md`): the owner, verbatim: «y» → CLAUDE.md §1, §4
 (the integrator, own agents, «A request comes» — the fork is the law) and the soul without cases; sealed (instruction `51139db80cdd`,
-soul), both refused the text before the reseal. NEXT: his «Sync fork» on aifa-agi (it carries 670-9, 673-1…4, 674) → `node:update`
+soul), both refused the text before the reseal. CI of `1ca22b7a` green (windows, ubuntu; the runs of `fa681cfb`, `393ec1ea`,
+`81427d08` were cancelled by the next push — GitHub's concurrency). The owner: «sync ok» → measured: aifa-agi main `1ca22b7a`, 7 new
+commits for the node → **the detached update STARTED by the main agent** (`node scripts/spawn-free.mjs scripts/node-update-run.mjs`,
+`NEXT_*`, `__NEXT_PROCESSED_ENV`, `PORT`, `WEB4_COMMIT` stripped; log `logs/node-update.log`, result `data/node/node-update.json`) — it
+ends that session at the core's build; a FRESH session goes on: `===NODE_UPDATE_DONE===` + `serve:status` «сборка» = `1ca22b7a`, the
+system part restored from the fork (CLAUDE.md seal `51139db80cdd`, `shape-the-need` with the forces), 674's check (the main agent's
+`data/services/build/session-mode.json`: model opus, effort high), then 673-5. Before that line the plan was: his «Sync fork» on aifa-agi (it carries 670-9, 673-1…4, 674) → `node:update`
 (detached, ends the session) → the fresh session: 674's node check (`session-mode.json` effort high) → 673-5, the exam on Opus high.
 
 **NOW-32 (2026-11-07, afternoon) — 670 APPROVED («да, подтверждаю план, начинай»), from the owner's node (this Mac): «an order finds its hand» — waking on an order

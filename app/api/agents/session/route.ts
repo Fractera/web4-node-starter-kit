@@ -1,4 +1,4 @@
-// @api clear an agent session's context or switch its model
+// @api clear an agent session, switch its model or read its state
 import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -34,6 +34,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, reason: "service must be an element id" }, { status: 400, headers: HEADERS })
   }
   const action = typeof body.action === "string" ? body.action : ""
+  // 675-1: `status` — работает ли сессия сейчас (карта живых сессий `_agent-kit/server/session.cjs`); его спрашивает сборка ядра
+  // до закрытой крышки, чтобы после удачной сборки вернуть работавшего главного агента (`lib/deploy/agent-return.cjs`).
+  if (action === "status") {
+    const live = (globalThis as { __web4TerminalSessions?: Map<string, { startedAt?: string }> }).__web4TerminalSessions?.get(service)
+    return NextResponse.json({ ok: true, service, running: Boolean(live), startedAt: live?.startedAt ?? null }, { headers: HEADERS })
+  }
   const model = typeof body.model === "string" ? body.model : undefined
   const command = (globalThis as { __web4AgentSession?: SessionCommand }).__web4AgentSession
   if (typeof command !== "function") {

@@ -25,6 +25,8 @@ const { startReader, stopReader } = createRequire(import.meta.url)('../lib/deplo
 // 642-4: причина отказа; проходящая (память, сеть) — один повтор `next build`, названный до него. Причина читается из журнала, куда
 // пишет запустивший (кнопка, обновление узла); из терминала журнала нет — повтора нет.
 const { causeOf } = createRequire(import.meta.url)('../lib/deploy/build-failure.cjs')
+// 675-1: главный агент, которого остановит крышка, возвращается после удачной сборки в тот же разговор (`lib/deploy/agent-return.cjs`).
+const agentReturn = createRequire(import.meta.url)('../lib/deploy/agent-return.cjs')
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const root = path.join(here, '..')
@@ -637,6 +639,9 @@ async function rebuild() {
   openLid(root)
   console.log("Собираю сайт заново. На время сборки узел остановлен: пульт и сайты этого компьютера не отвечают, в интернете — копии страниц.")
   const backedUp = backupNext(root)
+  const buildWhat = process.env.FRACTERA_BUILD_WHAT || "core"
+  const buildSince = Date.now()
+  const agentBack = await agentReturn.noteBefore(root, buildWhat)
   closeLid(root)
   // 642-2: журнал этой сборки — тот файл, куда её вывод пишет запустивший (кнопка ядра, обновление узла); из терминала — только этап.
   startReader(root, { log: process.env.FRACTERA_BUILD_LOG, what: process.env.FRACTERA_BUILD_WHAT || "core" })
@@ -677,6 +682,7 @@ async function rebuild() {
   if (build.status !== 0) {
     // Упавшая сборка стирает статику прежней (ANTI-PATTERNS «Оборванная сборка ядра…») — прежняя возвращается из копии.
     if (backedUp) restoreNext(root)
+    agentReturn.drop(root)
     stopReader(root)
     openLid(root)
     console.error(`\nСборка НЕ УДАЛАСЬ — ${backedUp ? "возвращена прежняя сборка, узел запущен снова" : "копии прежней сборки не было, узел запущен снова"}. Ошибки выше.`)
@@ -698,6 +704,7 @@ async function rebuild() {
   })
   if (seo.status !== 0) {
     if (backedUp) restoreNext(root)
+    agentReturn.drop(root)
     stopReader(root)
     openLid(root)
     console.error("\nСборка собралась, но языковые сигналы в ней противоречат друг другу —")
@@ -715,6 +722,11 @@ async function rebuild() {
   dropBackup(root)
   // 557: страницы собраны без элементов (они были вынесены) — перерисовать их, когда ядро поднялось и элементы на месте.
   await redrawCore(root)
+  // 675-1: обновление узла ещё не кончилось (каталог, навыки) — его итог дождётся ждун вне дерева ядра; своя сборка — будим сразу.
+  if (agentBack && buildWhat === "update") {
+    spawnSync(process.execPath, [path.join(root, "scripts", "spawn-free.mjs"), path.join(root, "scripts", "agent-return.mjs"), "--after-update", String(buildSince)], { cwd: root, stdio: "ignore", windowsHide: true })
+    console.log("Главный агент вернётся, когда обновление узла закончится удачно (журнал: logs/agent-return.log).")
+  } else if (agentBack) await agentReturn.wakeAfter(root, "the core is built and running")
   console.log("Готово. Проверить: npm run serve:status")
 }
 

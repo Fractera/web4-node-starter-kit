@@ -41,6 +41,15 @@ export type AgentTerminalWords = {
   pasteKeyLink: string
   /** 551-7: задача из ссылки ушла спящему терминалу вместе с запуском. */
   taskAtStart: string
+  /** 675-2: идёт сборка ядра — вместо карточки запуска */
+  buildRunning: string
+  buildNoStart: string
+  buildEnded: string
+  /** голая `serve:rebuild`: конец без вердикта */
+  buildBack: string
+  buildCloseStart: string
+  buildClose: string
+  buildWoke: string
 }
 
 const DICT: Record<string, AgentTerminalWords> = {
@@ -81,6 +90,13 @@ const DICT: Record<string, AgentTerminalWords> = {
     pasteCancel: "Cancel",
     pasteKeyLink: "Add the OpenAI key",
     taskAtStart: "The task from the link went to the agent with the start, as its first request. If Claude Code asks whether you trust this folder, the node answers it.",
+    buildRunning: "The core is building — the agent cannot start now",
+    buildNoStart: "The build has stopped the node, the agent's session too. Do not start the agent until the build ends: it would be stopped again.",
+    buildEnded: "The core build has ended",
+    buildBack: "The core answers again.",
+    buildCloseStart: "Close and start the agent",
+    buildClose: "Close",
+    buildWoke: "The agent came back by itself, in the same conversation — connecting…",
   },
   ru: {
     folderLabel: "Агент запускается в папке:",
@@ -119,6 +135,13 @@ const DICT: Record<string, AgentTerminalWords> = {
     pasteCancel: "Отмена",
     pasteKeyLink: "Добавить ключ OpenAI",
     taskAtStart: "Задача из ссылки ушла агенту вместе с запуском — первым поручением. Если Claude Code спросит, доверяете ли вы этой папке, узел ответит сам.",
+    buildRunning: "Идёт сборка ядра — агента сейчас не запустить",
+    buildNoStart: "Сборка остановила узел, а вместе с ним и сессию агента. Не запускайте агента, пока сборка не закончится: она остановит его снова.",
+    buildEnded: "Сборка ядра закончилась",
+    buildBack: "Ядро снова отвечает.",
+    buildCloseStart: "Закрыть и запустить агента",
+    buildClose: "Закрыть",
+    buildWoke: "Агент вернулся сам, в тот же разговор, — подключаюсь…",
   },
 }
 

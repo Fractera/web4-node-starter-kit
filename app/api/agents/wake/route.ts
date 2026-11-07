@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic"
 
 const HEADERS = { "Cache-Control": "no-store" }
 
-type Wake = (service: string, opts: { text?: string; from?: string; about?: string; declineUrl?: string; confirmed?: boolean }) => Promise<Record<string, unknown> & { ok: boolean }>
+type Wake = (service: string, opts: { text?: string; from?: string; about?: string; declineUrl?: string; confirmed?: boolean; continueLast?: boolean }) => Promise<Record<string, unknown> & { ok: boolean }>
 // 548-11: `supervised: true` — поручение главного агента элементу, который архитектор отдал ему под надзор
 // (`data/node/supervision.json`, `lib/web4-items/supervision.cjs`): включается без вопроса в Telegram — человек этот вопрос уже
 // решил, выбрав надзор. Нет записи надзора — флаг ничего не меняет.
@@ -59,6 +59,18 @@ export async function POST(req: NextRequest) {
   // агента, reason main-agent-create), включается и с согласием на свою папку: бота у новорождённого нет, и вопрос Claude Code о
   // доверии папке висел бы молча (watchTrust зовёт человека только через бота). На этой машине папки доверены через домашнюю
   // (`~/.claude.json`), на чистой — нет. Элемент с подключённым ботом этим путём не идёт — для него остаётся вопрос в Telegram.
+  // 675-1 (владелец 2026-11-07: «в самом идеальным вариантом было бы авто пробуждение после успешного завершения»): `core-back` — сборка
+  // ядра остановила работавшего главного агента и закончилась удачно (`lib/deploy/agent-return.cjs`). Только главный агент; тот же
+  // разговор (`claude --continue`), без вопроса — человек его уже запустил; без `from` — разговор остаётся разговором с человеком.
+  const back = body.reason === "core-back"
+  if (back && service !== "build") {
+    return NextResponse.json({ ok: false, reason: "core-back returns only the main agent (service build)" }, { status: 403, headers: HEADERS })
+  }
+  if (back) {
+    const out = await wake(service, { text, confirmed: true, continueLast: true })
+    console.log(`[agents/wake] build reason=core-back → ${out.ok ? (out.already ? "already" : "started") : out.reason}`)
+    return NextResponse.json(out, { status: out.ok ? 200 : out.reason === "memory" ? 503 : 409, headers: HEADERS })
+  }
   const created = body.reason === "main-agent-create" && !telegramConnected(service)
   const confirmed = (body.supervised === true && supervision.byMain(service)) || created || alarm
   const out = await wake(service, { text, from: str(body.from, 120), about: str(body.about, 600), declineUrl: str(body.declineUrl, 300), ...(confirmed ? { confirmed: true } : {}) })

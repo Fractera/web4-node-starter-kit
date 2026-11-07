@@ -724,7 +724,7 @@ function freshPid(file, since) {
  * РАЗБУДИТЬ АГЕНТА СЛУЖБЫ БЕЗ БРАУЗЕРА (409-1). Сессия жива — только вставить текст. Свободной памяти меньше нормы на сессию —
  * отказ с цифрами, ничего не рождается (задача ждёт). Открытая потом страница терминала видит этот же экран.
  */
-async function wake(element, { text, from, about, declineUrl, confirmed, taskUrls = [], model, effort, ultracode = false, callerTells = false } = {}) {
+async function wake(element, { text, from, about, declineUrl, confirmed, taskUrls = [], model, effort, ultracode = false, callerTells = false, continueLast = false } = {}) {
   const urls = [declineUrl, ...taskUrls].filter(Boolean)
   // 552-4 (владелец 2026-10-20: «каждый из этих процессов может отправлять первое слово»): у элемента с группами навыков запрос
   // идёт в сессию своего процесса по первому слову; слова нет — строительство, и это пишется в журнал узла. Ключ сессии
@@ -765,7 +765,10 @@ async function wake(element, { text, from, about, declineUrl, confirmed, taskUrl
   if (freeMb < per) return { ok: false, reason: 'memory', freeMb, perSessionMb: per, top: topApps(3) }
   // 614-1: `hold` — у сессии с ботом поручение ждёт её канал; `callerTells` — о неудаче канала человеку скажет вызывающий (кнопка Telegram).
   // 666: усилия и ultracode — с кнопок Telegram (`telegram.cjs` `onButton`); ultracode рождается только с подтверждением человека.
-  const r = await spawnAgent(service, undefined, undefined, text && task ? `${text}\n\n${finishRule(service)}` : '', { pass, model, effort, ultracode: ultracode === true && Boolean(confirmed), hold: true, callerTells })
+  // 675-1: `continueLast` — главный агент возвращается после сборки ядра в тот же разговор этой папки (`/api/agents/wake` reason core-back);
+  // разговора ещё не было — новая сессия, как прежде.
+  const again = continueLast === true && hasConversation(serviceDir(element))
+  const r = await spawnAgent(service, undefined, undefined, text && task ? `${text}\n\n${finishRule(service)}` : '', { pass, model, effort, ultracode: ultracode === true && Boolean(confirmed), hold: true, callerTells, continueLast: again })
   if (!r.ok) return { ok: false, reason: r.reason }
   rememberTasks(r.session, urls)
   // 615-6: пробуждение с `from` — узел (надзор, задача главного агента, другой агент); без `from` — человек (кнопка, «включить»).
