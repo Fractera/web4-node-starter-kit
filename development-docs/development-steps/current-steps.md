@@ -5,6 +5,21 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-32 (2026-11-07, afternoon) — 670 APPROVED («да, подтверждаю план, начинай»), from the owner's node (this Mac): «an order finds its hand» — waking on an order
+(i2i now, a2a on paper), new element or a route in an existing one, the accumulator of an element's agents, the order «who already solved
+it».** Plan draft: `new-steps/670/670-main.md`; substep files after the owner's yes. Work address: this clone
+(`~/fractera-dev/web4-node-starter-kit`, Fractera main); the live proof on his node after his fork sync → `npm run node:update`.
+The owner, verbatim: «сегодня я хочу сделать это наши основной задачей разработки … я даю тебе разрешение на разработку ядра с пуш в
+github.com/fractera/web4-node-starter-kit»; «a2a is not only on protocol , you must remember about i2i , and i2i we can use just now , but
+a2a it must discribed for feature , ok ?». Measured on his node (do not measure again): `find` «сгенерировать контент для соцсетей» →
+storage 0.34, «пересказ ролика YouTube» → storage 0.38 (both false, threshold `FIND_MIN` 0.25); `npm run task` always wakes the BUILD
+session (`modes.withWord(text, 'build')`), there is no way to hand a neighbour a job for its `<id>--work` session; the gatekeeper is online
+(36 MB); no A2A endpoint exists in code (only `STANDARD.md`, guards); his temporary address is dead (not touched — his word first).
+Also verbatim: «Смотри lagrix прямо сейчас ещё не создан … этот шаг лучше сразу закрепить чтобы в будущем … подключили без сильных
+конфликтов» → 670-6. Plan and substep files: `new-steps/670/` (670-1 … 670-7). **NEXT:** 670-1 — on his node `blocks` is put to sleep
+by the rule (`npm run power -- blocks off --by-rule`) and called on its port; stripe is the negative control; then the summary. After
+670-1 — propose a context reset before the code substeps.
+
 **NOW-31 (2026-11-07) — 669 CLOSED on the owner's node (core `23451197`): the figure of the 13 landings without the eyes callout** (the
 owner: «сноска на глаза пересекается с сноской на руки. Убери полностью»); seen live on auth and data — four callouts, console 0.
 
