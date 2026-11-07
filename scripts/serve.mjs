@@ -25,7 +25,7 @@ const { startReader, stopReader } = createRequire(import.meta.url)('../lib/deplo
 // 642-4: причина отказа; проходящая (память, сеть) — один повтор `next build`, названный до него. Причина читается из журнала, куда
 // пишет запустивший (кнопка, обновление узла); из терминала журнала нет — повтора нет.
 const { causeOf } = createRequire(import.meta.url)('../lib/deploy/build-failure.cjs')
-// 675-1: главный агент, которого остановит крышка, возвращается после удачной сборки в тот же разговор (`lib/deploy/agent-return.cjs`).
+// 675-1, 675-3: агенты, которых остановит крышка, возвращаются после удачной сборки в те же разговоры (`lib/deploy/agent-return.cjs`).
 const agentReturn = createRequire(import.meta.url)('../lib/deploy/agent-return.cjs')
 
 const here = path.dirname(fileURLToPath(import.meta.url))
@@ -725,7 +725,7 @@ async function rebuild() {
   // 675-1: обновление узла ещё не кончилось (каталог, навыки) — его итог дождётся ждун вне дерева ядра; своя сборка — будим сразу.
   if (agentBack && buildWhat === "update") {
     spawnSync(process.execPath, [path.join(root, "scripts", "spawn-free.mjs"), path.join(root, "scripts", "agent-return.mjs"), "--after-update", String(buildSince)], { cwd: root, stdio: "ignore", windowsHide: true })
-    console.log("Главный агент вернётся, когда обновление узла закончится удачно (журнал: logs/agent-return.log).")
+    console.log("Агенты, которых остановила сборка, вернутся, когда обновление узла закончится удачно (журнал: logs/agent-return.log).")
   } else if (agentBack) await agentReturn.wakeAfter(root, "the core is built and running")
   console.log("Готово. Проверить: npm run serve:status")
 }

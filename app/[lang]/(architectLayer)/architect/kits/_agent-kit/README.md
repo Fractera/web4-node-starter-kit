@@ -20,8 +20,9 @@ While the terminal is off, the node itself reads the bot and answers with a stat
 **While the core builds (step 675)** every terminal whose agent is not running shows the core build instead of «Start the agent» —
 the same build terminal as the Deployments board (`components/deploy/core-terminal.client.tsx`, its words
 `components/deploy/core-terminal.i18n.ts`): the node update or the «Deploy core» record while the core answers, then the build reader
-of this computer. At the end — «Close and start the agent» and «Close» (only «Close» after a failure). A main agent that WAS running when
-the build stopped it comes back by itself after a good build, in the same conversation (`lib/deploy/agent-return.cjs`).
+of this computer. At the end — «Close and start the agent» and «Close» (only «Close» after a failure). Every agent that WAS running when
+the build stopped it — the main agent and the element agents — comes back by itself after a good build, in the same conversation
+(`lib/deploy/agent-return.cjs`; a work session is not continued; skill `core-build-return`).
 
 ## Where it lives
 

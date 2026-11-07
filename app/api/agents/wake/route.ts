@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server"
 
 import supervision from "@/lib/web4-items/supervision.cjs"
 import { telegramConnected } from "@/lib/a2a/telegram-relay"
+import agentReturn from "@/lib/deploy/agent-return.cjs"
 
 // ПРОБУЖДЕНИЕ АГЕНТА ЭЛЕМЕНТА (шаг 409-1; владелец 2026-10-05: «агент должен уметь запускать собственный терминал»; «примерно
 // 300 МБ свободной памяти на один терминал»). POST `{ service, reason?, text? }` с ключом узла (`X-Node-Key`): сессия `claude`
@@ -60,15 +61,16 @@ export async function POST(req: NextRequest) {
   // доверии папке висел бы молча (watchTrust зовёт человека только через бота). На этой машине папки доверены через домашнюю
   // (`~/.claude.json`), на чистой — нет. Элемент с подключённым ботом этим путём не идёт — для него остаётся вопрос в Telegram.
   // 675-1 (владелец 2026-11-07: «в самом идеальным вариантом было бы авто пробуждение после успешного завершения»): `core-back` — сборка
-  // ядра остановила работавшего главного агента и закончилась удачно (`lib/deploy/agent-return.cjs`). Только главный агент; тот же
-  // разговор (`claude --continue`), без вопроса — человек его уже запустил; без `from` — разговор остаётся разговором с человеком.
+  // ядра остановила работавшего агента и закончилась удачно (`lib/deploy/agent-return.cjs`). Тот же разговор (`claude --continue`), без
+  // вопроса — его уже запустили; `from` — только если сессию родил узел, иначе разговор остаётся разговором с человеком.
+  // 675-3: и агента элемента — только того, кого записала сборка перед закрытой крышкой (`data/node/agent-return.json`).
   const back = body.reason === "core-back"
-  if (back && service !== "build") {
-    return NextResponse.json({ ok: false, reason: "core-back returns only the main agent (service build)" }, { status: 403, headers: HEADERS })
+  if (back && !agentReturn.listed(process.cwd(), service)) {
+    return NextResponse.json({ ok: false, reason: "core-back returns only an agent the core build stopped (data/node/agent-return.json)" }, { status: 403, headers: HEADERS })
   }
   if (back) {
-    const out = await wake(service, { text, confirmed: true, continueLast: true })
-    console.log(`[agents/wake] build reason=core-back → ${out.ok ? (out.already ? "already" : "started") : out.reason}`)
+    const out = await wake(service, { text, from: str(body.from, 120), confirmed: true, continueLast: true })
+    console.log(`[agents/wake] ${service} reason=core-back → ${out.ok ? (out.already ? "already" : "started") : out.reason}`)
     return NextResponse.json(out, { status: out.ok ? 200 : out.reason === "memory" ? 503 : 409, headers: HEADERS })
   }
   const created = body.reason === "main-agent-create" && !telegramConnected(service)

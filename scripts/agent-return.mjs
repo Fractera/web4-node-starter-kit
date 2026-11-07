@@ -17,5 +17,5 @@ const since = Number(process.argv[i + 1])
 if (i < 0 || !Number.isFinite(since)) { say('usage: agent-return.mjs --after-update <ms>'); process.exit(2) }
 say(`жду итог обновления узла (начало сборки ${new Date(since).toISOString()})`)
 const r = await afterUpdate(ROOT, since, { say })
-say(`итог: ${r.woke ? 'главный агент вернулся' : `не будится — ${r.reason}`}`)
+say(`итог: ${r.woke ? 'агенты вернулись' : `не будятся — ${r.reason}`}`)
 process.exit(0)

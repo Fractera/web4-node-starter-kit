@@ -36,9 +36,12 @@ export async function POST(req: NextRequest) {
   const action = typeof body.action === "string" ? body.action : ""
   // 675-1: `status` — работает ли сессия сейчас (карта живых сессий `_agent-kit/server/session.cjs`); его спрашивает сборка ядра
   // до закрытой крышки, чтобы после удачной сборки вернуть работавшего главного агента (`lib/deploy/agent-return.cjs`).
+  // 675-3 (владелец 2026-11-07: «b» — возвращать всех, кто работал): `sessions` — все живые сессии узла, у каждой — родил ли её человек.
   if (action === "status") {
-    const live = (globalThis as { __web4TerminalSessions?: Map<string, { startedAt?: string }> }).__web4TerminalSessions?.get(service)
-    return NextResponse.json({ ok: true, service, running: Boolean(live), startedAt: live?.startedAt ?? null }, { headers: HEADERS })
+    const map = (globalThis as { __web4TerminalSessions?: Map<string, { startedAt?: string; byPerson?: boolean }> }).__web4TerminalSessions
+    const live = map?.get(service)
+    const sessions = [...(map?.entries() ?? [])].map(([key, s]) => ({ service: key, byPerson: s.byPerson !== false }))
+    return NextResponse.json({ ok: true, service, running: Boolean(live), startedAt: live?.startedAt ?? null, sessions }, { headers: HEADERS })
   }
   const model = typeof body.model === "string" ? body.model : undefined
   const command = (globalThis as { __web4AgentSession?: SessionCommand }).__web4AgentSession
