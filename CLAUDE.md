@@ -201,7 +201,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - **Reverse engineering:** REA is one copy in the core and is never edited; studies live in the element's `study/`, outside git, and are
   made by its separate study pass. You hand the task over — `npm run study`, skill `study-for-element`.
 - **Building the core:** `npm run serve:rebuild` with the closed lid — the node's processes except the tunnels stop, the outside world gets
-  the page copies; once, at the end of the queue of edits. It failed — the Deploy core button for the owner.
+  the page copies; once, at the end of the queue of edits. It failed — the Deploy core button for the owner. Every agent stops with it;
+  after a good build the ones that were running come back by themselves in the same conversations — skill `core-build-return`.
 - The node is run by the `serve:*` commands (`serve:start`, `serve:status`); the person never hears the word pm2.
 - **Deploying an element:** Deploy, Preview → Accept or Reject; a rollback is a new commit.
 - **An element's own domain:** adding the domain to the node's list of domains is your work; connecting it to the element — the person or
@@ -363,7 +364,7 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   `supervise-element`; an element asks how the node works — `answer-element`; a check from an element, starting or closing its agent —
   `ask-element`; a capability an element lacks — `handle-need` (a bare yes or no with no question in this session — `npm run needs`
   first); the node type — `node-type`; an element on or off — `element-power`; how a product or SDK works — `study-for-element`; a
-  skill the person heard of — `adopt-suggested-skill`; a clock and reminders — `core-schedule`; page sections and blocks — `blocks-of-the-node`; colours, fonts, menus — `design-and-settings-of-elements`;
+  skill the person heard of — `adopt-suggested-skill`; a clock and reminders — `core-schedule`; a core build and who comes back — `core-build-return`; page sections and blocks — `blocks-of-the-node`; colours, fonts, menus — `design-and-settings-of-elements`;
   routing a need — `route-to-element`; a new element — `create-element`; people near the architect, a family or a team — `integrator`; channels, voices and trends — `content-factory`; agents for the person themselves — `own-agents`; a person stuck in someone else's interface — `help-in-browser`
   (their Chrome on this computer); a request against a provider's rules, a warning or a ban — `provider-rules`; a session confirmed as ultracode — `ultracode-session`; a template release and its rollout to the elements — `release-template` (the elements' sealed
   instruction comes from `npm run instruction:element`).

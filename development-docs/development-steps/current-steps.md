@@ -8,7 +8,7 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 **NOW-36 (2026-11-07, ~19:30 UTC) — 675-4 CLOSED** (`completed-steps/675-4.md`; `562313c3`, `4e35fbde`, CI green; the owner's node on
 `83fe64ea`): the owner's defect (only «Start the agent» during a build) — found by a watcher (16 s: core stopped, reader not up), the
 reader starts before `closeLid`, silence = a build, the bare build waits for its verdict; three watcher runs: 2 → 0 → 0 start frames, the
-end «The core is built and running». OWED: the sealed lines of CLAUDE.md §4/§8 (`core-build-return`) — wait for the owner's word; 676
+end «The core is built and running». The owner, verbatim: «y» → CLAUDE.md §4/§8 name `core-build-return`, sealed `35bed0eadf22`. OWED: the fork sync and the node update to deliver the seal; 676
 queued; `completed-steps/674.md`; 673-5.
 
 **NOW-35 (2026-11-07, ~18:45 UTC) — 675-3 CLOSED** (`completed-steps/675-3.md`, code `9b36b3ac`, CI green): the owner's «b» — every
