@@ -5,6 +5,12 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-38 (2026-11-07, ~20:15 UTC) — 673-5 RUNNING, the exam on Opus high.** The owner, verbatim: «экзамен 673-5 на Opus high». Prepared
+on his node: base memory off, the «Also in work» paragraph lifted from the node's `current-steps.md`, the Claude Code auto-memory moved to
+`~/Desktop/exam-673-5-memory-aside/`, the judge's file `~/Desktop/ТЕСТ-673-5 — прочитай после экзамена.md` (restore steps, where the
+transcripts are, how to judge), then `npm run session -- clear`. He asks cold, one question per fresh session; after it he sends «прочитай
+ТЕСТ-673-5» and the session restores everything and judges against `development-docs/exams/shape-of-a-need.md`.
+
 **NOW-37 (2026-11-07, ~20:05 UTC) — 677 CLOSED** (`completed-steps/677.md`, `bdc68042`): «GitHub» first among the «Main» shortcuts,
 red while the binding is not own; proven on the owner's node `3a23da39` (order, link, colour own → normal, flagged → #ef4444). The seal
 of §4/§8 (`35bed0eadf22`) reached the node with the update. OWED: 676 queued; `completed-steps/674.md`; 673-5, the exam on Opus high.
