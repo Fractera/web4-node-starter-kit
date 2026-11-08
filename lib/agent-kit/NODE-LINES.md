@@ -13,6 +13,9 @@ commit. Messages to the PERSON have their own closed list (`lib/main-agent-cron/
 | `job-done` | an element worker's «done» (`lib/web4-items/jobs.cjs`; a batch names every element) | the main agent | reads the reports, answers the person once |
 | `first-session-done` | a newborn element's first session closed (`lib/web4-items/first-session.cjs`) | the main agent | closes the birth substep, goes to the next |
 | `limit-resume` | the pulse after a stop by the subscription limit (`lib/agent-kit/pulse.cjs`, delivered by the main agent's clock at the reset) | the main agent | `npm run where`, then wakes the element «continue from your record» |
+| `ask-core` | an element (`npm run ask-core`, its template) | the main agent | answers from the instruction, skill `answer-element` |
+| `tell-core` | an element (`npm run tell-core`) | the main agent | passes the words to the architect, naming the element |
+| `need` | an element (`npm run need`) | the main agent | finds who does it or asks the architect, skill `handle-need` |
 
-Not in the list yet: the words an element sends the core itself — a question (`ask-core`), words for the architect (`tell-core`), a
-need (`need`) — they are written by the elements' templates; their heads come with the next template release.
+The elements' words carry the head right after the process word («Build process: ⟦node · need · s8y6x · 18:17⟧ …»): the bridge picks the
+session by that word first (step 699).
