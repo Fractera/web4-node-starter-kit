@@ -5,6 +5,14 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-62 (2026-11-08, ~20:35 WET) — 699 LIVE on the node, 700 IN WORK** (the owner: «да, начинай 700 после 699», then «да, начинай 700»).
+699 on the node: core `2eafbe13`; root `df30cdf` (v3.0.37, «Сделать зарядку» re-added by `npm run calendar`), s8y6x `5ef707c`; eyes:
+the canvas 9 Nov shows both entries, today no false «missed». The owner corrected me: this node is a TEST BENCH for Fractera's starters;
+root = the real shared sample (github.com/Fractera/fractera-root-starter), Клип is not pushed (nothing important yet).
+700-1 DONE `6f88e568` (not pushed): status line → `data/services/<id>/context.json`, window hook from 55 %/85 %, kinds
+context-window/context-reset. Next: 700-3 (`session clear --continue`: after /clear the bridge pastes the context-reset line), 700-2 (the
+letter section), 700-4 (compaction off — docs first), 700-5 (elements: `npm run reset`, template release), 700-6 (How it works 7.1).
+
 **NOW-61 (2026-11-08, ~19:45 WET) — LETTER TO MY NEXT SESSION (written by me for myself; the owner's idea of step 700: reset
 instead of compacting; my window was 66 % = 664k of 1M).** RESUME HERE.
 - **Done today, all in Fractera and on the owner's node (core `8c5e3b57`):** 671 (boundary in code), 686-8/9 (where), 694/694-2
