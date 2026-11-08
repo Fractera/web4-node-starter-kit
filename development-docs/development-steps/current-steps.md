@@ -5,13 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-62 (2026-11-08, ~20:35 WET) — 699 LIVE on the node, 700 IN WORK** (the owner: «да, начинай 700 после 699», then «да, начинай 700»).
-699 on the node: core `2eafbe13`; root `df30cdf` (v3.0.37, «Сделать зарядку» re-added by `npm run calendar`), s8y6x `5ef707c`; eyes:
-the canvas 9 Nov shows both entries, today no false «missed». The owner corrected me: this node is a TEST BENCH for Fractera's starters;
-root = the real shared sample (github.com/Fractera/fractera-root-starter), Клип is not pushed (nothing important yet).
-700-1 DONE `6f88e568` (not pushed): status line → `data/services/<id>/context.json`, window hook from 55 %/85 %, kinds
-context-window/context-reset. 700-3 `f4b03263` (session clear --continue), 700-2 `27dd438a` (the letter in use-development-steps), 700-4 `226fa15c` (autoCompactEnabled:false) — all NOT pushed. 700-5 RELEASED: 15 templates (custom v0.3.175 `0ae6162`, native v0.1.56, root v3.0.38, natives next patch), pins `b61c1bf5`; 700-6 `225ac74a` (How it works 7.1). Core PUSHED `9f5c9b5c` (~21:05), template + core CI watched. NEXT: fork sync (the owner; the Chrome extension disconnected, no node token) → node update → live proofs (table in the 700 plan): my own reset with a letter, s8y6x takes 700-5 (`git fetch https://github.com/Fractera/fractera-custom-item-starter.git tag v0.3.175 && git cherry-pick 0ae6162`), root merges v3.0.38, eyes on 7.1 → close 700 (summary, plan deleted). Was next: 700-3 (`session clear --continue`: after /clear the bridge pastes the context-reset line), 700-2 (the
-letter section), 700-4 (compaction off — docs first), 700-5 (elements: `npm run reset`, template release), 700-6 (How it works 7.1).
+**NOW-62 (2026-11-08, ~21:20 WET) — 700 CLOSED** (the owner: «да, начинай 700 после 699», «can you fifnish 700 step without me ?»,
+«yes to do it»). Summary `completed-steps/700.md`, plan deleted. Live on the node (core `36232497`): the status line's `context.json`,
+compaction off in `--settings`, How it works 7.1 by eyes, root v3.0.38 `449990a` (reset refused without a letter), s8y6x reset itself
+and went on from its letter, the main agent reset itself and closed 700 from its letter. Next free step 701.
 
 **NOW-61 (2026-11-08, ~19:45 WET) — LETTER TO MY NEXT SESSION (written by me for myself; the owner's idea of step 700: reset
 instead of compacting; my window was 66 % = 664k of 1M).** RESUME HERE.
@@ -28,9 +25,7 @@ instead of compacting; my window was 66 % = 664k of 1M).** RESUME HERE.
   → node update → root (`git fetch origin tag v3.0.37 && git merge --no-edit v3.0.37`, no push) and s8y6x (`cherry-pick 1cc8151` from the
   custom template v0.3.174) by their agents, `--lang ru` → root re-adds «Сделать зарядку» through `npm run calendar` (its hand-written
   saidAt was midnight — the canvas showed today's 07:30 as missed) → look at the canvas with the owner.
-- **Then 700** (`new-steps/700-a-session-resets-itself-instead-of-compacting.md`, APPROVED 2026-11-08 ~20:15 WET — the owner: «да, начинай 700 после 699»): code measures the
-  window, a line from ~55 % (judgement, not a dead threshold), the letter section, `session clear --continue` waking the fresh session,
-  compaction off (`autoCompactEnabled` — check the docs first), the same for elements, How it works 7.1.
+- **700 closed** — `completed-steps/700.md`.
 - **Open, smaller:** the a2a cold-start wait seen live; the YouTube retelling asked cold (next exam); in the canvas a main-agent
   repeatsPaused would grey element entries too.
 - **Rules learned today (keep):** never `git checkout` a file to undo a negative control — it erased my uncommitted edit once; never run
