@@ -59,6 +59,14 @@ function occursOn(s: CronSchedule, day: Date): boolean {
   }
 }
 
+// 697-6 (показ владельцу 2026-11-08: запись «Сделать зарядку» создана в 18:36, а её сегодняшние 07:30 календарь назвал «пропущено»):
+// раз записи ещё не было, её в тот момент нет и в календаре — время записи (`saidAt`) отсекает моменты раньше него.
+function existed(s: CronSchedule, day: Date): boolean {
+  if (!s.saidAt) return true
+  const [h, m] = s.time.split(":").map(Number)
+  return new Date(day.getFullYear(), day.getMonth(), day.getDate(), h, m).getTime() >= Date.parse(s.saidAt)
+}
+
 const slotOf = (time: string) => { const [h, m] = time.split(":").map(Number); return h * 2 + (m >= 30 ? 1 : 0) }
 
 export function CronCalendar({ plan, lang, ui }: { plan: CronPlan; lang: string; ui: CronUi }) {
@@ -82,7 +90,7 @@ export function CronCalendar({ plan, lang, ui }: { plan: CronPlan; lang: string;
     return new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, m) < new Date() ? "missed" : "planned"
   }
 
-  const tasks = plan.schedules.filter((s) => occursOn(s, day)).sort((a, b) => a.time.localeCompare(b.time))
+  const tasks = plan.schedules.filter((s) => occursOn(s, day) && existed(s, day)).sort((a, b) => a.time.localeCompare(b.time))
   const bySlot = new Map<number, CronSchedule[]>()
   for (const s of tasks) bySlot.set(slotOf(s.time), [...(bySlot.get(slotOf(s.time)) ?? []), s])
 
@@ -132,7 +140,7 @@ export function CronCalendar({ plan, lang, ui }: { plan: CronPlan; lang: string;
           <div className="grid grid-cols-7 gap-1">
             {cells.map((d, i) => {
               if (!d) return <span key={i} />
-              const count = plan.schedules.filter((s) => !off(s) && occursOn(s, d)).length
+              const count = plan.schedules.filter((s) => !off(s) && occursOn(s, d) && existed(s, d)).length
               const chosen = ymd(d) === ymd(day)
               return (
                 <button

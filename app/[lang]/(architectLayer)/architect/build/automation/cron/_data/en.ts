@@ -4,5 +4,5 @@ import type { WorkspacePageWords } from '@/lib/collection/types'
 // по определённому расписанию».
 export const en: WorkspacePageWords = {
   title: 'Cron events',
-  lead: 'The calendar of the main agent: when each automation runs and how it went.',
+  lead: 'The clocks of the whole node: the main agent’s and every element’s entries — when each runs and how it went.',
 }
