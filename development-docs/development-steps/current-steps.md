@@ -5,6 +5,11 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-66 (2026-11-08, ~23:25 WET) — 703 BUILT here, not pushed** (the owner: «Запланируй небольшое обновление на страх архитектора, в левом
+меню замени слово основное на слово ядро»): `zoneMain` ru «Ядро», en «Core» (was «Основное» / «Main»), comments and the hosting README
+follow; term hints and broken characters green. Rides the next node update; live — eyes on the left menu, then `completed-steps/703.md`.
+Pending for my return from the running update: the four calendar entries (the owner: «4 yes»), then the 701/702 live proofs.
+
 **NOW-65 (2026-11-08, ~23:00 WET) — 701-1..6 and 702-1 BUILT here, PUSHED** (the owner: «lets' go , to work»; «it must to be updated in
 the core ans all elements , no ?» — yes: the soul carries «Fractera's worker first and Claude's second»). Core `ed15900c` … `0abdf015`, 15
 templates released (custom v0.3.176, native v0.1.57, root v3.0.39, natives next patch). Core CI green (`e84f91e4`, three-os), custom and
