@@ -5,6 +5,16 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-56 (2026-11-08, ~15:35 WET) — RESUME HERE.** The owner chose «b»: finish ALL of 686, then ONE node update (with 693). Built here, not
+pushed: 7e878032 (§1 leader + 686 plan), be6b313a (686-2 pulse + limits line), 361d9138 (686-4 `npm run where` + §4), e1582c0e (693: §7
+Mercedes/BRABUS + Apple/Caviar, the question in a warm frame — the owner: «нужно сравнивать Mercedes и BRABUS … Apple и caviar … рамку
+оформить … оранжевый … иконку типа вопросик»). NEXT, in a fresh session: 686-3 (passport fragment `development` + the element skill for a
+quick answer + the rule «write it on every event» — custom and native templates, skill release-template, rollout to root, s8y6x, natives),
+686-5 (a stop by rate_limit → the core's clock wakes the element at resets_at), 686-6 (lending: the element's session on the node's login
+while the forecast keeps ≥15 % of the limit, every lending counted, recorded, returned; `data/node/limits/`), 686-7 (§7.3 present tense);
+then guards, push, CI, the fork synced by the main agent, `node scripts/spawn-free.mjs scripts/node-update-run.mjs`, live proofs
+(`npm run where`, pulse files, the limits line in a terminal, §7 frame).
+
 **NOW-55 (2026-11-08, ~15:15 WET) — 686-2 `be6b313a` (pulse + limits line) and 686-4 (`npm run where`, §4 line sealed) BUILT here, not pushed;
 proven on real-shaped inputs. Left: 686-1 second half (a real StopFailure — waits for a natural one), 686-3 (passport fragment + element
 skill, both templates — a template release), 686-5 (pause/resume clock), 686-6 (lending ≥15%), 686-7 (page 7.3). The owner switched the
