@@ -1124,11 +1124,14 @@ html[data-no-own-domain] [data-alert~="no-domain"] { color: var(--color-destruct
 /* 677: ярлык «GitHub» — узел не работает со своим репозиторием. */
 html[data-no-github] [data-alert~="no-github"] { color: var(--color-destructive); }
 
-/* 687 (владелец 2026-11-08: «увеличив размер в три раза в состоянии максимального диаметра при импульсе минимальный диаметр поставь как
-   сейчас»): ореол точки внимания (`AttentionDot`, components/shell/shell-attention.client.tsx) — от 4 px точки до 24 px, scale 6 вместо
-   scale 2 у `animate-ping` (8 px). Ритм и кривая — те же, что у `animate-ping`. */
-.attention-ping { animation: attention-ping 1s cubic-bezier(0, 0, 0.2, 1) infinite; }
+/* 687 (владелец 2026-11-08: «Оба этих индикатора сделай не оранжевыми а зелёными при этом увеличив размер в три раза в состоянии
+   максимального диаметра при импульсе минимальный диаметр поставь как сейчас»): точка внимания ядра (`AttentionDot`,
+   components/shell/shell-attention.client.tsx) — зелёная, 4 px; её ореол растёт до 24 px: scale 6 вместо scale 2 у `animate-ping` (8 px).
+   🔒 ЗДЕСЬ, А НЕ В ФАЙЛЕ ОБОЛОЧКИ: `components/shell/` — байт-в-байт копия оболочки сайта (сторож `check-shell-kits`), а точка внимания
+   живёт только в ядре (у сайта двери внимания нет). Ритм и кривая — те же, что у `animate-ping`. */
+[data-attention-dot] > span { background-color: var(--color-success); }
+[data-attention-dot] > span:first-child { animation: attention-ping 1s cubic-bezier(0, 0, 0.2, 1) infinite; }
 @keyframes attention-ping {
   75%, 100% { transform: scale(6); opacity: 0; }
 }
-@media (prefers-reduced-motion: reduce) { .attention-ping { animation: none; } }
+@media (prefers-reduced-motion: reduce) { [data-attention-dot] > span:first-child { animation: none; } }
