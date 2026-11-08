@@ -767,6 +767,9 @@ if (cmd === 'create') {
   const look = flag('--look')
   if (look !== null && look !== 'own' && look !== 'project') fail('--look own|project')
   const blocksOff = flag('--blocks') === 'off'
+  // 683 (разбор экзамена D5): рождение — подшаг шага ядра; нет имени элемента в `current-steps.md` — предупреждение, не отказ.
+  { const nm = (flag('--name') ?? '').trim(); let steps = ''; try { steps = readFileSync(join(ROOT, 'development-docs', 'development-steps', 'current-steps.md'), 'utf8') } catch { /* нет записей */ }
+    if (nm && !steps.toLocaleLowerCase().includes(nm.toLocaleLowerCase())) console.log(`note: «${nm}» is not in current-steps.md — a birth is a substep of a core step: write the person's decision and this substep there (skill use-development-steps)`) }
   // 682: имя обязательно — без него меню и шапка покажут случайный адрес; описание паспорта — `--describe`, нет — роль.
   if (role && brief && !(flag('--name') ?? '').trim()) fail('--name "<the name people see in the menu>" is required: without it the menu, the header and the drawer show a random address (node step 682)')
   if (!role || !brief) fail('create --role "<one sentence>" --name "<the name people see in the menu>" [--describe "<what it is for, 1–3 sentences, for the passport and the header>"] [--look own|project] [--blocks off] [--close-after-first-session] (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--native] [--supervise main|architect] [--no-wake]')
@@ -782,7 +785,12 @@ if (cmd === 'create') {
     const all = selfAll()
     const hits = await self.findByMeaning(`${role} ${brief.slice(0, 600)}`, all, { k: 3 })
     if (hits) {
-      const near = hits.filter((h) => h.score >= DUP_MIN)
+      // 683 (разбор экзамена D7): отказ — только когда сосед УЖЕ делает это (его навык) или работа в его ОБЛАСТИ; совпадение лишь по
+      // имени, роли или описанию — предупреждение, рождение идёт. ✗ 2026-11-07: «Авторы» и «Дозор» получили отказ по слабым совпадениям,
+      // и `--different` пришлось ставить всем шести наперёд — сторож опустел.
+      const all3 = hits.filter((h) => h.score >= DUP_MIN)
+      for (const h of all3.filter((h) => !['skill', 'area'].includes(h.best?.kind))) console.log(`note: looks a little like ${h.id} (match ${h.score.toFixed(2)}; ${self.whyOf(h)}) — only by its name, role or description, not a refusal; look if unsure: npm run card -- ${h.id}`)
+      const near = all3.filter((h) => ['skill', 'area'].includes(h.best?.kind))
       if (near.length) {
         const x = all.find((y) => y.id === near[0].id)
         fail(`this job looks like ${x.id} (match ${near[0].score.toFixed(2)}; ${self.whyOf(near[0])}): ${x.short || x.role}. Look: npm run card -- ${x.id}; if it can do the job, route the person to it (skill route-to-element)${near[0].best?.kind === 'area' ? ' — its area covers this job: a route its own agent builds there, not a new element' : ''}. Only if the person says the job is different: run again with --different "<their words why>"`)

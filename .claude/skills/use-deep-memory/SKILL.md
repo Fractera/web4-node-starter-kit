@@ -18,7 +18,10 @@ Read what the person wants:
 - how you should work with them («отвечай коротко», «зови меня Ромой») → your picture of them (`know-the-architect`), and remember too
   when they asked to remember it;
 - the same word in another task is not memory: «запиши меня к врачу» (a booking), «сохрани файл в проект» (a build), «пометь задачу
-  готовой», «напомни завтра в 9 позвонить маме» (a time — a schedule, `core-schedule`).
+  готовой», «напомни завтра в 9 позвонить маме» (a time — a schedule, `core-schedule`);
+- a decision about the product or the work you are shaping with the person right now («запомни, у каждой соцсети десятки аккаунтов»
+  in a talk about their projects) is a decision of the step: verbatim into `current-steps.md` (skill `use-development-steps`), not the
+  deep memory (node step 683; ✗ 2026-11-07 the owner: «не уверен что мы должны через память их отслеживать»).
 Unclear — one short question.
 
 ## A thing and its words — one call

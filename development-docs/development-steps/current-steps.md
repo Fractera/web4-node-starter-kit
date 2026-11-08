@@ -5,6 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-43 (2026-11-08, ~01:45 UTC) — 683 CLOSED in the workshop** (D5, D6, D7, D11 of the examinee's report); the owner: «go to finish
+non stop». Next in the same run: 684 — the template's worker always ends with `reply-core` (skill `release-template`), then the fork
+sync and the node update.
+
 **NOW-42 (2026-11-08, ~01:10 UTC) — 681 CLOSED** (`completed-steps/681.md`): one job for several elements is one batch and one wake —
 proven live (s8y6x + inanv, one wake with both lines). OWED: the template's worker ends with `reply-core` (D1 c, a template release);
 D3, D7, D9 of the examinee's report; `completed-steps/674.md`; 676 queued.
