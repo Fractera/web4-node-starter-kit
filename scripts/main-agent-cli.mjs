@@ -15,7 +15,7 @@
 //   lagrix <слова>           — f2f: поиск целого элемента в сети Lagrix; сети ещё нет — ИМИТАЦИЯ (запрос по документам 17 и 20)
 //   create --role "<фраза>" (--brief "<текст>" | --brief-file <путь>) [--native] [--supervise main|architect] [--no-wake]
 //                            — новый элемент: черновик → рождение из шаблона → роль → задание в его приёмную → пробуждение агента
-//   task <id> "<текст>" [--work [--skill <навык>]] [--dry] — поручение агенту элемента (живой сессии — во вход, спящему —
+//   task <id> "<текст>" [--work [--skill <навык>]] [--lang <код>] [--dry] — поручение агенту элемента (живой сессии — во вход, спящему —
 //                              пробуждением); `--work` — работа его рабочему процессу, не строителю (670-2)
 //   state <id>               — как идёт работа элемента: роль, текущий шаг, приёмная, коммиты, надзор
 //   role <id> ["<фраза>"] [--area "<поле>"] [--grows "<работа>; …"] — роль элемента (`data/node/roles.json`) и его область
@@ -585,10 +585,17 @@ if (cmd === 'task') {
   const work = has('--work')
   const dry = has('--dry')
   const skill = flag('--skill')
-  const skip = new Set(rest.flatMap((w, i) => (w === '--work' || w === '--dry' ? [i] : w === '--skill' ? [i, i + 1] : [])))
+  const skip = new Set(rest.flatMap((w, i) => (w === '--work' || w === '--dry' ? [i] : w === '--skill' || w === '--lang' ? [i, i + 1] : [])))
   const [id, ...words] = rest.filter((_, i) => !skip.has(i))
+  // 694 (владелец 2026-11-08: «на каком языке ты отвечаешь на том языке должны отвечать элементы»): каждая задача несёт язык разговора
+  // с человеком; `--lang <код>` его задаёт и запоминает (`lib/main-agent/talk-lang.cjs`), дверь `person-lang` пишет его элементу.
+  const talk = require(join(ROOT, 'lib', 'main-agent', 'talk-lang.cjs'))
+  const tl = talk.take(ROOT, flag('--lang'))
+  if (tl.error) fail(tl.error)
+  const langLine = tl.lang ? talk.line(tl.lang) : ''
+  const tellLang = async (one) => { if (tl.lang && !dry) await core('/api/agents/person-lang', { method: 'POST', body: JSON.stringify({ service: one, lang: tl.lang }) }).catch(() => null) }
   const said = words.join(' ').trim()
-  if (!id || !said) fail('task <id>[,<id>…] "<what the element agent must do>" [--work [--skill <skill id>]] [--dry]')
+  if (!id || !said) fail('task <id>[,<id>…] "<what the element agent must do>" [--work [--skill <skill id>]] [--lang <code>] [--dry]')
   // 681: одно поручение нескольким элементам — пачка (`<id>,<id>,…` с `--work`): каждый рабочий процесс делает своё, а тебя будит
   // ОДИН «закончил» — последнего, со строкой отчёта каждого (`lib/web4-items/jobs.cjs`). ✗ 2026-11-07: девять пробуждений «отчёта нет».
   const ids = id.split(',').map((x) => x.trim()).filter(Boolean)
@@ -607,7 +614,8 @@ if (cmd === 'task') {
       }
       const session = modes.hasGroups(itemDir(one)) ? modes.sessionKey(one, 'work') : one
       jobs.set(session, { about, skill, batch }, ROOT)
-      const r = await core('/api/agents/wake', { method: 'POST', body: JSON.stringify({ service: one, text: modes.withWord((skill !== null ? `skill ${skill} — ${said}` : said) + REPORT_LAST, 'work'), from: 'main agent', about, reason: 'main-agent-job', supervised: supervision.byMain(one, ROOT) }) }).catch((e) => ({ body: { ok: false, reason: e.message } }))
+      await tellLang(one)
+      const r = await core('/api/agents/wake', { method: 'POST', body: JSON.stringify({ service: one, text: modes.withWord((skill !== null ? `skill ${skill} — ${said}` : said) + langLine + REPORT_LAST, 'work'), from: 'main agent', about, reason: 'main-agent-job', supervised: supervision.byMain(one, ROOT) }) }).catch((e) => ({ body: { ok: false, reason: e.message } }))
       const b = r.body ?? {}
       if (!b.ok) { jobs.take(session, ROOT); jobs.dropFromBatch(batch, one, ROOT); lines.push(`${one}: NOT started — ${b.reason ?? r.status}`); continue }
       lines.push(`${one}: ${b.pending ? 'its person was asked in Telegram to turn its worker on' : b.already ? 'pasted into its live worker' : 'its worker woke with the job'}`)
@@ -627,12 +635,13 @@ if (cmd === 'task') {
   }
   const grouped = modes.hasGroups(itemDir(id))
   const session = work && grouped ? modes.sessionKey(id, 'work') : id
-  const body = { service: id, text: modes.withWord(work ? text + REPORT_LAST : text, work ? 'work' : 'build'), from: 'main agent', about: firstSentence(said, 300), reason: work ? 'main-agent-job' : 'main-agent-task', supervised: supervision.byMain(id, ROOT) }
+  const body = { service: id, text: modes.withWord(work ? text + langLine + REPORT_LAST : text + langLine, work ? 'work' : 'build'), from: 'main agent', about: firstSentence(said, 300), reason: work ? 'main-agent-job' : 'main-agent-task', supervised: supervision.byMain(id, ROOT) }
   if (dry) {
     console.log(`===TASK_DRY=== ${id} → session ${session}${work && !grouped ? ' (this element has no skill groups: one session, the job goes into it with its word)' : ''}\n${body.text}`)
     process.exit(0)
   }
   if (work) jobs.set(session, { about: body.about, skill }, ROOT)
+  await tellLang(id)
   const r = await core('/api/agents/wake', { method: 'POST', body: JSON.stringify(body) }).catch((e) => { if (work) jobs.take(session, ROOT); fail(`the core did not answer: ${e.message}`) })
   const b = r.body ?? {}
   if (!b.ok && work) jobs.take(session, ROOT)

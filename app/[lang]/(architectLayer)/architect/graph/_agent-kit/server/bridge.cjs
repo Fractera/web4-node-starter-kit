@@ -841,7 +841,7 @@ function languageRule(service, base) {
   const code = telegram.personLang(service)
   let name = code
   try { name = new Intl.DisplayNames(['ru'], { type: 'language' }).of(code) || code } catch { /* код как есть */ }
-  return `Язык человека: ${name} (${code}). Всё, что пишешь человеку в Telegram, — на этом языке, на каком бы языке ни пришла задача. Если человек стал писать тебе на другом языке — сообщи узлу: POST ${base}/person-lang с тем же заголовком и телом {"service":"${service}","lang":"<код BCP 47, например uk>"} — и дальше пиши ему на новом языке.`
+  return `Язык человека: ${name} (${code}). Всё, что пишешь человеку — в этом терминале, в Telegram и в отчёте ядру, — на этом языке, на каком бы языке ни пришла задача (694); коммиты и документы разработки — по-английски. Если человек стал писать тебе на другом языке — сообщи узлу: POST ${base}/person-lang с тем же заголовком и телом {"service":"${service}","lang":"<код BCP 47, например uk>"} — и дальше пиши ему на новом языке.`
 }
 
 /**

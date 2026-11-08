@@ -249,6 +249,12 @@ if (cmd === 'wake') {
   if (!id) fail('WAKE', 'wake <element id>')
   const registry = readJson(join(ROOT, 'WEB4-ITEMS-REGISTRY', 'web4-items.json'), { services: [] }).services ?? []
   if (!registry.some((s) => s.id === id)) fail('WAKE', `no element ${id} in the registry — npm run find -- <English words>`)
+  // 694: агент элемента просыпается с языком разговора главного агента с человеком (`--lang <код>` задаёт и запоминает) — правило
+  // моста «Язык человека» называет его же.
+  const talk = (await import('node:module')).createRequire(import.meta.url)(join(ROOT, 'lib', 'main-agent', 'talk-lang.cjs'))
+  const tl = talk.take(ROOT, flags('--lang')[0] ?? null)
+  if (tl.error) fail('WAKE', tl.error)
+  if (tl.lang) await fetch(`${CORE}/api/agents/person-lang`, { method: 'POST', headers: { 'X-Node-Key': KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ service: id, lang: tl.lang }), signal: AbortSignal.timeout(10_000) }).catch(() => null)
   let r
   try {
     const res = await fetch(`${CORE}/api/agents/wake`, { method: 'POST', headers: { 'X-Node-Key': KEY, 'Content-Type': 'application/json' }, body: JSON.stringify({ service: id, reason: 'main-agent-on' }), signal: AbortSignal.timeout(60_000) })
@@ -260,5 +266,5 @@ if (cmd === 'wake') {
   process.exit(0)
 }
 
-console.log('usage: commands [check [<file>] | menu | --lang ru|en] · remember "<words>" [--file <path>]… · remind "<question>" · wake <id>')
+console.log('usage: commands [check [<file>] | menu | --lang ru|en] · remember "<words>" [--file <path>]… · remind "<question>" · wake <id> [--lang <code>]')
 process.exit(1)

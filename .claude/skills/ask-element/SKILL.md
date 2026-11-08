@@ -14,6 +14,11 @@ A hint, not a law: models of late 2026 work worse under rigid step-by-step instr
 you lead starts its agent at once, and its «done» wakes you at once — both without a Telegram question. Every running agent holds
 about 300 MB of the person's memory, so you turn off what you turned on.
 
+**The language.** An element answers in the language you speak with the person — never English by default (the owner 2026-11-08:
+«на каком языке ты отвечаешь на том языке должны отвечать элементы»). The first `npm run task` or `npm run wake` of a conversation
+carries `--lang <code>` of that language (`ru` when the person writes Russian); it is kept for the next ones and changed by the next
+`--lang` when the person switches. The task itself stays English: the line about the language is added by the command.
+
 1. Who: the id or address the architect named, or `npm run find -- <English words>`.
 2. `npm run supervise -- <id> main --max 1` — you lead it for this one check.
 3. `npm run task -- <id> --work "Task from the core's main agent: <the check, in the architect's words>. It is a check, not a build:
