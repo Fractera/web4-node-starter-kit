@@ -13,6 +13,20 @@
 страницей и определённый дашборд»; «как нам сделать так чтобы при появлении подобных запросов от пользователей твой ответ был более-менее
 таким как я его описал?».
 
+The owner, the next message, verbatim (excerpts): «нужно мягко но последовательно подсказывать архитектору и пользователям элементов о том
+что у них есть уникальная возможность перестать думать об ограничениях архитектуры … Fractera закрыла их все: – каких с ней окно
+безлимитная, – все делают мульти агент ную разработку … против мульти агент на разработки в чистом виде так как она всегда приводит к
+избыточному расходу токенов а вместо этогодекомпозиции на элементы позволяет сохранять контекст с каждого потока … – архитектура уже покрыта
+базами данных авторизации блоками пользовательских интерфейсов и дизайна … – потенциально есть возможность работать с разными элементами с
+разными подписками … Всё это модель должна держать внутри себя … ты как тони Старк, все умеют ходить Тони Старк умеет летать … У всех есть
+руки у тони Старк есть 1000 рук его Джарвиса».
+Checked: «the window is unlimited» is not true as said — each window is up to 1M; the project is not limited by it (How it works 7.1).
+Multi-agent: «agents typically use about 4× more tokens than chat interactions, and multi-agent systems use about 15× more tokens than
+chats» (anthropic.com/engineering/multi-agent-research-system, 2025-06-13; the same page: worth it when the task's value is high — so
+not «always»). Subscriptions: 689 built (each person's element on its own subscription), its live proof still owed; one person's several
+subscriptions against the limits — against the provider's rules (How it works 7.4). «Nobody on the market offers this» — not provable,
+stays out of every text. Jarvis stays out of the soul: the spirit, not the props.
+
 ## Facts (2026-11-08, read in code)
 - An element's CLAUDE.md: §1–10 sealed (template release, `check:instruction` in its prebuild), §11 «This element» its own — born
   «(Nothing yet …)», carried over every release by `ownOf()` in `lib/instructions/element/build.mjs` — §12 Evolution. No person's
@@ -38,6 +52,6 @@
 | 701-2 | `npm run create … --vector-file <file>` (required with `--role`); the birth writes it into §11 «From the core» before the first commit, next to the passport; `create` prints `passport:` and `vector:` read back from the element | a birth on the node: card + the element's first answer names its vector |
 | 701-3 | `create-element`: the form of the vector (headings, no case), ≤ 30 lines (it is loaded every session); existing elements get theirs by `npm run task` from their own agent | root and s8y6x carry it |
 | 701-4 | Field skill `research` (facts, no case; added to FIELD_SKILLS): what a research needs (primary sources, site rules, test accounts, a live probe), what a node gives it that a chat does not (checked, dated), its price, how the work runs in a research hand (a record per research: question, sources, tests, verdict, re-check date; a dashboard; a public page only by the person's yes; an i2i door «what do we know about X»); `study-for-element` and `create-element` point to it | `check:shape-examples` green |
-| 701-5 | Soul «A thousand hands» — one sentence of the measure (a window per hand, a billion tokens per project, Fractera a tuning atelier of Claude Code); CLAUDE.md §4 one line «A research …», §8 names `research`; both seals — after the owner's word on the wording | `check:instruction`, soul seal |
+| 701-5 | Soul «A thousand hands» — a short paragraph «What you fly on»: the window is no longer a project's limit, lasting hands instead of a swarm (Anthropic's ~15× measurement), the foundations built, each person's own subscription; the physical limits said aloud; named when a limit would make the person think small — once, with the fact, never a slogan. How it works 7.5 «Hands instead of a swarm» with the source. CLAUDE.md §4 one line «A research …», §8 names `research`; both seals — after the owner's word on the wording | `check:instruction`, soul seal, eyes on 7.5 |
 | 701-6 | The exam: the owner's research case into `exams/shape-of-a-need.md`; after the node update a cold exam in a fresh session | Pass: the referent, find, the fork with the honest one-off branch, the pitch from checked facts, the price, one question, nothing born without a yes |
 | 701-7 | Live, after the person's yes: the research element born — proves 682's passport at birth and 701-2 in one birth | card, its first quiz question names its vector |
