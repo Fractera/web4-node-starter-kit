@@ -1,6 +1,7 @@
 # 701 — The core writes every element its starting vector at birth; research gets a hand of its own
 
-**State: PROPOSED 2026-11-08 ~21:40 WET, not agreed.** The owner, verbatim (excerpts of one message): «та часть которая записывается
+**State: PROPOSED 2026-11-08 ~21:40 WET. The soul's paragraph «What you fly on» APPROVED as drafted — the owner, ~21:55 WET, verbatim:
+«абзац души утверждаешь как есть - y»; before the start he asked for the advantages of a phone-and-Telegram person over Claude.ai.** The owner, verbatim (excerpts of one message): «та часть которая записывается
 самой моделью Orchestrator для элементов … ты должен дописать в инструкцию агенту элемента послание которые создаст базовое понимание
 того что он должен делать. Например как он должен создавать маршруты где будет находиться область публичного взаимодействия с страницы
 элемента где будут находиться внутренние страницы какие они будут нести нагрузки и как вообще строить этот проект … внести изменения в

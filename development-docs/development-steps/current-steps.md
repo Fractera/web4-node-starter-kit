@@ -8,8 +8,8 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 **NOW-63 (2026-11-08, ~21:40 WET) — 701 PROPOSED, not agreed** (`new-steps/701-the-core-writes-every-element-its-starting-vector-and-research-gets-its-hand.md`,
 the owner's words verbatim there): the core writes every element a starting vector into its §11 «From the core» at birth; research
 gets a field skill and a hand of its own; the owner's case goes to the exam, not to a skill. Grown by his next message: the soul knows what the node has closed
-(«ты как тони Старк … 1000 рук») — 701-5 is now a paragraph «What you fly on» + How it works 7.5, the claims checked (plan, top). Waiting
-for his word on the plan and on the soul's paragraph.
+(«ты как тони Старк … 1000 рук») — 701-5 is now a paragraph «What you fly on» + How it works 7.5, the claims checked (plan, top). The soul's
+paragraph APPROVED verbatim «абзац души утверждаешь как есть - y»; before the start — his question on the phone-and-Telegram advantages.
 
 **NOW-62 (2026-11-08, ~21:20 WET) — 700 CLOSED** (the owner: «да, начинай 700 после 699», «can you fifnish 700 step without me ?»,
 «yes to do it»). Summary `completed-steps/700.md`, plan deleted. Live on the node (core `36232497`): the status line's `context.json`,
