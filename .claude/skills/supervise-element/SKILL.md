@@ -20,6 +20,10 @@ back at any time (`npm run supervise -- <id> architect`).
 carries `--lang <code>` of that language (`ru` when the person writes Russian); it is kept for the next ones and changed by the next
 `--lang` when the person switches. The task itself stays English: the line about the language is added by the command.
 
+**The node's messages carry a head** — `⟦node · <kind> · <element> · <HH:MM>⟧` (step 698): `supervision-done`, `job-done`,
+`first-session-done`, `limit-resume`, `core-back`, `held-during-build`, `build-failed`. Act by the kind; what each asks —
+`lib/agent-kit/NODE-LINES.md`.
+
 ## One cycle
 
 1. `npm run state -- <id>` — its role, who leads, intake, last commits and `current-step.md`.
