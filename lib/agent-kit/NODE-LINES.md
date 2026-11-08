@@ -13,6 +13,8 @@ commit. Messages to the PERSON have their own closed list (`lib/main-agent-cron/
 | `job-done` | an element worker's «done» (`lib/web4-items/jobs.cjs`; a batch names every element) | the main agent | reads the reports, answers the person once |
 | `first-session-done` | a newborn element's first session closed (`lib/web4-items/first-session.cjs`) | the main agent | closes the birth substep, goes to the next |
 | `limit-resume` | the pulse after a stop by the subscription limit (`lib/agent-kit/pulse.cjs`, delivered by the main agent's clock at the reset) | the main agent | `npm run where`, then wakes the element «continue from your record» |
+| `context-window` | the window hook on every turn from 55 % (`lib/agent-kit/window.cjs`, the status line writes `data/services/<id>/context.json`) | the agent itself | decides: a small last task first, or the letter to its next session and the reset now (from 85 % — now) |
+| `context-reset` | the bridge after `session clear --continue` (the main agent) or `npm run reset` (an element) | the agent's fresh session | reads its letter in the state record and goes on; asks nobody |
 | `ask-core` | an element (`npm run ask-core`, its template) | the main agent | answers from the instruction, skill `answer-element` |
 | `tell-core` | an element (`npm run tell-core`) | the main agent | passes the words to the architect, naming the element |
 | `need` | an element (`npm run need`) | the main agent | finds who does it or asks the architect, skill `handle-need` |
