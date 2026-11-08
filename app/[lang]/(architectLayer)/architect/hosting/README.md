@@ -13,7 +13,7 @@ have children, which is why depth costs this project nothing.
 | `_components/` | the working part; returns `[]` until something is built here |
 | `_list.generated.ts` | **generated** — the sections of this group. Never edit |
 
-**The red mark (632-2).** While the node has no own domain, this item, «Активация домена» and the zone «Основное» holding them
+**The red mark (632-2).** While the node has no own domain, this item, «Активация домена» and the zone «Ядро» (before step 703 «Основное») holding them
 are drawn in the warning colour: `meta.alert` puts `data-alert` on the menu item, and the island `NodeAlerts` asks `/api/domain/state`
 in the browser (law 264) and marks `<html>`; the rule is in `styles/globals.css`.
 

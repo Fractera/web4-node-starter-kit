@@ -26,7 +26,7 @@ import { MAIN_AGENT } from './main-agent-scheme'
 const ANCHOR = 'design'
 // 327 (слово владельца 2026-09-27): «после вкладки ядро добавим горизонтальный сепаратор, под которым слева в бордюр напишем более
 // мелким шрифтом нативные WEB4 ITEMS. После вкладки дизайн добавим сепаратор … кастомные WEB4 ITEMS. Задача визуально разделить
-// меню на зоны». Якорь первой зоны — пункт «Ядро» (`build`); вторая встаёт за «Дизайном», над кнопкой создания.
+// меню на зоны». Якорь первой зоны — пункт «Главный агент» (`build`); вторая встаёт за «Дизайном», над кнопкой создания.
 const CORE = 'build'
 
 /** Разделитель зоны меню: горизонтальная черта и мелкая подпись у левого края — она же переключатель зоны (553). */
@@ -132,7 +132,7 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   const page = at(currentPath)
   const customZone = [...rootTree, button, ...customs]
   const withCustom = [...menu.slice(0, cut), ...natives, zone(ui.zoneCustom, 'custom', holds(customZone, page)), ...inZone(customZone, 'custom'), ...menu.slice(cut)]
-  // Нет пункта «Ядро» — первой зоны нет: подпись над пустотой хуже её отсутствия.
+  // Нет пункта «Главный агент» (`build`) — первой зоны нет: подпись над пустотой хуже её отсутствия.
   const c = withCustom.findIndex((m) => m.href === at(`${ARCHITECT_HOME}/${CORE}`))
   if (c < 0) return withCustom
   // Зона «Нативные» — от «Ядра» до подписи «Кастомные».
@@ -154,7 +154,7 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
     ...inZone(rest.slice(first), 'native'),
   ]
   // 582 (владелец 2026-10-24): «Паспорт отдельная вкладка – раскрывающиеся список основное – перенести туда все кроме паспорта,
-  // нативных и кастомных разделов … меню по умолчанию будет закрыты». Зона «Основное» — всё от Паспорта до «Ядра» включительно;
+  // нативных и кастомных разделов … меню по умолчанию будет закрыты». Зона «Ядро» (703, владелец 2026-11-08: «в левом меню замени слово основное на слово ядро»; прежде «Основное») — всё от Паспорта до «Главного агента» включительно;
   // список не рукописный: новый пункт верхнего уровня сам уходит в неё. Нет Паспорта — меню как было.
   const top = withCustom.slice(0, c + 1)
   const p = top.findIndex((m) => m.href === at(`${ARCHITECT_HOME}/passport`))
@@ -186,7 +186,7 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   const mainItems = top.filter((m, k) => k !== p && !(compact && m.href && hiddenInCompact.has(m.href)))
   const tg = mainItems.findIndex((m) => m.href === at(`${ARCHITECT_HOME}/main-telegram`))
   const main = tg < 0 ? [...mainItems, ...before, ...after] : [...mainItems.slice(0, tg), ...before, mainItems[tg], ...after, ...mainItems.slice(tg + 1)]
-  // 632-2: тревога пункта видна и сквозь свёрнутую зону — подпись «Основное» несёт ту же тревогу, что пункт в ней («Домен и хостинг»).
+  // 632-2: тревога пункта видна и сквозь свёрнутую зону — подпись «Ядро» несёт ту же тревогу, что пункт в ней («Домен и хостинг»).
   // 677: тревог в зоне может быть несколько — подпись несёт все (`data-alert` — список слов, правило CSS — `~=`).
   const mainAlert = [...new Set(main.flatMap((m) => (m.alert ? m.alert.split(' ') : [])))].join(' ') || undefined
   // 692-1 (владелец 2026-11-08: «кнопку переключения компактной полный вынеси вверх сразу под кнопку ваш узел»): переключатель — первой
