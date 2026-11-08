@@ -780,7 +780,13 @@ if (cmd === 'where') {
       const head = readFileSync(join(dir, 'development-docs', 'current-step.md'), 'utf8')
       step = (/\*\*Active step:\*\*\s*([^\n]+)/.exec(head)?.[1] ?? '').trim()
     } catch { /* у элемента нет записи шага */ }
-    const pulse = readJson(join(ROOT, 'data', 'services', e.id, 'pulse.json'), null)?.last ?? null
+    // 686-8 (замер 2026-11-08 17:11 на узле владельца: root закончил шаг в 16:21, человек выключил его — последним событием стало
+    // `session-end`, и сводка назвала root «тихо»; так же пропал ход, обрезанный закрытием сессии). Смотрится последнее событие ХОДА:
+    // закрытие сессии за ним не прячет ни законченный ход, ни обрезанный.
+    const hist = readJson(join(ROOT, 'data', 'services', e.id, 'pulse.json'), null)?.history ?? []
+    const pulse = hist.find((h) => h.event !== 'session-end') ?? null
+    const lastEnd = hist.find((h) => h.event === 'turn-end' && Date.parse(h.at) >= since) ?? null
+    const closedAfter = Boolean(pulse && hist[0] && hist[0].event === 'session-end' && hist[0] !== pulse)
     const fresh = pulse && Date.parse(pulse.at) >= since
     const name = `${e.id}${step ? ` — ${firstSentence(step, 90)}` : ''}`
     // Записи расходятся — модель писала «строю», а ход оборван или обрезан: только этот элемент спрашивают, быстрым навыком агента
@@ -788,7 +794,7 @@ if (cmd === 'where') {
     const ask = `; спросить: npm run task -- ${e.id} "skill answer-the-leader — where does development stand?" --work`
     const midStep = ['building', 'checking', 'planning'].includes(dev?.state)
     if (pulse?.event === 'turn-error') loud.push(`⛔ ${name}: ход оборван (${pulse.error}) в ${hhmm(pulse.at)}${pulse.details ? ` — ${firstSentence(pulse.details, 80)}` : ''}${pulse.last ? `; последнее: «${firstSentence(pulse.last, 80)}»` : ''}${midStep ? ask : ''}`)
-    else if (pulse?.event === 'turn-start' && !live.has(e.id)) loud.push(`✂️ ${name}: ход начат в ${hhmm(pulse.at)} и не закончен, сессии нет — обрезан (сборка, сон, сбой)${midStep ? ask : ''}`)
+    else if (pulse?.event === 'turn-start' && !live.has(e.id)) loud.push(`✂️ ${name}: ход начат в ${hhmm(pulse.at)} и не закончен — ${closedAfter ? 'сессию закрыли посреди хода' : 'сессии нет: обрезан (сборка, сон, сбой)'}${lastEnd ? `; последний законченный ход — ${hhmm(lastEnd.at)}${lastEnd.last ? ` «${firstSentence(lastEnd.last, 60)}»` : ''}` : ''}${midStep ? ask : ''}`)
     else if (fresh && pulse.event === 'turn-end') loud.push(`✅ ${name}: ход закончен в ${hhmm(pulse.at)}${pulse.last ? ` — «${firstSentence(pulse.last, 80)}»` : ''}`)
     else if (live.has(e.id)) loud.push(`▶️ ${name}: сессия идёт`)
     else quiet.push(e.id)
