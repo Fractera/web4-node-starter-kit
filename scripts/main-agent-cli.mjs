@@ -173,6 +173,9 @@ const DUP_MIN = FIND_MIN
 const [cmd, ...rest] = process.argv.slice(2)
 const flag = (name) => { const i = rest.indexOf(name); return i >= 0 ? rest[i + 1] ?? '' : null }
 const has = (name) => rest.includes(name)
+// 684 (разбор экзамена D1 c; ✗ живой замер 2026-11-08: рабочий процесс inanv закончил за 13 с без \`reply-core\` — «отчёта нет»): каждое
+// поручение рабочему процессу кончается обязательной строкой отчёта — её несёт сам текст поручения, до любого выпуска шаблона.
+const REPORT_LAST = ' Your LAST action before you finish, always: npm run reply-core -- "<the result in one line, or: done, nothing to report>" — without it the core\'s main agent gets «no report» and has to check you by hand.'
 
 // 548-14 (владелец 2026-10-20: стоимость агента не растёт с ростом узла): список всех элементов больше не печатается — строка на
 // элемент делала каждое пробуждение главного агента дороже с каждым новым элементом. Постоянная часть — службы, с которыми узел
@@ -598,7 +601,7 @@ if (cmd === 'task') {
       }
       const session = modes.hasGroups(itemDir(one)) ? modes.sessionKey(one, 'work') : one
       jobs.set(session, { about, skill, batch }, ROOT)
-      const r = await core('/api/agents/wake', { method: 'POST', body: JSON.stringify({ service: one, text: modes.withWord(skill !== null ? `skill ${skill} — ${said}` : said, 'work'), from: 'main agent', about, reason: 'main-agent-job', supervised: supervision.byMain(one, ROOT) }) }).catch((e) => ({ body: { ok: false, reason: e.message } }))
+      const r = await core('/api/agents/wake', { method: 'POST', body: JSON.stringify({ service: one, text: modes.withWord((skill !== null ? `skill ${skill} — ${said}` : said) + REPORT_LAST, 'work'), from: 'main agent', about, reason: 'main-agent-job', supervised: supervision.byMain(one, ROOT) }) }).catch((e) => ({ body: { ok: false, reason: e.message } }))
       const b = r.body ?? {}
       if (!b.ok) { jobs.take(session, ROOT); jobs.dropFromBatch(batch, one, ROOT); lines.push(`${one}: NOT started — ${b.reason ?? r.status}`); continue }
       lines.push(`${one}: ${b.pending ? 'its person was asked in Telegram to turn its worker on' : b.already ? 'pasted into its live worker' : 'its worker woke with the job'}`)
@@ -618,7 +621,7 @@ if (cmd === 'task') {
   }
   const grouped = modes.hasGroups(itemDir(id))
   const session = work && grouped ? modes.sessionKey(id, 'work') : id
-  const body = { service: id, text: modes.withWord(text, work ? 'work' : 'build'), from: 'main agent', about: firstSentence(said, 300), reason: work ? 'main-agent-job' : 'main-agent-task', supervised: supervision.byMain(id, ROOT) }
+  const body = { service: id, text: modes.withWord(work ? text + REPORT_LAST : text, work ? 'work' : 'build'), from: 'main agent', about: firstSentence(said, 300), reason: work ? 'main-agent-job' : 'main-agent-task', supervised: supervision.byMain(id, ROOT) }
   if (dry) {
     console.log(`===TASK_DRY=== ${id} → session ${session}${work && !grouped ? ' (this element has no skill groups: one session, the job goes into it with its word)' : ''}\n${body.text}`)
     process.exit(0)
