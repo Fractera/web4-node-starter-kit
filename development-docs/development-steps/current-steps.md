@@ -5,6 +5,12 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-60 (2026-11-08, ~17:30 WET) — 671 APPROVED and IN WORK** (the owner: «go» to «Начинаю с плана 671 и правила границы?»; core
+development with the push allowed by him today). Plan `new-steps/671-templates-carry-the-order-chain-to-every-element.md`: 671-1 the
+boundary in code (rhythm is never a hand; CLAUDE.md §4 «clock» dropped; `create --boundary`), 671-2 the element's order chain
+(build.md 1b, work.md), 671-3 the i2i call waits through a cold start, 671-4 release, 671-5 close 670 and 671. Also in the core, not
+on the node yet: 686-8 (`cfe3bcf0`, `b825d67f`), 694 `c747a3b`, 695 `716ef77`, 696 `3e86537` — one node update after 671.
+
 **NOW-59 (2026-11-08, ~16:20 WET) — 686 and 693 LIVE on the owner's node** (core `ac4ff8bb`, 15 changes of the fork; natives on their
 686-3 tags). Proven live: `npm run where` (live sessions, the limits line «5 ч 46 % · 7 дн 65 %» from `data/node/limits/node.json` and
 `own-root.json`); pulse files of build, root, s8y6x (turn-start, session-end); root wrote its own `development` fragment after its step
