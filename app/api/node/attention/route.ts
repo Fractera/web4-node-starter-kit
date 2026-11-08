@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { addressOf } from "@/lib/web4-items/element-address"
+import { elementName } from "@/lib/web4-items/dashboard-rows"
 import paths from "@/lib/web4-items/paths.cjs"
 import previewLock from "@/lib/deploy/preview-lock.cjs"
 import { list } from "@/app/[lang]/(architectLayer)/architect/[item]/_agent-kit/server/session.cjs"
@@ -32,6 +33,10 @@ export async function GET(req: NextRequest) {
   const langParam = req.nextUrl.searchParams.get("lang") ?? "en"
   const lang = /^[a-z]{2}(-[A-Za-z]{2,4})?$/.test(langParam) ? langParam : "en"
   const page = (id: string, slug: string) => `/${lang}/architect/${addressOf(id)}/build/${slug}`
+  // 680 (владелец 2026-11-08: «активные терминалы … должны показывать точную такую же название какое присутствует в левом меню или
+  // например верхнее меню … по идентификатору понять какой именно терминал нужно открыть невозможно»): подпись — то же имя, что у меню и
+  // шапки (`elementName`: заголовок раздела ядра у встроенных, имя для людей у кастомных — 678); рабочая сессия `<id>--work` — по элементу.
+  const named = (service: string) => elementName(service.replace(/--work$/, ""), lang === "ru" ? "ru" : "en")
 
   // 🪦 «Только рождённые элементы» (345) отменено владельцем 2026-10-02: «да, показывай все терминалы в ящике» — любой открытый
   // терминал нагружает компьютер и тратит подписку. Встроенные (root, auth, data, config, design, blocks, узел `build`) ведут
@@ -40,8 +45,8 @@ export async function GET(req: NextRequest) {
     .filter((s) => s.running)
     .map((s) =>
       isBornItem(s.service)
-        ? { id: s.service, name: addressOf(s.service), href: page(s.service, "terminal") }
-        : { id: s.service, name: s.service, href: `/${lang}/architect/${s.service}/terminal` },
+        ? { id: s.service, name: named(s.service), href: page(s.service, "terminal") }
+        : { id: s.service, name: named(s.service), href: `/${lang}/architect/${s.service}/terminal` },
     )
 
   let entries: Entry[] = []
@@ -50,7 +55,7 @@ export async function GET(req: NextRequest) {
     .filter((e) => e.kind === "user" && e.born)
     .map((e) => ({ e, p: previewLock.pendingPreview(ROOT, e.id) as { state?: string; commit?: string } | null }))
     .filter(({ p }) => p?.state === "ready")
-    .map(({ e, p }) => ({ id: e.id, name: addressOf(e.id), commit: p?.commit ?? null, href: page(e.id, "deployments") }))
+    .map(({ e, p }) => ({ id: e.id, name: named(e.id), commit: p?.commit ?? null, href: page(e.id, "deployments") }))
 
   return NextResponse.json({ ok: true, terminals, previews }, noStore)
 }
