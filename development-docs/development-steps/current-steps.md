@@ -5,6 +5,16 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-59 (2026-11-08, ~16:20 WET) — 686 and 693 LIVE on the owner's node** (core `ac4ff8bb`, 15 changes of the fork; natives on their
+686-3 tags). Proven live: `npm run where` (live sessions, the limits line «5 ч 46 % · 7 дн 65 %» from `data/node/limits/node.json` and
+`own-root.json`); pulse files of build, root, s8y6x (turn-start, session-end); root wrote its own `development` fragment after its step
+event («шаг 2 (planning)»); s8y6x took 686-3 itself (cherry-pick `46539e0`, fragment `7e837a5`), root by merging v3.0.35 (unpushed: its
+own commits are not the template's); `instruction:element --dry` → nothing to change for both, `verify-elements` OK; eyes: How it works
+§7 — the orange question frame with Mercedes-Benz/BRABUS and Apple/Caviar, 7.3 in the present tense, no console errors. NOT proven
+live yet: a real StopFailure rate_limit and its resume entry (686-1 second half, 686-5), a real loan (686-6) — wait for a natural
+limit; then `completed-steps/686.md`. Core `0263ebc` (the token nudge) waits for the next update. The core's settings deny the main
+agent any command inside `WEB4-ITEMS/` — a rollout to an element without a GitHub repository goes through its own agent (`task`).
+
 **NOW-58 (2026-11-08, ~16:00 WET) — 686-3…686-7 BUILT here, committed, NOT pushed yet** (the owner: «продолжит ровно с 686-3», under «b»).
 - 686-3 `7ee96d82` — passport fragment `development` (`npm run development`), skill `answer-the-leader`, the `use-development-docs` event line,
   element instruction; 15 template releases (custom v0.3.172 `f68d3ea`, native v0.1.53, root v3.0.35 `7a69857`, the 12 natives next
