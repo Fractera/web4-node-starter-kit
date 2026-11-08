@@ -1,5 +1,5 @@
 // РАЗДЕЛ 7 «FRACTERA ПРОТИВ ПЛАТФОРМ» — на странице «Как это работает» (шаг 688, владелец 2026-11-08: «Для раздела как это работает
-// давай создадим седьмой пункт … – 7.0 Fractera против платформ Claude, GPT и тд.»; сравнение с Mercedes и Mercedes-AMG — «можно
+// давай создадим седьмой пункт … – 7.0 Fractera против платформ Claude, GPT и тд.»; сравнение с Mercedes и BRABUS (693: прежде Mercedes-AMG — он часть Mercedes, сравнение неверно) — «можно
 // сделать как раскрывашку с вопросом как вообще это можно сравнивать?» — поле `question`).
 //
 // 🔒 Каждое утверждение — о том, что узел умеет сегодня; чего ещё нет, сказано словами «следующий шаг ядра» и «пока не построен»
@@ -18,7 +18,7 @@ export const PLATFORM_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
       lead: 'Fractera cannot compete with Claude, GPT or any platform like them, and it does not try to: their own models run at its heart. It adds what one conversation with a model lacks, so that a large project can live for years.',
       question: {
         summary: 'How can these even be compared?',
-        text: 'Think of a Mercedes and a Mercedes-AMG. The first is the source of the technology and the maker of the car’s soul. The second is the same car taken further, mostly with added hardware. All else being equal, most people would pick the AMG. Claude and GPT are the Mercedes here, and Fractera is the AMG built on them.',
+        text: 'Think of Mercedes-Benz and BRABUS. Mercedes makes the car and its soul. BRABUS, an independent company, takes that car as its base and builds a stronger version of it, mostly with hardware of its own. Or Apple and Caviar: one makes the iPhone, the other turns it into a version of its own. Claude and GPT are the Mercedes and the Apple here, and Fractera is the BRABUS built on them.',
       },
       parts: [
         {
@@ -64,7 +64,7 @@ export const PLATFORM_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
       lead: 'Fractera не может конкурировать ни с Claude, ни с GPT, ни с другой такой платформой и не пытается: в её сердце работают их же модели. Она добавляет то, чего не хватает одному разговору с моделью, чтобы большой проект мог жить годами.',
       question: {
         summary: 'Как это вообще можно сравнивать?',
-        text: 'Вспомните Mercedes и Mercedes-AMG. Первый — источник технологий и создатель души Mercedes. Второй — тот же автомобиль, прокачанный дальше, чаще всего за счёт новых аппаратных возможностей. При прочих равных почти любой выберет AMG. Claude и GPT здесь — Mercedes, а Fractera — AMG, построенный на них.',
+        text: 'Вспомните Mercedes-Benz и BRABUS. Mercedes создаёт автомобиль и его душу. BRABUS — независимая компания — берёт этот автомобиль за основу и строит на нём более мощную версию, чаще всего за счёт своего железа. Или Apple и Caviar: одна делает iPhone, другая превращает его в свою версию. Claude и GPT здесь — Mercedes и Apple, а Fractera — BRABUS, построенный на них.',
       },
       parts: [
         {

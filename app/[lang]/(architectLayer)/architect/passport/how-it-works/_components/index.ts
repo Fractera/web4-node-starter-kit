@@ -44,7 +44,7 @@ export function content(lang: string): Block[] {
       // 688 (владелец 2026-11-08): вопрос раздела — раскрывашкой под вступлением («можно сделать как раскрывашку с вопросом как вообще
       // это можно сравнивать?»); одна полоса, свёрнута.
       ...(s.question
-        ? [{ kind: 'accordion', children: [{ kind: 'accordionItem', summary: s.question.summary, children: [{ kind: 'p', text: words(s.question.text) }] }] } as Block]
+        ? [{ kind: 'accordion', tone: 'question', children: [{ kind: 'accordionItem', summary: s.question.summary, children: [{ kind: 'p', text: words(s.question.text) }] }] } as Block]
         : []),
       ...s.parts.flatMap((p): Block[] => [
         { kind: 'h3', text: p.title },

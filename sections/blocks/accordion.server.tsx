@@ -3,6 +3,7 @@ import { H2 } from '@/components/ui/typography'
 import { inline } from '@/lib/content/blocks/inline'
 import { AccordionSection, type AccordionPanel } from '@/components/accordion/accordion-section.client'
 import { appDialogUi } from '@/components/dialog/app-dialog.i18n'
+import { CircleHelp } from 'lucide-react'
 
 // РАСКРЫВАЮЩИЕСЯ ПОЛОСЫ — вид каталога (244-1).
 //
@@ -47,8 +48,12 @@ export const accordion: SectionRenderer<'accordion'> = (b, ctx) => {
     child => child.kind === 'accordionItem' && child.open,
   )
 
+  // 693: `tone: 'question'` — тёплая рамка цвета `warning` и значок вопроса слева; цвет — токеном, перекрашивается из «Дизайна».
+  const question = b.tone === 'question'
   return (
-    <section key={ctx.key} className="flex flex-col gap-4">
+    <section key={ctx.key} data-block="acc1" data-tone={question ? 'question' : undefined} className={question ? 'flex gap-3 rounded-lg border border-warning/40 bg-warning/10 p-4' : 'flex flex-col gap-4'}>
+      {question ? <CircleHelp aria-hidden className="mt-3 size-6 shrink-0 text-warning" /> : null}
+      <div data-block="acc2" className="flex min-w-0 flex-1 flex-col gap-4">
       {b.title ? <H2>{inline(b.title, `${ctx.key}-t`)}</H2> : null}
       {b.lead ? (
         <p className="text-muted-foreground leading-relaxed">{inline(b.lead, `${ctx.key}-l`)}</p>
@@ -60,6 +65,7 @@ export const accordion: SectionRenderer<'accordion'> = (b, ctx) => {
         cards={b.cards === true}
         dialogUi={hasDetails ? appDialogUi(ctx.lang) : undefined}
       />
+      </div>
     </section>
   )
 }
