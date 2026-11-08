@@ -41,6 +41,11 @@ export function content(lang: string): Block[] {
     ...w.sections.flatMap((s: PresentationSection, i): Block[] => [
       { kind: 'h2', text: s.title },
       ...(s.lead ? [{ kind: 'p', text: words(s.lead) } as Block] : []),
+      // 688 (владелец 2026-11-08): вопрос раздела — раскрывашкой под вступлением («можно сделать как раскрывашку с вопросом как вообще
+      // это можно сравнивать?»); одна полоса, свёрнута.
+      ...(s.question
+        ? [{ kind: 'accordion', children: [{ kind: 'accordionItem', summary: s.question.summary, children: [{ kind: 'p', text: words(s.question.text) }] }] } as Block]
+        : []),
       ...s.parts.flatMap((p): Block[] => [
         { kind: 'h3', text: p.title },
         { kind: 'olist', items: p.items.map(words) },

@@ -14,6 +14,8 @@ about it is written anywhere else.
 | `_data/index.ts` | ties them together; **this file is what makes the folder a page** |
 | `_components/` | the working part: the presentation of the node and its link with Lagrix, built from blocks (step 535) |
 | `_data/presentation.ts` | the words of the presentation, `en` base and `ru`: intro, the card «you do not have to open this panel», four numbered sections (Web4-ready and Lagrix · the ordinary web · the killer features: reverse engineering and the product quiz, step 583 · home or a dedicated server); money figures by the Lagrix changelog, one reading (entry 51) |
+| `_data/memory-sections.ts` | sections 5 and 6 — deep memory and continuous evolution (step 600) |
+| `_data/platforms-section.ts` | section 7 — Fractera versus the platforms: the Mercedes-AMG question as a collapsed accordion (`question`), the context window, sleeping elements, a subscription's limit, many subscriptions lawfully (step 688); what is not built yet says so |
 
 ## The three states of this page
 

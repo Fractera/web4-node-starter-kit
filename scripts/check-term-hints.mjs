@@ -43,6 +43,8 @@ const DICTS = [
 // ликбез входа в своём `_components`). Их метки проверяются по ключам этого словаря, а не считаются «вне словаря».
 const EXPANDED_BY = {
   'app/[lang]/(architectLayer)/architect/passport/how-it-works/_data/memory-sections.ts': 'app/[lang]/(architectLayer)/_i18n/architect-home.i18n.ts',
+  // 688: раздел 7 «Fractera против платформ» раскрывается тем же `_components` страницы.
+  'app/[lang]/(architectLayer)/architect/passport/how-it-works/_data/platforms-section.ts': 'app/[lang]/(architectLayer)/_i18n/architect-home.i18n.ts',
 }
 
 const term = await load('lib/content/blocks/term.ts', 'term')

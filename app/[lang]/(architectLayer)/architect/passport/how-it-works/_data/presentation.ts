@@ -8,12 +8,15 @@
 export type PresentationPart = { title: string; items: string[] }
 /** Карточка внутри раздела (раздел «Глубокая память»): кнопка ведёт на `/{lang}` + `path`. */
 export type PresentationSectionCard = { title: string; text: string; action: string; path: string }
-/** Раздел страницы: вкладка оглавления (`tab`), вступление под заголовком (`lead`), части (`parts`), карточка (`card`). */
-export type PresentationSection = { title: string; tab: string; lead?: string; parts: PresentationPart[]; card?: PresentationSectionCard }
+/** Вопрос раздела раскрывашкой под вступлением (688, раздел 7): видимая подпись и ответ одним абзацем. */
+export type PresentationQuestion = { summary: string; text: string }
+/** Раздел страницы: вкладка оглавления (`tab`), вступление под заголовком (`lead`), вопрос (`question`), части (`parts`), карточка (`card`). */
+export type PresentationSection = { title: string; tab: string; lead?: string; question?: PresentationQuestion; parts: PresentationPart[]; card?: PresentationSectionCard }
 export type PresentationCard = { title: string; text: string; action: string }
 export type PresentationWords = { intro: string; card: PresentationCard; lagrixCard: PresentationCard; aiCard: PresentationCard; sections: PresentationSection[] }
 
 import { MEMORY_SECTIONS } from './memory-sections'
+import { PLATFORM_SECTIONS } from './platforms-section'
 
 const UI: Record<'en' | 'ru', PresentationWords> = {
   en: {
@@ -298,5 +301,7 @@ const UI: Record<'en' | 'ru', PresentationWords> = {
 export function presentationWords(lang: string): PresentationWords {
   const base = lang === 'ru' ? UI.ru : UI.en
   // 600-1: разделы 5 и 6 («Глубокая память», «Непрерывная эволюция») переехали со входа — см. `memory-sections.ts`.
-  return { ...base, sections: [...base.sections, ...MEMORY_SECTIONS[lang === 'ru' ? 'ru' : 'en']] }
+  // 688: раздел 7 «Fractera против платформ» — `platforms-section.ts`.
+  const l = lang === 'ru' ? 'ru' : 'en'
+  return { ...base, sections: [...base.sections, ...MEMORY_SECTIONS[l], ...PLATFORM_SECTIONS[l]] }
 }
