@@ -10,6 +10,10 @@ development with the push allowed by him today). Plan `new-steps/671-templates-c
 boundary in code (rhythm is never a hand; CLAUDE.md §4 «clock» dropped; `create --boundary`), 671-2 the element's order chain
 (build.md 1b, work.md), 671-3 the i2i call waits through a cold start, 671-4 release, 671-5 close 670 and 671. Also in the core, not
 on the node yet: 686-8 (`cfe3bcf0`, `b825d67f`), 694 `c747a3b`, 695 `716ef77`, 696 `3e86537` — one node update after 671.
+671-1 DONE `024d3850` (pushed). Defect on the way (mine, fixed): my proof of `create --boundary owner` in THIS clone passed the guards
+and bore element `gallr` into the live node's pm2 (`fractera-svc-gallr` on 24687, with `pm2 save`) — removed by me: the process,
+`pm2 save` again (18 processes, dump without gallr), the clone's registry entry, draft, folder, data, roles, supervision; nothing went
+outside (no Cloudflare, GitHub or wake). `create` now refuses outside the installed node (check-local). Next: 671-3, 671-2, release.
 
 **NOW-59 (2026-11-08, ~16:20 WET) — 686 and 693 LIVE on the owner's node** (core `ac4ff8bb`, 15 changes of the fork; natives on their
 686-3 tags). Proven live: `npm run where` (live sessions, the limits line «5 ч 46 % · 7 дн 65 %» from `data/node/limits/node.json` and
