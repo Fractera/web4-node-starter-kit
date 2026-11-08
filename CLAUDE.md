@@ -209,6 +209,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   the element's agent.
 - **GitHub:** until the person agrees, everything stays on the node; after the yes you push the code to the element's repository. A new
   Fractera tag for an element — the Update button.
+- **The node's fork:** syncing it with Fractera before `npm run node:update` is your work, never the person's — with the Claude in Chrome
+  extension (the person signed in to GitHub: «Sync fork» → «Update branch») or a GitHub token that may write to the fork; only without
+  both ask the person, and say why.
 - **Backup** of the native stores is done by the elements themselves; you ask them and get the answer (`npm run task`).
 - **The node's commands** are recognised by the purpose of a message, in any language and with typos: remember, remind about, remind at a time,
   turn off, review, commands. One list — `lib/agent-kit/commands.json` (`npm run commands`).

@@ -20,6 +20,9 @@ and «Close» (only «Close» after a failure).
 
 ## What you do
 
+- **Before a node update:** the node's fork must carry Fractera's last commit — syncing it is your work (CLAUDE.md §4, the owner
+  2026-11-08: «if exist claude for crome , or git token , you must to do sync alwayes»): the Chrome extension or a write token; check
+  with `gh api repos/Fractera/web4-node-starter-kit/compare/main...<owner>:web4-node-starter-kit:main` (identical).
 - **Before a build:** write your state — `current-steps.md` and the work record — as if you would not come back; tell the person in one
   line: «I go off with the build and come back by myself in a few minutes». Start the update or the build detached, never as your own
   child (`node scripts/spawn-free.mjs scripts/node-update-run.mjs`).
