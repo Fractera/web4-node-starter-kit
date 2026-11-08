@@ -5,6 +5,11 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-64 (2026-11-08, ~22:10 WET) — 702 PROPOSED, not agreed** (`new-steps/702-a-skill-fractera-versus-the-platforms.md`, the owner's
+three messages verbatim there): a core skill on what a person gets against Claude.ai and why a platform does not make Fractera
+unnecessary, with roles, the native elements, discovery, a2a and payment. Defect on the way: the cards of `vectors` and `graph` still say
+OpenAI counts the vectors (626 moved them to `embeddings`). 701 not started — its decision waits here.
+
 **NOW-63 (2026-11-08, ~21:40 WET) — 701 PROPOSED, not agreed** (`new-steps/701-the-core-writes-every-element-its-starting-vector-and-research-gets-its-hand.md`,
 the owner's words verbatim there): the core writes every element a starting vector into its §11 «From the core» at birth; research
 gets a field skill and a hand of its own; the owner's case goes to the exam, not to a skill. Grown by his next message: the soul knows what the node has closed
