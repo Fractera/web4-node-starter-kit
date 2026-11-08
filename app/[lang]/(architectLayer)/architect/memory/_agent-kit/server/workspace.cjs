@@ -127,7 +127,14 @@ function ownClaudeHome(service) {
 /** Своя папка Claude Code элемента, если он перешёл на подписку своего человека; иначе `null` — подписка узла. */
 function ownClaudeDir(service) {
   const dir = ownClaudeHome(service)
-  return dir && existsSync(dir) ? dir : null
+  if (!dir || !existsSync(dir)) return null
+  // 686-6: руководитель одолжил этому элементу подписку узла (`lib/agent-kit/lending.cjs`) и у узла осталось больше 15 % — сессия на входе
+  // узла; ниже 15 % — снова своя подписка, запись ждёт. Модуль ядра — через `globalThis` (`lib/agent-kit/mount.cjs`): этот файл собирает
+  // сборка ядра, путь от корня она не разрешает.
+  try {
+    if (globalThis.__web4Lending?.onLoan?.(ROOT, String(service))) return null
+  } catch { /* узел без одалживания — своя подписка, как прежде */ }
+  return dir
 }
 
 module.exports = { serviceDir, agentServices, isBornItem, ownClaudeHome, ownClaudeDir }

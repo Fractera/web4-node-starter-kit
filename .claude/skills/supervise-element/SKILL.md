@@ -31,6 +31,15 @@ back at any time (`npm run supervise -- <id> architect`).
 3. Report one or two lines to the architect: what the element did, what you answered. `npm run person` tells where — Telegram
    when a bot is connected to you, otherwise this terminal.
 
+## When the hand cannot finish (686)
+
+`npm run where` names it: a turn cut off or stopped by a limit. A stop by the limit already has its resume — the clock wakes you at the
+reset (686-5); then wake it «continue from your record». The element runs on its own person's subscription (689) and that one ran out
+before the work ended — finish through the same hand on lent fuel: `npm run lend -- <id> --cost <% of the node's window you expect>
+--reason "<the work>"`; it refuses when the forecast leaves you less than 15 % (every running lending counted). Then `npm run close`
+and `npm run task`; the end of that session gives the fuel back by itself, `npm run lend` shows the debt. Never to get around the
+limits of one person with two subscriptions — skill `provider-rules`.
+
 ## Never
 
 - answer a permission question the element's agent asks its person (reading outside its folder and the like) — only the person

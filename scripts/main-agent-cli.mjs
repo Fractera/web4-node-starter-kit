@@ -31,6 +31,8 @@
 //   openai-key <sk-…> [--chat <id> --message <id>] — ключ OpenAI узла: проверка дверью ядра, запись, удаление сообщения с ключом (620)
 //   transcribe <файл> [--lang xx] — голосовое человека → текст дверью распознавания ядра; нет рабочего ключа — попросить /openai_key (617)
 //   review <id> "<слова человека>" — разбор элемента по слову человека: его недовольство первой причиной, расход сессии второй (571-6)
+//   where [--since <часы>]   — где стоит разработка каждого элемента, кодом, без пробуждения (686-4)
+//   lend [<id> --cost <%> --reason "…" | <id> --return] — подписка узла в долг элементу на своей подписке, пока у тебя остаётся 15 % (686-6)
 // 🔒 Ничего не делается само: каждую команду запускает главный агент по слову человека или по событию надзора.
 
 import { appendFileSync, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, statSync, writeFileSync } from 'node:fs'
@@ -786,6 +788,44 @@ if (cmd === 'where') {
     console.log(`Лимит ${l.login === 'node' ? 'подписки узла' : `своей подписки ${l.element}`}: ${[w(l.fiveHour, '5 ч'), w(l.sevenDay, '7 дн')].filter(Boolean).join(' · ')} — замер ${hhmm(l.at)}`)
   }
   if (!lims.length) console.log('Лимит подписки: ещё не замерен — его пишет строка состояния сессий узла после обновления (686-2)')
+  const loans = require(join(ROOT, 'lib', 'agent-kit', 'lending.cjs')).active(ROOT)
+  if (loans.length) console.log(`В долг на подписке узла: ${loans.map((r) => `${r.element} (${r.cost} %)`).join(', ')} — npm run lend`)
+  process.exit(0)
+}
+
+// 686-6 (владелец 2026-11-08: «переключить его на свою подписку для завершения этой работы и вернуть обратно его подписку после завершения
+// работы … сохранится хотя бы15%»; CLAUDE.md §1): ОДАЛЖИВАНИЕ. Элементу на своей подписке (689), которому её не хватило закончить работу, —
+// следующая его сессия на подписке узла, только пока прогноз (израсходовано узлом + обещано всем текущим долгам + цена этой работы) оставляет
+// тебе 15 %. Цену в процентах окна называешь ты сам (`--cost`, по умолчанию 20) — по своему рассуждению. Возврат — сам в конце его сессии
+// (хук пульса) или `--return`; ниже 15 % — пауза сама: его следующая сессия снова на своей подписке. Логика — `lib/agent-kit/lending.cjs`.
+if (cmd === 'lend') {
+  const lending = require(join(ROOT, 'lib', 'agent-kit', 'lending.cjs'))
+  const [id] = rest.filter((a, i) => !a.startsWith('--') && !(i > 0 && ['--cost', '--reason'].includes(rest[i - 1])))
+  if (!id) {
+    const list = lending.active(ROOT)
+    const f = lending.forecast(ROOT, 0)
+    console.log(f.now === undefined ? `Лимит подписки узла: ${f.why}` : `Подписка узла: израсходовано ${f.now} %, обещано в долг ${f.owed} % — останется тебе ${Math.round(f.keep)} % (порог ${lending.KEEP} %)`)
+    for (const r of list) console.log(`- ${r.element}: в долг с ${new Date(r.since).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}, цена ${r.cost} % — ${r.reason}`)
+    if (!list.length) console.log('Долгов нет.')
+    if (list.length && !lending.nodeHasRoom(ROOT)) console.log(`⏸ У узла меньше ${lending.KEEP} %: долги на паузе — следующие сессии этих элементов идут на их своей подписке.`)
+    process.exit(0)
+  }
+  if (!registry().some((s) => s.id === id)) fail(`no element ${id} in the registry`)
+  if (has('--return')) {
+    const r = lending.giveBack(ROOT, id, 'returned by the leader')
+    if (!r.ok) fail(r.why)
+    console.log(`===LEND_RETURNED=== ${id}: снова на своей подписке со следующей сессии${r.nodeUsed !== null ? `; узел сейчас ${r.nodeUsed} % (был ${r.rec.nodeUsedAtStart} %)` : ''}`)
+    process.exit(0)
+  }
+  if (!existsSync(join(ROOT, 'data', 'services', id, 'claude'))) fail(`${id} already runs on the node's subscription — nothing to lend (689: no own Claude Code folder)`)
+  const cost = Number(flag('--cost') ?? 20)
+  if (!(cost > 0 && cost <= 85)) fail('--cost: the share of the node\'s window this job will take, 1–85 %')
+  const reason = flag('--reason')
+  if (!reason) fail('--reason "<which work it must finish, and why its own subscription cannot>"')
+  const r = lending.lend(ROOT, id, { cost, reason })
+  if (!r.ok) fail(r.why)
+  console.log(`===LEND_OK=== ${id}: следующая его сессия — на подписке узла; прогноз оставляет тебе ${Math.round(r.forecast.keep)} %`)
+  console.log(`Живая сессия на своей подписке сама не переключится: npm run close -- ${id}, затем npm run task -- ${id} "<работа>"${''}. Конец той сессии вернёт долг сам.`)
   process.exit(0)
 }
 
