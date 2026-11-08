@@ -5,10 +5,11 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-40 (2026-11-07, ~23:15 UTC) — 678 CODED, proof owed on the owner's node** (`new-steps/678-…md`). The owner: «to do all and fix
-all» — the menu names of the elements and a live menu. One display name in the core (`lib/web4-items/name-file.cjs`, `data/services/<id>/
-name.json` → passport `name` → address) read by the left menu, the header catalog, the notice door and `card`; `npm run create --
---name`, `npm run rename`; the island `MenuLive` + door `/api/node/menu-stamp`. Next: his fork sync → `npm run node:update` → eyes.
+**NOW-41 (2026-11-08, ~01:00 UTC) — 678, 679, 680 CLOSED** (`completed-steps/678.md`, `679.md`, `680.md`; proven on the owner's node,
+core `48ad64e1`): the menu and the drawer name elements like people do and refresh within 10 s; an element is never left waiting; the
+main agent switches an element's links (`npm run look -- <id> --own|--linked`) and asks «on its own or one with the project» before birth.
+OWED from the examinee's report: D1 (nine identical «done» wakes), D3 (own-role needs), D7 (`create` refusing right births), D9 (the deny
+rule blocks the core's own `lib/web4-items/`); `completed-steps/674.md`; 676 queued.
 
 **NOW-39 (2026-11-07, ~22:40 UTC) — 673 CLOSED** (`completed-steps/673-main.md`, `completed-steps/673-5.md`; the plan deleted): the
 exam on Opus high — one question, the owner's own (a personal brand across networks and a blog), session `0ba0bad6` on his node —
