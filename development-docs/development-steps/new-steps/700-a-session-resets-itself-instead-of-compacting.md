@@ -28,3 +28,16 @@ the page: «на странице как это работает, в пункт�
 | 700-4 | Compaction off for every node session (`autoCompactEnabled: false`, after the primary source is read); the 85 % line is the safety net | a session's settings; no compaction in a long run |
 | 700-5 | The elements: the same bridge gives them all of it; `use-development-docs` and the element instruction say «do it yourself», not «tell the person» (a template release) | an element resets itself in a long step |
 | 700-6 | How it works 7.1 — how a long development survives the window without compaction | the page, eyes |
+
+## Built (2026-11-08) — the live proofs wait for the node update
+| Substep | Commit | Proof here | Live, after the update |
+|---|---|---|---|
+| 700-1 | core `6f88e568` | on a copy: 40 % no line, 60 % the choice, 90 % now; bad id / garbage exit 0 | a real session's `context.json`, the status line «окно N %» |
+| 700-2 | core `27dd438a` | use-development-steps §2 rewritten | the main agent writes the letter itself |
+| 700-3 | core `f4b03263` | fake live session through the real bridge: /clear + context-reset line; without continue /clear only | the main agent resets and its fresh session goes on from the letter |
+| 700-4 | core `226fa15c` | settings-reference read; 15 bridge copies carry `autoCompactEnabled: false` | `ps` of a node session shows it in `--settings` |
+| 700-5 | 15 templates (custom v0.3.175 `0ae6162`, native v0.1.56, root v3.0.38 `db2604d`, natives next patch), pins `b61c1bf5` | copy of an element vs a fake core door: refused without the letter, with it the door got clear+continue; custom prebuild green | an element (s8y6x) takes it by its agent; `npm run reset` live |
+| 700-6 | core `225ac74a` | guards green | eyes on the owner's node |
+Mistakes: in the 699 rollout I named a non-existent repo (web4-item-custom-template) in s8y6x's task — the custom template is
+fractera-custom-item-starter; my first two scans of the Claude Code binary for the status line fields hung (BSD grep, 200 MB) — the
+primary source was the documentation page, read in a second.
