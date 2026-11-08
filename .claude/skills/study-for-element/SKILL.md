@@ -37,3 +37,5 @@ with its write guard. Nothing of that is in your session.
 - A sign-in to a test account belongs to the element's agent in its pass (`npm run study -- login <site>`): the person confirms it in
   the node's login window; nobody asks for a password.
 - The person only wants to know whether an element of the node already does something — that is `route-to-element`, not a study.
+- The person wants to understand, compare or check a product, or how to integrate it, not to build an analogue — the field `research`,
+  with `shape-the-need`.

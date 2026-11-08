@@ -21,7 +21,7 @@ const ROOT = i > 0 ? resolve(process.argv[i + 1]) : resolve(import.meta.dirname,
 
 // The files that decide which shape a need takes: the method, and (673-3) the skills of a field, which give facts, not shapes.
 const METHOD_SKILL = 'shape-the-need'
-const FIELD_SKILLS = ['content-factory', 'own-agents', 'integrator']
+const FIELD_SKILLS = ['content-factory', 'own-agents', 'integrator', 'research']
 const SKILLS = [METHOD_SKILL, ...FIELD_SKILLS]
 // A skill of a field never names the shape itself — the method decides it on the node's facts (673-3).
 const FIELD_RULES = [
