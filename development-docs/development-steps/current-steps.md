@@ -8,7 +8,8 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 **NOW-64 (2026-11-08, ~22:10 WET) — 702 PROPOSED, not agreed** (`new-steps/702-a-skill-fractera-versus-the-platforms.md`, the owner's
 three messages verbatim there): a core skill on what a person gets against Claude.ai and why a platform does not make Fractera
 unnecessary, with roles, the native elements, discovery, a2a and payment. Defect on the way: the cards of `vectors` and `graph` still say
-OpenAI counts the vectors (626 moved them to `embeddings`). 701 not started — its decision waits here.
+OpenAI counts the vectors (626 moved them to `embeddings`). 701 not started — its decision waits here. Grown (the owner: «больно … но … не
+смертельно … Давай это усилим»): 702-1b «Pain, not death»; 690 named as the switch that makes the pain small.
 
 **NOW-63 (2026-11-08, ~21:40 WET) — 701 PROPOSED, not agreed** (`new-steps/701-the-core-writes-every-element-its-starting-vector-and-research-gets-its-hand.md`,
 the owner's words verbatim there): the core writes every element a starting vector into its §11 «From the core» at birth; research
