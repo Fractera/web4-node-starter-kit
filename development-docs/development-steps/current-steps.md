@@ -5,6 +5,12 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-55 (2026-11-08, ~15:15 WET) — 686-2 `be6b313a` (pulse + limits line) and 686-4 (`npm run where`, §4 line sealed) BUILT here, not pushed;
+proven on real-shaped inputs. Left: 686-1 second half (a real StopFailure — waits for a natural one), 686-3 (passport fragment + element
+skill, both templates — a template release), 686-5 (pause/resume clock), 686-6 (lending ≥15%), 686-7 (page 7.3). The owner switched the
+machine's Claude login to bo…@gmail.com by /login (five-hour 14 %, weekly 60 %); told once: two subscriptions of one person to get around
+limits is against Anthropic's rules.
+
 **NOW-54 (2026-11-08, 15:03 WET) — 686-1, first half PROVEN:** a node-like interactive session (scratchpad, `--settings` statusLine
 command) wrote `rate_limits` — five_hour used 95% (resets 16:00 WET), seven_day used 83% (resets 2026-11-12 20:00 WET). The status line
 carries: session_id, transcript_path, cwd, model, effort, cost, context_window, rate_limits … Work paused to keep the leader conscious
