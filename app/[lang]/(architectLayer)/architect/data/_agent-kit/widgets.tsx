@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { type AgentLinks, AgentNextLinks, TelegramAppNeeded } from './agent-links'
 import { AgentTerminal } from './client/agent-terminal.client'
 import { ClaudeSubscription } from './client/claude-subscription.client'
+import { ClaudeOwnLogin } from './client/claude-own-login.client'
 import { TelegramChannel } from './client/telegram-channel.client'
 import { agentLinksWords } from './words/agent-links.i18n'
 import { agentTerminalWords } from './words/agent-terminal.i18n'
@@ -41,6 +42,7 @@ export function agentKitWidget(page: AgentKitPage, service: string, lang: string
       return (
         <>
           <ClaudeSubscription service={service} lang={lang} words={claudeSubscriptionWords(lang)} />
+          <ClaudeOwnLogin service={service} lang={lang} words={claudeSubscriptionWords(lang)} />
           <AgentNextLinks links={links ?? { terminal: `/${lang}/architect/${service}/terminal`, telegram: `/${lang}/architect/${service}/telegram` }} words={agentLinksWords(lang)} />
         </>
       )

@@ -26,7 +26,7 @@ const { randomBytes } = require('node:crypto')
 const { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } = require('node:fs')
 const os = require('node:os')
 const path = require('node:path')
-const { isBornItem, serviceDir } = require('./workspace.cjs')
+const { isBornItem, ownClaudeDir, serviceDir } = require('./workspace.cjs')
 const session = require('./session.cjs')
 const { claudeAuthState, extraBins, resolveBin } = require('./claude-cli.cjs')
 const { tableFor } = require('./translate.cjs')
@@ -196,8 +196,10 @@ function terminalWithoutChannel(service) {
  * `--debug mcp`). Первая установка в них не укладывалась — бот молчал. Путь плагина — из
  * `~/.claude/plugins/installed_plugins.json`: у каждой машины он свой. Асинхронно — сервер сайта не встаёт.
  */
-const pluginPath = () =>
-  readJson(path.join(os.homedir(), '.claude', 'plugins', 'installed_plugins.json'), {}).plugins?.[PLUGIN]?.[0]?.installPath ?? ''
+// 689: у элемента на подписке своего человека плагин живёт в ЕГО папке Claude Code (`CLAUDE_CONFIG_DIR` окружения сессии) — там его и
+// ставит `claude plugin install` с тем же окружением.
+const pluginPath = (env = process.env) =>
+  readJson(path.join(env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), '.claude'), 'plugins', 'installed_plugins.json'), {}).plugins?.[PLUGIN]?.[0]?.installPath ?? ''
 
 /**
  * Одна команда `claude …` асинхронно: сервер сайта не встаёт. Итог — код выхода и хвост вывода.
@@ -231,20 +233,20 @@ async function installPlugin(env) {
   const claude = resolveBin('claude', env.PATH || env.Path)
   if (!claude) return { ok: false, error: 'claude не найден — плагин Telegram ставится им' }
   let r = await runClaude(claude, ['plugin', 'install', PLUGIN], env)
-  if (!pluginPath()) {
+  if (!pluginPath(env)) {
     await runClaude(claude, ['plugin', 'marketplace', 'add', 'anthropics/claude-plugins-official'], env)
     r = await runClaude(claude, ['plugin', 'install', PLUGIN], env)
   }
-  return pluginPath() ? { ok: true } : { ok: false, error: `плагин ${PLUGIN} не установился: ${r.out}. Вручную: claude plugin install ${PLUGIN}` }
+  return pluginPath(env) ? { ok: true } : { ok: false, error: `плагин ${PLUGIN} не установился: ${r.out}. Вручную: claude plugin install ${PLUGIN}` }
 }
 
 async function preparePlugin(env) {
-  if (!pluginPath()) {
+  if (!pluginPath(env)) {
     const installed = await installPlugin(env)
     if (!installed.ok) return installed
   }
   return new Promise((resolve) => {
-    const installPath = pluginPath()
+    const installPath = pluginPath(env)
     if (existsSync(path.join(installPath, 'node_modules'))) return resolve({ ok: true })
     const bun = resolveBin('bun', env.PATH || env.Path)
     if (!bun) return resolve({ ok: false, error: 'bun не найден — сервер плагина Telegram запускается им' })
@@ -324,14 +326,15 @@ const FALLBACK = {
   noSubscription: 'This message was sent by your node. Claude Code on this computer is not signed in to a subscription. Sign in first, then start the agent in the terminal.',
 }
 
-function claudeSignedIn() {
-  return new Promise((resolve) => setImmediate(() => resolve(claudeAuthState().loggedIn)))
+// 689: у элемента на подписке своего человека «вошёл ли» спрашивается в ЕГО папке Claude Code, а не у узла.
+function claudeSignedIn(service) {
+  return new Promise((resolve) => setImmediate(() => resolve(claudeAuthState(ownClaudeDir(service)).loggedIn)))
 }
 
 /** Состояние словами: подписка не подключена → сначала она; иначе — активен ли терминал. */
 async function statusMessage(service) {
   const m = { ...FALLBACK, ...readJson(messagesFile(service), {}) }
-  if ((await claudeSignedIn()) === false) return { text: m.noSubscription, trouble: true }
+  if ((await claudeSignedIn(service)) === false) return { text: m.noSubscription, trouble: true }
   return { text: running(service) ? m.active : m.inactive, trouble: false }
 }
 
@@ -398,7 +401,7 @@ async function idleTick(service) {
       console.log(`[telegram] ${service}: ключ OpenAI из чата — ${saved.ok ? 'сохранён' : `не принят (${saved.error})`}, сообщение ${gone.ok ? 'удалено' : 'не удалено'}`)
       continue
     }
-    if (d.do !== 'status' && (await claudeSignedIn()) !== false) {
+    if (d.do !== 'status' && (await claudeSignedIn(service)) !== false) {
       const t = await askTable(service)
       const a = shortName(named(service))
       // Владелец 2026-10-06: «выключи» выключенному агенту — не повод его включать; ответ «уже выключен».
@@ -528,8 +531,10 @@ function named(service) {
 function folderTrusted(service) {
   const dir = serviceDir(service)
   if (!dir) return null
+  // 689: у элемента на подписке своего человека доверие помнит ЕГО папка Claude Code (`<своя папка>/.claude.json`).
+  const home = ownClaudeDir(service)
   try {
-    const projects = JSON.parse(readFileSync(path.join(os.homedir(), '.claude.json'), 'utf8')).projects ?? {}
+    const projects = JSON.parse(readFileSync(home ? path.join(home, '.claude.json') : path.join(os.homedir(), '.claude.json'), 'utf8')).projects ?? {}
     const key = dir.replace(/\\/g, '/')
     const entry = projects[key] ?? projects[dir]
     return entry ? entry.hasTrustDialogAccepted === true : false

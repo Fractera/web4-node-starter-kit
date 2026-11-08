@@ -18,7 +18,8 @@ const cut = (t, n = CUT) => {
 
 // Папка проектов Claude Code называется путём рабочей папки, где всё, кроме букв и цифр, заменено на «-» (измерено:
 // C:\Users\…\WEB4-ITEMS\user\roman → C--Users-…-WEB4-ITEMS-user-roman).
-const dir = join(homedir(), ".claude", "projects", process.cwd().replace(/[^A-Za-z0-9]/g, "-"))
+// 689: агент элемента на подписке своего человека запускает это в своей сессии — её `CLAUDE_CONFIG_DIR` и есть папка его журналов.
+const dir = join(process.env.CLAUDE_CONFIG_DIR || join(homedir(), ".claude"), "projects", process.cwd().replace(/[^A-Za-z0-9]/g, "-"))
 const arg = process.argv.indexOf("--session")
 const wanted = arg > 0 ? process.argv[arg + 1] : ""
 

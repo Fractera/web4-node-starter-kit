@@ -41,10 +41,18 @@ function resolveBin(name, pathValue = process.env.PATH || process.env.Path || ''
   return null
 }
 
-/** @returns {{ loggedIn: boolean | null, method: string | null, email: string | null, plan: string | null }} */
-function claudeAuthState() {
+/** Окружение для `claude` с папкой своей подписки элемента (689, `CLAUDE_CONFIG_DIR`); без папки — окружение узла как есть. */
+function claudeEnv(configDir = null) {
+  return configDir ? { ...process.env, CLAUDE_CONFIG_DIR: configDir } : process.env
+}
+
+/**
+ * @param {string | null} [configDir] своя папка Claude Code элемента (689, `workspace.cjs` `ownClaudeDir`); без неё — вход узла.
+ * @returns {{ loggedIn: boolean | null, method: string | null, email: string | null, plan: string | null }}
+ */
+function claudeAuthState(configDir = null) {
   try {
-    const out = spawnSync(claudeBin(), ['auth', 'status'], { encoding: 'utf8', timeout: 15_000, windowsHide: true })
+    const out = spawnSync(claudeBin(), ['auth', 'status'], { encoding: 'utf8', timeout: 15_000, windowsHide: true, env: claudeEnv(configDir) })
     if (!out.stdout) return { loggedIn: null, method: null, email: null, plan: null }
     const p = JSON.parse(out.stdout)
     return {
@@ -55,6 +63,20 @@ function claudeAuthState() {
     }
   } catch {
     return { loggedIn: null, method: null, email: null, plan: null }
+  }
+}
+
+/**
+ * 689: выход из СВОЕЙ подписки элемента — перед тем как его папка уходит. 🛑 Без папки не делает ничего: выход из подписки узла
+ * выключил бы всех агентов узла и самого владельца за компьютером.
+ */
+function claudeOwnLogout(configDir) {
+  if (!configDir) return false
+  try {
+    const out = spawnSync(claudeBin(), ['auth', 'logout'], { encoding: 'utf8', timeout: 15_000, windowsHide: true, env: claudeEnv(configDir) })
+    return out.status === 0
+  } catch {
+    return false
   }
 }
 
@@ -78,4 +100,4 @@ function claudeEfforts(bin = claudeBin()) {
   return levels
 }
 
-module.exports = { claudeBin, claudeAuthState, claudeEfforts, extraBins, resolveBin }
+module.exports = { claudeBin, claudeAuthState, claudeOwnLogout, claudeEfforts, extraBins, resolveBin }

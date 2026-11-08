@@ -109,4 +109,25 @@ function agentServices() {
   return names.filter((id) => manifest(id) !== null && serviceDir(id) !== null)
 }
 
-module.exports = { serviceDir, agentServices, isBornItem }
+// 689 (владелец 2026-11-08: «if user need personal claude subscribtion , then can add to own element»): своя подписка Claude Code у
+// элемента — своя папка Claude Code в данных узла, вне git и вне папки элемента: `data/services/<id>/claude/`. Claude Code держит вход в
+// папке своих настроек (`CLAUDE_CONFIG_DIR`; замерено 2026-11-08 на Mac владельца: два аккаунта разом, вход узла не сменился). Папка есть —
+// вход и все сессии элемента идут через неё; нет — подписка узла, как прежде. 🛑 У агента самого узла и у главного агента своей папки не
+// бывает: их работа — работа владельца узла, на его подписке.
+/** Где лежала бы своя папка Claude Code элемента; `null` — элементу своя подписка не положена (узел, главный агент, нет такой службы). */
+function ownClaudeHome(service) {
+  const id = String(service ?? '')
+  if (!ID_SHAPE.test(id)) return null
+  const ws = manifest(id)?.workspace
+  if (ws === 'node' || ws === 'main-agent') return null
+  if (!serviceDir(id)) return null
+  return path.join(ROOT, 'data', 'services', id, 'claude')
+}
+
+/** Своя папка Claude Code элемента, если он перешёл на подписку своего человека; иначе `null` — подписка узла. */
+function ownClaudeDir(service) {
+  const dir = ownClaudeHome(service)
+  return dir && existsSync(dir) ? dir : null
+}
+
+module.exports = { serviceDir, agentServices, isBornItem, ownClaudeHome, ownClaudeDir }

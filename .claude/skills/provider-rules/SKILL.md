@@ -49,8 +49,8 @@ controls — the policy does not name the word «CAPTCHA» itself; never claim i
 ## The node's own points
 - The node's agents run the unmodified Claude Code on the owner's own subscription — the permitted case («an end user … signing in to
   the unmodified Claude Code binary with their own Claude subscription»).
-- **The integrator case** — other people using the node's agents: each person signs in with their own subscription or key; their work
-  never runs on the owner's subscription.
+- **The integrator case** — other people using the node's agents: each person signs their own element in with their own subscription on its
+  page «Подписка Claude Code» (the element's own Claude Code folder, step 689); their work never runs on the owner's subscription.
 - **Big batch or scheduled jobs** (the skills catalog's marking, woken agent sessions): the subscription's limits «assume ordinary,
   individual usage»; Anthropic names no threshold — the more automatic work on the subscription, the higher the risk. The owner decides
   and is warned once a day.

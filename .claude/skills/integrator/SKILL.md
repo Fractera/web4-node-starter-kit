@@ -18,7 +18,8 @@ One person who can drive the node is enough; everyone else only talks.
 ## The facts the forces act on
 - **Each person is an owner of their own**: an element's memory, bot and data belong to one person (force 5). The architect sees all of
   them; the person's agent sees only its own element — say so to the person.
-- **Each person works on their own Claude subscription** — their work never runs on the architect's; Anthropic's services are for
+- **Each person works on their own Claude subscription** — their work never runs on the architect's; the person signs their own
+  element in on its page «Подписка Claude Code» → «Своя подписка человека этого элемента» (the element's own Claude Code folder, step 689); Anthropic's services are for
   people of 18 and older; a minor's work does not run on a Claude subscription, and the lawful way for it is the architect's decision,
   never yours (skill `provider-rules`, «The integrator case»).
 - **Registration needs the own domain** — on the temporary address it is closed (`/api/domain/activate`, skill `use-domain`).

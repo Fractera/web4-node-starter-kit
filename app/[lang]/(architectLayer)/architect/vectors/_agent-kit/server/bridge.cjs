@@ -15,7 +15,7 @@ const { existsSync, mkdirSync, readFileSync, readdirSync, statSync, unlinkSync, 
 const path = require('node:path')
 const { redeemTicket } = require('./ticket.cjs')
 const session = require('./session.cjs')
-const { serviceDir } = require('./workspace.cjs')
+const { serviceDir, ownClaudeDir } = require('./workspace.cjs')
 const { claudeBin, claudeEfforts, resolveBin } = require('./claude-cli.cjs')
 const telegram = require('./telegram.cjs')
 const { channelLaunch } = telegram
@@ -218,6 +218,10 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   // говорит «Агент завершил работу» и снова даёт кнопку запуска.
   const shell = shellPath()
   let env = shellEnv(shell)
+  // 689: элемент на подписке своего человека — вся его сессия идёт через его папку Claude Code (`CLAUDE_CONFIG_DIR`), до запуска канала,
+  // чтобы и он видел ту же папку. Нет папки — подписка узла, как прежде.
+  const ownHome = ownClaudeDir(element)
+  if (ownHome) env = { ...env, CLAUDE_CONFIG_DIR: ownHome }
   const bin = resolveBin('claude', env.PATH || env.Path)
   if (!bin) {
     notice('[claude не найден ни в PATH, ни в ~/.local/bin — установите Claude Code]')
@@ -237,6 +241,10 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   } else if (launch) {
     env = launch.env
     args = launch.args
+  }
+  if (ownHome) {
+    env = { ...env, CLAUDE_CONFIG_DIR: ownHome }
+    notice('[подписка своего человека: этот элемент входит в Claude Code своей папкой]')
   }
   if (!wanted() || session.current(service)) return { ok: false, reason: 'gone' }
   const viaChannel = args.length > 0
@@ -622,10 +630,13 @@ function whenIdle(s, { quietMs = 4000, maxMs = 10 * 60_000 } = {}) {
  *          выбор «as your default for new sessions» в `~/.claude/settings.json` человека (замерено 2026-10-30, проба scratchpad 620).
  */
 const SESSION_MODELS = ['opus', 'sonnet', 'haiku']
-/** Был ли в папке разговор, который `--continue` продолжит: журналы Claude Code `~/.claude/projects/<папка>/` (правило имени — как у `qa:agent`). */
-function hasConversation(cwd) {
+/**
+ * Был ли в папке разговор, который `--continue` продолжит: журналы Claude Code `~/.claude/projects/<папка>/` (правило имени — как у
+ * `qa:agent`). 689: у элемента на подписке своего человека журналы — в его папке Claude Code (`<своя папка>/projects/<папка>/`).
+ */
+function hasConversation(cwd, configDir = null) {
   try {
-    const dir = path.join(os.homedir(), '.claude', 'projects', String(cwd).replace(/[:\\/]/g, '-'))
+    const dir = path.join(configDir || path.join(os.homedir(), '.claude'), 'projects', String(cwd).replace(/[:\\/]/g, '-'))
     return readdirSync(dir).some((f) => f.endsWith('.jsonl'))
   } catch { return false }
 }
@@ -646,7 +657,7 @@ function sessionCommand(service, { action, model } = {}) {
     void whenIdle(live).then(async (idle) => {
       if (!idle) return console.log(`[agents/session] ${service}: смена модели не выполнена — экран не затих или сессии уже нет`)
       const pass = live.pass
-      const continueLast = hasConversation(live.cwd)
+      const continueLast = hasConversation(live.cwd, ownClaudeDir(modes.baseOf(service)))
       session.stop(service, 'model-switch')
       // Процесс завершается не мгновенно, а новая сессия той же службы при живой старой не рождается (`session.current`).
       await new Promise((r) => setTimeout(r, 1500))
@@ -767,7 +778,7 @@ async function wake(element, { text, from, about, declineUrl, confirmed, taskUrl
   // 666: усилия и ultracode — с кнопок Telegram (`telegram.cjs` `onButton`); ultracode рождается только с подтверждением человека.
   // 675-1: `continueLast` — главный агент возвращается после сборки ядра в тот же разговор этой папки (`/api/agents/wake` reason core-back);
   // разговора ещё не было — новая сессия, как прежде.
-  const again = continueLast === true && hasConversation(serviceDir(element))
+  const again = continueLast === true && hasConversation(serviceDir(element), ownClaudeDir(element))
   const r = await spawnAgent(service, undefined, undefined, text && task ? `${text}\n\n${finishRule(service)}` : '', { pass, model, effort, ultracode: ultracode === true && Boolean(confirmed), hold: true, callerTells, continueLast: again })
   if (!r.ok) return { ok: false, reason: r.reason }
   rememberTasks(r.session, urls)
@@ -993,8 +1004,10 @@ function onConnection(ws, service) {
         return
       }
       const shell = shellPath()
+      // 689: у элемента на подписке своего человека `claude auth login` пишет вход в ЕГО папку, а вход узла не трогает.
+      const home = ownClaudeDir(service)
       try {
-        own = pty.spawn(shell, [], { cols: 100, rows: 24, cwd: serviceDir(service) || os.homedir(), env: shellEnv(shell), name: 'xterm-256color' })
+        own = pty.spawn(shell, [], { cols: 100, rows: 24, cwd: serviceDir(service) || os.homedir(), env: home ? { ...shellEnv(shell), CLAUDE_CONFIG_DIR: home } : shellEnv(shell), name: 'xterm-256color' })
       } catch (err) {
         ws.send(`\r\n[оболочка ${shell} не запустилась: ${err instanceof Error ? err.message : String(err)}]\r\n`)
         fail('spawn-failed')

@@ -479,7 +479,11 @@ if (cmd === 'telegram') {
 // их после конца хода, в котором ты ответил человеку. Окно — по модели: у Opus/Sonnet/Haiku 5.x и Fable 1 000 000 (навык claude-api,
 // таблица моделей; `/context` Claude Code на этой подписке — «32.4k/1m», замер 2026-10-30).
 const windowOf = (model) => (/(fable|mythos|opus-5|sonnet-5|haiku-5|opus-4-[678]|sonnet-4-6)/.test(model ?? '') ? 1_000_000 : /haiku-4-5/.test(model ?? '') ? 200_000 : null)
-const journalDir = (folder) => join(homedir(), '.claude', 'projects', folder.replace(/[:\\/]/g, '-'))
+// 689: у элемента на подписке своего человека журналы Claude Code — в его папке (`data/services/<id>/claude/projects/`), не в `~/.claude`.
+const journalDir = (folder, id = null) => {
+  const own = id ? join(ROOT, 'data', 'services', id, 'claude') : null
+  return join(own && existsSync(own) ? own : join(homedir(), '.claude'), 'projects', folder.replace(/[:\\/]/g, '-'))
+}
 if (cmd === 'session') {
   const [what, ...args] = rest
   const models = ['opus', 'sonnet', 'haiku']
@@ -489,7 +493,7 @@ if (cmd === 'session') {
   const service = e ? e.id : 'build'
   if (what === 'context') {
     const folder = e ? itemDir(e.id) : ROOT
-    const dir = folder ? journalDir(folder) : null
+    const dir = folder ? journalDir(folder, e?.id ?? null) : null
     const files = dir && existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith('.jsonl')).map((f) => ({ f, t: statSync(join(dir, f)).mtimeMs })).sort((a, b) => b.t - a.t) : []
     if (!files.length) fail(`${service}: no session journal yet — the agent has not talked to a model in its folder`)
     const lines = readFileSync(join(dir, files[0].f), 'utf8').split('\n')
@@ -653,7 +657,7 @@ if (cmd === 'review') {
   if (!e) fail(`no element ${id} in the registry`)
   let cost = 'not measured (no session journal of this element)'
   const folder = itemDir(e.id)
-  const dir = folder ? journalDir(folder) : null
+  const dir = folder ? journalDir(folder, e?.id ?? null) : null
   const last = dir && existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith('.jsonl')).map((f) => ({ f, t: statSync(join(dir, f)).mtimeMs })).sort((a, b) => b.t - a.t)[0] : null
   if (last) {
     // Один ответ модели пишется в журнал несколькими строками с тем же message.id — считается один раз.

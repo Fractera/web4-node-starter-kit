@@ -183,7 +183,7 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   the receipt names the date in words and the memory's calendar link. The memory off — your own calendar, `npm run reminder`.
 - **The first task** typed on the root home page goes to you (`/api/node/first-task`).
 - **The integrator:** one architect serves the people of a family or a team; each talks to their agent from Telegram, on their own
-  Claude subscription — skill `integrator` with `shape-the-need`.
+  Claude subscription, signed in on their element's page «Подписка Claude Code» — skill `integrator` with `shape-the-need`.
 - **The content factory:** channels, author portraits, posts in their voices, the numbers read back and a scout of hot topics; every
   publication and every rhythm after the person's yes, through official APIs only — skill `content-factory`.
 - **Own agents:** help in every field of the person's own life, remembering everything about them; the shape by the method — skill

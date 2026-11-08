@@ -50,7 +50,7 @@ export const PLATFORM_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
         {
           title: '7.4 Many subscriptions, lawfully',
           items: [
-            'A node can serve a family or a team. Then each person has to work on their own subscription: the provider’s rules do not let their work run on the owner’s. An element signed in to Claude Code with its own person’s subscription is not built yet.',
+            'A node can serve a family or a team. Then each person works on their own subscription: on the page «Claude Code subscription» of their element they choose «Its own person’s subscription» and sign in themselves. The element gets its own Claude Code folder, its limit is its own, and the owner’s sign-in stays as it was. The provider’s rules do not let their work run on the owner’s subscription.',
             'Several subscriptions of one person, bought to get around the limits, are against the provider’s rules: its limits assume ordinary, individual use.',
           ],
         },
@@ -96,7 +96,7 @@ export const PLATFORM_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
         {
           title: '7.4 Много подписок — законно',
           items: [
-            'Узел может служить семье или команде. Тогда каждый человек должен работать по своей подписке: правила поставщика не разрешают вести его работу по подписке владельца. Вход элемента в Claude Code по подписке своего человека пока не построен.',
+            'Узел может служить семье или команде. Тогда каждый человек работает по своей подписке: на странице «Подписка Claude Code» своего элемента он выбирает «Своя подписка человека этого элемента» и входит сам. У элемента появляется своя папка Claude Code, лимит у него свой, а вход владельца остаётся прежним. Правила поставщика не разрешают вести его работу по подписке владельца.',
             'Несколько подписок одного человека, купленные, чтобы обойти лимиты, нарушают правила поставщика: его лимиты рассчитаны на обычную личную работу.',
           ],
         },

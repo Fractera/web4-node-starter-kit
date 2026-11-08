@@ -30,7 +30,8 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 const BUFFER_LIMIT = 8000
 const DETECT_DELAY_MS = 300
 
-type Auth = { loggedIn: boolean | null; email: string | null; plan: string | null }
+// 689: `own` — элемент на подписке своего человека (своя папка Claude Code); тогда и почта, и лимит — его.
+type Auth = { loggedIn: boolean | null; email: string | null; plan: string | null; own?: boolean }
 
 export function ClaudeSubscription({ service, lang, words }: { service: string; lang: string; words: ClaudeSubscriptionWords }) {
   const api = `${BASE}/${lang}/architect/${service}/agent-api`
@@ -51,7 +52,7 @@ export function ClaudeSubscription({ service, lang, words }: { service: string; 
       const res = await fetch(`${api}/claude-auth`, { cache: "no-store" })
       if (res.status === 401 || res.status === 403) return setAuth("forbidden")
       const d = (await res.json()) as Auth
-      setAuth({ loggedIn: d.loggedIn ?? null, email: d.email ?? null, plan: d.plan ?? null })
+      setAuth({ loggedIn: d.loggedIn ?? null, email: d.email ?? null, plan: d.plan ?? null, own: d.own === true })
     } catch {
       setAuth({ loggedIn: null, email: null, plan: null })
     }
@@ -59,6 +60,9 @@ export function ClaudeSubscription({ service, lang, words }: { service: string; 
 
   useEffect(() => {
     check()
+    // 689: переключатель «чья подписка» (`claude-own-login.client.tsx`) просит проверить вход заново — без таймера, по событию.
+    window.addEventListener("claude-own-changed", check)
+    return () => window.removeEventListener("claude-own-changed", check)
   }, [check])
 
   const send = useCallback((payload: unknown) => {
@@ -179,7 +183,7 @@ export function ClaudeSubscription({ service, lang, words }: { service: string; 
             </p>
             <p className="mt-1 text-muted-foreground text-sm">
               {on
-                ? words.onText.replace("{email}", state?.email ?? "—").replace("{plan}", state?.plan ?? "—")
+                ? (state?.own ? words.ownOnText : words.onText).replace("{email}", state?.email ?? "—").replace("{plan}", state?.plan ?? "—")
                 : unknown
                   ? words.unknownText
                   : words.offText}
@@ -200,7 +204,7 @@ export function ClaudeSubscription({ service, lang, words }: { service: string; 
         )}
       </div>
 
-      <p className="text-muted-foreground text-xs">{words.quota}</p>
+      <p className="text-muted-foreground text-xs">{state?.own ? words.ownQuota : words.quota}</p>
 
       {open && (
         <div className="flex flex-col gap-2">

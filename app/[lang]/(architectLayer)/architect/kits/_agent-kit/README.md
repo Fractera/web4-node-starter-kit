@@ -7,7 +7,7 @@ This folder is the **master**: the only source of the kit. Services get full cop
 
 | Page | Address | What it does |
 |---|---|---|
-| Claude Code subscription | `/{lang}/architect/<service>/claude-code` | sign-in state of `claude` on this machine and sign-in in place. **One per computer**: every service shows the same state |
+| Claude Code subscription | `/{lang}/architect/<service>/claude-code` | sign-in state of `claude` and sign-in in place. **One per computer by default**: every service shows the node's state; an element switched to its own person's subscription (689) has its own Claude Code folder `data/services/<id>/claude/` — its sign-in, sessions, plugin and logs live there |
 | Terminal | `/{lang}/architect/<service>/terminal` | a live Claude Code in `WEB4-ITEMS/<kind>/<service>/`. **Started and stopped by this island only** — the page, or the same island in the Preview drawer (336: `initialPaste` puts a task into the paste window, `keyHref` points voice to the OpenAI key field; the paste window is the tool `_tools/terminal-paste`) |
 | Telegram bot | `/{lang}/architect/<service>/telegram` | BotFather → token → admission by link → a state card. No start or stop buttons here |
 
