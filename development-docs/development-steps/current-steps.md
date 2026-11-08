@@ -5,6 +5,14 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-52 (2026-11-08, ~14:30 UTC) — QUEUED with 692: every hand deploys and pushes by its own lifecycle.** Found: the node update rebuilt
+root from its newest commit `b5c732a` — root's headline went live with nobody's «Развернуть». The owner, verbatim: «право разворачивать и
+делать ги Push существует о элемента и ядра как обязанность если это возможно ну в смысле если есть необходимые токены и прочее. Но тем не
+менее каждый управляется собственным жизненным циклом а ты просто собираешь информацию и выдаёшь команду». To build: a node update brings
+an element up on its last deployed version, never on commits its own lifecycle has not deployed; the element's agent deploys and pushes
+itself as its duty when it has the tokens; the main agent gathers state and gives the command (`npm run task`), never presses an element's
+«Развернуть» itself; CLAUDE.md §4 «Deploying an element» and the skills say it.
+
 **NOW-51 (2026-11-08, ~14:10 UTC) — QUEUED with 692 for the next core update: the page «Подписка Claude Code» redesigned.** The owner,
 verbatim: «одна кнопка должна быть переименована и должна называться собственная подписка этого элемента. Ты написал про человека какого-то
 все это сложное … Не надо так акцентировать внимание. … элемент чья это подписка должен стоять первым сверху … слева нарисовал крупные цифры
