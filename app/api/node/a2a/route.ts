@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { findEntries, nodeEntries } from "@/lib/a2a/node-registry"
 import { telegramConnected } from "@/lib/a2a/telegram-relay"
+import power from "@/lib/web4-items/element-power.cjs"
 
 // ДВЕРЬ «НАЙТИ / ПОЛУЧИТЬ» РЕЕСТРА A2A УЗЛА (шаг 406-6). Ядро — центр обнаружения; вызов соседа идёт напрямую по адресу из
 // ответа. `?q=<слова или способность>` — до 10 записей (уровень 1) по убыванию совпадения; `?address=<адрес>` — одна запись;
@@ -22,7 +23,18 @@ function nodeKeyOk(given: string | null): boolean {
   return a.length === b.length && timingSafeEqual(a, b)
 }
 
-const withTelegram = <T extends { id: string }>(e: T) => ({ ...e, telegram: telegramConnected(e.id) })
+// 671-3 (670-8, «the caller waits»): спит ли сосед — `by-rule` (усыпило правило нагрузки, привратник держит порт и будит на первый
+// вызов: вызывающий ждёт холодный старт и повторяет) или `off` (выключил человек: вызов отказывает сразу, с причиной). Реестр читается
+// заново на каждый запрос — признак меняется без перезапуска ядра.
+type Sleep = { sleep: "by-rule" | "off"; reason: string } | { sleep: null }
+function sleepOf(id: string): Sleep {
+  try {
+    const s = ((power.readRegistry().services ?? []) as { id: string }[]).find((x) => x.id === id)
+    const off = power.offOf(s) as { byRule?: boolean } | null
+    return off ? { sleep: off.byRule ? "by-rule" : "off", reason: power.reasonIn(off, "en") } : { sleep: null }
+  } catch { return { sleep: null } }
+}
+const withTelegram = <T extends { id: string }>(e: T) => ({ ...e, telegram: telegramConnected(e.id), ...sleepOf(e.id) })
 
 export async function GET(req: NextRequest) {
   if (!nodeKeyOk(req.headers.get("x-node-key"))) {
