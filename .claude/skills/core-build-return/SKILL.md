@@ -26,6 +26,12 @@ and «Close» (only «Close» after a failure).
   «will you click it or shall I?» — you do it (the owner 2026-11-08: «why you ASK ME ? IT NOT GOOD … NOT ASK IF IT IS POSSIBLE»). The
   only block is a missing sign-in of the fork's owner in their Chrome with no write token: open github.com/login in that Chrome, say in
   one line that the update waits for their sign-in, and on their next word check and sync yourself — no question, no choice.
+- **Until the node has a GitHub token** (the page `build/github` shows none), every answer about a fork sync — blocked or done through
+  Chrome — ends with one line in the person's language: what the token would have saved («без токена GitHub я не смог синхронизировать
+  форк сам — …» or «синхронизировал через Chrome; с токеном это шло бы без браузера и без входа»), the one-time path (a fine-grained
+  token of the fork's owner, the fork only, Contents read and write) and the full link `http://localhost:<core port>/<lang>/architect/
+  build/github`. Never a refusal, never a reproach; you never create or type the token yourself. The owner 2026-11-08: «подталкивать
+  пользователей к тому чтобы он однажды прошел этот путь предоставил токен».
 - **Before a build:** write your state — `current-steps.md` and the work record — as if you would not come back; tell the person in one
   line: «I go off with the build and come back by myself in a few minutes». Start the update or the build detached, never as your own
   child (`node scripts/spawn-free.mjs scripts/node-update-run.mjs`).
