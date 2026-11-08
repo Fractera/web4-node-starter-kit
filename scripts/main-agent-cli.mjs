@@ -754,16 +754,24 @@ if (cmd === 'where') {
   const quiet = []
   for (const e of registry()) {
     const dir = itemDir(e.id)
+    // 686-3: первым — фрагмент паспорта `development`, который агент элемента пишет кодом (`npm run development`) на каждом событии
+    // шага; вторым — строка «Active step» его `current-step.md` (элемент без фрагмента — до выпуска шаблонов 686-3).
+    const dev = readJson(join(dir, 'OWN-SERVICE-PROPS', 'OWN-SERVICE-PROPS.json'), null)?.development ?? null
     let step = ''
-    try {
+    if (dev?.current) step = `шаг ${dev.current} (${dev.state})${dev.next ? `, дальше: ${dev.next}` : ''}`
+    else try {
       const head = readFileSync(join(dir, 'development-docs', 'current-step.md'), 'utf8')
       step = (/\*\*Active step:\*\*\s*([^\n]+)/.exec(head)?.[1] ?? '').trim()
     } catch { /* у элемента нет записи шага */ }
     const pulse = readJson(join(ROOT, 'data', 'services', e.id, 'pulse.json'), null)?.last ?? null
     const fresh = pulse && Date.parse(pulse.at) >= since
     const name = `${e.id}${step ? ` — ${firstSentence(step, 90)}` : ''}`
-    if (pulse?.event === 'turn-error') loud.push(`⛔ ${name}: ход оборван (${pulse.error}) в ${hhmm(pulse.at)}${pulse.details ? ` — ${firstSentence(pulse.details, 80)}` : ''}${pulse.last ? `; последнее: «${firstSentence(pulse.last, 80)}»` : ''}`)
-    else if (pulse?.event === 'turn-start' && !live.has(e.id)) loud.push(`✂️ ${name}: ход начат в ${hhmm(pulse.at)} и не закончен, сессии нет — обрезан (сборка, сон, сбой)`)
+    // Записи расходятся — модель писала «строю», а ход оборван или обрезан: только этот элемент спрашивают, быстрым навыком агента
+    // (навык назван в тексте: `--skill` у `task` — навык A2A-карточки, не агента).
+    const ask = `; спросить: npm run task -- ${e.id} "skill answer-the-leader — where does development stand?" --work`
+    const midStep = ['building', 'checking', 'planning'].includes(dev?.state)
+    if (pulse?.event === 'turn-error') loud.push(`⛔ ${name}: ход оборван (${pulse.error}) в ${hhmm(pulse.at)}${pulse.details ? ` — ${firstSentence(pulse.details, 80)}` : ''}${pulse.last ? `; последнее: «${firstSentence(pulse.last, 80)}»` : ''}${midStep ? ask : ''}`)
+    else if (pulse?.event === 'turn-start' && !live.has(e.id)) loud.push(`✂️ ${name}: ход начат в ${hhmm(pulse.at)} и не закончен, сессии нет — обрезан (сборка, сон, сбой)${midStep ? ask : ''}`)
     else if (fresh && pulse.event === 'turn-end') loud.push(`✅ ${name}: ход закончен в ${hhmm(pulse.at)}${pulse.last ? ` — «${firstSentence(pulse.last, 80)}»` : ''}`)
     else if (live.has(e.id)) loud.push(`▶️ ${name}: сессия идёт`)
     else quiet.push(e.id)

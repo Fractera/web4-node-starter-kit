@@ -5,7 +5,16 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-56 (2026-11-08, ~15:35 WET) — RESUME HERE.** The owner chose «b»: finish ALL of 686, then ONE node update (with 693). Built here, not
+**NOW-57 (2026-11-08, ~15:45 WET) — 686-3 IN WORK** (the owner: «продолжит ровно с 686-3»). Plan file
+`new-steps/686/686-3-the-passport-fragment-development-and-a-quick-answer.md`. Done so far, NOT committed: `_tools/686/rollout.mjs`
+applied to all 15 repositories in `~/fractera-dev` (7 files each: `scripts/development.mjs`, its npm script, skill `answer-the-leader`,
+its README row, the event line of `use-development-docs`, `CLAUDE.md` + seal from `element-instruction.src.md`), staged; the core's
+`where` reads the passport fragment first. Proof 1 green (scratch passport: fragment written, other keys identical; bad state/steps →
+exit 1, file unchanged). All 15 prebuilds GREEN (no generated change); `where` proven on a planted fragment (building + rate_limit → the quick-wake line;
+done → none). RELEASE STARTED (`_tools/686/release.sh`) — then the core pins fifteen. 686-5 written in `lib/agent-kit/pulse.cjs`
+(uncommitted): proven on a scratch root — one `agent-task` at the reset + 2 min, no duplicate; overloaded and a passed reset — none.
+
+**NOW-56 (2026-11-08, ~15:35 WET).** The owner chose «b»: finish ALL of 686, then ONE node update (with 693). Built here, not
 pushed: 7e878032 (§1 leader + 686 plan), be6b313a (686-2 pulse + limits line), 361d9138 (686-4 `npm run where` + §4), e1582c0e (693: §7
 Mercedes/BRABUS + Apple/Caviar, the question in a warm frame — the owner: «нужно сравнивать Mercedes и BRABUS … Apple и caviar … рамку
 оформить … оранжевый … иконку типа вопросик»). NEXT, in a fresh session: 686-3 (passport fragment `development` + the element skill for a
