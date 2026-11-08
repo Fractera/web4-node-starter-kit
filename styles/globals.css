@@ -1123,3 +1123,12 @@ html[data-app-width="narrow"] { --app-w: 64rem; }
 html[data-no-own-domain] [data-alert~="no-domain"] { color: var(--color-destructive); }
 /* 677: ярлык «GitHub» — узел не работает со своим репозиторием. */
 html[data-no-github] [data-alert~="no-github"] { color: var(--color-destructive); }
+
+/* 687 (владелец 2026-11-08: «увеличив размер в три раза в состоянии максимального диаметра при импульсе минимальный диаметр поставь как
+   сейчас»): ореол точки внимания (`AttentionDot`, components/shell/shell-attention.client.tsx) — от 4 px точки до 24 px, scale 6 вместо
+   scale 2 у `animate-ping` (8 px). Ритм и кривая — те же, что у `animate-ping`. */
+.attention-ping { animation: attention-ping 1s cubic-bezier(0, 0, 0.2, 1) infinite; }
+@keyframes attention-ping {
+  75%, 100% { transform: scale(6); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .attention-ping { animation: none; } }

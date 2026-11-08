@@ -10,6 +10,9 @@ import { cn } from "@/lib/utils"
 // ящик мой аккаунт под страницы архитектора … раскрывающиеся список … меню третьего уровня в котором будут перечислены терминалы и
 // не кнопка закрыть а кнопка перейти на страницу терминала … аналогичным образом … развёртывания … пульсирующий оранжевый индикатор
 // например в четыре пикселя». Заменяет полосу терминалов шага 345.
+// 687 (владелец 2026-11-08): «Оба этих индикатора сделай не оранжевыми а зелёными при этом увеличив размер в три раза в состоянии
+// максимального диаметра при импульсе минимальный диаметр поставь как сейчас» — точка зелёная (`bg-success`), 4 px; ореол растёт до
+// 24 px (`attention-ping`, styles/globals.css) вместо 8 px у `animate-ping`.
 //
 // 🔒 ТОЧКА ИДЁТ ПО ПУТИ: кнопка «Мой аккаунт» → группа страниц архитектора (пока свёрнута) → «Терминалы» / «Развёртывания» (пока
 // свёрнуты). Нечего — ни точки, ни списков. Свежесть — открытие страницы, открытие ящика, возврат на вкладку; таймеров нет
@@ -42,13 +45,13 @@ export function useAttention(url: string | undefined): { attention: Attention | 
 
 export const hasAttention = (a: Attention | null) => !!a && a.terminals.length + a.previews.length > 0
 
-/** Оранжевая пульсирующая точка 4 px; `className` ставит её на место. */
+/** Зелёная пульсирующая точка 4 px с ореолом до 24 px (687); `className` ставит её на место. */
 export function AttentionDot({ className }: { className?: string }) {
-  // Пульс — ореол-маяк (`animate-ping`) вокруг неподвижной точки: мерцание всей точки закреплено за заглушкой загрузки (Skeleton).
+  // Пульс — ореол-маяк (`attention-ping`) вокруг неподвижной точки: мерцание всей точки закреплено за заглушкой загрузки (Skeleton).
   return (
     <span aria-hidden className={cn("pointer-events-none flex size-1", className)} data-attention-dot>
-      <span className="absolute inline-flex size-1 rounded-full bg-warning opacity-75 animate-ping motion-reduce:animate-none" />
-      <span className="relative inline-flex size-1 rounded-full bg-warning" />
+      <span className="attention-ping absolute inline-flex size-1 rounded-full bg-success opacity-75" />
+      <span className="relative inline-flex size-1 rounded-full bg-success" />
     </span>
   )
 }
