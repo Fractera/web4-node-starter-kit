@@ -2,8 +2,8 @@
   "enableAllProjectMcpServers": true,
   "permissions": {
     "deny": [
-      "Read(./WEB4-ITEMS/**)",
-      "Edit(./WEB4-ITEMS/**)"
+      "Read(/WEB4-ITEMS/**)",
+      "Edit(/WEB4-ITEMS/**)"
     ]
   },
   "hooks": {
