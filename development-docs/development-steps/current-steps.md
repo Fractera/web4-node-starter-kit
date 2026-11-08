@@ -8,8 +8,9 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 **NOW-48 (2026-11-08, ~15:20 UTC) — 691 built `20ff0b35`, NOT pushed:** the core's Settings (`build/settings`, `own`) show the node's base AI
 provider — Anthropic · Claude Code by default, OpenAI · Codex «not possible yet» (690). The owner, verbatim: «in the settings you can to do
 now part base AI provider default antropic , not possible now replace to codex»; «it wil huge long time process for replae all»; «go back
-to base flow after fix new step». The owner's «y» (2026-11-08) to «Утверждаешь текст раздела 7 и отправляем?» — 688's text approved, PUSHED.
-Next: the fork synced → the fork synced → node update → the live
+to base flow after fix new step». The owner's «y» (2026-11-08) to «Утверждаешь текст раздела 7 и отправляем?» — 688's text approved, PUSHED (`3cbbb149`). CI 42484726348 failed
+— `check-shape-examples`: my integrator line held «…» → «…» (a case); fixed `6bfc677d`, all 42 build guards green here, CI again.
+Next: the fork synced AFTER `6bfc677d` → the fork synced → node update → the live
 proofs of 687, 688, 689, 691 on the owner's node; then 686 (planning), then «Клип».
 
 **NOW-47 (2026-11-08, ~14:40 UTC) — 689 BUILT here (`c4d41fd2` plan, `4d2e2941` code), NOT pushed; live proofs after the update** (the owner: «да, утверждаю, начинай 689»): the plan `new-steps/689/`;
