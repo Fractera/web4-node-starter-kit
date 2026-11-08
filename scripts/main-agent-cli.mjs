@@ -31,6 +31,7 @@
 //   openai-key <sk-…> [--chat <id> --message <id>] — ключ OpenAI узла: проверка дверью ядра, запись, удаление сообщения с ключом (620)
 //   transcribe <файл> [--lang xx] — голосовое человека → текст дверью распознавания ядра; нет рабочего ключа — попросить /openai_key (617)
 //   review <id> "<слова человека>" — разбор элемента по слову человека: его недовольство первой причиной, расход сессии второй (571-6)
+//   lang [<код>]            — язык разговора с человеком: тебе и каждому элементу, которого будишь (694-2)
 //   where [--since <часы>]   — где стоит разработка каждого элемента, кодом, без пробуждения (686-4)
 //   lend [<id> --cost <%> --reason "…" | <id> --return] — подписка узла в долг элементу на своей подписке, пока у тебя остаётся 15 % (686-6)
 // 🔒 Ничего не делается само: каждую команду запускает главный агент по слову человека или по событию надзора.
@@ -593,7 +594,12 @@ if (cmd === 'task') {
   const tl = talk.take(ROOT, flag('--lang'))
   if (tl.error) fail(tl.error)
   const langLine = tl.lang ? talk.line(tl.lang) : ''
-  const tellLang = async (one) => { if (tl.lang && !dry) await core('/api/agents/person-lang', { method: 'POST', body: JSON.stringify({ service: one, lang: tl.lang }) }).catch(() => null) }
+  // 694-2 (замер 2026-11-08 18:08: строка пробуждения главного агента всё ещё говорила «английский»): `--lang` пишет язык и самому
+  // главному агенту — его строка «Язык человека» берётся из той же записи.
+  const tellLang = async (one) => {
+    if (!tl.lang || dry) return
+    for (const service of flag('--lang') ? [one, 'build'] : [one]) await core('/api/agents/person-lang', { method: 'POST', body: JSON.stringify({ service, lang: tl.lang }) }).catch(() => null)
+  }
   const said = words.join(' ').trim()
   if (!id || !said) fail('task <id>[,<id>…] "<what the element agent must do>" [--work [--skill <skill id>]] [--lang <code>] [--dry]')
   // 681: одно поручение нескольким элементам — пачка (`<id>,<id>,…` с `--work`): каждый рабочий процесс делает своё, а тебя будит
@@ -795,6 +801,12 @@ if (cmd === 'where') {
     const ask = `; спросить: npm run task -- ${e.id} "skill answer-the-leader — where does development stand?" --work`
     const midStep = ['building', 'checking', 'planning'].includes(dev?.state)
     if (pulse?.event === 'turn-error') loud.push(`⛔ ${name}: ход оборван (${pulse.error}) в ${hhmm(pulse.at)}${pulse.details ? ` — ${firstSentence(pulse.details, 80)}` : ''}${pulse.last ? `; последнее: «${firstSentence(pulse.last, 80)}»` : ''}${midStep ? ask : ''}`)
+    // 686-9 (замер 2026-11-08 18:08: s8y6x отчитался в 16:15:29, узел закрыл его по его же «закончил», хук конца хода не успел — сводка
+    // сказала «обрезан»): отчёт ядру (`reply-core` → `data/services/<id>/core-report.json`) после начала хода — ход закончен.
+    else if (pulse?.event === 'turn-start' && !live.has(e.id) && (() => { const r = readJson(join(ROOT, 'data', 'services', e.id, 'core-report.json'), null); return r && Date.parse(r.at) >= Date.parse(pulse.at) })()) {
+      const r = readJson(join(ROOT, 'data', 'services', e.id, 'core-report.json'), null)
+      loud.push(`✅ ${name}: отчитался в ${hhmm(r.at)} — «${firstSentence(r.text, 80)}»`)
+    }
     else if (pulse?.event === 'turn-start' && !live.has(e.id)) loud.push(`✂️ ${name}: ход начат в ${hhmm(pulse.at)} и не закончен — ${closedAfter ? 'сессию закрыли посреди хода' : 'сессии нет: обрезан (сборка, сон, сбой)'}${lastEnd ? `; последний законченный ход — ${hhmm(lastEnd.at)}${lastEnd.last ? ` «${firstSentence(lastEnd.last, 60)}»` : ''}` : ''}${midStep ? ask : ''}`)
     else if (fresh && pulse.event === 'turn-end') loud.push(`✅ ${name}: ход закончен в ${hhmm(pulse.at)}${pulse.last ? ` — «${firstSentence(pulse.last, 80)}»` : ''}`)
     else if (live.has(e.id)) loud.push(`▶️ ${name}: сессия идёт`)
@@ -848,6 +860,20 @@ if (cmd === 'lend') {
   if (!r.ok) fail(r.why)
   console.log(`===LEND_OK=== ${id}: следующая его сессия — на подписке узла; прогноз оставляет тебе ${Math.round(r.forecast.keep)} %`)
   console.log(`Живая сессия на своей подписке сама не переключится: npm run close -- ${id}, затем npm run task -- ${id} "<работа>"${''}. Конец той сессии вернёт долг сам.`)
+  process.exit(0)
+}
+
+// 694-2: язык разговора главного агента с человеком — показать или задать без задачи элементу: `lang` · `lang <код>`. Пишет запись
+// разговора (`data/main-agent/talk-lang.json`) и язык самого главного агента дверью `person-lang` (ключ узла — у `core`).
+if (cmd === 'lang') {
+  const talk = require(join(ROOT, 'lib', 'main-agent', 'talk-lang.cjs'))
+  const [code] = rest
+  if (!code) { const l = talk.get(ROOT); console.log(l ? `the person's language: ${talk.name(l)} (${l})` : 'no language recorded yet — npm run lang -- <code>'); process.exit(0) }
+  const tl = talk.take(ROOT, code)
+  if (tl.error) fail(tl.error)
+  const r = await core('/api/agents/person-lang', { method: 'POST', body: JSON.stringify({ service: 'build', lang: tl.lang }) }).catch((e) => ({ body: { ok: false, error: e.message } }))
+  if (!r.body?.ok) fail(`the core did not take it: ${r.body?.error ?? r.status}`)
+  console.log(`===LANG_OK=== ${talk.name(tl.lang)} (${tl.lang}) — for you and for every element you wake or task from now on`)
   process.exit(0)
 }
 

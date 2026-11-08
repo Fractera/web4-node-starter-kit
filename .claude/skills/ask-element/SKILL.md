@@ -17,7 +17,8 @@ about 300 MB of the person's memory, so you turn off what you turned on.
 **The language.** An element answers in the language you speak with the person — never English by default (the owner 2026-11-08:
 «на каком языке ты отвечаешь на том языке должны отвечать элементы»). The first `npm run task` or `npm run wake` of a conversation
 carries `--lang <code>` of that language (`ru` when the person writes Russian); it is kept for the next ones and changed by the next
-`--lang` when the person switches. The task itself stays English: the line about the language is added by the command.
+`--lang` when the person switches. The task itself stays English: the line about the language is added by the command. The same `--lang`
+sets your own language line; without a task — `npm run lang -- <code>`.
 
 1. Who: the id or address the architect named, or `npm run find -- <English words>`.
 2. A build task sets one cycle of your lead by itself (step 695), so its «done» wakes you; `npm run supervise -- <id> main --max N` only

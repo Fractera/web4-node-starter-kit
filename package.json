@@ -115,6 +115,7 @@
     "state": "node scripts/main-agent-cli.mjs state",
     "where": "node scripts/main-agent-cli.mjs where",
     "lend": "node scripts/main-agent-cli.mjs lend",
+    "lang": "node scripts/main-agent-cli.mjs lang",
     "role": "node scripts/main-agent-cli.mjs role",
     "supervise": "node scripts/main-agent-cli.mjs supervise",
     "close": "node scripts/main-agent-cli.mjs close",
