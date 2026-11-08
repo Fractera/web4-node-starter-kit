@@ -773,10 +773,11 @@ if (cmd === 'where') {
     const dir = itemDir(e.id)
     // 686-3: первым — фрагмент паспорта `development`, который агент элемента пишет кодом (`npm run development`) на каждом событии
     // шага; вторым — строка «Active step» его `current-step.md` (элемент без фрагмента — до выпуска шаблонов 686-3).
-    const dev = readJson(join(dir, 'OWN-SERVICE-PROPS', 'OWN-SERVICE-PROPS.json'), null)?.development ?? null
+    // 686-8: элемент в реестре без папки (посреди удаления, не поставлен) не роняет сводку — у него просто нет записи шага.
+    const dev = dir ? readJson(join(dir, 'OWN-SERVICE-PROPS', 'OWN-SERVICE-PROPS.json'), null)?.development ?? null : null
     let step = ''
     if (dev?.current) step = `шаг ${dev.current} (${dev.state})${dev.next ? `, дальше: ${dev.next}` : ''}`
-    else try {
+    else if (dir) try {
       const head = readFileSync(join(dir, 'development-docs', 'current-step.md'), 'utf8')
       step = (/\*\*Active step:\*\*\s*([^\n]+)/.exec(head)?.[1] ?? '').trim()
     } catch { /* у элемента нет записи шага */ }
