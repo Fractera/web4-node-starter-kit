@@ -315,7 +315,7 @@ if (cmd === 'rename') {
   if (!id) fail('rename <element> "<the name people see in the menu>" (an empty name takes it back to the passport or the address)')
   const e = registry().find((s) => s.id === id || addressOf(s.id) === id) ?? fail(`no element ${id} in the registry`)
   const wrote = nameFile.writeName(e.id, name, ROOT)
-  console.log(`===RENAME_OK=== ${e.id}: ${wrote ? `«${wrote}»` : 'own name removed'} — the open architect pages show it within seconds, no reload`)
+  console.log(`===RENAME_OK=== ${e.id}: ${wrote ? `«${wrote}»` : 'own name removed'} — the open architect pages show it within about 10 s by themselves (a quiet page reload when a refresh in place did not take it)`)
   process.exit(0)
 }
 

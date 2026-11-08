@@ -26,6 +26,11 @@ within 8 s the left menu «АВТОРЫ 2» and the header «Авторы 2», t
 the page kept «АВТОРЫ 2» — `router.refresh()` did not bring it, and the island's check passed by `includes`. Fixed: an exact match, a
 second refresh, then a reload (not while typing, not on a terminal). Re-proof after the next update.
 
+**Re-proof on the owner's node (core `1024e96f`, 2026-11-08 ~01:20 UTC), Chrome on /en with a page mark:** `rename jfi92 «Авторы 2»` →
+the menu «АВТОРЫ 2» within 10 s, the mark gone (the fallback reload fired: `router.refresh()` did not take it); `rename … «Авторы»` → the
+menu «АВТОРЫ» within 10 s, the mark kept (refreshed in place). Both directions reach the menu; in place is not reliable, the exact check and
+its reload make it so. `rename`'s line now says so.
+
 ## Substeps
 | # | Result | Proof |
 |---|---|---|
