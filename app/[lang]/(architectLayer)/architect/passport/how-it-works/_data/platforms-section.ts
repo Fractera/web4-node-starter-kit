@@ -6,7 +6,7 @@
 // (душа: «say what works today and what is on the way»). Лимиты подписки — support.claude.com, статья 11145838, прочитано 2026-11-08:
 // «shared across Claude and Claude Code». Окно в миллион токенов — замер узла 2026-11-08 (`npm run session -- context`, Opus 5.5).
 // Правило многих подписок — навык `provider-rules` (Claude Code legal and compliance: «ordinary, individual usage»).
-// Пункты 7.3 «следующий шаг ядра» переписываются в настоящее время в последней подсцене шага 686, когда он доказан.
+// Пункт 7.3 — в настоящем времени с подшага 686-7: пульс, `where`, паспорт `development`, пробуждение к сбросу лимита и долг 686-6.
 // `en` основа, `ru` перевод; метки `[[форма|ключ]]` раскрывает `_components/index.ts`.
 import type { PresentationSection } from './presentation'
 
@@ -43,8 +43,9 @@ export const PLATFORM_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
           title: '7.3 When a subscription’s limit runs out',
           items: [
             'The limits of a Claude subscription are shared by all its sessions: Anthropic counts Claude and Claude Code against the same limits. When they run out, every element working on that subscription stops in the same minute.',
-            'The next step of the core: an element stopped in the middle of its development pauses. Claude Code itself tells the node why the turn ended, with no model involved; the node wakes the element when the limit resets, and it goes on from its last recorded step.',
-            'The next step of the core: the [[main agent|main-agent]] knows where the development of every element stands without waking it. The steps, the current step and its state are written in the element’s passport, and how its last session ended is written by Claude Code’s hooks. The main agent wakes only an element whose two records disagree.',
+            'An element stopped in the middle of its development pauses. Claude Code itself tells the node why the turn ended, with no model involved; the node puts a wake into its calendar for the minute the limit resets, and the element goes on from its last recorded step.',
+            'The [[main agent|main-agent]] knows where the development of every element stands without waking it. The element writes its steps, the current step and its state into its passport, and Claude Code’s hooks write how its last session ended. The main agent wakes only an element whose two records disagree, and it answers in three lines.',
+            'Work the owner handed out that an element on its own person’s subscription cannot finish, the main agent finishes on the node’s subscription: only while the forecast leaves it 15% of the limit, with that person’s Telegram off until the debt is returned.',
           ],
         },
         {
@@ -89,8 +90,9 @@ export const PLATFORM_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
           title: '7.3 Когда кончается лимит подписки',
           items: [
             'Лимиты подписки Claude общие для всех её сессий: Anthropic считает Claude и Claude Code по одним и тем же лимитам. Когда они кончаются, все элементы на этой подписке останавливаются в одну минуту.',
-            'Следующий шаг ядра: элемент, остановленный посреди разработки, встаёт на паузу. Claude Code сам сообщает узлу, почему оборвался ход, без всякой модели; узел будит элемент, когда лимит восстановится, и тот продолжает с последнего записанного шага.',
-            'Следующий шаг ядра: [[главный агент|main-agent]] знает, где стоит разработка каждого элемента, не пробуждая его. Шаги, текущий шаг и его состояние записаны в паспорте элемента, а то, чем кончилась его последняя сессия, записывают хуки Claude Code. Будит главный агент только тот элемент, у которого эти две записи расходятся.',
+            'Элемент, остановленный посреди разработки, встаёт на паузу. Claude Code сам сообщает узлу, почему оборвался ход, без всякой модели; узел ставит пробуждение в свой календарь на минуту, когда лимит восстановится, и элемент продолжает с последнего записанного шага.',
+            '[[Главный агент|main-agent]] знает, где стоит разработка каждого элемента, не пробуждая его. Шаги, текущий шаг и его состояние элемент записывает в свой паспорт, а то, чем кончилась его последняя сессия, записывают хуки Claude Code. Будит главный агент только тот элемент, у которого эти две записи расходятся, и тот отвечает в три строки.',
+            'Работу, которую поручил владелец и которую элемент на подписке своего человека не может закончить, главный агент доводит на подписке узла: только пока прогноз оставляет ему 15 % лимита, а Telegram того человека выключен до возврата долга.',
           ],
         },
         {
