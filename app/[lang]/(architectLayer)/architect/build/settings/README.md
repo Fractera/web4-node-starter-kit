@@ -10,3 +10,4 @@ and the same page in each element.
 | `page.tsx` | thin entry |
 | `_data/` | `slug`, `order`, words `en` + `ru` |
 | `_components/index.ts` | empty — the working part is passed as `own` |
+| `own` (in `page.tsx`) | 691: the node's base AI provider — `components/ai-provider/` (Anthropic · Claude Code by default; Codex shown as not possible yet, step 690) |
