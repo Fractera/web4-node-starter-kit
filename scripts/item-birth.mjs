@@ -129,6 +129,34 @@ if (propsFile === folderPassport) props.shortDescription = bornWords
 else props.summary = bornWords
 writeFileSync(propsFile, JSON.stringify(props, null, 2) + '\n', 'utf8')
 
+// 4а. СТАРТОВЫЙ ВЕКТОР (701-2; владелец 2026-11-08: «ты должен дописать в инструкцию агенту элемента послание которые создаст базовое
+// понимание того что он должен делать … стартовый вектор»). Вектор главного агента (`create --vector-file`) ложится в §11 «This element»
+// инструкции элемента подразделом «From the core» — до первого коммита, рядом с паспортом: после любой перезагрузки элемент знает, зачем
+// он и как его строить. Печать инструкции §11 не читает; держит его сам элемент с человеком (§5 запечатанной части). Без вектора — как прежде.
+const vectorFile = argOf('--vector-file')
+if (vectorFile) {
+  if (!existsSync(vectorFile)) fail(`нет файла стартового вектора ${vectorFile}`, dir)
+  const vector = readFileSync(vectorFile, 'utf8').replace(/\r\n/g, '\n').trim()
+  const vectorLines = vector.split('\n').length
+  if (!vector || vectorLines > 40 || vector.length > 4000) fail(`стартовый вектор — от 1 до 40 строк и до 4000 знаков (сейчас ${vectorLines} строк, ${vector.length} знаков): он грузится в каждую сессию элемента`, dir)
+  const claudeFile = join(dir, 'CLAUDE.md')
+  const PLACE = '(Nothing yet. What only this element does, and the laws of it, are written here by its agent in the build process.)'
+  const claude = existsSync(claudeFile) ? readFileSync(claudeFile, 'utf8') : ''
+  if (!claude.includes('## 11. This element') || !claude.includes(PLACE)) fail('в инструкции шаблона нет пустого §11 «This element» — стартовому вектору некуда лечь', dir)
+  writeFileSync(claudeFile, claude.replace(PLACE, [
+    '### From the core',
+    '',
+    `Written by the core's main agent at your birth on ${new Date().toISOString().slice(0, 10)}; yours to keep true with your person (section 5).`,
+    '',
+    vector,
+    '',
+    '### The laws of this element',
+    '',
+    PLACE,
+  ].join('\n')), 'utf8')
+  stage(`стартовый вектор записан в §11 инструкции элемента (${vectorLines} строк)`)
+}
+
 // 4б. ЭЛЕМЕНТ РОЖДАЕТСЯ В ОБЛИКЕ ПРОЕКТА (слово владельца 2026-10-01: «стартовый шаблон … по дефолту должен сразу подключиться к
 // настройкам всего проекта … если у меня даже страницы архитектора и авторизации жёлтые то и новый проект должен покраситься сразу»).
 // ✗ Замерено кодом: шаблон приезжает со своим `DESIGN-CONFIG`, поэтому шаг 4а установщика («если своего файла ещё нет») его

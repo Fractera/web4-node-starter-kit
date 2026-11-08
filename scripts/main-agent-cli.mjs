@@ -42,7 +42,7 @@ import { randomBytes } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
 import { createRequire } from 'node:module'
 import { homedir } from 'node:os'
-import { dirname, join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -953,7 +953,15 @@ if (cmd === 'create') {
     if (nm && !steps.toLocaleLowerCase().includes(nm.toLocaleLowerCase())) console.log(`note: «${nm}» is not in current-steps.md — a birth is a substep of a core step: write the person's decision and this substep there (skill use-development-steps)`) }
   // 682: имя обязательно — без него меню и шапка покажут случайный адрес; описание паспорта — `--describe`, нет — роль.
   if (role && brief && !(flag('--name') ?? '').trim()) fail('--name "<the name people see in the menu>" is required: without it the menu, the header and the drawer show a random address (node step 682)')
-  if (!role || !brief) fail('create --role "<one sentence>" --name "<the name people see in the menu>" [--describe "<what it is for, 1–3 sentences, for the passport and the header>"] [--look own|project] [--blocks off] [--close-after-first-session] (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--different "<their words>" --boundary owner|money|secrets|control|face|channel|sleep|visibility] [--native] [--supervise main|architect] [--no-wake]')
+  // 701-2: the starting vector — what the element is for and how it is built — goes into its section 11 at birth; checked before the draft.
+  const vectorFile = flag('--vector-file')
+  if (role && brief && !vectorFile) fail('--vector-file <path> is required: the starting vector the core writes into the element\'s section 11 «From the core» at birth (core step 701) — its form: skill create-element')
+  if (vectorFile) {
+    if (!existsSync(vectorFile)) fail(`no file ${vectorFile}`)
+    const v = readFileSync(vectorFile, 'utf8').replace(/\r\n/g, '\n').trim()
+    if (!v || v.split('\n').length > 40 || v.length > 4000) fail(`--vector-file: 1–40 lines and up to 4000 characters (now ${v.split('\n').length} lines, ${v.length} characters) — it is loaded into every session of the element`)
+  }
+  if (!role || !brief) fail('create --role "<one sentence>" --name "<the name people see in the menu>" --vector-file <path> [--describe "<what it is for, 1–3 sentences, for the passport and the header>"] [--look own|project] [--blocks off] [--close-after-first-session] (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--different "<their words>" --boundary owner|money|secrets|control|face|channel|sleep|visibility] [--native] [--supervise main|architect] [--no-wake]')
   if (!['main', 'architect'].includes(by)) fail('--supervise main|architect')
   // 670-3: область нового элемента — проверяется до рождения, пишется вместе с ролью.
   const newArea = areaPatch(flag('--area'), flag('--grows'))
@@ -1017,7 +1025,7 @@ if (cmd === 'create') {
   console.log(`draft ${id} — birth starts (clone of the template, install, build: a few minutes)`)
 
   // 2. Рождение — тот же путь, что кнопка «Родить элемент». 553-1: облик выбирает `item-birth.mjs` по типу узла.
-  const birth = spawnSync(process.execPath, [join(ROOT, 'scripts', 'item-birth.mjs'), id, ...(has('--native') ? ['--native'] : []), ...(look ? ['--look', look] : []), ...((flag('--name') ?? '').trim() ? ['--name', flag('--name').trim()] : []), '--describe', ((flag('--describe') ?? '').trim() || role)], { cwd: ROOT, encoding: 'utf8', windowsHide: true, timeout: 20 * 60_000 })
+  const birth = spawnSync(process.execPath, [join(ROOT, 'scripts', 'item-birth.mjs'), id, ...(has('--native') ? ['--native'] : []), ...(look ? ['--look', look] : []), ...((flag('--name') ?? '').trim() ? ['--name', flag('--name').trim()] : []), '--describe', ((flag('--describe') ?? '').trim() || role), ...(vectorFile ? ['--vector-file', resolve(vectorFile)] : [])], { cwd: ROOT, encoding: 'utf8', windowsHide: true, timeout: 20 * 60_000 })
   const log = `${birth.stdout ?? ''}${birth.stderr ?? ''}`
   if (!/===BIRTH_OK===/.test(log)) fail(`birth of ${id} failed: ${log.trim().split(/\r?\n/).slice(-3).join(' | ')}`)
   const dir = itemDir(id)
@@ -1088,6 +1096,10 @@ if (cmd === 'create') {
   console.log(`name: ${nameFile.ownName(id, ROOT) ?? `none — give it one: npm run rename -- ${id} "<name>"`}`)
   console.log(siteLine)
   console.log(`role: ${role}`)
+  // 701-2: the vector read back from the element's own instruction — proof that it lies where the element reads it.
+  { let t = ''; try { t = readFileSync(join(dir, 'CLAUDE.md'), 'utf8') } catch { /* no instruction */ }
+    const m = /### From the core\n([\s\S]*?)\n### The laws of this element/.exec(t)
+    console.log(m ? `vector: section 11 «From the core» of its CLAUDE.md, ${m[1].trim().split('\n').length} lines` : 'vector: NOT in its CLAUDE.md — tell its agent the vector with npm run task') }
   console.log(`task: development-docs/pre-steps/${name}`)
   console.log(`agent: ${woke}`)
   console.log(`led by: ${by === 'main' ? 'you (the main agent): its «done» wakes you — skill supervise-element' : 'the architect'}`)
