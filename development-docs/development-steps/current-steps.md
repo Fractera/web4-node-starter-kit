@@ -5,6 +5,14 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-51 (2026-11-08, ~14:10 UTC) — QUEUED with 692 for the next core update: the page «Подписка Claude Code» redesigned.** The owner,
+verbatim: «одна кнопка должна быть переименована и должна называться собственная подписка этого элемента. Ты написал про человека какого-то
+все это сложное … Не надо так акцентировать внимание. … элемент чья это подписка должен стоять первым сверху … слева нарисовал крупные цифры
+единичка это чья это подписка, двоечка войти в аккаунт Троечка открыть терминал или настроить Telegram»; and on my asking him to click:
+«Что это ещё за глупость … вкладка этой страницы открыта … Тебе какая-то инструкция запрещает это делать?» — the rule of §6/help-in-browser
+also covers the node's own pages when a step needs the person's clicks (only signing in stays theirs). The page lives in the kit — one
+change in the core reaches every element, no template release.
+
 **NOW-50 (2026-11-08, ~16:35 UTC) — QUEUED for the NEXT core update, step 692 (the menu), not planned yet.** The owner, verbatim: «Также
 запомни когда ты будешь делать обновления ядра сделай ещё одно вещь: кнопку переключения компактной полный вынеси вверх сразу под кнопку
 ваш узел. Сделай красиво посмотри внимательно на switch переключатель я думаю что это shadcn так как в нём есть какой-то дефект на мой
