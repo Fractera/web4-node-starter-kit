@@ -7,8 +7,9 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 
 **NOW-65 (2026-11-08, ~23:00 WET) — 701-1..6 and 702-1 BUILT here, PUSHED** (the owner: «lets' go , to work»; «it must to be updated in
 the core ans all elements , no ?» — yes: the soul carries «Fractera's worker first and Claude's second»). Core `ed15900c` … `0abdf015`, 15
-templates released (custom v0.3.176, native v0.1.57, root v3.0.39, natives next patch). NEXT: core CI → fork sync in Chrome (the node has
-no GitHub token) → node update → live: root merges v3.0.39 and s8y6x cherry-picks `bee0cc0` by their agents, each writes its «From the
+templates released (custom v0.3.176, native v0.1.57, root v3.0.39, natives next patch). Core CI green (`e84f91e4`, three-os), custom and
+root CI green; fork synced through Chrome «Browser 1» (macOS, the owner's pick: «chrome in macbook») ~23:10 — identical; the node has no
+GitHub token. NODE UPDATE STARTED. After it, live: root merges v3.0.39 and s8y6x cherry-picks `bee0cc0` by their agents, each writes its «From the
 core» vector (701-3), vectors and graph fix their cards (702-2), eyes on How it works 7.5, the cold exam (701-6) and the cold question
 (702-3) by the owner in a fresh session, the research element's birth after his yes (701-7).
 
