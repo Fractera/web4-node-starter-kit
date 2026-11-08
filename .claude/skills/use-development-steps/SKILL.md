@@ -39,9 +39,17 @@ events. When one happens, the file is updated in the same operation:
 The test that replaces all others: «if the power went off right now, what of the last hour would not come back?» — that is written now.
 The file is rewritten in place, never appended as a chronicle; a block «measured — do not measure again» survives every reset.
 
-**Nothing is compacted.** Compaction loses silently. Near the limit — at the nearest boundary (end of a substep, before a long operation):
-write the file, TELL the person it is time to clear the session, they clear it, the new session reads the file first. You have no
-exact counter of the window — say so, never pretend to read one.
+**Nothing is compacted — you reset yourself (step 700).** Compaction loses silently and is off in every node session. The node counts
+your window: from 55 % a line `⟦node · context-window · …⟧` comes with the person's message. It is a judgement, not a threshold — a small
+last task that fits is finished first; a long or new piece of work starts in a clean window; from 85 % — now, at the nearest boundary.
+Then three moves, without asking the person:
+1. **The letter to your next session** — the section `## Letter to my next session` at the top of `current-steps.md`, rewritten whole,
+   «written by me for myself»: where I stand (step, substep, the last commit with its hash) · the person's words of this session
+   verbatim · what is half done and where it lies (uncommitted files, a running build) · the next action, exactly · the clues to keep
+   (what was measured, what failed and why, the rules learned). It replaces the old letter; it is not a chronicle.
+2. **Commit it** — a letter only in the working tree dies with a crash.
+3. **`npm run session -- clear --continue`**, one line to the person («окно N %, письмо записано — продолжу после сброса»). When the turn
+   ends the node clears the window and wakes the fresh session with `⟦node · context-reset · …⟧`: it reads the letter first and goes on.
 
 ## 3. A task that arrives in the middle of a step is ROUTED, not done at once
 
