@@ -5,6 +5,14 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-67 (2026-11-08, ~23:12 WET) — live after the update to core `c8129671`.** The four test calendar entries removed by the root
+and s8y6x workers (the owner: «4 yes»; `npm run clocks` — no entries). root merged v3.0.39 `ae6a86d` + its vector `861f8d1`; s8y6x
+cherry-picked `bee0cc0` as `5f4f20f` + its vector `886b397` (no push; both quoted the modes guard, not the seal line). vectors `ddb2bb3`
+and graph `c0d72f9` corrected their passport descriptions (the code goes through embeddings) — the cards show it; `describe:publish`
+answers 404 for natives («not a born element»). OWED: carry ddb2bb3 and c0d72f9 into fractera-vectors-starter and
+fractera-graph-lightrag-starter at the next release (else the next pin brings the old words back); eyes on How it works 7.5 — done,
+no console errors. Left for the owner: the cold exam (701-6), the cold question (702-3), the research element's birth (701-7).
+
 **NOW-66 (2026-11-08, ~23:25 WET) — 703 BUILT here, not pushed** (the owner: «Запланируй небольшое обновление на страх архитектора, в левом
 меню замени слово основное на слово ядро»): `zoneMain` ru «Ядро», en «Core» (was «Основное» / «Main»), comments and the hosting README
 follow; term hints and broken characters green. Rides the next node update; live — eyes on the left menu, then `completed-steps/703.md`.
