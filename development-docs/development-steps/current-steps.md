@@ -5,6 +5,11 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-63 (2026-11-08, ~21:40 WET) — 701 PROPOSED, not agreed** (`new-steps/701-the-core-writes-every-element-its-starting-vector-and-research-gets-its-hand.md`,
+the owner's words verbatim there): the core writes every element a starting vector into its §11 «From the core» at birth; research
+gets a field skill and a hand of its own; the owner's case goes to the exam, not to a skill. Waiting for his word on the plan and on the
+soul's sentence.
+
 **NOW-62 (2026-11-08, ~21:20 WET) — 700 CLOSED** (the owner: «да, начинай 700 после 699», «can you fifnish 700 step without me ?»,
 «yes to do it»). Summary `completed-steps/700.md`, plan deleted. Live on the node (core `36232497`): the status line's `context.json`,
 compaction off in `--settings`, How it works 7.1 by eyes, root v3.0.38 `449990a` (reset refused without a letter), s8y6x reset itself
