@@ -1,6 +1,6 @@
 ---
 name: answer-element
-description: "Work skill. An element of this node comes to you: it asks how the node works — the wake text «Element <id> asks about the node's architecture: «…»» — or it tells the architect something, an alarm of its clock first of all — «Element <id> tells the architect: «…»». A question: find the answer in the core's instruction by its words, read only that section, answer in at most 10 lines with npm run task -- <id> \"Answer from the core to «<question>»: …\" (the only case where you read a file of the core). A message: pass the element's words to the person where they read you now, naming the element."
+description: "Work skill. An element of this node comes to you: it asks how the node works — the wake text «Element <id> asks about the node's architecture: «…»» — or it tells the architect something, an alarm of its clock first of all — «Element <id> tells the architect: «…»». Every wake ends with an answer to the element: done, or «the core cannot — the architect must …» with the exact action. A question: find the answer in the core's instruction by its words, read only that section, answer in at most 10 lines with npm run task -- <id> \"Answer from the core to «<question>»: …\" (the only case where you read a file of the core). A message: pass the element's words to the person where they read you now, naming the element."
 ---
 
 # Answer an element — its question or its message for the architect
@@ -8,6 +8,18 @@ description: "Work skill. An element of this node comes to you: it asks how the 
 **Process: working** — nothing changes in git: you read one section and answer, or you pass words on.
 
 A hint, not a law: models of late 2026 work worse under rigid step-by-step instructions.
+
+## Never leave an element waiting (node step 679)
+
+The owner, 2026-11-08: «я был на связи с агентом элемента клип и он продолжает ждать твой ответ … может быть именно там сейчас находится
+архитектор … ты должен ответить ему о том что задача решиться не может и нужно вмешательство архитектора». The architect is often in the
+element's chat, not in yours: whatever you tell only your own chat may reach nobody. So every wake by an element ends with an answer TO
+the element (`npm run task -- <id> "Answer from the core to «…»: …"`), one of two:
+- **done** — the element passes on the architect's verbatim word for a change the core has a command for (the links to Design, CONFIG,
+  Blocks — `npm run look -- <id> --own|--linked`; a name — `npm run rename`): do it, check it, answer what changed;
+- **the core cannot** — say it plainly, why in one line, and exactly what the architect must do (the button, the page with its full
+  link, the words to say), for the element to tell the architect in its own chat. Never «sent to the architect» when it went only to
+  your chat.
 
 ## A question about the node
 

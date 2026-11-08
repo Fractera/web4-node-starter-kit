@@ -212,11 +212,26 @@ if (cmd === 'contacts') {
 // включена — общий элемент в ядре, выключена — страница самого элемента. Две строки, без модели.
 if (cmd === 'look') {
   const [one] = rest
-  if (!one) fail('look <id> — where the design and the site settings of this element are changed')
+  if (!one) fail('look <id> [--own [config,design,blocks] | --linked [config,design,blocks]] — where the design, the site settings and the blocks of this element are changed; the switch on the person\'s word')
   const r = await core('/api/node/projects').catch(() => null)
   const rows = Array.isArray(r?.body?.rows) ? r.body.rows : []
   const x = rows.find((y) => y.id === one || y.service === one || addressOf(y.id) === one)
   if (!x) fail(`no element «${one}» in this node — who does a job: npm run find -- <English words>`)
+  // 679-2 (владелец 2026-11-08: «чтобы у тебя была возможность по такой команде переводить блоки дизайн и прочее связи с узлом в
+  // самостоятельно режим»): по слову человека — та же дверь, что выключатели «Опасной зоны» (`PATCH /api/architect/items/<id>/links`).
+  const turn = has('--own') ? false : has('--linked') ? true : null
+  if (turn !== null) {
+    if (!x.custom || x.id === 'root') fail(`${x.id}: only a born custom element has these links`)
+    const listAt = rest.findIndex((w) => w === '--own' || w === '--linked') + 1
+    const asked = (rest[listAt] && !rest[listAt].startsWith('--') ? rest[listAt] : 'config,design,blocks').split(',').map((k) => k.trim()).filter(Boolean)
+    const bad = asked.filter((k) => !['config', 'design', 'blocks'].includes(k))
+    if (bad.length) fail(`unknown link ${bad.join(', ')} — config, design, blocks`)
+    for (const kind of asked) {
+      const r = await core(`/api/architect/items/${encodeURIComponent(x.id)}/links`, { method: 'PATCH', body: JSON.stringify({ kind, on: turn }) }).catch((e) => ({ status: 0, body: { error: e.message } }))
+      if (!r.body?.ok) fail(`${x.id}: the link ${kind} was not switched (${r.status} ${r.body?.error ?? ''}) — the person can switch it on ${ORIGIN}/${LANG}/${addressOf(x.id)}/settings/danger-zone`)
+      console.log(`===LOOK_SWITCHED=== ${x.id}: ${kind} ${turn ? 'linked to the project' : 'own'}`)
+    }
+  }
   const links = readJson(join(ROOT, 'data', 'services', x.id, 'links.json'), {}) ?? {}
   const on = (k) => links[k] !== false
   // Главный адрес элемента — у узла (`domain.json`: свой домен), иначе корень зоны у root и поддомен у остальных.
@@ -229,6 +244,7 @@ if (cmd === 'look') {
     console.log(`${x.id} is a native element: its look and site settings come from the shared Design (${shared.design}) and CONFIG (${shared.config}); it has no workshop of its own.`)
     process.exit(0)
   }
+  console.log(`Blocks: ${on('blocks') ? 'linked to the shared Blocks catalogue (its agent takes blocks from it)' : 'own — new blocks are built inside the element'}`)
   for (const [k, label] of [['design', 'Design (colours, fonts, shapes)'], ['config', 'Site settings (name, menu, footer, switches)']]) {
     console.log(on(k)
       ? `${label}: linked to the shared ${k === 'design' ? 'Design' : 'CONFIG'} — change it there: ${shared[k]} (it applies to every element that follows it)`
@@ -237,7 +253,7 @@ if (cmd === 'look') {
   // У root меню в ядре — папки страниц, «Опасной зоны» с выключателями связей у него нет (замер 2026-10-24: 404).
   console.log(x.id === 'root'
     ? 'Give the person the link; never change the values yourself.'
-    : `The switch of these links: ${ORIGIN}/${LANG}/${addressOf(x.id)}/settings/danger-zone. Give the person the link; never change the values yourself.`)
+    : `The switch of these links: ${ORIGIN}/${LANG}/${addressOf(x.id)}/settings/danger-zone; on the person's word you switch them yourself: npm run look -- ${x.id} --own [config,design,blocks] | --linked [config,design,blocks].`)
   process.exit(0)
 }
 
@@ -721,7 +737,10 @@ if (cmd === 'create') {
   const briefFile = flag('--brief-file')
   const brief = (briefFile ? (existsSync(briefFile) ? readFileSync(briefFile, 'utf8') : fail(`no file ${briefFile}`)) : flag('--brief') ?? '').trim()
   const by = flag('--supervise') ?? 'architect'
-  if (!role || !brief) fail('create --role "<one sentence>" [--name "<the name people see in the menu>"] (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--native] [--supervise main|architect] [--no-wake]')
+  const look = flag('--look')
+  if (look !== null && look !== 'own' && look !== 'project') fail('--look own|project')
+  const blocksOff = flag('--blocks') === 'off'
+  if (!role || !brief) fail('create --role "<one sentence>" [--name "<the name people see in the menu>"] [--look own|project] [--blocks off] (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--native] [--supervise main|architect] [--no-wake]')
   if (!['main', 'architect'].includes(by)) fail('--supervise main|architect')
   // 670-3: область нового элемента — проверяется до рождения, пишется вместе с ролью.
   const newArea = areaPatch(flag('--area'), flag('--grows'))
@@ -764,7 +783,7 @@ if (cmd === 'create') {
   console.log(`draft ${id} — birth starts (clone of the template, install, build: a few minutes)`)
 
   // 2. Рождение — тот же путь, что кнопка «Родить элемент». 553-1: облик выбирает `item-birth.mjs` по типу узла.
-  const birth = spawnSync(process.execPath, [join(ROOT, 'scripts', 'item-birth.mjs'), id, ...(has('--native') ? ['--native'] : [])], { cwd: ROOT, encoding: 'utf8', windowsHide: true, timeout: 20 * 60_000 })
+  const birth = spawnSync(process.execPath, [join(ROOT, 'scripts', 'item-birth.mjs'), id, ...(has('--native') ? ['--native'] : []), ...(look ? ['--look', look] : [])], { cwd: ROOT, encoding: 'utf8', windowsHide: true, timeout: 20 * 60_000 })
   const log = `${birth.stdout ?? ''}${birth.stderr ?? ''}`
   if (!/===BIRTH_OK===/.test(log)) fail(`birth of ${id} failed: ${log.trim().split(/\r?\n/).slice(-3).join(' | ')}`)
   const dir = itemDir(id)
@@ -776,6 +795,11 @@ if (cmd === 'create') {
   mkdirSync(dirname(rolesFile), { recursive: true })
   writeFileSync(rolesFile, JSON.stringify(rj, null, 2) + '\n', 'utf8')
   if (Object.keys(newArea).length) writeArea(id, newArea)
+  // 679-3: самостоятельный элемент и без общих «Блоков» — тем же выключателем, что «Опасная зона» (рождение `own` выключает CONFIG и «Дизайн»).
+  if (blocksOff) {
+    const r = await core(`/api/architect/items/${encodeURIComponent(id)}/links`, { method: 'PATCH', body: JSON.stringify({ kind: 'blocks', on: false }) }).catch(() => null)
+    console.log(r?.body?.ok ? 'blocks: own (the link to the shared Blocks is off)' : `blocks: still linked — switch it: npm run look -- ${id} --own blocks`)
+  }
   // 678-2: имя для людей — в данные ядра (`name-file.cjs`): меню, шапка и `card` покажут его, а не случайный адрес.
   const display = (flag('--name') ?? '').trim()
   if (display) nameFile.writeName(id, display, ROOT)
@@ -823,6 +847,8 @@ if (cmd === 'create') {
       : site[1] === 'none' ? 'site: NOT connected — the element page → «Internet address» → «Connect»'
         : site[2] && Number(site[2]) < 400 ? `site: ${site[1]} — answers ${site[2]} from the internet` : `site: ${site[1]} — connected, NOT answering yet (${site[2] ?? 'no answer'})`
   console.log(`address: ${addressOf(id)}`)
+  const born = readJson(join(ROOT, 'data', 'services', id, 'links.json'), {}) ?? {}
+  console.log(`look: ${born.config === false && born.design === false ? 'own (its own design and settings)' : 'one with the project (shared Design and CONFIG)'}; blocks: ${born.blocks === false ? 'own' : 'shared catalogue'}`)
   console.log(`name: ${nameFile.ownName(id, ROOT) ?? `none — give it one: npm run rename -- ${id} "<name>"`}`)
   console.log(siteLine)
   console.log(`role: ${role}`)

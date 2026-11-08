@@ -31,18 +31,26 @@ The owner of Fractera, 2026-10-23: «не всегда в наш проект п
 2. **The network.** `npm run lagrix -- <English words>` — a2a (an agent that sells the result of the work) and f2f (a whole element),
    one contract (670-6). Today both are simulated and always empty — tell the person so in one line: «в сети Lagrix подходящих агентов
    и элементов не найдено (поиск в сети пока имитируется)».
-3. **Agree four things with the person:**
+3. **Agree five things with the person:**
    - the **role** — one sentence, what the element will do for the node («Removes the background from product photos and
      returns a PNG link.»);
    - the **area** — the field it will be the home for, and 2–5 jobs it may grow into (`--area`, `--grows`): the next job of that field
      becomes a route there, not another element;
    - the **task** — the person's words first, verbatim, then your restatement and what «done» will look like;
    - **who leads it** — the architect (default: they work with its agent in its terminal or Telegram) or you (`supervise
-     main`: its «done» wakes you, skill `supervise-element`, at most 10 cycles).
+     main`: its «done» wakes you, skill `supervise-element`, at most 10 cycles);
+   - **on its own or one with the project** (node step 679; the owner, 2026-11-08: «прежде элемента запрашивать самостоятельно ли это
+     будет элемент или единой с ядром … если нет комментирует»). Ask it every time, in plain words, and explain if the person does not
+     know what it means: **one with the project** — it takes the shared Design (colours, fonts), CONFIG (menu, footer, switches) and the
+     shared Blocks catalogue: the node looks like one site, a change in Design reaches it by itself, and ready blocks save build tokens;
+     but it cannot look different. **On its own** — its own design, settings and blocks, built inside it: it can be a separate product
+     or brand (a clip studio, a client's shop), and nothing of the project changes it; but every look and every block is its own work.
+     Your pick and why. `--look project|own`; on its own without the shared Blocks too — `--blocks off`. Later, on the person's word,
+     `npm run look -- <id> --own [config,design,blocks]` or `--linked […]`.
    Custom by default. Native (`--native`) only for a job of the node itself that is never sold and never leaves it.
 4. **Create.** Write the task into a file in this folder (no shell quoting of the person's words), then:
    ```
-   npm run create -- --role "<one sentence>" --name "<the name the person sees in the menu>" --area "<the field>" --grows "<a job>; <another>" --brief-file task-<words>.md [--supervise main] [--native]
+   npm run create -- --role "<one sentence>" --name "<the name the person sees in the menu>" --look own|project [--blocks off] --area "<the field>" --grows "<a job>; <another>" --brief-file task-<words>.md [--supervise main] [--native]
    ```
    Birth takes a few minutes (template clone, install, build, then the address in Cloudflare is connected and checked from the
    internet). It prints `===ELEMENT_CREATE_OK=== <id>`, `address:`, `name:` and `site:`. The name is the core's (node step 678): the
