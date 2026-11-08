@@ -50,6 +50,7 @@ const nodeType = require('../lib/web4-items/node-type.cjs')
 // 603-1: самоописание элементов — паспорт и измеренное одним модулем (что это, где живёт, где данные, двери из кода, кто зависит).
 const self = require('../lib/a2a/self-description.cjs')
 const nameFile = require('../lib/web4-items/name-file.cjs')
+const firstSession = require('../lib/web4-items/first-session.cjs')
 // 552-4: поручение главного агента элементу — строительный процесс; слово уже стоит (например, ответ ядра сессии рабочего процесса)
 // — остаётся своё. Мост ядра по слову будит сессию процесса (`lib/agent-kit/modes.cjs`).
 const modes = require('../lib/agent-kit/modes.cjs')
@@ -766,7 +767,9 @@ if (cmd === 'create') {
   const look = flag('--look')
   if (look !== null && look !== 'own' && look !== 'project') fail('--look own|project')
   const blocksOff = flag('--blocks') === 'off'
-  if (!role || !brief) fail('create --role "<one sentence>" [--name "<the name people see in the menu>"] [--look own|project] [--blocks off] (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--native] [--supervise main|architect] [--no-wake]')
+  // 682: имя обязательно — без него меню и шапка покажут случайный адрес; описание паспорта — `--describe`, нет — роль.
+  if (role && brief && !(flag('--name') ?? '').trim()) fail('--name "<the name people see in the menu>" is required: without it the menu, the header and the drawer show a random address (node step 682)')
+  if (!role || !brief) fail('create --role "<one sentence>" --name "<the name people see in the menu>" [--describe "<what it is for, 1–3 sentences, for the passport and the header>"] [--look own|project] [--blocks off] [--close-after-first-session] (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--native] [--supervise main|architect] [--no-wake]')
   if (!['main', 'architect'].includes(by)) fail('--supervise main|architect')
   // 670-3: область нового элемента — проверяется до рождения, пишется вместе с ролью.
   const newArea = areaPatch(flag('--area'), flag('--grows'))
@@ -809,7 +812,7 @@ if (cmd === 'create') {
   console.log(`draft ${id} — birth starts (clone of the template, install, build: a few minutes)`)
 
   // 2. Рождение — тот же путь, что кнопка «Родить элемент». 553-1: облик выбирает `item-birth.mjs` по типу узла.
-  const birth = spawnSync(process.execPath, [join(ROOT, 'scripts', 'item-birth.mjs'), id, ...(has('--native') ? ['--native'] : []), ...(look ? ['--look', look] : [])], { cwd: ROOT, encoding: 'utf8', windowsHide: true, timeout: 20 * 60_000 })
+  const birth = spawnSync(process.execPath, [join(ROOT, 'scripts', 'item-birth.mjs'), id, ...(has('--native') ? ['--native'] : []), ...(look ? ['--look', look] : []), ...((flag('--name') ?? '').trim() ? ['--name', flag('--name').trim()] : []), '--describe', ((flag('--describe') ?? '').trim() || role)], { cwd: ROOT, encoding: 'utf8', windowsHide: true, timeout: 20 * 60_000 })
   const log = `${birth.stdout ?? ''}${birth.stderr ?? ''}`
   if (!/===BIRTH_OK===/.test(log)) fail(`birth of ${id} failed: ${log.trim().split(/\r?\n/).slice(-3).join(' | ')}`)
   const dir = itemDir(id)
@@ -829,6 +832,8 @@ if (cmd === 'create') {
   // 678-2: имя для людей — в данные ядра (`name-file.cjs`): меню, шапка и `card` покажут его, а не случайный адрес.
   const display = (flag('--name') ?? '').trim()
   if (display) nameFile.writeName(id, display, ROOT)
+  // 682: первая сессия закроется сама по её «закончил», и тебя разбудит одна строка — без опроса `state`.
+  if (has('--close-after-first-session')) firstSession.set(id, { name: display }, ROOT)
 
   // 4. Задание — в приёмную элемента, его формой (`development-docs/pre-steps/README.md`): слова в кавычках, одной строкой.
   const now = new Date()
@@ -858,7 +863,7 @@ if (cmd === 'create') {
       : 'Ведёт тебя архитектор: три подтверждающие строки — ему, начинай после его «да».'
     // 548-14: первая сессия коротка — ✗ замерено 2026-10-20: с «опиши себя в паспорте» и «квиз и план шага» в одном поручении агент
     // нового элемента потратил 11 запросов модели и 850 тыс. токенов кэша на чтение своего кода, паспорта и сторожей до первого вопроса.
-    const text = `${modes.WORDS.build} Тебя создал главный агент узла под задание архитектора. Твоя роль: ${role} Задание лежит в твоей приёмной: development-docs/pre-steps/${name}. Первая сессия — коротко, по своей инструкции: назови задание, пройди порядок «Before you build a new capability» (CLAUDE.md, «Steps», 1b: поиск в узле, затем в сети), затем задай первый вопрос продуктового квиза (навык product-quiz, пункт «The first session of a new element») и остановись. Код, сторожа и скрипты до утверждения квиза не читай; паспорт опишешь в первом шаге, когда квиз утверждён. ${lead}`
+    const text = `${modes.WORDS.build} Тебя создал главный агент узла под задание архитектора. Твоя роль: ${role} Задание лежит в твоей приёмной: development-docs/pre-steps/${name}. Первая сессия — коротко, по своей инструкции: назови задание; ядро уже проверило узел и сеть для твоей роли — никто её не делает, она твоя: порядок «Before you build a new capability» (CLAUDE.md, «Steps», 1b) и \`npm run need\` — только для возможности ВНЕ твоей роли (шаг 682: ✗ 2026-11-07 пять из девяти новых элементов спросили ядро о собственной роли); затем задай первый вопрос продуктового квиза (навык product-quiz, пункт «The first session of a new element») и остановись. Код, сторожа и скрипты до утверждения квиза не читай; паспорт опишешь в первом шаге, когда квиз утверждён. ${lead}`
     const r = await core('/api/agents/wake', { method: 'POST', body: JSON.stringify({ service: id, text, from: 'main agent', about: role, reason: 'main-agent-create', supervised: by === 'main' }) }).catch((e) => ({ body: { ok: false, reason: e.message } }))
     const b = r.body ?? {}
     woke = b.ok ? (b.pending ? 'its person was asked in Telegram to turn it on' : 'its agent started with the task') : `not woken: ${b.reason}${b.freeMb ? ` (free ${b.freeMb} MB, needs ${b.perSessionMb} MB)` : ''} — run later: npm run task -- ${id} "<the same task>"`

@@ -113,10 +113,18 @@ const propsFile = existsSync(folderPassport) ? folderPassport : join(dir, 'OWN-S
 if (!existsSync(propsFile)) fail('в шаблоне нет паспорта (OWN-SERVICE-PROPS/ или OWN-SERVICE-PROPS.json) — элементу не у кого спросить своё имя', dir)
 const props = JSON.parse(readFileSync(propsFile, 'utf8'))
 props.id = id
-props.name = id
+// 682 (владелец 2026-11-08: «элемент обязательно должен получить own-service-props … в самом начале после рождения с нормальным пусть и
+// предварительно но достаточно полным описанием его роли в системе. Потому что если этого не сделать то после перезагрузки … не поймёт что
+// это за мусор»): имя и предварительное описание роли — от главного агента (`create --name`, `--describe`); нет — как прежде.
+const argOf = (k) => { const i = process.argv.indexOf(k); return i > 0 && process.argv[i + 1] && !process.argv[i + 1].startsWith('--') ? process.argv[i + 1] : null }
+const bornName = (argOf('--name') ?? '').replace(/\s+/g, ' ').trim().slice(0, 60)
+const bornDescribe = (argOf('--describe') ?? '').replace(/\s+/g, ' ').trim().slice(0, 600)
+props.name = bornName || id
 // 325-1: СВОЁ ОПИСАНИЕ, А НЕ ШАБЛОННОЕ. ✗ Замерено: рождённый `as8kp` описывал себя словами шаблона («The template of a node
 // element…»). Первичная запись говорит, кто это и откуда; что элемент умеет, пишет его агент (Настройки → Описание, 325-2).
-const bornWords = `WEB4 element ${id}, born from ${origin.from} ${origin.version} on ${new Date().toISOString().slice(0, 10)}. Its capabilities are written by its agent from Settings → Capabilities description.`
+const bornWords = bornDescribe
+  ? `${bornDescribe} (Preliminary — written by the core's main agent at birth on ${new Date().toISOString().slice(0, 10)}, from ${origin.from} ${origin.version}; the element's agent refines it.)`
+  : `WEB4 element ${id}, born from ${origin.from} ${origin.version} on ${new Date().toISOString().slice(0, 10)}. Its capabilities are written by its agent from Settings → Capabilities description.`
 if (propsFile === folderPassport) props.shortDescription = bornWords
 else props.summary = bornWords
 writeFileSync(propsFile, JSON.stringify(props, null, 2) + '\n', 'utf8')

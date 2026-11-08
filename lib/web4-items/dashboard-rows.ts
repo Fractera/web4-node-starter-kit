@@ -299,7 +299,10 @@ async function catalogEntry(id: string, entry: RegistryEntry, custom: boolean, l
   return {
     id,
     title: nameOf(id, lang).slice(0, 160),
-    description: (seen.description ?? passport.short ?? page).slice(0, 400),
+    // 682 (владелец 2026-11-08: «чтобы в верхнем меню кнопок этот элемент можно было найти быстро по названию и описанию»): у кастомного —
+    // описание его паспорта (главный агент пишет его при рождении, `create --describe`), а не мета главной: ✗ замерено 2026-11-07 — у девяти
+    // новых элементов шапка показывала одинаковый текст главной шаблона. Старое «WEB4 element …, born from …» описанием не считается.
+    description: ((kind === "custom" && passport.short && !/^WEB4 element \S+, born from /.test(passport.short) ? passport.short : null) ?? seen.description ?? passport.short ?? page).slice(0, 400),
     href,
     local: `http://localhost:${port}/${lang}`,
     kind,

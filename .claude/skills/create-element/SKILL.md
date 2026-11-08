@@ -50,7 +50,7 @@ The owner of Fractera, 2026-10-23: «не всегда в наш проект п
    Custom by default. Native (`--native`) only for a job of the node itself that is never sold and never leaves it.
 4. **Create.** Write the task into a file in this folder (no shell quoting of the person's words), then:
    ```
-   npm run create -- --role "<one sentence>" --name "<the name the person sees in the menu>" --look own|project [--blocks off] --area "<the field>" --grows "<a job>; <another>" --brief-file task-<words>.md [--supervise main] [--native]
+   npm run create -- --role "<one sentence>" --name "<the name the person sees in the menu>" --describe "<what it is for in this node, 1–3 sentences>" --look own|project [--blocks off] --area "<the field>" --grows "<a job>; <another>" --brief-file task-<words>.md [--close-after-first-session] [--supervise main] [--native]
    ```
    Birth takes a few minutes (template clone, install, build, then the address in Cloudflare is connected and checked from the
    internet). It prints `===ELEMENT_CREATE_OK=== <id>`, `address:`, `name:` and `site:`. The name is the core's (node step 678): the
@@ -60,6 +60,19 @@ The owner of Fractera, 2026-10-23: «не всегда в наш проект п
    «answers … from the internet» — otherwise say what the line says (only on this computer, not connected, not answering yet) and
    never send a link that does not open (owner of the node, 2026-10-20); that its agent started with the task (or why not —
    memory, a question in Telegram), who leads it, and how they go on: its terminal, its development documents, its Telegram bot.
+
+## Several elements — strictly one by one (node step 682)
+
+The owner, 2026-11-08: «ты рождаешь их строго по одному сначала создаешь его, затем прописываешь его нормальное имя … прописываешь
+стартовые задания … Когда элемент создан ты закрываешь свой под шаг … Затем ты его выключаешь и после этого переходишь к созданию
+нового … элемент обязательно должен получить own-service-props … в самом начале после рождения с нормальным пусть и предварительно но
+достаточно полным описанием его роли в системе». The births are a step of the core: its plan names one substep per element (skill
+`use-development-steps`). For each element, in this order, and only then the next:
+1. `npm run create` with `--name` (the menu, the header and the drawer show it — required) and `--describe` (its role in the node, 1–3
+   sentences: the core writes it into the element's passport at birth, so after any reload the element and the person know what it is
+   and the header shows it), the task with its start — the quiz or the first step, by how hard it is — and `--close-after-first-session`.
+2. Its first session asks its first quiz question; its «done» closes its agent by itself and wakes you with one line — no polling.
+3. Write the substep closed in `current-steps.md` (its id, name, what it asked), one line to the person, then the next element.
 
 ## What the new element does by itself
 
