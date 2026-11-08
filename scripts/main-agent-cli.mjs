@@ -578,7 +578,33 @@ if (cmd === 'task') {
   const skip = new Set(rest.flatMap((w, i) => (w === '--work' || w === '--dry' ? [i] : w === '--skill' ? [i, i + 1] : [])))
   const [id, ...words] = rest.filter((_, i) => !skip.has(i))
   const said = words.join(' ').trim()
-  if (!id || !said) fail('task <id> "<what the element agent must do>" [--work [--skill <skill id>]] [--dry]')
+  if (!id || !said) fail('task <id>[,<id>…] "<what the element agent must do>" [--work [--skill <skill id>]] [--dry]')
+  // 681: одно поручение нескольким элементам — пачка (`<id>,<id>,…` с `--work`): каждый рабочий процесс делает своё, а тебя будит
+  // ОДИН «закончил» — последнего, со строкой отчёта каждого (`lib/web4-items/jobs.cjs`). ✗ 2026-11-07: девять пробуждений «отчёта нет».
+  const ids = id.split(',').map((x) => x.trim()).filter(Boolean)
+  if (ids.length > 1) {
+    if (!work) fail('several elements at once — only a job of their workers: add --work (a build task goes to one element at a time)')
+    const unknown = ids.filter((x) => !registry().some((s) => s.id === x))
+    if (unknown.length) fail(`no element ${unknown.join(', ')} in the registry`)
+    const about = firstSentence(said, 300)
+    if (dry) { console.log(`===TASK_DRY=== batch of ${ids.length}: ${ids.join(', ')} — one wake when all are done`); process.exit(0) }
+    const batch = jobs.openBatch(ids, { about, skill }, ROOT)
+    const lines = []
+    for (const one of ids) {
+      if (skill !== null) {
+        const d = selfAll().find((x) => x.id === one)
+        if (![...(d?.ownSkills ?? []).map((k) => k.id), ...(d?.commonSkills ?? [])].includes(skill)) { jobs.dropFromBatch(batch, one, ROOT); lines.push(`${one}: no skill «${skill}» — left out`); continue }
+      }
+      const session = modes.hasGroups(itemDir(one)) ? modes.sessionKey(one, 'work') : one
+      jobs.set(session, { about, skill, batch }, ROOT)
+      const r = await core('/api/agents/wake', { method: 'POST', body: JSON.stringify({ service: one, text: modes.withWord(skill !== null ? `skill ${skill} — ${said}` : said, 'work'), from: 'main agent', about, reason: 'main-agent-job', supervised: supervision.byMain(one, ROOT) }) }).catch((e) => ({ body: { ok: false, reason: e.message } }))
+      const b = r.body ?? {}
+      if (!b.ok) { jobs.take(session, ROOT); jobs.dropFromBatch(batch, one, ROOT); lines.push(`${one}: NOT started — ${b.reason ?? r.status}`); continue }
+      lines.push(`${one}: ${b.pending ? 'its person was asked in Telegram to turn its worker on' : b.already ? 'pasted into its live worker' : 'its worker woke with the job'}`)
+    }
+    console.log(`===TASK_BATCH_OK=== ${batch}: ${lines.length} element(s) — one wake when all are done, with every report in one text; do not poll them and answer the person once\n${lines.join('\n')}`)
+    process.exit(0)
+  }
   if (!registry().some((s) => s.id === id)) fail(`no element ${id} in the registry`)
   if (skill !== null && !work) fail('--skill names which of the element\'s agents does a job — use it with --work')
   let text = said

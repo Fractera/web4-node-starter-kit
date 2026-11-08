@@ -1,0 +1,27 @@
+# 681 — One job for several elements is one batch and one wake (the examinee's D1)
+
+**State: APPROVED 2026-11-08** — the owner's «y» to «Я бы начал с первого … Берём его?» (D1).
+
+## The owner's words, verbatim (2026-11-07, the exam session)
+«я уже низко часов смотрю а то как очень медленно ты пытаешься сделать какие-то совершенно одинаковые шаги из серии: Instagram отчёт не
+прислал. Это какая-то фатальная глупая ситуация которая сжигают огромное количество времени и наверно ещё и токенов»
+
+## Measured
+2026-11-07 22:56–22:13 UTC on the owner's node: nine `task --work` (one naming job) → nine «done» wakes (`mount.cjs` → `jobs.wakeText`,
+one per session) → nine turns, nine card checks, nine messages «отчёта нет».
+
+## Result
+- `lib/web4-items/jobs.cjs`: a batch (`data/node/job-batches.json`) — `openBatch`, `finish`, `dropFromBatch`; a member's «done» is only
+  marked; the LAST wakes the main agent once with a line per element (its `reply-core` since the job, or «отчёта нет») and the order
+  «answer the person once, for all».
+- `lib/agent-kit/mount.cjs`: the work session's «done» wakes with `jobs.finish` (null — the batch is not complete).
+- `npm run task -- <id>,<id>,… --work "…"` opens the batch, wakes every worker, leaves out one that did not start.
+- `ask-element`: the same job for several elements is one batch, no polling, one answer.
+
+## Proof
+1. A temp folder: three members — the first two give no wake, the third one text with three lines; the batch file empties; a single
+   job unchanged.
+2. Live on the owner's node after the update: a batch of two elements, one wake.
+
+## Not in it
+The template's worker ending with `reply-core` every time (D1 c) — a template release; the main agent then checks the silent ones itself.

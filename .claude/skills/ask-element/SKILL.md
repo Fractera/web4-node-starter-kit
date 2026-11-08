@@ -21,6 +21,9 @@ about 300 MB of the person's memory, so you turn off what you turned on.
    A check of its code or its build (a guard, a commit) — the same without `--work`. It prints «its worker … woke with the job» or
    «pasted into the live session» (the architect is working with it — do not turn it off later). Tell the architect in one line that
    the element is asked and that the answer comes from you.
+   **The same job for several elements is ONE batch** (node step 681; the owner, 2026-11-07, about nine «no report» wakes: «фатальная
+   глупая ситуация»): `npm run task -- <id>,<id>,… --work "…"` — no `supervise` per element, no polling of your own; one wake comes when
+   the last worker is done, with every report in it — answer the person once, for all of them.
 4. Its «done» wakes you (a new session) → `npm run state -- <id>`: «Report to you» is its answer, «Turned on by you» says whether you
    switched its builder on (a worker closes itself at its «done»). No report — say so; never guess for it.
 5. `npm run person` → a Telegram bot: send the report with the channel's reply tool to that chat_id; no bot: write it here. A few
