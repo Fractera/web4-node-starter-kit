@@ -736,6 +736,51 @@ if (cmd === 'needs') {
   fail('needs [list] · show <id> · answer <id> … · verify <id> [--skill <id>] [--door <path>]')
 }
 
+// 686-4 (владелец 2026-11-08: «у нас 1000 компонентов в 565-м компоненте у нас на полпути закончились токены как ты об этом узнаешь? … Ты
+// ответишь Рома доброе утро всё в порядке»): ГДЕ СТОИТ РАЗРАБОТКА — без модели и без пробуждения. Две записи каждого элемента: модель
+// пишет шаг (`development-docs/current-step.md`, «Active step»), код пишет пульс (`data/services/<id>/pulse.json`, 686-2: как кончился
+// последний ход). Расхождение — первым: «оборван лимитом», «обрезан посреди хода». `--since <часы>` (по умолчанию 12) — что было за это
+// время; остальные — одной строкой «тихо». Ниже — остаток лимита каждого входа (`data/node/limits/`, строка состояния).
+if (cmd === 'where') {
+  const hours = Number(flag('--since')) || 12
+  const since = Date.now() - hours * 3600_000
+  let live = new Set()
+  try {
+    const a = await core('/api/node/attention')
+    live = new Set((a?.body?.terminals ?? []).map((t) => t.id))
+  } catch { /* ядро не ответило — живые сессии неизвестны */ }
+  const hhmm = (iso) => new Date(iso).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+  const loud = []
+  const quiet = []
+  for (const e of registry()) {
+    const dir = itemDir(e.id)
+    let step = ''
+    try {
+      const head = readFileSync(join(dir, 'development-docs', 'current-step.md'), 'utf8')
+      step = (/\*\*Active step:\*\*\s*([^\n]+)/.exec(head)?.[1] ?? '').trim()
+    } catch { /* у элемента нет записи шага */ }
+    const pulse = readJson(join(ROOT, 'data', 'services', e.id, 'pulse.json'), null)?.last ?? null
+    const fresh = pulse && Date.parse(pulse.at) >= since
+    const name = `${e.id}${step ? ` — ${firstSentence(step, 90)}` : ''}`
+    if (pulse?.event === 'turn-error') loud.push(`⛔ ${name}: ход оборван (${pulse.error}) в ${hhmm(pulse.at)}${pulse.details ? ` — ${firstSentence(pulse.details, 80)}` : ''}${pulse.last ? `; последнее: «${firstSentence(pulse.last, 80)}»` : ''}`)
+    else if (pulse?.event === 'turn-start' && !live.has(e.id)) loud.push(`✂️ ${name}: ход начат в ${hhmm(pulse.at)} и не закончен, сессии нет — обрезан (сборка, сон, сбой)`)
+    else if (fresh && pulse.event === 'turn-end') loud.push(`✅ ${name}: ход закончен в ${hhmm(pulse.at)}${pulse.last ? ` — «${firstSentence(pulse.last, 80)}»` : ''}`)
+    else if (live.has(e.id)) loud.push(`▶️ ${name}: сессия идёт`)
+    else quiet.push(e.id)
+  }
+  console.log(`Где стоит разработка (за ${hours} ч):`)
+  for (const l of loud) console.log(`- ${l}`)
+  if (quiet.length) console.log(`- тихо: ${quiet.length} (${quiet.slice(0, 12).join(', ')}${quiet.length > 12 ? ' …' : ''})`)
+  const limDir = join(ROOT, 'data', 'node', 'limits')
+  const lims = existsSync(limDir) ? readdirSync(limDir).filter((f) => f.endsWith('.json')).map((f) => readJson(join(limDir, f), null)).filter(Boolean) : []
+  for (const l of lims) {
+    const w = (x, n) => (x ? `${n} ${x.used} %${x.resetsAt ? ` (сброс ${new Date(x.resetsAt).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })})` : ''}` : null)
+    console.log(`Лимит ${l.login === 'node' ? 'подписки узла' : `своей подписки ${l.element}`}: ${[w(l.fiveHour, '5 ч'), w(l.sevenDay, '7 дн')].filter(Boolean).join(' · ')} — замер ${hhmm(l.at)}`)
+  }
+  if (!lims.length) console.log('Лимит подписки: ещё не замерен — его пишет строка состояния сессий узла после обновления (686-2)')
+  process.exit(0)
+}
+
 if (cmd === 'state') {
   const [id] = rest
   if (!id) fail('state <id>')

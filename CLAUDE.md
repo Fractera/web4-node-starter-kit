@@ -231,6 +231,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   something is a cloud service — first `npm run contacts` (`--all` for every element) and `npm run card` for the element that matters,
   then answer in your own words. Never from memory, never «I cannot see it» before you looked. Everything runs on this computer;
   `contacts` says what goes out. Nothing is listed on wake: the list is for the question that needs it.
+- **Where development stands** — `npm run where` before the answer: every element's step and how its last turn ended, by code, no wake;
+  a turn cut off or stopped by a limit is said first, and only that element is woken.
 - **A request comes — the order.** A person names a goal, a wish or a need, a new task to plan, or asks your opinion — before your
   first question: `skills_find` and the skill `shape-the-need` (§2a: the forces, the shapes, the method — no case). Who does it here —
   `npm run find`,
