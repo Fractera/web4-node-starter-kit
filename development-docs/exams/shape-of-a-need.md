@@ -125,3 +125,14 @@ Each case: the request · the shapes that survive · the right one · the forces
     (holds 6, ~150 MB awake); a boundary of control — the one who translates does not accept the quality (5): an independent
     proofreader, a person he finds or Lagrix later (simulated today). Pick: the new hand plus a human proofreading. Question: for reading
     or for sale — whether it needs a face (a page, a store). Forces 6, 5, 3.
+22. **«Проведи исследование и скажи каким именно образом работает этот проект какие задачи решает и как можно с ним
+    интегрироваться»** (the owner's case, 2026-11-08, step 701). The words «this project» first: an outside product with a link or a
+    name — a research; the node or Fractera — `contacts` and `card`, an answer; an element — its card and its agent. No link — the one
+    question. `find`: nobody holds research. Survives: an answer here or in Claude.ai for a one-off with nothing to keep (killed by 6 when
+    it recurs, is re-checked or compared; by 2 — the core's window would carry the weight); a new hand «Исследования» — one for every
+    research, each a route with a public page by the person's yes and a dashboard (holds 6, 5 — a face of its own, 4 — the sibling test:
+    never a hand per research; ~150 MB awake, sleeps); a study pass in the element that will build an analogue (only when the goal is
+    building). Right: the fork with the honest one-off branch and the new hand, the pitch from checked facts only — the tests on this
+    computer, the research outliving windows, the page and the dashboard, the clock after a yes, one yardstick across researches, the
+    dossier for other hands over i2i — never «Claude.ai cannot call tools» (it can: Integrations); the price named; the starting vector
+    agreed before the birth. Forces 6, 2, 5, 4.
