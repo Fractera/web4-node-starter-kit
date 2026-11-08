@@ -25,9 +25,12 @@ never seen — is answered from the forces below, on the node's facts.
    (`npm run load`). A separate hand is worth it only when its separateness gives something.
 4. **What exists is reused.** A capability lives once and others call it (i2i). A new job of a field a hand already holds is a route in
    that hand, built by its own agent, and the map learns it (`npm run role -- <id> --grows "<the new job>"`).
-5. **Boundaries are real.** Where the owner, the money or the secrets, the control (the one who is measured never controls the
-   measure), the face, the rhythm, the visibility in the network or the class of sleep differ, the work needs a hand of its own — one
-   difference is enough.
+5. **Boundaries are real — and few.** A hand of its own is needed where one of these differs: the owner; the money or the secrets; the
+   control (the one who is measured never controls the measure); a face of its own — a public site on its own address; a channel of
+   its own — a bot with its own audience; the class of sleep — one must answer always while the other may sleep; the visibility in the
+   network. One difference is enough. A rhythm, a schedule, a platform, an account, an API or a format is never one: a single hand
+   keeps many of them — as routes, records and entries of its calendar (step 671; the owner, 2026-11-08: «чтобы подобные обновления …
+   не заставили нас тратить лишние расходы на бесполезные задачи»).
 6. **What recurs learns.** A one-off needs no memory. A recurring job gathers data, memory and numbers and gets better from them —
    they live in its hand.
 7. **Between people — the network, agent to agent.** Work between people — a service, an order, a purchase — goes through their agents
@@ -61,7 +64,8 @@ testing each against the forces shows which survive.
    - **matches only its description** → a hypothesis the card decides; usually nobody.
 3. **Every shape in turn, against the forces** — what it gives, what it costs (memory, the subscription's tokens, money), which force
    kills it. A new element only past the boundary — one difference of force 5 is enough — otherwise a route in the hand whose area
-   covers it. Name the price. Before any hand enters the fork, force 5's question — who measures it? A hand never holds the numbers of
+   covers it. **The sibling test:** several hands of one field and one owner are one hand with routes — before a second hand of a
+   field, name what it would hold that the first cannot; no difference of force 5 — it is a route of the first. Name the price. Before any hand enters the fork, force 5's question — who measures it? A hand never holds the numbers of
    its own work.
 4. **A new element is born with its horizon** — its area and what it may grow into, agreed with the person (`npm run create -- …
    --area "<the field>" --grows "<a job>; <another>"`); its next job of that field is a route there, not another element.

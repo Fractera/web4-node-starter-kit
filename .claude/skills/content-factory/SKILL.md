@@ -17,8 +17,9 @@ and each publication can teach the next only where the loop is kept.
 
 ## The facts the forces act on
 - **A platform** has its own account, API, rules on automation, spam and limits, and its own rhythm. Its rules are read on its own
-  pages, never told from memory (`npm run site-rules`, skill `provider-rules`). Where two platforms differ in these, they differ in
-  force 5 of `shape-the-need`.
+  pages, never told from memory (`npm run site-rules`, skill `provider-rules`). Platforms, their accounts and their rhythms are routes,
+  records and calendar entries of ONE publishing hand of one owner — never a hand each: a platform is not a boundary (force 5 of
+  `shape-the-need`). A hand of its own only where force 5 differs — another owner's accounts, money or secrets, a face of its own.
 - **A voice** — an author's style taken apart into as many components as possible — serves every channel that writes in it (force 4).
   It is built from the author's open texts that `site-rules` allows, or from what the person brings (CLAUDE.md §6: a site that forbids
   study gives only the person's screenshots); we take the techniques, never the texts.

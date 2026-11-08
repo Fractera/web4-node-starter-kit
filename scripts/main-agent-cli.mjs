@@ -894,7 +894,7 @@ if (cmd === 'create') {
     if (nm && !steps.toLocaleLowerCase().includes(nm.toLocaleLowerCase())) console.log(`note: «${nm}» is not in current-steps.md — a birth is a substep of a core step: write the person's decision and this substep there (skill use-development-steps)`) }
   // 682: имя обязательно — без него меню и шапка покажут случайный адрес; описание паспорта — `--describe`, нет — роль.
   if (role && brief && !(flag('--name') ?? '').trim()) fail('--name "<the name people see in the menu>" is required: without it the menu, the header and the drawer show a random address (node step 682)')
-  if (!role || !brief) fail('create --role "<one sentence>" --name "<the name people see in the menu>" [--describe "<what it is for, 1–3 sentences, for the passport and the header>"] [--look own|project] [--blocks off] [--close-after-first-session] (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--native] [--supervise main|architect] [--no-wake]')
+  if (!role || !brief) fail('create --role "<one sentence>" --name "<the name people see in the menu>" [--describe "<what it is for, 1–3 sentences, for the passport and the header>"] [--look own|project] [--blocks off] [--close-after-first-session] (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--different "<their words>" --boundary owner|money|secrets|control|face|channel|sleep|visibility] [--native] [--supervise main|architect] [--no-wake]')
   if (!['main', 'architect'].includes(by)) fail('--supervise main|architect')
   // 670-3: область нового элемента — проверяется до рождения, пишется вместе с ролью.
   const newArea = areaPatch(flag('--area'), flag('--grows'))
@@ -903,6 +903,22 @@ if (cmd === 'create') {
   // 100 по 1000 одинаковых элементов?». Роль и задание сравниваются по смыслу со всеми элементами узла; похожий найден — рождения нет, пока
   // человек не скажет, что работа другая (`--different "<его слова>"`). Без поиска по смыслу — по словам роли, тем же поиском ядра, что `find`.
   const different = (flag('--different') ?? '').trim()
+  // 671-1 (✗ 2026-11-07: девять элементов для бренда одного человека, каждая сеть — свой сервер, через `--different "<любые слова>"`;
+  // владелец 2026-11-08 удалил восемь: «чтобы подобные обновления … не заставили нас тратить лишние расходы на бесполезные задачи»):
+  // похожий элемент уже есть — новый рождается, только когда назван рубеж силы 5 `shape-the-need` из закрытого списка. Ритм, платформа,
+  // аккаунт, API — маршруты и записи той руки, что держит поле, а не рубеж.
+  const BOUNDARIES = ['owner', 'money', 'secrets', 'control', 'face', 'channel', 'sleep', 'visibility']
+  const boundary = (flag('--boundary') ?? '').trim().toLowerCase()
+  if (different && !BOUNDARIES.includes(boundary)) {
+    fail(`--different needs --boundary <${BOUNDARIES.join('|')}>: the one difference of force 5 (skill shape-the-need) the existing hand cannot hold — ${boundary ? `«${boundary}» is not one; ` : ''}a rhythm, a platform, an account, an API or a format is a route of the hand that holds the field (npm run task -- <its id> "Build process: …"), never a new element`)
+  }
+  // 671-1 (✗ 2026-11-08, мой запуск из клона мастерской: `create` прошёл проверки и родил элемент в общем pm2 живого узла, с `pm2 save`):
+  // рождение — только из папки установленного узла; тот же признак, что у установщика (`scripts/check-local.mjs`: «один компьютер — один
+  // узел»). Клон мастерской и любая вторая копия получают отказ до черновика, процессов и реестра.
+  {
+    const local = spawnSync(process.execPath, [join(ROOT, 'scripts', 'check-local.mjs')], { cwd: ROOT, encoding: 'utf8', timeout: 30_000, windowsHide: true })
+    if (local.status !== 0) fail(`this folder is not the installed node (${(/===NODE_EXISTS=== (.+)/.exec(local.stderr ?? '')?.[1] ?? 'check-local refused').trim()}): a birth from here would run in the live node's processes — run create in the installed node's folder`)
+  }
   if (!different) {
     const all = selfAll()
     const hits = await self.findByMeaning(`${role} ${brief.slice(0, 600)}`, all, { k: 3 })
@@ -922,7 +938,7 @@ if (cmd === 'create') {
       const lex = (r?.body?.entries ?? []).slice(0, 3).map((x) => x.address)
       if (lex.length) fail(`maybe already in this node: ${lex.join(', ')} (by words: the search by meaning is unavailable). Look: npm run card -- ${lex[0]}. Only if the person says the job is different: run again with --different "<their words why>"`)
     }
-  } else console.log(`the person says this job is different from what the node has: «${different}»`)
+  } else console.log(`the person says this job is different from what the node has — boundary ${boundary}: «${different}»`)
 
   // 1. Черновик — тем же правилом имени, что кнопка «Создать WEB4 ITEM» (`lib/web4-items/drafts.ts`).
   const RESERVED = new Set(['auth', 'blocks', 'build', 'config', 'data', 'design', 'hosting', 'kits', 'passport', 'root', 'admin', 'architect', 'api', 'www', 'mail', 'memory', 'telegram', 'store', 'items'])

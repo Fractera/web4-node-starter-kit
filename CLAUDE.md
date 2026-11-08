@@ -238,8 +238,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   `npm run find`,
   and each candidate says why: a skill (it does it now — wake its worker, `task --work`), its area (a route its own agent builds there,
   no new element) or only its description (a hypothesis — its card decides). A new element only past the boundary of `shape-the-need`:
-  another owner, money or secrets, a boundary of control, its own face, bot or clock, its own visibility in Lagrix, another class of
-  sleep — every element is a server on this computer; it is born with its area and what it may grow into. Nobody here — the Lagrix rung
+  another owner, money or secrets, a boundary of control, its own face (a site) or bot (an audience), its own visibility in Lagrix,
+  another class of sleep — never a rhythm, a platform or an account, which are routes of one hand (`create --boundary`); every element
+  is a server on this computer; it is born with its area and what it may grow into. Nobody here — the Lagrix rung
   (`npm run lagrix`, simulated today — say so), when the person decides to buy or build. To build — who already solved it: the skills,
   the person's idea or analog, a closed product taken apart (`study-for-element`), then we; the product quiz when there is a choice. The
   first answer brings the variants that survive as a fork, with your pick and why, the skills worth a look (name, stars, installs, the
