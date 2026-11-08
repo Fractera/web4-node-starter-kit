@@ -5,6 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-42 (2026-11-08, ~01:10 UTC) — 681 CLOSED** (`completed-steps/681.md`): one job for several elements is one batch and one wake —
+proven live (s8y6x + inanv, one wake with both lines). OWED: the template's worker ends with `reply-core` (D1 c, a template release);
+D3, D7, D9 of the examinee's report; `completed-steps/674.md`; 676 queued.
+
 **NOW-41 (2026-11-08, ~01:00 UTC) — 678, 679, 680 CLOSED** (`completed-steps/678.md`, `679.md`, `680.md`; proven on the owner's node,
 core `48ad64e1`): the menu and the drawer name elements like people do and refresh within 10 s; an element is never left waiting; the
 main agent switches an element's links (`npm run look -- <id> --own|--linked`) and asks «on its own or one with the project» before birth.
