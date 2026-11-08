@@ -635,6 +635,12 @@ if (cmd === 'task') {
   }
   const grouped = modes.hasGroups(itemDir(id))
   const session = work && grouped ? modes.sessionKey(id, 'work') : id
+  // 695 (владелец 2026-11-08: «по какой причине элементов не отчитался завершение работы тебе … Есть ли у тебя … техническая возможность
+  // … смотреть завершена ли работа которую ты отправил?»): задача на сборку будит главного агента своим «закончил», только если он
+  // ведёт элемент; шаг 2 навыка ask-element (`supervise … --max 1`) держался на памяти модели и был пропущен — root и s8y6x отчитались
+  // (reply-core), а «закончил» ушёл архитектору. Теперь задача сама ставит один цикл надзора, если его нет; после цикла узел его снимает.
+  // Не опрос: событие «закончил» (§6 — ни таймеров, ни опросов без слова архитектора).
+  if (!work && !dry && !supervision.byMain(id, ROOT)) supervision.set(id, 'main', { max: 1, root: ROOT })
   const body = { service: id, text: modes.withWord(work ? text + langLine + REPORT_LAST : text + langLine, work ? 'work' : 'build'), from: 'main agent', about: firstSentence(said, 300), reason: work ? 'main-agent-job' : 'main-agent-task', supervised: supervision.byMain(id, ROOT) }
   if (dry) {
     console.log(`===TASK_DRY=== ${id} → session ${session}${work && !grouped ? ' (this element has no skill groups: one session, the job goes into it with its word)' : ''}\n${body.text}`)

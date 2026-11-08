@@ -20,7 +20,8 @@ carries `--lang <code>` of that language (`ru` when the person writes Russian); 
 `--lang` when the person switches. The task itself stays English: the line about the language is added by the command.
 
 1. Who: the id or address the architect named, or `npm run find -- <English words>`.
-2. `npm run supervise -- <id> main --max 1` — you lead it for this one check.
+2. A build task sets one cycle of your lead by itself (step 695), so its «done» wakes you; `npm run supervise -- <id> main --max N` only
+   for more cycles.
 3. `npm run task -- <id> --work "Task from the core's main agent: <the check, in the architect's words>. It is a check, not a build:
    save the result with npm run reply-core -- \"<result>\" and finish as usual."` — its worker answers, not its builder (step 670-2).
    A check of its code or its build (a guard, a commit) — the same without `--work`. It prints «its worker … woke with the job» or
