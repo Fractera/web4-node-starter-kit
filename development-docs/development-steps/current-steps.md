@@ -5,9 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-44 (2026-11-08, ~01:55 UTC) — 683 and 684 CLOSED in the workshop** (`completed-steps/683.md`, `684.md`): the examinee's D5, D6, D7,
-D11; every `task --work` ends with the mandatory `reply-core` line (D1 c) — from the core, no template release. Then the fork sync, the
-node update, the live batch, and «Блог» told that Medium is its route (D13). Left: D9 — the owner's own edit of `.claude/settings.json`.
+**NOW-45 (2026-11-08, ~02:25 UTC) — the exam's report worked through** (the owner: «go to finish non stop»): 678–685 closed. Proven live
+on the owner's node: D1 (681, 684), D2/D10 (678), D9 (685), the drawer (680), s8y6x own (679), passport descriptions in the header
+(682). Live at the next occasion: 682's birth part, 683 (D5, D6, D7, D11). «Блог» took Medium as its route. OWED: `completed-steps/674.md`;
+676 queued.
 
 **NOW-42 (2026-11-08, ~01:10 UTC) — 681 CLOSED** (`completed-steps/681.md`): one job for several elements is one batch and one wake —
 proven live (s8y6x + inanv, one wake with both lines). OWED: the template's worker ends with `reply-core` (D1 c, a template release);
