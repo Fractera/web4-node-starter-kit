@@ -1,6 +1,6 @@
 # 702 — A skill: Fractera versus the platforms (what a person gets, why a platform does not make it unnecessary)
 
-**State: PROPOSED 2026-11-08 ~22:10 WET, not agreed.** The owner, verbatim (three messages): «Ещё как навык я бы хотел чтобы после ответа
+**State: APPROVED 2026-11-08 — the owner: «lets' go , to work»; the name his own (and «remember , in the fractera first you are is fractera worker , secondary = claude worker»).** The owner, verbatim (three messages): «Ещё как навык я бы хотел чтобы после ответа
 на этот вопрос ты описал: почему платформа такие как Claude Code Agent не будут конкурировать с Fractera и у Fractera всегда будет
 отстройка сколько бы времени не прошло? Как бы ты ответил на этот вопрос///давай твой предыдущий ответ объединим вместе с этим и создадим
 какой-то навык который может быть мы так и назовём fractera vs antropic???»; «Сравнениях также помню о ролевом доступе и возможностям
@@ -46,3 +46,10 @@ The owner, the fourth message, verbatim: «если платформы изме�
 | 702-1b | In the skill, «Pain, not death»: every outside dependency (Anthropic, OpenAI, Cloudflare, GitHub, Stripe, Telegram, Fractera) — what stops, what stays, how it is switched; death only where the product, its data and its people live inside someone else's account; the disk and backups | each line from the instruction or a card |
 | 702-2 | The cards of `vectors` and `graph` corrected by their agents (`npm run task`) | their cards |
 | 702-3 | Live: a cold question in a fresh session («почему не Claude.ai?», «Anthropic сделает это сам?») | the answer stands on the skill's checked facts |
+
+## Built (2026-11-08)
+| Substep | Commit | Proof |
+|---|---|---|
+| 702-1, 702-1b | core `6ce5244e` — `.claude/skills/fractera-vs-anthropic/SKILL.md` | check:skill-headers green (89 skills); every claim from the instruction, a card or a dated page |
+| 702-2 | — | after the update: the agents of vectors and graph fix their cards |
+| 702-3 | — | a cold question in a fresh session |

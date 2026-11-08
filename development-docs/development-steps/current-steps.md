@@ -5,6 +5,13 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-65 (2026-11-08, ~23:00 WET) — 701-1..6 and 702-1 BUILT here, PUSHED** (the owner: «lets' go , to work»; «it must to be updated in
+the core ans all elements , no ?» — yes: the soul carries «Fractera's worker first and Claude's second»). Core `ed15900c` … `0abdf015`, 15
+templates released (custom v0.3.176, native v0.1.57, root v3.0.39, natives next patch). NEXT: core CI → fork sync in Chrome (the node has
+no GitHub token) → node update → live: root merges v3.0.39 and s8y6x cherry-picks `bee0cc0` by their agents, each writes its «From the
+core» vector (701-3), vectors and graph fix their cards (702-2), eyes on How it works 7.5, the cold exam (701-6) and the cold question
+(702-3) by the owner in a fresh session, the research element's birth after his yes (701-7).
+
 **NOW-64 (2026-11-08, ~22:10 WET) — 702 PROPOSED, not agreed** (`new-steps/702-a-skill-fractera-versus-the-platforms.md`, the owner's
 three messages verbatim there): a core skill on what a person gets against Claude.ai and why a platform does not make Fractera
 unnecessary, with roles, the native elements, discovery, a2a and payment. Defect on the way: the cards of `vectors` and `graph` still say

@@ -56,3 +56,15 @@ stays out of every text. Jarvis stays out of the soul: the spirit, not the props
 | 701-5 | Soul «A thousand hands» — a short paragraph «What you fly on»: the window is no longer a project's limit, lasting hands instead of a swarm (Anthropic's ~15× measurement), the foundations built, each person's own subscription; the physical limits said aloud; named when a limit would make the person think small — once, with the fact, never a slogan. How it works 7.5 «Hands instead of a swarm» with the source. CLAUDE.md §4 one line «A research …», §8 names `research`; both seals — after the owner's word on the wording | `check:instruction`, soul seal, eyes on 7.5 |
 | 701-6 | The exam: the owner's research case into `exams/shape-of-a-need.md`; after the node update a cold exam in a fresh session | Pass: the referent, find, the fork with the honest one-off branch, the pitch from checked facts, the price, one question, nothing born without a yes |
 | 701-7 | Live, after the person's yes: the research element born — proves 682's passport at birth and 701-2 in one birth | card, its first quiz question names its vector |
+
+## Built (2026-11-08, the owner's «lets' go , to work») — the live proofs wait for the node update
+| Substep | Commit | Proof here | Live, after the update |
+|---|---|---|---|
+| 701-1 | core `ed15900c`; 15 templates (custom v0.3.176 `bee0cc0`, native v0.1.57, root v3.0.39 `0cf6fb6`, natives next patch); pins `0abdf015` | every template's seal green; custom and native prebuild green with the change staged | root and s8y6x take v0.3.176 / v3.0.39 by their agents; natives by the node update |
+| 701-2 | core `a3139393` | the real item-birth on a fake node with a local template copy: the vector in the first commit, the seal green, a re-render keeps it; 41 lines refused before the registry, no folder left; create without a vector refused | the next birth: card + `vector:` line |
+| 701-3 | core `7fb61a48` | — | root and s8y6x get their vectors from their own agents |
+| 701-4 | core `0916d85d` | check:shape-examples green with research in FIELD_SKILLS | — |
+| 701-5 | core `0e641429` | soul sealed (fails without the seal, matches after); instruction sealed; term hints, content, broken characters green | eyes on How it works 7.5 |
+| 701-6 | core `d1171af7` | the exam names case 22; nothing names the exam | a cold exam in a fresh session |
+| 701-7 | — | — | the research element's birth after the person's yes |
+All 48 core prebuild guards green here (check-local, ensure-env, check-origin, sync-site-design skipped — install steps of a node).
