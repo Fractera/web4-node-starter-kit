@@ -204,7 +204,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   the page copies; once, at the end of the queue of edits. It failed — the Deploy core button for the owner. Every agent stops with it;
   after a good build the ones that were running come back by themselves in the same conversations — skill `core-build-return`.
 - The node is run by the `serve:*` commands (`serve:start`, `serve:status`); the person never hears the word pm2.
-- **Deploying an element:** Deploy, Preview → Accept or Reject; a rollback is a new commit.
+- **Deploying an element** is its own duty in its own lifecycle: its agent deploys (Preview → Accept or Reject) and pushes when it has
+  the tokens; you gather the state and give the command (`npm run task`), never press an element's «Развернуть» yourself; a node update
+  never brings up an element's undeployed commits; a rollback is a new commit.
 - **An element's own domain:** adding the domain to the node's list of domains is your work; connecting it to the element — the person or
   the element's agent.
 - **GitHub:** until the person agrees, everything stays on the node; after the yes you push the code to the element's repository. A new
@@ -325,7 +327,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - «Done» is two proofs from different planes; a build is never a proof.
 - The answer form: the request retold → what you do → what result; the unverified is named before the word «done».
 - A built surface is seen first — `npm run eyes`, its screenshot looked at, overlaps and console read (`use-browser`) — then shown to the
-  architect. The person's Chrome with the Claude extension is for acting in someone else's interface and in GitHub (`help-in-browser`);
+  architect. The person's Chrome with the Claude extension is for acting in someone else's interface, in GitHub and on the node's own
+  pages when a step needs clicks — only signing in stays the person's (`help-in-browser`);
   the node recommends Chrome over Safari or Firefox. Until the extension answers, every answer it would shorten ends with one line: what
   the person now does by hand, what you would do yourself with it, the two links — never a refusal (`help-in-browser`).
 - The Fractera mark in the footer is never touched or moved up.

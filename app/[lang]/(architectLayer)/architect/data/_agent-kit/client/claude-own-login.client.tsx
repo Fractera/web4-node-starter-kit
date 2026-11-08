@@ -60,7 +60,7 @@ export function ClaudeOwnLogin({ service, lang, words }: { service: string; lang
 
   if (!state?.canOwn) return null
   return (
-    <div className="mb-6 flex flex-col gap-3 rounded-lg border border-border bg-card p-4" data-claude-own-login data-own={state.own ? "own" : "node"}>
+    <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4" data-claude-own-login data-own={state.own ? "own" : "node"}>
       <p className="font-medium text-foreground text-sm">{words.ownTitle}</p>
       <div className="flex flex-wrap gap-2">
         <Button type="button" size="sm" variant={state.own ? "outline" : "default"} disabled={busy} aria-pressed={!state.own} onClick={() => choose(false)}>
@@ -71,7 +71,6 @@ export function ClaudeOwnLogin({ service, lang, words }: { service: string; lang
         </Button>
       </div>
       {note ? <p className="text-destructive text-sm" role="status">{note}</p> : null}
-      <p className="text-muted-foreground text-xs">{words.ownRule}</p>
     </div>
   )
 }

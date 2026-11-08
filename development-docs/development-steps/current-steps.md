@@ -5,6 +5,13 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-53 (2026-11-08, ~15:00 UTC) — 692 built (menu, subscription page, every hand's lifecycle); the leader finishes what a hand cannot —
+in DISCUSSION, nothing written into the system part yet.** The owner, verbatim: «если сотрудник по определённым причинам не в состоянии
+завершить работу руководитель должен завершить её сам. Именно это должно находиться в одном ряде с твоими ограничениями и разрешениями …
+предположим у агента кончились токены. У тебя нету другого варианта как: – переключить его на свою подписку для завершения этой работы и
+вернуть обратно его подписку после завершения работы. Когда и как это делать должно зависеть от твоих собственных рассуждений. Попробуй
+расширить мою мысль и углубиться в ней.»
+
 **NOW-52 (2026-11-08, ~14:30 UTC) — QUEUED with 692: every hand deploys and pushes by its own lifecycle.** Found: the node update rebuilt
 root from its newest commit `b5c732a` — root's headline went live with nobody's «Развернуть». The owner, verbatim: «право разворачивать и
 делать ги Push существует о элемента и ядра как обязанность если это возможно ну в смысле если есть необходимые токены и прочее. Но тем не

@@ -38,14 +38,27 @@ export function openAiKeyHref(service: string, lang: string): string {
  */
 export function agentKitWidget(page: AgentKitPage, service: string, lang: string, slot?: string, links?: AgentLinks): ReactNode {
   switch (page) {
-    case 'claude-code':
+    case 'claude-code': {
+      // 692-3 (владелец 2026-11-08: «элемент чья это подписка должен стоять первым сверху … слева нарисовал крупные цифры единичка это
+      // чья это подписка, двоечка войти в аккаунт Троечка открыть терминал или настроить Telegram»). Своя подписка бывает только у элемента
+      // узла (он есть в реестре); у главного агента шагов два — вход и разговор.
+      const ownable = Boolean(getService(service))
+      const steps = [
+        ...(ownable ? [<ClaudeOwnLogin key="own" service={service} lang={lang} words={claudeSubscriptionWords(lang)} />] : []),
+        <ClaudeSubscription key="sign-in" service={service} lang={lang} words={claudeSubscriptionWords(lang)} />,
+        <AgentNextLinks key="next" links={links ?? { terminal: `/${lang}/architect/${service}/terminal`, telegram: `/${lang}/architect/${service}/telegram` }} words={agentLinksWords(lang)} />,
+      ]
       return (
-        <>
-          <ClaudeSubscription service={service} lang={lang} words={claudeSubscriptionWords(lang)} />
-          <ClaudeOwnLogin service={service} lang={lang} words={claudeSubscriptionWords(lang)} />
-          <AgentNextLinks links={links ?? { terminal: `/${lang}/architect/${service}/terminal`, telegram: `/${lang}/architect/${service}/telegram` }} words={agentLinksWords(lang)} />
-        </>
+        <ol data-block="akst1" className="my-6 flex flex-col gap-6">
+          {steps.map((step, i) => (
+            <li key={i} data-block="akst2" className="flex gap-4">
+              <span data-block="akst3" aria-hidden className="w-8 shrink-0 pt-3 text-center font-semibold text-[length:var(--fs-h2)] text-muted-foreground tabular-nums">{i + 1}</span>
+              <div data-block="akst4" className="min-w-0 flex-1 [&>*]:my-0">{step}</div>
+            </li>
+          ))}
+        </ol>
       )
+    }
     case 'terminal':
       return <AgentTerminal service={service} lang={lang} words={agentTerminalWords(lang)} build={coreTerminalWords(lang)} dialogUi={appDialogUi(lang)} keyHref={openAiKeyHref(service, lang)} />
     case 'terminal-work':

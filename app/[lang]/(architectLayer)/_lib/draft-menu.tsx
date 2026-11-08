@@ -174,16 +174,22 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   // этот важный процесс вынести вверх. Также подсвечивать его красным если репозитории не подключён»): первым ярлыком — «GitHub»
   // «Строительства» главного агента; красный — пока узел не работает со своим репозиторием (`no-github`, островок `NodeAlerts`).
   const before = [shortcut('github', null, 'github', '', 'no-github'), shortcut('subscription', null, 'card'), shortcut('terminal', null, 'window')]
-  const after = shortcut('environment', ui.openAiKey, 'key', '#OPENAI_API_KEY')
+  // 692-2 (владелец 2026-11-08: «в общей ленте ниже чем open а и ключ поставить кнопку настройка и на этой кнопки настройки переключать
+  // модель Anthropic или OpenAI»): под ключом OpenAI — «Настройки» узла (`build/settings`, там базовый AI-провайдер), в обоих режимах.
+  const after = [shortcut('environment', ui.openAiKey, 'key', '#OPENAI_API_KEY'), shortcut('settings', null, 'settings')]
   const words = { title: ui.menuMode, compact: ui.menuModeCompact, full: ui.menuModeFull, failed: ui.menuModeFailed, readOnly: ui.menuModeReadOnly }
   const switchRow: WorkspaceItem = { label: ui.menuMode, node: <MenuModeSwitch mode={mode} words={words} /> }
-  const mainItems = top.filter((m, k) => k !== p && !(compact && m.href === at(`${ARCHITECT_HOME}/${MAIN_AGENT}`)))
+  // 692-1 (владелец 2026-11-08: «когда режим компактный, вкладку супер узел скрывай»): в компактном — ни «Главного агента», ни «Супер узла».
+  const hiddenInCompact = new Set([at(`${ARCHITECT_HOME}/${MAIN_AGENT}`), at(`${ARCHITECT_HOME}/super-node`)])
+  const mainItems = top.filter((m, k) => k !== p && !(compact && m.href && hiddenInCompact.has(m.href)))
   const tg = mainItems.findIndex((m) => m.href === at(`${ARCHITECT_HOME}/main-telegram`))
-  const main = [switchRow, ...(tg < 0 ? [...mainItems, ...before, after] : [...mainItems.slice(0, tg), ...before, mainItems[tg], after, ...mainItems.slice(tg + 1)])]
+  const main = tg < 0 ? [...mainItems, ...before, ...after] : [...mainItems.slice(0, tg), ...before, mainItems[tg], ...after, ...mainItems.slice(tg + 1)]
   // 632-2: тревога пункта видна и сквозь свёрнутую зону — подпись «Основное» несёт ту же тревогу, что пункт в ней («Домен и хостинг»).
   // 677: тревог в зоне может быть несколько — подпись несёт все (`data-alert` — список слов, правило CSS — `~=`).
   const mainAlert = [...new Set(main.flatMap((m) => (m.alert ? m.alert.split(' ') : [])))].join(' ') || undefined
-  const head = [top[p], { ...zone(ui.zoneMain, 'main', holds(main, page)), ...(mainAlert ? { alert: mainAlert } : {}) }, ...inZone(main, 'main')]
+  // 692-1 (владелец 2026-11-08: «кнопку переключения компактной полный вынеси вверх сразу под кнопку ваш узел»): переключатель — первой
+  // строкой меню, над Паспортом, вне зон: он виден и при свёрнутом «Основном».
+  const head = [switchRow, top[p], { ...zone(ui.zoneMain, 'main', holds(main, page)), ...(mainAlert ? { alert: mainAlert } : {}) }, ...inZone(main, 'main')]
   // 657 (владелец 2026-11-05: «Название элементов приведи к верхнему регистру чтобы все было заглавными буквами»): названия элементов —
   // заглавными в обоих режимах; подписи зон, подзона «Память» и кнопки создания — как были.
   const upper = (m: WorkspaceItem): WorkspaceItem => (m.zoneHead || m.node ? m : { ...m, label: m.label.toLocaleUpperCase(lang) })

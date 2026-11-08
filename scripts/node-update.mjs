@@ -255,7 +255,8 @@ if (!run(npm, ['run', 'prebuild'], 'npm run prebuild')) rollback('сторожа
 // ── 7. элементы ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 stage('elements', 'элементы на закрепления — без остановки служб')
 const warnings = []
-const install = node('services-install.mjs')
+// 692-4: обновление узла не разворачивает чужую работу — элемент со своими неразвёрнутыми коммитами остаётся на своей сборке.
+const install = node('services-install.mjs', '--keep-undeployed')
 if (!run(install[0], install[1], 'npm run services:install') && !run(install[0], install[1], 'npm run services:install (второй проход — сбой сети бывает)')) {
   warnings.push('часть элементов не встала на новые версии — они работают на прежних; журнал выше')
 }

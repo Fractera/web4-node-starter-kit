@@ -533,6 +533,10 @@ const summary = []
 // внутри элемента, а их отпечаток установщик не считает.
 const ONLY = (() => { const i = process.argv.indexOf('--only'); return i > 0 ? process.argv[i + 1] : null })()
 const REBUILD = process.argv.includes('--rebuild')
+// 692-4 (владелец 2026-11-08: «каждый управляется собственным жизненным циклом а ты просто собираешь информацию и выдаёшь команду»): у
+// обновления узла — `--keep-undeployed`: элемент со своей работой (версия `<тег>+<коммит>`), чей HEAD ушёл дальше последней сборки, НЕ
+// пересобирается — его новые коммиты разворачивает он сам (Предпросмотр и развёртывание → `deploy-elements`, `--only <id> --rebuild`).
+const KEEP_UNDEPLOYED = process.argv.includes('--keep-undeployed')
 // 576-1: начало установки — копии, снятые с прогрева после него, проход «все адреса» в конце второй раз не снимает.
 const INSTALL_STARTED_AT = new Date().toISOString()
 
@@ -965,13 +969,17 @@ for (const entry of registry.services) {
     .digest('hex')
     .slice(0, 16)
 
+  let undeployed = false
   if (props.runtime?.build) {
     // 🛑 «СОБРАНО» — ЭТО ФАЙЛ СЕРВЕРА, А НЕ ПАПКА `.next` (265-6). ✗ Оплачено: сборка, прерванная
     // на Windows `EBUSY`, стёрла standalone-сервер и оставила `.next`; следующий прогон счёл блок
     // собранным и ответил «нечем запускать».
     const server = stamp.start?.args?.[0]
     const built = server ? existsSync(join(stamp.start.cwd || dir, server)) : existsSync(join(dir, '.next'))
-    if (built && !FORCE && !REBUILD && stamp.version === version && stamp.env === envFingerprint) {
+    undeployed = KEEP_UNDEPLOYED && built && version.includes('+') && typeof stamp.version === 'string' && stamp.version !== version
+    if (undeployed) {
+      say(`  своя неразвёрнутая работа: работает ${stamp.version}, в репозитории ${version} — не пересобираю, её разворачивает сам элемент`)
+    } else if (built && !FORCE && !REBUILD && stamp.version === version && stamp.env === envFingerprint) {
       say('  сборка на месте (версия и окружение те же) — пропущена')
     } else {
       // 🔒 СБОРКА БЕЗ ПРОСТОЯ (280-9, слово владельца 2026-09-24: «blue/green build without downtime»).
@@ -1075,8 +1083,9 @@ for (const entry of registry.services) {
 
   try {
     writeFileSync(stampFile, JSON.stringify({
-      version: version,
-      env: envFingerprint,
+      // 692-4: неразвёрнутая работа не становится «работающей версией» — отметка остаётся прежней.
+      version: undeployed ? stamp.version : version,
+      env: undeployed ? stamp.env : envFingerprint,
       lockHash,
       port,
       start,

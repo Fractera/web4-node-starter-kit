@@ -36,7 +36,10 @@ function Switch({ className, ...props }: React.ComponentProps<typeof SwitchPrimi
         data-slot="switch-thumb"
         className={cn(
           "pointer-events-none block size-4 rounded-full bg-background ring-0 transition-transform",
-          "data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0",
+          // 692-1 (владелец 2026-11-08: «шарик переключателя в режиме полное должен находиться правее на два или три пикселя»): замерено —
+          // у включённого справа 5 px, у выключенного слева 1 px; при ширине w-9 (36 px) шарик 16 px встаёт симметрично сдвигом 18 px
+          // (calc(100%+2px)); прежние 100%-2px (14 px) — от образца shadcn шириной w-8.
+          "data-[state=checked]:translate-x-[calc(100%+2px)] data-[state=unchecked]:translate-x-0",
         )}
       />
     </SwitchPrimitive.Root>

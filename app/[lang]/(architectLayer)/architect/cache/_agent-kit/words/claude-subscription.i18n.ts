@@ -37,7 +37,6 @@ export type ClaudeSubscriptionWords = {
   ownOwn: string
   ownOnText: string
   ownQuota: string
-  ownRule: string
   ownBusy: string
   ownFailed: string
 }
@@ -71,10 +70,9 @@ const DICT: Record<string, ClaudeSubscriptionWords> = {
     codeSent: "Sent",
     ownTitle: "Whose subscription this element uses",
     ownNode: "The node's subscription",
-    ownOwn: "Its own person's subscription",
+    ownOwn: "This element's own subscription",
     ownOnText: "Account {email} · plan {plan}. Only this element works under it.",
-    ownQuota: "This element works on its own person's subscription: its usage limit is its own and does not touch the node's.",
-    ownRule: "Each person signs in with their own subscription. Never someone else's account, never one sign-in for two people, never several subscriptions of one person to get around the limits.",
+    ownQuota: "This element has its own subscription: its usage limit is its own and does not touch the node's.",
     ownBusy: "Turn this element's agent off first: its session runs under the subscription it started with.",
     ownFailed: "The switch did not go through. Check again in a moment.",
   },
@@ -106,10 +104,9 @@ const DICT: Record<string, ClaudeSubscriptionWords> = {
     codeSent: "Отправлено",
     ownTitle: "Чья подписка у этого элемента",
     ownNode: "Подписка узла",
-    ownOwn: "Своя подписка человека этого элемента",
+    ownOwn: "Собственная подписка этого элемента",
     ownOnText: "Учётная запись {email} · тариф {plan}. Под ней работает только этот элемент.",
-    ownQuota: "Этот элемент работает по подписке своего человека: лимит у него свой и лимит узла не трогает.",
-    ownRule: "Каждый входит по своей подписке. Нельзя: чужой аккаунт, один вход на двоих, несколько подписок одного человека ради обхода лимитов.",
+    ownQuota: "У этого элемента собственная подписка: лимит у него свой и лимит узла не трогает.",
     ownBusy: "Сначала выключите агента этого элемента: его сессия идёт по подписке, с которой запущена.",
     ownFailed: "Переключить не удалось. Проверьте ещё раз через минуту.",
   },
