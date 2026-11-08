@@ -274,7 +274,10 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   for (const [event, list] of Object.entries(extra)) if (list.length) hooks = { ...(hooks ?? {}), [event]: [...(hooks?.[event] ?? []), ...list] }
   // 686-2: строка состояния каждой сессии пишет остаток лимита подписки (`lib/agent-kit/limits.cjs`).
   const line = typeof modes.limitsLine === 'function' ? modes.limitsLine(element) : null
-  const mem = { ...(memDir ? { autoMemoryDirectory: memDir } : {}), ...(hooks ? { hooks } : {}), ...(line ? { statusLine: line } : {}) }
+  // 700-4 (владелец 2026-11-08: «стратегия при переполнении контекста … создавать компакт … самая отвратительная функция»): сжатие
+  // выключено в каждой сессии узла — `autoCompactEnabled: false` гасит и автоматическое, и сжатие в простое (code.claude.com/docs/en/
+  // settings-reference, прочитано 2026-11-08); окно считает строка состояния, сбрасывается агент сам письмом (700-1…3).
+  const mem = { autoCompactEnabled: false, ...(memDir ? { autoMemoryDirectory: memDir } : {}), ...(hooks ? { hooks } : {}), ...(line ? { statusLine: line } : {}) }
   const ownData = path.join(process.cwd(), 'data', 'services', element)
   if (existsSync(ownData) && !args.includes(ownData)) args = ['--add-dir', ownData, ...(args.length ? args : ['--permission-mode', 'auto'])]
   // 569-3: свои встроенные инструменты папки агента (`.claude/launch-tools.txt`, `lib/agent-kit/modes.cjs`). 🛑 `--tools` забирает СПИСОК
