@@ -10,7 +10,7 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 the canvas 9 Nov shows both entries, today no false «missed». The owner corrected me: this node is a TEST BENCH for Fractera's starters;
 root = the real shared sample (github.com/Fractera/fractera-root-starter), Клип is not pushed (nothing important yet).
 700-1 DONE `6f88e568` (not pushed): status line → `data/services/<id>/context.json`, window hook from 55 %/85 %, kinds
-context-window/context-reset. Next: 700-3 (`session clear --continue`: after /clear the bridge pastes the context-reset line), 700-2 (the
+context-window/context-reset. 700-3 `f4b03263` (session clear --continue), 700-2 `27dd438a` (the letter in use-development-steps), 700-4 `226fa15c` (autoCompactEnabled:false) — all NOT pushed. 700-5 RELEASE STARTED (~20:55): `_tools/700/rollout.mjs` applied to 15 templates (npm run reset = ask-core --reset, docs skill paragraph), custom prebuild green; `_tools/700/release.sh` → then pins, core push. Was next: 700-3 (`session clear --continue`: after /clear the bridge pastes the context-reset line), 700-2 (the
 letter section), 700-4 (compaction off — docs first), 700-5 (elements: `npm run reset`, template release), 700-6 (How it works 7.1).
 
 **NOW-61 (2026-11-08, ~19:45 WET) — LETTER TO MY NEXT SESSION (written by me for myself; the owner's idea of step 700: reset
