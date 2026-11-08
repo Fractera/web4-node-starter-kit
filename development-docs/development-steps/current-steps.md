@@ -5,6 +5,37 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-47 (2026-11-08, ~13:40 UTC) — 689 APPROVED and in work** (the owner: «да, утверждаю, начинай 689»): the plan `new-steps/689/`;
+next — 689-1 in the kit master (`architect/kits/_agent-kit/`), then `agent-kit:update`. 690 QUEUED — the five-platform sign-in window
+of April–May found in history (`bf3000c5`, removed in step 500 `28f7cc49`): `new-steps/690-…`. Codex on the owner's Mac — certificate
+revoked, moved to the Trash by the owner.
+
+**NOW-46 (2026-11-08, ~12:30 UTC) — 687 and 688 committed here, NOT pushed; 686 proposed, not agreed.** Ship all three in ONE node
+update (a core build once, at the end of the queue).
+- **687** `c30331d2` — the attention dot (`AttentionDot`, the account button and «Группа страниц архитектора»): the owner, verbatim: «Оба этих
+  индикатора сделай не оранжевыми а зелёными при этом увеличив размер в три раза в состоянии максимального диаметра при импульсе
+  минимальный диаметр поставь как сейчас». Proof 1 (eyes, the CSS block frozen at its peak): halo 24×24, dot 4×4, the old ping 8×8
+  (negative control). Proof 2 owed: eyes on the owner's node after the update, `--measure "[data-attention-dot]"`.
+- **688** `ad2117da` — How it works, section 7: the owner: «– 7.0 Fractera против платформ Claude, GPT и тд.»; «Этот блок можно сделать
+  как раскрыва шку … вопрос как вообще это можно сравнивать?» (Mercedes / Mercedes-AMG). Truth edits in the text: «нет и не может быть»
+  → «сегодня нет»; «бесконечно масштабируется» → disk, memory and limits; a2a and a login per element — «not built yet»; 7.3 says «the
+  next step of the core» until 686 is proven. Narrow tsc 0 errors (negative control 1); term-hints OK after registering the file. Waits
+  for the owner's word on the text before the push.
+- **686 proposed** — «where development stands» grown by the owner's 11:40 message: «он может просто выключиться. Передаст агенту
+  регистратору таймер на пробуждение и будет пробу жден к моменту возобновления лимита подписки после чего продолжит работу». Substeps
+  in the main agent's answer of 2026-11-08 (node session 066fc6e3): measure StopFailure live · the pulse in the bridge (every session,
+  its login) · passport fragment + element skill in both templates · `where` + §4 line · pause and resume clock (the owner's standing yes)
+  · flip 688's 7.3.
+- Also asked, for later: a login per element («Каждый элемент может получать свой собственный клад код на своей собственной подписке»)
+  — no `CLAUDE_CONFIG_DIR` per element in the core today; lawful only as each person's own subscription (skill `provider-rules`).
+  The owner: «but neet rool - if user need personal claude subscribtion , then can add to own element , check is it was builded before
+  and work now ?»; «i have another acc for test , i go to root , no ?». Measured: a separate config folder is a separate login (the
+  node's loggedIn true; an empty folder false, its own `.claude.json`); every element's page «Подписка Claude Code» signs in the WHOLE
+  computer (bridge: one login terminal per node) — not for the test account. Proposed as 689, before 686 (testable today).
+  Proven: two Claude logins at once on this Mac (2026-11-08, the owner signed in himself): the node — ad…@fractera.ai, pro; `CLAUDE_CONFIG_DIR=~/claude-test` —
+  bo…@gmail.com, pro (the first try authorised the main account: the browser was signed in to it). The node's login unchanged.
+- Defect on the way, not ours: `check:i18n` fails 44 dictionaries on the clean HEAD `0d56e734` too.
+
 **NOW-45 (2026-11-08, ~02:25 UTC) — the exam's report worked through** (the owner: «go to finish non stop»): 678–685 closed. Proven live
 on the owner's node: D1 (681, 684), D2/D10 (678), D9 (685), the drawer (680), s8y6x own (679), passport descriptions in the header
 (682). Live at the next occasion: 682's birth part, 683 (D5, D6, D7, D11). «Блог» took Medium as its route. OWED: `completed-steps/674.md`;
