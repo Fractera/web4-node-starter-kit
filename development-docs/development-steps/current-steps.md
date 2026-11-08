@@ -14,7 +14,9 @@ instead of compacting; my window was 66 % = 664k of 1M).** RESUME HERE.
   the soul's dose (half Holmes half Stark in character, 4:1 Holmes in text).
 - **In flight — 699 (the owner: «первый путь, делай выпуск шаблонов»):** 15 templates released (custom v0.3.174 `1cc8151`, native
   v0.1.55, root v3.0.37 `115015c`, natives next patch): `npm run calendar` stamps saidAt by code; the element's ask-core/tell-core/need
-  carry the head after the process word; core side + pins `b1bd1cb4`; template CI GREEN on all 15; the core PUSHED (`07b1227`), its CI running. NEXT: its CI → the owner syncs the fork (the Chrome extension is disconnected since his /login to another account — he presses «Sync fork»)
+  carry the head after the process word; core side + pins `b1bd1cb4`; template CI GREEN on all 15; the core PUSHED, CI GREEN (`aa03c0c`, 19:58 WET). I asked the owner to press «Sync fork» and RESET MY CONTEXT
+  (`npm run session -- clear`, the 700 practice by hand). FIRST in the fresh session: when he says the sync is done — `gh api
+  repos/Fractera/web4-node-starter-kit/compare/main...aifa-agi:web4-node-starter-kit:main` (identical) → the owner syncs the fork (the Chrome extension is disconnected since his /login to another account — he presses «Sync fork»)
   → node update → root (`git fetch origin tag v3.0.37 && git merge --no-edit v3.0.37`, no push) and s8y6x (`cherry-pick 1cc8151` from the
   custom template v0.3.174) by their agents, `--lang ru` → root re-adds «Сделать зарядку» through `npm run calendar` (its hand-written
   saidAt was midnight — the canvas showed today's 07:30 as missed) → look at the canvas with the owner.
