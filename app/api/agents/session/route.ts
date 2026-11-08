@@ -3,7 +3,7 @@ import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
 
 // КОМАНДЫ СЕССИИ АГЕНТА (шаг 620; владелец 2026-10-30: «нужна команда очистки контекста … нужна команда для переключения на модель
-// Opus … Sonnet … haiku»). POST `{ service, action: "clear" }` или `{ service, action: "model", model: "opus" | "sonnet" | "haiku" }` с
+// Opus … Sonnet … haiku»). POST `{ service, action: "clear" [, continue: true] }` или `{ service, action: "model", model: "opus" | "sonnet" | "haiku" }` с
 // ключом узла (`X-Node-Key`). Зовёт её главный агент командой `npm run session` по слову человека. Дверь только ставит действие:
 // мост выполняет его после конца хода, в котором агент ответил человеку (`_agent-kit/server/bridge.cjs` → `sessionCommand`).
 // Заполнение контекста дверь не считает — его читает сама команда из журнала сессии.
@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic"
 
 const HEADERS = { "Cache-Control": "no-store" }
 
-type SessionCommand = (service: string, opts: { action?: string; model?: string }) => Record<string, unknown> & { ok: boolean }
+type SessionCommand = (service: string, opts: { action?: string; model?: string; continue?: boolean }) => Record<string, unknown> & { ok: boolean }
 
 function nodeKeyOk(given: string | null): boolean {
   const expected = process.env.SETTINGS_SECRET ?? ""
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   if (!nodeKeyOk(req.headers.get("x-node-key"))) {
     return NextResponse.json({ ok: false, reason: "node key required (X-Node-Key)" }, { status: 401, headers: HEADERS })
   }
-  let body: { service?: unknown; action?: unknown; model?: unknown }
+  let body: { service?: unknown; action?: unknown; model?: unknown; continue?: unknown }
   try { body = await req.json() } catch {
     return NextResponse.json({ ok: false, reason: "invalid JSON" }, { status: 400, headers: HEADERS })
   }
@@ -48,8 +48,11 @@ export async function POST(req: NextRequest) {
   if (typeof command !== "function") {
     return NextResponse.json({ ok: false, reason: "agent kits are not mounted in this process" }, { status: 503, headers: HEADERS })
   }
-  const out = command(service, { action, model })
-  console.log(`[agents/session] ${service} ${action}${model ? ` ${model}` : ""} → ${out.ok ? `scheduled ${out.scheduled}` : out.reason}`)
+  // 700-3: `clear` with `continue: true` — the agent asked for its own reset: after /clear the bridge wakes the fresh session with
+  // `⟦node · context-reset …⟧` and its letter; nobody is asked.
+  const cont = action === "clear" && body.continue === true
+  const out = command(service, { action, model, ...(cont ? { continue: true } : {}) })
+  console.log(`[agents/session] ${service} ${action}${model ? ` ${model}` : ""}${cont ? " --continue" : ""} → ${out.ok ? `scheduled ${out.scheduled}` : out.reason}`)
   const status = out.ok ? 200 : out.reason === "no-agent-kit" ? 404 : out.reason === "no-session" ? 409 : 400
   return NextResponse.json(out, { status, headers: HEADERS })
 }

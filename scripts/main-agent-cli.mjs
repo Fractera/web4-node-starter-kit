@@ -489,7 +489,8 @@ const journalDir = (folder, id = null) => {
   return join(own && existsSync(own) ? own : join(homedir(), '.claude'), 'projects', folder.replace(/[:\\/]/g, '-'))
 }
 if (cmd === 'session') {
-  const [what, ...args] = rest
+  const [what, ...withFlags] = rest
+  const args = withFlags.filter((a) => !a.startsWith('--')) // 700-3: `--continue` is a flag, never an element
   const models = ['opus', 'sonnet', 'haiku']
   const target = what === 'model' ? args[1] : args[0]
   const e = target ? registry().find((s) => s.id === target || addressOf(s.id) === target) : null
@@ -518,15 +519,19 @@ if (cmd === 'session') {
     process.exit(0)
   }
   if (what === 'clear' || (what === 'model' && models.includes(args[0]))) {
-    const r = await core('/api/agents/session', { method: 'POST', body: JSON.stringify({ service, action: what, ...(what === 'model' ? { model: args[0] } : {}) }) }).catch((err) => fail(`the core did not answer: ${err.message}`))
+    // 700-3: `session clear --continue` — the agent's own reset: the node wakes its fresh session with the letter.
+    const cont = what === 'clear' && process.argv.includes('--continue')
+    const r = await core('/api/agents/session', { method: 'POST', body: JSON.stringify({ service, action: what, ...(what === 'model' ? { model: args[0] } : {}), ...(cont ? { continue: true } : {}) }) }).catch((err) => fail(`the core did not answer: ${err.message}`))
     const b = r.body ?? {}
     if (!b.ok) fail(`${service}: ${b.reason === 'no-session' ? 'its agent is not on — nothing to clear or switch' : b.reason ?? r.status}`)
     console.log(what === 'clear'
-      ? `===SESSION_OK=== ${service}: when this turn ends the conversation starts over — memory and records stay. Answer the person first.`
+      ? (cont
+        ? `===SESSION_OK=== ${service}: when this turn ends the window is cleared and the node wakes your next session with your letter — make sure it is written and committed. Say one line to the person now.`
+        : `===SESSION_OK=== ${service}: when this turn ends the conversation starts over — memory and records stay. Answer the person first.`)
       : `===SESSION_OK=== ${service}: when this turn ends the session restarts on ${args[0]} and the same conversation goes on (a few seconds; messages wait). Answer the person first.`)
     process.exit(0)
   }
-  fail('session context [<id>] | session clear [<id>] | session model opus|sonnet|haiku [<id>]')
+  fail('session context [<id>] | session clear [<id>] [--continue] | session model opus|sonnet|haiku [<id>]')
 }
 
 // 620 (владелец 2026-10-30: «нужна команда которая позволит загрузить и использовать ключ OpenAI»): ключ проверяет и пишет дверь

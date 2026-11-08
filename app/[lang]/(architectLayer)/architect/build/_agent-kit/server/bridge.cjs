@@ -648,7 +648,19 @@ function hasConversation(cwd, configDir = null) {
     return readdirSync(dir).some((f) => f.endsWith('.jsonl'))
   } catch { return false }
 }
-function sessionCommand(service, { action, model } = {}) {
+/**
+ * 700-3 (владелец 2026-11-08: «самопроизвольно сбросить контекст и с помощью функции пробудить себя прочитать переходной файл»): строка,
+ * которой узел будит свежую сессию после сброса по её же просьбе. Письмо — в записи состояния папки агента.
+ */
+function resetLine(service) {
+  const nodeLine = require(path.join(process.cwd(), 'lib', 'agent-kit', 'node-line.cjs'))
+  const where = modes.baseOf(service) === 'build'
+    ? 'development-docs/development-steps/current-steps.md'
+    : 'development-docs/current-step.md'
+  return `${nodeLine.head('context-reset', modes.baseOf(service))}The node cleared your context window at your own request. Read your letter to your next session — the section «Letter to my next session» of ${where} — and go on from it. Ask nobody; tell the person in one line that you continue after a reset.`
+}
+
+function sessionCommand(service, { action, model, continue: cont = false } = {}) {
   const live = session.current(service)
   if (!live) return { ok: false, reason: 'no-session' }
   if (action === 'clear') {
@@ -657,8 +669,15 @@ function sessionCommand(service, { action, model } = {}) {
       live.proc.write('\x1b[200~/clear\x1b[201~')
       for (const ms of [400, 2500]) setTimeout(() => { if (session.current(service) === live) live.proc.write('\r') }, ms)
       console.log(`[agents/session] ${service}: /clear — контекст очищен`)
+      // 700-3: the same process, a clean window — and the node wakes it with its letter (no question on the screen, or nothing is typed).
+      if (cont) {
+        setTimeout(() => {
+          void pasteWhenReady(live, resetLine(service), { ready: () => !promptOnScreen(live.buffer) && !trustOnScreen(live.buffer) })
+            .then((ok) => console.log(`[agents/session] ${service}: ${ok ? 'пробуждён письмом после сброса' : 'письмо после сброса не вставлено'}`))
+        }, 5000)
+      }
     })
-    return { ok: true, scheduled: 'clear' }
+    return { ok: true, scheduled: cont ? 'clear-continue' : 'clear' }
   }
   if (action === 'model') {
     if (!SESSION_MODELS.includes(model)) return { ok: false, reason: `model must be one of ${SESSION_MODELS.join(', ')}` }
