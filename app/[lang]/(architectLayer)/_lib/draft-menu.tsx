@@ -176,7 +176,9 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   const before = [shortcut('github', null, 'github', '', 'no-github'), shortcut('subscription', null, 'card'), shortcut('terminal', null, 'window')]
   // 692-2 (владелец 2026-11-08: «в общей ленте ниже чем open а и ключ поставить кнопку настройка и на этой кнопки настройки переключать
   // модель Anthropic или OpenAI»): под ключом OpenAI — «Настройки» узла (`build/settings`, там базовый AI-провайдер), в обоих режимах.
-  const after = [shortcut('environment', ui.openAiKey, 'key', '#OPENAI_API_KEY'), shortcut('settings', null, 'settings')]
+  // 697-4 (владелец 2026-11-08: «в компактной версии левого меню кроны вытащи наружу и поставь под главный Telegram бот»): в компактном —
+  // «Крон события» главного агента (холст всех часов узла, 697-1) сразу под Telegram-ботом; в полном он стоит в дереве главного агента.
+  const after = [...(compact ? [shortcut('automation/cron', null, 'clock')] : []), shortcut('environment', ui.openAiKey, 'key', '#OPENAI_API_KEY'), shortcut('settings', null, 'settings')]
   const words = { title: ui.menuMode, compact: ui.menuModeCompact, full: ui.menuModeFull, failed: ui.menuModeFailed, readOnly: ui.menuModeReadOnly }
   const switchRow: WorkspaceItem = { label: ui.menuMode, node: <MenuModeSwitch mode={mode} words={words} /> }
   // 692-1 (владелец 2026-11-08: «когда режим компактный, вкладку супер узел скрывай»): в компактном — ни «Главного агента», ни «Супер узла».

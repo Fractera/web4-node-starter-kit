@@ -1,4 +1,4 @@
-# `/architect/main-telegram` — Main Telegram bot
+# `/architect/main-telegram` — Telegram bot (the main agent's)
 
 Owner 2026-11-02: «В левом меню выше чем кнопка главный агент поставь кнопку main Telegram бот это кнопка должна приводить
 переадресация и открыть страницы h2A/telegram где происходит настраивание телеграмм бота. Потому что его найти в проекте почти

@@ -1,5 +1,6 @@
 import { join } from "node:path"
-import { folderAutomation } from "@/lib/a2a/element-passport"
+import { folderAutomation, type CronPlan } from "@/lib/a2a/element-passport"
+import allClocks from "@/lib/web4-items/all-clocks.cjs"
 import { CronCalendar } from "./cron-calendar.client"
 import { SubscriptionsView } from "./subscriptions-view.client"
 import { ScheduleTask } from "./schedule-task.client"
@@ -26,7 +27,14 @@ export function AutomationView({ lang, view }: { lang: string; view: "tools" | "
       : <p className="my-4 max-w-3xl text-sm text-muted-foreground" data-automation-tools="0">{w.empty}</p>
   }
   const cronUi = automationCronUi(lang, ui.cron)
-  return cron
-    ? <div className="my-4" data-automation-cron><CronCalendar plan={cron} lang={lang} ui={cronUi} /></div>
+  // 697-1 (владелец 2026-11-08: «проверить что все возможные задачи из элементов переносится на главный холст Cron событий»): на холсте
+  // главного агента — и настоящие записи каждого элемента (не заготовки шаблона), с именем элемента и его журналом; исполняет их сам
+  // элемент, ядро только показывает (`lib/web4-items/all-clocks.cjs`).
+  const part = allClocks.canvasPart(process.cwd()) as Pick<CronPlan, "events" | "schedules" | "runs">
+  const merged: CronPlan | null = cron || part.schedules.length
+    ? { repeatsPaused: cron?.repeatsPaused ?? false, events: [...(cron?.events ?? []), ...part.events], schedules: [...(cron?.schedules ?? []), ...part.schedules], runs: [...(cron?.runs ?? []), ...part.runs] }
+    : null
+  return merged
+    ? <div className="my-4" data-automation-cron data-element-entries={part.schedules.length}><CronCalendar plan={merged} lang={lang} ui={cronUi} /></div>
     : <p className="my-4 max-w-3xl text-sm text-muted-foreground" data-automation-cron="empty">{cronUi.empty}</p>
 }

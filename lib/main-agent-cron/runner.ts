@@ -4,6 +4,8 @@ import { AGENT_TASK, TELEGRAM_MESSAGE, dueAt, elementDir, hm, readPlan, ymd, typ
 import { noticeLang, sendNotice } from "./notice"
 import { noticeWords } from "./notice.i18n"
 import calendarWake from "@/lib/web4-items/calendar-wake.cjs"
+import allClocks from "@/lib/web4-items/all-clocks.cjs"
+import talkLang from "@/lib/main-agent/talk-lang.cjs"
 
 // ЧАСЫ «АВТОМАТИЗИРОВАННОГО УПРАВЛЕНИЯ» ГЛАВНОГО АГЕНТА (узел, шаг 558-3). Слово владельца 2026-10-21: «в Аргенти это будет
 // автоматизированное управление агентами или приложениями позволяет запускать агентов по определённому расписанию»; план 558 —
@@ -101,6 +103,15 @@ export function startMainAgentCron() {
       if (did.length) console.log(`[calendar-wake] ${did.join(" ")}`)
     } catch (e) {
       console.warn(`[calendar-wake] ${(e as Error).message}`)
+    }
+    // 697-2 (владелец 2026-11-08: «Б, только сообщать»): тот же тик — сторож всех часов: запись элемента, не отметившаяся в его журнале
+    // через 3 минуты после своего времени, — одно слово человеку дверью уведомлений, с причиной; никого не будит (`all-clocks.cjs`).
+    try {
+      const root = process.cwd()
+      const said = await allClocks.watchTick(root, new Date(), (n: { from: string; who: string; text: string }) => sendNotice(root, { kind: "missed", ...n }), String(talkLang.get(root) ?? noticeLang(root)).startsWith("ru") ? "ru" : "en")
+      if (said.length) console.log(`[clock-watch] ${said.join(" ")}`)
+    } catch (e) {
+      console.warn(`[clock-watch] ${(e as Error).message}`)
     }
   }
   const first = setTimeout(() => {

@@ -31,6 +31,7 @@
 //   openai-key <sk-…> [--chat <id> --message <id>] — ключ OpenAI узла: проверка дверью ядра, запись, удаление сообщения с ключом (620)
 //   transcribe <файл> [--lang xx] — голосовое человека → текст дверью распознавания ядра; нет рабочего ключа — попросить /openai_key (617)
 //   review <id> "<слова человека>" — разбор элемента по слову человека: его недовольство первой причиной, расход сессии второй (571-6)
+//   clocks                  — часы всех элементов: записи сегодня, пропуски и почему (697)
 //   lang [<код>]            — язык разговора с человеком: тебе и каждому элементу, которого будишь (694-2)
 //   where [--since <часы>]   — где стоит разработка каждого элемента, кодом, без пробуждения (686-4)
 //   lend [<id> --cost <%> --reason "…" | <id> --return] — подписка узла в долг элементу на своей подписке, пока у тебя остаётся 15 % (686-6)
@@ -822,6 +823,13 @@ if (cmd === 'where') {
     console.log(`Лимит ${l.login === 'node' ? 'подписки узла' : `своей подписки ${l.element}`}: ${[w(l.fiveHour, '5 ч'), w(l.sevenDay, '7 дн')].filter(Boolean).join(' · ')} — замер ${hhmm(l.at)}`)
   }
   if (!lims.length) console.log('Лимит подписки: ещё не замерен — его пишет строка состояния сессий узла после обновления (686-2)')
+  // 697-3: часы элементов одной строкой — сколько записей и что не сработало за последний час (подробно — npm run clocks).
+  try {
+    const clk = require(join(ROOT, 'lib', 'web4-items', 'all-clocks.cjs'))
+    const n = clk.elementClocks(ROOT).reduce((s, c) => s + c.plan.schedules.length, 0)
+    const miss = clk.missed(ROOT)
+    if (n) console.log(`Часы элементов: записей ${n}${miss.length ? `, не сработали за час: ${miss.length} — npm run clocks` : ', пропусков за час нет'}`)
+  } catch { /* часы не прочитаны — сводка идёт дальше */ }
   const loans = require(join(ROOT, 'lib', 'agent-kit', 'lending.cjs')).active(ROOT)
   if (loans.length) console.log(`В долг на подписке узла: ${loans.map((r) => `${r.element} (${r.cost} %)`).join(', ')} — npm run lend`)
   process.exit(0)
@@ -874,6 +882,26 @@ if (cmd === 'lang') {
   const r = await core('/api/agents/person-lang', { method: 'POST', body: JSON.stringify({ service: 'build', lang: tl.lang }) }).catch((e) => ({ body: { ok: false, error: e.message } }))
   if (!r.body?.ok) fail(`the core did not take it: ${r.body?.error ?? r.status}`)
   console.log(`===LANG_OK=== ${talk.name(tl.lang)} (${tl.lang}) — for you and for every element you wake or task from now on`)
+  process.exit(0)
+}
+
+// 697-3 (владелец 2026-11-08: «контроль за их Krohn событиями … один из элементов должен каждое утро напоминать сделать зарядку а другой
+// … парсинг новостных каналов»): ЧАСЫ ВСЕХ ЭЛЕМЕНТОВ — кодом, без модели и без пробуждения: записи на сегодня и ближайшая, что не
+// сработало за последний час и почему. Записи живут в элементах, ядро их только читает (`lib/web4-items/all-clocks.cjs`).
+if (cmd === 'clocks') {
+  const clocks = require(join(ROOT, 'lib', 'web4-items', 'all-clocks.cjs'))
+  const now = new Date()
+  const list = clocks.elementClocks(ROOT)
+  if (!list.length) { console.log('Часы элементов: ни у одного элемента нет своих записей (заготовки шаблонов не в счёт).'); process.exit(0) }
+  const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59)
+  const miss = clocks.missed(ROOT, now)
+  for (const c of list) {
+    const state = c.automationOff ? ' · автоматизация выключена' : c.sleep === 'off' ? ' · выключен' : c.sleep === 'by-rule' ? ' · спит (разбудится к записи)' : ''
+    const today = clocks.dueBetween(c.plan, now, endOfDay).map((d) => `${d.schedule.time} «${d.schedule.name || d.schedule.message || d.schedule.event}»`)
+    console.log(`- ${c.name} (${c.id})${state}: записей ${c.plan.schedules.length}${today.length ? `; сегодня ещё: ${today.join(', ')}` : ''}`)
+    for (const m of miss.filter((x) => x.clock.id === c.id)) console.log(`  ⚠️ ${m.schedule.time} «${m.schedule.name || m.schedule.message || m.schedule.event}» не сработала: ${clocks.reasonOf(c, 'ru')}`)
+  }
+  console.log(`Холст: http://localhost:${readJson(join(ROOT, 'logs', 'runtime.json'), {})?.port ?? 24680}/ru/build/automation/cron`)
   process.exit(0)
 }
 
