@@ -5,6 +5,12 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-48 (2026-11-08, ~15:20 UTC) — 691 built `20ff0b35`, NOT pushed:** the core's Settings (`build/settings`, `own`) show the node's base AI
+provider — Anthropic · Claude Code by default, OpenAI · Codex «not possible yet» (690). The owner, verbatim: «in the settings you can to do
+now part base AI provider default antropic , not possible now replace to codex»; «it wil huge long time process for replae all»; «go back
+to base flow after fix new step». Base flow next: the owner's yes to the text of 688 → push all → the fork synced → node update → the live
+proofs of 687, 688, 689, 691 on the owner's node; then 686 (planning), then «Клип».
+
 **NOW-47 (2026-11-08, ~14:40 UTC) — 689 BUILT here (`c4d41fd2` plan, `4d2e2941` code), NOT pushed; live proofs after the update** (the owner: «да, утверждаю, начинай 689»): the plan `new-steps/689/`;
 next — 689-1 in the kit master (`architect/kits/_agent-kit/`), then `agent-kit:update`. 690 QUEUED (the owner 2026-11-08: the WHOLE node switches Claude Code ↔ Codex; elements side by side cancelled) — the five-platform sign-in window
 of April–May found in history (`bf3000c5`, removed in step 500 `28f7cc49`): `new-steps/690-the-whole-node-switches-its-engine-claude-code-codex.md`. Codex on the owner's Mac — certificate
