@@ -17,9 +17,9 @@ The owner of Fractera, 2026-10-23: «не всегда в наш проект п
 который был бы предназначен для аккумулирования подобных исследование … о всех этих преимущества стоит сказать пользователю и
 предупредить что мы собираемся сделать».
 
-- First say what the node does better than a one-time answer in chat: an element of its own keeps every finding in the node's data
-  and graph, adds the next research to it, compares them over time and shows it all on its own page by link. Name what you are about
-  to create and ask; a plain answer in chat stays possible if that is all the person wants.
+- First say what the node does better than a one-time answer in chat — for a research the checked facts, what a chat already does and
+  the price are in the field skill `research`. Name what you are about to create and ask; a plain answer in chat stays possible if
+  that is all the person wants.
 - A link or an SDK to study — skill `study-for-element`; it comes here first when no element fits.
 - The person need not move to a computer: the element's page is on the node's own domain and opens on the phone too.
 
@@ -50,8 +50,26 @@ The owner of Fractera, 2026-10-23: «не всегда в наш проект п
    Custom by default. Native (`--native`) only for a job of the node itself that is never sold and never leaves it.
 4. **Create.** Write the task into a file in this folder (no shell quoting of the person's words), then:
    ```
-   npm run create -- --role "<one sentence>" --name "<the name the person sees in the menu>" --describe "<what it is for in this node, 1–3 sentences>" --look own|project [--blocks off] --area "<the field>" --grows "<a job>; <another>" --brief-file task-<words>.md [--close-after-first-session] [--supervise main] [--native]
+   npm run create -- --role "<one sentence>" --name "<the name the person sees in the menu>" --vector-file vector-<words>.md --describe "<what it is for in this node, 1–3 sentences>" --look own|project [--blocks off] --area "<the field>" --grows "<a job>; <another>" --brief-file task-<words>.md [--close-after-first-session] [--supervise main] [--native]
    ```
+   **The starting vector** (core step 701; the owner, 2026-11-08: «ты должен дописать в инструкцию агенту элемента послание которые
+   создаст базовое понимание того что он должен делать … как он должен создавать маршруты где будет находиться область публичного
+   взаимодействия … где будут находиться внутренние страницы какие они будут нести нагрузки»). The birth writes it into section 11
+   «From the core» of the element's CLAUDE.md before its first commit; the element reads it in every session and keeps it true with its
+   person. The task goes to the intake and is done once; the vector stays. English, 1–40 lines (the command refuses more — every line is
+   paid in every session of the element), in the element's own words — its public layer, inner pages behind sign-in, blocks, the data
+   element — never code or file paths. One line each, in this order:
+   - **The whole goal** — the person's words verbatim, and this element's part of it;
+   - **Role** and **field** — the same as `--role`, `--area`, `--grows`;
+   - **Neighbours in this goal** — the elements it will work with and what each does; the first contact goes through the core;
+   - **Face** — its public pages: what a visitor finds where; static, by the standards of search;
+   - **Inner pages** — what the person and which roles see behind sign-in, what they do there;
+   - **Loads and data** — what must answer always and what may sleep; what it keeps and in which store;
+   - **First step** — the first stage of the product quiz;
+   - **Not its** — the neighbours' fields, so it never grows them.
+   An element born before step 701 gets its vector from its own agent: `npm run task -- <id> "Build process: write this starting vector
+   into section 11 of your CLAUDE.md as «### From the core», above your own laws, and commit it: …"` — the core never edits an element's
+   files.
    Birth takes a few minutes (template clone, install, build, then the address in Cloudflare is connected and checked from the
    internet). It prints `===ELEMENT_CREATE_OK=== <id>`, `address:`, `name:` and `site:`. The name is the core's (node step 678): the
    menu and the header show it within seconds, no reload; a later name — `npm run rename -- <id> "<name>"`, never a task to the
@@ -70,13 +88,13 @@ The owner, 2026-11-08: «ты рождаешь их строго по одном
 `use-development-steps`). For each element, in this order, and only then the next:
 1. `npm run create` with `--name` (the menu, the header and the drawer show it — required) and `--describe` (its role in the node, 1–3
    sentences: the core writes it into the element's passport at birth, so after any reload the element and the person know what it is
-   and the header shows it), the task with its start — the quiz or the first step, by how hard it is — and `--close-after-first-session`.
+   and the header shows it), `--vector-file` (its part of the whole goal and its neighbours in it, section 11), the task with its start — the quiz or the first step, by how hard it is — and `--close-after-first-session`.
 2. Its first session asks its first quiz question; its «done» closes its agent by itself and wakes you with one line — no polling.
 3. Write the substep closed in `current-steps.md` (its id, name, what it asked), one line to the person, then the next element.
 
 ## What the new element does by itself
 
-Its agent wakes with its role and the path of the task in its intake (`development-docs/pre-steps/`). Its first session is short:
+Its agent wakes with its role, its starting vector in section 11 and the path of the task in its intake (`development-docs/pre-steps/`). Its first session is short:
 it names the task, goes through «Before you build a new capability» (node → network) and asks the first question of the product
 quiz — no code is read before the quiz is confirmed; the passport is described in its first step. Then it reports done to whoever
 leads it.
