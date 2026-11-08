@@ -20,7 +20,7 @@ instead of compacting; my window was 66 % = 664k of 1M).** RESUME HERE.
   → node update → root (`git fetch origin tag v3.0.37 && git merge --no-edit v3.0.37`, no push) and s8y6x (`cherry-pick 1cc8151` from the
   custom template v0.3.174) by their agents, `--lang ru` → root re-adds «Сделать зарядку» through `npm run calendar` (its hand-written
   saidAt was midnight — the canvas showed today's 07:30 as missed) → look at the canvas with the owner.
-- **Then 700** (`new-steps/700-a-session-resets-itself-instead-of-compacting.md`, proposed, waits for his word): code measures the
+- **Then 700** (`new-steps/700-a-session-resets-itself-instead-of-compacting.md`, APPROVED 2026-11-08 ~20:15 WET — the owner: «да, начинай 700 после 699»): code measures the
   window, a line from ~55 % (judgement, not a dead threshold), the letter section, `session clear --continue` waking the fresh session,
   compaction off (`autoCompactEnabled` — check the docs first), the same for elements, How it works 7.1.
 - **Open, smaller:** the a2a cold-start wait seen live; the YouTube retelling asked cold (next exam); in the canvas a main-agent

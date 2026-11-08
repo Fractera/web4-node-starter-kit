@@ -1,6 +1,6 @@
 # 700 — A session resets itself instead of compacting: a letter to its next session, then a clean window
 
-**State: PROPOSED 2026-11-08, discussed with the owner; the plan waits for his word.** The owner, verbatim: «в архитектуре Cloud Code
+**State: APPROVED 2026-11-08 ~20:15 WET — the owner, verbatim: «да, начинай 700 после 699» (the six substeps below, shown to him in Russian).** The owner, verbatim: «в архитектуре Cloud Code
 существует стратегия при переполнении контекста нова окна создавать компакт. На мой взгляд это самая отвратительная функция … отслеживать
 переполнения контекста больше чем на 70% и когда выполнено это переполнение ты мог бы обновить current-step записать него всю информацию
 которая требуется для перехода и пробуждения после сброса контекста явно указав что эта информация для самого себя, а затем не ставил в
