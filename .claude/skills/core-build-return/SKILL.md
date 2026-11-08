@@ -22,7 +22,10 @@ and «Close» (only «Close» after a failure).
 
 - **Before a node update:** the node's fork must carry Fractera's last commit — syncing it is your work (CLAUDE.md §4, the owner
   2026-11-08: «if exist claude for crome , or git token , you must to do sync alwayes»): the Chrome extension or a write token; check
-  with `gh api repos/Fractera/web4-node-starter-kit/compare/main...<owner>:web4-node-starter-kit:main` (identical).
+  with `gh api repos/Fractera/web4-node-starter-kit/compare/main...<owner>:web4-node-starter-kit:main` (identical). Never ask
+  «will you click it or shall I?» — you do it (the owner 2026-11-08: «why you ASK ME ? IT NOT GOOD … NOT ASK IF IT IS POSSIBLE»). The
+  only block is a missing sign-in of the fork's owner in their Chrome with no write token: open github.com/login in that Chrome, say in
+  one line that the update waits for their sign-in, and on their next word check and sync yourself — no question, no choice.
 - **Before a build:** write your state — `current-steps.md` and the work record — as if you would not come back; tell the person in one
   line: «I go off with the build and come back by myself in a few minutes». Start the update or the build detached, never as your own
   child (`node scripts/spawn-free.mjs scripts/node-update-run.mjs`).
