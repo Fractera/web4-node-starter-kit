@@ -5,7 +5,22 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-57 (2026-11-08, ~15:45 WET) — 686-3 IN WORK** (the owner: «продолжит ровно с 686-3»). Plan file
+**NOW-58 (2026-11-08, ~16:00 WET) — 686-3…686-7 BUILT here, committed, NOT pushed yet** (the owner: «продолжит ровно с 686-3», under «b»).
+- 686-3 `7ee96d82` — passport fragment `development` (`npm run development`), skill `answer-the-leader`, the `use-development-docs` event line,
+  element instruction; 15 template releases (custom v0.3.172 `f68d3ea`, native v0.1.53, root v3.0.35 `7a69857`, the 12 natives next
+  patch), all prebuilds green, CI three-os green; pins in the core; `where` reads the fragment first.
+- 686-5 `b1762ce3` — a rate_limit stop puts ONE `agent-task` into the main agent's clock at the reset + 2 min.
+- 686-6 `aa36054a` + `69f3638a` — `npm run lend` (forecast keeps 15 %, running loans counted, pause below, returned by the end of the
+  session that ran on it, journal); while on loan the element's person's Telegram channel is OFF. Found on the way and decided by me:
+  the node's own `provider-rules` and How it works 7.4 say other people's work never runs on the owner's subscription — so a loan
+  carries only the work the leader handed out (the owner's work), led by the main agent. Said to the owner in the report.
+- 686-7 `dbe35fff` — How it works 7.3 in the present tense (en, ru).
+NEXT: blocks CI → push the core → CI of the core → the main agent syncs the fork → ONE node update (686 + 693) → on the owner's node:
+`template -- rollout` of the 686-3 paths into root and s8y6x (NOT package.json/CLAUDE.md from the template: package.json by the
+anchor with `--also`, CLAUDE.md by `instruction:element -- element`) → live proofs: `npm run where`, a pulse file after a turn, the
+limits line, an element's fragment after its step event, 7.3 and the §7 frame on the page.
+
+**NOW-57 (2026-11-08, ~15:45 WET) — 686-3 in work** (the owner: «продолжит ровно с 686-3»). Plan file
 `new-steps/686/686-3-the-passport-fragment-development-and-a-quick-answer.md`. Done so far, NOT committed: `_tools/686/rollout.mjs`
 applied to all 15 repositories in `~/fractera-dev` (7 files each: `scripts/development.mjs`, its npm script, skill `answer-the-leader`,
 its README row, the event line of `use-development-docs`, `CLAUDE.md` + seal from `element-instruction.src.md`), staged; the core's
