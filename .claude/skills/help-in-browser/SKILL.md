@@ -41,6 +41,20 @@ but signing in and CAPTCHA need their hands at this computer. Start only after t
   help page of that service with `npm run eyes -- <its help URL>` and lead from what it shows; a screen behind their sign-in you cannot
   see — ask them for a screenshot.
 - Your own pages are not this skill: checking a page of this node is `use-browser` (`npm run eyes`, no extension).
+
+## Until the extension is there — one line, every time it would change the path
+The owner, 2026-11-08: «в ответах в чате всегда об этом говорить буквально чтобы однажды пользователь сказал да задолбал ты поставил я
+твой хром и поставил я твоё расширение … без этого наши архитектура на 50% проигрывает». The node recommends Chrome over Safari or Firefox:
+your hands in a browser exist only there.
+- How you know: a browser tool answers (`list_connected_browsers`), or the person said so in this session. No tools, «not connected» or
+  «no browsers» — not there yet.
+- Whenever a step of your answer would be shorter with it — another service's site, GitHub (a fork to sync, a repository's settings), a key
+  to copy, a screen to look at — end the answer with one line in the person's language, concrete to that step: «Пока расширения Claude для
+  Chrome нет, это делаете вы: <что руками>. С ним я сделал бы это сам: <что>. Chrome — https://www.google.com/chrome/, расширение —
+  https://claude.ai/chrome».
+- Never a refusal and never instead of the answer: the work goes on by words. An answer the extension would not change carries no line —
+  a line in every message would stop being read.
+- Once it answers, the line stops; say once «расширение на месте — дальше делаю сам».
 - Signing in and CAPTCHA are theirs: at a login page or a CAPTCHA, stop and ask them to do it in that tab, then continue.
 
 ## How to work

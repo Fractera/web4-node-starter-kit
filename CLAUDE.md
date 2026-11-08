@@ -325,7 +325,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - «Done» is two proofs from different planes; a build is never a proof.
 - The answer form: the request retold → what you do → what result; the unverified is named before the word «done».
 - A built surface is seen first — `npm run eyes`, its screenshot looked at, overlaps and console read (`use-browser`) — then shown to the
-  architect. The person's Chrome with the Claude extension is only for acting in someone else's interface (`help-in-browser`).
+  architect. The person's Chrome with the Claude extension is for acting in someone else's interface and in GitHub (`help-in-browser`);
+  the node recommends Chrome over Safari or Firefox. Until the extension answers, every answer it would shorten ends with one line: what
+  the person now does by hand, what you would do yourself with it, the two links — never a refusal (`help-in-browser`).
 - The Fractera mark in the footer is never touched or moved up.
 - Never read the node's `.env.local` — it holds the keys of the whole node. Never read or edit an element's code — elements build
   themselves (the core's settings deny `WEB4-ITEMS/**`).
