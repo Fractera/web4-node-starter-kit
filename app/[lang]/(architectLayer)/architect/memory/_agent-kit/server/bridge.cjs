@@ -15,7 +15,7 @@ const { existsSync, mkdirSync, readFileSync, readdirSync, statSync, unlinkSync, 
 const path = require('node:path')
 const { redeemTicket } = require('./ticket.cjs')
 const session = require('./session.cjs')
-const { serviceDir, ownClaudeDir } = require('./workspace.cjs')
+const { serviceDir, ownClaudeDir, onLoan } = require('./workspace.cjs')
 const { claudeBin, claudeEfforts, resolveBin } = require('./claude-cli.cjs')
 const telegram = require('./telegram.cjs')
 const { channelLaunch } = telegram
@@ -234,7 +234,10 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   starting.add(service)
   notice('[запускаю агента…]')
   // 552-4: бот элемента — только у сессии строительства; опрашивать бота может один процесс (409), а мессенджер до 552-6 живёт там.
-  const launch = mode === 'work' ? null : await channelLaunch(element, env).catch((err) => ({ ok: false, error: err instanceof Error ? err.message : String(err) }))
+  // 686-6: на одолженной подписке узла сессию ведёт руководитель — канал Telegram человека элемента не подключается до возврата.
+  const loaned = onLoan(element)
+  if (loaned) notice('[подписка узла в долг: работу ведёт главный агент, Telegram человека этого элемента подключится после возврата]')
+  const launch = mode === 'work' || loaned ? null : await channelLaunch(element, env).catch((err) => ({ ok: false, error: err instanceof Error ? err.message : String(err) }))
   starting.delete(service)
   if (launch && !launch.ok) {
     notice(`[бот Telegram не подключится: ${launch.error}]\r\n[агент запускается без него]`)

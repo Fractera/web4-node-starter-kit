@@ -37,8 +37,9 @@ back at any time (`npm run supervise -- <id> architect`).
 reset (686-5); then wake it «continue from your record». The element runs on its own person's subscription (689) and that one ran out
 before the work ended — finish through the same hand on lent fuel: `npm run lend -- <id> --cost <% of the node's window you expect>
 --reason "<the work>"`; it refuses when the forecast leaves you less than 15 % (every running lending counted). Then `npm run close`
-and `npm run task`; the end of that session gives the fuel back by itself, `npm run lend` shows the debt. Never to get around the
-limits of one person with two subscriptions — skill `provider-rules`.
+and `npm run task`; the end of that session gives the fuel back by itself, `npm run lend` shows the debt. Only the work YOU handed
+out — the architect's own work, led by you; the element's person's Telegram stays off during the loan, and their own wishes never run
+on the owner's subscription, nor one person's two subscriptions around the limits — skill `provider-rules`.
 
 ## Never
 

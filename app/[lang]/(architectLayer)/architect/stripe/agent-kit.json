@@ -2,7 +2,7 @@
   "_": "Параметры установки комплекта агента. Пишет npm run agent-kit:add, читают мост и сторож. Руками не править: правьте мастер и повторите npm run agent-kit:update.",
   "service": "stripe",
   "workspace": "web4-item",
-  "version": "2132dcedd62b8cd2",
+  "version": "1ff8b8cfd4f3516e",
   "pages": [
     {
       "template": "claude-code",

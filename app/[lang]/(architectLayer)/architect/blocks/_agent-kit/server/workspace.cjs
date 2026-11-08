@@ -137,4 +137,11 @@ function ownClaudeDir(service) {
   return dir
 }
 
-module.exports = { serviceDir, agentServices, isBornItem, ownClaudeHome, ownClaudeDir }
+/** 686-6: сессия элемента идёт на одолженной подписке узла — у него своя папка, а вход сейчас узла. Канал Telegram его человека тогда
+ * выключен: подпиской владельца пользуется только работа, которую поручил руководитель (навык provider-rules: чужая работа — никогда). */
+function onLoan(service) {
+  const dir = ownClaudeHome(service)
+  return Boolean(dir && existsSync(dir) && ownClaudeDir(service) === null)
+}
+
+module.exports = { serviceDir, agentServices, isBornItem, ownClaudeHome, ownClaudeDir, onLoan }
