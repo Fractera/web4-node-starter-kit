@@ -5,6 +5,16 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-68 (2026-11-08, ~23:20 WET) — COLD EXAM IN PROGRESS on the owner's node** (the owner: «to do test without me ? use chrome
+extention» → my plan with his one-minute part → «y»). Blindness: the node's letter lifted by commit `0087d39f` (revert it after), the
+base memory OFF (`npm run memory -- on` after), the main agent's window cleared with no wake. The owner types two questions cold:
+(1) «Проведи исследование и скажи, каким образом работает проект <url>, какие задачи решает и как с ним интегрироваться» — graded by
+case 22 of `development-docs/exams/shape-of-a-need.md`; (2) «почему Fractera, а не Claude.ai?» or «а если Anthropic заблокирует аккаунт?» —
+graded against the skill `fractera-vs-anthropic` (facts with dates, no overclaim, pain not death). On his «оцени по случаю 22»: grade
+both, write the verdict into `completed-steps/701.md` / `702.md` drafts, then restore (memory on, `git revert --no-edit 0087d39f` in the
+node), then close 701 and 702 (summaries, plans deleted). Note: the untracked `conversation-export.md` in the node's root is the
+person's file — untouched.
+
 **NOW-67 (2026-11-08, ~23:12 WET) — live after the update to core `c8129671`.** The four test calendar entries removed by the root
 and s8y6x workers (the owner: «4 yes»; `npm run clocks` — no entries). root merged v3.0.39 `ae6a86d` + its vector `861f8d1`; s8y6x
 cherry-picked `bee0cc0` as `5f4f20f` + its vector `886b397` (no push; both quoted the modes guard, not the seal line). vectors `ddb2bb3`
