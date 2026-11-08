@@ -7,6 +7,8 @@
 // «shared across Claude and Claude Code». Окно в миллион токенов — замер узла 2026-11-08 (`npm run session -- context`, Opus 5.5).
 // Правило многих подписок — навык `provider-rules` (Claude Code legal and compliance: «ordinary, individual usage»).
 // 7.1 — последний абзац с шага 700: сжатие выключено, узел меряет окно, агент пишет письмо и сбрасывается сам.
+// 7.5 — шаг 701: рой против постоянных рук; замер Anthropic — anthropic.com/engineering/multi-agent-research-system (2025-06-13, прочитано
+// 2026-11-08): «about 4× more tokens than chat interactions … about 15× more tokens than chats».
 // Пункт 7.3 — в настоящем времени с подшага 686-7: пульс, `where`, паспорт `development`, пробуждение к сбросу лимита и долг 686-6.
 // `en` основа, `ru` перевод; метки `[[форма|ключ]]` раскрывает `_components/index.ts`.
 import type { PresentationSection } from './presentation'
@@ -57,6 +59,14 @@ export const PLATFORM_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
             'Several subscriptions of one person, bought to get around the limits, are against the provider’s rules: its limits assume ordinary, individual use.',
           ],
         },
+        {
+          title: '7.5 Lasting hands instead of a swarm',
+          items: [
+            'A common way to give AI a large job is a swarm: one agent splits the task, many short-lived subagents each read their share of the context, do a piece and are gone. It is strong, and it is expensive. Anthropic measured it on its own research system: agents use about four times the tokens of a chat, and multi-agent systems about fifteen times (its engineering article on that system, June 2025).',
+            'A node splits the work another way, into [[elements|element]] that last. Each keeps its own folder, memory and window, so its stream of work stays clean and nothing is read twice. Two elements that need each other agree an API once, and from then on the work between them runs with no model at all.',
+            'A swarm is still there for a task that truly needs one: in a session you confirm as ultracode, and only there.',
+          ],
+        },
       ],
     },
   ],
@@ -103,6 +113,14 @@ export const PLATFORM_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
           items: [
             'Узел может служить семье или команде. Тогда каждый человек работает по своей подписке: на странице «Подписка Claude Code» своего элемента он выбирает «Своя подписка человека этого элемента» и входит сам. У элемента появляется своя папка Claude Code, лимит у него свой, а вход владельца остаётся прежним. Правила поставщика не разрешают вести его работу по подписке владельца.',
             'Несколько подписок одного человека, купленные, чтобы обойти лимиты, нарушают правила поставщика: его лимиты рассчитаны на обычную личную работу.',
+          ],
+        },
+        {
+          title: '7.5 Постоянные руки вместо роя',
+          items: [
+            'Обычно большую работу поручают ИИ роем: один агент делит задачу, много короткоживущих субагентов читают каждый свою долю контекста, делают кусок и исчезают. Это сильный способ, и дорогой. Anthropic измерила его на своей исследовательской системе: агенты тратят примерно вчетверо больше токенов, чем чат, а мультиагентные системы — примерно в пятнадцать раз больше (её инженерная статья об этой системе, июнь 2025).',
+            'Узел делит работу иначе — на [[элементы|element]], которые живут долго. У каждого своя папка, память и окно, поэтому его поток работы остаётся чистым и ничего не перечитывается дважды. Два элемента, которые нужны друг другу, один раз договариваются об API, и дальше работа между ними идёт вовсе без модели.',
+            'Рой никуда не делся, если задаче он действительно нужен: в сессии, которую вы подтвердили как ultracode, и только там.',
           ],
         },
       ],

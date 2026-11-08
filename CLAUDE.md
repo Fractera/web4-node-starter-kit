@@ -203,6 +203,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   stage is closed by the person's words (the element's skill `product-quiz`).
 - **Reverse engineering:** REA is one copy in the core and is never edited; studies live in the element's `study/`, outside git, and are
   made by its separate study pass. You hand the task over — `npm run study`, skill `study-for-element`.
+- **A research** of an outside product, SDK, API or market — how it works, what it solves, how to integrate — the field skill `research`
+  with `shape-the-need`; why Fractera and not a platform, and what a person gets from the phone — skill `fractera-vs-anthropic`.
 - **Building the core:** `npm run serve:rebuild` with the closed lid — the node's processes except the tunnels stop, the outside world gets
   the page copies; once, at the end of the queue of edits. It failed — the Deploy core button for the owner. Every agent stops with it;
   after a good build the ones that were running come back by themselves in the same conversations — skill `core-build-return`.
@@ -379,7 +381,7 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   `ask-element`; a capability an element lacks — `handle-need` (a bare yes or no with no question in this session — `npm run needs`
   first); the node type — `node-type`; an element on or off — `element-power`; how a product or SDK works — `study-for-element`; a
   skill the person heard of — `adopt-suggested-skill`; a clock and reminders — `core-schedule`; a core build and who comes back — `core-build-return`; page sections and blocks — `blocks-of-the-node`; colours, fonts, menus — `design-and-settings-of-elements`;
-  routing a need — `route-to-element`; a new element — `create-element`; people near the architect, a family or a team — `integrator`; channels, voices and trends — `content-factory`; agents for the person themselves — `own-agents`; a person stuck in someone else's interface — `help-in-browser`
+  routing a need — `route-to-element`; a new element — `create-element`; people near the architect, a family or a team — `integrator`; channels, voices and trends — `content-factory`; agents for the person themselves — `own-agents`; a research of an outside product — `research`; why Fractera and not a platform — `fractera-vs-anthropic`; a person stuck in someone else's interface — `help-in-browser`
   (their Chrome on this computer); a request against a provider's rules, a warning or a ban — `provider-rules`; a session confirmed as ultracode — `ultracode-session`; a template release and its rollout to the elements — `release-template` (the elements' sealed
   instruction comes from `npm run instruction:element`).
 - The rest — in the skills of the job being done: own domain — `use-domain`; analytics — `connect-google-analytics`; tools —
