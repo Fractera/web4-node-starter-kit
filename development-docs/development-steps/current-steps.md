@@ -5,17 +5,19 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-47 (2026-11-08, ~13:40 UTC) — 689 APPROVED and in work** (the owner: «да, утверждаю, начинай 689»): the plan `new-steps/689/`;
+**NOW-47 (2026-11-08, ~14:40 UTC) — 689 BUILT here (`c4d41fd2` plan, `4d2e2941` code), NOT pushed; live proofs after the update** (the owner: «да, утверждаю, начинай 689»): the plan `new-steps/689/`;
 next — 689-1 in the kit master (`architect/kits/_agent-kit/`), then `agent-kit:update`. 690 QUEUED — the five-platform sign-in window
 of April–May found in history (`bf3000c5`, removed in step 500 `28f7cc49`): `new-steps/690-…`. Codex on the owner's Mac — certificate
 revoked, moved to the Trash by the owner.
 
 **NOW-46 (2026-11-08, ~12:30 UTC) — 687 and 688 committed here, NOT pushed; 686 proposed, not agreed.** Ship all three in ONE node
 update (a core build once, at the end of the queue).
-- **687** `c30331d2` — the attention dot (`AttentionDot`, the account button and «Группа страниц архитектора»): the owner, verbatim: «Оба этих
+- **687** `c30331d2` + `24f3c08e` — the attention dot (`AttentionDot`, the account button and «Группа страниц архитектора»): the owner, verbatim: «Оба этих
   индикатора сделай не оранжевыми а зелёными при этом увеличив размер в три раза в состоянии максимального диаметра при импульсе
   минимальный диаметр поставь как сейчас». Proof 1 (eyes, the CSS block frozen at its peak): halo 24×24, dot 4×4, the old ping 8×8
   (negative control). Proof 2 owed: eyes on the owner's node after the update, `--measure "[data-attention-dot]"`.
+  Defect on the way (mine): c30331d2 edited `components/shell/` — a byte copy of the site's shell; `check-shell-kits` failed. Fixed in
+  24f3c08e: the shell file is the site's again, the look is the core's CSS by `[data-attention-dot]`; re-measured green 24/4 vs plain 8/4.
 - **688** `ad2117da` — How it works, section 7: the owner: «– 7.0 Fractera против платформ Claude, GPT и тд.»; «Этот блок можно сделать
   как раскрыва шку … вопрос как вообще это можно сравнивать?» (Mercedes / Mercedes-AMG). Truth edits in the text: «нет и не может быть»
   → «сегодня нет»; «бесконечно масштабируется» → disk, memory and limits; a2a and a login per element — «not built yet»; 7.3 says «the
