@@ -8,7 +8,8 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 **NOW-49 (2026-11-08, ~16:10 UTC) — two rules of the owner, in the system part:** the node's fork is synced by the main agent («remember it ,
 if exist claude for crome , or git token , you must to do sync alwayes») — CLAUDE.md §4, skill core-build-return; Chrome over Safari and
 Firefox and one line in every answer the extension would shorten («…чтобы однажды пользователь сказал да задолбал ты поставил я твой хром
-…») — CLAUDE.md §6, skill help-in-browser. Then: CI green → the fork synced → node update.
+…») — CLAUDE.md §6, skill help-in-browser. CI 42485460351 of `75caa78c` green (ubuntu, windows); the fork synced by the main agent
+(identical); the node update STARTED ~16:30 UTC — live proofs on the owner's node after the return.
 
 **NOW-48 (2026-11-08, ~15:20 UTC) — 691 built `20ff0b35`, NOT pushed:** the core's Settings (`build/settings`, `own`) show the node's base AI
 provider — Anthropic · Claude Code by default, OpenAI · Codex «not possible yet» (690). The owner, verbatim: «in the settings you can to do
