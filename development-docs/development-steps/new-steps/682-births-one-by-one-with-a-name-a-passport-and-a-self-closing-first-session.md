@@ -34,3 +34,8 @@
 1. Workshop: `tsc` clean, guards green; `first-session` takes a mark once; `create` without `--name` refused.
 2. Live, owed: the next real birth on the owner's node — the passport's description and name at once, the header shows it, its first
    session closes itself, one wake.
+
+## Measured on the owner's node (core `96af35ad`, 2026-11-08 ~01:30 UTC)
+`/api/node/catalog?lang=ru` and `npm run eyes` on «Кастомные элементы»: every custom element shows its name and its own passport
+description («Клип — Музыкальные клипы по конвейеру …», «Дозор — Следит за новостями …»), not the template's page text. The birth part
+(`--name`, `--describe` into the passport, `--close-after-first-session`) waits for the next real birth.
