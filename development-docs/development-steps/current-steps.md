@@ -5,6 +5,15 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-50 (2026-11-08, ~16:35 UTC) — QUEUED for the NEXT core update, step 692 (the menu), not planned yet.** The owner, verbatim: «Также
+запомни когда ты будешь делать обновления ядра сделай ещё одно вещь: кнопку переключения компактной полный вынеси вверх сразу под кнопку
+ваш узел. Сделай красиво посмотри внимательно на switch переключатель я думаю что это shadcn так как в нём есть какой-то дефект на мой
+взгляд шарик переключателя в режиме полное должен находиться правее на два или три пикселя. Накладке основное, когда режим компактный,
+вкладку супер узел скрывай , насколько я понимаю нам понадобится в общей ленте ниже чем open а и ключ поставить кнопку настройка и на
+этой кнопки настройки переключать модель Anthropic или OpenAI мы уже это обсудили». Four parts: the Compact/Full switch right under
+«Ваш узел»; its knob 2–3 px further right in Full (measure with eyes first); «Супер узел» hidden in «Основное» while Compact; a menu item
+«Настройки» below «OpenAI API key» carrying the base AI provider (691's card moves there).
+
 **NOW-49 (2026-11-08, ~16:10 UTC) — two rules of the owner, in the system part:** the node's fork is synced by the main agent («remember it ,
 if exist claude for crome , or git token , you must to do sync alwayes») — CLAUDE.md §4, skill core-build-return; Chrome over Safari and
 Firefox and one line in every answer the extension would shorten («…чтобы однажды пользователь сказал да задолбал ты поставил я твой хром
