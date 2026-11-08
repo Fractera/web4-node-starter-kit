@@ -15,6 +15,11 @@ conversation (`claude --continue`) with a line from the node: the element agents
 not (memory) and which work sessions were stopped. A failed build brings back nobody — the previous build is up again and the person sees
 the cause on the terminal page. An agent that was asleep stays asleep.
 
+An element that says «done» while the build runs does not wake you — the closed lid would kill that session, and it is not on the
+return list. Its words wait in `data/node/held-for-main.json` and come to you after the build, good or failed, together with the
+work sessions it cut — even if you were asleep before it (step 696): the node wakes you with them; do what each line asks, then
+`npm run done -- --close`. An element cut mid-turn comes back and finishes; its own «done» then wakes you as usual.
+
 The terminal page of every agent shows the build instead of «Start the agent» while it runs, and at the end «Close and start the agent»
 and «Close» (only «Close» after a failure).
 

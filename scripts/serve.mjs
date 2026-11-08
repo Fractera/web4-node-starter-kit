@@ -689,6 +689,8 @@ async function rebuild() {
     stopReader(root)
     openLid(root)
     console.error(`\nСборка НЕ УДАЛАСЬ — ${backedUp ? "возвращена прежняя сборка, узел запущен снова" : "копии прежней сборки не было, узел запущен снова"}. Ошибки выше.`)
+    // 696: отчёты элементов, пришедшие главному агенту за время сборки, — ему же, на прежней сборке.
+    await agentReturn.deliverHeld(root, "the core build FAILED; the previous build runs again")
     process.exit(1)
   }
   // 🔒 СТОРОЖ ЯЗЫКОВЫХ СИГНАЛОВ — МЕЖДУ СБОРКОЙ И ПЕРЕЗАПУСКОМ (256-8).
@@ -714,6 +716,7 @@ async function rebuild() {
     console.error("сайт НЕ выложен: возвращена прежняя сборка, узел запущен снова. Разбор выше.")
     console.error("Это защита от ярлыка «дорвей»: набор почти одинаковых адресов,")
     console.error("обещанных поисковику, стоит сайту присутствия в выдаче целиком.")
+    await agentReturn.deliverHeld(root, "the core build was not deployed (language signals); the previous build runs again")
     process.exit(1)
   }
 
