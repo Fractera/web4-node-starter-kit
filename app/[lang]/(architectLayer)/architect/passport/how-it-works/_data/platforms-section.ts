@@ -6,6 +6,7 @@
 // (душа: «say what works today and what is on the way»). Лимиты подписки — support.claude.com, статья 11145838, прочитано 2026-11-08:
 // «shared across Claude and Claude Code». Окно в миллион токенов — замер узла 2026-11-08 (`npm run session -- context`, Opus 5.5).
 // Правило многих подписок — навык `provider-rules` (Claude Code legal and compliance: «ordinary, individual usage»).
+// 7.1 — последний абзац с шага 700: сжатие выключено, узел меряет окно, агент пишет письмо и сбрасывается сам.
 // Пункт 7.3 — в настоящем времени с подшага 686-7: пульс, `where`, паспорт `development`, пробуждение к сбросу лимита и долг 686-6.
 // `en` основа, `ru` перевод; метки `[[форма|ключ]]` раскрывает `_components/index.ts`.
 import type { PresentationSection } from './presentation'
@@ -28,6 +29,7 @@ export const PLATFORM_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
             'The trouble starts when the work has to outlive many sessions, and every next session has to start more experienced than the last one. An agent of the node starts each session from the whole goal and the linked parts of it that are written down, and goes deep into the next part only.',
             'With one subscription and one project the two can still be compared. With tens or hundreds of such projects at once, one window cannot hold them: no model today has a window of a billion tokens.',
             'A node does not need one. Every [[element|element]] works in its own Claude Code window, up to a million tokens on the largest models, and its steps, its memory and its development diary carry the work from session to session. A project that needs a billion tokens of context in total can be kept and grown this way, because nothing it has learned lives only in a window. This is the node’s main architectural advantage, and the others follow from it.',
+            'When a window fills up, Claude Code usually compacts it: the conversation is replaced with a summary the model writes for itself, and whatever the summary drops is gone without a trace. In a node compaction is off. The node measures how full every agent’s window is, and past 55 % it tells the agent. The agent weighs the work in front of it: a small last task it finishes first, a long one it starts in a clean window. It writes a letter to its next session (where it stands, your words exactly as you said them, what is half done, the next step), commits it, and the node clears the window and wakes the new session with that letter. Nobody has to ask you, and the work goes on from what the agent wrote down itself.',
           ],
         },
         {
@@ -75,6 +77,7 @@ export const PLATFORM_SECTIONS: Record<'en' | 'ru', PresentationSection[]> = {
             'Трудности начинаются, когда работа должна пережить много сессий, и каждая следующая сессия должна начинаться опытнее прошлой. Агент узла начинает каждую сессию с общей цели и записанных частей этой цели, связанных между собой, и углубляется только в очередную.',
             'Пока подписка одна и проект один, сравнивать ещё можно. Когда таких проектов десятки или сотни одновременно, одно окно их не вместит: моделей с окном в миллиард токенов сегодня нет.',
             'Узлу оно и не нужно. Каждый [[элемент|element]] работает в своём окне Claude Code, на самых больших моделях это до миллиона токенов, а его шаги, память и дневник разработки переносят работу из сессии в сессию. Так можно держать и развивать проект, которому в сумме нужен миллиард токенов контекста: ничто из того, что он узнал, не живёт только в окне. Это главное архитектурное преимущество узла, и остальные вытекают из него.',
+            'Когда окно заполняется, Claude Code обычно сжимает его: разговор заменяется пересказом, который модель пишет сама себе, и всё, что в пересказ не попало, исчезает без следа. В узле сжатие выключено. Узел измеряет, насколько заполнено окно каждого агента, и после 55 % говорит ему об этом. Агент смотрит на работу перед собой: короткую последнюю задачу доделывает, длинную начинает в чистом окне. Он пишет письмо своей следующей сессии (где стоит, ваши слова дословно, что сделано наполовину, следующий шаг), сохраняет его в истории, и узел очищает окно и будит новую сессию этим письмом. Вас ни о чём не спрашивают, а работа продолжается с того, что агент записал сам.',
           ],
         },
         {
