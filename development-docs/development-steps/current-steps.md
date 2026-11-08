@@ -6,8 +6,8 @@ start of a long or irreversible operation (before it), a changed next action. Th
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
 **NOW-47 (2026-11-08, ~14:40 UTC) — 689 BUILT here (`c4d41fd2` plan, `4d2e2941` code), NOT pushed; live proofs after the update** (the owner: «да, утверждаю, начинай 689»): the plan `new-steps/689/`;
-next — 689-1 in the kit master (`architect/kits/_agent-kit/`), then `agent-kit:update`. 690 QUEUED — the five-platform sign-in window
-of April–May found in history (`bf3000c5`, removed in step 500 `28f7cc49`): `new-steps/690-…`. Codex on the owner's Mac — certificate
+next — 689-1 in the kit master (`architect/kits/_agent-kit/`), then `agent-kit:update`. 690 QUEUED (the owner 2026-11-08: the WHOLE node switches Claude Code ↔ Codex; elements side by side cancelled) — the five-platform sign-in window
+of April–May found in history (`bf3000c5`, removed in step 500 `28f7cc49`): `new-steps/690-the-whole-node-switches-its-engine-claude-code-codex.md`. Codex on the owner's Mac — certificate
 revoked, moved to the Trash by the owner.
 
 **NOW-46 (2026-11-08, ~12:30 UTC) — 687 and 688 committed here, NOT pushed; 686 proposed, not agreed.** Ship all three in ONE node

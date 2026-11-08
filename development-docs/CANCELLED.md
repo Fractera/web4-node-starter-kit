@@ -10,3 +10,4 @@ starter line, 2026-08) live in the core's git history.
 | Date | Cancelled | In force instead |
 |---|---|---|
 | 2026-10-30 | `development-docs/PASSPORT.md` — «the fifth address of memory» of the guest starter line, an empty file since 2026-09-18; the guard `check-steps` no longer expects it | what the project is — `CLAUDE.md` section 1 and `development-docs/README.md`; what the node is — the Passport pages (`/architect/passport`) |
+| 2026-11-08 | Element agents on other subscriptions side by side (Codex, Gemini CLI, Qwen Code, Kimi Code in one node) — the first draft of queued step 690. The owner, verbatim: «ok lets' cancel codex, i think better wil create function which will replase all node codex <-> Antropik . to do fix it for step in feature» | queued step 690 — the WHOLE node switches its engine, Claude Code ↔ Codex: one engine at a time |
