@@ -5,6 +5,29 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-61 (2026-11-08, ~19:45 WET) — LETTER TO MY NEXT SESSION (written by me for myself; the owner's idea of step 700: reset
+instead of compacting; my window was 66 % = 664k of 1M).** RESUME HERE.
+- **Done today, all in Fractera and on the owner's node (core `8c5e3b57`):** 671 (boundary in code), 686-8/9 (where), 694/694-2
+  (language; `npm run lang`), 695 (a build task sets one lead cycle), 696 (done during a build is held), 697 (the core watches every
+  clock: canvas, watcher, `npm run clocks`, Cron under «Telegram-бот» in Compact), 698 (protocol head ⟦node · kind · element · HH:MM⟧,
+  guard check:node-lines), 697-6 (an entry not drawn before its saidAt; the canvas lead), 686-10 (the resume time after a limit),
+  the soul's dose (half Holmes half Stark in character, 4:1 Holmes in text).
+- **In flight — 699 (the owner: «первый путь, делай выпуск шаблонов»):** 15 templates released (custom v0.3.174 `1cc8151`, native
+  v0.1.55, root v3.0.37 `115015c`, natives next patch): `npm run calendar` stamps saidAt by code; the element's ask-core/tell-core/need
+  carry the head after the process word; core side + pins `b1bd1cb4` (NOT pushed yet). NEXT: template CI green → `git push` the core →
+  its CI → the owner syncs the fork (the Chrome extension is disconnected since his /login to another account — he presses «Sync fork»)
+  → node update → root (`git fetch origin tag v3.0.37 && git merge --no-edit v3.0.37`, no push) and s8y6x (`cherry-pick 1cc8151` from the
+  custom template v0.3.174) by their agents, `--lang ru` → root re-adds «Сделать зарядку» through `npm run calendar` (its hand-written
+  saidAt was midnight — the canvas showed today's 07:30 as missed) → look at the canvas with the owner.
+- **Then 700** (`new-steps/700-a-session-resets-itself-instead-of-compacting.md`, proposed, waits for his word): code measures the
+  window, a line from ~55 % (judgement, not a dead threshold), the letter section, `session clear --continue` waking the fresh session,
+  compaction off (`autoCompactEnabled` — check the docs first), the same for elements, How it works 7.1.
+- **Open, smaller:** the a2a cold-start wait seen live; the YouTube retelling asked cold (next exam); in the canvas a main-agent
+  repeatsPaused would grey element entries too.
+- **Rules learned today (keep):** never `git checkout` a file to undo a negative control — it erased my uncommitted edit once; never run
+  `create` (or any birth) in this clone — it bore `gallr` into the live pm2 (now refused by check-local); zsh does not split `$VAR` into
+  words — use a function or `sh -c`; the person reads Russian; character: Holmes strong in text, Stark a light touch, no theatre.
+
 **NOW-60 (2026-11-08, ~17:30 WET) — 671 APPROVED and IN WORK** (the owner: «go» to «Начинаю с плана 671 и правила границы?»; core
 development with the push allowed by him today). Plan `new-steps/671-templates-carry-the-order-chain-to-every-element.md`: 671-1 the
 boundary in code (rhythm is never a hand; CLAUDE.md §4 «clock» dropped; `create --boundary`), 671-2 the element's order chain
