@@ -265,8 +265,13 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   const progress = mode !== 'work' ? progressHooks(element) : null
   const extra = { PreToolUse: [...(guard ? [guard] : []), ...(progress?.PreToolUse ?? [])], PostToolUse: progress?.PostToolUse ?? [], UserPromptSubmit: progress?.UserPromptSubmit ?? [], Stop: progress?.Stop ?? [] }
   let hooks = memHooks
+  // 686-2: пульс — каждой сессии, и рабочей тоже: как закончился ход, записанное кодом (`lib/agent-kit/pulse.cjs`).
+  const pulse = typeof modes.pulseHooks === 'function' ? modes.pulseHooks(element) : null
+  if (pulse) for (const [event, list] of Object.entries(pulse)) hooks = { ...(hooks ?? {}), [event]: [...(hooks?.[event] ?? []), ...list] }
   for (const [event, list] of Object.entries(extra)) if (list.length) hooks = { ...(hooks ?? {}), [event]: [...(hooks?.[event] ?? []), ...list] }
-  const mem = { ...(memDir ? { autoMemoryDirectory: memDir } : {}), ...(hooks ? { hooks } : {}) }
+  // 686-2: строка состояния каждой сессии пишет остаток лимита подписки (`lib/agent-kit/limits.cjs`).
+  const line = typeof modes.limitsLine === 'function' ? modes.limitsLine(element) : null
+  const mem = { ...(memDir ? { autoMemoryDirectory: memDir } : {}), ...(hooks ? { hooks } : {}), ...(line ? { statusLine: line } : {}) }
   const ownData = path.join(process.cwd(), 'data', 'services', element)
   if (existsSync(ownData) && !args.includes(ownData)) args = ['--add-dir', ownData, ...(args.length ? args : ['--permission-mode', 'auto'])]
   // 569-3: свои встроенные инструменты папки агента (`.claude/launch-tools.txt`, `lib/agent-kit/modes.cjs`). 🛑 `--tools` забирает СПИСОК
