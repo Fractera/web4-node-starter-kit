@@ -65,6 +65,14 @@ in the element's `app/[lang]/layout.tsx` (custom; root has it dismissible) — e
 стартовый шаблон…», and it is `fixed … top-14 z-30`, so it covers content (the lqvop hero badge). The width/skill badge (`ViewportBadge`,
 «impeccable 1440») is on by default in production too.
 
+The owner, 2026-11-09 11:53 WET, verbatim: «Есть ещё одна вещь у нас в левом нижнем углу экрана есть подсветка ширины экрана и она же
+отображает навык дизайна. Возможно имеет смысл новых дизайна добавить к own-service-props.json ну возможно ещё и ссылку на референс для
+этого можем хранить их в базе данных. Какую-то проблему решает если архитектура развивает связанные решения: например решение вокруг
+генерации контента может предполагать генерацию текста генерацию видео, генерацию клипа то логично что эти решения будут выглядеть в
+одном интерфейсе и если первая уже создано агент нативно может получить описание для второго и сразу же при запуске подставить его на
+вкладку дизайнпредлагаю пользователю с минимальными настройками продолжить разработку? Подумай об этом».
+Fact: the passport already holds `designSkill` (`OWN-SERVICE-PROPS/OWN-SERVICE-PROPS.json`) and reaches the core by `describe:publish`.
+
 Assumptions:
 - I assume that the element's OWN design panel (`admin/design`, `DESIGN-CONFIG`) stays: it caps nothing and gives the owner a path
   without a model. «элементы дизайн» is read as the Design native element.
@@ -106,8 +114,14 @@ Assumptions:
 - `npm run load` lists neither blocks nor design; every existing element's pages still render (eyes screenshots before and after).
 - lqvop's home page rebuilt by the new pass and graded by the owner.
 
-## Substeps — draft order, unfolded after the owner's answer on the legacy
+## Substeps — draft for the owner's approval (2026-11-09 11:53)
 
-706-1 review tools and verdicts out of Blocks · 706-2 the section pattern in the three templates · 706-3 the design pass rewritten
-(brief, DESIGN.md, frontend-design, the anti-slop list from the verdicts) · 706-4 template releases and rollout · 706-5 the core: natives
-out, pages, commands, skills, CLAUDE.md §3/§6 sealed · 706-6 node update, live proofs, lqvop's page.
+706-1 core: «Blocks» leaves the Build tab; «Site settings» gets the CONFIG link switch moved from the Danger zone · 706-2 template:
+the quick navigation banner — an island in the flow; localhost always, own domain only the architect, temporary address hidden; three
+buttons, the width badge folded in · 706-3 template: «Design» = the brief (audience, character, references with upload, anti-references,
+the skill with a default); the look in the passport; the design pass reads the brief · 706-4 template: the empty body «awaiting design»,
+noindex; the Blocks pages, `npm run blocks`, cards and the two composition guards go · 706-5 release custom and root, pins, push, fork
+sync, node update · 706-6 the stand born from the new tag: the owner fills the brief, its agent designs, the owner grades · 706-7 birth
+«like element X»: X's look from its passport fills the new element's brief, proven with a sibling of the stand.
+Not included: the brief from Telegram; the natives Blocks and Design out of the core's list; review-page and verdicts moved; the existing
+elements.
