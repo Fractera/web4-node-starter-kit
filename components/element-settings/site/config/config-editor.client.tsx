@@ -3,7 +3,7 @@
 import { Fragment, useMemo, useState } from "react"
 import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { H3, Small } from "@/components/ui/typography"
+import { Small, H4 } from "@/components/ui/typography"
 import { Separator } from "@/components/ui/separator"
 import { FieldRow } from "./field-row.client"
 import { patchAtPath, mergePatches, typedValue, type Section } from "@/lib/site-settings/fields"
@@ -123,7 +123,7 @@ export function ConfigEditor({
       {sections.map(section => (
         <section data-block="f1eh3" key={section.id} data-section={section.id} className="flex flex-col gap-4">
           <div data-block="imo28" className="flex flex-col gap-1">
-            <H3 data-block="ed9gd" variant="ui">{ui.sections[section.id] ?? section.id}</H3>
+            <H4 data-block="ed9gd" variant="ui">{ui.sections[section.id] ?? section.id}</H4>
             {ui.sectionHints[section.id] && (
               <Small data-block="rktgg" className="max-w-2xl">{ui.sectionHints[section.id]}</Small>
             )}

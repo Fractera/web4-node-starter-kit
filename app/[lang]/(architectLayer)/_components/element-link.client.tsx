@@ -8,10 +8,11 @@ import type { ElementSettingsUi } from "../_i18n/element-settings.i18n"
 // ОДНА СВЯЗЬ ЭЛЕМЕНТА С УЗЛОМ (324-7): CONFIG, Дизайн или Блоки. Состояние словами и одна кнопка; нажатие — дверь ядра
 // `/api/architect/items/<id>/links`, которая пишет состояние, выполняет своё (перенос настроек, реестр блоков) и
 // перерисовывает страницы элемента.
+// 713-3: `variant="line"` — та же связь одной строкой над «Настройками сайта» (была карточка в половину ширины над вкладками).
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
-export function ElementLink({ id, kind, on, ui }: { id: string; kind: "config" | "design" | "blocks"; on: boolean; ui: ElementSettingsUi }) {
+export function ElementLink({ id, kind, on, ui, variant = "card" }: { id: string; kind: "config" | "design" | "blocks"; on: boolean; ui: ElementSettingsUi; variant?: "card" | "line" }) {
   const w = ui.linkCard
   const router = useRouter()
   const [busy, setBusy] = useState(false)
@@ -27,6 +28,21 @@ export function ElementLink({ id, kind, on, ui }: { id: string; kind: "config" |
       setError(`${w.failed} ${j?.error ?? r.status}`)
     } catch { setError(w.failed) }
     setBusy(false)
+  }
+
+  if (variant === "line") {
+    return (
+      <div data-block="elk01" className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-lg border border-border px-4 py-3" data-element-link={kind} data-link-on={on ? "yes" : "no"}>
+        <p data-block="elk02" className="flex min-w-0 items-center gap-2.5 text-[length:var(--fs-small)] text-foreground">
+          <span data-block="elk03" aria-hidden className={`size-2 shrink-0 rounded-full ${on ? "bg-primary" : "bg-muted-foreground/50"}`} />
+          {on ? w.lineOn : w.lineOff}
+        </p>
+        <Button type="button" size="sm" variant="outline" onClick={toggle} disabled={busy} data-link-toggle>
+          {busy ? w.busy : on ? w.turnOff : w.turnOn}
+        </Button>
+        {error && <p data-block="elk04" className="w-full text-[length:var(--fs-small)] text-destructive" role="alert">{error}</p>}
+      </div>
+    )
   }
 
   return (

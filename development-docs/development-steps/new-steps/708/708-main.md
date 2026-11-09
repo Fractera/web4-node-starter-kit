@@ -93,3 +93,6 @@ Kit master `app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/server/`:
   (scratchpad t7087/fixture.cjs): an old transcript touched again is not taken, the new one is, the record keeps its other fields, a
   non-uuid is refused, `resumable` returns the new id. On the node the record was set by hand to c5fa494c meanwhile. Live proof: the
   next `session clear` after the node update — the bridge log «после сброса — разговор … записан».
+- 708-7 PROVEN LIVE 2026-11-09 20:35 on build ecc66c40: `session clear --continue` from c5fa494c; the bridge log «после сброса —
+  разговор 194cd707-1ac0-442a-9ca0-255e6e50de4a записан» (20:35:13), session-mode.json `conversation` = 194cd707 = the woken session's
+  own transcript (20:35:19 «пробуждён письмом после сброса»). The record's `at` stays the mode's start (20:14) — by design.

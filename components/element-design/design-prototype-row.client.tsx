@@ -1,39 +1,37 @@
 "use client"
 
-import { useState } from "react"
-import { Button, buttonVariants } from "@/components/ui/button"
-import { Small } from "@/components/ui/typography"
+import { Skeleton } from "@/components/ui/skeleton"
 import type { ElementDesignWords } from "@/app/[lang]/(architectLayer)/_i18n/element-design.i18n"
-import { DOOR, type Prototype } from "./types"
+import { PrototypeActions, prototypeHref, shotUrl } from "./design-prototype-actions.client"
+import type { Prototype } from "./types"
+import { SMALL } from "./step-parts"
 
-// ОДИН ПРОТОТИП (711-5, 711-6): статус, снимки компьютера и телефона, ссылка на страницу в защищённом разделе элемента и «Закрепить».
-// Ссылка — на сам элемент: этот компьютер — его порт, свой домен — его адрес (адрес выбирает браузер, `element-design-panel.client.tsx`).
-export function DesignPrototypeRow({ item, lang, proto, queued, base, words, canPin, onPin, onBuild }: {
-  item: string; lang: string; proto: Prototype | null; queued?: string; base: string | null; words: ElementDesignWords; canPin: boolean; onPin: (id: string) => void; onBuild?: () => Promise<boolean>
+// ОДНА ПРОБНАЯ СТРАНИЦА В ШАГЕ «ПРОБЫ» (711-5, вид 713-2): миниатюра, имя и состояние словами, «Открыть» и «Собрать». Пока строится или
+// ждёт очереди — заглушка вместо снимка и строка, когда её ждать. Сравнение крупно и «Закрепить» — шаг «Закрепление».
+export function DesignPrototypeRow({ item, lang, proto, queued, base, words, time, onBuild }: {
+  item: string; lang: string; proto: Prototype | null; queued?: string; base: string | null; words: ElementDesignWords
+  time: (iso?: string) => string; onBuild?: () => Promise<boolean>
 }) {
-  const [building, setBuilding] = useState(false)
-  if (!proto) {
-    return <li data-block="edp01" data-prototype-row={queued} data-status="queued" className="rounded-md border border-dashed border-border px-3 py-2"><Small data-block="edp02" className="text-muted-foreground">{queued} · {words.status.queued}</Small></li>
-  }
-  const shot = (size: "desktop" | "mobile") => `${DOOR}?item=${encodeURIComponent(item)}&shot=${encodeURIComponent(proto.id)}&size=${size}`
-  const href = base && !proto.archived ? `${base}/${lang}/prototypes/${proto.id}` : null
+  const id = proto?.id ?? queued ?? ""
+  const status = proto ? proto.status : "queued"
+  const waiting = status === "queued" || status === "draft"
+  const ready = proto && (proto.status === "ready" || proto.status === "pinned") && !proto.archived
   return (
-    <li data-block="edp03" data-prototype-row={proto.id} data-status={proto.status} className="flex flex-col gap-2 rounded-md border border-border p-3">
-      <div data-block="edp04" className="flex flex-wrap items-center justify-between gap-2">
-        <span data-block="edp05" className="text-sm text-foreground">{proto.title ?? proto.id}<span className="text-muted-foreground"> · {words.status[proto.status]}</span></span>
-        <span data-block="edp06" className="flex gap-2">
-          {href && <a href={href} target="_blank" rel="noopener noreferrer" className={buttonVariants({ size: "sm", variant: "outline" })} data-prototype-open>{words.open}</a>}
-          {proto.status === "ready" && !proto.archived && onBuild && <Button size="sm" variant="outline" disabled={building} onClick={async () => setBuilding(await onBuild())} title={words.buildHint} data-prototype-build>{words.build}</Button>}
-          {proto.status === "ready" && !proto.archived && <Button size="sm" disabled={!canPin} onClick={() => onPin(proto.id)} title={words.pinHint} data-prototype-pin>{words.pin}</Button>}
-        </span>
-      </div>
-      {building && <Small data-block="edp08" className="text-muted-foreground">{words.building}</Small>}
-      {(proto.shots.desktop || proto.shots.mobile) && (
-        <div data-block="edp07" className="flex items-start gap-2">
-          {proto.shots.desktop && <img src={shot("desktop")} alt={`${proto.id} · ${words.desktop}`} className="h-40 w-auto rounded border border-border object-cover object-top" loading="lazy" />}
-          {proto.shots.mobile && <img src={shot("mobile")} alt={`${proto.id} · ${words.mobile}`} className="h-40 w-auto rounded border border-border object-cover object-top" loading="lazy" />}
-        </div>
+    <li data-block="edp01" data-prototype-row={id} data-status={status} className="flex flex-wrap items-center gap-4 px-4 py-3">
+      {proto?.shots.desktop ? (
+        <img src={shotUrl(item, proto.id, "desktop")} alt={`${proto.title ?? proto.id} · ${words.desktop}`} loading="lazy"
+          className="aspect-[16/10] w-24 shrink-0 rounded-md border border-border object-cover object-top" />
+      ) : (
+        <Skeleton data-block="edp02" className="aspect-[16/10] w-24 shrink-0 rounded-md" />
       )}
+      <div data-block="edp03" className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <span data-block="edp04" className={`truncate font-medium text-foreground ${SMALL}`}>{proto?.title ?? id}</span>
+        <span data-block="edp05" className={`text-muted-foreground ${SMALL}`}>
+          {words.status[status]}{proto?.readyAt && ready ? ` · ${time(proto.readyAt)}` : ""}
+        </span>
+        {waiting ? <span data-block="edp06" className={`text-muted-foreground ${SMALL}`}>{words.buildingWait}</span> : null}
+      </div>
+      {ready ? <PrototypeActions href={prototypeHref(base, lang, proto)} onBuild={onBuild} words={words} /> : null}
     </li>
   )
 }

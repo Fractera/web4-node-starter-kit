@@ -7,7 +7,7 @@ import { toast } from "./toast"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { H3, P, Small } from "@/components/ui/typography"
+import { P, Small, H4 } from "@/components/ui/typography"
 import { AdviceNote } from "./advice-note"
 import type { GroupsUi } from "./groups.i18n"
 import { SearchLanguages } from "./search-languages.client"
@@ -222,7 +222,7 @@ export function LanguagesEditor({
 
       <section data-block="a5c0n" className="flex flex-col gap-4">
         <div data-block="z0476" className="flex flex-col gap-1">
-          <H3 data-block="b8i9j" variant="ui">{t.title}</H3>
+          <H4 data-block="b8i9j" variant="ui">{t.title}</H4>
           <Small data-block="j9ji0" className="max-w-2xl">{t.hint}</Small>
           <Small data-block="aw6n7" data-lang-count className="font-medium text-foreground">
             {selected.length} {t.selected}

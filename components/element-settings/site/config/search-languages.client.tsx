@@ -6,7 +6,7 @@ import { Loader2, Lock, LockOpen } from "lucide-react"
 import { toast } from "./toast"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { H3, P, Small } from "@/components/ui/typography"
+import { P, Small, H4 } from "@/components/ui/typography"
 import { AdviceNote } from "./advice-note"
 import type { LangRow } from "./languages-editor.client"
 import type { SearchLanguagesWords } from "./search-languages.i18n"
@@ -92,7 +92,7 @@ export function SearchLanguages({
 
   return (
     <section data-block="sl340" data-search-languages className="flex flex-col gap-5">
-      <H3 data-block="h60b0" variant="ui">{w.title}</H3>
+      <H4 data-block="h60b0" variant="ui">{w.title}</H4>
       <AdviceNote probe="search-languages" tone="recommended" title={w.adviceTitle} text={w.advice} />
       <Small data-block="jmqfx" className="max-w-2xl">{w.why}</Small>
 

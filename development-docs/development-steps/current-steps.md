@@ -5,6 +5,12 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-85 (2026-11-09, 20:50 WET) — 713 IN WORK: the element's Design and Site settings tabs redesigned as one logical flow (the owner:
+«не спагетти дизайн … найди меня когда твой внутренний критик скажет это восхитительно» — approved, no questions). Plan
+`new-steps/713/713-main.md`. 708-7 PROVEN LIVE at 20:35 (line in 708-main.md); 686-5 PROVEN LIVE at 20:52 (a natural limit stop at
+18:38; its text reworded — line in 686-main.md). 713-1..4 BUILT in the workshop (tsc clean, guards green; check:i18n keeps its 44 old
+dictionaries). NEXT: commit, push, CI, fork sync (Chrome), node update; eyes on qfx9w at 1440 and 390; the critic; fix until «delightful».**
+
 **NOW-84 (2026-11-09) — 711 BUILT: template v0.3.179 released (CI green) and pinned (`7f2a9c4f`), core `b675d7f5` (the Design tab,
 the live search, the element-space store, the door, generate/pin through the element's agent). NEXT: push, CI, fork sync, node update;
 then 711-8 the stand: a new custom element from v0.3.179, the Design tab by eyes, one prototype generated end to end, the owner's grade;

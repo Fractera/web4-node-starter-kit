@@ -19,3 +19,9 @@ UserPromptSubmit (never to work sessions); 689 gives an element its own Claude C
 | 686-5 | Pause and resume: a stop by the limit wakes the element at `resets_at` by the core's clock, «continue from your record» (the owner's standing yes in this plan) | a wake at a set time |
 | 686-6 | Lending: the leader runs a waiting element's session on the node's login only while the forecast keeps ≥15% of the limit, every lending counted, recorded, returned at the job's end, paused below 15% (§1, 2026-11-08) | a lending record and its return; a refusal at a low forecast |
 | 686-7 | How it works 7.3 says it works | the page |
+
+- 686-5 PROVEN LIVE 2026-11-09 on build ecc66c40 (a natural stop): the main agent's turn was stopped by the subscription limit at 18:38:49
+  WET; the core's clock got ONE entry `resume-build-2026-11-09T2052` (the reset + 2 min) and pasted it into the live session at 20:52:01
+  (`cron-runs.jsonl`: «pasted into the live session»). Found: the text «where you stopped (step 686-5)» reads as the agent's own step — the
+  woken session took 686-5 for its step; worded in 713 as «this wake is the node's step 686-5, not your step». Noted, not built: the
+  session had already gone on after the stop (a reset and a new conversation at 20:35) — the paste was harmless but redundant.

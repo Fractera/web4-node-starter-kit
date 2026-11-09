@@ -66,7 +66,6 @@ import { listOrders } from '@/lib/web4-items/element-orders'
 import { elementDashboardUi } from '../../../_i18n/element-dashboard.i18n'
 import { hasDoc } from '@/lib/web4-items/element-docs'
 import { ElementDocIsland } from '@/components/element-docs/element-doc.client'
-import { ElementDesignPanel } from '@/components/element-design/element-design-panel.client'
 import { elementDesignWords } from '../../../_i18n/element-design.i18n'
 import { ElementDesignSettings } from '@/components/element-settings/design-settings.client'
 import { designUi } from '@/components/design/design.i18n'
@@ -412,26 +411,23 @@ export default async function Page({ params }: { params: Promise<Params> }) {
     : null
   const siteSettings = key === 'build/site-settings'
     ? (entry
-      ? <>
-          {/* 706-1: первой строкой — наследует ли элемент CONFIG узла (прежде карточка «Опасной зоны»). */}
-          <ElementDangerZone ui={sui} badge={false} cards={['config']} actions={{ config: <ElementLink id={item} kind="config" on={readLinks(item).config} ui={sui} /> }} />
-          {/* 712-4 (владелец 2026-11-09: «избавиться от внешних страниц»): свои настройки сайта элемента правятся здесь, пультом ядра. */}
-          <ElementSiteSettingsRemote item={item} slug={slug} lang={lang} port={port} publicUrl={ownPublicUrl} words={elementRemoteWords(lang)} site={siteRemoteWords(lang)} />
-          {/* 567-6: «элемент в сети Web4» — только у кастомного: у нативного сети нет. */}
-          {!treeCtx.native ? <ElementWeb4 id={item} ui={sui} dialogUi={appDialogUi(lang)} initialOn={treeCtx.web4 !== false} /> : null}
-        </>
+      // 706-1: первой строкой — наследует ли элемент CONFIG узла; 712-4 (владелец 2026-11-09: «избавиться от внешних страниц»): свои
+      // настройки сайта правятся здесь, пультом ядра; 567-6: «Сеть Web4» — только у кастомного. 713-3 («не спагетти дизайн»): связь —
+      // одной строкой сверху, Web4 — последним разделом списка, а не отдельной частью под кнопкой «Сохранить».
+      ? <ElementSiteSettingsRemote item={item} slug={slug} lang={lang} port={port} publicUrl={ownPublicUrl} words={elementRemoteWords(lang)} site={siteRemoteWords(lang)}
+          configLine={<ElementLink id={item} kind="config" on={readLinks(item).config} ui={sui} variant="line" />}
+          web4={!treeCtx.native ? <ElementWeb4 id={item} ui={sui} dialogUi={appDialogUi(lang)} initialOn={treeCtx.web4 !== false} bare /> : null} />
       : <p className="my-4 text-sm text-muted-foreground">{sui.notBorn}</p>)
     : null
 
   // 711: рабочая вкладка ядра — живой поиск навыков дизайна, кандидаты, референсы, тестовые страницы и закрепление.
   // 712-3 (владелец 2026-11-09: «перенести дизайн страницу на ту самую вкладку»): вкладка целиком — бриф, панель 711, тонкая настройка;
   // всё читает и пишет пульт ядра в файлы самого элемента, ссылки наружу нет.
+  // 713 (владелец 2026-11-09: «не спагетти дизайн … проходит от начала и до конца»): один путь «Бриф → Навыки → Пробы → Закрепление».
   const designPage = key === 'build/design'
     ? (entry
-      ? <section className="my-6 flex flex-col gap-3" data-element-design-page data-block="element-design-page">
-          <ElementDesignSettings item={item} ui={designUi(lang)} words={elementRemoteWords(lang)}>
-            <ElementDesignPanel item={item} lang={lang} port={port} publicUrl={ownPublicUrl} words={elementDesignWords(lang)} dialogUi={appDialogUi(lang)} />
-          </ElementDesignSettings>
+      ? <section className="flex flex-col" data-element-design-page data-block="element-design-page">
+          <ElementDesignSettings item={item} lang={lang} port={port} publicUrl={ownPublicUrl} ui={designUi(lang)} words={elementRemoteWords(lang)} design={elementDesignWords(lang)} dialogUi={appDialogUi(lang)} />
         </section>
       : <p className="my-4 text-sm text-muted-foreground">{sui.notBorn}</p>)
     : null

@@ -22,7 +22,8 @@ export type ElementSettingsUi = {
   config: Card
   design: Card
   blocks: Card
-  linkCard: { on: string; off: string; turnOn: string; turnOff: string; busy: string; failed: string }
+  /** 713-3: `lineOn`/`lineOff` — the CONFIG link as one line on top of «Site settings». */
+  linkCard: { on: string; off: string; turnOn: string; turnOff: string; busy: string; failed: string; lineOn: string; lineOff: string }
   remove: Card
   removeDialog: { title: string; text: string; label: string; confirm: string; deleting: string; cancel: string; mismatch: string; failed: string; riskNever: string; riskAhead: string; riskNone: string }
   /** 567: включение элемента — признак узла «выключен» с причиной. */
@@ -138,7 +139,7 @@ const DICT: Record<string, ElementSettingsUi> = {
       text: "The element's agent takes ready blocks from the Blocks registry. Turned off, the registry is removed from components.json; blocks already taken stay in the element's code.",
       action: "", pending: "",
     },
-    linkCard: { on: "Connected", off: "Disconnected — the element lives on its own", turnOn: "Connect", turnOff: "Disconnect", busy: "Saving…", failed: "Not saved:" },
+    linkCard: { on: "Connected", off: "Disconnected — the element lives on its own", turnOn: "Connect", turnOff: "Disconnect", busy: "Saving…", failed: "Not saved:", lineOn: "The site settings come from the node's CONFIG — shared with every linked element.", lineOff: "The element keeps its own site settings — the link to the node's CONFIG is off." },
     signIn: {
       title: "Sign-in on your own domain",
       text: "Read this before you decide that sign-in is broken: on an own domain it works through the node's sign-in center.",
@@ -332,7 +333,7 @@ const DICT: Record<string, ElementSettingsUi> = {
       text: "Агент элемента берёт готовые блоки из реестра «Блоков». Отключите — реестр уберётся из components.json; уже взятые блоки останутся в коде элемента.",
       action: "", pending: "",
     },
-    linkCard: { on: "Подключено", off: "Отключено — элемент живёт самостоятельно", turnOn: "Подключить", turnOff: "Отключить", busy: "Сохраняю…", failed: "Не сохранено:" },
+    linkCard: { on: "Подключено", off: "Отключено — элемент живёт самостоятельно", turnOn: "Подключить", turnOff: "Отключить", busy: "Сохраняю…", failed: "Не сохранено:", lineOn: "Настройки сайта приходят из CONFIG узла — общие для всех связанных элементов.", lineOff: "Элемент ведёт свои настройки сайта — связь с CONFIG узла выключена." },
     signIn: {
       title: "Вход на собственном домене",
       text: "Прочитайте, прежде чем решить, что вход сломан: на собственном домене он работает через центр входа узла.",

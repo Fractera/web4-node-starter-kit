@@ -7,7 +7,7 @@ import { ownSettingsUrl } from "./settings-access"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { H3, P, Small } from "@/components/ui/typography"
+import { P, Small, H4 } from "@/components/ui/typography"
 import {
   candidateTree,
   renumber,
@@ -280,7 +280,7 @@ export function NavEditor({
 
       <section data-block="slq2m" className="flex flex-col gap-4">
         <div data-block="qopzx" className="flex flex-col gap-1">
-          <H3 data-block="nhpjh" variant="ui">{t.items}</H3>
+          <H4 data-block="nhpjh" variant="ui">{t.items}</H4>
           <Small data-block="jjp9a" className="max-w-2xl">{t.itemsHint}</Small>
           <Small data-block="hojto" className="max-w-2xl">{t.nestHint}</Small>
         </div>
@@ -409,7 +409,7 @@ export function NavEditor({
 
       <section data-block="eb0cb" className="flex flex-col gap-4">
         <div data-block="slwwc" className="flex flex-col gap-1">
-          <H3 data-block="ozb1b" variant="ui">{t.candidates}</H3>
+          <H4 data-block="ozb1b" variant="ui">{t.candidates}</H4>
         </div>
         <Separator />
 

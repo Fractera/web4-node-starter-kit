@@ -15,10 +15,11 @@ import type { ElementSettingsUi } from "../_i18n/element-settings.i18n"
 // чтобы переключить режим нужно нажать на звёздочку в этой карточке всплывёт модельное окно в котором пользователь должен понимать о том что
 // происходит и подтвердить это. После этого на карточке загорается*». Запись — дверь `/api/node/web4`; после неё страница перезагружается:
 // меню (A2A и «Отзывы») рисует сервер.
+// 713-3: `bare` — раздел «Сеть Web4» списка «Настроек сайта»: заголовок и строку даёт раздел, здесь — две карточки владельца и окно.
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
-export function ElementWeb4({ id, ui, dialogUi, initialOn }: { id: string; ui: ElementSettingsUi; dialogUi: AppDialogUi; initialOn: boolean }) {
+export function ElementWeb4({ id, ui, dialogUi, initialOn, bare = false }: { id: string; ui: ElementSettingsUi; dialogUi: AppDialogUi; initialOn: boolean; bare?: boolean }) {
   const w = ui.web4
   const [on] = useState(initialOn)
   const [target, setTarget] = useState<boolean | null>(null)
@@ -67,10 +68,8 @@ export function ElementWeb4({ id, ui, dialogUi, initialOn }: { id: string; ui: E
   }
 
   return (
-    <section className="my-6 flex flex-col gap-3" data-element-web4={on ? "on" : "off"} aria-label={w.title}>
-      <Separator />
-      <H2>{w.title}</H2>
-      <p className="text-sm text-muted-foreground">{w.lead}</p>
+    <section className={bare ? "flex flex-col gap-3" : "my-6 flex flex-col gap-3"} data-element-web4={on ? "on" : "off"} aria-label={w.title}>
+      {bare ? null : <><Separator /><H2>{w.title}</H2><p className="text-sm text-muted-foreground">{w.lead}</p></>}
       <div className="grid gap-3 md:grid-cols-2">
         {card(true)}
         {card(false)}

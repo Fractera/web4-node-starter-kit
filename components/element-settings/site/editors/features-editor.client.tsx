@@ -7,7 +7,7 @@ import { ownSettingsUrl } from "./settings-access"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
-import { H3, P, Small } from "@/components/ui/typography"
+import { P, Small, H4 } from "@/components/ui/typography"
 import type { GroupsUi } from "./groups.i18n"
 
 // ВЫКЛЮЧАТЕЛИ ВОЗМОЖНОСТЕЙ ПРОЕКТА (31-13, 2026-08-29).
@@ -121,7 +121,7 @@ export function FeaturesEditor({
     <div data-block="ibho5" data-features-editor className="flex flex-col gap-8">
       <section data-block="k0pca" className="flex flex-col gap-4">
         <div data-block="eexyf" className="flex flex-col gap-1">
-          <H3 data-block="grbyy" variant="ui">{title}</H3>
+          <H4 data-block="grbyy" variant="ui">{title}</H4>
           {hint && <Small data-block="kbab1" className="max-w-2xl">{hint}</Small>}
         </div>
         <Separator />

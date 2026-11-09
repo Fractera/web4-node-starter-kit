@@ -372,9 +372,9 @@ export const ITEM_TREE: TreePage[] = [
       // элемента»): только переадресация на страницы самого элемента, в ядре ничего не строится. Только у кастомных: 579 — их шаг.
       // 706-1: страница ядра с одной ссылкой на мастерскую элемента — адрес выбирает браузер (на этой машине — локальный порт
       // элемента, иначе его свой домен): прежняя переадресация вела на `https://<адрес>`, которого без своего домена нет.
-      { slug: "design", custom: true, words: w("Design", "The element's brief, design skills, test pages and fine tuning — its own files, changed right here.", "Дизайн", "Бриф, навыки дизайна, тестовые страницы и тонкая настройка элемента — его собственные файлы, правятся прямо здесь.") },
+      { slug: "design", custom: true, words: w("Design", "How the element looks — from the brief to the pinned design, step by step.", "Дизайн", "Облик элемента — от брифа до закреплённого дизайна, шаг за шагом.") },
       // 706-1: связь с CONFIG узла — здесь, первой строкой (прежде в «Опасной зоне»), и ссылка на свои настройки элемента.
-      { slug: "site-settings", words: w("Site settings", "Whether the element takes the node's CONFIG, and its own site settings — name, search, languages, menus, switches — changed right here.", "Настройки сайта", "Наследует ли элемент CONFIG узла, и свои настройки сайта — название, поиск, языки, меню, выключатели — правятся прямо здесь.") },
+      { slug: "site-settings", words: w("Site settings", "The element's name, search, languages, menus and switches — section by section.", "Настройки сайта", "Имя, поиск, языки, меню и выключатели элемента — по разделам.") },
       // 472: у элемента с H2A бот переехал в H2A (`MOVED_WITH`); здесь он остаётся для элементов без H2A.
       { slug: "telegram", unless: "h2a", words: w("Telegram bot", "A bot that talks to the same agent session.", "Telegram-бот", "Бот, который говорит с той же сессией агента.") },
       { slug: "environment", words: w("Environment variables", "Keys and settings the element reads at start.", "Переменные окружения", "Ключи и настройки, которые элемент читает при старте.") },
