@@ -38,6 +38,16 @@ The order is now his: a NEW test element from the custom starter (`--look own --
 the existing elements later. lqvop is out of this step. The way back (my proposal): the element's agent hands its pattern commits as
 patches into its own data folder; I apply them in the workshop clone, generalise, release. The element's subject waits for the owner.
 
+The owner, 2026-11-09 11:42 WET, a proposal under discussion, verbatim: «имеющийся стартовый дизайн с которым проходит сейчас страница
+создает для агента Pater безликого дизайна? Если я тебя правильно понял то стартовый шаблон не имеющий никакого Патерно проще развернуть в
+любую сторону? Если это так то наилучшим решением будет пустой экран, который имеет обязательно заголовок обязательно футер наш
+стандартный обязательно хлебные кружки если они включены и обязательно секции вопрос ответ если они включены обязательно страницы футера
+если они включены всё остальное так называемое тело в идеальном состоянии лучше бы оставалось пустым? Так ли это». Fact: the starter's
+home today = block-hero-centered + widget-static-custom-landing (343 lines: cards, flow, access-map, faq) + ~10 section-heads with text +
+block-faq — the pattern every element inherits. My answer: yes, with three conditions — the chrome follows the element's tokens; an empty
+body is a declared state «awaiting design», closed from indexing (check:page-blocks rule 7 forbids an empty home today, ✗ 577-7); the
+brief and the anti-slop list replace our pattern, or the model's own default (the same centred SaaS hero) fills the void.
+
 Assumptions:
 - I assume that the element's OWN design panel (`admin/design`, `DESIGN-CONFIG`) stays: it caps nothing and gives the owner a path
   without a model. «элементы дизайн» is read as the Design native element.
