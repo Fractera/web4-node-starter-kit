@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { AlertTriangle, ChevronDown, ClipboardPaste, Eraser, Moon, Play, Square } from "lucide-react"
+import { AlertTriangle, ChevronDown, ClipboardPaste, Eraser, Square } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ForbiddenWithExit } from "@/components/node-state/open-on-this-computer.client"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
@@ -12,6 +12,7 @@ import { createMouseFilter, MOUSE_OFF } from "./mouse-filter.mjs"
 import { type XtermHandle, XtermTerminal } from "./xterm-terminal.client"
 import type { CoreTerminalWords } from "@/components/deploy/core-terminal.client"
 import { CoreBuildWatch } from "./core-build-watch.client"
+import { type ResumeOffer, SleepingCard } from "./sleeping-card.client"
 
 // ТЕРМИНАЛ АГЕНТА УЗЛА: СПИТ ДО ЗАПУСКА, ЖИВЁТ ПРИ УХОДЕ, ОСТАНАВЛИВАЕТСЯ КНОПКОЙ (267-1).
 //
@@ -43,6 +44,8 @@ export function AgentTerminal({ service, lang, words, build, dialogUi, initialPa
   const [state, setState] = useState<State>("checking")
   const [note, setNote] = useState("")
   const [folder, setFolder] = useState<string | null | undefined>(undefined)
+  // 708-2: что продолжить — из двери состояния (`resume`); нет записанного разговора — одна кнопка, как прежде.
+  const [offer, setOffer] = useState<ResumeOffer | null>(null)
   const termRef = useRef<XtermHandle>(null)
   const wsRef = useRef<WebSocket | null>(null)
   const sizeRef = useRef({ cols: 120, rows: 32 })
@@ -102,13 +105,20 @@ export function AgentTerminal({ service, lang, words, build, dialogUi, initialPa
     return () => window.clearTimeout(t)
   }, [pasteOpen])
 
+  // 708-2: сессия кончилась при открытой странице — мост пишет её конец при выходе процесса; спросить дверь чуть позже.
+  const refreshOffer = useCallback(() => {
+    window.setTimeout(() => {
+      void fetch(sessionUrl, { cache: "no-store" }).then((r) => r.json()).then((b: { resume?: ResumeOffer | null }) => setOffer(b.resume ?? null)).catch(() => {})
+    }, 1500)
+  }, [sessionUrl])
+
   const send = useCallback((payload: unknown) => {
     const ws = wsRef.current
     if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(payload))
   }, [])
 
   const connect = useCallback(
-    async (wantStart: boolean, task?: string) => {
+    async (wantStart: boolean, task?: string, again = false) => {
       setState("connecting")
       setNote("")
       setTaskAtStart(false)
@@ -132,7 +142,7 @@ export function AgentTerminal({ service, lang, words, build, dialogUi, initialPa
       ws.onopen = () => {
         // 🛑 `init` ПЕРВЫМ ДЕЙСТВИЕМ: любое исключение до него съело бы его целиком, и мост закрыл бы
         // молчащее соединение — человек увидел бы чёрный экран (оплачено у чата, 157-3).
-        ws.send(JSON.stringify({ mode: "agent", start: wantStart, ticket, type: "init", ...(task ? { task } : {}) }))
+        ws.send(JSON.stringify({ mode: "agent", start: wantStart, ticket, type: "init", ...(task ? { task } : {}), ...(again ? { resume: true } : {}) }))
         if (task) {
           taskPendingRef.current = task
           setTaskAtStart(true)
@@ -168,16 +178,18 @@ export function AgentTerminal({ service, lang, words, build, dialogUi, initialPa
         } else if (event.reason === "stopped") {
           setState("stopped")
           setNote(words.stopped)
+          refreshOffer()
         } else if (event.reason === "exited") {
           setState("stopped")
           setNote(words.exited)
+          refreshOffer()
         } else {
           setState("offline")
           setNote(event.reason === "no-agent-dir" ? words.noFolder : words.offline)
         }
       }
     },
-    [api, service, words.exited, words.noFolder, words.offline, words.stopped],
+    [api, service, words.exited, words.noFolder, words.offline, words.stopped, refreshOffer],
   )
 
   useEffect(() => {
@@ -190,7 +202,7 @@ export function AgentTerminal({ service, lang, words, build, dialogUi, initialPa
           setState("forbidden")
           return
         }
-        const body = (await res.json()) as { running?: boolean; agentDir?: string | null; service?: string; reason?: string }
+        const body = (await res.json()) as { running?: boolean; agentDir?: string | null; service?: string; reason?: string; resume?: ResumeOffer | null }
         if (cancelled) return
         if (body.reason === "no-modes") {
           setNoModes(true)
@@ -198,6 +210,7 @@ export function AgentTerminal({ service, lang, words, build, dialogUi, initialPa
         }
         if (body.service) keyRef.current = body.service
         setFolder(body.agentDir ?? null)
+        setOffer(body.resume ?? null)
         const task = taskForStartRef.current
         taskForStartRef.current = null
         if (body.running) {
@@ -236,7 +249,8 @@ export function AgentTerminal({ service, lang, words, build, dialogUi, initialPa
     wsRef.current?.close()
     setState("stopped")
     setNote(words.stopped)
-  }, [words.stopped, sessionUrl, mode])
+    refreshOffer()
+  }, [words.stopped, sessionUrl, mode, refreshOffer])
 
   const handleClear = useCallback(() => {
     termRef.current?.reset()
@@ -308,20 +322,7 @@ export function AgentTerminal({ service, lang, words, build, dialogUi, initialPa
 
       {!live && (
         <CoreBuildWatch active={state !== "checking"} words={words} build={build} sessionUrl={sessionUrl}>
-        <div className="flex flex-col gap-3 rounded-lg border border-border border-dashed bg-muted/40 p-5 text-muted-foreground">
-          <div className="flex items-center gap-2 font-medium text-foreground">
-            <Moon className="size-4" aria-hidden />
-            {state === "checking" ? "…" : words.sleepingTitle}
-          </div>
-          <p className="text-sm">{words.sleepingBody}</p>
-          {note && <p className="text-sm">{note}</p>}
-          <div>
-            <Button disabled={state === "checking" || folder === null} onClick={() => connect(true)} type="button" data-agent-start>
-              <Play className="size-4" aria-hidden />
-              {words.start}
-            </Button>
-          </div>
-        </div>
+        <SleepingCard words={words} checking={state === "checking"} disabled={state === "checking" || folder === null} note={note} offer={offer} onStart={(again) => connect(true, undefined, again)} />
         </CoreBuildWatch>
       )}
 

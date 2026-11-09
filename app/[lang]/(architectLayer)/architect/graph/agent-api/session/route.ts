@@ -4,8 +4,9 @@ import { NextRequest, NextResponse } from "next/server"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { status, stop } from "../../_agent-kit/server/session.cjs"
-import { isBornItem, serviceDir } from "../../_agent-kit/server/workspace.cjs"
+import { isBornItem, ownClaudeDir, serviceDir } from "../../_agent-kit/server/workspace.cjs"
 import modes from "@/lib/agent-kit/modes.cjs"
+import resume from "@/lib/agent-kit/resume.cjs"
 
 // СОСТОЯНИЕ СЕССИИ АГЕНТА СЛУЖБЫ (267-1; в маршруте службы — 271).
 // 🔒 ДВЕРЬ КОПИИ КОМПЛЕКТА АГЕНТА (271): шаблон `kits/_agent-kit/api/*/route.ts.tpl`, установщик подставил
@@ -51,7 +52,10 @@ export async function GET(req: NextRequest, ctx: Ctx) {
   if (!service || !dir) return unknown()
   const key = keyOf(service, dir, req.nextUrl.searchParams.get("mode"))
   if (!key) return noModes()
-  return NextResponse.json({ ok: true, service: key, agentDir: dir, ...status(key) }, noStore)
+  const now = status(key)
+  // 708-2: спящему терминалу — что продолжить: как кончилась прошлая сессия и насколько полно её окно (рабочей сессии — нет).
+  const offer = !now.running && key === service ? resume.offer(process.cwd(), service, dir, ownClaudeDir(service)) : null
+  return NextResponse.json({ ok: true, service: key, agentDir: dir, ...now, resume: offer }, noStore)
 }
 
 export async function POST(req: NextRequest, ctx: Ctx) {

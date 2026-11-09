@@ -13,6 +13,7 @@ export async function register() {
   startMainAgentCron()
   await startMemoryByFree()
   await checkCutBuild()
+  await checkLostSessions()
   const { hasDesignElement, pullDesign, subscribeToDesign } = await import("./lib/design-follow")
   if (!hasDesignElement()) return
   const r = await pullDesign()
@@ -31,6 +32,20 @@ async function checkCutBuild() {
   const root = process.cwd()
   if (!fs.existsSync(path.join(root, "data", "node", "agent-return.json"))) return
   await spawnFree(root, ["agent-return.mjs", "--cut-off"], "[agent-return] старт ядра при записи сборки — проверяю, не оборвана ли она")
+}
+
+// 708 (владелец 2026-11-09: «разрядился компьютер … выключился из сети»; выбор «b»): сессии, чья запись осталась `running: true`, умерли
+// вместе с ядром — они помечаются `lost` (страница терминала и /on предложат продолжить тот же разговор), а главный агент возвращается
+// в него сам. Пока есть запись сборки ядра, их возвращает сама сборка (675, 707) — тогда ничего не помечается.
+async function checkLostSessions() {
+  const { createRequire } = await import("node:module")
+  const path = await import("node:path")
+  const root = process.cwd()
+  let lost: string[] = []
+  try { lost = createRequire(path.join(root, "package.json"))("./lib/agent-kit/resume.cjs").markLost(root) } catch { return }
+  if (!lost.length) return
+  console.log(`[resume] сессии, умершие с ядром: ${lost.join(", ")} — помечены, их разговоры можно продолжить`)
+  if (lost.includes("build")) await spawnFree(root, ["agent-return.mjs", "--lost"], "[resume] главный агент возвращается в тот же разговор")
 }
 
 async function startMemoryByFree() {

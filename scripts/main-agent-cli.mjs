@@ -518,7 +518,7 @@ const journalDir = (folder, id = null) => {
 }
 if (cmd === 'session') {
   const [what, ...withFlags] = rest
-  const args = withFlags.filter((a) => !a.startsWith('--')) // 700-3: `--continue` is a flag, never an element
+  const args = withFlags.filter((a, i) => !a.startsWith('--') && withFlags[i - 1] !== '--turns') // 700-3: `--continue` is a flag, never an element; 708-4: nor the value of --turns
   const models = ['opus', 'sonnet', 'haiku']
   const target = what === 'model' ? args[1] : args[0]
   const e = target ? registry().find((s) => s.id === target || addressOf(s.id) === target) : null
@@ -546,6 +546,17 @@ if (cmd === 'session') {
       : `${service}: context ${n(used)} tokens · the window of model ${model} is not known to the node · session ${sid}`)
     process.exit(0)
   }
+  // 708-4 (владелец 2026-11-09: «продолжай с того же места ты пытаешься прочитать какие-то файлы … и сверяемся»): хвост прерванного
+  // разговора — слова последних реплик, без вызовов инструментов и их вывода; записанный разговор службы, иначе самый новый в папке.
+  if (what === 'tail') {
+    const folder = e ? itemDir(e.id) : ROOT
+    const resume = require('../lib/agent-kit/resume.cjs')
+    const own = e ? join(ROOT, 'data', 'services', e.id, 'claude') : null
+    const t = folder ? resume.tail(folder, { id: resume.readMode(ROOT, service)?.conversation ?? null, configDir: own && existsSync(own) ? own : null, turns: Number(flag('--turns')) || 12 }) : null
+    if (!t) fail(`${service}: no conversation on disk yet`)
+    console.log(`===SESSION_TAIL=== ${service} · conversation ${t.id.slice(0, 8)} · ${t.file}\n\n${t.text || '(no words in its last turns)'}`)
+    process.exit(0)
+  }
   if (what === 'clear' || (what === 'model' && models.includes(args[0]))) {
     // 700-3: `session clear --continue` — the agent's own reset: the node wakes its fresh session with the letter.
     const cont = what === 'clear' && process.argv.includes('--continue')
@@ -559,7 +570,7 @@ if (cmd === 'session') {
       : `===SESSION_OK=== ${service}: when this turn ends the session restarts on ${args[0]} and the same conversation goes on (a few seconds; messages wait). Answer the person first.`)
     process.exit(0)
   }
-  fail('session context [<id>] | session clear [<id>] [--continue] | session model opus|sonnet|haiku [<id>]')
+  fail('session context [<id>] | session tail [<id>] [--turns N] | session clear [<id>] [--continue] | session model opus|sonnet|haiku [<id>]')
 }
 
 // 620 (владелец 2026-10-30: «нужна команда которая позволит загрузить и использовать ключ OpenAI»): ключ проверяет и пишет дверь

@@ -254,6 +254,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   idea) and only then the one question you need; a
   wish to publish or to act stays a draft until their yes. Then report where the person goes on: the element's terminal, documents or
   Telegram bot. An element without a role or area for the request — `npm run role`, said aloud.
+- **A conversation cut by accident** (Stop pressed, power lost, the core killed — step 708): the node names every conversation and
+  continues it — the terminal's «Продолжить разговор», the bot's /on, and you by yourself when the core starts (`session-lost`).
+  «Продолжай с того же места» — your state record first, then `npm run session -- tail`; never the browser's storage.
 - **Finishing.** Woken by an element or the node (a need, a report, supervision) — when the work is done, `npm run done` with `--close`.
   Woken by the person — the conversation goes on, no `done` after an answer; they say «turn off» in any words — `--close`. Every `done`
   gets `--note`: one line on where you stopped and what is next, no keys, no secrets.

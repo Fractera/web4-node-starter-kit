@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server"
 import supervision from "@/lib/web4-items/supervision.cjs"
 import { telegramConnected } from "@/lib/a2a/telegram-relay"
 import agentReturn from "@/lib/deploy/agent-return.cjs"
+import resume from "@/lib/agent-kit/resume.cjs"
 
 // ПРОБУЖДЕНИЕ АГЕНТА ЭЛЕМЕНТА (шаг 409-1; владелец 2026-10-05: «агент должен уметь запускать собственный терминал»; «примерно
 // 300 МБ свободной памяти на один терминал»). POST `{ service, reason?, text? }` с ключом узла (`X-Node-Key`): сессия `claude`
@@ -71,6 +72,16 @@ export async function POST(req: NextRequest) {
   if (back) {
     const out = await wake(service, { text, from: str(body.from, 120), confirmed: true, continueLast: true })
     console.log(`[agents/wake] ${service} reason=core-back → ${out.ok ? (out.already ? "already" : "started") : out.reason}`)
+    return NextResponse.json(out, { status: out.ok ? 200 : out.reason === "memory" ? 503 : 409, headers: HEADERS })
+  }
+  // 708 (владелец 2026-11-09, «b»): `session-lost` — сессия главного агента умерла вместе с ядром, старт ядра пометил её (`lib/agent-kit/
+  // resume.cjs` `markLost`); только главный агент и только с такой пометкой — тот же разговор, без вопроса и не как задача узла.
+  if (body.reason === "session-lost") {
+    if (service !== "build" || resume.readMode(process.cwd(), service)?.why !== "lost") {
+      return NextResponse.json({ ok: false, reason: "session-lost returns only the main agent whose session the core's start marked lost" }, { status: 403, headers: HEADERS })
+    }
+    const out = await wake(service, { text, confirmed: true, continueLast: true })
+    console.log(`[agents/wake] ${service} reason=session-lost → ${out.ok ? (out.already ? "already" : "started") : out.reason}`)
     return NextResponse.json(out, { status: out.ok ? 200 : out.reason === "memory" ? 503 : 409, headers: HEADERS })
   }
   const created = body.reason === "main-agent-create" && !telegramConnected(service)

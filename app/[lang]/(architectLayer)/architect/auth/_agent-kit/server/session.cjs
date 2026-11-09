@@ -58,6 +58,8 @@ function stop(service, reason = 'stopped') {
   const s = box().get(service)
   if (!s) return { ok: true, was: false }
   box().delete(service)
+  // 708-1: как кончилась сессия — мост пишет это при выходе процесса (`session-mode.json` `why`); после `delete` выход её уже не найдёт.
+  s.endReason = reason
   closeAll(s, reason)
   try { s.proc.kill() } catch { /* уже мёртв */ }
   return { ok: true, was: true, pid: s.pid }

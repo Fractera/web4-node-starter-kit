@@ -59,3 +59,17 @@ Kit master `app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/server/`:
 - Client: `core/client/agent-terminal.client.tsx` sleeping card, words `core/words/agent-terminal.i18n.ts:117` («Терминал спит»,
   «Запустить агента»); the start goes through the ticket (`ticket.cjs`) → needs a `continue` flag. Fill %: `scripts/main-agent-cli.mjs:527`
   (`session -- context`).
+
+## Built 2026-11-09 (708-1…4 and B)
+
+- `lib/agent-kit/resume.cjs` — offer, markLost, resumable, tail; the bridge names every non-work session `--session-id <uuid>`
+  (recorded as `conversation`) and continues with `--resume <uuid>` (old records without it — `--continue`); `session.stop` keeps
+  `endReason`, the exit writes it as `why`.
+- Terminal: `sleeping-card.client.tsx` — «Продолжить разговор» / «Новый разговор», the reason and the window fill; the door
+  `agent-api/session` GET returns `resume`. Bot /on and «включить» (`wake`) continue by themselves after an unclean end with room.
+- B: `instrumentation.ts` `checkLostSessions` → `markLost` → `agent-return.mjs --lost` → `/api/agents/wake` reason `session-lost`
+  (main agent only, only when marked lost), node line kind `session-lost` (NODE-LINES.md).
+- 708-4: CLAUDE.md §4 line (resealed `20151e86d1ec`), `npm run session -- tail [<id>] [--turns N]`. The element template's line —
+  with its next release.
+- Proofs before the live run: fixture t708/logic.cjs PASS 10/10; probe: `claude -p --session-id U` then `--resume U` — one transcript
+  file, the word remembered; all prebuild guards but the install-only ones pass; tsc clean outside stale .next types.

@@ -5,6 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-79 (2026-11-09) — 708 BUILT (the owner: «b»), see 708-main.md «Built». NEXT: push, CI, fork sync, node update detached; live
+proofs: (1) s8y6x terminal by eyes — start, kill its claude, the card shows «Продолжить разговор» first, press it → same conversation id;
+(2) the main agent: restart the core detached → marked lost → I come back by myself with ⟦session-lost⟧ in the same conversation.**
+
 **NOW-78 (2026-11-09, ~14:30 WET) — 708 PLAN for the owner's yes** (`new-steps/708/708-main.md`): a conversation cut by accident
 (Stop pressed, power lost, core killed) is continued from disk (`--continue`) by the terminal's button and the bot's /on; the end kind is
 recorded in session-mode.json; «продолжай с того же места» reads the state record, then the transcript's tail. DECIDED by the owner: «b». Code map written in 708-main.md; NO code yet — next: 708-1 (endReason in session.stop → resetMode).

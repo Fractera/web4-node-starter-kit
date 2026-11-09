@@ -17,6 +17,12 @@ export type AgentTerminalWords = {
   sleepingTitle: string
   sleepingBody: string
   start: string
+  /** 708-2: продолжить записанный разговор, начать новый и почему кнопка такая (как кончилась прошлая сессия, полнота окна). */
+  resumeContinue: string
+  resumeNew: string
+  resumeWhy: Record<"stopped" | "exited" | "channel-failed" | "lost" | "closed", string>
+  resumeFill: string
+  resumeFull: string
   starting: string
   running: string
   keepsRunning: string
@@ -71,6 +77,17 @@ const DICT: Record<string, AgentTerminalWords> = {
     sleepingTitle: "The terminal is asleep",
     sleepingBody: "Nothing runs until you press the button: no process, no load on the computer.",
     start: "Start the agent",
+    resumeContinue: "Continue the conversation",
+    resumeNew: "New conversation",
+    resumeWhy: {
+      stopped: "The last session was stopped with the Stop button — its conversation is kept whole and can go on.",
+      exited: "The last session ended by itself — its conversation is kept whole and can go on.",
+      "channel-failed": "The last session stopped when its Telegram channel failed — its conversation is kept whole and can go on.",
+      lost: "The last session was cut off (the computer or the node went down) — its conversation is kept whole and can go on.",
+      closed: "The last session was turned off on purpose. You can still continue its conversation.",
+    },
+    resumeFill: "Its window is {used} % full.",
+    resumeFull: "Its window is {used} % full — a new conversation is better: the agent reads its state record and goes on from there.",
     starting: "Starting…",
     running: "Running",
     keepsRunning: "Leaving this page does not stop it.",
@@ -117,6 +134,17 @@ const DICT: Record<string, AgentTerminalWords> = {
     sleepingTitle: "Терминал спит",
     sleepingBody: "Пока вы не нажали кнопку, ничего не запущено: ни процесса, ни нагрузки на компьютер.",
     start: "Запустить агента",
+    resumeContinue: "Продолжить разговор",
+    resumeNew: "Новый разговор",
+    resumeWhy: {
+      stopped: "Прошлую сессию остановили кнопкой «Стоп» — её разговор сохранён целиком, его можно продолжить.",
+      exited: "Прошлая сессия завершилась сама — её разговор сохранён целиком, его можно продолжить.",
+      "channel-failed": "Прошлая сессия остановилась, когда отказал её канал Telegram, — разговор сохранён целиком, его можно продолжить.",
+      lost: "Прошлая сессия оборвалась (выключился компьютер или узел) — её разговор сохранён целиком, его можно продолжить.",
+      closed: "Прошлую сессию выключили намеренно. Её разговор всё равно можно продолжить.",
+    },
+    resumeFill: "Её окно заполнено на {used} %.",
+    resumeFull: "Её окно заполнено на {used} % — лучше новый разговор: агент прочитает свою запись состояния и продолжит с неё.",
     starting: "Запускаю…",
     running: "Работает",
     keepsRunning: "Уход с этой страницы его не останавливает.",

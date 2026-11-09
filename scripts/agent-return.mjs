@@ -8,11 +8,17 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
-const { afterUpdate, afterCutOff } = createRequire(import.meta.url)('../lib/deploy/agent-return.cjs')
+const { afterUpdate, afterCutOff, afterLost } = createRequire(import.meta.url)('../lib/deploy/agent-return.cjs')
 const LOG = join(ROOT, 'logs', 'agent-return.log')
 mkdirSync(dirname(LOG), { recursive: true })
 const say = (s) => appendFileSync(LOG, `${new Date().toISOString()} ${s}\n`)
 
+// 708: `--lost` — старт ядра пометил сессию главного агента потерянной (она умерла с ядром) — вернуть его в тот же разговор.
+if (process.argv.includes('--lost')) {
+  const r = await afterLost(ROOT, say)
+  say(`старт ядра: сессия главного агента потеряна с ядром — ${r.woke ? 'он вернулся в тот же разговор' : `не вернулся — ${r.reason}`}`)
+  process.exit(0)
+}
 if (process.argv.includes('--cut-off')) {
   const r = await afterCutOff(ROOT, say)
   if (r.reason !== 'no-record') say(`старт ядра: ${r.woke ? 'оборванная сборка — агенты вернулись' : `не будятся — ${r.reason}`}`)

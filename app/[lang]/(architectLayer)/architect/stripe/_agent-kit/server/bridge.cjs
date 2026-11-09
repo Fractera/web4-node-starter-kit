@@ -23,6 +23,9 @@ const os = require('node:os')
 // 552-4: режимы сессии (первое слово запроса, группы навыков, ключ сессии) — один модуль ядра, общий с прибором `check:modes`.
 // Из корня узла, как `supervision.cjs`: у копий комплекта свой путь, а модуль один.
 const modes = require(path.join(process.cwd(), 'lib', 'agent-kit', 'modes.cjs'))
+// 708: разговор, оборванный случайно, продолжается — его номер задаёт узел (`--session-id`), продолжение — `--resume` (`lib/agent-kit/resume.cjs`).
+const resume = require(path.join(process.cwd(), 'lib', 'agent-kit', 'resume.cjs'))
+const { randomUUID } = require('node:crypto')
 // 624-1: доступная память — один модуль ядра; `os.freemem()` на macOS видит только пустые страницы (свободно 114 МБ при 79% свободной).
 const { availableMb, topApps } = require(path.join(process.cwd(), 'lib', 'free-memory.cjs'))
 
@@ -172,7 +175,8 @@ function writeMode(element, rec) {
     writeFileSync(modeFile(element), JSON.stringify({ ...rec, at: new Date().toISOString() }, null, 2) + '\n', 'utf8')
   } catch { /* запись — сведение, не условие запуска */ }
 }
-const resetMode = (element, why) => writeMode(element, { running: false, effort: DEFAULT_EFFORT, ultracode: false, workflows: false, why })
+// 708-1: номер разговора переживает конец сессии — по нему кнопка «Продолжить разговор» и /on берут именно его.
+const resetMode = (element, why) => writeMode(element, { running: false, effort: DEFAULT_EFFORT, ultracode: false, workflows: false, why, conversation: resume.readMode(process.cwd(), element)?.conversation ?? null })
 /** Через сколько после старта проверяется, что Claude Code показал ultracode; переменная — для прибора. */
 const ultraCheckMs = () => Number(process.env.AGENT_ULTRA_CHECK_MS) || 30_000
 /** Отметка ultracode в системной подсказке сессии: тот же файл подсказки, что уже собрали `promptArgs`/`soulArgs`, — без новых флагов. */
@@ -339,8 +343,11 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   const effortArg = levels === null ? null : levels.includes(effort) ? effort : EFFORTS.slice(0, EFFORTS.indexOf(effort) + 1).reverse().find((e) => levels.includes(e)) ?? null
   if (effortArg) args = [...args, '--effort', effortArg]
   else console.log(`[agents] ${service}: этот Claude Code не знает --effort ${effort} — сессия на своих усилиях по умолчанию`)
-  // 620: смена модели командой сессии — тот же разговор (`--continue`: последний разговор этой папки) на другой модели.
-  if (continueLast) args = [...args, '--continue']
+  // 620: смена модели командой сессии — тот же разговор на другой модели. 708: продолжение — записанный разговор этой службы
+  // (`--resume <номер>`); записи нет (сессия старше 708) — прежний `--continue`. Новая сессия (не рабочая) получает свой номер.
+  const conversation = mode === 'work' ? null : continueLast ? resume.resumable(process.cwd(), element, cwd, ownHome) : randomUUID()
+  if (continueLast) args = [...args, ...(conversation ? ['--resume', conversation] : ['--continue'])]
+  else if (conversation) args = [...args, '--session-id', conversation]
   // 590-5: команда элемента `npm run pass` узнаёт проход своей сессии из окружения и не переключает сессию на тот же проход.
   if (modes.hasGroups(cwd) && mode === 'build') env = { ...env, FRACTERA_PASS: pass }
   // 587-5 (владелец 2026-10-24): «если пользователь авторизуется в Claude Code Agent а затем придёт терминал … если есть такая запись то
@@ -369,7 +376,7 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   born.pass = pass
   // 666: с чем родилась сессия — Telegram называет это человеку («Режим: Opus · max · ultracode»), запись — для узла и агента.
   born.mode = { model: model ?? null, effort: effortArg ?? 'default', ultracode: ultra }
-  if (mode !== 'work') writeMode(element, { running: true, service, model: model ?? null, effort: effortArg ?? 'default', ultracode: ultra, workflows: ultra })
+  if (mode !== 'work') writeMode(element, { running: true, service, model: model ?? null, effort: effortArg ?? 'default', ultracode: ultra, workflows: ultra, conversation, continued: Boolean(continueLast) })
   // 666: человек выбрал ultracode, прочитав о цене, — правда о нём обязательна. Claude Code показывает его в строке состояния («◈ max ·
   // ultracode», замер 2.1.319); через 30 с его нет на экране — в журнал и человеку: агент работает на Opus без рабочих процессов
   // (старый Claude Code или политика организации). Одна проверка на сессию, не опрос.
@@ -399,7 +406,8 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   child.onExit(() => {
     session.exited(born)
     // 666: сессии нет — следующая родится на medium без рабочих процессов, если человек снова не выберет другое.
-    if (mode !== 'work') resetMode(element, 'session-ended')
+    // 708-1: причина остановки (`session.stop`) или «вышла сама»; закрытие человеком/агентом — чистый конец, остальное предложит продолжить.
+    if (mode !== 'work') resetMode(element, born.endReason ?? 'exited')
     // 639: «выключить?» и «ждёт ответа в терминале» этой сессии потеряли смысл — исчезают через 30 с
     telegram.sessionEnded(service)
     startQueuedPass(element)
@@ -808,7 +816,10 @@ async function wake(element, { text, from, about, declineUrl, confirmed, taskUrl
   // 666: усилия и ultracode — с кнопок Telegram (`telegram.cjs` `onButton`); ultracode рождается только с подтверждением человека.
   // 675-1: `continueLast` — главный агент возвращается после сборки ядра в тот же разговор этой папки (`/api/agents/wake` reason core-back);
   // разговора ещё не было — новая сессия, как прежде.
-  const again = continueLast === true && hasConversation(serviceDir(element), ownClaudeDir(element))
+  // 708-3 (владелец «b»): /on и «включить» после случайного конца (Стоп, выход процесса, потеря с ядром) продолжают тот же разговор,
+  // если в его окне есть место; после «выключить» — новая сессия, как прежде. Только основной проход, не рабочая сессия.
+  const byItself = continueLast !== true && modes.modeOfKey(service) !== 'work' && pass === 'main' && resume.continuesByItself(process.cwd(), element, serviceDir(element), ownClaudeDir(element))
+  const again = (continueLast === true || byItself) && hasConversation(serviceDir(element), ownClaudeDir(element))
   const r = await spawnAgent(service, undefined, undefined, text && task ? `${text}\n\n${finishRule(service)}` : '', { pass, model, effort, ultracode: ultracode === true && Boolean(confirmed), hold: true, callerTells, continueLast: again })
   if (!r.ok) return { ok: false, reason: r.reason }
   rememberTasks(r.session, urls)
@@ -826,7 +837,7 @@ async function wake(element, { text, from, about, declineUrl, confirmed, taskUrl
     timer.unref?.()
   }
   // 614-1: функция, а не обещание — дверь `/api/agents/wake` отдаёт этот ответ в JSON, и функция в нём просто пропадает.
-  return { ok: true, started: true, freeMb, perSessionMb: per, mode: born.mode, ...(born.channelReady ? { channelReady: () => born.channelReady } : {}) }
+  return { ok: true, started: true, continued: again, freeMb, perSessionMb: per, mode: born.mode, ...(born.channelReady ? { channelReady: () => born.channelReady } : {}) }
 }
 
 const wakeTimeoutMs = () => Number(process.env.AGENT_WAKE_TIMEOUT_MS) || 60 * 60 * 1000
@@ -970,7 +981,7 @@ function onConnection(ws, service) {
      * 🛑 Подключение без `start` к спящей сессии ничего не рождает и закрывается с причиной `not-running`:
      * страница, открытая «просто посмотреть», не имеет права поднять процесс.
      */
-    async function startAgent(service, wantStart, task = '') {
+    async function startAgent(service, wantStart, task = '', again = false) {
       if (!pty) {
         ws.send(`\r\n[терминал недоступен: node-pty не загружен — ${ptyLoadError}]\r\n`)
         fail('pty-unavailable')
@@ -995,7 +1006,9 @@ function onConnection(ws, service) {
         const first = task && modes.hasGroups(serviceDir(service)) ? modes.withWord(task, 'build') : task
         // 590-5: задача из ссылки со словом прохода рождает сессию этого прохода; кнопка без задачи — основной проход.
         const pass = first && modes.hasGroups(serviceDir(service)) ? (modes.passOfText(first) ?? 'main') : 'main'
-        const r = await spawnAgent(service, (line) => ws.send(`\r\n${line}\r\n`), () => ws.readyState === ws.OPEN, first, { answerTrust: Boolean(task), pass })
+        // 708-2: «Продолжить разговор» — записанный разговор этой службы, только у основного прохода и без задачи из ссылки.
+        const continueLast = again === true && !first && pass === 'main' && Boolean(resume.resumable(process.cwd(), modes.baseOf(service), serviceDir(service), ownClaudeDir(modes.baseOf(service))))
+        const r = await spawnAgent(service, (line) => ws.send(`\r\n${line}\r\n`), () => ws.readyState === ws.OPEN, first, { answerTrust: Boolean(task), pass, continueLast })
         if (!r.ok) {
           fail(r.reason)
           return
@@ -1077,7 +1090,7 @@ function onConnection(ws, service) {
           const task = msg.start === true && typeof msg.task === 'string'
             ? msg.task.replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, '').slice(0, TASK_LIMIT).trim()
             : ''
-          startAgent(service, msg.start === true, task)
+          startAgent(service, msg.start === true, task, msg.resume === true)
           return
         }
         if (msg.mode === 'login') {
