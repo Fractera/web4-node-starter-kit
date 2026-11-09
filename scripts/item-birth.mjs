@@ -55,6 +55,12 @@ const look = lookAt > 0
   ? process.argv[lookAt + 1]
   : process.argv.includes('--repo') ? 'own' : require('../lib/web4-items/node-type.cjs').birthLook({ native: process.argv.includes('--native') }, ROOT)
 if (look !== 'project' && look !== 'own') fail(`облик «${look ?? ''}» — не из списка: project | own`)
+// 706-2: рождение «как элемент X» (`--look-like X`): облик X, забранный в ядро (запись реестра `look`), ложится в паспорт и
+// DESIGN-CONFIG нового элемента; облик — только самостоятельный, общие «Блоки» выключены.
+const likeAt = process.argv.indexOf('--look-like')
+const likeId = likeAt > 0 ? process.argv[likeAt + 1] : null
+if (likeAt > 0 && (!likeId || likeId.startsWith('--'))) fail('--look-like <id элемента, чей облик взять>')
+if (likeId && look !== 'own') fail('рождение «как элемент» — только самостоятельным: --look own (или без --look)')
 // 553-1: проба выбора облика — до чтения черновиков и любой записи.
 if (process.argv.includes('--print-look')) {
   say(`look: ${look} (node type ${require('../lib/web4-items/node-type.cjs').readNodeType(ROOT)})`)
@@ -68,6 +74,9 @@ if (!drafts.some((d) => d?.id === id)) fail(`черновика «${id}» нет
 
 const registry = JSON.parse(readFileSync(REGISTRY_FILE, 'utf8'))
 if (registry.services.some((s) => s.id === id)) fail(`«${id}» уже есть в реестре узла — второй раз не рождается`)
+const likeLook = likeId ? require('../lib/web4-items/element-look.cjs').registryLook(registry, likeId) : null
+if (likeId && !registry.services.some((s) => s.id === likeId)) fail(`элемента «${likeId}» нет в реестре — не у кого взять облик`)
+if (likeId && !likeLook) fail(`у «${likeId}» облик ещё не забран в ядро: его бриф на странице «Дизайн», затем «Забрать в ядро» (npm run describe:publish в элементе)`)
 
 const dir = itemDir(id, 'user')
 if (existsSync(dir)) fail(`папка ${dir} уже существует — рождение не пишет поверх чужих файлов`)
@@ -170,10 +179,14 @@ if (vectorFile) {
 {
   const links = join(ROOT, 'data', 'services', id, 'links.json')
   mkdirSync(dirname(links), { recursive: true })
-  writeFileSync(links, JSON.stringify(look === 'own' ? { config: false, design: false, blocks: true } : { config: true, design: true, blocks: true }, null, 2) + '\n', 'utf8')
+  writeFileSync(links, JSON.stringify(look === 'own' ? { config: false, design: false, blocks: !likeId } : { config: true, design: true, blocks: true }, null, 2) + '\n', 'utf8')
   stage(look === 'own'
     ? 'облик: самостоятельный — дизайн и настройки шаблона, связи с CONFIG и «Дизайном» выключены'
     : 'облик: как весь проект — связи с CONFIG, «Дизайном» и «Блоками» включены')
+}
+if (likeId) {
+  const done = require('../lib/web4-items/element-look.cjs').seedLook(dir, propsFile, likeLook, likeId)
+  stage(`облик взят у «${likeId}»: бриф (${done.brief.join(', ') || 'пусто'})${done.tokens ? ', шрифты и цвета (DESIGN-CONFIG)' : ''}`)
 }
 if (look === 'project') {
   const site = registry.services.find((x) => x.id === 'root')

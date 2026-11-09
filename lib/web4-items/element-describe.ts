@@ -5,6 +5,7 @@ import { join } from "node:path"
 import paths from "@/lib/web4-items/paths.cjs"
 import { entryForRegistry } from "@/lib/a2a/node-registry"
 import elementProps from "@/lib/web4-items/element-props.cjs"
+import elementLook from "@/lib/web4-items/element-look.cjs"
 
 // ОПИСАНИЕ ВОЗМОЖНОСТЕЙ WEB4 ЭЛЕМЕНТА → ЗАПИСЬ В ЯДРЕ (325-2). Решение владельца 2026-09-27: описание пишет «Агент элемента».
 //
@@ -43,9 +44,9 @@ const CAPABILITY = /^[a-z0-9][a-z0-9-]{1,47}$/
 const DESIGN_SKILL = /^[a-z0-9][a-z0-9-]{0,39}$/
 
 export type Description = { summary: string; provides: string[]; at: string; commit: string | null }
-export type TakeError = "passport-unreadable" | "summary-missing" | "summary-not-written" | "provides-missing" | "provides-bad-shape" | "design-skill-bad-shape" | "registry-failed"
+export type TakeError = "passport-unreadable" | "summary-missing" | "summary-not-written" | "provides-missing" | "provides-bad-shape" | "design-skill-bad-shape" | "look-bad-shape" | "registry-failed"
 
-type Entry = { id: string; kind?: string; born?: unknown; summary?: string; provides?: string[]; designSkill?: string; described?: { at: string; commit: string | null } }
+type Entry = { id: string; kind?: string; born?: unknown; summary?: string; provides?: string[]; designSkill?: string; look?: Record<string, unknown>; described?: { at: string; commit: string | null } }
 type Registry = { services: Entry[] }
 
 const readRegistry = (): Registry => JSON.parse(readFileSync(paths.REGISTRY_FILE, "utf8")) as Registry
@@ -60,8 +61,8 @@ export function registryDescription(id: string): Description | null {
 }
 
 /** Прочитать паспорт элемента и проверить форму описания. */
-export function passportDescription(id: string): { ok: true; summary: string; provides: string[]; designSkill?: string } | { ok: false; error: TakeError } {
-  let props: { summary?: unknown; provides?: unknown; designSkill?: unknown }
+export function passportDescription(id: string): { ok: true; summary: string; provides: string[]; designSkill?: string; look: Record<string, unknown> | null } | { ok: false; error: TakeError } {
+  let props: { summary?: unknown; provides?: unknown; designSkill?: unknown; design?: unknown }
   try {
     props = elementProps.readElementProps(paths.itemDir(id, "user")) // 417: обе раскладки
   } catch { return { ok: false, error: "passport-unreadable" } }
@@ -78,7 +79,12 @@ export function passportDescription(id: string): { ok: true; summary: string; pr
     designSkill = typeof props.designSkill === "string" ? props.designSkill.trim() : ""
     if (!DESIGN_SKILL.test(designSkill)) return { ok: false, error: "design-skill-bad-shape" }
   }
-  return { ok: true, summary: summary.slice(0, 800), provides, designSkill }
+  // 706-2: облик элемента — блок `design` паспорта (бриф) плюс ветки его DESIGN-CONFIG; форма проверяется, отказ — реестр не тронут.
+  const looked = elementLook.normalizeLook(props.design)
+  if (!looked.ok) return { ok: false, error: "look-bad-shape" }
+  const tokens = elementLook.readTokens(paths.itemDir(id, "user"))
+  const look = looked.look || tokens ? { ...(looked.look ?? {}), ...(tokens ? { tokens } : {}) } : null
+  return { ok: true, summary: summary.slice(0, 800), provides, designSkill, look }
 }
 
 /** «Забрать в ядро»: паспорт → запись реестра. Отказ — реестр не тронут. */
@@ -95,6 +101,9 @@ export function takeDescription(id: string): { ok: true; description: Descriptio
     e.summary = read.summary
     e.provides = read.provides
     if (read.designSkill) e.designSkill = read.designSkill
+    // 706-2: облик — для рождения «как этот элемент» (`create --look-like`); нет облика — прежняя запись снимается.
+    if (read.look) e.look = { ...read.look, taken: { at, commit } }
+    else delete e.look
     e.described = { at, commit }
     // 406-6: запись A2A (уровень 1) из визитки элемента с отпечатком — ядро по ней отвечает «кто умеет и где»; нет визитки — нет записи.
     const a2a = entryForRegistry(id, "user")

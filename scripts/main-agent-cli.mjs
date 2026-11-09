@@ -973,9 +973,12 @@ if (cmd === 'create') {
   const briefFile = flag('--brief-file')
   const brief = (briefFile ? (existsSync(briefFile) ? readFileSync(briefFile, 'utf8') : fail(`no file ${briefFile}`)) : flag('--brief') ?? '').trim()
   const by = flag('--supervise') ?? 'architect'
-  const look = flag('--look')
+  // 706-2: `--look-like <id>` — облик соседа (его бриф и шрифты с цветами, забранные в ядро); значит самостоятельный и без общих «Блоков».
+  const lookLike = flag('--look-like')
+  const look = lookLike ? 'own' : flag('--look')
   if (look !== null && look !== 'own' && look !== 'project') fail('--look own|project')
-  const blocksOff = flag('--blocks') === 'off'
+  if (lookLike && flag('--look') === 'project') fail('--look-like gives the element its own look: drop --look project')
+  const blocksOff = flag('--blocks') === 'off' || Boolean(lookLike)
   // 683 (разбор экзамена D5): рождение — подшаг шага ядра; нет имени элемента в `current-steps.md` — предупреждение, не отказ.
   { const nm = (flag('--name') ?? '').trim(); let steps = ''; try { steps = readFileSync(join(ROOT, 'development-docs', 'development-steps', 'current-steps.md'), 'utf8') } catch { /* нет записей */ }
     if (nm && !steps.toLocaleLowerCase().includes(nm.toLocaleLowerCase())) console.log(`note: «${nm}» is not in current-steps.md — a birth is a substep of a core step: write the person's decision and this substep there (skill use-development-steps)`) }
@@ -989,7 +992,7 @@ if (cmd === 'create') {
     const v = readFileSync(vectorFile, 'utf8').replace(/\r\n/g, '\n').trim()
     if (!v || v.split('\n').length > 40 || v.length > 4000) fail(`--vector-file: 1–40 lines and up to 4000 characters (now ${v.split('\n').length} lines, ${v.length} characters) — it is loaded into every session of the element`)
   }
-  if (!role || !brief) fail('create --role "<one sentence>" --name "<the name people see in the menu>" --vector-file <path> [--describe "<what it is for, 1–3 sentences, for the passport and the header>"] [--look own|project] [--blocks off] [--close-after-first-session] (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--different "<their words>" --boundary owner|money|secrets|control|face|channel|sleep|visibility] [--native] [--supervise main|architect] [--no-wake]')
+  if (!role || !brief) fail('create --role "<one sentence>" --name "<the name people see in the menu>" --vector-file <path> [--describe "<what it is for, 1–3 sentences, for the passport and the header>"] [--look own|project | --look-like <id>] [--blocks off] [--close-after-first-session] (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--different "<their words>" --boundary owner|money|secrets|control|face|channel|sleep|visibility] [--native] [--supervise main|architect] [--no-wake]')
   if (!['main', 'architect'].includes(by)) fail('--supervise main|architect')
   // 670-3: область нового элемента — проверяется до рождения, пишется вместе с ролью.
   const newArea = areaPatch(flag('--area'), flag('--grows'))
@@ -1053,7 +1056,7 @@ if (cmd === 'create') {
   console.log(`draft ${id} — birth starts (clone of the template, install, build: a few minutes)`)
 
   // 2. Рождение — тот же путь, что кнопка «Родить элемент». 553-1: облик выбирает `item-birth.mjs` по типу узла.
-  const birth = spawnSync(process.execPath, [join(ROOT, 'scripts', 'item-birth.mjs'), id, ...(has('--native') ? ['--native'] : []), ...(look ? ['--look', look] : []), ...((flag('--name') ?? '').trim() ? ['--name', flag('--name').trim()] : []), '--describe', ((flag('--describe') ?? '').trim() || role), ...(vectorFile ? ['--vector-file', resolve(vectorFile)] : [])], { cwd: ROOT, encoding: 'utf8', windowsHide: true, timeout: 20 * 60_000 })
+  const birth = spawnSync(process.execPath, [join(ROOT, 'scripts', 'item-birth.mjs'), id, ...(has('--native') ? ['--native'] : []), ...(look ? ['--look', look] : []), ...(lookLike ? ['--look-like', lookLike] : []), ...((flag('--name') ?? '').trim() ? ['--name', flag('--name').trim()] : []), '--describe', ((flag('--describe') ?? '').trim() || role), ...(vectorFile ? ['--vector-file', resolve(vectorFile)] : [])], { cwd: ROOT, encoding: 'utf8', windowsHide: true, timeout: 20 * 60_000 })
   const log = `${birth.stdout ?? ''}${birth.stderr ?? ''}`
   if (!/===BIRTH_OK===/.test(log)) fail(`birth of ${id} failed: ${log.trim().split(/\r?\n/).slice(-3).join(' | ')}`)
   const dir = itemDir(id)

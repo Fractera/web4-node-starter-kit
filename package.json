@@ -40,6 +40,7 @@
     "check:typography": "node scripts/check-typography.mjs",
     "check:layout": "node scripts/check-layout.mjs",
     "check:page-composition": "node scripts/check-page-composition.mjs",
+    "check:element-look": "node scripts/check-element-look.mjs",
     "check:shadcn-rules": "node scripts/check-shadcn-rules.mjs",
     "check:dialogs": "node scripts/check-dialogs.mjs",
     "check:project-types": "node scripts/check-project-types.mjs",
