@@ -34,7 +34,7 @@
     {
       "id": "auth",
       "repo": "https://github.com/Fractera/fractera-auth-starter.git",
-      "version": "v2.4.30",
+      "version": "v2.4.31",
       "port": 24681,
       "provides": [
         "session",
@@ -49,7 +49,7 @@
     {
       "id": "data",
       "repo": "https://github.com/Fractera/fractera-data-starter.git",
-      "version": "v2.2.23",
+      "version": "v2.2.24",
       "port": 24682,
       "provides": [
         "tables",
@@ -66,7 +66,7 @@
     {
       "id": "storage",
       "repo": "https://github.com/Fractera/fractera-storage-starter.git",
-      "version": "v1.1.43",
+      "version": "v1.1.44",
       "port": 24693,
       "provides": [
         "media"
@@ -92,7 +92,7 @@
     {
       "id": "embeddings",
       "repo": "https://github.com/Fractera/fractera-embeddings-starter.git",
-      "version": "v0.1.24",
+      "version": "v0.1.25",
       "port": 24696,
       "provides": [
         "embeddings"
@@ -105,7 +105,7 @@
     {
       "id": "config",
       "repo": "https://github.com/Fractera/fractera-config-starter.git",
-      "version": "v1.2.39",
+      "version": "v1.2.40",
       "provides": [
         "project-settings"
       ],
@@ -118,7 +118,7 @@
     {
       "id": "design",
       "repo": "https://github.com/Fractera/fractera-design-starter.git",
-      "version": "v1.1.38",
+      "version": "v1.1.39",
       "provides": [
         "project-design"
       ],
@@ -144,7 +144,7 @@
     {
       "id": "cache",
       "repo": "https://github.com/Fractera/fractera-redis-cache-starter.git",
-      "version": "v0.1.36",
+      "version": "v0.1.37",
       "port": 24695,
       "provides": [
         "cache"
@@ -157,7 +157,7 @@
     {
       "id": "memory",
       "repo": "https://github.com/Fractera/fractera-memory-starter.git",
-      "version": "v2.2.43",
+      "version": "v2.2.44",
       "port": 24690,
       "provides": [
         "memory",
@@ -172,7 +172,7 @@
     {
       "id": "stripe",
       "repo": "https://github.com/Fractera/fractera-stripe-starter.git",
-      "version": "v1.3.34",
+      "version": "v1.3.35",
       "port": 24691,
       "provides": [
         "payments"
@@ -185,7 +185,7 @@
     {
       "id": "root",
       "repo": "https://github.com/Fractera/fractera-root-starter.git",
-      "version": "v3.0.39",
+      "version": "v3.0.40",
       "port": 24683,
       "provides": [
         "site"
@@ -198,7 +198,7 @@
     {
       "id": "blocks",
       "repo": "https://github.com/Fractera/fractera-blocks-starter.git",
-      "version": "v1.4.33",
+      "version": "v1.4.34",
       "provides": [
         "page-blocks"
       ],
