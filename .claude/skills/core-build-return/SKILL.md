@@ -1,19 +1,21 @@
 ---
 name: core-build-return
-description: "Work process. What happens to you and to the element agents when the core is built — a node update, the «Deploy core» button, npm run serve:rebuild: the build stops every agent, and after a good build the ones that were running come back by themselves, in the same conversations. Load it before you start a core build or a node update, when you wake with the line «Node: the core build has finished», and when the person asks why an agent went off during a build or whether it comes back."
+description: "Work process. What happens to you and to the element agents when the core is built — a node update, the «Deploy core» button, npm run serve:rebuild: the build stops every agent, and after its end — good, failed or cut off — the ones that were running come back by themselves, in the same conversations. Load it before you start a core build or a node update, when you wake with the line «Node: the core build has finished», and when the person asks why an agent went off during a build or whether it comes back."
 ---
 
-# The core build, and the agents that come back (node step 675)
+# The core build, and the agents that come back (node steps 675, 707)
 
 **Process: work.** Nothing here is built by you: it is how the node behaves; you plan around it and say it to the person.
 
 ## What happens
 
 Every agent's `claude` is a child of the core, so a core build with the closed lid stops all of them — you too. Before it stops the
-core, the build writes who was running (`data/node/agent-return.json`); after a GOOD build it brings each of them back in the same
-conversation (`claude --continue`) with a line from the node: the element agents first, then you, with the list of who came back, who did
-not (memory) and which work sessions were stopped. A failed build brings back nobody — the previous build is up again and the person sees
-the cause on the terminal page. An agent that was asleep stays asleep.
+core, the build writes who was running and its own process (`data/node/agent-return.json`); after its end it brings each of them back in
+the same conversation (`claude --continue`) with a line from the node: the element agents first, then you, with the list of who came
+back, who did not (memory) and which work sessions were stopped. The end is any of three (step 707, the owner 2026-11-09: «с неудачным
+исходом автоматически поднимать себя так же как и удачным»): a GOOD build — the new build runs; a FAILED build — the previous build is up
+again and the line names the cause; a build CUT OFF (its process died, the lid stayed shut) — the core's next start sees the dead builder
+and returns everyone with «the build was cut off». An agent that was asleep stays asleep.
 
 An element that says «done» while the build runs does not wake you — the closed lid would kill that session, and it is not on the
 return list. Its words wait in `data/node/held-for-main.json` and come to you after the build, good or failed, together with the
@@ -45,7 +47,12 @@ and «Close» (only «Close» after a failure).
 - **Who did not come back** (the line names them, memory was short): wake them when the person needs them — `npm run wake -- <id>`.
 - **A work session** (`<id>--work`) is not continued: one folder has one «last conversation». Its job, if unfinished, goes again —
   `npm run task -- <id> --work`.
-- **You did not come back** (a failure, the computer was off): the person wakes you on the terminal page or in Telegram.
+- **You come back after a failure** with «the core build FAILED» or «WITHOUT success»: the previous build runs; read the cause
+  (`logs/node-update.log` or the terminal page), tell the person in one line, fix it or start again — detached.
+- **You come back after a cut-off** («CUT OFF»): `npm run serve:status`; stopped services — `npm run serve:start`; then the build again,
+  detached. ✗ 2026-11-09: the main agent started `npm run node:update` as its own background child — the lid killed the core, the agent
+  and the update mid-build; `node-update.mjs` now refuses a start from an agent's session (707-3).
+- **You did not come back** (the computer was off, memory was short): the person wakes you on the terminal page or in Telegram.
 
 ## The price
 

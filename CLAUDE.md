@@ -211,7 +211,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   with `shape-the-need`; why Fractera and not a platform, and what a person gets from the phone — skill `fractera-vs-anthropic`.
 - **Building the core:** `npm run serve:rebuild` with the closed lid — the node's processes except the tunnels stop, the outside world gets
   the page copies; once, at the end of the queue of edits. It failed — the Deploy core button for the owner. Every agent stops with it;
-  after a good build the ones that were running come back by themselves in the same conversations — skill `core-build-return`.
+  after its end — good, failed or cut off — the ones that were running come back by themselves in the same conversations — skill
+  `core-build-return`.
 - The node is run by the `serve:*` commands (`serve:start`, `serve:status`); the person never hears the word pm2.
 - **Deploying an element** is its own duty in its own lifecycle: its agent deploys (Preview → Accept or Reject) and pushes when it has
   the tokens; you gather the state and give the command (`npm run task`), never press an element's «Развернуть» yourself; a node update

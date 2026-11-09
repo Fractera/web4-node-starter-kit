@@ -119,6 +119,19 @@ function mergeRegistry(theirs, ours) {
   return { ...(comment === undefined ? {} : { _: comment }), ...(ours.nodeType ? { nodeType: ours.nodeType } : {}), ...rest, services }
 }
 
+// 707-3: два неправильных запуска — отказ ДО любой правки и без записи итога. ✗ Узел владельца 2026-11-09: `npm run node:update -- --help`
+// начал настоящее обновление (аргументов скрипт не читал), а минуту спустя главный агент запустил его своим фоновым ребёнком — крышка
+// сборки убила ядро, агента и само обновление посреди сборки, и никто не записал конец. Агент Claude Code несёт `CLAUDECODE=1`; правильный
+// запуск (`scripts/node-update-run.mjs` через `spawn-free`, кнопка узла) ставит `FRACTERA_BUILD_LOG`.
+if (process.argv.length > 2) {
+  console.error(`===NODE_UPDATE_REFUSED=== неизвестные аргументы: ${process.argv.slice(2).join(' ')} — у обновления узла аргументов нет; ничего не тронуто`)
+  process.exit(2)
+}
+if (process.env.CLAUDECODE && !process.env.FRACTERA_BUILD_LOG) {
+  console.error('===NODE_UPDATE_REFUSED=== запуск из сессии агента: сборка ядра остановит ядро, а с ним агента и это обновление. Запускать вне своего дерева: node scripts/spawn-free.mjs scripts/node-update-run.mjs (ход — logs/node-update.log); ничего не тронуто')
+  process.exit(2)
+}
+
 // ── 1. проверка и форк ──────────────────────────────────────────────────────────────────────────────────────────────────────
 stage('check', 'проверка')
 const origin = readJson(join(ROOT, 'logs', 'origin.json'))

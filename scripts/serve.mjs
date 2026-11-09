@@ -685,12 +685,11 @@ async function rebuild() {
   if (build.status !== 0) {
     // Упавшая сборка стирает статику прежней (ANTI-PATTERNS «Оборванная сборка ядра…») — прежняя возвращается из копии.
     if (backedUp) restoreNext(root)
-    agentReturn.drop(root)
     stopReader(root)
     openLid(root)
     console.error(`\nСборка НЕ УДАЛАСЬ — ${backedUp ? "возвращена прежняя сборка, узел запущен снова" : "копии прежней сборки не было, узел запущен снова"}. Ошибки выше.`)
-    // 696: отчёты элементов, пришедшие главному агенту за время сборки, — ему же, на прежней сборке.
-    await agentReturn.deliverHeld(root, "the core build FAILED; the previous build runs again")
+    // 707: агенты, которых остановила сборка, возвращаются и после отказа — с причиной; 696: отложенное — главному агенту.
+    await agentsBackAfter(root, { agentBack, buildWhat, buildSince, summary: "the core build FAILED; the previous build runs again — the cause is in the build log (the terminal page shows it)" })
     process.exit(1)
   }
   // 🔒 СТОРОЖ ЯЗЫКОВЫХ СИГНАЛОВ — МЕЖДУ СБОРКОЙ И ПЕРЕЗАПУСКОМ (256-8).
@@ -709,14 +708,13 @@ async function rebuild() {
   })
   if (seo.status !== 0) {
     if (backedUp) restoreNext(root)
-    agentReturn.drop(root)
     stopReader(root)
     openLid(root)
     console.error("\nСборка собралась, но языковые сигналы в ней противоречат друг другу —")
     console.error("сайт НЕ выложен: возвращена прежняя сборка, узел запущен снова. Разбор выше.")
     console.error("Это защита от ярлыка «дорвей»: набор почти одинаковых адресов,")
     console.error("обещанных поисковику, стоит сайту присутствия в выдаче целиком.")
-    await agentReturn.deliverHeld(root, "the core build was not deployed (language signals); the previous build runs again")
+    await agentsBackAfter(root, { agentBack, buildWhat, buildSince, summary: "the core build was NOT deployed (its language signals contradict each other — check-seo-html); the previous build runs again" })
     process.exit(1)
   }
 
@@ -728,12 +726,18 @@ async function rebuild() {
   dropBackup(root)
   // 557: страницы собраны без элементов (они были вынесены) — перерисовать их, когда ядро поднялось и элементы на месте.
   await redrawCore(root)
-  // 675-1: обновление узла ещё не кончилось (каталог, навыки) — его итог дождётся ждун вне дерева ядра; своя сборка — будим сразу.
+  await agentsBackAfter(root, { agentBack, buildWhat, buildSince, summary: "the core is built and running" })
+  console.log("Готово. Проверить: npm run serve:status")
+}
+
+// 675-1, 707: конец сборки — любой. Обновление узла ещё не кончилось (каталог, навыки или его запись об отказе) — его итог дождётся ждун
+// вне дерева ядра; своя сборка — будим сразу. Никто не работал — только отложенное главному агенту (696).
+async function agentsBackAfter(root, { agentBack, buildWhat, buildSince, summary }) {
   if (agentBack && buildWhat === "update") {
     spawnSync(process.execPath, [path.join(root, "scripts", "spawn-free.mjs"), path.join(root, "scripts", "agent-return.mjs"), "--after-update", String(buildSince)], { cwd: root, stdio: "ignore", windowsHide: true })
-    console.log("Агенты, которых остановила сборка, вернутся, когда обновление узла закончится удачно (журнал: logs/agent-return.log).")
-  } else if (agentBack) await agentReturn.wakeAfter(root, "the core is built and running")
-  console.log("Готово. Проверить: npm run serve:status")
+    console.log("Агенты, которых остановила сборка, вернутся, когда обновление узла запишет свой итог, удачный или нет (журнал: logs/agent-return.log).")
+  } else if (agentBack) await agentReturn.wakeAfter(root, summary)
+  else await agentReturn.deliverHeld(root, summary)
 }
 
 // 🔒 ПРЕДУПРЕЖДЕНИЕ ГОВОРИТСЯ В МОМЕНТ ВЫДАЧИ АДРЕСА, А НЕ В МОМЕНТ ОТКАЗА —

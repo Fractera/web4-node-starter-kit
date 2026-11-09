@@ -5,6 +5,16 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-76 (2026-11-09, ~14:30 WET) — 707 + 706-8 built in the workshop, the owner: «да, делай всё до конца без меня».** 707 (plan
+`new-steps/707/707-main.md`): agents come back after a FAILED build (serve.mjs `agentsBackAfter`, `afterUpdate` non-done) and after a
+CUT-OFF one (the build reader, last witness, restores `.next` and opens the lid when its parent dies; the core's start runs
+`agent-return.mjs --cut-off`: a record whose `builder` pid is dead → wake); `node-update.mjs` refuses unknown arguments and a start from
+an agent session without `FRACTERA_BUILD_LOG`. Fixture test 7/7 (scratchpad t707). 706-8: Web3 payment hidden (tree + folder
+`_hidden-until-lagrix-web3`), Passport's `nodePassport` summary commented, How it works shows `presentation-temporary.ts` (derived, no
+Lagrix, throws if it returns). 706-9 README queued. CLAUDE.md §4 line «after its end — good, failed or cut off» resealed (the owner's
+word of 707). NEXT: commit, push, CI, fork sync (Chrome), node update DETACHED, live tests: failure (dead https_proxy), cut-off (detached
+killer with a serve:start fallback), then 707-4 fonts local, 706-9 README, 706-7 the stand.**
+
 **NOW-75 (2026-11-09) — 706 PLAN APPROVED (the owner: «go to work, to do step by step to finish»). Core: 706-1 `7efc75df`, 706-2
 `df20558e`, Lagrix pages of Working process commented out `d5b870d0`. Custom template v0.3.178 released (706-3 `1ce1230`, 706-4 `c8b8874`,
 706-5 `d223957`; release crashed after tagging on the missing data/node/github/.env as in 704-4 — main and tag pushed by hand), pinned.
