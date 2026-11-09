@@ -89,7 +89,10 @@ if (args.includes('--top')) {
 }
 
 const stamp = new Date().toISOString().replace(/[:.]/g, '-')
-const out = one('out', path.join(root, 'logs', 'eyes', `${stamp}.png`))
+// 711-8 ✗ found live: an element's `npm run eyes … --out app/…/shots/desktop.png` ran this script from the core's folder (its wrapper sets
+// cwd to the node), so a relative path wrote the element's shots into the CORE — and the next node update failed its prebuild
+// (check:protected saw a stray app/[lang]/(protectedLayer)). A relative --out is the caller's: npm gives its folder in INIT_CWD.
+const out = path.resolve(process.env.INIT_CWD || process.cwd(), one('out', path.join(root, 'logs', 'eyes', `${stamp}.png`)))
 mkdirSync(path.dirname(out), { recursive: true })
 await page.screenshot({ path: out, fullPage: args.includes('--full') })
 
