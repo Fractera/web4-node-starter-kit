@@ -72,7 +72,7 @@ export function DesignTestCard({ item, lang, skill, state, base, words, act }: {
       {(protos.length > 0 || queued.length > 0) && (
         <ul data-block="edt13" className="flex flex-col gap-2">
           {queued.map((id) => <DesignPrototypeRow key={id} item={item} lang={lang} proto={null} queued={id} base={base} words={words} canPin={false} onPin={() => {}} />)}
-          {protos.map((p) => <DesignPrototypeRow key={p.id} item={item} lang={lang} proto={p} base={base} words={words} canPin={!state.busy} onPin={async (id) => report(await act({ action: "pin", prototype: id }))} />)}
+          {protos.map((p) => <DesignPrototypeRow key={p.id} item={item} lang={lang} proto={p} base={base} words={words} canPin={!state.busy} onPin={async (id) => report(await act({ action: "pin", prototype: id }))} onBuild={async () => report(await act({ action: "build" })).ok} />)}
         </ul>
       )}
     </li>

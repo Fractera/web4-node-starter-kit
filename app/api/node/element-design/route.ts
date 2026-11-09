@@ -108,6 +108,12 @@ export async function POST(req: NextRequest) {
       return json(await generate(req, element, mark, body.scriptsYes === true, str(body.from, 48) || "home"))
     } else if (action === "pin") {
       return json(await pin(element, str(body.prototype, 48)))
+    } else if (action === "build") {
+      // 711-8 ✗ found live on qfx9w: a prototype's sections are code — the element's running server shows them only after a build, so the
+      // link opened an empty page. The press builds the element (a model-free act of the core, `services:install --only`), detached from
+      // the core's process tree; the public pages do not change — a prototype is the architect's page until the pin.
+      spawnSync(process.execPath, [join(process.cwd(), "scripts", "spawn-free.mjs"), join("scripts", "services-install.mjs"), "--only", element], { cwd: process.cwd(), timeout: 15_000 })
+      return json({ ...(await state(element)), building: true })
     } else {
       return json({ ok: false, error: "unknown action" }, 400)
     }
