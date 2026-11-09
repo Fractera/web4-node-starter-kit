@@ -83,3 +83,6 @@ Kit master `app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/server/`:
 - Found: the main agent came back after the update by `--continue` with `conversation: null` (its record predates 708) → 708-6
   (`f86d87b9`): a legacy continue records the newest transcript's id; on the node the record was set by hand to 909a8288 meanwhile.
 - Open: the main agent's `session-lost` return (restart the core) — after the next build.
+- B PROVEN 2026-11-09 15:31 on build 1a5262ca: the core restarted detached (pm2 restart, a stand-in for a crash) at 15:31:31; its start
+  marked the main agent's session lost and `agent-return.mjs --lost` woke it at 15:31:34 by `--resume 909a8288` with ⟦session-lost⟧ —
+  the same conversation. With 707-4 the same day: the dead-proxy rebuild succeeded (0 Google font fetches, built 15:28:23).
