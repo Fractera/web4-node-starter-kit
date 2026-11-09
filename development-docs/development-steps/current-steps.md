@@ -5,9 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-75 (2026-11-09) — 706 PLAN APPROVED (the owner: «go to work, to do step by step to finish»); substeps 706-1..7 in
-`new-steps/706/`. Done (not pushed): 706-1 core `7efc75df`, 706-2 core `df20558e` (check:element-look green), 706-3 custom template `1ce1230`
-(test:quick-nav green, spoiled rule fails). Working now: 706-4 (the brief).**
+**NOW-75 (2026-11-09) — 706 PLAN APPROVED (the owner: «go to work, to do step by step to finish»). Core: 706-1 `7efc75df`, 706-2
+`df20558e`, Lagrix pages of Working process commented out `d5b870d0`. Custom template v0.3.178 released (706-3 `1ce1230`, 706-4 `c8b8874`,
+706-5 `d223957`; release crashed after tagging on the missing data/node/github/.env as in 704-4 — main and tag pushed by hand), pinned.
+NEXT: push core, CI, fork sync (Chrome), node:update, live proofs, then 706-7 the stand. The native template is NOT touched (the owner).**
 
 **NOW-74 (2026-11-09, 11:36 WET) — 706: blocks and design OFF on the owner's node (not deletable by the door — natives, required,
 pinned; deletion = 706-5). His order: a NEW test element from the custom starter, its patterns back into the starter, existing elements
