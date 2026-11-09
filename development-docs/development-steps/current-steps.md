@@ -5,6 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-83 (2026-11-09) — 711 PLAN written for the owner's yes (`new-steps/711/711-main.md`): the element's Design tab in the core — live
+graph search of design skills (no list in code), chosen skills and references kept in the node's database, handed to the element's
+agent; then the stand. No code before his word.**
+
 **NOW-82 (2026-11-09, 15:32 WET) — 707-4, 708 (all of it, B included), 709, 710 LIVE AND PROVEN on the owner's node (build 1a5262ca).
 NEXT: back to design — 706-7 the stand from custom v0.3.178 (the owner: «возвращаемся к проблемам дизайна»).**
 
