@@ -43,8 +43,8 @@ import { ElementOwnDomainSignIn } from '../../../_components/element-own-domain-
 import { readStaticCopy } from '@/lib/web4-items/static-copy-state'
 import { readLinks } from '@/lib/web4-items/element-links'
 import { ElementLink } from '../../../_components/element-link.client'
-import { ElementSiteSettings } from '../../../_components/element-site-settings'
-import { ElementOwnPageLink } from '../../../_components/element-own-page-link.client'
+import { ElementSiteSettingsRemote } from '@/components/element-settings/site-settings.client'
+import { siteRemoteWords } from '@/components/element-settings/site/words'
 import { ElementWeb4 } from '../../../_components/element-web4.client'
 import { addressOf, idOfAddress } from '@/lib/web4-items/element-address'
 import { registryDescription, TASK as DESCRIBE_TASK } from '@/lib/web4-items/element-describe'
@@ -68,6 +68,9 @@ import { hasDoc } from '@/lib/web4-items/element-docs'
 import { ElementDocIsland } from '@/components/element-docs/element-doc.client'
 import { ElementDesignPanel } from '@/components/element-design/element-design-panel.client'
 import { elementDesignWords } from '../../../_i18n/element-design.i18n'
+import { ElementDesignSettings } from '@/components/element-settings/design-settings.client'
+import { designUi } from '@/components/design/design.i18n'
+import { elementRemoteWords } from '../../../_i18n/element-remote.i18n'
 import { PassportDoor } from '@/components/element-docs/passport-door.client'
 import { elementDocsUi, elementOrdersUi, passportDoorUi } from '../../../_i18n/element-docs.i18n'
 import { ElementOrdersIsland } from '@/components/element-docs/element-orders.client'
@@ -266,9 +269,9 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   const node = r.trail[r.trail.length - 1]
   const key = r.trail.map((t) => t.slug).join('/')
   const words = node.words[l]
-  // 706-1: «Блоки» сняты (элемент Blocks выведен, владелец 2026-11-09); «Дизайн» и «Настройки сайта» — страницы ядра со ссылкой на
-  // собственные страницы элемента, адрес которой выбирает браузер (`ElementOwnPageLink`): переадресация на `https://<адрес>` без своего
-  // домена вела в пустоту. Свой адрес элемента в интернете — только свой домен или поддомен зоны узла.
+  // 706-1: «Блоки» сняты (элемент Blocks выведен, владелец 2026-11-09). 712: «Дизайн» и «Настройки сайта» правят файлы элемента прямо во
+  // вкладке ядра (пульт `/api/node/element-settings`) — ссылок на собственные страницы элемента больше нет. Свой адрес элемента в
+  // интернете (ссылка на прототип, ссылки выключателей) — только свой домен или поддомен зоны узла.
   const ownPublicUrl = domainRecord(item)?.url ?? (primaryDomain() ? `https://${address}` : null)
   const nodePath = `${dir}/${key}`
   const path = r.service ? `${nodePath}/${r.service}` : nodePath
@@ -412,21 +415,23 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       ? <>
           {/* 706-1: первой строкой — наследует ли элемент CONFIG узла (прежде карточка «Опасной зоны»). */}
           <ElementDangerZone ui={sui} badge={false} cards={['config']} actions={{ config: <ElementLink id={item} kind="config" on={readLinks(item).config} ui={sui} /> }} />
-          <ElementSiteSettings lang={lang} ui={sui} port={port} publicUrl={ownPublicUrl} configOn={readLinks(item).config} />
+          {/* 712-4 (владелец 2026-11-09: «избавиться от внешних страниц»): свои настройки сайта элемента правятся здесь, пультом ядра. */}
+          <ElementSiteSettingsRemote item={item} slug={slug} lang={lang} port={port} publicUrl={ownPublicUrl} words={elementRemoteWords(lang)} site={siteRemoteWords(lang)} />
           {/* 567-6: «элемент в сети Web4» — только у кастомного: у нативного сети нет. */}
           {!treeCtx.native ? <ElementWeb4 id={item} ui={sui} dialogUi={appDialogUi(lang)} initialOn={treeCtx.web4 !== false} /> : null}
         </>
       : <p className="my-4 text-sm text-muted-foreground">{sui.notBorn}</p>)
     : null
 
-  // 706-1: «Строительство → Дизайн» — что там и ссылка на мастерскую самого элемента (бриф, шрифты, цвета).
-  // 711: сверху — рабочая вкладка ядра: живой поиск навыков дизайна, кандидаты, референсы, тестовые страницы и закрепление.
+  // 711: рабочая вкладка ядра — живой поиск навыков дизайна, кандидаты, референсы, тестовые страницы и закрепление.
+  // 712-3 (владелец 2026-11-09: «перенести дизайн страницу на ту самую вкладку»): вкладка целиком — бриф, панель 711, тонкая настройка;
+  // всё читает и пишет пульт ядра в файлы самого элемента, ссылки наружу нет.
   const designPage = key === 'build/design'
     ? (entry
       ? <section className="my-6 flex flex-col gap-3" data-element-design-page data-block="element-design-page">
-          <ElementDesignPanel item={item} lang={lang} port={port} publicUrl={ownPublicUrl} words={elementDesignWords(lang)} />
-          <p className="text-sm text-foreground">{sui.designPage.text}</p>
-          <ElementOwnPageLink lang={lang} path="admin/design" port={port} publicUrl={ownPublicUrl} label={sui.designPage.open} localOnly={sui.ownPage.localOnly} />
+          <ElementDesignSettings item={item} ui={designUi(lang)} words={elementRemoteWords(lang)}>
+            <ElementDesignPanel item={item} lang={lang} port={port} publicUrl={ownPublicUrl} words={elementDesignWords(lang)} dialogUi={appDialogUi(lang)} />
+          </ElementDesignSettings>
         </section>
       : <p className="my-4 text-sm text-muted-foreground">{sui.notBorn}</p>)
     : null

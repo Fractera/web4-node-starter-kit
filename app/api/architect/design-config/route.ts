@@ -1,12 +1,12 @@
 // @api read and change the site element's design settings from the core
 import { readFileSync } from "node:fs"
-import { join } from "node:path"
 import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
 import { serviceUrl } from "@/lib/microservices/registry"
 import paths from "@/lib/web4-items/paths.cjs"
 import elementProps from "@/lib/web4-items/element-props.cjs"
+import { settingsKey } from "@/lib/web4-items/element-settings-door"
 
 // ОФОРМЛЕНИЕ САЙТА ИЗ ЯДРА (280-6).
 //
@@ -30,19 +30,6 @@ import elementProps from "@/lib/web4-items/element-props.cjs"
 export const dynamic = "force-dynamic"
 
 const ROLES = ["architect", "admin"] as const
-const ROOT = process.cwd()
-
-/** Ключ двери сайта — из окружения узла, куда его положил установщик. */
-function settingsKey(): string {
-  const fromEnv = process.env.SETTINGS_SECRET?.trim()
-  if (fromEnv) return fromEnv
-  try {
-    const m = readFileSync(join(ROOT, ".env.local"), "utf8").match(/^SETTINGS_SECRET=(.*)$/m)
-    return m ? m[1].trim() : ""
-  } catch {
-    return ""
-  }
-}
 
 /** Элементы узла, объявившие дверь настроек, — из реестра и их паспортов. */
 function settingsElements(): { id: string; door: string }[] {

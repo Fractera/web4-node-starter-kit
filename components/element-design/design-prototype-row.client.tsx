@@ -6,7 +6,7 @@ import type { ElementDesignWords } from "@/app/[lang]/(architectLayer)/_i18n/ele
 import { DOOR, type Prototype } from "./types"
 
 // ОДИН ПРОТОТИП (711-5, 711-6): статус, снимки компьютера и телефона, ссылка на страницу в защищённом разделе элемента и «Закрепить».
-// Ссылка — на сам элемент: этот компьютер — его порт, свой домен — его адрес (как `element-own-page-link.client.tsx`).
+// Ссылка — на сам элемент: этот компьютер — его порт, свой домен — его адрес (адрес выбирает браузер, `element-design-panel.client.tsx`).
 export function DesignPrototypeRow({ item, lang, proto, queued, base, words, canPin, onPin }: {
   item: string; lang: string; proto: Prototype | null; queued?: string; base: string | null; words: ElementDesignWords; canPin: boolean; onPin: (id: string) => void
 }) {

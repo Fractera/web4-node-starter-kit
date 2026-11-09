@@ -1,11 +1,14 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { Undo2 } from "lucide-react"
 import { DesignWorkbench, DesignPreview } from "./design-workbench"
 import { COLOR_SCHEMES, activeScheme } from "@/lib/design/color-schemes"
 import { contrastRatio, verdictOf, onColor } from "@/lib/design/contrast"
 import type { DesignUi } from "./design.i18n"
+import { useDesignSave, useDesignVisible } from "./design-save"
 
 // ЦВЕТ: ДВЕ ТЕМЫ, СЕМЬ РОЛЕЙ, ДЕСЯТЬ ГОТОВЫХ НАБОРОВ (шаг 42, 2026-08-29).
 //
@@ -27,7 +30,7 @@ import type { DesignUi } from "./design.i18n"
 // промахнулись, а по жёлтому треугольнику — нет.
 
 type Role =
-  | "primary" | "accent" | "background" | "foreground" | "muted" | "border" | "destructive"
+  | "primary" | "accent" | "background" | "foreground" | "muted" | "border" | "destructive" | "card" | "popover" | "input" | "ring"
   // Пять рядов диаграммы (шаг 58). Имена с дефисом — они же имена токенов темы.
   | "chart-1" | "chart-2" | "chart-3" | "chart-4" | "chart-5"
   // Два состояния (шаг 64): «не получилось» и «идёт запись».
@@ -37,6 +40,8 @@ type State = Record<Theme, Partial<Record<Role, string>>>
 
 const ROLES: Role[] = [
   "primary", "accent", "background", "foreground", "muted", "border", "destructive",
+  // 711-7: surfaces and the focus ring
+  "card", "popover", "input", "ring",
   // 🔒 ДИАГРАММЫ ИДУТ ПОСЛЕДНИМИ И ПОДРЯД. Порядок списка — порядок полей на
   // экране, а ряды диаграммы читаются как одна шкала: разорви их ролями темы,
   // и человек перестанет видеть, что правит именно шкалу.
@@ -57,6 +62,8 @@ const FALLBACK: Record<Theme, Record<Role, string>> = {
     "chart-1": "#262626", "chart-2": "#404040", "chart-3": "#525252",
     "chart-4": "#737373", "chart-5": "#d4d4d4",
     warning: "#bb4d00", recording: "#c70036",
+    // 711-7: the theme's oklch(1 0 0), oklch(0.922 0 0), oklch(0.708 0 0) as #hex
+    card: "#ffffff", popover: "#ffffff", input: "#ebebeb", ring: "#a1a1a1",
   },
   dark: {
     primary: "#ebebeb", accent: "#444444", background: "#252525", foreground: "#fbfbfb",
@@ -64,10 +71,15 @@ const FALLBACK: Record<Theme, Record<Role, string>> = {
     "chart-1": "#d4d4d4", "chart-2": "#b4b4b4", "chart-3": "#949494",
     "chart-4": "#737373", "chart-5": "#525252",
     warning: "#ffb900", recording: "#ff637e",
+    // 711-7: the theme's oklch(0.205 0 0), white at 15 % over the dark background, oklch(0.556 0 0) as #hex
+    card: "#343434", popover: "#343434", input: "#3a3a3a", ring: "#737373",
   },
 }
 
 export function DesignColors({ initial, ui }: { initial: State; ui: DesignUi["colors"] }) {
+  // 712-3: the core's copy saves through the remote control of the element on screen and shows only what the element declares.
+  const saveDesign = useDesignSave()
+  const visible = useDesignVisible()
   const [state, setState] = useState<State>(initial)
   const [theme, setTheme] = useState<Theme>("light")
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "failed" | "same">("idle")
@@ -107,13 +119,9 @@ export function DesignColors({ initial, ui }: { initial: State; ui: DesignUi["co
         for (const r of ROLES) out[r] = p[r] ?? null
         return out
       }
-      const res = await fetch("/api/architect/design-config", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ patch: { colors: { light: build(state.light), dark: build(state.dark) } } }),
-      })
+      const res = await saveDesign({ patch: { colors: { light: build(state.light), dark: build(state.dark) } } })
       setStatus(res.ok ? "saved" : "failed")
-      // 280-11a: сохранение не пересобирает сайт — загрузчик показывает, что нужно развёртывание.
+      // 310: дверь элемента сама разослала сигнал — службы перерисуются за секунды, без пересборки.
       if (res.ok) window.dispatchEvent(new CustomEvent("design:saved"))
     } catch {
       setStatus("failed")
@@ -125,18 +133,18 @@ export function DesignColors({ initial, ui }: { initial: State; ui: DesignUi["co
   const active = activeScheme(state.light, state.dark)
 
   const controls = (
-    <div className="flex flex-col gap-4">
-      <p className="text-[length:var(--fs-small)] leading-relaxed text-muted-foreground">{ui.intro}</p>
+    <div data-block="ruu66" className="flex flex-col gap-4">
+      <p data-block="n9apo" className="text-[length:var(--fs-small)] leading-relaxed text-muted-foreground">{ui.intro}</p>
 
-      <section data-design-schemes className="rounded-lg border border-border p-4">
-        <p className="text-[length:var(--fs-body)] font-medium text-foreground">{ui.schemesLabel}</p>
-        <p className="mt-1 text-[length:var(--fs-small)] leading-relaxed text-muted-foreground">{ui.schemesHint}</p>
-        <div className="mt-3 flex flex-col gap-1.5">
+      <section data-block="sero0" data-design-schemes className="rounded-lg border border-border p-4">
+        <p data-block="zv4hg" className="text-[length:var(--fs-body)] font-medium text-foreground">{ui.schemesLabel}</p>
+        <p data-block="d9whd" className="mt-1 text-[length:var(--fs-small)] leading-relaxed text-muted-foreground">{ui.schemesHint}</p>
+        <div data-block="j5cbh" className="mt-3 flex flex-col gap-1.5">
           {COLOR_SCHEMES.map(scheme => {
             const on = active === scheme.id
             const face = scheme[theme]
             return (
-              <button
+              <Button variant="outline"
                 key={scheme.id}
                 type="button"
                 data-scheme={scheme.id}
@@ -144,7 +152,7 @@ export function DesignColors({ initial, ui }: { initial: State; ui: DesignUi["co
                 aria-pressed={on}
                 title={ui.schemes[scheme.id as keyof typeof ui.schemes]}
                 className={
-                  "flex w-full items-center gap-2 rounded-md border px-3 py-2 text-left transition-colors " +
+                  "h-auto justify-start whitespace-normal font-normal flex w-full items-center gap-2 rounded-md border px-3 py-2 text-left transition-colors " +
                   (on ? "border-primary/50 bg-primary/5" : "border-border hover:bg-muted/50")
                 }
               >
@@ -156,35 +164,35 @@ export function DesignColors({ initial, ui }: { initial: State; ui: DesignUi["co
                 <span className="text-[length:var(--fs-small)] text-foreground">
                   {ui.schemes[scheme.id as keyof typeof ui.schemes]}
                 </span>
-              </button>
+              </Button>
             )
           })}
         </div>
         {!active && (
-          <p className="mt-2 text-[length:var(--fs-small)] leading-relaxed text-muted-foreground">{ui.schemeCustom}</p>
+          <p data-block="n7o04" className="mt-2 text-[length:var(--fs-small)] leading-relaxed text-muted-foreground">{ui.schemeCustom}</p>
         )}
       </section>
 
-      <div className="flex gap-2">
+      <div data-block="vdb5v" className="flex gap-2">
         {(["light", "dark"] as Theme[]).map(t => (
-          <button
+          <Button variant="outline"
             key={t}
             type="button"
             data-color-theme={t}
             onClick={() => setTheme(t)}
             aria-pressed={theme === t}
             className={
-              "rounded-md border px-3 py-1.5 text-[length:var(--fs-small)] transition-colors " +
+              "h-auto justify-start whitespace-normal font-normal rounded-md border px-3 py-1.5 text-[length:var(--fs-small)] transition-colors " +
               (theme === t ? "border-primary/50 bg-primary/5 text-foreground" : "border-border text-muted-foreground hover:bg-muted/50")
             }
           >
             {t === "light" ? ui.themeLight : ui.themeDark}
-          </button>
+          </Button>
         ))}
       </div>
 
-      <div className="flex flex-col gap-2">
-        {ROLES.map(role => {
+      <div data-block="dikhq" className="flex flex-col gap-2">
+        {ROLES.filter(role => visible(`colors.${theme}.${role}`, "string")).map(role => {
           const own = state[theme][role]
           return (
             // 🔒 КАРТОЧКА В ДВЕ СТРОКИ, А НЕ В ТРИ КОЛОНКИ (владелец 2026-08-29):
@@ -195,16 +203,16 @@ export function DesignColors({ initial, ui }: { initial: State; ui: DesignUi["co
             // зажатое между образцом цвета слева и кнопкой сброса справа оно
             // ломалось на четыре-пять коротких обрывков. Ширина у текста должна
             // быть та же, что у карточки.
-            <section key={role} data-color-role={role} className="flex flex-col gap-2 rounded-lg border border-border p-3">
-              <div className="flex items-center gap-3">
-                <input
+            <section data-block="zn3ao" key={role} data-color-role={role} className="flex flex-col gap-2 rounded-lg border border-border p-3">
+              <div data-block="vnyvw" className="flex items-center gap-3">
+                <Input
                   type="color"
                   aria-label={ui.roles[role].label}
                   value={shown(role)}
                   onChange={e => set(role, e.target.value)}
                   className="size-8 shrink-0 cursor-pointer rounded border border-border bg-transparent"
                 />
-                <p className="min-w-0 flex-1 truncate text-[length:var(--fs-body)] font-medium text-foreground">
+                <p data-block="h66g5" className="min-w-0 flex-1 truncate text-[length:var(--fs-body)] font-medium text-foreground">
                   {ui.roles[role].label}
                 </p>
                 {/* 🔒 ЗНАЧОК ВМЕСТО ФРАЗЫ (владелец 2026-08-29): «длинный текст
@@ -212,18 +220,18 @@ export function DesignColors({ initial, ui }: { initial: State; ui: DesignUi["co
                     назад». Подпись никуда не делась: она осталась доступным именем
                     кнопки, то есть её по-прежнему читают вслух и находят поиском. */}
                 {own && (
-                  <button
+                  <Button variant="ghost" size="icon-sm"
                     type="button"
                     onClick={() => clear(role)}
                     aria-label={ui.reset}
                     title={ui.reset}
-                    className="shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    className="shrink-0 text-muted-foreground"
                   >
                     <Undo2 className="size-4" aria-hidden />
-                  </button>
+                  </Button>
                 )}
               </div>
-              <p className="text-[length:var(--fs-small)] leading-relaxed text-muted-foreground">
+              <p data-block="wxq4d" className="text-[length:var(--fs-small)] leading-relaxed text-muted-foreground">
                 {ui.roles[role].description}
               </p>
             </section>
@@ -236,15 +244,15 @@ export function DesignColors({ initial, ui }: { initial: State; ui: DesignUi["co
   const preview = (
     <>
       <DesignPreview label={ui.preview}>
-        <div
+        <div data-block="v0e9i"
           data-design-preview="colors"
           className="rounded-md p-3"
           style={{ background: shown("background"), border: `1px solid ${shown("border")}` }}
         >
-          <p className="text-[length:var(--fs-body)] font-bold" style={{ color: shown("foreground") }}>
+          <p data-block="br7fc" className="text-[length:var(--fs-body)] font-bold" style={{ color: shown("foreground") }}>
             {ui.previewHeading}
           </p>
-          <p
+          <p data-block="fjmpk"
             className="mt-1 text-[length:var(--fs-small)] leading-relaxed"
             style={{ color: shown("foreground"), opacity: 0.75 }}
           >
@@ -259,7 +267,7 @@ export function DesignColors({ initial, ui }: { initial: State; ui: DesignUi["co
         </div>
 
         {contrast !== null && (
-          <div
+          <div data-block="sg29r"
             data-contrast={verdict}
             className={
               "mt-2 rounded-md border px-2.5 py-2 " +
@@ -270,25 +278,24 @@ export function DesignColors({ initial, ui }: { initial: State; ui: DesignUi["co
                   : "border-destructive/40 bg-destructive/5 text-destructive")
             }
           >
-            <p className="text-[length:var(--fs-small)] font-medium">
+            <p data-block="w9dyf" className="text-[length:var(--fs-small)] font-medium">
               {verdict === "ok" ? ui.contrastOk : verdict === "low" ? ui.contrastLow : ui.contrastBad}
               {" · "}
               <span className="font-mono tabular-nums">{contrast.toFixed(1)}:1</span>
             </p>
-            <p className="mt-0.5 text-[length:var(--fs-small)] leading-relaxed opacity-90">{ui.contrastHint}</p>
+            <p data-block="m37eo" className="mt-0.5 text-[length:var(--fs-small)] leading-relaxed opacity-90">{ui.contrastHint}</p>
           </div>
         )}
       </DesignPreview>
 
-      <div className="mt-3 flex flex-wrap items-center gap-2">
-        <button
+      <div data-block="k8yet" className="mt-3 flex flex-wrap items-center gap-2">
+        <Button variant="default"
           type="button"
           onClick={save}
           disabled={status === "saving"}
-          className="rounded-md bg-primary px-4 py-2 text-[length:var(--fs-body)] font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {status === "saving" ? ui.saving : ui.save}
-        </button>
+        </Button>
         <span data-save-status={status} className="text-[length:var(--fs-small)] text-muted-foreground">
           {status === "saved" && ui.saved}
           {status === "failed" && ui.failed}

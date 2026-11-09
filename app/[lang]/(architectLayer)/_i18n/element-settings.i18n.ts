@@ -22,10 +22,6 @@ export type ElementSettingsUi = {
   config: Card
   design: Card
   blocks: Card
-  siteSettings: { text: string; configOn: string; configOff: string; open: string }
-  /** 706-1: страница ядра «Дизайн» элемента и общая строка ссылок на его собственные страницы. */
-  designPage: { text: string; open: string }
-  ownPage: { localOnly: string }
   linkCard: { on: string; off: string; turnOn: string; turnOff: string; busy: string; failed: string }
   remove: Card
   removeDialog: { title: string; text: string; label: string; confirm: string; deleting: string; cancel: string; mismatch: string; failed: string; riskNever: string; riskAhead: string; riskNone: string }
@@ -142,17 +138,6 @@ const DICT: Record<string, ElementSettingsUi> = {
       text: "The element's agent takes ready blocks from the Blocks registry. Turned off, the registry is removed from components.json; blocks already taken stay in the element's code.",
       action: "", pending: "",
     },
-    siteSettings: {
-      text: "The site settings of this element — name, description, search settings, images, icons and languages — live on the element's own site and open there, on its main address, and on this computer on its local port.",
-      configOn: "Sync with CONFIG is on: these settings come from the CONFIG element, and the element's own settings page shows them without saving. Turn the sync off in the card above to give the element its own settings.",
-      configOff: "Sync with CONFIG is off: the element lives by its own settings, and they are saved on its settings page.",
-      open: "Open the site settings",
-    },
-    designPage: {
-      text: "The element's design lives on its own site: first the brief — who the site is for, its character in a few words, references and what to avoid — then fonts and colours. The element's agent designs its pages from the brief.",
-      open: "Open the element's design",
-    },
-    ownPage: { localOnly: "This page opens only on this computer: the element has no own domain yet. Open the core here, at localhost, and press again." },
     linkCard: { on: "Connected", off: "Disconnected — the element lives on its own", turnOn: "Connect", turnOff: "Disconnect", busy: "Saving…", failed: "Not saved:" },
     signIn: {
       title: "Sign-in on your own domain",
@@ -347,17 +332,6 @@ const DICT: Record<string, ElementSettingsUi> = {
       text: "Агент элемента берёт готовые блоки из реестра «Блоков». Отключите — реестр уберётся из components.json; уже взятые блоки останутся в коде элемента.",
       action: "", pending: "",
     },
-    siteSettings: {
-      text: "Настройки сайта этого элемента — название, описание, настройки для поиска, картинки, иконки и языки — живут на собственном сайте элемента и открываются там: на его главном адресе, а на этом компьютере — на его локальном порту.",
-      configOn: "Синхронизация с CONFIG включена: эти настройки приходят от элемента CONFIG, и страница настроек элемента показывает их без сохранения. Чтобы у элемента были свои, выключите синхронизацию в карточке выше.",
-      configOff: "Синхронизация с CONFIG выключена: элемент живёт своими настройками, и они сохраняются на его странице настроек.",
-      open: "Открыть настройки сайта",
-    },
-    designPage: {
-      text: "Дизайн элемента живёт на его собственном сайте: сначала бриф — для кого сайт, его характер в нескольких словах, референсы и чего избегать, — потом шрифты и цвета. По брифу агент элемента рисует его страницы.",
-      open: "Открыть дизайн элемента",
-    },
-    ownPage: { localOnly: "Эта страница открывается только на этом компьютере: у элемента ещё нет своего домена. Откройте ядро здесь, на localhost, и нажмите снова." },
     linkCard: { on: "Подключено", off: "Отключено — элемент живёт самостоятельно", turnOn: "Подключить", turnOff: "Отключить", busy: "Сохраняю…", failed: "Не сохранено:" },
     signIn: {
       title: "Вход на собственном домене",

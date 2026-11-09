@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { H2, H3, P, Small } from "@/components/ui/typography"
 import { isLoopbackHostname } from "@/lib/auth/owner-at-machine"
+import { AppDialog } from "@/components/dialog/app-dialog.client"
+import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import type { ElementDesignWords } from "@/app/[lang]/(architectLayer)/_i18n/element-design.i18n"
 import { DesignCandidates } from "./design-candidates.client"
 import { DesignSearch } from "./design-search.client"
@@ -14,7 +16,7 @@ import { DOOR, type ActResult, type DesignState, type FoundSkill } from "./types
 // кандидатов к проекту, отметить несколько на тест, дать каждому свои референсы, сгенерировать тестовые страницы, закрепить победителя.
 // Состояние — дверь `/api/node/element-design`; прототипы строит агент элемента, вкладка их только показывает. Таймеров нет: статус
 // обновляется кнопкой «Обновить» и после каждого действия.
-export function ElementDesignPanel({ item, lang, port, publicUrl, words }: { item: string; lang: string; port: number | null; publicUrl: string | null; words: ElementDesignWords }) {
+export function ElementDesignPanel({ item, lang, port, publicUrl, words, dialogUi }: { item: string; lang: string; port: number | null; publicUrl: string | null; words: ElementDesignWords; dialogUi: AppDialogUi }) {
   const [state, setState] = useState<DesignState | null>(null)
   const [error, setError] = useState("")
   const [base, setBase] = useState<string | null>(null)
@@ -32,6 +34,14 @@ export function ElementDesignPanel({ item, lang, port, publicUrl, words }: { ite
     if (j?.ok) setState(j)
     return j ?? { ok: false, error: "network" }
   }, [item])
+  // 712-3: a pin replaces the hand edits of «Fine tuning» below — the platform's window says so before the press.
+  const [pinAsk, setPinAsk] = useState<((yes: boolean) => void) | null>(null)
+  const guarded = useCallback(async (payload: Record<string, unknown>): Promise<ActResult> => {
+    if (payload.action !== "pin") return act(payload)
+    const yes = await new Promise<boolean>((resolve) => setPinAsk(() => resolve))
+    setPinAsk(null)
+    return yes ? act(payload) : (state ?? { ok: false, error: "" })
+  }, [act, state])
   const inProject = useMemo(() => new Set((state?.skills ?? []).map((s) => s.mark)), [state])
   const add = (s: FoundSkill) => void act({ action: "add-skill", skill: s })
   const tests = (state?.skills ?? []).filter((s) => s.test)
@@ -56,13 +66,27 @@ export function ElementDesignPanel({ item, lang, port, publicUrl, words }: { ite
             </div>
             {tests.length === 0 ? <Small data-block="edm12" className="text-muted-foreground">{words.testEmpty}</Small> : (
               <ul data-block="edm13" className="flex flex-col gap-3">
-                {tests.map((s) => <DesignTestCard key={s.mark} item={item} lang={lang} skill={s} state={state} base={base} words={words} act={act} />)}
+                {tests.map((s) => <DesignTestCard key={s.mark} item={item} lang={lang} skill={s} state={state} base={base} words={words} act={guarded} />)}
               </ul>
             )}
             {!base && <Small data-block="edm14" className="text-muted-foreground">{words.localOnly}</Small>}
           </section>
         </>
       )}
+      <AppDialog
+        open={pinAsk !== null}
+        onOpenChange={(open) => { if (!open) pinAsk?.(false) }}
+        title={words.pinWarnTitle}
+        description={words.pinWarnText}
+        ui={dialogUi}
+        size="sm"
+        footer={
+          <>
+            <Button variant="outline" onClick={() => pinAsk?.(false)}>{words.cancel}</Button>
+            <Button onClick={() => pinAsk?.(true)} data-pin-confirm>{words.pinConfirm}</Button>
+          </>
+        }
+      />
     </section>
   )
 }

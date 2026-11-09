@@ -9,6 +9,7 @@ import { DesignFonts } from "./design-fonts.client"
 import { DesignType } from "./design-type.client"
 import { DesignShape } from "./design-shape.client"
 import type { DesignUi } from "./design.i18n"
+import { DesignSaveProvider, type DesignSaveApi } from "./design-save-context.client"
 
 // ОФОРМЛЕНИЕ САЙТА, СПРОШЕННОЕ В БРАУЗЕРЕ (280-6).
 //
@@ -39,6 +40,15 @@ export type DeployWords = {
   savedText: string
   savedButton: string
   deployHref: string
+}
+
+/** 712-3: the catalogue kind keeps its old door — the shared design of every element that declares `settings.door` (280-10). */
+const LEGACY: DesignSaveApi = {
+  save: async (patch) => {
+    const r = await fetch(`${BASE}/api/architect/design-config`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ patch }) }).catch(() => null)
+    return { ok: !!r?.ok }
+  },
+  visible: () => true,
 }
 
 export function DesignSectionLoader({
@@ -92,7 +102,7 @@ export function DesignSectionLoader({
         <Lightbulb className="mt-0.5 size-4 shrink-0" aria-hidden />
         {deploy.hint}
       </p>
-      {editor}
+      <DesignSaveProvider value={LEGACY}>{editor}</DesignSaveProvider>
       {saved && (
         <div className="flex flex-col gap-3 rounded-md border border-warning/50 bg-warning/10 p-4 text-sm" data-design-saved>
           <p className="font-medium text-foreground">{deploy.savedTitle}</p>

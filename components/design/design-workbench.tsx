@@ -40,13 +40,13 @@ export function DesignWorkbench({
   preview: ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:items-start lg:gap-6">
+    <div data-block="glrrd" className="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:items-start lg:gap-6">
       {/* Предпросмотр в разметке ПОСЛЕ выбора — так его читает голосовой
           интерфейс и так он ложится на телефоне. Визуальный порядок на широком
           экране задаёт сетка, а не порядок в коде. */}
-      <div className="min-w-0 lg:order-1">{controls}</div>
+      <div data-block="deeiu" className="min-w-0 lg:order-1">{controls}</div>
 
-      <div className="lg:order-2 lg:sticky lg:top-4">{preview}</div>
+      <div data-block="nifum" className="lg:order-2 lg:sticky lg:top-4">{preview}</div>
     </div>
   );
 }
@@ -54,9 +54,9 @@ export function DesignWorkbench({
 /** Рамка предпросмотра — общая, чтобы «то, что получится» везде выглядело одинаково. */
 export function DesignPreview({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <section className="rounded-lg border border-border bg-muted/30 p-3">
-      <p className="text-[length:var(--fs-small)] uppercase tracking-widest text-muted-foreground">{label}</p>
-      <div className="mt-2">{children}</div>
+    <section data-block="nf0m1" className="rounded-lg border border-border bg-muted/30 p-3">
+      <p data-block="jkxd1" className="text-[length:var(--fs-small)] uppercase tracking-widest text-muted-foreground">{label}</p>
+      <div data-block="pmry2" className="mt-2">{children}</div>
     </section>
   );
 }

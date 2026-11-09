@@ -1,9 +1,11 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { DesignWorkbench, DesignPreview } from "./design-workbench"
 import { FONT_CATALOGUE, isSystemFont, type FontEntry } from "@/lib/design/font-catalogue"
 import type { DesignUi } from "./design.i18n"
+import { useDesignSave, useDesignVisible } from "./design-save"
 
 // ВЫБОР ШРИФТОВ ВНУТРИ ПРОЕКТА (39-2, 2026-08-29).
 //
@@ -18,10 +20,9 @@ import type { DesignUi } from "./design.i18n"
 // прежнее значение навсегда. Та же причина, по которой массивы меню шлются
 // целиком.
 //
-// 🔒 СИСТЕМНЫЙ ШРИФТ СТОИТ ПЕРВЫМ И НИЧЕГО НЕ ЗАГРУЖАЕТ. Оговорка про внешние
-// шрифты остаётся видимой всегда, а не прячется мелким шрифтом внизу: подключение
-// внешнего шрифта отдаёт адрес посетителя чужому серверу, и в Европе это уже
-// признавалось нарушением GDPR.
+// 🔒 СИСТЕМНЫЙ ШРИФТ СТОИТ ПЕРВЫМ И НИЧЕГО НЕ ЗАГРУЖАЕТ. Остальные с шага 315
+// отдаёт сам узел (`public/fonts/`), и под каждым это написано: наружу страница не
+// ходит, без интернета шрифт на месте.
 
 type Role = "heading" | "body" | "mono"
 type Choice = { family: string; import?: string }
@@ -30,11 +31,20 @@ type State = Partial<Record<Role, Choice>>
 const ROLES: Role[] = ["heading", "body", "mono"]
 
 export function DesignFonts({ initial, ui }: { initial: State; ui: DesignUi["fonts"] }) {
+  // 712-3: the core's copy saves through the remote control of the element on screen and shows only what the element declares.
+  const saveDesign = useDesignSave()
+  const visible = useDesignVisible()
   const [state, setState] = useState<State>(initial)
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "failed" | "same">("idle")
 
   const changed = JSON.stringify(state) !== JSON.stringify(initial)
-  const links = [...new Set(ROLES.map(r => state[r]?.import).filter((u): u is string => !!u))]
+  // 315: адрес — из КАТАЛОГА по имени, а не из сохранённого `import`: в настройках до 315 там ссылка Google, и
+  // предпросмотр тянул бы шрифт оттуда. В каталоге адрес всегда на своём сервере (`/fonts/<slug>.css`).
+  const links = [
+    ...new Set(
+      ROLES.map(r => FONT_CATALOGUE.find(e => e.family === state[r]?.family)?.import).filter((u): u is string => !!u),
+    ),
+  ]
 
   function pick(role: Role, entry: FontEntry | null) {
     setStatus("idle")
@@ -48,15 +58,12 @@ export function DesignFonts({ initial, ui }: { initial: State; ui: DesignUi["fon
     if (!changed) { setStatus("same"); return }
     setStatus("saving")
     try {
-      const fonts: Record<string, Choice> = {}
-      for (const r of ROLES) if (state[r]) fonts[r] = state[r]!
-      const res = await fetch("/api/architect/design-config", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ patch: { fonts } }),
-      })
+      const fonts: Record<string, Choice | null> = {}
+      // 310: снятая роль уходит `null` — дверь элемента сливает заплату по ключам.
+      for (const r of ROLES) fonts[r] = state[r] ?? null
+      const res = await saveDesign({ patch: { fonts } })
       setStatus(res.ok ? "saved" : "failed")
-      // 280-11a: сохранение не пересобирает сайт — загрузчик показывает, что нужно развёртывание.
+      // 310: дверь элемента сама разослала сигнал — службы перерисуются за секунды, без пересборки.
       if (res.ok) window.dispatchEvent(new CustomEvent("design:saved"))
     } catch {
       setStatus("failed")
@@ -64,20 +71,20 @@ export function DesignFonts({ initial, ui }: { initial: State; ui: DesignUi["fon
   }
 
   const controls = (
-    <div className="flex flex-col gap-5">
+    <div data-block="dive1" className="flex flex-col gap-5">
       {/* Настоящие шрифты в образце: витрина, показывающая выбор чужим шрифтом,
           не показывает ничего. */}
       {links.map(href => <link key={href} rel="stylesheet" href={href} />)}
 
-      <p className="text-[length:var(--fs-small)] leading-relaxed text-muted-foreground">{ui.intro}</p>
+      <p data-block="pjjcg" className="text-[length:var(--fs-small)] leading-relaxed text-muted-foreground">{ui.intro}</p>
 
-      {ROLES.map(role => {
+      {ROLES.filter(role => visible(`fonts.${role}`, "object")).map(role => {
         const current = state[role]
         const options = FONT_CATALOGUE.filter(f => (role === "mono" ? f.kind === "mono" : f.kind !== "mono"))
         return (
-          <section key={role} data-font-role={role} className="rounded-lg border border-border p-4">
-            <p className="text-[length:var(--fs-body)] font-medium text-foreground">{ui.roles[role].label}</p>
-            <p className="mt-1 text-[length:var(--fs-small)] leading-relaxed text-muted-foreground">
+          <section data-block="ip5ft" key={role} data-font-role={role} className="rounded-lg border border-border p-4">
+            <p data-block="fnq9w" className="text-[length:var(--fs-body)] font-medium text-foreground">{ui.roles[role].label}</p>
+            <p data-block="lnv1i" className="mt-1 text-[length:var(--fs-small)] leading-relaxed text-muted-foreground">
               {ui.roles[role].description}
             </p>
 
@@ -89,18 +96,18 @@ export function DesignFonts({ initial, ui }: { initial: State; ui: DesignUi["fon
                 деление её пополам даёт полосы шириной с телефон на настольном
                 экране — при том, что справа стоит предпросмотр, ради которого место
                 и берегут. */}
-            <div className="mt-3 flex flex-col gap-1.5">
+            <div data-block="z3ohi" className="mt-3 flex flex-col gap-1.5">
               {options.map(entry => {
                 const active = current?.family === entry.family
                 const system = isSystemFont(entry.family)
                 return (
-                  <button
+                  <Button variant="outline"
                     key={entry.family}
                     type="button"
                     onClick={() => pick(role, entry)}
                     aria-pressed={active}
                     className={
-                      "flex flex-col items-start gap-0.5 rounded-md border px-3 py-2 text-left transition-colors " +
+                      "h-auto justify-start whitespace-normal font-normal flex flex-col items-start gap-0.5 rounded-md border px-3 py-2 text-left transition-colors " +
                       (active ? "border-primary/50 bg-primary/5" : "border-border hover:bg-muted/50")
                     }
                   >
@@ -115,37 +122,36 @@ export function DesignFonts({ initial, ui }: { initial: State; ui: DesignUi["fon
                       {" · "}
                       {system ? ui.noDownload : ui.external}
                     </span>
-                  </button>
+                  </Button>
                 )
               })}
             </div>
 
             {current && (
-              <button
+              <Button variant="link"
                 type="button"
                 onClick={() => pick(role, null)}
-                className="mt-2 text-[length:var(--fs-small)] text-muted-foreground underline hover:text-foreground"
+                className="mt-2 h-auto p-0 text-[length:var(--fs-small)] font-normal text-muted-foreground"
               >
                 {ui.reset}
-              </button>
+              </Button>
             )}
           </section>
         )
       })}
 
-      <p className="rounded-md border border-tone-access/30 bg-tone-access/5 p-3 text-[length:var(--fs-small)] leading-relaxed text-tone-access">
+      <p data-block="m4vin" className="rounded-md border border-tone-access/30 bg-tone-access/5 p-3 text-[length:var(--fs-small)] leading-relaxed text-tone-access">
         {ui.systemNote}
       </p>
 
-      <div className="flex items-center gap-3">
-        <button
+      <div data-block="c16qh" className="flex items-center gap-3">
+        <Button variant="default"
           type="button"
           onClick={save}
           disabled={status === "saving"}
-          className="rounded-md bg-primary px-4 py-2 text-[length:var(--fs-body)] font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {status === "saving" ? ui.saving : ui.save}
-        </button>
+        </Button>
         <span data-save-status={status} className="text-[length:var(--fs-small)] text-muted-foreground">
           {status === "saved" && ui.saved}
           {status === "failed" && ui.failed}
@@ -161,20 +167,20 @@ export function DesignFonts({ initial, ui }: { initial: State; ui: DesignUi["fon
   const preview = (
     <>
       <DesignPreview label={ui.preview}>
-        <div data-design-preview="fonts" className="flex flex-col gap-3">
-          <p
+        <div data-block="t4grk" data-design-preview="fonts" className="flex flex-col gap-3">
+          <p data-block="vnpmu"
             className="text-[length:var(--fs-h3)] font-bold leading-tight text-foreground"
             style={{ fontFamily: state.heading?.family }}
           >
             {ui.previewText}
           </p>
-          <p
+          <p data-block="uj3h6"
             className="text-[length:var(--fs-body)] leading-relaxed text-muted-foreground"
             style={{ fontFamily: state.body?.family }}
           >
             {ui.previewText}
           </p>
-          <p
+          <p data-block="o9hmx"
             className="text-[length:var(--fs-small)] text-muted-foreground"
             style={{ fontFamily: state.mono?.family ?? "ui-monospace, monospace" }}
           >
