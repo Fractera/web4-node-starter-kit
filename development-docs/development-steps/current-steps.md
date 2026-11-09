@@ -5,6 +5,9 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-71 (2026-11-09, ~02:05 WET) — LIVE on the owner's node (build `069e0844`): 705 CLOSED, 704-1..3 CLOSED (summaries in
+`completed-steps/`), 703 «Ядро» seen. NEXT in 704: 704-4 the elements' sealed instruction line — a template release, on the owner's word.
+
 **NOW-70 (2026-11-09, ~02:05 WET) — 705 BUILT** (the owner: «вкладка GitHub … должна светиться красным если не подключён Token … давай
 исправим?»): `NodeAlerts` raises `no-github` unless the node has its own repository AND a GitHub token; the GitHub page's meta carries the
 alert. Rides the same node update as 704 and 703 («Ядро» — the owner asked again 02:00: «нужно новые сборка? Или ты просто забыл?» — it
