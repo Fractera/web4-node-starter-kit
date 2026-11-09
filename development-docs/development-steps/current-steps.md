@@ -5,8 +5,13 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
-**NOW-69 (2026-11-09, ~01:30 WET) — 704 IN WORK (the owner: «check and fix»): the core's main agent decides an element's permission
-question.** Plan `new-steps/704/704-main.md` (his words verbatim, the probe measured). lqvop was stuck on the guard's false positive (`cd ..`
+**NOW-70 (2026-11-09, ~02:05 WET) — 705 BUILT** (the owner: «вкладка GitHub … должна светиться красным если не подключён Token … давай
+исправим?»): `NodeAlerts` raises `no-github` unless the node has its own repository AND a GitHub token; the GitHub page's meta carries the
+alert. Rides the same node update as 704 and 703 («Ядро» — the owner asked again 02:00: «нужно новые сборка? Или ты просто забыл?» — it
+waits only for this update). Live proof after the update: plan `new-steps/705-…md`.
+
+**NOW-69 (2026-11-09, ~01:50 WET) — 704-1..3 BUILT, PUSHED `8df69a50`, fork synced (Chrome, identical), NODE UPDATE NEXT (the owner:
+«check and fix»): the core's main agent decides an element's permission question.** Plan `new-steps/704/704-main.md` (his words verbatim, the probe measured). lqvop was stuck on the guard's false positive (`cd ..`
 after a `cd` into a subfolder) — I pressed «1. Yes» in its terminal through Chrome as the core's decision, it went on. Next: 704-1 the guard
 follows `cd`, then 704-2 the door and `npm run permit`, 704-3 the law; push, fork sync, node update, live. The cold exam (NOW-68) is not
 touched: its restore waits for the owner's «оцени по случаю 22».

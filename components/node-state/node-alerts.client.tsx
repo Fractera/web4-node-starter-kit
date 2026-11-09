@@ -21,12 +21,16 @@ export function NodeAlerts() {
       })
       .catch(() => { /* узел не ответил — тревоги нет: ложная красная хуже отсутствующей */ })
     // 677: репозиторий узла — та же дверь и тот же вердикт, что у страницы GitHub «Строительства» (`own` и `foreign-host` — спокойно).
+    // 705 (владелец 2026-11-09: «эта вкладка должна светиться красным если не подключён Token»): спокойно только вместе — свой
+    // репозиторий И токен GitHub узла (`token.configured` той же двери). ✗ До 705 узел из своего форка без токена горел спокойно, хотя
+    // без токена он не синхронизирует форк и не отправляет код сам.
     const lang = document.documentElement.lang || "en"
     fetch(`${BASE}/${lang}/architect/build/github/api/state`, { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
-      .then((d: { binding?: { state?: string } } | null) => {
+      .then((d: { binding?: { state?: string }; token?: { configured?: boolean } } | null) => {
         if (!alive || !d?.binding?.state) return
-        if (d.binding.state === "own" || d.binding.state === "foreign-host") delete document.documentElement.dataset.noGithub
+        const ownRepo = d.binding.state === "own" || d.binding.state === "foreign-host"
+        if (ownRepo && d.token?.configured === true) delete document.documentElement.dataset.noGithub
         else document.documentElement.dataset.noGithub = ""
       })
       .catch(() => { /* узел не ответил или временный адрес — тревоги нет */ })
