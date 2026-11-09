@@ -345,8 +345,10 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   else console.log(`[agents] ${service}: этот Claude Code не знает --effort ${effort} — сессия на своих усилиях по умолчанию`)
   // 620: смена модели командой сессии — тот же разговор на другой модели. 708: продолжение — записанный разговор этой службы
   // (`--resume <номер>`); записи нет (сессия старше 708) — прежний `--continue`. Новая сессия (не рабочая) получает свой номер.
-  const conversation = mode === 'work' ? null : continueLast ? resume.resumable(process.cwd(), element, cwd, ownHome) : randomUUID()
-  if (continueLast) args = [...args, ...(conversation ? ['--resume', conversation] : ['--continue'])]
+  const known = continueLast && mode !== 'work' ? resume.resumable(process.cwd(), element, cwd, ownHome) : null
+  // 708-6: `--continue` без записи — записать номер разговора, который он берёт (самый новый в папке), чтобы следующий обрыв тоже продолжился.
+  const conversation = mode === 'work' ? null : continueLast ? (known ?? resume.newest(cwd, ownHome)) : randomUUID()
+  if (continueLast) args = [...args, ...(known ? ['--resume', known] : ['--continue'])]
   else if (conversation) args = [...args, '--session-id', conversation]
   // 590-5: команда элемента `npm run pass` узнаёт проход своей сессии из окружения и не переключает сессию на тот же проход.
   if (modes.hasGroups(cwd) && mode === 'build') env = { ...env, FRACTERA_PASS: pass }
