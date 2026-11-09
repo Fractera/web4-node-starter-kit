@@ -3,7 +3,10 @@ import { headingId } from '@/lib/content/blocks/inline'
 import { labelGlossaryWords, labelsToForms, resolveTermLabels } from '@/lib/content/blocks/term'
 import { architectHomeUi, type BasicsTerm } from '../../../../_i18n/architect-home.i18n'
 import { glossaryForms } from '../../../../_i18n/glossary-forms'
-import { presentationWords, type PresentationSection } from '../_data/presentation'
+import { type PresentationSection } from '../_data/presentation'
+// 706-8: до запуска Lagrix страница показывает временную версию без Lagrix; основная закомментирована ниже, её слова целы в `presentation.ts`.
+// import { presentationWords } from '../_data/presentation'
+import { temporaryPresentationWords as presentationWords } from '../_data/presentation-temporary'
 
 // СОДЕРЖИМОЕ СТРАНИЦЫ «How it works» — презентация узла и его связи с Lagrix (шаг 535, слово владельца 2026-10-18 — в
 // `../_data/presentation.ts`). Три уровня нумерации: раздел «1.» (h2) → часть «1.1» (h3) → нумерованный список. Сразу после вступления —
@@ -51,11 +54,13 @@ export function content(lang: string): Block[] {
         { kind: 'olist', items: p.items.map(words) },
       ]),
       // 535-3 (владелец 2026-10-18): в конце первого раздела — карточка о миссии Lagrix с кнопкой на главную lagrix.dev (en/ru).
+      // 706-8: закомментирована до запуска Lagrix вместе с разделом 1 «Готов к Web4».
+      // ...(i === 0
+      //   ? [{ kind: 'callout', title: w.lagrixCard.title, text: words(w.lagrixCard.text), action: { href: `https://lagrix.dev/${lang === 'ru' ? 'ru' : 'en'}`, label: w.lagrixCard.action, external: true } } as Block]
+      //   : []),
+      // 535-4 (владелец 2026-10-18): в конце раздела «Обычный интернет» — карточка «ИИ — сердце узла» с кнопкой на активацию Claude Code.
+      // 706-8: во временной версии этот раздел первый (`i === 0`); с основной версией — снова `i === 1`.
       ...(i === 0
-        ? [{ kind: 'callout', title: w.lagrixCard.title, text: words(w.lagrixCard.text), action: { href: `https://lagrix.dev/${lang === 'ru' ? 'ru' : 'en'}`, label: w.lagrixCard.action, external: true } } as Block]
-        : []),
-      // 535-4 (владелец 2026-10-18): в конце второго раздела — карточка «ИИ — сердце узла» с кнопкой на активацию Claude Code.
-      ...(i === 1
         ? [{ kind: 'callout', title: w.aiCard.title, text: words(w.aiCard.text), action: { href: `/${lang}/build/subscription`, label: w.aiCard.action } } as Block]
         : []),
       // 600-1: карточка раздела памяти — ключ OpenAI, кнопка ведёт в редактор ключей ядра.

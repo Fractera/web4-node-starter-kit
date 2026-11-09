@@ -194,6 +194,26 @@ Assumptions:
 - Proof: the owner's grade with screenshots · machine plane: the page's `index.md` holds every section's text; the home was noindex
   until designed.
 
+**706-8 · Core: everything that ties the node to Lagrix hidden until Lagrix launches** (the owner 2026-11-09, verbatim: «Также на
+вкладке строй, платежи есть платёж web3 также комментируй его до появления Lagrix. На вкладке паспорт есть три большие карточки как это
+работает, официальный аккаунт, главное кошелёк их оставь но все что выше нужно также закомментировать до появления lagrix. На вкладке
+как это работает нужно создать вторую версию документа и убрать все что связывает этот проект с lagrix основную страницу которая
+находится сейчас закомментировать до появления lagrix, вместо этого показать временную.»)
+- Build → Payments: the Web3 payment page hidden the same way as the A2A pages (`_hidden-until-lagrix-*` folder, its tree entry
+  commented with the same marker; `check:main-agent-menu` / `check:architect-routes` green).
+- Passport: the three large cards (How it works, Official account, Main wallet) stay; everything above them is commented out with the
+  marker «until Lagrix».
+- How it works: the present page kept whole but hidden (`_hidden-until-lagrix-*`); a temporary second version shown in its place with
+  every tie to Lagrix removed; words in per-language data.
+- Proof: eyes on the three pages (localhost) · negative: the hidden routes answer 404 live; `grep -i lagrix` over the temporary page's
+  data finds nothing.
+
+**706-9 · README of github.com/Fractera/web4-node-starter-kit matched to 706** (the owner 2026-11-09, verbatim: «добавь туда задание
+привести readme.md у GitHub.com/fractera/web4-node-starter-kit в соответствии с сделанными изменениями»)
+- Blocks and Design no longer named as native elements the person uses; the element designs its own pages from the brief; the Lagrix
+  parts said as «on the way», never as working; through `humanizer`.
+- Proof: the README on GitHub after the push (link) · `grep -n -i 'blocks\|design'` shows no promise of the dropped elements.
+
 ## My decisions (one line each, for the owner's yes)
 
 - Root and native templates keep their banner and blocks in this step; only the custom template changes.

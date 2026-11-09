@@ -64,3 +64,9 @@ Create a folder next to this one with `_data/` and a thin `page.tsx`. Nothing el
 the build regenerates `_list.generated.ts`, and the section appears in this index
 and in the left menu by itself. See `../../lib/collection/README.md` for the mechanism
 and `../README.md` for this layer's skeleton.
+
+## Until Lagrix launches (step 706-8)
+
+The owner, 2026-11-09: «three large cards — How it works, Official account, Main wallet — stay, everything above them is commented out
+until Lagrix». The summary «The node in Lagrix: the reputation of its elements» (block `nodePassport`) is commented out in
+`_components/index.ts`; uncomment it there when the network launches.

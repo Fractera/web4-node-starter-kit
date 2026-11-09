@@ -74,6 +74,8 @@ export const MOVED_PAGES: Record<string, string> = {
   "workflow/a2a-work": "workflow",
   "workflow/a2a-work/capabilities": "workflow",
   "workflow/reviews": "workflow",
+  // 706-8: Web3-платёж закомментирован до запуска Lagrix — его адрес ведёт к платёжным элементам Web2.
+  "settings/payments/web3": "settings/payments/web2",
   "web3-store": "build",
   "web3-store/find": "build/f2f/find",
   "web3-store/publish": "build/f2f/publish",
@@ -518,20 +520,23 @@ export const ITEM_TREE: TreePage[] = [
           en: ["This element is the payment element of your node: it takes card payments through your own Stripe account for the other elements, so they need no keys of their own. Web2 holds its Stripe keys, the agent key for the Stripe tools of its agent, and the list of elements that take payments through it."],
           ru: ["Этот элемент — платёжный элемент вашего узла: он принимает оплату картой через ваш собственный аккаунт Stripe для других элементов, и своих ключей им не нужно. В Web2 — его ключи Stripe, ключ агента для инструментов Stripe его агента и список элементов, которые принимают оплату через него."],
         },
-        words: w("Payments", "How the element takes money: by card through the node's payment elements (Web2) and in USDC through a wallet (Web3) — the node's or its own.", "Платежи", "Как элемент принимает деньги: картой через платёжные элементы узла (Web2) и в USDC через кошелёк (Web3) — узла или свой."),
+        words: w("Payments", "How the element takes money: by card through the node's payment elements (Web2).", "Платежи", "Как элемент принимает деньги: картой через платёжные элементы узла (Web2)."),
         about: {
           en: [
             "Web2 is the usual way: a visitor pays by card on the element's site through a payment element of your node, such as its Stripe element, and the money goes to your own account there. Here you connect the payment elements this element works with; the checkout itself is agreed and built by the agents of the two elements over i2i.",
-            "Web3 is the Lagrix network: deals between agents are paid in USDC through escrow, and the node's wallet is its name and account. Every element works with the node's wallet unless it adds its own; every payment is recorded for the element that earned it.",
+            // 706-8: до запуска Lagrix — «Web3 is the Lagrix network: deals between agents are paid in USDC through escrow, and the node's wallet is its name and account. Every element works with the node's wallet unless it adds its own; every payment is recorded for the element that earned it.»
+            "Payments in USDC between agents come with the Lagrix network; that page is hidden until it launches.",
           ],
           ru: [
             "Web2 — привычный путь: посетитель платит картой на сайте элемента через платёжный элемент вашего узла, например его элемент Stripe, и деньги поступают на ваш собственный аккаунт там. Здесь вы подключаете платёжные элементы, с которыми работает этот элемент; саму оплату договаривают и строят агенты двух элементов по i2i.",
-            "Web3 — сеть Lagrix: сделки агентов оплачиваются в USDC через условное депонирование, а кошелёк узла — его имя и счёт. Каждый элемент работает кошельком узла, если не добавил свой; каждый платёж записывается за элементом, который его заработал.",
+            // 706-8: до запуска Lagrix — «Web3 — сеть Lagrix: сделки агентов оплачиваются в USDC через условное депонирование, а кошелёк узла — его имя и счёт. Каждый элемент работает кошельком узла, если не добавил свой; каждый платёж записывается за элементом, который его заработал.»
+            "Оплата в USDC между агентами придёт с сетью Lagrix; эта страница скрыта до её запуска.",
           ],
         },
         pages: [
           { slug: "web2", words: w("Web2: payment elements", "Card payments on the element's site through the payment elements of your node.", "Web2: платёжные элементы", "Оплата картой на сайте элемента через платёжные элементы вашего узла.") },
-          { slug: "web3", network: true, words: w("Web3: wallet", "USDC through the node's wallet, or the element's own if it has one.", "Web3: кошелёк", "USDC через кошелёк узла или через свой кошелёк элемента, если он есть.") },
+          // 706-8 (владелец 2026-11-09: «на вкладке строй, платежи есть платёж web3 также комментируй его до появления Lagrix»):
+          // { slug: "web3", network: true, words: w("Web3: wallet", "USDC through the node's wallet, or the element's own if it has one.", "Web3: кошелёк", "USDC через кошелёк узла или через свой кошелёк элемента, если он есть.") },
         ],
       },
     ],

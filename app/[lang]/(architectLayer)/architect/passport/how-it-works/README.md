@@ -80,3 +80,11 @@ the menu is `meta.order`, never the alphabet of folder names.
 
 Mechanism: `../../../lib/collection/README.md`. Layer skeleton and recovery:
 `../../README.md`.
+
+## Until Lagrix launches (step 706-8)
+
+The owner, 2026-11-09: the page shows a temporary second version with every tie to Lagrix removed, and the main version waits for the
+network. The temporary words are derived from the main ones in `_data/presentation-temporary.ts` (section 1 «Ready for Web4» and the
+Lagrix mission card dropped, Lagrix lines replaced, sections renumbered; a check throws if the word «Lagrix» comes back). To bring the
+main version back: in `_components/index.ts` import `presentationWords` from `_data/presentation`, uncomment the Lagrix card and set
+the AI card back to `i === 1`; restore the leads in `_data/en.ts` and `_data/ru.ts`.
