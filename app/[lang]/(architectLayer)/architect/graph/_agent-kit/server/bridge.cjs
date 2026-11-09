@@ -673,13 +673,34 @@ function resetLine(service) {
   return `${nodeLine.head('context-reset', modes.baseOf(service))}The node cleared your context window at your own request. Read your letter to your next session — the section «Letter to my next session» of ${where} — and go on from it. Ask nobody; tell the person in one line that you continue after a reset.`
 }
 
+/**
+ * 708-7: the conversation after `/clear` is born with the first message into it (the letter of `--continue`, or the person's words):
+ * watch the folder until a transcript that was not there before appears, for as long as this same session lives, at most 30 minutes.
+ */
+function watchNewConversation(service, live, element, home, before) {
+  const t0 = Date.now()
+  const timer = setInterval(() => {
+    if (session.current(service) !== live || Date.now() - t0 > 30 * 60_000) return clearInterval(timer)
+    const id = resume.bornSince(live.cwd, before, home)
+    if (!id) return
+    clearInterval(timer)
+    console.log(`[agents/session] ${service}: после сброса — разговор ${id}${resume.recordConversation(process.cwd(), element, id) ? ' записан' : ' не записан'}`)
+  }, 2000)
+  timer.unref?.()
+}
+
 function sessionCommand(service, { action, model, continue: cont = false } = {}) {
   const live = session.current(service)
   if (!live) return { ok: false, reason: 'no-session' }
   if (action === 'clear') {
     void whenIdle(live).then((idle) => {
       if (!idle) return console.log(`[agents/session] ${service}: clear не выполнен — экран не затих или сессии уже нет`)
+      // 708-7: `/clear` gives the session a new conversation id — the transcript born after it becomes the record's `conversation`.
+      const element = modes.baseOf(service)
+      const home = ownClaudeDir(element)
+      const before = resume.ids(live.cwd, home)
       live.proc.write('\x1b[200~/clear\x1b[201~')
+      if (modes.modeOfKey(service) !== 'work') watchNewConversation(service, live, element, home, before)
       for (const ms of [400, 2500]) setTimeout(() => { if (session.current(service) === live) live.proc.write('\r') }, ms)
       console.log(`[agents/session] ${service}: /clear — контекст очищен`)
       // 700-3: the same process, a clean window — and the node wakes it with its letter (no question on the screen, or nothing is typed).

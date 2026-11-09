@@ -86,3 +86,10 @@ Kit master `app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/server/`:
 - B PROVEN 2026-11-09 15:31 on build 1a5262ca: the core restarted detached (pm2 restart, a stand-in for a crash) at 15:31:31; its start
   marked the main agent's session lost and `agent-return.mjs --lost` woke it at 15:31:34 by `--resume 909a8288` with ⟦session-lost⟧ —
   the same conversation. With 707-4 the same day: the dead-proxy rebuild succeeded (0 Google font fetches, built 15:28:23).
+- 708-7 DEFECT found live 2026-11-09 17:00: after `session clear --continue` the core build brought the main agent back into the OLD
+  conversation 909a8288 — `/clear` gives Claude Code a new conversation id and the record kept the old one. Fix: the bridge's clear branch
+  takes the folder's transcript ids before `/clear` and watches (2 s, while the same session lives, at most 30 min) for a transcript that
+  was not there; its id is written into the record's `conversation` (`resume.ids`, `bornSince`, `recordConversation`). Fixture
+  (scratchpad t7087/fixture.cjs): an old transcript touched again is not taken, the new one is, the record keeps its other fields, a
+  non-uuid is refused, `resumable` returns the new id. On the node the record was set by hand to c5fa494c meanwhile. Live proof: the
+  next `session clear` after the node update — the bridge log «после сброса — разговор … записан».
