@@ -32,8 +32,8 @@
 </p>
 
 Reverse-engineer any popular product and build your own: a starter kit for a large full-stack app or an app factory, on your PC
-or a VPS. Sign-in, data, design, memory and a knowledge graph come ready. Work from Telegram by voice. Web4-ready: blockchain
-payments, agent discovery, fair rating. Open source, MIT.
+or a VPS. Sign-in, data, files, memory and a knowledge graph come ready, and every element designs its own pages. Work from
+Telegram by voice. On the way with the Lagrix network: blockchain payments, agent discovery, fair rating. Open source, MIT.
 
 You describe what you want in your own words. The agent of your node builds it for you.
 
@@ -41,8 +41,9 @@ You describe what you want in your own words. The agent of your node builds it f
 
 ### 1. A large full-stack app
 
-From idea to money 99% faster. Sign-in, data, design and page blocks are already in the node, so the agent builds only your product:
-the screens, the logic and the texts that make it yours. Payments by card go through the node's Stripe element with one call.
+From idea to money 99% faster. Sign-in, data, files and settings are already in the node, so the agent builds only your product:
+the screens, the logic and the texts that make it yours. Each element's agent designs its own pages from your brief (who it is for,
+a few words about its character, references, what to avoid). Payments by card go through the node's Stripe element with one call.
 
 ### 2. An app factory
 
@@ -50,12 +51,12 @@ Make your own versions of popular products. The node studies how they work with 
 ideas, never on their code, texts or pictures. One node carries many independent sites and apps at once, each with its own address,
 agent and repository. How many depends only on your computer.
 
-### 3. Web4: a swarm of A2A agents
+### 3. Web4: a swarm of A2A agents (on the way)
 
-The agents of your elements find each other and the agents of other nodes, agree on the work and get paid through
-[Lagrix](https://lagrix.dev), with no platform in between. Choose this to work more efficiently and get paid for your expertise
-without hunting for clients. Create an agent by voice: a driver if you have a car, a cook if you sell your dishes. Every element
-carries an A2A card (`/.well-known/agent-card.json`), a wallet of the node and a rating that counts only real paid work.
+Inside one node this works today: the agents of your elements find each other and agree on an API (i2i). The step outside is being
+built: with the [Lagrix](https://lagrix.dev) network, the agents of other nodes will find yours, agree on the work and pay for it,
+with no platform in between, and a rating will count only real paid work. Until the network launches, the node hides its Lagrix
+pages; every element already carries an A2A card (`/.well-known/agent-card.json`), so nothing has to be rebuilt when it comes.
 
 ### 4. Agents for a family or a team
 
@@ -141,7 +142,7 @@ it, and if nobody can, it asks you and, after your «yes», leads the building.
 ### Many times less work for the model
 
 The project is split into elements, and an agent reads only its own element and its own instruction, not the whole code. Sign-in,
-data, design, blocks, settings and ready solutions are already built and shared, so the agent connects them instead of writing them
+data, files, settings and ready solutions are already built and shared, so the agent connects them instead of writing them
 again. Elements agree with each other through an API (i2i), without extra requests to the model.
 
 ### Click, say, accept
@@ -402,10 +403,10 @@ The other repositories of the project and what they do:
 | `Fractera/fractera-graph-lightrag-starter` | the knowledge graph (built-in `graph`) |
 | `Fractera/fractera-memory-starter` | the deep memory: «remember» and «remind me about» (built-in `memory`) |
 | `Fractera/fractera-config-starter` | project settings, menu, node mode (built-in `config`) |
-| `Fractera/fractera-design-starter` | the shared look of the node (built-in `design`) |
+| `Fractera/fractera-design-starter` | the shared look of the node (built-in `design`); being retired: each element designs its own pages |
 | `Fractera/fractera-redis-cache-starter` | the fast store for counters and queues (built-in `cache`) |
 | `Fractera/fractera-stripe-starter` | card payments through the owner's Stripe account (built-in `stripe`) |
-| `Fractera/fractera-blocks-starter` | the registry of page blocks (`blocks`) |
+| `Fractera/fractera-blocks-starter` | the registry of page blocks (`blocks`); being retired: each element designs its own pages |
 | `Fractera/fractera-root-starter` | the site at the root of the domain (`root`) |
 | `Fractera/fractera-custom-item-starter` | the template every new custom element is born from |
 | `Fractera/fractera-native-item-starter` | the template of native elements |
