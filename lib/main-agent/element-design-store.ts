@@ -1,11 +1,16 @@
 import "server-only"
 import { dataService } from "@/lib/fractera/data-service"
+import { elementKeyOf } from "@/lib/element-key.cjs"
 
 // ВЫБОР ДИЗАЙНА ЭЛЕМЕНТА В БАЗЕ УЗЛА (узел, шаг 711-2, 711-3, 711-5). Владелец 2026-11-09: «из общего числа навыков в граф добавить
 // кандидатов в скилы элемента – из общего числа скилл добавленных в элемент выбрать несколько кандидатов на тест – для каждого кандидата
 // на тест сделать свои референсы … сохранить их в базе данных».
-// 🔒 ОДНА ДВЕРЬ К ДАННЫМ — ЭЛЕМЕНТ data (`/db/migrate`, ключ узла), и ПРОСТРАНСТВО САМОГО ЭЛЕМЕНТА (`?space=<id>`, его база
-// `data/elements/<id>.db`): выбор дизайна — данные элемента; его агент читает их своим ключом (`X-Element-Key`), они уезжают вместе с ним.
+// 🔒 ОДНА ДВЕРЬ К ДАННЫМ — ЭЛЕМЕНТ data (`/db/migrate`), и ПРОСТРАНСТВО САМОГО ЭЛЕМЕНТА (его база `data/elements/<id>.db`): выбор
+// дизайна — данные элемента; его агент читает их своим ключом, они уезжают вместе с ним.
+// 🔒 КЛЮЧ ЭЛЕМЕНТА, НЕ КЛЮЧ УЗЛА (найдено вживую 2026-11-09: `?space=<id>` с ключом узла → 404 no-such-space — ключ узла базу
+// элемента не создаёт, её создаёт только первый вызов самого элемента). Ядро держит DATA_SECRET и делает тот же `X-Element-Key`, что
+// установщик пишет элементу (`lib/element-key.cjs`): вызов открывает ровно пространство этого элемента и создаёт его, как первый вызов
+// элемента; ни одной таблицы в базе узла, ни `/db/claim`.
 // Таблицы объявлены ЗДЕСЬ, одной константой, и появляются в пространстве элемента сами при первом обращении процесса.
 const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS design_skills (
@@ -43,10 +48,12 @@ const ELEMENT = /^[a-z][a-z0-9-]{0,39}$/
 /** Один запрос в пространство элемента. */
 async function sql(element: string, statement: string, params: unknown[] = []): Promise<Record<string, unknown>[]> {
   if (!ELEMENT.test(element)) throw new Error(`not an element id: ${element}`)
-  const { url, key } = dataService()
-  const res = await fetch(`${url}/db/migrate?space=${encodeURIComponent(element)}`, {
+  const { url } = dataService()
+  const key = elementKeyOf(element, process.env.DATA_SECRET ?? "")
+  if (!url || !key) throw new Error("no data service or no DATA_SECRET in the core")
+  const res = await fetch(`${url}/db/migrate`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", "X-Data-Secret": key },
+    headers: { "Content-Type": "application/json", "X-Element-Key": key },
     body: JSON.stringify({ sql: statement, params }),
     signal: AbortSignal.timeout(15_000),
   })
