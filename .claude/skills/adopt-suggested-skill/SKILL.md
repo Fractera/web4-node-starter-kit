@@ -46,6 +46,9 @@ value, use, quality, the partners' audits — and the repository's own history, 
    «embeddings did not count» — the vectors element is off, nothing was kept (`npm run power -- embeddings on`).
 4. **Tell them** where it went: kept — «it is in the node's own skills, I will offer it first when it fits»; handed — the element's agent takes the checked copy from the core, installs it with its `SOURCE.md` («Origin:
    suggested by the person») and commits; its report comes back to you (`npm run state -- <element>`).
+   A kept **design** skill (step 711, the owner 2026-11-09: «он будет сохранён в коллекции ваших навыков и в любой момент … примените
+   его как к новому элементу … так и при необходимости к редизайну уже существующих») — add one line: it now shows in every
+   element's «Build → Design» tab (its search reads their own collection first), where they test it as a prototype page and pin it.
 
 ## Never
 

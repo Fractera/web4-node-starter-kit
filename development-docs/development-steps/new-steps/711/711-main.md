@@ -75,3 +75,24 @@ Proof: the element's agent has the skills in its folder and names the references
 
 **711-6 · The stand.** A new element from the custom template v0.3.178 (empty body); its Design tab filled by the owner; the design
 pass; the owner's grade.
+
+## Built 2026-11-09 (the owner's «y, go to finish non stop»)
+
+- Template `fractera-custom-item-starter` v0.3.179 (`e07c820` 711-7, `ad2535b` 711-4/711-6; CI three-os green): the design document
+  widened (surfaces card/popover/input/ring, `type.headingWeight`, `shape.shadow`, `motion.speed`, each read by components and editable
+  in the element's Design), the `blocks` branch removed; `buildDesignCss(cfg, scope)` + `prototypeScope(id)` =
+  `:root:has([data-prototype="<id>"])`; the protected branch `/<lang>/prototypes` (architect only) — a prototype is a data folder with
+  `tokens.json`, `DESIGN.md`, `prototype.json`, `shots/`; `npm run prototype -- new|done|list`, `npm run design:pin`; guard
+  `check:prototypes`; the brief holds no list of skills (`DESIGN_SKILLS` removed) and keeps `design.pinned`; `.claude/modes/build-design.md`
+  tokens-first. Fixture proof (scratchpad t711): new → done refused (no DESIGN.md, no blocks) → colour in words refused → ready → guard
+  refuses a bad shadow → pin: tokens = design-config, DESIGN.md at root, words to home, awaitingDesign gone, passport designSkill and
+  pinned, both prototypes archived (pinned / archived).
+- Core: `lib/main-agent/design-skills.mjs` — the live search (own collection + graph base + catalog; the person's words refine the design
+  intent, measured: a Russian portfolio phrase alone gave the catalog «media-use, image-generation», with the intent — design skills);
+  `findSkills` `maxSkills` and the skill's description, `findInCatalogFile` `ownN`; `lib/main-agent/element-design-store.ts` — tables
+  `design_skills`, `design_refs`, `design_runs` in the ELEMENT's own space of the node's database (`/db/migrate?space=<id>`);
+  `lib/main-agent/element-prototypes.ts` — reads the element's prototypes and shots; door `/api/node/element-design` (search, state,
+  shot, add/remove skill, test, refs, generate — hands the skill with `skills hand` unless the element has it, wakes the element's agent
+  with «Build process, design: generate the design prototype …», one at a time; pin — wakes it with «… pin …»); the tab
+  `components/element-design/*` with the word to the architect (711-9); `element-look.cjs` accepts skill marks, `motion` and `pinned`;
+  `adopt-suggested-skill` — a kept design skill shows in every element's Design tab.

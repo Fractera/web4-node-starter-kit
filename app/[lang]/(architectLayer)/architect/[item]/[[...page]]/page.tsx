@@ -66,6 +66,8 @@ import { listOrders } from '@/lib/web4-items/element-orders'
 import { elementDashboardUi } from '../../../_i18n/element-dashboard.i18n'
 import { hasDoc } from '@/lib/web4-items/element-docs'
 import { ElementDocIsland } from '@/components/element-docs/element-doc.client'
+import { ElementDesignPanel } from '@/components/element-design/element-design-panel.client'
+import { elementDesignWords } from '../../../_i18n/element-design.i18n'
 import { PassportDoor } from '@/components/element-docs/passport-door.client'
 import { elementDocsUi, elementOrdersUi, passportDoorUi } from '../../../_i18n/element-docs.i18n'
 import { ElementOrdersIsland } from '@/components/element-docs/element-orders.client'
@@ -418,9 +420,11 @@ export default async function Page({ params }: { params: Promise<Params> }) {
     : null
 
   // 706-1: «Строительство → Дизайн» — что там и ссылка на мастерскую самого элемента (бриф, шрифты, цвета).
+  // 711: сверху — рабочая вкладка ядра: живой поиск навыков дизайна, кандидаты, референсы, тестовые страницы и закрепление.
   const designPage = key === 'build/design'
     ? (entry
       ? <section className="my-6 flex flex-col gap-3" data-element-design-page data-block="element-design-page">
+          <ElementDesignPanel item={item} lang={lang} port={port} publicUrl={ownPublicUrl} words={elementDesignWords(lang)} />
           <p className="text-sm text-foreground">{sui.designPage.text}</p>
           <ElementOwnPageLink lang={lang} path="admin/design" port={port} publicUrl={ownPublicUrl} label={sui.designPage.open} localOnly={sui.ownPage.localOnly} />
         </section>
