@@ -11,7 +11,32 @@ The owner 2026-11-09, verbatim: «мы должны развивать вкла�
 Law of the step: no list of skills and no filter in code — every open of the tab is a live search of the graph; a skill added to the
 graph (the person's own, a base update) shows up without a core build.
 
-## Substeps (for the owner's yes)
+## The end goal (the owner's «y», 2026-11-09)
+
+The mechanism knows nothing about skills in advance — 2 or 200 in the graph, the owner's and the client's. The client, for their element:
+picks skill candidates from a live graph search → picks test candidates → gives each its references → «Сгенерировать тестовую страницу»
+→ the prototype is kept in a protected section, its link in the tab → looks, picks the winner, pins it into the element's
+`own-service-props.json`; from then on the element's agent builds every page by that choice. Pinned is the client's choice in the
+element, in ONE common form for any skill: tokens first (the prototype's own copy of `DESIGN-CONFIG`, scoped to the prototype), the page
+second; on pin the winner's tokens become the element's `design-config.json`, the rest (composition rules) goes to `DESIGN.md`.
+The token pipeline stays (it is the flexible part); its schema widens (surfaces, shadows, motion, rhythm, weights), the `blocks` leftovers
+go; no tool reads settings back from a finished page. The element's own `admin/design` stays for hand edits without a model.
+
+DECIDED by the owner 2026-11-09, verbatim: «y , go to finish non stop first for fractera-item-starter , later for root.not more now».
+
+## Substeps (revised — token-first; the earlier list below is superseded where it differs)
+
+1. 711-1 live graph search of design skills, no list in code. 2. 711-2 the client's skill candidates of the element, in the node's
+database. 3. 711-3 test candidates with their own references (images in storage, links). 4. 711-4 template: protected section
+«Прототипы дизайна» — one route, data; each prototype its own token copy scoped to it; a guard that a prototype takes colours only from
+tokens. 5. 711-5 «Сгенерировать тестовую страницу» in the core's tab — the element agent's design pass with that skill and references;
+one at a time, the price before the press; status, link and screenshots in the tab. 6. 711-6 «Закрепить» — the winner's tokens become the
+element's design document, DESIGN.md goes into the element, the passport records skill + version, references, date; the element's design
+pass always starts by reading it; losers' code goes, their screenshots and grades stay. 7. 711-7 the schema widened, `blocks` leftovers
+removed, the element's editor shows the new fields. 8. 711-8 the stand: a new element through the whole path, the owner's grade. Then the
+same for the root starter.
+
+## Substeps (first draft, superseded)
 
 **711-1 · The search.** A door of the core (architect, admin) asks the graph by meaning (`graph-query`, the same door as `skills_find`;
 keywords taken from the query's own words — an empty keyword list is refused by the graph, measured 400) and returns every skill whose
