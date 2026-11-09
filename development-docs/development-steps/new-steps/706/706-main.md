@@ -74,6 +74,14 @@ The owner, 2026-11-09 11:53 WET, verbatim: «Есть ещё одна вещь �
 вкладку дизайнпредлагаю пользователю с минимальными настройками продолжить разработку? Подумай об этом».
 Fact: the passport already holds `designSkill` (`OWN-SERVICE-PROPS/OWN-SERVICE-PROPS.json`) and reaches the core by `describe:publish`.
 
+The owner, 2026-11-09 ~13:30 WET, verbatim: «Пожалуйста запомни что нет необходимости менять стартовый нативный шаблон представленный
+интерфейс вполне соответствует ожиданиям для типовых шаблонов Fractera с минимальным дизайном и стандартизированным описанием. То есть мы
+работаем только над нативными элементами. Когда будешь работать над интерфейсом ядра обрати внимание что на вкладке элементы у нас есть
+раздел рабочей процесс. Так как лагрикс ещё не запущен то имеет смысл этот раздел закомментировать внутри.» Done: the native template is
+not touched in 706; in the core the Lagrix pages of «Working process» (A2A orders, A2A work with capability cards, reviews) and the Lagrix
+rating card are commented out, their addresses lead to «Working process»; its terminal (`task --work`) and «Process» (subscriptions, the
+custom element's calendar) stay — they work today.
+
 Assumptions:
 - I assume that the element's OWN design panel (`admin/design`, `DESIGN-CONFIG`) stays: it caps nothing and gives the owner a path
   without a model. «элементы дизайн» is read as the Design native element.

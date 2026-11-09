@@ -527,7 +527,9 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       ? (entry ? <NodeWalletCard words={nodeWalletUi(lang)} note={pw.web3ElementNote} element={item} /> : <p className="my-4 text-sm text-muted-foreground">{pw.notBorn}</p>)
       : null
   // 436-3 (владелец 2026-10-09): рейтинг элемента в Lagrix; 528-1 — на главной «Рабочего процесса», куда переехал A2A.
-  const lagrix = key === 'workflow' && !isNativeElement(item) ? <LagrixRating words={lagrixRatingUi(lang)} /> : null
+  // 706 (владелец 2026-11-09): Lagrix ещё не запущен — карточка рейтинга на главной «Рабочего процесса» закомментирована вместе с разделами A2A.
+  // const lagrix = key === 'workflow' && !isNativeElement(item) ? <LagrixRating words={lagrixRatingUi(lang)} /> : null
+  const lagrix = null
   // 435-3: «Каталог» показывает и элементы узла — из того же реестра, по которому элементы ищут соседей (`nodeEntries`);
   // у элемента без визитки — только адрес.
   const nodeElements: NodeElementRow[] | undefined = passportView === 'catalog'

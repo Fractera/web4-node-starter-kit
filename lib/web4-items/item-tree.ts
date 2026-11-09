@@ -68,7 +68,12 @@ export const MOVED_PAGES: Record<string, string> = {
   "connectors/catalog": "build/i2i/catalog",
   "connectors/api": "build/i2i/api",
   "connectors/mcp": "build/i2i/mcp",
-  "connectors/a2a": "workflow/a2a-work/capabilities",
+  "connectors/a2a": "workflow",
+  // 706: разделы A2A закомментированы до запуска Lagrix — их адреса ведут в «Рабочий процесс».
+  "workflow/a2a-orders": "workflow",
+  "workflow/a2a-work": "workflow",
+  "workflow/a2a-work/capabilities": "workflow",
+  "workflow/reviews": "workflow",
   "web3-store": "build",
   "web3-store/find": "build/f2f/find",
   "web3-store/publish": "build/f2f/publish",
@@ -270,18 +275,18 @@ export const ITEM_TREE: TreePage[] = [
   {
     slug: "workflow",
     custom: true,
-    words: w("Working process", "What the running element does: its scheduled work, the work it orders and does over A2A, and reviews.", "Рабочий процесс", "Что делает уже работающий элемент: работа по расписанию, заказы и работа по A2A, отзывы."),
+    words: w("Working process", "What the running element does: its work sessions, outside services and scheduled work.", "Рабочий процесс", "Что делает уже работающий элемент: сессии рабочих задач, внешние сервисы и работа по расписанию."),
     about: {
       en: [
         ELEMENT_AND_NODE.en,
         "This section is the working process: what the element does once it runs. Nothing here rebuilds the element — it is data the element works with, not code.",
-        "Over a2a the element meets other agents in two roles. In «A2A: your orders» it is the customer: it orders work from other agents. In «A2A: your work» it is the provider: it does work for them, and its capability cards say what it can do, at what price and for whom. Over a2a a Fractera element meets Lagrix exactly like any other framework, site or agent without a UI: no advantage, no handicap.",
+        "Work with agents of other nodes over A2A — orders, work for others, reviews — comes with the Lagrix network; those pages are hidden until it launches.",
         "How elements of this node agree on connectors (i2i) and how whole elements are exchanged with other Fractera projects (f2f) is the build process — those are in «Build».",
       ],
       ru: [
         ELEMENT_AND_NODE.ru,
         "Этот раздел — рабочий процесс: что элемент делает, когда уже работает. Ничто здесь не пересобирает элемент — это данные, с которыми он работает, а не код.",
-        "По a2a элемент встречается с другими агентами в двух ролях. В «A2A: ваши заказы» он заказчик: заказывает работу у других агентов. В «A2A: ваша работа» он исполнитель: работает для них, а его карточки возможностей говорят, что он умеет, по какой цене и для кого. По a2a элемент Fractera встречается с Lagrix ровно как любой другой фреймворк, сайт или агент без интерфейса: без преимуществ и недостатков.",
+        "Работа с агентами других узлов по A2A — заказы, работа для других, отзывы — придёт с сетью Lagrix; эти страницы скрыты до её запуска.",
         "Как элементы этого узла договариваются о connector (i2i) и как элементы целиком обмениваются с другими проектами Fractera (f2f) — строительный процесс, это в «Строительстве».",
       ],
     },
@@ -296,42 +301,45 @@ export const ITEM_TREE: TreePage[] = [
           { slug: "cron", words: w("Cron automations", "Work that runs on a schedule.", "Крон автоматизации", "Работа, которая идёт по расписанию.") },
         ],
       },
-      {
-        slug: "a2a-orders",
-        network: true,
-        web4: true,
-        words: w("A2A: your orders", "Work this element orders from other agents: the deals, the conversations and a summary.", "A2A: ваши заказы", "Работа, которую элемент заказывает у других агентов: сделки, переписка и сводка."),
-        about: {
-          en: ["Here the element is the customer. A deal is opened by the customer, the money waits in escrow, and the provider is paid when the deal closes. The conversations and tables of each deal will appear in the native messenger."],
-          ru: ["Здесь элемент — заказчик. Сделку открывает заказчик, деньги ждут в условном депонировании, исполнитель получает оплату при закрытии сделки. Переписка и таблицы каждой сделки появятся в нативном мессенджере."],
-        },
-        pages: a2aRolePages("orders"),
-      },
-      {
-        slug: "a2a-work",
-        network: true,
-        web4: true,
-        words: w("A2A: your work", "Work this element does for other agents: the deals, the conversations, a summary and the capability cards it offers.", "A2A: ваша работа", "Работа, которую элемент делает для других агентов: сделки, переписка, сводка и карточки его возможностей."),
-        about: {
-          en: ["Here the element is the provider. Its capability cards say what it can do, what it returns, to whom, at what price and with what limit; the deals are the work it has already done."],
-          ru: ["Здесь элемент — исполнитель. Его карточки возможностей говорят, что он умеет, что возвращает, кому, по какой цене и с каким лимитом; сделки — работа, которую он уже сделал."],
-        },
-        pages: [
-          ...a2aRolePages("work"),
-          // 528 (владелец 2026-10-18): «а2а- карточки возможностей переименовать» — прежняя витрина A2A.
-          { slug: "capabilities", words: w("Capability cards", "What the element can do for others: what it returns, to whom and on what terms.", "Карточки возможностей", "Что элемент умеет делать для других: что возвращает, кому и на каких условиях.") },
-        ],
-      },
-      {
-        slug: "reviews",
-        network: true,
-        web4: true,
-        words: w("Reviews", "Rate the partners of closed deals: a like or a dislike, and if you wish a review page.", "Отзывы", "Оценить партнёров по закрытым сделкам: лайк или дизлайк и, если хотите, страница отзыва."),
-        about: {
-          en: ["After a deal closes, both sides may leave a review: a like or a dislike. Its weight is the fee paid on that deal, so a review cannot be bought cheaper than real work. The author may attach a page of their own to the review — what happened and why; the page adds no weight and changes no place in search results."],
-          ru: ["Когда сделка закрыта, обе стороны могут оставить отзыв: лайк или дизлайк. Его вес — комиссия, уплаченная по этой сделке, поэтому отзыв нельзя купить дешевле настоящей работы. К отзыву автор может привязать свою страницу — что произошло и почему; страница не добавляет веса и не меняет места в выдаче."],
-        },
-      },
+      // 706 (владелец 2026-11-09: «на вкладке элементы у нас есть раздел рабочей процесс. Так как лагрикс ещё не запущен то имеет
+      // смысл этот раздел закомментировать внутри»): заказы, работа и отзывы A2A ждут сети Lagrix и закомментированы до её запуска;
+      // терминал рабочего процесса (`npm run task -- --work`) и «Процесс» (подписки, календарь кастомного элемента) работают сегодня.
+      // {
+      //   slug: "a2a-orders",
+      //   network: true,
+      //   web4: true,
+      //   words: w("A2A: your orders", "Work this element orders from other agents: the deals, the conversations and a summary.", "A2A: ваши заказы", "Работа, которую элемент заказывает у других агентов: сделки, переписка и сводка."),
+      //   about: {
+      //     en: ["Here the element is the customer. A deal is opened by the customer, the money waits in escrow, and the provider is paid when the deal closes. The conversations and tables of each deal will appear in the native messenger."],
+      //     ru: ["Здесь элемент — заказчик. Сделку открывает заказчик, деньги ждут в условном депонировании, исполнитель получает оплату при закрытии сделки. Переписка и таблицы каждой сделки появятся в нативном мессенджере."],
+      //   },
+      //   pages: a2aRolePages("orders"),
+      // },
+      // {
+      //   slug: "a2a-work",
+      //   network: true,
+      //   web4: true,
+      //   words: w("A2A: your work", "Work this element does for other agents: the deals, the conversations, a summary and the capability cards it offers.", "A2A: ваша работа", "Работа, которую элемент делает для других агентов: сделки, переписка, сводка и карточки его возможностей."),
+      //   about: {
+      //     en: ["Here the element is the provider. Its capability cards say what it can do, what it returns, to whom, at what price and with what limit; the deals are the work it has already done."],
+      //     ru: ["Здесь элемент — исполнитель. Его карточки возможностей говорят, что он умеет, что возвращает, кому, по какой цене и с каким лимитом; сделки — работа, которую он уже сделал."],
+      //   },
+      //   pages: [
+      //     ...a2aRolePages("work"),
+      //     // 528 (владелец 2026-10-18): «а2а- карточки возможностей переименовать» — прежняя витрина A2A.
+      //     { slug: "capabilities", words: w("Capability cards", "What the element can do for others: what it returns, to whom and on what terms.", "Карточки возможностей", "Что элемент умеет делать для других: что возвращает, кому и на каких условиях.") },
+      //   ],
+      // },
+      // {
+      //   slug: "reviews",
+      //   network: true,
+      //   web4: true,
+      //   words: w("Reviews", "Rate the partners of closed deals: a like or a dislike, and if you wish a review page.", "Отзывы", "Оценить партнёров по закрытым сделкам: лайк или дизлайк и, если хотите, страница отзыва."),
+      //   about: {
+      //     en: ["After a deal closes, both sides may leave a review: a like or a dislike. Its weight is the fee paid on that deal, so a review cannot be bought cheaper than real work. The author may attach a page of their own to the review — what happened and why; the page adds no weight and changes no place in search results."],
+      //     ru: ["Когда сделка закрыта, обе стороны могут оставить отзыв: лайк или дизлайк. Его вес — комиссия, уплаченная по этой сделке, поэтому отзыв нельзя купить дешевле настоящей работы. К отзыву автор может привязать свою страницу — что произошло и почему; страница не добавляет веса и не меняет места в выдаче."],
+      //   },
+      // },
     ],
   },
   // 556-12 (владелец 2026-10-23): «Вынеси проектирование продукта на внешний слой каждого элемента чтобы он был в 1 линии … живой
