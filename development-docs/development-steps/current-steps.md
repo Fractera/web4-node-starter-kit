@@ -5,6 +5,12 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-78 (2026-11-09, ~14:30 WET) — 708 PLAN for the owner's yes** (`new-steps/708/708-main.md`): a conversation cut by accident
+(Stop pressed, power lost, core killed) is continued from disk (`--continue`) by the terminal's button and the bot's /on; the end kind is
+recorded in session-mode.json; «продолжай с того же места» reads the state record, then the transcript's tail. Open: A buttons only, B +
+the main agent returns by itself after a lost session (my pick). 707 live tests T1–T3 PASSED on the owner's node 14:02–14:11. No code
+before his word.
+
 **NOW-77 (2026-11-09, ~14:20 WET) — 707-5 + 707-6 (plan 707-main.md).** The 707 live update did NOT return the main agent: the stale
 lid record made `openLid` restart the running core and kill the agent before it was recorded. Fixed (openLid starts only what is
 down; fixture PASS, old code FAIL). 707-6 Messenger of the main agent hidden until Lagrix (the owner's word), Telegram → «Строительство».
