@@ -36,6 +36,17 @@ pass always starts by reading it; losers' code goes, their screenshots and grade
 removed, the element's editor shows the new fields. 8. 711-8 the stand: a new element through the whole path, the owner's grade. Then the
 same for the root starter.
 
+**711-9 · The word to the architect and the collection** (the owner 2026-11-09, verbatim: «твоя презентация для архитектора как работает
+дизайн какое в этом преимущество. Нужно буквально ему говорить … каждый раз когда вы видите в социальных сетях пример содержащий названия
+красивого навыка дизайна просто вы можете сообщить через свой Telegram бот или прямо в терминал о том что вы нашли новый интересный навык
+для дизайна. Он будет сохранён в коллекции ваших навыков и в любой момент … примените его как к новому элементу во время его создания и
+последующего строительства так и при необходимости к редизайну уже существующих. Может быть это какой-то такой навык создашь?»). Fact:
+the skill exists — `adopt-suggested-skill` keeps a named skill in the node's own collection (`data/node/skills/own/`, its own vector
+index, searched first by `skills_find`) — NOT in the graph. So the Design tab searches what `skills_find` searches: the person's own
+collection first, the node's base in the graph, the checked catalog. The tab opens with the presentation (how design works here, the
+advantage, «found a beautiful design skill — tell your bot»); `adopt-suggested-skill` says that a kept design skill appears in every
+element's Design tab — for a new element and for a redesign.
+
 ## Substeps (first draft, superseded)
 
 **711-1 · The search.** A door of the core (architect, admin) asks the graph by meaning (`graph-query`, the same door as `skills_find`;
