@@ -5,6 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-74 (2026-11-09, 11:36 WET) — 706: blocks and design OFF on the owner's node (not deletable by the door — natives, required,
+pinned; deletion = 706-5). His order: a NEW test element from the custom starter, its patterns back into the starter, existing elements
+later; lqvop out. The test element's subject waits for him. 704-4's source edit committed and pushed `a16c4056` (CI three-os ran).**
+
 **NOW-73 (2026-11-09, 11:26 WET) — STEP 706 DECIDED, plan in drafting: drop the Blocks and Design native elements** (the owner,
 verbatim: «Отлично давай зафиксируем факт того что мы приняли решение отказаться от элементов дизайн и от элементов Blok.»). Pages are
 designed natively by the element's agent; the physics stays (route template + data folders, words in per-language data, static layer,

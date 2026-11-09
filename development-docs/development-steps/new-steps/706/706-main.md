@@ -25,11 +25,23 @@ translations, edits without a build); the static public layer; tokens in the ele
 (`buildDesignCss`); `bid` / `data-block` addresses; the SEO/AIO guards. What goes: the shared catalogue and its process, the block/widget
 taxonomy, the «first a ready block» law, the Design link.
 
+The owner, 2026-11-09 ~11:30 WET, verbatim: «Прежде всего давай перестанем смотреть вообще на элемент исследования он самый мусорный
+и самый бесполезный. Предлагаю поднять для теста новый элемент из стартового шаблона затем разработанные на этом элементе патерны
+переедут сначала обратно в стартовый шаблон а затем будем думать его других существующих элементах согласен?» — and: «Технически если мы
+не зависим от элемента блоки и от элемента дизайн прямо сейчас давай их удалим а потом поднимем новый стартовый шаблон если в процессе
+поднятия появится какая-то зависимость мы её обнаружим в виде ошибки».
+Done 11:36: blocks and design turned OFF on his node (`npm run power … off`, reason «шаг 706»): node 2.47 → 2.27 GB, the core answers 200.
+Not deleted: the delete door takes only born custom elements (`isBornElement`: kind user + born); both are `required: true`, pinned
+(blocks v1.4.34, design v1.1.39) — `services:install` of the next node update would bring them back. Off by a person = a neighbour's
+call is refused at once with the reason, so a dependency surfaces as an error (his test). The real deletion is 706-5.
+The order is now his: a NEW test element from the custom starter (`--look own --blocks off`) → its patterns back into the starter →
+the existing elements later. lqvop is out of this step. The way back (my proposal): the element's agent hands its pattern commits as
+patches into its own data folder; I apply them in the workshop clone, generalise, release. The element's subject waits for the owner.
+
 Assumptions:
 - I assume that the element's OWN design panel (`admin/design`, `DESIGN-CONFIG`) stays: it caps nothing and gives the owner a path
   without a model. «элементы дизайн» is read as the Design native element.
 - I assume that existing elements are not rewritten: their blocks are their own copies, the data format does not change.
-- I assume that lqvop's redo is the first page of the new design pass — not a gate (the owner decided without the experiment).
 
 ## 2. What is reused (paths that open)
 
