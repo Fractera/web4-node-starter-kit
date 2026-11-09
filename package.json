@@ -122,6 +122,7 @@
     "supervise": "node scripts/main-agent-cli.mjs supervise",
     "close": "node scripts/main-agent-cli.mjs close",
     "trust": "node scripts/main-agent-cli.mjs trust",
+    "permit": "node scripts/main-agent-cli.mjs permit",
     "person": "node scripts/main-agent-cli.mjs person",
     "done": "node scripts/main-agent-cli.mjs done",
     "telegram": "node scripts/main-agent-cli.mjs telegram",

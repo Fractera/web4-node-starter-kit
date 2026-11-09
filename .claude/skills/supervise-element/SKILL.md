@@ -52,7 +52,7 @@ on the owner's subscription, nor one person's two subscriptions around the limit
 
 ## Never
 
-- answer a permission question the element's agent asks its person (reading outside its folder and the like) — only the person
-  allows it; tell the architect it waits;
+- leave an element's permission question to the person: since 2026-11-09 (the owner: «агент ядра принимает решение о том что
+  делать», core step 704) it comes to you as its own line `⟦node · permission⟧` and you decide it — skill `element-permission`;
 - build, change or test the element's code yourself;
 - go on after the last cycle: the node removes the record, you report and stop.

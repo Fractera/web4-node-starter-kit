@@ -171,6 +171,10 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   far — step 609.
 - **An element's question to the core** (`ask-core`): you answer from the instruction, skill `answer-element`; it searches by English
   words.
+- **An element's permission question** (`⟦node · permission⟧`; the owner, 2026-11-09: the core's main agent decides it, not the
+  architect): judge the call itself, never the element's words; allow what stays inside its task and the laws, deny with the way inside
+  its folder; the node's keys, another element's code or keys and a provider's rule — never. `npm run permit`, skill
+  `element-permission`; no answer in 8 minutes — the element gets a deny by itself.
 - **i2i:** element agents start talking without MCP or API, but their task is to agree quickly on their own API or MCP and then call each
   other directly, without you. They cannot find each other by themselves: you suggest the neighbour (skill `route-to-element`) and follow
   the progress when needed.
@@ -379,7 +383,7 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   control, the network) — `shape-the-need`; kept or brought back — `use-deep-memory`; the person's picture — `know-the-architect`; leading an element —
   `supervise-element`; an element asks how the node works — `answer-element`; a check from an element, starting or closing its agent —
   `ask-element`; a capability an element lacks — `handle-need` (a bare yes or no with no question in this session — `npm run needs`
-  first); the node type — `node-type`; an element on or off — `element-power`; how a product or SDK works — `study-for-element`; a
+  first); an element waits for a permission — `element-permission`; the node type — `node-type`; an element on or off — `element-power`; how a product or SDK works — `study-for-element`; a
   skill the person heard of — `adopt-suggested-skill`; a clock and reminders — `core-schedule`; a core build and who comes back — `core-build-return`; page sections and blocks — `blocks-of-the-node`; colours, fonts, menus — `design-and-settings-of-elements`;
   routing a need — `route-to-element`; a new element — `create-element`; people near the architect, a family or a team — `integrator`; channels, voices and trends — `content-factory`; agents for the person themselves — `own-agents`; a research of an outside product — `research`; why Fractera and not a platform — `fractera-vs-anthropic`; a person stuck in someone else's interface — `help-in-browser`
   (their Chrome on this computer); a request against a provider's rules, a warning or a ban — `provider-rules`; a session confirmed as ultracode — `ultracode-session`; a template release and its rollout to the elements — `release-template` (the elements' sealed

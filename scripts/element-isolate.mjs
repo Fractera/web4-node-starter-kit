@@ -118,8 +118,19 @@ for (const dir of only ? [] : elements) {
 
   // Сторож путей: своя запись узнаётся по имени сценария и переписывается целиком.
   const hookCmd = `node "${HOOK}" --dir "${dir.replace(/\\/g, '/')}" --data "${join(ROOT, 'data', 'services', id).replace(/\\/g, '/')}" --root "${ROOT.replace(/\\/g, '/')}"`
-  const pre = (s.hooks?.PreToolUse ?? []).filter((m) => !(m.hooks ?? []).some((h) => String(h.command ?? '').includes('element-boundary-hook.mjs')))
-  s.hooks = { ...(s.hooks ?? {}), PreToolUse: [...pre, { matcher: 'Bash|PowerShell|Write|Edit|MultiEdit|NotebookEdit', hooks: [{ type: 'command', command: hookCmd }] }] }
+  // 704: решает главный агент ядра — хук ждёт его ответа до 8 минут, поэтому `timeout` 600 с; `onFailure: block` — упавший или
+  // зависший сторож закрывает вызов, а не пропускает его («don't count on a stalled hook to act as a gate», code.claude.com/docs/en/hooks,
+  // прочитано 2026-11-09). Тот же сценарий на `PermissionRequest` (без matcher — любой инструмент): вопрос по правилу `ask` выше и любой
+  // другой вопрос Claude Code в сессии элемента идёт главному агенту ядра, а не висит в терминале.
+  const isBoundary = (m) => (m.hooks ?? []).some((h) => String(h.command ?? '').includes('element-boundary-hook.mjs'))
+  const boundaryHook = { type: 'command', command: hookCmd, timeout: 600, onFailure: 'block' }
+  const pre = (s.hooks?.PreToolUse ?? []).filter((m) => !isBoundary(m))
+  const perm = (s.hooks?.PermissionRequest ?? []).filter((m) => !isBoundary(m))
+  s.hooks = {
+    ...(s.hooks ?? {}),
+    PreToolUse: [...pre, { matcher: 'Bash|PowerShell|Write|Edit|MultiEdit|NotebookEdit', hooks: [boundaryHook] }],
+    PermissionRequest: [...perm, { hooks: [boundaryHook] }],
+  }
 
   // Чужое — вон из списка; вендорные навыки — по имени; бюджет — под свои описания.
   const own = ownSkills(dir)

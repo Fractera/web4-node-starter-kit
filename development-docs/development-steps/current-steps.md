@@ -5,6 +5,12 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-69 (2026-11-09, ~01:30 WET) — 704 IN WORK (the owner: «check and fix»): the core's main agent decides an element's permission
+question.** Plan `new-steps/704/704-main.md` (his words verbatim, the probe measured). lqvop was stuck on the guard's false positive (`cd ..`
+after a `cd` into a subfolder) — I pressed «1. Yes» in its terminal through Chrome as the core's decision, it went on. Next: 704-1 the guard
+follows `cd`, then 704-2 the door and `npm run permit`, 704-3 the law; push, fork sync, node update, live. The cold exam (NOW-68) is not
+touched: its restore waits for the owner's «оцени по случаю 22».
+
 **NOW-68 (2026-11-08, ~23:20 WET) — COLD EXAM IN PROGRESS on the owner's node** (the owner: «to do test without me ? use chrome
 extention» → my plan with his one-minute part → «y»). Blindness: the node's letter lifted by commit `0087d39f` (revert it after), the
 base memory OFF (`npm run memory -- on` after), the main agent's window cleared with no wake. The owner types two questions cold:

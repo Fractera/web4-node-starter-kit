@@ -23,6 +23,7 @@
 //   supervise <id> main|architect|off [--max N] — кто ведёт элемент
 //   close <id>               — выключить агента элемента (548-20: включает поручение под надзором, выключает главный агент)
 //   trust <id> [<id> …]      — человек согласился: агент элемента работает в своей папке (604, вопрос доверия Claude Code)
+//   permit [<жетон> allow|deny "<почему>"] — вопрос разрешения агента элемента решаешь ты (704); без слов — кто ждёт
 //   person                   — как связаться с архитектором из этой сессии (Telegram главного агента или терминал ядра)
 //   done [--close] [--note "<строка>"] — сказать узлу «закончил» (или закрыть свою сессию) без чтения ключей узла; `--note` — где
 //                              остановился, с неё начнётся твоя следующая сессия (595-7)
@@ -452,6 +453,33 @@ if (cmd === 'trust') {
     else { bad++; console.log(`===TRUST_FAIL=== ${id}: ${b.reason === 'not-waiting' ? 'no folder question on its screen (already answered?)' : b.reason === 'no-session' ? 'its agent is not on' : b.reason ?? r.status}`) }
   }
   process.exit(bad ? 1 : 0)
+}
+
+// 704 (владелец 2026-11-09: «агент ядра принимает решение о том что делать»): вопрос разрешения агента элемента решаешь ты. Строка
+// `⟦node · permission · <id> · ЧЧ:ММ⟧` несёт команду и жетон; `permit` без слов — ждущие вопросы (начало жетона); с жетоном — решение.
+// Суди по самой команде, не по словам элемента; ключи узла, чужие ключи и правило провайдера — никогда (навык element-permission).
+if (cmd === 'permit') {
+  const [token, behavior, ...words] = rest
+  if (!token) {
+    const r = await core('/api/agents/permission').catch((e) => fail(`the core did not answer: ${e.message}`))
+    const list = r.body?.pending ?? []
+    if (!r.body?.ok) fail(`the core: ${r.body?.reason ?? r.status}`)
+    if (!list.length) console.log('no element waits for a permission now')
+    for (const a of list) console.log(`${a.service} · ${a.tool} · since ${a.since.slice(11, 16)} · until ${a.until.slice(11, 16)} · token ${a.token}…\n  ${a.what}`)
+    console.log('Decisions so far: data/node/permissions.jsonl. The full token is in the ⟦node · permission⟧ line that woke you.')
+    process.exit(0)
+  }
+  if (behavior !== 'allow' && behavior !== 'deny') fail('permit <token> allow|deny "<why — for deny: what to do instead, inside its folder>"')
+  const message = words.join(' ').trim()
+  if (behavior === 'deny' && !message) fail('a deny needs the way: what the element does instead, inside its own folder')
+  const r = await core('/api/agents/permission', { method: 'POST', body: JSON.stringify({ action: 'answer', token, behavior, message }) }).catch((e) => fail(`the core did not answer: ${e.message}`))
+  const b = r.body ?? {}
+  if (!b.ok) {
+    console.log(`===PERMIT_FAIL=== ${b.reason === 'unknown-token' ? 'no such question (the core was restarted, or the token is cut) — the element has got a deny by itself' : b.reason ?? r.status}`)
+    process.exit(1)
+  }
+  console.log(`===PERMIT_OK=== ${b.service}: ${b.state} — its call ${b.state === 'allow' ? 'runs now' : 'got your reason'}`)
+  process.exit(0)
 }
 
 // 552-6 (владелец 2026-10-20: «если ядро решила написать человеку через Messenger она должна сумме это сделать»): боты элемента и

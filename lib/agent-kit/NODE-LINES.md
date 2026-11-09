@@ -18,6 +18,7 @@ commit. Messages to the PERSON have their own closed list (`lib/main-agent-cron/
 | `ask-core` | an element (`npm run ask-core`, its template) | the main agent | answers from the instruction, skill `answer-element` |
 | `tell-core` | an element (`npm run tell-core`) | the main agent | passes the words to the architect, naming the element |
 | `need` | an element (`npm run need`) | the main agent | finds who does it or asks the architect, skill `handle-need` |
+| `permission` | the core's boundary guard of an element (`scripts/element-boundary-hook.mjs` → `/api/agents/permission`, `lib/agent-kit/permission.cjs`, step 704) | the main agent | judges the command itself, then `npm run permit -- <token> allow\|deny "<why>"`; no answer by the deadline — the element gets a deny by itself (skill `element-permission`) |
 
 The elements' words carry the head right after the process word («Build process: ⟦node · need · s8y6x · 18:17⟧ …»): the bridge picks the
 session by that word first (step 699).
