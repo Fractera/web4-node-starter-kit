@@ -1,6 +1,7 @@
 # 706 — Drop the Blocks and Design native elements; pages are designed natively by the element's agent
 
-Status: DECIDED by the owner, plan in drafting (stages 1–4 below; substeps unfold after the owner answers the legacy question).
+Status: PLAN APPROVED by the owner 2026-11-09 12:32 WET, verbatim: «go to work, to do step by step to finish» (after plan mode on the plan
+«Step 706 — native design: the entrance, the empty starter body, birth «like X», the stand»). Substeps 706-1..7 below, each in its file.
 Born 2026-11-09 on the owner's node (aifa-agi), from the lqvop landing graded 1 twice.
 
 ## 1. Retelling and decisions
@@ -114,14 +115,99 @@ Assumptions:
 - `npm run load` lists neither blocks nor design; every existing element's pages still render (eyes screenshots before and after).
 - lqvop's home page rebuilt by the new pass and graded by the owner.
 
-## Substeps — draft for the owner's approval (2026-11-09 11:53)
+## Substeps (approved)
 
-706-1 core: «Blocks» leaves the Build tab; «Site settings» gets the CONFIG link switch moved from the Danger zone · 706-2 template:
-the quick navigation banner — an island in the flow; localhost always, own domain only the architect, temporary address hidden; three
-buttons, the width badge folded in · 706-3 template: «Design» = the brief (audience, character, references with upload, anti-references,
-the skill with a default); the look in the passport; the design pass reads the brief · 706-4 template: the empty body «awaiting design»,
-noindex; the Blocks pages, `npm run blocks`, cards and the two composition guards go · 706-5 release custom and root, pins, push, fork
-sync, node update · 706-6 the stand born from the new tag: the owner fills the brief, its agent designs, the owner grades · 706-7 birth
-«like element X»: X's look from its passport fills the new element's brief, proven with a sibling of the stand.
-Not included: the brief from Telegram; the natives Blocks and Design out of the core's list; review-page and verdicts moved; the existing
-elements.
+**706-1 · Core: the Build tab.**
+- `lib/web4-items/item-tree.ts`: the `blocks` page and its moved-page entry go; `site-settings` stops being a redirect.
+- `[item]/[[...page]]/page.tsx`: the three `redirect()` lines go. `build/site-settings` renders the existing `ElementSiteSettings`
+  with the CONFIG `ElementLink` card on top (moved from `settings/danger-zone`); `settings/site-settings` moves there (moved-page map).
+  `build/design` renders a small client island: loopback → `http://127.0.0.1:<port>/<lang>/admin/design`, own domain →
+  `domainRecord(item).url`, otherwise one line why the element is local-only.
+- `_components/element-danger-zone.tsx`: default cards without `config`, `design`, `blocks`; `_i18n/element-settings.i18n.ts`: the
+  site-settings texts stop sending people to the Danger zone.
+- Proof: eyes screenshots of the Build tab (no Blocks, the switch in Site settings) · on localhost «Design» opens the element's design
+  page (negative control: today's build lands on a non-existent https address).
+
+**706-2 · Core: the look in the registry and birth «like X».**
+- `element-describe.ts`: take the passport's `design` block (skill, audience, character words, what to avoid, reference links, token
+  summary) into the registry entry, beside `designSkill`.
+- `npm run create` (`scripts/main-agent-cli.mjs` → `scripts/item-birth.mjs`, `lib/web4-items/birth.ts`): `--look-like <id>` reads X's
+  taken look from the registry (never X's code), writes it into the newborn's passport `design` (`inheritedFrom: X`) and its tokens into
+  `DESIGN-CONFIG/design-config.json`; implies `--look own --blocks off`. Uploaded images stay in X's store space; links and captions
+  travel.
+- Proof: a seeding test on fixtures (passport with a look → newborn files) · negative: `--look-like` an element with no taken look →
+  a clear error, nothing born.
+
+**706-3 · Template: the quick navigation banner.**
+- `components/shell/starter-banner.client.tsx` + `.i18n.ts` become the strip (the `inline` mode for pages without text stays as is);
+  mounted in `app/[lang]/layout.tsx`.
+- Visibility decided in the browser with the existing helpers (`lib/auth/temporary-address` `isTemporaryHostname`,
+  `isLoopbackHostname`, the showcase check) and the architect check of `components/auth/access-gate.client.tsx`: loopback — always;
+  temporary address — never; own domain — only a signed-in architect.
+- In the flow under the header, never over content; three buttons — Design (`/<lang>/admin/design` of this site), Site settings (the
+  core's `…/<id>/build/site-settings`), Claude subscription (today's link); the width/skill badge folded into it.
+- Proof: the visibility function tested on hostnames and roles (negative: a temporary host shows nothing) · eyes on localhost.
+
+**706-4 · Template: «Design» = the brief.**
+- New widget `widget-dynamic-design-brief` first on `app/[lang]/(protectedLayer)/admin/_pages/design/{en,ru}.json`; the token editor
+  stays below. Fields: for whom, 3–5 character words, references (links + screenshots through the existing
+  `app/api/media/upload/route.ts`), what to avoid, design skill (default `frontend-design`).
+- A door beside `/<lang>/admin/api/settings/design` (pattern of `design-save.ts` / `settings-access`) writes the passport's `design`
+  block, keeping `designSkill` in step; `npm run describe:publish` carries it to the core.
+- Vendored into the template's skills with `SOURCE.md`: `frontend-design` (anthropics/skills, Apache-2.0) and the anti-slop checklist
+  (samber/cc-skills deslop, MIT) extended with the owner's verdict lessons.
+- `.claude/modes/build-design.md` rewritten: brief → `DESIGN.md` (open DESIGN.md format) → own sections with words in data →
+  `npm run eyes` → the owner's grade. `use-blocks`, `custom-design` out; `use-design` rewritten.
+- Proof: the door writes the passport and refuses a bad shape (negative) · eyes of the filled brief.
+
+**706-5 · Template: the empty body and the section contract.**
+- Home `app/[lang]/(publicLayer)/_data/{en,ru,meta}.json`: empty sequence, `meta.awaitingDesign: true` → noindex
+  (`lib/content/create-content-page.tsx`, beside `config.noindex`); `widget-static-custom-landing` goes.
+- Sections kept: section-head, faq, toc, warning-card + page-body + typography; hero-centered and cta-button go (custom only). Each
+  section's markdown form lives beside it (today's central `switch` in `lib/aio/blocks-to-markdown.ts`); a guard fails a kind without a
+  renderer or a markdown form, and the same check runs when page data is written (the lqvop silent drop).
+- Removed: `scripts/blocks.mjs`, `check-page-composition.mjs`, `check-page-blocks.mjs` (its «one h1» rule moves to
+  `check-page-sequence` unless `check-seo-html` holds it), the `@fractera` registry in `components.json`, cards and `.blocks-lock.json`,
+  the admin «Blocks» pages, their package.json scripts and prebuild lines.
+- Proof: the template's whole prebuild + tsc green · negatives: a section without a markdown form fails; an empty home without
+  `awaitingDesign` fails; the home's robots says noindex.
+
+**706-6 · Release and node update.**
+- Custom template: prebuild, tag, push, CI green; `npm run template -- pin` in the core; core commits (706-1, 706-2) pushed, CI green;
+  fork aifa-agi synced (Chrome: «Sync fork» → «Update branch»); here `npm run node:update` — the core build stops agents and brings
+  them back (skill `core-build-return`).
+- Proof: `npm run serve:status` shows the pushed core hash · the Build tab live.
+
+**706-7 · The stand and its sibling.**
+- `npm run find`, then `npm run create -- … --look own --blocks off` from the new tag; Blocks and Design stay OFF, so a hidden
+  dependency surfaces as an error and is fixed in the core.
+- On localhost: the strip shows; the owner fills the brief; `npm run task -- <id> "Build process, design: …"`; eyes; the owner's grade.
+- `npm run create -- … --look-like <stand>`: the sibling's Design opens filled; its first page wears the same tokens.
+- Proof: the owner's grade with screenshots · machine plane: the page's `index.md` holds every section's text; the home was noindex
+  until designed.
+
+## My decisions (one line each, for the owner's yes)
+
+- Root and native templates keep their banner and blocks in this step; only the custom template changes.
+- The brief and the token editor live on the element's own page; the CONFIG switch is node state and lives in the core.
+- The design skill has a default (`frontend-design`); vendoring it and deslop into the template is part of this yes.
+- No stubs: every page is built working and proven on the stand.
+- Uploaded reference images are not inherited by a sibling — links and captions are.
+
+## Not in this step
+
+The brief from Telegram (bot questions, photos as references); Blocks and Design out of the natives list (registry, pins, install);
+`review-page` and `data/services/blocks/verdicts.jsonl` moved; root and native templates; existing elements.
+
+## Records and price
+
+After the owner's yes: the plan unfolds into `new-steps/706/706-1..7.md` and 706-main.md stages 5–8; `current-steps.md` on every event;
+each substep closes with a summary naming its hashes. Price: my session on Opus; one template release; one core build (agents stop and
+return); about 150 MB per new element (stand + sibling ≈ 300 MB; 5.5 GB free now).
+
+## Verification, end to end
+
+On this Mac: open the stand's site on localhost → the strip is there and covers nothing → «Design» opens the brief → filled → the
+element's agent designs the home → screenshots graded by the owner; `/<lang>/index.md` carries every section's text; before the design
+the home answered noindex. The visibility rule for a visitor (temporary address, own domain without sign-in) is covered by the unit test
+until the node has its own domain. The sibling born `--look-like <stand>` shows the stand's tokens and a filled brief.
