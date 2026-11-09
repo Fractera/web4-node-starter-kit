@@ -5,6 +5,13 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-73 (2026-11-09, 11:26 WET) — STEP 706 DECIDED, plan in drafting: drop the Blocks and Design native elements** (the owner,
+verbatim: «Отлично давай зафиксируем факт того что мы приняли решение отказаться от элементов дизайн и от элементов Blok.»). Pages are
+designed natively by the element's agent; the physics stays (route template + data folders, words in per-language data, static layer,
+DESIGN-CONFIG tokens, `bid`, SEO/AIO guards). Plan `new-steps/706/706-main.md` (stages 1–4, the facts measured on his node). OPEN: his
+question on the legacy — keep the best blocks in every template as a pattern? My proposal there: section-head, faq, toc, warning-card +
+page-body + typography as the section pattern, hero-centered and cta-button out. Substeps unfold after his answer; no code before his yes.
+
 **NOW-72 (2026-11-09, ~02:30 WET) — 704-4 RELEASED, rollout half-way** (the owner: «now ,Вы должны завершить весь цикл работы этой
 задачи»). Source edited (coverage ok); templates custom v0.3.177, native v0.1.58, root v3.0.40; natives auth, data, storage, embeddings,
 config, design, cache, memory, stripe, blocks at their next patch (each element's top commit = its starter's head, checked by `npm run
