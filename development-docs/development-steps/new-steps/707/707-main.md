@@ -37,7 +37,9 @@ right command.
 - Proof: `--help` refuses with no backup folder written; negative: the right start passes the check.
 
 **707-4 · The core's fonts from npm, never from Google at build time.** `lib/fonts.ts` → `next/font/local` over
-`@fontsource-variable/geist` and `geist-mono` (OFL-1.1, the step-315 way).
+`@fontsource-variable/geist` and `geist-mono` (OFL-1.1, the step-315 way). BUILT 2026-11-09: both pinned 5.3.0 in package.json (they
+were extraneous), latin wght files, the same CSS variables; the node update's deps stage installs them. Proof: the dead-proxy rebuild
+on the node must now SUCCEED.
 
 ## Verification, end to end (the owner's test)
 

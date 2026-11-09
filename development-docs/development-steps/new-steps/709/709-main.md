@@ -15,3 +15,5 @@ the whole node needs it — e.g. web research with Exa), resealed. Proof on the 
 the alert, so «Домен и хостинг» gets its red icon like GitHub (`f86d87b9`); «Автоматизированное управление» of the main agent — «Инструменты»
 deleted («все инструменты могут быть только у агентов»), «Настройки» → «Добавить событие» / «Add an event», the empty-calendar words
 point there. Proven live on the node 709: eyes — no Рабочий процесс, no i2i, «Рабочие процессы», Environment under Settings.
+
+709-3: the main agent's Payments card no longer says «… in USDC through the node's wallet (Web3)» until Lagrix (706-8 leftover).

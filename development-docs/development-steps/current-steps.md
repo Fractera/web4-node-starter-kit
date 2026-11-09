@@ -5,6 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-81 (2026-11-09) — 707-4 fonts local + 709-3 Payments card without Web3 built; with 708-6 and 709-2 they go in ONE node update
+(the owner: «go»). NEXT: push, CI, fork sync, update; proofs: the dead-proxy rebuild SUCCEEDS; eyes — red icon of «Домен и хостинг»,
+automation without «Инструменты» and with «Добавить событие»; then the main agent's session-lost return (restart the core).**
+
 **NOW-80 (2026-11-09) — 709 built (the main agent: no Working process, no i2i, «Рабочие процессы», Environment under Settings; plan
 709-main.md). Goes in ONE node update with 708. NEXT: push, CI, fork sync, update, live proofs of 708 and eyes on the 709 menu.**
 
