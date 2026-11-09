@@ -18,8 +18,7 @@ import { data as p12 } from './memory/_data'
 import { data as p13 } from './passport/_data'
 import { data as p14 } from './storage/_data'
 import { data as p15 } from './stripe/_data'
-import { data as p16 } from './super-node/_data'
-import { data as p17 } from './vectors/_data'
+import { data as p16 } from './vectors/_data'
 import { PAGES as c0, TREE as t0 } from './auth/_list.generated'
 import { PAGES as c1, TREE as t1 } from './blocks/_list.generated'
 import { PAGES as c2, TREE as t2 } from './build/_list.generated'
@@ -35,10 +34,9 @@ import { PAGES as c12, TREE as t12 } from './memory/_list.generated'
 import { PAGES as c13, TREE as t13 } from './passport/_list.generated'
 import { PAGES as c14, TREE as t14 } from './storage/_list.generated'
 import { PAGES as c15, TREE as t15 } from './stripe/_list.generated'
-import { PAGES as c16, TREE as t16 } from './super-node/_list.generated'
-import { PAGES as c17, TREE as t17 } from './vectors/_list.generated'
+import { PAGES as c16, TREE as t16 } from './vectors/_list.generated'
 
-export const PAGES: WorkspacePageData[] = [p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17]
+export const PAGES: WorkspacePageData[] = [p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16]
 
 /** Each child together with its own children — see the law in the generator. */
 export const TREE: CollectionBranch[] = [
@@ -59,5 +57,4 @@ export const TREE: CollectionBranch[] = [
   { page: p14, children: c14, branches: t14 },
   { page: p15, children: c15, branches: t15 },
   { page: p16, children: c16, branches: t16 },
-  { page: p17, children: c17, branches: t17 },
 ]

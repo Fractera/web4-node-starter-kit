@@ -2,7 +2,8 @@
 import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
-import { readDoc } from "@/lib/web4-items/element-docs"
+import { readDoc, readDocAt } from "@/lib/web4-items/element-docs"
+import { CORE_DOCS } from "@/lib/main-agent/core-docs"
 import { findTreePath } from "@/lib/web4-items/item-tree"
 import { idOfAddress } from "@/lib/web4-items/element-address"
 
@@ -20,6 +21,13 @@ export async function GET(req: NextRequest) {
   const denied = await requireRoles(req, ROLES)
   if (denied) return denied
   const q = req.nextUrl.searchParams
+  // 710: `item=build` — документы самого ядра для страниц «Документов» главного агента; путь — только из `CORE_DOCS`.
+  if (q.get("item") === "build") {
+    const src = CORE_DOCS[q.get("page") ?? ""]
+    const files = src ? readDocAt(process.cwd(), src) : null
+    if (!files) return NextResponse.json({ ok: false, error: src ? "no such file" : "unknown document" }, { status: 404 })
+    return NextResponse.json({ ok: true, files, collapse: Boolean(src.deep || src.nested) }, { headers: { "Cache-Control": "no-store" } })
+  }
   const id = idOfAddress(q.get("item") ?? "")
   // 528-1: «Документы» — подраздел «Строительства» (`build/documents/<страница>`).
   const doc = findTreePath(["build", "documents", q.get("page") ?? ""])?.at(-1)?.doc

@@ -77,3 +77,8 @@ the menu is `meta.order`, never the alphabet of folder names.
 
 Mechanism: `../../../lib/collection/README.md`. Layer skeleton and recovery:
 `../../README.md`.
+
+## Step 710
+
+The page shows a file of the core (`lib/main-agent/core-docs.ts`, key `glossary`) with the element's document island; the text is asked
+when the page opens, never baked into the build.
