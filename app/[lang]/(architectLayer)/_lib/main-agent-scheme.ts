@@ -6,7 +6,7 @@
 // `build/environment` несут копии комплекта всех служб. Переезд папок задел бы общий комплект (закон 2026-10-06: только с вопросом
 // владельцу) и двери. Поэтому страница остаётся по своему адресу, а здесь сказано, под каким пунктом меню она стоит.
 // 🔒 КЛЮЧ — имя папки в `architect/build/`, ЗНАЧЕНИЕ — путь пункта-родителя от `architect/build/` (сам родитель — настоящая страница
-// со своим адресом: оглавление `build/construction`, `build/i2i`, `build/documents` или `build/messenger/h2a`). Порядок внутри
+// со своим адресом: оглавление `build/construction`, `build/documents` или `build/messenger/h2a`). Порядок внутри
 // родителя — `meta.order` страниц, как везде в слое.
 // 🔒 ПОЛНОТУ СТЕРЕЖЁТ `scripts/check-main-agent-menu.mjs` (prebuild): страница главного агента без места и место без страницы — отказ
 // сборки; Messenger и Рабочий процесс сверяются с деревом элемента `lib/web4-items/item-tree.ts`.
@@ -17,20 +17,19 @@ export const MAIN_AGENT = 'build'
 
 /** Пункты верхнего уровня главного агента — как разделы элемента; всё остальное обязано иметь место ниже. */
 // 558-3 (владелец 2026-10-21): «Автоматизированное управление» — свой раздел главного агента (у элемента его нет: это не страница дерева).
-export const MAIN_AGENT_TOP = ['messenger', 'workflow', 'automation', 'construction', 'settings'] as const
+// 709 (владелец 2026-11-09: «У главного агента нужно удалить раздел рабочий процесс … если ему нужны какие-либо процессы, то он должен
+// извлекать их из элементов … философия рабочих процессов на уровне терминала непросто не нужна а катастрофически запрещена»; «I2i внутри
+// узла главного агента также не могут существовать удали их»): ни «Рабочего процесса», ни i2i у главного агента нет — его работа идёт
+// через элементы; «Строительство» называется у него «Рабочие процессы» (строит узел и координирует агентов).
+export const MAIN_AGENT_TOP = ['messenger', 'automation', 'construction', 'settings'] as const
 
 export const MAIN_AGENT_PLACE: Record<string, string> = {
-  // «Строительство» — как у элемента: GitHub, подписка, терминал, развёртывание, переменные, i2i, Документы.
+  // «Рабочие процессы» (709; у элемента — «Строительство»): GitHub, подписка, терминал, развёртывание, Документы.
   github: 'construction',
   subscription: 'construction',
   terminal: 'construction',
   deployments: 'construction',
-  environment: 'construction',
-  i2i: 'construction',
   documents: 'construction',
-  // i2i главного агента — его двери: карта API и MCP.
-  'api-map': 'i2i',
-  mcp: 'i2i',
   // «Документы» — в порядке документов элемента.
   instruction: 'documents',
   skills: 'documents',
@@ -46,6 +45,9 @@ export const MAIN_AGENT_PLACE: Record<string, string> = {
   'task-add': 'documents',
   // 472: у элемента с H2A Telegram-бот живёт в Messenger → H2A; бот главного агента — там же.
   telegram: 'messenger/h2a',
+  // 709 (владелец 2026-11-09: «переменное окружение … должны находиться на вкладке настройки … две настройка провайдера и переменная
+  // окружение»): страница «Настройки» — базовый AI-провайдер, под ней — Переменные окружения (и Платежи).
+  environment: 'settings',
 }
 
 // 707-6 (владелец 2026-11-09: «на вкладке глав агент есть вкладка Messenger. Её надо скрыть до появления lagrix»): раздел скрыт из
@@ -60,5 +62,5 @@ export const MAIN_AGENT_PLACE_WHILE_HIDDEN: Record<string, string> = { telegram:
  */
 export function elementPathOf(rel: string): string | null {
   // 530-1: и «Настройки → Платежи» — та же страница у элемента.
-  return rel.startsWith('messenger') || rel.startsWith('workflow') || rel.startsWith('settings') ? rel : null
+  return rel.startsWith('messenger') || rel.startsWith('settings') ? rel : null
 }

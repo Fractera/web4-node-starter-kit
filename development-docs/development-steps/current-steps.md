@@ -5,6 +5,9 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-80 (2026-11-09) — 709 built (the main agent: no Working process, no i2i, «Рабочие процессы», Environment under Settings; plan
+709-main.md). Goes in ONE node update with 708. NEXT: push, CI, fork sync, update, live proofs of 708 and eyes on the 709 menu.**
+
 **NOW-79 (2026-11-09) — 708 BUILT (the owner: «b»), see 708-main.md «Built». NEXT: push, CI, fork sync, node update detached; live
 proofs: (1) s8y6x terminal by eyes — start, kill its claude, the card shows «Продолжить разговор» first, press it → same conversation id;
 (2) the main agent: restart the core detached → marked lost → I come back by myself with ⟦session-lost⟧ in the same conversation.**

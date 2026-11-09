@@ -58,7 +58,8 @@ const PLACE = scheme.MAIN_AGENT_PLACE
 const borrowed = new Set(Object.entries(PLACE).map(([slug, parent]) => `${parent}/${slug}`))
 
 // 530-1: и «Настройки → Платежи» — у главного агента та же ветка (остальные настройки элемента у ядра законно другие).
-for (const section of ['messenger', 'workflow', 'settings/payments']) {
+// 709: «Рабочего процесса» у главного агента нет (владелец 2026-11-09) — сверяются Messenger и Платежи.
+for (const section of ['messenger', 'settings/payments']) {
   const onDisk = new Set(folders(section))
   for (const p of treePaths(section)) {
     if (!onDisk.has(p) && !borrowed.has(p)) errors.push(`у элемента есть «${p}», у главного агента — нет (ни папки build/${p}, ни места в схеме)`)
@@ -72,6 +73,8 @@ for (const slug of childPages(BUILD)) {
   if (!top.has(slug) && !PLACE[slug]) errors.push(`страница build/${slug} лежит россыпью: её нет ни среди верхних пунктов, ни в схеме места`)
 }
 for (const slug of top) if (!isPage(join(BUILD, slug))) errors.push(`верхний пункт «${slug}» назван, а папки build/${slug} нет`)
+// 709 (владелец 2026-11-09): рабочие процессы главного агента — только через элементы; своих «Рабочего процесса» и i2i у него не бывает.
+for (const banned of ['workflow', 'i2i']) if (existsSync(join(BUILD, banned))) errors.push(`у главного агента есть build/${banned} — запрещено (709): работа главного агента идёт через элементы`)
 for (const [slug, parent] of Object.entries(PLACE)) {
   if (!isPage(join(BUILD, slug))) errors.push(`в схеме место для build/${slug}, а такой страницы нет`)
   if (!isPage(join(BUILD, ...parent.split('/')))) errors.push(`в схеме build/${slug} стоит под «${parent}», а такой страницы нет`)
@@ -90,4 +93,4 @@ if (errors.length) {
   console.log(`===MAIN_AGENT_MENU_FAILED=== ошибок: ${errors.length}`)
   process.exit(1)
 }
-console.log(`===MAIN_AGENT_MENU_OK=== Messenger, Рабочий процесс и Платежи совпадают с элементом, страниц россыпью нет, мест в схеме: ${Object.keys(PLACE).length}`)
+console.log(`===MAIN_AGENT_MENU_OK=== Messenger и Платежи совпадают с элементом, Рабочего процесса и i2i у главного агента нет, страниц россыпью нет, мест в схеме: ${Object.keys(PLACE).length}`)

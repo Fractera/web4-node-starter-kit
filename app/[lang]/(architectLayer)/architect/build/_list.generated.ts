@@ -3,44 +3,39 @@
 // Lists every child folder of this one that carries _data/index.ts.
 import type { WorkspacePageData, CollectionBranch } from '@/lib/collection/types'
 import { data as p0 } from './anti-patterns/_data'
-import { data as p1 } from './api-map/_data'
-import { data as p2 } from './automation/_data'
-import { data as p3 } from './backlog/_data'
-import { data as p4 } from './cancelled/_data'
-import { data as p5 } from './construction/_data'
-import { data as p6 } from './deployments/_data'
-import { data as p7 } from './docs-registry/_data'
-import { data as p8 } from './documents/_data'
-import { data as p9 } from './environment/_data'
-import { data as p10 } from './github/_data'
-import { data as p11 } from './glossary/_data'
-import { data as p12 } from './i2i/_data'
-import { data as p13 } from './instruction/_data'
-import { data as p14 } from './mcp/_data'
-import { data as p15 } from './messenger/_data'
-import { data as p16 } from './settings/_data'
-import { data as p17 } from './skills/_data'
-import { data as p18 } from './step-current/_data'
-import { data as p19 } from './steps-done/_data'
-import { data as p20 } from './steps-new/_data'
-import { data as p21 } from './subscription/_data'
-import { data as p22 } from './task-add/_data'
-import { data as p23 } from './telegram/_data'
-import { data as p24 } from './terminal/_data'
-import { data as p25 } from './translation-debt/_data'
-import { data as p26 } from './workflow/_data'
-import { PAGES as c2, TREE as t2 } from './automation/_list.generated'
-import { PAGES as c15, TREE as t15 } from './messenger/_list.generated'
-import { PAGES as c16, TREE as t16 } from './settings/_list.generated'
-import { PAGES as c26, TREE as t26 } from './workflow/_list.generated'
+import { data as p1 } from './automation/_data'
+import { data as p2 } from './backlog/_data'
+import { data as p3 } from './cancelled/_data'
+import { data as p4 } from './construction/_data'
+import { data as p5 } from './deployments/_data'
+import { data as p6 } from './docs-registry/_data'
+import { data as p7 } from './documents/_data'
+import { data as p8 } from './environment/_data'
+import { data as p9 } from './github/_data'
+import { data as p10 } from './glossary/_data'
+import { data as p11 } from './instruction/_data'
+import { data as p12 } from './messenger/_data'
+import { data as p13 } from './settings/_data'
+import { data as p14 } from './skills/_data'
+import { data as p15 } from './step-current/_data'
+import { data as p16 } from './steps-done/_data'
+import { data as p17 } from './steps-new/_data'
+import { data as p18 } from './subscription/_data'
+import { data as p19 } from './task-add/_data'
+import { data as p20 } from './telegram/_data'
+import { data as p21 } from './terminal/_data'
+import { data as p22 } from './translation-debt/_data'
+import { PAGES as c1, TREE as t1 } from './automation/_list.generated'
+import { PAGES as c12, TREE as t12 } from './messenger/_list.generated'
+import { PAGES as c13, TREE as t13 } from './settings/_list.generated'
 
-export const PAGES: WorkspacePageData[] = [p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26]
+export const PAGES: WorkspacePageData[] = [p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22]
 
 /** Each child together with its own children — see the law in the generator. */
 export const TREE: CollectionBranch[] = [
   { page: p0, children: [] },
-  { page: p1, children: [] },
-  { page: p2, children: c2, branches: t2 },
+  { page: p1, children: c1, branches: t1 },
+  { page: p2, children: [] },
   { page: p3, children: [] },
   { page: p4, children: [] },
   { page: p5, children: [] },
@@ -50,19 +45,15 @@ export const TREE: CollectionBranch[] = [
   { page: p9, children: [] },
   { page: p10, children: [] },
   { page: p11, children: [] },
-  { page: p12, children: [] },
-  { page: p13, children: [] },
+  { page: p12, children: c12, branches: t12 },
+  { page: p13, children: c13, branches: t13 },
   { page: p14, children: [] },
-  { page: p15, children: c15, branches: t15 },
-  { page: p16, children: c16, branches: t16 },
+  { page: p15, children: [] },
+  { page: p16, children: [] },
   { page: p17, children: [] },
   { page: p18, children: [] },
   { page: p19, children: [] },
   { page: p20, children: [] },
   { page: p21, children: [] },
   { page: p22, children: [] },
-  { page: p23, children: [] },
-  { page: p24, children: [] },
-  { page: p25, children: [] },
-  { page: p26, children: c26, branches: t26 },
 ]

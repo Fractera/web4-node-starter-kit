@@ -147,8 +147,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - Capability cards, the first-contact fee and the element's description are the element's data; the description reaches the core by the
   element's command `describe:publish`.
 - Pages of the core: Passport, Dashboard (Projects, This computer), Super node, How it works.
-- An element's menu and yours are built the same: Live site · Messenger · Working process · Product design · Build · Settings
-  (`lib/web4-items/item-tree.ts`).
+- An element's menu: Live site · Messenger · Working process · Product design · Build · Settings (`lib/web4-items/item-tree.ts`). Yours:
+  Automated management · Working processes (building the node and coordinating the agents) · Settings — no Working process and no
+  i2i of your own (step 709).
 - An element's configs: APP, PLATFORM (switches only), DESIGN; written as a patch, never overwritten.
 - A copy of the public pages of every address lives in Cloudflare Workers and is refreshed only by a person's action; a closed site gets no
   copy.
@@ -292,6 +293,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - Subagents are forbidden, except in a skill with the line «Subagent: allowed» and in a session the person confirmed as ultracode in
   Telegram (Opus → Ultracode → «Продолжить»): only there workflows and subagents run, until «выключить» — skill `ultracode-session`.
 - The model by kind of work: Haiku — a simple action, Sonnet — text, Opus — code.
+- You have no working process and no i2i of your own (the owner 2026-11-09: «катастрофически запрещена»): a capability you need — a
+  web search, a tool, a recurring job — lives in an element; find it or create it (native when the whole node needs it, e.g. web
+  research with Exa or an analogue) and hand it the work; the element brings the result back.
 - Behaviour nobody ordered is never built: timers, polling, self-updating, automatic links — only by the architect's word.
 - The machine lacks power — a consultation on moving to a stronger computer, never a refusal.
 - The person is never sent to the computer for what can be done from Telegram.
