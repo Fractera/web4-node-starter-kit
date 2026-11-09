@@ -5,6 +5,14 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-72 (2026-11-09, ~02:30 WET) — 704-4 RELEASED, rollout half-way** (the owner: «now ,Вы должны завершить весь цикл работы этой
+задачи»). Source edited (coverage ok); templates custom v0.3.177, native v0.1.58, root v3.0.40; natives auth, data, storage, embeddings,
+config, design, cache, memory, stripe, blocks at their next patch (each element's top commit = its starter's head, checked by `npm run
+state`); pins `56ef2261`, `e35d12bc`, `eb7c6187`. `template release` crashes in the workshop (no data/node/github/.env) after tagging —
+pushed main+tag by hand with the workshop's git login. NOT done: vectors and graph (their element commits ddb2bb3, c0d72f9 must reach the
+starters first — reading an element's git is out of my bounds); s8y6x and lqvop cherry-pick 261870a by their agents, root merges v3.0.40
+by its agent — after the node update. lqvop builds step 1 under my supervision (max 6), the owner: «with landing», «together».
+
 **NOW-71 (2026-11-09, ~02:05 WET) — LIVE on the owner's node (build `069e0844`): 705 CLOSED, 704-1..3 CLOSED (summaries in
 `completed-steps/`), 703 «Ядро» seen. NEXT in 704: 704-4 the elements' sealed instruction line — a template release, on the owner's word.
 
