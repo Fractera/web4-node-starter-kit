@@ -4,5 +4,5 @@ import type { WorkspacePageWords } from '@/lib/collection/types'
 // по определённому расписанию».
 export const en: WorkspacePageWords = {
   title: 'Automated management',
-  lead: 'Run agents and applications of the node on a schedule: the services they use, the calendar and the task for the main agent.',
+  lead: 'Running the node\'s agents and apps on a schedule: the calendar of events and a new event for the main agent. Tools live only with the elements\' agents.',
 }

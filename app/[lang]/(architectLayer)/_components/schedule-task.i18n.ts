@@ -65,20 +65,15 @@ const AUTOMATION_CRON: Record<string, CronWords> = {
     lead: "When the main agent is woken by the clock and what it is asked to do. The core server checks the schedule once a minute by the local time of this computer; every run is a session of the main agent on your Claude subscription. While the computer is off, runs are skipped and not made up later.",
     examplesTitle: "For example, tell the main agent:",
     examples: ["Every morning at 08:00 check the news on my topic and give the blog agent a post to write if one fits", "On Mondays at 10:00 ask every element for a short report", "Pause the morning news check"],
-    empty: "Nothing is automated yet. Describe it in «Settings» and add it to development.",
+    empty: "Nothing is automated yet. Describe it in «Add an event» and add it to development.",
   },
   ru: {
     lead: "Когда часы будят главного агента и что ему поручено. Сервер ядра сверяется с расписанием раз в минуту по местному времени этого компьютера; каждый запуск — сессия главного агента по вашей подписке Claude. Пока компьютер выключен, запуски пропускаются и потом не делаются.",
     examplesTitle: "Например, скажите главному агенту:",
     examples: ["Каждое утро в 08:00 проверяй новости по моей теме и, если найдётся подходящая, дай агенту блога написать пост", "По понедельникам в 10:00 попроси у каждого элемента короткий отчёт", "Приостанови утреннюю проверку новостей"],
-    empty: "Пока ничего не автоматизировано. Опишите это в «Настройках» и добавьте в разработку.",
+    empty: "Пока ничего не автоматизировано. Опишите это в «Добавить событие» и добавьте в разработку.",
   },
 }
 export const backupCronUi = (lang: string, base: CronUi): CronUi => ({ ...base, ...(BACKUP_CRON[lang] ?? BACKUP_CRON.en) })
 export const automationCronUi = (lang: string, base: CronUi): CronUi => ({ ...base, ...(AUTOMATION_CRON[lang] ?? AUTOMATION_CRON.en) })
 
-const TOOLS: Record<string, { empty: string }> = {
-  en: { empty: "The automations use no outside service yet. When one needs it, the main agent adds it here with the names of its keys." },
-  ru: { empty: "Автоматизации пока не пользуются ни одним внешним сервисом. Когда понадобится, главный агент добавит его сюда с именами ключей." },
-}
-export const automationToolsWords = (lang: string) => TOOLS[lang] ?? TOOLS.en

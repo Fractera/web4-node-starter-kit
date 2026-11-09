@@ -73,3 +73,13 @@ Kit master `app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/server/`:
   with its next release.
 - Proofs before the live run: fixture t708/logic.cjs PASS 10/10; probe: `claude -p --session-id U` then `--resume U` — one transcript
   file, the word remembered; all prebuild guards but the install-only ones pass; tsc clean outside stale .next types.
+
+## Live proofs on the owner's node (2026-11-09, build be827f55)
+
+- Element s8y6x: a tiny task → conversation eff79508 recorded; its claude killed (SIGKILL) → `why: exited`; eyes on its terminal: main
+  button «Продолжить разговор», the reason «Прошлая сессия завершилась сама…», window 7 %; pressed → the process runs `--resume
+  eff79508`, record `continued: true`; asked for the code word given before the cut → «OKAPI-708» in the same transcript file.
+- Negative: `npm run close -- s8y6x` → `why: closed-by-agent` → offer `primary: new`.
+- Found: the main agent came back after the update by `--continue` with `conversation: null` (its record predates 708) → 708-6
+  (`f86d87b9`): a legacy continue records the newest transcript's id; on the node the record was set by hand to 909a8288 meanwhile.
+- Open: the main agent's `session-lost` return (restart the core) — after the next build.
