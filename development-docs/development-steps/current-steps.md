@@ -6,7 +6,8 @@ start of a long or irreversible operation (before it), a changed next action. Th
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
 **NOW-75 (2026-11-09) — 706 PLAN APPROVED (the owner: «go to work, to do step by step to finish»); substeps 706-1..7 in
-`new-steps/706/`. Working now: 706-1 (core Build tab).**
+`new-steps/706/`. Done (not pushed): 706-1 core `7efc75df`, 706-2 core `df20558e` (check:element-look green), 706-3 custom template `1ce1230`
+(test:quick-nav green, spoiled rule fails). Working now: 706-4 (the brief).**
 
 **NOW-74 (2026-11-09, 11:36 WET) — 706: blocks and design OFF on the owner's node (not deletable by the door — natives, required,
 pinned; deletion = 706-5). His order: a NEW test element from the custom starter, its patterns back into the starter, existing elements
