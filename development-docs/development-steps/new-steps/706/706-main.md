@@ -48,6 +48,23 @@ block-faq — the pattern every element inherits. My answer: yes, with three con
 body is a declared state «awaiting design», closed from indexing (check:page-blocks rule 7 forbids an empty home today, ✗ 577-7); the
 brief and the anti-slop list replace our pattern, or the model's own default (the same centred SaaS hero) fills the void.
 
+The owner, 2026-11-09 11:52 WET, a proposal, verbatim: «Я обратил внимание что ядро для каждого элемента на вкладке строительства
+предоставляет кнопки: блоки, дизайн, настройки сайта. Эти кнопки сейчас у нас не реализуют ничего. Но в свете развития нашей архитектуры
+кажется логичным: – убрать кнопку блоки да или нет? – На вкладке дизайн создать Бриф где пользователь выбирает один из навыков дизайна и
+загружают референсы? – На вкладке настройки сайта выбирает связан ли этот новый элемент с узлом то есть наследует ли он его конфиге, и
+дублирует собственные настройки. Если в этой части ты со мной согласен то при создании на странице у нас выпадает оранжевый баннер
+который отправляет пользователя на вкладку настройки нужно расширить описание этого баннера и добавить эти две кнопки: дизайн, CONFIG, и
+старая кнопка ведущая скорее всего на подписку Claude, Считаю правильным оставить этот баннер всегда если страница имеет формат Local
+хост, или если это собственный домен то оставить этот баннер если его видит архитектор.Можно было бы его назвать баннер быстрой навигации
+что ты думаешь по этому поводу внесёшь изменения в стартовый шаблон сразу? Одновременно понадобится создать какие-то заглушки для этих
+страниц и перезапустить ядро? Я бы с этого начал как думаешь».
+Facts found: the core's Build tab (`lib/web4-items/item-tree.ts`) — «blocks» for every element and «design», «site-settings» for custom
+ones are only new-tab redirects to the element's own `/admin/*` pages (the owner 2026-10-23); the three link cards CONFIG, Design, Blocks
+sit in the core's `element-danger-zone.tsx`. The starter banner (`components/shell/starter-banner.client.tsx`) is mounted UNCONDITIONALLY
+in the element's `app/[lang]/layout.tsx` (custom; root has it dismissible) — every visitor on every address sees «Вы просматриваете ваш
+стартовый шаблон…», and it is `fixed … top-14 z-30`, so it covers content (the lqvop hero badge). The width/skill badge (`ViewportBadge`,
+«impeccable 1440») is on by default in production too.
+
 Assumptions:
 - I assume that the element's OWN design panel (`admin/design`, `DESIGN-CONFIG`) stays: it caps nothing and gives the owner a path
   without a model. «элементы дизайн» is read as the Design native element.
