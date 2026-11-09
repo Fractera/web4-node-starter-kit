@@ -48,6 +48,12 @@ export const MAIN_AGENT_PLACE: Record<string, string> = {
   telegram: 'messenger/h2a',
 }
 
+// 707-6 (владелец 2026-11-09: «на вкладке глав агент есть вкладка Messenger. Её надо скрыть до появления lagrix»): раздел скрыт из
+// меню и рубрикатора главного агента, папки и адреса на месте — сторож по-прежнему сверяет их с деревом элемента. Telegram-бот, чьё
+// законное место `messenger/h2a`, пока раздел скрыт, стоит в «Строительстве» — как у элемента без H2A. Lagrix запущен — оба списка пусты.
+export const MAIN_AGENT_HIDDEN: readonly string[] = ['messenger']
+export const MAIN_AGENT_PLACE_WHILE_HIDDEN: Record<string, string> = { telegram: 'construction' }
+
 /**
  * Путь страницы ядра в дереве элемента, когда это та же страница (Messenger и Рабочий процесс главного агента ведут к ней у каждого
  * элемента); `null` — своя страница ядра. Сторож сверяет эти пути с деревом элемента.

@@ -77,6 +77,14 @@ for (const [slug, parent] of Object.entries(PLACE)) {
   if (!isPage(join(BUILD, ...parent.split('/')))) errors.push(`в схеме build/${slug} стоит под «${parent}», а такой страницы нет`)
 }
 
+// 707-6: временное место страницы, пока её раздел скрыт до Lagrix, — настоящая страница вне скрытого раздела.
+const hidden = new Set(scheme.MAIN_AGENT_HIDDEN ?? [])
+for (const [slug, parent] of Object.entries(scheme.MAIN_AGENT_PLACE_WHILE_HIDDEN ?? {})) {
+  if (!isPage(join(BUILD, slug))) errors.push(`временное место для build/${slug}, а такой страницы нет`)
+  if (!isPage(join(BUILD, ...parent.split('/'))) || hidden.has(parent.split('/')[0])) errors.push(`временное место build/${slug} — «${parent}»: такой видимой страницы нет`)
+}
+for (const slug of hidden) if (!top.has(slug)) errors.push(`скрыт «${slug}», а такого верхнего пункта нет`)
+
 for (const e of errors) console.log(`  ОШИБКА  ${e}`)
 if (errors.length) {
   console.log(`===MAIN_AGENT_MENU_FAILED=== ошибок: ${errors.length}`)

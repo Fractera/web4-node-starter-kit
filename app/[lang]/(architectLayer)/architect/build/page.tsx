@@ -3,6 +3,7 @@ import { collectionMetadata } from '../../_lib/collection-metadata'
 import { data } from './_data'
 import { content } from './_components'
 import { PAGES } from './_list.generated'
+import { MAIN_AGENT_HIDDEN } from '../../_lib/main-agent-scheme'
 
 // РУБРИКАТОР ГРУППЫ «Building» — `/{lang}/architect/build`.
 //
@@ -18,7 +19,7 @@ export default async function Page({ params }: { params: Promise<{ lang: string 
       lang={lang}
       dir="/architect/build"
       page={data}
-      pages={PAGES}
+      pages={PAGES.filter((p) => !MAIN_AGENT_HIDDEN.includes(p.meta.slug))} // 707-6: Messenger скрыт до Lagrix
       content={content(lang)}
     />
   )

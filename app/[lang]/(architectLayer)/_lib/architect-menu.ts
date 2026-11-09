@@ -1,7 +1,7 @@
 import type { WorkspaceItem } from '@/lib/content/blocks/types'
 import { pagesInOrder, wordsOf, type CollectionBranch, type WorkspacePageData } from '@/lib/collection/types'
 import { TREE } from '../architect/_list.generated'
-import { MAIN_AGENT, MAIN_AGENT_PLACE } from './main-agent-scheme'
+import { MAIN_AGENT, MAIN_AGENT_HIDDEN, MAIN_AGENT_PLACE, MAIN_AGENT_PLACE_WHILE_HIDDEN } from './main-agent-scheme'
 
 // МЕНЮ СЛОЯ АРХИТЕКТОРА — СОБИРАЕТСЯ ИЗ ДЕРЕВА ПАПОК, А НЕ ИЗ СПИСКА (254).
 //
@@ -85,12 +85,13 @@ export function groupTree(slug: string): MenuNode[] {
   const index = (ns: MenuNode[]) => ns.forEach((n) => { all.set(n.rel, n); index(n.kids) })
   index(nodes)
   const moved = new Set<string>()
-  for (const [rel, parent] of Object.entries(MAIN_AGENT_PLACE)) {
+  // 707-6: скрытый до Lagrix раздел (Messenger) не показывается; его страницы, нужные и без него, стоят на временном месте.
+  for (const [rel, parent] of Object.entries({ ...MAIN_AGENT_PLACE, ...MAIN_AGENT_PLACE_WHILE_HIDDEN })) {
     const n = all.get(rel)
     const to = all.get(parent)
     if (n && to && n !== to) { to.kids.push(n); moved.add(rel) }
   }
-  return ordered(nodes.filter((n) => !moved.has(n.rel)))
+  return ordered(nodes.filter((n) => !moved.has(n.rel) && !MAIN_AGENT_HIDDEN.includes(n.rel)))
 }
 
 /** Пункт дерева группы по пути от группы (`construction`, `messenger/h2a`) — для страниц-оглавлений. */

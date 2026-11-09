@@ -47,3 +47,19 @@ On his node, release A (707-1..3 with 706-8) merged by `node:update` started the
    failure line (`logs/agent-return.log`). Negative control: the same run on the old code returned nobody (01:59 and 13:10 today).
 2. A normal rebuild → good → the agent comes back; 706-8 live.
 3. Release B (707-4) → the same dead-proxy rebuild now SUCCEEDS: the fonts need no network.
+
+## 707-5 — the lid opens only what is down (defect of the 707 live run, 2026-11-09)
+
+The owner: «такого раньше не было всегда ты просыпался автоматически что-то сломал». Found: the 13:09 cut-off update left
+`quiet-build.json`; the health watch raised the core; the 13:43 update's `openLid` ran `pm2 start` on all 12 names — pm2 restarts a live
+process — the core restarted 13:45:11, the main agent (its child) died before `noteBefore`, which then logged «Ни один агент не
+запущен», so nobody was recorded and nobody came back. Fix: `openLid` starts only names not online and returns what it started.
+Proof 1: fixture (stubbed pm2, scratchpad t7075/lid-test.cjs) — fixed: one start, PASS; old code: three starts incl. the core, FAIL.
+Proof 2: the live update that carries this step must bring the main agent back by itself.
+
+## 707-6 — Messenger of the main agent hidden until Lagrix
+
+The owner 2026-11-09: «на вкладке глав агент есть вкладка Messenger. Её надо скрыть до появления lagrix». `MAIN_AGENT_HIDDEN`
+(menu and the main agent's index), folders and addresses kept so the menu guard still matches the element tree; the main agent's
+Telegram bot stands in «Строительство» while Messenger is hidden (`MAIN_AGENT_PLACE_WHILE_HIDDEN`, checked by the guard). Proof: guard
+ok; eyes on the live menu after the update.

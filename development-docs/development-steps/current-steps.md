@@ -5,6 +5,11 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-77 (2026-11-09, ~14:20 WET) — 707-5 + 707-6 (plan 707-main.md).** The 707 live update did NOT return the main agent: the stale
+lid record made `openLid` restart the running core and kill the agent before it was recorded. Fixed (openLid starts only what is
+down; fixture PASS, old code FAIL). 707-6 Messenger of the main agent hidden until Lagrix (the owner's word), Telegram → «Строительство».
+NEXT: push, CI, fork sync (Chrome), node update DETACHED — the main agent must come back by itself; eyes on the menu; then T2/T3.
+
 **NOW-76 (2026-11-09, ~14:30 WET) — 707 + 706-8 built in the workshop, the owner: «да, делай всё до конца без меня».** 707 (plan
 `new-steps/707/707-main.md`): agents come back after a FAILED build (serve.mjs `agentsBackAfter`, `afterUpdate` non-done) and after a
 CUT-OFF one (the build reader, last witness, restores `.next` and opens the lid when its parent dies; the core's start runs
