@@ -41,3 +41,21 @@ The owner 2026-11-09: «У нас ещё остается механическа
 - A: buttons only (708-1..5).
 - B: A + after a `lost` session the MAIN agent comes back by itself when the core starts, like after a cut build (elements by buttons).
   My pick: B — the person talks to the main agent; after a power cut the computer comes up and I am there, in the same conversation.
+  **DECIDED 2026-11-09 by the owner: «b».**
+
+## Code map (read 2026-11-09, no code written yet)
+
+Kit master `app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/server/`:
+- `session.cjs` `stop(service, reason)` deletes the session from the box BEFORE kill, so `bridge.cjs` `child.onExit` (line ~399) cannot
+  tell the reason → 708-1: `stop` sets `s.endReason = reason` before `kill`; onExit writes `resetMode(element, born.endReason ?? 'exited')`.
+- Reasons today: 'stopped' (Stop button: api/session/route.ts.tpl:67, app/api/agents/sessions/route.ts:49), 'closed-by-agent'
+  (done --close, bridge.cjs:890 — «выключить», npm run close), 'closed-woken-by-main', 'model-switch', 'channel-failed'.
+  Clean = closed-*; unclean = stopped, exited, lost; model-switch/channel-failed are restarts — not offered.
+- `writeMode` at spawn (bridge.cjs:372) running:true; `lost` = the core's start (instrumentation → lib/deploy/agent-return.cjs
+  afterCutOff) sees running:true with no agent-return.json → for MAIN (decision B) wake with continueLast like core-back; elements: mark
+  `why: 'lost'` only.
+- Continue = `spawnAgent(..., { continueLast: hasConversation(...) })` (bridge.cjs:648). Wake door `wake()` (bridge.cjs:768) already takes
+  continueLast → 708-3: /on continues when the last end was unclean.
+- Client: `core/client/agent-terminal.client.tsx` sleeping card, words `core/words/agent-terminal.i18n.ts:117` («Терминал спит»,
+  «Запустить агента»); the start goes through the ticket (`ticket.cjs`) → needs a `continue` flag. Fill %: `scripts/main-agent-cli.mjs:527`
+  (`session -- context`).
