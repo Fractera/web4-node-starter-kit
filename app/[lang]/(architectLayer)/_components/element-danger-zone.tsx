@@ -10,12 +10,12 @@ import type { ElementSettingsUi } from '../_i18n/element-settings.i18n'
 // будет здесь, и нет кнопки, обещающей несделанное. Построенный подшаг передаёт своё действие через `actions`.
 // Удаление — в тоне предупреждения: это единственное необратимое действие страницы.
 
-// 324-7: три связи с узлом (CONFIG, Дизайн, Блоки) — по карточке на связь, перед удалением.
+// 324-7: связи с узлом — по карточке на связь; 706-1: CONFIG переехал в «Строительство → Настройки сайта», Дизайн и Блоки сняты.
 // 567: «Включение элемента» — признак узла «выключен», перед удалением.
 type Key = 'describe' | 'address' | 'mirror' | 'signIn' | 'config' | 'design' | 'blocks' | 'power' | 'remove'
 
 // 443-5: «Главное зеркало» и «Адрес элемента» живут на странице «Настройки → Домен» — та же сетка карточек, без метки опасности.
-export function ElementDangerZone({ ui, actions = {}, cards = ['describe', 'config', 'design', 'blocks', 'power', 'remove'], badge = true }: {
+export function ElementDangerZone({ ui, actions = {}, cards = ['describe', 'power', 'remove'], badge = true }: {
   ui: ElementSettingsUi; actions?: Partial<Record<Key, ReactNode>>; cards?: Key[]; badge?: boolean
 }) {
   return (

@@ -44,6 +44,7 @@ import { readStaticCopy } from '@/lib/web4-items/static-copy-state'
 import { readLinks } from '@/lib/web4-items/element-links'
 import { ElementLink } from '../../../_components/element-link.client'
 import { ElementSiteSettings } from '../../../_components/element-site-settings'
+import { ElementOwnPageLink } from '../../../_components/element-own-page-link.client'
 import { ElementWeb4 } from '../../../_components/element-web4.client'
 import { addressOf, idOfAddress } from '@/lib/web4-items/element-address'
 import { registryDescription, TASK as DESCRIBE_TASK } from '@/lib/web4-items/element-describe'
@@ -263,11 +264,10 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   const node = r.trail[r.trail.length - 1]
   const key = r.trail.map((t) => t.slug).join('/')
   const words = node.words[l]
-  // 577-11: «Блоки» — только переадресация на страницу блоков самого элемента (владелец: «мы не строим внутри страницы архитектора блоки»).
-  if (key === 'build/blocks') redirect(`${domainRecord(item)?.url ?? `https://${address}`}/${lang}/admin/blocks`)
-  // 579-4: «Дизайн» и «Настройки сайта» — тем же путём, на страницы самого элемента (его мастерская и настройки, шаги 579-1, 579-2).
-  if (key === 'build/design') redirect(`${domainRecord(item)?.url ?? `https://${address}`}/${lang}/admin/design`)
-  if (key === 'build/site-settings') redirect(`${domainRecord(item)?.url ?? `https://${address}`}/${lang}/admin/site-settings`)
+  // 706-1: «Блоки» сняты (элемент Blocks выведен, владелец 2026-11-09); «Дизайн» и «Настройки сайта» — страницы ядра со ссылкой на
+  // собственные страницы элемента, адрес которой выбирает браузер (`ElementOwnPageLink`): переадресация на `https://<адрес>` без своего
+  // домена вела в пустоту. Свой адрес элемента в интернете — только свой домен или поддомен зоны узла.
+  const ownPublicUrl = domainRecord(item)?.url ?? (primaryDomain() ? `https://${address}` : null)
   const nodePath = `${dir}/${key}`
   const path = r.service ? `${nodePath}/${r.service}` : nodePath
 
@@ -398,23 +398,32 @@ export default async function Page({ params }: { params: Promise<Params> }) {
           address: <ElementAddress id={item} lang={lang} ui={sui} current={slug} internet={domainRecord(item)?.url.replace("https://", "") ?? address} />,
           // 324: главное зеркало — второй собственный домен в корне элемента.
           mirror: <ElementDomain id={item} lang={lang} ui={sui} current={domainRecord(item)} />,
-          // 324-7: связи с узлом — CONFIG, Дизайн, Блоки.
-          config: <ElementLink id={item} kind="config" on={readLinks(item).config} ui={sui} />,
-          design: <ElementLink id={item} kind="design" on={readLinks(item).design} ui={sui} />,
-          blocks: <ElementLink id={item} kind="blocks" on={readLinks(item).blocks} ui={sui} />,
+          // 706-1: связь с CONFIG переехала в «Строительство → Настройки сайта»; связи с Дизайном и Блоками сняты вместе с элементами.
           // 567: включение элемента — признак «выключен» в реестре узла (кнопка — выбор владельца 2026-10-22).
           power: <ElementPower id={item} lang={lang} ui={sui} dialogUi={appDialogUi(lang)} initial={(() => { const off = power.offOf(entry); return { on: !off, reason: off ? power.reasonIn(off, lang) : null, byDefault: Boolean(off?.byDefault) } })()} />,
           remove: <DeleteElementButton lang={lang} id={item} address={address} ui={sui} dialogUi={appDialogUi(lang)} />,
         }} />
       : <p className="my-4 text-sm text-muted-foreground">{sui.notBorn}</p>)
     : null
-  const siteSettings = key === 'settings/site-settings'
+  const siteSettings = key === 'build/site-settings'
     ? (entry
       ? <>
-          <ElementSiteSettings lang={lang} ui={sui} siteUrl={domainRecord(item)?.url ?? `https://${address}`} configOn={readLinks(item).config} />
+          {/* 706-1: первой строкой — наследует ли элемент CONFIG узла (прежде карточка «Опасной зоны»). */}
+          <ElementDangerZone ui={sui} badge={false} cards={['config']} actions={{ config: <ElementLink id={item} kind="config" on={readLinks(item).config} ui={sui} /> }} />
+          <ElementSiteSettings lang={lang} ui={sui} port={port} publicUrl={ownPublicUrl} configOn={readLinks(item).config} />
           {/* 567-6: «элемент в сети Web4» — только у кастомного: у нативного сети нет. */}
           {!treeCtx.native ? <ElementWeb4 id={item} ui={sui} dialogUi={appDialogUi(lang)} initialOn={treeCtx.web4 !== false} /> : null}
         </>
+      : <p className="my-4 text-sm text-muted-foreground">{sui.notBorn}</p>)
+    : null
+
+  // 706-1: «Строительство → Дизайн» — что там и ссылка на мастерскую самого элемента (бриф, шрифты, цвета).
+  const designPage = key === 'build/design'
+    ? (entry
+      ? <section className="my-6 flex flex-col gap-3" data-element-design-page data-block="element-design-page">
+          <p className="text-sm text-foreground">{sui.designPage.text}</p>
+          <ElementOwnPageLink lang={lang} path="admin/design" port={port} publicUrl={ownPublicUrl} label={sui.designPage.open} localOnly={sui.ownPage.localOnly} />
+        </section>
       : <p className="my-4 text-sm text-muted-foreground">{sui.notBorn}</p>)
     : null
 
@@ -563,7 +572,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       title={words.title}
       lead={words.lead}
       pageTitle={address}
-      widget={<>{offNote}{bar}{lagrix}{about}{list}{preview}{github}{deployPanel}{copyNote}{deploymentsNote}{environment}{domainSettings}{settings}{siteSettings}{agent}{passport}{capabilities}{doc}{orders}{messengerSettings}{payments}{productQuiz}{reverseEngineering}{backupSettings}{users}</>}
+      widget={<>{offNote}{bar}{lagrix}{about}{list}{preview}{github}{deployPanel}{copyNote}{deploymentsNote}{environment}{domainSettings}{settings}{siteSettings}{designPage}{agent}{passport}{capabilities}{doc}{orders}{messengerSettings}{payments}{productQuiz}{reverseEngineering}{backupSettings}{users}</>}
       children={[...dashboardBlocks, ...tables]}
     />
   )

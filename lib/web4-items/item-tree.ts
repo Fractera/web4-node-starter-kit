@@ -90,9 +90,14 @@ export const MOVED_PAGES: Record<string, string> = {
   "telegram": "build/telegram",
   "reverse-engineering": "product-design/reverse-engineering",
   "external-github": "build/github",
-  "blocks": "build/blocks",
+  // 706-1: «Блоки» сняты вместе с элементом Blocks (владелец 2026-11-09); прежние адреса ведут в «Дизайн».
+  "blocks": "build/design",
+  "build/blocks": "build/design",
   "design": "build/design",
   "site-settings": "build/site-settings",
+  // 706-1: «Настройки сайта» — одна страница во вкладке «Строительство» (владелец 2026-11-09: «На вкладке настройки сайта выбирает
+  // связан ли этот новый элемент с узлом»); прежний пункт «Настройки → Настройки сайта» ведёт туда.
+  "settings/site-settings": "build/site-settings",
 }
 const MOVED_PREFIXES: [string, string][] = [
   ["h2a", "messenger/h2a"],
@@ -352,14 +357,14 @@ export const ITEM_TREE: TreePage[] = [
       // Владелец 2026-10-01: «кнопку развёртывания мы находим внизу а это очень важная кнопка … подними её вверх и установи сразу
       // под кнопкой терминал».
       { slug: "deployments", words: w("Preview & Deploy", "See a new version before visitors do, deploy it, or go back to a working one.", "Предпросмотр и развёртывание", "Посмотреть новую версию до посетителей, развернуть её или вернуться к работающей.") },
-      // 577-11 (владелец 2026-10-23: «мы не строим внутри страницы архитектора блоки это кнопка просто работает как переадресация на
-      // страницу блоке которая находится в элементах»): пункт ведёт на `/<язык>/admin/blocks` самого элемента.
-      { slug: "blocks", newTab: true, words: w("Blocks", "The blocks of this element, on the element itself.", "Блоки", "Блоки этого элемента — на самом элементе.") },
       // 579-4 (владелец 2026-10-23: «должно существовать такая же кнопка в левом меню какое мы сделали кнопка блоки и у нас должны быть
       // там две кнопки которые ведут на настройку дизайна и на настройку CONFIG то есть на собственные страницы каждого кастомного
       // элемента»): только переадресация на страницы самого элемента, в ядре ничего не строится. Только у кастомных: 579 — их шаг.
-      { slug: "design", custom: true, newTab: true, words: w("Design", "The element's own design workshop, on the element itself: fonts, colours, type, shapes.", "Дизайн", "Своя мастерская оформления элемента — на самом элементе: шрифты, цвета, текст, формы.") },
-      { slug: "site-settings", custom: true, newTab: true, words: w("Site settings", "The element's own site settings, on the element itself: name, menu, footer, switches.", "Настройки сайта", "Свои настройки сайта элемента — на самом элементе: название, меню, подвал, выключатели.") },
+      // 706-1: страница ядра с одной ссылкой на мастерскую элемента — адрес выбирает браузер (на этой машине — локальный порт
+      // элемента, иначе его свой домен): прежняя переадресация вела на `https://<адрес>`, которого без своего домена нет.
+      { slug: "design", custom: true, words: w("Design", "The element's brief and look, on the element itself: who it is for, references, fonts, colours.", "Дизайн", "Бриф и облик элемента — на самом элементе: для кого он, референсы, шрифты, цвета.") },
+      // 706-1: связь с CONFIG узла — здесь, первой строкой (прежде в «Опасной зоне»), и ссылка на свои настройки элемента.
+      { slug: "site-settings", words: w("Site settings", "Whether the element takes the node's CONFIG, and its own site settings: name, menu, footer, switches.", "Настройки сайта", "Наследует ли элемент CONFIG узла, и свои настройки сайта: название, меню, подвал, выключатели.") },
       // 472: у элемента с H2A бот переехал в H2A (`MOVED_WITH`); здесь он остаётся для элементов без H2A.
       { slug: "telegram", unless: "h2a", words: w("Telegram bot", "A bot that talks to the same agent session.", "Telegram-бот", "Бот, который говорит с той же сессией агента.") },
       { slug: "environment", words: w("Environment variables", "Keys and settings the element reads at start.", "Переменные окружения", "Ключи и настройки, которые элемент читает при старте.") },
@@ -486,7 +491,7 @@ export const ITEM_TREE: TreePage[] = [
   // 325 (слово владельца 2026-09-27): обязательная страница внизу — «Настройки», так называемый Danger zone. Всегда последняя.
   {
     slug: "settings",
-    words: w("Settings", "The element's danger zone and the settings of its own site.", "Настройки", "Опасная зона элемента и настройки его собственного сайта."),
+    words: w("Settings", "The element's domain, its danger zone and payments.", "Настройки", "Домен элемента, опасная зона и платежи."),
     // 328 (слово владельца 2026-09-28): «на вкладке настройки увидеть выпадающий список … страница настройки, которые уже
     // существуют, и страница конфигуратора». Конфигуратор живёт в самом элементе (выбор «б» 324-8) — страница ядра открывает
     // его на главном адресе в новой вкладке (выбор «б» 2026-09-28: во встроенном окне свой домен не получил бы билет входа).
@@ -495,7 +500,6 @@ export const ITEM_TREE: TreePage[] = [
       // домен. Поместить туда два внутренних раздела главное зеркало и адрес элемента».
       { slug: "domain", words: w("Domain", "The element's main mirror (its own domain) and its address in the core.", "Домен", "Главное зеркало элемента (его собственный домен) и его адрес в ядре.") },
       { slug: "danger-zone", words: w("Danger zone", "The element's description in the core, its links to the node and deleting it.", "Опасная зона", "Описание элемента в ядре, связи с узлом и удаление.") },
-      { slug: "site-settings", words: w("Site settings", "The name, texts, search settings, images and languages of the element's own site.", "Настройки сайта", "Название, тексты, настройки для поиска, картинки и языки собственного сайта элемента.") },
       // 530-1 (владелец 2026-10-18): «На вкладке настройки создать вкладку платежи которые будет раскрываться и предлагать два выбора веб
       // два и web3 в одной у нас будет настраиваться страйп , в другой у нас будет настраиваться кошелёк».
       {

@@ -259,7 +259,7 @@ export function NodePassport({ words, lang }: { words: NodePassportWords; lang: 
                 )}
                 {/* 566: «нужно сделать кнопку изменить настройки» — «Настройки → Настройки сайта» элемента, там выбор «в сети Web4» (567-6). */}
                 <div>
-                  <a href={`${BASE}/${lang}${c.open}/settings/site-settings`} className={buttonVariants({ variant: "outline", size: "sm" })} data-passport-settings={c.id}>{words.changeSettings}</a>
+                  <a href={`${BASE}/${lang}${c.open}/build/site-settings`} className={buttonVariants({ variant: "outline", size: "sm" })} data-passport-settings={c.id}>{words.changeSettings}</a>
                 </div>
               </LagrixRating>
             </div>
