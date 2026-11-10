@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic"
 
 const HEADERS = { "Cache-Control": "no-store" }
 
-type SessionCommand = (service: string, opts: { action?: string; model?: string; continue?: boolean }) => Record<string, unknown> & { ok: boolean }
+type SessionCommand = (service: string, opts: { action?: string; model?: string; effort?: string; continue?: boolean }) => Record<string, unknown> & { ok: boolean }
 
 function nodeKeyOk(given: string | null): boolean {
   const expected = process.env.SETTINGS_SECRET ?? ""
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   if (!nodeKeyOk(req.headers.get("x-node-key"))) {
     return NextResponse.json({ ok: false, reason: "node key required (X-Node-Key)" }, { status: 401, headers: HEADERS })
   }
-  let body: { service?: unknown; action?: unknown; model?: unknown; continue?: unknown }
+  let body: { service?: unknown; action?: unknown; model?: unknown; effort?: unknown; continue?: unknown }
   try { body = await req.json() } catch {
     return NextResponse.json({ ok: false, reason: "invalid JSON" }, { status: 400, headers: HEADERS })
   }
@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, service, running: Boolean(live), startedAt: live?.startedAt ?? null, sessions }, { headers: HEADERS })
   }
   const model = typeof body.model === "string" ? body.model : undefined
+  const effort = typeof body.effort === "string" ? body.effort : undefined
   const command = (globalThis as { __web4AgentSession?: SessionCommand }).__web4AgentSession
   if (typeof command !== "function") {
     return NextResponse.json({ ok: false, reason: "agent kits are not mounted in this process" }, { status: 503, headers: HEADERS })
@@ -51,7 +52,7 @@ export async function POST(req: NextRequest) {
   // 700-3: `clear` with `continue: true` — the agent asked for its own reset: after /clear the bridge wakes the fresh session with
   // `⟦node · context-reset …⟧` and its letter; nobody is asked.
   const cont = action === "clear" && body.continue === true
-  const out = command(service, { action, model, ...(cont ? { continue: true } : {}) })
+  const out = command(service, { action, model, ...(effort ? { effort } : {}), ...(cont ? { continue: true } : {}) })
   console.log(`[agents/session] ${service} ${action}${model ? ` ${model}` : ""}${cont ? " --continue" : ""} → ${out.ok ? `scheduled ${out.scheduled}` : out.reason}`)
   const status = out.ok ? 200 : out.reason === "no-agent-kit" ? 404 : out.reason === "no-session" ? 409 : 400
   return NextResponse.json(out, { status, headers: HEADERS })

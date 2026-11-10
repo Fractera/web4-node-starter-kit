@@ -689,7 +689,7 @@ function watchNewConversation(service, live, element, home, before) {
   timer.unref?.()
 }
 
-function sessionCommand(service, { action, model, continue: cont = false } = {}) {
+function sessionCommand(service, { action, model, effort, continue: cont = false } = {}) {
   const live = session.current(service)
   if (!live) return { ok: false, reason: 'no-session' }
   if (action === 'clear') {
@@ -715,6 +715,7 @@ function sessionCommand(service, { action, model, continue: cont = false } = {})
   }
   if (action === 'model') {
     if (!SESSION_MODELS.includes(model)) return { ok: false, reason: `model must be one of ${SESSION_MODELS.join(', ')}` }
+    if (effort !== undefined && !EFFORTS.includes(effort)) return { ok: false, reason: `effort must be one of ${EFFORTS.join(', ')}` }
     void whenIdle(live).then(async (idle) => {
       if (!idle) return console.log(`[agents/session] ${service}: смена модели не выполнена — экран не затих или сессии уже нет`)
       const pass = live.pass
@@ -722,8 +723,8 @@ function sessionCommand(service, { action, model, continue: cont = false } = {})
       session.stop(service, 'model-switch')
       // Процесс завершается не мгновенно, а новая сессия той же службы при живой старой не рождается (`session.current`).
       await new Promise((r) => setTimeout(r, 1500))
-      const r = await spawnAgent(service, undefined, undefined, '', { model, pass, continueLast })
-      console.log(`[agents/session] ${service}: модель → ${model}, ${r.ok ? (continueLast ? 'тот же разговор продолжен' : 'разговора не было — новая сессия') : `не запустилась — ${r.reason}`}`)
+      const r = await spawnAgent(service, undefined, undefined, '', { model, effort, pass, continueLast })
+      console.log(`[agents/session] ${service}: модель → ${model}${effort ? ` · ${effort}` : ''}, ${r.ok ? (continueLast ? 'тот же разговор продолжен' : 'разговора не было — новая сессия') : `не запустилась — ${r.reason}`}`)
     })
     return { ok: true, scheduled: 'model', model }
   }

@@ -305,7 +305,8 @@
       "The person's block",
       "Building blocks",
       "task for a block",
-      "or block of your own call"
+      "or block of your own call",
+      "адрес блока из подсветки"
     ],
     "files": [
       "components/block-highlight/",

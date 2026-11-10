@@ -52,7 +52,8 @@ export function AgentTerminal({ service, lang, words, build, dialogUi, initialPa
   const mouseRef = useRef(createMouseFilter())
   // Закрытие, которое сделали мы сами, не должно читаться как обрыв связи.
   const quietCloseRef = useRef(false)
-  // 316: окно вставки. Текст приходит кнопкой «Вставить» или ссылкой `?paste=` (адрес секции из подсветки Preview);
+  const followUntilRef = useRef(0)
+  // 316: окно вставки. Текст приходит кнопкой «Вставить» или ссылкой `?paste=` (адрес блока из подсветки Preview);
   // в работающий терминал он уходит ТОЛЬКО кнопкой человека в окне (спящему — вместе с запуском, 551-7 ниже).
   const [pasteOpen, setPasteOpen] = useState(false)
   const [pasteText, setPasteText] = useState(initialPaste ?? "")
@@ -173,6 +174,15 @@ export function AgentTerminal({ service, lang, words, build, dialogUi, initialPa
             return
           }
         }
+        // 717-x (the owner 2026-11-10: the terminal closed at «switch to Sonnet»): a model switch stops this session and the node
+        // starts the same conversation on the new model a moment later — the window follows it instead of going «offline».
+        if (event.reason === "model-switch" || (event.reason === "not-running" && Date.now() < followUntilRef.current)) {
+          if (event.reason === "model-switch") followUntilRef.current = Date.now() + 60_000
+          setState("connecting")
+          window.setTimeout(() => void connect(false), 1500)
+          return
+        }
+        followUntilRef.current = 0
         if (event.reason === "not-running") {
           setState("sleeping")
         } else if (event.reason === "stopped") {
