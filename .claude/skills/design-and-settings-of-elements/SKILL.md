@@ -19,11 +19,17 @@ A hint, not a law: models of late 2026 work worse under rigid step-by-step instr
 - **Site settings** — `/<lang>/<element>/build/site-settings`: the CONFIG link in one line on top, then sections (basics, search, meta and
   media, languages, header, footer, cookie banner, switches, Web4 network). A saved value redraws the pages with no build; only languages
   need a deploy. Linked to CONFIG — the values are read-only there and change in CONFIG.
-- A look the settings cannot express (a new token, a new block) is code — hand it to the element's agent (`route-to-element`).
+- A look the settings cannot express (a new token, a new section) is code — hand it to the element's agent (`route-to-element`).
+- **One design for a family of elements** (step 717-5; the owner: «рабочие страницы выполнены с использованием одного и того же
+  навыка»). A new element: `npm run create -- … --look-like <x>`. An element already born: on the person's word
+  `npm run look -- <id> --like <x>` — the core puts the look X took into the core (registry `look`; X ran `npm run describe:publish`)
+  into the element's intake as a copy, never a live link and never X's folder; its own agent applies it with `npm run design:take` and
+  shows the pages — wake it with `npm run task -- <id> "Take the look waiting in your intake"`. X's pictures stay X's; each element's
+  sections stay its own code.
 
 ## A page or a section of a page (node step 716)
 
-Every element designs its own pages: its sections are its own code (`components/blocks/` of that element), built by its agent's design
+Every element designs its own pages: its sections are its own code (`components/sections/` of that element), built by its agent's design
 pass in the element's approved design; the node has no shared catalogue of sections and no shared design. A request for a page or a
 section of element X goes to X's agent, never to you — `npm run task -- <id> "Build process, design: <the person's words>"` (the node
 starts the session of that pass with its own skills) or X's terminal and Telegram bot (`route-to-element`). Why one change needs a build

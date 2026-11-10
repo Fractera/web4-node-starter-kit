@@ -221,11 +221,47 @@ if (cmd === 'contacts') {
 // (`data/services/<id>/links.json`, нет файла или ключа — связь включена): включена — CONFIG в ядре, выключена — вкладка элемента. Без модели.
 if (cmd === 'look') {
   const [one] = rest
-  if (!one) fail('look <id> [--own | --linked] — where the design and the site settings of this element are changed; the CONFIG link switch on the person\'s word')
+  if (!one) fail('look <id> [--own | --linked | --like <id>] — where the design and the site settings of this element are changed; the CONFIG link switch and a sibling\'s look on the person\'s word')
   const r = await core('/api/node/projects').catch(() => null)
   const rows = Array.isArray(r?.body?.rows) ? r.body.rows : []
   const x = rows.find((y) => y.id === one || y.service === one || addressOf(y.id) === one)
   if (!x) fail(`no element «${one}» in this node — who does a job: npm run find -- <English words>`)
+  // 717-5 (the owner 2026-11-10: «рабочие страницы выполнены с использованием одного и того же навыка» — a family of elements in one
+  // design): on the person's word the core gives element <id> the look of its sibling <x> — the look X took into the core (registry
+  // `look`, `npm run describe:publish` in X), never X's folder. A COPY, never a live link: it goes into <id>'s intake as a request and a
+  // data file; <id>'s own agent applies it with its `npm run design:take` (the core never edits an element). X's pictures stay X's.
+  const likeId = flag('--like')
+  if (likeId !== null) {
+    if (!likeId || likeId.startsWith('--')) fail('look <id> --like <id of the element whose look to take>')
+    if (!x.custom || x.id === 'root') fail(`${x.id}: only a born custom element takes a sibling's look`)
+    const from = rows.find((y) => y.id === likeId || y.service === likeId || addressOf(y.id) === likeId)
+    if (!from) fail(`no element «${likeId}» in this node`)
+    if (from.id === x.id) fail('an element cannot take its own look')
+    const elook = require('../lib/web4-items/element-look.cjs')
+    const taken = registry().find((e) => e.id === from.id)?.look
+    if (!taken || typeof taken !== 'object') fail(`${from.id} has not taken its look into the core: its brief on its Design page, then «Take into the core» (npm run describe:publish in it)`)
+    const { brief, tokens } = elook.portableLook(taken, from.id)
+    const dir = itemDir(x.id)
+    if (!dir) fail(`no folder of element ${x.id}`)
+    const now = new Date()
+    const p2 = (n) => String(n).padStart(2, '0')
+    const stem = `${p2(now.getDate())}-${p2(now.getMonth() + 1)}-${now.getFullYear()}_${p2(now.getHours())}-${p2(now.getMinutes())}-${p2(now.getSeconds())}`
+    const intakeDir = join(dir, 'development-docs', 'pre-steps')
+    mkdirSync(intakeDir, { recursive: true })
+    const data = `${stem}.look-from-${from.id}.json`
+    writeFileSync(join(intakeDir, data), JSON.stringify({ from: from.id, at: now.toISOString(), brief, tokens }, null, 2) + '\n', 'utf8')
+    writeFileSync(join(intakeDir, `${stem}.md`), [
+      '# Request',
+      `- Received: ${now.toISOString().slice(0, 16).replace('T', ' ')} (UTC)`,
+      "- From: the core's main agent, for the architect (node step 717-5)",
+      `- Asked: «Take the look of the element ${from.id} — the same design for a family of elements»`,
+      `- Context: the look ${from.id} took into the core, as a copy (no live link): \`development-docs/pre-steps/${data}\` — its brief${tokens ? ` and its tokens (${Object.keys(tokens).join(', ')})` : ' (no tokens)'}. Apply it with \`npm run design:take -- development-docs/pre-steps/${data}\` (skill use-design), see the pages with npm run eyes, commit; the person approves.`,
+      '',
+    ].join('\n'), 'utf8')
+    console.log(`===LOOK_OFFERED=== ${x.id} ← ${from.id}: brief ${Object.keys(brief).filter((k) => k !== 'inheritedFrom').join(', ') || '—'}; tokens ${tokens ? Object.keys(tokens).join(', ') : '—'}`)
+    console.log(`In its intake: development-docs/pre-steps/${stem}.md — its agent applies it (npm run design:take). Wake it on the person's word: npm run task -- ${x.id} "Take the look waiting in your intake"`)
+    process.exit(0)
+  }
   // 679-2 (владелец 2026-11-08: «чтобы у тебя была возможность по такой команде переводить блоки дизайн и прочее связи с узлом в
   // самостоятельно режим»): по слову человека — та же дверь, что выключатель «Опасной зоны» (`PATCH /api/architect/items/<id>/links`).
   // 716 (владелец 2026-11-10: элементов «Дизайн» и «Блоки» нет): связь одна — CONFIG; облик элемента всегда его собственный.
