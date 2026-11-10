@@ -6,6 +6,14 @@ instuctions for update ?». The decision the review rests on, 2026-11-09, verbat
 давай зафиксируем факт того что мы приняли решение отказаться от элементов дизайн и от элементов Blok»; «стартовый шаблон не имеющий
 никакого Патерно проще развернуть в любую сторону».
 
+**The owner's decision, 2026-11-10 ~11:35 (terminal), verbatim — the plan is approved by it and runs without him:** «go to finish non
+stop , i am not here , use only best solutions fo our goal : Приоритет твоей работы проверить чтобы нигде не было упоминаний о том что
+существуют блоки и дизайн как нативные элементы их не должно существовать как нативные элементы и не должно быть обращение к ним. Поэтому
+сначала убери их, проверь что все продолжает работать без них а затем опиши работу внутри нативных и кастомных элементов речь о
+инструкции и навыках с точки зрения нашей новой архитектуры». So: C (the registry entries and every call to them) FIRST, option (a) —
+removed from the node, the repositories stay on GitHub untouched; then the proof that everything works without them; then A, B, D.
+Then «good luck», «great , i am go out». The fork sync by Chrome checked at his request (11:38: pressed myself, `identical`).
+
 **The new model (live since 706/711/715).** An element designs itself: design skills from the library → a test page (prototype: its own
 `tokens.json` + `DESIGN.md` + page) → compare in the core's «Build → Design» → approve (`design:pin`: tokens become the element's
 `DESIGN-CONFIG`) → the element's agent builds every other page in that design, its sections are its own code. No shared Blocks catalogue,
@@ -56,6 +64,35 @@ addresses of its page items). Both are «blocks» in a different sense — a pag
 | custom `fractera-custom-item-starter` | already new (706-4); only `build-design.md` 9 names the retirement | nothing |
 | root `fractera-root-starter` | `build.md` 119 «the link to the shared Design or CONFIG»; `use-design` 37 `npm run look` for Design | two lines: CONFIG only |
 | native `fractera-native-item-starter` (auth, data, storage …) | fully old: `build-design.md` 37–42 (`npm run blocks find/add/request`), `build.md` 80, 179, skills `use-blocks`, `custom-design` («designs itself through the Blocks and Design elements»), `custom-design/impeccable-on-design.md`, `build-widget` 49 | bring to the custom model: `build-design.md`, `use-design`, `use-page-tree` from the custom template; delete `use-blocks`, `custom-design`; then a release and the rollout into the 12 native elements |
+
+## Substeps (the owner's order, 11:35: remove first, prove, then the instructions and skills)
+
+Facts measured 11:40–11:55 that shape the plan:
+- The installer gives every element `DESIGN_SERVICE_URL` / `BLOCKS_REGISTRY_URL` by the registry's neighbour rule — no entry → empty →
+  the element's code never calls (`scripts/services-install.mjs` 434–447). Calls stop by construction once the entries are gone and an
+  element is installed again; the dead code is then cleaned from the templates.
+- ✗ The node update keeps every entry of the node's registry the fork no longer has (`mergeRegistry`, `scripts/node-update.mjs` 109–120)
+  — right for custom elements, wrong for a native Fractera retires: removing the two entries from the fork alone would leave them on
+  every node as «own». Fix: a native (`kind: core`) missing from the fork leaves the node's registry, and the update retires it (pm2
+  process and watcher deleted, its folder and its `data/services/<id>` moved into `WEB4-ITEMS/.trash/`, as the deletion door does).
+- `/api/settings/changed` is the node's general redraw signal (core build `lib/deploy/quiet-build.cjs`, the catalog push), not only
+  Design's: the doors stay, only the pull from Design leaves them.
+- Every native repository carries the same ten files that call Design/Blocks (`lib/design-follow.ts`, `instrumentation.ts`,
+  `app/api/settings/changed/route.ts`, `config/design-config.ts`, `.env.example`, `OWN-SERVICE-PROPS/A2A-CARD.json`, `components.json`
+  `@fractera`, `scripts/blocks.mjs`, the admin «Blocks» page lib, `lib/content/blocks/types.ts`); custom and root — six of them.
+- The way 704-4 proved for the natives: edit the author workshop clones `~/fractera-dev/fractera-*-starter`, next patch tag, push by hand,
+  pin in the core; vectors and graph carry their own element commits — their agents merge the starter's tag themselves.
+
+- 716-2 Core: the two registry entries; `mergeRegistry` + `scripts/element-retire.mjs` in the node update; the core sections
+  `architect/design`, `architect/blocks`; links → `config` only (door, UI, `npm run look`, `create`, `node-type`); `lib/design-follow.ts`,
+  `lib/web4-items/design-seed.mjs` and their calls; prefixes, reserved names, progress words, README. Guards green.
+- 716-3 Templates' code (custom, root, native) and the natives: the ten / six files; releases, the natives' patches, pins.
+- 716-4 Instructions and skills: the core's `CLAUDE.md` (sealed, by this word), its skills; the element instruction source (sealed) →
+  the three templates; the native template's modes and skills rewritten to the custom model; root's lines.
+- 716-5 Delivery: push, fork sync, node update (the retirement runs), elements installed / merged by their agents.
+- 716-6 Proof, two planes: (1) the node — `serve:status` and pm2 without design and blocks, their folders gone, the core's and the
+  elements' pages answer (eyes), each element's `/api/health` 200; (2) a search for the old words gives zero living mentions, and a cold
+  test of a fresh custom element agent goes the new way.
 
 ## Next substeps (after the owner's decisions by group)
 - 716-2 A — rewrite the sealed lines, `check:instruction -- --seal`.
