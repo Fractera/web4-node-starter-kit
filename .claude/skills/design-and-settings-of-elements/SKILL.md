@@ -1,6 +1,6 @@
 ---
 name: design-and-settings-of-elements
-description: "Both natures. The look of an element (design skills tested on a test home page, the approved design, colours and fonts) and its site settings (name, search, languages, menus, cookie banner, switches, the CONFIG link): where each is changed — the core's «Build → Design» and «Build → Site settings» of the element — and how the whole design path runs from the architect's Telegram with `npm run design`. Load it when the person asks to choose or test design skills, to make or compare test pages, to approve a design, to change colours, a font, the title, the menu, «hide sign-in», «turn on the footer», sends a screenshot or a link of a site whose style they like, or asks where an element's design or settings are."
+description: "Both natures. The look of an element (design skills tested on a test home page, the approved design, colours and fonts) and its site settings (name, search, languages, menus, cookie banner, switches, the CONFIG link): where each is changed — the core's «Build → Design» and «Build → Site settings» of the element — and how the whole design path runs from the architect's Telegram with `npm run design`. Load it when the person asks to choose or test design skills, to make or compare test pages, to approve a design, to change colours, a font, the title, the menu, «hide sign-in», «turn on the footer», sends a screenshot or a link of a site whose style they like, asks where an element's design or settings are, or asks for a page or a section of one (a hero, pricing, questions, a comparison) and where such sections live."
 ---
 
 # Design and settings of elements
@@ -20,6 +20,15 @@ A hint, not a law: models of late 2026 work worse under rigid step-by-step instr
   media, languages, header, footer, cookie banner, switches, Web4 network). A saved value redraws the pages with no build; only languages
   need a deploy. Linked to CONFIG — the values are read-only there and change in CONFIG.
 - A look the settings cannot express (a new token, a new block) is code — hand it to the element's agent (`route-to-element`).
+
+## A page or a section of a page (node step 716)
+
+Every element designs its own pages: its sections are its own code (`components/blocks/` of that element), built by its agent's design
+pass in the element's approved design; the node has no shared catalogue of sections and no shared design. A request for a page or a
+section of element X goes to X's agent, never to you — `npm run task -- <id> "Build process, design: <the person's words>"` (the node
+starts the session of that pass with its own skills) or X's terminal and Telegram bot (`route-to-element`). Why one change needs a build
+and another does not, in the person's words: a new section is code — the element is built once (beside the running version, switched in
+seconds); a new page made of sections the element already has, other words or another order is page data — no build.
 
 ## The design path from Telegram (the owner 2026-11-10: «создания проекта прямо из Telegram в том числе и дизайна»)
 

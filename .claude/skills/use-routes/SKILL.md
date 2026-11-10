@@ -92,7 +92,7 @@ Getting this wrong is not cosmetic: a folder per item for a catalogue is a milli
 dynamic page for an authored text is a page search never sees.
 
 🔒 **2026-09-25 — the first row changed.** It used to read "a folder per item" and was built as one `page.tsx`
-per folder. Measured on the Blocks service: 300 page files built in 1252 s, the same 300 pages through one
+per folder. Measured on one element: 300 page files built in 1252 s, the same 300 pages through one
 template in 98 s; the core reached 126 near-identical `page.tsx` and 5–7 minutes of compile. The folder stays
 (it holds the data); the route file per page is forbidden. Details and the guard — `use-page-tree`.
 

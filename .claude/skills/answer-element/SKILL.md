@@ -15,8 +15,8 @@ The owner, 2026-11-08: «я был на связи с агентом элеме�
 архитектор … ты должен ответить ему о том что задача решиться не может и нужно вмешательство архитектора». The architect is often in the
 element's chat, not in yours: whatever you tell only your own chat may reach nobody. So every wake by an element ends with an answer TO
 the element (`npm run task -- <id> "Answer from the core to «…»: …"`), one of two:
-- **done** — the element passes on the architect's verbatim word for a change the core has a command for (the links to Design, CONFIG,
-  Blocks — `npm run look -- <id> --own|--linked`; a name — `npm run rename`): do it, check it, answer what changed;
+- **done** — the element passes on the architect's verbatim word for a change the core has a command for (the link to CONFIG —
+  `npm run look -- <id> --own|--linked`; a name — `npm run rename`): do it, check it, answer what changed;
 - **the core cannot** — say it plainly, why in one line, and exactly what the architect must do (the button, the page with its full
   link, the words to say), for the element to tell the architect in its own chat. Never «sent to the architect» when it went only to
   your chat.

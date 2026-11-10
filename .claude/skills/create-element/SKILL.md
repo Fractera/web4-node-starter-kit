@@ -41,16 +41,15 @@ The owner of Fractera, 2026-10-23: «не всегда в наш проект п
      main`: its «done» wakes you, skill `supervise-element`, at most 10 cycles);
    - **on its own or one with the project** (node step 679; the owner, 2026-11-08: «прежде элемента запрашивать самостоятельно ли это
      будет элемент или единой с ядром … если нет комментирует»). Ask it every time, in plain words, and explain if the person does not
-     know what it means: **one with the project** — it takes the shared Design (colours, fonts), CONFIG (menu, footer, switches) and the
-     shared Blocks catalogue: the node looks like one site, a change in Design reaches it by itself, and ready blocks save build tokens;
-     but it cannot look different. **On its own** — its own design, settings and blocks, built inside it: it can be a separate product
-     or brand (a clip studio, a client's shop), and nothing of the project changes it; but every look and every block is its own work.
-     Your pick and why. `--look project|own`; on its own without the shared Blocks too — `--blocks off`. Later, on the person's word,
-     `npm run look -- <id> --own [config,design,blocks]` or `--linked […]`.
+     know what it means: **one with the project** — it starts with the site's look (a copy of its tokens, then its own: every element
+     designs its own pages in its Design tab, node step 716) and follows the shared CONFIG (menu, footer, switches): the node reads like
+     one site. **On its own** — the template's look and its own settings: it can be a separate product or brand (a clip studio, a
+     client's shop), and nothing of the project changes it. Your pick and why. `--look project|own` (`--look-like <id>` starts from a
+     sibling's look). Later, on the person's word, `npm run look -- <id> --own` or `--linked` (the CONFIG link).
    Custom by default. Native (`--native`) only for a job of the node itself that is never sold and never leaves it.
 4. **Create.** Write the task into a file in this folder (no shell quoting of the person's words), then:
    ```
-   npm run create -- --role "<one sentence>" --name "<the name the person sees in the menu>" --vector-file vector-<words>.md --describe "<what it is for in this node, 1–3 sentences>" --look own|project [--blocks off] --area "<the field>" --grows "<a job>; <another>" --brief-file task-<words>.md [--close-after-first-session] [--supervise main] [--native]
+   npm run create -- --role "<one sentence>" --name "<the name the person sees in the menu>" --vector-file vector-<words>.md --describe "<what it is for in this node, 1–3 sentences>" --look own|project --area "<the field>" --grows "<a job>; <another>" --brief-file task-<words>.md [--close-after-first-session] [--supervise main] [--native]
    ```
    **The starting vector** (core step 701; the owner, 2026-11-08: «ты должен дописать в инструкцию агенту элемента послание которые
    создаст базовое понимание того что он должен делать … как он должен создавать маршруты где будет находиться область публичного

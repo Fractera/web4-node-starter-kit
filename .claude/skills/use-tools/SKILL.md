@@ -5,9 +5,8 @@ description: >
   optional. Load this BEFORE building any interface piece that feels generic: a picker, a cropper,
   a dialog for translations, a microphone, a code viewer, a media trimmer. Also load it when the
   owner says "we already made that", "why is there no window", "use the tool we built" — that
-  sentence usually means a tool exists and was not found. Tools live in `_tools/<id>/` and appear in
-  the showcase at `/{lang}/architect/design?section=tools`; anything built beside them is a second
-  copy nobody asked for.
+  sentence usually means a tool exists and was not found. Tools live in `_tools/<id>/` and are listed in
+  `_tools/TOOLS.json`; anything built beside them is a second copy nobody asked for.
 ---
 
 # use-tools
@@ -21,10 +20,8 @@ hidden in a feature folder — those are invisible, and invisible is the same as
 
 ## Where to look, in this repository
 
-**The showcase: `/{lang}/architect/design?section=tools`.** One column, one card per tool: what it
-does, how to use it, what it gives you, what it needs (browser, HTTPS, an OpenAI key, ffmpeg), which
-package must be installed, and who already calls it. A pencil beside each asks for a change to it; a
-card at the bottom asks for a tool that does not exist yet.
+**The list: `_tools/TOOLS.json`** and each tool's own folder `_tools/<id>/`: what it does, how to use it, what it gives you, what
+it needs (browser, HTTPS, an OpenAI key, ffmpeg), which package must be installed, and who already calls it.
 
 🔒 **THE CATALOGUE IS GENERATED FROM THE FOLDER, AND A SECOND LIST IS FORBIDDEN.** Each tool carries
 `_tools/<id>/tool.json`; `npm run build:tools-map` renders `_tools/TOOLS.json` from those cards and

@@ -13,9 +13,9 @@ description: >
 
 # use-page-tree
 
-> COPY. The master of this skill and its reference implementation live in `Fractera/fractera-blocks-starter`
-> (`.claude/skills/use-page-tree`, `presentation/lib/page-tree.ts`). Change it there first, then copy here.
-> Paths below are the Blocks service's; in the core the same shape applies to `app/[lang]/(architectLayer)/`.
+> COPY. The master of this skill lives in the element templates (`Fractera/fractera-custom-item-starter`, `.claude/skills/build-skills/
+> skills/use-page-tree`, `lib/page-tree.ts`). Change it there first, then copy here.
+> Paths below are an element's; in the core the same shape applies to `app/[lang]/(architectLayer)/`.
 
 > Informational, not binding. **Know a better way for the case in front of you — do it your way and
 > say so.** The one thing that is not optional: a new page never arrives as a new route file.
@@ -98,7 +98,7 @@ was not prerendered (found and fixed on 2026-09-25).
 
 ## 6. The real exception
 
-A page whose behaviour cannot be composed from catalogue blocks (a live tool, a form with its own logic)
+A page whose behaviour cannot be composed from its sections (a live tool, a form with its own logic)
 may have its own route file. It goes into `ALLOWED` in `scripts/check-routes.mjs` **with its reason** —
 a decision the owner can read, not a habit. If a second page needs the same behaviour, the behaviour
 becomes a block kind and both pages become data.

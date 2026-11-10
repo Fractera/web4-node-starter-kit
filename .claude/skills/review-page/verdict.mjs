@@ -1,4 +1,5 @@
-// ЗАПИСЬ ВЕРДИКТА РАЗБОРА (шаг 577-6, 2026-10-24) — `agi-code/data/services/blocks/verdicts.jsonl`, строка на вердикт.
+// ЗАПИСЬ ВЕРДИКТА РАЗБОРА (шаг 577-6, 2026-10-24) — `data/node/page-verdicts.jsonl` ядра, строка на вердикт (716: прежде лежал в
+// данных элемента «Блоки», которого у узла больше нет; записи перенесены).
 //
 //   node verdict.mjs add --element reverse --page en --grade 2 --by model:claude-opus-5-5 \
 //        [--replace "block-a>block-b"]… [--move block-x]… [--fine block-y]… [--note "…"]
@@ -18,7 +19,7 @@ const argv = process.argv.slice(2)
 const all = (name) => argv.flatMap((a, i) => (a === name ? [argv[i + 1]] : []))
 const opt = (name) => all(name)[0] ?? null
 // In the core since federal step 621-5: the skill folder is <core>/.claude/skills/review-page, three levels below the core.
-const FILE = path.resolve(opt("--file") || path.join(here, "..", "..", "..", "data", "services", "blocks", "verdicts.jsonl"))
+const FILE = path.resolve(opt("--file") || path.join(here, "..", "..", "..", "data", "node", "page-verdicts.jsonl"))
 const fail = (msg) => { console.log(`===VERDICT_FAIL=== ${msg}`); process.exit(1) }
 
 if (argv[0] === "add") {

@@ -56,8 +56,7 @@ sections/contract.ts           what a renderer receives
 
 ## 🔒 Как назван блок: владелец говорит «`quote01`»
 
-Владелец видит блоки на витрине (`/{lang}/architect/design?section=blocks`), и у каждого там стоит
-**код** — метка фирменного цвета: `quote01`, `workspace02`. Этим кодом он и называет блок в задаче:
+У каждого блока есть **код** — первая колонка `sections/BLOCKS.md`: `quote01`, `workspace02`. Этим кодом владелец и называет блок в задаче:
 «собери секцию из этого и этого».
 
 **Что делать, получив код.** Открыть `sections/BLOCKS.md`, найти строку по коду — он в **первой
@@ -128,8 +127,8 @@ sections/contract.ts           what a renderer receives
 каталоге в тот же день, пусть и в последнем типе. Появился вид с назначением — впиши его в
 `taxonomy.json` тем же шагом, что и рендерер.
 
-**Владелец видит этот же каталог** в панели, «Дизайн» → «Секции»: типы, превью схемой и твои заметки
-из карточек. Там же он читает, что на его сайте секция выглядит иначе — её перекрашивают его токены.
+Отдельной витрины у каталога нет: его читают по `sections/BLOCKS.md` и карточкам `sections/blocks/<kind>.md`; на сайте секция
+выглядит так, как её красят токены ядра.
 
 **How many kinds exist: ask `sections/index.ts`, never a document.** `npm run check:sections` prints
 the count. A number written into prose is stale the week after — this project's own instruction said

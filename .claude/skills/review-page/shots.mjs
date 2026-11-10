@@ -11,9 +11,10 @@
 //      500 px, окно 900 px; страница прокручивается до низа (ленивые картинки), затем нарезается по экранам:
 //      <out>/<страница>-<ширина>-<NN>.png.
 //   3. Печатает карту «экран → блоки» по `[data-block]` (адрес блока; вид — из `_data/<язык>.json`, если дан --element).
-//   4. --element: печатает дословно вывод `scripts/check-page-blocks.mjs` элемента (сторож 577-5) — та же страница, 0 токенов.
+//   4. --element: печатает дословно вывод сторожа страниц элемента — `scripts/check-page-sequence.mjs` (у старого элемента —
+//      `check-page-blocks.mjs`, 577-5): та же страница, 0 токенов.
 //   --eval <файл.js>: выполнить скрипт в странице перед снимками (испорченная копия для проверки разбора; сторож её не видит).
-// 🛑 Поданная сборка при старте подписывается на сигналы CONFIG и «Дизайна» своим временным адресом — как прогрев установщика;
+// 🛑 Поданная сборка при старте подписывается на сигнал CONFIG своим временным адресом — как прогрев установщика;
 // подписка элемента вернётся к его порту при следующем запуске элемента.
 // Итог — ===SHOTS_OK=== <число снимков> или ===SHOTS_FAIL=== (код 1).
 import { spawn, spawnSync } from "node:child_process"
@@ -140,8 +141,11 @@ try {
   }
   ws.close()
   if (element) {
-    const g = spawnSync(process.execPath, ["scripts/check-page-blocks.mjs"], { cwd: path.resolve(element), encoding: "utf8", windowsHide: true })
-    console.log(`--- guard check:page-blocks (RC ${g.status}) ---\n${(g.stdout + g.stderr).trim()}`)
+    const guard = ["check-page-sequence.mjs", "check-page-blocks.mjs"].find((f) => existsSync(path.join(path.resolve(element), "scripts", f)))
+    if (guard) {
+      const g = spawnSync(process.execPath, [`scripts/${guard}`], { cwd: path.resolve(element), encoding: "utf8", windowsHide: true })
+      console.log(`--- guard ${guard} (RC ${g.status}) ---\n${(g.stdout + g.stderr).trim()}`)
+    }
   }
   console.log(`===SHOTS_OK=== ${shots} screenshots in ${out}`)
 } catch (e) {

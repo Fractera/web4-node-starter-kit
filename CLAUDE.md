@@ -100,7 +100,7 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - An element is a self-contained part of the node: its own folder, repository, port, subdomain or own domain. It is a site, an app or a
   bot.
 - Native elements come with the core at the first start and serve the core and the other elements: sign-in, database, object store,
-  vector store, embeddings (the node's vectors), LightRAG graph, Redis cache, deep memory, CONFIG, Blocks, Design, Stripe.
+  vector store, embeddings (the node's vectors), LightRAG graph, Redis cache, deep memory, CONFIG, Stripe.
 - Custom elements are created by the person — for autonomous products.
 - The required auth, data and root can be replaced but not deleted. Data flows from the element to the core; an element lives without the
   core too.
@@ -125,11 +125,10 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - CONFIG (the configurator) in a single project gives every element 12 switches: top menu, cookie banner, sign-in, questions and answers,
   page width, social networks, footer pages, offline copy, breadcrumbs, theme switch, language switch, width and design-skill indicator.
   And sections: search and AI, meta and media, header, footer, cookie banner.
-- Changes in CONFIG and Design reach the elements by a signal, without a rebuild.
-- Design: in a single project one set of fonts, spacing and colours for all elements; the project's design skill is chosen here too
-  (skill `design-and-settings-of-elements`).
-- Blocks: in a single project every element reuses them — the node looks one style, and instead of development a ready block is
-  plugged in, a large saving of tokens (skill `blocks-of-the-node`).
+- Changes in CONFIG reach the elements by a signal, without a rebuild.
+- Design is every element's own: in its «Build → Design» tab the person picks design skills of third-party developers, each builds a
+  test page, and the approved one becomes the element's tokens; then its agent builds every other page in that design, its sections its
+  own code. There is no shared design and no shared catalogue of blocks (skill `design-and-settings-of-elements`).
 - The core's tools — 11 (`_tools/TOOLS.json`): image and video crop, voice input, code view, translations dialog, chat, social profile links from a phrase,
   fact draft, task for a block, paste window, terminal drawer.
 - Sign-in is a native element that works like the core: every element, when it needs one, gets a private area through 14 roles plus guest
@@ -277,8 +276,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   element takes its settings from the configurator. App factory — the node holds projects of different owners: a new own element is born
   with its own settings, while the settings of the core and the built-in elements stay shared. To change — `npm run node-type`, skill
   `node-type`, after a yes.
-- **An element's mode:** it syncs CONFIG, Blocks and Design with the shared elements or keeps its own; only knowing this do you understand
-  its purpose. With the link off, a custom element edits its look and settings on its own pages (`npm run look`).
+- **An element's mode:** it syncs its site settings with the shared CONFIG or keeps its own, and its look is always its own; only knowing
+  this do you understand its purpose. With the link off, a custom element edits its settings in its own tab (`npm run look`).
 - **On or off.** A turned-on element always uses memory (sign-in), a turned-off one uses none (Stripe). The default is in the passport; the
   person switches it, or you after their yes (`npm run power`, skill `element-power`); a turned-off element is not given to
   neighbours. Separately — whether the element is visible in the Web4 network (`npm run web4`).
@@ -320,9 +319,10 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - Every container of any code carries `data-block`, without exception (in elements — `widgets:ids` and `check:widget-ids`).
 - A new page is a data folder, not `page.tsx`. The public layer is static: `'use cache'`, no `force-dynamic`, `cookies()`, `headers()`;
   motion is an island over the static page (`check:static`, `check:seo-html`).
-- A page has three sources: a catalogue block, a route widget, a platform primitive. When working with code you have tools, blocks, the
-  design system and the right to create a widget (`check:page-composition`).
-- An interface is needed — first a ready block; none — a new section in Blocks, then its reuse.
+- A page has three sources: a section of its own set (the core's catalogue in the core, the element's own sections in an element), a
+  route widget, a platform primitive. When working with code you have tools, the sections, the design system and the right to create a
+  widget (`check:page-composition`).
+- An interface is needed — first a section the core or the element already has; none — a new section of its own set, then its reuse.
 - A number about the machine is never printed into a prebuilt page — the browser asks for it; the architect's pages ask nothing without a
   click.
 - Code limits: a component up to 250 lines, texts only through translations, every door has `// @api` (`check:api`,
@@ -364,7 +364,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - **i2i, a2a, f2f** — protocols (section 2); **H2H** — person to person, **H2A** — person to agent.
 - **Single project** and **app factory** — node modes; **integrator** — one person gives elements to many; **Web4 ready** — an element in
   the Web4 network: agents of other nodes find it and give it orders through Lagrix.
-- **Block** — a design section from the Blocks catalogue. **Widget** — not an element: code inside an element, when a block is not enough
+- **Block** (section) — a designed part of a page: the core's own catalogue in the core, the element's own code in an element. **Widget**
+  — not an element: code inside an element, when a block is not enough
   or the code is needed nowhere else (`static/`, `dynamic/`). **Tool** — a reusable part inside an element. Widgets and tools are the
   element agents' business; you understand these words when elements say them.
 - **Build** and **working process** — section 5; **pass** — a separate build session: main, design, texts, study.
@@ -392,7 +393,7 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   `supervise-element`; an element asks how the node works — `answer-element`; a check from an element, starting or closing its agent —
   `ask-element`; a capability an element lacks — `handle-need` (a bare yes or no with no question in this session — `npm run needs`
   first); an element waits for a permission — `element-permission`; the node type — `node-type`; an element on or off — `element-power`; how a product or SDK works — `study-for-element`; a
-  skill the person heard of — `adopt-suggested-skill`; a clock and reminders — `core-schedule`; a core build and who comes back — `core-build-return`; page sections and blocks — `blocks-of-the-node`; colours, fonts, menus — `design-and-settings-of-elements`;
+  skill the person heard of — `adopt-suggested-skill`; a clock and reminders — `core-schedule`; a core build and who comes back — `core-build-return`; page sections, colours, fonts, menus of an element — `design-and-settings-of-elements`;
   an administration panel, a dashboard or a settings tab of the core — `interface-design` (vendored; the core's primitives and tokens win); routing a need — `route-to-element`; a new element — `create-element`; people near the architect, a family or a team — `integrator`; channels, voices and trends — `content-factory`; agents for the person themselves — `own-agents`; a research of an outside product — `research`; why Fractera and not a platform — `fractera-vs-anthropic`; a person stuck in someone else's interface — `help-in-browser`
   (their Chrome on this computer); a request against a provider's rules, a warning or a ban — `provider-rules`; a session confirmed as ultracode — `ultracode-session`; a template release and its rollout to the elements — `release-template` (the elements' sealed
   instruction comes from `npm run instruction:element`).
