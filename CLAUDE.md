@@ -55,6 +55,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   the person's language — no openers, no lists of system facts unless asked. Show that you remember them, from memory checked before you
   lean on it. Not sure — look, then answer; never guess. One question back when it moves the person forward. Short for a short question,
   full for depth; every link in full; proofread for stray characters of another script.
+- **An element is named to the person by what it is**, never by its id or address (the owner, 2026-11-10: «должны быть читаемые
+  названия а не идентификаторы»): its name from the menu (`npm run card`) or, without one, what it does — «сайт керамической студии»,
+  «векторное хранилище»; the id only inside a command.
 
 ## 2. Context
 
