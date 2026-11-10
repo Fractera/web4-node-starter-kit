@@ -30,6 +30,18 @@
 что внутри с архитектурой самого приложения у нас есть яркие же файлы в каждой папке они тоже не должны конфликтовать» («яркие же
 файлы» — a voice slip for «README-файлы»): the core's README.md and the README of every folder are in the scope of the rename.
 
+2026-11-10 ~14:50, the plan: «Утверждаешь вариант C? 0 y» — APPROVED, variant C (the whole 717). On my idea of passing a section folder to a
+neighbour: «= which use case for it ?» (answered: a door with its own view, the harvest into the template, a sibling's start; not planned).
+
+2026-11-10 ~15:05: «Правильно ли я понимаю что это потребует навык который будет жить и в элементе и в ядре? Попутное действия если нам в
+будущем предстоит обновление всех других элементов из концепции больше не используем блок а используем секции то может быть тебе сейчас
+имеет смысл создавать какой-то отдельный документ где ты будешь помечать в каком месте были найдены упоминание о блоки и заменены на
+упоминание о секции? Но я говорю про то как бы нам такой большое количество работы потом пройти гораздо быстрее буквально может быть на
+основе твоего текущего исправления кастомного стартового шага сделать скрипт который просто выполнится автоматически исправит все
+остальные элементы?» — ACCEPTED: 717-2 is built as a migration — the rename map as data, `npm run migrate:sections` applies it and writes
+its report; the template itself is migrated by that script from v0.3.185, by hand only what it cannot judge; the script ships in the
+release and every element's agent runs it in its own folder (the core never edits an element's code).
+
 The order: the custom template first, tested on a fresh custom element; then the native template with the same changes; the existing
 elements — later, by his word.
 
