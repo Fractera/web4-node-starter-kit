@@ -257,7 +257,10 @@ export async function forgetSkill(id, { root, embed } = {}) {
 /** Pack a staged folder with its SOURCE.md into the door's archive and write the element agent's task. */
 function packForElement({ root, to, card, folderSha, stage, sourceText, origin }) {
   if (existsSync(join(stage, 'SOURCE.md'))) cpSync(join(stage, 'SOURCE.md'), join(stage, 'SOURCE.original.md'))
-  writeFileSync(join(stage, 'SOURCE.md'), sourceText)
+  // 715 ✗ found live 2026-11-10 (qfx9w, visual-design-foundations): an element's guard check-skill-process wants a foreign skill's
+  // SOURCE.md to name its process and the build passes that load it — without them the element's next prebuild fails.
+  const lines = [/^Process: (build|working|both)\b/m.test(sourceText) ? '' : 'Process: build', /^Pass:/m.test(sourceText) ? '' : 'Pass: main design — loaded in the main and the design passes'].filter(Boolean)
+  writeFileSync(join(stage, 'SOURCE.md'), lines.length ? `${sourceText.replace(/\s*$/, '')}\n\n${lines.join('\n')}\n` : sourceText)
   const doorId = idOf(card.source.toLowerCase(), card.skill)
   const archive = archivePathOf(root, doorId)
   mkdirSync(dirname(archive), { recursive: true })
@@ -276,8 +279,9 @@ function packForElement({ root, to, card, folderSha, stage, sourceText, origin }
     `3. Unpack it into .claude/skills/ (tar -xzf ${card.skill}.tar.gz -C .claude/skills/): it makes .claude/skills/${card.skill}/ with`,
     `   SOURCE.md («Origin: ${origin.line}»). Change nothing in it; delete the archive.`,
     scripts.length ? `4. It holds scripts (${scripts.join(', ')}): the person said a separate yes to them; never run them while installing.` : '4. It holds no scripts.',
-    `5. Commit: «Skill ${card.skill} from ${card.source} — ${origin.commit} (${folderSha})».`,
-    `6. Report: npm run reply-core -- "installed ${card.skill}, commit <hash>".`,
+    `5. Add \`${card.skill}\` to the «vendored» row of the groups table in .claude/modes/build.md (your guard check-skill-process asks for it).`,
+    `6. Commit: «Skill ${card.skill} from ${card.source} — ${origin.commit} (${folderSha})».`,
+    `7. Report: npm run reply-core -- "installed ${card.skill}, commit <hash>".`,
   ].join('\n')
   ledger(root, { at: new Date().toISOString(), source: card.source, skill: card.skill, event: 'handed', from: origin.from, to, sha256, folderSha })
   return { archive, sha256, task, card }

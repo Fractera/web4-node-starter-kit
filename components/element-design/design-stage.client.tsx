@@ -66,7 +66,12 @@ export function DesignStage({ item, lang, card, state, base, name, agentHref, wo
         <AccordionItem value="fine">
           <AccordionTrigger data-design-accordion="fine">{remote.fineTitle}</AccordionTrigger>
           <AccordionContent>
-            {card.state === "approved" ? <DesignFine ui={ui} words={remote} bare /> : <Small data-block="est13" className="max-w-prose">{words.fineLocked}</Small>}
+            {/* 715 ✗ the owner 2026-11-10: «выбираю аккордеон … тонкая настройка и не могу обнаружить здесь наш интерфейс» — the editors
+                open under every design; under one not approved yet a line says what the approval does to these edits. */}
+            <div data-block="est13" className="flex flex-col gap-4">
+              {card.state !== "approved" ? <Small data-block="est18" className="max-w-prose">{words.fineLocked}</Small> : null}
+              <DesignFine ui={ui} words={remote} bare />
+            </div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>

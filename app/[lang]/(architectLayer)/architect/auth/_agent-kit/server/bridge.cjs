@@ -820,6 +820,14 @@ async function wake(element, { text, from, about, declineUrl, confirmed, taskUrl
     if (grouped && modes.modeOfKey(service) === 'build' && (live.pass ?? 'main') !== pass) {
       queuedPass.set(element, { pass, text: task ? text : `${modes.PASS_WORDS[pass] ?? modes.WORDS.build}`, at: Date.now() })
       console.log(`[agents/wake] ${element}: проход ${pass} ждёт — идёт сессия прохода ${live.pass ?? 'main'}`)
+      // 715 ✗ found live on qfx9w 2026-11-10: the core build brought the main pass back idle, and a design generation waited behind it 8
+      // minutes while the tab said «being built». A session whose screen is quiet (its turn ended, no question on screen) is closed —
+      // cleanly, its conversation stays — and its exit starts the queued pass. A working session is never touched: the pass waits.
+      void whenIdle(live, { quietMs: 4000, maxMs: 15_000 }).then((idle) => {
+        if (!idle || session.current(service) !== live || !queuedPass.has(element)) return
+        console.log(`[agents/wake] ${element}: сессия прохода ${live.pass ?? 'main'} простаивает — закрываю, чтобы начался проход ${pass}`)
+        session.stop(service, 'closed-by-agent')
+      })
       return { ok: true, queued: pass, running: live.pass ?? 'main' }
     }
     rememberTasks(live, urls)
