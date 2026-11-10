@@ -123,7 +123,7 @@ elements — later, by his word.
   (git keeps it), `check:sections` both ways, the archive is history (a defect of the release fixed). Its first half was built in 717-2.
   **A section is one folder:** `components/sections/<name>/` — the code, its shape and its Markdown line together; the set is
   assembled from the folders (no hand-kept registry line); a prototype's sections stay inside the prototype until the pin.
-- 717-4 **One map, rules where the work is:** CLAUDE.md gets a short map (the tree — pages, sections, widgets, doors, data, the look,
+- 717-4 ✓ DONE (template `6eeb5d5`, `0eccbe1`; summary `completed-steps/717-4.md`). **One map, rules where the work is:** CLAUDE.md gets a short map (the tree — pages, sections, widgets, doors, data, the look,
   the passport; how a page is made; how to work with neighbours, the YouTube case); a folder's rules go into a short `CLAUDE.md` inside
   it (sections, doors, pages, integrations, the look) and leave `build.md` and the skills; skill descriptions shortened so the list
   fits the budget with room. The always-loaded text measured before and after. From 717-3: no guard refuses `cookies()` or a literal
@@ -131,9 +131,8 @@ elements — later, by his word.
 - 717-5 (found in 717-2: the template's A2A card already has catalog skills — find, give, take a section «stored as the next version so
   anyone can reuse it», `lib/a2a/catalog.ts`, step 406-7 — the base for passing a section between elements.) **One design for a family of elements:** the core's command to take the approved design of another element — tokens,
   `DESIGN.md`, the design skill — as a copy, never a live link (no single point of failure); the map says when.
-- 717-6 **Skills:** `use-ai-generation` with the vendored `ai-sdk` and `use-personal-data`, written for an element; the node-knowledge
-  skills an element rarely needs (`project-origin`, `temporary-domain`, `cloudflare-connection`, `computer-off`, `local-node`,
-  `github-repositories`) folded into the map or `ask-core`.
+- 717-6 **Skills:** `use-ai-generation` with the vendored `ai-sdk` and `use-personal-data`, written for an element (the six
+  node-knowledge skills were folded in 717-4d). Each new description ≤ 440 and the pass list ≤ 24,000 — `check-skill-process`.
 - 717-7 **Test on a fresh custom element, two planes:** a cold agent with no hints builds a page of sections in an approved design, adds
   a new section, answers «you publish to YouTube — how do you get pictures, video, texts and statistics?»; the same questions to an
   element of v0.3.185 as the negative control; the folder rules proven to load; guards and eyes. The price first: a new element is a
