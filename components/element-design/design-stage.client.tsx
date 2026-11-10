@@ -78,10 +78,14 @@ export function DesignStage({ item, lang, card, state, base, name, agentHref, wo
               {words.approved.replace("{name}", name)}
             </span>
           ) : (
-            <Button size="lg" disabled={state.busy} onClick={() => approve(p.id)} data-design-approve>
-              <CheckCircle2 data-icon="inline-start" aria-hidden />
-              {words.approve.replace("{name}", name)}
-            </Button>
+            <>
+              {/* 715 ✗ found by eyes at 390: the long label ran out of the column — it wraps. */}
+              <Button size="lg" disabled={state.busy} onClick={() => approve(p.id)} className="h-auto min-h-9 max-w-full whitespace-normal py-2 text-left" data-design-approve>
+                <CheckCircle2 data-icon="inline-start" aria-hidden />
+                {words.approve.replace("{name}", name)}
+              </Button>
+              {state.busy ? <Small data-block="est17">{words.approveWait}</Small> : null}
+            </>
           )}
           <Small data-block="est16" className="max-w-prose">
             {words.approveAfter} <a href={agentHref} className="text-primary hover:underline">{words.agentLink}</a>

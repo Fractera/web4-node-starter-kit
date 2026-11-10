@@ -85,6 +85,7 @@ const EN = {
   approved: "Approved for the element «{name}»",
   approveAfter: "After you approve this design, repeat the generation for every important page: tell your Claude Code agent, one page at a time, which page should appear in this design.",
   agentLink: "Open the element's agent",
+  approveWait: "A test page is being built right now — the approval waits until it is ready.",
   // 712-3: the approval replaces the hand edits of «Fine tuning» — said before the press, in the platform's window.
   pinWarnTitle: "Approve this design for the element «{name}»?",
   pinWarnText: "Its colours, fonts and shapes replace the element's design — including your hand edits in «Fine tuning». The other test pages go to the archive.",
@@ -177,6 +178,7 @@ const RU: typeof EN = {
   approved: "Утверждён для элемента «{name}»",
   approveAfter: "После того как вы утвердите этот дизайн, повторите генерацию для всех важных страниц: по очереди говорите вашему агенту Claude Code, какая страница должна появиться в этом дизайне.",
   agentLink: "Открыть агента элемента",
+  approveWait: "Сейчас строится тестовая страница — утвердить можно, когда она будет готова.",
   pinWarnTitle: "Утвердить этот дизайн для элемента «{name}»?",
   pinWarnText: "Его цвета, шрифты и формы заменят дизайн элемента — вместе с вашими ручными правками в «Тонкой настройке». Остальные тестовые страницы уйдут в архив.",
   pinConfirm: "Утвердить",

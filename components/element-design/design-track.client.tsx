@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useRef } from "react"
 import { Check } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import type { ElementDesignWords } from "@/app/[lang]/(architectLayer)/_i18n/element-design.i18n"
@@ -14,10 +15,18 @@ import { SMALL } from "./step-parts"
 export function DesignTrack({ current, lines, done, onPick, words }: {
   current: StepId | null; lines: Record<StepId, string>; done: Record<StepId, boolean>; onPick: (s: StepId) => void; words: ElementDesignWords
 }) {
+  // 715 ✗ found by eyes at 390: the strip scrolls sideways and the current step stayed out of sight — it is brought into view.
+  const list = useRef<HTMLOListElement>(null)
+  useEffect(() => {
+    const box = list.current
+    const on = box?.querySelector<HTMLElement>('[aria-current="step"]')
+    if (!box || !on || box.scrollWidth <= box.clientWidth) return
+    box.scrollTo({ left: on.getBoundingClientRect().left - box.getBoundingClientRect().left + box.scrollLeft - 8, behavior: "smooth" })
+  }, [current])
   return (
     <TooltipProvider delayDuration={150}>
       <nav data-block="edk01" aria-label={words.flow.label} className="wsx-sticky sticky z-30 -mx-1 bg-card px-1 pt-2">
-        <ol data-block="edk02" className="slim-scrollbar flex overflow-x-auto border-b border-border">
+        <ol ref={list} data-block="edk02" className="slim-scrollbar flex overflow-x-auto border-b border-border">
           {STEPS.map((id, i) => {
             const on = id === current
             return (
