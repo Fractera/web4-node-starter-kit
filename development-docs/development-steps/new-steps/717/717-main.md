@@ -144,3 +144,25 @@ elements — later, by his word.
   «remove any section code written only for the prototypes that lost»; found in 717-3 — the prototype's screenshots are taken before the
   core's build and miss its new sections: the core takes them itself after the build (model-free). The core's own catalogue `sections/blocks` (its own interface, never read by
   an element's agent) — later, by the owner's word. The existing elements — later, by the owner's word.
+
+## Dangerous places — read before every substep (2026-11-10, the owner: «укажи на опасное место», before moving to a medium model)
+
+1. **The element instruction is generated.** Never edit the template's `CLAUDE.md`: edit the core's
+   `lib/instructions/element/element-instruction.src.md`, then `node lib/instructions/element/build.mjs element
+   ~/fractera-dev/fractera-custom-item-starter` (`templates` also writes root's folder — no).
+2. **The skill budget is the smallest window, not 1M.** 1 % of the window × 4 chars: 40,000 at 1M, 8,000 at 200k. An element session
+   on a 200k model already collapses descriptions to names. 717-4 measures before and after against both, by the same method
+   (`promptArgs` of `lib/agent-kit/modes.cjs`), or it proves nothing.
+3. **A subfolder `CLAUDE.md` loading is a claim until a real element session shows it** (717-7): `claudeMdExcludes` in an element's
+   `settings.local.json` excludes only the core's file, but no test has run yet.
+4. **A shortened skill description keeps its trigger words.** A description that no longer names the request never wakes its skill.
+5. **The tree manifest reads only tracked files:** `git add` first, then `node scripts/tree-manifest.mjs`, then add again (717-3).
+6. **JSON maps are edited by a parser**, never cut by hand (717-2 corrupted the map).
+7. **Paths with `[lang]` and `(protectedLayer)`:** single quotes, `GIT_LITERAL_PATHSPECS=1`; zsh reads `$X:a…` as a modifier (717-3).
+   No `grep -r` in the core and no path under `WEB4-ITEMS` (the hook blocks it) — `git grep` and exact paths.
+8. **Proof = two planes and a negative control;** a build log is never a proof. Every template push waits for CI three-os green.
+9. **717-5 is a copy, never a live link** (the owner removed the shared Design in 716 — no single point of failure).
+10. **The core's CLAUDE.md is sealed:** 717-9 changes §2/§7 only by the owner's word, then `npm run check:instruction -- --seal`. A core
+    rebuild (`serve:rebuild`) once, at the end, after reading the skill `core-build-return`.
+11. **Not touched without the owner's word:** the existing elements, the native template before 717-7 passes, a release tag before 717-7.
+12. **Open questions to the owner:** merge 717-4 and 717-6? The prototype screenshots fix — first, as its own small core step?
