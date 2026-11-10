@@ -119,12 +119,15 @@ elements — later, by his word.
   kinds `section-*`, `lib/content/sections/`, the set, the Markdown copy), every README, the docs and the skills — judged line by line;
   a guard refuses «block» in the sense of a section (allowed: `data-block`, `#block=`, a code block, CSS). «Block» keeps one meaning: the
   address of a container (`data-block`) — kept, it is in every element's code and the core's highlight.
-- 717-3 **A section is one folder:** `components/sections/<name>/` — the code, its shape and its Markdown line together; the set is
+- 717-3 ✓ DONE (`069311a`; summary `completed-steps/717-3.md`): a prototype's own set until the pin, the losers' code leaves the tree
+  (git keeps it), `check:sections` both ways, the archive is history (a defect of the release fixed). Its first half was built in 717-2.
+  **A section is one folder:** `components/sections/<name>/` — the code, its shape and its Markdown line together; the set is
   assembled from the folders (no hand-kept registry line); a prototype's sections stay inside the prototype until the pin.
 - 717-4 **One map, rules where the work is:** CLAUDE.md gets a short map (the tree — pages, sections, widgets, doors, data, the look,
   the passport; how a page is made; how to work with neighbours, the YouTube case); a folder's rules go into a short `CLAUDE.md` inside
   it (sections, doors, pages, integrations, the look) and leave `build.md` and the skills; skill descriptions shortened so the list
-  fits the budget with room. The always-loaded text measured before and after.
+  fits the budget with room. The always-loaded text measured before and after. From 717-3: no guard refuses `cookies()` or a literal
+  colour in a section's code — a rule and its guard where sections live.
 - 717-5 (found in 717-2: the template's A2A card already has catalog skills — find, give, take a section «stored as the next version so
   anyone can reuse it», `lib/a2a/catalog.ts`, step 406-7 — the base for passing a section between elements.) **One design for a family of elements:** the core's command to take the approved design of another element — tokens,
   `DESIGN.md`, the design skill — as a copy, never a live link (no single point of failure); the map says when.
@@ -137,5 +140,7 @@ elements — later, by his word.
   server, the sessions run on the node's subscription. Release the custom template.
 - 717-8 **The native template** with the same changes (its admin «Blocks» page and cards become «Sections»); release.
 - 717-9 **The core:** README.md, CLAUDE.md (§7 «Block (section)» → «Section», §2 the port «block» → «range»; sealed again by the owner's
-  word), the core's skills that describe elements' sections. The core's own catalogue `sections/blocks` (its own interface, never read by
+  word), the core's skills that describe elements' sections; the pin's task text (`app/api/node/element-design/route.ts`) without
+  «remove any section code written only for the prototypes that lost»; found in 717-3 — the prototype's screenshots are taken before the
+  core's build and miss its new sections: the core takes them itself after the build (model-free). The core's own catalogue `sections/blocks` (its own interface, never read by
   an element's agent) — later, by the owner's word. The existing elements — later, by the owner's word.
