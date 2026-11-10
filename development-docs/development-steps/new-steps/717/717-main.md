@@ -22,6 +22,14 @@
 касается других существующих элементов обсудим это позже»
 («Наруто» — a voice slip for «навыков».)
 
+2026-11-10 ~14:36, on my point «one word, three meanings» (quoted back to me): «Я считаю что ты нашел правильную точку мы действительно
+лучше должны избавиться от использования слова блоки и начать использовать слово секции таким образом мы закончим нашу переезд на новую
+архитектуру и сможем более чётко переписать документацию» — DECIDED: the word «section» everywhere, «block» goes.
+
+2026-11-10 ~14:38: «Также помнишь что у тебя есть в главном репозитории файл readme.md он также не должен был конфликтовать. Также помню
+что внутри с архитектурой самого приложения у нас есть яркие же файлы в каждой папке они тоже не должны конфликтовать» («яркие же
+файлы» — a voice slip for «README-файлы»): the core's README.md and the README of every folder are in the scope of the rename.
+
 The order: the custom template first, tested on a fresh custom element; then the native template with the same changes; the existing
 elements — later, by his word.
 
@@ -45,21 +53,76 @@ elements — later, by his word.
   skills an element agent may need too (data, roles, routes, static and dynamic pages, SEO, AIO, translations, testing, AI generation,
   personal data …) — or are deliberately replaced in elements (`use-own-stores`, `use-languages`, `use-machine-copy`). Not yet compared.
 
+## 717-1 — measured, no model (2026-11-10, 14:30–14:40 WET)
+
+- **What a fresh build session of a custom element loads before its first word** (v0.3.185; `promptArgs` of `lib/agent-kit/modes.cjs`
+  run on the workshop clone): the system-prompt file 39,186 bytes (the soul, the session note, memory, the commands, the chat rule and
+  `.claude/modes/build.md` 21,516); `CLAUDE.md` 18,864; the skill list — 54 skills on (build-skills 40, own-service-props-skills 11,
+  vendored of the main pass 3), descriptions ≈ 40,600 characters. Together ≈ 98 KB ≈ 25k tokens before Claude Code's own prompt. The
+  design pass: 48,371 bytes of system prompt.
+- **Claude Code's budget for the skill list** (2.1.322, read from the binary): 1 % of the window at 4 characters a token — 40,000
+  characters at 1M, 8,000 at 200k; one description at most 1,536; over the budget the lowest-priority descriptions collapse to bare names
+  («Skill listing over budget … descriptions will be truncated»). The element's 54 ≈ 41k — over even at 1M. Evidence in the core: the
+  main agent's list (87 skills, ≈ 50.8k) shows `use-route-parameters`, `use-routes`, `use-sections`, `use-seo`, `use-shadcn`,
+  `use-static-pages`, `use-tools`, `use-translations`, `use-widgets` as bare names. More skills make an agent blinder, not wiser.
+- **Rules where the work is exist in Claude Code** (its own /init prompt, 2.1.322): `.claude/rules/*.md` load with CLAUDE.md and «can
+  be scoped to specific file paths using `paths` frontmatter»; a `CLAUDE.md` in a subfolder is «loaded automatically when Claude works in
+  those directories». Not yet proven in the node's sessions (`--settings`, `--append-system-prompt-file`, the boundary hook) — 717-7.
+- **What the loaded text does not answer.** `CLAUDE.md` (who, protocols, laws) has no word on where pages, sections, doors, data and the
+  look live in the code; `build.md` gives the laws («a page is data … one sequence of block-*…») and sends to `use-page-tree` (10.6 KB)
+  and `use-element-tree` (12.4 KB) for the paths. The YouTube case on paper: CLAUDE.md §5.2 answers how to get pictures (`npm run need`
+  → the core names the neighbour → its card → i2i → its door `http://127.0.0.1:<port>/api/<name>` with `X-Node-Key`). Answered nowhere:
+  how elements born at different times take one design for their working pages (`create --look-like` copies X's tokens only at birth,
+  `use-design` line 35); when and how an element calls a model for images, video or texts (`lib/openai-key.ts` exists, no skill; one
+  line in §7).
+- **Skills, the core's 87 against the element's 54 own and 11 vendored:** (a) 35 are the main agent's own work — creating and leading
+  elements, permissions, the person, the fields (content factory, research, own agents, integrator), releases — not for an element; its
+  own twins exist (`element-power`, `self-review`, `ultracode-session`, `use-development-docs`, the study pass); (b) ~37 are engineering
+  skills of the site starter the core is built from — the element has its own ~25 written for its boundary: `use-own-stores` (data,
+  database, object storage, vectors, graph), `use-site-settings` + `use-site-menu` (app and platform config, menus), `use-languages`
+  (languages, translations), `use-machine-copy` (aio), `use-eyes` (browser), `use-tests-before-dev-finish` (testing), `deploy-element`,
+  the domain three, `build-widget`, `use-page-tree` (pages, sections, static and dynamic), `use-element-tree` + 34 guards (routes, code
+  shape), `use-auth` (auth, providers, roles), `use-messenger` (chat), `product-quiz` (products config), `use-i2i` · `use-a2a` ·
+  `use-f2f`; SEO and PWA are platform code with guards (`check:seo`, `check:seo-html`, `check:pwa`); (c) vendored in both: `ai-elements`,
+  `humanizer`, `interface-design`, `shadcn`. **Missing for an element:** `use-ai-generation` with the vendored `ai-sdk` (the YouTube
+  family: images, video, texts) and `use-personal-data` (any element with sign-in, orders or a2a). From `use-links` one rule (an
+  outgoing link is the architect's decision) — a line, not a skill.
+- **The word «block»:** custom v0.3.185 — 347 files, 957 lines (READMEs 35 of 87); native v0.1.59 — 320 files, 1,132 lines (READMEs 48
+  of 81); the core — 715 files, 2,547 lines (READMEs 80 of 142, most of it its own catalogue `sections/blocks`). Several meanings: a
+  section, a code block, «settings blocks», the port «block» — every line is judged, never a blind replace. The container address
+  `data-block` — 520 / 411 / 486 lines. The core's README.md: one line in the section sense (150), two about the port block (300, 307).
+- **The subscription:** the weekly 99 % at 12:24 was root's OWN login (`data/node/limits/own-root.json`, reset 2026-11-13 11:00); the
+  node's login at 14:37 — five hours 30 % (reset 18:50), week 51 % (reset 2026-11-15 11:00).
+- **Others** (`skills_find`, the checked catalog; the idea taken, in our words): mattpocock/skills `improve-codebase-architecture`
+  (★310k, 1.21M installs, MIT) — deep modules, a domain glossary; affaan-m/ecc `codebase-onboarding` (11,965 installs) — one onboarding
+  map and a short CLAUDE.md; giuseppe-trisciuoglio/developer-kit `learn` (★366, 3,382 installs, MIT) — conventions as short rule files;
+  egonex-ai/understand-anything `understand` (★90k, 5,565 installs, MIT, 13 scripts, subagents) — a code graph with a tour, heavy and
+  built on subagents; anthropics/knowledge-work-plugins `documentation` (★34k) — outlines; trailofbits `diagramming-code` (★8k,
+  CC-BY-SA, a PyPI tool) — diagrams.
+
 ## Substeps (DRAFT — the owner's yes before code)
 
-- 717-1 **Measure, no model:** what a fresh custom agent loads (CLAUDE.md, modes, skills index — size in tokens) and which architecture
-  questions it cannot answer from it; the skills table core vs custom with a verdict per skill (needed · deliberately replaced · not for an
-  element); `skills_find` for how others make a codebase readable to an agent (one map, conventions over rules) — sources named.
-- 717-2 **One map of the element:** a short architecture page the agent reads first — the tree, where pages, sections, doors, data and the
-  look live, how a page is made, how it works with neighbours; everything else on demand in skills. Agreed with the owner.
-- 717-3 **A section is one folder:** `components/sections/<name>/` (code, shape, Markdown line together), the set assembled by code, one
-  word «section», a prototype's sections inside the prototype until the pin.
-- 717-4 **The YouTube case as the acceptance scenario:** a publisher element that needs pictures, video from pictures, creative texts and
-  statistics — how its agent finds them (core → neighbours), agrees doors, and how a family of elements shares one design skill for their
-  working pages (take the approved design of another element: tokens + DESIGN.md + skill).
-- 717-5 **Skills of the custom template:** add what the table shows missing (with its line in the skills index), remove what an element
-  never needs.
-- 717-6 **Test on a fresh custom element, two planes:** a cold agent with no hints builds a page in an approved design and answers «you need
-  images — how do you get them»; guards and eyes. Release the custom template. The price named first (a new element is a server; sessions
-  run on the subscription — check its weekly limit: 99 % at 12:24, reset 2026-11-13 11:00).
-- 717-7 **The native template** with the same changes; release.
+- 717-1 ✓ measured (above).
+- 717-2 **The word «section» everywhere in the custom template** (the owner's decision 14:36): code names (`components/sections/`,
+  kinds `section-*`, `lib/content/sections/`, the set, the Markdown copy), every README, the docs and the skills — judged line by line;
+  a guard refuses «block» in the sense of a section (allowed: `data-block`, `#block=`, a code block, CSS). «Block» keeps one meaning: the
+  address of a container (`data-block`) — kept, it is in every element's code and the core's highlight.
+- 717-3 **A section is one folder:** `components/sections/<name>/` — the code, its shape and its Markdown line together; the set is
+  assembled from the folders (no hand-kept registry line); a prototype's sections stay inside the prototype until the pin.
+- 717-4 **One map, rules where the work is:** CLAUDE.md gets a short map (the tree — pages, sections, widgets, doors, data, the look,
+  the passport; how a page is made; how to work with neighbours, the YouTube case); a folder's rules go into a short `CLAUDE.md` inside
+  it (sections, doors, pages, integrations, the look) and leave `build.md` and the skills; skill descriptions shortened so the list
+  fits the budget with room. The always-loaded text measured before and after.
+- 717-5 **One design for a family of elements:** the core's command to take the approved design of another element — tokens,
+  `DESIGN.md`, the design skill — as a copy, never a live link (no single point of failure); the map says when.
+- 717-6 **Skills:** `use-ai-generation` with the vendored `ai-sdk` and `use-personal-data`, written for an element; the node-knowledge
+  skills an element rarely needs (`project-origin`, `temporary-domain`, `cloudflare-connection`, `computer-off`, `local-node`,
+  `github-repositories`) folded into the map or `ask-core`.
+- 717-7 **Test on a fresh custom element, two planes:** a cold agent with no hints builds a page of sections in an approved design, adds
+  a new section, answers «you publish to YouTube — how do you get pictures, video, texts and statistics?»; the same questions to an
+  element of v0.3.185 as the negative control; the folder rules proven to load; guards and eyes. The price first: a new element is a
+  server, the sessions run on the node's subscription. Release the custom template.
+- 717-8 **The native template** with the same changes (its admin «Blocks» page and cards become «Sections»); release.
+- 717-9 **The core:** README.md, CLAUDE.md (§7 «Block (section)» → «Section», §2 the port «block» → «range»; sealed again by the owner's
+  word), the core's skills that describe elements' sections. The core's own catalogue `sections/blocks` (its own interface, never read by
+  an element's agent) — later, by the owner's word. The existing elements — later, by the owner's word.
