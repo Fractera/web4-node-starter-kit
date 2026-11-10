@@ -115,7 +115,7 @@ elements — later, by his word.
 ## Substeps (DRAFT — the owner's yes before code)
 
 - 717-1 ✓ measured (above).
-- 717-2 **The word «section» everywhere in the custom template** (the owner's decision 14:36): code names (`components/sections/`,
+- 717-2 ✓ DONE (`c8c1c72`, `d1d8150`, core `ffe81067`; summary `completed-steps/717-2.md`), with the code part of 717-3. **The word «section» everywhere in the custom template** (the owner's decision 14:36): code names (`components/sections/`,
   kinds `section-*`, `lib/content/sections/`, the set, the Markdown copy), every README, the docs and the skills — judged line by line;
   a guard refuses «block» in the sense of a section (allowed: `data-block`, `#block=`, a code block, CSS). «Block» keeps one meaning: the
   address of a container (`data-block`) — kept, it is in every element's code and the core's highlight.
@@ -125,7 +125,8 @@ elements — later, by his word.
   the passport; how a page is made; how to work with neighbours, the YouTube case); a folder's rules go into a short `CLAUDE.md` inside
   it (sections, doors, pages, integrations, the look) and leave `build.md` and the skills; skill descriptions shortened so the list
   fits the budget with room. The always-loaded text measured before and after.
-- 717-5 **One design for a family of elements:** the core's command to take the approved design of another element — tokens,
+- 717-5 (found in 717-2: the template's A2A card already has catalog skills — find, give, take a section «stored as the next version so
+  anyone can reuse it», `lib/a2a/catalog.ts`, step 406-7 — the base for passing a section between elements.) **One design for a family of elements:** the core's command to take the approved design of another element — tokens,
   `DESIGN.md`, the design skill — as a copy, never a live link (no single point of failure); the map says when.
 - 717-6 **Skills:** `use-ai-generation` with the vendored `ai-sdk` and `use-personal-data`, written for an element; the node-knowledge
   skills an element rarely needs (`project-origin`, `temporary-domain`, `cloudflare-connection`, `computer-off`, `local-node`,
