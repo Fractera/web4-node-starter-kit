@@ -166,3 +166,9 @@ elements — later, by his word.
 11. **Not touched without the owner's word:** the existing elements, the native template before 717-7 passes, a release tag before 717-7.
 12. **Decided 2026-11-10 ~22:00** (the owner: «продолжай»): the six node-knowledge skills of 717-6 fold in 717-4 (4d), the two new skills stay
     in 717-6; the screenshots fix stays in 717-9 (`717-4.md`).
+
+## The owner after the review (2026-11-11 ~00:15)
+
+«Твой запрос сожрал почти всю сессию с моим тарифом я больше не могу этого запускать … К тому же модели по 200 000 токенов давно не
+существует поэтому я не понимаю почему это обсуждаем» — DECIDED: the 200k budget is not a concern; no budget setting is added; no more
+runs of a separate model for this step.
