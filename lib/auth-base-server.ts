@@ -14,7 +14,7 @@
 // (e.g. admin.aifa.dev → aifa.dev) in domain/Secure mode. Mirrors KNOWN_PREFIXES
 // in lib/runtime-urls.ts.
 // 285: `architect` — поддомен ядра (280-3); без него вход с `architect.<зона>` уходил на `auth.architect.<зона>`.
-const KNOWN_PREFIXES = ["www", "auth", "admin", "architect", "projects", "design", "data", "hermes", "lightrag"];
+const KNOWN_PREFIXES = ["www", "auth", "admin", "architect", "projects", "data", "hermes", "lightrag"];
 
 function isIpHost(hostname: string): boolean {
   return /^\d{1,3}(?:\.\d{1,3}){3}$/.test(hostname) || hostname === "localhost";
@@ -81,7 +81,8 @@ export function projectsBaseFromHost(host: string | null, proto: string): string
   const scheme = proto === "https" ? "https" : "http";
   if (isIpHost(hostname)) return `${scheme}://${hostname}:3003`;
   return `${scheme}://projects.${apexFrom(hostname)}`;
-}import { authUrl as nodeAuthUrl } from "@/lib/microservices/urls";
+}
+import { authUrl as nodeAuthUrl } from "@/lib/microservices/urls";
 
 
 import { publicAuth } from "@/lib/domain/public-auth.cjs";

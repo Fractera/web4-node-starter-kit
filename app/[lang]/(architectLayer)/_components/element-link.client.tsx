@@ -5,14 +5,13 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import type { ElementSettingsUi } from "../_i18n/element-settings.i18n"
 
-// ОДНА СВЯЗЬ ЭЛЕМЕНТА С УЗЛОМ (324-7): CONFIG, Дизайн или Блоки. Состояние словами и одна кнопка; нажатие — дверь ядра
-// `/api/architect/items/<id>/links`, которая пишет состояние, выполняет своё (перенос настроек, реестр блоков) и
-// перерисовывает страницы элемента.
+// СВЯЗЬ ЭЛЕМЕНТА С CONFIG (324-7; с 716 единственная: элементов «Дизайн» и «Блоки» у узла нет). Состояние словами и одна кнопка;
+// нажатие — дверь ядра `/api/architect/items/<id>/links`, которая пишет состояние, переносит настройки и перерисовывает страницы элемента.
 // 713-3: `variant="line"` — та же связь одной строкой над «Настройками сайта» (была карточка в половину ширины над вкладками).
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
-export function ElementLink({ id, kind, on, ui, variant = "card" }: { id: string; kind: "config" | "design" | "blocks"; on: boolean; ui: ElementSettingsUi; variant?: "card" | "line" }) {
+export function ElementLink({ id, kind, on, ui, variant = "card" }: { id: string; kind: "config"; on: boolean; ui: ElementSettingsUi; variant?: "card" | "line" }) {
   const w = ui.linkCard
   const router = useRouter()
   const [busy, setBusy] = useState(false)

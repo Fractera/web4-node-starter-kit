@@ -116,19 +116,6 @@
       "address": "config"
     },
     {
-      "id": "design",
-      "repo": "https://github.com/Fractera/fractera-design-starter.git",
-      "version": "v1.1.39",
-      "provides": [
-        "project-design"
-      ],
-      "required": true,
-      "note": "Дизайн проекта отдельным элементом (309): цвета светлой и тёмной темы, шрифты, текст, формы, настройки блоков. После сохранения — сигнал подписчикам, и каждая служба узла перекрашивается на лету.",
-      "kind": "core",
-      "port": 24686,
-      "address": "design"
-    },
-    {
       "id": "graph",
       "repo": "https://github.com/Fractera/fractera-graph-lightrag-starter.git",
       "version": "v1.2.25",
@@ -194,19 +181,6 @@
       "note": "Сайт узла: что видит посетитель в корне домена. Заменяется другим репозиторием с тем же договором (OWN-SERVICE-PROPS.json), убрать нельзя.",
       "kind": "user",
       "address": "root"
-    },
-    {
-      "id": "blocks",
-      "repo": "https://github.com/Fractera/fractera-blocks-starter.git",
-      "version": "v1.4.34",
-      "provides": [
-        "page-blocks"
-      ],
-      "required": true,
-      "note": "Реестр блоков страниц по методологии shadcn: API (/r/*.json) и свой MCP (/mcp). Нативный элемент (605: kind core, стартует при каждом запуске).",
-      "kind": "core",
-      "port": 24684,
-      "address": "blocks"
     }
   ]
 }

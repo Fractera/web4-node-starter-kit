@@ -82,7 +82,7 @@ function liveTail(id: string): string[] {
 }
 
 /** Облик рождённого элемента (367, слово владельца 2026-10-01): `project` — дизайн и CONFIG проекта, связи включены; `own` —
- *  самостоятельный: файлы шаблона, связи CONFIG и «Дизайн» выключены до первой сборки. */
+ *  самостоятельный: файлы шаблона, связь с CONFIG выключена до первой сборки. */
 export type BirthLook = "project" | "own"
 export const BIRTH_LOOKS: BirthLook[] = ["project", "own"]
 

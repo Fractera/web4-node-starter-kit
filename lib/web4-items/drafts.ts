@@ -30,7 +30,7 @@ const FILE = join(process.cwd(), "data", "web4-drafts.json")
 const ID_LENGTH = 5
 // 325-7: ОДИН список на черновики и адреса элементов (`element-address.ts`) — имена, занятые узлом как поддомены и разделы.
 export const RESERVED_NAMES: ReadonlySet<string> = new Set([
-  "auth", "blocks", "build", "config", "data", "design", "hosting", "kits", "passport", "root",
+  "auth", "build", "config", "data", "hosting", "kits", "passport", "root",
   "admin", "architect", "api", "www", "mail", "memory", "telegram", "store", "items",
 ])
 

@@ -50,8 +50,8 @@ export type ServicePortWords = {
 }
 
 const NAMES: Record<string, Record<string, string>> = {
-  en: { auth: "Your sign-in service", data: "Your data service", config: "Your settings service", design: "Your design service", graph: "Your knowledge graph", storage: "Your file storage", vectors: "Your vector store", cache: "Your fast store", memory: "Your deep memory", embeddings: "Your vector model", stripe: "Your payments service", root: "Your site", default: "This service" },
-  ru: { auth: "Ваша служба входа", data: "Ваша служба данных", config: "Ваша служба настроек", design: "Ваша служба дизайна", graph: "Ваш граф знаний", storage: "Ваше хранилище файлов", vectors: "Ваше векторное хранилище", cache: "Ваше быстрое хранилище", memory: "Ваша глубокая память", embeddings: "Ваша модель векторов", stripe: "Ваша служба платежей", root: "Ваш сайт", default: "Эта служба" },
+  en: { auth: "Your sign-in service", data: "Your data service", config: "Your settings service", graph: "Your knowledge graph", storage: "Your file storage", vectors: "Your vector store", cache: "Your fast store", memory: "Your deep memory", embeddings: "Your vector model", stripe: "Your payments service", root: "Your site", default: "This service" },
+  ru: { auth: "Ваша служба входа", data: "Ваша служба данных", config: "Ваша служба настроек", graph: "Ваш граф знаний", storage: "Ваше хранилище файлов", vectors: "Ваше векторное хранилище", cache: "Ваше быстрое хранилище", memory: "Ваша глубокая память", embeddings: "Ваша модель векторов", stripe: "Ваша служба платежей", root: "Ваш сайт", default: "Эта служба" },
 }
 
 const DICT: Record<string, ServicePortWords> = {

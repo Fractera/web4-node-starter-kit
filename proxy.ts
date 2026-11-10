@@ -64,7 +64,8 @@ const TEMPORARY_WRITE_ALLOWED = ["/api/settings/changed", "/api/telegram/hook", 
 
 const PUBLIC_API_PREFIXES = [
   "/api/health",
-  // 309: сигнал элемента «Дизайн» — у службы нет сессии; дверь стережёт ключ узла (X-Settings-Key), а не роль.
+  // Сигнал узла «настройки сменились» (конец сборки ядра, каталог элементов) — у службы нет сессии; дверь стережёт ключ узла
+  // (X-Settings-Key), а не роль.
   "/api/settings/changed",
   "/api/catalogue",   // догрузка витрины: те же товары, что в статическом HTML
   "/api/i18n",        // строки интерфейса — они и так в разметке

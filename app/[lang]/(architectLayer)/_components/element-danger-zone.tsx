@@ -12,7 +12,7 @@ import type { ElementSettingsUi } from '../_i18n/element-settings.i18n'
 
 // 324-7: связи с узлом — по карточке на связь; 706-1: CONFIG переехал в «Строительство → Настройки сайта», Дизайн и Блоки сняты.
 // 567: «Включение элемента» — признак узла «выключен», перед удалением.
-type Key = 'describe' | 'address' | 'mirror' | 'signIn' | 'config' | 'design' | 'blocks' | 'power' | 'remove'
+type Key = 'describe' | 'address' | 'mirror' | 'signIn' | 'config' | 'power' | 'remove'
 
 // 443-5: «Главное зеркало» и «Адрес элемента» живут на странице «Настройки → Домен» — та же сетка карточек, без метки опасности.
 export function ElementDangerZone({ ui, actions = {}, cards = ['describe', 'power', 'remove'], badge = true }: {

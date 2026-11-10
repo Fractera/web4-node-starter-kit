@@ -3,40 +3,36 @@
 // Lists every child folder of this one that carries _data/index.ts.
 import type { WorkspacePageData, CollectionBranch } from '@/lib/collection/types'
 import { data as p0 } from './auth/_data'
-import { data as p1 } from './blocks/_data'
-import { data as p2 } from './build/_data'
-import { data as p3 } from './cache/_data'
-import { data as p4 } from './config/_data'
-import { data as p5 } from './dashboard/_data'
-import { data as p6 } from './data/_data'
-import { data as p7 } from './design/_data'
-import { data as p8 } from './embeddings/_data'
-import { data as p9 } from './graph/_data'
-import { data as p10 } from './hosting/_data'
-import { data as p11 } from './main-telegram/_data'
-import { data as p12 } from './memory/_data'
-import { data as p13 } from './passport/_data'
-import { data as p14 } from './storage/_data'
-import { data as p15 } from './stripe/_data'
-import { data as p16 } from './vectors/_data'
+import { data as p1 } from './build/_data'
+import { data as p2 } from './cache/_data'
+import { data as p3 } from './config/_data'
+import { data as p4 } from './dashboard/_data'
+import { data as p5 } from './data/_data'
+import { data as p6 } from './embeddings/_data'
+import { data as p7 } from './graph/_data'
+import { data as p8 } from './hosting/_data'
+import { data as p9 } from './main-telegram/_data'
+import { data as p10 } from './memory/_data'
+import { data as p11 } from './passport/_data'
+import { data as p12 } from './storage/_data'
+import { data as p13 } from './stripe/_data'
+import { data as p14 } from './vectors/_data'
 import { PAGES as c0, TREE as t0 } from './auth/_list.generated'
-import { PAGES as c1, TREE as t1 } from './blocks/_list.generated'
-import { PAGES as c2, TREE as t2 } from './build/_list.generated'
-import { PAGES as c3, TREE as t3 } from './cache/_list.generated'
-import { PAGES as c4, TREE as t4 } from './config/_list.generated'
-import { PAGES as c5, TREE as t5 } from './dashboard/_list.generated'
-import { PAGES as c6, TREE as t6 } from './data/_list.generated'
-import { PAGES as c7, TREE as t7 } from './design/_list.generated'
-import { PAGES as c8, TREE as t8 } from './embeddings/_list.generated'
-import { PAGES as c9, TREE as t9 } from './graph/_list.generated'
-import { PAGES as c10, TREE as t10 } from './hosting/_list.generated'
-import { PAGES as c12, TREE as t12 } from './memory/_list.generated'
-import { PAGES as c13, TREE as t13 } from './passport/_list.generated'
-import { PAGES as c14, TREE as t14 } from './storage/_list.generated'
-import { PAGES as c15, TREE as t15 } from './stripe/_list.generated'
-import { PAGES as c16, TREE as t16 } from './vectors/_list.generated'
+import { PAGES as c1, TREE as t1 } from './build/_list.generated'
+import { PAGES as c2, TREE as t2 } from './cache/_list.generated'
+import { PAGES as c3, TREE as t3 } from './config/_list.generated'
+import { PAGES as c4, TREE as t4 } from './dashboard/_list.generated'
+import { PAGES as c5, TREE as t5 } from './data/_list.generated'
+import { PAGES as c6, TREE as t6 } from './embeddings/_list.generated'
+import { PAGES as c7, TREE as t7 } from './graph/_list.generated'
+import { PAGES as c8, TREE as t8 } from './hosting/_list.generated'
+import { PAGES as c10, TREE as t10 } from './memory/_list.generated'
+import { PAGES as c11, TREE as t11 } from './passport/_list.generated'
+import { PAGES as c12, TREE as t12 } from './storage/_list.generated'
+import { PAGES as c13, TREE as t13 } from './stripe/_list.generated'
+import { PAGES as c14, TREE as t14 } from './vectors/_list.generated'
 
-export const PAGES: WorkspacePageData[] = [p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16]
+export const PAGES: WorkspacePageData[] = [p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]
 
 /** Each child together with its own children — see the law in the generator. */
 export const TREE: CollectionBranch[] = [
@@ -49,12 +45,10 @@ export const TREE: CollectionBranch[] = [
   { page: p6, children: c6, branches: t6 },
   { page: p7, children: c7, branches: t7 },
   { page: p8, children: c8, branches: t8 },
-  { page: p9, children: c9, branches: t9 },
+  { page: p9, children: [] },
   { page: p10, children: c10, branches: t10 },
-  { page: p11, children: [] },
+  { page: p11, children: c11, branches: t11 },
   { page: p12, children: c12, branches: t12 },
   { page: p13, children: c13, branches: t13 },
   { page: p14, children: c14, branches: t14 },
-  { page: p15, children: c15, branches: t15 },
-  { page: p16, children: c16, branches: t16 },
 ]

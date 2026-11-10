@@ -106,6 +106,15 @@ function copyOfFork(path) {
   return false
 }
 
+// 716 (the owner 2026-11-10: «их не должно существовать как нативные элементы … сначала убери их»): an element of the node that the fork
+// does not list stays — it is the node's own (born, root); a NATIVE one (`kind: core`) belongs to Fractera, so the fork dropping it
+// retires it: it leaves the registry here and `scripts/element-retire.mjs` removes its process and folder in stage 7.
+// ✗ Before 716 every missing entry stayed: removing Blocks and Design from the fork would have kept them on every node as «own».
+function retiredNatives(theirs, ours) {
+  const forkIds = new Set((theirs?.services ?? []).map((s) => s.id))
+  return (ours?.services ?? []).filter((o) => o.kind === 'core' && !o.born && !forkIds.has(o.id)).map((o) => o.id)
+}
+
 function mergeRegistry(theirs, ours) {
   if (!ours) return theirs
   const mine = new Map((ours.services ?? []).map((s) => [s.id, s]))
@@ -114,7 +123,8 @@ function mergeRegistry(theirs, ours) {
     return o ? { ...t, ...Object.fromEntries(Object.entries(o).filter(([k]) => !FORK_KEYS.has(k))) } : t
   })
   const known = new Set(services.map((s) => s.id))
-  for (const o of ours.services ?? []) if (!known.has(o.id)) services.push(o)
+  const retired = new Set(retiredNatives(theirs, ours))
+  for (const o of ours.services ?? []) if (!known.has(o.id) && !retired.has(o.id)) services.push(o)
   const { _: comment, nodeType: _forkType, services: _s, ...rest } = theirs
   return { ...(comment === undefined ? {} : { _: comment }), ...(ours.nodeType ? { nodeType: ours.nodeType } : {}), ...rest, services }
 }
@@ -254,7 +264,9 @@ stage('registry', 'реестр: закрепления форка, состоя
 const theirsRegistry = readJson(REGISTRY)
 if (!theirsRegistry) rollback('чтение реестра после слияния')
 const registry = mergeRegistry(theirsRegistry, oursRegistry)
+const retired = retiredNatives(theirsRegistry, oursRegistry)
 writeFileSync(REGISTRY, JSON.stringify(registry, null, 2) + '\n')
+if (retired.length) say(`нативные элементы, которых больше нет у Fractera: ${retired.join(', ')} — сняты с реестра узла, их процессы и папки уйдут на шаге элементов`)
 
 // ── 6. зависимости и сторожа — до остановки узла ────────────────────────────────────────────────────────────────────────────
 const depsOf = (rev) => { const j = JSON.parse(git(['show', `${rev}:package.json`]).out || '{}'); return JSON.stringify([j.dependencies, j.devDependencies, j.optionalDependencies]) }
@@ -268,6 +280,11 @@ if (!run(npm, ['run', 'prebuild'], 'npm run prebuild')) rollback('сторожа
 // ── 7. элементы ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 stage('elements', 'элементы на закрепления — без остановки служб')
 const warnings = []
+// 716: the retired natives first — past the last rollback (the guards), so a moved folder never meets a restored registry.
+if (retired.length) {
+  const r = node('element-retire.mjs', ...retired)
+  if (!run(r[0], r[1], `npm run element:retire -- ${retired.join(' ')}`)) warnings.push(`снятые элементы ${retired.join(', ')} убраны не полностью — npm run element:retire -- ${retired.join(' ')}`)
+}
 // 692-4: обновление узла не разворачивает чужую работу — элемент со своими неразвёрнутыми коммитами остаётся на своей сборке.
 const install = node('services-install.mjs', '--keep-undeployed')
 if (!run(install[0], install[1], 'npm run services:install') && !run(install[0], install[1], 'npm run services:install (второй проход — сбой сети бывает)')) {

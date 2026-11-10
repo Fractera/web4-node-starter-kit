@@ -21,12 +21,11 @@ import { MAIN_AGENT } from './main-agent-scheme'
 //
 // 🔒 ОТДЕЛЬНЫЙ МОДУЛЬ, А НЕ `architect-menu.ts`: тот читают и не-серверные места (`lib/menu/account-links.ts`,
 // сторож маршрутов), а здесь чтение файла с диска.
-// 🔒 ЯКОРЬ — ГРУППА `design`. Её нет — кнопка и черновики встают в конец, а не пропадают.
-
-const ANCHOR = 'design'
+// 🔒 ЯКОРЬ — ПОСЛЕДНИЙ ВСТРОЕННЫЙ ЭЛЕМЕНТ МЕНЮ (716: прежний якорь, группа `design`, ушёл вместе с элементом «Дизайн», владелец
+// 2026-11-10). Встроенных нет — кнопка и черновики встают в конец, а не пропадают.
 // 327 (слово владельца 2026-09-27): «после вкладки ядро добавим горизонтальный сепаратор, под которым слева в бордюр напишем более
 // мелким шрифтом нативные WEB4 ITEMS. После вкладки дизайн добавим сепаратор … кастомные WEB4 ITEMS. Задача визуально разделить
-// меню на зоны». Якорь первой зоны — пункт «Главный агент» (`build`); вторая встаёт за «Дизайном», над кнопкой создания.
+// меню на зоны». Якорь первой зоны — пункт «Главный агент» (`build`); вторая встаёт за последним встроенным элементом, над кнопкой создания.
 const CORE = 'build'
 
 /** Разделитель зоны меню: горизонтальная черта и мелкая подпись у левого края — она же переключатель зоны (553). */
@@ -49,7 +48,7 @@ function findByHref(items: WorkspaceItem[], href: string): WorkspaceItem | undef
   return undefined
 }
 
-/** Меню слоя с кнопкой и группами черновиков, вставленными за «Дизайном»; 657: в режиме `compact` — короткое меню. */
+/** Меню слоя с кнопкой и группами черновиков, вставленными за последним встроенным элементом; 657: в режиме `compact` — короткое меню. */
 export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: string, mode: MenuMode = 'full'): WorkspaceItem[] {
   const ui = web4DraftsUi(lang)
   const l = treeLang(lang)
@@ -119,9 +118,10 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   const builtIn = new Map(builtInIds().map((id) => { const t = treeItem({ id }, true); return [t.href, t] as const }))
   menu = menu.map((m) => { const t = m.href ? builtIn.get(m.href) : undefined; if (!t) return m; const { native: _n, ...item } = t; return { ...item, label: m.label, icon: m.icon ?? item.icon } })
 
-  const i = menu.findIndex((m) => m.href === at(`${ARCHITECT_HOME}/${ANCHOR}`))
+  let i = -1
+  menu.forEach((m, k) => { if (m.href && builtIn.has(m.href)) i = k })
   const cut = i < 0 ? menu.length : i + 1
-  // 544-3 (владелец 2026-10-19: «шаблон … положи в раздел нативных элементов»): рождённый нативный элемент — в зоне «Нативные», за «Дизайном».
+  // 544-3 (владелец 2026-10-19: «шаблон … положи в раздел нативных элементов»): рождённый нативный элемент — в зоне «Нативные», за последним встроенным.
   const strip = ({ native: _native, ...item }: WorkspaceItem & { native: boolean }): WorkspaceItem => item
   const natives = drafts.filter((d) => d.native).map(strip)
   const customs = drafts.filter((d) => !d.native).map(strip)
@@ -204,7 +204,7 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   // «Между секции основное и кастомными элементами в компактной настройках должен быть сепаратор как между паспортом и основной»: та же
   // черта, что над подписью зоны, — без подписи и без переключателя.
   const separator: WorkspaceItem = { label: '', node: <div data-block="mmsep" aria-hidden className="mt-2 border-t border-border" /> }
-  // То, что стоит в меню после «Дизайна» и не является элементом, остаётся (сегодня там пусто).
+  // То, что стоит в меню после последнего встроенного элемента и не является элементом, остаётся (сегодня там пусто).
   const tail = menu.slice(cut).filter((m) => !(m.href && builtIn.has(m.href)))
   return [...head, ...(named.length > 0 ? [separator, ...named] : []), ...tail]
 }

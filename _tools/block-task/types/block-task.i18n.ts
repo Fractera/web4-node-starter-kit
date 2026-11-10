@@ -18,7 +18,7 @@ const DICT: Record<"en" | "ru", BlockTaskUi> = {
     keyLink: "Add the OpenAI key",
     task: "Task",
     intents: {
-      design: { title: "Improve the design", text: "The agent redraws the block — spacing, colours, fonts, composition — with Design tokens, no hard-coded values. Meaning and texts stay." },
+      design: { title: "Improve the design", text: "The agent redraws the block — spacing, colours, fonts, composition — with this element's design tokens, no hard-coded values. Meaning and texts stay." },
       code: { title: "Improve the code", text: "Behaviour stays, structure changes: the agent simplifies the block's code, removes repetition, checks types and accessibility." },
       broken: { title: "This works wrong", text: "Say what you expected and what you see. The agent finds the cause, fixes it and shows how it checked." },
       delete: { title: "Let's delete this", text: "The agent removes the block from the page with its data and any code nobody else needs, and checks that the page still builds." },
@@ -40,7 +40,7 @@ const DICT: Record<"en" | "ru", BlockTaskUi> = {
     keyLink: "Добавить ключ OpenAI",
     task: "Задача",
     intents: {
-      design: { title: "Улучшить дизайн", text: "Агент перерисует блок — отступы, цвета, шрифты, композицию — токенами «Дизайна», без жёстких значений. Смысл и тексты остаются." },
+      design: { title: "Улучшить дизайн", text: "Агент перерисует блок — отступы, цвета, шрифты, композицию — токенами дизайна элемента, без жёстких значений. Смысл и тексты остаются." },
       code: { title: "Улучшить код", text: "Поведение то же, меняется устройство: агент упростит код блока, уберёт повторы, проверит типы и доступность." },
       broken: { title: "Это работает неправильно", text: "Опишите, что вы ждали и что видите. Агент найдёт причину, исправит её и покажет, чем проверил." },
       delete: { title: "Давай это удалим", text: "Агент уберёт блок со страницы вместе с данными и кодом, который больше никому не нужен, и проверит, что страница собирается." },

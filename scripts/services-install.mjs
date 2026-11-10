@@ -47,7 +47,6 @@ import { addressOf } from '../lib/web4-items/address-file.mjs'
 import { elementLanguages } from '../lib/web4-items/element-languages.mjs'
 import { dropStaleTypes } from '../lib/deploy/stale-types.mjs'
 import { progressElement } from './progress.mjs'
-import { seedProjectDesign } from '../lib/web4-items/design-seed.mjs'
 // 654-6: the element's own key — the core's copy of the stores' function (its test vector: scripts/check-element-key.mjs).
 const { elementKeyOf } = createRequire(import.meta.url)('../lib/element-key.cjs')
 
@@ -353,7 +352,7 @@ function derivedValue(name, ctx) {
     case 'DATA_BIND': return '127.0.0.1'
     case 'NEXTAUTH_URL': return self
     case 'DATA_PUBLIC_URL': return self
-    // 297: общие имена для любого элемента — в коде узла нет имени службы (первый WEB4 ITEM вида user — «Блоки»).
+    // 297: общие имена для любого элемента — в коде узла нет имени службы.
     case 'SERVICE_BIND': return '127.0.0.1'
     // 297: публичный адрес элемента — по той же формуле, что у двери `/api/node/reach`: сайт — корень зоны, прочие —
     // `<id>.<зона>` (публичная главная любого WEB4 ITEM индексируется: canonical и hreflang нужен настоящий адрес).
@@ -557,9 +556,9 @@ async function warmUp(start, healthPath) {
   if (!port) return { note: 'нет свободного порта для прогрева' }
   const proc = spawn(process.execPath, start.args, {
     cwd: start.cwd, windowsHide: true, stdio: 'ignore',
-    // 668 (✗ 2026-11-06: прогрев каждого элемента спрашивал «Дизайн» и стирал тему проекта до `{}`, и подписывался своим запасным портом —
-    // ANTI-PATTERNS «A probe of an element on a spare port …»): у прогрева нет адресов CONFIG и «Дизайна» — он только отвечает на страницы.
-    env: { ...childEnv(), PORT: String(port), HOSTNAME: '127.0.0.1', NODE_ENV: 'production', CONFIG_SERVICE_URL: '', DESIGN_SERVICE_URL: '' },
+    // 668 (✗ 2026-11-06: прогрев каждого элемента подписывался своим запасным портом — ANTI-PATTERNS «A probe of an element on a spare
+    // port …»): у прогрева нет адреса CONFIG — он только отвечает на страницы.
+    env: { ...childEnv(), PORT: String(port), HOSTNAME: '127.0.0.1', NODE_ENV: 'production', CONFIG_SERVICE_URL: '' },
   })
   const stop = () => { try { proc.kill() } catch { /* уже вышел */ } }
   const base = `http://127.0.0.1:${port}`
@@ -842,8 +841,8 @@ for (const entry of registry.services) {
 
   // 4а. ОФОРМЛЕНИЕ ПРОЕКТА НАСЛЕДУЕТСЯ С РОЖДЕНИЯ (297; слово владельца 2026-09-25: «каждый AGI ITEM наследует дизайн»).
   // Элемент, объявивший в паспорте `settings.owns: DESIGN-CONFIG`, получает текущее оформление сайта, если своего файла
-  // ещё нет. ✗ Измерено: новый элемент «Блоки» рисовался оформлением по умолчанию — ядро рассылает дизайн только при
-  // сохранении, и до первого сохранения элемент выпадал из проекта. Свой файл не перезаписывается никогда.
+  // ещё нет. ✗ Измерено: новый элемент рисовался оформлением по умолчанию и до первого
+  // сохранения выпадал из проекта. Свой файл не перезаписывается никогда.
   if (entry.id !== 'root' && Array.isArray(props.settings?.owns) && props.settings.owns.includes('DESIGN-CONFIG')) {
     const own = join(dir, 'DESIGN-CONFIG', 'design-config.json')
     const site = registry.services.find((x) => x.id === 'root')
@@ -1112,14 +1111,6 @@ for (const entry of registry.services) {
 
 // ── 6. Фактические порты — обратно в реестр ──────────────────────────────────
 writeFileSync(REGISTRY, JSON.stringify(registry, null, 2) + '\n', 'utf8')
-
-// ── 6а. Тема проекта — в «Дизайн», если он её ещё не знает (668) ─────────────
-// До перезапуска живых процессов (шаг 8): перезапущенные элементы уже прочтут возвращённую тему.
-try {
-  seedProjectDesign({ coreRoot: ROOT, services: registry.services, dirOf: entryDir, say })
-} catch (e) {
-  say(`  оформление: посев «Дизайна» не удался — ${e instanceof Error ? e.message : e}`)
-}
 
 // ── 7. NEXT_PUBLIC_* узла — единственное вынужденное исключение ──────────────
 //

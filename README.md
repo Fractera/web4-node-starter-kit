@@ -403,10 +403,8 @@ The other repositories of the project and what they do:
 | `Fractera/fractera-graph-lightrag-starter` | the knowledge graph (built-in `graph`) |
 | `Fractera/fractera-memory-starter` | the deep memory: «remember» and «remind me about» (built-in `memory`) |
 | `Fractera/fractera-config-starter` | project settings, menu, node mode (built-in `config`) |
-| `Fractera/fractera-design-starter` | the shared look of the node (built-in `design`); being retired: each element designs its own pages |
 | `Fractera/fractera-redis-cache-starter` | the fast store for counters and queues (built-in `cache`) |
 | `Fractera/fractera-stripe-starter` | card payments through the owner's Stripe account (built-in `stripe`) |
-| `Fractera/fractera-blocks-starter` | the registry of page blocks (`blocks`); being retired: each element designs its own pages |
 | `Fractera/fractera-root-starter` | the site at the root of the domain (`root`) |
 | `Fractera/fractera-custom-item-starter` | the template every new custom element is born from |
 | `Fractera/fractera-native-item-starter` | the template of native elements |

@@ -66,7 +66,8 @@ if (cmd === 'look') {
   let port = 24680
   try { port = JSON.parse(readFileSync(join(ROOT, 'logs', 'runtime.json'), 'utf8')).port ?? port } catch { /* ядро ещё не писало — порт по умолчанию */ }
   const on = b === 'project'
-  for (const kind of ['config', 'design']) {
+  // 716: the only link is CONFIG — the elements «Design» and «Blocks» are gone (the owner, 2026-11-10).
+  for (const kind of ['config']) {
     let r
     try {
       r = await fetch(`http://localhost:${port}/api/architect/items/${encodeURIComponent(a)}/links`, {

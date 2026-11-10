@@ -31,13 +31,11 @@ const ELEMENT_WORDS = {
   vectors: ['векторное хранилище', 'vector store'],
   embeddings: ['поиск по смыслу', 'search by meaning'],
   config: ['конфигуратор', 'configurator'],
-  design: ['дизайн', 'design'],
   graph: ['граф знаний', 'knowledge graph'],
   cache: ['кэш', 'cache'],
   memory: ['глубокая память', 'deep memory'],
   stripe: ['платежи Stripe', 'Stripe payments'],
   root: ['ваш сайт', 'your site'],
-  blocks: ['блоки страниц', 'page blocks'],
 }
 
 // Этапы до элементов и после них: [номер, ru, en, минуты]. Номера «после» считаются от числа элементов.

@@ -4,26 +4,25 @@ import { dirname, join } from "node:path"
 import paths from "@/lib/web4-items/paths.cjs"
 import { redrawElement } from "@/lib/web4-items/element-domain"
 
-// СВЯЗИ ЭЛЕМЕНТА С УЗЛОМ (шаг 324-7). Решение владельца 2026-09-28, дословно: «в настройках WEB4 ITEM нужно создать новый
+// СВЯЗЬ ЭЛЕМЕНТА С УЗЛОМ (шаг 324-7). Решение владельца 2026-09-28, дословно: «в настройках WEB4 ITEM нужно создать новый
 // раздел который отрубает синхронизацию проекта от CONFIG, от блоков, от дизайна и позволяет проекту продолжить своё
-// развитие абсолютно самостоятельно».
+// развитие абсолютно самостоятельно». С шага 716 связь одна — CONFIG: элементов «Дизайн» и «Блоки» у узла нет (владелец
+// 2026-11-10: «их не должно существовать как нативные элементы и не должно быть обращение к ним»); облик каждого элемента — его
+// собственный DESIGN-CONFIG, его секции — его собственный код.
 //
-// 🔒 СОСТОЯНИЕ — `data/services/<id>/links.json` (`{ config, design, blocks }`), папка данных элемента у узла: её читает сам
-// элемент (`lib/own-site.ts` → `linkOn`), удаление элемента стирает её вместе с ним. Нет ключа — связь включена.
+// 🔒 СОСТОЯНИЕ — `data/services/<id>/links.json` (`{ config }`), папка данных элемента у узла: её читает сам элемент
+// (`lib/own-site.ts` → `linkOn`), удаление элемента стирает её вместе с ним. Нет ключа — связь включена. Прежние ключи `design` и
+// `blocks` в старых файлах ничего не значат и не читаются.
 //   CONFIG выключен — элемент не кладёт копию настроек проекта поверх своих файлов и не забирает новую. В момент
 //     отключения последняя копия ОДИН РАЗ переносится в его собственные APP-CONFIG / PLATFORM-CONFIG / DESIGN-CONFIG:
 //     элемент продолжает с того же места, а не с умолчаний. Включение обратно — снова поверх (последняя копия; новая придёт
 //     со следующим сохранением в CONFIG или при запуске элемента).
-//   Дизайн выключен — элемент не забирает оформление; остаётся последнее полученное.
-//   Блоки выключены — реестр `@fractera` убирается из `components.json` элемента (взятые блоки — копии в его коде —
-//     остаются), включены — возвращается той же строкой, что даёт шаблон.
 // После каждого нажатия ядро перерисовывает страницы элемента (`revalidate` по петле) — в ответ на нажатие, не само.
 
-export type LinkKind = "config" | "design" | "blocks"
+export type LinkKind = "config"
 export type Links = Record<LinkKind, boolean>
-const KINDS: LinkKind[] = ["config", "design", "blocks"]
+const KINDS: LinkKind[] = ["config"]
 const DATA = join(process.cwd(), "data", "services")
-const BLOCKS_REGISTRY = "${BLOCKS_REGISTRY_URL}/r/{name}.json"
 
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v)
 
@@ -44,7 +43,7 @@ function readJson(file: string): unknown {
 export function readLinks(id: string): Links {
   const raw = readJson(join(DATA, id, "links.json"))
   const r = isObj(raw) ? raw : {}
-  return { config: r.config !== false, design: r.design !== false, blocks: r.blocks !== false }
+  return { config: r.config !== false }
 }
 
 function deepMerge(base: unknown, over: unknown): unknown {
@@ -70,24 +69,12 @@ function adoptProjectSettings(id: string, dir: string): void {
   }
 }
 
-/** Реестр блоков в `components.json` элемента: убрать или вернуть. */
-function setBlocksRegistry(dir: string, on: boolean): void {
-  const file = join(dir, "components.json")
-  const raw = readJson(file)
-  if (!isObj(raw)) return
-  const registries = isObj(raw.registries) ? { ...raw.registries } : {}
-  if (on) registries["@fractera"] = BLOCKS_REGISTRY
-  else delete registries["@fractera"]
-  writeJson(file, { ...raw, registries })
-}
-
 export async function setLink(id: string, kind: LinkKind, on: boolean): Promise<{ ok: true; links: Links } | { ok: false; error: string }> {
   if (!KINDS.includes(kind)) return { ok: false, error: "bad-kind" }
   const dir = paths.itemDir(id, "user")
   const links = { ...readLinks(id), [kind]: on }
   try {
     if (kind === "config" && !on) adoptProjectSettings(id, dir)
-    if (kind === "blocks") setBlocksRegistry(dir, on)
     writeJson(join(DATA, id, "links.json"), links)
   } catch {
     return { ok: false, error: "write-failed" }

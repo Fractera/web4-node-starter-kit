@@ -1,12 +1,12 @@
-// @api turn an element's sync with CONFIG, Design or Blocks on or off
+// @api turn an element's sync with CONFIG on or off
 import { NextRequest, NextResponse } from "next/server"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { isBornElement } from "@/lib/web4-items/element-delete"
 import { setLink, type LinkKind } from "@/lib/web4-items/element-links"
 
-// СВЯЗИ ЭЛЕМЕНТА (324-7). PATCH `{ kind: "config" | "design" | "blocks", on }`. Только рождённые элементы; ворота
-// architect/admin; на временном публичном адресе — отказ.
+// СВЯЗЬ ЭЛЕМЕНТА С CONFIG (324-7; 716 — единственная, элементов «Дизайн» и «Блоки» у узла нет). PATCH `{ kind: "config", on }`.
+// Только рождённые элементы; ворота architect/admin; на временном публичном адресе — отказ.
 export const dynamic = "force-dynamic"
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -17,7 +17,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (!isBornElement(id)) return NextResponse.json({ ok: false, error: "not-a-born-element" }, { status: 404 })
   let body: { kind?: unknown; on?: unknown } = {}
   try { body = await req.json() } catch { return NextResponse.json({ ok: false, error: "bad-request" }, { status: 400 }) }
-  if (typeof body.on !== "boolean" || !["config", "design", "blocks"].includes(String(body.kind))) {
+  if (typeof body.on !== "boolean" || body.kind !== "config") {
     return NextResponse.json({ ok: false, error: "bad-request" }, { status: 400 })
   }
   const r = await setLink(id, body.kind as LinkKind, body.on)
