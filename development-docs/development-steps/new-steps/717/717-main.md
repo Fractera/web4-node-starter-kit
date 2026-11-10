@@ -128,10 +128,10 @@ elements — later, by his word.
   it (sections, doors, pages, integrations, the look) and leave `build.md` and the skills; skill descriptions shortened so the list
   fits the budget with room. The always-loaded text measured before and after. From 717-3: no guard refuses `cookies()` or a literal
   colour in a section's code — a rule and its guard where sections live.
-- 717-5 (found in 717-2: the template's A2A card already has catalog skills — find, give, take a section «stored as the next version so
+- 717-5 ✓ DONE (template `8a29e54`, core `005bc85c`; summary `completed-steps/717-5-6.md`) (found in 717-2: the template's A2A card already has catalog skills — find, give, take a section «stored as the next version so
   anyone can reuse it», `lib/a2a/catalog.ts`, step 406-7 — the base for passing a section between elements.) **One design for a family of elements:** the core's command to take the approved design of another element — tokens,
   `DESIGN.md`, the design skill — as a copy, never a live link (no single point of failure); the map says when.
-- 717-6 **Skills:** `use-ai-generation` with the vendored `ai-sdk` and `use-personal-data`, written for an element (the six
+- 717-6 ✓ DONE (template `0d4a6e0`, core `67253c5e`; summary `completed-steps/717-5-6.md`) **Skills:** `use-ai-generation` with the vendored `ai-sdk` and `use-personal-data`, written for an element (the six
   node-knowledge skills were folded in 717-4d). Each new description ≤ 440 and the pass list ≤ 24,000 — `check-skill-process`.
 - 717-7 **Test on a fresh custom element, two planes:** a cold agent with no hints builds a page of sections in an approved design, adds
   a new section, answers «you publish to YouTube — how do you get pictures, video, texts and statistics?»; the same questions to an
