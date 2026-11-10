@@ -112,7 +112,8 @@ function copyOfFork(path) {
 // ✗ Before 716 every missing entry stayed: removing Blocks and Design from the fork would have kept them on every node as «own».
 function retiredNatives(theirs, ours) {
   const forkIds = new Set((theirs?.services ?? []).map((s) => s.id))
-  return (ours?.services ?? []).filter((o) => o.kind === 'core' && !o.born && !forkIds.has(o.id)).map((o) => o.id)
+  const { isRetired } = require('../lib/web4-items/retired-natives.cjs')
+  return (ours?.services ?? []).filter((o) => o.kind === 'core' && !o.born && (!forkIds.has(o.id) || isRetired(o))).map((o) => o.id)
 }
 
 function mergeRegistry(theirs, ours) {

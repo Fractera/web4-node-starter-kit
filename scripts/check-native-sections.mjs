@@ -11,6 +11,7 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createRequire } from 'node:module'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const args = process.argv.slice(2)
@@ -18,7 +19,9 @@ const i = args.indexOf('--registry')
 const registry = i >= 0 ? args[i + 1] : join(ROOT, 'WEB4-ITEMS-REGISTRY', 'web4-items.json')
 const ARCHITECT = join(ROOT, 'app', '[lang]', '(architectLayer)', 'architect')
 
-const natives = (JSON.parse(readFileSync(registry, 'utf8').replace(/^﻿/, '')).services ?? []).filter((s) => s.kind === 'core')
+// 716: a native Fractera retired has no section to have — the installer removes its entry (`lib/web4-items/retired-natives.cjs`).
+const { isRetired } = createRequire(import.meta.url)('../lib/web4-items/retired-natives.cjs')
+const natives = (JSON.parse(readFileSync(registry, 'utf8').replace(/^﻿/, '')).services ?? []).filter((s) => s.kind === 'core' && !isRetired(s))
 const missing = []
 for (const s of natives) {
   if (!existsSync(join(ARCHITECT, s.id, '_data', 'index.ts'))) missing.push(`${s.id} — no section architect/${s.id}/_data/index.ts: the left menu does not show it`)

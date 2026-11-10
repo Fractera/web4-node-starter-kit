@@ -174,6 +174,22 @@ if (!existsSync(join(ROOT, 'data', 'services')) && existsSync(SNAPSHOT_FILE)) {
   rmSync(PENDING_FILE, { force: true })
 }
 
+// ── 716: нативные элементы, снятые Fractera ──────────────────────────────────
+// Запись снятого нативного элемента уходит из реестра, его процесс и папка — `scripts/element-retire.mjs`; ставить его нечего.
+// Здесь, а не только в обновлении узла: первое обновление после снятия идёт ПРЕЖНИМ `node-update.mjs` (он загружен до своего слияния) и
+// оставляет запись как «свою»; установщик же — свежий процесс нового кода (`lib/web4-items/retired-natives.cjs`).
+{
+  const { isRetired } = require('../lib/web4-items/retired-natives.cjs')
+  const gone = registry.services.filter(isRetired).map((s) => s.id)
+  if (gone.length) {
+    registry.services = registry.services.filter((s) => !isRetired(s))
+    writeFileSync(REGISTRY, JSON.stringify(registry, null, 2) + '\n', 'utf8')
+    const r = spawnSync(process.execPath, [join(ROOT, 'scripts', 'element-retire.mjs'), ...gone], { cwd: ROOT, encoding: 'utf8', windowsHide: true })
+    for (const line of `${r.stdout ?? ''}${r.stderr ?? ''}`.trim().split(/\r?\n/).filter(Boolean)) say(`  ${line.trim()}`)
+    say(`  снятые Fractera нативные элементы: ${gone.join(', ')} — ${r.status === 0 ? 'убраны с узла' : `убраны не полностью: npm run element:retire -- ${gone.join(' ')}`}`)
+  }
+}
+
 /** Ключ GitHub для восстановления: свой элемента → общий узла (`data/node/github/.env`) → `FRACTERA_GITHUB_TOKEN`. */
 function githubToken(id) {
   for (const f of [join(ROOT, 'data', 'services', id, 'github', '.env'), join(ROOT, 'data', 'node', 'github', '.env')]) {
