@@ -1,5 +1,5 @@
-// ЗАПИСЬ ВЕРДИКТА РАЗБОРА (шаг 577-6, 2026-10-24) — `data/node/page-verdicts.jsonl` ядра, строка на вердикт (716: прежде лежал в
-// данных элемента «Блоки», которого у узла больше нет; записи перенесены).
+// ЗАПИСЬ ВЕРДИКТА РАЗБОРА (шаг 577-6, 2026-10-24) — `data/node/page-verdicts.jsonl` ядра, строка на вердикт (716: записи перенесены
+// из папки данных снятого элемента).
 //
 //   node verdict.mjs add --element reverse --page en --grade 2 --by model:claude-opus-5-5 \
 //        [--replace "block-a>block-b"]… [--move block-x]… [--fine block-y]… [--note "…"]
