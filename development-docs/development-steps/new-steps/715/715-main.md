@@ -45,3 +45,21 @@ The owner 2026-11-10 09:16 and 09:35 (Telegram, pasted into the terminal), verba
   the main agent's skill so the whole flow — or any part — runs from the architect's Telegram.
 - 715-6 Delivery; a second design on the stand qfx9w through the new command (the owner: «создай второй дизайн»), eyes 1440 and 390,
   the critic, the report.
+
+## Live (2026-11-10, node build a7987f6e)
+
+- 715-1 PROVEN: the core built the element after its agent's done — `[agents/done] qfx9w → the element is built after generation:
+  impeccable-5jd1` (09:59:14).
+- The Telegram path: `npm run design -- qfx9w library` (108 skills, GitHub links), `choose wshobson/agents@visual-design-foundations`,
+  `ref … https://www.heathceramics.com`, `generate` → `visual-design-foundations-ql7a` started.
+- DEFECT found live: the generation waited 8 minutes unseen — `[agents/wake] qfx9w: проход design ждёт — идёт сессия прохода main`
+  (09:59:40): the element's main-pass session, brought back idle by the core build, blocked the design pass while the tab said «строится».
+  Closed by hand (`npm run close -- qfx9w`, 10:07:32) → «проход design из очереди → started» (10:07:35). To fix: `generate` closes the
+  element's idle main session before its wake, or the tab names the wait («ждёт, пока закончится сессия агента»).
+- 10:10 the second test page `visual-design-foundations-ql7a` ready in 3 minutes after the queue was freed; `[agents/done] qfx9w → the
+  element is built after generation: visual-design-foundations-ql7a` (10:10:53); `/ru/prototypes/visual-design-foundations-ql7a` → 200
+  with its own H1 — the link works with no «Build» button (two planes: the log and the live page).
+- NOT fixed here, moved to the next step: (a) the queue — the fix belongs in the agent bridge (`_agent-kit/server/bridge.cjs`, copied
+  into every service): when a pass is queued behind a live session of another pass that `whenIdle` shows quiet, stop it so the queue
+  starts; (b) `skills hand` writes a catalog skill without the «Process:» / «Pass:» lines and the vendored-table row the element's
+  `check-skill-process` needs (the element's agent warned, 10:10); the build passed this time.
