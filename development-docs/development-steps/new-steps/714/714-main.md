@@ -30,3 +30,20 @@ the strip's «Дизайн и бриф» → the element's own `/admin/design`; 
   panels and dashboards.
 - 714-5 Delivery: template release, pin, core push, fork sync, node update, rollout to qfx9w only, its rebuild; eyes 1440 and 390 on
   qfx9w (menu with both tabs, the strip's links into the core, the name); 713 closed (the owner accepted the result).
+
+## Live (2026-11-10, node build 1a7a2167)
+
+- The rollout left qfx9w alone («HEAD ee00f4f is not its pin v0.3.180»: its own prototype commits) — by design. Its agent merged
+  v0.3.181 (`f2b09fd`: unrelated histories → v0.3.181 as the second parent, the template's diff v0.3.180..v0.3.181 applied three-way,
+  13 files, no conflicts; `titleInBody` kept next to `AwaitingTitle`); tsc and its prebuild green; not pushed, not deployed. Its sealed
+  instruction: nothing to change. Rebuilt (`services:install --only qfx9w`).
+- Eyes 1440 and 390: the name «Глина и огонь» as the hero H1 ✓; the strip's three buttons → `http://localhost:24680/ru/qfx9w/build/
+  {design,site-settings,subscription}`, each 200 (`/ru/architect/qfx9w/…` redirects there) ✓; console clean.
+- Found: after the first rebuild the header had NO «Нативные / Кастомные элементы» though the element's copy held 16 catalog entries.
+  The element's agent (`50d8235`, anti-patterns): the template's shell and menu doors are `force-static` (`app/api/shell/[lang]/route.ts:13`,
+  `app/api/menu/[lang]/route.ts:18`); the build baked `top: []` at 09:19:16, the start pull wrote the copy at 09:19:23 and nothing
+  revalidated; one `POST /api/settings/changed` restored both groups (12 native, 4 custom) ✓ by eyes.
+- 714-6 (core): `services:install --only <id>` now refreshes the node catalog after the element answers (`notifyCatalog('install',
+  { waitPort })`), the same call a full install, a birth and a deploy make — its signal revalidates the element's baked shell. Not
+  reproduced on demand: two more rebuilds (one with the copy removed) baked the menu correctly, so the race shows only sometimes; the
+  live proof is the next single install on a fresh element. Rides the next node update.
