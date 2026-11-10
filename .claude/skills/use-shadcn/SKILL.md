@@ -51,7 +51,7 @@ project; a widget need fit nobody but its route.
 
 | It says | Here | Why |
 |---|---|---|
-| compose `Dialog` + `DialogTitle` yourself | **`AppDialog` only** — `components/dialog/app-dialog.client.tsx` | one owner per genus of thing. A bare `DialogContent` has no height limit and no scrolling body, and a long form grows past the bottom of the screen together with its submit button. `check:dialogs` refuses a direct import; the visible standard is `/{lang}/architect/design?section=dialogs` |
+| compose `Dialog` + `DialogTitle` yourself | **`AppDialog` only** — `components/dialog/app-dialog.client.tsx` | one owner per genus of thing. A bare `DialogContent` has no height limit and no scrolling body, and a long form grows past the bottom of the screen together with its submit button. `check:dialogs` refuses a direct import; the visible standard is the design settings (`DESIGN-CONFIG`) |
 | toast from `toast` for Base UI projects | **`sonner`** | this project carries both base libraries at once, and its toaster is mounted once. A second toast system means two toasters and doubled messages |
 | components go wherever you compose them | **nothing under `sections/` is a client component** | the section layer is server-only, whole; interactivity is the island it mounts. `check:static` refuses it |
 | semantic colours (`bg-primary`) | same rule, one step further: **the token is the only colour** | the owner repaints his whole project from the design panel. A literal colour does not break — it silently leaves that system. `check:contrast` measures it |
