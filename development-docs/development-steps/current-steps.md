@@ -5,6 +5,11 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-86 (2026-11-10, ~08:10 WET) — 714 IN WORK (plan `new-steps/714/714-main.md`): the stand qfx9w keeps the node's menu, the quick
+strip leads into the core, the project's name on the empty page; the skill interface-design into the core's and elements'
+instructions. 713 ACCEPTED by the owner («интерфейс получился значительно лучше») — its summary goes with 714-5. After 714: call the
+owner; at max effort — the review of the old blocks-and-design instructions and skills.**
+
 **NOW-85 (2026-11-09, 20:50 WET) — 713 IN WORK: the element's Design and Site settings tabs redesigned as one logical flow (the owner:
 «не спагетти дизайн … найди меня когда твой внутренний критик скажет это восхитительно» — approved, no questions). Plan
 `new-steps/713/713-main.md`. 708-7 PROVEN LIVE at 20:35 (line in 708-main.md); 686-5 PROVEN LIVE at 20:52 (a natural limit stop at
