@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
 import { idOfAddress } from "@/lib/web4-items/element-address"
-import { searchDesignSkills } from "@/lib/main-agent/design-skills.mjs"
+import { githubOf, searchDesignSkills } from "@/lib/main-agent/design-skills.mjs"
 import { addRef, addRun, addSkill, readDesign, removeRef, removeSkill, setTest } from "@/lib/main-agent/element-design-store"
 import { elementHasSkill, elementPrototypes, prototypeShot } from "@/lib/main-agent/element-prototypes"
 
@@ -24,6 +24,8 @@ const MARK = /^[a-zA-Z0-9][a-zA-Z0-9._:/@-]{0,119}$/
 const ORIGINS = new Set(["own", "base", "catalog"])
 /** Генерация считается идущей, пока её папки нет, не дольше двух часов. */
 const RUN_TTL_MS = 2 * 3600_000
+/** 715-1: сборка элемента после генерации идёт минуту-две — столько ссылка тестовой страницы говорит «собирается». */
+const BUILD_TTL_MS = 4 * 60_000
 
 type Wake = (service: string, opts: { text?: string; confirmed?: boolean }) => Promise<Record<string, unknown> & { ok: boolean }>
 const json = (body: unknown, status = 200) => NextResponse.json(body, { status, headers: NO_STORE })
@@ -45,7 +47,10 @@ async function state(element: string) {
   const now = Date.now()
   const pending = design.runs.filter((r) => r.kind === "generate" && now - Date.parse(r.requestedAt) < RUN_TTL_MS && !protos.list.some((p) => p.id === r.prototype))
   const busy = pending.length > 0 || protos.list.some((p) => !p.archived && p.status === "draft")
-  return { ok: true, ...design, prototypes: protos.list, supported: protos.supported, pending: pending.map((r) => r.prototype), busy, limits: limitsOf(element) }
+  // 715-1: у каждого навыка — его репозиторий на GitHub; `building` — тестовые страницы, после которых ядро сейчас собирает элемент.
+  const skills = design.skills.map((s) => ({ ...s, github: githubOf(process.cwd(), s.origin, s.source, s.name) }))
+  const building = design.runs.filter((r) => r.kind === "build" && now - Date.parse(r.requestedAt) < BUILD_TTL_MS).map((r) => r.prototype)
+  return { ok: true, ...design, skills, prototypes: protos.list, supported: protos.supported, pending: pending.map((r) => r.prototype), busy, building, limits: limitsOf(element) }
 }
 
 export async function GET(req: NextRequest) {
@@ -129,8 +134,9 @@ async function generate(req: NextRequest, element: string, mark: string, scripts
   const now = await state(element)
   if (!now.supported) return { ok: false, reason: "template", error: "this element's template has no design prototypes yet — it needs the custom template v0.3.179 or newer" }
   if (now.busy) return { ok: false, reason: "busy", error: "a prototype of this element is being built — one at a time" }
-  const skill = now.skills.find((s) => s.mark === mark && s.test)
-  if (!skill) return { ok: false, error: "the skill is not a test candidate of this element" }
+  // 715-1: навык, сохранённый для тестирования, и есть кандидат — отдельного «На тест» больше нет (владелец: «тарабарщина»).
+  const skill = now.skills.find((s) => s.mark === mark)
+  if (!skill) return { ok: false, error: "the skill is not saved for testing in this element" }
   const wake = wakeFn()
   if (typeof wake !== "function") return { ok: false, error: "agent kits are not mounted in this process" }
   // Навык — в папку элемента: базовые навыки узла приходят с шаблоном, свои и каталожные передаёт `skills hand` (его проверки и отпечаток).

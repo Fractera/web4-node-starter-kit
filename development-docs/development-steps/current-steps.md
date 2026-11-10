@@ -10,6 +10,14 @@ strip leads into the core, the project's name on the empty page; the skill inter
 instructions. 713 ACCEPTED by the owner («интерфейс получился значительно лучше») — its summary goes with 714-5. After 714: call the
 owner; at max effort — the review of the old blocks-and-design instructions and skills.**
 
+**NOW-86 (2026-11-10, ~10:30 WET) — 715 BUILT in the workshop: the Design tab rebuilt to the owner's own scheme (his Telegram 09:16 and
+09:35, «Вот задание как переделать»): «1 Навыки · 2 Бриф (по желанию) · 3 Сгенерировать и сравнить», sticky track with tooltip states,
+the library (95 design skills of the checked catalog + base + collection, GitHub links), carousel with red/amber/green badges, the
+stage with «Изменить референс» (screenshot upload/paste) and «Тонкая настройка», «Утвердить этот дизайн для элемента «…»»; the core
+builds the element after a generation (`/api/agents/done`); `npm run design` + skill for Telegram. Plan `new-steps/715/715-main.md`.
+714 live on qfx9w (714-6 rides this update). NEXT: push, CI, fork sync, node update; then the second design on qfx9w via `npm run
+design` (the owner: «создай второй дизайн»), eyes, critic, report.**
+
 **NOW-85 (2026-11-09, 20:50 WET) — 713 IN WORK: the element's Design and Site settings tabs redesigned as one logical flow (the owner:
 «не спагетти дизайн … найди меня когда твой внутренний критик скажет это восхитительно» — approved, no questions). Plan
 `new-steps/713/713-main.md`. 708-7 PROVEN LIVE at 20:35 (line in 708-main.md); 686-5 PROVEN LIVE at 20:52 (a natural limit stop at

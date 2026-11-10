@@ -13,7 +13,8 @@ import { StepHead } from "@/components/element-design/step-parts"
 import { useRemote } from "./remote.client"
 import { RemoteState } from "./remote-state"
 
-// «ТОНКАЯ НАСТРОЙКА» — ПЯТЫЙ ШАГ ВКЛАДКИ «ДИЗАЙН», ПО ЖЕЛАНИЮ (712-3, вид 713-2): цвета, шрифты, текст, формы и отступы — редакторы
+// «ТОНКАЯ НАСТРОЙКА» ВКЛАДКИ «ДИЗАЙН» (712-3, вид 713-2; 715-4 — второй аккордеон под картинкой утверждённого дизайна, `bare`: шапку даёт
+// аккордеон): цвета, шрифты, текст, формы и отступы — редакторы
 // шаблона (`components/design/*`) как есть, сменилась только рамка: без карточки, под той же шапкой шага, что и остальные.
 // Редакторы пишут через пульт ядра и показывают только то, что элемент объявляет.
 type Raw = {
@@ -24,7 +25,7 @@ type Raw = {
   motion?: { speed?: "none" | "fast" | "normal" | "slow" }
 }
 
-export function DesignFine({ ui, words }: { ui: DesignUi; words: ElementRemoteWords }) {
+export function DesignFine({ ui, words, bare = false }: { ui: DesignUi; words: ElementRemoteWords; bare?: boolean }) {
   const { files, save, visible } = useRemote()
   const loaded = files.design
   const api = useMemo<DesignSaveApi>(() => ({
@@ -34,7 +35,7 @@ export function DesignFine({ ui, words }: { ui: DesignUi; words: ElementRemoteWo
   const c = (loaded?.state === "ok" ? loaded.config : null) as Raw | null
   return (
     <section data-block="edn01" data-design-fine data-design-panel="fine" className="flex flex-col gap-6">
-      <StepHead title={words.fineTitle} lead={words.fineLead} />
+      {bare ? null : <StepHead title={words.fineTitle} lead={words.fineLead} />}
       {!c ? <RemoteState loaded={loaded} words={words} /> : (
         <DesignSaveProvider value={api}>
           <Tabs defaultValue="colors" className="flex flex-col gap-6">

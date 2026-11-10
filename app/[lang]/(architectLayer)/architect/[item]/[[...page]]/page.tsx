@@ -427,7 +427,10 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   const designPage = key === 'build/design'
     ? (entry
       ? <section className="flex flex-col" data-element-design-page data-block="element-design-page">
-          <ElementDesignSettings item={item} lang={lang} port={port} publicUrl={ownPublicUrl} ui={designUi(lang)} words={elementRemoteWords(lang)} design={elementDesignWords(lang)} dialogUi={appDialogUi(lang)} />
+          {/* 715: «Утвердить этот дизайн для элемента (название элемента)» — имя из реестра узла; агент элемента — его терминал. */}
+          <ElementDesignSettings item={item} lang={lang} port={port} publicUrl={ownPublicUrl}
+            name={nodeEntries().find((e) => e.id === item)?.name ?? address} agentHref={`/${lang}${dir}/build/terminal`}
+            ui={designUi(lang)} words={elementRemoteWords(lang)} design={elementDesignWords(lang)} dialogUi={appDialogUi(lang)} />
         </section>
       : <p className="my-4 text-sm text-muted-foreground">{sui.notBorn}</p>)
     : null

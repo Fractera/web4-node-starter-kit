@@ -1,22 +1,23 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { Check, Search } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Check, Github, Plus, Search } from "lucide-react"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { H4, H5, Small } from "@/components/ui/typography"
 import type { ElementDesignWords } from "@/app/[lang]/(architectLayer)/_i18n/element-design.i18n"
 import { DOOR, type FoundSkill, type Origin } from "./types"
 import { SMALL } from "./step-parts"
 
-// ПОИСК НАВЫКОВ ДИЗАЙНА (711-1, вид 713-2): живой, при каждом открытии — коллекция человека, база узла в графе, проверенный каталог.
-// Списка в коде нет: что сохранено словами боту или пришло с обновлением графа и каталога, появляется само. Найденное — строками, по пять
-// на источник и «Показать ещё»: двадцать карточек сеткой были стеной, которую никто не читает. Пустая коллекция говорит, как её пополнить.
+// БИБЛИОТЕКА НАВЫКОВ ДИЗАЙНА (711-1, вид 713-2, 715-3): живая, при каждом открытии — коллекция человека, база узла в графе, проверенный
+// каталог Fractera (без слов — весь его раздел дизайна, ближайшее к дизайну страниц первым; число уходит наверх шага, `onLibrary`). Списка в
+// коде нет. Строки по пять на источник и «Показать ещё»; у каждой — репозиторий на GitHub (владелец 2026-11-10: «название ничего не
+// дает») и «Выбрать для теста». Пустая коллекция говорит, как её пополнить.
 type Found = { own: FoundSkill[]; base: FoundSkill[]; catalog: FoundSkill[]; notes: string[] }
 const ORDER: Origin[] = ["own", "base", "catalog"]
 const FIRST = 5
 
-export function DesignSearch({ item, lang, words, inProject, onAdd }: { item: string; lang: string; words: ElementDesignWords; inProject: Set<string>; onAdd: (s: FoundSkill) => void }) {
+export function DesignSearch({ item, lang, words, inProject, onAdd, onLibrary }: { item: string; lang: string; words: ElementDesignWords; inProject: Set<string>; onAdd: (s: FoundSkill) => void; onLibrary: (n: number) => void }) {
   const [query, setQuery] = useState("")
   const [found, setFound] = useState<Found | null>(null)
   const [busy, setBusy] = useState(false)
@@ -25,20 +26,21 @@ export function DesignSearch({ item, lang, words, inProject, onAdd }: { item: st
     setBusy(true)
     const j = await fetch(`${DOOR}?item=${encodeURIComponent(item)}&q=${encodeURIComponent(q)}`, { cache: "no-store" }).then((r) => r.json()).catch(() => null)
     setFound(j?.ok ? { own: j.own ?? [], base: j.base ?? [], catalog: j.catalog ?? [], notes: j.notes ?? [] } : { own: [], base: [], catalog: [], notes: [String(j?.error ?? "network")] })
+    if (j?.ok && typeof j.library === "number") onLibrary(j.library + (j.own?.length ?? 0))
     setOpen({})
     setBusy(false)
-  }, [item])
+  }, [item, onLibrary])
   useEffect(() => { void run("") }, [run])
   const num = new Intl.NumberFormat(lang)
   const meta = (s: FoundSkill) => [s.stars !== null ? `★ ${num.format(s.stars)}` : "", s.installs !== null ? `${num.format(s.installs)} ${words.installs}` : "", s.licence ?? "", s.scripts > 0 ? words.scripts : ""].filter(Boolean).join(" · ")
   return (
     <section data-block="edq01" data-design-search className="flex flex-col gap-4">
       <div data-block="edq02" className="flex flex-col gap-1.5">
-        <H4 data-block="edq03" variant="ui">{words.searchTitle}</H4>
+        <H4 data-block="edq03" variant="ui">{words.allTitle}</H4>
         <Small data-block="edq04">{words.searchHint}</Small>
       </div>
       <form data-block="edq05" role="search" className="flex gap-2" onSubmit={(e) => { e.preventDefault(); void run(query) }}>
-        <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={words.placeholder} className="min-w-0 flex-1" aria-label={words.searchTitle} />
+        <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={words.placeholder} className="min-w-0 flex-1" aria-label={words.allTitle} />
         <Button type="submit" variant="outline" disabled={busy}>
           <Search data-icon="inline-start" aria-hidden />
           {busy ? words.searching : words.search}
@@ -66,10 +68,18 @@ export function DesignSearch({ item, lang, words, inProject, onAdd }: { item: st
                         <span data-block="edq14" className={`line-clamp-1 text-muted-foreground ${SMALL}`} title={s.summary}>{s.summary}</span>
                         {meta(s) ? <span data-block="edq15" className={`text-muted-foreground ${SMALL}`}>{meta(s)}</span> : null}
                       </div>
-                      <Button size="sm" variant={has ? "ghost" : "outline"} disabled={has} onClick={() => onAdd(s)} data-design-add className="shrink-0">
-                        {has ? <Check data-icon="inline-start" aria-hidden /> : null}
-                        {has ? words.added : words.add}
-                      </Button>
+                      <div data-block="edq16" className="flex shrink-0 items-center gap-1">
+                        {s.github ? (
+                          <a href={s.github} target="_blank" rel="noopener noreferrer" aria-label={`${words.github}: ${s.name}`} title={words.github}
+                            className={buttonVariants({ size: "icon-sm", variant: "ghost" })} data-design-github>
+                            <Github aria-hidden />
+                          </a>
+                        ) : null}
+                        <Button size="sm" variant={has ? "ghost" : "outline"} disabled={has} onClick={() => onAdd(s)} data-design-add>
+                          {has ? <Check data-icon="inline-start" aria-hidden /> : <Plus data-icon="inline-start" aria-hidden />}
+                          {has ? words.chosen : words.choose}
+                        </Button>
+                      </div>
                     </li>
                   )
                 })}

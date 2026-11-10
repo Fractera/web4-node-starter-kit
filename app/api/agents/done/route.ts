@@ -1,6 +1,7 @@
 // @api woken element agent reports work done or closes its terminal
 import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
+import { buildAfterGeneration } from "@/lib/main-agent/element-design-build"
 
 // КОНЕЦ РАБОТЫ ПРОБУЖДЁННОГО АГЕНТА (шаг 409-5; владелец 2026-10-05: «предложение закрыть», «Ответ текстом»). POST `{ service }`
 // с ключом узла (`X-Node-Key`) — человеку в Telegram элемента «Работа закончена. Закрыть терминал? Ответьте «закрыть»»; POST
@@ -38,6 +39,14 @@ export async function POST(req: NextRequest) {
   const done = (globalThis as { __web4AgentDone?: Done }).__web4AgentDone
   if (typeof done !== "function") {
     return NextResponse.json({ ok: false, reason: "agent kits are not mounted in this process" }, { status: 503, headers: HEADERS })
+  }
+  // 715-1: агент закончил генерацию тестовой страницы — ядро собирает элемент, чтобы её ссылка открылась (владелец 2026-11-10: «когда
+  // генерация будет закончена вы сможете увидеть всю страницу по этой ссылке»). Ошибка хранилища дизайна «закончил» не останавливает.
+  if (body.close !== true) {
+    try {
+      const built = await buildAfterGeneration(service)
+      if (built.length) console.log(`[agents/done] ${service} → the element is built after generation: ${built.join(", ")}`)
+    } catch { /* the element has no design store yet — done goes on */ }
   }
   // 410: `reviewed` — разбор в этой сессии уже был, вопрос «выключить?» придёт без предложения разбора.
   const out = await done(service, { close: body.close === true, reviewed: body.reviewed === true })

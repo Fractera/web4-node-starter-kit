@@ -77,7 +77,9 @@ export type DesignSkillRow = {
   stars: number | null; installs: number | null; scripts: number; test: boolean; addedAt: string
 }
 export type DesignRefRow = { id: number; mark: string; url: string; mediaId: string | null; caption: string | null; addedAt: string }
-export type DesignRunRow = { prototype: string; mark: string; kind: "generate" | "pin"; requestedAt: string }
+/** 715-1: `build` — the core built the element after its agent finished a generation, so the test page's link opens it. */
+export type RunKind = "generate" | "pin" | "build"
+export type DesignRunRow = { prototype: string; mark: string; kind: RunKind; requestedAt: string }
 
 const num = (v: unknown) => (typeof v === "number" ? v : v === null || v === undefined ? null : Number(v))
 
@@ -91,7 +93,7 @@ export async function readDesign(element: string): Promise<{ skills: DesignSkill
   return {
     skills: s.map((x) => ({ mark: String(x.mark), name: String(x.name), origin: String(x.origin), source: (x.source as string) ?? null, summary: (x.summary as string) ?? null, licence: (x.licence as string) ?? null, stars: num(x.stars), installs: num(x.installs), scripts: Number(x.scripts ?? 0), test: Number(x.test) === 1, addedAt: String(x.added_at) })),
     refs: r.map((x) => ({ id: Number(x.id), mark: String(x.mark), url: String(x.url), mediaId: (x.media_id as string) ?? null, caption: (x.caption as string) ?? null, addedAt: String(x.added_at) })),
-    runs: u.map((x) => ({ prototype: String(x.prototype), mark: String(x.mark), kind: x.kind === "pin" ? "pin" : "generate", requestedAt: String(x.requested_at) })),
+    runs: u.map((x) => ({ prototype: String(x.prototype), mark: String(x.mark), kind: x.kind === "pin" || x.kind === "build" ? x.kind : "generate", requestedAt: String(x.requested_at) })),
   }
 }
 
@@ -118,7 +120,7 @@ export async function removeRef(element: string, id: number): Promise<void> {
   await schema(element)
   await sql(element, "DELETE FROM design_refs WHERE id = ?", [id])
 }
-export async function addRun(element: string, prototype: string, mark: string, kind: "generate" | "pin"): Promise<void> {
+export async function addRun(element: string, prototype: string, mark: string, kind: RunKind): Promise<void> {
   await schema(element)
   await sql(element, `INSERT INTO design_runs (prototype, mark, kind, requested_at) VALUES (?, ?, ?, ?)
     ON CONFLICT (prototype, kind) DO UPDATE SET requested_at = excluded.requested_at`, [prototype, mark, kind, new Date().toISOString()])
