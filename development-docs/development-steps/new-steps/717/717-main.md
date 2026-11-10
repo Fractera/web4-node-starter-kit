@@ -165,4 +165,5 @@ elements — later, by his word.
 10. **The core's CLAUDE.md is sealed:** 717-9 changes §2/§7 only by the owner's word, then `npm run check:instruction -- --seal`. A core
     rebuild (`serve:rebuild`) once, at the end, after reading the skill `core-build-return`.
 11. **Not touched without the owner's word:** the existing elements, the native template before 717-7 passes, a release tag before 717-7.
-12. **Open questions to the owner:** merge 717-4 and 717-6? The prototype screenshots fix — first, as its own small core step?
+12. **Decided 2026-11-10 ~22:00** (the owner: «продолжай»): the six node-knowledge skills of 717-6 fold in 717-4 (4d), the two new skills stay
+    in 717-6; the screenshots fix stays in 717-9 (`717-4.md`).
