@@ -60,3 +60,15 @@ Opened 2026-11-11 by the owner (tandem). His words, verbatim:
 Skills looked at (checked catalog): `wshobson/agents@interaction-design` (★42k, 16.6k installs) — skeletons and feedback states, the idea
 taken; `deckardger/tanstack-agent-skills@tanstack-query-best-practices` (★228, 13k) — infinite pages, the idea taken, the library not
 brought into the core. Nothing checked for voice search by meaning — built from the node's own parts.
+
+## 722-1 built (2026-11-11)
+
+- `lib/web4-items/menu-state.cjs`: `menuRows` (the registry and the drafts, one read each — the state of every element), `menuPage`
+  (a portion of 12; `active`, `custom`, `q`), `menuElements` (all with names, for the static list of 722-5). Names are read only for the
+  rows shown: ✗ measured first with names for all — 96 ms for 1000 (three small files each), over the 20 ms target.
+- Proof 1: `npm run test:menu-state` — 1000 synthetic elements: a portion of 12 in 4.2 ms, «only active» 3.0 ms, a name search over all
+  102 ms (a button press); negative controls: asleep and draft are never «running», an unknown name finds nothing.
+- Proof 2: on the owner's node — root and «Клип» «running», cache and stripe «off», the same as the live processes in `serve:status`
+  (online / не запущен); 1.9 ms.
+- Said aloud: «running» = the node keeps the process running (the registry), not a live poll; a crashed process is raised by the health
+  watcher.
