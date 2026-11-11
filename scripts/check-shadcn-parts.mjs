@@ -42,7 +42,9 @@ const ROLES = { tab: "Tabs", tablist: "Tabs", tooltip: "Tooltip", menu: "Dropdow
   listbox: "Select / Command", option: "Select / Command", combobox: "Popover + Command", progressbar: "Progress" }
 
 const rel = (p) => path.relative(ROOT, p).split(path.sep).join("/")
-const hash = (s) => crypto.createHash("sha256").update(s).digest("hex").slice(0, 16)
+// The fingerprint reads LF: a Windows checkout gives CRLF, and a raw hash made every debt file look «touched» there — the CI's
+// windows-latest failed on 172 frozen findings (found 2026-11-12, 726-0). The same normalisation as `lib/agent-kit/check.mjs`.
+const hash = (s) => crypto.createHash("sha256").update(s.replace(/\r\n/g, "\n")).digest("hex").slice(0, 16)
 const readJson = (f) => { try { return JSON.parse(fs.readFileSync(f, "utf8")) } catch { return null } }
 const hint = (owner, ui) => `${owner}${ui && !INSTALLED.has(ui) ? ` (нет в components/ui — npx shadcn@latest add ${ui})` : ""}`
 
