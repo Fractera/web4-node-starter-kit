@@ -1,4 +1,4 @@
-# 727 — the header (native elements, custom elements, search, «only running») as ONE tool of the core that every element imports (PLAN — to be designed with the owner)
+# 727 — the shell as tools of the core that every element imports: the header (native elements, custom elements, search, «only running»), the account, the footer (PLAN — to be designed with the owner)
 
 Opened 2026-11-11 by the owner, verbatim:
 
@@ -7,6 +7,16 @@ Opened 2026-11-11 by the owner, verbatim:
 > должны делать обновления а все остальные элементы должны получить его нативно. То есть если ты сделал или инструмент верхнее меню
 > который содержит вкладку нативный элементы кастомные элементы и поиск значит любой другой элемент который захотел бы это использовать
 > просто его импортирует вот и всё
+
+then, the same evening:
+
+> Также вкладка личный кабинет тоже может быть отдельным инструментом потому что на всех элементах она возвращает одно и то же также
+> текущая версия Footer может быть инструментом потому что все элементы возвращают один и тот же инструмент я правильно мысли?
+
+(Answered: yes — the header, the account (`components/shell/shell-account.client.tsx`) and the footer (`components/shell/project-footer.tsx`)
+are today the shell kit copied into every element; as tools of the core they change in one place. The code is common, the data stays each
+element's (`ShellData` from CONFIG); the footer's Fractera mark is protected better with no copies; an element must stay whole without
+JavaScript and without the core — the central question.)
 
 and before it (722-9): «фильтрации через чекбокс … По задумке он должен находиться прямо в верхнем меню то есть верхнем меню выпадает
 список страниц и в этом же меню в верхней его части есть вот этот вот чекбокс они же идут элементы которые можно сортировать».
