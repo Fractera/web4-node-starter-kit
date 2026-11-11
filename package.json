@@ -45,6 +45,7 @@
     "check:shadcn-rules": "node scripts/check-shadcn-rules.mjs",
     "check:shadcn-parts": "node scripts/check-shadcn-parts.mjs",
     "test:shadcn-parts": "node scripts/check-shadcn-parts.test.mjs",
+    "test:shadcn-skills-hook": "node scripts/shadcn-skills-hook.test.mjs",
     "check:dialogs": "node scripts/check-dialogs.mjs",
     "check:project-types": "node scripts/check-project-types.mjs",
     "check:api": "node scripts/check-api.mjs",

@@ -53,6 +53,15 @@
             "command": "node scripts/system-part.mjs guard"
           }
         ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/shadcn-skills.mjs"
+          }
+        ]
       }
     ]
   }

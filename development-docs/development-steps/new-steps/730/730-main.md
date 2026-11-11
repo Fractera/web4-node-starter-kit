@@ -121,3 +121,14 @@ Not in this step: a sweep of old code (the owner: no tokens on what is done — 
   word in a comment is not a button, the clean twin passes, a design mark legal only with the element's skill in its territory, `@no-js`
   only on the server, the debt frozen once and only shrinks, a touched debt file must leave clean, a new file with old markup fails.
   The negative control is the red test itself: the 13 earlier guards pass it.
+
+## 730-2 built (2026-11-11)
+
+- `.claude/hooks/shadcn-skills.mjs`, PreToolUse `Edit|Write|MultiEdit` in `.claude/settings.json`: an interface `.tsx` (components/, app/,
+  _tools/, sections/, _widgets/) is refused with exit 2 until this session's transcript shows `Skill use-primitives` and `Skill
+  use-shadcn` (only those present in the project); free: `components/ui/`, `components/ai-elements/`, the design territory (sections of
+  an element, prototypes, widgets — the core has none). Unreadable input or no transcript — pass (the build guard stands behind).
+- `npm run test:shadcn-skills-hook`: 9 cases green. Live, on real transcripts: the previous conversation 57daaf7f (no skill loads) →
+  exit 2 with the reason; this conversation c38db5fc (both loaded) → exit 0.
+- Found for 730-4: the element templates carry no `.claude/settings.json` of their own (the core installs an element's session
+  settings), and no `use-primitives` — only `build-skills/skills/use-shadcn` and `use-typography`.
