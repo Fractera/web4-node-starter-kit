@@ -23,7 +23,10 @@
     "specimenFieldCaption": "Single-line field — microphone built into the field",
     "specimenAreaCaption": "Text area — microphone underneath, full width",
     "specimenI18nTitle": "These words come from one file, in two languages",
-    "specimenI18nNote": "Everything you read inside these two elements lives in lib/i18n/voice-field.i18n.json. Two commands take it to an external model and bring the answer back — the same pair works for any dictionary in DICTS."
+    "specimenI18nNote": "Everything you read inside these two elements lives in lib/i18n/voice-field.i18n.json. Two commands take it to an external model and bring the answer back — the same pair works for any dictionary in DICTS.",
+    "noFunds": "OpenAI did not transcribe: the OpenAI account has no money left — top it up at platform.openai.com/settings/organization/billing.",
+    "rateLimit": "OpenAI did not transcribe: the key hit its request limit. Wait a minute and try again; if it repeats, check the limits of the key's project at platform.openai.com.",
+    "badKey": "OpenAI did not accept the key — check it in the workspace settings."
   },
   "ru": {
     "hold": "Удерживайте для речи",
@@ -49,6 +52,9 @@
     "specimenFieldCaption": "Однострочное поле — микрофон встроен в поле",
     "specimenAreaCaption": "Область текста — микрофон снизу, во всю ширину",
     "specimenI18nTitle": "Эти слова берутся из одного файла, на двух языках",
-    "specimenI18nNote": "Всё, что вы читаете внутри этих двух элементов, лежит в lib/i18n/voice-field.i18n.json. Две команды отдают его внешней модели и вносят ответ обратно — та же пара работает для любого словаря из DICTS."
+    "specimenI18nNote": "Всё, что вы читаете внутри этих двух элементов, лежит в lib/i18n/voice-field.i18n.json. Две команды отдают его внешней модели и вносят ответ обратно — та же пара работает для любого словаря из DICTS.",
+    "noFunds": "OpenAI не расшифровал: на счёте OpenAI кончились деньги — пополните его на platform.openai.com/settings/organization/billing.",
+    "rateLimit": "OpenAI не расшифровал: ключ упёрся в лимит запросов. Подождите минуту и попробуйте снова; если повторится — проверьте лимиты проекта ключа на platform.openai.com.",
+    "badKey": "OpenAI не принял ключ — проверьте его в настройках рабочего пространства."
   }
 }

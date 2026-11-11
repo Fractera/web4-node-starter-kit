@@ -170,7 +170,7 @@ export function useVoiceRecorder({
         const url = apiUrl ?? `${location.pathname.replace(/\/+$/, "")}/api/transcribe`;
         const r = await fetch(url, { method: "POST", body: fd, credentials: "include" });
         const d = (await r.json()) as { text?: string; reason?: string };
-        if (!r.ok) { setNote(d.reason === "no-key" ? L.noKey : L.failed); return; }
+        if (!r.ok) { setNote(({ "no-key": L.noKey, "no-funds": L.noFunds, "rate-limit": L.rateLimit, "bad-key": L.badKey } as Record<string, string>)[d.reason ?? ""] ?? L.failed); return; }
         if (!d.text) { setNote(L.nothing); return; }
         setNote("");
         setDraft(d.text);

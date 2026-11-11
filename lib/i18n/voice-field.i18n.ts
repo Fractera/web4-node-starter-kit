@@ -53,6 +53,10 @@ export type VoiceStrings = {
   nothing: string
   /** Отказ: не подключён ключ OpenAI. */
   noKey: string
+  /** Отказы OpenAI по их коду (шаг 730): нет денег на счёте, лимит частоты, ключ не принят. */
+  noFunds: string
+  rateLimit: string
+  badKey: string
   draftTitle: string
   accept: string
   discard: string
