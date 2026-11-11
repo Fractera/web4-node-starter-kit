@@ -19,11 +19,13 @@ export type MenuSearchWords = {
   whyArea: string
   whyName: string
   whyDescription: string
+  byModel: string
+  byVectors: string
 }
 
 const DICT: Record<"en" | "ru", MenuSearchWords> = {
-  en: { open: "Search elements", placeholder: "Element name", find: "Find", ai: "AI", found: "Found: {n}", none: "No element with this name", clear: "Clear", failed: "The search did not answer — try again", aiTitle: "Find by meaning", aiLead: "Tell me which component you are looking for", aiPlaceholder: "For example: do we have something that helps to make clips?", aiFind: "Search", aiNone: "Nothing in this node is close by meaning", aiNoVectors: "The search by meaning is not available now — the node's vectors do not answer", whySkill: "does it now", whyArea: "it is its field", whyName: "the name matches", whyDescription: "close by its description" },
-  ru: { open: "Поиск элементов", placeholder: "Название элемента", find: "Найти", ai: "ИИ", found: "Найдено: {n}", none: "Элемента с таким названием нет", clear: "Очистить", failed: "Поиск не ответил — попробуйте ещё раз", aiTitle: "Поиск по смыслу", aiLead: "Расскажите, какой компонент вы ищете", aiPlaceholder: "Например: есть у нас что-то, что помогает создавать клипы?", aiFind: "Искать", aiNone: "Ничего похожего по смыслу в узле нет", aiNoVectors: "Поиск по смыслу сейчас недоступен — векторы узла не отвечают", whySkill: "умеет это сейчас", whyArea: "это его область", whyName: "совпало название", whyDescription: "похоже по описанию" },
+  en: { open: "Search elements", placeholder: "Element name", find: "Find", ai: "AI", found: "Found: {n}", none: "No element with this name", clear: "Clear", failed: "The search did not answer — try again", aiTitle: "Find by meaning", aiLead: "Tell me which component you are looking for", aiPlaceholder: "For example: do we have something that helps to make clips?", aiFind: "Search", aiNone: "Nothing in this node is close by meaning", aiNoVectors: "The search by meaning is not available now — the node's vectors do not answer", whySkill: "does it now", whyArea: "it is its field", whyName: "the name matches", whyDescription: "close by its description", byModel: "Chosen by the OpenAI model", byVectors: "Found by the node's vectors — the model did not answer" },
+  ru: { open: "Поиск элементов", placeholder: "Название элемента", find: "Найти", ai: "ИИ", found: "Найдено: {n}", none: "Элемента с таким названием нет", clear: "Очистить", failed: "Поиск не ответил — попробуйте ещё раз", aiTitle: "Поиск по смыслу", aiLead: "Расскажите, какой компонент вы ищете", aiPlaceholder: "Например: есть у нас что-то, что помогает создавать клипы?", aiFind: "Искать", aiNone: "Ничего похожего по смыслу в узле нет", aiNoVectors: "Поиск по смыслу сейчас недоступен — векторы узла не отвечают", whySkill: "умеет это сейчас", whyArea: "это его область", whyName: "совпало название", whyDescription: "похоже по описанию", byModel: "Подобрала модель OpenAI", byVectors: "Подобрано векторами узла — модель не ответила" },
 }
 
 export function menuSearchWords(lang: string): MenuSearchWords {

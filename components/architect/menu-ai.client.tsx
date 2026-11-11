@@ -14,7 +14,7 @@ import type { MenuSearchWords } from "@/components/architect/menu-search.i18n"
 // модель в этом окне показывает результаты какие совпадают может быть дают комментарии может быть оставляют просто кнопки».
 // Нажатие спрашивает узел, есть ли ключ (GET `/api/architect/menu/ai`): нет — переход на страницу ключа OpenAI; есть — одно окно проекта
 // (`AppDialog`) с полем, голосовым вводом ядра (`_tools/voice-input`, расшифровка ключом узла) и кнопками найденных элементов: имя,
-// состояние, почему подошёл. Поиск по смыслу — свои векторы узла, без модели; модель OpenAI работает только на расшифровке голоса.
+// состояние, почему подошёл. Подбирает модель OpenAI, когда она отвечает; не ответила — векторы узла (закон двери, строка «кто подобрал»).
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 type Row = { id: string; label: string; href: string; state: { kind: MenuStateKind; label: string }; why: string; said: string }
@@ -25,6 +25,7 @@ export function MenuAi({ lang, words, dialogUi }: { lang: string; words: MenuSea
   const [rows, setRows] = useState<Row[] | null>(null)
   const [busy, setBusy] = useState(false)
   const [note, setNote] = useState<string | null>(null)
+  const [by, setBy] = useState<"model" | "vectors" | null>(null)
   const field = useRef<HTMLTextAreaElement>(null)
 
   async function start() {
@@ -40,9 +41,10 @@ export function MenuAi({ lang, words, dialogUi }: { lang: string; words: MenuSea
     setNote(null)
     try {
       const r = await fetch(`${BASE}/api/architect/menu/ai`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: t, lang }) })
-      const j = (await r.json()) as { ok?: boolean; rows?: Row[]; reason?: string }
+      const j = (await r.json()) as { ok?: boolean; rows?: Row[]; reason?: string; by?: "model" | "vectors" }
       if (!r.ok || !j.ok || !Array.isArray(j.rows)) { setRows(null); setNote(j?.reason === "no-vectors" ? words.aiNoVectors : words.failed); return }
       setRows(j.rows)
+      setBy(j.by ?? null)
       if (!j.rows.length) setNote(words.aiNone)
     } catch {
       setNote(words.failed)
@@ -63,6 +65,7 @@ export function MenuAi({ lang, words, dialogUi }: { lang: string; words: MenuSea
           <Button type="submit" disabled={busy || !text.trim()} className="self-end">{words.aiFind}</Button>
         </form>
         {note && <p className="mt-3 text-sm text-muted-foreground" role="status">{note}</p>}
+        {rows && by && <p className="mt-3 text-xs text-muted-foreground" data-menu-ai-by={by}>{by === "model" ? words.byModel : words.byVectors}</p>}
         {rows && rows.length > 0 && (
           <ul data-block="menu-ai-result" className="mt-3 flex flex-col gap-2">
             {rows.map((r) => (

@@ -110,3 +110,16 @@ brought into the core. Nothing checked for voice search by meaning — built fro
 - Measured on the owner's node with his own words «есть у нас что-то что помогает создавать клипы»: «Клип» first (0.59), storage 0.38,
   root 0.26 — 1.2 s, no OpenAI key used.
 - Proof 1: tsc clean, the prebuild chain green. Proof 2 after the node update: the dialog by eyes, the door with and without a key.
+
+## 722-4 changed by the owner's word (2026-11-11)
+
+> Твой подход с исключением OpenAI является слишком узким. Во всех случаях когда модель доступна и возвращает ответ вместо ошибки нужно
+> использовать OpenAI в противном случае возвращайся к использованию вектора
+
+- The door now: `find --json --shortlist 30` (the node's vectors give the 30 nearest — a thousand descriptions are never sent) → with a
+  key the OpenAI model (`textModelId()` — `lib/openai-text-model.ts`, the setting `OPENAI_TEXT_MODEL`, the old default named once; AI SDK
+  `generateText` + `Output.object`) picks up to five and comments each in the person's language; ids outside the list are dropped by the
+  core → on no key, an error or an empty answer the vectors' own matches with their reason. The answer says who picked (`by`), the dialog
+  shows it. Price: one text call per search, about 2–4 thousand input tokens.
+- Proof 1: tsc clean, the prebuild chain green. Proof 2 after the node update: the door answers `by: model` with the key, `by: vectors`
+  with the model unreachable.

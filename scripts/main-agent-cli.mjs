@@ -300,16 +300,22 @@ if (cmd === 'look') {
 if (cmd === 'find') {
   // 722-4: `--json` — тот же поиск по смыслу для двери кнопки «ИИ» меню архитектора (`/api/architect/menu/ai`): одна строка JSON
   // `{ hits: [{ id, score, kind, text, on }] }` (лучшие от FIND_MIN, до пяти) или `{ hits: null }`, когда поиск по смыслу недоступен.
+  // `--shortlist N` (владелец 2026-11-11: «во всех случаях когда модель доступна и возвращает ответ вместо ошибки нужно использовать
+  // OpenAI в противном случае возвращайся к использованию вектора»): ещё и N ближайших БЕЗ порога, с именем и описанием — их выбирает
+  // и комментирует модель; векторов нет — первые N описаний узла как есть (`shortlist` всегда есть, `hits` — только с векторами).
   const json = rest.includes('--json')
-  const words = rest.filter((w) => w !== '--json').join(' ').trim()
+  const si = rest.indexOf('--shortlist')
+  const shortN = si >= 0 ? Math.min(60, Math.max(0, Number(rest[si + 1]) || 0)) : 0
+  const words = rest.filter((w, i) => w !== '--json' && i !== si && i !== si + 1).join(' ').trim()
   if (!words) fail('find <plain words of the job>')
   if (json) {
     const all = selfAll()
     const hits = await self.findByMeaning(words, all, { k: 5 })
-    const out = hits
-      ? hits.filter((h) => h.score >= FIND_MIN).slice(0, 5).map((h) => ({ id: h.id, score: Math.round(h.score * 1000) / 1000, kind: h.best?.kind ?? 'whole', text: String(h.best?.text ?? '').replace(/\s+/g, ' ').trim().slice(0, 140), on: all.find((y) => y.id === h.id)?.on !== false }))
-      : null
-    console.log(JSON.stringify({ hits: out }))
+    const pick = (h) => ({ id: h.id, score: Math.round(h.score * 1000) / 1000, kind: h.best?.kind ?? 'whole', text: String(h.best?.text ?? '').replace(/\s+/g, ' ').trim().slice(0, 140), on: all.find((y) => y.id === h.id)?.on !== false })
+    const out = hits ? hits.filter((h) => h.score >= FIND_MIN).slice(0, 5).map(pick) : null
+    const describe = (x) => ({ id: x.id, name: x.name ?? x.id, short: String(x.short || x.role || '').replace(/\s+/g, ' ').trim().slice(0, 240), on: x.on !== false })
+    const shortlist = shortN ? (hits ? hits.slice(0, shortN).map((h) => ({ ...describe(all.find((y) => y.id === h.id) ?? { id: h.id }), score: pick(h).score })) : all.slice(0, shortN).map(describe)) : []
+    console.log(JSON.stringify({ hits: out, shortlist }))
     process.exit(0)
   }
   // 603-2: по смыслу, на любом языке — самоописания элементов в элементе vectors (векторы — ключом OpenAI ядра). ✗ 2026-10-26: поиск по
