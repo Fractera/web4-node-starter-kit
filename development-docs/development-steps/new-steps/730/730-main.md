@@ -152,3 +152,18 @@ Not in this step: a sweep of old code (the owner: no tokens on what is done — 
   (`build-skills:use-shadcn`); an element without `use-primitives` is asked only for `use-shadcn`.
 - `test:shadcn-skills-hook` 12 green (3 element cases); `check:boundary-hook` 29 samples ok. Live (an element's settings carry it) —
   after the node update.
+
+## 730-4 B released (2026-11-11)
+
+- Templates: `fractera-custom-item-starter` v0.3.188 (`0897b2a`), `fractera-native-item-starter` v0.1.61 (`40cf255`),
+  `fractera-root-starter` v3.0.47 (`060f4ed`) — each: `check:shadcn-parts` in prebuild + `test:shadcn-parts` (23 green) + its own frozen
+  debt (custom 22 findings / 14 files, native 19 / 13, root 22 / 14), the `@design` mark rule in `.claude/modes/build-design.md`,
+  `use-shadcn` §0, the instruction §7 regenerated and sealed. Guards: custom and native `template release --dry` — every guard green;
+  root — its whole prebuild exit 0, nothing changed by it.
+- Pushed with the workshop's GitHub login (gh, account Fractera, `repo`): the core's `template release` reads a node token
+  (`data/node/github/.env`) that the author's workshop does not have — the tag and push done by hand after the green dry run.
+- Pins in the core: custom `5da34824`, native `8b2325b5`. root is pinned per node as an element (step C, after the owner's Accept of
+  «Клип»).
+- Found on the way and fixed: the element instruction named `use-own-stores` for native too (a 717 line the native template had not
+  been regenerated with) — its release guard `check-skill-process` refused it; the line is now split by variant. The generator learned
+  `ROOT_TEMPLATE_DIR` (root's clone beside the core in the author's workshop).
