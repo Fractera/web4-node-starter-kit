@@ -5,6 +5,13 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-88 (2026-11-11, ~19:30 WET) — the owner at maximum effort: «Очень чётко внимательно зафиксируй все эти проблемы … исследовал эту
+проблему описал создал шаги разработки а потом возвращайся к закрытию основного шага». The register of the day —
+`development-docs/reports/errors-2026-11-11-ready-parts-ignored-surfaces-unseen-money-unseen.md` (16 problems, 5 root causes); plans
+724 (soul + laws of looking), 725 (ready parts always found: parts map, `parts_find`, the gate), 726 (the money: ledger, «Все подписки»,
+balances, the answer, recommended services) — all waiting for his yes. NEXT: 722-8 (the AI window rebuilt from ready parts with
+`interface-design`, seen in every mode), close 722, then 724 → 725 → 726 in that order. 723 kept as is (the owner chose C).**
+
 **NOW-87 (2026-11-11, ~14:50 WET) — 720 BUILT in the workshop (plan + summary `new-steps/720/720-main.md`): the core refused to a
 non-owner on a node, the owner known by a GitHub key that may push to Fractera's repository (`npm run owner`), the person's records kept
 over a node update (`lib/deploy/node-records.cjs`), CLAUDE.md §6 sealed `2ef94c0dca4e`. NEXT: push, CI, fork sync (Chrome), node update
