@@ -5,6 +5,11 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-93 (2026-11-12) — 726-0 CODE COMMITTED `afd749f0` (one reader `lib/openai-error.cjs`, 20 callers, guard
+`check:openai-calls`, test `test:openai-errors` 26 green + 2 negative controls; full prebuild chain exit 0). NEXT: push → fork sync →
+node update → live proof on the node (`/api/transcribe` with the node's key whose account has no credits → `no-funds` + words + billing
+link; the translate door the same) → summary `completed-steps/726-0.md` → 726-1 the ledger.**
+
 **NOW-92 (2026-11-12 night) — 730 CLOSED (`completed-steps/730-main.md`, live on the node `d4eba500`). 726 STARTED as an autonomous
 night run (the owner: «go to fifnish non stop»): order 726-0 → 726-1 → 726-3 → 726-4 → 726-5 → 726-2 → 726-6 (mechanism only); the
 node's letter holds the details.**

@@ -88,4 +88,11 @@ forecast already count them).
 
 ## 9. The owner's approval
 
-(waiting)
+2026-11-12 night, after «Начинаем 726 с подшага 726-0?»: «go to fifnish non stop , night is started now , i agein go back to sleep» —
+an autonomous run; my decisions: order 726-0 → 726-1 → 726-3 → 726-4 → 726-5 → 726-2 → 726-6 (the mechanism only).
+
+## 10. Progress
+
+- 726-0 code `afd749f0`: the reader's list from OpenAI's guide (read 2026-11-12); codes the guide does not name are read by status
+  only. The kit carries a byte-identical copy (it lives without the core). Words chosen on the server (`check:lang-delivery` caught
+  my first try that imported the dictionary into clients). Live proof on the node — pending.
