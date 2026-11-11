@@ -106,3 +106,6 @@ an autonomous run; my decisions: order 726-0 → 726-1 → 726-3 → 726-4 → 7
 - 726-4 CLOSED `84314196`: OpenAI tells no balance (costs only with an Admin key), Exa tells it with a service key; burn in calls
   against a daily budget; live on `3a90405b`. 726-5 CLOSED `3661bc27`: skill `money-and-resources`, red line at the session start, the
   offer in `where`. Summaries 726-4.md, 726-5.md.
+- 726-2 STOPPED before code (measured: 15 templates × 5 direct callers, drifted tool copies, no sync; the owner's 717 order says
+  custom first, existing elements later) — the pilot proposal is in 726-2.md. 726-6: the FTC rule read at its source (16 CFR 255.5);
+  no code until the owner's three decisions — 726-6.md.
