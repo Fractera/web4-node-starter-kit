@@ -103,3 +103,6 @@ an autonomous run; my decisions: order 726-0 → 726-1 → 726-3 → 726-4 → 7
   `7b4cc6e7` (`npm run money` names both doors with `no-funds (credit_balance_exhausted)`), summary `completed-steps/726-1.md`.
 - 726-3 CLOSED: the page `2bcbb2f1` + the eye's fix `bdfe9f1b`, live on `60d513e2` (openai with its refusal; exa — one row, two
   elements), summary `completed-steps/726-3.md`.
+- 726-4 CLOSED `84314196`: OpenAI tells no balance (costs only with an Admin key), Exa tells it with a service key; burn in calls
+  against a daily budget; live on `3a90405b`. 726-5 CLOSED `3661bc27`: skill `money-and-resources`, red line at the session start, the
+  offer in `where`. Summaries 726-4.md, 726-5.md.
