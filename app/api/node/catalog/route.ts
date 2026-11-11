@@ -18,7 +18,9 @@ export async function GET(req: NextRequest) {
   if (denied) return denied
   const lang = req.nextUrl.searchParams.get("lang") === "ru" ? "ru" : "en"
   // 632-1: шапка ядра показывает и выключенные элементы (Stripe) — с причиной и ссылкой в их раздел.
-  return NextResponse.json({ ok: true, entries: await catalogEntries(lang, { all: true }) }, { headers: { "Cache-Control": "no-store" } })
+  // 722-2: `?native=1` — только нативные (шапка архитектора; кастомные она берёт порцией из двери меню).
+  const nativeOnly = req.nextUrl.searchParams.get("native") === "1"
+  return NextResponse.json({ ok: true, entries: await catalogEntries(lang, { all: true, nativeOnly }) }, { headers: { "Cache-Control": "no-store" } })
 }
 
 export async function POST(req: NextRequest) {

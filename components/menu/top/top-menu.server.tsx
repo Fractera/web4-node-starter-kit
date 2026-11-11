@@ -4,6 +4,7 @@ import { topMenuUi } from "@/components/menu/top/top-menu.i18n";
 import { ProjectHeader } from "@/components/shell/project-header";
 import { AllProjects } from "@/components/architect/all-projects.client";
 import { coreShellData } from "@/lib/shell/core-shell-data";
+import { menuSearchWords } from "@/components/architect/menu-search.i18n";
 
 // ШАПКА СТРАНИЦ АРХИТЕКТОРА — СВОЯ (узел, шаг 553). Вид — `components/shell/` (копия сайта байт в байт, `npm run shell-kit:add`,
 // сторож `check:shell-kits`); данные — `lib/shell/core-shell-data.ts`: имя и логотип ядра, «Все проекты» (островок после логотипа),
@@ -20,7 +21,7 @@ export function TopMenu({ lang }: { lang: string }) {
       data={data}
       // 356-1: только ядро знает, что ждёт архитектора, — открытые терминалы и готовые предпросмотры.
       surface={{ attentionUrl: `/api/node/attention?lang=${lang}`, attentionWords: ui.attention }}
-      navSlot={<AllProjects lang={lang} nativeLabel={ui.nativeElements} customLabel={ui.customElements} menuLabel={ui.menu} />}
+      navSlot={<AllProjects lang={lang} nativeLabel={ui.nativeElements} customLabel={ui.customElements} menuLabel={ui.menu} allProjectsLabel={ui.allProjects} searchWords={menuSearchWords(lang)} />}
       leftSlot={leftHas ? <DrawerToggle side="left" labels={{ open: ui.openLeft, close: ui.closeLeft }} /> : undefined}
       rightSlot={rightHas ? <DrawerToggle side="right" labels={{ open: ui.openRight, close: ui.closeRight }} /> : undefined}
     />

@@ -304,7 +304,9 @@ async function catalogEntry(id: string, entry: RegistryEntry, custom: boolean, l
 
 /** Карточки «Все проекты» на одном языке: root, затем кастомные (новые сверху), затем нативные в порядке реестра.
  *  `all` — каталог шапки ядра (632-1): и выключенные, и молчащие элементы; без него — только ответившие (каталог для CONFIG). */
-export async function catalogEntries(lang: "en" | "ru", { all = false }: { all?: boolean } = {}): Promise<CatalogEntry[]> {
+// 722-2: `nativeOnly` — только нативные: вкладка «Кастомные элементы» шапки берёт порцию из быстрой двери меню
+// (`/api/architect/menu/elements`), а не опрос главной каждого кастомного элемента — на тысяче элементов это тысяча запросов на показ.
+export async function catalogEntries(lang: "en" | "ru", { all = false, nativeOnly = false }: { all?: boolean; nativeOnly?: boolean } = {}): Promise<CatalogEntry[]> {
   const d = nodeDomain()
   const drafts = listDrafts()
   const customIds = new Set(drafts.map((x) => x.id))
@@ -313,8 +315,8 @@ export async function catalogEntries(lang: "en" | "ru", { all = false }: { all?:
   const root = byId.get("root")
   const jobs = [
     // 586: root — кастомный (слово владельца 2026-10-24), первым, как и прежде.
-    ...(root ? [catalogEntry("root", root, true, lang, d, all)] : []),
-    ...drafts.filter((x) => x.id !== "root" && byId.has(x.id)).map((x) => catalogEntry(x.id, byId.get(x.id) as RegistryEntry, true, lang, d, all)),
+    ...(root && !nativeOnly ? [catalogEntry("root", root, true, lang, d, all)] : []),
+    ...(nativeOnly ? [] : drafts.filter((x) => x.id !== "root" && byId.has(x.id)).map((x) => catalogEntry(x.id, byId.get(x.id) as RegistryEntry, true, lang, d, all))),
     ...services.filter((s) => s.id !== "root" && !customIds.has(s.id)).map((s) => catalogEntry(s.id, s, false, lang, d, all)),
   ]
   const entries = await Promise.all(jobs)

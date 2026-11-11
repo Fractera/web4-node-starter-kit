@@ -17,6 +17,8 @@ import { MAIN_AGENT } from './main-agent-scheme'
 import { menuStates, stateWord } from '@/lib/web4-items/menu-page'
 import { MenuMore } from '../_components/menu-more.client'
 import { OnlyActive } from '../_components/only-active'
+import { MenuSearch } from '@/components/architect/menu-search.client'
+import { menuSearchWords } from '@/components/architect/menu-search.i18n'
 
 // ЧЕРНОВИКИ И КНОПКА «СОЗДАТЬ МИКРОСЕРВИС» В ЛЕВОМ МЕНЮ (314-1). Слово владельца: «в левом меню после кнопки дизайн
 // добавляем кнопку создать микро service». Меню слоя собирается из папок при сборке; черновики — данные узла, поэтому их
@@ -150,7 +152,9 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
     : []
   // 722-2: флажок архитектора «только работающие» — первой строкой зоны; прячет строки чистым CSS, работает без JavaScript.
   const onlyActive: WorkspaceItem = { label: ui.onlyActive, node: <OnlyActive label={ui.onlyActive} /> }
-  const customZone = [onlyActive, ...rootTree, button, ...customs, ...more]
+  // 722-3: поиск «Найти» по названию — над флажком; без JavaScript его нет.
+  const search: WorkspaceItem = { label: menuSearchWords(lang).open, node: <MenuSearch lang={lang} words={menuSearchWords(lang)} /> }
+  const customZone = [search, onlyActive, ...rootTree, button, ...customs, ...more]
   const withCustom = [...menu.slice(0, cut), ...natives, zone(ui.zoneCustom, 'custom', holds(customZone, page)), ...inZone(customZone, 'custom'), ...menu.slice(cut)]
   // Нет пункта «Главный агент» (`build`) — первой зоны нет: подпись над пустотой хуже её отсутствия.
   const c = withCustom.findIndex((m) => m.href === at(`${ARCHITECT_HOME}/${CORE}`))
@@ -230,5 +234,5 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   const separator: WorkspaceItem = { label: '', node: <div data-block="mmsep" aria-hidden className="mt-2 border-t border-border" /> }
   // То, что стоит в меню после последнего встроенного элемента и не является элементом, остаётся (сегодня там пусто).
   const tail = menu.slice(cut).filter((m) => !(m.href && builtIn.has(m.href)))
-  return [...head, ...(named.length > 0 ? [separator, onlyActive, ...named, ...more] : []), ...tail]
+  return [...head, ...(named.length > 0 ? [separator, search, onlyActive, ...named, ...more] : []), ...tail]
 }

@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react"
 import { DesktopNav, MobileMenu } from "@/components/shell/shell-menu.client"
 import type { ShellGroup } from "@/components/shell/shell-types"
+import { MenuSearch } from "@/components/architect/menu-search.client"
+import type { MenuSearchWords } from "@/components/architect/menu-search.i18n"
 
 // ВКЛАДКИ «НАТИВНЫЕ ЭЛЕМЕНТЫ» И «КАСТОМНЫЕ ЭЛЕМЕНТЫ» В ШАПКЕ СТРАНИЦ АРХИТЕКТОРА (узел, шаги 553 и 600-3).
 // Слово владельца 2026-10-26: вкладка «Все проекты» называется неверно; правильно — «Нативные элементы», и в ней все нативные;
@@ -11,6 +13,10 @@ import type { ShellGroup } from "@/components/shell/shell-types"
 // решает, в какой вкладке элемент.
 // 🔒 СОСТАВ УЗЛА НЕ ЗАПЕКАЕТСЯ В СБОРКУ ЯДРА (закон 264 «число о машине — спрашивать в браузере»): новый элемент появляется в
 // списке без пересборки ядра — при открытии страницы и по событию `node:menu-changed` (678-3). Пока ответа нет или элементов нет — вкладок нет.
+// 722-2 (владелец 2026-11-11: «1000 элементов … подгружает по 12»): нативные — из каталога (`?native=1`, их немного); кастомные — первые
+// 12 из быстрой двери меню (`/api/architect/menu/elements`, без опроса главных) и карточка «Все проекты (N)», когда их больше.
+// 🛑 Порции внутри самой выпадашки потребовали бы правки мега-меню оболочки (`components/shell/`, копия сайта байт в байт) — это
+// выпуск оболочки сайта и ядра вместе, не этот шаг.
 
 type Entry = { id: string; title: string; description: string; href: string | null; local: string | null; kind?: "custom" | "native"; mark?: string }
 
@@ -29,7 +35,9 @@ function groupOf(slug: string, label: string, list: Entry[]): ShellGroup | null 
   }
 }
 
-export function AllProjects({ lang, nativeLabel, customLabel, menuLabel }: { lang: string; nativeLabel: string; customLabel: string; menuLabel: string }) {
+type Portion = { rows: { id: string; label: string; href: string; description?: string }[]; total: number }
+
+export function AllProjects({ lang, nativeLabel, customLabel, menuLabel, allProjectsLabel, searchWords }: { lang: string; nativeLabel: string; customLabel: string; menuLabel: string; allProjectsLabel: string; searchWords: MenuSearchWords }) {
   const [entries, setEntries] = useState<Entry[] | null>(null)
   // 678-3: островок `MenuLive` увидел новый элемент или новое имя — каталог спрашивается заново, без перезагрузки страницы.
   const [round, setRound] = useState(0)
@@ -41,12 +49,21 @@ export function AllProjects({ lang, nativeLabel, customLabel, menuLabel }: { lan
 
   useEffect(() => {
     let alive = true
-    fetch(`/api/node/catalog?lang=${lang === "ru" ? "ru" : "en"}`, { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((b: { entries?: Entry[] } | null) => { if (alive) setEntries(Array.isArray(b?.entries) ? b.entries : []) })
-      .catch(() => { if (alive) setEntries([]) })
+    const l = lang === "ru" ? "ru" : "en"
+    const json = (u: string) => fetch(u, { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null)
+    Promise.all([
+      json(`/api/node/catalog?lang=${l}&native=1`),
+      json(`/api/architect/menu/elements?lang=${encodeURIComponent(lang)}&from=0&limit=12&description=1&root=1`),
+    ]).then(([cat, menu]: [{ entries?: Entry[] } | null, (Portion & { ok?: boolean }) | null]) => {
+      if (!alive) return
+      const natives = (Array.isArray(cat?.entries) ? cat.entries : []).filter((e) => e.kind !== "custom")
+      const portion = menu?.ok && Array.isArray(menu.rows) ? menu : { rows: [], total: 0 }
+      const customs: Entry[] = portion.rows.map((r) => ({ id: r.id, title: r.label, description: r.description ?? "", href: r.href, local: null, kind: "custom" }))
+      if (portion.total > portion.rows.length) customs.push({ id: "all-projects", title: allProjectsLabel.replace("{n}", String(portion.total)), description: "", href: `/${lang}/architect/dashboard/projects`, local: null, kind: "custom" })
+      setEntries([...natives, ...customs])
+    })
     return () => { alive = false }
-  }, [lang, round])
+  }, [lang, round, allProjectsLabel])
 
   if (!entries || entries.length === 0) return null
   // Нативные первыми — как в каталоге и в левом меню; всё, что не помечено кастомным, относится к нативным.
@@ -59,6 +76,8 @@ export function AllProjects({ lang, nativeLabel, customLabel, menuLabel }: { lan
     <>
       <DesktopNav lang={lang} groups={groups} meUrl="/api/me" />
       <MobileMenu lang={lang} groups={groups} label={menuLabel} meUrl="/api/me" />
+      {/* 722-3: поиск элементов в шапке — лупа открывает панель «Найти» (широкая и мобильная). */}
+      <MenuSearch lang={lang} words={searchWords} variant="header" />
     </>
   )
 }

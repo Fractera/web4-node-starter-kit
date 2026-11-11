@@ -5,7 +5,7 @@ import { menuPortion } from "@/lib/web4-items/menu-page"
 import { readMenuMode } from "@/lib/node-menu-mode"
 
 // 722-2 (владелец 2026-11-11: «ленивые загрузка то есть ты подгружает по 12 элементов предварительно отрисовывает сначала скелетрон, а
-// затем запрашиваем очередные 12 элементов»). GET `?lang=ru&from=12&limit=12&active=1&q=…` → `{ rows, total, next }`. Только архитектор:
+// затем запрашиваем очередные 12 элементов»). GET `?lang=ru&from=12&limit=12&active=1&q=…&description=1&root=1` → `{ rows, total, next }`. Только архитектор:
 // это свежие данные узла — обычному посетителю меню отдаёт статическая сборка (722-5). Чтение двух файлов и имён порции, ни процесса, ни модели.
 const ROLES = ["architect", "admin"] as const
 const NO_STORE = { "Cache-Control": "no-store" }
@@ -22,6 +22,8 @@ export async function GET(req: NextRequest) {
     q: (p.get("q") ?? "").slice(0, 80),
     active: p.get("active") === "1",
     compact: readMenuMode() === "compact",
+    description: p.get("description") === "1",
+    withRoot: p.get("root") === "1",
   })
   return NextResponse.json({ ok: true, ...page }, { headers: NO_STORE })
 }

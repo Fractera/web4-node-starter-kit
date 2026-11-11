@@ -84,3 +84,15 @@ brought into the core. Nothing checked for voice search by meaning — built fro
 - ✗ on the way: `check:sections` read the state union inside `lib/content/sections/types.ts` as section kinds — the type moved to
   `menu-state-dot.tsx`; `check:api` wanted a door name of 6–12 words.
 - Proof 1: tsc clean, the prebuild chain green. Proof 2 (after the node update): eyes with JavaScript on and off on the owner's node.
+
+## 722-2 (the top menu) and 722-3 built in the working copy (2026-11-11)
+
+- ✗ Found: every architect page asked `/api/node/catalog`, which probes the home page of EVERY running element over HTTP (3–10 s
+  timeouts) — a thousand requests per page view at a thousand elements. Now the header takes natives from the catalog (`?native=1`,
+  `catalogEntries({ nativeOnly })`) and the custom tab from the fast door: the first 12 with their passport description
+  (`?description=1&root=1`) and a card «Все проекты (N)». Portions inside the dropdown itself would need the shell kit's mega-menu
+  (`components/shell/`, a byte copy of the site) — a release of the site's shell together with the core, not this step.
+- 722-3 «Найти»: `components/architect/menu-search.client.tsx` — one field and the button «Найти» (the slot for «ИИ» is 722-4); in the
+  left menu above «Только работающие», in the header a magnifier that opens the same panel; results with the state dot and `data-state`;
+  without JavaScript the field is not drawn. Words `menu-search.i18n.ts`. The static search for visitors goes with 722-5.
+- Proof 1: tsc clean, the prebuild chain green, `test:menu-state` (the name search over 1000 and its negative control).
