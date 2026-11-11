@@ -5,6 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-91 (2026-11-11, ~20:25 WET) — 729 CLOSED (summary `completed-steps/729-main.md`): the header search inline — the field left of
+the magnifier, the AI icon right, no panel; proven on the node (core `e5e8b5ff`) at 1440 and 390, light and dark, JS off. NEXT after the
+owner's yes: 725 → 727 design → 724 → 726; 723 later; findings — eyes --dark, native descriptions in English.**
+
 **NOW-90 (2026-11-11, ~20:00 WET) — 728 PROVEN LIVE (PROOF 3, `9838b7b8`: my own reset woke me by the letter in the new
 conversation). 722 CLOSED for the core (summary `completed-steps/722-main.md`, variant A, the owner «ok»): state dots, pages of 12,
 «Найти», «ИИ» proven on the node in light and dark; the header inside the elements → 727, the visitors' static menu → 723. Owner:
