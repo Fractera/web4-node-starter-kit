@@ -101,3 +101,5 @@ an autonomous run; my decisions: order 726-0 → 726-1 → 726-3 → 726-4 → 7
   decision in the autonomous run, reversible. Found on the way: a 21st caller through the AI SDK (`app/api/architect/menu/ai`) the
   first guard could not see (no literal host) — now the guard also looks for `@ai-sdk/openai`. CLOSED: live on the node
   `7b4cc6e7` (`npm run money` names both doors with `no-funds (credit_balance_exhausted)`), summary `completed-steps/726-1.md`.
+- 726-3 CLOSED: the page `2bcbb2f1` + the eye's fix `bdfe9f1b`, live on `60d513e2` (openai with its refusal; exa — one row, two
+  elements), summary `completed-steps/726-3.md`.
