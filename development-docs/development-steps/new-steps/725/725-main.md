@@ -12,6 +12,9 @@ Opened 2026-11-11 at maximum effort. The register — `development-docs/reports/
 
 > в таком виде наши архитектура не может существовать это как раз тот бардак который мы хотели избежать создавая структуру Fractera
 
+> мало иметь технологию для поиска инструмента гораздо важнее иметь технологию для того чтобы из того процесса в котором ты находишься в
+> процессе строительства понять что именно сейчас ты создаёшь инструмент этот инструмент который будет нужен тебе в будущем
+
 ## 1. Retelling and decisions
 
 The blocks era found ready parts by an ACTION (`npm run blocks -- find|add`, the Blocks showcase, skills `blocks-of-the-node`,
@@ -52,11 +55,13 @@ node's vectors; that «любой компонент» means every element too (
 
 Repository: the core's working copy, then the custom and native templates and root (725-5), each with CI.
 1. 725-1 the parts map — cards for composites and primitives, `PARTS.json`, its guard.
-2. 725-2 `parts_find` — the tool in every build session and `npm run parts`, words + meaning + the graph's «used by».
-3. 725-3 the gate — no new interface file before the parts were asked; `replaces` enforced in prebuild.
-4. 725-4 the craft in the flow — `interface-design` required for the panel's files; surfaces seen named in the summary.
-5. 725-5 the elements — the same map, tool and gate in the custom and native templates and root.
-6. 725-6 the sweep — the core's panel audited with `parts_find` for hand-built duplicates; a list for the owner.
+2. 725-7 a part recognized at its BIRTH — the declaration at a new file's first line (`@part` / `@local`), the second-copy detector
+   `check:parts-dup`, «Parts born here» in the plan and the summary (the owner: the birth matters more than the search).
+3. 725-2 `parts_find` — the tool in every build session and `npm run parts`, words + meaning + the graph's «used by».
+4. 725-3 the gate — no new interface file before the parts were asked; `replaces` enforced in prebuild.
+5. 725-4 the craft in the flow — `interface-design` required for the panel's files; surfaces seen named in the summary.
+6. 725-5 the elements — the same map, tool and gate in the custom and native templates and root.
+7. 725-6 the sweep — the core's panel audited with `parts_find` for hand-built duplicates; a list for the owner.
 
 ## 7. Not in this step
 
