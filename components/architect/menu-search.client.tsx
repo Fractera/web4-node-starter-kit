@@ -96,7 +96,9 @@ export function MenuSearch({ lang, words, dialogUi }: { lang: string; words: Men
                   onChange={(e) => { setQ(e.target.value); if (shown) results(null) }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !shown) { e.preventDefault(); e.stopPropagation(); void find() }
-                    if (e.key === "Escape" && !shown) { e.preventDefault(); close() }
+                    // 730-0: Esc has ONE owner — the field. ✗ Seen on the node: Radix closed the list first, React re-rendered before this
+                    // handler ran, `shown` was already false and the second branch closed the whole bar. First Esc — the list, second — the bar.
+                    if (e.key === "Escape") { e.preventDefault(); if (shown) results(null); else close() }
                   }}
                   placeholder={words.placeholder}
                   aria-label={words.placeholder}
@@ -115,7 +117,7 @@ export function MenuSearch({ lang, words, dialogUi }: { lang: string; words: Men
                 </InputGroupAddon>
               </InputGroup>
             </PopoverAnchor>
-            <PopoverContent ref={list} align="start" className="w-80 p-0" onOpenAutoFocus={(e) => e.preventDefault()} onCloseAutoFocus={(e) => { e.preventDefault(); field.current?.focus() }} data-block="menu-search-result">
+            <PopoverContent ref={list} align="start" className="w-80 p-0" onOpenAutoFocus={(e) => e.preventDefault()} onCloseAutoFocus={(e) => { e.preventDefault(); field.current?.focus() }} onEscapeKeyDown={(e) => e.preventDefault()} data-block="menu-search-result">
               <CommandList>
                 {failed && <p role="status" className="p-3 text-[length:var(--fs-small)] text-destructive">{words.failed}</p>}
                 {!failed && <CommandEmpty>{words.none}</CommandEmpty>}
