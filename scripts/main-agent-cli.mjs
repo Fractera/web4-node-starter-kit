@@ -233,7 +233,8 @@ if (cmd === 'look') {
   const likeId = flag('--like')
   if (likeId !== null) {
     if (!likeId || likeId.startsWith('--')) fail('look <id> --like <id of the element whose look to take>')
-    if (!x.custom || x.id === 'root') fail(`${x.id}: only a born custom element takes a sibling's look`)
+    // 717-9d: a native element takes a sibling's look too — its template has design:take since e2acb3f.
+    if (x.id === 'root') fail(`${x.id}: the root site keeps its own look`)
     const from = rows.find((y) => y.id === likeId || y.service === likeId || addressOf(y.id) === likeId)
     if (!from) fail(`no element «${likeId}» in this node`)
     if (from.id === x.id) fail('an element cannot take its own look')
@@ -279,11 +280,13 @@ if (cmd === 'look') {
   const links = readJson(join(ROOT, 'data', 'services', x.id, 'links.json'), {}) ?? {}
   const shared = `${ORIGIN}/${LANG}/architect/config`
   const tab = (t) => `${ORIGIN}/${LANG}/${addressOf(x.id)}/build/${t}`
+  console.log(`Design (colours, fonts, shapes, its sections): its own — skills, a test page and the approval in its Design tab: ${tab('design')}`)
+  // 717-9d: a native element has the Design tab and its workshop; its site settings always come from the shared CONFIG.
   if (!x.custom && x.id !== 'root') {
-    console.log(`${x.id} is a native element: its site settings come from the shared CONFIG (${shared}); its look is its own DESIGN-CONFIG from its template — it has no Design tab and no workshop of its own.`)
+    console.log(`Site settings (name, menu, footer, switches): a native element always takes them from the shared CONFIG: ${shared}`)
+    console.log('Give the person the link; never change the values yourself.')
     process.exit(0)
   }
-  console.log(`Design (colours, fonts, shapes, its sections): its own — skills, a test page and the approval in its Design tab: ${tab('design')}`)
   console.log(links.config !== false
     ? `Site settings (name, menu, footer, switches): linked to the shared CONFIG — change it there: ${shared} (it applies to every element that follows it)`
     : `Site settings (name, menu, footer, switches): own — change them in its tab: ${tab('site-settings')}`)

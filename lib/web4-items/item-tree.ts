@@ -372,7 +372,8 @@ export const ITEM_TREE: TreePage[] = [
       // элемента»): только переадресация на страницы самого элемента, в ядре ничего не строится. Только у кастомных: 579 — их шаг.
       // 706-1: страница ядра с одной ссылкой на мастерскую элемента — адрес выбирает браузер (на этой машине — локальный порт
       // элемента, иначе его свой домен): прежняя переадресация вела на `https://<адрес>`, которого без своего домена нет.
-      { slug: "design", custom: true, words: w("Design", "Choose from many design skills the ones that suit your project and test them: each builds a test home page; look through them one by one, weigh the pluses and minuses and approve the best.", "Дизайн", "Выберите из множества навыков дизайна те, что подходят вашему проекту, и испытайте их: каждый строит тестовую главную страницу; просмотрите их по очереди, взвесьте плюсы и минусы и утвердите лучшую.") },
+      // 717-9d (the owner 2026-11-11: «до 717-11, делай без вопросов до конца»): a native element has the design workshop too.
+      { slug: "design", words: w("Design", "Choose from many design skills the ones that suit your project and test them: each builds a test home page; look through them one by one, weigh the pluses and minuses and approve the best.", "Дизайн", "Выберите из множества навыков дизайна те, что подходят вашему проекту, и испытайте их: каждый строит тестовую главную страницу; просмотрите их по очереди, взвесьте плюсы и минусы и утвердите лучшую.") },
       // 706-1: связь с CONFIG узла — здесь, первой строкой (прежде в «Опасной зоне»), и ссылка на свои настройки элемента.
       { slug: "site-settings", words: w("Site settings", "The element's name, search, languages, menus and switches — section by section.", "Настройки сайта", "Имя, поиск, языки, меню и выключатели элемента — по разделам.") },
       // 472: у элемента с H2A бот переехал в H2A (`MOVED_WITH`); здесь он остаётся для элементов без H2A.
