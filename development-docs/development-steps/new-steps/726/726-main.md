@@ -99,4 +99,5 @@ an autonomous run; my decisions: order 726-0 → 726-1 → 726-3 → 726-4 → 7
   fingerprint of check:shadcn-parts, CI windows red since 730).
 - 726-1 code: the ledger counts PAID calls only (OpenAI today) — free ones (Telegram, GitHub, Cloudflare) would bury the paid lines; my
   decision in the autonomous run, reversible. Found on the way: a 21st caller through the AI SDK (`app/api/architect/menu/ai`) the
-  first guard could not see (no literal host) — now the guard also looks for `@ai-sdk/openai`. Live proof — pending.
+  first guard could not see (no literal host) — now the guard also looks for `@ai-sdk/openai`. CLOSED: live on the node
+  `7b4cc6e7` (`npm run money` names both doors with `no-funds (credit_balance_exhausted)`), summary `completed-steps/726-1.md`.
