@@ -5,6 +5,11 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-87 (2026-11-11, ~14:50 WET) — 720 BUILT in the workshop (plan + summary `new-steps/720/720-main.md`): the core refused to a
+non-owner on a node, the owner known by a GitHub key that may push to Fractera's repository (`npm run owner`), the person's records kept
+over a node update (`lib/deploy/node-records.cjs`), CLAUDE.md §6 sealed `2ef94c0dca4e`. NEXT: push, CI, fork sync (Chrome), node update
+detached; on the node: the owner line at the session start, the guard live (positive with gh, negative with gh off the PATH).**
+
 **NOW-86 (2026-11-10, ~08:10 WET) — 714 IN WORK (plan `new-steps/714/714-main.md`): the stand qfx9w keeps the node's menu, the quick
 strip leads into the core, the project's name on the empty page; the skill interface-design into the core's and elements'
 instructions. 713 ACCEPTED by the owner («интерфейс получился значительно лучше») — its summary goes with 714-5. After 714: call the

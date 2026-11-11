@@ -12,7 +12,8 @@
 //      убирается; чья-то своя работа — ОТКАЗ со списком, и ничего не тронуто;
 //   4. форк сливается, а шаги разработки узла остаются его собственными (`development-docs/development-steps/` — свежий проект:
 //      планы и итоги стартера в узел не возвращаются, `current-steps.md` — узла);
-//   5. реестр: закрепления и описания — форка, состояние узла (порты, выключения, рождённые элементы, тип узла) — узла;
+//   5. реестр: закрепления и описания — форка, состояние узла (порты, выключения, рождённые элементы, тип узла) — узла; 720-2: и
+//      свои записи узла в дереве git — настройки сайта (слияние по ключам), записи раздела 9 CLAUDE.md, свои шаги (`lib/deploy/node-records.cjs`);
 //   6. зависимости, если `package.json` их сменил; сторожа сборки — ОТДЕЛЬНО, до остановки узла: упали — откат, узел как был;
 //   7. элементы на закрепления (`services-install`; второй проход — на случай сбоя сети), новые элементы включаются;
 //   8. сборка ядра с закрытой крышкой (упала — прежняя сборка возвращается сама); база навыков — в граф (повтор безопасен).
@@ -28,6 +29,8 @@ import { fileURLToPath } from 'node:url'
 const require = createRequire(import.meta.url)
 // 642-4: причина отказа простыми словами.
 const { causeOf } = require('../lib/deploy/build-failure.cjs')
+// 720-2: the node's records inside the core's git tree (the site settings, section 9 entries, its own steps) survive the merge.
+const records = require('../lib/deploy/node-records.cjs')
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const IS_WIN = process.platform === 'win32'
 const STATE = join(ROOT, 'data', 'node', 'node-update.json')
@@ -207,6 +210,7 @@ const own = []
 const drop = []
 for (const e of entries) {
   if (e.path === REGISTRY_REL) continue
+  if (records.RECORDS.includes(e.path) && e.code !== '??') continue
   // Неотслеживаемый файл, которого нет в форке, слиянию не мешает — он остаётся как есть.
   if (e.code === '??' && !git(['cat-file', '-e', `${FORK}:${e.path}`]).ok) continue
   if (copyOfFork(e.path) || GENERATED.test(e.path) || (e.path === 'package-lock.json' && lockOnly)) drop.push(e)
@@ -229,6 +233,8 @@ for (const e of drop) {
 }
 if (entries.some((e) => e.path === REGISTRY_REL)) git(['checkout', '-q', '--', REGISTRY_REL])
 say(`убрано копий файлов форка и порождённого: ${drop.length}; состояние реестра узла сохранено`)
+const kept = records.take(ROOT, git)
+if (kept.length) say(`свои записи узла отложены на время слияния: ${kept.map((k) => k.p).join(', ')}`)
 
 // ── 4. слияние, шаги разработки — узла ──────────────────────────────────────────────────────────────────────────────────────
 stage('merge', `сливаю форк: ${forkCommits.length} изменений`)
@@ -267,6 +273,8 @@ if (git(['rev-parse', '-q', '--verify', 'MERGE_HEAD']).ok) {
 }
 const newHead = must(git(['rev-parse', '--short', 'HEAD']), 'git rev-parse')
 say(`узел на ${newHead}`)
+const back = records.put(ROOT, kept)
+if (back.length) say(`свои записи узла вернулись поверх форка: ${back.join(', ')}`)
 
 // ── 5. реестр: закрепления — форка, состояние — узла ────────────────────────────────────────────────────────────────────────
 stage('registry', 'реестр: закрепления форка, состояние узла')

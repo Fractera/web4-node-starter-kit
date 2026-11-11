@@ -143,6 +143,7 @@
     "check:instruction": "node scripts/check-instruction.mjs",
     "check:lagrix-contract": "node scripts/check-lagrix-contract.mjs",
     "system": "node scripts/system-part.mjs",
+    "owner": "node scripts/system-part.mjs owner",
     "session": "node scripts/main-agent-cli.mjs session",
     "openai-key": "node scripts/main-agent-cli.mjs openai-key",
     "transcribe": "node scripts/main-agent-cli.mjs transcribe",
@@ -150,7 +151,9 @@
     "load": "node scripts/load.mjs",
     "migrate:sections": "node scripts/migrate-sections.mjs",
     "check:words": "node scripts/migrate-sections.mjs --check",
-    "test:update-wake": "node scripts/update-wake.test.mjs"
+    "test:update-wake": "node scripts/update-wake.test.mjs",
+    "test:core-guard": "node scripts/core-guard.test.mjs",
+    "test:node-records": "node scripts/node-records.test.mjs"
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.55",

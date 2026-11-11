@@ -1,4 +1,4 @@
-# 720 — the core stays Fractera's: its own changes are refused, the person's part survives every update (PLAN — not built)
+# 720 — the core stays Fractera's: its own changes are refused, the person's part survives every update (BUILT in the workshop 2026-11-11)
 
 Opened 2026-11-11 ~14:00 by the owner's word, to be done after 717/718/719, autonomous («continue to finish non stop not ask me i am
 going out … for last create NEW step just now»). The owner's words, verbatim:
@@ -53,3 +53,25 @@ going out … for last create NEW step just now»). The owner's words, verbatim:
 
 Done when: a non-owner session that tries to edit the core is refused by the hook and by the words; an owner session (with the key) is
 greeted and allowed; a `node:update` keeps every listed record; a user's block and own skill survive an update.
+
+## Built (2026-11-11, autonomous by the owner's word)
+
+- **720-1** `lib/agent-kit/system-part.cjs` + `scripts/system-part.mjs`: on a node every file of the core's folder is refused to
+  Edit/Write/MultiEdit/NotebookEdit and to plain shell writes (redirection, tee, sed -i, cp/mv/rm…, git apply/checkout/merge/reset…),
+  except the person's part (`data/`, `logs/`, `development-docs/`, `WEB4-ITEMS*`, the three site settings files, a new skill folder of
+  their own, section 9 entries). The owner = a GitHub key (node key → `FRACTERA_GITHUB_TOKEN` → `gh auth token`) that may PUSH to
+  Fractera/web4-node-starter-kit (`permissions.push`), cached an hour in `logs/core-owner.json` by the key's hash, never the key; the
+  owner's session may change everything and its system part is not restored. `npm run owner`; the session start prints one line (owner →
+  greet «Рома»; else the limit and «Вы не являетесь разработчиком»). Hook matcher widened to `NotebookEdit|Bash`.
+  Proof 1: `npm run test:core-guard` — 25 ✓ with a negative control (a development clone is never refused).
+  Proof 2: `npm run owner` here → `===OWNER=== (gh)`; the same with `gh` off the PATH → `===NOT_OWNER===`.
+  🛑 Not caught, said aloud: a script that opens files itself, a path built at run time.
+- **720-2/720-3** `lib/deploy/node-records.cjs` in `scripts/node-update.mjs`: the node's tracked records are put aside before the
+  merge and come back over it — the site settings merged three ways (✗ found: «Activate domain» writes `cfg.url` into the core's
+  app-config.json and every later update REFUSED), section 9 entries under the release's system part, the node's own steps as they
+  were. `data/*` and `logs/*` are outside git (CLAUDE.user.md, soul.user.md, domains, keys, bots, memory, clocks); an own skill folder is
+  untracked and stays. Proof: `npm run test:node-records` — 13 ✓, negative control: the plain merge is refused by git.
+- **720-4** CLAUDE.md: the Priority line (the owner's node is not restored) and two §6 laws — «The core is Fractera's» with the two
+  channels (Telegram @roma_armstrong, a first contact may be paid with Telegram Stars — the owner's word; a pull request) and «The
+  person's part survives every update»; sealed `2ef94c0dca4e`.
+- Guards: the prebuild chain (minus the install-only four) green.
