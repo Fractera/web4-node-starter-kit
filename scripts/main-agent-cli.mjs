@@ -454,6 +454,9 @@ if (cmd === 'person') {
   const allow = readJson(join(tg, 'access.json'), null)?.allowFrom
   const chat = p?.chatId ?? p?.chat_id ?? p?.id ?? (Array.isArray(allow) && allow.length ? allow[0] : null)
   const bot = botOf('build')
+  // 726-5: a line at the start of a session ONLY when money is red today (a provider refusing for money, a budget reached or not
+  // lasting the day) — from the ledger, no model, no network; silence otherwise.
+  for (const l of moneyRed()) console.log(`Money is red today — tell the architect in your first answer: ${l}`)
   if (bot && !(await channelUp(tg))) console.log(`Telegram bot @${bot} is yours, but its channel did not start in this session — the architect reads you in the core's terminal ${ORIGIN}/${LANG}/architect/build/terminal: answer there and say that the bot is silent.`)
   else if (bot && chat) console.log(`Telegram bot @${bot} is yours and its channel is up: write to the architect with the reply tool, chat_id ${chat}, language ${p?.lang ?? LANG}.`)
   else if (bot) console.log(`Telegram bot @${bot} is yours, but the architect has not written to it yet — answer in the core's terminal ${ORIGIN}/${LANG}/architect/build/terminal.`)
@@ -925,7 +928,25 @@ if (cmd === 'where') {
   } catch { /* часы не прочитаны — сводка идёт дальше */ }
   const loans = require(join(ROOT, 'lib', 'agent-kit', 'lending.cjs')).active(ROOT)
   if (loans.length) console.log(`В долг на подписке узла: ${loans.map((r) => `${r.element} (${r.cost} %)`).join(', ')} — npm run lend`)
+  // 726-5: деньги одной-двумя строками — красное сегодня по журналу и одно предложение сверить балансы (владелец 2026-11-11: «ты можешь
+  // углубиться в этот ответ и предложить пользователю … свериться с тем какое состояние баланса»).
+  for (const l of moneyRed()) console.log(`💸 ${l}`)
+  console.log('Деньги: предложи человеку сверить балансы — npm run money -- --balances (несколько HTTP-вызовов, без модели, бесплатно); за что ушли — npm run money')
   process.exit(0)
+}
+
+// 726-5: красные строки денег сегодня (lib/money-day.cjs `redLines`) словами человека; журнал — ядра, без сети.
+function moneyRed() {
+  try {
+    const money = require(join(ROOT, 'lib', 'money-day.cjs'))
+    const t = (iso) => (iso ? new Date(iso).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : '')
+    const billing = (s) => money.PROBES[s]?.billing ?? ''
+    return money.redLines(ROOT, (b) => b.state === 'refusing'
+      ? `${b.service}: поставщик отказывает из-за денег с ${t(b.at)}${billing(b.service) ? ` — пополнить: ${billing(b.service)}` : ''}; подробно — npm run money`
+      : b.state === 'crossed'
+        ? `${b.service}: бюджет дня (${b.budget} вызовов) исчерпан в ${t(b.at)}; вызовов сегодня ${b.calls}`
+        : `${b.service}: при таком темпе бюджет дня (${b.budget} вызовов) кончится в ${t(b.at)}; вызовов сегодня ${b.calls}`)
+  } catch { return [] }
 }
 
 // 686-6 (владелец 2026-11-08: «переключить его на свою подписку для завершения этой работы и вернуть обратно его подписку после завершения

@@ -66,6 +66,25 @@ await check('the admin line never counts into OpenAI\'s burn of the day', () => 
   assert.equal(b.state, 'no-spend')
 })
 rmSync(ledgerRoot, { recursive: true, force: true })
+
+console.log('the red line (726-5):')
+const { redLines } = require('../lib/money-day.cjs')
+const { recordRefusal, recordOk } = require('../lib/usage-ledger.cjs')
+const redRoot = mkdtempSync(join(tmpdir(), 'money-red-'))
+await check('an empty journal → no red line (never an invented one)', () => assert.deepEqual(redLines(redRoot), []))
+await check('a call answered with no budget → still no red line', () => {
+  recordOk({ who: 'i18n/translate', provider: 'openai', endpoint: 'chat/completions' }, redRoot)
+  assert.deepEqual(redLines(redRoot), [])
+})
+await check('the provider refusing for money → one red line naming it', () => {
+  recordRefusal({ who: 'voice-input', provider: 'openai', endpoint: 'audio/transcriptions', info: { status: 429, reason: 'no-funds', code: 'credit_balance_exhausted' } }, redRoot)
+  const r = redLines(redRoot); assert.equal(r.length, 1); assert.match(r[0], /^openai: refusing/)
+})
+await check('the admin spend query never makes a line red', () => {
+  recordRefusal({ who: 'money/balances', provider: 'openai-admin', endpoint: 'organization/costs', info: { status: 429, reason: 'no-funds' } }, redRoot)
+  assert.equal(redLines(redRoot).length, 1)
+})
+rmSync(redRoot, { recursive: true, force: true })
 await check('a refusal of the provider → failed with its status', async () => assert.deepEqual(await probe('exa', () => 'k', { fetch: fake({ error: 'Unauthorized' }, 401) }), { state: 'failed', status: 401 }))
 
 console.log('negative controls:')
