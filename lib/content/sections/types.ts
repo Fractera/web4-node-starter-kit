@@ -128,6 +128,8 @@ export type LeafItem =
   | { kind: 'projectsBoard'; lang: string }
   // 572: Dashboard → «Этот компьютер» — машина, память по элементам, сравнение с Tier-2; числа спрашивает островок у /api/node/machine.
   | { kind: 'machineBoard'; lang: string }
+  // 726-3: Dashboard → «Все подписки» — сервисы × элементы × состояние; строки спрашивает островок у /api/node/subscriptions.
+  | { kind: 'subscriptionsBoard'; lang: string }
   // 478-1: карточки элементов «Паспорта» узла; спрашиваются в браузере у `/api/node/passport`.
   | { kind: 'nodePassport'; lang: string }
   | { kind: 'a2aFeed'; lang: string }

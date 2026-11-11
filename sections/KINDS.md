@@ -21,7 +21,7 @@
 и только карточка говорит, что он выдержит** — сколько элементов, что ломается за пределом, когда
 его не брать. Есть карточка — прочти её перед использованием.
 
-Видов: **72** · рендереров: **71** · карточек: **46**
+Видов: **73** · рендереров: **72** · карточек: **47**
 
 | Код | Вид | Семейство | Что это | Поля | Правила владельца |
 |---|---|---|---|---|---|
@@ -90,6 +90,7 @@
 | `deployBoard01` | `deployBoard` | Workspace | the deployment board of the node | lang: string | [карточка](kinds/deployBoard.md) |
 | `projectsBoard01` | `projectsBoard` | Page material | the projects table of the node | lang: string | [карточка](kinds/projectsBoard.md) |
 | `machineBoard01` | `machineBoard` | Page material | this computer: the machine, the memory per element, the Tier-2 comparison | lang: string | [карточка](kinds/machineBoard.md) |
+| `subscriptionsBoard01` | `subscriptionsBoard` | Page material | all subscriptions of the node: services × the elements that use them × their state | lang: string | [карточка](kinds/subscriptionsBoard.md) |
 | `nodePassport01` | `nodePassport` | Page material | the node passport: the Lagrix rating of the node and of its elements | lang: string | [карточка](kinds/nodePassport.md) |
 | `a2aFeed01` | `a2aFeed` | Page material | a2aFeed — the agents' conversation feed of the node | lang: string | [карточка](kinds/a2aFeed.md) |
 | `elementPreview01` | `elementPreview` | Workspace | a live preview of an element | lang: string; serviceId: string | [карточка](kinds/elementPreview.md) |

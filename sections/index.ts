@@ -19,6 +19,7 @@ import { separator } from './kinds/separator.server'
 import { deployBoard } from './kinds/deploy-board.server'
 import { projectsBoard } from './kinds/projects-board.server'
 import { machineBoard } from './kinds/machine-board.server'
+import { subscriptionsBoard } from './kinds/subscriptions-board.server'
 import { nodePassport } from './kinds/node-passport.server'
 import { a2aFeed } from './kinds/a2a-feed.server'
 import { elementPreview } from './kinds/element-preview.server'
@@ -86,5 +87,5 @@ import { chat } from './kinds/chat.server'
 // и лежат по файлу на вид. Разбор того сценария сохранён в `SECTIONS.md`, чтобы
 // следующая сессия не проектировала его заново.
 export const SECTIONS: SectionSet = {
-  p, h2, h3, h4, h5, quote, list, olist, figure, code, note, cta, callout, table, docref, founder, columns, group, heroBadge, heroSplit, badges, panel, metrics, flow, personaCases, problemSolution, cards, card, statement, invite, noBill, faq, toc, languageMarquee, projectTypeMarquee, voiceField, workspace, accordion, accordionItem, benefitCards, splitPair, logoCards, carousel, support, showcaseCarousel, featureGrid, promoBand, priceTable, spotlightPair, platformGrid, chartArea, chartBar, chartLine, chartPie, chartRadar, chartRadial, chartTooltip, orbitLayers, chat, domainLadder, servicePort, designSection, deployBoard, projectsBoard, machineBoard, nodePassport, a2aFeed, elementPreview, authGoogleSetup, authResendSetup, dialogSample, separator,
+  p, h2, h3, h4, h5, quote, list, olist, figure, code, note, cta, callout, table, docref, founder, columns, group, heroBadge, heroSplit, badges, panel, metrics, flow, personaCases, problemSolution, cards, card, statement, invite, noBill, faq, toc, languageMarquee, projectTypeMarquee, voiceField, workspace, accordion, accordionItem, benefitCards, splitPair, logoCards, carousel, support, showcaseCarousel, featureGrid, promoBand, priceTable, spotlightPair, platformGrid, chartArea, chartBar, chartLine, chartPie, chartRadar, chartRadial, chartTooltip, orbitLayers, chat, domainLadder, servicePort, designSection, deployBoard, projectsBoard, machineBoard, subscriptionsBoard, nodePassport, a2aFeed, elementPreview, authGoogleSetup, authResendSetup, dialogSample, separator,
 }
