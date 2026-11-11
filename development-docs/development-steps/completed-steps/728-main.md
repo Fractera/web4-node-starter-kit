@@ -57,10 +57,23 @@ PROOF 2 — plane the data (live, on the node after the update)
 NEGATIVE CONTROL
   case:       the same test on the old code; and the window hook fed the conversation of the record — must still print
   answer:     11 ✗ before; `same conversation: ⟦node · context-window · tstw1 …⟧ Your context window is 65 %`, fresh one — silent.
+PROOF 3 — plane the wire (live, the main agent's own reset on the updated node, 2026-11-11, times UTC)
+  logs/web4-out.log:
+    18:55:35 [agents/session] build clear --continue → scheduled clear-continue
+    18:55:52 [agents/session] build: /clear — контекст очищен
+    18:55:54 [agents/session] build: после сброса — разговор c38db5fc-8396-46d0-9574-c6b1d1ea7b54 записан
+    18:55:57 [agents/session] build: пробуждён письмом после сброса
+  data/services/build/pulse.json:
+    18:55:48.474 turn-end    57daaf7f (the old conversation — its turn ended BEFORE the /clear at 18:55:52)
+    18:55:53.418 session-end 57daaf7f reason=clear
+    18:55:58.018 turn-start  c38db5fc (the NEW conversation carries the letter)
+  Negative control — the 18:21 incident on the old code: «пробуждён письмом» at 18:21:55 was logged while the pulse shows the old
+  conversation bd70b093 taking the turn at 18:21:56 and its session-end reason=clear only at 18:22:17 — the letter went into the old
+  conversation. Now the order is turn-end → /clear → session-end(clear) → new conversation recorded → letter → turn-start in it.
+
 NOT PROVEN YET
-  the live reset of the main agent on the new code — done as the last act of this run (`session clear --continue`); its result is
-  written below by the woken session. An element's live reset is not run (it costs that element's model turns); the same bridge code is
-  in the test with an element's session.
+  An element's live reset is not run (it costs that element's model turns); the same bridge code is in the test with an element's
+  session.
 
 ## Mistakes
 
