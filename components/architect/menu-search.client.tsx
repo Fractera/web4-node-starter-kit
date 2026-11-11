@@ -115,7 +115,7 @@ export function MenuSearch({ lang, words, dialogUi }: { lang: string; words: Men
                 </InputGroupAddon>
               </InputGroup>
             </PopoverAnchor>
-            <PopoverContent ref={list} align="start" className="w-80 p-0" onOpenAutoFocus={(e) => e.preventDefault()} data-block="menu-search-result">
+            <PopoverContent ref={list} align="start" className="w-80 p-0" onOpenAutoFocus={(e) => e.preventDefault()} onCloseAutoFocus={(e) => { e.preventDefault(); field.current?.focus() }} data-block="menu-search-result">
               <CommandList>
                 {failed && <p role="status" className="p-3 text-[length:var(--fs-small)] text-destructive">{words.failed}</p>}
                 {!failed && <CommandEmpty>{words.none}</CommandEmpty>}
