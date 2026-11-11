@@ -1,6 +1,6 @@
 // 720-2/720-3: the person's part survives a node update. Run: node scripts/node-records.test.mjs
 // A scratch release and a node cloned from it. The node changes, without saving: the site settings (the domain's `url`, as «Activate
-// domain» does), a section 9 entry of CLAUDE.md, its own steps; it has its own untracked skill and its block in `data/` (outside git).
+// domain» does), a section 9 entry of CLAUDE.md, its own steps; it has its own untracked skill and its own instructions in `data/` (outside git).
 // The release then changes the same files. The update's order — `take`, `git merge`, `put` — must bring Fractera's new text AND keep every
 // record of the node. Negative control: the same merge without `take` is refused by git (the node's unsaved work stands in the way).
 import { execFileSync, spawnSync } from 'node:child_process'
@@ -73,7 +73,7 @@ ok(claude.endsWith('Entries:\n- If the person asks for tea — offer green.\n'),
 ok(read(nodeDir, 'development-docs/development-steps/current-steps.md') === 'the node\'s own letter\n', 'the node\'s own steps stay')
 ok(read(nodeDir, '.claude/skills/create-element/SKILL.md') === 'release skill v2\n', 'a release skill is the release\'s')
 ok(existsSync(join(nodeDir, '.claude/skills/my-own-skill/SKILL.md')), 'the person\'s own skill stays')
-ok(read(nodeDir, 'data/main-agent/CLAUDE.user.md') === 'Speak to me in short sentences.\n', 'the person\'s block (data/) stays')
+ok(read(nodeDir, 'data/main-agent/CLAUDE.user.md') === 'Speak to me in short sentences.\n', 'the person\'s own instructions (data/) stay')
 ok(JSON.parse(read(nodeDir, 'data/node/domains.json'))[0].name === 'my.domain', 'the list of domains (data/) stays')
 ok(records.merge3({ a: 1 }, { a: 2 }, { a: 3 }).a === 2 && records.merge3({ a: 1 }, { a: 1 }, {}).a === undefined, 'merge3: the node\'s change wins, a key the fork removed goes')
 
