@@ -341,7 +341,9 @@
     "logs/",
     "data/",
     "lib/agent-kit/soul.md",
-    "lib/agent-kit/soul.seal"
+    "lib/agent-kit/soul.seal",
+    "WEB4-ITEMS-REGISTRY/"
   ],
-  "vendoredSkillsRoot": ".claude/skills/"
+  "vendoredSkillsRoot": ".claude/skills/",
+  "trackedOnly": true
 }
