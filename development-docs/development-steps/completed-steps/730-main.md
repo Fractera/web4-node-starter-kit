@@ -189,6 +189,8 @@ dark × 1440 and 390): the magnifier moves right (507 → 757 at 1440, 143 → 3
 «клип» + Enter → «Клип | Найдено: 1» with the first row selected, Esc → the list closed and the bar still open, the second Esc → closed,
 a click outside → closed, «нет такого элемента» → «Элемента с таким названием нет», the AI icon carries «что-то для клипов» into the
 window, Enter on the selected row opens «Клип»; console errors — none in all four runs. Screenshots seen.
+PROOF 4 — the polish, the node `d4eba500`: the four runs green again (the same numbers); `dark-1440-1-closed.png` — the closed magnifier
+without a tile; `light-1440-2-open.png` — the tooltip «Найти» opens below the magnifier, not under the banner.
 Negative controls on the way: before `8ef18896`/`74a71eee` the same run failed — Esc moved focus to body and closed the whole bar.
 
 ## What the eyes and the guards caught on the way
