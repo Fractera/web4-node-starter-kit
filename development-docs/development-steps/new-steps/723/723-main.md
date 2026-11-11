@@ -32,3 +32,8 @@ layer the architecture does not have («create — yes, invent — no»). The sh
 - B — portions inside the sites' mega-menu: a release of the shell with every template.
 - C — keep as is: a visitor already gets the menu statically and free; the price is the page weight, measurable when the node has dozens
   of elements (today 2 custom).
+
+## The owner's decision 2026-11-11: C («ok» to «Мой выбор — В … ради будущего, которое мы сможем измерить»)
+
+Kept as is. Trigger: at 50 custom elements on a node — measure the HTML weight of a root page with the catalog (wide and phone menus)
+and choose A′ or B then. Not built.
