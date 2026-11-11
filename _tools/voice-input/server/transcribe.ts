@@ -46,7 +46,7 @@ export async function transcribeAudio(audio: unknown, language?: string): Promis
     const detail = (await r.json().catch(() => null)) as { error?: { code?: string; type?: string; message?: string } } | null;
     const code = String(detail?.error?.code ?? detail?.error?.type ?? "");
     console.error(`[voice-input] OpenAI ${r.status} ${code}: ${String(detail?.error?.message ?? "").replace(/org-[A-Za-z0-9]+/g, "org-…").slice(0, 300)}`);
-    const reason = r.status === 401 ? "bad-key" : code === "insufficient_quota" ? "no-funds" : r.status === 429 ? "rate-limit" : "upstream";
+    const reason = r.status === 401 ? "bad-key" : /^(insufficient_quota|credit_balance_exhausted)$/.test(code) ? "no-funds" : r.status === 429 ? "rate-limit" : "upstream";
     return { ok: false, status: 502, error: `transcription failed (${r.status})`, reason };
   }
   const d = (await r.json()) as { text?: string };

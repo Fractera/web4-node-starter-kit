@@ -88,7 +88,9 @@ export async function POST(req: NextRequest) {
       const detail = await res.json().catch(() => null)
       const code = String(detail?.error?.code ?? "")
       if (res.status === 401) return NextResponse.json({ error: "bad-key" }, { status: 401 })
-      if (code === "insufficient_quota") return NextResponse.json({ error: "no-funds" }, { status: 402 })
+      // 730: OpenAI 2026-11 answers an empty prepaid balance with `credit_balance_exhausted` and HTTP 429 — seen live on the node; the old
+      // `insufficient_quota` alone read it as a rate limit and told the person to wait.
+      if (code === "insufficient_quota" || code === "credit_balance_exhausted") return NextResponse.json({ error: "no-funds" }, { status: 402 })
       if (res.status === 429) return NextResponse.json({ error: "rate-limit" }, { status: 429 })
       return NextResponse.json({ error: "upstream", upstreamStatus: res.status }, { status: 502 })
     }
