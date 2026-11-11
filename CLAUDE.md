@@ -327,6 +327,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   route widget, a platform primitive. When working with code you have tools, the sections, the design system and the right to create a
   widget (`check:page-composition`).
 - An interface is needed — first a section the core or the element already has; none — a new section of its own set, then its reuse.
+- A design element that exists in shadcn is taken from shadcn; own markup only from a design skill in its territory, with its `@design`
+  mark (`check:shadcn-parts`, the hook `shadcn-skills`: `use-primitives` and `use-shadcn` load before an interface file).
 - A number about the machine is never printed into a prebuilt page — the browser asks for it; the architect's pages ask nothing without a
   click.
 - Code limits: a component up to 250 lines, texts only through translations, every door has `// @api` (`check:api`,

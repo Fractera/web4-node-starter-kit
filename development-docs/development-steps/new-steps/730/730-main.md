@@ -132,3 +132,13 @@ Not in this step: a sweep of old code (the owner: no tokens on what is done — 
   exit 2 with the reason; this conversation c38db5fc (both loaded) → exit 0.
 - Found for 730-4: the element templates carry no `.claude/settings.json` of their own (the core installs an element's session
   settings), and no `use-primitives` — only `build-skills/skills/use-shadcn` and `use-typography`.
+
+## 730-3 built (2026-11-11)
+
+- CLAUDE.md §6 (the owner's «go your choose» for variant C and its wording): «A design element that exists in shadcn is taken from
+  shadcn; own markup only from a design skill in its territory, with its `@design` mark (`check:shadcn-parts`, the hook
+  `shadcn-skills`…)» — sealed `2e38f88e4d88`, `check:instruction` exit 0.
+- `use-primitives` §0 and `use-shadcn` §0 — the law, the guard, the hook, the touched-file rule, the design-skill freedom, `@no-js`.
+- The element instruction source (`lib/instructions/element/element-instruction.src.md` §7, every template) — the same law in the
+  element's words; `render custom` carries it. It reaches the templates together with the guard in 730-4 (an instruction without its
+  guard would be advice again).

@@ -16,6 +16,21 @@ description: >
 > Informational, not binding. **Know a better way for the case in front of you — do it your way and
 > say so.** You are trusted with the creative work on this project.
 
+## 0. 🔒 The law since step 730 — the whole shadcn catalogue, held by machines
+
+The owner, 2026-11-11: «каждый раз когда ты пытаешься делать что-то свое это получается натуральное уродство»; «навыку разрешено
+создавать то что он хочет только работа интерфейса где навыков нет требует использования того что мы обсуждаем».
+
+- **A design element that exists in shadcn is taken from shadcn** — not only what `components/ui/` holds today: a button, a field, a field
+  with buttons (`InputGroup`), a list under a field (`Popover` + `Command`), a hint (`Tooltip`, never `title=`), a menu
+  (`DropdownMenu`), tabs, a table, a progress bar, a collapsible block. Missing in `components/ui/` — `npx shadcn@latest add <name>`.
+- **`check:shadcn-parts`** refuses raw `<button> <input> <select> <textarea> <table> <progress> <details>`, widget roles, a hand-built
+  floating panel and `title=` on a button, and names the owner. Old code is a frozen debt; **a file you touch leaves clean**.
+- **The hook `shadcn-skills`** refuses an interface file until this session loaded this skill and `use-shadcn`.
+- **A design skill is free** in its territory — the element's sections, prototypes and widgets — with `@design <its mark>` on the file's
+  first lines; the mark is legal only with the skill the passport or the prototype names. The core has no design territory.
+- **Without JavaScript** a server file may keep native `<details>` / `<input type="checkbox">` on a line marked `@no-js <reason>`.
+
 ## 1. One owner per kind of thing
 
 `components/ui/` — shadcn/ui plus `lucide-react` icons plus Sonner for toasts. No other UI library.

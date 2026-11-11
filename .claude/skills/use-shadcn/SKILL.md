@@ -21,6 +21,12 @@ markup, compose instead of reinvent. Use it. It has one blind spot, and it is no
 knows shadcn, it does not know that in this project **a page is not a place where you may put
 things**.
 
+## 0. 🔒 Step 730 — the catalogue is the law, outside a design skill's territory
+
+Every interface element shadcn has comes from shadcn, installed or not yet installed (`npx shadcn@latest add <name>`); the guard
+`check:shadcn-parts` and the hook `shadcn-skills` hold it, and a touched file leaves clean (`use-primitives` §0). Own markup belongs only
+to a design skill in its territory, marked `@design <mark>`.
+
 ## 1. The question that comes first, always
 
 Before a single component is added: **what am I building?** → `CLAUDE.md`, *What goes on a page*.
