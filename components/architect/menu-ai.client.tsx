@@ -3,6 +3,8 @@
 import { useId, useState } from "react"
 import { Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { InputGroupButton } from "@/components/ui/input-group"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { Spinner } from "@/components/ui/spinner"
 import { EmptyState } from "@/components/ui/empty-state"
 import { AppDialog } from "@/components/dialog/app-dialog.client"
@@ -22,7 +24,7 @@ import type { MenuSearchWords } from "@/components/architect/menu-search.i18n"
 // `Spinner` и `EmptyState`, строки — `ElementRow`. Фокус окна — область запроса; под ней одна строка: что происходит слева, единственное
 // действие «Искать» справа; результаты — строки без рамок, имя и «почему» под ним, точка состояния. Подбирает модель OpenAI, когда она
 // отвечает; не ответила — векторы узла (закон двери), и окно говорит, кто подобрал.
-// 729: кнопка — иконка справа от лупы шапки; `seed` — слова, уже набранные в поле поиска, переходят в окно; `onOpenChange` говорит
+// 729 → 730-0: кнопка — `InputGroupButton` с `Tooltip` в рамке поиска шапки, справа от лупы; `seed` — слова, уже набранные в поле поиска, переходят в окно; `onOpenChange` говорит
 // шапке, что окно открыто (щелчки по нему не закрывают строку поиска).
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
@@ -70,9 +72,14 @@ export function MenuAi({ lang, words, dialogUi, seed = "", onOpenChange }: { lan
 
   return (
     <>
-      <Button type="button" size="icon" variant="ghost" onClick={() => void start()} data-menu-ai aria-label={words.aiTitle} title={words.aiTitle}>
-        <Sparkles size={16} aria-hidden />
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <InputGroupButton size="icon-xs" onClick={() => void start()} data-menu-ai aria-label={words.aiTitle}>
+            <Sparkles aria-hidden />
+          </InputGroupButton>
+        </TooltipTrigger>
+        <TooltipContent>{words.aiTitle}</TooltipContent>
+      </Tooltip>
       <AppDialog open={open} onOpenChange={setOpen} title={words.aiTitle} description={words.aiLead} ui={dialogUi} size="md">
         <form data-block="menu-ai" className="flex flex-col gap-3" onSubmit={(e) => { e.preventDefault(); void search() }}>
           <label htmlFor={id} className="sr-only">{words.aiLead}</label>

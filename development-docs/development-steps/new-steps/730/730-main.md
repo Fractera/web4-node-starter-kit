@@ -1,4 +1,4 @@
-# 730 — the primitives law held by a guard and a hook, not by the agent's memory: why hand-rolled UI passes, the red test, the elements (PLAN — the diagnosis done 2026-11-11; the fix waits for the owner's yes)
+# 730 — the primitives law held by a guard and a hook, not by the agent's memory: why hand-rolled UI passes, the red test, the elements (PLAN — the diagnosis done 2026-11-11; the scope set by the owner the same evening)
 
 Opened 2026-11-11 by the owner (tandem), after he found hand-rolled markup in 729. His words, verbatim:
 
@@ -44,21 +44,47 @@ hand-classed heading. Buttons, inputs, selects, textareas, floating panels, inpu
 - Live elements: their code is not read by the core (the boundary); they inherit the same base and the same two guards, so the same hole.
   Their own count — by their agents (costs their turns) or after the release.
 
-## 5. The fix (proposed — waits for the owner's yes)
+## 5. The owner's scope (2026-11-11, verbatim)
 
-- **730-1 `check:primitives`** in prebuild (core first): refuses in interface files a raw `<button>`, `<input>` (except `hidden`/`file`),
-  `<select>`, `<textarea>`, a hand-built floating panel (`absolute|fixed` + `bg-popover|shadow-*` outside `components/ui`) and names the
-  owner part (`Button`, `Input`/`InputGroup`, `NativeSelect`/`Select`, `Textarea`, `Popover`/`Command`/`DropdownMenu`). The existing debt
-  is a frozen list that can only shrink (a new entry fails the build). The red test becomes its test: the fixture fails, the clean twin
-  passes.
-- **730-2 the skills hook** — PreToolUse on Write/Edit of `*.tsx` under `components/`, `app/`, `_tools/`, `sections/`: refused until this
-  session's transcript shows the Skill calls `use-primitives` and `use-shadcn`; the message names the command. Advice becomes law.
-- **730-3 729 rebuilt on the law** — `InputGroup` + `Popover` + `Command` (arrows, Enter, Esc), «Очистить» a `Button`; the guard green
-  for these files; eyes 1440/390 light and dark again.
-- **730-4 the debt burned down in the core** — file by file, each a commit, the list shrinking (the owner sees the count).
-- **730-5 the elements** — the same guard and hook into the custom and native templates and root by a release (`release-template`);
-  each live element gets them with its next template update, and its agent burns its own list.
-- **730-6 `check:i18n`** — either into the chain with its 40 dictionaries as a frozen debt list, or named aloud as not a guard.
+> Речь не только об кнопке решат любом элементе дизайна которые существуют в библиотеке shadcn каждый раз когда ты пытаешься делать
+> что-то свое это получается натуральное уродство.
 
-Relation to 725: 725 finds the parts (map, `parts_find`, a gate on NEW files); 730 is the law on every file and every session. 730 first
-— it is mechanical and would have caught 729 today.
+> Хорошо сейчас заводи новый шаг быстро исправляй текущую проблему и движемся дальше
+
+> И помню что меня больше всего беспокоит ядро а именно элементы всех видов. То тратить токены я бы не стал для того чтобы лечить то что
+> уже сделано я бы только обновил инструкцию и навыки ну и конечно тесты особенно мне нужны стартовый шаблоны
+
+> Хотя с другой стороны как ты можешь не лечить дух по сделанным если ты будешь делать сторожа то что произойдёт в момент очередной
+> сборки сторож укажет на ошибку и одновременно элемент будет исправлен так? Это был бы идеальный вариант
+
+Read as: the law covers the WHOLE shadcn catalogue, not only what is installed; no tokens spent on a sweep of old code; the repair rides
+on work already paid — a guard refuses a file the moment an agent touches it, and that agent fixes it in the same pass. A guard cannot
+fix code by itself (an automatic rewrite of markup is a guess, not a fix); the agent who touched the file can, at almost no extra cost.
+
+The red test extended: `check:shadcn-rules` (8 rules: gap, size, truncate, literal colour, manual dark, Separator, Skeleton, partial
+class) — exit 0 on the fixture too. 13 of 13 interface guards pass a hand-rolled control.
+
+## 6. Substeps
+
+- **730-0 the current problem** — the header search rebuilt only from shadcn parts: `InputGroup` (the field, the magnifier and the AI icon
+  in one frame that grows to the right — the magnifier slides right, the field opens on its left), `Popover` + `Command` (the shadcn
+  combobox: arrows, Enter opens, Esc and outside close), `Tooltip` instead of `title`, `Button`; no raw control left. Plane 1: tsc,
+  prebuild exit 0 (it caught my `dark:` override first). Plane 2: eyes after the node update.
+- **730-1 `check:shadcn-parts`** — knows the whole shadcn catalogue: a raw `<button>`, `<input>` (not `hidden`/`file`), `<select>`,
+  `<textarea>`, `<table>`, `<progress>`, `<details>`; a `role` of `tab`/`tooltip`/`menu`/`switch`/`checkbox`/`slider`/`dialog`; a
+  hand-built floating panel (`absolute|fixed` with `bg-popover|shadow-*` outside `components/ui`); `title=` on an icon button → each named
+  with its owner (`Button`, `Input`/`InputGroup`, `Select`/`NativeSelect`, `Textarea`, `Table`, `Progress`, `Accordion`/`Collapsible`,
+  `Tabs`, `Tooltip`, `DropdownMenu`, `Switch`, `Checkbox`, `Slider`, `AppDialog`, `Popover`/`Command`/`HoverCard`); a part not installed
+  yet → `npx shadcn@latest add <name>`. **The touched-file law:** a file changed in the work being built must be clean; untouched files
+  are a counted debt that can only shrink. The red-test fixture is its own test: red on the fixture, green on its clean twin.
+- **730-2 the skills hook** — PreToolUse Write/Edit of an interface `.tsx` (`components/`, `app/`, `_tools/`, `sections/`) refused until
+  this session's transcript shows the Skill calls `use-primitives` and `use-shadcn`; the refusal names them.
+- **730-3 instruction and skills** — CLAUDE.md §6 (the owner's word): «a design element that exists in shadcn is taken from shadcn; own
+  markup only as a widget»; `use-primitives` and `use-shadcn` say the catalogue comes first and name the guard; the elements' sealed
+  instruction (`instruction:element`) the same.
+- **730-4 the starter templates** — the guard, the hook, the test and the skills into the custom and native templates and root
+  (`release-template`); every element gets them with its next template update, and its agent fixes only the files it touches.
+- **730-5 `check:i18n`** — red for a long time (40 dictionaries) and outside the chain: put it in with a frozen debt, or say it is not a
+  guard.
+
+Not in this step: a sweep of old code (the owner: no tokens on what is done — the touched-file law repairs it on the way).
