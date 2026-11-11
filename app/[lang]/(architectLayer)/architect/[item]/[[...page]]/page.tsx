@@ -584,7 +584,8 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       path={path}
       title={words.title}
       lead={words.lead}
-      pageTitle={address}
+      // 721-2: шапка страницы элемента (видна в компактном режиме) — его имя для людей, не адрес; найдено глазами после обновления.
+      pageTitle={elementLabel(item, lang)}
       widget={<>{offNote}{bar}{lagrix}{about}{list}{preview}{github}{deployPanel}{copyNote}{deploymentsNote}{environment}{domainSettings}{settings}{siteSettings}{designPage}{agent}{passport}{capabilities}{doc}{orders}{messengerSettings}{payments}{productQuiz}{reverseEngineering}{backupSettings}{users}</>}
       children={[...dashboardBlocks, ...tables]}
     />

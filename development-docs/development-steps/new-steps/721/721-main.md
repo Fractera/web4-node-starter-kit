@@ -49,3 +49,11 @@ Rides the same node update as 720 (one core build).
 - Not built: a static words check «a component prints a raw id» — the eyes scan is the check (rerun after the node update).
 - Proof 1: `tsc` clean (outside the stale `.next/dev`), the prebuild chain green with the new files tracked.
 - Proof 2 (after the node update): the eyes scan again — zero raw ids in the inventory's places; the compact menu by eyes.
+
+## Live on the node (core 81149042, 2026-11-11 ~16:20)
+
+- Titles: «Настройки — Клип», «Строительство — Авторизация», «Главный сайт»; the element home heading «Клип», root «Главный сайт»;
+  the left menu «ГЛАВНЫЙ САЙТ»; the inventory places rescanned — only English description words and error codes remain, no ids.
+- Compact menu by eyes: no Passport, «Как это работает» on the first level above «Ядро» (switched for the screenshot, switched back).
+- ✗ Found by eyes in compact mode: the inner element pages printed the address as the page heading (`pageTitle={address}`, not seen in
+  full mode, so the full-mode scan missed it) — fixed in the next commit, rides the next node update.
