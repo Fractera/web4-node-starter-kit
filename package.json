@@ -154,7 +154,8 @@
     "test:update-wake": "node scripts/update-wake.test.mjs",
     "test:core-guard": "node scripts/core-guard.test.mjs",
     "test:node-records": "node scripts/node-records.test.mjs",
-    "test:menu-state": "node scripts/menu-state.test.mjs"
+    "test:menu-state": "node scripts/menu-state.test.mjs",
+    "test:reset-wake": "node scripts/reset-wake.test.mjs"
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.55",
