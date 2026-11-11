@@ -131,7 +131,7 @@ export function SubscriptionsBoard({ words, lang }: { words: SubscriptionsBoardW
             <TableBody>
               {state.rows.map((r) => (
                 <TableRow key={r.service} data-subscription-row={r.service} className="align-top">
-                  <TableCell className="min-w-48 max-w-72 whitespace-normal">
+                  <TableCell className="min-w-44 max-w-60 whitespace-normal">
                     <span className="flex flex-wrap items-center gap-2">
                       {r.docs
                         ? <a className="font-semibold text-foreground underline-offset-4 hover:underline" href={r.docs} target="_blank" rel="noopener noreferrer">{r.name}</a>
@@ -142,7 +142,7 @@ export function SubscriptionsBoard({ words, lang }: { words: SubscriptionsBoardW
                   </TableCell>
                   <TableCell><UsersMenu row={r} words={words} lang={lang} /></TableCell>
                   <TableCell>{r.keys ? <Badge variant={KEY_TONE[r.keys]}>{words.keys[r.keys]}</Badge> : <span className="text-muted-foreground">{words.noKeys}</span>}</TableCell>
-                  <TableCell className="tabular-nums">
+                  <TableCell className="whitespace-normal tabular-nums">
                     {r.calls ? fill(words.usage, { n: r.calls, r: r.refused }) : <span className="text-muted-foreground">{words.noCalls}</span>}
                     {r.tokensIn || r.tokensOut ? <span className="block text-xs text-muted-foreground">{fill(words.tokens, { in: r.tokensIn, out: r.tokensOut })}</span> : null}
                   </TableCell>
@@ -154,12 +154,12 @@ export function SubscriptionsBoard({ words, lang }: { words: SubscriptionsBoardW
                       </>
                     ) : <span className="text-muted-foreground">{DASH}</span>}
                   </TableCell>
-                  <TableCell className="min-w-56 max-w-80 whitespace-normal" data-subscription-error={r.lastError?.code ?? r.lastError?.reason ?? ""}>
+                  <TableCell className="min-w-52 max-w-72 whitespace-normal break-words" data-subscription-error={r.lastError?.code ?? r.lastError?.reason ?? ""}>
                     {r.lastError ? (
                       <>
-                        <span className="text-destructive">{r.lastError.reason ?? DASH}{r.lastError.code ? <> · <code className="text-xs">{r.lastError.code}</code></> : null}</span>
+                        <span className="text-destructive">{r.lastError.reason ?? DASH}{r.lastError.code ? <> · <code className="text-xs break-all">{r.lastError.code}</code></> : null}</span>
                         <span className="block text-xs text-muted-foreground tabular-nums">{when(r.lastError.at)} · {r.lastError.element === "core" ? words.core : r.lastError.label}{r.lastError.who ? ` · ${r.lastError.who}` : ""}</span>
-                        {r.lastError.message ? <span className="mt-1 line-clamp-2 block text-xs text-muted-foreground">{r.lastError.message}</span> : null}
+                        {r.lastError.message ? <span className="mt-1 line-clamp-3 block text-xs break-all text-muted-foreground">{r.lastError.message}</span> : null}
                       </>
                     ) : <span className="text-muted-foreground">{DASH}</span>}
                   </TableCell>
