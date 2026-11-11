@@ -30,6 +30,13 @@ expect("a design skill's territory (a section) — allowed", hook("components/se
 expect("a design skill's territory (a prototype) — allowed", hook("app/[lang]/(protectedLayer)/prototypes/_pages/p1/sections/a.tsx", []), 0)
 fs.rmSync(path.join(root, ".claude/skills/use-primitives"), { recursive: true })
 expect("a project without use-primitives asks only for use-shadcn", hook("components/x/a.client.tsx", ["use-shadcn"]), 0)
+// 730-4: элемент — навыки в группе, вызов с приставкой группы.
+fs.rmSync(path.join(root, ".claude/skills/use-shadcn"), { recursive: true })
+fs.mkdirSync(path.join(root, ".claude/skills/build-skills/skills/use-shadcn"), { recursive: true })
+fs.writeFileSync(path.join(root, ".claude/skills/build-skills/skills/use-shadcn/SKILL.md"), "x")
+expect("an element (skill in a group) without the skill is refused", hook("components/x/a.client.tsx", []), 2, "«use-shadcn»")
+expect("an element skill called with its group prefix — allowed", hook("components/x/a.client.tsx", ["build-skills:use-shadcn"]), 0)
+expect("an element widget is a design territory — allowed", hook("app/[lang]/(publicLayer)/blog/_widgets/static/w/w.tsx", []), 0)
 fs.rmSync(root, { recursive: true, force: true })
 console.log(failed ? `\n===TEST_FAILED=== ${failed}` : "\n===TEST_OK===")
 process.exit(failed ? 1 : 0)

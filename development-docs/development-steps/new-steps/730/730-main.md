@@ -142,3 +142,13 @@ Not in this step: a sweep of old code (the owner: no tokens on what is done — 
 - The element instruction source (`lib/instructions/element/element-instruction.src.md` §7, every template) — the same law in the
   element's words; `render custom` carries it. It reaches the templates together with the guard in 730-4 (an instruction without its
   guard would be advice again).
+
+## 730-4 A built (2026-11-11; the owner «to y», «to do it»)
+
+- `scripts/element-isolate.mjs` installs the skills hook into every element's `.claude/settings.local.json` (PreToolUse
+  `Write|Edit|MultiEdit`, `node "<core>/.claude/hooks/shadcn-skills.mjs"`, its own entry rewritten on each run) — reaches every element
+  of every node with the core's update, no template release.
+- The hook knows element skills in groups (`.claude/skills/<group>/skills/use-shadcn`) and calls with the group prefix
+  (`build-skills:use-shadcn`); an element without `use-primitives` is asked only for `use-shadcn`.
+- `test:shadcn-skills-hook` 12 green (3 element cases); `check:boundary-hook` 29 samples ok. Live (an element's settings carry it) —
+  after the node update.
