@@ -10,8 +10,10 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 просыпается терминал для тебя или элементов»; 18:40: «go to finish non stop , not call me , i am going out for 2 hour». Measured: the
 bridge's «screen quiet» is `buffer.length` of a buffer capped at 256 KB — a long session always looks idle, `/clear` was typed into a
 running turn and the letter eaten by the OLD conversation (timeline in the plan). Also: a fresh conversation's first window line read the
-old `context.json` (65 % at 7 %). NEXT: 728-1 test (red) → 728-2 fix (green) → 728-3 window line → push, CI, fork sync, node update
-(it brings 722-8/9 too) → live proof by my own reset; then 722's eyes and summary. The node's letter: the node's current-steps.md.**
+old `context.json` (65 % at 7 %). DONE: `e815bc03` plan, `0b014286` 728-1 test (red on the old code: 11 ✗), `610ca459` 728-2 fix,
+`9ab8cea1` 728-3 window line — test green, `check:agent-kits` 12 legal, pushed; fork aifa-agi synced in Chrome (identical); the node
+update starts detached ~18:50 (brings 722-8/9 too). NEXT: back from the build — live data proofs, CI of 9ab8cea1, 722's eyes, the 728
+summaries (plan folder deleted), push; the live reset proof by my own `session clear --continue`. The node's letter: its current-steps.md.**
 
 **NOW-88 (2026-11-11, ~19:30 WET) — the owner at maximum effort: «Очень чётко внимательно зафиксируй все эти проблемы … исследовал эту
 проблему описал создал шаги разработки а потом возвращайся к закрытию основного шага». The register of the day —
