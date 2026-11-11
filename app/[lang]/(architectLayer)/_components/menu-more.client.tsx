@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { StateDot } from "@/components/workspace/menu-state-dot"
+import { ElementRow } from "@/components/architect/element-row"
 
 // ОСТАЛЬНЫЕ КАСТОМНЫЕ ЭЛЕМЕНТЫ ЛЕВОГО МЕНЮ — ПОРЦИЯМИ ПО 12 (722-2). Слово владельца 2026-11-11: «ленивые загрузка то есть ты
 // подгружает по 12 элементов предварительно отрисовывает сначала скелетрон, а затем запрашиваем очередные 12 элементов».
@@ -54,12 +54,7 @@ export function MenuMore({ lang, from, total, skip, projectsHref, words }: { lan
     <div data-block="menu-more" data-menu-more="live">
       <ul className="flex flex-col gap-1">
         {rows.map((r) => (
-          <li key={r.id} data-state={r.state.kind}>
-            <a href={r.href} className="flex min-w-0 items-center gap-2 rounded-md px-[9px] py-2 text-[length:var(--fs-body)] text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground">
-              <StateDot state={r.state} />
-              <span className="truncate">{r.label.toLocaleUpperCase(lang)}</span>
-            </a>
-          </li>
+          <li key={r.id} data-state={r.state.kind}><ElementRow variant="menu" href={r.href} label={r.label.toLocaleUpperCase(lang)} state={r.state} /></li>
         ))}
         {loading && Array.from({ length: 12 }, (_, k) => (
           <li key={`s${k}`} aria-hidden data-menu-skeleton>

@@ -4,7 +4,8 @@ import { useEffect, useState, type ReactNode } from "react"
 import { Search, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { StateDot, type MenuStateKind } from "@/components/workspace/menu-state-dot"
+import type { MenuStateKind } from "@/components/workspace/menu-state-dot"
+import { ElementRow } from "@/components/architect/element-row"
 import type { MenuSearchWords } from "@/components/architect/menu-search.i18n"
 
 // ПОИСК ЭЛЕМЕНТОВ В МЕНЮ АРХИТЕКТОРА (722-3). Слово владельца 2026-11-11: «И в левом меню и верхнем меню должно быть два поиска это одно
@@ -62,12 +63,7 @@ function Panel({ lang, words, aiSlot }: { lang: string; words: MenuSearchWords; 
           </div>
           <ul className="flex flex-col gap-0.5">
             {rows.map((r) => (
-              <li key={r.id} data-state={r.state.kind}>
-                <a href={r.href} className="flex min-w-0 items-center gap-2 rounded-md px-2 py-1.5 text-[length:var(--fs-small)] text-foreground hover:bg-muted/60">
-                  <StateDot state={r.state} />
-                  <span className="truncate">{r.label}</span>
-                </a>
-              </li>
+              <li key={r.id} data-state={r.state.kind}><ElementRow href={r.href} label={r.label} state={r.state} /></li>
             ))}
           </ul>
         </div>

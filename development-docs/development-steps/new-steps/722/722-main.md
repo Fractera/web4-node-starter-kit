@@ -144,3 +144,16 @@ brought into the core. Nothing checked for voice search by meaning — built fro
 - The drafts file restored: the same sha `b3fdbdf290d7`, the menu shows no TST row.
 - ✗ Found and fixed in the working copy (722-7, rides the next build): the search panel in the 240 px menu squeezed the field to a few
   letters — the field now has its own row; the model call retried 429 with pauses — now one retry within 12 s.
+
+## 722-8 — the AI window rebuilt from ready parts (2026-11-11, after the owner's verdict and the register `reports/errors-2026-11-11-…`)
+
+- Loaded first this time: `interface-design`, `use-tools`, `use-chat`. Ready parts taken: `AppDialog` (the one modal), `VoiceControl
+  variant="textarea"` (an area with voice, the microphone under it full width — the pattern of «Реверс-инжиниринг», with the key hint),
+  `Spinner`, `EmptyState`, `Button`. The chat tool considered and not taken: the window is one request and its result, not a conversation.
+- `components/architect/element-row.tsx` — the row «state dot + name link (+ why)» extracted at its third copy (menu portions, «Найти»,
+  «ИИ»); the three now use it.
+- Intent: the architect in the middle of work finds «a component that does X» by saying it — calm, workbench-tight. Focal: the request
+  area; one line under it — the status left, the one action «Искать» right; results as borderless rows (name 500, the reason small and
+  muted), states: searching, empty, error, no vectors, who picked.
+- Plane 1: tsc clean, the prebuild chain green by its exit code. Plane 2 (after the node update, BEFORE any report): eyes of the window at
+  1440 and 390, light and dark, empty / searching / results — the screenshot paths named here.
