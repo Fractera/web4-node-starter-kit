@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { listDrafts } from '@/lib/web4-items/drafts'
 import { builtInDraft } from '@/lib/web4-items/built-in-elements'
 import { addressOf } from '@/lib/web4-items/element-address'
+import { elementLabel } from '@/lib/web4-items/element-name'
 import { getService } from '@/lib/microservices/registry'
 import { findTreePath, treeVisible } from '@/lib/web4-items/item-tree'
 import { treeContextOf } from '@/lib/web4-items/tree-context'
@@ -26,7 +27,8 @@ export function MainAgentElements({ lang, path }: { lang: string; path: string }
     const ctx = treeContextOf(d.id)
     const visible = !!trail && trail.every((t) => treeVisible(t, ctx))
     const note = !getService(d.id) ? ui.draft : visible ? null : ui.off
-    return { slug, href: visible ? `/${lang}${ARCHITECT_HOME}/${slug}/${path}` : null, note }
+    // 721-2: подпись — имя элемента для людей; адрес остаётся только в ссылке.
+    return { slug, label: elementLabel(d.id, lang), href: visible ? `/${lang}${ARCHITECT_HOME}/${slug}/${path}` : null, note }
   })
 
   return (
@@ -39,8 +41,8 @@ export function MainAgentElements({ lang, path }: { lang: string; path: string }
         {rows.map((r) => (
           <li key={r.slug} className="flex flex-col gap-1 rounded-lg border border-border p-3" data-main-agent-element={r.slug}>
             {r.href
-              ? <Link href={r.href} className="w-fit font-medium text-foreground underline-offset-4 hover:underline">{r.slug}</Link>
-              : <span className="font-medium text-foreground">{r.slug}</span>}
+              ? <Link href={r.href} className="w-fit font-medium text-foreground underline-offset-4 hover:underline">{r.label}</Link>
+              : <span className="font-medium text-foreground">{r.label}</span>}
             <span className="text-[length:var(--fs-small)] text-muted-foreground">{r.note ?? `${ui.open}: /${r.slug}/${path}`}</span>
           </li>
         ))}

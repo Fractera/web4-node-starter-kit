@@ -16,7 +16,6 @@ export function NodePaymentElements({ lang, ui }: { lang: string; ui: PaymentEle
             {list.map((e) => (
               <li key={e.id}>
                 <Link className="text-primary underline-offset-4 hover:underline" href={`/${lang}/architect/${e.address}/settings/payments/web2`}>{e.name}</Link>
-                <span className="text-muted-foreground"> — {e.address}</span>
               </li>
             ))}
           </ul>

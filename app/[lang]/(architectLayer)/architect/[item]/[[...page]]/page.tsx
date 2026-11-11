@@ -47,6 +47,7 @@ import { ElementSiteSettingsRemote } from '@/components/element-settings/site-se
 import { siteRemoteWords } from '@/components/element-settings/site/words'
 import { ElementWeb4 } from '../../../_components/element-web4.client'
 import { addressOf, idOfAddress } from '@/lib/web4-items/element-address'
+import { elementLabel } from '@/lib/web4-items/element-name'
 import { registryDescription, TASK as DESCRIBE_TASK } from '@/lib/web4-items/element-describe'
 import { terminalLink } from '@/app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/client/terminal-paste.mjs'
 import { ScheduleTask } from '@/app/[lang]/(architectLayer)/_components/schedule-task.client'
@@ -174,7 +175,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const l = treeLang(p.lang)
   const words = r?.trail.length ? r.trail[r.trail.length - 1].words[l] : null
   return {
-    title: words ? `${words.title} — ${p.item}` : p.item,
+    // 721-2: имя элемента для людей, не адрес («Настройки — Клип», не «Настройки — s8y6x»).
+    title: words ? `${words.title} — ${elementLabel(idOfAddress(p.item) ?? p.item, p.lang)}` : elementLabel(idOfAddress(p.item) ?? p.item, p.lang),
     description: words?.lead,
     robots: { index: false, follow: false },
   }
@@ -227,8 +229,9 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       <ArchitectPage
         lang={lang}
         path={dir}
-        title={address}
-        pageTitle={address}
+        // 721-2: заголовок главной элемента — его имя для людей («Клип»), не адрес.
+        title={elementLabel(item, lang)}
+        pageTitle={elementLabel(item, lang)}
         widget={<>
           {/* 338: вводный текст под заголовком — только пока черновик не рождается и не родился (слово владельца 2026-09-29). */}
           {/* 582: у черновика нативного элемента — пометка владельца о назначении нативных («могут быть использованы любым
@@ -545,7 +548,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
         const known = new Map(nodeEntries().map((e) => [e.id, e]))
         return (listServices() as unknown as { id: string }[]).map((s) => {
           const e = known.get(s.id)
-          return { id: s.id, address: addressOf(s.id), name: e?.name ?? addressOf(s.id), description: e?.description ?? '', self: s.id === item }
+          return { id: s.id, address: addressOf(s.id), name: elementLabel(s.id, lang), description: e?.description ?? '', self: s.id === item }
         })
       })()
     : undefined

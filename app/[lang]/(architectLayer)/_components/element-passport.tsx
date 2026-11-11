@@ -6,6 +6,7 @@ import { SubscriptionsView } from "./subscriptions-view.client"
 import { CronCalendar } from "./cron-calendar.client"
 import { CronSwitch } from "./cron-switch.client"
 import { cronSwitchUi } from "../_i18n/cron-switch.i18n"
+import { elementLabel } from "@/lib/web4-items/element-name"
 
 // СТРАНИЦЫ МЕНЮ ЭЛЕМЕНТА ПОКАЗЫВАЮТ ЕГО ПАСПОРТ (шаг 406-4; карта меню 406-2 — решение владельца «удалить всё предложенное,
 // остальное как предложил»). Серверный компонент: читает уже прочитанный паспорт, своих данных не держит.
@@ -22,8 +23,9 @@ function Example({ label, value }: { label: string; value: unknown }) {
   )
 }
 
-function Door({ d, ui }: { d: A2ADoor; ui: ElementPassportUi }) {
-  const callers = d.callers.includes("*") ? ui.everyone : d.callers.join(", ")
+function Door({ d, ui, lang }: { d: A2ADoor; ui: ElementPassportUi; lang: string }) {
+  // 721-2: кто вызывает — имена элементов для людей, не их id.
+  const callers = d.callers.includes("*") ? ui.everyone : d.callers.map((c) => elementLabel(c, lang)).join(", ")
   const errors = d.errors && Object.keys(d.errors).length ? Object.entries(d.errors).map(([c, w]) => `${c} — ${w}`).join(" · ") : null
   return (
     <section className="flex flex-col gap-2 rounded-lg border border-border px-4 py-3" data-passport-door={`${d.method ?? "MCP"} ${d.path}`}>
@@ -52,7 +54,7 @@ function NodeElements({ rows, ui }: { rows: NodeElementRow[]; ui: ElementPasspor
       <ul className="flex flex-col gap-1.5">
         {rows.map((r) => (
           <li key={r.id} className="text-sm">
-            <span className="font-medium">{r.name}</span> <span className="font-mono text-xs text-muted-foreground">{r.address}</span>
+            <span className="font-medium">{r.name}</span>
             {r.self ? <Badge variant="secondary" className="ml-2">{ui.thisElement}</Badge> : null}
             <span className="text-muted-foreground"> — {r.description || ui.noDescription}</span>
           </li>
@@ -97,7 +99,7 @@ export function ElementPassport({ view, passport, ui, lang = "en", nodeElements,
   if (view === "api" || view === "mcp") {
     const doors = (x.doors ?? []).filter((d) => d.protocol === (view === "api" ? "http" : "mcp"))
     body = doors.length
-      ? <div className="flex flex-col gap-3"><p className="text-sm font-medium">{ui.doors}</p>{doors.map((d) => <Door key={`${d.method} ${d.path}`} d={d} ui={ui} />)}</div>
+      ? <div className="flex flex-col gap-3"><p className="text-sm font-medium">{ui.doors}</p>{doors.map((d) => <Door key={`${d.method} ${d.path}`} d={d} ui={ui} lang={lang} />)}</div>
       : <p className="text-sm text-muted-foreground">{view === "api" ? ui.noHttp : ui.noMcp}</p>
   } else if (view === "catalog") {
     const own = x.catalog

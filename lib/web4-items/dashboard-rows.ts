@@ -8,7 +8,7 @@ import { listServices } from "@/lib/microservices/registry"
 type RegistryEntry = ReturnType<typeof listServices>[number]
 import { listDrafts } from "@/lib/web4-items/drafts"
 import { addressOf } from "@/lib/web4-items/address-file.mjs"
-import { elementDisplayName } from "@/lib/web4-items/element-name"
+import { elementLabel } from "@/lib/web4-items/element-name"
 import { domainRecord } from "@/lib/web4-items/element-domain"
 import { birthState } from "@/lib/web4-items/birth"
 import paths from "@/lib/web4-items/paths.cjs"
@@ -16,8 +16,6 @@ import deployLock from "@/lib/deploy/deploy-lock.cjs"
 import power from "@/lib/web4-items/element-power.cjs"
 import web4 from "@/lib/web4-items/element-web4.cjs"
 import elementProps from "@/lib/web4-items/element-props.cjs"
-import { TREE } from "@/app/[lang]/(architectLayer)/architect/_list.generated"
-import { wordsOf } from "@/lib/collection/types"
 import { catalogWords } from "@/lib/web4-items/catalog.i18n"
 
 // СТРОКИ ТАБЛИЦЫ «Dashboard → Проекты» (339). Слово владельца 2026-09-29: «В каждой строке: порядковый номер · служебный адрес ·
@@ -217,14 +215,9 @@ export type CatalogEntry = { id: string; title: string; description: string; hre
  * имя для людей (678-1). ✗ Замерено 2026-11-03 на узле владельца: карточка брала `<title>` главной — root выходил «Что вы хотите построить?», cache —
  * «Эталонный нативный шаблон», и владелец не нашёл root в «Кастомных элементах», хотя он там был.
  */
-/** 636-8: имя агента в шапке уведомления главного чата (`/api/node/notice`) — то же, что у карточки каталога. */
-export const elementName = (id: string, lang: "en" | "ru"): string => nameOf(id, lang)
-
-function nameOf(id: string, lang: "en" | "ru"): string {
-  const section = TREE.find((b) => b.page.meta.slug === id)
-  // 678-1: у кастомного раздела нет — имя элемента для людей (имя ядра → паспорт → адрес), то же, что в левом меню.
-  return section ? wordsOf(section.page, lang).title : elementDisplayName(id)
-}
+/** 636-8: имя агента в шапке уведомления главного чата (`/api/node/notice`) — то же, что у карточки каталога (721-1: `elementLabel`). */
+export const elementName = (id: string, lang: "en" | "ru"): string => elementLabel(id, lang)
+const nameOf = elementName
 
 /**
  * Главная элемента на ЯЗЫКЕ каталога. ✗ 553-5 (замерено 2026-10-21): общий `probe` при отказе `/<язык>` за 3 с переходит на `/`, а `/`

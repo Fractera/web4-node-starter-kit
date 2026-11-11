@@ -13,7 +13,7 @@ export type MainAgentUi = {
 const UI: Record<"en" | "ru", MainAgentUi> = {
   en: {
     elementsTitle: "The same page in each element",
-    elementsLead: "The main agent gathers root and every custom element of the node. Open the page of the element you need.",
+    elementsLead: "The main agent gathers the main site and every custom element of the node. Open the page of the element you need.",
     open: "Open",
     off: "turned off in the element's passport",
     draft: "a draft: the element is not born yet",
@@ -21,7 +21,7 @@ const UI: Record<"en" | "ru", MainAgentUi> = {
   },
   ru: {
     elementsTitle: "Эта же страница у элементов",
-    elementsLead: "Главный агент собирает root и все кастомные элементы узла. Откройте страницу нужного элемента.",
+    elementsLead: "Главный агент собирает главный сайт и все кастомные элементы узла. Откройте страницу нужного элемента.",
     open: "Открыть",
     off: "выключено в паспорте элемента",
     draft: "черновик: элемент ещё не родился",

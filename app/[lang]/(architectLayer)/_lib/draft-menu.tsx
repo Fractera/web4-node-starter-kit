@@ -2,7 +2,7 @@ import "server-only"
 import type { WorkspaceItem } from '@/lib/content/sections/types'
 import { listDrafts } from '@/lib/web4-items/drafts'
 import { addressOf } from '@/lib/web4-items/element-address'
-import { elementDisplayName } from '@/lib/web4-items/element-name'
+import { elementLabel } from '@/lib/web4-items/element-name'
 import { ITEM_TREE, treeLang, treeVisible, type TreePage } from '@/lib/web4-items/item-tree'
 import { elementPassport, hasCatalog, isNativeElement } from '@/lib/a2a/element-passport'
 import { treeContextOf } from '@/lib/web4-items/tree-context'
@@ -105,7 +105,7 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
     return {
       native,
       // 678-1: подпись — имя элемента для людей (имя ядра → паспорт → адрес); путь остаётся по адресу.
-      label: elementDisplayName(d.id),
+      label: elementLabel(d.id, lang),
       icon: 'box',
       href: at(dir),
       active: currentPath === dir,
@@ -191,7 +191,11 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   const mainAlert = [...new Set(main.flatMap((m) => (m.alert ? m.alert.split(' ') : [])))].join(' ') || undefined
   // 692-1 (владелец 2026-11-08: «кнопку переключения компактной полный вынеси вверх сразу под кнопку ваш узел»): переключатель — первой
   // строкой меню, над Паспортом, вне зон: он виден и при свёрнутом «Основном».
-  const head = [switchRow, top[p], { ...zone(ui.zoneMain, 'main', holds(main, page)), ...(mainAlert ? { alert: mainAlert } : {}) }, ...inZone(main, 'main')]
+  // 721-3 (владелец 2026-11-11: «компактном режиме мы паспорт полностью скрываем а вкладку как это работает оставляем на уровне паспорта
+  // чтобы она была в одном уровне с вкладкой основной»): в компактном на месте Паспорта — только «Как это работает», первым уровнем.
+  const howItWorks = top[p].children?.find((k) => k.href === at(`${ARCHITECT_HOME}/passport/how-it-works`))
+  const passportRow: WorkspaceItem[] = compact ? (howItWorks ? [{ ...howItWorks, icon: howItWorks.icon ?? 'network' }] : []) : [top[p]]
+  const head = [switchRow, ...passportRow, { ...zone(ui.zoneMain, 'main', holds(main, page)), ...(mainAlert ? { alert: mainAlert } : {}) }, ...inZone(main, 'main')]
   // 657 (владелец 2026-11-05: «Название элементов приведи к верхнему регистру чтобы все было заглавными буквами»): названия элементов —
   // заглавными в обоих режимах; подписи зон, подзона «Память» и кнопки создания — как были.
   const upper = (m: WorkspaceItem): WorkspaceItem => (m.zoneHead || m.node ? m : { ...m, label: m.label.toLocaleUpperCase(lang) })
