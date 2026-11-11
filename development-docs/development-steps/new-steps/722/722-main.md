@@ -130,3 +130,17 @@ brought into the core. Nothing checked for voice search by meaning — built fro
 - 722-6: `npm run eyes -- <url> --no-js` (a browser context without JavaScript; the line says «без JavaScript»). First use on the owner's
   node (core 81149042): without scripts the element page shows its heading and breadcrumb as the address «s8y6x» — the fix `d35c5009`
   rides this update; the full menu is there without JavaScript (zones, «ГЛАВНЫЙ САЙТ», «КЛИП» and its sections).
+
+## Live on the owner's node (core b1e9882a, 2026-11-11 ~17:20) — 15 temporary drafts added, then the file restored byte for byte
+
+- Without JavaScript (the HTML): «Все проекты (16)» (`data-menu-more="static"`), 12 draft rows and the running root and «Клип» with
+  `data-state`, «Только работающие» present.
+- With JavaScript (a live browser): after the scroll the island brought exactly the rest — 3 rows (16 − 12 drawn − «Клип» drawn as the
+  open page), the skeleton was seen, «Все проекты (16)» at the end; «Только работающие» left 2 of 17 rows, both running; «Найти» «клип»
+  → «Клип», negative control «нет такого элемента» → «Элемента с таким названием нет»; no console errors.
+- The header: «Главный сайт» with its description, 11 more and «Все проекты (17)»; the magnifier beside the tabs.
+- «ИИ»: `GET` → `key: true`; `POST` the owner's words → `by: vectors` («Клип» · совпало название, «Хранилище», «Главный сайт»): OpenAI
+  answers the node 429 (the translate door says `rate-limit` too) — the fallback did what the owner ordered, but after 20.9 s.
+- The drafts file restored: the same sha `b3fdbdf290d7`, the menu shows no TST row.
+- ✗ Found and fixed in the working copy (722-7, rides the next build): the search panel in the 240 px menu squeezed the field to a few
+  letters — the field now has its own row; the model call retried 429 with pauses — now one retry within 12 s.

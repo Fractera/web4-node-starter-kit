@@ -44,10 +44,14 @@ function Panel({ lang, words, aiSlot }: { lang: string; words: MenuSearchWords; 
 
   return (
     <div data-block="menu-search" className="flex flex-col gap-2">
-      <form className="flex items-center gap-1.5" onSubmit={(e) => { e.preventDefault(); void find() }}>
-        <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={words.placeholder} aria-label={words.placeholder} className="h-8 min-w-0 flex-1 text-[length:var(--fs-small)]" />
-        <Button type="submit" size="sm" variant="secondary" disabled={busy || !q.trim()}>{words.find}</Button>
-        {aiSlot}
+      {/* 722-7: поле — своей строкой, кнопки — под ним. ✗ Замерено глазами на узле владельца: в колонке меню шириной 240 px поле в одной
+          строке с двумя кнопками сжималось до нескольких букв. */}
+      <form className="flex flex-col gap-1.5" onSubmit={(e) => { e.preventDefault(); void find() }}>
+        <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={words.placeholder} aria-label={words.placeholder} className="h-8 w-full text-[length:var(--fs-small)]" />
+        <div className="flex items-center gap-1.5">
+          <Button type="submit" size="sm" variant="secondary" disabled={busy || !q.trim()}>{words.find}</Button>
+          {aiSlot}
+        </div>
       </form>
       {failed && <p className="text-[length:var(--fs-small)] text-destructive" role="status">{words.failed}</p>}
       {rows && (

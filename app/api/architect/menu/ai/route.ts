@@ -26,7 +26,7 @@ import { menuSearchWords } from "@/components/architect/menu-search.i18n"
 //      проверяет ядро: id не из списка — выбрасывается (модель предлагает, ядро проверяет); ошибка, пустой ответ или нет ключа —
 //   3. пороговые совпадения векторов с причиной (навык · область · имя · описание). Ответ говорит, кто подобрал (`by`).
 // Цена названа: один вызов модели текста на поиск, около 2–4 тыс. входных токенов (30 коротких описаний); расшифровка голоса — отдельно.
-// 🔒 Слова идут аргументом процесса, без оболочки; не длиннее 300 знаков; поиск не дольше 25 с, модель — 20 с.
+// 🔒 Слова идут аргументом процесса, без оболочки; не длиннее 300 знаков; поиск не дольше 25 с, модель — 12 с с одним повтором.
 const ROLES = ["architect", "admin"] as const
 const NO_STORE = { "Cache-Control": "no-store" }
 type Hit = { id: string; score: number; kind: string; text: string; on: boolean }
@@ -57,7 +57,10 @@ async function pickByModel(text: string, lang: string, list: Short[]): Promise<{
       output: Output.object({ schema: z.object({ matches: z.array(z.object({ id: z.string(), comment: z.string() })).max(5) }) }),
       system: "You help a person find a component (an element) of their node. Choose from the given list only the elements that fit the request, best first, at most five; for each write one short comment in the person's language (" + lang + ") — what it does for this request. Use only ids from the list. None fits — return an empty list.",
       prompt: `Request: ${text}\n\nElements:\n${list.map((e) => `- id: ${e.id} · name: ${e.name} · ${e.short || "no description"}${e.on ? "" : " · turned off"}`).join("\n")}`,
-      abortSignal: AbortSignal.timeout(20_000),
+      // 722-7: один повтор, не больше 12 с. ✗ Замерено на узле владельца 2026-11-11: OpenAI ответил 429 (предел запросов), AI SDK по
+      // умолчанию повторял с паузами, и поиск ждал 20,9 с, прежде чем отдать векторы.
+      maxRetries: 1,
+      abortSignal: AbortSignal.timeout(12_000),
     })
     const known = new Set(list.map((e) => e.id))
     return output.matches.filter((m) => known.has(m.id)).map((m) => ({ id: m.id, comment: m.comment.replace(/\s+/g, " ").trim().slice(0, 200) }))
