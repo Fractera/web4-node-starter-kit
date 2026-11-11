@@ -16,7 +16,9 @@
 //
 // Опции: --click "<текст или css>" (можно несколько, по порядку) · --measure "<css>" (несколько) · --width 1440 --height 900 ·
 // --dark · --wait <мс после загрузки, 800> · --out <файл.png> · --full (скриншот всей страницы) · --top (прокрутить к началу перед
-// скриншотом: ✗ измерено 2026-11-04 — страницы пульта сами прокручиваются к содержимому, и полосы над шапкой уходят за край).
+// скриншотом: ✗ измерено 2026-11-04 — страницы пульта сами прокручиваются к содержимому, и полосы над шапкой уходят за край) ·
+// --no-js (722-6, владелец 2026-11-11: «все должно работать с выключенным JavaScript вот меню это именно то что нужно тестировать»):
+// страница без JavaScript — видно то, что получает человек и поисковик без скриптов; клики по островкам в этом режиме ничего не делают.
 import { mkdirSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -28,7 +30,7 @@ const many = (name) => args.flatMap((a, i) => (a === `--${name}` && args[i + 1] 
 const one = (name, fallback) => many(name)[0] ?? fallback
 
 if (!url) {
-  console.log('Использование: npm run eyes -- <адрес> [--click "<текст или css>"] [--measure "<css>"] [--width 1440] [--height 900] [--dark] [--full]')
+  console.log('Использование: npm run eyes -- <адрес> [--click "<текст или css>"] [--measure "<css>"] [--width 1440] [--height 900] [--dark] [--full] [--no-js]')
   process.exit(2)
 }
 
@@ -54,7 +56,8 @@ async function launch() {
 const { browser, via } = await launch()
 const width = Number(one('width', 1440))
 const height = Number(one('height', 900))
-const context = await browser.newContext({ viewport: { width, height }, colorScheme: args.includes('--dark') ? 'dark' : 'light' })
+const noJs = args.includes('--no-js')
+const context = await browser.newContext({ viewport: { width, height }, colorScheme: args.includes('--dark') ? 'dark' : 'light', javaScriptEnabled: !noJs })
 const page = await context.newPage()
 const problems = []
 page.on('console', (m) => { if (m.type() === 'error') problems.push(`console: ${m.text().slice(0, 200)}`) })
@@ -100,7 +103,7 @@ const name = (el) => el
   ? `${el.tagName.toLowerCase()}${el.getAttribute?.('data-block') ? `[data-block=${el.getAttribute('data-block')}]` : ''}${el.getAttribute?.('data-slot') ? `[data-slot=${el.getAttribute('data-slot')}]` : ''}${typeof el.className === 'string' && el.className ? `.${el.className.trim().split(/\s+/).slice(0, 3).join('.')}` : ''}`
   : 'ничего'
 
-console.log(`===EYES=== ${via} ${browser.version()} · ${status} · «${await page.title()}» · ${width}×${height}${args.includes('--dark') ? ' тёмная' : ''}`)
+console.log(`===EYES=== ${via} ${browser.version()} · ${status} · «${await page.title()}» · ${width}×${height}${args.includes('--dark') ? ' тёмная' : ''}${noJs ? ' · без JavaScript' : ''}`)
 console.log(`скриншот: ${out}`)
 for (const css of many('measure')) {
   const found = await page.evaluate(({ css, nameSrc }) => {

@@ -123,3 +123,10 @@ brought into the core. Nothing checked for voice search by meaning — built fro
   shows it. Price: one text call per search, about 2–4 thousand input tokens.
 - Proof 1: tsc clean, the prebuild chain green. Proof 2 after the node update: the door answers `by: model` with the key, `by: vectors`
   with the model unreachable.
+
+## 722-5 → step 723 (the owner: «да, 723 отдельно»); 722-6 built
+
+- 722-5 moved to its own step 723 (`new-steps/723/723-main.md`, variant A, not built).
+- 722-6: `npm run eyes -- <url> --no-js` (a browser context without JavaScript; the line says «без JavaScript»). First use on the owner's
+  node (core 81149042): without scripts the element page shows its heading and breadcrumb as the address «s8y6x» — the fix `d35c5009`
+  rides this update; the full menu is there without JavaScript (zones, «ГЛАВНЫЙ САЙТ», «КЛИП» and its sections).
