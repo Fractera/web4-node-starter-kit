@@ -1,5 +1,5 @@
 import "server-only"
-import { readFileSync } from "fs"
+import { existsSync, readFileSync } from "fs"
 import { join } from "path"
 import { cache } from "react"
 import { DEFAULT_DESIGN_CONFIG, type DesignConfig } from "./design-config.defaults"
@@ -31,9 +31,13 @@ const CONFIG_PATH =
  * известной формы; глубокое слияние здесь дало бы лишь возможность прислать
  * половину ветки и получить смесь двух решений владельца.
  */
+// 718: the panel's own look (`data/node/panel-design.json`, «Settings → Panel design») wins over the copy of the site's look; no
+// file — the panel looks like the site (`lib/panel-design.ts`).
+const PANEL_PATH = join(process.cwd(), "data", "node", "panel-design.json")
+
 export const getDesignConfig = cache((): DesignConfig => {
   try {
-    const raw = JSON.parse(readFileSync(CONFIG_PATH, "utf8")) as Partial<DesignConfig>
+    const raw = JSON.parse(readFileSync(existsSync(PANEL_PATH) ? PANEL_PATH : CONFIG_PATH, "utf8")) as Partial<DesignConfig>
     const merged: DesignConfig = {
       colors: {
         light: raw.colors?.light ?? {},

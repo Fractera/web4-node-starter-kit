@@ -10,4 +10,4 @@ and the same page in each element.
 | `page.tsx` | thin entry |
 | `_data/` | `slug`, `order`, words `en` + `ru` |
 | `_components/index.ts` | empty — the working part is passed as `own` |
-| `own` (in `page.tsx`) | 691: the node's base AI provider — `components/ai-provider/` (Anthropic · Claude Code by default; Codex shown as not possible yet, step 690) |
+| `own` (in `page.tsx`) | 718: a drop-down list (`components/panel-design/node-settings.tsx`) — the node's base AI provider (691: `components/ai-provider/`, Anthropic · Claude Code by default, Codex not possible yet) and «Panel design»: the fine-tuning editors (`components/design/*`) writing this panel's own look through `/api/architect/panel-design` into `data/node/panel-design.json`; no file — the panel copies the site's look |
