@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { ChevronDown, RefreshCw } from "lucide-react"
+import { ChevronDown, RefreshCw, Wallet } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,7 +11,8 @@ import { EmptyState } from "@/components/ui/empty-state"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Small } from "@/components/ui/typography"
-import type { BoardRow, BoardUser } from "@/lib/web4-items/subscriptions-board"
+import type { Balance, BoardRow, BoardUser } from "@/lib/web4-items/subscriptions-board"
+import { BalanceLine, TodayLine, type SubscriptionsTodayWords } from "./subscriptions-today.client"
 
 // «DASHBOARD → ВСЕ ПОДПИСКИ» (726-3). Владелец 2026-11-11: «таблица … все подписки она указывает название сервиса и выпадающем списке
 // показывают все элементы которые его вызывают». Страница предрендерена: строки спрашиваются у `/api/node/subscriptions` при открытии и
@@ -42,6 +43,9 @@ export type SubscriptionsBoardWords = {
   tokens: string
   emptyTitle: string
   emptyHint: string
+  /** 726-4: the button that asks the providers about money, on request only */
+  checkBalances: string
+  money: SubscriptionsTodayWords
 }
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
@@ -88,13 +92,17 @@ function UsersMenu({ row, words, lang }: { row: BoardRow; words: SubscriptionsBo
 
 export function SubscriptionsBoard({ words, lang }: { words: SubscriptionsBoardWords; lang: string }) {
   const [state, setState] = useState<{ rows: BoardRow[]; windowDays: number } | "loading" | "failed">("loading")
+  const [balances, setBalances] = useState<Record<string, Balance> | null>(null)
   const [busy, setBusy] = useState(false)
 
-  const load = useCallback(() => {
+  const load = useCallback((withBalances = false) => {
     setBusy(true)
-    fetch(`${BASE}/api/node/subscriptions?lang=${lang}`, { cache: "no-store" })
+    fetch(`${BASE}/api/node/subscriptions?lang=${lang}${withBalances ? "&balances=1" : ""}`, { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((d: { rows: BoardRow[]; windowDays: number }) => setState({ rows: d.rows, windowDays: d.windowDays }))
+      .then((d: { rows: BoardRow[]; windowDays: number; balances: Record<string, Balance> | null }) => {
+        setState({ rows: d.rows, windowDays: d.windowDays })
+        if (d.balances) setBalances(d.balances)
+      })
       .catch(() => setState((s) => (s === "loading" ? "failed" : s)))
       .finally(() => setBusy(false))
   }, [lang])
@@ -116,9 +124,14 @@ export function SubscriptionsBoard({ words, lang }: { words: SubscriptionsBoardW
     <div className="my-6 flex flex-col gap-4" data-subscriptions-board={state.rows.length}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Small className="text-muted-foreground">{fill(words.lead, { days: state.windowDays })}</Small>
-        <Button variant="outline" size="sm" onClick={load} disabled={busy} data-subscriptions-refresh>
-          <RefreshCw className={busy ? "animate-spin" : undefined} aria-hidden /> {words.refresh}
-        </Button>
+        <span className="flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" onClick={() => load(true)} disabled={busy} data-subscriptions-balances>
+            <Wallet aria-hidden /> {words.checkBalances}
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => load()} disabled={busy} data-subscriptions-refresh>
+            <RefreshCw className={busy ? "animate-spin" : undefined} aria-hidden /> {words.refresh}
+          </Button>
+        </span>
       </div>
       {!state.rows.length ? (
         <EmptyState title={words.emptyTitle} hint={words.emptyHint} />
@@ -141,10 +154,14 @@ export function SubscriptionsBoard({ words, lang }: { words: SubscriptionsBoardW
                     {r.description ? <span className="mt-1 line-clamp-2 block text-xs text-muted-foreground">{r.description}</span> : null}
                   </TableCell>
                   <TableCell><UsersMenu row={r} words={words} lang={lang} /></TableCell>
-                  <TableCell>{r.keys ? <Badge variant={KEY_TONE[r.keys]}>{words.keys[r.keys]}</Badge> : <span className="text-muted-foreground">{words.noKeys}</span>}</TableCell>
+                  <TableCell className="whitespace-normal">
+                    {r.keys ? <Badge variant={KEY_TONE[r.keys]}>{words.keys[r.keys]}</Badge> : <span className="text-muted-foreground">{words.noKeys}</span>}
+                    <BalanceLine row={r} balance={balances?.[r.service]} words={words.money} />
+                  </TableCell>
                   <TableCell className="whitespace-normal tabular-nums">
                     {r.calls ? fill(words.usage, { n: r.calls, r: r.refused }) : <span className="text-muted-foreground">{words.noCalls}</span>}
                     {r.tokensIn || r.tokensOut ? <span className="block text-xs text-muted-foreground">{fill(words.tokens, { in: r.tokensIn, out: r.tokensOut })}</span> : null}
+                    <TodayLine row={r} words={words.money} lang={lang} onSaved={() => load()} />
                   </TableCell>
                   <TableCell className="whitespace-normal">
                     {r.lastCall ? (

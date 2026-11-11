@@ -10,4 +10,5 @@ The page is prerendered (build cost: one static shell per language, no data at b
 paid calls (`lib/usage-ledger.cjs` — the core's `data/node/usage/` and each element's own) for the last 7 days; the rows are built by the
 pure `lib/subscriptions-board.cjs`, proven over a fixture by `npm run test:subscriptions-board`. Keys leave as a state only.
 
-Not here: balances and the day's burn (726-4).
+726-4: today's burn against a daily budget in calls (set in the «Budget» popover, `data/node/budgets.json`) and «Check balances»
+(`?balances=1`, the only moment the providers are asked) — `lib/money-day.cjs`, proven by `npm run test:money-day`.

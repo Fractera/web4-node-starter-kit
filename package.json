@@ -52,6 +52,7 @@
     "check:openai-calls": "node scripts/check-openai-calls.mjs",
     "test:openai-errors": "node scripts/test-openai-errors.mjs",
     "test:subscriptions-board": "node scripts/test-subscriptions-board.mjs",
+    "test:money-day": "node scripts/test-money-day.mjs",
     "money": "node scripts/money.mjs",
     "build:api-map": "node scripts/build-api-map.mjs",
     "build:config-schemas": "node scripts/build-config-schemas.mjs",

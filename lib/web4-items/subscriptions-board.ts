@@ -4,11 +4,12 @@ import { join } from "node:path"
 import { listServices } from "@/lib/microservices/registry"
 import { folderAutomation, elementPassport } from "@/lib/a2a/element-passport"
 import { elementLabel } from "@/lib/web4-items/element-name"
-import { setNames } from "@/lib/env-file"
+import { readVar, setNames } from "@/lib/env-file"
 import { openAiKey } from "@/lib/openai-key"
 import paths from "@/lib/web4-items/paths.cjs"
 import ledger from "@/lib/usage-ledger.cjs"
 import board from "@/lib/subscriptions-board.cjs"
+import money from "@/lib/money-day.cjs"
 
 // «ВСЕ ПОДПИСКИ» (726-3): the sources of the Dashboard table, read on request — the page is prerendered, the island asks
 // `/api/node/subscriptions`. The rows themselves are built by the pure `lib/subscriptions-board.cjs` (proven over a fixture).
@@ -31,7 +32,13 @@ export type BoardRow = {
   calls: number; refused: number; tokensIn: number; tokensOut: number
   lastCall: (BoardEvent & { ok: boolean }) | null
   lastError: (BoardEvent & { reason: string | null; code: string | null; message: string | null }) | null
+  /** 726-4: today's burn (UTC) against the daily budget, from the ledger — in calls. */
+  today: { state: "no-spend" | "no-budget" | "within" | "will-cross" | "crossed" | "refusing"; calls: number; projected: number; budget: number | null; at: string | null }
+  /** 726-4: what the provider tells about money (measured): a balance, only the day's spend, or nothing known. */
+  money: { tells: "balance" | "spend" | "unknown"; billing: string | null }
 }
+export type Balance = { state: "balance"; usd: number; at: string } | { state: "spent-today"; usd: number }
+  | { state: "not-told" | "needs-key" | "unknown" | "failed"; key?: string; status?: number }
 
 type Line = Record<string, unknown> & { at: string }
 
@@ -57,5 +64,32 @@ export function subscriptionsBoard(lang: string): { rows: BoardRow[]; windowDays
       setNames: setNames(entry.id),
     })),
   ]
-  return { rows: board.boardRows(sources, { coreSetNames: core }) as BoardRow[], windowDays: WINDOW_DAYS }
+  const rows = board.boardRows(sources, { coreSetNames: core }) as Omit<BoardRow, "today" | "money">[]
+  const budgets = money.readBudgets() as Record<string, { calls: number }>
+  const lines = sources.flatMap((s) => s.ledger)
+  return {
+    windowDays: WINDOW_DAYS,
+    rows: rows.map((r) => {
+      const p = (money.PROBES as Record<string, { balance: boolean; billing: string }>)[r.service]
+      const b = money.dayBurn(lines.filter((l) => l.provider === r.service), { budget: budgets[r.service]?.calls ?? null })
+      return {
+        ...r,
+        today: { state: b.state, calls: b.calls, projected: b.projected, budget: b.budget, at: b.at },
+        money: { tells: p ? (p.balance ? "balance" : "spend") : "unknown", billing: p?.billing ?? null },
+      } as BoardRow
+    }),
+  }
+}
+
+/** 726-4: ask every provider of the table what it tells about money — ON REQUEST only (a few HTTP calls, no model). */
+export async function subscriptionBalances(services: string[]): Promise<Record<string, Balance>> {
+  const keyOf = (name: string) => process.env[name] || readVar("core", name)
+  const out: Record<string, Balance> = {}
+  for (const s of services.slice(0, 50)) out[s] = (await money.probe(s, keyOf)) as Balance
+  return out
+}
+
+/** 726-4: the person sets the daily budget of a service in calls (0 removes it). */
+export function setBudget(service: string, calls: number): boolean {
+  return money.writeBudget(service, calls) as boolean
 }

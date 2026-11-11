@@ -5,6 +5,8 @@
 //   npm run money -- --who i18n/translate      only one consumer, with its last lines
 //   npm run money -- --days                    the days the ledger holds
 //   npm run money -- --json                    the same as data, for a page or another script
+//   npm run money -- --balances                726-4: today's burn against the daily budget, and what each provider tells about
+//                                              money (a few HTTP calls, no model, free; only when asked)
 //
 // The ledger is `data/node/usage/<day>.jsonl` (`lib/usage-ledger.cjs`): one line per paid call, written at the call — never a key,
 // a prompt or a person's words. A refusal keeps the provider's own reason and code, so «why did it stop» is read, not guessed.
@@ -17,6 +19,33 @@ const { readDay, days } = require('../lib/usage-ledger.cjs')
 const args = process.argv.slice(2)
 const opt = (name) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : undefined }
 const json = args.includes('--json')
+
+if (args.includes('--balances')) {
+  // 726-4: the core's ledger only — the elements' ledgers are read by the «Все подписки» page.
+  const { PROBES, dayBurn, probe, readBudgets, envLocalReader } = require('../lib/money-day.cjs')
+  const today = readDay()
+  const budgets = readBudgets()
+  const services = [...new Set([...today.map((l) => l.provider).filter(Boolean), ...Object.keys(PROBES)])]
+  const keyOf = envLocalReader()
+  const out = []
+  for (const s of services) {
+    const burn = dayBurn(today.filter((l) => l.provider === s), { budget: budgets[s]?.calls ?? null })
+    out.push({ service: s, burn, money: await probe(s, keyOf) })
+  }
+  if (json) { console.log(JSON.stringify(out)); process.exit(0) }
+  const usd = (n) => `${n} USD`
+  for (const { service, burn, money } of out) {
+    const b = burn.state === 'no-spend' ? 'no calls today'
+      : `${burn.calls} calls today${burn.budget ? ` of ${burn.budget}` : ''} → ${burn.state}${burn.at ? ` at ${burn.at}` : ''} (pace: about ${burn.projected} a day)`
+    const m = money.state === 'balance' ? `balance ${usd(money.usd)}`
+      : money.state === 'spent-today' ? `spent today ${usd(money.usd)}, no balance told`
+        : money.state === 'needs-key' || money.state === 'not-told' ? `no balance told without ${money.key}`
+          : money.state === 'failed' ? `the provider did not answer${money.status ? ` ${money.status}` : ''}`
+            : 'how this provider tells money is not known'
+    console.log(`  ${service}: ${b}; ${m}`)
+  }
+  process.exit(0)
+}
 
 if (args.includes('--days')) {
   const list = days()
