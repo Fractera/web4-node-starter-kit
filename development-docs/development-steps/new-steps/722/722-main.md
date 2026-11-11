@@ -157,3 +157,20 @@ brought into the core. Nothing checked for voice search by meaning — built fro
   muted), states: searching, empty, error, no vectors, who picked.
 - Plane 1: tsc clean, the prebuild chain green by its exit code. Plane 2 (after the node update, BEFORE any report): eyes of the window at
   1440 and 390, light and dark, empty / searching / results — the screenshot paths named here.
+
+## 722-9 — the left menu cleaned by the owner's critique (2026-11-11)
+
+> раз ты уже сделал этот инструмент внутри верхнего меню пусть он только там и остается. Одновременно с этим из левого меню убирай все что
+> ты построил я имею в виду инструмент для поиска и Checkbox. Но скажу-то мне нравится что ты поставил зелёный индикатор это правильно мы
+> его оставляем возможно для не работающих элементов индикатор будет красный? Индикатор также поставь на вкладку нативные элементы там
+> тоже есть работающие и неработающие. Теперь вопрос о фильтрации через чекбокс. По задумке он должен находиться прямо в верхнем меню …
+> Но прежде чем продолжать сразу же включи нормальный навык дизайнер
+
+- `interface-design` loaded again before continuing (his order). The left menu: the search panel and the checkbox removed
+  (`only-active.tsx` deleted); the header keeps the search. Dots: `menuStates()` now covers every registry entry (`allStates` in
+  `menu-state.cjs`) — the built-in natives get them; «выключен» is red (`destructive`), «спит» stays amber (it wakes by itself on a
+  call — a question for the owner if he wants it red too), «черновик» a hollow ring.
+- The checkbox and the dots in the header's dropdown need the shell's mega-menu (core and root carry it byte for byte, the templates an
+  older copy) — taken over by the owner's next word: the header becomes ONE tool of the core that every element imports (step 727).
+- Plane 1: the prebuild chain green by its exit code, `test:menu-state` green. Plane 2: after the node update, eyes of the left menu (full
+  and compact) with the natives' dots.

@@ -16,7 +16,8 @@ export function stateWord(kind: MenuState, ui: Web4DraftsUi): string {
 
 /** Состояние каждого элемента по id — для деревьев меню, которые строит сервер (без имён, одно чтение реестра). */
 export function menuStates(): Map<string, MenuState> {
-  return new Map((menuState.menuRows(process.cwd()) as { id: string; state: MenuState }[]).map((r) => [r.id, r.state]))
+  // 722-9 (владелец: «Индикатор также поставь на вкладку нативные элементы там тоже есть работающие и неработающие»): и встроенные нативные.
+  return menuState.allStates(process.cwd()) as Map<string, MenuState>
 }
 
 /** Порция кастомных элементов (root — только с `withRoot`, у левого меню он своей строкой): `compact` — ссылка ведёт на «Живой сайт», как у короткого меню. */

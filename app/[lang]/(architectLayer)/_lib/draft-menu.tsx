@@ -16,11 +16,6 @@ import { ARCHITECT_HOME } from './architect-menu'
 import { MAIN_AGENT } from './main-agent-scheme'
 import { menuStates, stateWord } from '@/lib/web4-items/menu-page'
 import { MenuMore } from '../_components/menu-more.client'
-import { OnlyActive } from '../_components/only-active'
-import { MenuSearch } from '@/components/architect/menu-search.client'
-import { menuSearchWords } from '@/components/architect/menu-search.i18n'
-import { MenuAi } from '@/components/architect/menu-ai.client'
-import { appDialogUi } from '@/components/dialog/app-dialog.i18n'
 
 // ЧЕРНОВИКИ И КНОПКА «СОЗДАТЬ МИКРОСЕРВИС» В ЛЕВОМ МЕНЮ (314-1). Слово владельца: «в левом меню после кнопки дизайн
 // добавляем кнопку создать микро service». Меню слоя собирается из папок при сборке; черновики — данные узла, поэтому их
@@ -152,11 +147,10 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   const more: WorkspaceItem[] = customAll.length > PORTION
     ? [{ label: ui.allProjects, node: <MenuMore lang={lang} from={PORTION} total={customAll.length} skip={shownCustom.slice(PORTION).map((d) => d.id)} projectsHref={at(`${ARCHITECT_HOME}/dashboard/projects`)} words={{ allProjects: ui.allProjects, loadingMore: ui.loadingMore, loadFailed: ui.loadFailed }} /> }]
     : []
-  // 722-2: флажок архитектора «только работающие» — первой строкой зоны; прячет строки чистым CSS, работает без JavaScript.
-  const onlyActive: WorkspaceItem = { label: ui.onlyActive, node: <OnlyActive label={ui.onlyActive} /> }
-  // 722-3: поиск «Найти» по названию — над флажком; без JavaScript его нет.
-  const search: WorkspaceItem = { label: menuSearchWords(lang).open, node: <MenuSearch lang={lang} words={menuSearchWords(lang)} aiSlot={<MenuAi lang={lang} words={menuSearchWords(lang)} dialogUi={appDialogUi(lang)} />} /> }
-  const customZone = [search, onlyActive, ...rootTree, button, ...customs, ...more]
+  // 722-9 (владелец 2026-11-11: «раз ты уже сделал этот инструмент внутри верхнего меню пусть он только там и остается. Одновременно с
+  // этим из левого меню убирай все что ты построил я имею в виду инструмент для поиска и Checkbox»): поиск — только в шапке, флажок
+  // «только работающие» переезжает в выпадающий список шапки (722-10); в левом меню остаются точки состояния.
+  const customZone = [...rootTree, button, ...customs, ...more]
   const withCustom = [...menu.slice(0, cut), ...natives, zone(ui.zoneCustom, 'custom', holds(customZone, page)), ...inZone(customZone, 'custom'), ...menu.slice(cut)]
   // Нет пункта «Главный агент» (`build`) — первой зоны нет: подпись над пустотой хуже её отсутствия.
   const c = withCustom.findIndex((m) => m.href === at(`${ARCHITECT_HOME}/${CORE}`))
@@ -236,5 +230,5 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   const separator: WorkspaceItem = { label: '', node: <div data-block="mmsep" aria-hidden className="mt-2 border-t border-border" /> }
   // То, что стоит в меню после последнего встроенного элемента и не является элементом, остаётся (сегодня там пусто).
   const tail = menu.slice(cut).filter((m) => !(m.href && builtIn.has(m.href)))
-  return [...head, ...(named.length > 0 ? [separator, search, onlyActive, ...named, ...more] : []), ...tail]
+  return [...head, ...(named.length > 0 ? [separator, ...named, ...more] : []), ...tail]
 }
