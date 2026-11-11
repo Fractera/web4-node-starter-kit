@@ -1,4 +1,5 @@
 import { openAiKeyFor } from "@/lib/env-file"
+import { readOpenAiResponse, readOpenAiException, logOpenAiError } from "@/lib/openai-error.cjs"
 
 // ПЕРЕВОД РЕПЛИК РАЗГОВОРА АГЕНТОВ НА ЯЗЫК ЧЕЛОВЕКА (шаг 411-3; владелец 2026-10-06: «если м2м агент напишет на английском или
 // на китайском я бы не хотел видеть это в свою чате на английском для китайском»). Только то, что уходит в Telegram; журнал и
@@ -40,13 +41,18 @@ export async function translateTo(text: string, lang: string, hint = ""): Promis
       }),
       signal: AbortSignal.timeout(60_000),
     })
-    if (!res.ok) return null
+    if (!res.ok) {
+      // 726-0: the translation stays optional (null — the original goes on), but the node's log names why OpenAI refused.
+      logOpenAiError("a2a/translate", await readOpenAiResponse(res))
+      return null
+    }
     const body = (await res.json()) as { choices?: { message?: { content?: string } }[] }
     const out = JSON.parse(body.choices?.[0]?.message?.content ?? "null") as Translated | null
     if (!out || typeof out !== "object") return null
     if (out.same) return { same: true }
     return typeof out.text === "string" && out.text.trim() ? { same: false, text: out.text, note: String(out.note ?? "") } : null
-  } catch {
+  } catch (e) {
+    if (!(e instanceof SyntaxError)) logOpenAiError("a2a/translate", readOpenAiException(e))
     return null
   }
 }

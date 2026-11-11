@@ -40,6 +40,7 @@ import { useState } from "react"
 import { AlertTriangle, ExternalLink, HelpCircle, Languages, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { AppDialog } from "@/components/dialog/app-dialog.client"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import { SINGLE_LANG_MODE } from "@/config/translations/translations.config"
@@ -77,7 +78,7 @@ export function TranslationsDialog(
   const t = ui
   const [active, setActive] = useState(0)
   const [savingLang, setSavingLang] = useState<string | null>(null)
-  const { targets, drafts, setCell, translate, busy, error, saved, markSaved } =
+  const { targets, drafts, setCell, translate, busy, error, refusal, saved, markSaved } =
     useTranslations(fields, lang)
 
   if (!open || SINGLE_LANG_MODE || targets.length === 0) return null
@@ -99,7 +100,10 @@ export function TranslationsDialog(
     : error === "bad-key" ? errors.badKey
     : error === "no-funds" ? errors.noFunds
     : error === "rate-limit" ? errors.rateLimit
-    : error ? errors.upstream : null
+    : error === "upstream" ? errors.upstream
+    // 726-0: every other refusal of OpenAI (a spend limit, an overloaded model, a region…) in the door's words from the node's
+    // one dictionary.
+    : error ? refusal?.words ?? errors.upstream : null
 
   return (
     /* 🔒 ЭТО ОКНО БЫЛО СОБРАНО РУКАМИ ИЗ ГОЛЫХ `div` — и в нём не было НИЧЕГО из
@@ -132,21 +136,28 @@ export function TranslationsDialog(
         <div className="space-y-3">
           {/* Вкладки полей — только когда полей больше одного. */}
           {fields.length > 1 && (
+            <TooltipProvider>
             <div className="flex flex-wrap items-center gap-1.5">
+              {/* 726-0: the field's name is shadcn's Tooltip, not `title=` (step 730, `check:shadcn-parts`). */}
               {fields.map((f, i) => (
-                <Button
-                  key={f.key}
-                  size="sm"
-                  variant={i === active ? "default" : "outline"}
-                  className="h-7 min-w-7 px-2 text-[11px]"
-                  onClick={() => setActive(i)}
-                  title={f.label}
-                >
-                  {i + 1}
-                </Button>
+                <Tooltip key={f.key}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      size="sm"
+                      variant={i === active ? "default" : "outline"}
+                      className="h-7 min-w-7 px-2 text-[11px]"
+                      onClick={() => setActive(i)}
+                      aria-label={f.label}
+                    >
+                      {i + 1}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{f.label}</TooltipContent>
+                </Tooltip>
               ))}
               <span className="ml-1 text-[11px] text-muted-foreground">{field?.label}</span>
             </div>
+            </TooltipProvider>
           )}
 
           {/* ДВЕ кнопки перевода, и обе про ВКЛАДКИ: эту и все. «Перевести это
@@ -177,6 +188,11 @@ export function TranslationsDialog(
                 {error === "no-funds" && (
                   <a href={billingUrl} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex items-center gap-1 underline">
                     {errors.fundsLink}<ExternalLink size={10} />
+                  </a>
+                )}
+                {error && !["no-key", "bad-key", "no-funds"].includes(error) && refusal?.link && (
+                  <a href={refusal.link} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex items-center gap-1 underline">
+                    {refusal.linkLabel}<ExternalLink size={10} />
                   </a>
                 )}
               </div>

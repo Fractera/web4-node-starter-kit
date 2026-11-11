@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { readOpenAiResponse, readOpenAiException, logOpenAiError } from "@/lib/openai-error.cjs";
 import type { TranscribeResult } from "../types/voice-input";
 
 // СЕРВЕРНАЯ ФУНКЦИЯ микросервиса «голосовой ввод» — расшифровка аудио. Живёт РЯДОМ со своим клиентом
@@ -39,15 +40,20 @@ export async function transcribeAudio(audio: unknown, language?: string): Promis
   upstream.append("model", MODEL);
   upstream.append("language", language && /^[a-z]{2}$/.test(language) ? language : defaultLanguage());
 
-  const r = await fetch(OPENAI_URL, { method: "POST", headers: { Authorization: `Bearer ${key}` }, body: upstream });
+  // 726-0: the refusal is read by the node's ONE reader of OpenAI's errors (`lib/openai-error.cjs`, the list from OpenAI's guide) —
+  // «no money», «a spend limit», «the key» and «slow down» ask the person for different actions; OpenAI's own words go to the log.
+  let r: Response;
+  try {
+    r = await fetch(OPENAI_URL, { method: "POST", headers: { Authorization: `Bearer ${key}` }, body: upstream, signal: AbortSignal.timeout(120_000) });
+  } catch (e) {
+    const info = readOpenAiException(e);
+    logOpenAiError("voice-input", info);
+    return { ok: false, status: 502, error: `transcription failed (${info.reason})`, reason: info.reason, link: info.link };
+  }
   if (!r.ok) {
-    // 730: ответ OpenAI разбирается, как в двери перевода, — «нет денег», «лимит» и «ключ не тот» требуют разных действий человека.
-    // Текст OpenAI — в журнал узла (номер организации скрыт): без него «429» не говорит, какой лимит кончился.
-    const detail = (await r.json().catch(() => null)) as { error?: { code?: string; type?: string; message?: string } } | null;
-    const code = String(detail?.error?.code ?? detail?.error?.type ?? "");
-    console.error(`[voice-input] OpenAI ${r.status} ${code}: ${String(detail?.error?.message ?? "").replace(/org-[A-Za-z0-9]+/g, "org-…").slice(0, 300)}`);
-    const reason = r.status === 401 ? "bad-key" : /^(insufficient_quota|credit_balance_exhausted)$/.test(code) ? "no-funds" : r.status === 429 ? "rate-limit" : "upstream";
-    return { ok: false, status: 502, error: `transcription failed (${r.status})`, reason };
+    const info = await readOpenAiResponse(r);
+    logOpenAiError("voice-input", info);
+    return { ok: false, status: 502, error: `transcription failed (${r.status})`, reason: info.reason, link: info.link };
   }
   const d = (await r.json()) as { text?: string };
   return { ok: true, text: (d.text ?? "").trim() };

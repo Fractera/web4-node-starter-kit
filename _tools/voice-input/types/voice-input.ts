@@ -19,4 +19,4 @@ export type VoiceInputProps = {
 /** Результат серверной расшифровки — что дверь `api/transcribe` возвращает клиенту. */
 export type TranscribeResult =
   | { ok: true; text: string }
-  | { ok: false; status: number; error: string; reason?: string };
+  | { ok: false; status: number; error: string; reason?: string; link?: string | null; words?: string; linkLabel?: string | null };

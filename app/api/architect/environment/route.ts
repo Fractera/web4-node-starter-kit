@@ -4,6 +4,7 @@ import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { isBornElement } from "@/lib/web4-items/element-delete"
 import { EDITABLE, type EditableName, setNames, writeVar } from "@/lib/env-file"
+import { readOpenAiResponse, readOpenAiException, logOpenAiError } from "@/lib/openai-error.cjs"
 
 // ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ (336-1). `?target=core` или id рождённого элемента.
 //   GET  — имена заданных переменных и есть ли ключ OpenAI у ядра. Значений в ответе нет никогда.
@@ -39,8 +40,12 @@ async function probe(key: string): Promise<"ok" | "key-rejected" | "probe-failed
   try {
     const r = await fetch("https://api.openai.com/v1/models", { headers: { Authorization: `Bearer ${key}` }, signal: AbortSignal.timeout(10000) })
     if (r.ok) return "ok"
-    return r.status === 401 || r.status === 403 ? "key-rejected" : "probe-failed"
-  } catch {
+    // 726-0: read by the node's one reader; the screen keeps its two words, the node's log gets OpenAI's own reason.
+    const info = await readOpenAiResponse(r)
+    logOpenAiError("environment/probe", info)
+    return ["bad-key", "ip-blocked", "forbidden", "region"].includes(info.reason) ? "key-rejected" : "probe-failed"
+  } catch (e) {
+    logOpenAiError("environment/probe", readOpenAiException(e))
     return "probe-failed"
   }
 }

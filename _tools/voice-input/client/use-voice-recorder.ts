@@ -60,6 +60,8 @@ export type VoiceRecorder = {
   elapsed: string;
   /** Причина отказа словами; пусто — отказа нет. */
   note: string;
+  /** 726-0: OpenAI's own page where the person acts on the refusal (billing, limits, keys) and its label; `null` — no such page. */
+  noteLink: { href: string; label: string } | null;
   /** Расшифровка, ждущая решения человека; `null` — ждать нечего. */
   draft: string | null;
   setDraft: (text: string | null) => void;
@@ -102,6 +104,7 @@ export function useVoiceRecorder({
   const [seconds, setSeconds] = useState(0);
   const [supported, setSupported] = useState(true);
   const [note, setNote] = useState("");
+  const [noteLink, setNoteLink] = useState<{ href: string; label: string } | null>(null);
   // 🔒 РАСШИФРОВКА НЕ ВСТАВЛЯЕТСЯ САМА: она ждёт решения человека. Причина в цене
   // ошибки — распознавание иногда слышит не то, а текст встаёт в СЕРЕДИНУ
   // документа, и вылавливать чужую фразу дороже, чем один раз её прочитать.
@@ -167,20 +170,31 @@ export function useVoiceRecorder({
       try {
         const fd = new FormData();
         fd.append("audio", new File([blob], "speech.webm", { type: blob.type || "audio/webm" }));
+        // 726-0: the page's language — the door chooses the words of a refusal on the server, a client carries no dictionary.
+        fd.append("uiLang", lang);
         const url = apiUrl ?? `${location.pathname.replace(/\/+$/, "")}/api/transcribe`;
         const r = await fetch(url, { method: "POST", body: fd, credentials: "include" });
-        const d = (await r.json()) as { text?: string; reason?: string };
-        if (!r.ok) { setNote(({ "no-key": L.noKey, "no-funds": L.noFunds, "rate-limit": L.rateLimit, "bad-key": L.badKey } as Record<string, string>)[d.reason ?? ""] ?? L.failed); return; }
+        const d = (await r.json()) as { text?: string; reason?: string; words?: string; link?: string | null; linkLabel?: string | null };
+        setNoteLink(null);
+        // 726-0: every refusal of OpenAI reads in the door's words from the node's one dictionary (`lib/i18n/openai-error`), with
+        // OpenAI's page to act on; «no key» keeps the field's own words — the field shows where the key is added.
+        if (!r.ok) {
+          if (d.reason === "no-key") { setNote(L.noKey); return; }
+          setNote(d.words || L.failed);
+          if (d.link && d.linkLabel) setNoteLink({ href: d.link, label: d.linkLabel });
+          return;
+        }
         if (!d.text) { setNote(L.nothing); return; }
         setNote("");
         setDraft(d.text);
       } catch {
         setNote(L.failed);
+        setNoteLink(null);
       } finally {
         setBusy(false);
       }
     },
-    [L, apiUrl],
+    [L, apiUrl, lang],
   );
 
   const start = useCallback(async () => {
@@ -205,6 +219,7 @@ export function useVoiceRecorder({
       return;
     }
     setNote("");
+    setNoteLink(null);
     stream.current = media;
     chunks.current = [];
 
@@ -269,6 +284,7 @@ export function useVoiceRecorder({
     bars,
     elapsed: `${mm}:${ss}`,
     note,
+    noteLink,
     draft,
     setDraft,
     setBarCapacity: (n: number) => { maxBars.current = Math.max(16, n); },

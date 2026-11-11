@@ -1,6 +1,8 @@
 import { openAiKey } from "@/lib/openai-key"
 import { SOCIAL_BRANDS } from "@/lib/socials/catalogue"
 import type { SocialCandidate, SocialOutcome, SocialResolveResult } from "../types/socials-ai"
+import { readOpenAiResponse, readOpenAiException, logOpenAiError } from "@/lib/openai-error.cjs"
+import { openAiErrorWords } from "@/lib/i18n/openai-error.i18n"
 
 // РАСПОЗНАВАНИЕ СОЦСЕТИ — ПОЛНЫЙ ЦИКЛ, А НЕ ОЦИФРОВКА НАЗВАНИЯ (31-25, 2026-08-29).
 //
@@ -147,12 +149,18 @@ export async function resolveSocial(phrase: string, lang: string): Promise<Socia
     })
     if (!res.ok) {
       // Отказ модели называется своим именем, а не превращается в пустой список.
-      return { ok: false, reason: "model", detail: `${res.status} ${(await res.text()).slice(0, 200)}` }
+      // 726-0: the node's one reader names why; OpenAI's own words go to the node's log with secrets hidden, never to the page.
+      const info = await readOpenAiResponse(res)
+      logOpenAiError("socials-ai", info)
+      return { ok: false, reason: "model", detail: `${res.status} ${info.code || info.reason}`, openai: info.reason, openaiWords: openAiErrorWords(lang, info.reason) }
     }
     const data = (await res.json()) as { choices?: { message?: { content?: string } }[] }
     proposal = JSON.parse(data.choices?.[0]?.message?.content ?? "{}")
   } catch (e) {
-    return { ok: false, reason: "model", detail: String(e).slice(0, 200) }
+    if (e instanceof SyntaxError) return { ok: false, reason: "model", detail: "the model's answer is not JSON" }
+    const info = readOpenAiException(e)
+    logOpenAiError("socials-ai", info)
+    return { ok: false, reason: "model", detail: info.reason, openai: info.reason, openaiWords: openAiErrorWords(lang, info.reason) }
   }
 
   if (!proposal?.name) return { ok: false, reason: "unknown-network" }

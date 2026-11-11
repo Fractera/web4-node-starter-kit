@@ -70,6 +70,11 @@ export const DICTS = {
       "соединение не защищено), вопрос о вставке расшифровки с двумя кнопками, " +
       "а также заголовок, подсказка и комментарий контейнера поля ввода.",
   },
+  // 726-0: the person's words for every refusal of OpenAI — one dictionary for every screen (the reasons from OpenAI's guide).
+  "openai-error": {
+    json: "lib/i18n/openai-error.i18n.json",
+    what: "Why OpenAI refused a call — no money, a spend or usage limit, a wrong key, a rate limit, an overloaded model and others — each in one short sentence with the action for the person, plus the label of the link to OpenAI's page.",
+  },
 };
 
 // Целевой набор для СЛЕДУЮЩЕГО обмена. Первые десять (en, ru + эти восемь) уже

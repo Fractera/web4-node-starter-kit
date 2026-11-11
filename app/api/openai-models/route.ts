@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readFileSync } from "fs";
 import { getSession } from "@/lib/auth/get-session";
+import { readOpenAiResponse, readOpenAiException, logOpenAiError } from "@/lib/openai-error.cjs";
 
 // Live OpenAI model list for the slot's model pickers (step 207.19, owner rule: model choice is ALWAYS
 // a dropdown fed by the real /v1/models — hardcoded stale lists are a critical error). Same mechanism
@@ -65,7 +66,12 @@ export async function GET(req: NextRequest) {
       headers: { Authorization: `Bearer ${apiKey}` },
       signal: AbortSignal.timeout(8000),
     });
-    if (!res.ok) return NextResponse.json({ error: `openai_${res.status}`, models: [] });
+    if (!res.ok) {
+      // 726-0: the node's one reader names why (no money, a wrong key, a region…), with OpenAI's page to act on.
+      const info = await readOpenAiResponse(res);
+      logOpenAiError("openai-models", info);
+      return NextResponse.json({ error: info.reason, link: info.link, upstreamStatus: res.status, models: [] });
+    }
     const raw = (await res.json()) as { data?: { id: string; created?: number }[] };
     const list = (raw.data ?? [])
       .map((m) => ({ id: m.id, created: m.created ?? 0 }))
@@ -82,6 +88,8 @@ export async function GET(req: NextRequest) {
     cache = { at: Date.now(), payload };
     return NextResponse.json(payload);
   } catch (e) {
-    return NextResponse.json({ error: `fetch_failed: ${e}`, models: [] });
+    const info = readOpenAiException(e);
+    logOpenAiError("openai-models", info);
+    return NextResponse.json({ error: info.reason, link: info.link, models: [] });
   }
 }

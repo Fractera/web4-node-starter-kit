@@ -5,6 +5,7 @@ import { ButtonGroup } from "@/components/ui/button-group"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Small } from "@/components/ui/typography"
 import { useVoiceRecorder, VOICE_BAR } from "@/_tools/voice-input/client/use-voice-recorder"
 import { MicIcon } from "./mic-icon"
@@ -105,11 +106,11 @@ export function VoiceControl({
   const failure = withVoice ? v.note || (!v.supported ? L.tipInsecure : "") : ""
 
   const mic = (
+    <TooltipProvider><Tooltip><TooltipTrigger asChild>
     <Button
       type="button"
       variant="outline"
       aria-label={L.mic}
-      title={v.supported ? L.tipOk : L.tipInsecure}
       disabled={disabled || v.busy || !v.supported}
       data-voice-mic
       data-recording={v.recording ? "true" : "false"}
@@ -128,6 +129,7 @@ export function VoiceControl({
       <MicIcon off={!v.supported} />
       {variant === "textarea" ? (v.busy ? L.transcribing : v.recording ? L.recording : L.mic) : null}
     </Button>
+    </TooltipTrigger><TooltipContent className="max-w-xs">{v.supported ? L.tipOk : L.tipInsecure}</TooltipContent></Tooltip></TooltipProvider>
   )
 
   return (
@@ -232,6 +234,7 @@ export function VoiceControl({
       {failure && (
         <Small data-voice-failure className="text-warning">
           {failure}
+          {v.noteLink && <> <a href={v.noteLink.href} target="_blank" rel="noopener" className="underline" data-voice-openai-link>{v.noteLink.label}</a></>}
           {keyHint && v.note === L.noKey && (
             <>
               {" "}

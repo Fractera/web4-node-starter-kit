@@ -1,5 +1,7 @@
 import { openAiKey } from "@/lib/openai-key"
 import type { DraftField, DraftResult } from "../types/fact-draft"
+import { readOpenAiResponse, readOpenAiException, logOpenAiError } from "@/lib/openai-error.cjs"
+import { openAiErrorWords } from "@/lib/i18n/openai-error.i18n"
 
 // СВОБОДНОЕ ОПИСАНИЕ → ТИПИЗИРОВАННЫЙ ЧЕРНОВИК (81-5).
 //
@@ -92,7 +94,12 @@ export async function draftFromWords(
       }),
       signal: AbortSignal.timeout(30_000),
     })
-    if (!res.ok) return { ok: false, reason: "model-silent" }
+    if (!res.ok) {
+      // 726-0: why OpenAI refused, by the node's one reader — the form names it instead of «the model is silent».
+      const info = await readOpenAiResponse(res)
+      logOpenAiError("fact-draft", info)
+      return { ok: false, reason: "model-silent", openai: info.reason, openaiWords: openAiErrorWords(lang, info.reason) }
+    }
 
     const data = (await res.json()) as { choices?: { message?: { content?: string } }[] }
     const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as Record<string, unknown>
@@ -114,7 +121,11 @@ export async function draftFromWords(
     }
 
     return { ok: true, draft, notes: String(parsed.notes ?? "").trim() }
-  } catch {
-    return { ok: false, reason: "model-silent" }
+  } catch (e) {
+    // A malformed answer of the model (JSON.parse) stays «silent»; a timeout or the network is named.
+    if (e instanceof SyntaxError) return { ok: false, reason: "model-silent" }
+    const info = readOpenAiException(e)
+    logOpenAiError("fact-draft", info)
+    return { ok: false, reason: "model-silent", openai: info.reason, openaiWords: openAiErrorWords(lang, info.reason) }
   }
 }

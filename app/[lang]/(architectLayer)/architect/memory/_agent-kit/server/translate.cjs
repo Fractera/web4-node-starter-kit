@@ -8,6 +8,9 @@
 const { existsSync, mkdirSync, readFileSync, writeFileSync } = require('node:fs')
 const { createHash } = require('node:crypto')
 const path = require('node:path')
+// 726-0: the node's one reader of OpenAI's errors — a byte-identical copy of the core's `lib/openai-error.cjs` (the guard
+// `check:openai-calls` compares them), because the kit lives in every element group without the core.
+const { readOpenAiResponse, readOpenAiException, logOpenAiError } = require('./openai-error.cjs')
 
 const ROOT = process.cwd()
 const MODEL = 'gpt-5-mini'
@@ -41,7 +44,11 @@ async function translateMap(map, lang) {
       }),
       signal: AbortSignal.timeout(60_000),
     })
-    if (!res.ok) return null
+    if (!res.ok) {
+      // The table stays English (and is tried again next time), but the node's log names why OpenAI refused.
+      logOpenAiError('agent-kit/translate', await readOpenAiResponse(res))
+      return null
+    }
     const body = await res.json()
     const out = JSON.parse(body.choices?.[0]?.message?.content ?? 'null')
     if (!out || typeof out !== 'object') return null
@@ -50,7 +57,8 @@ async function translateMap(map, lang) {
       if (typeof out[k] !== 'string' || !marks.every((m) => out[k].includes(m))) return null
     }
     return out
-  } catch {
+  } catch (e) {
+    if (!(e instanceof SyntaxError)) logOpenAiError('agent-kit/translate', readOpenAiException(e))
     return null
   }
 }

@@ -20,7 +20,10 @@ export type TranslatableField = {
 export type Drafts = Record<string, Record<string, string>>
 
 /** Код отказа двери перевода — интерфейс показывает по нему свою подсказку. */
-export type TranslateError = "no-key" | "bad-key" | "no-funds" | "rate-limit" | "upstream" | null
+// 726-0: the reasons are the node's one reader's (`lib/openai-error.cjs`, read from OpenAI's own guide); the door sends the
+// sentence for the person with them (`words`), chosen on the server for the page's language.
+export type TranslateError = string | null
+export type TranslateRefusal = { words: string; link: string | null; linkLabel: string | null }
 
 export function useTranslations(fields: TranslatableField[], baseLang: string) {
   // Языки, на которые переводим: все языки приложения, кроме базового — базовый
@@ -33,6 +36,8 @@ export function useTranslations(fields: TranslatableField[], baseLang: string) {
   const [drafts, setDrafts] = useState<Drafts>({})
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<TranslateError>(null)
+  // 726-0: the door's words for the refusal and OpenAI's own page to act on (billing, limits, keys); `null` — no refusal.
+  const [refusal, setRefusal] = useState<TranslateRefusal | null>(null)
   /** Языки, уже сохранённые в этом сеансе, — по ним прячется кнопка карточки. */
   const [saved, setSaved] = useState<Record<string, boolean>>({})
 
@@ -74,6 +79,7 @@ export function useTranslations(fields: TranslatableField[], baseLang: string) {
     if (!source.length || !targets.length) return
     setBusy(true)
     setError(null)
+    setRefusal(null)
     try {
       const res = await fetch("/api/i18n/translate", {
         method: "POST",
@@ -82,11 +88,13 @@ export function useTranslations(fields: TranslatableField[], baseLang: string) {
           texts: Object.fromEntries(source.map(f => [f.key, f.value])),
           from: baseLang,
           to: targets,
+          uiLang: baseLang,
         }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        setError((data?.error as TranslateError) ?? "upstream")
+        setError(typeof data?.error === "string" ? data.error : "upstream")
+        setRefusal(typeof data?.words === "string" ? { words: data.words, link: data.link ?? null, linkLabel: data.linkLabel ?? null } : null)
         return
       }
       const data = await res.json() as { translations?: Drafts }
@@ -107,5 +115,5 @@ export function useTranslations(fields: TranslatableField[], baseLang: string) {
     }
   }, [fields, targets, baseLang])
 
-  return { targets, drafts, setCell, translate, busy, error, setError, saved, markSaved }
+  return { targets, drafts, setCell, translate, busy, error, refusal, setError, saved, markSaved }
 }
