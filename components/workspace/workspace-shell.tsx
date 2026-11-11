@@ -5,6 +5,7 @@ import { H3, H4, P, Small } from '@/components/ui/typography'
 import { TabsScroll } from '@/components/workspace/tabs-scroll.client'
 import { MenuScrollKeep } from '@/components/workspace/menu-scroll-keep.client'
 import { MenuIcon } from '@/components/workspace/menu-icons'
+import { StateDot, type MenuStateKind } from '@/components/workspace/menu-state-dot'
 
 // РАСКЛАДКА РАБОЧЕГО ЭКРАНА — ОДНА НА БЛОК И НА СТРАНИЦЫ (шаг 49, 2026-08-30).
 //
@@ -56,6 +57,8 @@ export type WorkspaceShellItem = {
   newTab?: boolean
   /** 632-2: тревога пункта (`data-alert`) — закон у поля `alert` вида `workspace`. */
   alert?: string
+  /** 722-2: состояние элемента — закон у поля `state` вида `workspace`. */
+  state?: { kind: MenuStateKind; label: string }
 }
 export type WorkspaceShellNote = {
   tone: 'recommended' | 'advice' | 'warning'
@@ -268,7 +271,7 @@ export function WorkspaceShell({
         )}
         <ul className="flex flex-col gap-1">
           {menu.map((item, i) => (
-            <li key={`${id}-m-${i}`} data-zone={item.zone} className={item.zone?.includes(' ') ? 'pl-3' : undefined}>
+            <li key={`${id}-m-${i}`} data-zone={item.zone} data-state={item.state?.kind} className={item.zone?.includes(' ') ? 'pl-3' : undefined}>
               {item.zoneHead?.item ? (
                 // 560-2: подзона-пункт («Память»): значок, подпись и стрелка, как у раскрывающейся группы; флажок тот же, что у зоны.
                 <label className="flex cursor-pointer items-center justify-between gap-2 rounded-md px-[9px] py-2 text-[length:var(--fs-body)] text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground [&:has(input:checked)_svg.chevron]:rotate-180" data-menu-zone={item.zoneHead.id}>
@@ -301,6 +304,7 @@ export function WorkspaceShell({
                         чтобы значок раскрывающегося пункта («Домен и хостинг») краснел вместе с подписью, как у простого пункта. */}
                     <span className="flex min-w-0 items-center gap-2" data-alert={item.alert}>
                     <MenuIcon name={item.icon} />
+                    <StateDot state={item.state} />
                     {item.href ? (
                       <NavLink
                         reload={item.reload}
@@ -472,6 +476,7 @@ export function WorkspaceShell({
                     item.icon ? (
                       <span className="flex min-w-0 items-center gap-2">
                         <MenuIcon name={item.icon} />
+                        <StateDot state={item.state} />
                         <span className="truncate">{renderItem?.(item, i) ?? item.label}</span>
                       </span>
                     ) : (

@@ -72,3 +72,15 @@ brought into the core. Nothing checked for voice search by meaning — built fro
   (online / не запущен); 1.9 ms.
 - Said aloud: «running» = the node keeps the process running (the registry), not a live poll; a crashed process is raised by the health
   watcher.
+
+## 722-2 built in the working copy (2026-11-11) — live proof waits for the build at the end of 722
+
+- The server builds trees for the native drafts and only the first 12 custom elements, plus the one whose page is open
+  (`draft-menu.tsx`); below them the island `MenuMore` (`_components/menu-more.client.tsx`): without JavaScript a link «Все проекты (N)»
+  to the projects page, with JavaScript 12 skeleton rows when the end comes into view, then the door's 12, until the end.
+- The door `GET /api/architect/menu/elements` (architect, admin; `lib/web4-items/menu-page.ts` over `menu-state.cjs`).
+- The state dot on every element row (`components/workspace/menu-state-dot.tsx`, theme tokens: success, warning, muted), `data-state` on
+  the row; the checkbox «Только работающие» (`_components/only-active.tsx`) hides every row not running with plain CSS — no JavaScript.
+- ✗ on the way: `check:sections` read the state union inside `lib/content/sections/types.ts` as section kinds — the type moved to
+  `menu-state-dot.tsx`; `check:api` wanted a door name of 6–12 words.
+- Proof 1: tsc clean, the prebuild chain green. Proof 2 (after the node update): eyes with JavaScript on and off on the owner's node.

@@ -14,6 +14,9 @@ import { MenuModeSwitch } from '../_components/menu-mode-switch.client'
 import type { MenuMode } from '@/lib/node-menu-mode'
 import { ARCHITECT_HOME } from './architect-menu'
 import { MAIN_AGENT } from './main-agent-scheme'
+import { menuStates, stateWord } from '@/lib/web4-items/menu-page'
+import { MenuMore } from '../_components/menu-more.client'
+import { OnlyActive } from '../_components/only-active'
 
 // ЧЕРНОВИКИ И КНОПКА «СОЗДАТЬ МИКРОСЕРВИС» В ЛЕВОМ МЕНЮ (314-1). Слово владельца: «в левом меню после кнопки дизайн
 // добавляем кнопку создать микро service». Меню слоя собирается из папок при сборке; черновики — данные узла, поэтому их
@@ -53,6 +56,7 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   const ui = web4DraftsUi(lang)
   const l = treeLang(lang)
   const at = (path: string) => `/${lang}${path}`
+  const states = menuStates()
 
   const button: WorkspaceItem = {
     label: ui.create,
@@ -107,13 +111,24 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
       // 678-1: подпись — имя элемента для людей (имя ядра → паспорт → адрес); путь остаётся по адресу.
       label: elementLabel(d.id, lang),
       icon: 'box',
+      // 722-2: состояние элемента — точка у подписи, `data-state` у строки (одно чтение реестра на всё меню).
+      ...(states.has(d.id) ? { state: { kind: states.get(d.id)!, label: stateWord(states.get(d.id)!, ui) } } : {}),
       href: at(dir),
       active: currentPath === dir,
       open: currentPath === dir || currentPath.startsWith(`${dir}/`),
       children,
     }
   }
-  const drafts = listDrafts().map((d) => treeItem(d, false))
+  // 722-2 (владелец 2026-11-11: «если мы говорим о том что у нас есть 1000 элементов … подгружает по 12 элементов»): деревья сервер
+  // строит нативным черновикам и только первым 12 кастомным — плюс тому, на чьей странице стоит человек; остальные приходят порциями
+  // островком `MenuMore` (без JavaScript — ссылка «Все проекты»).
+  const all = listDrafts()
+  const nativeOf = (d: { id: string; native?: boolean }) => d.native === true || isNativeElement(d.id)
+  const customAll = all.filter((d) => !nativeOf(d))
+  const here = (id: string) => { const dir = `${ARCHITECT_HOME}/${addressOf(id)}`; return currentPath === dir || currentPath.startsWith(`${dir}/`) }
+  const PORTION = 12
+  const shownCustom = customAll.filter((d, k) => k < PORTION || here(d.id))
+  const drafts = [...all.filter(nativeOf), ...shownCustom].map((d) => treeItem(d, false))
   // 557: прежний пункт встроенного элемента (страница службы) заменяется деревом на том же месте — адрес пункта тот же.
   const builtIn = new Map(builtInIds().map((id) => { const t = treeItem({ id }, true); return [t.href, t] as const }))
   menu = menu.map((m) => { const t = m.href ? builtIn.get(m.href) : undefined; if (!t) return m; const { native: _n, ...item } = t; return { ...item, label: m.label, icon: m.icon ?? item.icon } })
@@ -130,7 +145,12 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   // lagrix, первой строкой кастомной зоны, выше кнопки создания. Нет root в реестре — нет и пункта.
   const rootTree = builtInDraft('root') ? [strip(treeItem({ id: 'root' }, false))] : []
   const page = at(currentPath)
-  const customZone = [...rootTree, button, ...customs]
+  const more: WorkspaceItem[] = customAll.length > PORTION
+    ? [{ label: ui.allProjects, node: <MenuMore lang={lang} from={PORTION} total={customAll.length} skip={shownCustom.slice(PORTION).map((d) => d.id)} projectsHref={at(`${ARCHITECT_HOME}/dashboard/projects`)} words={{ allProjects: ui.allProjects, loadingMore: ui.loadingMore, loadFailed: ui.loadFailed }} /> }]
+    : []
+  // 722-2: флажок архитектора «только работающие» — первой строкой зоны; прячет строки чистым CSS, работает без JavaScript.
+  const onlyActive: WorkspaceItem = { label: ui.onlyActive, node: <OnlyActive label={ui.onlyActive} /> }
+  const customZone = [onlyActive, ...rootTree, button, ...customs, ...more]
   const withCustom = [...menu.slice(0, cut), ...natives, zone(ui.zoneCustom, 'custom', holds(customZone, page)), ...inZone(customZone, 'custom'), ...menu.slice(cut)]
   // Нет пункта «Главный агент» (`build`) — первой зоны нет: подпись над пустотой хуже её отсутствия.
   const c = withCustom.findIndex((m) => m.href === at(`${ARCHITECT_HOME}/${CORE}`))
@@ -204,11 +224,11 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
     return [...head, zone(ui.zoneNative, 'native', holds(nativeZone, page)), nativeButton, ...grouped.map(upper), ...tail]
   }
   // Короткое меню: root и кастомные элементы — первым уровнем, только название, щелчок — их «Живой сайт» (`preview` дерева).
-  const named = [...rootTree, ...customs].map((t): WorkspaceItem => upper({ label: t.label, icon: t.icon, href: `${t.href}/preview`, active: !!t.open }))
+  const named = [...rootTree, ...customs].map((t): WorkspaceItem => upper({ label: t.label, icon: t.icon, href: `${t.href}/preview`, active: !!t.open, ...(t.state ? { state: t.state } : {}) }))
   // «Между секции основное и кастомными элементами в компактной настройках должен быть сепаратор как между паспортом и основной»: та же
   // черта, что над подписью зоны, — без подписи и без переключателя.
   const separator: WorkspaceItem = { label: '', node: <div data-block="mmsep" aria-hidden className="mt-2 border-t border-border" /> }
   // То, что стоит в меню после последнего встроенного элемента и не является элементом, остаётся (сегодня там пусто).
   const tail = menu.slice(cut).filter((m) => !(m.href && builtIn.has(m.href)))
-  return [...head, ...(named.length > 0 ? [separator, ...named] : []), ...tail]
+  return [...head, ...(named.length > 0 ? [separator, onlyActive, ...named, ...more] : []), ...tail]
 }
