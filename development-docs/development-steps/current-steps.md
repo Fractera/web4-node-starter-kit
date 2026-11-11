@@ -5,6 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-92 (2026-11-12 night) — 730 CLOSED (`completed-steps/730-main.md`, live on the node `d4eba500`). 726 STARTED as an autonomous
+night run (the owner: «go to fifnish non stop»): order 726-0 → 726-1 → 726-3 → 726-4 → 726-5 → 726-2 → 726-6 (mechanism only); the
+node's letter holds the details.**
+
 **NOW-91 (2026-11-11, ~20:25 WET) — 729 CLOSED (summary `completed-steps/729-main.md`): the header search inline — the field left of
 the magnifier, the AI icon right, no panel; proven on the node (core `e5e8b5ff`) at 1440 and 390, light and dark, JS off. NEXT after the
 owner's yes: 725 → 727 design → 724 → 726; 723 later; findings — eyes --dark, native descriptions in English.**
