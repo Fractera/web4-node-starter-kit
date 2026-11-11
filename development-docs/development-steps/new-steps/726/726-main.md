@@ -59,6 +59,21 @@ to be checked at the primary source before building.
 ## 5–6. Substeps, order, address
 
 Repository: the core's working copy; 726-2 also the templates (release-template). After 725 (the dashboard page uses ready parts).
+0. **726-0 one reader of OpenAI's errors, the right words everywhere** (added 2026-11-11 by the owner, verbatim: «Так значит надо было
+   вывести правильную ошибку разве ты не можешь получить все виды ошибок и показать нужную? Добавь это в шаг работы когда ты будешь
+   создавать данные инструмент»). Measured that evening: the voice field showed only a red mark — OpenAI answered 429 with
+   `credit_balance_exhausted: You have no credits remaining`; the translate door knew only the old `insufficient_quota` and called it a
+   rate limit; 20 files of the core call `api.openai.com` directly, each reading the error its own way or not at all (13 copies of the
+   agent kits' `translate.cjs`, `_tools/voice-input`, `_tools/fact-draft`, `_tools/socials-ai`, `app/api/i18n/translate`,
+   `app/api/architect/environment`, `app/api/openai-models`, `lib/a2a/translate.ts`). The cure: one module (`lib/openai-error.cjs`)
+   classifies every error by HTTP status AND OpenAI's `error.code`/`type`, the list taken from OpenAI's primary source (its error-codes
+   guide and API reference, read in the step, not from memory) — bad key, key of another organization, region not supported, no money
+   (`insufficient_quota`, `credit_balance_exhausted`), rate limit, model not found or not allowed, request too large, server error,
+   overloaded — each with the person's words, the action and the exact link (billing, limits, keys); every caller and the templates'
+   copies use it; OpenAI's own message goes to the node's log with the organization hidden; a guard refuses a new direct call to
+   `api.openai.com` that does not go through the reader; the ledger line of 726-1 records the reason. Test: a fake OpenAI answering
+   each code → each door names its reason; the negative control is the old code reading `credit_balance_exhausted` as a rate limit.
+   Done already as a first patch (`23b2d503`, `78089ae4`): the voice tool and the translate door — 726-0 replaces both with the module.
 1. 726-1 the ledger in the core — every outside call writes one line; `npm run money`.
 2. 726-2 the elements' ledger — the same module in the templates, the core reads every element's journal.
 3. 726-3 Dashboard «Все подписки» — services × elements × state.
