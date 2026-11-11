@@ -1,6 +1,7 @@
 "use client"
 
 import { useId, useState } from "react"
+import { Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { EmptyState } from "@/components/ui/empty-state"
@@ -21,23 +22,27 @@ import type { MenuSearchWords } from "@/components/architect/menu-search.i18n"
 // `Spinner` и `EmptyState`, строки — `ElementRow`. Фокус окна — область запроса; под ней одна строка: что происходит слева, единственное
 // действие «Искать» справа; результаты — строки без рамок, имя и «почему» под ним, точка состояния. Подбирает модель OpenAI, когда она
 // отвечает; не ответила — векторы узла (закон двери), и окно говорит, кто подобрал.
+// 729: кнопка — иконка справа от лупы шапки; `seed` — слова, уже набранные в поле поиска, переходят в окно; `onOpenChange` говорит
+// шапке, что окно открыто (щелчки по нему не закрывают строку поиска).
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 type Row = { id: string; label: string; href: string; state: { kind: MenuStateKind; label: string }; why: string; said: string }
 
-export function MenuAi({ lang, words, dialogUi }: { lang: string; words: MenuSearchWords; dialogUi: AppDialogUi }) {
+export function MenuAi({ lang, words, dialogUi, seed = "", onOpenChange }: { lang: string; words: MenuSearchWords; dialogUi: AppDialogUi; seed?: string; onOpenChange?: (open: boolean) => void }) {
   const id = useId()
-  const [open, setOpen] = useState(false)
+  const [open, setOpenState] = useState(false)
   const [text, setText] = useState("")
   const [rows, setRows] = useState<Row[] | null>(null)
   const [by, setBy] = useState<"model" | "vectors" | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const keyHref = `${BASE}/${lang}/architect/build/environment#OPENAI_API_KEY`
+  const setOpen = (v: boolean) => { setOpenState(v); onOpenChange?.(v) }
 
   async function start() {
     const r = (await fetch(`${BASE}/api/architect/menu/ai`, { cache: "no-store" }).then((x) => x.json()).catch(() => null)) as { ok?: boolean; key?: boolean } | null
     if (r?.ok && !r.key) { window.location.href = keyHref; return }
+    if (seed.trim() && !text.trim()) setText(seed.trim())
     setOpen(true)
   }
 
@@ -65,7 +70,9 @@ export function MenuAi({ lang, words, dialogUi }: { lang: string; words: MenuSea
 
   return (
     <>
-      <Button type="button" size="sm" variant="outline" onClick={() => void start()} data-menu-ai>{words.ai}</Button>
+      <Button type="button" size="icon" variant="ghost" onClick={() => void start()} data-menu-ai aria-label={words.aiTitle} title={words.aiTitle}>
+        <Sparkles size={16} aria-hidden />
+      </Button>
       <AppDialog open={open} onOpenChange={setOpen} title={words.aiTitle} description={words.aiLead} ui={dialogUi} size="md">
         <form data-block="menu-ai" className="flex flex-col gap-3" onSubmit={(e) => { e.preventDefault(); void search() }}>
           <label htmlFor={id} className="sr-only">{words.aiLead}</label>

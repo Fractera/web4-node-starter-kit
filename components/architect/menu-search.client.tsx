@@ -1,29 +1,59 @@
 "use client"
 
-import { useEffect, useState, type ReactNode } from "react"
-import { Search, X } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
+import { ArrowLeft, Search, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { MenuStateKind } from "@/components/workspace/menu-state-dot"
+import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import { ElementRow } from "@/components/architect/element-row"
+import { MenuAi } from "@/components/architect/menu-ai.client"
 import type { MenuSearchWords } from "@/components/architect/menu-search.i18n"
 
-// ПОИСК ЭЛЕМЕНТОВ В МЕНЮ АРХИТЕКТОРА (722-3). Слово владельца 2026-11-11: «И в левом меню и верхнем меню должно быть два поиска это одно
-// поле ввода и две кнопки кнопка найти и кнопка искусственный интеллект. Кнопка найти ищет по совпадению в названии».
-// 🔒 БЕЗ JAVASCRIPT ПОЛЯ НЕТ: островок рисует себя только после первой отрисовки в браузере — меню остаётся полным списком ссылок.
-// 🔒 «НАЙТИ» — совпадение в названии через дверь меню (`?q=`, имена читаются у всех — это нажатие, не отрисовка); строки — с точкой
-// состояния и `data-state`, поэтому флажок «только работающие» прячет и их. «ИИ» — `aiSlot` (722-4).
-// `header` — вид для шапки: кнопка-лупа открывает ту же панель под шапкой (мобильная и широкая).
+// ПОИСК ЭЛЕМЕНТОВ В ШАПКЕ АРХИТЕКТОРА (722-3 → 729). Слово владельца 2026-11-11: «почему ты не можешь взять и в интерфейсе на широкой
+// версии при нажатии на лупу просто анимировано сдвинуть лупу вправо и слева от лупы показать Input а справа от лупы сразу нарисовать
+// иконку искусственный интеллект зачем это лишняя модельное окно».
+// ✗ 722-3: лупа открывала отдельную панель в правом верхнем углу экрана (`fixed right-3 top-16`) — поле и две кнопки далеко от лупы.
+// 🔒 ОДНА СТРОКА, БЕЗ ПАНЕЛИ. Широкая: поле вырастает СЛЕВА от лупы (200 мс, ease-out — единственный переход ширины, редкое действие),
+// лупа уезжает вправо вместе с ним, справа проявляется иконка ИИ. Открытая лупа — «Найти» (и Enter); пустое поле — лупа закрывает.
+// Узкая: строка занимает всю шапку (поверх логотипа и меню), слева «←». Совпадения — список под полем. Esc и щелчок мимо закрывают
+// (пока открыто окно ИИ — нет: щелчки по нему не «мимо»). Иконка ИИ открывает окно «Поиск по смыслу» с уже набранными словами.
+// 🔒 БЕЗ JAVASCRIPT ЛУПЫ НЕТ: островок рисует себя только после первой отрисовки — меню остаётся списком ссылок.
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
+const EASE = "ease-[cubic-bezier(0.23,1,0.32,1)]"
 type Row = { id: string; label: string; href: string; state: { kind: MenuStateKind; label: string } }
 
-function Panel({ lang, words, aiSlot }: { lang: string; words: MenuSearchWords; aiSlot?: ReactNode }) {
+export function MenuSearch({ lang, words, dialogUi }: { lang: string; words: MenuSearchWords; dialogUi: AppDialogUi }) {
+  const [js, setJs] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [aiOpen, setAiOpen] = useState(false)
   const [q, setQ] = useState("")
   const [rows, setRows] = useState<Row[] | null>(null)
   const [total, setTotal] = useState(0)
   const [busy, setBusy] = useState(false)
   const [failed, setFailed] = useState(false)
+  const box = useRef<HTMLFormElement>(null)
+  const field = useRef<HTMLInputElement>(null)
+  const lens = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => { setJs(true) }, [])
+  useEffect(() => { if (open) field.current?.focus() }, [open])
+
+  function close() {
+    setOpen(false)
+    setRows(null)
+    setFailed(false)
+    setQ("")
+    lens.current?.focus()
+  }
+
+  useEffect(() => {
+    if (!open || aiOpen) return
+    const away = (e: PointerEvent) => { if (box.current && !box.current.contains(e.target as Node)) close() }
+    document.addEventListener("pointerdown", away)
+    return () => document.removeEventListener("pointerdown", away)
+  }, [open, aiOpen])
 
   async function find() {
     const needle = q.trim()
@@ -37,57 +67,70 @@ function Panel({ lang, words, aiSlot }: { lang: string; words: MenuSearchWords; 
       setRows(j.rows)
       setTotal(j.total ?? j.rows.length)
     } catch {
+      setRows(null)
       setFailed(true)
     } finally {
       setBusy(false)
     }
   }
 
-  return (
-    <div data-block="menu-search" className="flex flex-col gap-2">
-      {/* 722-7: поле — своей строкой, кнопки — под ним. ✗ Замерено глазами на узле владельца: в колонке меню шириной 240 px поле в одной
-          строке с двумя кнопками сжималось до нескольких букв. */}
-      <form className="flex flex-col gap-1.5" onSubmit={(e) => { e.preventDefault(); void find() }}>
-        <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={words.placeholder} aria-label={words.placeholder} className="h-8 w-full text-[length:var(--fs-small)]" />
-        <div className="flex items-center gap-1.5">
-          <Button type="submit" size="sm" variant="secondary" disabled={busy || !q.trim()}>{words.find}</Button>
-          {aiSlot}
-        </div>
-      </form>
-      {failed && <p className="text-[length:var(--fs-small)] text-destructive" role="status">{words.failed}</p>}
-      {rows && (
-        <div data-block="menu-search-result" className="flex flex-col gap-1">
-          <div className="flex items-center justify-between gap-2 text-[length:var(--fs-small)] text-muted-foreground">
-            <span role="status">{rows.length ? words.found.replace("{n}", String(total)) : words.none}</span>
-            <button type="button" onClick={() => { setRows(null); setQ("") }} className="inline-flex items-center gap-1 hover:text-foreground"><X size={12} aria-hidden />{words.clear}</button>
-          </div>
-          <ul className="flex flex-col gap-0.5">
-            {rows.map((r) => (
-              <li key={r.id} data-state={r.state.kind}><ElementRow href={r.href} label={r.label} state={r.state} /></li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  )
-}
+  function onLens() {
+    if (!open) { setOpen(true); return }
+    if (!q.trim()) { close(); return }
+    void find()
+  }
 
-export function MenuSearch({ lang, words, variant = "menu", aiSlot }: { lang: string; words: MenuSearchWords; variant?: "menu" | "header"; aiSlot?: ReactNode }) {
-  const [js, setJs] = useState(false)
-  const [open, setOpen] = useState(false)
-  useEffect(() => { setJs(true) }, [])
   if (!js) return null
-  if (variant === "menu") return <div className="px-[9px] py-1"><Panel lang={lang} words={words} aiSlot={aiSlot} /></div>
+  const shown = open ? "opacity-100" : "pointer-events-none opacity-0"
   return (
-    <div data-block="menu-search-header" className="flex items-center">
-      <Button type="button" size="icon" variant="ghost" aria-label={words.open} aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+    <form
+      ref={box}
+      data-block="menu-search-header"
+      data-open={open || undefined}
+      onSubmit={(e) => { e.preventDefault(); void find() }}
+      className={`flex items-center gap-1 ${open ? "max-md:absolute max-md:inset-0 max-md:z-10 max-md:bg-background max-md:px-3 md:relative" : "relative"}`}
+    >
+      {open && (
+        <Button type="button" size="icon" variant="ghost" className="md:hidden" aria-label={words.close} onClick={close}>
+          <ArrowLeft size={16} aria-hidden />
+        </Button>
+      )}
+      <div className={`min-w-0 overflow-hidden transition-[width,opacity] duration-200 ${EASE} ${open ? "max-md:flex-1 md:w-64" : "w-0"} ${shown}`} inert={!open}>
+        <Input
+          ref={field}
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Escape") { e.preventDefault(); close() } }}
+          placeholder={words.placeholder}
+          aria-label={words.placeholder}
+          className="h-8 w-full text-[length:var(--fs-small)]"
+        />
+      </div>
+      <Button ref={lens} type="button" size="icon" variant="ghost" aria-label={open ? words.find : words.open} aria-expanded={open} disabled={busy} onClick={onLens} title={open ? words.find : words.open}>
         <Search size={16} aria-hidden />
       </Button>
-      {open && (
-        <div className="fixed right-3 top-16 z-50 w-[min(22rem,calc(100vw-1.5rem))] rounded-lg border border-border bg-popover p-3 shadow-lg">
-          <Panel lang={lang} words={words} aiSlot={aiSlot} />
+      <div className={`transition-opacity duration-200 ${EASE} ${shown} ${open ? "" : "w-0 overflow-hidden"}`} inert={!open}>
+        <MenuAi lang={lang} words={words} dialogUi={dialogUi} seed={q} onOpenChange={setAiOpen} />
+      </div>
+      {open && (failed || rows) && (
+        <div data-block="menu-search-result" className="absolute top-full mt-2 flex flex-col gap-1 rounded-lg border border-border bg-popover p-2 shadow-md max-md:inset-x-3 md:left-0 md:w-80">
+          <div className="flex items-center justify-between gap-2 px-1 text-[length:var(--fs-small)] text-muted-foreground">
+            <span role="status" className={failed ? "text-destructive" : undefined}>
+              {failed ? words.failed : rows && rows.length ? words.found.replace("{n}", String(total)) : words.none}
+            </span>
+            <button type="button" onClick={() => { setRows(null); setFailed(false); setQ(""); field.current?.focus() }} className="inline-flex items-center gap-1 hover:text-foreground">
+              <X size={12} aria-hidden />{words.clear}
+            </button>
+          </div>
+          {rows && rows.length > 0 && (
+            <ul className="flex max-h-80 flex-col gap-0.5 overflow-y-auto">
+              {rows.map((r) => (
+                <li key={r.id} data-state={r.state.kind}><ElementRow href={r.href} label={r.label} state={r.state} /></li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
-    </div>
+    </form>
   )
 }
