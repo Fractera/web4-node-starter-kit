@@ -25,13 +25,17 @@ function current(service) {
 }
 
 function register({ service, pid, proc, cwd, channel = false }) {
-  const session = { service, buffer: '', clients: new Set(), pid, proc, cwd, channel, startedAt: new Date().toISOString() }
+  const session = { service, buffer: '', seen: 0, clients: new Set(), pid, proc, cwd, channel, startedAt: new Date().toISOString() }
   box().set(service, session)
   return session
 }
 
+// 728: the buffer keeps only the last 256 KB, so its length stops moving once it is full — and every «has the screen gone quiet» of the
+// bridge went blind in a long session (✗ 2026-11-11 18:21: `/clear` typed into a running turn, the letter eaten by the old
+// conversation). `seen` counts everything the screen ever printed: it keeps moving, it is the measure.
 function remember(session, chunk) {
   session.buffer = (session.buffer + chunk).slice(-BUFFER_BYTES)
+  session.seen = (session.seen || 0) + String(chunk).length
 }
 
 /** Что видно снаружи — факты, без процесса и сокетов. */

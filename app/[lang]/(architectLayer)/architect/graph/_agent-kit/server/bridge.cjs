@@ -598,7 +598,7 @@ function pasteWhenReady(s, text, { quietMs = 3000, maxMs = 120_000, ready = null
         clearInterval(timer)
         return resolve(false)
       }
-      const len = s.buffer.length
+      const len = printed(s)
       if (len !== last) {
         last = len
         since = Date.now()
@@ -623,6 +623,12 @@ function pasteWhenReady(s, text, { quietMs = 3000, maxMs = 120_000, ready = null
 }
 
 /**
+ * 728: how much the screen has printed so far — the measure of «the screen moved» for `whenIdle` and `pasteWhenReady`. Never the buffer's
+ * length: the buffer keeps the last 256 KB and its length stops moving once full (`session.remember`), so a long session looked idle.
+ */
+const printed = (s) => (typeof s.seen === 'number' ? s.seen : s.buffer.length)
+
+/**
  * 620: ход агента закончился — экран затих (`quietMs` без вывода: пока идёт ход, Claude Code крутит счётчик) и на нём нет вопроса
  * (разрешение, доверие папке): Enter команды сессии ответил бы на вопрос. Обещание: true — можно действовать; false — сессии нет или
  * экран не затих за `maxMs` (тогда ничего не делается).
@@ -634,7 +640,7 @@ function whenIdle(s, { quietMs = 4000, maxMs = 10 * 60_000 } = {}) {
     let since = Date.now()
     const timer = setInterval(() => {
       if (session.current(s.service) !== s) { clearInterval(timer); return resolve(false) }
-      if (s.buffer.length !== last) { last = s.buffer.length; since = Date.now() }
+      if (printed(s) !== last) { last = printed(s); since = Date.now() }
       if (Date.now() - since >= quietMs && !promptOnScreen(s.buffer) && !trustOnScreen(s.buffer)) { clearInterval(timer); return resolve(true) }
       if (Date.now() - t0 > maxMs) { clearInterval(timer); return resolve(false) }
     }, 500)
@@ -689,6 +695,31 @@ function watchNewConversation(service, live, element, home, before) {
   timer.unref?.()
 }
 
+/**
+ * 728: has `/clear` taken effect in this live session since `typedAt` — the pulse's `session-end` with `reason: clear` (the SessionEnd
+ * hook every node session carries, 686-2) or a transcript born after it (708-7). Every 500 ms while the same session lives, at most
+ * `maxMs`. Promise: true — the new conversation exists; false — no evidence (the session is gone or `/clear` never ran).
+ */
+function clearedSince(live, element, home, before, typedAt, { maxMs = 10 * 60_000 } = {}) {
+  const pulseFile = path.join(process.cwd(), 'data', 'services', element, 'pulse.json')
+  const byPulse = () => {
+    try {
+      const p = JSON.parse(readFileSync(pulseFile, 'utf8'))
+      return [p.last, ...(Array.isArray(p.history) ? p.history : [])]
+        .some((h) => h && h.event === 'session-end' && h.reason === 'clear' && Date.parse(h.at) >= typedAt)
+    } catch { return false }
+  }
+  return new Promise((resolve) => {
+    const t0 = Date.now()
+    const timer = setInterval(() => {
+      if (session.current(live.service) !== live) { clearInterval(timer); return resolve(false) }
+      if (byPulse() || resume.bornSince(live.cwd, before, home)) { clearInterval(timer); return resolve(true) }
+      if (Date.now() - t0 > maxMs) { clearInterval(timer); return resolve(false) }
+    }, 500)
+    timer.unref?.()
+  })
+}
+
 function sessionCommand(service, { action, model, effort, continue: cont = false } = {}) {
   const live = session.current(service)
   if (!live) return { ok: false, reason: 'no-session' }
@@ -699,16 +730,21 @@ function sessionCommand(service, { action, model, effort, continue: cont = false
       const element = modes.baseOf(service)
       const home = ownClaudeDir(element)
       const before = resume.ids(live.cwd, home)
+      const typedAt = Date.now()
       live.proc.write('\x1b[200~/clear\x1b[201~')
       if (modes.modeOfKey(service) !== 'work') watchNewConversation(service, live, element, home, before)
       for (const ms of [400, 2500]) setTimeout(() => { if (session.current(service) === live) live.proc.write('\r') }, ms)
       console.log(`[agents/session] ${service}: /clear — контекст очищен`)
       // 700-3: the same process, a clean window — and the node wakes it with its letter (no question on the screen, or nothing is typed).
+      // 728: only into the conversation born after /clear. ✗ 2026-11-11 18:21: a fixed 5 s pause pasted the letter into the OLD
+      // conversation — `/clear` typed into a turn still running waits for that turn's end, the letter did not; the old agent answered
+      // it at 65 % of its window and the new one got nothing. No evidence of the clear — nothing is pasted, the old one is not misled.
       if (cont) {
-        setTimeout(() => {
-          void pasteWhenReady(live, resetLine(service), { ready: () => !promptOnScreen(live.buffer) && !trustOnScreen(live.buffer) })
+        void clearedSince(live, element, home, before, typedAt).then((cleared) => {
+          if (!cleared) return console.log(`[agents/session] ${service}: письмо после сброса не вставлено — /clear не выполнился или сессии уже нет`)
+          return pasteWhenReady(live, resetLine(service), { ready: () => !promptOnScreen(live.buffer) && !trustOnScreen(live.buffer) })
             .then((ok) => console.log(`[agents/session] ${service}: ${ok ? 'пробуждён письмом после сброса' : 'письмо после сброса не вставлено'}`))
-        }, 5000)
+        })
       }
     })
     return { ok: true, scheduled: cont ? 'clear-continue' : 'clear' }
