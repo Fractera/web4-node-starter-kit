@@ -12,14 +12,14 @@ about it is written anywhere else.
 | `_data/en.ts` | the base language — mandatory |
 | `_data/ru.ts` | an override |
 | `_data/index.ts` | ties them together; **this file is what makes the folder a page** |
-| `_components/` | the working part: the presentation of the node and its link with Lagrix, built from blocks (step 535) |
+| `_components/` | the working part: the presentation of the node and its link with Lagrix, built from sections (step 535) |
 | `_data/presentation.ts` | the words of the presentation, `en` base and `ru`: intro, the card «you do not have to open this panel», four numbered sections (Web4-ready and Lagrix · the ordinary web · the killer features: reverse engineering and the product quiz, step 583 · home or a dedicated server); money figures by the Lagrix changelog, one reading (entry 51) |
 | `_data/memory-sections.ts` | sections 5 and 6 — deep memory and continuous evolution (step 600) |
 | `_data/platforms-section.ts` | section 7 — Fractera versus the platforms: the Mercedes-AMG question as a collapsed accordion (`question`), the context window, sleeping elements, a subscription's limit, many subscriptions lawfully (step 688); what is not built yet says so |
 
 ## The three states of this page
 
-1. `_components/` returns blocks → they are shown;
+1. `_components/` returns sections → they are shown;
 2. it returns nothing, but `_data` carries `topics` → the text is shown;
 3. neither → the page states its own name and says the content is coming.
 
@@ -55,7 +55,7 @@ reusable in a public layer too — not only behind this lock:
 
 🔒 **Two language versions that do not point at each other read as duplicates.**
 That is precisely how a site earns the "doorway" label — a set of near-identical
-pages with no declared relation. The `hreflang` block is what turns them into one
+pages with no declared relation. The `hreflang` links are what turn them into one
 page in two languages, so it is emitted in **both** visibility modes.
 
 🛑 **One switch decides three things at once** — `ARCHITECT_LAYER_IS_PUBLIC` in

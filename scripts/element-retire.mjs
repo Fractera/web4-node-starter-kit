@@ -1,7 +1,7 @@
 // npm run element:retire -- <id> [<id> …]
 //
 // RETIRE A NATIVE ELEMENT FRACTERA NO LONGER SHIPS (node step 716). The owner, 2026-11-10, verbatim: «нигде не было упоминаний о том что
-// существуют блоки и дизайн как нативные элементы их не должно существовать как нативные элементы и не должно быть обращение к ним.
+// существуют секции и дизайн как нативные элементы их не должно существовать как нативные элементы и не должно быть обращение к ним.
 // Поэтому сначала убери их». A native element (`kind: core`) belongs to Fractera: when the fork's registry drops it, the node update leaves
 // it out of the node's registry (`mergeRegistry`, `scripts/node-update.mjs`) and calls this script for it after the guards — past the last
 // rollback, so a retired folder never meets a restored registry.

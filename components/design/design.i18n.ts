@@ -169,7 +169,7 @@ const EN = {
       },
       "muted": {
         "label": "Muted surface",
-        "description": "Cards, panels, the background of secondary blocks."
+        "description": "Cards, panels, the background of secondary sections."
       },
       "border": {
         "label": "Borders",
@@ -409,7 +409,7 @@ const RU: typeof EN = {
       },
       "muted": {
         "label": "Приглушённая поверхность",
-        "description": "Карточки, панели, фон вспомогательных блоков."
+        "description": "Карточки, панели, фон вспомогательных секций."
       },
       "border": {
         "label": "Рамки",

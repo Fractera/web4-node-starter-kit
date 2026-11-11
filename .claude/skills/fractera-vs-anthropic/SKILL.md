@@ -46,7 +46,7 @@ and nothing has to be kept. Say it: honesty here makes the rest believed.
 | graph | a knowledge graph of who and what is linked; no language model inside, one operation in about two seconds |
 | memory | «remember» and «remind» by a phrase, a photo, a PDF or a voice note; the answer with its date, source and certainty; reminders at a time |
 | config, design | one set of settings and one look for every element: saved once, every element re-styles at once, without a rebuild |
-| blocks | ready sections of pages for the agents — tokens saved on every page |
+| sections | ready sections of pages for the agents — tokens saved on every page |
 | stripe | a Stripe payment link; no card number reaches the node; on after its keys |
 | cache | fast counters and queues — a body only today, Redis not connected |
 | root | the main site; its home is the first screen where a person types or says a task to the node |
@@ -99,9 +99,9 @@ The honest risk is not competition but dependency — the next part. In a cold v
 provider, while people want to own what they build, and while Fractera does not compete with a platform in its own field.
 
 ## Pain, not death
-A platform may change its rules, block an account or disappear. For a node that is pain — switching to another provider — never death,
+A platform may change its rules, section an account or disappear. For a node that is pain — switching to another provider — never death,
 because a model is needed to build and to think, and rarely to run: the i2i law moves work between elements onto agreed APIs with no
-model. Where a product, its data and its people live inside someone else's account, one block takes them all at once — that is death.
+model. Where a product, its data and its people live inside someone else's account, one section takes them all at once — that is death.
 | If it goes | What stops | What stays |
 |---|---|---|
 | Anthropic | the agents: building, their work, the task window on root's home | the whole running product — sites, sign-in, tables, files, payments, connectors between elements, reminders (they need no model); the apps' AI (it goes through the OpenAI key); the deep memory with the OpenAI key; the vectors (counted locally) |

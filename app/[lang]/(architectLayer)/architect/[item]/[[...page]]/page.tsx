@@ -28,7 +28,7 @@ import { ElementRollback } from '../../../_components/element-rollback.client'
 import { elementCodeState } from '@/lib/web4-items/element-code-state'
 import { elementDir } from '@/lib/web4-items/element-github'
 import { elementVersions } from '@/lib/web4-items/element-versions'
-import type { Block } from '@/lib/content/blocks/types'
+import type { PageItem } from '@/lib/content/sections/types'
 import { ElementDangerZone } from '../../../_components/element-danger-zone'
 import { ElementPower } from '../../../_components/element-power.client'
 import power from '@/lib/web4-items/element-power.cjs'
@@ -55,7 +55,7 @@ import { NodeUsers } from '@/components/node-users/node-users.client'
 import { nodeUsersUi } from '@/components/node-users/node-users.i18n'
 import { agentKitWidget, openAiKeyHref, type AgentKitPage } from '../_agent-kit/widgets'
 import { ElementPreview } from '@/components/preview/element-preview.client'
-import { elementPreviewWords, previewTaskKit } from '@/sections/blocks/element-preview.server'
+import { elementPreviewWords, previewTaskKit } from '@/sections/kinds/element-preview.server'
 import { EnvironmentPanel } from '@/components/environment/environment-panel'
 import { ElementPassport, type NodeElementRow, type PassportView } from '../../../_components/element-passport'
 import { nodeEntries } from '@/lib/a2a/node-registry'
@@ -239,7 +239,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
             </div>
           )}
           {bar}
-          {/* 319-4: родившийся и работающий элемент получает ТОТ ЖЕ блок, что root и службы, — порт по факту и «Адрес в
+          {/* 319-4: родившийся и работающий элемент получает ТОТ ЖЕ секция, что root и службы, — порт по факту и «Адрес в
               интернете» с кнопкой подключения поддомена (289). Черновик и упавшее рождение — свои карточки. */}
           {port !== null
             ? <ServicePort serviceId={item} words={servicePortWords(lang, item)} />
@@ -268,7 +268,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   const node = r.trail[r.trail.length - 1]
   const key = r.trail.map((t) => t.slug).join('/')
   const words = node.words[l]
-  // 706-1: «Блоки» сняты (элемент Blocks выведен, владелец 2026-11-09). 712: «Дизайн» и «Настройки сайта» правят файлы элемента прямо во
+  // 706-1: «Блоки» сняты (элемент Sections выведен, владелец 2026-11-09). 712: «Дизайн» и «Настройки сайта» правят файлы элемента прямо во
   // вкладке ядра (пульт `/api/node/element-settings`) — ссылок на собственные страницы элемента больше нет. Свой адрес элемента в
   // интернете (ссылка на прототип, ссылки выключателей) — только свой домен или поддомен зоны узла.
   const ownPublicUrl = domainRecord(item)?.url ?? (primaryDomain() ? `https://${address}` : null)
@@ -346,7 +346,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   const dui = elementDeploymentsUi(lang)
   // 472-2: дашборд H2A · H2H · A2A. У «A2A: ваша работа» собеседники и сделки — из сделок элемента (`listOrders`, тот же источник,
   // что её «Сделки»); у H2A, H2H и «A2A: ваши заказы» источника пока нет — нули и честная строка. Данные — при открытии, без таймеров.
-  const dashboardBlocks: Block[] = node.slug === 'dashboard'
+  const dashboardBlocks: PageItem[] = node.slug === 'dashboard'
     ? (() => {
         const dw = elementDashboardUi(lang)
         const orders = key === 'workflow/a2a-work/dashboard' && entry ? listOrders(item) : []
@@ -361,10 +361,10 @@ export default async function Page({ params }: { params: Promise<Params> }) {
           { kind: 'metrics', items: [{ value: String(by.size), label: dw.counterparts }, { value: String(orders.length), label: dw.deals }] },
           rows.length ? { kind: 'table', headers: [...dw.headers], rows } : { kind: 'note', text: dw.empty },
           { kind: 'cta', text: dw.note, href: `/${lang}${ARCHITECT_HOME}/${slug}/build/terminal`, label: dw.terminal },
-        ] as Block[]
+        ] as PageItem[]
       })()
     : []
-  const tables: Block[] = versions
+  const tables: PageItem[] = versions
     ? [{
         kind: 'table',
         caption: dui.caption,
@@ -402,7 +402,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
           address: <ElementAddress id={item} lang={lang} ui={sui} current={slug} internet={domainRecord(item)?.url.replace("https://", "") ?? address} />,
           // 324: главное зеркало — второй собственный домен в корне элемента.
           mirror: <ElementDomain id={item} lang={lang} ui={sui} current={domainRecord(item)} />,
-          // 706-1: связь с CONFIG переехала в «Строительство → Настройки сайта»; связи с Дизайном и Блоками сняты вместе с элементами.
+          // 706-1: связь с CONFIG переехала в «Строительство → Настройки сайта»; связи с Дизайном и Секциями сняты вместе с элементами.
           // 567: включение элемента — признак «выключен» в реестре узла (кнопка — выбор владельца 2026-10-22).
           power: <ElementPower id={item} lang={lang} ui={sui} dialogUi={appDialogUi(lang)} initial={(() => { const off = power.offOf(entry); return { on: !off, reason: off ? power.reasonIn(off, lang) : null, byDefault: Boolean(off?.byDefault) } })()} />,
           remove: <DeleteElementButton lang={lang} id={item} address={address} ui={sui} dialogUi={appDialogUi(lang)} />,

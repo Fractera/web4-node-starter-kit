@@ -1,4 +1,4 @@
-// @api report which service blocks this node carries and on which ports
+// @api report which service sections this node carries and on which ports
 import { NextResponse } from "next/server"
 
 import { listServices } from "@/lib/microservices/registry"
@@ -18,7 +18,7 @@ import { listServices } from "@/lib/microservices/registry"
 // ложь, только этажом ниже.
 //
 // 🔒 ДВЕРЬ ЗАКРЫТА ВОРОТАМИ, И ЭТО РЕШЕНИЕ, А НЕ УПУЩЕНИЕ. Её имени НЕТ в
-// `PUBLIC_API_PREFIXES` (`proxy.ts`) намеренно: закон о сменных блоках говорит
+// `PUBLIC_API_PREFIXES` (`proxy.ts`) намеренно: закон о сменных элементах говорит
 // «ничего своего наружу — узнавший наши порты и схемы привязан к нам». Состав
 // узла — сведение о машине человека, а не о продукте. Проходят те же, кто и к
 // прочим дверям: хозяин за клавиатурой этой машины, временный адрес и сессия.

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// check:element-look (706-2) — облик элемента для узла: форма блока `design` паспорта и посев «как X» (`create --look-like`).
+// check:element-look (706-2) — облик элемента для узла: форма секции `design` паспорта и посев «как X» (`create --look-like`).
 // Чистые функции `lib/web4-items/element-look.cjs` на фикстурах во временной папке; узел и реестр не трогаются.
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -11,11 +11,11 @@ let bad = 0
 const ok = (cond, what) => { if (!cond) { bad++; console.log(`✗ ${what}`) } else console.log(`✓ ${what}`) }
 
 ok(L.normalizeLook({ skill: 'frontend-design', audience: 'partner engineers', character: ['strict', 'calm'], references: [{ url: 'https://stripe.com/docs', note: 'tone' }] }).ok, 'a valid brief passes')
-ok(L.normalizeLook(undefined).look === null, 'no design block — no look')
+ok(L.normalizeLook(undefined).look === null, 'no design part — no look')
 ok(!L.normalizeLook({ character: ['a', 'b', 'c', 'd', 'e', 'f'] }).ok, 'six character words are refused')
 ok(!L.normalizeLook({ references: [{ url: 'ftp://x' }] }).ok, 'a reference without http(s) is refused')
 ok(!L.normalizeLook({ skill: 'Bad Skill' }).ok, 'a skill name of the wrong shape is refused')
-ok(!L.normalizeLook([1]).ok, 'a design block that is not an object is refused')
+ok(!L.normalizeLook([1]).ok, 'a design part that is not an object is refused')
 
 const dir = mkdtempSync(join(tmpdir(), 'look-'))
 try {

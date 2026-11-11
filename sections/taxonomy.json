@@ -40,8 +40,8 @@
         "ru": "Раскрытие ключевой пользы продукта через тезисы и иконки."
       },
       "variants": {
-        "en": "A 2x2 or 3x2 grid of cards, blocks with large icons, alternating rows (Z-pattern).",
-        "ru": "Сетка карточек 2×2 или 3×2, блоки с крупными иконками, чередующиеся строки (Z-паттерн)."
+        "en": "A 2x2 or 3x2 grid of cards, sections with large icons, alternating rows (Z-pattern).",
+        "ru": "Сетка карточек 2×2 или 3×2, секции с крупными иконками, чередующиеся строки (Z-паттерн)."
       }
     },
     {
@@ -105,7 +105,7 @@
       },
       "variants": {
         "en": "A tick-and-cross table, \"before / after\" plates, a vertical head-to-head block.",
-        "ru": "Сравнительная таблица галочек и крестиков, плашки «было / стало», вертикальный баттл-блок."
+        "ru": "Сравнительная таблица галочек и крестиков, плашки «было / стало», вертикальная баттл-панель."
       }
     },
     {

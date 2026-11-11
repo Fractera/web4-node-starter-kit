@@ -64,12 +64,12 @@ a route. That is why the content root is called `content`.
 ```
 content/<collection>/_collection.json   { "titles": { "en": "Guide", "ru": "Руководство" }, "index": true }
 content/<collection>/<slug>/meta.json   { "order": 10 }                       ("index": false hides one page)
-content/<collection>/<slug>/en.json     { "title": "…", "lead": "…", "blocks": [ … ] }
+content/<collection>/<slug>/en.json     { "title": "…", "lead": "…", "sections": [ … ] }
 content/<collection>/<slug>/ru.json     (one file per language the page exists in)
 ```
 
 - The address is the folder path: `/<lang>/<collection>/<slug>`; nested folders give nested addresses.
-- `blocks` are blocks of the catalogue (`registry/src/lib/content/blocks/types.ts`, kinds such as `h2`, `p`,
+- `sections` are sections of the catalogue (`registry/src/lib/content/sections/types.ts`, kinds such as `h2`, `p`,
   `list`, `quote`, `code`, `figure`, `cta`) — the page is COMPOSED, not coded.
 - **There is no registry.** Add the folder and the page has an address, a line in the collection index and
   a line in the sitemap; delete it and it is gone from all three. There is no list to forget.
@@ -101,7 +101,7 @@ was not prerendered (found and fixed on 2026-09-25).
 A page whose behaviour cannot be composed from its sections (a live tool, a form with its own logic)
 may have its own route file. It goes into `ALLOWED` in `scripts/check-routes.mjs` **with its reason** —
 a decision the owner can read, not a habit. If a second page needs the same behaviour, the behaviour
-becomes a block kind and both pages become data.
+becomes a section kind and both pages become data.
 
 ## 7. Search visibility is the owner's decision
 

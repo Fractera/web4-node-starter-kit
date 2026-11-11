@@ -97,7 +97,7 @@ the health endpoint returned `200`.
 Two findings came out of it, and both are about **diagnosis, not delivery**:
 
 - **The agent's access key had never been issued.** The whole chain was built and shipped; the
-  environment export skipped a block in silence; the script refused naming the *second* link ("set the
+  environment export skipped a section in silence; the script refused naming the *second* link ("set the
   variable") instead of the first ("no key was issued"). A chain that reports the wrong link looks
   exactly like an agent that will not obey.
 - **The canonical proof of delivery was unobtainable by construction** — the build stamp it reads is
@@ -160,7 +160,7 @@ Three things it showed beyond the task:
 1. **A public page and a protected page have different SHAPES.** What is normal in the protected layer
    is three violations at once in the public one — the public layer is stricter because crawlers and
    agents arrive there.
-2. **Emptying content breaks what stood on it.** Removing the home page's blocks removed its heading
+2. **Emptying content breaks what stood on it.** Removing the home page's sections removed its heading
    too: a flag was set because a section printed the H1. **A setting explained by a neighbouring piece
    outlives that piece and lies in silence.**
 3. **The agent's own note nearly made it dismiss a real failure.** An observation about false alarms,

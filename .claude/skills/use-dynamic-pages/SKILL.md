@@ -97,7 +97,7 @@ Data that belongs to this project goes in `SCHEMA` (`lib/db/index.ts`) as usual 
 
 ## 3b. What the page is MADE OF, and what goes in the hole
 
-A page here is still a list of blocks in a language cell — the shell, the heading, the explanation and
+A page here is still a list of sections in a language cell — the shell, the heading, the explanation and
 the chrome are content, exactly as on a static page (`use-static-pages`). The difference is one hole
 in that list where something live stands. Deciding WHAT stands there is the first question of this
 skill, and it is answered before the first file:

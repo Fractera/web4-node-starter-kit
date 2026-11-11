@@ -37,7 +37,7 @@ events. When one happens, the file is updated in the same operation:
 | the next action changed | the line is rewritten |
 
 The test that replaces all others: «if the power went off right now, what of the last hour would not come back?» — that is written now.
-The file is rewritten in place, never appended as a chronicle; a block «measured — do not measure again» survives every reset.
+The file is rewritten in place, never appended as a chronicle; a section «measured — do not measure again» survives every reset.
 
 **Nothing is compacted — you reset yourself (step 700).** Compaction loses silently and is off in every node session. The node counts
 your window: from 55 % a line `⟦node · context-window · …⟧` comes with the person's message. It is a judgement, not a threshold — a small
@@ -120,7 +120,7 @@ start — there is no genre «amended step».
 
 When the last step of a group closes: `reports/feature-<8+ words>.md` — what the capability does today and how it is proven · which steps
 went in, side steps included, with the reason · what it cannot do and what stays owed · the owner's decisions verbatim · where it lives.
-Then the working part of `current-steps.md` is reset; the block «measured — do not measure again» stays.
+Then the working part of `current-steps.md` is reset; the section «measured — do not measure again» stays.
 
 ## 8. What not to do
 

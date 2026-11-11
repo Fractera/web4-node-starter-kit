@@ -40,7 +40,7 @@ app/[lang]/<tab>/<slug>/        # one document = one co-located route folder
   _components/index.tsx         # createContentPost / createContentPage({ resolve, chrome, … })
   _data/
     meta.ts                     # non-translatable: slug, date, tags, author, images
-    en.ts                       # the FULL base body (required): translatable fields + blocks + FAQ
+    en.ts                       # the FULL base body (required): translatable fields + sections + FAQ
     <lang>.ts                   # a PARTIAL override: only the keys that differ from the base
     index.ts                    # export const data = { meta, en, overrides: { <lang> } }
 ```
@@ -56,7 +56,7 @@ The per-tab plumbing already exists once in the tab folder and is reused by ever
   list helper (`<tab>Post` / `<tab>List`) and `<tab>/_lib/types.ts` — the type contracts.
 - `app/[lang]/<tab>/_data/{en,ru,index}.ts` — DATA: the tab's localized UI chrome
   (`get<Tab>Ui(lang)`). UI strings are data → never hardcode them in `_components`.
-- Shared engine (reused, never copied into a tab): `lib/content` (neutral block catalog,
+- Shared engine (reused, never copied into a tab): `lib/content` (neutral section catalog,
   `resolveEntry`, `createContentPost`/`createContentPage`) + `components/content-page`
   (`StandardContentPage`, `PostBody`). A new tab = one line in `lib/parser-fs.mjs`
   `COLLECTIONS` with `typeModule: './_lib/post'`.
@@ -104,7 +104,7 @@ explicit confirmation. Never silently scaffold a content tree.
    `_components/index.tsx`, thin `page.tsx`) and add one `COLLECTIONS` line in
    `lib/parser-fs.mjs` — see `content-engine.md` §7.
 2. Create `app/[lang]/<tab>/<slug>/_data/meta.ts` — non-translatable fields only.
-3. Create `_data/en.ts` — the complete base body (all translatable fields + blocks + FAQ).
+3. Create `_data/en.ts` — the complete base body (all translatable fields + sections + FAQ).
 4. For each language you can translate now, create `_data/<lang>.ts` — only the keys that
    differ. Leave the rest; `resolveEntry` fills them from `en` per key.
 5. Create `_data/index.ts` — `export const data = { meta, en, overrides: { <lang> } }`.

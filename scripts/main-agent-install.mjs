@@ -37,7 +37,7 @@ export function installMainAgent(root) {
   const file = join(root, '.claude', 'settings.local.json')
   let s = {}
   try { s = JSON.parse(readFileSync(file, 'utf8')) } catch { /* нет файла — начинаем с пустого */ }
-  // 548-13: без блока чтения вне папки — с ним каждая команда с подоболочкой ждала бы человека, а главного агента будит событие.
+  // 548-13: без секции чтения вне папки — с ним каждая команда с подоболочкой ждала бы человека, а главного агента будит событие.
   s.permissions = { ...(s.permissions ?? {}) }
   delete s.permissions.blockReadsOutsideWorkingDirectories
   delete s.claudeMdExcludes

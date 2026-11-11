@@ -8,6 +8,6 @@
   "design": "Keeps the project look (colours of both themes, fonts, corners) and signals elements when it changes (MCP get_project_settings, subscribe).",
   "graph": "The node's shared knowledge graph (LightRAG): elements store what they learn as entities and links and find it again by meaning.",
   "root": "The project's main site on the root domain.",
-  "blocks": "A catalog of ready page blocks in one style that elements take instead of designing pages from scratch.",
+  "sections": "A catalog of ready page sections in one style that elements take instead of designing pages from scratch.",
   "stripe": "The node’s payment element: meant to take card payments through the person’s Stripe account for the elements of this node (Settings → Payments → Web2); turned off until card payments are built."
 }

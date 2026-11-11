@@ -10,7 +10,7 @@ word of 2026-09-25: same shape, only the element id differs.
 |---|---|
 | `page.tsx` | thin entry; the menu item "Config" |
 | `_data/` | `meta.ts` (slug `config`, `order` 24.5 — right under "Data"), `en.ts`, `ru.ts` |
-| `_components/index.ts` | one block `servicePort` with `serviceId: 'config'`: port on the machine and address on the internet |
+| `_components/index.ts` | one section `servicePort` with `serviceId: 'config'`: port on the machine and address on the internet |
 | `preview/` | live preview (`elementPreview`), opens `https://config.<zone>` in a new tab too |
 | `claude-code/`, `terminal/`, `telegram/`, `agent-api/`, `_agent-kit/`, `agent-kit.json` | the agent kit — written by `npm run agent-kit:add -- config`, never edited by hand; the agent works in `WEB4-ITEMS/core/config` |
 

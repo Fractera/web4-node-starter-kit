@@ -54,7 +54,7 @@ fresh server would open the article on an empty database and show a hole.
 
 **Two traps this already fell into.** A **link on a picture is not a source of the picture** — the
 figure renderer branched on `href` first and drew the image itself, skipping `media:` resolution, so
-the raw string reached the HTML; the defect was visible only on the one block where both conditions
+the raw string reached the HTML; the defect was visible only on the one section where both conditions
 met. And a **video's poster is not an image**: `<video poster="…">` takes neither the blurred
 placeholder nor the optimiser, wherever the file lives. That is the element's nature, not a gap here —
 say so plainly instead of promising a placeholder for every picture.

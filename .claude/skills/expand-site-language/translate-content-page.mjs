@@ -7,10 +7,10 @@
 // Two modes:
 //   --op next  --lang <L> [--tab t --slug s]
 //        Return the next page still needing translation for <L>: its current (default-language) _data
-//        file as raw TS + the ordered list of block kinds + how many remain. The agent reads it,
+//        file as raw TS + the ordered list of section kinds + how many remain. The agent reads it,
 //        translates the visible strings, and calls --op write with the SAME structure.
 //   --op write --lang <L> --tab t --slug s --data <file.json>
-//        Validate STRUCTURE PARITY (same block kinds in the same order, same faq length — only leaf
+//        Validate STRUCTURE PARITY (same section kinds in the same order, same faq length — only leaf
 //        STRINGS may change, never the structure — the safe subset of step 155), serialize the payload
 //        into _data/<L>.ts WITHOUT needsTranslation, and tick the page off in the translation step.
 //
@@ -110,7 +110,7 @@ async function opNext(outRoot, L, a) {
   return finish({
     mode: "next", lang: L, tab: target.tab, slug: target.slug, remaining: pages.length,
     blockKinds: blockKindsOf(src), faqCount: faqCountOf(src), sourceTs: src,
-    instruction: `Translate every visible STRING in sourceTs into '${L}'. Keep the block kinds in the EXACT same order (${blockKindsOf(src).join(", ")}) and the same number of faq pairs. Keep the root-anchor link [Agentic Engineering Infrastructure](/${L}) and any /${L}/... links. Then call --op write with { fields:{title,seoTitle?,subtitle?,description?,summary?,keywords?}, blocks:[{kind,text|items}], faq:[{q,a}] }.`,
+    instruction: `Translate every visible STRING in sourceTs into '${L}'. Keep the section kinds in the EXACT same order (${blockKindsOf(src).join(", ")}) and the same number of faq pairs. Keep the root-anchor link [Agentic Engineering Infrastructure](/${L}) and any /${L}/... links. Then call --op write with { fields:{title,seoTitle?,subtitle?,description?,summary?,keywords?}, body:[{kind,text|items}], faq:[{q,a}] }.`,
   })
 }
 
@@ -125,18 +125,18 @@ async function opWrite(outRoot, L, a) {
   const expectedKinds = blockKindsOf(src), expectedFaq = faqCountOf(src)
 
   const data = JSON.parse(await readFile(a.data, "utf8"))
-  const blocks = Array.isArray(data.blocks) ? data.blocks : []
-  const gotKinds = blocks.map(b => b && b.kind)
+  const items = Array.isArray(data.body) ? data.body : []
+  const gotKinds = items.map(b => b && b.kind)
   // STRUCTURE-PARITY GATE: only strings may change, never the structure (safe subset of step 155).
   if (gotKinds.length !== expectedKinds.length || gotKinds.some((k, i) => k !== expectedKinds[i]))
-    fail(`structure parity violated: blocks must stay [${expectedKinds.join(", ")}] in that order, got [${gotKinds.join(", ")}]. Translate the STRINGS only; never add/remove/reorder blocks (that is authoring = step 155).`)
+    fail(`structure parity violated: body must stay [${expectedKinds.join(", ")}] in that order, got [${gotKinds.join(", ")}]. Translate the STRINGS only; never add/remove/reorder body (that is authoring = step 155).`)
   const faq = Array.isArray(data.faq) ? data.faq : []
   if (expectedFaq && faq.length !== expectedFaq) fail(`faq must keep ${expectedFaq} pairs, got ${faq.length}`)
-  const rootOk = JSON.stringify(blocks).includes(`(/${L})`)
+  const rootOk = JSON.stringify(items).includes(`(/${L})`)
   if (!rootOk) fail(`the root anchor link (/${L}) must be preserved in the translated body`)
   // BROKEN-CHARACTER GATE: refuse a translation carrying U+FFFD / mojibake / control chars.
   scanBroken("fields", data.fields, fail)
-  scanBroken("blocks", blocks, fail)
+  scanBroken("body", items, fail)
   scanBroken("faq", faq, fail)
   if (errs.length) return finish({})
 
@@ -144,9 +144,9 @@ async function opWrite(outRoot, L, a) {
   const fields = data.fields && typeof data.fields === "object" ? data.fields : {}
   const obj = {}
   for (const k of ["title", "seoTitle", "subtitle", "description", "summary", "keywords"]) if (fields[k] != null) obj[k] = String(fields[k])
-  obj.blocks = blocks
+  obj.body = items
   if (faq.length) obj.faq = faq
-  const body = `import type { ${typeName} } from '../../_lib/types'\n\n// Translated to '${L}'. Strings only — the block structure stays frozen (set by the fan-out).\nexport const ${L}: ${typeName} = ${tsLit(obj)}\n`
+  const body = `import type { ${typeName} } from '../../_lib/types'\n\n// Translated to '${L}'. Strings only — the section structure stays frozen (set by the fan-out).\nexport const ${L}: ${typeName} = ${tsLit(obj)}\n`
   await writeOut(outRoot, rel, body)
 
   // Сколько страниц ещё ждёт перевода — это и есть отметка о прогрессе, и её

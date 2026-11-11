@@ -2,7 +2,7 @@ import type { ShellGroup } from "@/components/shell/shell-types"
 import type { NavCandidate, NavItem, NavSlot } from "./editors/lib/nav"
 
 // МЕНЮ ЭЛЕМЕНТА ДЛЯ РЕДАКТОРА (узел, шаг 712-4) — то же, что собирала страница элемента из своей оболочки (`site-settings-editors/
-// blocks.tsx`), но из его публичной двери оболочки `/api/shell/<язык>`, которую ядро спрашивает через пульт: текущее меню места и
+// sections.tsx`), но из его публичной двери оболочки `/api/shell/<язык>`, которую ядро спрашивает через пульт: текущее меню места и
 // кандидаты — все страницы шапки и подвала.
 export function shellMenu(shell: { top?: ShellGroup[]; footer?: ShellGroup[] }, lang: string, slot: NavSlot): { current: NavItem[]; candidates: NavCandidate[] } {
   const top = shell.top ?? []

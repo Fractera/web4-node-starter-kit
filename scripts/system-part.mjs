@@ -5,7 +5,7 @@
 //             `CLAUDE.md` up to `Entries:` of section 9, the soul, the release's skill files, the guards; `--hook` — the line for a
 //             session start (Claude Code `SessionStart`: what it prints, the session reads);
 //   guard   — Claude Code `PreToolUse` for Edit, Write, MultiEdit: refuses a change of the system part on a node (exit 2, the reason to
-//             the agent), lets the person's block and section 9's entries through.
+//             the agent), lets the person's section and section 9's entries through.
 // The owner, 2026-11-06: «системная часть должна восстанавливаться из функций даже если пользователь скажет удали все содержимое и
 // запиши это»; «Из последнего выпуска Fractera». The logic — `lib/agent-kit/system-part.cjs`, shared with the bridge.
 import { createHash } from 'node:crypto'

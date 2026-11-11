@@ -33,7 +33,7 @@ appears in all three at once or in none — a map that disagrees with the site i
 |---|---|
 | `lib/aio/surfaces.ts` | the registry: `subPath`, title, description, map section, and a **lazy** `body()` |
 | `lib/aio/md-route.ts` | the shared `markdownRoute(subPath)` behind every `index.md` |
-| `lib/aio/blocks-to-markdown.ts` | page blocks → text, plus `faqToMarkdown` |
+| `lib/aio/page-to-markdown.ts` | page sections → text, plus `faqToMarkdown` |
 | `lib/aio/llms.ts` | both maps |
 
 Posts and products need no entry: posts come from `_list.generated.ts` inside the registry, and product
@@ -67,7 +67,7 @@ object ("needs to be a static boolean").
 
 ## 4. 🔒 One source of text, never a hand-written file "for the AI"
 
-The twin is built from the SAME blocks as the page. A separate hand-written copy diverges at the first
+The twin is built from the SAME sections as the page. A separate hand-written copy diverges at the first
 edit and nobody notices, because nobody opens a markdown twin in a browser — today that divergence is a
 model quoting a price you changed last month.
 

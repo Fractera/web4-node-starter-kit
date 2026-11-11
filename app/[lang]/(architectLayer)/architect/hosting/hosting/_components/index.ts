@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react'
-import type { Block } from '@/lib/content/blocks/types'
+import type { PageItem } from '@/lib/content/sections/types'
 import { nodePlaceWidget } from '@/components/node-state/widgets'
 
 // СОДЕРЖИМОЕ СТРАНИЦЫ «Hosting activation».
 //
 // 🔒 ЗДЕСЬ ЖИВЁТ РАБОТАЮЩАЯ ЧАСТЬ, А В `_data` — СЛОВА. Разница проверяемая: в
 // `_data` лежит то, что переводится, здесь — то, что исполняется (островки,
-// таблицы, формы, чтение дверей `/api/*`), разобранное в блоки каталога.
+// таблицы, формы, чтение дверей `/api/*`), разобранное в секции каталога.
 //
 // 🔒 ПУСТОЙ ОТВЕТ — ЗАКОННОЕ СОСТОЯНИЕ, А НЕ ЗАГОТОВКА. Страница обработает его
 // сама и скажет человеку, что содержимое скоро будет построено; поэтому страница
@@ -15,7 +15,7 @@ import { nodePlaceWidget } from '@/components/node-state/widgets'
 //
 // 🛑 СЛОВА ОТСЮДА НЕ ПИШУТСЯ: любая строка, которую увидит человек, приходит
 // параметром из `_data` — иначе она не переводится и её не видит сторож словарей.
-export function content(_lang: string): Block[] {
+export function content(_lang: string): PageItem[] {
   return []
 }
 

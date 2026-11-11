@@ -11,6 +11,6 @@ off» banner with that reason.
 | Path | Role |
 |---|---|
 | `page.tsx`, `_data/` | the menu item «Stripe payments»: title, lead, `order`, icon `card` |
-| `_components/index.ts` | one block `servicePort` with `serviceId: 'stripe'`: port on the machine and address on the internet |
+| `_components/index.ts` | one section `servicePort` with `serviceId: 'stripe'`: port on the machine and address on the internet |
 | `preview/` | live preview of the element's home page |
 | `claude-code/`, `terminal/`, `telegram/`, `agent-api/`, `_agent-kit/`, `agent-kit.json` | the agent kit — `npm run agent-kit:add -- stripe`; never edited by hand |

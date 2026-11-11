@@ -1,4 +1,4 @@
-import { blocksToMarkdown, faqToMarkdown } from './blocks-to-markdown'
+import { pageToMarkdown, faqToMarkdown } from './page-to-markdown'
 import { urlFor, mdUrlFor } from '@/lib/seo/alternates'
 import { getAppConfig, metaForLang } from '@/config/app-config'
 import { footerPage } from '@/lib/pages/footer-page'
@@ -48,7 +48,7 @@ export function publicSurfaces(lang: string): Surface[] {
       title: home.siteName,
       description: home.description,
       section: 'main',
-      // У главной нет собственного текста в блоках: её содержимое — это
+      // У главной нет собственного текста в секциях: её содержимое — это
       // идентичность проекта из настроек. Честнее отдать её как описание с
       // перечнем разделов, чем выдумать текст, которого на странице нет.
       // 🔒 БЕЗ СЛУЖЕБНЫХ ПОДПИСЕЙ НА ЧУЖОМ ЯЗЫКЕ (шаг 507). Здесь стояла строка

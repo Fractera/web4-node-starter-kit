@@ -20,7 +20,7 @@ description: >
 > Informational, not binding. **Know a better way for the case in front of you — do it your way and
 > say so.** You are trusted with the creative work on this project.
 
-**A page is a LIST OF BLOCKS in a language cell, not a laid-out file.** Everything below follows from
+**A page is a LIST OF SECTIONS in a language cell, not a laid-out file.** Everything below follows from
 that. The engine's rule: everything a page needs lives in its own folder, everything shared lives once
 in the engine, nothing in between.
 
@@ -34,9 +34,9 @@ per page      _components/  view      index.tsx — calls the factory
               _data/        data      meta.ts + one cell per enabled language + index.ts
               _lib/         functions resolve/list + type contracts   (a tab has one, a page rarely)
 engine        lib/content/  factories create-content-page.tsx · create-content-post.tsx
-                            resolve.ts (cell resolver, EN fallback) · blocks/{types,registry,inline,links}
+                            resolve.ts (cell resolver, EN fallback) · sections/{types,registry,inline,links}
               lib/parser-fs.mjs        generates _list.generated.ts on predev/prebuild — gitignored
-sections      sections/blocks/<kind>.server.tsx   ONE kind, ONE file — the renderers
+sections      sections/kinds/<kind>.server.tsx   ONE kind, ONE file — the renderers
               sections/index.ts                   the full set · sections/contract.ts the contract
 ```
 
@@ -49,12 +49,12 @@ none of them needs a tab of its own, not a shortcut. This cost a rebuild during 
 run.
 
 🔒 **Localized UI strings are DATA** → `_data`, never `_lib`. Type contracts are CODE → `_lib/types.ts`.
-🔒 **`lib/content/blocks/types.ts` has zero imports on purpose** — a leaf of the graph. Engine types are
+🔒 **`lib/content/sections/types.ts` has zero imports on purpose** — a leaf of the graph. Engine types are
 imported, never extended.
 
 **How many kinds exist — ask `sections/index.ts`, never this file.** The authoritative list is `sections/index.ts` (the `SECTIONS` object)
-and it always equals the number of files in `sections/blocks/`; `npm run check:sections` prints the count. A number written into a skill is stale the week after it is written — this one said 28 while the gate answered 29. You cannot get this wrong silently:
-`SectionSet` is a mapped type over every `Block["kind"]`, so a kind without a renderer does not compile.
+and it always equals the number of files in `sections/kinds/`; `npm run check:sections` prints the count. A number written into a skill is stale the week after it is written — this one said 28 while the gate answered 29. You cannot get this wrong silently:
+`SectionSet` is a mapped type over every `Section["kind"]`, so a kind without a renderer does not compile.
 Count them before you invent a new one — `p`, `h2`, `list`, `table`, `card`, `cards`, `callout`, `note`,
 `quote`, `code`, `figure`, `columns`, `metrics`, `flow`, `panel`, `cta`, `badges`, `docref` and more are
 already there.
@@ -137,7 +137,7 @@ The slug is language-agnostic and chosen once from the English title. One post s
 
 Enforced by `check:content`, and every rule below is a defect that already shipped.
 
-**External — always absolute.** It carries a host, opens in a new tab, and `lib/content/blocks/links.ts`
+**External — always absolute.** It carries a host, opens in a new tab, and `lib/content/sections/links.ts`
 adds `rel="noopener noreferrer nofollow"` — omitting `nofollow` for **this project's own** domain, read
 from `APP-CONFIG`. A relative external link is a bug: the post travels into projects that do not have
 the page it points at.
@@ -171,13 +171,13 @@ It shipped exactly that way on `/ru`.
 ## 6. Need something that WORKS, not prose?
 
 A calculator, a picker, a list that saves — **that is a kind of section, not a page of its own**:
-a server renderer in `sections/blocks/<kind>.server.tsx` resolves data and dictionary and mounts an
+a server renderer in `sections/kinds/<kind>.server.tsx` resolves data and dictionary and mounts an
 island from `components/`. Pattern to copy: `project-type-marquee.server.tsx`.
 
 🔒 **No file under `sections/` carries `"use client"`** — a property of the layer, not an accident.
 
 A page of its own is for something that needs its OWN ADDRESS — searched for, linked to, in the sitemap.
-Its body is still blocks.
+Its body is still sections.
 
 ## 6a. 🔒 The page ships without the part you could not make
 
@@ -190,9 +190,9 @@ looking finished, which is why it survives.
 
 | Missing | Do NOT | Do |
 |---|---|---|
-| a fact, a number, a date about the owner's business | write a plausible one | leave the block out, or mark the text a sample in its own words, and ask |
+| a fact, a number, a date about the owner's business | write a plausible one | leave the section out, or mark the text a sample in its own words, and ask |
 | a source for a claim you are making | attach a link that looks authoritative | name the source in words and let the architect approve the link — `use-links` |
-| a section kind the catalogue does not have | invent one for this page alone | ship without that block; a new kind is its own step, and a one-page thing is a widget |
+| a section kind the catalogue does not have | invent one for this page alone | ship without that section; a new kind is its own step, and a one-page thing is a widget |
 | a widget or tool the page wanted | fake it with static markup pretending to work | ship the page, defer the widget — `use-dynamic-pages` §3c |
 | a picture | ship a broken path | ship without it (every hero field is optional) or draw a placeholder that says so |
 | a translation | machine-fill languages you cannot check | write the enabled set, record the debt — `use-multi-lang` |

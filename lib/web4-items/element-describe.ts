@@ -37,7 +37,7 @@ export const TASK = [
 const TEMPLATE_SUMMARY = /^The template of a node element/i
 const BIRTH_SUMMARY = /^WEB4 element \S+, born from /i
 const CAPABILITY = /^[a-z0-9][a-z0-9-]{1,47}$/
-// 333-3: НАВЫК ДИЗАЙНА ЭЛЕМЕНТА — короткое имя (`impeccable`, `design-taste-frontend`, `blocks`). Слово владельца: «в коллекции
+// 333-3: НАВЫК ДИЗАЙНА ЭЛЕМЕНТА — короткое имя (`impeccable`, `design-taste-frontend`, `sections`). Слово владельца: «в коллекции
 // собственной информации о себе мы теперь всегда передаем название навыка дизайна … глобальный реестр … должен получать этот
 // навык». Поле необязательное; имя вне библиотеки `WEB4-ITEMS-REGISTRY/design-skills.json` — не ошибка (элемент мог прийти извне),
 // проверяется только форма.
@@ -79,7 +79,7 @@ export function passportDescription(id: string): { ok: true; summary: string; pr
     designSkill = typeof props.designSkill === "string" ? props.designSkill.trim() : ""
     if (!DESIGN_SKILL.test(designSkill)) return { ok: false, error: "design-skill-bad-shape" }
   }
-  // 706-2: облик элемента — блок `design` паспорта (бриф) плюс ветки его DESIGN-CONFIG; форма проверяется, отказ — реестр не тронут.
+  // 706-2: облик элемента — секция `design` паспорта (бриф) плюс ветки его DESIGN-CONFIG; форма проверяется, отказ — реестр не тронут.
   const looked = elementLook.normalizeLook(props.design)
   if (!looked.ok) return { ok: false, error: "look-bad-shape" }
   const tokens = elementLook.readTokens(paths.itemDir(id, "user"))

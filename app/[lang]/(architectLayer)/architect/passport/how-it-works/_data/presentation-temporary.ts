@@ -5,7 +5,7 @@
 // 🔒 ВТОРАЯ ВЕРСИЯ ВЫВОДИТСЯ ИЗ ОСНОВНОЙ, А НЕ КОПИРУЕТСЯ: основная (`presentation.ts` + разделы памяти и платформ) остаётся целой и
 // вернётся с сетью; здесь — что из неё убрано и чем заменено. Копия в 600 строк разошлась бы с основной молча при первой правке.
 // Убрано: раздел 1 «Готов к Web4» целиком, карточка миссии Lagrix (`_components/index.ts`), строки о связи с Lagrix и заказах a2a;
-// разделы перенумерованы. Строка об общей основе больше не называет Дизайн и Блоки — их узел отменил тем же шагом 706.
+// разделы перенумерованы. Строка об общей основе больше не называет Дизайн и Секции — их узел отменил тем же шагом 706.
 // Сторож: ни одно слово этой версии не называет Lagrix (`assertNoLagrix`, падает при первом же показе страницы в сборке).
 import { presentationWords, type PresentationWords } from './presentation'
 
@@ -19,14 +19,14 @@ const INTRO: Record<Lang, string> = {
 /** Строка основной версии → строка временной. */
 const REPLACE: Record<Lang, Record<string, string>> = {
   en: {
-    'The basics are already built and shared: sign-in, data, design, blocks, settings and ready-made solutions — the agent connects them instead of writing them again.':
+    'The basics are already built and shared: sign-in, data, design, body, settings and ready-made solutions — the agent connects them instead of writing them again.':
       'The basics are already built and shared: sign-in, data, files, search by meaning, settings and ready-made solutions — the agent connects them instead of writing them again.',
     'Agents, sites and the link with Lagrix keep working without being rebuilt.': 'Agents and sites keep working without being rebuilt.',
     'When a helper’s time comes, by an entry in its own calendar, the node wakes it; it does the job and goes back to sleep. Orders from outside agents (a2a) will wake it the same way once the Lagrix network is live.':
       'When a helper’s time comes, by an entry in its own calendar, the node wakes it; it does the job and goes back to sleep.',
   },
   ru: {
-    'Основа уже построена и общая для всех: вход, данные, дизайн, блоки, настройки, готовые решения — агент подключает их, а не пишет заново.':
+    'Основа уже построена и общая для всех: вход, данные, дизайн, секции, настройки, готовые решения — агент подключает их, а не пишет заново.':
       'Основа уже построена и общая для всех: вход, данные, файлы, поиск по смыслу, настройки, готовые решения — агент подключает их, а не пишет заново.',
     'Агенты, сайты и связь с Lagrix продолжают работать без переделки.': 'Агенты и сайты продолжают работать без переделки.',
     'Когда приходит время помощника, по записи в его собственном календаре, узел будит его; он делает работу и снова засыпает. Заказы внешних агентов (a2a) будут будить его так же, когда заработает сеть Lagrix.':

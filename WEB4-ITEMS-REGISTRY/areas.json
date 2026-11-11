@@ -48,8 +48,8 @@
     "area": "The project's main public site on the root domain and the first screen where a person gives the node a task.",
     "growsInto": ["landing pages of the project", "the project's blog", "a help desk for visitors"]
   },
-  "blocks": {
+  "sections": {
     "area": "Reusable sections of pages, kept as code that the elements' agents plug in.",
-    "growsInto": ["a new kind of block", "a gallery of block previews"]
+    "growsInto": ["a new kind of section", "a gallery of section previews"]
   }
 }

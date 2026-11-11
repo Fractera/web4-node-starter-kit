@@ -44,7 +44,7 @@ const base = join(paths.ITEMS_DIR, entry.kind === 'user' ? 'user' : 'core')
 const target = join(base, addressOf(id, ROOT))
 
 // Где элемент лежит сейчас: та папка, чей паспорт называет этот id (id-папка или прежний адрес); паспорта нет нигде — папка по id.
-// 605 (владелец 2026-10-30: блоки — нативный элемент, а лежат в WEB4-ITEMS\user\blocks; «may be need only replace ?»): папку ищем в
+// 605 (владелец 2026-10-30: секции — нативный элемент, а лежат в WEB4-ITEMS\user\sections; «may be need only replace ?»): папку ищем в
 // обеих зонах — смена `kind` записи реестра переносит элемент между `user/` и `core/` этой же процедурой; цель — по `kind`.
 const dirsOf = (b) => { try { return readdirSync(b, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => join(b, d.name)) } catch { return [] } }
 const dirs = [...dirsOf(base), ...dirsOf(join(paths.ITEMS_DIR, entry.kind === 'user' ? 'core' : 'user'))]

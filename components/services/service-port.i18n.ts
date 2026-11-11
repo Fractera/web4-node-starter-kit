@@ -2,8 +2,8 @@
 //
 // 🔒 ПОЧЕМУ СЛОВА ЗДЕСЬ, А НЕ В `_data` СТРАНИЦЫ. `_data` несёт слова СТРАНИЦЫ —
 // заголовок, вступление и темы. Островок переиспользуемый: тот же вопрос «на
-// каком порту живёт этот блок» встанет у раздела «Данные» и у любого следующего
-// сменного блока. Приём тот же, что у лестницы домена и слов cookie-баннера.
+// каком порту живёт этот элемент» встанет у раздела «Данные» и у любого следующего
+// сменного элемента. Приём тот же, что у лестницы домена и слов cookie-баннера.
 //
 // 🔒 МОДУЛЬ СЕРВЕРНЫЙ. Островок получает уже выбранный язык пропсами — в браузер
 // уезжает один набор строк, а не словарь; за этим следит `check:lang-delivery`.
@@ -15,9 +15,9 @@ export type ServicePortWords = {
   loading: string
   /** «служба такая-то живёт на порту» — `{port}` подставляется */
   onPort: string
-  /** блока нет в составе узла */
+  /** элемента нет в составе узла */
   absent: string
-  /** блок в составе, но порт ещё не назначен — установка не выполнена */
+  /** элемент в составе, но порт ещё не назначен — установка не выполнена */
   notInstalled: string
   /** дверь не ответила: сказать честно, а не подставить правдоподобное число */
   unknown: string
@@ -61,7 +61,7 @@ const DICT: Record<string, ServicePortWords> = {
     absent: "This node does not carry this service yet.",
     notInstalled: "The service is part of this node, but it has not been installed yet — no port is assigned.",
     unknown: "The node did not answer just now, so the port is unknown. Nothing is guessed here: a plausible number would read as a checked fact.",
-    note: "The number is asked of the node on every visit, never remembered: the installer may hand the block a different port, and a remembered one would knock at an empty door.",
+    note: "The number is asked of the node on every visit, never remembered: the installer may hand the element a different port, and a remembered one would knock at an empty door.",
     portTitle: "Port on this machine",
     reach: {
       title: "Address on the internet",
@@ -90,7 +90,7 @@ const DICT: Record<string, ServicePortWords> = {
     absent: "В составе этого узла такой службы пока нет.",
     notInstalled: "Служба входит в состав узла, но ещё не установлена — порт ей не назначен.",
     unknown: "Узел сейчас не ответил, и порт неизвестен. Правдоподобное число здесь не подставляется: его читают как проверенный факт.",
-    note: "Число спрашивается у узла при каждом заходе и никогда не помнится: установщик может назначить блоку другой порт, а запомненный стучался бы в пустоту.",
+    note: "Число спрашивается у узла при каждом заходе и никогда не помнится: установщик может назначить элементу другой порт, а запомненный стучался бы в пустоту.",
     portTitle: "Порт на этой машине",
     reach: {
       title: "Адрес в интернете",

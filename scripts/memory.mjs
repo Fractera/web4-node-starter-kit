@@ -87,7 +87,7 @@ if (cmd === 'adopt') {
   if (!id) { console.log('===MEMORY_FAIL=== brief <agent id> (the main agent is build)'); process.exit(2) }
   const text = createRequire(import.meta.url)('../lib/agent-kit/memory/brief.cjs').brief(id)
   if (text) console.log(text)
-  console.log(`===MEMORY_BRIEF=== ${id}: ${text ? `${text.length} characters` : 'empty — no block at the start'}`)
+  console.log(`===MEMORY_BRIEF=== ${id}: ${text ? `${text.length} characters` : 'empty — no brief at the start'}`)
 } else if (cmd === 'recall') {
   const [, id, ...said] = process.argv.slice(2)
   if (!id || !said.length) { console.log('===MEMORY_FAIL=== recall <agent id> "<message of the person>" (the main agent is build)'); process.exit(2) }

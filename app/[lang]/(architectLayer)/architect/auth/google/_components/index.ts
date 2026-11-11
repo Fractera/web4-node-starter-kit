@@ -1,4 +1,4 @@
-import type { Block } from '@/lib/content/blocks/types'
+import type { PageItem } from '@/lib/content/sections/types'
 import { googleSetupWords } from '@/components/auth/google-setup.i18n'
 
 // СОДЕРЖИМОЕ СТРАНИЦЫ «Sign in with Google» (265-2).
@@ -15,6 +15,6 @@ import { googleSetupWords } from '@/components/auth/google-setup.i18n'
 // 🔒 ЭКРАН СТОИТ ПЕРЕД ТЕКСТОМ, И ЭТО НЕ ВКУС. Оболочка складывает содержимое в
 // порядке «работающая часть, потом темы»: человек приходит сюда действовать, а
 // текст объясняет то, что он уже видит.
-export function content(lang: string): Block[] {
+export function content(lang: string): PageItem[] {
   return [{ kind: 'authGoogleSetup', words: googleSetupWords(lang) }]
 }

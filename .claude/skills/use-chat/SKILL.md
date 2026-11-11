@@ -57,8 +57,8 @@ ours, and they live in the chat tool, never as a fork of the library file.
 1. **Never accept the CLI's offer to overwrite our primitives.** `npx shadcn add` asks about
    `button.tsx`, `tooltip.tsx`, `hover-card.tsx` with a plain `(y/N)`. Every one of those is our design
    system. Answer no — always. Feed a **finite** number of `n` lines; an endless stream kills node.
-2. **Nothing under `sections/` is ever a client component.** The block kind `chat` is a thin server
-   renderer that places the tool; the interactive part is the island. Break this and the block
+2. **Nothing under `sections/` is ever a client component.** The section kind `chat` is a thin server
+   renderer that places the tool; the interactive part is the island. Break this and the section
    catalogue stops building — the law of step 58.
 3. **`components/ai-elements/` is foreign code.** Change it only the way the CLI would: import paths.
    Anything else lives until the next update of the library and then vanishes silently. If you need
@@ -85,7 +85,7 @@ and record what you did.
 Written after the tool was actually built and mounted three times. Both laws below are things this
 skill did **not** say, and both cost a wrong turn.
 
-🔒 **A BLOCK KIND NEVER HAS AN INPUT AREA, AND THAT IS MECHANICS, NOT MODESTY.** The input area appears
+🔒 **A SECTION KIND NEVER HAS AN INPUT AREA, AND THAT IS MECHANICS, NOT MODESTY.** The input area appears
 when the tool is given a send handler; a handler is a function, and a server renderer cannot pass a
 function into a client island. So the `chat` kind is always a read-only feed. **Say it out loud in the
 kind's card** — an input area missing without explanation reads as a defect of the kind rather than as

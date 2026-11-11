@@ -48,7 +48,7 @@ export function ElementDoc({ files, words, collapse = false }: { files: DocFile[
   )
 }
 
-/** Рамка одного файла: обычная статья или (416, навыки) свёрнутый блок с именем навыка. */
+/** Рамка одного файла: обычная статья или (416, навыки) свёрнутая секция с именем навыка. */
 function Shell({ name, collapse, many, children }: { name: string; collapse: boolean; many: boolean; children: React.ReactNode }) {
   if (collapse) {
     const parts = name.split("/")

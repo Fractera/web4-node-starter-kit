@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
-import type { Block, FaqPair } from '@/lib/content/blocks/types'
-import { termPlain } from '@/lib/content/blocks/term'
+import type { PageItem, FaqPair } from '@/lib/content/sections/types'
+import { termPlain } from '@/lib/content/sections/term'
 import { buildAlternates } from '@/lib/seo/alternates'
 import { translatedLanguages, isTranslated, type TranslatedPage } from '@/lib/seo/translation-state'
 import { author, authorSameAs } from '@/lib/author'
@@ -11,7 +11,7 @@ import { featureOn } from '@/config/platform-config'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // createContentPage — the page factory. It turns a content descriptor into a
-// complete, fully-static Block-3 page: `generateMetadata` (title/desc/keywords/
+// complete, fully-static Section-3 page: `generateMetadata` (title/desc/keywords/
 // hreflang/OpenGraph) + JSON-LD (Article/BreadcrumbList/FAQPage, author=Person)
 // + the StandardContentPage chrome. A new route becomes a ~10-line file that
 // supplies data only; all the boilerplate lives here.
@@ -27,7 +27,7 @@ const SITE = brand().siteUrl
 
 /** Shape returned by a per-document resolver — the localized page descriptor. */
 // 🔒 В СТРУКТУРИРОВАННЫЕ ДАННЫЕ ОТВЕТ ЕДЕТ БЕЗ РАЗМЕТКИ (2026-08-29, шаг 38).
-// С этого дня ответ FAQ может нести ссылку (`sections/blocks/faq.server.tsx`
+// С этого дня ответ FAQ может нести ссылку (`sections/kinds/faq.server.tsx`
 // разбирает `[подпись](адрес)`), а `FAQPage` поисковик читает ДОСЛОВНО — и
 // напечатал бы квадратные скобки в выдаче. Снимаем разметку здесь, а не в
 // словах: словам ссылка нужна, поисковику — нет.
@@ -42,7 +42,7 @@ export type ContentPageContent = {
   subtitle?: string
   description: string
   keywords: string
-  blocks: Block[]
+  body: PageItem[]
   faq?: FaqPair[]
 }
 
@@ -109,7 +109,7 @@ export type ContentPageConfig<C extends ContentPageContent> = {
    */
   titleInBody?: boolean
   /**
-   * Optional sections injected into the block, directly ABOVE the FAQ (architect
+   * Optional sections injected into the section, directly ABOVE the FAQ (architect
    * discretion — e.g. the sponsorship section). The factory bakes in nothing
    * here; the route entry decides what to pass. May render one section, several,
    * or none. The FAQ stays last by contract.
@@ -200,11 +200,11 @@ export function createContentPage<C extends ContentPageContent>(config: ContentP
 
     // 🔒 ВЫКЛЮЧАТЕЛЬ FAQ БЫЛ МЁРТВЫМ (шаг 522, 2026-08-20). Панель его предлагала,
     // конфиг хранил, а страница рисовала вопросы всегда: проверено браузером —
-    // при `faq: false` на живом сервере стояли и блок «Frequently asked questions»,
+    // при `faq: false` на живом сервере стояли и секция «Frequently asked questions»,
     // и разметка `FAQPage`.
     //
     // 🔒 ГЕЙТ У ИСТОЧНИКА, А НЕ У ДВУХ ПОТРЕБИТЕЛЕЙ. Вопросы уходят в ДВА места —
-    // видимый блок и структурированные данные. Закрыть только видимое значит
+    // видимая секция и структурированные данные. Закрыть только видимое значит
     // пообещать машине то, чего на странице нет; закрывать оба по отдельности —
     // оставить третье место следующему, кто добавит потребителя. Гасится массив:
     // оба потребителя уже проверяют его длину.
@@ -274,7 +274,7 @@ export function createContentPage<C extends ContentPageContent>(config: ContentP
           afterHero={afterHero?.(lang)}
           afterHeader={afterHeader?.(lang)}
           afterBody={afterBody?.(lang)}
-          blocks={c.blocks}
+          body={c.body}
           faq={faq}
           backHref={backHref}
           backLabel={backLabel}

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { linkAttrs, resolveRootHref } from '@/lib/content/blocks/links'
+import { linkAttrs, resolveRootHref } from '@/lib/content/sections/links'
 
 // ГЛАВНОЕ ДЕЙСТВИЕ СТРАНИЦЫ — ОДНА КНОПКА НА ВСЕ МЕСТА, ГДЕ ОНО ПРЕДЛАГАЕТСЯ.
 //
@@ -8,7 +8,7 @@ import { linkAttrs, resolveRootHref } from '@/lib/content/blocks/links'
 // завести две кнопки, которые совпадают ровно до первой правки цвета, — тот же
 // разбор, что у шапки страницы и у оболочки.
 //
-// 🔒 ЗАКОН ССЫЛОК ОБЩИЙ (`lib/content/blocks/links.ts`). Внешний адрес получает
+// 🔒 ЗАКОН ССЫЛОК ОБЩИЙ (`lib/content/sections/links.ts`). Внешний адрес получает
 // новую вкладку и `rel`, внутренний на корень — учёт одноязычного режима, где
 // языкового сегмента в адресах нет. Кнопка не имеет права решать это по-своему.
 //

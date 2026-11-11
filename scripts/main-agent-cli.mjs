@@ -263,7 +263,7 @@ if (cmd === 'look') {
     console.log(`In its intake: development-docs/pre-steps/${stem}.md — its agent applies it (npm run design:take). Wake it on the person's word: npm run task -- ${x.id} "Take the look waiting in your intake"`)
     process.exit(0)
   }
-  // 679-2 (владелец 2026-11-08: «чтобы у тебя была возможность по такой команде переводить блоки дизайн и прочее связи с узлом в
+  // 679-2 (владелец 2026-11-08: «чтобы у тебя была возможность по такой команде переводить секции дизайн и прочее связи с узлом в
   // самостоятельно режим»): по слову человека — та же дверь, что выключатель «Опасной зоны» (`PATCH /api/architect/items/<id>/links`).
   // 716 (владелец 2026-11-10: элементов «Дизайн» и «Блоки» нет): связь одна — CONFIG; облик элемента всегда его собственный.
   const turn = has('--own') ? false : has('--linked') ? true : null

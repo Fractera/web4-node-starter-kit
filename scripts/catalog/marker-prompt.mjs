@@ -14,7 +14,7 @@ What a Fractera node is FOR: people build and run sites, web apps and AI agents 
 video and voice for social networks, landing pages, shops, blogs. Its stack: Next.js 16 App Router, React 19, TypeScript, Tailwind CSS 4,
 shadcn/ui; sign-in is its own element (next-auth 5, roles); data lives in its own SQLite element, the only door to data; files in its
 storage element; vectors and a LightRAG knowledge graph in their elements; card payments through its Stripe element; page sections from
-its Blocks catalogue. Claude Code agents build each element; a skill is installed into one element's folder, never globally.
+its Sections catalogue. Claude Code agents build each element; a skill is installed into one element's folder, never globally.
 
 Output ONLY one JSON object — no prose, no code fence:
 {"summary": "...", "tasks": ["..."], "tags": ["..."], "tools": ["..."], "quality": 1-5, "qualityWhy": "...",

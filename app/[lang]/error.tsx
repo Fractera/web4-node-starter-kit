@@ -10,7 +10,7 @@ import { H1 } from "@/components/ui/typography";
 // JavaScript OFF; only "Try again" (reset) needs JS. It renders INSIDE the [lang] layout's <html>.
 //
 // WHY THIS EXISTS: without a boundary, ANY thrown error in this subtree — a malformed document, a
-// structurally invalid locale tag in toLocaleDateString, an unexpected language file, a bad block —
+// structurally invalid locale tag in toLocaleDateString, an unexpected language file, a bad section —
 // returns a raw HTTP 500 (Internal Server Error). With it, the route DEGRADES to this friendly page
 // and the rest of the site is unaffected. "Better to ignore the stray file than to fall."
 export default function LangError({

@@ -11,6 +11,6 @@ graph. It has no backup section: it is a buffer, the truth lives in data.
 | Path | Role |
 |---|---|
 | `page.tsx`, `_data/` | the menu item «Fast store»: title, lead, `order`, icon `zap` |
-| `_components/index.ts` | one block `servicePort` with `serviceId: 'cache'` |
+| `_components/index.ts` | one section `servicePort` with `serviceId: 'cache'` |
 | `preview/` | live preview of the element's home page |
 | `claude-code/`, `terminal/`, `telegram/`, `agent-api/`, `_agent-kit/`, `agent-kit.json` | the agent kit — `npm run agent-kit:add -- cache`; never edited by hand |

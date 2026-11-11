@@ -9,6 +9,6 @@ key — the element's README, «Using the memory». The passport turns it off by
 | Path | What |
 |---|---|
 | `page.tsx`, `_data/` | the section page and its words (en, ru); icon `memory`, order 25 — in the Memory group after the fast store |
-| `_components/index.ts` | one block `servicePort` with `serviceId: 'memory'` |
+| `_components/index.ts` | one section `servicePort` with `serviceId: 'memory'` |
 | `preview/` | the live preview of the element |
 | `claude-code/`, `terminal/`, `telegram/`, `agent-api/`, `_agent-kit/`, `agent-kit.json` | the agent kit — `npm run agent-kit:add -- memory`; never edited by hand |

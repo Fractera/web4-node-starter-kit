@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const modes = createRequire(import.meta.url)(join(ROOT, 'lib', 'agent-kit', 'modes.cjs'))
-// 597-1: the node's hard commands — the head of their block in a session's prompt.
+// 597-1: the node's hard commands — the head of their section in a session's prompt.
 const COMMANDS_HEAD = createRequire(import.meta.url)(join(ROOT, 'lib', 'agent-kit', 'commands.cjs')).HEAD
 
 /** 591: без файлов режима — есть душа: файл «душа + фраза»; души нет: фраза строкой, как до 552-5. */

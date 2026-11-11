@@ -114,7 +114,7 @@ export function elementDeployUi(lang: string): ElementDeployUi {
   return lang === "ru" ? DICT.ru : DICT.en
 }
 
-// 356-3: слова окна «Почему отклоняете?» — инструмент `_tools/block-task` в режиме «заметка»; варианты блока не показываются,
+// 356-3: слова окна «Почему отклоняете?» — инструмент `_tools/block-task` в режиме «заметка»; варианты секции не показываются,
 // поэтому берутся как есть из его словаря.
 const REJECT: Record<"en" | "ru", Partial<BlockTaskUi>> = {
   en: {

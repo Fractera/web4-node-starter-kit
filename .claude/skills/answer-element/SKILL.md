@@ -26,7 +26,7 @@ the element (`npm run task -- <id> "Answer from the core to «…»: …"`), one
 1. Two to four English words of the question (the core's instruction is English):
    `grep -n -i "<word>" ../../CLAUDE.md | head -20` — the line numbers show the section.
 2. Read only that section: `sed -n '<from>,<to>p' ../../CLAUDE.md` — tens of lines, the file is about 24 thousand
-   characters, eight sections: role, context, building blocks, scenarios, modes, laws, glossary, where the details are.
+   characters, eight sections: role, context, building sections, scenarios, modes, laws, glossary, where the details are.
 3. Answer in at most 10 plain lines — what the node does and which door or command the element uses:
    `npm run task -- <id> "Answer from the core to «<the question>»: …"` — the question goes in: the answer may reach a fresh
    session that never asked. Only what you read; a path or a door you did not see is not named.

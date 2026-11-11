@@ -9,6 +9,6 @@ from the standard custom element (roman); the versions after it add the graph. T
 | Path | Role |
 |---|---|
 | `page.tsx`, `_data/` | the menu item «Graph»: title, lead, `order`, icon `network` |
-| `_components/index.ts` | one block `servicePort` with `serviceId: 'graph'`: port on the machine and address on the internet |
+| `_components/index.ts` | one section `servicePort` with `serviceId: 'graph'`: port on the machine and address on the internet |
 | `preview/` | live preview of the element's home page |
 | `claude-code/`, `terminal/`, `telegram/`, `agent-api/`, `_agent-kit/`, `agent-kit.json` | the agent kit — `npm run agent-kit:add -- graph`; never edited by hand |

@@ -1,6 +1,6 @@
 # `/architect/dashboard/agents-log` — the agents' conversation of the node (step 408)
 
-One block: `a2aFeed` (`sections/blocks/a2a-feed.server.tsx` words → island `components/dashboard/a2a-feed.client.tsx`).
+One section: `a2aFeed` (`sections/kinds/a2a-feed.server.tsx` words → island `components/dashboard/a2a-feed.client.tsx`).
 The page is prerendered; the island asks `GET /api/node/a2a-log` (architect/admin or node key) for the last 100 calls, then
 `after=<last id>` every 3 s while the tab is visible (owner 2026-10-05: «Опрос раз в 3 с»), and «Show earlier» pages back.
 

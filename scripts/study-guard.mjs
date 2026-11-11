@@ -11,7 +11,7 @@
 // - documents of the site keep a human pace (PACE_MS between them) and a budget (`--budget`, 60 by default);
 // - a challenge page (captcha, «verify you are human», «unusual activity», 429, Cloudflare challenge) stops the browser at once.
 // Every decision goes to <study dir>/guard.jsonl: time, kind, method, host, path — never a query string, a body or a value.
-// `--log-only` (the person drives the window, mode B) writes the same lines and blocks nothing.
+// `--log-only` (the person drives the window, mode B) writes the same lines and sections nothing.
 import { appendFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 

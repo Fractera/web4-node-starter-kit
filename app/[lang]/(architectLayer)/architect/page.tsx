@@ -1,4 +1,4 @@
-import type { Block, WorkspaceItem } from '@/lib/content/blocks/types'
+import type { PageItem, WorkspaceItem } from '@/lib/content/sections/types'
 import type { WorkspacePageData } from '@/lib/collection/types'
 import { ArchitectPage } from '../_lib/architect-page'
 import { collectionMetadata } from '../_lib/collection-metadata'
@@ -6,7 +6,7 @@ import { architectLayerUi, ARCHITECT_LAYER_LANGS } from '../_i18n/architect-laye
 import { architectHomeUi, type BasicsTerm } from '../_i18n/architect-home.i18n'
 import { ARCHITECT_HOME } from '../_lib/architect-menu'
 import { nodeStateWidget } from '@/components/node-state/widgets'
-import { labelsToForms, resolveTermLabels } from '@/lib/content/blocks/term'
+import { labelsToForms, resolveTermLabels } from '@/lib/content/sections/term'
 
 // ✗ У ВХОДА В СЛОЙ НЕ БЫЛО МЕТАДАННЫХ ВОВСЕ — ИЗМЕРЕНО 2026-09-20 (256-7):
 //
@@ -61,7 +61,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 // для входа не заводится: она разошлась бы с разделами на первой правке темы.
 //
 // 🪦 АККОРДЕОН ОТМЕНЁН 2026-09-19 (владелец: «уберём с этой страницы аккордеоны и
-// представим страницу в виде раскрытых блоков с заголовками своего уровня и
+// представим страницу в виде раскрытых секций с заголовками своего уровня и
 // описанием»). Свёрнутое здесь мешало: сюда приходят разбираться в своём узле, а
 // не открывать полосы по одной.
 //
@@ -90,9 +90,9 @@ export default async function Page({ params }: { params: Promise<{ lang: string 
   const terms = Object.fromEntries(home.basics.items.map((t) => [t.key, { word: termWord(t), text: labelsToForms(t.text) }]))
   const words = (text: string) => resolveTermLabels(text, terms)
 
-  const children: Block[] = [
+  const children: PageItem[] = [
     { kind: 'h3', text: home.start.title, id: home.start.anchor },
-    ...home.start.actions.map((a): Block => ({
+    ...home.start.actions.map((a): PageItem => ({
       kind: 'docref',
       title: words(a.title),
       summary: words(a.text),

@@ -14,7 +14,7 @@
     "title": "Block task",
     "what": "A window opened from a highlighted block: its address on top, six things to do with it (improve the design, improve the code, it works wrong, delete it, change the texts, turn it into a tool), each opening a short explanation, and a details field that takes voice. Send gives back one text: the choice, the address and the details.",
     "how": "The window is AppDialog; the choice is a single-item accordion, so the opened item is the chosen one. Details use VoiceControl with the core's transcription door; without an OpenAI key the voice line links to the key field on the Environment variables tab, opened in a new tab. The text is built by composeBlockTask in the words file — one place for every consumer. The tool does not know where the task goes: onSend receives it. With note (step 356-3, the reason for rejecting a preview) there are no choices: the address line is the ready task line, details are optional and Send is open at once.",
-    "value": "The step from seeing a block to giving its agent a precise task used to be copy, switch pages, paste and type. Here it is one click on the frame, one choice and a spoken sentence — and the same window can serve any page that shows blocks, not only the Preview."
+    "value": "The step from seeing a block to giving its agent a precise task used to be copy, switch pages, paste and type. Here it is one click on the frame, one choice and a spoken sentence — and the same window can serve any page whose containers carry an address, not only the Preview."
   },
   "ru": {
     "title": "Задача блоку",

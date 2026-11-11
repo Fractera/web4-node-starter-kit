@@ -79,7 +79,7 @@ If you are tempted to reach for one of those to add a language: **stop and use t
    confirm, §8.2), then for real. **REBUILD** (Deploy in the panel's footer) to publish the new routes
    (seeded, noindex). The menus (header / footer / left / right) update automatically.
 3. **Translate later (non-blocking), when you choose.** `node translate-content-page.mjs --out <slot-root> --lang <L> --op next` in a
-   loop: it returns the next pending page → you translate the **strings only** (keep the block kinds and
+   loop: it returns the next pending page → you translate the **strings only** (keep the section kinds and
    order, keep the root anchor and `/<lang>/` links) → call again with `{ op:"write", tab, slug,
    translations }`. Repeat until `remaining: 0`. Honor any owner notes on the dev-step (e.g. "focus on
    Spanish law, link real statutes") for regional value.

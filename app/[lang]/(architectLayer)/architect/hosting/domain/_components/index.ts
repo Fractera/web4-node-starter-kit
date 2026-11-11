@@ -1,4 +1,4 @@
-import type { Block } from '@/lib/content/blocks/types'
+import type { PageItem } from '@/lib/content/sections/types'
 import { domainLadderWords } from '@/components/domain/domain-ladder.i18n'
 import { homeHostingNotes } from './home-hosting-notes.i18n'
 
@@ -13,10 +13,10 @@ import { homeHostingNotes } from './home-hosting-notes.i18n'
 // 🔒 ЯЗЫК ВЫБИРАЕТСЯ ЗДЕСЬ, НА СЕРВЕРЕ, И В БЛОК УХОДИТ ОДИН НАБОР СТРОК. Отдай
 // мы островку весь словарь — он уехал бы в браузер целиком, и это поймал бы
 // сторож `check:lang-delivery`.
-export function content(lang: string): Block[] {
+export function content(lang: string): PageItem[] {
   const n = homeHostingNotes(lang)
-  const item = (x: { summary: string; text: string[] }): Block => ({
-    kind: 'accordionItem', summary: x.summary, children: x.text.map((text): Block => ({ kind: 'p', text })),
+  const item = (x: { summary: string; text: string[] }): PageItem => ({
+    kind: 'accordionItem', summary: x.summary, children: x.text.map((text): PageItem => ({ kind: 'p', text })),
   })
   return [
     { kind: 'domainLadder', lang, words: domainLadderWords(lang) },

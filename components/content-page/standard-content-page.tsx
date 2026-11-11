@@ -1,11 +1,11 @@
 import { type ReactNode } from 'react'
-import type { Block, FaqPair, TocItem } from '@/lib/content/blocks/types'
+import type { PageItem, FaqPair, TocItem } from '@/lib/content/sections/types'
 // Импортируется под другим именем НАМЕРЕННО: у компонента есть проп `author`,
 // и одноимённая функция была бы перекрыта им внутри тела — значение по умолчанию
 // ссылалось бы само на себя.
 import { author as projectAuthor } from '@/lib/author'
 import { getPostBodyUi } from '@/lib/content/post-body-ui'
-import { renderBlocks } from '@/lib/content/blocks/registry'
+import { renderPage } from '@/lib/content/sections/registry'
 import { PostBody, headingId } from './post-body'
 import { PageHeader } from './page-header.server'
 import { PageCover } from './page-cover.server'
@@ -19,12 +19,12 @@ import { PageShell } from './page-shell'
 // worth reusing.
 
 // ─────────────────────────────────────────────────────────────────────────────
-// StandardContentPage — the ONE reusable template for every Block 3 content page.
+// StandardContentPage — the ONE reusable template for every Section 3 content page.
 // It renders the full Fractera page standard, mirroring the News article layout,
 // so future pages only supply data and reuse this chrome:
 //
 //   1. Breadcrumbs (visible)            5. 3× H2, each with 2× H3
-//   2. Max-size H1 (homepage hero style) 6. Quote / CTA / docref blocks
+//   2. Max-size H1 (homepage hero style) 6. Quote / CTA / docref sections
 //   3. Table of contents (from H2s)      7. `sections` slot (injected by the route)
 //   4. "Did you know?" callout           8. Sponsorship (baked, every page)
 //                                        9. FAQ (last content section)
@@ -46,7 +46,7 @@ export type StandardContentPageProps = {
   /**
    * Крошки. НЕОБЯЗАТЕЛЬНЫ (шаг 508): у корня сайта нет уровня выше, крошка
    * «Главная → Главная» была бы ложью. Но из этого следует «крошек нет», а не
-   * «нужен второй шаблон страницы»: из пятнадцати свойств этого блока
+   * «нужен второй шаблон страницы»: из пятнадцати свойств этой секции
    * четырнадцать уже исчезали сами, когда их не дают, и обязательность
    * оставшихся была свойством кода, а не устройства страницы.
    */
@@ -110,7 +110,7 @@ export type StandardContentPageProps = {
    */
   afterHeader?: ReactNode
   afterBody?: ReactNode
-  blocks: Block[]
+  body: PageItem[]
   faq?: FaqPair[]
   /** Ссылка «назад» — на уровень выше. Нет уровня выше — нет и ссылки. */
   backHref?: string
@@ -118,7 +118,7 @@ export type StandardContentPageProps = {
   /**
    * Open slot for architect-discretion sections (e.g. the sponsorship section),
    * injected by the route entry and rendered directly ABOVE the FAQ. May be one
-   * section, several, or none — the block bakes in nothing here. The FAQ stays
+   * section, several, or none — the section bakes in nothing here. The FAQ stays
    * the last section regardless (only the global footer is below it).
    */
   sections?: ReactNode
@@ -139,7 +139,7 @@ export function StandardContentPage({
   afterHero,
   afterHeader,
   afterBody,
-  blocks,
+  body,
   faq,
   backHref,
   backLabel,
@@ -164,7 +164,7 @@ export function StandardContentPage({
   // ✗ оплачено 2026-09-19: с главной убраны дублирующие `h2`, стоявшие вплотную к
   // секциям (`flow`, `cards`) и дававшие два заголовка об одном и том же, — и
   // оглавление схлопнулось с шести пунктов до двух. Причина: сборщик знал только
-  // самостоятельный блок `h2`, а заголовок, нарисованный шапкой секции, для него
+  // самостоятельная секция `h2`, а заголовок, нарисованный шапкой секции, для него
   // не существовал.
   //
   // 🔒 ОТСЮДА УСТРОЙСТВО, А НЕ ЗАПЛАТА: в оглавление идёт ЗАГОЛОВОК ВТОРОГО
@@ -177,12 +177,12 @@ export function StandardContentPage({
   const SECTION_WITH_HEAD = new Set(['flow', 'cards', 'noBill', 'benefitCards', 'featureGrid', 'platformGrid'])
 
   const toc: TocItem[] = []
-  blocks.forEach((b, i) => {
+  body.forEach((b, i) => {
     if (b.kind === 'h2') {
       toc.push({ id: headingId(b.text), text: b.text.replace(/\*\*/g, '') })
     } else if (SECTION_WITH_HEAD.has(b.kind) && 'title' in b && typeof b.title === 'string') {
       // 🔒 ЯКОРЬ СЕКЦИИ СОБИРАЕТСЯ ИЗ КЛЮЧА БЛОКА (`blk-<номер>-t`), и форма ключа
-      // задана в `lib/content/blocks/registry.tsx`. Здесь она повторена
+      // задана в `lib/content/sections/registry.tsx`. Здесь она повторена
       // НАМЕРЕННО и с этой оговоркой: другого способа узнать чужой якорь у
       // оглавления нет, а молчаливое расхождение даст пункты, ведущие в никуда.
       toc.push({ id: `blk-${i}-t`, text: b.title.replace(/\*\*/g, '') })
@@ -211,9 +211,9 @@ export function StandardContentPage({
   // шире неё — можно лишь вытягивать её отрицательными отступами, и это ломается
   // на каждой второй ширине экрана. Поэтому такие секции физически стоят снаружи
   // колонки, а внутри неё остаётся текст.
-  const heroBlock = blocks.find(b => b.kind === 'heroSplit')
-  const outroBlock = blocks.find(b => b.kind === 'languageMarquee')
-  const bodyBlocks = blocks.filter(b => b !== heroBlock && b !== outroBlock)
+  const heroItem = body.find(b => b.kind === 'heroSplit')
+  const outroItem = body.find(b => b.kind === 'languageMarquee')
+  const bodyItems = body.filter(b => b !== heroItem && b !== outroItem)
 
   return (
     /* 🔒 ОБОЛОЧКА — ОБЩАЯ, А НЕ СВОЯ (2026-08-19). Здесь стоял собственный
@@ -236,10 +236,10 @@ export function StandardContentPage({
     <PageShell
       top={titleInBody ? "work" : "content"}
       columnAs="article"
-      hero={heroBlock ? <PostBody blocks={[heroBlock]} lang={lang} /> : undefined}
+      hero={heroItem ? <PostBody body={[heroItem]} lang={lang} /> : undefined}
       afterHero={afterHero}
       afterBody={afterBody}
-      outro={outroBlock ? <PostBody blocks={[outroBlock]} lang={lang} /> : undefined}
+      outro={outroItem ? <PostBody body={[outroItem]} lang={lang} /> : undefined}
     >
 
         {/* 1–2. Шапка страницы — ОДИН примитив на весь сайт.
@@ -273,20 +273,20 @@ export function StandardContentPage({
         {afterHeader}
 
         {/* 3. Оглавление — ВИД КАТАЛОГА `toc`, а не своя разметка (шаг 542).
-            Фабрика считает заголовки и передаёт их блоку; рисует его каталог.
+            Фабрика считает заголовки и передаёт их секции; рисует его каталог.
             Владелец решил 2026-08-22 оставить оглавление автоматическим, поэтому
-            блок появляется сам, а страницы о нём по-прежнему не знают.
+            секция появляется сам, а страницы о нём по-прежнему не знают.
 
-            🔒 РИСУЕТСЯ ЧЕРЕЗ `renderBlocks`, А НЕ ЧЕРЕЗ `PostBody`. Тот заворачивает
-            блоки в `flex flex-col gap-6`; здесь обёртка изменила бы отступы —
+            🔒 РИСУЕТСЯ ЧЕРЕЗ `renderPage`, А НЕ ЧЕРЕЗ `PostBody`. Тот заворачивает
+            секции в `flex flex-col gap-6`; здесь обёртка изменила бы отступы —
             лента страницы обычный блочный поток, и воздух ей задают margin'ы
             самих секций. */}
-        {renderBlocks([{ kind: 'toc', items: toc }], lang, blockUi, 'toc')}
+        {renderPage([{ kind: 'toc', items: toc }], lang, blockUi, 'toc')}
 
-        {/* 4–7, 9. Body blocks (callout, H2/H3, quote, CTA, docref download, …).
+        {/* 4–7, 9. Body sections (callout, H2/H3, quote, CTA, docref download, …).
             Без первого экрана и завершающей секции: они нарисованы снаружи этой
             колонки, потому что подчиняются другой ширине. */}
-        <PostBody blocks={bodyBlocks} lang={lang} />
+        <PostBody body={bodyItems} lang={lang} />
 
         {/* Open sections slot — page-specific sections injected by the route entry
             (e.g. the VPS deploy form / the MCP connector + the founder quote). The
@@ -299,7 +299,7 @@ export function StandardContentPage({
             содержательный на странице: ниже только ссылка «назад» и подвал сайта.
             Материал не изменился — вопросы приходят полем `faq` языковой ячейки,
             и та же ячейка кормит разметку `FAQPage` для поисковика. */}
-        {faq && faq.length > 0 && renderBlocks([{ kind: 'faq', items: faq }], lang, blockUi, 'faq')}
+        {faq && faq.length > 0 && renderPage([{ kind: 'faq', items: faq }], lang, blockUi, 'faq')}
 
         {/* Ссылка «назад» — ПРИМИТИВ `BackLink`, последний элемент страницы.
             Ведёт на уровень выше; у корня сайта такого уровня нет, поэтому её

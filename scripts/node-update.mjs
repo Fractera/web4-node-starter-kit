@@ -109,7 +109,7 @@ function copyOfFork(path) {
 // 716 (the owner 2026-11-10: «их не должно существовать как нативные элементы … сначала убери их»): an element of the node that the fork
 // does not list stays — it is the node's own (born, root); a NATIVE one (`kind: core`) belongs to Fractera, so the fork dropping it
 // retires it: it leaves the registry here and `scripts/element-retire.mjs` removes its process and folder in stage 7.
-// ✗ Before 716 every missing entry stayed: removing Blocks and Design from the fork would have kept them on every node as «own».
+// ✗ Before 716 every missing entry stayed: removing Sections and Design from the fork would have kept them on every node as «own».
 function retiredNatives(theirs, ours) {
   const forkIds = new Set((theirs?.services ?? []).map((s) => s.id))
   const { isRetired } = require('../lib/web4-items/retired-natives.cjs')

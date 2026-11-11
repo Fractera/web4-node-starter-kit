@@ -18,6 +18,6 @@ export async function GET(req: NextRequest) {
   if (denied) return denied
   const lang = req.nextUrl.searchParams.get("lang") === "ru" ? "ru" : "en"
   const rows = await projectRows(lang)
-  // 553: тип узла — агентам элементов (`passport -- me`, блок node) и всем, кто читает состав узла.
+  // 553: тип узла — агентам элементов (`passport -- me`, часть node) и всем, кто читает состав узла.
   return NextResponse.json({ ok: true, nodeType: nodeType.readNodeType(process.cwd()), rows }, { headers: { "Cache-Control": "no-store" } })
 }

@@ -59,7 +59,7 @@ optimize → {"order":[0,1,2], "geometry":…, "totalKm":6.79, "totalMin":17.19}
 🔒 **The matrix is NOT symmetric.** `4303.9` there against `4039.4` back — one-way streets are real.
 Averaging the two directions, or reading one cell for both, quietly invents a road that does not exist.
 
-*(This block exists because a cold acceptance run had to GUESS the units: the skill said only «raw
+*(This section exists because a cold acceptance run had to GUESS the units: the skill said only «raw
 material for your own logic». A guess that lands on the right answer is still a guess.)*
 
 🔒 **`route` keeps your order; `optimize` chooses one.** Sending points to `route` and calling the

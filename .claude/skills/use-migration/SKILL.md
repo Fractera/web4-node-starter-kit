@@ -213,7 +213,7 @@ the look of the output.**
   question, with a ban on deciding it silently.
 - 🔒 **When delivery fails, find the FIRST broken link, not the one the error names.** ✗ the whole
   delivery chain was built and shipped while the agent's key had never been issued: the environment
-  export skipped a block in silence, and the script refused naming the *second* link ("set the
+  export skipped a section in silence, and the script refused naming the *second* link ("set the
   variable") instead of the first ("no key was issued"). A chain that reports the wrong link looks
   exactly like an agent that will not obey.
 - 🔒 **A required proof can be unobtainable by construction — say so, never substitute an easy one.**
@@ -258,7 +258,7 @@ the look of the output.**
   but **"every address of the agreed tree is still reachable"**.
 - 🔒 **Silence in a list is not permission.** A template widget appeared in neither the delete nor the
   keep list: the right move was to ask.
-- 🔒 **Emptying a page breaks whatever stood on its content.** ✗ removing the home page's blocks also
+- 🔒 **Emptying a page breaks whatever stood on its content.** ✗ removing the home page's sections also
   removed its heading: a `titleInBody` flag was set because a section printed the H1. **A setting
   explained by a neighbouring piece outlives that piece and lies in silence.** After emptying, re-read
   the settings that existed FOR the content.

@@ -6,10 +6,10 @@
 // ── ЧТО ОН ДЕЛАЕТ, ПО ПОРЯДКУ
 //   1. читает WEB4-ITEMS-REGISTRY/web4-items.json — состав узла и закреплённые ТЕГИ;
 //   2. приводит каждый элемент в WEB4-ITEMS/<kind>/<id>/ ровно той версии;
-//   3. читает паспорт блока (OWN-SERVICE-PROPS.json) — ТОЛЬКО читает;
-//   4. назначает порт: желаемый из паспорта, занят — следующий свободный из блока;
-//   5. ставит зависимости и, если блок того просит, собирает его;
-//   6. пишет файл окружения блока — с тем ИМЕНЕМ, которое блок назвал сам;
+//   3. читает паспорт элемента (OWN-SERVICE-PROPS.json) — ТОЛЬКО читает;
+//   4. назначает порт: желаемый из паспорта, занят — следующий свободный из элемента;
+//   5. ставит зависимости и, если элемент того просит, собирает его;
+//   6. пишет файл окружения элемента — с тем ИМЕНЕМ, которое элемент назвал сам;
 //   7. дописывает в .env.local узла только NEXT_PUBLIC_* — вынужденное исключение;
 //   8. вписывает ФАКТИЧЕСКИЕ порты обратно в реестр.
 //
@@ -20,14 +20,14 @@
 //             не заработает.
 //   element-key — собственный ключ элемента `<id>.<mac>` (шаг 654-6): HMAC общего DATA_SECRET узла над id элемента;
 //             хранилища узла открывают по нему только место этого элемента.
-// Род объявлен в `.env.example` блока строкой `# kind:` над переменной. Блок,
+// Род объявлен в `.env.example` элемента строкой `# kind:` над переменной. Элемент,
 // который спросили, нельзя заполнить неверно.
 //
 // 🛑 ЧУЖИХ КЛЮЧЕЙ ОН НЕ СПРАШИВАЕТ ДИАЛОГОМ, И ЭТО РЕШЕНИЕ, А НЕ ЛЕНЬ. Установку
 // зовут и вручную, и из автозапуска; модальный вопрос в непривычном месте
 // означает зависание, которым проект уже платил двумя часами молчания бота.
 // Поэтому недостающие ключи печатаются списком: что именно отсутствует, у какого
-// блока и какая способность без него не работает. Человек дописывает их в
+// элемента и какая способность без него не работает. Человек дописывает их в
 // названный файл и зовёт установку снова — она идемпотентна.
 //
 // 🛑 WINDOWS, ТРИ ОПЛАЧЕННЫХ ПРАВИЛА. `npm` — это `npm.cmd`, а node после
@@ -203,7 +203,7 @@ function githubToken(id) {
 }
 
 if (!Array.isArray(registry.services) || registry.services.length === 0) {
-  say('  В составе узла нет ни одного блока — ставить нечего.')
+  say('  В составе узла нет ни одного элемента — ставить нечего.')
   say('===SERVICES_INSTALL_OK===')
   process.exit(0)
 }
@@ -248,7 +248,7 @@ function sharedSecret(name) {
 // ── Порты ────────────────────────────────────────────────────────────────────
 //
 // 🛑 ПОРТ СЛУЖБА ПРОСИТ, А НАЗНАЧАЕТ УЗЕЛ. В паспорте стоит желаемый номер;
-// занят — берём следующий свободный из блока и пишем ФАКТИЧЕСКИЙ в реестр. Без
+// занят — берём следующий свободный из элемента и пишем ФАКТИЧЕСКИЙ в реестр. Без
 // этого две купленные службы однажды попросят один номер и подерутся молча.
 const takenByRegistry = new Set(
   registry.services.map((s) => s.port).filter((p) => Number.isInteger(p)),
@@ -270,13 +270,13 @@ async function freeOnBothStacks(port) {
   return true
 }
 
-// `installedHere` — ставился ли блок на ЭТОЙ машине (есть отметка установки).
+// `installedHere` — ставился ли элемент на ЭТОЙ машине (есть отметка установки).
 //
 // 🛑 РАЗЛИЧИЕ НЕ ФОРМАЛЬНОЕ, И БЕЗ НЕГО РЕЕСТР В GIT СТАНОВИТСЯ ЛОВУШКОЙ. Номер
 // порта лежит в реестре и уезжает гостю вместе с репозиторием. На нашей машине
 // он верен и занят нашей же службой — переназначать его нельзя: адрес роздан.
 // На машине гостя тот же номер — чужое наследство, и там он может быть занят
-// чем угодно. Отличает эти два случая ровно одно: ставился ли блок ЗДЕСЬ.
+// чем угодно. Отличает эти два случая ровно одно: ставился ли элемент ЗДЕСЬ.
 async function assignPort(entry, desired, installedHere) {
   if (Number.isInteger(entry.port)) {
     if (installedHere) return { port: entry.port, moved: false, kept: true }
@@ -287,7 +287,7 @@ async function assignPort(entry, desired, installedHere) {
     entry.port = null
   }
 
-  // 370: желаемый порт паспорта — только если узел вправе его занимать (внутри блока и не чужое умолчание).
+  // 370: желаемый порт паспорта — только если узел вправе его занимать (внутри элемента и не чужое умолчание).
   const first = isBlockPort(desired) ? desired : PORT_BLOCK_START
   const candidates = [first, ...blockPorts().filter((p) => p !== first)]
 
@@ -304,7 +304,7 @@ async function assignPort(entry, desired, installedHere) {
     }
   }
   throw new Error(
-    `Свободного порта нет во всём блоке ${PORT_BLOCK_START}–${PORT_BLOCK_END}. ` +
+    `Свободного порта нет во всём диапазоне ${PORT_BLOCK_START}–${PORT_BLOCK_END}. ` +
       'Остановите лишние службы (npm run serve:stop) и повторите установку.',
   )
 }
@@ -312,7 +312,7 @@ async function assignPort(entry, desired, installedHere) {
 // 654-6: keys of the whole node that an element keeps only while its `.env.example` declares them.
 const MASTER_KEYS = new Set(['DATA_SECRET'])
 
-// ── Разбор `.env.example` блока: имя переменной плюс РОД ─────────────────────
+// ── Разбор `.env.example` элемента: имя переменной плюс РОД ─────────────────────
 function parseExample(text) {
   const vars = []
   let kind = null
@@ -752,7 +752,7 @@ for (const entry of registry.services) {
   // 417: старый корневой файл или новая раскладка (паспорт + NODE-CONTRACT.json) — одним модулем.
   const props = elementProps.readElementProps(dir)
   if (!props) {
-    say('  ОШИБКА: у блока нет паспорта (OWN-SERVICE-PROPS.json или OWN-SERVICE-PROPS/) — установщику не у кого спросить, как его ставить')
+    say('  ОШИБКА: у элемента нет паспорта (OWN-SERVICE-PROPS.json или OWN-SERVICE-PROPS/) — установщику не у кого спросить, как его ставить')
     failed += 1
     continue
   }
@@ -887,7 +887,7 @@ for (const entry of registry.services) {
 
   const vars = parseExample(readFileSync(examplePath, 'utf8'))
 
-  // 🛑 ПУСТОЙ РАЗБОР — ЭТО ОТКАЗ, А НЕ «ВОПРОСОВ НЕТ». Блок, у которого есть
+  // 🛑 ПУСТОЙ РАЗБОР — ЭТО ОТКАЗ, А НЕ «ВОПРОСОВ НЕТ». Элемент, у которого есть
   // `.env.example`, обязан объявить хотя бы одну переменную; ноль означает, что
   // сломался разбор, а не что настраивать нечего. Без этой проверки установщик
   // пишет пустой файл окружения и рапортует об успехе — служба поднимается с
@@ -911,7 +911,7 @@ for (const entry of registry.services) {
     '# а не здесь. Исключение — чужие ключи: их вписывают сюда, потому что',
     '# установщик их не выдумывает.',
     `#`,
-    `# блок: ${entry.id} · версия: ${version} · порт: ${port}`,
+    `# элемент: ${entry.id} · версия: ${version} · порт: ${port}`,
     `# порождён: ${new Date().toISOString()}`,
     '',
   ]
@@ -950,7 +950,7 @@ for (const entry of registry.services) {
 
   // 🔒 ДОМЕН ДОПИСЫВАЕТ ТО, ЧЕГО БЛОК НЕ ОБЪЯВИЛ (259-8): `AUTH_TRUST_HOST` не
   // стоит в `.env.example` службы входа, а без него за туннелем она отвечает 500.
-  // Дописываются только блоку, который объявил `NEXTAUTH_URL`, — то есть входу.
+  // Дописываются только элементу, который объявил `NEXTAUTH_URL`, — то есть входу.
   if (vars.some((v) => v.name === 'NEXTAUTH_URL')) {
     const domain = authEnvOverrides(ROOT, [])
     for (const [name, value] of Object.entries(domain || {})) {
@@ -987,7 +987,7 @@ for (const entry of registry.services) {
   let undeployed = false
   if (props.runtime?.build) {
     // 🛑 «СОБРАНО» — ЭТО ФАЙЛ СЕРВЕРА, А НЕ ПАПКА `.next` (265-6). ✗ Оплачено: сборка, прерванная
-    // на Windows `EBUSY`, стёрла standalone-сервер и оставила `.next`; следующий прогон счёл блок
+    // на Windows `EBUSY`, стёрла standalone-сервер и оставила `.next`; следующий прогон счёл элемент
     // собранным и ответил «нечем запускать».
     const server = stamp.start?.args?.[0]
     const built = server ? existsSync(join(stamp.start.cwd || dir, server)) : existsSync(join(dir, '.next'))
@@ -1019,7 +1019,7 @@ for (const entry of registry.services) {
           bg = run('npm', ['run', 'build'], dir, { env: { [distEnv]: target } })
         }
         if (bg.rc !== 0) {
-          say('  ОШИБКА сборки блока (работающая версия не тронута):')
+          say('  ОШИБКА сборки элемента (работающая версия не тронута):')
           say(bg.out.split('\n').slice(-8).map((l) => '    ' + l).join('\n'))
           rmSync(join(dir, target), { recursive: true, force: true })
           failed += 1
@@ -1059,7 +1059,7 @@ for (const entry of registry.services) {
         b = run('npm', ['run', 'build'], dir)
       }
       if (b.rc !== 0) {
-        say('  ОШИБКА сборки блока:')
+        say('  ОШИБКА сборки элемента:')
         say(b.out.split('\n').slice(-8).map((l) => '    ' + l).join('\n'))
         if (backup && existsSync(backup)) {
           rmSync(standaloneRoot, { recursive: true, force: true })
@@ -1191,7 +1191,7 @@ for (const s of summary) {
     if (st.rc === 0) refreshed.push(name)
   }
 }
-// Остановленное установщиком и не поднятое выше (блок упал) поднимается прежним:
+// Остановленное установщиком и не поднятое выше (элемент упал) поднимается прежним:
 // узел без службы входа хуже узла со старой службой входа.
 for (const name of stoppedByInstaller) {
   if (refreshed.includes(name)) continue
@@ -1230,11 +1230,11 @@ if (missingForeign.length) {
   for (const m of missingForeign) {
     say(`  ${m.id}: ${m.name} — впишите в ${m.file}`)
   }
-  say('  Без них блок работает, но способность, которой они нужны, отвечает отказом.')
+  say('  Без них элемент работает, но способность, которой они нужны, отвечает отказом.')
 }
 
 if (failed > 0) {
-  say(`\n===SERVICES_INSTALL_FAILED=== блоков с ошибкой: ${failed}`)
+  say(`\n===SERVICES_INSTALL_FAILED=== элементов с ошибкой: ${failed}`)
   process.exit(1)
 }
 

@@ -43,7 +43,7 @@ export function StepLink({ href, label }: { href: string; label?: string }) {
       <span className="shrink-0 opacity-70">{label ?? "ссылка"}</span>
       <ArrowRight size={16} aria-hidden className="shrink-0" />
       {/* Адрес виден целиком, пока помещается; длинный обрезается — строка не
-          имеет права стать двумя, иначе движение читается как дрожание блока. */}
+          имеет права стать двумя, иначе движение читается как дрожание секции. */}
       <span className="truncate">{href}</span>
     </a>
   );

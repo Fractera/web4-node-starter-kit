@@ -56,7 +56,7 @@ The owner of Fractera, 2026-10-23: «не всегда в наш проект п
    взаимодействия … где будут находиться внутренние страницы какие они будут нести нагрузки»). The birth writes it into section 11
    «From the core» of the element's CLAUDE.md before its first commit; the element reads it in every session and keeps it true with its
    person. The task goes to the intake and is done once; the vector stays. English, 1–40 lines (the command refuses more — every line is
-   paid in every session of the element), in the element's own words — its public layer, inner pages behind sign-in, blocks, the data
+   paid in every session of the element), in the element's own words — its public layer, inner pages behind sign-in, sections, the data
    element — never code or file paths. One line each, in this order:
    - **The whole goal** — the person's words verbatim, and this element's part of it;
    - **Role** and **field** — the same as `--role`, `--area`, `--grows`;

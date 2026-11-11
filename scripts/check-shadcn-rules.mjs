@@ -138,7 +138,7 @@ for (const f of files.sort()) {
   }
 }
 
-const kinds = files.filter(f => /sections[\\/]blocks[\\/].*\.server\.tsx$/.test(f)).length
+const kinds = files.filter(f => /sections[\\/]kinds[\\/].*\.server\.tsx$/.test(f)).length
 console.log(`\n  просмотрено файлов: ${files.length} (рендерреров видов среди них: ${kinds})`)
 for (const e of EXEMPT) console.log(`  · исключение ${e.file} [${e.rule}]: ${e.why}`)
 

@@ -90,14 +90,14 @@ const UI: Record<'en' | 'ru', PresentationWords> = {
             title: '2.2 Why it takes many times less work from the model',
             items: [
               'The project is split into elements: an agent reads only its own element and its instruction, not the whole code.',
-              'The basics are already built and shared: sign-in, data, design, blocks, settings and ready-made solutions — the agent connects them instead of writing them again.',
+              'The basics are already built and shared: sign-in, data, design, body, settings and ready-made solutions — the agent connects them instead of writing them again.',
               'Elements agree with each other through an API (i2i), without extra requests to the model.',
             ],
           },
           {
             title: '2.3 Why development is faster',
             items: [
-              'A task can be spoken: click a block in the preview, say what to change, and the task goes to that element\'s agent.',
+              'A task can be spoken: click any part of the page in the preview, say what to change, and the task goes to that element\'s agent.',
               'Every change is first built in a preview, and you accept it with one button; the live version never breaks.',
               'Every element is kept in its own GitHub repository, so history and rollback are always at hand.',
             ],
@@ -228,14 +228,14 @@ const UI: Record<'en' | 'ru', PresentationWords> = {
             title: '2.2 Почему модели нужно в разы меньше работы',
             items: [
               'Проект разделён на элементы: агент читает только свой элемент и его инструкцию, а не весь код целиком.',
-              'Основа уже построена и общая для всех: вход, данные, дизайн, блоки, настройки, готовые решения — агент подключает их, а не пишет заново.',
+              'Основа уже построена и общая для всех: вход, данные, дизайн, секции, настройки, готовые решения — агент подключает их, а не пишет заново.',
               'Элементы договариваются между собой через API (i2i), без лишних запросов к модели.',
             ],
           },
           {
             title: '2.3 Почему разработка идёт быстрее',
             items: [
-              'Задачу можно сказать голосом: нажмите на блок в предпросмотре, надиктуйте, что поменять, — и задача уходит агенту этого элемента.',
+              'Задачу можно сказать голосом: нажмите на любую часть страницы в предпросмотре, надиктуйте, что поменять, — и задача уходит агенту этого элемента.',
               'Каждая правка сначала собирается в предпросмотре, и вы принимаете её одной кнопкой; живая версия не ломается.',
               'Каждый элемент хранится в своём репозитории GitHub, поэтому история и откат всегда под рукой.',
             ],

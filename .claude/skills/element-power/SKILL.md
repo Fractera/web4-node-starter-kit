@@ -22,7 +22,7 @@ more than 1 GB is free.
 - **manual** — stripe (off by default until its keys): only a person's word.
 - Off by default (the owner, 2026-11-06: «as default turn of both Stripe + Redis»): stripe and cache. Cache, once a person turns it on,
   is an `auto` element below.
-- **auto** + `wakeOnCall` — embeddings, graph, memory, vectors, cache, config, design, blocks, every custom element: the rule may put them to sleep.
+- **auto** + `wakeOnCall` — embeddings, graph, memory, vectors, cache, config, design, sections, every custom element: the rule may put them to sleep.
 
 ## The load — `npm run load`
 
@@ -45,7 +45,7 @@ It runs at the core's start, after a build, before an agent session and after a 
 
 - **A call** — the gatekeeper (`fractera-gatekeeper`) listens on the port of an asleep `wakeOnCall` element; the first call starts it and
   is answered after its cold start (seconds); a call that arrives during those seconds gets a refusal. Measured on the owner's Mac
-  (670-1): blocks woke in 2.9 s, a second call 1 s into it was refused at once — the neighbour's client waits and retries (the owner's
+  (670-1): sections woke in 2.9 s, a second call 1 s into it was refused at once — the neighbour's client waits and retries (the owner's
   choice of way, 670-8): `npm run a2a` of every element waits up to 30 s for a neighbour asleep by the rule, and a neighbour off by
   its person is refused at once with its reason — the registry door names `sleep: by-rule | off` (step 671). An outside order (a2a, plan 672) gets an A2A Task at once and never sees it.
 - **A calendar entry** — the core's minute clock wakes an asleep element 2 minutes before its entry, and the rule decides 5 minutes after it.

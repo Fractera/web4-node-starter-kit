@@ -83,7 +83,7 @@ switch: `npm run read:app-config` and the platform config beside it. A requested
 switched off is a sentence to the owner, not a bug to fix.
 
 🔒 **A switch is honoured at the SOURCE, not at each consumer.** `featureOn("faq")` blanks the array
-once, so the visible block and the `FAQPage` node cannot disagree. Gating only the visible half
+once, so the visible section and the `FAQPage` node cannot disagree. Gating only the visible half
 promises a machine something the page does not contain.
 
 **Author and brand are read, never typed** — `lib/author.ts`, `lib/brand.ts`, both from `APP-CONFIG`.
@@ -117,7 +117,7 @@ died this way.
 ## 6. The picture in the card
 
 `og:image` must be **absolute** — Telegram, Facebook and LinkedIn ignore a relative path — and the file
-must exist. Nothing checks the second half: `check:content` verifies assets named in blocks, never in
+must exist. Nothing checks the second half: `check:content` verifies assets named in sections, never in
 `meta`. Five footer pages shipped pointing at `/og-default.png`, a file absent from the repository, and
 the preview card of every one of them was empty. Request the URL before you believe it.
 
@@ -150,7 +150,7 @@ page is findable.
 ## 8. Before you call it done
 
 - Fetch the built page and read its head: one `canonical`, one `og:url`, `hreflang` for every enabled
-  language plus `x-default`, the `alternate` of type `text/markdown`, and the `ld+json` blocks —
+  language plus `x-default`, the `alternate` of type `text/markdown`, and the `ld+json` sections —
   **count** them, a duplicated `BreadcrumbList` is invisible any other way.
 - Request the `og:image` URL itself. Empty card, missing file, same thing.
 - Read `/sitemap.xml` and `/robots.txt` on a deployment that has an address, and find your page there.

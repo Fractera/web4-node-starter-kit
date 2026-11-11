@@ -1,5 +1,5 @@
 import "server-only"
-import type { WorkspaceItem } from '@/lib/content/blocks/types'
+import type { WorkspaceItem } from '@/lib/content/sections/types'
 import { listDrafts } from '@/lib/web4-items/drafts'
 import { addressOf } from '@/lib/web4-items/element-address'
 import { elementDisplayName } from '@/lib/web4-items/element-name'

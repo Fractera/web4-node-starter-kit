@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { Block } from '@/lib/content/blocks/types'
+import type { PageItem } from '@/lib/content/sections/types'
 import type { PostBodyUi } from '@/lib/content/post-body-ui'
 
 // ДОГОВОР СЕКЦИИ: что такое рендерер вида и что он получает.
@@ -9,25 +9,25 @@ import type { PostBodyUi } from '@/lib/content/post-body-ui'
 // всех шестнадцати рендереров разом.
 //
 // 🔒 ФОРМА ДАННЫХ СЕКЦИИ НЕ ПРИНАДЛЕЖИТ. Виды и их поля объявлены в
-// `lib/content/blocks/types.ts` — рендерер решает, КАК выглядит `quote`, и не
+// `lib/content/sections/types.ts` — рендерер решает, КАК выглядит `quote`, и не
 // решает, из чего `quote` состоит. Иначе материал перестал бы быть переносимым
 // между поверхностями, а он один и тот же в статье, в машинной версии и в карте.
 
-/** Всё, что рендерер получает сверх самого блока. */
+/** Всё, что рендерер получает сверх самой секции. */
 export type SectionCtx = {
   lang: string
   /** Подписи, которые печатает сам механизм (кнопка `docref` и т. п.). */
   ui: PostBodyUi
-  /** React-ключ этого блока; он же префикс ключей для его внутренностей. */
+  /** React-ключ этой секции; он же префикс ключей для его внутренностей. */
   key: string
-  /** Нарисовать вложенные блоки — ими пользуются контейнеры. */
-  renderBlocks: (blocks: Block[], lang: string, ui: PostBodyUi, keyPrefix?: string) => ReactNode[]
+  /** Нарисовать вложенные секции — ими пользуются контейнеры. */
+  renderPage: (body: PageItem[], lang: string, ui: PostBodyUi, keyPrefix?: string) => ReactNode[]
 }
 
-type BlockOf<K extends Block['kind']> = Extract<Block, { kind: K }>
+type BlockOf<K extends PageItem['kind']> = Extract<PageItem, { kind: K }>
 
 /** Рендерер одного вида секции. */
-export type SectionRenderer<K extends Block['kind']> = (block: BlockOf<K>, ctx: SectionCtx) => ReactNode
+export type SectionRenderer<K extends PageItem['kind']> = (block: BlockOf<K>, ctx: SectionCtx) => ReactNode
 
 /**
  * Полный набор рендереров.
@@ -38,5 +38,5 @@ export type SectionRenderer<K extends Block['kind']> = (block: BlockOf<K>, ctx: 
  * может: он запускается, когда его запустили, а тип — всегда.
  */
 export type SectionSet = {
-  [K in Block['kind']]: SectionRenderer<K>
+  [K in PageItem['kind']]: SectionRenderer<K>
 }

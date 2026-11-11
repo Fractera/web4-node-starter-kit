@@ -28,14 +28,14 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 type Entry = { id: string; port: number | null; installed: boolean }
 type Answer = { ok?: boolean; services?: Entry[] }
 
-/** Что мы узнали о блоке: ещё спрашиваем · нашли · в составе без порта · нет в составе · дверь молчит. */
+/** Что мы узнали о элементе: ещё спрашиваем · нашли · в составе без порта · нет в составе · дверь молчит. */
 type State = "asking" | "port" | "not-installed" | "absent" | "unknown"
 
 export function ServicePort({
   serviceId,
   words,
 }: {
-  /** вечное имя блока в реестре узла — `auth`, `data`, и так далее */
+  /** вечное имя элемента в реестре узла — `auth`, `data`, и так далее */
   serviceId: string
   words: ServicePortWords
 }) {

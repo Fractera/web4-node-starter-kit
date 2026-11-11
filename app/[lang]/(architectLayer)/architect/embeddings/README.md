@@ -10,6 +10,6 @@ deep memory count every vector through its doors (626-3 … 626-6). In the left 
 | Path | Role |
 |---|---|
 | `page.tsx`, `_data/` | the menu item «Embeddings»: title, lead, `order`, icon `binary` |
-| `_components/index.ts` | one block `servicePort` with `serviceId: 'embeddings'`: port on the machine and address on the internet |
+| `_components/index.ts` | one section `servicePort` with `serviceId: 'embeddings'`: port on the machine and address on the internet |
 | `preview/` | live preview of the element's home page |
 | `claude-code/`, `terminal/`, `telegram/`, `agent-api/`, `_agent-kit/`, `agent-kit.json` | the agent kit — `npm run agent-kit:add -- embeddings`; never edited by hand |

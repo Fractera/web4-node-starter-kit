@@ -31,7 +31,7 @@ project's own domain**, or you are repairing a dead link to the same destination
 | `[%SITE%](/ru)` | the site root, in the language of that cell. The label is the literal token `%SITE%`, replaced at render with the site's name from `APP-CONFIG`. **Every language cell carries one** |
 | `[любая подпись](/ru/about-us)` | another page of this same site. Label is free — a page's name belongs to the material |
 
-Both resolve through `lib/content/blocks/links.ts`, which also strips the language segment in
+Both resolve through `lib/content/sections/links.ts`, which also strips the language segment in
 single-language mode — a hand-glued address answers 301 there.
 
 **Why not a plain relative link:** material travels between projects, and `/pricing` in another

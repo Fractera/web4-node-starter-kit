@@ -18,9 +18,9 @@ export const en: WorkspacePageWords = {
       text:
         'Sign-in is a replaceable block of its own: its own process, its own repository, its own database. It covers everything on this node at once — the core, the data layer and every application you build here — because a node hands out entry in exactly one place. Two sign-ins on one machine is the same as none: each would call the other a stranger.',
       points: [
-        'It is the only block that issues sessions; everything else asks it who came.',
+        'It is the only element that issues sessions; everything else asks it who came.',
         'It keeps its own accounts, so losing an application does not lose your users.',
-        'You can replace it with someone else\'s: the addresses and the shape of its answers are the contract, and they do not change with the block.',
+        'You can replace it with someone else\'s: the addresses and the shape of its answers are the contract, and they do not change with the element.',
       ],
     },
     {

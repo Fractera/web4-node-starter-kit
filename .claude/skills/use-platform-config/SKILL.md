@@ -65,7 +65,7 @@ Measured in a browser on a live server, 2026-08-20 — not inferred from the cod
 | `faq` | off | `lib/content/create-content-post.tsx`, `create-content-page.tsx` |
 
 🔒 **A switch is wired in ONE place, at the source.** `faq` gates the array itself, not the two
-consumers (the visible block and the `FAQPage` structured data) — gate consumers separately and the
+consumers (the visible section and the `FAQPage` structured data) — gate consumers separately and the
 third one somebody adds later will be ungated, promising a machine what the page does not show. Same
 reason breadcrumbs are gated where the component is mounted: `BreadcrumbList` markup lives inside it.
 

@@ -1,16 +1,16 @@
-import type { Block } from '@/lib/content/blocks/types'
+import type { PageItem } from '@/lib/content/sections/types'
 import { getPostBodyUi } from '@/lib/content/post-body-ui'
-import { renderBlocks } from '@/lib/content/blocks/registry'
+import { renderPage } from '@/lib/content/sections/registry'
 
-// PostBody is now a thin dispatcher over the shared block registry
-// (lib/content/blocks/registry). The actual per-kind renderers live in the
+// PostBody is now a thin dispatcher over the shared section registry
+// (lib/content/sections/registry). The actual per-kind renderers live in the
 // catalog so any content surface (news, blog, documentation, StandardContentPage)
-// renders blocks identically and new block kinds are added in one place.
+// renders sections identically and new section kinds are added in one place.
 // `headingId` is re-exported for the table-of-contents builders that import it
 // from here, keeping their import paths unchanged.
-export { headingId } from '@/lib/content/blocks/inline'
+export { headingId } from '@/lib/content/sections/inline'
 
-export function PostBody({ blocks, lang = 'en' }: { blocks: Block[]; lang?: string }) {
+export function PostBody({ body, lang = 'en' }: { body: PageItem[]; lang?: string }) {
   const ui = getPostBodyUi(lang)
-  return <div className="flex flex-col gap-6">{renderBlocks(blocks, lang, ui)}</div>
+  return <div className="flex flex-col gap-6">{renderPage(body, lang, ui)}</div>
 }

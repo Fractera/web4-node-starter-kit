@@ -1,9 +1,9 @@
 ---
 name: use-sections
 description: >
-  The SECTION layer — the closed catalogue of block kinds every page is built from, and what it takes
+  The SECTION layer — the closed catalogue of section kinds every page is built from, and what it takes
   to add one. Load it when a page needs a look the catalogue does not have, when you are about to
-  write anything under `sections/`, or when the owner says "make a block that…". The decision this
+  write anything under `sections/`, or when the owner says "make a section that…". The decision this
   skill exists for is made before the first file: a new kind is a promise the platform keeps forever,
   and most of what feels like a new kind is a widget belonging to one route. Adding one wrongly does
   not fail loudly — it quietly makes the project's look un-maintainable.
@@ -16,17 +16,17 @@ description: >
 
 ## 1. What the layer is
 
-A page is a list of blocks; a **kind** is one entry in the catalogue, and its **renderer** is the one
+A page is a list of sections; a **kind** is one entry in the catalogue, and its **renderer** is the one
 file that draws it.
 
 ```
-lib/content/blocks/types.ts    the SHAPE of every kind — what fields it has
-sections/blocks/<kind>.server.tsx   ONE kind, ONE file — how it looks
+lib/content/sections/types.ts    the SHAPE of every kind — what fields it has
+sections/kinds/<kind>.server.tsx   ONE kind, ONE file — how it looks
 sections/index.ts              the SECTIONS map — the authoritative list
 sections/contract.ts           what a renderer receives
 ```
 
-**Перед выбором вида читай `sections/BLOCKS.md`** — порождаемую сводку по всем видам: имя, семейство,
+**Перед выбором вида читай `sections/KINDS.md`** — порождаемую сводку по всем видам: имя, семейство,
 поля, и есть ли у вида карточка с правилами владельца. Она отвечает на вопрос момента выбора и избавляет
 от чтения двадцати девяти рендереров.
 
@@ -51,15 +51,15 @@ sections/contract.ts           what a renderer receives
 узнали»; пустая, написанная ради полноты таблицы, не учит никого. Сторож требует её ровно там, где есть
 что записать, и молчит там, где нечего.
 
-Сводка порождается (`npm run build:blocks-map`), свежесть стережёт `check:blocks-map` в `prebuild`.
+Сводка порождается (`npm run build:sections-map`), свежесть стережёт `check:sections-map` в `prebuild`.
 Правки руками теряются: источник — реестр `SECTIONS` и типы.
 
-## 🔒 Как назван блок: владелец говорит «`quote01`»
+## 🔒 Как названа секция: владелец говорит «`quote01`»
 
-У каждого блока есть **код** — первая колонка `sections/BLOCKS.md`: `quote01`, `workspace02`. Этим кодом владелец и называет блок в задаче:
+У каждой секции есть **код** — первая колонка `sections/KINDS.md`: `quote01`, `workspace02`. Этим кодом владелец и называет секцию в задаче:
 «собери секцию из этого и этого».
 
-**Что делать, получив код.** Открыть `sections/BLOCKS.md`, найти строку по коду — он в **первой
+**Что делать, получив код.** Открыть `sections/KINDS.md`, найти строку по коду — он в **первой
 колонке** — и взять из неё вид и поля. Этого хватает, чтобы собрать секцию, не открывая ни одного
 рендерера и не переспрашивая.
 
@@ -69,7 +69,7 @@ sections/contract.ts           what a renderer receives
 «просто workspace»: номер называет настройку, а не только вид.
 
 Полей из сводки не хватило — тогда, и только тогда, открывается сам образец:
-`app/[lang]/(protectedLayer)/(admin)/blocks/_data/specimen.ts`, запись с тем же порядковым номером
+`app/[lang]/(protectedLayer)/(admin)/sections/_data/specimen.ts`, запись с тем же порядковым номером
 среди образцов своего вида.
 
 🔒 **НЕ ПУТАТЬ С ЧИСЛОВЫМ `id`** (`0015`, `0035`) из `SECTIONS.json`: это внутренний ключ панели
@@ -78,7 +78,7 @@ sections/contract.ts           what a renderer receives
 
 ✗ **Чем оплачен этот раздел (2026-08-30).** Коды показывались человеку и не попадали никуда больше —
 ни в сводку, ни в карту, ни в один из 48 навыков. Путь при этом был построен: навык честно приводил
-агента сюда, в `BLOCKS.md`, а кода здесь не было. Дефект худшего рода — он не выглядит поломкой:
+агента сюда, в `KINDS.md`, а кода здесь не было. Дефект худшего рода — он не выглядит поломкой:
 агент читает то, что велено, и не находит.
 → `development-docs/reports/errors-block-identifiers-live-only-on-screen-and-reach-no-skill.md`
 
@@ -98,7 +98,7 @@ sections/contract.ts           what a renderer receives
 `PageHeader` (он же рисует строку сведений по частям `metaItems`).
 
 🔒 **Хром видом каталога НЕ становится.** Строка автора, обложка, ссылка «назад» появляются оттого,
-что у страницы есть автор, обложка и уровень выше, — их не выбирают в списке блоков. Вид, который
+что у страницы есть автор, обложка и уровень выше, — их не выбирают в списке секций. Вид, который
 нельзя поставить, врёт о назначении каталога. Нашёл такую вещь — ей место в `components/`, а не в
 `sections/`.
 
@@ -109,7 +109,7 @@ sections/contract.ts           what a renderer receives
 
 1. **какой это тип** — «нужен раздел про шаги» → `how-it-works`;
 2. **какой вид внутри типа** — там `flow`;
-3. **что он выдержит** — карточка `sections/blocks/flow.md`.
+3. **что он выдержит** — карточка `sections/kinds/flow.md`.
 
 | Тип | Виды сегодня |
 |---|---|
@@ -127,7 +127,7 @@ sections/contract.ts           what a renderer receives
 каталоге в тот же день, пусть и в последнем типе. Появился вид с назначением — впиши его в
 `taxonomy.json` тем же шагом, что и рендерер.
 
-Отдельной витрины у каталога нет: его читают по `sections/BLOCKS.md` и карточкам `sections/blocks/<kind>.md`; на сайте секция
+Отдельной витрины у каталога нет: его читают по `sections/KINDS.md` и карточкам `sections/kinds/<kind>.md`; на сайте секция
 выглядит так, как её красят токены ядра.
 
 **How many kinds exist: ask `sections/index.ts`, never a document.** `npm run check:sections` prints
@@ -136,7 +136,7 @@ the count. A number written into prose is stale the week after — this project'
 
 ## 2. 🔒 The catalogue is closed by construction, and that is the point
 
-`SectionSet` is a mapped type over every `Block["kind"]`. Add a kind to the catalogue without writing
+`SectionSet` is a mapped type over every `Section["kind"]`. Add a kind to the catalogue without writing
 its renderer and **the project does not compile** — you learn in a second, not in a month by an empty
 patch on a page. No gate can offer that: a gate runs when somebody runs it, a type always runs.
 
@@ -164,7 +164,7 @@ Two more markers worth naming:
 
 - **A section renderer never takes a build-time dependency of its own.** Something needing a package
   and a build is a **tool** (`_tools/`, `use-tools`), mounted from wherever it is needed.
-- **A section owns its LOOK, not the shape of its data.** Fields live in `blocks/types.ts`. A renderer
+- **A section owns its LOOK, not the shape of its data.** Fields live in `sections/types.ts`. A renderer
   decides how `quote` looks and not what `quote` is made of — otherwise material stops being portable
   between the page, the markdown twin and the map, and it is the same material in all three.
 
@@ -172,8 +172,8 @@ Two more markers worth naming:
 
 Four edits, and the type will not let you skip any:
 
-1. the shape in `lib/content/blocks/types.ts`;
-2. the renderer `sections/blocks/<kind>.server.tsx`;
+1. the shape in `lib/content/sections/types.ts`;
+2. the renderer `sections/kinds/<kind>.server.tsx`;
 3. the entry in `sections/index.ts`;
 4. a **specimen** on the catalogue page — `check:sections` refuses a kind that is rendered nowhere
    (`kind-not-rendered`): a kind drawn on no page is checked by nothing.
@@ -204,7 +204,7 @@ ships every language to the browser. Pattern to copy: `project-type-marquee.serv
 | a named accent (`violet-600`) | `bg-primary` + `text-primary-foreground` |
 
 🔒 **Sweep the SHARED ENGINE too, not only your section folder.** A section can be perfectly clean and
-still render dark, because posts are drawn by `components/content-page/` and `lib/content/blocks/`.
+still render dark, because posts are drawn by `components/content-page/` and `lib/content/sections/`.
 The blog was fixed once by sweeping its own folder, and its post pages stayed black for another round.
 
 The contract file carries no colour and no class deliberately: the first look-detail that leaks in
@@ -213,7 +213,7 @@ becomes mandatory for every renderer at once.
 ## 6. 🔒 One page, no repeated kinds
 
 The owner's rule: a kind does not appear twice on the same page. The eye recognises the drawing before
-it reads the words, so a second block of the same shape reads as a repetition even when the text is
+it reads the words, so a second section of the same shape reads as a repetition even when the text is
 entirely different. Counted for standalone sections (`flow`, `cards`, `metrics`, `panel`, …), not for
 what lives inside them — a paragraph, a card, a list item is material, not a second section.
 
@@ -234,14 +234,14 @@ not extra work. `problemSolution` exists because of exactly this.
 не нужно — ответ уже дан устройством вида.
 
 🔒 **МОЛЧАНИЕ ОПИСАНИЯ = ЗАПРЕТ, А НЕ РАЗРЕШЕНИЕ.** Исключение существует ровно одно: карточка вида
-(`sections/blocks/<kind>.md`) прямо описывает, **что и как в нём можно масштабировать**. Нет такой
+(`sections/kinds/<kind>.md`) прямо описывает, **что и как в нём можно масштабировать**. Нет такой
 записи — сетка неприкосновенна. Обратное прочтение («раз не запрещено, значит можно») здесь неверно:
 у молчания одно значение, и оно «как есть».
 
 🔒 **ЗАЧЕМ ЭТО ВООБЩЕ ЕСТЬ: ДИЗАЙН УЖЕ ЗАЛОЖЕН, ЕГО ПЕРЕИСПОЛЬЗУЮТ, А НЕ СОЧИНЯЮТ ЗАНОВО.** Каталог
 существует, чтобы страницы проекта выглядели одним продуктом. Вид, у которого на одной странице три
 колонки, а на другой четыре, — это уже два разных вида, и единство, ради которого каталог заведён,
-кончилось. Меняя сетку, ты не подгоняешь блок под страницу: ты **тратишь чужой дизайн**.
+кончилось. Меняя сетку, ты не подгоняешь секцию под страницу: ты **тратишь чужой дизайн**.
 
 🔒 **СОДЕРЖИМОЕ ПОДГОНЯЕТСЯ ПОД СЕТКУ, А НЕ СЕТКА ПОД СОДЕРЖИМОЕ.** Пришло четыре элемента в
 трёхколоночный вид — это не повод сменить сетку. Это одно из двух: либо четвёртый лишний, либо взят
@@ -269,7 +269,7 @@ not extra work. `problemSolution` exists because of exactly this.
 
 ## 8. 🔒 Every kind has a card, and the card is where the owner's taste is remembered
 
-`sections/blocks/<kind>.md`, beside the renderer. Free form, written for a model to read: the family
+`sections/kinds/<kind>.md`, beside the renderer. Free form, written for a model to read: the family
 it belongs to (`proof`, `breakdown`, `action`, `story`, …), how many elements it holds and **what
 exactly breaks** past that, when to reach for it, when not to.
 
@@ -306,7 +306,7 @@ survive the session that heard it — that is the same discipline as skill evolu
 one level down.
 
 **What counts, goes in the TYPE instead.** "Exactly three" is countable: a tuple in
-`lib/content/blocks/types.ts` makes the fourth element fail to compile, and prose only teaches while a
+`lib/content/sections/types.ts` makes the fourth element fail to compile, and prose only teaches while a
 type refuses. "Looks wrong right after `flow`" is not countable — that stays in the card. Change the
 type only when the owner has confirmed the number is hard, never on your own reading of the CSS.
 

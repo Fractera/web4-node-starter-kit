@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react'
-import type { Block } from '@/lib/content/blocks/types'
+import type { PageItem } from '@/lib/content/sections/types'
 import { agentKitWidget } from '../../_agent-kit/widgets'
 
 // СОДЕРЖИМОЕ СТРАНИЦЫ — ИЗ КОПИИ КОМПЛЕКТА АГЕНТА ЭТОЙ СЛУЖБЫ (271, `../../_agent-kit/`).
 // Шаблон `kits/_agent-kit/pages/claude-code/`; установщик подставил имя службы вместо `embeddings`.
-export function content(_lang: string): Block[] {
+export function content(_lang: string): PageItem[] {
   return []
 }
 

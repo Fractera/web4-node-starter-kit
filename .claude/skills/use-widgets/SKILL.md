@@ -4,7 +4,7 @@ description: >
   Widgets — the unique, route-owned pieces a project is recognised by. Load this BEFORE building any
   screen element that is not a plain content block: a table with its own behaviour, an animated
   showcase, a calculator-looking panel, anything a designer handed you as finished code. Also load it
-  when the owner says "make it look like this", "here is a block from my other site", "put a widget
+  when the owner says "make it look like this", "here is a section from my other site", "put a widget
   after the hero", or asks why an animation must not sit on the page itself. Two kinds exist —
   `_widgets/static/<name>` and `_widgets/dynamic/<name>` — and the folder names them out loud because
   the two obey different disciplines.
@@ -163,7 +163,7 @@ gets — and only the second one can hand you transparent letters. `use-tools` c
 | Behind authorization | the route entry (`_components/index.tsx`) imports it and passes resolved words | `manage-table` |
 | Public homepage | the `afterHero` slot of `createContentPage` — full width, right after the first screen, outside the column | `security-orbit` |
 
-**Why not a new block kind.** The section catalogue is closed and every kind needs a specimen on the
+**Why not a new section kind.** The section catalogue is closed and every kind needs a specimen on the
 architect's page — a public widget would have to be rendered from the protected layer, i.e. the
 platform would import a route. The slot keeps ownership where it belongs.
 

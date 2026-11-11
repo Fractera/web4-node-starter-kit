@@ -1,4 +1,4 @@
-import type { Block } from '@/lib/content/blocks/types'
+import type { PageItem } from '@/lib/content/sections/types'
 import { resendSetupWords } from '@/components/auth/resend-setup.i18n'
 
 // СОДЕРЖИМОЕ СТРАНИЦЫ «Sign-in letter (Resend)» (266-2).
@@ -12,6 +12,6 @@ import { resendSetupWords } from '@/components/auth/resend-setup.i18n'
 //
 // 🔒 ЭКРАН СТОИТ ПЕРЕД ТЕКСТОМ: оболочка складывает «работающая часть, потом
 // темы» — человек приходит сюда действовать, текст объясняет то, что он видит.
-export function content(lang: string): Block[] {
+export function content(lang: string): PageItem[] {
   return [{ kind: 'authResendSetup', words: resendSetupWords(lang) }]
 }

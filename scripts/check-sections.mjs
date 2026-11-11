@@ -1,4 +1,4 @@
-// check:sections — сторож слоя секций (шаг 508; вырос из `check:blocks`).
+// check:sections — сторож слоя секций (шаг 508; вырос из `check:sections`).
 //
 // 🔒 ЗАЧЕМ. Секции — единственное место, где живёт вёрстка материала, и правки
 // туда вносит агент, который видит один файл, а не страницу целиком. Три
@@ -23,10 +23,10 @@ import { readFileSync, readdirSync, existsSync, statSync } from "node:fs"
 import { join } from "node:path"
 
 const ROOT = process.cwd()
-const TYPES = join(ROOT, "lib", "content", "blocks", "types.ts")
-const SPECIMEN = join(ROOT, "lib", "content", "blocks", "specimen.ts")
+const TYPES = join(ROOT, "lib", "content", "sections", "types.ts")
+const SPECIMEN = join(ROOT, "lib", "content", "sections", "specimen.ts")
 const SECTIONS = join(ROOT, "sections")
-/** Шаблон страницы рисует хром вокруг блоков — правило пары действует и там. */
+/** Шаблон страницы рисует хром вокруг секций — правило пары действует и там. */
 const PAGE_SHELL = join(ROOT, "components", "content-page", "standard-content-page.tsx")
 
 const problems = []
@@ -116,7 +116,7 @@ for (const kind of kinds) {
 // ✗ Измерено 2026-08-30: одиннадцать рендереров цитировали владельца, у трёх
 // карточки не было вовсе — `cta`, `figure`, `statement`.
 const OWNER_MENTION = /владел(?:ец|ьца|ьцу|ьцем)/i
-const CARDS = join(ROOT, "sections", "blocks")
+const CARDS = join(ROOT, "sections", "kinds")
 
 // 🔒 ИМЯ ФАЙЛА И ИМЯ ВИДА ПИШУТСЯ ПО-РАЗНОМУ, И НА ЭТОМ ЛЕГКО ОШИБИТЬСЯ.
 // Рендерер — через дефис (`hero-badge.server.tsx`), карточка — как вид
@@ -137,7 +137,7 @@ for (const kind of kinds) {
   if (!existsSync(card)) {
     fail(
       "owner-rule-without-card",
-      `'${kind}': рендерер ссылается на решение владельца, а карточки sections/blocks/${kind}.md нет — правило живёт только в комментарии, куда навык не ведёт`,
+      `'${kind}': рендерер ссылается на решение владельца, а карточки sections/kinds/${kind}.md нет — правило живёт только в комментарии, куда навык не ведёт`,
     )
     continue
   }
@@ -189,7 +189,7 @@ for (const file of walk(SECTIONS)) {
 for (const w of warnings) console.log(`  предупреждение: ${w}`)
 
 if (problems.length === 0) {
-  const files = walk(SECTIONS).filter(f => f.includes("blocks")).length
+  const files = walk(SECTIONS).filter(f => f.includes("kinds")).length
   const tail = warnings.length ? `, предупреждений: ${warnings.length}` : ""
   console.log(
     `===SECTIONS_OK=== видов: ${kinds.length}, рендереров: ${files}, у каждого есть образец; цвета и пары — нарушений нет${tail}`,

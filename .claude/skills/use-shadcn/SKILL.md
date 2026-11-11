@@ -2,10 +2,10 @@
 name: use-shadcn
 description: >
   WHEN the foreign `shadcn` skill may be used here, and what our law says louder than it. Load it
-  before adding a shadcn component, before building a new BLOCK KIND for the catalogue, before
+  before adding a shadcn component, before building a new SECTION KIND for the catalogue, before
   building a WIDGET, and the moment the shadcn skill tells you to compose a Dialog, pick a toast, or
   place markup on a page. The shadcn skill owns HOW its components compose; this one owns WHERE the
-  result is allowed to live — and in this project there are only two places, a catalogue block and a
+  result is allowed to live — and in this project there are only two places, a catalogue section and a
   route widget. Four of its rules collide with ours; each collision below is resolved in our favour
   and says why, so you can follow the foreign skill everywhere else with a clear head.
 ---
@@ -25,17 +25,17 @@ things**.
 
 Before a single component is added: **what am I building?** → `CLAUDE.md`, *What goes on a page*.
 
-A page here is a LIST OF BLOCKS in a language cell. Whatever appears on it is a **catalogue block**,
+A page here is a LIST OF SECTIONS in a language cell. Whatever appears on it is a **catalogue section**,
 a **route widget**, or a **platform primitive**. There is no fourth source, and `check:page-composition`
 refuses the build for a page that invents its own layout. The shadcn skill will never stop you from
 writing a beautiful hand-laid page — this line is the only thing that does.
 
 ## 2. Two legal entries, in this order
 
-**Entry one — a NEW BLOCK KIND. This is the main one.** In this project one does not work without
-blocks: whatever the owner wants to create, he creates it as a block, so it is reusable by any page
+**Entry one — a NEW SECTION KIND. This is the main one.** In this project one does not work without
+sections: whatever the owner wants to create, he creates it as a section, so it is reusable by any page
 of his site. The shadcn skill is at its best exactly here — composing the inside of
-`sections/blocks/<kind>.server.tsx` out of components that already exist. The kind then lives in the
+`sections/kinds/<kind>.server.tsx` out of components that already exist. The kind then lives in the
 six places `use-sections` names, and its interactive part lives in an island under `components/`.
 
 **Entry two — a WIDGET.** A widget belongs to ONE route and is allowed an arbitrary look, so foreign

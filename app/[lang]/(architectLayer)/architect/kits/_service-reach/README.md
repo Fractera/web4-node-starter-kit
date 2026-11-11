@@ -19,7 +19,7 @@ button is needed here». The section shows:
 ## Where it lives
 
 ```
-components/services/service-port.client.tsx    the block `servicePort` (port) — renders the section below
+components/services/service-port.client.tsx    the section `servicePort` (port) — renders the section below
 components/services/service-reach.client.tsx   the section: mode, address, state, buttons
 components/services/service-port.i18n.ts       words (en, ru), the service name is put in by id
 app/api/node/reach/route.ts                    GET measure · POST connect (architect / admin)
@@ -30,7 +30,7 @@ lib/domain/cloudflare.ts                       getIngress, hasDnsRecord, setIngr
 
 ```ts
 import { servicePortWords } from '@/components/services/service-port.i18n'
-export function content(lang: string): Block[] {
+export function content(lang: string): PageItem[] {
   return [{ kind: 'servicePort', serviceId: 'data', words: servicePortWords(lang, 'data') }]
 }
 ```

@@ -69,7 +69,7 @@ build locally: **`npm run check:types` and `npm run check:i18n`**.
 | `check:api` | a route with no `// @api` name, or a name outside 6–12 words |
 | `check:seo` · `check:aio` · `check:pwa` | the search, machine and installable surfaces — their own skills |
 | `check:content` · `check:sections` · `check:links` | body rules, one specimen per section kind, dead links |
-| `check:blocks-map` | a stale `BLOCKS.md` / `SECTIONS.json` — they are GENERATED (`npm run build:blocks-map`) and the panel reads the second one out of the slot |
+| `check:sections-map` | a stale `KINDS.md` / `SECTIONS.json` — they are GENERATED (`npm run build:sections-map`) and the panel reads the second one out of the slot |
 | `check:project-types` | a project direction missing its words in a language of the corpus — `check:i18n` cannot read that shape, so it has its own guard |
 | `check:i18n` | a missing interface string in an enabled language |
 | `check:config-schemas` | a config key that exists in the type but not in the generated schema |
@@ -104,7 +104,7 @@ change — never route around it.
   it did not mean to. Data does not count: a translation table or a country list is data.
   🔒 **This is the one limit with NO gate behind it** (checked 2026-08-22): nothing measures it, so it
   holds only while you stop and count. Everything longer than 250 lines in the project today is DATA —
-  the specimen file, `SCHEMA`, the block catalogue, a page language cell — and data is exempt by the
+  the specimen file, `SCHEMA`, the section catalogue, a page language cell — and data is exempt by the
   line above, not by an exception somebody granted it.
 - `page.tsx` is a **thin entry**: declare the segment, re-export the entry from `./_components`.
 - `.client.tsx` / `.server.tsx` suffixes say which side a file runs on, in its name.

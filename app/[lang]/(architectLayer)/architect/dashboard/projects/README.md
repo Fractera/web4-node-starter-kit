@@ -1,6 +1,6 @@
 # `/architect/dashboard/projects` — every WEB4 ITEM of the node (step 339)
 
-One block: `projectsBoard` (`sections/blocks/projects-board.server.tsx` → island `components/dashboard/projects-board.client.tsx`).
+One section: `projectsBoard` (`sections/kinds/projects-board.server.tsx` → island `components/dashboard/projects-board.client.tsx`).
 The page is prerendered, so rows are asked in the browser from `GET /api/node/projects` (architect/admin only), built by
 `lib/web4-items/dashboard-rows.ts`. Nothing about the machine is baked into the build.
 

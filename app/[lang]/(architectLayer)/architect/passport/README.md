@@ -41,7 +41,7 @@ reusable in a public layer too — not only behind this lock:
 
 🔒 **Two language versions that do not point at each other read as duplicates.**
 That is precisely how a site earns the "doorway" label — a set of near-identical
-pages with no declared relation. The `hreflang` block is what turns them into one
+pages with no declared relation. The `hreflang` links are what turn them into one
 page in two languages, so it is emitted in **both** visibility modes.
 
 🛑 **One switch decides three things at once** — `ARCHITECT_LAYER_IS_PUBLIC` in
@@ -68,5 +68,5 @@ and `../README.md` for this layer's skeleton.
 ## Until Lagrix launches (step 706-8)
 
 The owner, 2026-11-09: «three large cards — How it works, Official account, Main wallet — stay, everything above them is commented out
-until Lagrix». The summary «The node in Lagrix: the reputation of its elements» (block `nodePassport`) is commented out in
+until Lagrix». The summary «The node in Lagrix: the reputation of its elements» (section `nodePassport`) is commented out in
 `_components/index.ts`; uncomment it there when the network launches.

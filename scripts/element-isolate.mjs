@@ -112,7 +112,7 @@ for (const dir of only ? [] : elements) {
   // соседом, встал: у задачи A2A человека нет. Граница наружу — правила ask выше и сторож путей.
   const allow = [`Edit(/${posix(dir)}/**)`, `Edit(/${posix(join(ROOT, 'data', 'services', id))}/**)`]
   s.permissions.allow = [...(s.permissions.allow ?? []).filter((r) => !ours(r)), ...allow]
-  // 548-13: блок чтения вне рабочих папок снят — он заставлял Claude Code спрашивать человека о КАЖДОЙ команде с подоболочкой
+  // 548-13: элемент чтения вне рабочих папок снят — он заставлял Claude Code спрашивать человека о КАЖДОЙ команде с подоболочкой
   // ($(…)), и разбуженный агент вставал на своём же «закончил» (замерено на erpxd 2026-10-20). Границу держат ask и хук.
   delete s.permissions.blockReadsOutsideWorkingDirectories
 

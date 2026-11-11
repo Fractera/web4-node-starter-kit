@@ -171,7 +171,7 @@ export function ElementDeploy({ id, lang, ui, reject }: { id: string; lang: stri
 
   const code = el.code
   const last = !dep?.running ? dep?.results.find((r) => r.id === id) : undefined
-  // 356-2: с отчётом — на изменённую страницу и к изменённому блоку, с ?report=<коммит> (сайт откроет окно отчёта); без — на главную.
+  // 356-2: с отчётом — на изменённую страницу и к изменённой секции, с ?report=<коммит> (сайт откроет окно отчёта); без — на главную.
   const rp = preview?.report
   const previewUrl = ready && preview?.port
     ? `http://127.0.0.1:${preview.port}/${lang}${rp?.path ?? ""}${rp ? `?report=${preview.commit ?? ""}` : ""}${rp?.anchor ? `#${rp.anchor}` : ""}`

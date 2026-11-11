@@ -160,7 +160,7 @@ of anchors INTO ITSELF — never a copy of the left menu.
 
 Step 599: its «Basics» is the glossary of the page — entries with a `key`. A word in
 any text of the page is written `[[form|key]]`; the page turns it into a hint with
-the definition from the glossary (`lib/content/blocks/term.ts`), and
+the definition from the glossary (`lib/content/sections/term.ts`), and
 `npm run check:term-hints` fails the build on a key the glossary does not have.
 Sections: Start · Basics. (600-1: Memory and Evolution moved to «How it works» — `architect/passport/how-it-works`, sections 5–6, with the page's own top row.)
 

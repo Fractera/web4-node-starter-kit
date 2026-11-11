@@ -31,7 +31,7 @@ and «Close» (only «Close» after a failure).
   2026-11-08: «if exist claude for crome , or git token , you must to do sync alwayes»): the Chrome extension or a write token; check
   with `gh api repos/Fractera/web4-node-starter-kit/compare/main...<owner>:web4-node-starter-kit:main` (identical). Never ask
   «will you click it or shall I?» — you do it (the owner 2026-11-08: «why you ASK ME ? IT NOT GOOD … NOT ASK IF IT IS POSSIBLE»). The
-  only block is a missing sign-in of the fork's owner in their Chrome with no write token: open github.com/login in that Chrome, say in
+  only section is a missing sign-in of the fork's owner in their Chrome with no write token: open github.com/login in that Chrome, say in
   one line that the update waits for their sign-in, and on their next word check and sync yourself — no question, no choice.
 - **Until the node has a GitHub token** (the page `build/github` shows none), every answer about a fork sync — blocked or done through
   Chrome — ends with one line in the person's language: what the token would have saved («без токена GitHub я не смог синхронизировать

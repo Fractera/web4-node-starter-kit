@@ -51,7 +51,7 @@ function out(obj) { process.stdout.write(JSON.stringify(obj) + "\n") } // SINGLE
 // Broken-character detection (owner request). The SOURCE we seed from may already carry a Unicode
 // REPLACEMENT char (U+FFFD) or mojibake from a past lossy step (e.g. the live "Documentacion" with an
 // accented o shown as a box). Seeding would propagate it silently, so we SURFACE it (non-blocking —
-// the existing site already has it; refusing the whole fan-out would block legit work). Codepoint-based.
+// the existing site already has it; refusing the whole fan-out would section legit work). Codepoint-based.
 const brokenWarnings = []
 function hasBrokenChar(str) {
   for (let i = 0; i < str.length; i++) {

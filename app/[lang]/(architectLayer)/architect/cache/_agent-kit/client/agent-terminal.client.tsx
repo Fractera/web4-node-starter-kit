@@ -27,7 +27,7 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
 type State = "checking" | "sleeping" | "connecting" | "running" | "stopped" | "offline" | "forbidden"
 
-// 336-4/5: `initialPaste` — готовый текст задачи (окно задачи блока в Preview): кладётся в окно вставки, окно НЕ открывается
+// 336-4/5: `initialPaste` — готовый текст задачи (окно задачи секции в Preview): кладётся в окно вставки, окно НЕ открывается
 // само — его открывает «Вставить». `keyHref` — поле ключа OpenAI для голоса в окне вставки (элемент — его вкладка, служба — ядра).
 // `compact` — узкий терминал (ящик рядом с Preview): «Очистить» и «Остановить» — только значок, имя в подсказке; «Вставить»
 // сохраняет значок и текст (слово владельца 2026-09-29).
@@ -52,7 +52,7 @@ export function AgentTerminal({ service, lang, words, build, dialogUi, initialPa
   const mouseRef = useRef(createMouseFilter())
   // Закрытие, которое сделали мы сами, не должно читаться как обрыв связи.
   const quietCloseRef = useRef(false)
-  // 316: окно вставки. Текст приходит кнопкой «Вставить» или ссылкой `?paste=` (адрес блока из подсветки Preview);
+  // 316: окно вставки. Текст приходит кнопкой «Вставить» или ссылкой `?paste=` (адрес секции из подсветки Preview);
   // в работающий терминал он уходит ТОЛЬКО кнопкой человека в окне (спящему — вместе с запуском, 551-7 ниже).
   const [pasteOpen, setPasteOpen] = useState(false)
   const [pasteText, setPasteText] = useState(initialPaste ?? "")

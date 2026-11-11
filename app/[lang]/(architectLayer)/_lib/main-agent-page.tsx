@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { Block } from '@/lib/content/blocks/types'
+import type { PageItem } from '@/lib/content/sections/types'
 import { type WorkspacePageData, wordsOf } from '@/lib/collection/types'
 import { ArchitectPage } from './architect-page'
 import { groupNode } from './architect-menu'
@@ -17,7 +17,7 @@ export function MainAgentPage({ lang, rel, page, own }: { lang: string; rel: str
   const ui = architectLayerUi(lang)
   const words = wordsOf(page, lang)
   const node = groupNode(MAIN_AGENT, rel)
-  const items: Block[] = (node?.kids ?? []).map((k) => ({
+  const items: PageItem[] = (node?.kids ?? []).map((k) => ({
     kind: 'docref',
     title: wordsOf(k.page, lang).title,
     summary: wordsOf(k.page, lang).lead ?? ui.emptyLead,

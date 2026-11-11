@@ -9,6 +9,6 @@ consumers still call `/vectors/*` on data, which passes the request here. This s
 | Path | Role |
 |---|---|
 | `page.tsx`, `_data/` | the menu item «Vectors»: title, lead, `order`, icon `scan` |
-| `_components/index.ts` | one block `servicePort` with `serviceId: 'vectors'`: port on the machine and address on the internet |
+| `_components/index.ts` | one section `servicePort` with `serviceId: 'vectors'`: port on the machine and address on the internet |
 | `preview/` | live preview of the element's home page |
 | `claude-code/`, `terminal/`, `telegram/`, `agent-api/`, `_agent-kit/`, `agent-kit.json` | the agent kit — `npm run agent-kit:add -- vectors`; never edited by hand |

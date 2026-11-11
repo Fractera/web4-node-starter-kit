@@ -68,7 +68,7 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - The tunnel: the node's first start raises a temporary address by itself. Errors 1016 and 1033 mean a new address is needed — they are
   not repaired. Delivering code does not touch the tunnel. Self-healing that changes the address is forbidden: a link the person already
   gave away would die silently, so a failure is only named aloud (`serve:publish`, `serve:status`).
-- Ports: the core — 24680, elements — the block 24680–25679 (`lib/server-port.cjs`). The core's port is asked from `logs/runtime.json`,
+- Ports: the core — 24680, elements — the range 24680–25679 (`lib/server-port.cjs`). The core's port is asked from `logs/runtime.json`,
   an element's from the registry or `npm run serve:status` — never remembered. 3000 and 49152+ are forbidden.
 - Installation — only from a direct fork of Fractera/web4-node-starter-kit and never in a cloud session; one node per computer.
 - People. **The owner** — one person, the creator of the project. **The architect** — the master of the node, the first registered; acts
@@ -131,7 +131,7 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - Changes in CONFIG reach the elements by a signal, without a rebuild.
 - Design is every element's own: in its «Build → Design» tab the person picks design skills of third-party developers, each builds a
   test page, and the approved one becomes the element's tokens; then its agent builds every other page in that design, its sections its
-  own code. There is no shared design and no shared catalogue of blocks (skill `design-and-settings-of-elements`).
+  own code. There is no shared design and no shared catalogue of sections (skill `design-and-settings-of-elements`).
 - The core's tools — 11 (`_tools/TOOLS.json`): image and video crop, voice input, code view, translations dialog, chat, social profile links from a phrase,
   fact draft, task for a block, paste window, terminal drawer.
 - Sign-in is a native element that works like the core: every element, when it needs one, gets a private area through 14 roles plus guest
@@ -367,8 +367,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - **i2i, a2a, f2f** — protocols (section 2); **H2H** — person to person, **H2A** — person to agent.
 - **Single project** and **app factory** — node modes; **integrator** — one person gives elements to many; **Web4 ready** — an element in
   the Web4 network: agents of other nodes find it and give it orders through Lagrix.
-- **Block** (section) — a designed part of a page: the core's own catalogue in the core, the element's own code in an element. **Widget**
-  — not an element: code inside an element, when a block is not enough
+- **Section** — a designed part of a page: the core's own catalogue in the core, the element's own code in an element. **Widget**
+  — not an element: code inside an element, when a section is not enough
   or the code is needed nowhere else (`static/`, `dynamic/`). **Tool** — a reusable part inside an element. Widgets and tools are the
   element agents' business; you understand these words when elements say them.
 - **Build** and **working process** — section 5; **pass** — a separate build session: main, design, texts, study.

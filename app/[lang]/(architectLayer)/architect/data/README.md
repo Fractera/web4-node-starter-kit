@@ -26,7 +26,7 @@ underscore. Nothing collides — but read the import line twice before changing 
 
 ## The three states of this page
 
-1. `_components/` returns blocks → they are shown;
+1. `_components/` returns sections → they are shown;
 2. it returns nothing, but `_data` carries `topics` → the text is shown;
 3. neither → the page states its own name and says the content is coming.
 
@@ -62,7 +62,7 @@ reusable in a public layer too — not only behind this lock:
 
 🔒 **Two language versions that do not point at each other read as duplicates.**
 That is precisely how a site earns the "doorway" label — a set of near-identical
-pages with no declared relation. The `hreflang` block is what turns them into one
+pages with no declared relation. The `hreflang` links are what turn them into one
 page in two languages, so it is emitted in **both** visibility modes.
 
 🛑 **One switch decides three things at once** — `ARCHITECT_LAYER_IS_PUBLIC` in

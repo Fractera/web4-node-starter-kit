@@ -1,12 +1,12 @@
 import type { ReactNode } from "react"
-import type { Block, WorkspaceItem } from '@/lib/content/blocks/types'
+import type { PageItem, WorkspaceItem } from '@/lib/content/sections/types'
 import { type WorkspacePageData, wordsOf } from '@/lib/collection/types'
 import { ArchitectPage } from './architect-page'
 import { architectLayerUi } from '../_i18n/architect-layer.i18n'
 
 // СТРАНИЦА КОЛЛЕКЦИИ — оболочка для страницы, которая живёт папкой (254).
 //
-// 🔒 ЧТО ОНА ДЕЛАЕТ И ЧЕГО НЕ ДЕЛАЕТ. Она превращает ДАННЫЕ папки в блоки
+// 🔒 ЧТО ОНА ДЕЛАЕТ И ЧЕГО НЕ ДЕЛАЕТ. Она превращает ДАННЫЕ папки в секции
 // каталога и отдаёт их общей оболочке слоя. Второй раскладки здесь не заводится:
 // `ArchitectPage` по-прежнему единственная, и всё, что она умеет, доступно и
 // странице-папке.
@@ -34,7 +34,7 @@ export function CollectionPage({
   page: WorkspacePageData
   /**
    * Содержимое из `_components/` этой страницы — работающая часть: островки,
-   * таблицы, формы, разобранные в блоки каталога.
+   * таблицы, формы, разобранные в секции каталога.
    *
    * 🔒 ПУСТО — ЭТО ЗАКОННЫЙ ОТВЕТ, А НЕ ОШИБКА (решение владельца 2026-09-19:
    * «компонент страницы может возвращать контент-заглушку, а может ничего не
@@ -43,7 +43,7 @@ export function CollectionPage({
    * построена"»). Поэтому страница ЗАВЕРШЕНА с первой минуты: она существует,
    * открывается, называет себя и честно говорит о своём состоянии.
    */
-  content?: Block[]
+  content?: PageItem[]
   /**
    * Собственный островок маршрута (271): вещь, которая живёт в папке маршрута, а не в каталоге видов
    * (комплект агента службы). Есть островок — третье состояние «скоро будет построено» не наступает.
@@ -68,7 +68,7 @@ export function CollectionPage({
 
   // Темы страницы: заголовок третьего уровня с явным якорем, текст, список.
   // Темы из `_data` — текст, который пишут словами.
-  const fromTopics: Block[] = topics.flatMap((t): Block[] => [
+  const fromTopics: PageItem[] = topics.flatMap((t): PageItem[] => [
     { kind: 'h3', text: t.title, id: t.anchor },
     { kind: 'p', text: t.text },
     ...(t.points ? [{ kind: 'list' as const, items: t.points }] : []),
@@ -86,11 +86,11 @@ export function CollectionPage({
   // честно сообщает о себе. ✗ Без обработчика пустоты на её месте была бы белая
   // страница, которую человек читает как поломку продукта.
   //
-  // 🪦 ЗДЕСЬ СТОЯЛО `content.length > 0 ? content : fromTopics` — блоки И ТЕМЫ
+  // 🪦 ЗДЕСЬ СТОЯЛО `content.length > 0 ? content : fromTopics` — секции И ТЕМЫ
   // БЫЛИ АЛЬТЕРНАТИВОЙ, и это оказалось дефектом, а не выбором (найден 264-2).
   //
   // ✗ ЧЕМ ОПЛАЧЕНО. У страницы «Активация домена» есть и лестница в
-  // `_components/`, и пять тем в `_data`. Блоки побеждали — и весь текст тем
+  // `_components/`, и пять тем в `_data`. Секции побеждали — и весь текст тем
   // (зачем нужен постоянный адрес, порядок из пяти шагов, что делать без домена,
   // сколько это стоит) НЕ РЕНДЕРИЛСЯ ВООБЩЕ. Измерено на боевом узле: фразы
   // «Что меняет постоянный адрес» в отданном HTML — ноль.
@@ -104,8 +104,8 @@ export function CollectionPage({
   // за действием, а не за чтением; текст объясняет то, что он уже видит. Нужен
   // обратный порядок — страница собирает всё сама в своём `_components/`, и эта
   // ветка ей не мешает.
-  const built: Block[] = [...(content ?? []), ...fromTopics]
-  const children: Block[] = built.length > 0 || widget ? built : [{ kind: 'note', text: ui.soon }]
+  const built: PageItem[] = [...(content ?? []), ...fromTopics]
+  const children: PageItem[] = built.length > 0 || widget ? built : [{ kind: 'note', text: ui.soon }]
 
   // Верхний ряд — навигация ПО ЭТОЙ странице. Тем нет — ряда нет вовсе, и это
   // законное состояние раздела, у которого ещё нет содержимого.

@@ -23,7 +23,7 @@
 // 🔒 ПОДСКАЗКИ К СЛОВАМ (599-1, владелец 2026-10-26: «добавить тултип и подсветить подсказки элемент, узел и так далее, все что у нас
 // есть в глоссари … так как эта страница первого контакта и при это много новых слов»). Ликбез — единственный список определений: в
 // текстах страницы слово пишется меткой `[[форма|ключ]]`, страница раскрывает её определением из ликбеза того же языка
-// (`lib/content/blocks/term.ts`), сторож `check-term-hints` роняет сборку на ключе, которого в ликбезе нет.
+// (`lib/content/sections/term.ts`), сторож `check-term-hints` роняет сборку на ключе, которого в ликбезе нет.
 // 🛑 «Глубокая», а не «глубинная» память: так это слово уже называется в проекте (словарь разработки, раздел 596) — второе слово для
 // того же самого развело бы страницу и агентов.
 
@@ -86,7 +86,7 @@ const DICT: Record<string, ArchitectHomeUi> = {
         { key: 'architect', word: 'Architect', text: 'you, the owner of the node: you give the agents their tasks and see everything on the node, in every element.' },
         { key: 'main-agent', word: 'Main agent', text: 'the agent of the core. It takes your request, finds the element that can do it or creates a new one, hands it the task and follows the work. It writes no code itself.' },
         { key: 'element', word: 'Element', text: 'a self-contained part of the node with its own folder, port, address, repository and agent. A site, an app and a bot are all elements.' },
-        { key: 'native-element', word: 'Native element', text: 'a built-in service any custom element can use: sign-in, data, memory, design, blocks. It is not sold and is not shown to the network.' },
+        { key: 'native-element', word: 'Native element', text: 'a built-in service any custom element can use: sign-in, data, memory, design, sections. It is not sold and is not shown to the network.' },
         { key: 'custom-element', word: 'Custom element', text: 'your own project: a site, an app or an agent. It can follow the node’s shared settings or live on its own, and it can be sold and put on the Web4 network.' },
         { key: 'passport', word: 'Passport', text: 'the first item of the left menu: the node’s reputation in Lagrix, the node’s wallet and a card for every element that shows whether it is on and whether it is on the Web4 network.' },
         { key: 'skill', word: 'Skill', text: 'written know-how an agent loads when a task calls for it: how to do one kind of work well.' },
@@ -145,7 +145,7 @@ const DICT: Record<string, ArchitectHomeUi> = {
         { key: 'architect', word: 'Архитектор', text: 'вы, хозяин узла: ставите задачи агентам и видите всё на узле, во всех элементах.' },
         { key: 'main-agent', word: 'Главный агент', text: 'агент ядра. Он принимает вашу просьбу, находит элемент, который её сделает, или создаёт новый, передаёт ему задачу и следит за работой. Сам код не пишет.' },
         { key: 'element', word: 'Элемент', text: 'самостоятельная часть узла со своей папкой, портом, адресом, репозиторием и агентом. Сайт, приложение, бот — всё это элементы.' },
-        { key: 'native-element', word: 'Нативный элемент', text: 'встроенная служба, которой пользуется любой кастомный элемент: авторизация, данные, память, дизайн, блоки. Его не продают и не показывают сети.' },
+        { key: 'native-element', word: 'Нативный элемент', text: 'встроенная служба, которой пользуется любой кастомный элемент: авторизация, данные, память, дизайн, секции. Его не продают и не показывают сети.' },
         { key: 'custom-element', word: 'Кастомный элемент', text: 'ваш собственный проект: сайт, приложение или агент. Он может брать общие настройки узла или жить отдельно, его можно продавать и выставить в сеть Web4.' },
         { key: 'passport', word: 'Паспорт', text: 'первый пункт левого меню: репутация узла в Lagrix, кошелёк узла и карточка каждого элемента, где видно, включён ли он и в сети ли Web4.' },
         { key: 'skill', word: 'Навык', text: 'записанное умение, которое агент подгружает, когда задача его требует: как хорошо сделать работу определённого рода.' },

@@ -10,7 +10,7 @@
 //   2. Безголовый Chrome (протокол отладки, без библиотек — как check-navigation.mjs навыка lagrix-answer-pages): ширина 1440 и
 //      500 px, окно 900 px; страница прокручивается до низа (ленивые картинки), затем нарезается по экранам:
 //      <out>/<страница>-<ширина>-<NN>.png.
-//   3. Печатает карту «экран → блоки» по `[data-block]` (адрес блока; вид — из `_data/<язык>.json`, если дан --element).
+//   3. Печатает карту «экран → блоки» по `[data-block]` (адрес секции; вид — из `_data/<язык>.json`, если дан --element).
 //   4. --element: печатает дословно вывод сторожа страниц элемента — `scripts/check-page-sequence.mjs` (у старого элемента —
 //      `check-page-blocks.mjs`, 577-5): та же страница, 0 токенов.
 //   --eval <файл.js>: выполнить скрипт в странице перед снимками (испорченная копия для проверки разбора; сторож её не видит).
@@ -44,14 +44,14 @@ mkdirSync(out, { recursive: true })
 if (!element && !base) { console.log("===SHOTS_FAIL=== give --element <folder> or --url <base>"); process.exit(1) }
 
 // 🛑 Не `listen(0)`: Windows даёт порт из 49152+ — этот диапазон ОС раздаёт исходящим соединениям, и слушатель там не отвечал
-// (✗ 577-6: сервер «Ready», fetch ждал 2 минуты). Порт — из блока продукта 24680–25679 сверху вниз, как прогрев установщика.
+// (✗ 577-6: сервер «Ready», fetch ждал 2 минуты). Порт — из секции продукта 24680–25679 сверху вниз, как прогрев установщика.
 const tryPort = (p) => new Promise((ok) => { const s = net.createServer(); s.once("error", () => ok(false)); s.listen(p, "127.0.0.1", () => s.close(() => ok(true))) })
 async function freePort() {
   for (let p = 25679; p >= 25500; p--) if (await tryPort(p)) return p
   throw new Error("no free port in 25500–25679")
 }
 
-/** bid → вид блока по данным страницы (вложенные — через children). */
+/** bid → вид секции по данным страницы (вложенные — через children). */
 function kindsOf(dir, page) {
   const map = new Map()
   const lang = page.split("/")[1] || "en"
@@ -60,7 +60,7 @@ function kindsOf(dir, page) {
   for (const f of candidates) {
     if (!existsSync(f)) continue
     const walk = (list) => (list || []).forEach((b) => { if (b?.bid) map.set(b.bid, b.kind); walk(b?.children) })
-    walk(JSON.parse(readFileSync(f, "utf8")).blocks)
+    walk(JSON.parse(readFileSync(f, "utf8")).body)
   }
   return map
 }
@@ -115,7 +115,7 @@ try {
       await send("Page.navigate", { url: base + page })
       for (let i = 0; i < 60 && (await evalJs(send, "document.readyState")) !== "complete"; i++) await sleep(250)
       await evalJs(send, "document.fonts.ready.then(() => true)")
-      // --eval <файл.js>: испорченная КОПИЯ для проверки разбора — скрипт переставляет блоки в браузере, данные и сборка не тронуты.
+      // --eval <файл.js>: испорченная КОПИЯ для проверки разбора — скрипт переставляет секции в браузере, данные и сборка не тронуты.
       if (opt("--eval")) await evalJs(send, readFileSync(opt("--eval"), "utf8"))
       // Плавная прокрутка страницы (`scroll-smooth`) иначе не доводит окно до места (✗ 523-2).
       await evalJs(send, `(async () => { document.documentElement.style.scrollBehavior = 'auto';
@@ -135,7 +135,7 @@ try {
         writeFileSync(file, Buffer.from(shot.data, "base64"))
         shots++
         const on = boxes.filter((b) => b.top < (n + 1) * HEIGHT && b.bottom > n * HEIGHT).map((b) => (kinds.has(b.bid) ? `${kinds.get(b.bid)}·${b.bid}` : b.bid))
-        console.log(`${page} ${width}px screen ${n + 1}/${screens}: ${on.join(", ") || "(no block address)"} → ${file}`)
+        console.log(`${page} ${width}px screen ${n + 1}/${screens}: ${on.join(", ") || "(no address)"} → ${file}`)
       }
     }
   }

@@ -1,4 +1,4 @@
-import type { Block } from '@/lib/content/blocks/types'
+import type { PageItem } from '@/lib/content/sections/types'
 
 // БЛОК ДЕЙСТВИЙ ПОСЛЕ КАЖДОГО РАЗДЕЛА (2026-09-20).
 //
@@ -22,14 +22,14 @@ import type { Block } from '@/lib/content/blocks/types'
  *
  * ✗ НАЙДЕНО ВЛАДЕЛЬЦЕМ ГЛАЗАМИ, А ПОТОМ ИЗМЕРЕНО (2026-09-20). Он сообщил, что
  * под разделом «Переезд — это легко» кнопки задвоились, и предположил пустую
- * секцию. Замер показал точнее: два блока действий стояли в 98 пикселях друг от
+ * секцию. Замер показал точнее: два секции действий стояли в 98 пикселях друг от
  * друга, тогда как остальные — в 800–1100.
  *
  * 🛑 ПРИЧИНА НЕ В ПУСТОЙ СЕКЦИИ, А В ПОРЯДКЕ, КОТОРЫЙ МЕНЯЕТСЯ ПОСЛЕ НАС.
  * `standard-content-page.tsx` вынимает `heroSplit` и `languageMarquee` из потока:
  * они рисуются во всю ширину — первый сверху, второй последним, уже ПОСЛЕ
  * вопросов и ответов. Языковая лента оказалась на отметке 7941, а поставленный
- * за ней блок действий остался на 6881 — вплотную к предыдущему.
+ * за ней секция действий остался на 6881 — вплотную к предыдущему.
  *
  * 🔒 ОТСЮДА ЗАКОН ШИРЕ ЭТОГО ФАЙЛА: **положение в массиве не равно положению на
  * экране.** Всё, что кто-то позже вынимает из потока, обязано быть названо здесь
@@ -41,19 +41,19 @@ const RENDERED_ELSEWHERE = new Set(['heroSplit', 'languageMarquee'])
  * Что считается разделом.
  *
  * 🔒 ЗАГОЛОВОК ВТОРОГО УРОВНЯ РИСУЮТ ДВА РАЗНЫХ УСТРОЙСТВА, и оба обязаны сюда
- * попасть: самостоятельный блок `h2` и поле `title` у видов каталога — их
+ * попасть: самостоятельная секция `h2` и поле `title` у видов каталога — их
  * тринадцать, и все печатают `H2` через `sections/section-head.server.tsx`.
  * Учитывай мы одно из двух, половина разделов осталась бы без действия, причём
  * ровно та половина, которая набрана видами, — то есть большая.
  */
-function isSection(block: Block): boolean {
-  if (RENDERED_ELSEWHERE.has(block.kind)) return false
-  if (block.kind === 'h2') return true
-  return 'title' in block && typeof (block as { title?: unknown }).title === 'string'
+function isSection(item: PageItem): boolean {
+  if (RENDERED_ELSEWHERE.has(item.kind)) return false
+  if (item.kind === 'h2') return true
+  return 'title' in item && typeof (item as { title?: unknown }).title === 'string'
 }
 
 /**
- * Блок действий: поставить Claude Code, затем подключить к нему подписку внутри
+ * Секция действий: поставить Claude Code, затем подключить к нему подписку внутри
  * собственного узла.
  *
  * 🔒 ДВА ДЕЙСТВИЯ И РОВНО В ЭТОМ ПОРЯДКЕ — решение владельца 2026-09-19. Адрес
@@ -63,7 +63,7 @@ function isSection(block: Block): boolean {
  * `/ru/architect/...`, то есть в английской ячейке жила русская ссылка ровно до
  * того дня, когда кто-нибудь её поправит. Здесь она строится из языка страницы.
  */
-export function buildCta(lang: string, labels: { install: string; build: string }): Block {
+export function buildCta(lang: string, labels: { install: string; build: string }): PageItem {
   return {
     kind: 'cta',
     href: 'https://code.claude.com/',
@@ -73,7 +73,7 @@ export function buildCta(lang: string, labels: { install: string; build: string 
 }
 
 /**
- * Расставляет блок действий после каждого раздела.
+ * Расставляет секцию действий после каждого раздела.
  *
  * 🛑 ДВА БЛОКА ДЕЙСТВИЙ ПОДРЯД НЕ ПОЯВЛЯЮТСЯ. Если раздел и так заканчивается
  * действием (первый экран страницы), второй не добавляется: две одинаковые пары
@@ -82,15 +82,15 @@ export function buildCta(lang: string, labels: { install: string; build: string 
  * 🛑 ПОСЛЕДНИЙ БЛОК СТРАНИЦЫ ТОЖЕ ПОЛУЧАЕТ ДЕЙСТВИЕ, и это не случайность: конец
  * страницы — то место, где человек дочитал и решает.
  */
-export function withCtaAfterSections(blocks: Block[], cta: Block): Block[] {
-  const out: Block[] = []
+export function withCtaAfterSections(body: PageItem[], cta: PageItem): PageItem[] {
+  const out: PageItem[] = []
 
-  blocks.forEach((block, i) => {
-    out.push(block)
-    if (!isSection(block)) return
+  body.forEach((item, i) => {
+    out.push(item)
+    if (!isSection(item)) return
 
-    // Следующий блок уже действие — своего не добавляем.
-    const next = blocks[i + 1]
+    // Следующая секция уже действие — своего не добавляем.
+    const next = body[i + 1]
     if (next && next.kind === 'cta') return
 
     out.push(cta)

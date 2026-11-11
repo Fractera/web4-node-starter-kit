@@ -82,7 +82,7 @@ const DICT: Record<"en" | "ru", ElementReposWords> = {
     queued: "in the queue",
     doneOk: "created and uploaded",
     phases: { start: "starting…", create: "creating the repository on GitHub…", history: "fetching the whole history from Fractera…", upload: "uploading the history to your repository…" },
-    rateWait: "GitHub temporarily stopped this account from creating repositories (a secondary rate limit). The node stopped at once — GitHub warns that requests during the block can get an integration banned. When the clock reaches zero (at {at}) the «Create and upload» buttons come back; what was already created is picked up.",
+    rateWait: "GitHub temporarily stopped this account from creating repositories (a secondary rate limit). The node stopped at once — GitHub warns that requests during the section can get an integration banned. When the clock reaches zero (at {at}) the «Create and upload» buttons come back; what was already created is picked up.",
     jobNow: "Now: {id} (done {done} of {total}). A required element first fetches its whole history from Fractera — a few minutes each.",
     jobInterrupted: "The run started {at} was interrupted — the node restarted while it worked. Press «Create and upload» again: what was already created is picked up.",
     mapPushed: "The project map went to your fork — a clone of the fork restores every element.",

@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
   const named = (service: string) => elementName(service.replace(/--work$/, ""), lang === "ru" ? "ru" : "en")
 
   // 🪦 «Только рождённые элементы» (345) отменено владельцем 2026-10-02: «да, показывай все терминалы в ящике» — любой открытый
-  // терминал нагружает компьютер и тратит подписку. Встроенные (root, auth, data, config, design, blocks, узел `build`) ведут
+  // терминал нагружает компьютер и тратит подписку. Встроенные (root, auth, data, config, design, sections, узел `build`) ведут
   // на свою страницу терминала `/<язык>/architect/<служба>/terminal`, рождённые — на `…/<адрес>/build/terminal`.
   const terminals = (list() as Session[])
     .filter((s) => s.running)

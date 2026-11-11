@@ -6,7 +6,7 @@
 //
 //   1. версия, записанная веткой вместо тега → два человека, выполнившие одну и ту
 //      же команду в разные дни, получают разные узлы, и отличие не записано нигде;
-//   2. два блока на одном порту → они подерутся при запуске, и проигравший будет
+//   2. два элемента на одном порту → они подерутся при запуске, и проигравший будет
 //      выглядеть сломанной службой, а не занятым портом;
 //   3. секрет, попавший в реестр → уедет каждому гостю вместе с репозиторием.
 //
@@ -27,7 +27,7 @@ import serverPort from '../lib/server-port.cjs'
 const ROOT = process.cwd()
 const FILE = paths.REGISTRY_FILE
 
-// 370: блок и чужие умолчания — из одного источника (lib/server-port.cjs), второй копии чисел здесь нет.
+// 370: элемент и чужие умолчания — из одного источника (lib/server-port.cjs), второй копии чисел здесь нет.
 const PORT_MIN = serverPort.PORT_BLOCK_START
 const PORT_MAX = serverPort.PORT_BLOCK_END
 
@@ -83,7 +83,7 @@ for (const [i, s] of reg.services.entries()) {
   if (typeof s.id !== 'string' || !/^[a-z0-9][a-z0-9-]{0,31}$/.test(s.id)) {
     fail('id-format', `${where}: id обязан быть строчными латинскими, цифрами и дефисом, 1–32 знака`)
   } else {
-    // ── 3. id-unique. Порча: продублировать блок.
+    // ── 3. id-unique. Порча: продублировать элемент.
     if (ids.has(s.id)) fail('id-unique', `${where}: id «${s.id}» уже занят в services[${ids.get(s.id)}]`)
     else ids.set(s.id, i)
   }
@@ -105,17 +105,17 @@ for (const [i, s] of reg.services.entries()) {
       'Ветка здесь запрещена: следуя за ней, два гостя с одной командой получают разные узлы.')
   }
 
-  // ── 6. port-block. Порча: поставить 3001 или 50505.
+  // ── 6. port-range. Порча: поставить 3001 или 50505.
   if (s.port !== null && s.port !== undefined) {
     if (Number.isInteger(s.port) && serverPort.PORT_SKIP.has(s.port)) {
       fail('port-block', `${where}: порт ${s.port} — умолчание чужой программы человека (список пропуска в lib/server-port.cjs); узел его не занимает.`)
     } else if (!Number.isInteger(s.port) || s.port < PORT_MIN || s.port > PORT_MAX) {
       fail('port-block',
-        `${where}: порт ${s.port} вне блока ${PORT_MIN}–${PORT_MAX}. ` +
-        'Ниже блока мы отбираем порты у собственных проектов человека, выше 49152 их раздаёт ОС исходящим соединениям.')
+        `${where}: порт ${s.port} вне диапазона ${PORT_MIN}–${PORT_MAX}. ` +
+        'Ниже элемента мы отбираем порты у собственных проектов человека, выше 49152 их раздаёт ОС исходящим соединениям.')
     } else {
-      // ── 7. port-unique. Порча: дать двум блокам один номер.
-      if (ports.has(s.port)) fail('port-unique', `${where}: порт ${s.port} уже занят блоком «${ports.get(s.port)}»`)
+      // ── 7. port-unique. Порча: дать двум элементам один номер.
+      if (ports.has(s.port)) fail('port-unique', `${where}: порт ${s.port} уже занят элементом «${ports.get(s.port)}»`)
       else ports.set(s.port, s.id)
     }
   }
@@ -123,11 +123,11 @@ for (const [i, s] of reg.services.entries()) {
   // ── 8. provides-nonempty. Порча: оставить пустой массив.
   if (!Array.isArray(s.provides) || s.provides.length === 0) {
     fail('provides-nonempty',
-      `${where}: provides пуст. Блок, не назвавший, что он даёт, нечем заменить: ` +
+      `${where}: provides пуст. Элемент, не назвавший, что он даёт, нечем заменить: ` +
       'покупатель не узнает, чью способность он берёт.')
   }
 
-  // ── 9. no-secrets. Порча: дописать в блок "token": "abc…".
+  // ── 9. no-secrets. Порча: дописать в секцию "token": "abc…".
   for (const [k, v] of Object.entries(s)) {
     if (SECRET_NAMES.test(k)) {
       fail('no-secrets', `${where}: поле «${k}» похоже на секрет. Реестр лежит в git и уезжает каждому гостю.`)
@@ -160,7 +160,7 @@ for (const id of REQUIRED) {
 // ── 10. no-remembered-address. Порча: вернуть "http://localhost:3300" в любую
 // дверь медиа. ПРАВИЛО НЕ ПРО РЕЕСТР, А ПРО КОД УЗЛА, и живёт здесь потому, что
 // сторож реестра — единственное место, знающее, что адрес назначается, а не
-// помнится. Порты узла берутся из блока 24680-25679 и чисел 3001/3300 не
+// помнится. Порты узла берутся из диапазона 24680-25679 и чисел 3001/3300 не
 // содержат никогда: умолчание с этими номерами есть тихий стук в пустоту.
 {
   // Адрес бывает не только строкой целиком: `${hostname}:3001` — тот же адрес,
@@ -218,7 +218,7 @@ for (const id of REQUIRED) {
   }
 }
 
-console.log(`  блоков в составе: ${reg.services.length}`)
+console.log(`  элементов в составе: ${reg.services.length}`)
 console.log(`  с назначенным портом: ${ports.size}` + (ports.size < reg.services.length
   ? ` (остальные ещё не установлены — это законное состояние)` : ''))
 for (const s of reg.services) {

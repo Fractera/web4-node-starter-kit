@@ -14,7 +14,7 @@ node .claude/skills/review-page/shots.mjs --element <element folder> --page en [
 node .claude/skills/review-page/shots.mjs --url http://127.0.0.1:<port> --page en --out <folder>
 ```
 
-- `--element` serves the element's installed build on a spare port of `127.0.0.1` (block 25500–25679) and stops it at the end; a turned-off
+- `--element` serves the element's installed build on a spare port of `127.0.0.1` (range 25500–25679) and stops it at the end; a turned-off
   element is not turned on. It prints the map «screen → sections» (`kind·address`) and, verbatim, the element's page guard
   (`scripts/check-page-sequence.mjs`).
 - A page goes **without the leading slash** (`en`, `ru/docs`): Git Bash rewrites `/en` into a Windows path and the instrument refuses it.
@@ -32,7 +32,7 @@ is an estimate, not a measurement — say so. A second language adds only its sc
 Three sources, in order:
 1. **The element's approved design:** its `DESIGN.md` (composition, rhythm, imagery, «do» and «don't») and the screenshots of the
    approved test page (`prototypes/_pages/<id>/shots/` or the core's Design tab) — does this page speak the same language; a section's
-   card (`components/blocks/<block>.card.json`, when the element keeps cards): `use` and `avoid`, the page's mode (a landing persuades).
+   card (`components/sections/<section>.card.json`, when the element keeps cards): `use` and `avoid`, the page's mode (a landing persuades).
 2. **`craft-floor` of the impeccable skill** (`.claude/skills/impeccable/reference/craft-floor.md` of any element) — «Verify» (contrast,
    spacing, type, motion, states, language) and «Refuse» (identical cards as the skeleton, an eyebrow over the heading, gradient text…).
 3. **`critique.md` of the same skill — parts only:** «Design Specificity Verdict» (made for this product or fits any), «Priority Issues»
@@ -56,7 +56,7 @@ Three sources, in order:
 
 ```
 node .claude/skills/review-page/verdict.mjs add --element <id> --page en --grade <1|2|3> --by model:<model id> \
-     [--replace "block-a>block-b"] [--move block-x] [--fine block-y] [--note "…"]
+     [--replace "section-a>section-b"] [--move section-x] [--fine section-y] [--note "…"]
 node .claude/skills/review-page/verdict.mjs add … --by owner                      # the owner's verdict — next to it
 node .claude/skills/review-page/verdict.mjs add … --copy "<what is spoiled>"      # a review of a spoiled copy — not compared
 node .claude/skills/review-page/verdict.mjs list [--element <id>]                # how often the model agrees with the owner

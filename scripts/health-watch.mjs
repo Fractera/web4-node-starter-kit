@@ -24,7 +24,7 @@ const root = path.join(here, '..')
 const runtimeFile = path.join(root, 'logs', 'runtime.json')
 
 const APP_NAME = process.env.FRACTERA_APP_NAME || 'fractera-web4'
-// Пусто — сторожим сам узел; имя блока — сторожим этот блок.
+// Пусто — сторожим сам узел; имя элемента — сторожим этот элемент.
 const WATCH_SERVICE = process.env.FRACTERA_WATCH_SERVICE || ''
 const INTERVAL_MS = Number(process.env.FRACTERA_HEALTH_INTERVAL_MS) || 30000
 const TIMEOUT_MS = Number(process.env.FRACTERA_HEALTH_TIMEOUT_MS) || 15000
@@ -126,7 +126,7 @@ async function tick() {
   if (Date.now() < nextCheckAfter) return
 
   const { url, known } = target()
-  if (!url) return // блок объявлен, но не установлен — сторожить нечего
+  if (!url) return // элемент объявлен, но не установлен — сторожить нечего
   const { ok, status } = await probe(url)
 
   if (ok) {
@@ -214,7 +214,7 @@ if (ALL) {
   setInterval(() => { tickAll().catch((error) => log(`ошибка внутри обхода: ${error.message}`)) }, INTERVAL_MS)
 } else {
 log(
-  `сторож пущен для ${WATCH_SERVICE ? 'блока «' + WATCH_SERVICE + '»' : 'узла'}: ` +
+  `сторож пущен для ${WATCH_SERVICE ? 'элемента «' + WATCH_SERVICE + '»' : 'узла'}: ` +
     `каждые ${INTERVAL_MS / 1000} с, терпение ${FAILURES_BEFORE_RESTART} неудачи подряд, ` +
     `таймаут ответа ${TIMEOUT_MS / 1000} с, пауза после перезапуска ${COOLDOWN_MS / 1000} с`,
 )

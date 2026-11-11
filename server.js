@@ -46,7 +46,7 @@ process.env.WEB4_STARTED_AT = new Date().toISOString()
 
 // 🔒 Порт выбирается ДО того, как поднят Next: его конструктор получает номер
 // один раз и потом о нём только рассказывает. Почему не 3000 и почему не
-// 49152+ — в `lib/server-port.cjs`, там же и блок портов продукта.
+// 49152+ — в `lib/server-port.cjs`, там же и диапазон портов продукта.
 async function main() {
   const { port, moved, asked } = await pickPort(hostname)
 

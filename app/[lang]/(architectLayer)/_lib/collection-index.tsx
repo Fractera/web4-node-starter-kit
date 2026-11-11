@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { Block, WorkspaceItem } from '@/lib/content/blocks/types'
+import type { PageItem, WorkspaceItem } from '@/lib/content/sections/types'
 import { type WorkspacePageData, pagesInOrder, wordsOf } from '@/lib/collection/types'
 import { ArchitectPage } from './architect-page'
 import { architectLayerUi } from '../_i18n/architect-layer.i18n'
@@ -44,7 +44,7 @@ export function CollectionIndex({
    * 🔒 ПУСТО — ЗАКОННО: у группы всегда есть что показать, её перечень детей.
    * Поэтому заглушки «скоро будет построено» здесь нет и быть не должно.
    */
-  content?: Block[]
+  content?: PageItem[]
   /** Собственный островок маршрута (271) — рисуется в рабочем экране над списком разделов. */
   widget?: ReactNode
 }) {
@@ -56,7 +56,7 @@ export function CollectionIndex({
   // и адрес, то есть ровно то, из чего состоит запись каталога; простой список
   // отдал бы одни имена, и человеку пришлось бы открывать разделы по очереди,
   // чтобы понять, куда ему надо.
-  const children: Block[] = ordered.map((p) => {
+  const children: PageItem[] = ordered.map((p) => {
     const w = wordsOf(p, lang)
     return {
       kind: 'docref',
@@ -107,7 +107,7 @@ export function CollectionIndex({
   // 🔒 ПРИЗНАК КЛАССА, А НЕ ОДИН СЛУЧАЙ: оболочка, которая ВЫБИРАЕТ между двумя
   // источниками содержимого, однажды выберет не тот. Складывать безопаснее, чем
   // выбирать, — пустой источник ничего не добавляет.
-  const fromTopics: Block[] = (words.topics ?? []).flatMap((t): Block[] => [
+  const fromTopics: PageItem[] = (words.topics ?? []).flatMap((t): PageItem[] => [
     { kind: 'h3', text: t.title, id: t.anchor },
     { kind: 'p', text: t.text },
     ...(t.points ? [{ kind: 'list' as const, items: t.points }] : []),
@@ -115,7 +115,7 @@ export function CollectionIndex({
 
   // Своё содержимое встаёт ПЕРЕД перечнем: человек пришёл в группу за общим
   // взглядом, а список разделов — это то, куда он пойдёт дальше.
-  const blocks: Block[] = [...(content ?? []), ...fromTopics, ...children]
+  const body: PageItem[] = [...(content ?? []), ...fromTopics, ...children]
 
   return (
     <ArchitectPage
@@ -125,7 +125,7 @@ export function CollectionIndex({
       pageLead={words.lead}
       title={words.title}
       tabs={tabs}
-      children={blocks}
+      children={body}
       widget={widget}
     />
   )

@@ -90,7 +90,7 @@ const list = (v: unknown): Record<string, unknown>[] =>
   Array.isArray(v) ? v.filter((x): x is Record<string, unknown> => !!x && typeof x === "object") : []
 const status = (v: unknown): QuizStatus => (v === "confirmed" ? "confirmed" : "draft")
 
-// 556-4: the block `references` as the skill `product-clone` writes it; the guard `check:product` of the element checks its links.
+// 556-4: the section `references` as the skill `product-clone` writes it; the guard `check:product` of the element checks its links.
 function readReferences(v: unknown): QuizReferences | null {
   if (!v || typeof v !== "object") return null
   const r = v as Record<string, unknown>

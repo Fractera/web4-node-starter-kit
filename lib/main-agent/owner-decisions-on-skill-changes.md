@@ -13,7 +13,7 @@ shown here as reverted is not proposed again; if the reason is new, name the ent
 
 | Date | What changed | Why | Measured | State |
 |---|---|---|---|---|
-| 2026-10-20 | An element's agent wakes with only `npm run passport -- me` (its block `node` of constant size); neighbours by search, at most five; the main agent lists nothing on wake | the owner: «агенты отвечают компактно, и эта стоимость не растёт с ростом узла» | 3 916 / 3 917 / 3 918 bytes at 10 / 100 / 1000 elements; before — up to 138 thousand | in force |
+| 2026-10-20 | An element's agent wakes with only `npm run passport -- me` (its section `node` of constant size); neighbours by search, at most five; the main agent lists nothing on wake | the owner: «агенты отвечают компактно, и эта стоимость не растёт с ростом узла» | 3 916 / 3 917 / 3 918 bytes at 10 / 100 / 1000 elements; before — up to 138 thousand | in force |
 | 2026-10-20 | Heavy skills hidden by `disable-model-invocation` and called by the command `/build-skills:<name>` | skills loaded without a request | — | reverted — do not repeat: a hidden skill runs only by a command the person types in that turn, and a Telegram message runs no command |
 | 2026-10-20 | Skill `humanizer` for the agents' working messages | the rule «every text goes through humanizer» | the skill (32 thousand characters) rode in 45 requests of one session | reverted — do not repeat: `humanizer` is only for published text |
 | 2026-10-20 | The laws of a mode in their own files `.claude/modes/*.md`, passed with the session by the bridge (`lib/agent-kit/modes.cjs`) | — | the first request of an element's working-process session: 30 424 → 26 296 tokens | in force |

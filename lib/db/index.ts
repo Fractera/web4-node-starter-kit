@@ -607,7 +607,7 @@ function makeLocalDb() {
   for (const sql of LATE_COLUMNS) safeAddColumn(sqlite, sql)
 
   seedProducts(sqlite)
-  // (step 500) The ALTER blocks for deployment_records / telegram_notes / automation_finance
+  // (step 500) The ALTER sections for deployment_records / telegram_notes / automation_finance
   // / automation_images are gone with their tables — those warehouses belonged to the
   // removed projects layer and to the Deployments journal.
 
@@ -637,7 +637,7 @@ function makeLocalDb() {
  *
  * 🔒 ЛЕСТНИЦА ОДНА НА ОБЕ ДОРОГИ К БАЗЕ (найдено падением развёртывания 2026-08-18).
  *
- * Здесь список был коротким, а колонки товаров добавлял отдельный блок ВНУТРИ
+ * Здесь список был коротким, а колонки товаров добавлял отдельная секция ВНУТРИ
  * `makeLocalDb()` — то есть только на локальной дороге. Пока приложение писало в
  * файл, это было незаметно. Коммит `4c21090` (2026-08-17) перевёл его на слой
  * данных, лестница перестала выполняться вовсе, и слой данных начал отвечать

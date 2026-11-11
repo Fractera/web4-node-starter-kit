@@ -43,7 +43,7 @@ neighbour — you are inventing. Stop and quote the contract instead.
 3. **What it can do for him** — the closest thing he actually asked about.
 4. **The edge** — what this does NOT do, and what you could not check from here.
 
-Measure before you claim: `sections/BLOCKS.md` says how many kinds exist today, `scripts/` says what
+Measure before you claim: `sections/KINDS.md` says how many kinds exist today, `scripts/` says what
 the gates refuse, `CLAUDE.md` says the law. Three numbers he can verify beat a page of prose.
 
 ## 3. Where to send him for more — read-only, and that is the point
@@ -69,6 +69,6 @@ the last working build back on its own. There is **no single button** that retur
 past state, and promising one would be a lie he discovers on his worst day.
 
 **"Does it slow down as it grows?"** The shape is what protects him, not the size: pages are lists of
-blocks, sections are server-rendered, motion lives in islands over a static twin, and the gates
+sections, sections are server-rendered, motion lives in islands over a static twin, and the gates
 refuse the shapes that rot. Show him the law that does it — do not promise numbers you have not
 measured on his machine.

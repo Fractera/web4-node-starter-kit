@@ -2,7 +2,7 @@ import { resolveFields, resolveLocalizedBody } from '@/lib/content/resolve'
 import { adminUrlFromSite } from '@/lib/site-urls'
 import { getAppConfig } from '@/config/app-config'
 import type { ContentPageContent } from '@/lib/content/create-content-page'
-import type { Block, FaqPair } from '@/lib/content/blocks/types'
+import type { PageItem, FaqPair } from '@/lib/content/sections/types'
 
 // Общая часть трёх страниц подвала — чтобы они были ПАТТЕРНОМ, а не тремя копиями.
 //
@@ -49,7 +49,7 @@ export type FooterPageCell = {
    */
   eyebrow?: string
   /** Абзацы заглушки: их владелец заменит своим текстом. */
-  blocks: Block[]
+  body: PageItem[]
   /** Вопросы и ответы — тот же механизм, что у главной: рисуются последней секцией и уходят в `FAQPage`. */
   faq?: FaqPair[]
 }
@@ -62,7 +62,7 @@ export type FooterPageCell = {
  * читаться с выключенным JS. Настройки не сохраняли — ссылки нет, остаётся
  * текст: адрес в никуда хуже отсутствующего.
  */
-export function panelNotice(lang: string, texts: { title: string; text: string; label: string }): Block {
+export function panelNotice(lang: string, texts: { title: string; text: string; label: string }): PageItem {
   const admin = adminUrlFromSite(getAppConfig().url)
   // 🔒 ЯЗЫКОВОЙ ПРЕФИКС ОБЯЗАТЕЛЕН (2026-08-12). Здесь стоял адрес
   // `<панель>/footer-pages` — без языка, и он отдавал 404: все страницы панели
@@ -77,7 +77,7 @@ export function panelNotice(lang: string, texts: { title: string; text: string; 
 export function footerPage(data: FooterPageData, lang: string): ContentPageContent {
   const override = data.overrides?.[lang]
   const fields = resolveFields(data.en, override ?? {}, ['title', 'description', 'keywords'] as const)
-  const body = resolveLocalizedBody({ blocks: data.en.blocks }, override ? { blocks: override.blocks } : undefined)
+  const body = resolveLocalizedBody({ body: data.en.body }, override ? { body: override.body } : undefined)
   const faq = override?.faq ?? data.en.faq
-  return { ...fields, blocks: body.blocks, ...(faq ? { faq } : {}) }
+  return { ...fields, body: body.body, ...(faq ? { faq } : {}) }
 }

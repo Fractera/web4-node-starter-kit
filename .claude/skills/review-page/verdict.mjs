@@ -2,7 +2,7 @@
 // из папки данных снятого элемента).
 //
 //   node verdict.mjs add --element reverse --page en --grade 2 --by model:claude-opus-5-5 \
-//        [--replace "block-a>block-b"]… [--move block-x]… [--fine block-y]… [--note "…"]
+//        [--replace "section-a>section-b"]… [--move section-x]… [--fine section-y]… [--note "…"]
 //   node verdict.mjs add … --by owner                    # вердикт владельца пишется РЯДОМ с вердиктом модели
 //   node verdict.mjs add … --copy <имя>                   # разбор ИСПОРЧЕННОЙ копии (проверка аналитика) — в сравнении не участвует
 //   node verdict.mjs list [--element reverse]            # последние вердикты и совпадение модели с владельцем по странице
@@ -34,8 +34,8 @@ if (argv[0] === "add") {
   const replace = all("--replace").map((r) => { const [from, to] = r.split(">"); if (!from || !to) fail(`--replace is "from>to": ${r}`); return { from, to } })
   const move = all("--move")
   const fine = all("--fine")
-  if (grade === 1 && !replace.length) fail("grade 1 names what to replace: --replace \"block-a>block-b\"")
-  if (grade === 2 && !move.length) fail("grade 2 names what to move: --move block-x")
+  if (grade === 1 && !replace.length) fail("grade 1 names what to replace: --replace \"section-a>section-b\"")
+  if (grade === 2 && !move.length) fail("grade 2 names what to move: --move section-x")
   const row = { at: new Date().toISOString(), element, page: page.replace(/^\//, ""), grade, by, replace, move, fine, note: opt("--note") || "", ...(opt("--copy") ? { copy: opt("--copy") } : {}) }
   mkdirSync(path.dirname(FILE), { recursive: true })
   appendFileSync(FILE, JSON.stringify(row) + "\n")

@@ -3,7 +3,7 @@ import { PageHeader } from '@/components/content-page/page-header.server'
 import { PageShell } from '@/components/content-page/page-shell'
 import { Breadcrumbs } from '@/components/nav/breadcrumbs.server'
 import type { ReactNode } from 'react'
-import type { Block, WorkspaceItem } from '@/lib/content/blocks/types'
+import type { PageItem, WorkspaceItem } from '@/lib/content/sections/types'
 import { architectLayerUi } from '../_i18n/architect-layer.i18n'
 import { architectMenu, ARCHITECT_HOME } from './architect-menu'
 import { withDrafts } from './draft-menu'
@@ -44,12 +44,12 @@ export function ArchitectPage({
   /** Имя раздела — заголовок правой части, внутри рабочего экрана. */
   title: string
   /** Содержимое раздела. Пусто — страница показывает своё устройство, и это законно. */
-  children?: Block[]
+  children?: PageItem[]
   lead?: string
   /**
    * Заголовок САМОЙ СТРАНИЦЫ — над рабочим экраном, слева, с бейджем слоя.
    * Решение владельца 2026-09-19: «Это надпись самой страницы, она должна
-   * находиться сверху блока workspace… в левом верхнем углу вместе с бейджем в
+   * находиться сверху секции workspace… в левом верхнем углу вместе с бейджем в
    * едином стиле». Не задан — шапки нет вовсе, и это законно: у раздела своё имя
    * уже стоит внутри рабочего экрана.
    */
@@ -68,12 +68,12 @@ export function ArchitectPage({
    * отменено вместе с `architectTabs`.
    */
   tabs?: WorkspaceItem[]
-  /** Собственный островок маршрута (271) — рисуется в рабочем экране над блоками. */
+  /** Собственный островок маршрута (271) — рисуется в рабочем экране над секциями. */
   widget?: ReactNode
 }) {
   const ui = architectLayerUi(lang)
 
-  const blocks: Block[] = [
+  const body: PageItem[] = [
     {
       kind: 'workspace',
       menuTitle: ui.menuTitle,
@@ -144,7 +144,7 @@ export function ArchitectPage({
 
       {/* 🔒 ШАПКА СТРАНИЦЫ — НАД РАБОЧИМ ЭКРАНОМ, СЛЕВА (решение владельца
           2026-09-19: «это надпись самой страницы, она должна находиться сверху
-          блока workspace… в левом верхнем углу вместе с бейджем в едином стиле»).
+          секции workspace… в левом верхнем углу вместе с бейджем в едином стиле»).
 
           🛑 РАНЬШЕ ЭТОТ ТЕКСТ ЖИЛ ВНУТРИ РАБОЧЕГО ЭКРАНА и рисовался как `H3`
           правой колонки. Снаружи он читался как заголовок РАЗДЕЛА, а не страницы,
@@ -173,7 +173,7 @@ export function ArchitectPage({
         breadcrumbs && <Breadcrumbs lang={lang} trail={breadcrumbs} />
       )}
 
-      <PostBody blocks={blocks} lang={lang} />
+      <PostBody body={body} lang={lang} />
     </PageShell>
   )
 }

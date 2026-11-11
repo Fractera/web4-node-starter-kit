@@ -1,4 +1,4 @@
-import type { WorkspaceItem } from '@/lib/content/blocks/types'
+import type { WorkspaceItem } from '@/lib/content/sections/types'
 import { pagesInOrder, wordsOf, type CollectionBranch, type WorkspacePageData } from '@/lib/collection/types'
 import { TREE } from '../architect/_list.generated'
 import { MAIN_AGENT, MAIN_AGENT_HIDDEN, MAIN_AGENT_PLACE, MAIN_AGENT_PLACE_WHILE_HIDDEN } from './main-agent-scheme'

@@ -9,6 +9,6 @@ still call `/media/*` on data, which passes the request here. This section is sh
 | Path | Role |
 |---|---|
 | `page.tsx`, `_data/` | the menu item «Storage»: title, lead, `order`, icon `drive` |
-| `_components/index.ts` | one block `servicePort` with `serviceId: 'storage'`: port on the machine and address on the internet |
+| `_components/index.ts` | one section `servicePort` with `serviceId: 'storage'`: port on the machine and address on the internet |
 | `preview/` | live preview of the element's home page |
 | `claude-code/`, `terminal/`, `telegram/`, `agent-api/`, `_agent-kit/`, `agent-kit.json` | the agent kit — `npm run agent-kit:add -- storage`; never edited by hand |

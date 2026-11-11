@@ -32,7 +32,7 @@ replaced inside the browser (CDP `Fetch.fulfillRequest`).
 
 ## 3. The defects no guard catches
 
-Markup can be correct and wrong: a page that reads like another site, blocks that do not tell a story, a section repeated in another guise.
+Markup can be correct and wrong: a page that reads like another site, sections that do not tell a story, a section repeated in another guise.
 The proof is comparison — the page and its neighbour side by side — and the owner's eye. Scrolling, timing, anything a page does by itself
 is proven in a real browser with a person's timing, not by a fixed pause.
 

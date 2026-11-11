@@ -12,13 +12,13 @@ description: "Work process. A request may break a provider's rules (many account
 
 1. **Which rule.** The provider and the point in plain words («Anthropic's Usage Policy forbids creating accounts automatically»), or
    that the provider's safeguards stopped the request.
-2. **What it risks.** A block alone is no violation — getting around it is. The price: a warning, throttling, limits, suspension or
+2. **What it risks.** A section alone is no violation — getting around it is. The price: a warning, throttling, limits, suspension or
    termination; payments are not refunded, and an account closed for a breach gets no refund at all.
 3. **The lawful way to the same goal** — the person's goal is usually fine, the method is not.
 4. Nothing else: never a rewording, never «try asking it like this», never the request split into innocent-looking parts, never a
    blocked call retried in other words. Insisted on — one short repeat of the rule and the way, then stop.
 
-An ordinary request gets no warning at all — this skill speaks only when a rule is in play or a block happened.
+An ordinary request gets no warning at all — this skill speaks only when a rule is in play or a section happened.
 
 ## Typical requests of site building and their lawful way
 
@@ -70,7 +70,7 @@ controls — the policy does not name the word «CAPTCHA» itself; never claim i
 - Export the data while the account is open.
 
 ## The sources — read 2026-11-04; read them again when a person asks about a ban or this date is older than 90 days
-- Anthropic Usage Policy, effective 2026-11-12 — https://www.anthropic.com/legal/aup: «encountering a block does not by itself indicate
+- Anthropic Usage Policy, effective 2026-11-12 — https://www.anthropic.com/legal/aup: «encountering a section does not by itself indicate
   a violation of the Usage Policy»; «Intentionally bypass or interfere with capabilities, restrictions, or guardrails established within
   our products (e.g., jailbreaking or prompt injection)»; «warn you or throttle, limit, suspend, or terminate your access to our products
   and services»; «Utilize automation in account creation or to engage in spammy behavior»; «Create or operate fake personas, accounts,

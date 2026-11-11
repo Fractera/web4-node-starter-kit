@@ -1,4 +1,4 @@
-import type { Block } from '@/lib/content/blocks/types'
+import type { PageItem } from '@/lib/content/sections/types'
 import { servicePortWords } from '@/components/services/service-port.i18n'
 
 // СОДЕРЖИМОЕ СТРАНИЦЫ «Authorization» (264-1).
@@ -6,7 +6,7 @@ import { servicePortWords } from '@/components/services/service-port.i18n'
 // 🔒 ЗДЕСЬ ЖИВЁТ РАБОТАЮЩАЯ ЧАСТЬ, А В `_data` — СЛОВА СТРАНИЦЫ. Островок порта —
 // не текст страницы, а переиспользуемая часть со своим словарём рядом с собой:
 // тот же вопрос «на каком порту живёт этот блок» встанет у раздела «Данные» и у
-// любого следующего сменного блока. Поэтому его слова приходят от него, а не
+// любого следующего сменного элемента. Поэтому его слова приходят от него, а не
 // отсюда и не из `_data`.
 //
 // 🔒 ЯЗЫК ВЫБИРАЕТСЯ ЗДЕСЬ, НА СЕРВЕРЕ, И В БЛОК УХОДИТ ОДИН НАБОР СТРОК. Отдай
@@ -16,6 +16,6 @@ import { servicePortWords } from '@/components/services/service-port.i18n'
 // 🛑 ЧИСЛО ПОРТА СЮДА НЕ ПИШЕТСЯ И НЕ ЧИТАЕТСЯ ИЗ РЕЕСТРА СЕРВЕРОМ. Страница
 // предрендерена: прочитанное здесь число застыло бы в HTML навсегда. Островок
 // спрашивает его у двери `/api/services` при каждом заходе.
-export function content(lang: string): Block[] {
+export function content(lang: string): PageItem[] {
   return [{ kind: 'servicePort', serviceId: 'auth', words: servicePortWords(lang) }]
 }
