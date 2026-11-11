@@ -306,7 +306,9 @@
       "Building blocks",
       "task for a block",
       "or block of your own call",
-      "адрес блока из подсветки"
+      "адрес блока из подсветки",
+      "прокручиваемого блока выпавший",
+      "^// блоком, и он выходит из прокрутки"
     ],
     "files": [
       "components/block-highlight/",
