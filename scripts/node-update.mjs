@@ -56,6 +56,13 @@ const write = (s) => {
   writeFileSync(STATE, JSON.stringify({ pid: process.pid, startedAt, stage: current, ...s }, null, 2) + '\n')
 }
 const stage = (name, words) => { current = name; write({ state: 'running' }); say(`\n── ${words}`) }
+// 719: обновление, кончившееся до сборки ядра, будит главного агента само (`agent-return.mjs --update-stopped`, вне дерева ядра);
+// после начала сборки его будит ждун `serve.mjs rebuild` — второй раз не будим.
+let building = false
+function wakeIfStopped(state, why) {
+  if (building || process.env.FRACTERA_NO_WAKE === '1') return
+  spawnSync(process.execPath, [join(ROOT, 'scripts', 'spawn-free.mjs'), join(ROOT, 'scripts', 'agent-return.mjs'), '--update-stopped', state, String(why ?? '').slice(0, 600)], { cwd: ROOT, windowsHide: true })
+}
 function finish(state, extra = {}) {
   // 642-4: отказ — с причиной простыми словами по своему журналу (`FRACTERA_BUILD_LOG` — его ставит запуск по кнопке).
   if (state !== 'done' && process.env.FRACTERA_BUILD_LOG) {
@@ -63,6 +70,7 @@ function finish(state, extra = {}) {
   }
   write({ state, ...extra, finishedAt: new Date().toISOString() })
   say(`===NODE_UPDATE_${state.toUpperCase()}=== ${extra.summary ?? extra.reason ?? ''}`)
+  wakeIfStopped(state, extra.summary ?? extra.reason ?? '')
   process.exit(state === 'done' ? 0 : 1)
 }
 function git(args, { raw = false } = {}) {
@@ -302,6 +310,7 @@ for (const s of readJson(REGISTRY)?.services ?? []) {
 // ── 8. ядро и база навыков ──────────────────────────────────────────────────────────────────────────────────────────────────
 stage('core', 'сборка ядра с закрытой крышкой — на время сборки узел остановлен')
 const rebuild = node('serve.mjs', 'rebuild')
+building = true
 if (!run(rebuild[0], rebuild[1], 'npm run serve:rebuild')) {
   finish('failed', { reason: 'сборка ядра не удалась — прежняя сборка возвращена и запущена; код и элементы уже новые, причина — в журнале', warnings })
 }

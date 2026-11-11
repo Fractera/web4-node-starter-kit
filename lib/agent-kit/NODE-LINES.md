@@ -8,6 +8,7 @@ commit. Messages to the PERSON have their own closed list (`lib/main-agent-cron/
 |---|---|---|---|
 | `core-back` | the build's return (`lib/deploy/agent-return.cjs`) | the agent the build stopped | goes on from where it stopped; the main agent checks `serve:status`, hands cut work sessions again |
 | `held-during-build` | the build's return | the main agent | reads each held line (`npm run state -- <id>`) and reports |
+| `update-stopped` | the node update that ended before the core build (`scripts/node-update.mjs` → `scripts/agent-return.mjs --update-stopped`) | the main agent | the node runs as it was; reads `logs/node-update.log`, fixes the cause and starts the update again detached, tells the person — never waits to be asked |
 | `build-failed` | the failed build (`scripts/serve.mjs` → `deliverHeld`) | the main agent | the previous build runs; reads the held lines, tells the person the build failed |
 | `supervision-done` | an element's «done» under the main agent's lead (`lib/web4-items/supervision.cjs`) | the main agent | `npm run state -- <id>`, answers or gives the next part, reports |
 | `job-done` | an element worker's «done» (`lib/web4-items/jobs.cjs`; a batch names every element) | the main agent | reads the reports, answers the person once |

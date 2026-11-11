@@ -149,7 +149,8 @@
     "review": "node scripts/main-agent-cli.mjs review",
     "load": "node scripts/load.mjs",
     "migrate:sections": "node scripts/migrate-sections.mjs",
-    "check:words": "node scripts/migrate-sections.mjs --check"
+    "check:words": "node scripts/migrate-sections.mjs --check",
+    "test:update-wake": "node scripts/update-wake.test.mjs"
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.55",

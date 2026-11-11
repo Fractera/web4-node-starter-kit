@@ -8,7 +8,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
-const { afterUpdate, afterCutOff, afterLost } = createRequire(import.meta.url)('../lib/deploy/agent-return.cjs')
+const { afterUpdate, afterCutOff, afterLost, afterUpdateStopped } = createRequire(import.meta.url)('../lib/deploy/agent-return.cjs')
 const LOG = join(ROOT, 'logs', 'agent-return.log')
 mkdirSync(dirname(LOG), { recursive: true })
 const say = (s) => appendFileSync(LOG, `${new Date().toISOString()} ${s}\n`)
@@ -17,6 +17,13 @@ const say = (s) => appendFileSync(LOG, `${new Date().toISOString()} ${s}\n`)
 if (process.argv.includes('--lost')) {
   const r = await afterLost(ROOT, say)
   say(`старт ядра: сессия главного агента потеряна с ядром — ${r.woke ? 'он вернулся в тот же разговор' : `не вернулся — ${r.reason}`}`)
+  process.exit(0)
+}
+// 719: `--update-stopped <state> <reason>` — обновление кончилось до сборки ядра; его зовёт `node-update.mjs` из `finish()`.
+const u = process.argv.indexOf('--update-stopped')
+if (u >= 0) {
+  const r = await afterUpdateStopped(ROOT, process.argv[u + 1] ?? 'stopped', process.argv[u + 2] ?? '', say)
+  say(`обновление кончилось до сборки ядра (${process.argv[u + 1]}): ${r.woke ? 'главный агент разбужен' : `не разбужен — ${r.reason}`}`)
   process.exit(0)
 }
 if (process.argv.includes('--cut-off')) {

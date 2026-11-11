@@ -49,6 +49,9 @@ and «Close» (only «Close» after a failure).
   `npm run task -- <id> --work`.
 - **You come back after a failure** with «the core build FAILED» or «WITHOUT success»: the previous build runs; read the cause
   (`logs/node-update.log` or the terminal page), tell the person in one line, fix it or start again — detached.
+- **You come back with «the node update ended before the core build»** (`⟦node · update-stopped⟧`, step 719): a refusal, a
+  merge or the build's guards stopped it and the node runs as it was — nobody else will tell the person. Read `logs/node-update.log`,
+  fix the cause, start the update again detached, and say it to the person in one line; never wait to be asked.
 - **You come back after a cut-off** («CUT OFF»): `npm run serve:status`; stopped services — `npm run serve:start`; then the build again,
   detached. ✗ 2026-11-09: the main agent started `npm run node:update` as its own background child — the lid killed the core, the agent
   and the update mid-build; `node-update.mjs` now refuses a start from an agent's session (707-3).
