@@ -1,0 +1,333 @@
+{
+  "_": "730-1: находки на день заморозки; файл тронут — выходит из правки чистым. Только --shrink.",
+  "files": {
+    "_tools/image-crop/client/image-cropper.client.tsx": {
+      "hash": "de8401e8a4afe623",
+      "count": 1
+    },
+    "_tools/translations-dialog/client/translations-dialog.client.tsx": {
+      "hash": "a80a811d44730468",
+      "count": 1
+    },
+    "_tools/video-trim/client/video-trimmer.client.tsx": {
+      "hash": "3c55964676076743",
+      "count": 2
+    },
+    "_tools/voice-input/client/voice-input.client.tsx": {
+      "hash": "f46e70d57f7e5f8b",
+      "count": 4
+    },
+    "app/[lang]/(architectLayer)/_components/birth-button.client.tsx": {
+      "hash": "6e52b1c73a69ace7",
+      "count": 3
+    },
+    "app/[lang]/(architectLayer)/_components/create-draft-button.client.tsx": {
+      "hash": "5b4413b2e15ca863",
+      "count": 1
+    },
+    "app/[lang]/(architectLayer)/_components/cron-calendar.client.tsx": {
+      "hash": "184416c0a9d39c6c",
+      "count": 1
+    },
+    "app/[lang]/(architectLayer)/_components/element-deploy.client.tsx": {
+      "hash": "e5dfb2ec28e899f1",
+      "count": 1
+    },
+    "app/[lang]/(architectLayer)/_components/element-rollback.client.tsx": {
+      "hash": "7a3576430c67d49c",
+      "count": 1
+    },
+    "app/[lang]/(architectLayer)/_components/element-web4.client.tsx": {
+      "hash": "dcd8feb435cadc54",
+      "count": 1
+    },
+    "app/[lang]/(architectLayer)/_components/subscriptions-view.client.tsx": {
+      "hash": "3398c56085134240",
+      "count": 1
+    },
+    "app/[lang]/(architectLayer)/architect/[item]/_agent-kit/client/agent-terminal.client.tsx": {
+      "hash": "0f93bed7dedeb54a",
+      "count": 3
+    },
+    "app/[lang]/(architectLayer)/architect/auth/_agent-kit/client/agent-terminal.client.tsx": {
+      "hash": "0f93bed7dedeb54a",
+      "count": 3
+    },
+    "app/[lang]/(architectLayer)/architect/build/_agent-kit/client/agent-terminal.client.tsx": {
+      "hash": "0f93bed7dedeb54a",
+      "count": 3
+    },
+    "app/[lang]/(architectLayer)/architect/build/github/_github/client/element-repos.client.tsx": {
+      "hash": "f422fc202e3aedbe",
+      "count": 1
+    },
+    "app/[lang]/(architectLayer)/architect/cache/_agent-kit/client/agent-terminal.client.tsx": {
+      "hash": "0f93bed7dedeb54a",
+      "count": 3
+    },
+    "app/[lang]/(architectLayer)/architect/config/_agent-kit/client/agent-terminal.client.tsx": {
+      "hash": "0f93bed7dedeb54a",
+      "count": 3
+    },
+    "app/[lang]/(architectLayer)/architect/data/_agent-kit/client/agent-terminal.client.tsx": {
+      "hash": "0f93bed7dedeb54a",
+      "count": 3
+    },
+    "app/[lang]/(architectLayer)/architect/embeddings/_agent-kit/client/agent-terminal.client.tsx": {
+      "hash": "0f93bed7dedeb54a",
+      "count": 3
+    },
+    "app/[lang]/(architectLayer)/architect/graph/_agent-kit/client/agent-terminal.client.tsx": {
+      "hash": "0f93bed7dedeb54a",
+      "count": 3
+    },
+    "app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/client/agent-terminal.client.tsx": {
+      "hash": "0f93bed7dedeb54a",
+      "count": 3
+    },
+    "app/[lang]/(architectLayer)/architect/memory/_agent-kit/client/agent-terminal.client.tsx": {
+      "hash": "0f93bed7dedeb54a",
+      "count": 3
+    },
+    "app/[lang]/(architectLayer)/architect/storage/_agent-kit/client/agent-terminal.client.tsx": {
+      "hash": "0f93bed7dedeb54a",
+      "count": 3
+    },
+    "app/[lang]/(architectLayer)/architect/stripe/_agent-kit/client/agent-terminal.client.tsx": {
+      "hash": "0f93bed7dedeb54a",
+      "count": 3
+    },
+    "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/agent-terminal.client.tsx": {
+      "hash": "0f93bed7dedeb54a",
+      "count": 3
+    },
+    "app/[lang]/error.tsx": {
+      "hash": "0c9c0180a56b19aa",
+      "count": 1
+    },
+    "app/global-error.tsx": {
+      "hash": "37045f0f587cb694",
+      "count": 1
+    },
+    "components/accordion/accordion-section.client.tsx": {
+      "hash": "f59f4a820d89d342",
+      "count": 1
+    },
+    "components/auth/setup-ladder.client.tsx": {
+      "hash": "115be85a28b1740d",
+      "count": 1
+    },
+    "components/carousel/showcase-carousel.client.tsx": {
+      "hash": "895d60726ce59ab8",
+      "count": 3
+    },
+    "components/charts/chart-bar.client.tsx": {
+      "hash": "9914e5533065ce35",
+      "count": 1
+    },
+    "components/charts/chart-line.client.tsx": {
+      "hash": "c56d580a1f75f948",
+      "count": 1
+    },
+    "components/content-page/term-hint.client.tsx": {
+      "hash": "a62e868c71c8f889",
+      "count": 1
+    },
+    "components/dashboard/a2a-feed.client.tsx": {
+      "hash": "5d93c2f02a745244",
+      "count": 1
+    },
+    "components/dashboard/machine-board.client.tsx": {
+      "hash": "b1517b4a911aa0cc",
+      "count": 1
+    },
+    "components/dashboard/node-passport.client.tsx": {
+      "hash": "3fe09c0c4e7fe522",
+      "count": 1
+    },
+    "components/dashboard/projects-board.client.tsx": {
+      "hash": "f545e5a4d2d21b03",
+      "count": 1
+    },
+    "components/deploy/deploy-board.client.tsx": {
+      "hash": "16d860e01453b29d",
+      "count": 3
+    },
+    "components/design/design-colors.client.tsx": {
+      "hash": "bfcbe86e04ce2e55",
+      "count": 2
+    },
+    "components/dialog/dialog-sample.client.tsx": {
+      "hash": "90211ad49489ed28",
+      "count": 3
+    },
+    "components/domain/domain-ladder.client.tsx": {
+      "hash": "8eb21ea0b12cefe5",
+      "count": 4
+    },
+    "components/domain/token-how-to.client.tsx": {
+      "hash": "34457ed31feee2aa",
+      "count": 2
+    },
+    "components/element-design/design-carousel.client.tsx": {
+      "hash": "4571a37ddac2adac",
+      "count": 1
+    },
+    "components/element-design/design-flow.client.tsx": {
+      "hash": "8418867d529ff7b7",
+      "count": 1
+    },
+    "components/element-design/design-reference.client.tsx": {
+      "hash": "db10ae66837deef5",
+      "count": 2
+    },
+    "components/element-design/design-saved.client.tsx": {
+      "hash": "93ba72054e46f78c",
+      "count": 2
+    },
+    "components/element-design/design-track.client.tsx": {
+      "hash": "572c9b4d411c1026",
+      "count": 1
+    },
+    "components/element-docs/element-doc.tsx": {
+      "hash": "210cebf96d1ae813",
+      "count": 2
+    },
+    "components/element-docs/element-orders.client.tsx": {
+      "hash": "69129ca16f6a4779",
+      "count": 1
+    },
+    "components/element-docs/indicator-hint.client.tsx": {
+      "hash": "049958ec20bf7c97",
+      "count": 1
+    },
+    "components/element-docs/lagrix-rating.tsx": {
+      "hash": "134ce0f0c5d90935",
+      "count": 1
+    },
+    "components/element-docs/product-quiz.client.tsx": {
+      "hash": "05c9df29465a714a",
+      "count": 1
+    },
+    "components/element-docs/reverse-engineering.client.tsx": {
+      "hash": "685294898bdcaa97",
+      "count": 1
+    },
+    "components/element-settings/site/config/languages-editor.client.tsx": {
+      "hash": "a1ceab05fcaebac0",
+      "count": 2
+    },
+    "components/element-settings/site/editors/nav-editor.client.tsx": {
+      "hash": "594c9adfdf0e25b5",
+      "count": 3
+    },
+    "components/element-settings/site/section-nav.client.tsx": {
+      "hash": "968088b0bc7ebd0d",
+      "count": 1
+    },
+    "components/form/voice-control.client.tsx": {
+      "hash": "17980b2a4ded33a2",
+      "count": 1
+    },
+    "components/media/video-cover.client.tsx": {
+      "hash": "d6cafac4111c4c1a",
+      "count": 1
+    },
+    "components/menu/footer/cookie-settings-button.client.tsx": {
+      "hash": "a75f9276ba5d90bc",
+      "count": 1
+    },
+    "components/node-state/dead-address-alarm.client.tsx": {
+      "hash": "480e1a9477165f24",
+      "count": 1
+    },
+    "components/node-state/github-token-alarm.client.tsx": {
+      "hash": "e731cfa75e660088",
+      "count": 1
+    },
+    "components/node-state/online-bar.client.tsx": {
+      "hash": "7bd9a9c4aed6ea5f",
+      "count": 2
+    },
+    "components/node-state/origin-notice.client.tsx": {
+      "hash": "6b4be16f751372e7",
+      "count": 3
+    },
+    "components/node-state/temporary-address-alarm.client.tsx": {
+      "hash": "c5a774a9954c592a",
+      "count": 1
+    },
+    "components/node-users/user-dialog.client.tsx": {
+      "hash": "0df9a3d95b30b394",
+      "count": 3
+    },
+    "components/preview/element-preview.client.tsx": {
+      "hash": "bb1e762548af2ec3",
+      "count": 3
+    },
+    "components/project-types/project-type-marquee.client.tsx": {
+      "hash": "6368f299017efefa",
+      "count": 1
+    },
+    "components/pwa/install-prompt.client.tsx": {
+      "hash": "98ba7bfbeba9916d",
+      "count": 2
+    },
+    "components/request/pre-step-request.client.tsx": {
+      "hash": "6b20b613697b2a5c",
+      "count": 7
+    },
+    "components/shell/language-switcher.client.tsx": {
+      "hash": "ceb532df05dec6fc",
+      "count": 2
+    },
+    "components/shell/shell-account.client.tsx": {
+      "hash": "a86a870398625500",
+      "count": 1
+    },
+    "components/shell/shell-attention.client.tsx": {
+      "hash": "2b53e6387765fbeb",
+      "count": 1
+    },
+    "components/shell/shell-toggles.client.tsx": {
+      "hash": "5ff752c7b1d6446c",
+      "count": 4
+    },
+    "components/super-node/test-table.tsx": {
+      "hash": "1e9373e3368bd8ac",
+      "count": 1
+    },
+    "components/table/server-table-tools.client.tsx": {
+      "hash": "1bdfc371349749e3",
+      "count": 9
+    },
+    "components/table/table-tools.client.tsx": {
+      "hash": "d3445c191bc32c2a",
+      "count": 10
+    },
+    "components/workspace/workspace-shell.tsx": {
+      "hash": "4651d7ed2a6ea24d",
+      "count": 7
+    },
+    "sections/kinds/carousel.server.tsx": {
+      "hash": "e080b46a82fab0d5",
+      "count": 1
+    },
+    "sections/kinds/persona-cases.server.tsx": {
+      "hash": "e8c04f44f2feebcd",
+      "count": 1
+    },
+    "sections/kinds/price-table.server.tsx": {
+      "hash": "e9ae24c9f1e2aa53",
+      "count": 2
+    },
+    "sections/kinds/problem-solution.server.tsx": {
+      "hash": "ad322be5b728a5c7",
+      "count": 1
+    },
+    "sections/kinds/spotlight-pair.server.tsx": {
+      "hash": "e3fb297dbb13b47b",
+      "count": 2
+    }
+  }
+}

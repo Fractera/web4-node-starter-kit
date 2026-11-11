@@ -64,13 +64,30 @@ fix code by itself (an automatic rewrite of markup is a guess, not a fix); the a
 The red test extended: `check:shadcn-rules` (8 rules: gap, size, truncate, literal colour, manual dark, Separator, Skeleton, partial
 class) — exit 0 on the fixture too. 13 of 13 interface guards pass a hand-rolled control.
 
+## 5a. The boundary: design skills are free (the owner, 2026-11-11, verbatim)
+
+> Самодельный интерфейс у нас может быть в результате работы навыка это нужно исследовать навык не обязан быть ограниченным этой
+> библиотекой? Это важно понимать навыку разрешено создавать то что он хочет только работа интерфейса где навыков нет требует
+> использования того что мы обсуждаем
+
+> Самодельный интерфейс в смысле может быть создан навыкам дизайна которых у нас 108 и будет больше
+
+Measured in the custom template: the design pass is its own session («Build process — design», `lib/agent-kit/modes.cjs` PASSES); it
+carries the design skill handed for a prototype (`npm run prototype -- new <id> --skill <mark>`) or the pinned one (`design.pinned.skill`,
+`designSkill` of the passport, `npm run design:pin`); its products are sections (`components/sections/<kind>`), widgets (`_widgets/`) and
+prototypes; `.claude/modes/build-design.md` today lists `shadcn` among that pass's skills as one of them, not as a law. The core has no
+design pass and no design skills — its panel is `interface-design` + shadcn.
+The line to draw: a file made by a design skill is free; every other interface file is under the shadcn law. A design-skill file is
+marked `@design <skill-mark>` on its first lines; the mark is legal only in the design territory (sections, widgets, prototypes) and
+only with a skill the passport names (handed or pinned) — a mark cannot be stamped to escape the law.
+
 ## 6. Substeps
 
 - **730-0 the current problem** — the header search rebuilt only from shadcn parts: `InputGroup` (the field, the magnifier and the AI icon
   in one frame that grows to the right — the magnifier slides right, the field opens on its left), `Popover` + `Command` (the shadcn
   combobox: arrows, Enter opens, Esc and outside close), `Tooltip` instead of `title`, `Button`; no raw control left. Plane 1: tsc,
   prebuild exit 0 (it caught my `dark:` override first). Plane 2: eyes after the node update.
-- **730-1 `check:shadcn-parts`** — knows the whole shadcn catalogue: a raw `<button>`, `<input>` (not `hidden`/`file`), `<select>`,
+- **730-1 `check:shadcn-parts`** — skips a file with a legal `@design <skill-mark>` (5a); otherwise knows the whole shadcn catalogue: a raw `<button>`, `<input>` (not `hidden`/`file`), `<select>`,
   `<textarea>`, `<table>`, `<progress>`, `<details>`; a `role` of `tab`/`tooltip`/`menu`/`switch`/`checkbox`/`slider`/`dialog`; a
   hand-built floating panel (`absolute|fixed` with `bg-popover|shadow-*` outside `components/ui`); `title=` on an icon button → each named
   with its owner (`Button`, `Input`/`InputGroup`, `Select`/`NativeSelect`, `Textarea`, `Table`, `Progress`, `Accordion`/`Collapsible`,
@@ -78,7 +95,8 @@ class) — exit 0 on the fixture too. 13 of 13 interface guards pass a hand-roll
   yet → `npx shadcn@latest add <name>`. **The touched-file law:** a file changed in the work being built must be clean; untouched files
   are a counted debt that can only shrink. The red-test fixture is its own test: red on the fixture, green on its clean twin.
 - **730-2 the skills hook** — PreToolUse Write/Edit of an interface `.tsx` (`components/`, `app/`, `_tools/`, `sections/`) refused until
-  this session's transcript shows the Skill calls `use-primitives` and `use-shadcn`; the refusal names them.
+  this session's transcript shows the Skill calls `use-primitives` and `use-shadcn`; the refusal names them. A design-pass session is
+  exempt for the design territory: there the handed or pinned design skill leads.
 - **730-3 instruction and skills** — CLAUDE.md §6 (the owner's word): «a design element that exists in shadcn is taken from shadcn; own
   markup only as a widget»; `use-primitives` and `use-shadcn` say the catalogue comes first and name the guard; the elements' sealed
   instruction (`instruction:element`) the same.
@@ -88,3 +106,18 @@ class) — exit 0 on the fixture too. 13 of 13 interface guards pass a hand-roll
   guard.
 
 Not in this step: a sweep of old code (the owner: no tokens on what is done — the touched-file law repairs it on the way).
+
+## 730-1 built (2026-11-11)
+
+- `scripts/check-shadcn-parts.mjs` (`npm run check:shadcn-parts`, in prebuild after `check-shadcn-rules`): raw controls, roles,
+  hand-built floating panels, `title=` on a button → the shadcn owner, `npx shadcn@latest add <name>` when missing; the `@design
+  <skill>` mark legal only in sections / prototypes / widgets with the passport's or the prototype's skill; `@no-js` only in server files;
+  the debt `scripts/shadcn-parts-debt.json` with a fingerprint per file — untouched quiet, touched must leave clean, new must be clean;
+  `--freeze` once, `--shrink` only strikes out.
+- The core's debt frozen: 82 files, 174 findings (60 raw-button, 52 title-not-tooltip, 21 raw-input, 21 raw-details, 10 raw-table,
+  4 raw-textarea, 3 role radio, 2 hand-floating-panel, 1 raw-select). Spot-checked — real: e.g. the shell's language switcher and toggles
+  are hand-built dropdowns instead of `DropdownMenu`. The header search (730-0) is not in the debt — it is clean.
+- `scripts/check-shadcn-parts.test.mjs` (`npm run test:shadcn-parts`): 23 cases green — the 730 red test fails and names each rule, a
+  word in a comment is not a button, the clean twin passes, a design mark legal only with the element's skill in its territory, `@no-js`
+  only on the server, the debt frozen once and only shrinks, a touched debt file must leave clean, a new file with old markup fails.
+  The negative control is the red test itself: the 13 earlier guards pass it.
