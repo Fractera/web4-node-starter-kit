@@ -95,4 +95,5 @@ an autonomous run; my decisions: order 726-0 → 726-1 → 726-3 → 726-4 → 7
 
 - 726-0 code `afd749f0`: the reader's list from OpenAI's guide (read 2026-11-12); codes the guide does not name are read by status
   only. The kit carries a byte-identical copy (it lives without the core). Words chosen on the server (`check:lang-delivery` caught
-  my first try that imported the dictionary into clients). Live proof on the node — pending.
+  my first try that imported the dictionary into clients). CLOSED: live on the node `e1d074c0`, summary `completed-steps/726-0.md`; on the way `537c0256` (the CRLF
+  fingerprint of check:shadcn-parts, CI windows red since 730).
