@@ -78,7 +78,7 @@ export function MenuAi({ lang, words, dialogUi, seed = "", onOpenChange }: { lan
             <Sparkles aria-hidden />
           </InputGroupButton>
         </TooltipTrigger>
-        <TooltipContent>{words.aiTitle}</TooltipContent>
+        <TooltipContent side="bottom">{words.aiTitle}</TooltipContent>
       </Tooltip>
       <AppDialog open={open} onOpenChange={setOpen} title={words.aiTitle} description={words.aiLead} ui={dialogUi} size="md">
         <form data-block="menu-ai" className="flex flex-col gap-3" onSubmit={(e) => { e.preventDefault(); void search() }}>

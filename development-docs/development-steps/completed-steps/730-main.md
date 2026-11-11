@@ -1,4 +1,4 @@
-# 730 — the primitives law held by a guard and a hook, not by the agent's memory: why hand-rolled UI passes, the red test, the elements (PLAN — the diagnosis done 2026-11-11; the scope set by the owner the same evening)
+# 730 — the primitives law held by a guard and a hook, not by the agent's memory: why hand-rolled UI passes, the red test, the elements — summary (2026-11-11; the owner chose variant C, the work done in tandem and then an autonomous night run)
 
 Opened 2026-11-11 by the owner (tandem), after he found hand-rolled markup in 729. His words, verbatim:
 
@@ -167,3 +167,51 @@ Not in this step: a sweep of old code (the owner: no tokens on what is done — 
 - Found on the way and fixed: the element instruction named `use-own-stores` for native too (a 717 line the native template had not
   been regenerated with) — its release guard `check-skill-process` refused it; the line is now split by variant. The generator learned
   `ROOT_TEMPLATE_DIR` (root's clone beside the core in the author's workshop).
+
+## Commits
+
+Core (`Fractera/web4-node-starter-kit`): `cd90b2ba` plan · `b2b7cb22` 730-0 · `2398f97d` 730-1 · `77f71ce8` 730-2 · `9cd50552` 730-3 ·
+`1eca28b2` 730-3 fix (the words guard stopped update 1) · `6719b9d2` 730-4 A · `b4e7f585` `5da34824` `8b2325b5` `f349b885` 730-4 B ·
+`8ef18896` `74a71eee` 730-0 fixes seen by the eyes · the last polish (tooltips below, no tile behind the closed magnifier) — in this
+commit's parent. Templates: custom v0.3.188, native v0.1.61, root v3.0.47. The node: updates `708f5f23`, `b852f3e6`, `1a6fe0ed`,
+`7fa42f02` (each fork sync in Chrome — identical).
+
+## Proofs
+
+PROOF 1 — plane the tree (tests): `test:shadcn-parts` 23 green (the red test of 730 fails and names every rule; the 13 older guards
+pass it — the negative control); `test:shadcn-skills-hook` 12 green; each template's release dry run — every guard green.
+PROOF 2 — plane the wire (live transcripts): the hook refuses an interface file for the transcript of a session without the skills
+(57daaf7f → exit 2 with the reason) and allows this one (c38db5fc → exit 0); on the node `check:shadcn-parts` green; `element-isolate`
+ran over the 12 elements with the new code (`===ELEMENT_ISOLATE_OK=== элементов: 12`, the update log) — the elements' settings files
+themselves were not read (the boundary).
+PROOF 3 — plane the eye (the header search on the node `7fa42f02`, a scratch Playwright run with the visitor's theme cookie, light and
+dark × 1440 and 390): the magnifier moves right (507 → 757 at 1440, 143 → 316 at 390), the focus in the field, the tooltip «Найти»,
+«клип» + Enter → «Клип | Найдено: 1» with the first row selected, Esc → the list closed and the bar still open, the second Esc → closed,
+a click outside → closed, «нет такого элемента» → «Элемента с таким названием нет», the AI icon carries «что-то для клипов» into the
+window, Enter on the selected row opens «Клип»; console errors — none in all four runs. Screenshots seen.
+Negative controls on the way: before `8ef18896`/`74a71eee` the same run failed — Esc moved focus to body and closed the whole bar.
+
+## What the eyes and the guards caught on the way
+
+- Update 1 stopped at `check:words` («a collapsible block» in use-primitives) — the node came back as it was; fixed and the whole chain
+  run before every push since.
+- Esc: Radix closed the list, React re-rendered before the field's handler, which then closed the bar — Esc now has one owner, the field.
+- The element instruction named `use-own-stores` for native (a 717 line never regenerated into native) — split by variant.
+- The voice in the AI window (the owner's own test): OpenAI answers `credit_balance_exhausted` with HTTP 429; the node read it as a rate
+  limit — fixed in the voice tool and the translate door (`23b2d503`, `78089ae4`), and the owner made it 726-0: one reader of OpenAI's
+  errors for all 20 callers.
+
+## Not done
+
+- 730-4 C — the guard's files rolled into the existing elements: waits for the owner's Accept of «Клип» (its 717 waits for Preview →
+  Accept and would ride along).
+- 730-5 — `check:i18n` is red without any change of ours (40 dictionaries) and is outside the prebuild chain: not a guard today; named,
+  not changed.
+- The tests of this step are not in CI (the core's CI runs no `test:*` today).
+- The elements' sealed instruction reaches a live element with its next template update (`instruction:element -- element <dir>`).
+
+## Evolution of skills
+
+Done in the step itself: `use-primitives` §0 and `use-shadcn` §0 (core and templates), CLAUDE.md §6, the element instruction §7, the
+design pass's `@design` rule. Lesson for my own work: the whole prebuild chain before every push, not only the guards of the files I
+touched.

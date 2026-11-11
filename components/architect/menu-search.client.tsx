@@ -87,7 +87,7 @@ export function MenuSearch({ lang, words, dialogUi }: { lang: string; words: Men
           <Popover open={open && shown} onOpenChange={(v) => { if (!v) results(null) }}>
             <PopoverAnchor asChild>
               <InputGroup
-                className={`h-8 overflow-hidden transition-[width,border-color,box-shadow] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] ${open ? "max-md:w-full md:w-80" : "w-9 border-transparent shadow-none"}`}
+                className={`h-8 overflow-hidden transition-[width,border-color,box-shadow] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] ${open ? "max-md:w-full md:w-80" : "w-9 border-transparent !bg-transparent shadow-none"}`}
               >
                 <InputGroupInput
                   ref={field}
@@ -111,7 +111,7 @@ export function MenuSearch({ lang, words, dialogUi }: { lang: string; words: Men
                         <Search aria-hidden />
                       </InputGroupButton>
                     </TooltipTrigger>
-                    <TooltipContent>{open ? words.find : words.open}</TooltipContent>
+                    <TooltipContent side="bottom">{open ? words.find : words.open}</TooltipContent>
                   </Tooltip>
                   {open && <MenuAi lang={lang} words={words} dialogUi={dialogUi} seed={q} onOpenChange={(v) => { aiOpen.current = v }} />}
                 </InputGroupAddon>
