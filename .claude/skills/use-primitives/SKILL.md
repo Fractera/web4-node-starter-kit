@@ -23,7 +23,7 @@ The owner, 2026-11-11: «каждый раз когда ты пытаешься 
 
 - **A design element that exists in shadcn is taken from shadcn** — not only what `components/ui/` holds today: a button, a field, a field
   with buttons (`InputGroup`), a list under a field (`Popover` + `Command`), a hint (`Tooltip`, never `title=`), a menu
-  (`DropdownMenu`), tabs, a table, a progress bar, a collapsible block. Missing in `components/ui/` — `npx shadcn@latest add <name>`.
+  (`DropdownMenu`), tabs, a table, a progress bar, a collapsible part (`Collapsible`, `Accordion`). Missing in `components/ui/` — `npx shadcn@latest add <name>`.
 - **`check:shadcn-parts`** refuses raw `<button> <input> <select> <textarea> <table> <progress> <details>`, widget roles, a hand-built
   floating panel and `title=` on a button, and names the owner. Old code is a frozen debt; **a file you touch leaves clean**.
 - **The hook `shadcn-skills`** refuses an interface file until this session loaded this skill and `use-shadcn`.
