@@ -264,7 +264,8 @@
       "npmDeps": [],
       "usedBy": [
         "manage/products/form",
-        "components/form/voice-control"
+        "components/form/voice-control",
+        "components/architect/menu-ai"
       ],
       "en": {
         "title": "Voice input",
