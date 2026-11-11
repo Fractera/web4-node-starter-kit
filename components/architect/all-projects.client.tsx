@@ -5,6 +5,7 @@ import { DesktopNav, MobileMenu } from "@/components/shell/shell-menu.client"
 import type { ShellGroup } from "@/components/shell/shell-types"
 import { MenuSearch } from "@/components/architect/menu-search.client"
 import type { MenuSearchWords } from "@/components/architect/menu-search.i18n"
+import type { ReactNode } from "react"
 
 // ВКЛАДКИ «НАТИВНЫЕ ЭЛЕМЕНТЫ» И «КАСТОМНЫЕ ЭЛЕМЕНТЫ» В ШАПКЕ СТРАНИЦ АРХИТЕКТОРА (узел, шаги 553 и 600-3).
 // Слово владельца 2026-10-26: вкладка «Все проекты» называется неверно; правильно — «Нативные элементы», и в ней все нативные;
@@ -37,7 +38,7 @@ function groupOf(slug: string, label: string, list: Entry[]): ShellGroup | null 
 
 type Portion = { rows: { id: string; label: string; href: string; description?: string }[]; total: number }
 
-export function AllProjects({ lang, nativeLabel, customLabel, menuLabel, allProjectsLabel, searchWords }: { lang: string; nativeLabel: string; customLabel: string; menuLabel: string; allProjectsLabel: string; searchWords: MenuSearchWords }) {
+export function AllProjects({ lang, nativeLabel, customLabel, menuLabel, allProjectsLabel, searchWords, aiSlot }: { lang: string; nativeLabel: string; customLabel: string; menuLabel: string; allProjectsLabel: string; searchWords: MenuSearchWords; aiSlot?: ReactNode }) {
   const [entries, setEntries] = useState<Entry[] | null>(null)
   // 678-3: островок `MenuLive` увидел новый элемент или новое имя — каталог спрашивается заново, без перезагрузки страницы.
   const [round, setRound] = useState(0)
@@ -77,7 +78,7 @@ export function AllProjects({ lang, nativeLabel, customLabel, menuLabel, allProj
       <DesktopNav lang={lang} groups={groups} meUrl="/api/me" />
       <MobileMenu lang={lang} groups={groups} label={menuLabel} meUrl="/api/me" />
       {/* 722-3: поиск элементов в шапке — лупа открывает панель «Найти» (широкая и мобильная). */}
-      <MenuSearch lang={lang} words={searchWords} variant="header" />
+      <MenuSearch lang={lang} words={searchWords} variant="header" aiSlot={aiSlot} />
     </>
   )
 }

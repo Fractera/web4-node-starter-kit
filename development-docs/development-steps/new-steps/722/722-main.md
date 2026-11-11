@@ -96,3 +96,17 @@ brought into the core. Nothing checked for voice search by meaning — built fro
   left menu above «Только работающие», in the header a magnifier that opens the same panel; results with the state dot and `data-state`;
   without JavaScript the field is not drawn. Words `menu-search.i18n.ts`. The static search for visitors goes with 722-5.
 - Proof 1: tsc clean, the prebuild chain green, `test:menu-state` (the name search over 1000 and its negative control).
+
+## 722-4 built in the working copy (2026-11-11)
+
+- «ИИ» (`components/architect/menu-ai.client.tsx`) beside «Найти» in the left menu and the header: a press asks the node whether an
+  OpenAI key is set (`GET /api/architect/menu/ai`) — none → the key's page (`/architect/build/environment#OPENAI_API_KEY`); a key → the
+  project's one dialog with «Расскажите, какой компонент вы ищете», a text field and the core's voice input (`_tools/voice-input`, its
+  transcription is the only model call), and the found elements as buttons: name, state dot, why it matched (skill · area · name ·
+  description) with the matched words.
+- The search by meaning is the main agent's own `find` (`scripts/main-agent-cli.mjs find --json`, the node's vectors, no key), run by
+  the door as a separate process with the words as an argument — one code, one threshold (FIND_MIN 0.25). ✗ Not imported into the Next
+  server: `self-description.cjs` finds the node by `__dirname`, which a server bundle may move.
+- Measured on the owner's node with his own words «есть у нас что-то что помогает создавать клипы»: «Клип» first (0.59), storage 0.38,
+  root 0.26 — 1.2 s, no OpenAI key used.
+- Proof 1: tsc clean, the prebuild chain green. Proof 2 after the node update: the dialog by eyes, the door with and without a key.

@@ -19,6 +19,8 @@ import { MenuMore } from '../_components/menu-more.client'
 import { OnlyActive } from '../_components/only-active'
 import { MenuSearch } from '@/components/architect/menu-search.client'
 import { menuSearchWords } from '@/components/architect/menu-search.i18n'
+import { MenuAi } from '@/components/architect/menu-ai.client'
+import { appDialogUi } from '@/components/dialog/app-dialog.i18n'
 
 // ЧЕРНОВИКИ И КНОПКА «СОЗДАТЬ МИКРОСЕРВИС» В ЛЕВОМ МЕНЮ (314-1). Слово владельца: «в левом меню после кнопки дизайн
 // добавляем кнопку создать микро service». Меню слоя собирается из папок при сборке; черновики — данные узла, поэтому их
@@ -153,7 +155,7 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   // 722-2: флажок архитектора «только работающие» — первой строкой зоны; прячет строки чистым CSS, работает без JavaScript.
   const onlyActive: WorkspaceItem = { label: ui.onlyActive, node: <OnlyActive label={ui.onlyActive} /> }
   // 722-3: поиск «Найти» по названию — над флажком; без JavaScript его нет.
-  const search: WorkspaceItem = { label: menuSearchWords(lang).open, node: <MenuSearch lang={lang} words={menuSearchWords(lang)} /> }
+  const search: WorkspaceItem = { label: menuSearchWords(lang).open, node: <MenuSearch lang={lang} words={menuSearchWords(lang)} aiSlot={<MenuAi lang={lang} words={menuSearchWords(lang)} dialogUi={appDialogUi(lang)} />} /> }
   const customZone = [search, onlyActive, ...rootTree, button, ...customs, ...more]
   const withCustom = [...menu.slice(0, cut), ...natives, zone(ui.zoneCustom, 'custom', holds(customZone, page)), ...inZone(customZone, 'custom'), ...menu.slice(cut)]
   // Нет пункта «Главный агент» (`build`) — первой зоны нет: подпись над пустотой хуже её отсутствия.

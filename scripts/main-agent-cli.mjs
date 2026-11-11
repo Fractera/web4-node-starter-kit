@@ -9,7 +9,7 @@
 //
 //   contacts [<id>]          — узел постоянного размера: службы, с которыми он родился, и число рождённых элементов; с <id> —
 //                              один элемент: адрес · род · состояние · роль · как до него достучаться
-//   find <слова>             — кто в узле умеет это (поиск реестра ядра `GET /api/node/a2a?q=…&off=1`, выключенные — с пометкой)
+//   find <слова> [--json]    — кто в узле умеет это (поиск реестра ядра `GET /api/node/a2a?q=…&off=1`, выключенные — с пометкой)
 //   card <id>                — визитка элемента с диска: навыки и двери (589-3)
 //   needs [list|show|answer|verify] — запросы возможности элементов (589, навык handle-need)
 //   lagrix <слова>           — f2f: поиск целого элемента в сети Lagrix; сети ещё нет — ИМИТАЦИЯ (запрос по документам 17 и 20)
@@ -298,8 +298,20 @@ if (cmd === 'look') {
 }
 
 if (cmd === 'find') {
-  const words = rest.join(' ').trim()
+  // 722-4: `--json` — тот же поиск по смыслу для двери кнопки «ИИ» меню архитектора (`/api/architect/menu/ai`): одна строка JSON
+  // `{ hits: [{ id, score, kind, text, on }] }` (лучшие от FIND_MIN, до пяти) или `{ hits: null }`, когда поиск по смыслу недоступен.
+  const json = rest.includes('--json')
+  const words = rest.filter((w) => w !== '--json').join(' ').trim()
   if (!words) fail('find <plain words of the job>')
+  if (json) {
+    const all = selfAll()
+    const hits = await self.findByMeaning(words, all, { k: 5 })
+    const out = hits
+      ? hits.filter((h) => h.score >= FIND_MIN).slice(0, 5).map((h) => ({ id: h.id, score: Math.round(h.score * 1000) / 1000, kind: h.best?.kind ?? 'whole', text: String(h.best?.text ?? '').replace(/\s+/g, ' ').trim().slice(0, 140), on: all.find((y) => y.id === h.id)?.on !== false }))
+      : null
+    console.log(JSON.stringify({ hits: out }))
+    process.exit(0)
+  }
   // 603-2: по смыслу, на любом языке — самоописания элементов в элементе vectors (векторы — ключом OpenAI ядра). ✗ 2026-10-26: поиск по
   // словам не нашёл stripe на «accept money», auth на «user login», memory на «keep a voice message» — и create родил бы дубль.
   // Нет ключа, vectors или data — по словам, как прежде (ниже).
