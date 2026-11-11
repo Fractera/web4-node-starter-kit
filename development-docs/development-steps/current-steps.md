@@ -5,6 +5,12 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-90 (2026-11-11, ~20:00 WET) — 728 PROVEN LIVE (PROOF 3, `9838b7b8`: my own reset woke me by the letter in the new
+conversation). 722 CLOSED for the core (summary `completed-steps/722-main.md`, variant A, the owner «ok»): state dots, pages of 12,
+«Найти», «ИИ» proven on the node in light and dark; the header inside the elements → 727, the visitors' static menu → 723. Owner:
+asleep stays amber («жёлтый is ok»). Findings waiting: `eyes --dark` never reaches the theme (needs the `fractera-theme` cookie); native
+passports' descriptions in English. NEXT, after the owner's yes: 725 (ready parts always found) → 727 design → 724 → 726; 723 later.**
+
 **NOW-89 (2026-11-11, 19:00 WET) — 728 CLOSED (summary `completed-steps/728-main.md`): the reset wake survives a long session, the
 window line knows its conversation, `npm run test:reset-wake` keeps both; live on the node (update `a4b1b048`). Open: the live reset proof
 of the main agent — its own `session clear --continue` at the end of this autonomous run; the woken session appends the result to the
