@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { readFileSync } from "fs";
 import { getSession } from "@/lib/auth/get-session";
 import { readOpenAiResponse, readOpenAiException, logOpenAiError } from "@/lib/openai-error.cjs";
+import { recordOk, recordRefusal } from "@/lib/usage-ledger.cjs";
 
 // Live OpenAI model list for the slot's model pickers (step 207.19, owner rule: model choice is ALWAYS
 // a dropdown fed by the real /v1/models — hardcoded stale lists are a critical error). Same mechanism
@@ -61,6 +62,8 @@ export async function GET(req: NextRequest) {
   if (!apiKey) {
     return NextResponse.json({ error: "no_key", models: [], hint: "Set the OpenAI key first (Admin → OpenAI settings)." });
   }
+  // 726-1: every call writes one line of the node's ledger (`lib/usage-ledger.cjs`, `npm run money`) — no prompt, no key.
+  const call = { who: "openai-models", endpoint: "models", started: Date.now() };
   try {
     const res = await fetch("https://api.openai.com/v1/models", {
       headers: { Authorization: `Bearer ${apiKey}` },
@@ -70,9 +73,11 @@ export async function GET(req: NextRequest) {
       // 726-0: the node's one reader names why (no money, a wrong key, a region…), with OpenAI's page to act on.
       const info = await readOpenAiResponse(res);
       logOpenAiError("openai-models", info);
+      recordRefusal({ ...call, info });
       return NextResponse.json({ error: info.reason, link: info.link, upstreamStatus: res.status, models: [] });
     }
     const raw = (await res.json()) as { data?: { id: string; created?: number }[] };
+    recordOk({ ...call, status: res.status });
     const list = (raw.data ?? [])
       .map((m) => ({ id: m.id, created: m.created ?? 0 }))
       .filter((m) => !EXCLUDE_PATTERNS.some((p) => m.id.toLowerCase().includes(p)) && familyWeight(m.id) > 0)
@@ -90,6 +95,7 @@ export async function GET(req: NextRequest) {
   } catch (e) {
     const info = readOpenAiException(e);
     logOpenAiError("openai-models", info);
+    recordRefusal({ ...call, info });
     return NextResponse.json({ error: info.reason, link: info.link, models: [] });
   }
 }

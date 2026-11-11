@@ -99,6 +99,21 @@ function readOpenAiException(err) {
   return { reason, status: 0, code: '', type: '', message: hideSecrets(err && err.message), link: r.link, retry: r.retry, hint: r.hint }
 }
 
+/**
+ * Read an error thrown by the AI SDK (`generateText` and friends) — read by shape, so this file needs no import of `ai`:
+ * `AI_RetryError` carries the last attempt in `lastError`; `AI_APICallError` carries `statusCode` and `responseBody` (a string)
+ * (node_modules/ai/docs/07-reference/05-ai-sdk-errors, measured 2026-11-12). Anything else is a timeout or the network.
+ */
+function readOpenAiSdkError(err) {
+  const e = err && typeof err === 'object' && err.lastError ? err.lastError : err
+  if (e && typeof e === 'object' && typeof e.statusCode === 'number') {
+    let body = null
+    try { body = typeof e.responseBody === 'string' ? JSON.parse(e.responseBody) : null } catch { body = null }
+    return readOpenAiError(e.statusCode, body)
+  }
+  return readOpenAiException(e)
+}
+
 /** One line into the node's log: where, the reason, OpenAI's own code and message (secrets hidden). Never the key, never the prompt. */
 function logOpenAiError(where, info) {
   console.error(`[openai] ${where}: ${info.reason} (HTTP ${info.status}${info.code ? ` ${info.code}` : ''}${info.type && info.type !== info.code ? `/${info.type}` : ''}) ${info.message}`)
@@ -110,4 +125,4 @@ function noKey() {
   return { reason: 'no-key', status: 0, code: '', type: '', message: '', link: r.link, retry: false, hint: r.hint }
 }
 
-module.exports = { REASONS, readOpenAiError, readOpenAiResponse, readOpenAiException, logOpenAiError, noKey, hideSecrets }
+module.exports = { REASONS, readOpenAiError, readOpenAiResponse, readOpenAiException, readOpenAiSdkError, logOpenAiError, noKey, hideSecrets }

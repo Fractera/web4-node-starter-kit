@@ -11,6 +11,8 @@ const path = require('node:path')
 // 726-0: the node's one reader of OpenAI's errors — a byte-identical copy of the core's `lib/openai-error.cjs` (the guard
 // `check:openai-calls` compares them), because the kit lives in every element group without the core.
 const { readOpenAiResponse, readOpenAiException, logOpenAiError } = require('./openai-error.cjs')
+// 726-1: and one line of the node's ledger for every call (byte-identical copy of `lib/usage-ledger.cjs`) — no prompt, no key.
+const { recordOk, recordRefusal } = require('./usage-ledger.cjs')
 
 const ROOT = process.cwd()
 const MODEL = 'gpt-5-mini'
@@ -30,6 +32,7 @@ function coreKey() {
 async function translateMap(map, lang) {
   const key = coreKey()
   if (!key) return null
+  const call = { who: 'agent-kit/translate', endpoint: 'chat/completions', model: MODEL, started: Date.now() }
   try {
     const res = await fetch(API, {
       method: 'POST',
@@ -46,10 +49,13 @@ async function translateMap(map, lang) {
     })
     if (!res.ok) {
       // The table stays English (and is tried again next time), but the node's log names why OpenAI refused.
-      logOpenAiError('agent-kit/translate', await readOpenAiResponse(res))
+      const info = await readOpenAiResponse(res)
+      logOpenAiError('agent-kit/translate', info)
+      recordRefusal({ ...call, info })
       return null
     }
     const body = await res.json()
+    recordOk({ ...call, status: res.status, usage: body.usage })
     const out = JSON.parse(body.choices?.[0]?.message?.content ?? 'null')
     if (!out || typeof out !== 'object') return null
     for (const k of Object.keys(map)) {
@@ -58,7 +64,11 @@ async function translateMap(map, lang) {
     }
     return out
   } catch (e) {
-    if (!(e instanceof SyntaxError)) logOpenAiError('agent-kit/translate', readOpenAiException(e))
+    if (!(e instanceof SyntaxError)) {
+      const info = readOpenAiException(e)
+      logOpenAiError('agent-kit/translate', info)
+      recordRefusal({ ...call, info })
+    }
     return null
   }
 }

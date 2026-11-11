@@ -6,10 +6,14 @@
 // (https://developers.openai.com/api/docs/guides/error-codes, read 2026-11-12) with its status and body; `readOpenAiResponse` must
 // name the reason and OpenAI's page to act on. Then the two ways fetch itself fails — a timeout and a closed port.
 //
-// Negative controls, both must stay red:
+// 726-1: the ledger — a 200 with usage writes one line with its tokens, a refusal writes OpenAI's own code, a line keeps only its
+// closed list of fields (a prompt handed to it is dropped), and `npm run money` reads it back.
+//
+// Negative controls, all must stay red:
 //   • the OLD reading of the translate door (before 78089ae4, verbatim below) reads `credit_balance_exhausted` as a rate limit —
 //     the very defect the owner saw on 2026-11-11;
-//   • the guard `check:openai-calls` on a tree with a direct call that bypasses the reader, and with a kit copy that drifted.
+//   • the guard `check:openai-calls` on a tree with a direct call that bypasses the reader or the ledger, and with a kit copy that drifted;
+//   • the kit's real `translate.cjs` with no key: no call, so no line.
 
 import { createServer } from 'node:http'
 import { createRequire } from 'node:module'
@@ -19,7 +23,8 @@ import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 
 const require = createRequire(import.meta.url)
-const { readOpenAiResponse, readOpenAiException } = require('../lib/openai-error.cjs')
+const { readOpenAiResponse, readOpenAiException, readOpenAiSdkError } = require('../lib/openai-error.cjs')
+const { recordOk, recordRefusal, record, readDay, days } = require('../lib/usage-ledger.cjs')
 
 const err = (code, type, message) => ({ error: { message, type, param: null, code } })
 // [title in the guide, status, body, the reason it must read as, a fragment of the link]
@@ -57,6 +62,7 @@ const say = (ok, line) => { if (!ok) failed++; console.log(`${ok ? '  ✓' : '  
 let current = null
 const server = createServer((req, res) => {
   if (req.url === '/hang') return // never answers: the timeout case
+  if (req.url === '/ok') { res.writeHead(200, { 'content-type': 'application/json' }); return res.end(JSON.stringify({ choices: [{ message: { content: '{}' } }], usage: { prompt_tokens: 12, completion_tokens: 5, total_tokens: 17 } })) }
   const [, status, body] = current
   res.writeHead(status, { 'content-type': typeof body === 'string' ? 'text/html' : 'application/json' })
   res.end(typeof body === 'string' ? body : JSON.stringify(body))
@@ -91,6 +97,43 @@ current = CASES.find((c) => c[3] === 'no-funds')
   say(!/sk-proj-abcd/.test(info.message), `a key fragment is hidden in OpenAI's message: «${info.message}»`)
 }
 
+console.log('the ledger (726-1):')
+const ledgerRoot = mkdtempSync(join(tmpdir(), 'usage-ledger-'))
+{
+  const call = { who: 'test/translate', endpoint: 'chat/completions', model: 'gpt-5-mini', started: Date.now() }
+  const ok = await fetch(`${base}/ok`, { method: 'POST' })
+  recordOk({ ...call, status: ok.status, usage: (await ok.json()).usage }, ledgerRoot)
+  current = CASES.find((c) => c[2]?.error?.code === 'credit_balance_exhausted')
+  const no = await fetch(`${base}/v1/chat/completions`, { method: 'POST' })
+  recordRefusal({ ...call, info: await readOpenAiResponse(no) }, ledgerRoot)
+  record({ who: 'test/leak', provider: 'openai', prompt: 'the person said something private', key: 'sk-live-123', ok: true }, ledgerRoot)
+  const lines = readDay(undefined, ledgerRoot)
+  say(lines.length === 3, `three calls → three lines in data/node/usage/${days(ledgerRoot)[0]}.jsonl`)
+  say(lines[0].ok === true && lines[0].tokensIn === 12 && lines[0].tokensOut === 5 && lines[0].model === 'gpt-5-mini', `a 200 with usage → ok, 12 in / 5 out tokens: ${JSON.stringify(lines[0])}`)
+  say(lines[1].ok === false && lines[1].reason === 'no-funds' && lines[1].code === 'credit_balance_exhausted' && lines[1].status === 429, `a refusal → OpenAI's own code kept: ${JSON.stringify(lines[1])}`)
+  say(!('prompt' in lines[2]) && !('key' in lines[2]) && !JSON.stringify(lines).includes('private'), 'a prompt and a key handed to the ledger are dropped — only its closed list of fields is written')
+  const sdk = readOpenAiSdkError({ name: 'AI_RetryError', lastError: { statusCode: 429, responseBody: JSON.stringify({ error: { code: 'credit_balance_exhausted', type: 'insufficient_quota' } }) } })
+  say(sdk.reason === 'no-funds', `an AI SDK refusal (AI_RetryError → AI_APICallError 429) → ${sdk.reason}`)
+  const money = JSON.parse(execFileSync('node', [join(process.cwd(), 'scripts/money.mjs'), '--json', '--who', 'test/translate'], { cwd: ledgerRoot, encoding: 'utf8' }))
+  const row = money.rows[0]
+  say(row?.calls === 2 && row.ok === 1 && row.refused['no-funds (credit_balance_exhausted)'] === 1 && row.tokensIn === 12, `npm run money reads it back: ${JSON.stringify({ who: row?.who, calls: row?.calls, ok: row?.ok, refused: row?.refused, tokensIn: row?.tokensIn })}`)
+}
+{
+  // Negative control: the kit's real translate.cjs with no key makes no call and writes no line.
+  const here = process.cwd()
+  const noKeyRoot = mkdtempSync(join(tmpdir(), 'usage-nokey-'))
+  const had = process.env.OPENAI_API_KEY
+  delete process.env.OPENAI_API_KEY
+  process.chdir(noKeyRoot)
+  const kit = require(join(here, 'app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/server/translate.cjs'))
+  const table = await kit.tableFor('test', { hello: 'Hello' }, 'de')
+  process.chdir(here)
+  if (had !== undefined) process.env.OPENAI_API_KEY = had
+  say(table.hello === 'Hello' && days(noKeyRoot).length === 0, 'no key → the kit translates nothing, calls nobody and writes no line')
+  rmSync(noKeyRoot, { recursive: true, force: true })
+}
+rmSync(ledgerRoot, { recursive: true, force: true })
+
 try { await fetch(`${base}/hang`, { signal: AbortSignal.timeout(300) }); say(false, 'the hanging call did not time out') } catch (e) {
   const info = readOpenAiException(e); say(info.reason === 'timeout', `a call OpenAI never answers → ${info.reason}`)
 }
@@ -110,14 +153,21 @@ console.log('negative control — the guard on a broken tree:')
   const tree = mkdtempSync(join(tmpdir(), 'openai-calls-'))
   try {
     const KIT = 'app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/server/openai-error.cjs'
-    for (const f of ['lib/openai-error.cjs', KIT]) { mkdirSync(join(tree, dirname(f)), { recursive: true }); cpSync('lib/openai-error.cjs', join(tree, f)) }
+    const KIT_LEDGER = KIT.replace('openai-error.cjs', 'usage-ledger.cjs')
+    for (const [from, f] of [['lib/openai-error.cjs', 'lib/openai-error.cjs'], ['lib/openai-error.cjs', KIT], ['lib/usage-ledger.cjs', 'lib/usage-ledger.cjs'], ['lib/usage-ledger.cjs', KIT_LEDGER]]) { mkdirSync(join(tree, dirname(f)), { recursive: true }); cpSync(from, join(tree, f)) }
     mkdirSync(join(tree, 'app/api/x'), { recursive: true })
     writeFileSync(join(tree, 'app/api/x/route.ts'), 'export async function POST() { return fetch("https://api.openai.com/v1/chat/completions") }\n')
     execFileSync('git', ['init', '-q'], { cwd: tree })
     const guard = () => { try { execFileSync('node', ['scripts/check-openai-calls.mjs', '--root', tree], { stdio: 'pipe' }); return 'green' } catch { return 'red' } }
     say(guard() === 'red', 'a new direct call without the reader → the guard is red')
     writeFileSync(join(tree, 'app/api/x/route.ts'), 'import { readOpenAiResponse } from "@/lib/openai-error.cjs"\nexport async function POST() { return fetch("https://api.openai.com/v1/chat/completions") }\n')
-    say(guard() === 'green', 'the same call through the reader → the guard is green')
+    say(guard() === 'red', 'the call through the reader but without the ledger → the guard is red')
+    writeFileSync(join(tree, 'app/api/x/route.ts'), 'import { readOpenAiResponse } from "@/lib/openai-error.cjs"\nimport { recordOk } from "@/lib/usage-ledger.cjs"\nexport async function POST() { return fetch("https://api.openai.com/v1/chat/completions") }\n')
+    say(guard() === 'green', 'the same call through the reader and the ledger → the guard is green')
+    mkdirSync(join(tree, 'app/api/sdk'), { recursive: true })
+    writeFileSync(join(tree, 'app/api/sdk/route.ts'), 'import { createOpenAI } from "@ai-sdk/openai"\nexport const m = createOpenAI\n')
+    say(guard() === 'red', 'an AI SDK call (no literal host) without the reader and the ledger → the guard is red')
+    rmSync(join(tree, 'app/api/sdk'), { recursive: true, force: true })
     writeFileSync(join(tree, KIT), '// drifted\n')
     say(guard() === 'red', "the kit's copy drifted from the reader → the guard is red")
   } finally {
@@ -125,5 +175,5 @@ console.log('negative control — the guard on a broken tree:')
   }
 }
 
-console.log(failed ? `===OPENAI_ERRORS_FAILED=== ${failed}` : '===OPENAI_ERRORS_OK=== every refusal of the guide read right; both negative controls red')
+console.log(failed ? `===OPENAI_ERRORS_FAILED=== ${failed}` : '===OPENAI_ERRORS_OK=== every refusal of the guide read right; the ledger writes and reads back; every negative control red')
 process.exit(failed ? 1 : 0)

@@ -5,6 +5,7 @@ import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { isBornElement } from "@/lib/web4-items/element-delete"
 import { EDITABLE, type EditableName, setNames, writeVar } from "@/lib/env-file"
 import { readOpenAiResponse, readOpenAiException, logOpenAiError } from "@/lib/openai-error.cjs"
+import { recordOk, recordRefusal } from "@/lib/usage-ledger.cjs"
 
 // ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ (336-1). `?target=core` или id рождённого элемента.
 //   GET  — имена заданных переменных и есть ли ключ OpenAI у ядра. Значений в ответе нет никогда.
@@ -37,15 +38,20 @@ export async function GET(req: NextRequest) {
 
 /** Живой ли ключ: список моделей OpenAI отвечает 200 только настоящему ключу. */
 async function probe(key: string): Promise<"ok" | "key-rejected" | "probe-failed"> {
+  // 726-1: every call writes one line of the node's ledger (`lib/usage-ledger.cjs`, `npm run money`) — no prompt, no key.
+  const call = { who: "environment/probe", endpoint: "models", started: Date.now() }
   try {
     const r = await fetch("https://api.openai.com/v1/models", { headers: { Authorization: `Bearer ${key}` }, signal: AbortSignal.timeout(10000) })
-    if (r.ok) return "ok"
+    if (r.ok) { recordOk({ ...call, status: r.status }); return "ok" }
     // 726-0: read by the node's one reader; the screen keeps its two words, the node's log gets OpenAI's own reason.
     const info = await readOpenAiResponse(r)
     logOpenAiError("environment/probe", info)
+    recordRefusal({ ...call, info })
     return ["bad-key", "ip-blocked", "forbidden", "region"].includes(info.reason) ? "key-rejected" : "probe-failed"
   } catch (e) {
-    logOpenAiError("environment/probe", readOpenAiException(e))
+    const info = readOpenAiException(e)
+    logOpenAiError("environment/probe", info)
+    recordRefusal({ ...call, info })
     return "probe-failed"
   }
 }

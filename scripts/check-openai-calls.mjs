@@ -6,9 +6,11 @@
 // bypassing it — the defect returns silently otherwise, because a direct call works perfectly until the day OpenAI refuses.
 //
 // Three rules, each with its own breakage (the guard is proven by breaking, `npm run test:openai-errors` does it):
-//   1. a file of the core that names `api.openai.com` must load the reader (`openai-error` in an import or a require);
-//   2. the agent kit's copy `core/server/openai-error.cjs` is byte-identical to `lib/openai-error.cjs` (the kit lives without the
-//      core; its copies in the groups are held by `check:agent-kits`);
+//   1. a file of the core that calls OpenAI — names `api.openai.com` or imports `@ai-sdk/openai` (726-1: the AI SDK path has no
+//      literal host and was invisible to the first version) — must load the reader (`openai-error`) AND the ledger (`usage-ledger`,
+//      726-1: every paid call writes its line);
+//   2. the agent kit's copies `core/server/openai-error.cjs` and `usage-ledger.cjs` are byte-identical to `lib/` (the kit lives
+//      without the core; its copies in the groups are held by `check:agent-kits`);
 //   3. the reader names every code of OpenAI's guide — a code dropped from the list is a refusal read wrong again.
 //
 // `--root <dir>` checks another tree (the test runs it on a broken copy).
@@ -23,7 +25,8 @@ const rootAt = args.indexOf('--root')
 const ROOT = rootAt >= 0 ? args[rootAt + 1] : process.cwd()
 const DIRS = ['lib', 'app', '_tools', 'scripts', 'components', 'services']
 const READER = 'lib/openai-error.cjs'
-const KIT_COPY = 'app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/server/openai-error.cjs'
+const KIT = 'app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/server'
+const LEDGER = 'lib/usage-ledger.cjs'
 // The codes OpenAI's guide names (https://developers.openai.com/api/docs/guides/error-codes, read 2026-11-12) and the reason each
 // must read as. A new code in the guide is added here AND in the reader, in one commit.
 const GUIDE = {
@@ -49,19 +52,24 @@ try {
 let callers = 0
 for (const f of new Set(files)) {
   const full = join(ROOT, f)
-  if (!existsSync(full) || f === READER || f.endsWith('/openai-error.cjs') || f === 'scripts/check-openai-calls.mjs' || f.startsWith('scripts/test-openai-errors')) continue
+  if (!existsSync(full) || f === READER || f === LEDGER || /\/(openai-error|usage-ledger)\.cjs$/.test(f) || f === 'scripts/check-openai-calls.mjs' || f.startsWith('scripts/test-openai-errors')) continue
   const src = readFileSync(full, 'utf8')
-  if (!src.includes('api.openai.com')) continue
+  if (!src.includes('api.openai.com') && !/from ["']@ai-sdk\/openai["']/.test(src)) continue
   callers++
-  if (!/openai-error(\.cjs)?['"]/.test(src)) problems.push(`${f}: calls api.openai.com without the reader — import { readOpenAiResponse, logOpenAiError } from "@/lib/openai-error.cjs" (a .cjs of the kit: require('./openai-error.cjs'))`)
+  if (!/openai-error(\.cjs)?['"]/.test(src)) problems.push(`${f}: calls OpenAI without the reader — import { readOpenAiResponse, logOpenAiError } from "@/lib/openai-error.cjs" (the AI SDK: readOpenAiSdkError; a .cjs of the kit: require('./openai-error.cjs'))`)
+  if (!/usage-ledger(\.cjs)?['"]/.test(src)) problems.push(`${f}: calls OpenAI without the ledger — import { recordOk, recordRefusal } from "@/lib/usage-ledger.cjs" (a .cjs of the kit: require('./usage-ledger.cjs')); every paid call writes one line`)
 }
 
-// 2. The kit's copy.
+// 2. The kit's copies.
 const reader = join(ROOT, READER)
-const kit = join(ROOT, KIT_COPY)
-if (!existsSync(reader)) problems.push(`${READER} is missing`)
-else if (!existsSync(kit)) problems.push(`${KIT_COPY} is missing — cp ${READER} into the kit master, then npm run agent-kit:update`)
-else if (readFileSync(reader, 'utf8') !== readFileSync(kit, 'utf8')) problems.push(`${KIT_COPY} differs from ${READER} — cp it again, then npm run agent-kit:update`)
+for (const own of [READER, LEDGER]) {
+  const name = own.split('/').pop()
+  const a = join(ROOT, own)
+  const b = join(ROOT, KIT, name)
+  if (!existsSync(a)) problems.push(`${own} is missing`)
+  else if (!existsSync(b)) problems.push(`${KIT}/${name} is missing — cp ${own} into the kit master, then npm run agent-kit:update`)
+  else if (readFileSync(a, 'utf8') !== readFileSync(b, 'utf8')) problems.push(`${KIT}/${name} differs from ${own} — cp it again, then npm run agent-kit:update`)
+}
 
 // 3. The guide's codes.
 if (existsSync(reader)) {
@@ -78,4 +86,4 @@ if (problems.length) {
   console.error(`===OPENAI_CALLS_FAILED=== ${problems.length}`)
   process.exit(1)
 }
-console.log(`===OPENAI_CALLS_OK=== ${callers} direct callers of OpenAI, every one through the reader; the kit's copy identical; ${Object.keys(GUIDE).length} codes of OpenAI's guide read right`)
+console.log(`===OPENAI_CALLS_OK=== ${callers} callers of OpenAI, every one through the reader and the ledger; the kit's copies identical; ${Object.keys(GUIDE).length} codes of OpenAI's guide read right`)

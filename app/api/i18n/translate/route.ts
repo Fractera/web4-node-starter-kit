@@ -5,6 +5,7 @@ import { PROTECTED_GROUP_ROLES } from "@/lib/roles"
 import { openAiKey } from "@/lib/openai-key"
 import { readOpenAiResponse, readOpenAiException, logOpenAiError } from "@/lib/openai-error.cjs"
 import { openAiRefusal } from "@/lib/i18n/openai-error.i18n"
+import { recordOk, recordRefusal } from "@/lib/usage-ledger.cjs"
 
 // Перевод полей записи — дверь для диалога добавления переводов.
 //
@@ -75,6 +76,8 @@ export async function POST(req: NextRequest) {
     `Source: ${JSON.stringify(texts)}`,
   ].join("\n")
 
+  // 726-1: every call writes one line of the node's ledger (`lib/usage-ledger.cjs`, `npm run money`) — no prompt, no key.
+  const call = { who: "i18n/translate", endpoint: "chat/completions", model: MODEL, started: Date.now() }
   try {
     const res = await fetch(API, {
       method: "POST",
@@ -92,10 +95,12 @@ export async function POST(req: NextRequest) {
       // The answer keeps the reason as `error` (the dialog's contract) and adds OpenAI's page to act on; OpenAI's words go to the log.
       const info = await readOpenAiResponse(res)
       logOpenAiError("i18n/translate", info)
+      recordRefusal({ ...call, info })
       const status = info.reason === "bad-key" ? 401 : info.reason === "no-funds" ? 402 : info.reason === "rate-limit" ? 429 : 502
       return NextResponse.json({ error: info.reason, ...openAiRefusal(uiLang, info.reason, info.link), upstreamStatus: res.status }, { status })
     }
     const data = await res.json()
+    recordOk({ ...call, status: res.status, usage: data?.usage })
     const raw = data?.choices?.[0]?.message?.content ?? "{}"
     const parsed = JSON.parse(raw) as Record<string, Record<string, string>>
 
@@ -114,7 +119,7 @@ export async function POST(req: NextRequest) {
   } catch (e) {
     // A thrown fetch is a timeout or the network; a thrown JSON.parse is the model's malformed answer — both named, never silent.
     const info = e instanceof SyntaxError ? null : readOpenAiException(e)
-    if (info) logOpenAiError("i18n/translate", info)
+    if (info) { logOpenAiError("i18n/translate", info); recordRefusal({ ...call, info }) }
     const reason = info?.reason ?? "upstream"
     return NextResponse.json({ error: reason, ...openAiRefusal(uiLang, reason, info?.link) }, { status: 502 })
   }

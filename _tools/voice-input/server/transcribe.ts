@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { readOpenAiResponse, readOpenAiException, logOpenAiError } from "@/lib/openai-error.cjs";
+import { recordOk, recordRefusal } from "@/lib/usage-ledger.cjs";
 import type { TranscribeResult } from "../types/voice-input";
 
 // СЕРВЕРНАЯ ФУНКЦИЯ микросервиса «голосовой ввод» — расшифровка аудио. Живёт РЯДОМ со своим клиентом
@@ -42,19 +43,24 @@ export async function transcribeAudio(audio: unknown, language?: string): Promis
 
   // 726-0: the refusal is read by the node's ONE reader of OpenAI's errors (`lib/openai-error.cjs`, the list from OpenAI's guide) —
   // «no money», «a spend limit», «the key» and «slow down» ask the person for different actions; OpenAI's own words go to the log.
+  // 726-1: and every call writes one line of the node's ledger (`npm run money`) — never the audio, never the text.
+  const call = { who: "voice-input", endpoint: "audio/transcriptions", model: MODEL, started: Date.now() };
   let r: Response;
   try {
     r = await fetch(OPENAI_URL, { method: "POST", headers: { Authorization: `Bearer ${key}` }, body: upstream, signal: AbortSignal.timeout(120_000) });
   } catch (e) {
     const info = readOpenAiException(e);
     logOpenAiError("voice-input", info);
+    recordRefusal({ ...call, info });
     return { ok: false, status: 502, error: `transcription failed (${info.reason})`, reason: info.reason, link: info.link };
   }
   if (!r.ok) {
     const info = await readOpenAiResponse(r);
     logOpenAiError("voice-input", info);
+    recordRefusal({ ...call, info });
     return { ok: false, status: 502, error: `transcription failed (${r.status})`, reason: info.reason, link: info.link };
   }
-  const d = (await r.json()) as { text?: string };
+  const d = (await r.json()) as { text?: string; usage?: unknown };
+  recordOk({ ...call, status: r.status, usage: d.usage });
   return { ok: true, text: (d.text ?? "").trim() };
 }

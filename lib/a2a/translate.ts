@@ -1,5 +1,6 @@
 import { openAiKeyFor } from "@/lib/env-file"
 import { readOpenAiResponse, readOpenAiException, logOpenAiError } from "@/lib/openai-error.cjs"
+import { recordOk, recordRefusal } from "@/lib/usage-ledger.cjs"
 
 // ПЕРЕВОД РЕПЛИК РАЗГОВОРА АГЕНТОВ НА ЯЗЫК ЧЕЛОВЕКА (шаг 411-3; владелец 2026-10-06: «если м2м агент напишет на английском или
 // на китайском я бы не хотел видеть это в свою чате на английском для китайском»). Только то, что уходит в Telegram; журнал и
@@ -27,6 +28,8 @@ export type Translated = { same: true } | { same: false; text: string; note: str
 export async function translateTo(text: string, lang: string, hint = ""): Promise<Translated | null> {
   const key = openAiKeyFor()
   if (!key || !text.trim()) return null
+  // 726-1: every call writes one line of the node's ledger (`lib/usage-ledger.cjs`, `npm run money`) — no prompt, no key.
+  const call = { who: "a2a/translate", endpoint: "chat/completions", model: MODEL, started: Date.now() }
   try {
     const res = await fetch(API, {
       method: "POST",
@@ -43,16 +46,23 @@ export async function translateTo(text: string, lang: string, hint = ""): Promis
     })
     if (!res.ok) {
       // 726-0: the translation stays optional (null — the original goes on), but the node's log names why OpenAI refused.
-      logOpenAiError("a2a/translate", await readOpenAiResponse(res))
+      const info = await readOpenAiResponse(res)
+      logOpenAiError("a2a/translate", info)
+      recordRefusal({ ...call, info })
       return null
     }
-    const body = (await res.json()) as { choices?: { message?: { content?: string } }[] }
+    const body = (await res.json()) as { choices?: { message?: { content?: string } }[]; usage?: unknown }
+    recordOk({ ...call, status: res.status, usage: body.usage })
     const out = JSON.parse(body.choices?.[0]?.message?.content ?? "null") as Translated | null
     if (!out || typeof out !== "object") return null
     if (out.same) return { same: true }
     return typeof out.text === "string" && out.text.trim() ? { same: false, text: out.text, note: String(out.note ?? "") } : null
   } catch (e) {
-    if (!(e instanceof SyntaxError)) logOpenAiError("a2a/translate", readOpenAiException(e))
+    if (!(e instanceof SyntaxError)) {
+      const info = readOpenAiException(e)
+      logOpenAiError("a2a/translate", info)
+      recordRefusal({ ...call, info })
+    }
     return null
   }
 }

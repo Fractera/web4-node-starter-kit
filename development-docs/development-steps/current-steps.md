@@ -5,6 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-95 (2026-11-12) — 726-1 CODE COMMITTED (the ledger `lib/usage-ledger.cjs`, 21 callers incl. the AI SDK's menu/ai, `npm run
+money`, guard + test extended). NEXT: push → fork sync → node update → live proof (a translate call → its line; `npm run money` names the
+door) → summary `completed-steps/726-1.md` → 726-3 «Все подписки».**
+
 **NOW-94 (2026-11-12) — 726-0 CLOSED (summary `completed-steps/726-0.md`; live on the node `e1d074c0`: `/api/transcribe` and
 `/api/i18n/translate` answer `no-funds` with Russian words and the billing link; CI green on windows and ubuntu after `537c0256`).
 NEXT: 726-1 the ledger (`new-steps/726/726-1.md`).**

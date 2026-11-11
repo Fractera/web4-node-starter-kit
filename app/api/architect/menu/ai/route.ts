@@ -8,6 +8,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { openAiKey } from "@/lib/openai-key"
 import { textModelId } from "@/lib/openai-text-model"
+import { readOpenAiSdkError, logOpenAiError } from "@/lib/openai-error.cjs"
+import { recordOk, recordRefusal } from "@/lib/usage-ledger.cjs"
 import { readMenuMode } from "@/lib/node-menu-mode"
 import { elementLabel } from "@/lib/web4-items/element-name"
 import { addressOf } from "@/lib/web4-items/element-address"
@@ -51,8 +53,11 @@ function findByMeaning(text: string): Promise<{ hits: Hit[] | null; shortlist: S
 async function pickByModel(text: string, lang: string, list: Short[]): Promise<{ id: string; comment: string }[] | null> {
   const apiKey = openAiKey()
   if (!apiKey || list.length === 0) return null
+  // 726-0/726-1: through the AI SDK too — a refusal is read by the node's one reader (`readOpenAiSdkError`: AI_RetryError →
+  // AI_APICallError), and every call writes one line of the ledger (`npm run money`) — no prompt, no key.
+  const call = { who: "menu/ai", endpoint: "chat/completions", model: textModelId(), started: Date.now() }
   try {
-    const { output } = await generateText({
+    const { output, totalUsage } = await generateText({
       model: createOpenAI({ apiKey })(textModelId()),
       output: Output.object({ schema: z.object({ matches: z.array(z.object({ id: z.string(), comment: z.string() })).max(5) }) }),
       system: "You help a person find a component (an element) of their node. Choose from the given list only the elements that fit the request, best first, at most five; for each write one short comment in the person's language (" + lang + ") — what it does for this request. Use only ids from the list. None fits — return an empty list.",
@@ -62,9 +67,13 @@ async function pickByModel(text: string, lang: string, list: Short[]): Promise<{
       maxRetries: 1,
       abortSignal: AbortSignal.timeout(12_000),
     })
+    recordOk({ ...call, usage: totalUsage })
     const known = new Set(list.map((e) => e.id))
     return output.matches.filter((m) => known.has(m.id)).map((m) => ({ id: m.id, comment: m.comment.replace(/\s+/g, " ").trim().slice(0, 200) }))
-  } catch {
+  } catch (e) {
+    const info = readOpenAiSdkError(e)
+    logOpenAiError("menu/ai", info)
+    recordRefusal({ ...call, info })
     return null
   }
 }
