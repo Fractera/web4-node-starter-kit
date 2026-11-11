@@ -20,3 +20,15 @@ The owner's words (722): «в случае обычного пользовате
   per visitor; `revalidate = 600` stays (the owner: «revalidate оставь»).
 - Open: the address a visitor of an own domain opens it at (the core lives on a subdomain there); the SEO and AIO guards of a new public
   page. Rejected for now: variant B (portions inside the sites' mega-menu — a release of the shell with every template).
+
+## ✗ 2026-11-11: variant A rested on a false premise
+
+Measured by code: the core has NO public layer — `app/[lang]` holds only `(architectLayer)`; `/ru` of the core is «Группа страниц
+архитектора». The public face is root (CONFIG drawing the catalog in every site's header). A public page of the core would invent a
+layer the architecture does not have («create — yes, invent — no»). The shapes left, for the owner:
+- A′ — the core caps the pushed catalog (12 + «Все проекты (N)») and the root site's own agent builds a static «Все проекты» by twelve;
+  the full list must reach root through CONFIG — a contract change of the CONFIG element (its agent) and the root starter (a shared
+  sample): two elements' agents over i2i, the core only leads.
+- B — portions inside the sites' mega-menu: a release of the shell with every template.
+- C — keep as is: a visitor already gets the menu statically and free; the price is the page weight, measurable when the node has dozens
+  of elements (today 2 custom).
