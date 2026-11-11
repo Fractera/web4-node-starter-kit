@@ -5,6 +5,14 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-89 (2026-11-11, 18:45 WET) — 728 IN WORK, AUTONOMOUS (plan `new-steps/728/728-main.md`). The owner 18:23: «Только что сбросил
+сессию но не проснулся ещё одна проблема мы же вроде её решили»; 18:24: «Добавлять тестирование этой проблемы: после сброса сессии не
+просыпается терминал для тебя или элементов»; 18:40: «go to finish non stop , not call me , i am going out for 2 hour». Measured: the
+bridge's «screen quiet» is `buffer.length` of a buffer capped at 256 KB — a long session always looks idle, `/clear` was typed into a
+running turn and the letter eaten by the OLD conversation (timeline in the plan). Also: a fresh conversation's first window line read the
+old `context.json` (65 % at 7 %). NEXT: 728-1 test (red) → 728-2 fix (green) → 728-3 window line → push, CI, fork sync, node update
+(it brings 722-8/9 too) → live proof by my own reset; then 722's eyes and summary. The node's letter: the node's current-steps.md.**
+
 **NOW-88 (2026-11-11, ~19:30 WET) — the owner at maximum effort: «Очень чётко внимательно зафиксируй все эти проблемы … исследовал эту
 проблему описал создал шаги разработки а потом возвращайся к закрытию основного шага». The register of the day —
 `development-docs/reports/errors-2026-11-11-ready-parts-ignored-surfaces-unseen-money-unseen.md` (16 problems, 5 root causes); plans
