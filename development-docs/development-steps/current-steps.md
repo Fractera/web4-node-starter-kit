@@ -7,7 +7,7 @@ hour would be lost?» — that is written now. How the steps are planned, proven
 
 **NOW-101 (2026-11-12 ~11:36) — 732 OPENED (plan only, `new-steps/732/732-main.md`): the owner wants colour marks in the main agent's
 answers (element answered / worked / fixed / needs solving / needs HIS decision), terminal and Telegram; «В работу после завершения этой
-сессии». No green or orange triangle emoji exists — fork A circles (my pick) / B triangles, his choice first.**
+сессии». No green or orange triangle emoji exists — the owner chose A, circles («Берём кружки, вариант A»).**
 
 **NOW-100 (2026-11-12 ~10:50, tandem) — 727-2 BUILT: template v0.3.191 released and pinned (`4b3cd87`); the core: POST door with the
 element's own data, the kit's drawer buttons, old kit files kept (12). Proofs on a harness in `new-steps/727/727-2.md`. NEXT: the owner's

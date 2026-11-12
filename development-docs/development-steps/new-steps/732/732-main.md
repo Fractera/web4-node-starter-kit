@@ -33,3 +33,10 @@ Opened 2026-11-12 ~11:36 by the owner, verbatim:
 - **732-1** — CLAUDE.md §1 «How you speak»: the five marks with one line each, the main agent only (elements untouched); resealed.
 - **732-2** — `check:node-lines` holds the line; the Telegram path checked: a reply with the marks arrives as they are.
 - **732-3** — proof: one live answer in the terminal and one in Telegram carrying the marks; the owner's look.
+
+## The owner's choice (2026-11-12 ~11:45, verbatim)
+
+> Берём кружки, вариант A
+
+Variant A: 🟡🟡🟡 an element answered · 🟢 what worked · 🟠 a problem found and solved · 🔴 a problem that needs solving (one per
+problem) · 🔴🔴🔴 needs YOUR decision, development stopped. Start: after the session of 727 (his word).
