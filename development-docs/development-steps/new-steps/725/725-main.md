@@ -69,4 +69,5 @@ Rebuilding the duplicates the sweep finds (each becomes its own substep after th
 
 ## 9. The owner's approval
 
-(waiting)
+2026-11-12 ~11:50, verbatim: «Да, утверждаю план 725 и такой порядок, and» (the message ends at «and» — asked what follows). The
+order approved: template v0.3.192 (the stub warns) → 732 circles → 725 at maximum effort → 727-4.
