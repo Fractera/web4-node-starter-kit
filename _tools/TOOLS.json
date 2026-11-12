@@ -410,7 +410,7 @@
         },
         {
           "id": "tool-voice-input",
-          "version": "1.1.0"
+          "version": "1.1.1"
         }
       ],
       "scope": "any",
@@ -495,7 +495,7 @@
       "id": "voice-input",
       "entry": "client/voice-input.client.tsx",
       "dir": "_tools/voice-input",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "parts": [],
       "scope": "any",
       "needs": [

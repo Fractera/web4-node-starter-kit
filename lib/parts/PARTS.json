@@ -1518,7 +1518,7 @@
         },
         {
           "id": "tool-voice-input",
-          "version": "1.1.0"
+          "version": "1.1.1"
         }
       ],
       "scope": "any",
@@ -1631,7 +1631,7 @@
         "en": "Voice input",
         "ru": "Голосовой ввод"
       },
-      "version": "1.1.0",
+      "version": "1.1.1",
       "parts": [],
       "scope": "any",
       "what": {
@@ -1676,7 +1676,7 @@
         "lib/openai-error.cjs",
         "lib/usage-ledger.cjs"
       ],
-      "bodyHash": "c3161d5a8689a5ff"
+      "bodyHash": "0fd8e36f5799ccf2"
     },
     {
       "id": "tools-tab",
@@ -1749,7 +1749,7 @@
       "parts": [
         {
           "id": "tool-voice-input",
-          "version": "1.1.0"
+          "version": "1.1.1"
         }
       ],
       "scope": "any",
