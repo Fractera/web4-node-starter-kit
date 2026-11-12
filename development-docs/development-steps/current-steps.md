@@ -5,6 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-106 (2026-11-12 ~15:10) — 733 APPROVED: «to do it , plan is confirmed» (plan `new-steps/733/733-main.md`). NOW: 733-1 — the
+definition of a tool and the check at birth; stop for the owner's review after it. 725-8's open items moved to 733-8; 727-4 put aside by
+the owner (tools first). The working copy keeps two uncommitted edits for 733-8 (`components/tools-tab/tool-looks.i18n.ts`, `sampleSrc`).**
+
 **NOW-105 (2026-11-12, autonomous) — 732 BUILT (`e16a1822`); 725-1…725-7 BUILT and pushed (core `74310cce`; custom v0.3.194, root
 v3.0.49 pinned; v0.3.193 / v3.0.48 tagged broken, never pinned). The sweep report `development-docs/reports/feature-parts-sweep-2026-11-12.md`.
 NEXT: node update (fork sync in Chrome) → live proofs: a new session lists parts_find, the meaning half answers, the gate refuses a blind
