@@ -5,6 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-107 (2026-11-12) — 733-1 BUILT (`f2c6a884`, summary `completed-steps/733-1.md`). STOP for the owner's review: the composite
+boundary (a control holding a value is not a tool) and the node update (core build ~4 min, the terminal goes dark). The 733-8 edits are in
+`git stash` («733-8 kept edits»). NEXT after his word: 733-2 — the card.**
+
 **NOW-106 (2026-11-12 ~15:10) — 733 APPROVED: «to do it , plan is confirmed» (plan `new-steps/733/733-main.md`). NOW: 733-1 — the
 definition of a tool and the check at birth; stop for the owner's review after it. 725-8's open items moved to 733-8; 727-4 put aside by
 the owner (tools first). The working copy keeps two uncommitted edits for 733-8 (`components/tools-tab/tool-looks.i18n.ts`, `sampleSrc`).**
