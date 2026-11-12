@@ -41,3 +41,11 @@ and before it (722-9): «фильтрации через чекбокс … По
 - **What the tool holds.** The «Нативные элементы» and «Кастомные элементы» tabs with the state dots (architect only), the checkbox «только
   работающие» at the top of the dropdown, the search «Найти»/«ИИ» (722-3/4/8), portions of 12 (722-2).
 - It becomes the first part born under 725-7: declared `@part`, carded, in the graph, found by `parts_find`.
+
+## The owner's word, 2026-11-12 early morning (verbatim) — an autonomous run
+
+> i go back to sleep , it is very early morning... you must work non stop , and i must know about step about tools problem , is it was finished and is was updated top menu , and footers in the all elements ? if not fifnised , will be next work , se you after 2 hours. i an  not here
+
+Read as: the answer — 727 is not built (a plan only); it is the next work, started now without him; the shape is my choice (the
+autonomous-run rule), inside his 717 order — the core and the custom template first, existing elements and the native template only
+after his word.
