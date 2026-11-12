@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { readOpenAiResponse, readOpenAiException, logOpenAiError } from "@/lib/openai-error.cjs";
 import { recordOk, recordRefusal } from "@/lib/usage-ledger.cjs";
-import type { TranscribeResult } from "../types/voice-input";
+import { TRANSCRIBE_MODEL, type TranscribeResult } from "../types/voice-input";
 
 // СЕРВЕРНАЯ ФУНКЦИЯ микросервиса «голосовой ввод» — расшифровка аудио. Живёт РЯДОМ со своим клиентом
 // (микросервис: `client/` + `server/` + `types/` в одной папке), а не разбросана по `api/`. Дверь
@@ -12,7 +12,7 @@ import type { TranscribeResult } from "../types/voice-input";
 // Единственная внешняя зависимость, и она не код, а среда: своего ключа автоматизация не заводит. Нет
 // ключа — честный `no-key`, и клиент показывает владельцу свою 10-языковую подсказку, где его добавить.
 const OPENAI_URL = "https://api.openai.com/v1/audio/transcriptions";
-const MODEL = "gpt-4o-transcribe";
+const MODEL = TRANSCRIBE_MODEL;
 const MAX_BYTES = 25 * 1024 * 1024; // предел самого API — отказываем раньше и понятной строкой
 
 function openAiKey(): string {

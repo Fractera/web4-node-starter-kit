@@ -127,9 +127,9 @@ export function VoiceControl({
       }
     >
       <MicIcon off={!v.supported} />
-      {variant === "textarea" ? (v.busy ? L.transcribing : v.recording ? L.recording : L.mic) : null}
+      {variant === "textarea" ? <>{v.busy ? L.transcribing : v.recording ? L.recording : L.mic}<span data-voice-model className="font-mono text-[10px] font-normal text-muted-foreground">{v.model}</span></> : null}
     </Button>
-    </TooltipTrigger><TooltipContent className="max-w-xs">{v.supported ? L.tipOk : L.tipInsecure}</TooltipContent></Tooltip></TooltipProvider>
+    </TooltipTrigger><TooltipContent className="max-w-xs">{v.supported ? L.tipOk : L.tipInsecure} · <span className="font-mono">{v.model}</span></TooltipContent></Tooltip></TooltipProvider>
   )
 
   return (

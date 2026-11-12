@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { voiceStrings, type VoiceStrings } from "./voice-input-i18n";
+import { TRANSCRIBE_MODEL } from "../types/voice-input";
 
 // МЕХАНИКА ГОЛОСОВОГО ВВОДА — ОДНА НА ВСЕ ИНТЕРФЕЙСЫ (шаг 32-2, 2026-08-28).
 //
@@ -49,6 +50,8 @@ function inFrame(): boolean {
 export type VoiceRecorder = {
   /** Слова на языке страницы — резолвятся один раз здесь, чтобы оба облика брали одни. */
   strings: VoiceStrings;
+  /** The transcription model's name, for the field's compact mark. */
+  model: string;
   /** Микрофон в принципе доступен в этой среде. */
   supported: boolean;
   recording: boolean;
@@ -278,6 +281,8 @@ export function useVoiceRecorder({
 
   return {
     strings: L,
+    /** The transcription model, for the field's compact mark (owner 2026-11-12). */
+    model: TRANSCRIBE_MODEL,
     supported,
     recording,
     busy,

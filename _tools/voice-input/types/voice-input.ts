@@ -1,6 +1,10 @@
 // ТИПЫ микросервиса «голосовой ввод» — общий контракт клиентской и серверной половины в одном месте.
 import type { RefObject } from "react";
 
+/** The OpenAI model that turns speech into text (the owner, 2026-11-12: «gpt-4o-mini-transcribe-2025-12-15 need for transcribe»). One
+ *  name for the server's call and the interface's mark, so what the field says is what runs. OpenAI marks this snapshot Deprecated. */
+export const TRANSCRIBE_MODEL = "gpt-4o-mini-transcribe-2025-12-15";
+
 /** Поле, принимающее речь; его курсор решает, КУДА встанет расшифровка. */
 export type VoiceTargetRef =
   | RefObject<HTMLTextAreaElement | null>
