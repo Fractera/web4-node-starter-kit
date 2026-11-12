@@ -5,6 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-99 (2026-11-12 ~10:30) — 731 CLOSED (summary `completed-steps/731-main.md`; live on the node `0e72b76b`: my own reset ran
+scenario G — bare clear then `clear --continue` joined, ONE `/clear`, «пробуждён письмом после сброса» 10:26:47, the fresh session
+went on from the letter). NEXT: 727-2 (`new-steps/727/727-2.md`) in `~/fractera-dev/fractera-custom-item-starter`.**
+
 **NOW-98 (2026-11-12 ~10:30, tandem) — 731 BUILT before 727-2 (the owner: «Да, сначала закрой дыру, потом 727-2 … этот механизм
 должен работать во всех элементах не так ли?»; plan `new-steps/731/731-main.md`). The 4th dark terminal after a reset: my own reset ran
 bare `session clear`. Fixed: the «clear» row names `clear --continue` for my own reset, bare clear says «NOBODY wakes», the bridge keeps
