@@ -18,7 +18,9 @@ more than 1 GB is free.
 
 ## Who may sleep — the passport's `power.switch` (the owner, 2026-11-06)
 
-- **never** — auth, data, root, storage: the node never turns them off («данные и авторизацию категорически запрещено включать и отключать»).
+- **never** — auth, data, storage: the node never turns them off («данные и авторизацию категорически запрещено включать и отключать»).
+  The custom element `root` still says `never` in its own passport — a privilege no custom element may hold (the owner, 2026-11-12:
+  «воспринимать все кастомные элементы равными»); the rollback of step 734 makes it `auto` like the others, until then name it so.
 - **manual** — stripe (off by default until its keys): only a person's word.
 - Off by default (the owner, 2026-11-06: «as default turn of both Stripe + Redis»): stripe and cache. Cache, once a person turns it on,
   is an `auto` element below.
@@ -72,5 +74,5 @@ find the element and send it orders; off — only inside the node. Change it onl
 
 - Switch an element on your own initiative — only the person's «yes» or the node's rule below 0.5 GB. One exception (step 597): the memory
   element is turned on by `npm run remember` / `npm run remind` themselves.
-- Turn off a `never` element (auth, data, root, storage) or the core, even when asked, without saying what stops working; the rule never does.
+- Turn off a `never` element (auth, data, storage) or the core, even when asked, without saying what stops working; the rule never does.
 - Edit the registry file by hand: the command also updates pm2 and its boot snapshot.

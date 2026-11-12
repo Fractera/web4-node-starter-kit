@@ -45,11 +45,10 @@ and nothing has to be kept. Say it: honesty here makes the rest believed.
 | vectors | search by meaning over the collections of any element |
 | graph | a knowledge graph of who and what is linked; no language model inside, one operation in about two seconds |
 | memory | «remember» and «remind» by a phrase, a photo, a PDF or a voice note; the answer with its date, source and certainty; reminders at a time |
-| config, design | one set of settings and one look for every element: saved once, every element re-styles at once, without a rebuild |
-| sections | ready sections of pages for the agents — tokens saved on every page |
+| config | one set of site settings for every element linked to it: saved once, applied at once, without a rebuild (each element's look is its own) |
 | stripe | a Stripe payment link; no card number reaches the node; on after its keys |
 | cache | fast counters and queues — a body only today, Redis not connected |
-| root | the main site; its home is the first screen where a person types or says a task to the node |
+Custom elements are the person's own servers, all equal — `root` is one of them; the core alone is special.
 Each lives on this computer; `npm run contacts -- --all` and `npm run card -- <id>` say it in the node's own words before any claim.
 
 ## Roles and what they open
@@ -104,7 +103,7 @@ because a model is needed to build and to think, and rarely to run: the i2i law 
 model. Where a product, its data and its people live inside someone else's account, one section takes them all at once — that is death.
 | If it goes | What stops | What stays |
 |---|---|---|
-| Anthropic | the agents: building, their work, the task window on root's home | the whole running product — sites, sign-in, tables, files, payments, connectors between elements, reminders (they need no model); the apps' AI (it goes through the OpenAI key); the deep memory with the OpenAI key; the vectors (counted locally) |
+| Anthropic | the agents: building, their work, a task typed into an element's prompt | the whole running product — sites, sign-in, tables, files, payments, connectors between elements, reminders (they need no model); the apps' AI (it goes through the OpenAI key); the deep memory with the OpenAI key; the vectors (counted locally) |
 | OpenAI | voice and the apps' AI until another key; the memory thinks with Claude | everything else |
 | Cloudflare | reach from outside and the copies of pages | everything on the computer; Telegram (it needs no domain) |
 | GitHub | pushing and pulling | all code in git on the disk |
