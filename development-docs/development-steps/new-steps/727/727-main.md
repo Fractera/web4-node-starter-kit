@@ -49,3 +49,24 @@ and before it (722-9): «фильтрации через чекбокс … По
 Read as: the answer — 727 is not built (a plan only); it is the next work, started now without him; the shape is my choice (the
 autonomous-run rule), inside his 717 order — the core and the custom template first, existing elements and the native template only
 after his word.
+
+## The fork put to the owner (2026-11-12, tandem — «начинай 727»)
+
+Measured for it: elements already take shell DATA at render through `/api/shell/<lang>` (`components/shell/remote-shell.ts`) and pick a
+change up at the next render of a `'use cache'` page — no rebuild; only the CODE (`components/shell/`, ~1900 lines) is copied.
+
+- **A — a live tool of the core (fragment + island).** The core renders header, account and footer to HTML per element and language
+  (door `/api/shell-kit/<lang>`) and serves one bundle `shell.js` with its own React and a scoped CSS on the element's own tokens
+  (`var(--background)` …). The element's layout keeps a stub for good: it reads the fragment at render (static page, works without JS),
+  the bundle brings it to life in the browser. A change in the core reaches every element at its next render, no element rebuilt. The
+  core is away — the stub draws a minimal header and footer from the element's own CONFIG. Cost: the stub copied into every element ONE
+  last time; ~45 KB gz more per page; CORS of the core's catalog door for the architect's tabs inside elements.
+- **B — one source, copies rolled out.** `_tools/shell/` in the core, a script copies it into every element and rebuilds each. Plain
+  Next; every change = a rebuild of all elements (minutes × N, memory) — what the owner rejected.
+- **C — static frame copied, only the live parts from the core.** Brand, links, footer stay copied code; the dropdown (native/custom tabs,
+  «только работающие», search) and the account drawer come as the core's island. Smaller bundle, but the frame still needs releases.
+
+My pick: **A** — the only one where a change is made once and no element is ever touched again, and it keeps the static page and the
+element's life without the core. Order if yes: 727-1 the core renders the fragment + bundle (proved on the core's own pages) → 727-2
+the stub in the custom template (release) → 727-3 a live custom element shows the core's header, a change in the core seen there with
+no rebuild → 727-4 the footer and account the same way; native template and existing elements — after the owner's word (717 order).
