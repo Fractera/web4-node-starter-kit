@@ -1007,7 +1007,7 @@
         "en": "Tool look",
         "ru": "Показ инструмента"
       },
-      "version": "1.0.3",
+      "version": "1.0.4",
       "parts": [
         {
           "id": "app-dialog",
@@ -1015,7 +1015,7 @@
         },
         {
           "id": "tool-looks",
-          "version": "1.1.0"
+          "version": "1.1.1"
         }
       ],
       "scope": "panel",
@@ -1039,16 +1039,18 @@
       },
       "usedBy": [],
       "body": [
+        "components/tools-tab/lives-at.ts",
         "components/tools-tab/tool-demo.client.tsx",
         "components/tools-tab/tools-tab.i18n.ts"
       ],
       "requires": [
         "components/dialog/app-dialog.i18n",
         "components/ui/badge",
+        "components/ui/button",
         "components/ui/typography",
         "lib/parts/tools-catalog"
       ],
-      "bodyHash": "3df8c7bc94d7121c"
+      "bodyHash": "8ce51bcf6c6ddab0"
     },
     {
       "id": "tool-fact-draft",
@@ -1168,7 +1170,7 @@
         "en": "Live tool looks",
         "ru": "Живые виды инструментов"
       },
-      "version": "1.1.0",
+      "version": "1.1.1",
       "parts": [
         {
           "id": "app-dialog",
@@ -1253,7 +1255,7 @@
         "lib/parts/tools-catalog",
         "sections/table.i18n"
       ],
-      "bodyHash": "64f93b106cdc5b0e"
+      "bodyHash": "207d9245afebac8c"
     },
     {
       "id": "tool-shell-kit",
@@ -1683,11 +1685,11 @@
         "en": "Tools tab",
         "ru": "Вкладка «Инструменты»"
       },
-      "version": "1.0.3",
+      "version": "1.0.4",
       "parts": [
         {
           "id": "tool-demo",
-          "version": "1.0.3"
+          "version": "1.0.4"
         },
         {
           "id": "tool-terminal-drawer",
@@ -1734,7 +1736,7 @@
         "components/ui/typography",
         "lib/parts/tools-catalog"
       ],
-      "bodyHash": "a6c32ca8857205fe"
+      "bodyHash": "38ab1cb6b4c11e8f"
     },
     {
       "id": "voice-control",
@@ -2971,6 +2973,7 @@
         "components/super-node/super-node-settings.client.tsx",
         "components/super-node/super-node-status.client.tsx",
         "components/tools-tab/tool-card.client.tsx",
+        "components/tools-tab/tool-demo.client.tsx",
         "components/tools-tab/tool-looks.client.tsx",
         "components/tools-tab/tools-tab.client.tsx",
         "components/wallet/node-wallet.client.tsx",

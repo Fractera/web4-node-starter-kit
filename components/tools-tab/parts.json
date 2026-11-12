@@ -8,11 +8,11 @@
     "en": "Tools tab",
     "ru": "Вкладка «Инструменты»"
    },
-   "version": "1.0.3",
+   "version": "1.0.4",
    "parts": [
     {
      "id": "tool-demo",
-     "version": "1.0.3"
+     "version": "1.0.4"
     },
     {
      "id": "tool-terminal-drawer",
@@ -73,7 +73,7 @@
     "en": "Tool look",
     "ru": "Показ инструмента"
    },
-   "version": "1.0.3",
+   "version": "1.0.4",
    "parts": [
     {
      "id": "app-dialog",
@@ -81,7 +81,7 @@
     },
     {
      "id": "tool-looks",
-     "version": "1.1.0"
+     "version": "1.1.1"
     }
    ],
    "scope": "panel",
@@ -111,7 +111,7 @@
     "en": "Live tool looks",
     "ru": "Живые виды инструментов"
    },
-   "version": "1.1.0",
+   "version": "1.1.1",
    "parts": [
     {
      "id": "app-dialog",

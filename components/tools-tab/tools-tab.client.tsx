@@ -133,7 +133,7 @@ export function ToolsTab({ item, service, place, lang, words, kit, demo }: {
           kit={kit} text={drawer.text} start={drawer.start} onCollapse={() => { setDrawer(null); setRefresh((n) => n + 1) }} />
         </div>
       )}
-      {shown && <ToolDemo tool={shown} tools={tools ?? []} lang={lang} words={words} ui={kit.dialogUi} kit={demo} onClose={() => setShown(null)} />}
+      {shown && <ToolDemo tool={shown} tools={tools ?? []} item={item} place={place} lang={lang} words={words} ui={kit.dialogUi} kit={demo} onClose={() => setShown(null)} />}
     </div>
   )
 }

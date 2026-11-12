@@ -60,6 +60,8 @@ export type ToolsTabWords = {
   demoVoiceTitle: string
   demoVoiceHint: string
   demoVoicePlaceholder: string
+  demoWhere: string
+  demoWhereOpen: string
 }
 
 const EN: ToolsTabWords = {
@@ -122,6 +124,8 @@ const EN: ToolsTabWords = {
   demoVoiceTitle: "Your text",
   demoVoiceHint: "Type here, or hold the microphone and speak.",
   demoVoicePlaceholder: "A few words…",
+  demoWhere: "It works on the node's own data, so it is not copied into a window. It works live on the element's page:",
+  demoWhereOpen: "Open that page",
   readOnly: "These are the core's tools: the core is Fractera's, so on your node they are shown and taken into your elements as copies, never changed here. Your own tools live in each element's «Tools» tab.",
 }
 
@@ -185,6 +189,8 @@ const RU: ToolsTabWords = {
   demoVoiceTitle: "Ваш текст",
   demoVoiceHint: "Напечатайте здесь или зажмите микрофон и говорите.",
   demoVoicePlaceholder: "Несколько слов…",
+  demoWhere: "Он работает на живых данных узла, поэтому в окно не копируется. Вживую он работает на странице элемента:",
+  demoWhereOpen: "Открыть эту страницу",
   readOnly: "Это инструменты ядра: ядро принадлежит Fractera, поэтому на вашем узле их можно посмотреть и взять копией в свои элементы, но не менять здесь. Ваши собственные инструменты — на вкладке «Инструменты» каждого элемента.",
 }
 
