@@ -170,8 +170,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - **Create an element.** First find a similar one by meaning (`npm run find`). None — `npm run create` (skill `create-element`): draft →
   clone of the template by tag → registry entry → port and Cloudflare subdomain → installation → the address checked from the internet
   (`scripts/item-birth.mjs`). Then a brief to the element's agent — it builds itself.
-- **Wake an element's agent:** `npm run wake`. The folder trust question comes to your chat; the person's yes — `npm run trust`. Then you
-  exchange messages.
+- **Wake an element's agent:** `npm run wake`. Its folder trust you confirm yourself at once — `npm run trust` (the owner, 2026-11-12:
+  «you must confirm the current folder automaticly»), then check the agent really started (`npm run where`). Then you exchange messages.
 - **Supervision without the person's taps:** `npm run supervise` for one check, `npm run task` turns the agent on (a job, not a build —
   `--work [--skill <id>]`: its worker does it and its «done» wakes you), the element saves its report (`reply-core`), you read `npm run
   state`, turn it off (`npm run close`) and yourself (`npm run done`). Skills `ask-element`, `supervise-element`.
