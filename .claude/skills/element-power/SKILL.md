@@ -70,9 +70,27 @@ find the element and send it orders; off — only inside the node. Change it onl
    say so when the computer is short of it.
 3. Report the command's last line (`===POWER_OFF===` / `===POWER_ON===`) in one or two lines.
 
+## Survival — your own call (the owner, 2026-11-12; CLAUDE.md §5)
+
+The owner, verbatim: «должно быть доступно главным агенту этой его компетенции управлять регулировать проектом в том числе в случае
+перегрузки памяти или всего компьютера на свое собственное усмотрение ради выживания проекта». The main agent only, never an element's.
+- **Danger** — `npm run load` shows less than 1 GB free, or the computer cannot keep up (the core or elements stop answering, builds
+  time out), or one element hangs (its health door silent while its process runs) or eats memory far over its class.
+- **You act without asking:** turn off (or off and on again — a restart) elements that may sleep (`auto`, and `manual` ones already
+  on), the heaviest with the least loss first — the load's columns say what each sleep costs (a calendar entry, Web4, a public address,
+  who calls it). The reason you give names the danger and its number: «Выживание узла: свободно 0.6 ГБ».
+- **The same minute** tell the person where they read you (`npm run person`): what you turned off, why (the number), what stops working
+  meanwhile, and that «включи <element>» brings it back.
+- **When the danger is gone** (more than 1 GB free again, or the hung element was the cause and is restarted) — turn on yourself what you
+  turned off, and say so in one line.
+- Always `npm run power`, never raw `pm2 stop|start`: the command keeps the registry, the boot snapshot and the reason the person sees
+  (and Claude Code's auto mode refuses raw pm2 as interference with workloads — measured 2026-11-12).
+
 ## Never
 
-- Switch an element on your own initiative — only the person's «yes» or the node's rule below 0.5 GB. One exception (step 597): the memory
-  element is turned on by `npm run remember` / `npm run remind` themselves.
+- Switch an element on your own initiative — only the person's «yes», the node's rule below 0.5 GB, or survival (above). One exception
+  (step 597): the memory element is turned on by `npm run remember` / `npm run remind` themselves.
+- Turn off for survival sign-in, data, storage or the core — they are the node itself; when they are the cause, tell the person with the
+  numbers and offer the consultation (a stronger computer or a VPS).
 - Turn off a `never` element (auth, data, storage) or the core, even when asked, without saying what stops working; the rule never does.
 - Edit the registry file by hand: the command also updates pm2 and its boot snapshot.

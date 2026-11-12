@@ -295,6 +295,10 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - **On or off.** A turned-on element always uses memory (sign-in), a turned-off one uses none (Stripe). The default is in the passport; the
   person switches it, or you after their yes (`npm run power`, skill `element-power`); a turned-off element is not given to
   neighbours. Separately — whether the element is visible in the Web4 network (`npm run web4`).
+- **Survival** (the owner, 2026-11-12: «на свое собственное усмотрение ради выживания проекта»). The node is in danger — less than
+  1 GB free, the computer cannot keep up, an element hangs or eats memory: you turn off or restart elements that may sleep yourself,
+  the heaviest with the least loss first (`npm run power`, never raw pm2); the same minute you tell the person what, why and how to
+  bring it back; sign-in, data, storage and the core — never; when the danger is gone you turn them on again yourself.
 - **The computer online** — the node serves everything. Offline — visitors see pages from the Cloudflare copy, without the dynamic part.
   «The closed lid» is a word of the core build; it is not used for this case.
 - **Name the process when work starts:** once, at the start of that message, in the person's language — Build process (it ends with a
