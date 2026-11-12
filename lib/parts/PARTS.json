@@ -1015,7 +1015,7 @@
         },
         {
           "id": "tool-looks",
-          "version": "1.1.1"
+          "version": "1.1.2"
         }
       ],
       "scope": "panel",
@@ -1170,7 +1170,7 @@
         "en": "Live tool looks",
         "ru": "Живые виды инструментов"
       },
-      "version": "1.1.1",
+      "version": "1.1.2",
       "parts": [
         {
           "id": "app-dialog",
@@ -1214,7 +1214,7 @@
         },
         {
           "id": "tool-translations-dialog",
-          "version": "1.1.0"
+          "version": "1.1.1"
         },
         {
           "id": "tool-video-trim",
@@ -1255,7 +1255,7 @@
         "lib/parts/tools-catalog",
         "sections/table.i18n"
       ],
-      "bodyHash": "207d9245afebac8c"
+      "bodyHash": "7c67d32415a42338"
     },
     {
       "id": "tool-shell-kit",
@@ -1510,7 +1510,7 @@
         "en": "Translations dialog",
         "ru": "Диалог переводов"
       },
-      "version": "1.1.0",
+      "version": "1.1.1",
       "parts": [
         {
           "id": "app-dialog",
@@ -1565,7 +1565,7 @@
         "lib/i18n/platform-errors",
         "lib/runtime-urls"
       ],
-      "bodyHash": "e9259e49ec555038"
+      "bodyHash": "102d90f380eaf095"
     },
     {
       "id": "tool-video-trim",

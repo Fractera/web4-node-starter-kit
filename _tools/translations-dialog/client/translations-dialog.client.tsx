@@ -219,6 +219,7 @@ export function TranslationsDialog(
             labels={{ save: t.saveOne, saving: t.saving, savedMark: t.savedMark }}
             onChange={v => field && setCell(code, field.key, v)}
             onSave={() => saveOne(code)}
+            lookDoor={lookDoor}
           />
         )
       })}

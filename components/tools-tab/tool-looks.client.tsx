@@ -41,6 +41,8 @@ export const LIVE_LOOKS = new Set(["chat", "code-view", "app-dialog", "table-too
 
 const SAMPLE_PICTURE = "/images/readme/one-billion-tokens.jpg"
 const SAMPLE_VIDEO = "/video/tool-look-sample.mp4"
+// The trimmer learns a length from `loadedmetadata`; a small clip fires it before the listener (seen 2026-11-12) — the sample's length is known.
+const SAMPLE_VIDEO_SECONDS = 6
 const cell = "px-4 py-3"
 
 export function ToolLook({ tool, tools, lang, words, ui, kit }: {
@@ -135,7 +137,7 @@ export function ToolLook({ tool, tools, lang, words, ui, kit }: {
         <div data-block="tool-look-video" className="flex flex-col gap-2">
           <Button type="button" variant="outline" className="self-start" onClick={() => setOpen(true)} data-look-open>{words.demoSampleOpen}</Button>
           {open && (
-            <VideoTrimmer mediaBase="" itemId="sample" name={kit.looks.trimmerName} labels={kit.looks.trimmer} dialogUi={ui}
+            <VideoTrimmer mediaBase="" itemId="sample" name={kit.looks.trimmerName} serverDuration={SAMPLE_VIDEO_SECONDS} labels={kit.looks.trimmer} dialogUi={ui}
               sampleSrc={SAMPLE_VIDEO} onClose={() => setOpen(false)} />
           )}
         </div>

@@ -22,7 +22,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { getLanguageFlag, getLanguageNativeName, type SupportedLanguage } from "@/config/translations/translations.config"
 
 export function TranslationCell(
-  { lang, value, multiline, dirty, saved, saving, labels, onChange, onSave }: {
+  { lang, value, multiline, dirty, saved, saving, labels, onChange, onSave, lookDoor }: {
     lang: string
     value: string
     multiline?: boolean
@@ -33,6 +33,8 @@ export function TranslationCell(
     labels: { save: string; saving: string; savedMark: string }
     onChange: (next: string) => void
     onSave: () => void
+    /** 733-8b: a look — the cell's microphone posts to this address instead, which refuses. */
+    lookDoor?: string
   },
 ) {
   const field = useRef<HTMLInputElement>(null)
@@ -66,7 +68,7 @@ export function TranslationCell(
           value={value}
           onChange={onChange}
           lang={lang}
-          apiUrl="/api/transcribe"
+          apiUrl={lookDoor ?? "/api/transcribe"}
         />
         {dirty && !saved && (
           <Button size="sm" variant="secondary" onClick={onSave} disabled={saving} className="h-7 text-[11px]">

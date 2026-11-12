@@ -402,7 +402,7 @@
       "id": "translations-dialog",
       "entry": "client/translations-dialog.client.tsx",
       "dir": "_tools/translations-dialog",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "parts": [
         {
           "id": "app-dialog",
