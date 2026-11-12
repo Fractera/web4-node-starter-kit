@@ -70,3 +70,33 @@ My pick: **A** — the only one where a change is made once and no element is ev
 element's life without the core. Order if yes: 727-1 the core renders the fragment + bundle (proved on the core's own pages) → 727-2
 the stub in the custom template (release) → 727-3 a live custom element shows the core's header, a change in the core seen there with
 no rebuild → 727-4 the footer and account the same way; native template and existing elements — after the owner's word (717 order).
+
+## The owner's answer (2026-11-12, verbatim)
+
+> Да, берём A, начинай
+
+and in the same turn:
+
+> Также в каждом элементе нужно коротко рассказать о том как он может избавляться от этих заглушек чтобы нарисовать свой собственный инструмент.
+
+## The shape, unfolded (variant A)
+
+Decisions of mine, one line each:
+- The browser talks only to the element's own origin: the stub carries one proxy route `/shell-kit/*` to the core over loopback — no
+  CORS, no core address in pages, the same on a temporary address and an own domain.
+- The core's door `/api/shell-kit/<lang>` (loopback, node key) answers the fragment: `html.header`, `html.footer`, the props and the
+  asset paths; the data is the project's ShellData the site already gives (`loadProjectShell` + `coreShellWhere`).
+- One code: the bundles are built by esbuild from the core's `components/shell/` (server render with its own React, browser hydration),
+  `next/link` and `next/navigation` shimmed; the CSS is Tailwind over the same files, without preflight, on the element's tokens.
+- The kit is a tool of the core: `_tools/shell-kit/` with its card — it shows on the core's «Инструменты» tab.
+
+Substeps:
+- **727-1** — the core gives the kit: tool folder, two bundles, the CSS, the door; proved by the door's answer and by eyes on a harness
+  that hydrates it (`727-1.md`).
+- **727-2** — the stub in the custom template: layout part + proxy route + the minimal fallback from the element's own CONFIG + a short
+  note for the element's agent how to drop the stub and draw its own; template release (`727-2.md`).
+- **727-3** — a live custom element on the node shows the core's header and footer; a change made only in the core is seen there with no
+  element rebuild (`727-3.md`).
+- **727-4** — the architect's catalog tabs (native, custom, state dots, «только работающие», search) inside the kit, seen in an element
+  by the architect, hidden from a guest (`727-4.md`).
+- Not in 727 without the owner's word: the native template, existing elements, the site (root) turning from the source into a consumer.
