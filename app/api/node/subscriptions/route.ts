@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
+import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { setBudget, subscriptionBalances, subscriptionsBoard } from "@/lib/web4-items/subscriptions-board"
 
 // «ВСЕ ПОДПИСКИ» (726-3). The Dashboard page is prerendered, so the services, the ledger and the key state are read here, on request.
@@ -17,8 +18,15 @@ export async function GET(req: NextRequest) {
   const denied = await requireRoles(req, ROLES)
   if (denied) return denied
   const lang = req.nextUrl.searchParams.get("lang") === "ru" ? "ru" : "en"
+  const asked = req.nextUrl.searchParams.get("balances") === "1"
+  // 726-4 fix (measured 2026-11-12 on the owner's node): the temporary address gives the panel READ-ONLY to anyone with the link
+  // (CLAUDE.md §2) — but «Check balances» is an act: the node calls the providers with ITS keys and shows a balance. Like a write, it
+  // works only on this computer or the own domain (the same answer the proxy gives a write there).
+  if (asked && isTemporaryPublicAddress(req)) {
+    return NextResponse.json({ ok: false, reason: "temporary-address" }, { status: 403, headers: { "Cache-Control": "no-store" } })
+  }
   const board = subscriptionsBoard(lang)
-  const balances = req.nextUrl.searchParams.get("balances") === "1" ? await subscriptionBalances(board.rows.map((r) => r.service)) : null
+  const balances = asked ? await subscriptionBalances(board.rows.map((r) => r.service)) : null
   return NextResponse.json({ ok: true, ...board, balances }, { headers: { "Cache-Control": "no-store" } })
 }
 
