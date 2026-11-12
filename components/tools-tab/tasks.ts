@@ -15,3 +15,8 @@ export function editTask(place: "core" | "element", title: string, dir: string):
   const own = place === "core" ? "of the core" : "of this element"
   return `Build process: improve the tool «${title}» ${own} (\`${dir}/\`) — keep its card tool.json true and rebuild the maps (npm run build:tools-map, npm run build:parts-map). What to change: `
 }
+
+/** 733-8: the core's tool into an element — a task for that element's agent, copied by the person and pasted into its terminal. */
+export function takeTask(id: string, title: string): string {
+  return `Build process: take the core's tool «${title}» into this element: npm run tool:take -- ${id} (first with --dry to see what comes). Use the copy as it is — its body is never edited; commit what was written and report where it will be used.`
+}

@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react"
 import { Plus } from "lucide-react"
+import { toast } from "sonner"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
 import { P, Small } from "@/components/ui/typography"
@@ -13,7 +14,7 @@ import type { ToolRow } from "@/lib/parts/tools-catalog"
 import type { ToolsTabWords } from "./tools-tab.i18n"
 import { ToolCard } from "./tool-card.client"
 import { ToolDemo, type ToolDemoKit } from "./tool-demo.client"
-import { createTask, editTask } from "./tasks"
+import { createTask, editTask, takeTask } from "./tasks"
 
 // ВКЛАДКА «ИНСТРУМЕНТЫ» (узел, шаг 725-8). Владелец 2026-11-12: «В праве вкладки ты будешь загружать по пять инструментов с кнопкой
 // показать ещё … Ниже списка стоит кнопка добавить инструмент … появляется кнопка запустить в разработку и прямо здесь на этой вкладке
@@ -21,6 +22,11 @@ import { createTask, editTask } from "./tasks"
 // редактировать … где-то в начале должно быть описание что такое инструменты … Эту надпись лучше раскрыть в аккордеоне».
 // 🔒 Список спрашивается при открытии (`/api/node/tools`): страница предрендерена, агент добавляет инструмент в любую минуту.
 // 🔒 ОДИН ТЕРМИНАЛ: пока ящик открыт, «Редактировать» и «Запустить в разработку» ждут — его сворачивают, и следующий получает новый ключ.
+// 733-8, владелец 2026-11-12 ~14:30: «раздвигать элемент вниз и внутри фиксированным окне открывать терминал на всю ширину также как и на
+// основной вкладке терминал. При нажатии на кнопку редактировать должно появиться уведомление описание инструмента скопировано вставьте в
+// его терминал … нельзя чтобы текст по Default отправлялся в терминал». Терминал — ПОД списком, во всю ширину (высоту держит сам
+// терминал, как на вкладке «Терминал»); «Редактировать» кладёт задачу в буфер и открывает ПУСТОЙ терминал; «Запустить в разработку»
+// остаётся явным действием человека над его же словами. Ядро на узле человека — только показ и «Взять в элемент» (дверь: `editable`).
 const PAGE = 5
 
 export function ToolsTab({ item, service, place, lang, words, kit, demo }: {
@@ -42,13 +48,15 @@ export function ToolsTab({ item, service, place, lang, words, kit, demo }: {
   const [text, setText] = useState("")
   const [drawer, setDrawer] = useState<{ n: number; text: string; start: boolean } | null>(null)
   const [refresh, setRefresh] = useState(0)
+  const [editable, setEditable] = useState(false)
 
   useEffect(() => {
     let live = true
     fetch(`/api/node/tools?item=${encodeURIComponent(item)}`, { cache: "no-store" })
       .then((r) => r.json())
-      .then((b: { ok?: boolean; tools?: ToolRow[] }) => {
+      .then((b: { ok?: boolean; tools?: ToolRow[]; editable?: boolean }) => {
         if (!live) return
+        setEditable(b.editable === true)
         if (b.ok && Array.isArray(b.tools)) setTools(b.tools)
         else setFailed(true)
       })
@@ -57,12 +65,15 @@ export function ToolsTab({ item, service, place, lang, words, kit, demo }: {
   }, [item, refresh])
 
   const open = (task: string, start: boolean) => setDrawer((d) => ({ n: (d?.n ?? 0) + 1, text: task, start }))
+  const copy = (text: string, said: string) =>
+    navigator.clipboard?.writeText(text).then(() => toast.success(said), () => toast.error(words.copyFailed)) ?? toast.error(words.copyFailed)
+  const edit = (t: ToolRow) => { copy(editTask(place, title(t), t.dir), words.copiedEdit); open("", false) }
   const busy = drawer !== null
   const title = (t: ToolRow) => (lang === "ru" ? t.ru.title : t.en.title)
 
   return (
-    <div data-block="tools-tab" className="flex flex-col gap-6 lg:flex-row lg:items-start">
-      <div data-block="tools-tab-main" className="flex min-w-0 flex-1 flex-col gap-6">
+    <div data-block="tools-tab" className="flex flex-col gap-6">
+      <div data-block="tools-tab-main" className="flex min-w-0 flex-col gap-6">
         <Accordion type="single" collapsible data-block="tools-tab-about">
           <AccordionItem value="about">
             <AccordionTrigger>{words.aboutTitle}</AccordionTrigger>
@@ -72,6 +83,7 @@ export function ToolsTab({ item, service, place, lang, words, kit, demo }: {
           </AccordionItem>
         </Accordion>
 
+        {!editable && tools && <P className="text-muted-foreground" data-tools-tab="read-only">{words.readOnly}</P>}
         {failed && <P className="text-muted-foreground" data-tools-tab="failed">{words.unavailable}</P>}
         {!failed && !tools && <P className="text-muted-foreground" data-tools-tab="loading">{words.loading}</P>}
         {tools && tools.length === 0 && <P className="text-muted-foreground" data-tools-tab="empty">{words.empty}</P>}
@@ -79,8 +91,9 @@ export function ToolsTab({ item, service, place, lang, words, kit, demo }: {
         {tools && tools.length > 0 && (
           <div data-block="tools-tab-list" className="flex flex-col gap-4">
             {tools.slice(0, count).map((t) => (
-              <ToolCard key={t.key} tool={t} lang={lang} words={words} editBlocked={busy}
-                onShow={() => setShown(t)} onEdit={() => open(editTask(place, title(t), t.dir), false)} />
+              <ToolCard key={t.key} tool={t} lang={lang} words={words} editBlocked={busy} onShow={() => setShown(t)}
+                onEdit={editable ? () => edit(t) : undefined}
+                onTake={!editable && t.scope === "any" ? () => copy(takeTask(t.id, title(t)), words.copiedTake) : undefined} />
             ))}
             <div data-block="tools-tab-more" className="flex flex-wrap items-center gap-3">
               <Small>{words.shown.replace("{n}", String(Math.min(count, tools.length))).replace("{total}", String(tools.length))}</Small>
@@ -91,12 +104,12 @@ export function ToolsTab({ item, service, place, lang, words, kit, demo }: {
           </div>
         )}
 
-        {!adding && (
+        {editable && !adding && (
           <Button type="button" variant="outline" className="w-full justify-start gap-2 border-dashed" onClick={() => setAdding(true)} data-tools-add>
             <Plus className="size-4" aria-hidden />{words.add}
           </Button>
         )}
-        {adding && (
+        {editable && adding && (
           <div data-block="tools-tab-add" className="flex flex-col gap-3">
             <VoiceTextarea value={text} onChange={setText} lang={lang} title={words.addTitle} hint={words.addHint} placeholder={words.addPlaceholder} rows={4} />
             <div className="flex flex-wrap gap-2">
@@ -111,7 +124,8 @@ export function ToolsTab({ item, service, place, lang, words, kit, demo }: {
       </div>
 
       {drawer && (
-        <TerminalDrawer key={drawer.n} service={service} lang={lang} words={{ title: words.drawerTitle, hint: words.drawerHint, collapse: words.collapse }}
+        <TerminalDrawer key={drawer.n} service={service} lang={lang} className="w-full"
+          words={{ title: words.drawerTitle, hint: drawer.start ? words.drawerHint : words.drawerHintEdit, collapse: words.collapse }}
           kit={kit} text={drawer.text} start={drawer.start} onCollapse={() => { setDrawer(null); setRefresh((n) => n + 1) }} />
       )}
       {shown && <ToolDemo tool={shown} lang={lang} words={words} ui={kit.dialogUi} kit={demo} onClose={() => setShown(null)} />}

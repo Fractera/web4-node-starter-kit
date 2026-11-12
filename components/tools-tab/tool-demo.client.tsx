@@ -44,7 +44,7 @@ export function ToolDemo({ tool, lang, words, ui, kit, onClose }: {
         {!live && (
           <div data-block="tool-demo-words" className="flex flex-col gap-3">
             <P>{t.what}</P>
-            <P className="text-muted-foreground">{t.value}</P>
+            {t.value && <P className="text-muted-foreground">{t.value}</P>}
             {needs.length > 0 && (
               <div className="flex flex-wrap gap-1.5">{needs.map((n) => <Badge key={n} variant="outline">{words.needNames[n] ?? n}</Badge>)}</div>
             )}

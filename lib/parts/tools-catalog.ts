@@ -2,18 +2,25 @@ import "server-only"
 import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 
-// THE TOOLS OF ONE PLACE FOR THE «TOOLS» TAB (node step 725-8). The owner, 2026-11-12: «Нажатие на кнопку инструмента справа откроет
-// карточки с описанием инструмента какое они задачи решают где могут быть использованы и то самое полное описание которое ты создал для
-// обнаружения этих инструментов. Очевидно что каждый элемент должен получить такую же карточку».
-// 🔒 The truth is the folder's own generated maps: `_tools/TOOLS.json` (the cards `tool.json`) and `lib/parts/PARTS.json` (the measured
-// `usedBy`). Nothing here is a second list; a place without the maps answers null and the tab says so.
+// THE TOOLS OF ONE PLACE FOR THE «TOOLS» TAB (node step 725-8, 733-8). The owner, 2026-11-12: «Нажатие на кнопку инструмента справа
+// откроет карточки с описанием инструмента какое они задачи решают где могут быть использованы и то самое полное описание которое ты создал
+// для обнаружения этих инструментов. Очевидно что каждый элемент должен получить такую же карточку».
+// 🔒 The truth is the folder's own generated maps: `lib/parts/PARTS.json` (every tool — a folder under `_tools/` or a component tool, 733-2:
+// its title, version, recipe, scope, measured `usedBy`) and `_tools/TOOLS.json` (the folder tools' longer words: how, value). Nothing here
+// is a second list; a place with neither map answers null and the tab says so.
 // 🔒 Read at the request, not at the build: an element's agent adds a tool at any minute, the panel's pages are prerendered.
 
 export type ToolText = { title: string; what: string; how: string; value: string }
 export type ToolRow = {
   /** The tool's id without the element templates' prefix «tool-» — the same tool has one key in the core and in an element. */
   key: string
+  /** The id in the parts map — what `npm run tool:take -- <id>` names. */
+  id: string
   dir: string
+  version: string
+  scope: "panel" | "any" | null
+  /** The tools it is made of (733-2): ids without the «tool-» prefix, with their versions. */
+  parts: { key: string; version: string }[]
   needs: string[]
   usedBy: string[]
   words: { en: string[]; ru: string[] }
@@ -21,8 +28,12 @@ export type ToolRow = {
   ru: ToolText
 }
 
-type RawTool = { id: string; dir?: string; needs?: string[]; usedBy?: string[]; words?: { en?: string[]; ru?: string[] }; en: ToolText; ru: ToolText }
-type RawPart = { id: string; kind: string; usedBy?: string[] }
+type Lang2 = { en?: string; ru?: string }
+type RawTool = { id: string; dir?: string; version?: string; needs?: string[]; usedBy?: string[]; words?: { en?: string[]; ru?: string[] }; en: ToolText; ru: ToolText }
+type RawPart = {
+  id: string; kind: string; path?: string; version?: string; scope?: "panel" | "any"; parts?: { id: string; version: string }[]
+  title?: Lang2 | string; what?: Lang2; how?: string; needs?: string[]; usedBy?: string[]; words?: { en?: string[]; ru?: string[] }
+}
 
 const readJson = <T,>(file: string): T | null => {
   try {
@@ -32,22 +43,47 @@ const readJson = <T,>(file: string): T | null => {
   }
 }
 
+const bare = (id: string) => id.replace(/^tool-/, "")
+
+/** A component tool's words from its card in the parts map; its «how» exists in English only — the Russian card shows it as it is. */
+function fromPart(p: RawPart, lang: "en" | "ru"): ToolText {
+  const title = typeof p.title === "string" ? p.title : p.title?.[lang] ?? p.title?.en ?? p.id
+  return { title, what: p.what?.[lang] ?? p.what?.en ?? "", how: p.how ?? "", value: "" }
+}
+
 /** The tools of the folder `dir` (the core's root or an element's folder), or null when it has no map. */
 export function readTools(dir: string | null): ToolRow[] | null {
-  if (!dir || !existsSync(join(dir, "_tools", "TOOLS.json"))) return null
-  const tools = readJson<{ tools?: RawTool[] }>(join(dir, "_tools", "TOOLS.json"))?.tools ?? []
-  const parts = readJson<{ parts?: RawPart[] }>(join(dir, "lib", "parts", "PARTS.json"))?.parts ?? []
-  const measured = new Map(parts.filter((p) => p.kind === "tool").map((p) => [p.id.replace(/^tool-/, ""), p.usedBy ?? []]))
-  return tools.map((t) => {
-    const key = t.id.replace(/^tool-/, "")
+  if (!dir) return null
+  const hasTools = existsSync(join(dir, "_tools", "TOOLS.json"))
+  const hasParts = existsSync(join(dir, "lib", "parts", "PARTS.json"))
+  if (!hasTools && !hasParts) return null
+  const folder = new Map((readJson<{ tools?: RawTool[] }>(join(dir, "_tools", "TOOLS.json"))?.tools ?? []).map((t) => [bare(t.id), t]))
+  const parts = (readJson<{ parts?: RawPart[] }>(join(dir, "lib", "parts", "PARTS.json"))?.parts ?? []).filter((p) => p.kind === "tool")
+  const rows: ToolRow[] = parts.map((p) => {
+    const key = bare(p.id)
+    const t = folder.get(key)
+    folder.delete(key)
     return {
       key,
-      dir: t.dir ?? `_tools/${t.id}`,
-      needs: t.needs ?? [],
-      usedBy: measured.get(key) ?? t.usedBy ?? [],
-      words: { en: t.words?.en ?? [], ru: t.words?.ru ?? [] },
-      en: t.en,
-      ru: t.ru,
+      id: p.id,
+      dir: t?.dir ?? (p.path?.startsWith("_tools/") ? p.path.split("/").slice(0, 2).join("/") : p.path ?? `_tools/${key}`),
+      version: p.version ?? t?.version ?? "",
+      scope: p.scope ?? null,
+      parts: (p.parts ?? []).map((x) => ({ key: bare(x.id), version: x.version })),
+      needs: p.needs ?? t?.needs ?? [],
+      usedBy: p.usedBy ?? t?.usedBy ?? [],
+      words: { en: p.words?.en ?? t?.words?.en ?? [], ru: p.words?.ru ?? t?.words?.ru ?? [] },
+      en: t?.en ?? fromPart(p, "en"),
+      ru: t?.ru ?? fromPart(p, "ru"),
     }
   })
+  // A place whose parts map is older than its tools map (an element born before 725) still shows its folder tools.
+  for (const [key, t] of folder) {
+    rows.push({
+      key, id: t.id, dir: t.dir ?? `_tools/${t.id}`, version: t.version ?? "", scope: null, parts: [], needs: t.needs ?? [],
+      usedBy: t.usedBy ?? [], words: { en: t.words?.en ?? [], ru: t.words?.ru ?? [] }, en: t.en, ru: t.ru,
+    })
+  }
+  // The ones a person meets first: a tool used by more files, then by name.
+  return rows.sort((a, b) => b.usedBy.length - a.usedBy.length || a.en.title.localeCompare(b.en.title))
 }

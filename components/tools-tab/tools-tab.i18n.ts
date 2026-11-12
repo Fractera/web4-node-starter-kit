@@ -33,6 +33,15 @@ export type ToolsTabWords = {
   drawerTitle: string
   drawerHint: string
   collapse: string
+  // 733-8 (the owner, 2026-11-12 ~14:30): «Edit» copies the task and says so; nothing goes into a terminal by itself.
+  drawerHintEdit: string
+  copiedEdit: string
+  copiedTake: string
+  copyFailed: string
+  madeOf: string
+  scopePanel: string
+  take: string
+  readOnly: string
 }
 
 const EN: ToolsTabWords = {
@@ -71,6 +80,14 @@ const EN: ToolsTabWords = {
   drawerTitle: "The agent's terminal",
   drawerHint: "The task is already in it. The agent builds the tool with its card; collapse the drawer at any time — the session keeps running.",
   collapse: "Collapse",
+  drawerHintEdit: "The edit task is on the clipboard, not in the terminal: check that this is the right terminal, paste it (Paste) and add what to change.",
+  copiedEdit: "The tool's description is copied — paste it into its terminal",
+  copiedTake: "The task is copied — paste it into the terminal of the element that needs the tool",
+  copyFailed: "The browser did not allow copying — select the text in the full description and copy it by hand",
+  madeOf: "Made of",
+  scopePanel: "the core's panel only",
+  take: "Take into an element",
+  readOnly: "These are the core's tools: the core is Fractera's, so on your node they are shown and taken into your elements as copies, never changed here. Your own tools live in each element's «Tools» tab.",
 }
 
 const RU: ToolsTabWords = {
@@ -109,6 +126,14 @@ const RU: ToolsTabWords = {
   drawerTitle: "Терминал агента",
   drawerHint: "Задача уже внутри. Агент построит инструмент вместе с карточкой; ящик можно свернуть в любой момент — сессия продолжится.",
   collapse: "Свернуть",
+  drawerHintEdit: "Задача правки скопирована, но не вставлена: проверьте, что это нужный терминал, вставьте её («Вставить») и допишите, что изменить.",
+  copiedEdit: "Описание инструмента скопировано — вставьте в его терминал",
+  copiedTake: "Задача скопирована — вставьте её в терминал элемента, которому нужен инструмент",
+  copyFailed: "Браузер не дал скопировать — выделите текст в полном описании и скопируйте вручную",
+  madeOf: "Из чего состоит",
+  scopePanel: "только панель ядра",
+  take: "Взять в элемент",
+  readOnly: "Это инструменты ядра: ядро принадлежит Fractera, поэтому на вашем узле их можно посмотреть и взять копией в свои элементы, но не менять здесь. Ваши собственные инструменты — на вкладке «Инструменты» каждого элемента.",
 }
 
 export function toolsTabUi(lang: string): ToolsTabWords {

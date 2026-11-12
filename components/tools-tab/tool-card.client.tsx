@@ -1,7 +1,7 @@
 "use client"
 // @part tool-card — one tool of the «Tools» tab: what it solves, where it is used, its full discovery text, Show and Edit
 
-import { ChevronDown, Eye, Pencil } from "lucide-react"
+import { ChevronDown, Copy, Eye, Pencil } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -13,12 +13,15 @@ import type { ToolsTabWords } from "./tools-tab.i18n"
 // ОДНА КАРТОЧКА ИНСТРУМЕНТА (725-8). Владелец 2026-11-12: «карточки с описанием инструмента какое они задачи решают где могут быть
 // использованы и то самое полное описание которое ты создал для обнаружения этих инструментов». Сверху — что он решает (это читают
 // всегда); где используется — строкой; полное описание (как устроен, зачем, слова поиска) — свёрнуто, его открывают, когда выбирают.
-export function ToolCard({ tool, lang, words, onShow, onEdit, editBlocked }: {
+// 733-8: the version and the recipe (what it is made of) on the card; «Edit» only where the tab may start an agent, «Take into an element»
+// for the core's tools of scope «any» on a person's node — each copies a task, the person pastes it where it belongs.
+export function ToolCard({ tool, lang, words, onShow, onEdit, onTake, editBlocked }: {
   tool: ToolRow
   lang: string
   words: ToolsTabWords
   onShow: () => void
-  onEdit: () => void
+  onEdit?: () => void
+  onTake?: () => void
   editBlocked: boolean
 }) {
   const t = lang === "ru" ? tool.ru : tool.en
@@ -27,7 +30,11 @@ export function ToolCard({ tool, lang, words, onShow, onEdit, editBlocked }: {
   return (
     <Card data-block="tool-card" data-tool={tool.key} className="gap-3">
       <CardHeader className="gap-1.5">
-        <CardTitle>{t.title}</CardTitle>
+        <div className="flex flex-wrap items-center gap-2">
+          <CardTitle>{t.title}</CardTitle>
+          {tool.version && <Badge variant="secondary" className="font-mono">v{tool.version}</Badge>}
+          {tool.scope === "panel" && <Badge variant="outline">{words.scopePanel}</Badge>}
+        </div>
         <CardDescription className="font-mono text-xs">{tool.dir}</CardDescription>
       </CardHeader>
       <CardContent data-block="tool-card-body" className="flex flex-col gap-3">
@@ -38,6 +45,12 @@ export function ToolCard({ tool, lang, words, onShow, onEdit, editBlocked }: {
             ? <Small className="break-all font-mono text-xs">{tool.usedBy.join(" · ")}</Small>
             : <Small>{words.usedNowhere}</Small>}
         </div>
+        {tool.parts.length > 0 && (
+          <div data-block="tool-card-parts" className="flex flex-wrap items-center gap-1.5">
+            <Small className="font-medium text-foreground">{words.madeOf}</Small>
+            {tool.parts.map((x) => <Badge key={x.key} variant="outline" className="font-mono">{x.key} v{x.version}</Badge>)}
+          </div>
+        )}
         {needs.length > 0 && (
           <div data-block="tool-card-needs" className="flex flex-wrap items-center gap-1.5">
             <Small className="font-medium text-foreground">{words.needs}</Small>
@@ -53,7 +66,7 @@ export function ToolCard({ tool, lang, words, onShow, onEdit, editBlocked }: {
           </CollapsibleTrigger>
           <CollapsibleContent data-block="tool-card-full" className="flex flex-col gap-3 pt-2">
             <div className="flex flex-col gap-1"><Small className="font-medium text-foreground">{words.how}</Small><P>{t.how}</P></div>
-            <div className="flex flex-col gap-1"><Small className="font-medium text-foreground">{words.value}</Small><P>{t.value}</P></div>
+            {t.value && <div className="flex flex-col gap-1"><Small className="font-medium text-foreground">{words.value}</Small><P>{t.value}</P></div>}
             {search.length > 0 && (
               <div className="flex flex-wrap items-center gap-1.5">
                 <Small className="font-medium text-foreground">{words.searchWords}</Small>
@@ -67,9 +80,16 @@ export function ToolCard({ tool, lang, words, onShow, onEdit, editBlocked }: {
         <Button type="button" variant="outline" size="sm" className="gap-1.5" onClick={onShow} data-tool-show>
           <Eye className="size-4" aria-hidden />{words.show}
         </Button>
-        <Button type="button" variant="ghost" size="sm" className="gap-1.5" onClick={onEdit} disabled={editBlocked} data-tool-edit>
-          <Pencil className="size-4" aria-hidden />{words.edit}
-        </Button>
+        {onEdit && (
+          <Button type="button" variant="ghost" size="sm" className="gap-1.5" onClick={onEdit} disabled={editBlocked} data-tool-edit>
+            <Pencil className="size-4" aria-hidden />{words.edit}
+          </Button>
+        )}
+        {onTake && (
+          <Button type="button" variant="ghost" size="sm" className="gap-1.5" onClick={onTake} data-tool-take>
+            <Copy className="size-4" aria-hidden />{words.take}
+          </Button>
+        )}
       </CardFooter>
     </Card>
   )
