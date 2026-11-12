@@ -18,6 +18,36 @@ A tool here is a small reusable piece with a home: one folder, one `tool.json` c
 one place in the showcase that says what it does, how to use it and what it needs. Not a helper
 hidden in a feature folder — those are invisible, and invisible is the same as absent.
 
+## 🔒 What a tool is — decided at its birth, not after (step 733)
+
+The owner, 2026-11-12: «модели не понимают когда их создавать и куда их складывать и вторая задача более первичная чем первая». A
+search finds only what was born as a tool; a tool written inside a feature is invisible forever. So the question comes FIRST, at the
+moment you are about to write code, and it has a fixed answer — the definition in the panel glossary (`architect-home.i18n.ts`, «Tool»):
+
+> **A tool is a job, not a place**: one job you can name with a verb and an object without naming a page («crop a picture», «turn speech
+> into text», «translate fields»). Its material comes from outside, its result goes back out, and it does not know who holds it.
+
+Every tool already here proves it in its own card: the translations dialog «connects to any entity with translatable fields», the fact
+draft gets «the schema of fields as a parameter», the terminal paste window «does not know the socket», the image crop «the server
+learns only the result».
+
+**Three questions, in this order, about the piece you are about to write — each a yes or a no, no guessing about the future:**
+
+1. Is it how the content of a page looks (a hero, prices, questions)? → a **section** (`use-sections`).
+2. Does it read this route's data or know where it stands? → a **widget** of that route (`use-widgets`).
+3. Does it do one job «verb + object», take its material from outside and give its result back out? → a **tool**, even when only one
+   place needs it today. «Needed in the future» is not a forecast: the shape of the contract already says it.
+
+A job born INSIDE a widget or a section is taken out into a tool, and the widget calls it — the row «state dot + element name» was
+written three times in one step (722) because nobody asked the third question at the first copy.
+
+**A composite is not a tool** (`components/<folder>/`): it is a ready CONTROL that holds a value of a form and produces no result of its
+own — the voice textarea holds text; the job, transcription, belongs to the voice tool under it. A composite that produces a result is a
+tool. (The owner confirms this boundary at 733-1's review.)
+
+**Where it goes:** `_tools/<id>/` with its card `tool.json` in the same commit — in the element where it is born. On a person's node the
+core is Fractera's and takes no new tools (CLAUDE.md §6); the core's own tools come with Fractera's releases.
+
 ## Where to look, in this repository
 
 **The list: `_tools/TOOLS.json`** and each tool's own folder `_tools/<id>/`: what it does, how to use it, what it gives you, what

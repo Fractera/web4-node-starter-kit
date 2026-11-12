@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// THE GATE OF A NEW INTERFACE FILE (node steps 725-3 and 725-7). PreToolUse on Write.
+// THE GATE OF A NEW INTERFACE FILE (node steps 725-3, 725-7 and 733-1). PreToolUse on Write.
 //
 // The owner, 2026-11-11: «вместо того чтобы взять готовые инструмент ты по какой-то причине полез создавать новый и создал говно» and
 // «гораздо важнее иметь технологию для того чтобы из того процесса в котором ты находишься в процессе строительства понять что именно
@@ -8,6 +8,9 @@
 // 🔒 A NEW `.tsx` in the interface folders is written only when (1) this session asked the parts map — the tool `parts_find` or
 // `npm run parts` is in its transcript — and (2) its first lines say what is being born: `// @part <id> — <what>` (its card in the
 // folder's parts.json, held by check:parts-map) or `// @local — <why no one else needs it>`.
+// 🔒 733-1 (the owner, 2026-11-12: «модели не понимают когда их создавать и куда их складывать и вторая задача более первичная чем
+// первая»): every refusal asks the three questions of the definition (skill use-tools); a file born under `_tools/<id>/` needs that
+// tool's card `tool.json` on disk first — the card is its declaration: the job is written before the code.
 // 🔒 Not held: an edit of an existing file (not a birth), route files (page, layout, route …), shadcn's own sources, a design skill's
 // territory (sections, prototypes, widgets — local by nature), a project without the parts map (lib/parts/PARTS.json).
 // 🛑 The hook never breaks work: an unreadable input or no transcript — it passes; the build's guards stand behind it.
@@ -36,14 +39,19 @@ let log = ""
 try { log = fs.readFileSync(call?.transcript_path ?? "", "utf8") } catch { process.exit(0) }
 const asked = /"name":"mcp__[a-z0-9_-]*__parts_find"/.test(log) || /npm run parts\b/.test(log)
 const head = String(call?.tool_input?.content ?? "").split("\n").slice(0, 8).join("\n")
-const declared = /\/\/\s*@part\s+[a-z0-9-]+/.test(head) || /\/\/\s*@local\b/.test(head)
+const tool = /^_tools\/([^/]+)\//.exec(rel)
+const carded = tool ? fs.existsSync(path.join(root, "_tools", tool[1], "tool.json")) : false
+const declared = carded || /\/\/\s*@part\s+[a-z0-9-]+/.test(head) || /\/\/\s*@local\b/.test(head)
 if (asked && declared) process.exit(0)
 
 const why = []
 if (!asked) why.push("ask the parts map first — the tool parts_find (or npm run parts -- <words>) with what you are about to build: a ready part is taken as it is, never built a second time")
-if (!declared) why.push("say on the file's first lines what is being born: `// @part <id> — <what it does>` if the node will need it again (its card goes into the folder's parts.json in the same commit), or `// @local — <why no one else needs it>`")
+if (tool && !carded) why.push(`write the tool's card _tools/${tool[1]}/tool.json first — its job «verb + object», what comes in, what goes out — then its code`)
+else if (!declared) why.push("say on the file's first lines what is being born: `// @part <id> — <what it does>` (a reusable control, its card in the folder's parts.json in the same commit) or `// @local — <why no one else needs it>`")
 process.stderr.write(
-  `New interface file ${rel}: ${why.join("; then ")}. The owner, 2026-11-11: «понять что именно сейчас ты создаёшь инструмент этот ` +
-  `инструмент который будет нужен тебе в будущем». Node step 725.\n`,
+  `New interface file ${rel}: ${why.join("; then ")}. Before it is born, answer three questions (skill use-tools): 1) is it how a page's ` +
+  `content looks? → a section; 2) does it read this route's data or know where it stands? → a widget of that route; 3) does it do one ` +
+  `job «verb + object», take its material from outside and give its result back out? → a TOOL: _tools/<id>/ with its card, even when one ` +
+  `place needs it today. The owner, 2026-11-12: «модели не понимают когда их создавать и куда их складывать». Node step 733.\n`,
 )
 process.exit(2)

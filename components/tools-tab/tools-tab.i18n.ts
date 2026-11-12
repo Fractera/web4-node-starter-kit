@@ -38,8 +38,8 @@ export type ToolsTabWords = {
 const EN: ToolsTabWords = {
   aboutTitle: "What tools are",
   about: [
-    "A tool is a ready working piece with its own logic — a voice input, a chat, image cropping, a code view, a terminal drawer. It lives in `_tools/<name>/` with a card that says what it solves, how it is used and what it needs, and any page or element of the node can take it.",
-    "A section is a designed part of a page (a hero, a price list, questions) — it is how a page looks. A widget is code that belongs to one route only, when a section is not enough. A tool is neither: it carries behaviour that several places need.",
+    "A tool is one job you can name with a verb and an object without naming a page: crop a picture, turn speech into text, translate fields. Its material comes from outside, its result goes back out, and it does not know who holds it — so any page of any element can use it. It lives in `_tools/<name>/` with a card: the job, how it is used, what it needs.",
+    "A section is how a page's content looks (a hero, prices, questions). A widget is code that belongs to one page address: it reads that page's data and knows where it stands. A job with an input and an output is a tool even when only one place needs it today — the agent decides this when the code is born, not later.",
     "Before building anything, the agent asks the parts map (parts_find): a ready tool is taken as it is, never built a second time. A new one is born here — say what it must do, and the agent builds it with its card.",
   ],
   loading: "Asking the node for the tools…",
@@ -76,8 +76,8 @@ const EN: ToolsTabWords = {
 const RU: ToolsTabWords = {
   aboutTitle: "Что такое инструменты",
   about: [
-    "Инструмент — готовая рабочая часть со своей логикой: голосовой ввод, чат, обрезка картинки, просмотр кода, ящик терминала. Он живёт в `_tools/<имя>/` с карточкой: какую задачу решает, как им пользоваться и что ему нужно; его может взять любая страница или любой элемент узла.",
-    "Секция — оформленная часть страницы (герой, прайс, вопросы): это то, как страница выглядит. Виджет — код, который принадлежит только одному маршруту, когда секции мало. Инструмент — ни то ни другое: он несёт поведение, которое нужно нескольким местам.",
+    "Инструмент — одна работа, которую можно назвать глаголом с предметом, не называя страницы: обрезать картинку, превратить речь в текст, перевести поля. Материал приходит снаружи, результат уходит наружу, а кто его держит, инструмент не знает, — поэтому им может пользоваться любая страница любого элемента. Он живёт в `_tools/<имя>/` с карточкой: работа, как им пользоваться, что ему нужно.",
+    "Секция — то, как выглядит содержание страницы (герой, цены, вопросы). Виджет — код, который принадлежит одному адресу страницы: читает её данные и знает, где стоит. Работа с входом и выходом — это инструмент, даже если сегодня она нужна в одном месте: агент решает это в момент, когда код рождается, а не потом.",
     "Прежде чем что-то строить, агент спрашивает карту частей (parts_find): готовый инструмент берётся как есть и никогда не строится второй раз. Новый рождается здесь — скажите, что он должен уметь, и агент построит его вместе с карточкой.",
   ],
   loading: "Спрашиваю узел об инструментах…",

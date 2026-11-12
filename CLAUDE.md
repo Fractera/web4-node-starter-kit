@@ -388,8 +388,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   the Web4 network: agents of other nodes find it and give it orders through Lagrix.
 - **Section** — a designed part of a page: the core's own catalogue in the core, the element's own code in an element. **Widget**
   — not an element: code inside an element, when a section is not enough
-  or the code is needed nowhere else (`static/`, `dynamic/`). **Tool** — a reusable part inside an element. Widgets and tools are the
-  element agents' business; you understand these words when elements say them.
+  or the code is needed nowhere else (`static/`, `dynamic/`). **Tool** — one job «verb + object» that names no page: its material
+  comes from outside, its result goes out, and it does not know who holds it (`_tools/<id>/` with its card; step 733). Widgets and
+  tools are the element agents' business; you understand these words when elements say them.
 - **Build** and **working process** — section 5; **pass** — a separate build session: main, design, texts, study.
 - The glossary at the entrance of the control panel is the only source of definitions; words on pages are marked with a hint
   (`check:term-hints`).

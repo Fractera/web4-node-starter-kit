@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// npm run test:parts-gate — the gate of a new interface file (725-3, 725-7): parts asked in the session, the birth declared.
+// npm run test:parts-gate — the gate of a new interface file (725-3, 725-7, 733-1): parts asked in the session, the birth declared, a tool carded first.
 import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
@@ -38,6 +38,12 @@ expect("shadcn's own source — allowed", run("components/ui/new.tsx"), 0)
 expect("a widget (design territory) — allowed", run("app/[lang]/(publicLayer)/blog/_widgets/static/w/w.tsx"), 0)
 expect("not an interface file — allowed", run("lib/x.ts"), 0)
 expect("an Edit is not a birth — allowed", run("components/x/a.client.tsx", { tool: "Edit" }), 0)
+// 733-1: a tool is born with its card first; every refusal asks the three questions of the definition.
+expect("a refusal asks the three questions", run("components/x/q.client.tsx", { asked: true }), 2, "«verb + object»")
+expect("a new tool file without its card — refused, the card named", run("_tools/qr-code/client/qr.client.tsx", { asked: true }), 2, "_tools/qr-code/tool.json")
+fs.mkdirSync(path.join(root, "_tools/qr-code"), { recursive: true }); fs.writeFileSync(path.join(root, "_tools/qr-code/tool.json"), "{}")
+expect("a new tool file with its card — allowed, the card declares it", run("_tools/qr-code/client/qr.client.tsx", { asked: true }), 0)
+expect("a carded tool still asks the parts map first", run("_tools/qr-code/client/qr2.client.tsx"), 2, "parts_find")
 const bare = fs.mkdtempSync(path.join(os.tmpdir(), "parts-gate-bare-"))
 expect("a project without the parts map — allowed", run("components/x/a.client.tsx", { cwd: bare }), 0)
 fs.rmSync(root, { recursive: true, force: true }); fs.rmSync(bare, { recursive: true, force: true })
