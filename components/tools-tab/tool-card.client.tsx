@@ -13,6 +13,10 @@ import type { ToolsTabWords } from "./tools-tab.i18n"
 // ОДНА КАРТОЧКА ИНСТРУМЕНТА (725-8). Владелец 2026-11-12: «карточки с описанием инструмента какое они задачи решают где могут быть
 // использованы и то самое полное описание которое ты создал для обнаружения этих инструментов». Сверху — что он решает (это читают
 // всегда); где используется — строкой; полное описание (как устроен, зачем, слова поиска) — свёрнуто, его открывают, когда выбирают.
+// 733-8, measured by eyes: the modal window is used by 50 files — the whole list made a wall; the card names three and «and N more»,
+// the full list lives in the full description.
+const SHORT = 3
+
 // 733-8: the version and the recipe (what it is made of) on the card; «Edit» only where the tab may start an agent, «Take into an element»
 // for the core's tools of scope «any» on a person's node — each copies a task, the person pastes it where it belongs.
 export function ToolCard({ tool, lang, words, onShow, onEdit, onTake, editBlocked }: {
@@ -42,7 +46,7 @@ export function ToolCard({ tool, lang, words, onShow, onEdit, onTake, editBlocke
         <div data-block="tool-card-used" className="flex flex-col gap-1">
           <Small className="font-medium text-foreground">{words.usedBy}</Small>
           {tool.usedBy.length
-            ? <Small className="break-all font-mono text-xs">{tool.usedBy.join(" · ")}</Small>
+            ? <Small className="break-all font-mono text-xs">{tool.usedBy.slice(0, SHORT).join(" · ")}{tool.usedBy.length > SHORT ? ` · ${words.usedMore.replace("{n}", String(tool.usedBy.length - SHORT))}` : ""}</Small>
             : <Small>{words.usedNowhere}</Small>}
         </div>
         {tool.parts.length > 0 && (
@@ -66,6 +70,12 @@ export function ToolCard({ tool, lang, words, onShow, onEdit, onTake, editBlocke
           </CollapsibleTrigger>
           <CollapsibleContent data-block="tool-card-full" className="flex flex-col gap-3 pt-2">
             <div className="flex flex-col gap-1"><Small className="font-medium text-foreground">{words.how}</Small><P>{t.how}</P></div>
+            {tool.usedBy.length > SHORT && (
+              <div className="flex flex-col gap-1">
+                <Small className="font-medium text-foreground">{words.usedAll.replace("{n}", String(tool.usedBy.length))}</Small>
+                <Small className="break-all font-mono text-xs">{tool.usedBy.join(" · ")}</Small>
+              </div>
+            )}
             {t.value && <div className="flex flex-col gap-1"><Small className="font-medium text-foreground">{words.value}</Small><P>{t.value}</P></div>}
             {search.length > 0 && (
               <div className="flex flex-wrap items-center gap-1.5">

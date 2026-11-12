@@ -1,7 +1,7 @@
 "use client"
 // @part tools-tab — the «Tools» tab of the core and of every element: what tools are, the cards five at a time, a look, edit and add through one terminal
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Plus } from "lucide-react"
 import { toast } from "sonner"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -49,6 +49,9 @@ export function ToolsTab({ item, service, place, lang, words, kit, demo }: {
   const [drawer, setDrawer] = useState<{ n: number; text: string; start: boolean } | null>(null)
   const [refresh, setRefresh] = useState(0)
   const [editable, setEditable] = useState(false)
+  // 733-8, measured by eyes: below 33 cards the terminal opened at y 3087 — off the screen; it is brought into view when it opens.
+  const below = useRef<HTMLDivElement>(null)
+  useEffect(() => { if (drawer) below.current?.scrollIntoView({ behavior: "smooth", block: "start" }) }, [drawer?.n])
 
   useEffect(() => {
     let live = true
@@ -124,9 +127,11 @@ export function ToolsTab({ item, service, place, lang, words, kit, demo }: {
       </div>
 
       {drawer && (
+        <div ref={below} data-block="tools-tab-terminal" className="scroll-mt-24">
         <TerminalDrawer key={drawer.n} service={service} lang={lang} className="w-full"
           words={{ title: words.drawerTitle, hint: drawer.start ? words.drawerHint : words.drawerHintEdit, collapse: words.collapse }}
           kit={kit} text={drawer.text} start={drawer.start} onCollapse={() => { setDrawer(null); setRefresh((n) => n + 1) }} />
+        </div>
       )}
       {shown && <ToolDemo tool={shown} lang={lang} words={words} ui={kit.dialogUi} kit={demo} onClose={() => setShown(null)} />}
     </div>

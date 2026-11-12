@@ -42,6 +42,8 @@ export type ToolsTabWords = {
   scopePanel: string
   take: string
   readOnly: string
+  usedMore: string
+  usedAll: string
 }
 
 const EN: ToolsTabWords = {
@@ -87,6 +89,8 @@ const EN: ToolsTabWords = {
   madeOf: "Made of",
   scopePanel: "the core's panel only",
   take: "Take into an element",
+  usedMore: "and {n} more in the full description",
+  usedAll: "Every file that uses it ({n})",
   readOnly: "These are the core's tools: the core is Fractera's, so on your node they are shown and taken into your elements as copies, never changed here. Your own tools live in each element's «Tools» tab.",
 }
 
@@ -133,6 +137,8 @@ const RU: ToolsTabWords = {
   madeOf: "Из чего состоит",
   scopePanel: "только панель ядра",
   take: "Взять в элемент",
+  usedMore: "и ещё {n} — в полном описании",
+  usedAll: "Все файлы, где он используется ({n})",
   readOnly: "Это инструменты ядра: ядро принадлежит Fractera, поэтому на вашем узле их можно посмотреть и взять копией в свои элементы, но не менять здесь. Ваши собственные инструменты — на вкладке «Инструменты» каждого элемента.",
 }
 
