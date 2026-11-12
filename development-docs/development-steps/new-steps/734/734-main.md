@@ -46,7 +46,21 @@ then ~17:35: «да, утверждаю, начинай с правила». The
     never root; the core's panel draws its shell data itself (CONFIG and its own catalogue), not root's `/api/shell`; the panel's «home»
     link is the core's own. Proof: root turned off — the panel keeps its header and footer.
   - 3b birth: a new element with the project look takes design and settings from CONFIG, never root's folder. Proof: a dry birth with
-    root absent.
+    root absent. MEASURED 2026-11-12 ~19:05 (plan for the owner's yes):
+    - found: `scripts/item-birth.mjs`:192-208 (`look === 'project'`) copies root's `DESIGN-CONFIG/design-config.json` into the newborn
+      and root's copy `data/services/root/project-settings.json` into `data/services/<id>/`; `scripts/sync-site-design.mjs` (every core
+      build) takes the core's design from root's `/api/settings/design`. CONFIG already holds all three kinds (app 21 keys, platform 12,
+      design colors/fonts/type/shape/blocks) and serves them by MCP `get_project_settings` with the node key; the registry names it by
+      `provides: ["project-settings"]`.
+    - 3b-1 birth: the core asks the element that provides `project-settings` (`get_project_settings`, node key) and writes the newborn's
+      copy in the element's own shape (`receivedAt, from, version, patches, catalog`); no file from root's folder — the template's
+      DESIGN-CONFIG stays and CONFIG's design patch lies over it (the element's readers already do that). CONFIG silent → born with the
+      template's files, catches up at its start (printed, as before). `--like <id>` (the person's own pick) unchanged.
+    - 3b-2 the core's design: `sync-site-design.mjs` reads the design from the `project-settings` provider, never root; the empty-answer
+      guard stays.
+    - proofs: a guard line — neither script names root (negative control: put it back → the guard fails); a real test birth with
+      root's process stopped (its copy `from` = CONFIG, its first page drawn in the project's colours — eyes), then the test element
+      removed after the owner's yes; a core build with root stopped prints the design taken from CONFIG.
   - 3c the bare domain: a setting in the node's domain record names the element (or the core) that answers it; every reader
     (activate, reach, preview-url, dashboard, check-addresses, main-agent-cli, services-install) reads the setting, never the id. Today's
     node keeps root there by the setting.
