@@ -4,9 +4,10 @@
 // презентационной страницы авторизации у меня имеет белую тему голубую. Что за калейдоскоп». Оформление —
 // настройка САЙТА (закон направления потока, 280-6), а ядро читало свой отдельный файл и оставалось зелёным.
 //
-// 🔒 ПЕРЕД КАЖДОЙ СБОРКОЙ ЯДРО БЕРЁТ ОФОРМЛЕНИЕ У САЙТА и кладёт его в `DESIGN-CONFIG/design-config.json`.
+// 🔒 ПЕРЕД КАЖДОЙ СБОРКОЙ ЯДРО БЕРЁТ ОФОРМЛЕНИЕ ПРОЕКТА (с 734-3b — у поставщика `project-settings`, CONFIG) и кладёт его в
+// `DESIGN-CONFIG/design-config.json`.
 // Файл ядра — производная копия, у неё один писатель (этот скрипт); руками его не править.
-// 🛑 Сайт не ответил — файл остаётся прежним, и это ПЕЧАТАЕТСЯ: молчаливый откат уже стоил нам «калейдоскопа».
+// 🛑 Поставщик не ответил — файл остаётся прежним, и это ПЕЧАТАЕТСЯ: молчаливый откат уже стоил нам «калейдоскопа».
 import { readFileSync, writeFileSync, renameSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -14,47 +15,26 @@ import { fileURLToPath } from 'node:url'
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const FILE = join(ROOT, 'DESIGN-CONFIG', 'design-config.json')
 
-function key() {
-  if (process.env.SETTINGS_SECRET?.trim()) return process.env.SETTINGS_SECRET.trim()
-  try {
-    const m = readFileSync(join(ROOT, '.env.local'), 'utf8').match(/^SETTINGS_SECRET=(.*)$/m)
-    return m ? m[1].trim() : ''
-  } catch {
-    return ''
-  }
-}
-
-function sitePort() {
-  try {
-    const reg = JSON.parse(readFileSync(join(ROOT, 'WEB4-ITEMS-REGISTRY', 'web4-items.json'), 'utf8'))
-    const root = (reg.services ?? []).find((s) => s.id === 'root')
-    return root && Number.isInteger(root.port) ? root.port : null
-  } catch {
-    return null
-  }
-}
-
+// 734-3b (владелец 2026-11-12: «ядро — особая сущность, все элементы равны»; выбор B): оформление проекта — у элемента, который даёт
+// `project-settings` (CONFIG), его собственная дверь `/api/settings/design` ключом узла. ✗ До 734-3b ядро брало его у сайта root.
+const { projectDesign } = await import('../lib/web4-items/project-settings-source.mjs')
 const warn = (why) => {
   console.warn(`[sync-site-design] ${why} — ядро соберётся со своим прежним оформлением`)
   process.exit(0)
 }
 
-const port = sitePort()
-const k = key()
-if (!port) warn('сайта нет в реестре узла')
-if (!k) warn('нет SETTINGS_SECRET')
+let registry = null
+try { registry = JSON.parse(readFileSync(join(ROOT, 'WEB4-ITEMS-REGISTRY', 'web4-items.json'), 'utf8')) } catch { warn('реестр узла не прочитан') }
 
 let config = null
+let from = ''
 for (let attempt = 0; attempt < 3 && !config; attempt++) {
-  try {
-    const res = await fetch(`http://127.0.0.1:${port}/api/settings/design`, { headers: { 'x-settings-key': k }, signal: AbortSignal.timeout(10000) })
-    const body = await res.json()
-    if (res.ok && body && body.ok && body.config && typeof body.config === 'object') config = body.config
-    else throw new Error(`HTTP ${res.status}`)
-  } catch (err) {
-    if (attempt === 2) warn(`сайт не ответил (${err instanceof Error ? err.message : err})`)
-    await new Promise((r) => setTimeout(r, 1000))
-  }
+  const r = await projectDesign({ root: ROOT, registry })
+  if (r.ok) { config = r.config; from = r.provider; break }
+  if (r.reason === 'no-provider') warn('в реестре нет элемента, который даёт настройки проекта')
+  if (r.reason === 'no-settings-key') warn('нет SETTINGS_SECRET')
+  if (attempt === 2) warn(`«настройки проекта» не ответили (${r.reason})`)
+  await new Promise((res) => setTimeout(res, 1000))
 }
 
 const next = JSON.stringify(config, null, 2) + '\n'
@@ -70,14 +50,14 @@ const hasColors = (c) => !!c && typeof c === 'object' && !!c.colors && Object.ke
 let prevConfig = null
 try { prevConfig = JSON.parse(prev) } catch { /* прежний файл пуст или битый */ }
 if (!hasColors(config) && hasColors(prevConfig)) {
-  console.warn('[sync-site-design] ⚠ сайт отдал ПУСТОЕ оформление, а у ядра оно настроено — оставляю прежнее. Проверь дверь /api/settings/design сайта.')
+  console.warn(`[sync-site-design] ⚠ «${from}» отдал ПУСТОЕ оформление, а у ядра оно настроено — оставляю прежнее. Проверь его дверь /api/settings/design.`)
   process.exit(0)
 }
 if (prev.replace(/\r\n/g, '\n') === next) {
-  console.log('[sync-site-design] оформление ядра уже совпадает с сайтом')
+  console.log(`[sync-site-design] оформление ядра уже совпадает с оформлением проекта («${from}»)`)
 } else {
   const tmp = `${FILE}.${process.pid}.tmp`
   writeFileSync(tmp, next, 'utf8')
   renameSync(tmp, FILE)
-  console.log('[sync-site-design] оформление ядра взято у сайта')
+  console.log(`[sync-site-design] оформление ядра взято у оформления проекта («${from}»)`)
 }

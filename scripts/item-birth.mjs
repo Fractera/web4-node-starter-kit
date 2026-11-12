@@ -15,7 +15,7 @@
 // 🔒 Процессы — `windowsHide: true` (закон 2026-09-18). Ничего не делается само: прибор запускает человек (или кнопка 319-3).
 // 🔒 Отказ до записи реестра не оставляет следов; отказ сборки оставляет папку и запись — повтор одной командой (печатается).
 
-import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { createRequire } from 'node:module'
@@ -170,9 +170,7 @@ if (vectorFile) {
 // настройкам всего проекта … если у меня даже страницы архитектора и авторизации жёлтые то и новый проект должен покраситься сразу»).
 // ✗ Замерено кодом: шаблон приезжает со своим `DESIGN-CONFIG`, поэтому шаг 4а установщика («если своего файла ещё нет») его
 // пропускал, а копию CONFIG элемент забирал только при запуске — ПОСЛЕ первой сборки: первая сборка выходила цветом и меню шаблона.
-// Файл шаблона — не «свой файл» элемента: здесь он заменяется оформлением проекта (у сайта root), а в
-// папку данных элемента кладётся последняя копия настроек проекта (её получил root от CONFIG) — сборка читает обе. Нет root или
-// его файлов — элемент рождается с файлами шаблона и догоняет проект при запуске, как прежде.
+// Здесь файл шаблона заменяется оформлением проекта, а в папку данных кладётся копия настроек проекта — обе от CONFIG (734-3b, ниже).
 // 367 (слово владельца 2026-10-01: «тема зелёная стартер синий, в одном случае стартер приедет синий а другой зелёный»): рычаги
 // `data/services/<id>/links.json` ставятся ДО установки — её и первую сборку читают те же рычаги (`linkOn` шаблона).
 // `own` — файлы шаблона нетронуты, CONFIG выключен; `project` — CONFIG включён, стартовый облик — сайта (ниже). С 716 рычаг один:
@@ -189,21 +187,31 @@ if (likeId) {
   const done = require('../lib/web4-items/element-look.cjs').seedLook(dir, propsFile, likeLook, likeId)
   stage(`облик взят у «${likeId}»: бриф (${done.brief.join(', ') || 'пусто'})${done.tokens ? ', шрифты и цвета (DESIGN-CONFIG)' : ''}`)
 }
+// 734-3b (владелец 2026-11-12: «ядро — особая сущность, все элементы равны»; выбор B): облик проекта — облик элемента, который даёт
+// `project-settings` (CONFIG), и его настройки. Ядро спрашивает его ключом узла: собственное оформление (`/api/settings/design`) ложится
+// в DESIGN-CONFIG нового элемента, копия настроек (MCP `get_project_settings`) — в его папку данных в его же форме; первая сборка
+// читает обе. ✗ До 734-3b ядро копировало DESIGN-CONFIG сайта root и его копию настроек — свой элемент читался через чужой.
+// Поставщик молчит — элемент рождается файлами шаблона и догоняет проект при запуске, как прежде; это печатается.
 if (look === 'project') {
-  const site = registry.services.find((x) => x.id === 'root')
-  const siteDir = site ? entryDir(site) : null
-  const design = siteDir ? join(siteDir, 'DESIGN-CONFIG', 'design-config.json') : null
-  if (design && existsSync(design)) {
+  const source = await import('../lib/web4-items/project-settings-source.mjs')
+  const design = await source.projectDesign({ root: ROOT, registry })
+  if (design.ok) {
     mkdirSync(join(dir, 'DESIGN-CONFIG'), { recursive: true })
-    copyFileSync(design, join(dir, 'DESIGN-CONFIG', 'design-config.json'))
-    stage('оформление проекта взято у сайта (DESIGN-CONFIG)')
+    writeFileSync(join(dir, 'DESIGN-CONFIG', 'design-config.json'), JSON.stringify(design.config, null, 2) + '\n', 'utf8')
+    stage(`оформление проекта взято у «${design.provider}» (DESIGN-CONFIG)`)
+  } else {
+    stage(`⚠ оформление проекта не получено (${design.reason}) — элемент родится оформлением шаблона`)
   }
-  const copy = join(ROOT, 'data', 'services', 'root', 'project-settings.json')
   const mine = join(ROOT, 'data', 'services', id, 'project-settings.json')
-  if (existsSync(copy) && !existsSync(mine)) {
-    mkdirSync(dirname(mine), { recursive: true })
-    copyFileSync(copy, mine)
-    stage('настройки проекта (копия CONFIG) переданы элементу')
+  if (!existsSync(mine)) {
+    const got = await source.projectSettingsCopy({ root: ROOT, registry })
+    if (got.ok) {
+      mkdirSync(dirname(mine), { recursive: true })
+      writeFileSync(mine, JSON.stringify(got.copy, null, 2) + '\n', 'utf8')
+      stage(`настройки проекта взяты у «${got.provider}» (версия ${got.copy.version.slice(0, 12)})`)
+    } else {
+      stage(`⚠ настройки проекта не получены (${got.reason}) — элемент догонит проект при запуске`)
+    }
   }
 }
 

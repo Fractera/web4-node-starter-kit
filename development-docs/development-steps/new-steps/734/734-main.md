@@ -61,6 +61,17 @@ then ~17:35: «да, утверждаю, начинай с правила». The
     - proofs: a guard line — neither script names root (negative control: put it back → the guard fails); a real test birth with
       root's process stopped (its copy `from` = CONFIG, its first page drawn in the project's colours — eyes), then the test element
       removed after the owner's yes; a core build with root stopped prints the design taken from CONFIG.
+    - the owner: «да, B, начинай» (~19:25). MEASURED while building: CONFIG's project «design» kind is EMPTY and has no writer
+      (`/api/settings/design` is every element's door to ITS OWN design, it shadows `/api/settings/[kind]` for design; MCP never
+      writes) — and the core always took root's OWN design too. CONFIG's own design is byte-equal to root's (= the core's copy,
+      #2563eb), and every running element is already #2563eb/#60a5fa. So B needs no data write: the project's look = the own look of
+      the `project-settings` provider. BUILT (working copy): `lib/web4-items/project-settings-source.mjs` (`projectSettingsProvider`,
+      `projectSettingsCopy` by MCP, `projectDesign` by the provider's design door, the node key never printed; live: ok), the birth
+      writes the newborn's DESIGN-CONFIG and settings copy from it (3b-1), `sync-site-design.mjs` reads it (3b-2), guard
+      `check:element-equality` (in the prebuild; negative control: the old code → FAILED naming item-birth :193 :201 and
+      sync-site-design :30; `--self-test` catches a planted `x.id === 'root'`). The core's chain (without the install-only
+      check-local/check-origin) 55 guards green + next build. NEXT: fork sync, node update; proofs on the node — the core build prints
+      «совпадает с оформлением проекта («config»)»; a test birth with root stopped; the test element removed after the owner's word.
   - 3c the bare domain: a setting in the node's domain record names the element (or the core) that answers it; every reader
     (activate, reach, preview-url, dashboard, check-addresses, main-agent-cli, services-install) reads the setting, never the id. Today's
     node keeps root there by the setting.
