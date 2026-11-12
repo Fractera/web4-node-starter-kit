@@ -5,6 +5,12 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-108 (2026-11-12) — 733-1 REWRITTEN by the owner's correction (a tool = a task + its own interface; tools nest; a combination is a
+recipe with references; elements must understand it even more than the core): core `903a7975`, templates custom v0.3.197, native v0.1.64,
+root v3.0.53 pinned. STOP for the owner: he reads the words; then the node update (fork sync, core build ~4 min, the terminal goes dark)
+and the rollout of the definition into born elements (instruction + use-tools). NEXT after his word: 733-2 — the card, the recipe
+`parts`, and the composites judged by the definition. 733-8 edits in `git stash`.**
+
 **NOW-107 (2026-11-12) — 733-1 BUILT (`f2c6a884`, summary `completed-steps/733-1.md`). STOP for the owner's review: the composite
 boundary (a control holding a value is not a tool) and the node update (core build ~4 min, the terminal goes dark). The 733-8 edits are in
 `git stash` («733-8 kept edits»). NEXT after his word: 733-2 — the card.**
