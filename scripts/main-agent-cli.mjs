@@ -618,7 +618,8 @@ if (cmd === 'session') {
     console.log(what === 'clear'
       ? (cont
         ? `===SESSION_OK=== ${service}: when this turn ends the window is cleared and the node wakes your next session with your letter — make sure it is written and committed. Say one line to the person now.`
-        : `===SESSION_OK=== ${service}: when this turn ends the conversation starts over — memory and records stay. Answer the person first.`)
+        // 731 (2026-11-12, the 4th dark terminal: my own reset ran bare clear and promised a wake): bare clear wakes nobody — said aloud.
+        : `===SESSION_OK=== ${service}: when this turn ends the conversation starts over — memory and records stay — and NOBODY wakes the fresh session: it waits for the person's words. Your own reset? Run it again with --continue now (it joins this one). Answer the person first.`)
       : `===SESSION_OK=== ${service}: when this turn ends the session restarts on ${args[0]}${flag('--effort') ? ` (effort ${flag('--effort')})` : ''} and the same conversation goes on (a few seconds; messages wait). Answer the person first.`)
     process.exit(0)
   }

@@ -99,7 +99,7 @@
         "en": "Clear the context — the conversation with the agent starts over; the node's memory and records stay"
       },
       "by": "main",
-      "run": "npm run session -- clear [<element id>] — answer the person first: it happens when your turn ends"
+      "run": "the person asks: npm run session -- clear [<element id>] — answer the person first: it happens when your turn ends, and the fresh session waits for their words; YOUR OWN reset (a step ends, the window is full): npm run session -- clear --continue, never bare clear — only it wakes your fresh session with your letter"
     },
     {
       "id": "opus",

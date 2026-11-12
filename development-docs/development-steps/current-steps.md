@@ -5,6 +5,13 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-98 (2026-11-12 ~10:30, tandem) — 731 BUILT before 727-2 (the owner: «Да, сначала закрой дыру, потом 727-2 … этот механизм
+должен работать во всех элементах не так ли?»; plan `new-steps/731/731-main.md`). The 4th dark terminal after a reset: my own reset ran
+bare `session clear`. Fixed: the «clear» row names `clear --continue` for my own reset, bare clear says «NOBODY wakes», the bridge keeps
+one pending clear (12 copies from the master); test:reset-wake F/G/H red on the old code (G: typed 2 — a late /clear wiped the woken
+one), green now; check:node-lines holds the words; full chain green. Elements: `npm run reset` always continues — safe by construction.
+NEXT: push, CI, fork sync, node update after the warning turn, live proof = my own reset wakes me; then 727-2.**
+
 **NOW-97 (2026-11-12, tandem) — 727 IN WORK, the owner chose A («Да, берём A, начинай»; plan `new-steps/727/`). 727-1 BUILT in the
 working copy, NOT pushed: `_tools/shell-kit/` (card, 12th tool), `scripts/build-shell-kit.mjs` (prebuild; `.shell-kit/` gitignored),
 doors `/api/shell-kit/<lang>` and `/api/shell-kit/asset/<file>` (node key). Proven so far: render with the live site's data (2 groups,

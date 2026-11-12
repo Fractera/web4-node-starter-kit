@@ -23,5 +23,10 @@ for (const f of files) {
 const { KINDS } = createRequire(import.meta.url)(join(ROOT, 'lib', 'agent-kit', 'node-line.cjs'))
 const doc = readFileSync(join(ROOT, 'lib', 'agent-kit', 'NODE-LINES.md'), 'utf8')
 for (const k of Object.keys(KINDS)) if (!doc.includes(`\`${k}\``)) bad.push(`lib/agent-kit/NODE-LINES.md: the kind «${k}» is not in the catalogue`)
+// 731: `context-reset` is born only by the main agent's `session clear --continue` (an element's `npm run reset` always continues). Where
+// the main agent is told how to reset itself, the words must name --continue — ✗ 2026-11-12 09:48 it took the bare row and stayed dark.
+const clearRow = JSON.parse(readFileSync(join(ROOT, 'lib', 'agent-kit', 'commands.json'), 'utf8')).commands.find((c) => c.id === 'clear')
+if (!/YOUR OWN reset[^]*session -- clear --continue/.test(clearRow?.run ?? '')) bad.push('lib/agent-kit/commands.json «clear»: the main agent\'s own reset must name npm run session -- clear --continue')
+if (!/'npm run session -- clear --continue'/.test(readFileSync(join(ROOT, 'lib', 'agent-kit', 'window.cjs'), 'utf8'))) bad.push('lib/agent-kit/window.cjs: the window line must name npm run session -- clear --continue')
 if (bad.length) { console.log(bad.join('\n')); console.log(`===NODE_LINES_FAILED=== ${bad.length}`); process.exit(1) }
 console.log(`===NODE_LINES_OK=== ${Object.keys(KINDS).length} kinds, every node message to an agent carries its head (${files.length} files)`)

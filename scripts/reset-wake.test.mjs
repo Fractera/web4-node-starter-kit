@@ -47,7 +47,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 function fakeClaude(k, service, element, { turnMs = 0, deaf = false } = {}) {
   const cwd = join(tmp, 'work', service)
   mkdirSync(cwd, { recursive: true })
-  const f = { conv: randomUUID(), first: null, turn: null, queue: [], input: '', got: [], timers: new Set(), deaf }
+  const f = { conv: randomUUID(), first: null, turn: null, queue: [], input: '', got: [], timers: new Set(), deaf, clears: 0, typed: 0 }
   f.first = f.conv
   const pulseFile = join(root, 'data', 'services', element, 'pulse.json')
   mkdirSync(dirname(pulseFile), { recursive: true })
@@ -80,6 +80,7 @@ function fakeClaude(k, service, element, { turnMs = 0, deaf = false } = {}) {
     for (const q of queued) run(q)
   }
   function clear() {
+    f.clears++
     if (f.deaf) return
     pulse('session-end', { reason: 'clear' })
     f.conv = randomUUID()
@@ -103,6 +104,7 @@ function fakeClaude(k, service, element, { turnMs = 0, deaf = false } = {}) {
   const proc = {
     write(data) {
       const s1 = String(data)
+      f.typed += (s1.match(/\/clear/g) ?? []).length // every /clear typed, even two glued into one line
       if (s1 === '\r') { const text = f.input.trim(); f.input = ''; submit(text); return }
       f.input += s1.replace(/\x1b\[20[01]~/g, '')
       screen(`\x1b[2K\x1b[1G> ${f.input.slice(-80)}`)
@@ -118,10 +120,12 @@ function fakeClaude(k, service, element, { turnMs = 0, deaf = false } = {}) {
 }
 
 /** Ask for the reset the way `npm run session -- clear --continue` and an element's `npm run reset` do, then watch. */
-async function scenario(name, k, service, element, opts, { watchMs, letterIn }) {
+async function scenario(name, k, service, element, opts, { watchMs, letterIn, asks = [true] }) {
   const f = fakeClaude(k, service, element, opts)
   await sleep(300)
-  const asked = k.bridge.sessionCommand(service, { action: 'clear', continue: true })
+  // 731: `asks` — the asks in the same turn, true = with --continue: [false] a bare clear, [false, true] a bare clear then its fix.
+  let asked = null
+  for (const cont of asks) { asked = k.bridge.sessionCommand(service, { action: 'clear', continue: cont }); await sleep(200) }
   const t0 = Date.now()
   while (Date.now() - t0 < watchMs) {
     if (letterIn !== 'none' && f.got.some((m) => m.text.startsWith(LETTER))) { await sleep(300); break }
@@ -167,9 +171,13 @@ const results = await Promise.all([
   scenario('B element, the turn already ended', KITS.item, 'tst6b', 'tst6b', { turnMs: 0 }, { watchMs: 30_000 }),
   // C — `/clear` never takes effect: the letter must not go into a conversation that was not cleared.
   scenario('C element, /clear never takes effect', KITS.item, 'tst7c', 'tst7c', { turnMs: 0, deaf: true }, { watchMs: 20_000, letterIn: 'none' }),
+  // 731 — ✗ 2026-11-12 09:48: the main agent's own reset went out as bare clear; nobody woke it. F: bare clear — cleared, no letter
+  // (the person writes next). G: bare clear, then the same turn asks again with --continue — one /clear, the letter in the new one.
+  scenario('F main agent, bare clear', KITS.main, 'build-f', 'build-f', { turnMs: 3000 }, { watchMs: 20_000, letterIn: 'none', asks: [false] }),
+  scenario('G main agent, bare clear then clear --continue in the same turn', KITS.main, 'build-g', 'build-g', { turnMs: 3000 }, { watchMs: 25_000, letterIn: 'none', asks: [false, true] }), // watched to the end: a late second /clear would wipe the woken one
 ])
 console.log('')
-const [a1, a2, b, c] = results
+const [a1, a2, b, c, fBare, g] = results
 for (const [name, r, file] of [['A1 main agent', a1, 'development-docs/development-steps/current-steps.md'], ['A2 element', a2, 'development-docs/current-step.md'], ['B element', b, 'development-docs/current-step.md']]) {
   const l = r.letters[0]
   ok(r.inOld.length === 0, `${name}: the letter never reaches the old conversation`)
@@ -178,6 +186,17 @@ for (const [name, r, file] of [['A1 main agent', a1, 'development-docs/developme
   ok(Boolean(l) && l.text.includes(file), `${name}: the letter names its own state record (${file})`)
 }
 ok(c.letters.length === 0, 'C: without a clear the letter is not pasted — the old conversation is not told it was cleared')
+ok(fBare.f.clears === 1 && fBare.letters.length === 0, `F: bare clear clears once and pastes no letter (clears ${fBare.f.clears}, letters ${fBare.letters.length})`)
+ok(g.f.typed === 1 && g.f.clears === 1, `G: a second ask in the same turn joins the first — /clear typed once (typed ${g.f.typed}, took effect ${g.f.clears})`)
+ok(g.letters.length === 1 && g.inOld.length === 0 && g.letters[0].conv !== g.f.first, 'G: the --continue that joins a bare clear wakes the new conversation with the letter')
+// The words that choose the reset: the main agent's own reset names --continue wherever it is told how (731).
+{
+  const cmds = JSON.parse(readFileSync(join(REPO, 'lib', 'agent-kit', 'commands.json'), 'utf8')).commands
+  const row = cmds.find((x) => x.id === 'clear')
+  ok(Boolean(row) && /YOUR OWN reset[^]*clear --continue/.test(row.run), 'H: the hard-command row «clear» names clear --continue for the main agent\'s own reset')
+  const cli = readFileSync(join(REPO, 'scripts', 'main-agent-cli.mjs'), 'utf8')
+  ok(/NOBODY wakes the fresh session/.test(cli), 'H: bare session clear says aloud that nobody wakes the fresh session')
+}
 
 rmSync(tmp, { recursive: true, force: true })
 console.log(bad ? `===RESET_WAKE_FAILED=== ${bad}` : '===RESET_WAKE_OK=== after its own reset the agent wakes with its letter in the new conversation — the main agent and an element')

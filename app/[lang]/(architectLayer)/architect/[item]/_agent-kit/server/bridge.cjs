@@ -724,7 +724,17 @@ function sessionCommand(service, { action, model, effort, continue: cont = false
   const live = session.current(service)
   if (!live) return { ok: false, reason: 'no-session' }
   if (action === 'clear') {
+    // 731: ONE pending clear per live session. A second ask in the same turn joins it — `continue` upgrades it to the reset with the
+    // letter — and `/clear` is typed once. ✗ 2026-11-12 09:48: the main agent's own reset went out as bare clear, nobody woke the fresh
+    // session; its fix is to ask again with --continue, which before this would have typed /clear twice.
+    if (live.pendingClear) {
+      live.pendingClear.cont = live.pendingClear.cont || cont
+      return { ok: true, scheduled: live.pendingClear.cont ? 'clear-continue' : 'clear', joined: true }
+    }
+    const pending = { cont }
+    live.pendingClear = pending
     void whenIdle(live).then((idle) => {
+      if (live.pendingClear === pending) live.pendingClear = null
       if (!idle) return console.log(`[agents/session] ${service}: clear не выполнен — экран не затих или сессии уже нет`)
       // 708-7: `/clear` gives the session a new conversation id — the transcript born after it becomes the record's `conversation`.
       const element = modes.baseOf(service)
@@ -734,12 +744,12 @@ function sessionCommand(service, { action, model, effort, continue: cont = false
       live.proc.write('\x1b[200~/clear\x1b[201~')
       if (modes.modeOfKey(service) !== 'work') watchNewConversation(service, live, element, home, before)
       for (const ms of [400, 2500]) setTimeout(() => { if (session.current(service) === live) live.proc.write('\r') }, ms)
-      console.log(`[agents/session] ${service}: /clear — контекст очищен`)
+      console.log(`[agents/session] ${service}: /clear — контекст очищен${pending.cont ? '' : ' (без письма: новую сессию разбудят слова человека)'}`)
       // 700-3: the same process, a clean window — and the node wakes it with its letter (no question on the screen, or nothing is typed).
       // 728: only into the conversation born after /clear. ✗ 2026-11-11 18:21: a fixed 5 s pause pasted the letter into the OLD
       // conversation — `/clear` typed into a turn still running waits for that turn's end, the letter did not; the old agent answered
       // it at 65 % of its window and the new one got nothing. No evidence of the clear — nothing is pasted, the old one is not misled.
-      if (cont) {
+      if (pending.cont) {
         void clearedSince(live, element, home, before, typedAt).then((cleared) => {
           if (!cleared) return console.log(`[agents/session] ${service}: письмо после сброса не вставлено — /clear не выполнился или сессии уже нет`)
           return pasteWhenReady(live, resetLine(service), { ready: () => !promptOnScreen(live.buffer) && !trustOnScreen(live.buffer) })
