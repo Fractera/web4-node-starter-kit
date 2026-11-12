@@ -3,7 +3,13 @@
   "parts": [
     {
       "id": "design-colors",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Design colour editor",
+        "ru": "Редактор цветов дизайна"
+      },
+      "version": "1.0.0",
+      "parts": [],
       "path": "components/design/design-colors.client.tsx",
       "export": "DesignColors",
       "what": {
@@ -26,7 +32,13 @@
     },
     {
       "id": "design-fonts",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Design font picker",
+        "ru": "Выбор шрифтов дизайна"
+      },
+      "version": "1.0.0",
+      "parts": [],
       "path": "components/design/design-fonts.client.tsx",
       "export": "DesignFonts",
       "what": {
@@ -49,7 +61,13 @@
     },
     {
       "id": "design-type",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Design type scale",
+        "ru": "Шкала шрифта дизайна"
+      },
+      "version": "1.0.0",
+      "parts": [],
       "path": "components/design/design-type.client.tsx",
       "export": "DesignType",
       "what": {
@@ -72,7 +90,13 @@
     },
     {
       "id": "design-shape",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Design shapes and spacing",
+        "ru": "Формы и отступы дизайна"
+      },
+      "version": "1.0.0",
+      "parts": [],
       "path": "components/design/design-shape.client.tsx",
       "export": "DesignShape",
       "what": {

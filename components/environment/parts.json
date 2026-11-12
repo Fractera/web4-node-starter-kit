@@ -3,7 +3,13 @@
   "parts": [
     {
       "id": "environment-panel",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Environment variables",
+        "ru": "Переменные окружения"
+      },
+      "version": "1.0.0",
+      "parts": [],
       "path": "components/environment/environment-panel.tsx",
       "export": "EnvironmentPanel",
       "what": {

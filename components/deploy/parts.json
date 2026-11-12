@@ -3,7 +3,13 @@
   "parts": [
     {
       "id": "core-terminal",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Build log",
+        "ru": "Журнал сборки"
+      },
+      "version": "1.0.0",
+      "parts": [],
       "path": "components/deploy/core-terminal.client.tsx",
       "export": "CoreTerminal",
       "what": {

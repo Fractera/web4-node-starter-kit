@@ -1,6 +1,13 @@
 {
   "id": "socials-ai",
   "entry": "client/socials-ai-dialog.client.tsx",
+  "version": "1.0.0",
+  "parts": [
+    {
+      "id": "app-dialog",
+      "version": "1.0.0"
+    }
+  ],
   "needs": [
     "browser",
     "openai-key"

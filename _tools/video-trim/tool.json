@@ -1,6 +1,13 @@
 {
   "id": "video-trim",
   "entry": "client/video-trimmer.client.tsx",
+  "version": "1.0.0",
+  "parts": [
+    {
+      "id": "app-dialog",
+      "version": "1.0.0"
+    }
+  ],
   "needs": [
     "browser",
     "ffmpeg"

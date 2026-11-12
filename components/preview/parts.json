@@ -3,7 +3,22 @@
   "parts": [
     {
       "id": "element-preview",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Element preview",
+        "ru": "Предпросмотр элемента"
+      },
+      "version": "1.0.0",
+      "parts": [
+        {
+          "id": "tool-block-task",
+          "version": "1.0.0"
+        },
+        {
+          "id": "tool-terminal-drawer",
+          "version": "1.0.0"
+        }
+      ],
       "path": "components/preview/element-preview.client.tsx",
       "export": "ElementPreview",
       "what": {

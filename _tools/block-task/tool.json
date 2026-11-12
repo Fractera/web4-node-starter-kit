@@ -1,6 +1,17 @@
 {
   "id": "block-task",
   "entry": "client/block-task.client.tsx",
+  "version": "1.0.0",
+  "parts": [
+    {
+      "id": "app-dialog",
+      "version": "1.0.0"
+    },
+    {
+      "id": "voice-control",
+      "version": "1.0.0"
+    }
+  ],
   "needs": [
     "browser",
     "openai-key"

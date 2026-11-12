@@ -3,7 +3,13 @@
   "parts": [
     {
       "id": "element-doc",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Element document",
+        "ru": "Документ элемента"
+      },
+      "version": "1.0.0",
+      "parts": [],
       "path": "components/element-docs/element-doc.client.tsx",
       "export": "ElementDocIsland",
       "what": {
@@ -24,7 +30,13 @@
     },
     {
       "id": "passport-door",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Element passport",
+        "ru": "Паспорт элемента"
+      },
+      "version": "1.0.0",
+      "parts": [],
       "path": "components/element-docs/passport-door.client.tsx",
       "export": "PassportDoor",
       "what": {
@@ -45,7 +57,18 @@
     },
     {
       "id": "element-orders",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Element deals",
+        "ru": "Сделки элемента"
+      },
+      "version": "1.0.0",
+      "parts": [
+        {
+          "id": "table-tools",
+          "version": "1.0.0"
+        }
+      ],
       "path": "components/element-docs/element-orders.client.tsx",
       "export": "ElementOrdersIsland",
       "what": {
@@ -67,7 +90,22 @@
     },
     {
       "id": "product-quiz",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Product quiz",
+        "ru": "Опрос продукта"
+      },
+      "version": "1.0.0",
+      "parts": [
+        {
+          "id": "tool-block-task",
+          "version": "1.0.0"
+        },
+        {
+          "id": "tool-terminal-drawer",
+          "version": "1.0.0"
+        }
+      ],
       "path": "components/element-docs/product-quiz.client.tsx",
       "export": "ProductQuizIsland",
       "what": {
@@ -88,7 +126,22 @@
     },
     {
       "id": "reverse-engineering",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Reverse engineering",
+        "ru": "Реверс-инжиниринг"
+      },
+      "version": "1.0.0",
+      "parts": [
+        {
+          "id": "tool-terminal-drawer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "voice-control",
+          "version": "1.0.0"
+        }
+      ],
       "path": "components/element-docs/reverse-engineering.client.tsx",
       "export": "ReverseEngineering",
       "what": {

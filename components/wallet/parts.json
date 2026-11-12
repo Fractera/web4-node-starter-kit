@@ -3,7 +3,13 @@
   "parts": [
     {
       "id": "node-wallet",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Node wallet",
+        "ru": "Кошелёк узла"
+      },
+      "version": "1.0.0",
+      "parts": [],
       "path": "components/wallet/node-wallet.client.tsx",
       "export": "NodeWalletCard, NodeWalletBody",
       "what": {

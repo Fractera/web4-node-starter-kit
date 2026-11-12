@@ -3,7 +3,13 @@
   "parts": [
     {
       "id": "table-tools",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Table with search and pages",
+        "ru": "Таблица с поиском и страницами"
+      },
+      "version": "1.0.0",
+      "parts": [],
       "path": "components/table/table-tools.client.tsx",
       "export": "TableTools",
       "what": {

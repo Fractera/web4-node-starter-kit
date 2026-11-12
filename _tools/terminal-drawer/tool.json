@@ -1,6 +1,8 @@
 {
   "id": "terminal-drawer",
   "entry": "client/terminal-drawer.client.tsx",
+  "version": "1.0.0",
+  "parts": [],
   "needs": [
     "browser"
   ],

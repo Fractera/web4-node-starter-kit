@@ -1,6 +1,8 @@
 {
   "id": "voice-input",
   "entry": "client/voice-input.client.tsx",
+  "version": "1.0.0",
+  "parts": [],
   "needs": [
     "browser",
     "https",

@@ -3,7 +3,18 @@
   "parts": [
     {
       "id": "voice-control",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Voice input control",
+        "ru": "Голосовой ввод"
+      },
+      "version": "1.0.0",
+      "parts": [
+        {
+          "id": "tool-voice-input",
+          "version": "1.0.0"
+        }
+      ],
       "path": "components/form/voice-control.client.tsx",
       "export": "VoiceControl",
       "what": {
@@ -35,7 +46,18 @@
     },
     {
       "id": "voice-field",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Voice input line",
+        "ru": "Строка с голосовым вводом"
+      },
+      "version": "1.0.0",
+      "parts": [
+        {
+          "id": "voice-control",
+          "version": "1.0.0"
+        }
+      ],
       "path": "components/form/voice-field.client.tsx",
       "export": "VoiceField",
       "what": {
@@ -64,7 +86,18 @@
     },
     {
       "id": "voice-textarea",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Voice text area",
+        "ru": "Поле с голосовым вводом"
+      },
+      "version": "1.0.0",
+      "parts": [
+        {
+          "id": "voice-control",
+          "version": "1.0.0"
+        }
+      ],
       "path": "components/form/voice-textarea.client.tsx",
       "export": "VoiceTextarea",
       "what": {

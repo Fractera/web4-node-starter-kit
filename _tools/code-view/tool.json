@@ -1,6 +1,8 @@
 {
   "id": "code-view",
   "entry": "client/code-view.client.tsx",
+  "version": "1.0.0",
+  "parts": [],
   "needs": [
     "browser"
   ],

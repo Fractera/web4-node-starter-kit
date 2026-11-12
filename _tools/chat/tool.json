@@ -1,6 +1,8 @@
 {
   "id": "chat",
   "entry": "client/chat.client.tsx",
+  "version": "1.0.0",
+  "parts": [],
   "needs": [
     "browser"
   ],

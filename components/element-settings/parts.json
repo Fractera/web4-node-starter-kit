@@ -3,7 +3,13 @@
   "parts": [
     {
       "id": "remote-settings",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Remote settings of an element",
+        "ru": "Удалённые настройки элемента"
+      },
+      "version": "1.0.0",
+      "parts": [],
       "path": "components/element-settings/remote.client.tsx",
       "export": "RemoteSettings, useRemote, remoteUrl, shellUrl",
       "what": {

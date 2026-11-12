@@ -1,6 +1,17 @@
 {
   "id": "translations-dialog",
   "entry": "client/translations-dialog.client.tsx",
+  "version": "1.0.0",
+  "parts": [
+    {
+      "id": "app-dialog",
+      "version": "1.0.0"
+    },
+    {
+      "id": "tool-voice-input",
+      "version": "1.0.0"
+    }
+  ],
   "needs": [
     "browser",
     "openai-key"

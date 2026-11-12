@@ -3,7 +3,26 @@
   "parts": [
     {
       "id": "tools-tab",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Tools tab",
+        "ru": "Вкладка «Инструменты»"
+      },
+      "version": "1.0.0",
+      "parts": [
+        {
+          "id": "tool-demo",
+          "version": "1.0.0"
+        },
+        {
+          "id": "tool-terminal-drawer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "voice-textarea",
+          "version": "1.0.0"
+        }
+      ],
       "path": "components/tools-tab/tools-tab.client.tsx",
       "export": "ToolsTab",
       "what": {
@@ -11,7 +30,18 @@
         "ru": "Вкладка «Инструменты» ядра и каждого элемента: что такое инструменты (аккордеон), карточки по пять, показ в единственном модальном окне, правка и добавление инструмента через один ящик терминала."
       },
       "how": "<ToolsTab item service place lang {...toolsTabProps(lang, service)} /> — the server assembles words, the terminal kit and the demo samples (props.server.ts); the list is asked from /api/node/tools.",
-      "words": { "en": ["tools tab", "tools catalog", "add a tool"], "ru": ["вкладка инструментов", "каталог инструментов", "добавить инструмент"] }
+      "words": {
+        "en": [
+          "tools tab",
+          "tools catalog",
+          "add a tool"
+        ],
+        "ru": [
+          "вкладка инструментов",
+          "каталог инструментов",
+          "добавить инструмент"
+        ]
+      }
     },
     {
       "id": "tool-card",
@@ -24,11 +54,39 @@
         "ru": "Карточка одного инструмента: что решает, где используется, что ему нужно, полное описание свёрнуто, «Показать» и «Редактировать»."
       },
       "how": "Inside ToolsTab only.",
-      "words": { "en": ["tool card", "tool description"], "ru": ["карточка инструмента", "описание инструмента"] }
+      "words": {
+        "en": [
+          "tool card",
+          "tool description"
+        ],
+        "ru": [
+          "карточка инструмента",
+          "описание инструмента"
+        ]
+      }
     },
     {
       "id": "tool-demo",
-      "kind": "composite",
+      "kind": "tool",
+      "title": {
+        "en": "Tool look",
+        "ru": "Показ инструмента"
+      },
+      "version": "1.0.0",
+      "parts": [
+        {
+          "id": "app-dialog",
+          "version": "1.0.0"
+        },
+        {
+          "id": "tool-chat",
+          "version": "1.0.0"
+        },
+        {
+          "id": "tool-code-view",
+          "version": "1.0.0"
+        }
+      ],
       "internal": true,
       "path": "components/tools-tab/tool-demo.client.tsx",
       "export": "ToolDemo",
@@ -37,7 +95,16 @@
         "ru": "Показ одного инструмента в AppDialog: живьём на примере, если ему хватает браузера, иначе — что он умеет и что ему нужно."
       },
       "how": "Inside ToolsTab only.",
-      "words": { "en": ["tool demo", "tool preview"], "ru": ["показ инструмента", "превью инструмента"] }
+      "words": {
+        "en": [
+          "tool demo",
+          "tool preview"
+        ],
+        "ru": [
+          "показ инструмента",
+          "превью инструмента"
+        ]
+      }
     }
   ]
 }

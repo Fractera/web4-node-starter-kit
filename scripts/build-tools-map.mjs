@@ -87,6 +87,11 @@ export function readCard(id) {
     }
   }
 
+  // 733-2: версия и рецепт — из чего инструмент состоит (инструменты по id и версии); сверку рецепта с кодом держит карта частей.
+  if (typeof raw.version !== "string" || !/^\d+\.\d+\.\d+$/.test(raw.version)) problems.push(`${id}: version — x.y.z`)
+  if (!Array.isArray(raw.parts) || !raw.parts.every((x) => typeof x?.id === "string" && typeof x?.version === "string"))
+    problems.push(`${id}: parts — рецепт [{ id, version }] (пустой [], когда частей нет)`)
+
   if (problems.length) return { problems }
 
   // Поля перечислены явно, а не распылением: карточка может нести что угодно
@@ -96,6 +101,8 @@ export function readCard(id) {
       id,
       entry: raw.entry,
       dir: `_tools/${id}`,
+      version: raw.version,
+      parts: raw.parts.map((x) => ({ id: x.id, version: x.version })),
       needs,
       npmDeps: Array.isArray(raw.npmDeps) ? raw.npmDeps : [],
       usedBy: Array.isArray(raw.usedBy) ? raw.usedBy : [],

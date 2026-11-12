@@ -4,6 +4,17 @@
       "id": "block-task",
       "entry": "client/block-task.client.tsx",
       "dir": "_tools/block-task",
+      "version": "1.0.0",
+      "parts": [
+        {
+          "id": "app-dialog",
+          "version": "1.0.0"
+        },
+        {
+          "id": "voice-control",
+          "version": "1.0.0"
+        }
+      ],
       "needs": [
         "browser",
         "openai-key"
@@ -42,6 +53,8 @@
       "id": "chat",
       "entry": "client/chat.client.tsx",
       "dir": "_tools/chat",
+      "version": "1.0.0",
+      "parts": [],
       "needs": [
         "browser"
       ],
@@ -83,6 +96,8 @@
       "id": "code-view",
       "entry": "client/code-view.client.tsx",
       "dir": "_tools/code-view",
+      "version": "1.0.0",
+      "parts": [],
       "needs": [
         "browser"
       ],
@@ -119,6 +134,13 @@
       "id": "fact-draft",
       "entry": "client/fact-draft.client.tsx",
       "dir": "_tools/fact-draft",
+      "version": "1.0.0",
+      "parts": [
+        {
+          "id": "voice-control",
+          "version": "1.0.0"
+        }
+      ],
       "needs": [
         "browser",
         "openai-key"
@@ -156,6 +178,13 @@
       "id": "image-crop",
       "entry": "client/image-cropper.client.tsx",
       "dir": "_tools/image-crop",
+      "version": "1.0.0",
+      "parts": [
+        {
+          "id": "app-dialog",
+          "version": "1.0.0"
+        }
+      ],
       "needs": [
         "browser"
       ],
@@ -193,6 +222,8 @@
       "id": "shell-kit",
       "entry": "client/shell-kit.client.tsx",
       "dir": "_tools/shell-kit",
+      "version": "1.0.0",
+      "parts": [],
       "needs": [
         "browser"
       ],
@@ -230,6 +261,13 @@
       "id": "socials-ai",
       "entry": "client/socials-ai-dialog.client.tsx",
       "dir": "_tools/socials-ai",
+      "version": "1.0.0",
+      "parts": [
+        {
+          "id": "app-dialog",
+          "version": "1.0.0"
+        }
+      ],
       "needs": [
         "browser",
         "openai-key"
@@ -267,6 +305,8 @@
       "id": "terminal-drawer",
       "entry": "client/terminal-drawer.client.tsx",
       "dir": "_tools/terminal-drawer",
+      "version": "1.0.0",
+      "parts": [],
       "needs": [
         "browser"
       ],
@@ -305,6 +345,17 @@
       "id": "terminal-paste",
       "entry": "client/terminal-paste-dialog.client.tsx",
       "dir": "_tools/terminal-paste",
+      "version": "1.0.0",
+      "parts": [
+        {
+          "id": "app-dialog",
+          "version": "1.0.0"
+        },
+        {
+          "id": "voice-control",
+          "version": "1.0.0"
+        }
+      ],
       "needs": [
         "browser",
         "openai-key"
@@ -342,6 +393,17 @@
       "id": "translations-dialog",
       "entry": "client/translations-dialog.client.tsx",
       "dir": "_tools/translations-dialog",
+      "version": "1.0.0",
+      "parts": [
+        {
+          "id": "app-dialog",
+          "version": "1.0.0"
+        },
+        {
+          "id": "tool-voice-input",
+          "version": "1.0.0"
+        }
+      ],
       "needs": [
         "browser",
         "openai-key"
@@ -380,6 +442,13 @@
       "id": "video-trim",
       "entry": "client/video-trimmer.client.tsx",
       "dir": "_tools/video-trim",
+      "version": "1.0.0",
+      "parts": [
+        {
+          "id": "app-dialog",
+          "version": "1.0.0"
+        }
+      ],
       "needs": [
         "browser",
         "ffmpeg"
@@ -415,6 +484,8 @@
       "id": "voice-input",
       "entry": "client/voice-input.client.tsx",
       "dir": "_tools/voice-input",
+      "version": "1.0.0",
+      "parts": [],
       "needs": [
         "browser",
         "https",

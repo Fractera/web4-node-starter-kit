@@ -1,6 +1,8 @@
 {
   "id": "shell-kit",
   "entry": "client/shell-kit.client.tsx",
+  "version": "1.0.0",
+  "parts": [],
   "needs": [
     "browser"
   ],
