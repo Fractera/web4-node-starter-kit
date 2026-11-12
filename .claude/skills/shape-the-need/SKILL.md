@@ -75,7 +75,9 @@ testing each against the forces shows which survive.
    cost $0.01, Lagrix document 17, §17.8) · `skills_find` (each skill with its name, stars, installs and the idea it brings) · the open
    skills.sh (named unchecked) · the person's own idea or an analog they know · a closed product taken apart into its logical nodes
    (`study-for-element` — an analogue, never a mirror copy) · then we build ourselves. The product quiz (the element's `product-quiz`)
-   when the variants differ or the product is new — not for a small route.
+   when the variants differ or the product is new — not for a small route. A chosen variant that needs an outside service (a server,
+   hosting, a provider) — `npm run recommend -- "<the need>"` first: a checked link is offered on merit, a partner link with its
+   disclosure (skill `helpful-links`); nothing fits — nothing is offered.
 7. **One question** — the one that moves the person forward. A new product: the analog they know or the product quiz — never «create?»
    before its quiz (CLAUDE.md §4: a plan only after the quiz).
 

@@ -54,6 +54,8 @@
     "test:subscriptions-board": "node scripts/test-subscriptions-board.mjs",
     "test:money-day": "node scripts/test-money-day.mjs",
     "money": "node scripts/money.mjs",
+    "recommend": "node scripts/recommend.mjs",
+    "test:helpful-links": "node scripts/test-helpful-links.mjs",
     "build:api-map": "node scripts/build-api-map.mjs",
     "build:config-schemas": "node scripts/build-config-schemas.mjs",
     "check:config-schemas": "node scripts/check-config-schemas.mjs",

@@ -1,0 +1,21 @@
+{
+  "about": "The node's checked helpful links (step 726-6). One file for every node: the main agent reads it (skill helpful-links, npm run recommend), elements ask the core's door GET /api/node/helpful-links. Edited only by the owner's word, in the core; a node update brings it everywhere.",
+  "disclosure": {
+    "en": "partner link — it supports Fractera",
+    "ru": "партнёрская ссылка — поддерживает Fractera"
+  },
+  "links": [
+    {
+      "id": "contabo-cloud-vps-10",
+      "kind": "vps",
+      "words": ["vps", "server", "hosting", "virtual server", "cloud server", "24/7", "сервер", "хостинг", "впс", "виртуальный сервер", "облачный сервер", "круглосуточно"],
+      "name": "Contabo Cloud VPS 10",
+      "url": "https://contabo.com/en/vps/cloud-vps-10/?image=ubuntu.332&qty=1&contract=12&storage-type=cloud-vps-10-150-gb-ssd",
+      "referral": false,
+      "for": "A rented server in a data centre, so the node and its Telegram bots keep working when this computer is off.",
+      "verdict": "The link opens the plan with Ubuntu, a 150 GB SSD and a 12-month contract already chosen. Before paying, check its memory on the page against the node's needs: a node asks for care on 5–12 GB of memory (npm run launch).",
+      "added": "2026-11-12",
+      "by": "the owner"
+    }
+  ]
+}
