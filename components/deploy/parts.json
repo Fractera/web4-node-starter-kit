@@ -10,6 +10,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/deploy/core-terminal.client.tsx",
       "export": "CoreTerminal",
       "what": {

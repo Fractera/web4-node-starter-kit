@@ -23,6 +23,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "panel",
       "path": "components/tools-tab/tools-tab.client.tsx",
       "export": "ToolsTab",
       "what": {
@@ -87,6 +88,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "panel",
       "internal": true,
       "path": "components/tools-tab/tool-demo.client.tsx",
       "export": "ToolDemo",

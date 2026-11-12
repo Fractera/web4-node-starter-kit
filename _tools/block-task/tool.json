@@ -12,6 +12,7 @@
       "version": "1.0.0"
     }
   ],
+  "scope": "panel",
   "needs": [
     "browser",
     "openai-key"

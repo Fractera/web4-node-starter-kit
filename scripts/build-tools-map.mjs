@@ -92,6 +92,7 @@ export function readCard(id) {
   if (!Array.isArray(raw.parts) || !raw.parts.every((x) => typeof x?.id === "string" && typeof x?.version === "string"))
     problems.push(`${id}: parts — рецепт [{ id, version }] (пустой [], когда частей нет)`)
 
+  if (raw.scope !== "panel" && raw.scope !== "any") problems.push(`${id}: scope — «panel» (только пульт ядра) или «any»`)
   if (problems.length) return { problems }
 
   // Поля перечислены явно, а не распылением: карточка может нести что угодно
@@ -103,6 +104,7 @@ export function readCard(id) {
       dir: `_tools/${id}`,
       version: raw.version,
       parts: raw.parts.map((x) => ({ id: x.id, version: x.version })),
+      scope: raw.scope,
       needs,
       npmDeps: Array.isArray(raw.npmDeps) ? raw.npmDeps : [],
       usedBy: Array.isArray(raw.usedBy) ? raw.usedBy : [],

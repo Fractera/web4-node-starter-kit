@@ -10,6 +10,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/element-settings/remote.client.tsx",
       "export": "RemoteSettings, useRemote, remoteUrl, shellUrl",
       "what": {

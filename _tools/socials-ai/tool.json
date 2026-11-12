@@ -8,6 +8,7 @@
       "version": "1.0.0"
     }
   ],
+  "scope": "any",
   "needs": [
     "browser",
     "openai-key"

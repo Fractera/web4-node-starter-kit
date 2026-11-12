@@ -10,6 +10,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/design/design-colors.client.tsx",
       "export": "DesignColors",
       "what": {
@@ -39,6 +40,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/design/design-fonts.client.tsx",
       "export": "DesignFonts",
       "what": {
@@ -68,6 +70,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/design/design-type.client.tsx",
       "export": "DesignType",
       "what": {
@@ -97,6 +100,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/design/design-shape.client.tsx",
       "export": "DesignShape",
       "what": {

@@ -10,6 +10,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/element-docs/element-doc.client.tsx",
       "export": "ElementDocIsland",
       "what": {
@@ -37,6 +38,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/element-docs/passport-door.client.tsx",
       "export": "PassportDoor",
       "what": {
@@ -69,6 +71,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "panel",
       "path": "components/element-docs/element-orders.client.tsx",
       "export": "ElementOrdersIsland",
       "what": {
@@ -106,6 +109,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "panel",
       "path": "components/element-docs/product-quiz.client.tsx",
       "export": "ProductQuizIsland",
       "what": {
@@ -142,6 +146,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "panel",
       "path": "components/element-docs/reverse-engineering.client.tsx",
       "export": "ReverseEngineering",
       "what": {

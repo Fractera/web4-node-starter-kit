@@ -10,6 +10,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/wallet/node-wallet.client.tsx",
       "export": "NodeWalletCard, NodeWalletBody",
       "what": {

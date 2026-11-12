@@ -19,6 +19,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "panel",
       "path": "components/preview/element-preview.client.tsx",
       "export": "ElementPreview",
       "what": {

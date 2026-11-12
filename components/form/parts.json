@@ -15,6 +15,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "any",
       "path": "components/form/voice-control.client.tsx",
       "export": "VoiceControl",
       "what": {
@@ -58,6 +59,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "any",
       "path": "components/form/voice-field.client.tsx",
       "export": "VoiceField",
       "what": {
@@ -98,6 +100,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "any",
       "path": "components/form/voice-textarea.client.tsx",
       "export": "VoiceTextarea",
       "what": {

@@ -10,6 +10,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/environment/environment-panel.tsx",
       "export": "EnvironmentPanel",
       "what": {

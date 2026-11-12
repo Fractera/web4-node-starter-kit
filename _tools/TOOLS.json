@@ -15,6 +15,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "panel",
       "needs": [
         "browser",
         "openai-key"
@@ -55,6 +56,7 @@
       "dir": "_tools/chat",
       "version": "1.0.0",
       "parts": [],
+      "scope": "any",
       "needs": [
         "browser"
       ],
@@ -98,6 +100,7 @@
       "dir": "_tools/code-view",
       "version": "1.0.0",
       "parts": [],
+      "scope": "any",
       "needs": [
         "browser"
       ],
@@ -141,6 +144,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "any",
       "needs": [
         "browser",
         "openai-key"
@@ -185,6 +189,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "any",
       "needs": [
         "browser"
       ],
@@ -224,6 +229,7 @@
       "dir": "_tools/shell-kit",
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "needs": [
         "browser"
       ],
@@ -268,6 +274,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "any",
       "needs": [
         "browser",
         "openai-key"
@@ -307,6 +314,7 @@
       "dir": "_tools/terminal-drawer",
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "needs": [
         "browser"
       ],
@@ -356,6 +364,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "panel",
       "needs": [
         "browser",
         "openai-key"
@@ -404,6 +413,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "any",
       "needs": [
         "browser",
         "openai-key"
@@ -449,6 +459,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "any",
       "needs": [
         "browser",
         "ffmpeg"
@@ -486,6 +497,7 @@
       "dir": "_tools/voice-input",
       "version": "1.0.0",
       "parts": [],
+      "scope": "any",
       "needs": [
         "browser",
         "https",

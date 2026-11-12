@@ -10,6 +10,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "any",
       "path": "components/table/table-tools.client.tsx",
       "export": "TableTools",
       "what": {

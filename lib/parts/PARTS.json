@@ -16,6 +16,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "any",
       "path": "components/dialog/app-dialog.client.tsx",
       "export": "AppDialog",
       "what": {
@@ -77,6 +78,14 @@
         "components/project-types/project-type-marquee.client.tsx",
         "components/request/pre-step-request.client.tsx",
         "components/tools-tab/tool-demo.client.tsx"
+      ],
+      "body": [
+        "components/dialog/app-dialog.client.tsx",
+        "components/dialog/app-dialog.i18n.ts"
+      ],
+      "requires": [
+        "components/ui/dialog",
+        "lib/utils"
       ]
     },
     {
@@ -88,6 +97,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/deploy/core-terminal.client.tsx",
       "export": "CoreTerminal",
       "what": {
@@ -134,6 +144,14 @@
         "app/[lang]/(architectLayer)/architect/stripe/_agent-kit/client/core-build-watch.client.tsx",
         "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/agent-terminal.client.tsx",
         "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/core-build-watch.client.tsx"
+      ],
+      "body": [
+        "components/deploy/core-terminal.client.tsx",
+        "components/deploy/failure-note.client.tsx"
+      ],
+      "requires": [
+        "app/[lang]/(architectLayer)/_components/live-log.client",
+        "components/ui/button"
       ]
     },
     {
@@ -145,6 +163,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/design/design-colors.client.tsx",
       "export": "DesignColors",
       "what": {
@@ -167,6 +186,19 @@
       "usedBy": [
         "components/element-settings/design-fine.client.tsx",
         "components/panel-design/panel-design.client.tsx"
+      ],
+      "body": [
+        "components/design/design-colors.client.tsx",
+        "components/design/design-save.ts",
+        "components/design/design-workbench.tsx",
+        "components/design/design.i18n.ts"
+      ],
+      "requires": [
+        "components/design/design-save-context.client",
+        "components/ui/button",
+        "components/ui/input",
+        "lib/design/color-schemes",
+        "lib/design/contrast"
       ]
     },
     {
@@ -178,6 +210,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/design/design-fonts.client.tsx",
       "export": "DesignFonts",
       "what": {
@@ -200,6 +233,17 @@
       "usedBy": [
         "components/element-settings/design-fine.client.tsx",
         "components/panel-design/panel-design.client.tsx"
+      ],
+      "body": [
+        "components/design/design-fonts.client.tsx",
+        "components/design/design-save.ts",
+        "components/design/design-workbench.tsx",
+        "components/design/design.i18n.ts"
+      ],
+      "requires": [
+        "components/design/design-save-context.client",
+        "components/ui/button",
+        "lib/design/font-catalogue"
       ]
     },
     {
@@ -211,6 +255,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/design/design-shape.client.tsx",
       "export": "DesignShape",
       "what": {
@@ -233,6 +278,18 @@
       "usedBy": [
         "components/element-settings/design-fine.client.tsx",
         "components/panel-design/panel-design.client.tsx"
+      ],
+      "body": [
+        "components/design/design-save.ts",
+        "components/design/design-shape.client.tsx",
+        "components/design/design-workbench.tsx",
+        "components/design/design.i18n.ts",
+        "components/design/preset-field.client.tsx"
+      ],
+      "requires": [
+        "components/design/design-save-context.client",
+        "components/ui/button",
+        "components/ui/input"
       ]
     },
     {
@@ -244,6 +301,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/design/design-type.client.tsx",
       "export": "DesignType",
       "what": {
@@ -266,6 +324,18 @@
       "usedBy": [
         "components/element-settings/design-fine.client.tsx",
         "components/panel-design/panel-design.client.tsx"
+      ],
+      "body": [
+        "components/design/design-save.ts",
+        "components/design/design-type.client.tsx",
+        "components/design/design-workbench.tsx",
+        "components/design/design.i18n.ts",
+        "components/design/preset-field.client.tsx"
+      ],
+      "requires": [
+        "components/design/design-save-context.client",
+        "components/ui/button",
+        "components/ui/input"
       ]
     },
     {
@@ -277,6 +347,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/element-docs/element-doc.client.tsx",
       "export": "ElementDocIsland",
       "what": {
@@ -308,6 +379,14 @@
         "app/[lang]/(architectLayer)/architect/build/steps-done/page.tsx",
         "app/[lang]/(architectLayer)/architect/build/steps-new/page.tsx",
         "app/[lang]/(architectLayer)/architect/build/translation-debt/page.tsx"
+      ],
+      "body": [
+        "components/element-docs/element-doc.client.tsx",
+        "components/element-docs/element-doc.tsx"
+      ],
+      "requires": [
+        "components/ui/typography",
+        "lib/web4-items/element-docs"
       ]
     },
     {
@@ -324,6 +403,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "panel",
       "path": "components/element-docs/element-orders.client.tsx",
       "export": "ElementOrdersIsland",
       "what": {
@@ -345,6 +425,17 @@
       "usedBy": [
         "app/[lang]/(architectLayer)/_i18n/element-docs.i18n.ts",
         "app/[lang]/(architectLayer)/architect/[item]/[[...page]]/page.tsx"
+      ],
+      "body": [
+        "components/element-docs/element-doc.tsx",
+        "components/element-docs/element-orders.client.tsx"
+      ],
+      "requires": [
+        "components/ui/sheet",
+        "components/ui/spinner",
+        "components/ui/typography",
+        "lib/web4-items/element-docs",
+        "sections/table.i18n"
       ]
     },
     {
@@ -365,6 +456,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "panel",
       "path": "components/preview/element-preview.client.tsx",
       "export": "ElementPreview",
       "what": {
@@ -385,6 +477,22 @@
       "usedBy": [
         "app/[lang]/(architectLayer)/architect/[item]/[[...page]]/page.tsx",
         "sections/kinds/element-preview.server.tsx"
+      ],
+      "body": [
+        "components/preview/element-preview.client.tsx",
+        "components/preview/use-screen-scale.client.ts"
+      ],
+      "requires": [
+        "app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/client/terminal-paste",
+        "app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/words/agent-terminal.i18n",
+        "components/ai-elements/web-preview",
+        "components/dialog/app-dialog.i18n",
+        "components/node-state/open-on-this-computer.client",
+        "components/ui/button",
+        "components/ui/input",
+        "components/ui/popover",
+        "components/ui/tooltip",
+        "lib/auth/owner-at-machine"
       ]
     },
     {
@@ -396,6 +504,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/environment/environment-panel.tsx",
       "export": "EnvironmentPanel",
       "what": {
@@ -416,6 +525,18 @@
       "usedBy": [
         "app/[lang]/(architectLayer)/architect/[item]/[[...page]]/page.tsx",
         "app/[lang]/(architectLayer)/architect/build/environment/page.tsx"
+      ],
+      "body": [
+        "components/environment/environment-panel.client.tsx",
+        "components/environment/environment-panel.tsx",
+        "components/environment/environment.i18n.ts"
+      ],
+      "requires": [
+        "components/dialog/app-dialog.client",
+        "components/dialog/app-dialog.i18n",
+        "components/ui/button",
+        "components/ui/input",
+        "lib/env-file"
       ]
     },
     {
@@ -427,6 +548,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/wallet/node-wallet.client.tsx",
       "export": "NodeWalletCard, NodeWalletBody",
       "what": {
@@ -452,6 +574,19 @@
         "app/[lang]/(architectLayer)/architect/build/settings/payments/_hidden-until-lagrix-web3/page.tsx",
         "app/[lang]/(architectLayer)/architect/passport/wallet/page.tsx",
         "components/dashboard/node-passport.client.tsx"
+      ],
+      "body": [
+        "components/wallet/node-wallet.client.tsx",
+        "components/wallet/node-wallet.i18n.ts"
+      ],
+      "requires": [
+        "components/lagrix/doc-items",
+        "components/ui/accordion",
+        "components/ui/button",
+        "components/ui/card",
+        "components/ui/input",
+        "components/ui/spinner",
+        "lib/lagrix-docs"
       ]
     },
     {
@@ -463,6 +598,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/element-docs/passport-door.client.tsx",
       "export": "PassportDoor",
       "what": {
@@ -483,6 +619,13 @@
       "usedBy": [
         "app/[lang]/(architectLayer)/_i18n/element-docs.i18n.ts",
         "app/[lang]/(architectLayer)/architect/[item]/[[...page]]/page.tsx"
+      ],
+      "body": [
+        "components/element-docs/passport-door.client.tsx"
+      ],
+      "requires": [
+        "components/ui/button",
+        "components/ui/typography"
       ]
     },
     {
@@ -503,6 +646,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "panel",
       "path": "components/element-docs/product-quiz.client.tsx",
       "export": "ProductQuizIsland",
       "what": {
@@ -523,6 +667,18 @@
       "usedBy": [
         "app/[lang]/(architectLayer)/_i18n/product-quiz.i18n.ts",
         "app/[lang]/(architectLayer)/architect/[item]/[[...page]]/page.tsx"
+      ],
+      "body": [
+        "components/element-docs/product-quiz.client.tsx"
+      ],
+      "requires": [
+        "components/dialog/app-dialog.i18n",
+        "components/ui/badge",
+        "components/ui/button",
+        "components/ui/card",
+        "components/ui/popover",
+        "components/ui/typography",
+        "lib/web4-items/product-quiz"
       ]
     },
     {
@@ -534,6 +690,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "path": "components/element-settings/remote.client.tsx",
       "export": "RemoteSettings, useRemote, remoteUrl, shellUrl",
       "what": {
@@ -554,7 +711,11 @@
       "usedBy": [
         "components/design/design-save-context.client.tsx",
         "components/element-design/design-flow.client.tsx"
-      ]
+      ],
+      "body": [
+        "components/element-settings/remote.client.tsx"
+      ],
+      "requires": []
     },
     {
       "id": "reverse-engineering",
@@ -574,6 +735,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "panel",
       "path": "components/element-docs/reverse-engineering.client.tsx",
       "export": "ReverseEngineering",
       "what": {
@@ -596,6 +758,18 @@
         "app/[lang]/(architectLayer)/_i18n/reverse-engineering.i18n.ts",
         "app/[lang]/(architectLayer)/architect/[item]/[[...page]]/page.tsx",
         "app/api/node/studies/route.ts"
+      ],
+      "body": [
+        "components/element-docs/reverse-engineering.client.tsx"
+      ],
+      "requires": [
+        "components/ui/accordion",
+        "components/ui/badge",
+        "components/ui/button",
+        "components/ui/input",
+        "components/ui/popover",
+        "components/ui/spinner",
+        "components/ui/typography"
       ]
     },
     {
@@ -607,6 +781,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "any",
       "path": "components/table/table-tools.client.tsx",
       "export": "TableTools",
       "what": {
@@ -634,6 +809,14 @@
         "components/element-docs/element-orders.client.tsx",
         "components/super-node/super-node-payouts.client.tsx",
         "sections/kinds/table.server.tsx"
+      ],
+      "body": [
+        "components/table/table-tools.client.tsx"
+      ],
+      "requires": [
+        "components/ui/pagination",
+        "components/ui/typography",
+        "sections/table.i18n"
       ]
     },
     {
@@ -657,6 +840,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "panel",
       "what": {
         "en": "A window opened from a highlighted block: its address on top, six things to do with it (improve the design, improve the code, it works wrong, delete it, change the texts, turn it into a tool), each opening a short explanation, and a details field that takes voice. Send gives back one text: the choice, the address and the details.",
         "ru": "Окно, которое открывается с подсвеченного блока: сверху его адрес, шесть действий (улучшить дизайн, улучшить код, это работает неправильно, удалить, изменить тексты, превратить в инструмент), у каждого раскрывается короткое пояснение, и поле подробностей с голосовым вводом. «Отправить» отдаёт один текст: выбор, адрес и подробности."
@@ -686,6 +870,17 @@
         "components/element-docs/product-quiz.client.tsx",
         "components/preview/element-preview.client.tsx",
         "sections/kinds/element-preview.server.tsx"
+      ],
+      "body": [
+        "_tools/block-task/client/block-task.client.tsx",
+        "_tools/block-task/types/block-task.i18n.ts",
+        "_tools/block-task/types/block-task.ts"
+      ],
+      "requires": [
+        "components/dialog/app-dialog.i18n",
+        "components/ui/accordion",
+        "components/ui/button",
+        "components/ui/typography"
       ]
     },
     {
@@ -700,6 +895,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "any",
       "what": {
         "en": "One conversation for the whole project, in two states. Given a send handler it is a full chat — a feed plus an input field with file attachment; without one it is a read-only feed, which is exactly what a log needs. A message carries text, who wrote it, when, an optional mark of which channel made it, and up to six kinds of attachment: four the library knows by itself — audio, image, video, document — and two of ours, a place and a calendar event.",
         "ru": "Одна переписка на весь проект, в двух состояниях. Дан обработчик отправки — это чат целиком: лента и поле ввода с прикреплением файла; не дан — лента только на чтение, ровно то, что нужно журналу. Сообщение несёт текст, автора, время, необязательную пометку канала и до шести родов вложений: четыре библиотека узнаёт сама — аудио, изображение, видео, документ — и два наших, место и календарное событие."
@@ -727,6 +923,17 @@
         "components/tools-tab/tool-demo.client.tsx",
         "sections/chat.i18n.ts",
         "sections/kinds/chat.server.tsx"
+      ],
+      "body": [
+        "_tools/chat/client/chat-attachments.client.tsx",
+        "_tools/chat/client/chat.client.tsx",
+        "_tools/chat/types/chat.ts"
+      ],
+      "requires": [
+        "components/ai-elements/attachments",
+        "components/ai-elements/conversation",
+        "components/ai-elements/message",
+        "components/ai-elements/prompt-input"
       ]
     },
     {
@@ -741,6 +948,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "any",
       "what": {
         "en": "Shows source code with real highlighting. The engine is Shiki: it parses the actual grammar of the language instead of matching regular expressions, so CSS nested inside HTML or a generic in TypeScript is coloured correctly rather than almost correctly. The language is taken from an explicit prop or guessed from the file name.",
         "ru": "Показывает исходный код с настоящей подсветкой. Движок — Shiki: он разбирает грамматику языка, а не подбирает регулярные выражения, поэтому вложенный в HTML CSS или дженерик в TypeScript окрашиваются верно, а не «почти верно». Язык берётся из явного пропса или угадывается по имени файла."
@@ -764,7 +972,12 @@
       ],
       "usedBy": [
         "components/tools-tab/tool-demo.client.tsx"
-      ]
+      ],
+      "body": [
+        "_tools/code-view/client/code-view.client.tsx",
+        "_tools/code-view/types/code-view.ts"
+      ],
+      "requires": []
     },
     {
       "id": "tool-demo",
@@ -788,6 +1001,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "panel",
       "internal": true,
       "path": "components/tools-tab/tool-demo.client.tsx",
       "export": "ToolDemo",
@@ -806,7 +1020,17 @@
           "превью инструмента"
         ]
       },
-      "usedBy": []
+      "usedBy": [],
+      "body": [
+        "components/tools-tab/tool-demo.client.tsx",
+        "components/tools-tab/tools-tab.i18n.ts"
+      ],
+      "requires": [
+        "components/dialog/app-dialog.i18n",
+        "components/ui/badge",
+        "components/ui/typography",
+        "lib/parts/tools-catalog"
+      ]
     },
     {
       "id": "tool-fact-draft",
@@ -825,6 +1049,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "any",
       "what": {
         "en": "A person describes in free words what they want to store, and the tool returns a filled-in record: machine name, human name, the form of the value, the instruction for recognising it, and what to do when it is implied but not extractable. The schema of fields comes as a parameter, so the tool serves any consumer, not only the fact registry.",
         "ru": "Человек описывает свободными словами, что хочет хранить, и получает заполненную запись: машинное имя, человеческое название, форму значения, инструкцию узнавания и поведение при неудаче. Схема полей приходит параметром — поэтому инструмент годится любому потребителю, а не только реестру признаков."
@@ -847,7 +1072,20 @@
         "browser",
         "openai-key"
       ],
-      "usedBy": []
+      "usedBy": [],
+      "body": [
+        "_tools/fact-draft/client/fact-draft.client.tsx",
+        "_tools/fact-draft/server/draft.ts",
+        "_tools/fact-draft/types/fact-draft.ts"
+      ],
+      "requires": [
+        "components/ui/button",
+        "components/ui/typography",
+        "lib/i18n/openai-error.i18n",
+        "lib/openai-error.cjs",
+        "lib/openai-key",
+        "lib/usage-ledger.cjs"
+      ]
     },
     {
       "id": "tool-image-crop",
@@ -866,6 +1104,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "any",
       "what": {
         "en": "Lets a person choose the visible part of a picture before it is saved and returns a ready JPEG. The frame sets a proportion — 16:9, 1:1 or 9:16 — not a size; the longer side is capped at 1200 pixels. All the work happens in the browser: canvas, dragging, a zoom slider. The server only learns the result.",
         "ru": "Даёт человеку выбрать видимую часть картинки до того, как она сохранена, и отдаёт готовый JPEG. Рамка задаёт пропорцию — 16:9, 1:1 или 9:16, — а не размер; большая сторона ограничена 1200 пикселями. Работа целиком в браузере: холст, перетаскивание, ползунок масштаба. Сервер узнаёт только результат."
@@ -887,7 +1126,14 @@
       "needs": [
         "browser"
       ],
-      "usedBy": []
+      "usedBy": [],
+      "body": [
+        "_tools/image-crop/client/image-cropper.client.tsx"
+      ],
+      "requires": [
+        "components/dialog/app-dialog.i18n",
+        "components/ui/button"
+      ]
     },
     {
       "id": "tool-shell-kit",
@@ -901,6 +1147,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "what": {
         "en": "The project's header, account drawer and footer as one tool of the core that every element takes at run time. The core draws them to HTML for the element's language and page, and one script brings them to life in the visitor's browser: the menu, the account, the theme, width and language switches.",
         "ru": "Шапка, ящик кабинета и подвал проекта как один инструмент ядра, который каждый элемент берёт во время работы. Ядро рисует их в HTML для языка и страницы элемента, а один скрипт оживляет их в браузере посетителя: меню, кабинет, переключатели темы, ширины и языка."
@@ -925,6 +1172,23 @@
       "usedBy": [
         "app/api/shell-kit/[lang]/route.ts",
         "lib/shell-kit/kit.ts"
+      ],
+      "body": [
+        "_tools/shell-kit/client/kit-drawer-toggle.client.tsx",
+        "_tools/shell-kit/client/shell-kit-root.tsx",
+        "_tools/shell-kit/client/shell-kit.client.tsx",
+        "_tools/shell-kit/server/render.tsx",
+        "_tools/shell-kit/shims/next-link.tsx",
+        "_tools/shell-kit/shims/next-navigation.ts",
+        "_tools/shell-kit/types/drawer-events.ts",
+        "_tools/shell-kit/types/shell-kit.ts"
+      ],
+      "requires": [
+        "components/shell/project-footer",
+        "components/shell/project-header",
+        "components/shell/shell-types",
+        "components/shell/theme-provider.client",
+        "components/ui/button"
       ]
     },
     {
@@ -944,6 +1208,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "any",
       "what": {
         "en": "A person writes a phrase — a company name, a nickname, a line about themselves — and the tool proposes several social profiles that could be theirs. Every candidate is checked by an actual request to the network, and the three outcomes look different rather than being shades of one: found, not found, and «the network refuses strangers».",
         "ru": "Человек пишет фразу — название компании, псевдоним, строку о себе, — и инструмент предлагает несколько профилей в соцсетях, которые могут быть его. Каждый кандидат проверяется настоящим обращением к сети, и три исхода выглядят по-разному, а не оттенками одного: найден, не найден и «сеть не отвечает посторонним»."
@@ -966,7 +1231,25 @@
         "browser",
         "openai-key"
       ],
-      "usedBy": []
+      "usedBy": [],
+      "body": [
+        "_tools/socials-ai/client/socials-ai-dialog.client.tsx",
+        "_tools/socials-ai/server/resolve.ts",
+        "_tools/socials-ai/types/socials-ai.ts"
+      ],
+      "requires": [
+        "components/dialog/app-dialog.i18n",
+        "components/icons/socials",
+        "components/ui/button",
+        "components/ui/input",
+        "components/ui/textarea",
+        "components/ui/typography",
+        "lib/i18n/openai-error.i18n",
+        "lib/openai-error.cjs",
+        "lib/openai-key",
+        "lib/socials/catalogue",
+        "lib/usage-ledger.cjs"
+      ]
     },
     {
       "id": "tool-terminal-drawer",
@@ -980,6 +1263,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "panel",
       "what": {
         "en": "The right half of the screen with an agent's terminal and a task already in it. A button on the page opens it, Collapse closes it, and the agent's session keeps running.",
         "ru": "Правая половина экрана с терминалом агента, в котором уже стоит задача. Открывает его кнопка на странице, закрывает «Свернуть», а сессия агента продолжает работать."
@@ -1007,6 +1291,16 @@
         "components/preview/element-preview.client.tsx",
         "components/tools-tab/props.server.ts",
         "components/tools-tab/tools-tab.client.tsx"
+      ],
+      "body": [
+        "_tools/terminal-drawer/client/terminal-drawer.client.tsx",
+        "_tools/terminal-drawer/types/terminal-drawer.ts"
+      ],
+      "requires": [
+        "app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/client/agent-terminal.client",
+        "app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/words/agent-terminal.i18n",
+        "components/dialog/app-dialog.i18n",
+        "components/ui/button"
       ]
     },
     {
@@ -1030,6 +1324,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "panel",
       "what": {
         "en": "The window that puts text into an agent's terminal: a large field that takes typing, pasting and voice, and two buttons — insert, or insert and send. Without a running session the buttons wait and the text stays in the window.",
         "ru": "Окно, которое кладёт текст в терминал агента: большое поле для набора, вставки и голоса и две кнопки — вставить или вставить и отправить. Пока сессия не запущена, кнопки ждут, а текст остаётся в окне."
@@ -1066,6 +1361,14 @@
         "app/[lang]/(architectLayer)/architect/storage/_agent-kit/client/agent-terminal.client.tsx",
         "app/[lang]/(architectLayer)/architect/stripe/_agent-kit/client/agent-terminal.client.tsx",
         "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/agent-terminal.client.tsx"
+      ],
+      "body": [
+        "_tools/terminal-paste/client/terminal-paste-dialog.client.tsx",
+        "_tools/terminal-paste/types/terminal-paste.ts"
+      ],
+      "requires": [
+        "components/dialog/app-dialog.i18n",
+        "components/ui/button"
       ]
     },
     {
@@ -1089,6 +1392,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "any",
       "what": {
         "en": "A window that any entity with translatable fields can open: a product today, a category and a page tomorrow. One card per language, automatic translation, saving one language at a time. A single-language application never sees it — the check stands on the first line, so the caller does not have to remember it.",
         "ru": "Окно, которое подключает любая сущность с переводимыми полями: продукт сегодня, категория и страница завтра. Карточка на язык, автоперевод, сохранение по одному языку. Одноязычное приложение этого диалога не видит — проверка стоит первой строкой, и вызывающему о ней помнить не надо."
@@ -1111,7 +1415,23 @@
         "browser",
         "openai-key"
       ],
-      "usedBy": []
+      "usedBy": [],
+      "body": [
+        "_tools/translations-dialog/client/translation-cell.client.tsx",
+        "_tools/translations-dialog/client/translations-dialog.client.tsx",
+        "_tools/translations-dialog/client/use-translations.ts",
+        "_tools/translations-dialog/types/translations-dialog.i18n.ts"
+      ],
+      "requires": [
+        "components/dialog/app-dialog.i18n",
+        "components/ui/button",
+        "components/ui/input",
+        "components/ui/textarea",
+        "components/ui/tooltip",
+        "config/translations/translations.config",
+        "lib/i18n/platform-errors",
+        "lib/runtime-urls"
+      ]
     },
     {
       "id": "tool-video-trim",
@@ -1130,6 +1450,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "any",
       "what": {
         "en": "Keeps the middle of a clip and cuts off the head and the tail. The browser only picks two points on a timeline; the cutting is done by the data layer with ffmpeg and `-c copy` — the streams are copied without re-encoding, so it is instant, lossless and costs the owner's machine nothing.",
         "ru": "Оставляет середину ролика, отрезая начало и конец. Браузер лишь выбирает две точки на шкале; режет слой данных, ffmpeg с `-c copy` — потоки копируются без перекодировки, поэтому мгновенно, без потерь и без нагрузки на машину владельца."
@@ -1152,7 +1473,14 @@
         "browser",
         "ffmpeg"
       ],
-      "usedBy": []
+      "usedBy": [],
+      "body": [
+        "_tools/video-trim/client/video-trimmer.client.tsx"
+      ],
+      "requires": [
+        "components/dialog/app-dialog.i18n",
+        "components/ui/button"
+      ]
     },
     {
       "id": "tool-voice-input",
@@ -1166,6 +1494,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "any",
       "what": {
         "en": "A small button beside a field: hold it and it records, release it and the recording goes off to be transcribed. While recording, a 40-pixel bar shows the incoming sound with the elapsed time in its middle. It remembers the caret — the transcript lands where the cursor stood, not at the end of the field.",
         "ru": "Маленькая кнопка рядом с полем: удерживаешь — идёт запись, отпустил — уходит на расшифровку. Во время записи полоса в 40 пикселей показывает приходящий звук, а в её центре идёт время. Помнит курсор: расшифровка встаёт туда, где он стоял, а не в конец поля."
@@ -1195,6 +1524,18 @@
         "_tools/translations-dialog/client/translation-cell.client.tsx",
         "app/api/transcribe/route.ts",
         "components/form/voice-control.client.tsx"
+      ],
+      "body": [
+        "_tools/voice-input/client/use-voice-recorder.ts",
+        "_tools/voice-input/client/voice-input-i18n.ts",
+        "_tools/voice-input/client/voice-input.client.tsx",
+        "_tools/voice-input/server/transcribe.ts",
+        "_tools/voice-input/types/voice-input.ts"
+      ],
+      "requires": [
+        "lib/i18n/voice-field.i18n",
+        "lib/openai-error.cjs",
+        "lib/usage-ledger.cjs"
       ]
     },
     {
@@ -1219,6 +1560,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "panel",
       "path": "components/tools-tab/tools-tab.client.tsx",
       "export": "ToolsTab",
       "what": {
@@ -1241,6 +1583,18 @@
       "usedBy": [
         "app/[lang]/(architectLayer)/architect/[item]/[[...page]]/page.tsx",
         "sections/kinds/tools-tab.server.tsx"
+      ],
+      "body": [
+        "components/tools-tab/tasks.ts",
+        "components/tools-tab/tools-tab.client.tsx",
+        "components/tools-tab/tools-tab.i18n.ts"
+      ],
+      "requires": [
+        "components/tools-tab/tool-card.client",
+        "components/ui/accordion",
+        "components/ui/button",
+        "components/ui/typography",
+        "lib/parts/tools-catalog"
       ]
     },
     {
@@ -1257,6 +1611,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "any",
       "path": "components/form/voice-control.client.tsx",
       "export": "VoiceControl",
       "what": {
@@ -1291,6 +1646,18 @@
         "_tools/terminal-paste/client/terminal-paste-dialog.client.tsx",
         "components/architect/menu-ai.client.tsx",
         "components/element-docs/reverse-engineering.client.tsx"
+      ],
+      "body": [
+        "components/form/voice-control.client.tsx"
+      ],
+      "requires": [
+        "components/form/mic-icon",
+        "components/ui/button",
+        "components/ui/button-group",
+        "components/ui/input",
+        "components/ui/textarea",
+        "components/ui/tooltip",
+        "components/ui/typography"
       ]
     },
     {
@@ -1307,6 +1674,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "any",
       "path": "components/form/voice-field.client.tsx",
       "export": "VoiceField",
       "what": {
@@ -1332,7 +1700,14 @@
       "needs": [
         "openai-key"
       ],
-      "usedBy": []
+      "usedBy": [],
+      "body": [
+        "components/form/voice-field.client.tsx"
+      ],
+      "requires": [
+        "components/ui/field",
+        "components/ui/typography"
+      ]
     },
     {
       "id": "voice-textarea",
@@ -1348,6 +1723,7 @@
           "version": "1.0.0"
         }
       ],
+      "scope": "any",
       "path": "components/form/voice-textarea.client.tsx",
       "export": "VoiceTextarea",
       "what": {
@@ -1378,6 +1754,13 @@
       "usedBy": [
         "app/[lang]/(architectLayer)/_components/schedule-task.client.tsx",
         "components/tools-tab/tools-tab.client.tsx"
+      ],
+      "body": [
+        "components/form/voice-textarea.client.tsx"
+      ],
+      "requires": [
+        "components/ui/field",
+        "components/ui/typography"
       ]
     },
     {

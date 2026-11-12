@@ -10,6 +10,7 @@
       },
       "version": "1.0.0",
       "parts": [],
+      "scope": "any",
       "path": "components/dialog/app-dialog.client.tsx",
       "export": "AppDialog",
       "what": {
