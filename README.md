@@ -85,6 +85,16 @@ through the results, fine-tune the one that wins and approve it: its colours, fo
 agent builds every other page in it. The whole path works from Telegram. A family of elements can share one look, or each can keep its
 own.
 
+### A tuning studio for your AI agent: a billion tokens of context
+
+![An agent with a billion tokens of context](public/images/readme/one-billion-tokens.jpg)
+
+No model today has a context window of a billion tokens, and a node gets there another way. Every element works in its own Claude
+Code window of up to a million tokens, and its steps, memory and development diary carry the work from session to session, so tens
+or hundreds of projects grow side by side. Compaction is off: past 55% of a window the agent writes a letter to its next session, and
+the node starts a clean one from it. The elements last and agree an API once, so nothing is read twice; a swarm of short-lived
+subagents spends about fifteen times the tokens of a chat, by Anthropic's own measure.
+
 ### Reverse engineering and the product quiz: one cycle
 
 Name a popular site or SDK, and the node studies how it works: its pages, user flows, API and data. It handles sites, npm and Python
