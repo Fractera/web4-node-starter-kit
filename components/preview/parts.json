@@ -1,0 +1,26 @@
+{
+  "_": "Cards of the reusable parts of this folder (node step 725-1). One card per part; the map is lib/parts/PARTS.json.",
+  "parts": [
+    {
+      "id": "element-preview",
+      "kind": "composite",
+      "path": "components/preview/element-preview.client.tsx",
+      "export": "ElementPreview",
+      "what": {
+        "en": "The preview of a node element inside the core: its live site in a frame, the highlight of blocks, the block task window and the element's terminal in a side drawer.",
+        "ru": "Просмотр элемента узла внутри ядра: его живой сайт во фрейме, подсветка блоков, окно задачи блока и терминал элемента в боковом ящике."
+      },
+      "how": "<ElementPreview id lang />.",
+      "words": {
+        "en": [
+          "element preview",
+          "live site frame"
+        ],
+        "ru": [
+          "просмотр элемента",
+          "предпросмотр сайта"
+        ]
+      }
+    }
+  ]
+}

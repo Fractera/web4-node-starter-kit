@@ -1,0 +1,26 @@
+{
+  "_": "Cards of the reusable parts of this folder (node step 725-1). One card per part; the map is lib/parts/PARTS.json.",
+  "parts": [
+    {
+      "id": "breadcrumbs",
+      "kind": "composite",
+      "path": "components/nav/breadcrumbs.server.tsx",
+      "export": "Breadcrumbs",
+      "what": {
+        "en": "Breadcrumbs — on every page, one component for the whole project, with their structured data.",
+        "ru": "Хлебные крошки — на каждой странице, один компонент на весь проект, со структурированными данными."
+      },
+      "how": "<Breadcrumbs items lang />.",
+      "words": {
+        "en": [
+          "breadcrumbs",
+          "page path"
+        ],
+        "ru": [
+          "хлебные крошки",
+          "путь страницы"
+        ]
+      }
+    }
+  ]
+}

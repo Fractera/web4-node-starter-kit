@@ -1,0 +1,28 @@
+{
+  "_": "Cards of the reusable parts of this folder (node step 725-1). One card per part; the map is lib/parts/PARTS.json.",
+  "parts": [
+    {
+      "id": "accordion-section",
+      "kind": "composite",
+      "path": "components/accordion/accordion-section.client.tsx",
+      "export": "AccordionSection",
+      "what": {
+        "en": "The island of the accordion section: bands that open and close, the server renderer only passes the section's fields in.",
+        "ru": "Островок секции-аккордеона: полосы, которые раскрываются и закрываются; серверный рендерер только передаёт поля секции."
+      },
+      "how": "Used by the section kind «accordion»; for a plain collapsible inside a panel take the primitive Accordion of components/ui.",
+      "words": {
+        "en": [
+          "accordion section",
+          "expandable bands",
+          "faq bands"
+        ],
+        "ru": [
+          "аккордеон",
+          "раскрывающиеся полосы",
+          "вопросы и ответы"
+        ]
+      }
+    }
+  ]
+}

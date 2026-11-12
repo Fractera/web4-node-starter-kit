@@ -1,0 +1,28 @@
+{
+  "_": "Cards of the reusable parts of this folder (node step 725-1). One card per part; the map is lib/parts/PARTS.json.",
+  "parts": [
+    {
+      "id": "node-wallet",
+      "kind": "composite",
+      "path": "components/wallet/node-wallet.client.tsx",
+      "export": "NodeWalletCard, NodeWalletBody",
+      "what": {
+        "en": "The node's wallet — one island in four places: create or inherit, add or remove an element's own, the backup file.",
+        "ru": "Кошелёк узла — один островок в четырёх местах: создать или унаследовать, добавить или удалить свой у элемента, файл резервной копии."
+      },
+      "how": "<NodeWalletCard lang element? />.",
+      "words": {
+        "en": [
+          "wallet",
+          "web3 wallet",
+          "crypto payments"
+        ],
+        "ru": [
+          "кошелёк",
+          "web3 кошелёк",
+          "крипто платежи"
+        ]
+      }
+    }
+  ]
+}

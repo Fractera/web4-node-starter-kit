@@ -1,0 +1,68 @@
+{
+  "_": "Cards of the reusable parts of this folder (node step 725-1). One card per part; the map is lib/parts/PARTS.json.",
+  "parts": [
+    {
+      "id": "workspace-shell",
+      "kind": "composite",
+      "path": "components/workspace/workspace-shell.tsx",
+      "export": "WorkspaceShell",
+      "what": {
+        "en": "The working screen layout of a block and its pages: the menu on the left, the content, the top row of tabs.",
+        "ru": "Раскладка рабочего экрана блока и его страниц: меню слева, содержимое, верхний ряд вкладок."
+      },
+      "how": "<WorkspaceShell …> around a working page.",
+      "words": {
+        "en": [
+          "workspace layout",
+          "side menu layout"
+        ],
+        "ru": [
+          "рабочий экран",
+          "раскладка с меню"
+        ]
+      }
+    },
+    {
+      "id": "state-dot",
+      "kind": "composite",
+      "path": "components/workspace/menu-state-dot.tsx",
+      "export": "StateDot",
+      "what": {
+        "en": "The state dot of an element in a menu: running green, asleep amber, off red, a draft an empty circle — server, no JavaScript, theme tokens.",
+        "ru": "Точка состояния элемента в меню: работает — зелёная, спит — жёлтая, выключен — красная, черновик — пустой кружок; серверная, без JavaScript, токены темы."
+      },
+      "how": "<StateDot state />.",
+      "words": {
+        "en": [
+          "status dot",
+          "running indicator"
+        ],
+        "ru": [
+          "точка состояния",
+          "индикатор работы"
+        ]
+      }
+    },
+    {
+      "id": "tabs-scroll",
+      "kind": "composite",
+      "path": "components/workspace/tabs-scroll.client.tsx",
+      "export": "TabsScroll",
+      "what": {
+        "en": "Smooth scrolling along the top row of a page's tabs.",
+        "ru": "Плавная прокрутка по верхнему ряду вкладок страницы."
+      },
+      "how": "<TabsScroll> around the row.",
+      "words": {
+        "en": [
+          "tabs scroll",
+          "smooth tab row"
+        ],
+        "ru": [
+          "прокрутка вкладок",
+          "плавные вкладки"
+        ]
+      }
+    }
+  ]
+}

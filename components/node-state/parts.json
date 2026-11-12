@@ -1,0 +1,69 @@
+{
+  "_": "Cards of the reusable parts of this folder (node step 725-1). One card per part; the map is lib/parts/PARTS.json.",
+  "parts": [
+    {
+      "id": "open-on-this-computer",
+      "kind": "composite",
+      "path": "components/node-state/open-on-this-computer.client.tsx",
+      "export": "ForbiddenWithExit, OpenOnThisComputerButton",
+      "what": {
+        "en": "A refusal on the temporary address with its way out: the reason and a button that opens the same page on this computer's address.",
+        "ru": "Отказ на временном адресе с выходом: причина и кнопка, открывающая ту же страницу по адресу этого компьютера."
+      },
+      "how": "<ForbiddenWithExit lang /> where a page is only for the architect at this computer.",
+      "words": {
+        "en": [
+          "forbidden",
+          "open on this computer"
+        ],
+        "ru": [
+          "отказ",
+          "открыть на этом компьютере",
+          "нет доступа"
+        ]
+      }
+    },
+    {
+      "id": "github-token-alarm",
+      "kind": "composite",
+      "path": "components/node-state/github-token-alarm.client.tsx",
+      "export": "GithubTokenAlarm, announceGithubState",
+      "what": {
+        "en": "The alarm band «your work is not saved to GitHub» above the architect layer until a token is given, with the way to the key.",
+        "ru": "Тревожная полоса «работа не сохраняется в GitHub» над слоем архитектора, пока нет токена, с путём к ключу."
+      },
+      "how": "Mounted once by the architect layout.",
+      "words": {
+        "en": [
+          "github alarm",
+          "token missing banner"
+        ],
+        "ru": [
+          "тревога github",
+          "нет токена"
+        ]
+      }
+    },
+    {
+      "id": "node-state-widgets",
+      "kind": "composite",
+      "path": "components/node-state/widgets.tsx",
+      "export": "nodeStateWidget, nodePlaceWidget",
+      "what": {
+        "en": "The entry of pages into the node's state islands: one call per language returns the island of the node's state or place.",
+        "ru": "Вход страниц в островки состояния узла: один вызов на язык возвращает островок состояния или места узла."
+      },
+      "how": "nodeStateWidget(lang) in a page's widget slot.",
+      "words": {
+        "en": [
+          "node state",
+          "node status widget"
+        ],
+        "ru": [
+          "состояние узла",
+          "статус узла"
+        ]
+      }
+    }
+  ]
+}

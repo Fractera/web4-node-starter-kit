@@ -1,0 +1,26 @@
+{
+  "_": "Cards of the reusable parts of this folder (node step 725-1). One card per part; the map is lib/parts/PARTS.json.",
+  "parts": [
+    {
+      "id": "environment-panel",
+      "kind": "composite",
+      "path": "components/environment/environment-panel.tsx",
+      "export": "EnvironmentPanel",
+      "what": {
+        "en": "The environment tab: the variables a target (the core or an element) reads at start, with their explanations; the island asks which are set.",
+        "ru": "Вкладка переменных окружения: что цель (ядро или элемент) читает при старте, с пояснениями; островок спрашивает, какие заданы."
+      },
+      "how": "<EnvironmentPanel target lang />.",
+      "words": {
+        "en": [
+          "environment variables",
+          "env keys"
+        ],
+        "ru": [
+          "переменные окружения",
+          "ключи окружения"
+        ]
+      }
+    }
+  ]
+}

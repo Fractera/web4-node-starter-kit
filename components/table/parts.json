@@ -1,0 +1,30 @@
+{
+  "_": "Cards of the reusable parts of this folder (node step 725-1). One card per part; the map is lib/parts/PARTS.json.",
+  "parts": [
+    {
+      "id": "table-tools",
+      "kind": "composite",
+      "path": "components/table/table-tools.client.tsx",
+      "export": "TableTools",
+      "what": {
+        "en": "The full table set of the node: search on top, pages below, rows per page, the toggles — the standard every list of the panel uses.",
+        "ru": "Полный набор таблицы узла: поиск сверху, страницы снизу, строк на странице, переключатели — стандарт каждого списка панели."
+      },
+      "how": "<TableTools rows columns searchKeys … /> instead of a bare Table with a hand search.",
+      "words": {
+        "en": [
+          "table with search",
+          "pagination",
+          "data table",
+          "list with filter"
+        ],
+        "ru": [
+          "таблица с поиском",
+          "пагинация",
+          "таблица данных",
+          "список с фильтром"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "_": "Cards of the reusable parts of this folder (node step 725-1). One card per part; the map is lib/parts/PARTS.json.",
+  "parts": [
+    {
+      "id": "static-image",
+      "kind": "composite",
+      "path": "components/media/static-image.server.tsx",
+      "export": "StaticImage",
+      "what": {
+        "en": "A static image of the project with its size and a blurred preview, for the public layer.",
+        "ru": "Статическая картинка проекта с размерами и размытым превью для публичного слоя."
+      },
+      "how": "<StaticImage src alt /> instead of a bare next/image.",
+      "words": {
+        "en": [
+          "image",
+          "picture with blur"
+        ],
+        "ru": [
+          "картинка",
+          "изображение с превью"
+        ]
+      },
+      "replaces": [
+        "next/image"
+      ]
+    },
+    {
+      "id": "config-image",
+      "kind": "composite",
+      "path": "components/media/config-image.server.tsx",
+      "export": "ConfigImage",
+      "what": {
+        "en": "The image of a settings slot (logo, cover) with its pair for the dark theme — the browser picks by the theme.",
+        "ru": "Картинка слота настроек (логотип, обложка) с парой для тёмной темы; браузер выбирает по теме."
+      },
+      "how": "<ConfigImage slot />.",
+      "words": {
+        "en": [
+          "logo image",
+          "themed image"
+        ],
+        "ru": [
+          "логотип",
+          "картинка под тему"
+        ]
+      }
+    }
+  ]
+}

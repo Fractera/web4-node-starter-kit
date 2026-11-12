@@ -1,0 +1,118 @@
+{
+  "_": "Cards of the reusable parts of this folder (node step 725-1). One card per part; the map is lib/parts/PARTS.json.",
+  "parts": [
+    {
+      "id": "design-colors",
+      "kind": "composite",
+      "path": "components/design/design-colors.client.tsx",
+      "export": "DesignColors",
+      "what": {
+        "en": "The colour editor of a design: two themes, seven roles, ten ready palettes; writes through the design save context.",
+        "ru": "Редактор цвета оформления: две темы, семь ролей, десять готовых наборов; пишет через контекст сохранения дизайна."
+      },
+      "how": "Inside a DesignSaveProvider; never a second colour picker.",
+      "words": {
+        "en": [
+          "colour editor",
+          "palette",
+          "theme colours"
+        ],
+        "ru": [
+          "редактор цвета",
+          "палитра",
+          "цвета темы"
+        ]
+      }
+    },
+    {
+      "id": "design-fonts",
+      "kind": "composite",
+      "path": "components/design/design-fonts.client.tsx",
+      "export": "DesignFonts",
+      "what": {
+        "en": "The font picker of a design: the same roles as the panel (body, headings, mono), from the project's local fonts.",
+        "ru": "Выбор шрифтов оформления: те же роли, что в панели (текст, заголовки, моноширинный), из локальных шрифтов проекта."
+      },
+      "how": "Inside a DesignSaveProvider.",
+      "words": {
+        "en": [
+          "font picker",
+          "typeface",
+          "heading font"
+        ],
+        "ru": [
+          "выбор шрифта",
+          "шрифты",
+          "шрифт заголовков"
+        ]
+      }
+    },
+    {
+      "id": "design-type",
+      "kind": "composite",
+      "path": "components/design/design-type.client.tsx",
+      "export": "DesignType",
+      "what": {
+        "en": "The type scale of a design: two numbers drive every text size of the project.",
+        "ru": "Шкала текста оформления: два числа задают все кегли проекта."
+      },
+      "how": "Inside a DesignSaveProvider.",
+      "words": {
+        "en": [
+          "type scale",
+          "font size",
+          "text size"
+        ],
+        "ru": [
+          "шкала текста",
+          "размер шрифта",
+          "кегль"
+        ]
+      }
+    },
+    {
+      "id": "design-shape",
+      "kind": "composite",
+      "path": "components/design/design-shape.client.tsx",
+      "export": "DesignShape",
+      "what": {
+        "en": "Shapes and air of a design: radius, spacing and borders — each value acts on every surface at once.",
+        "ru": "Формы и воздух оформления: скругление, отступы, границы; каждое значение сразу действует на все поверхности."
+      },
+      "how": "Inside a DesignSaveProvider.",
+      "words": {
+        "en": [
+          "border radius",
+          "spacing",
+          "rounded corners"
+        ],
+        "ru": [
+          "скругление",
+          "отступы",
+          "воздух"
+        ]
+      }
+    },
+    {
+      "id": "design-save-context",
+      "kind": "composite",
+      "path": "components/design/design-save-context.client.tsx",
+      "export": "DesignSaveProvider, useDesignSave, useDesignVisible",
+      "what": {
+        "en": "Where the four design editors write: an element's own design files or the core's — one provider, the editors never know which.",
+        "ru": "Куда пишут четыре редактора оформления: в файлы дизайна элемента или ядра; один поставщик, редакторы не знают куда."
+      },
+      "how": "Wrap the editors in <DesignSaveProvider save={…} visible={…}>.",
+      "words": {
+        "en": [
+          "design save",
+          "design editors provider"
+        ],
+        "ru": [
+          "сохранение дизайна",
+          "поставщик редакторов оформления"
+        ]
+      }
+    }
+  ]
+}

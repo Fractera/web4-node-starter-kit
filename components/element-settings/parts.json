@@ -1,0 +1,26 @@
+{
+  "_": "Cards of the reusable parts of this folder (node step 725-1). One card per part; the map is lib/parts/PARTS.json.",
+  "parts": [
+    {
+      "id": "remote-settings",
+      "kind": "composite",
+      "path": "components/element-settings/remote.client.tsx",
+      "export": "RemoteSettings, useRemote, remoteUrl, shellUrl",
+      "what": {
+        "en": "The core's remote control of an element's settings in the browser: only the rows the core knows, read and written through the element's door.",
+        "ru": "Пульт ядра к настройкам элемента в браузере: только строки, известные ядру, чтение и запись через дверь элемента."
+      },
+      "how": "Wrap a settings tab of an element in <RemoteSettings id>; read with useRemote().",
+      "words": {
+        "en": [
+          "remote settings",
+          "element settings"
+        ],
+        "ru": [
+          "настройки элемента",
+          "удалённый пульт"
+        ]
+      }
+    }
+  ]
+}

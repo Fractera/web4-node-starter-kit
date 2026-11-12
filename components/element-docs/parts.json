@@ -1,0 +1,133 @@
+{
+  "_": "Cards of the reusable parts of this folder (node step 725-1). One card per part; the map is lib/parts/PARTS.json.",
+  "parts": [
+    {
+      "id": "element-doc",
+      "kind": "composite",
+      "path": "components/element-docs/element-doc.client.tsx",
+      "export": "ElementDocIsland",
+      "what": {
+        "en": "Shows one document of an element (its steps, reports) asked from the core when the page opens: loading, files, empty, refused.",
+        "ru": "Показывает один документ элемента (шаги, отчёты), спрошенный у ядра при открытии страницы: загрузка, файлы, пусто, отказ."
+      },
+      "how": "<ElementDocIsland id kind lang /> on a prerendered page of an element's documents.",
+      "words": {
+        "en": [
+          "element document",
+          "development docs view"
+        ],
+        "ru": [
+          "документ элемента",
+          "документы разработки"
+        ]
+      }
+    },
+    {
+      "id": "passport-door",
+      "kind": "composite",
+      "path": "components/element-docs/passport-door.client.tsx",
+      "export": "PassportDoor",
+      "what": {
+        "en": "The element's passport as the core receives it from the element's door, with «Generate description» that opens its terminal.",
+        "ru": "Паспорт элемента, как его получает ядро из двери элемента, с кнопкой «Сгенерировать описание», открывающей его терминал."
+      },
+      "how": "<PassportDoor id lang /> on the passport page of an element.",
+      "words": {
+        "en": [
+          "element passport",
+          "passport door"
+        ],
+        "ru": [
+          "паспорт элемента",
+          "описание элемента"
+        ]
+      }
+    },
+    {
+      "id": "element-orders",
+      "kind": "composite",
+      "path": "components/element-docs/element-orders.client.tsx",
+      "export": "ElementOrdersIsland",
+      "what": {
+        "en": "The deals of an element (incoming and outgoing a2a orders) in the node's table standard, a deal opens in a side sheet.",
+        "ru": "Сделки элемента (входящие и исходящие заказы a2a) в табличном стандарте узла; сделка открывается в боковой панели."
+      },
+      "how": "<ElementOrdersIsland id lang />.",
+      "words": {
+        "en": [
+          "deals table",
+          "a2a orders"
+        ],
+        "ru": [
+          "сделки",
+          "заказы a2a",
+          "таблица сделок"
+        ]
+      }
+    },
+    {
+      "id": "product-quiz",
+      "kind": "composite",
+      "path": "components/element-docs/product-quiz.client.tsx",
+      "export": "ProductQuizIsland",
+      "what": {
+        "en": "The product quiz of an element: its stages and questions asked from the core, with the way to go on in the terminal or Telegram.",
+        "ru": "Продуктовый квиз элемента: этапы и вопросы, спрошенные у ядра, и путь продолжить в терминале или Telegram."
+      },
+      "how": "<ProductQuizIsland id lang />.",
+      "words": {
+        "en": [
+          "product quiz",
+          "product questionnaire"
+        ],
+        "ru": [
+          "продуктовый квиз",
+          "опрос о продукте"
+        ]
+      }
+    },
+    {
+      "id": "reverse-engineering",
+      "kind": "composite",
+      "path": "components/element-docs/reverse-engineering.client.tsx",
+      "export": "ReverseEngineering",
+      "what": {
+        "en": "The reverse-engineering page of an element: cards of the site and its pages (address, notes by voice, screenshots) and the start of a study in the terminal.",
+        "ru": "Страница реверс-инжиниринга элемента: карточки сайта и страниц (адрес, заметки голосом, скриншоты) и запуск исследования в терминале."
+      },
+      "how": "<ReverseEngineering id lang />.",
+      "words": {
+        "en": [
+          "reverse engineering",
+          "study a site"
+        ],
+        "ru": [
+          "реверс-инжиниринг",
+          "изучить сайт",
+          "разбор продукта"
+        ]
+      }
+    },
+    {
+      "id": "lagrix-rating",
+      "kind": "composite",
+      "path": "components/element-docs/lagrix-rating.tsx",
+      "export": "LagrixRating",
+      "what": {
+        "en": "The reputation of an element in Lagrix: six indicator cards, «—» until the element is in the network, never an invented number.",
+        "ru": "Репутация элемента в Lagrix: шесть карточек показателей, «—» пока элемент не в сети, никогда не выдуманное число."
+      },
+      "how": "<LagrixRating lang /> on the A2A home or the node passport.",
+      "words": {
+        "en": [
+          "lagrix rating",
+          "reputation"
+        ],
+        "ru": [
+          "рейтинг lagrix",
+          "репутация"
+        ]
+      }
+    }
+  ]
+}

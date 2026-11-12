@@ -1,0 +1,138 @@
+{
+  "_": "Cards of the reusable parts of this folder (node step 725-1). One card per part; the map is lib/parts/PARTS.json.",
+  "parts": [
+    {
+      "id": "voice-control",
+      "kind": "composite",
+      "path": "components/form/voice-control.client.tsx",
+      "export": "VoiceControl",
+      "what": {
+        "en": "The control with voice: a field, the microphone, the equaliser bar and the transcript — the one engine under VoiceField and VoiceTextarea.",
+        "ru": "Элемент с голосом: поле, микрофон, полоса эквалайзера и расшифровка — один двигатель под VoiceField и VoiceTextarea."
+      },
+      "how": "Prefer VoiceField (one line) or VoiceTextarea (several lines); VoiceControl only for a settings row with its own heading.",
+      "words": {
+        "en": [
+          "voice input",
+          "microphone",
+          "speech to text",
+          "dictation"
+        ],
+        "ru": [
+          "голосовой ввод",
+          "микрофон",
+          "диктовка",
+          "расшифровка речи"
+        ]
+      },
+      "replaces": [
+        "@/_tools/voice-input/client/voice-input.client"
+      ],
+      "needs": [
+        "openai-key"
+      ]
+    },
+    {
+      "id": "voice-field",
+      "kind": "composite",
+      "path": "components/form/voice-field.client.tsx",
+      "export": "VoiceField",
+      "what": {
+        "en": "A one-line input with a title and the microphone inside on the right; while recording the equaliser runs under it, then the transcript fills the field.",
+        "ru": "Однострочное поле с заголовком и микрофоном внутри справа; при записи под ним бежит эквалайзер, потом расшифровка заполняет поле."
+      },
+      "how": "<VoiceField label value onChange lang /> — never a bare Input beside a microphone button.",
+      "words": {
+        "en": [
+          "input with voice",
+          "field with microphone",
+          "voice field"
+        ],
+        "ru": [
+          "поле с голосом",
+          "поле с микрофоном",
+          "ввод голосом"
+        ]
+      },
+      "replaces": [
+        "@/_tools/voice-input/client/voice-input.client"
+      ],
+      "needs": [
+        "openai-key"
+      ]
+    },
+    {
+      "id": "voice-textarea",
+      "kind": "composite",
+      "path": "components/form/voice-textarea.client.tsx",
+      "export": "VoiceTextarea",
+      "what": {
+        "en": "A text area with a title and a full-width microphone button UNDER it (never on the right, the owner's word) — dictate or type several lines.",
+        "ru": "Область текста с заголовком и кнопкой микрофона ВО ВСЮ ШИРИНУ ПОД ней (никогда справа — слово владельца): надиктовать или написать несколько строк."
+      },
+      "how": "<VoiceTextarea label value onChange lang rows />; the task window, a brief, a comment — never Textarea plus a microphone in one row.",
+      "words": {
+        "en": [
+          "textarea with voice",
+          "dictate text",
+          "voice textarea",
+          "describe a task by voice"
+        ],
+        "ru": [
+          "область текста с голосом",
+          "надиктовать текст",
+          "описать задачу голосом",
+          "поле с голосом"
+        ]
+      },
+      "replaces": [
+        "@/_tools/voice-input/client/voice-input.client"
+      ],
+      "needs": [
+        "openai-key"
+      ]
+    },
+    {
+      "id": "voice-block",
+      "kind": "composite",
+      "path": "components/form/voice-block.client.tsx",
+      "export": "VoiceBlock",
+      "what": {
+        "en": "The island of the section kind «voiceField»: holds the line's state for a page section and renders VoiceField.",
+        "ru": "Островок вида секции «voiceField»: держит состояние строки для секции страницы и рисует VoiceField."
+      },
+      "how": "Used by the section renderer only.",
+      "words": {
+        "en": [
+          "voice field section",
+          "voice island"
+        ],
+        "ru": [
+          "секция поля с голосом",
+          "островок голоса"
+        ]
+      }
+    },
+    {
+      "id": "mic-icon",
+      "kind": "composite",
+      "path": "components/form/mic-icon.tsx",
+      "export": "MicIcon",
+      "what": {
+        "en": "The microphone icon of the voice controls — one for both containers of the form.",
+        "ru": "Значок микрофона голосовых элементов — один на оба контейнера формы."
+      },
+      "how": "Inside the voice controls only; elsewhere the lucide Mic icon.",
+      "words": {
+        "en": [
+          "microphone icon",
+          "mic glyph"
+        ],
+        "ru": [
+          "значок микрофона",
+          "иконка микрофона"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "_": "Cards of the reusable parts of this folder (node step 725-1). One card per part; the map is lib/parts/PARTS.json.",
+  "parts": [
+    {
+      "id": "service-port",
+      "kind": "composite",
+      "path": "components/services/service-port.client.tsx",
+      "export": "ServicePort",
+      "what": {
+        "en": "Asks on which port a native element lives and shows it, on a prerendered page of the layer.",
+        "ru": "Спрашивает, на каком порту живёт нативный элемент, и показывает его на предрендеренной странице слоя."
+      },
+      "how": "<ServicePort id lang />.",
+      "words": {
+        "en": [
+          "service port",
+          "element port"
+        ],
+        "ru": [
+          "порт службы",
+          "порт элемента"
+        ]
+      }
+    }
+  ]
+}

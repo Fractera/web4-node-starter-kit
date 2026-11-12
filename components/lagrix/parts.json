@@ -1,0 +1,26 @@
+{
+  "_": "Cards of the reusable parts of this folder (node step 725-1). One card per part; the map is lib/parts/PARTS.json.",
+  "parts": [
+    {
+      "id": "lagrix-doc-items",
+      "kind": "composite",
+      "path": "components/lagrix/doc-items.tsx",
+      "export": "DocLinks, DocItems",
+      "what": {
+        "en": "Points with links to the Lagrix documents they rest on — every claim about Lagrix links its document.",
+        "ru": "Пункты со ссылками на документы Lagrix, на которые они опираются: каждое утверждение о Lagrix ссылается на документ."
+      },
+      "how": "<DocItems lang items /> or <DocLinks lang docs />; server or island alike.",
+      "words": {
+        "en": [
+          "lagrix docs links",
+          "claim with source"
+        ],
+        "ru": [
+          "ссылки на документы lagrix",
+          "утверждение с источником"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "_": "Cards of the reusable parts of this folder (node step 725-1). One card per part; the map is lib/parts/PARTS.json.",
+  "parts": [
+    {
+      "id": "setup-ladder",
+      "kind": "composite",
+      "path": "components/auth/setup-ladder.client.tsx",
+      "export": "Step, RouteLine, LimitsNote, StepPoints, CopyRow",
+      "what": {
+        "en": "The common steps of a setup ladder for an outside provider (Google, Resend …): numbered steps, a line to copy with its button, the limits note.",
+        "ru": "Общие ступени лестницы настройки внешнего провайдера (Google, Resend …): шаги с номерами, строка для копирования с кнопкой, заметка об ограничениях."
+      },
+      "how": "Compose a provider's setup screen from Step, StepPoints, CopyRow, RouteLine and LimitsNote instead of laying steps out by hand.",
+      "words": {
+        "en": [
+          "setup steps",
+          "copy row",
+          "provider setup ladder",
+          "step by step instructions"
+        ],
+        "ru": [
+          "ступени настройки",
+          "строка с копированием",
+          "пошаговая инструкция",
+          "настройка провайдера"
+        ]
+      }
+    },
+    {
+      "id": "sign-in-notice",
+      "kind": "composite",
+      "path": "components/auth/sign-in-notice.client.tsx",
+      "export": "SignInNotice",
+      "what": {
+        "en": "The green or red notice «you are signed in as …» that greets a person where they arrive after the sign-in service.",
+        "ru": "Зелёная или красная плашка «вы вошли как …», которая встречает человека там, куда он пришёл после службы входа."
+      },
+      "how": "Mount <SignInNotice /> once in a layout with the SIGN_IN_TOASTER; its words come from sign-in-notice.i18n on the server.",
+      "words": {
+        "en": [
+          "signed in notice",
+          "role banner after login",
+          "login toast"
+        ],
+        "ru": [
+          "плашка входа",
+          "вы вошли",
+          "уведомление о роли"
+        ]
+      }
+    }
+  ]
+}
