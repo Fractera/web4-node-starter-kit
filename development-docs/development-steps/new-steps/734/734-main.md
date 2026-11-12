@@ -21,7 +21,12 @@ then ~17:35: «да, утверждаю, начинай с правила». The
     2026-11-12 18:01): the update built although root's copy now differs (the old guard failed the core's build on that); `check:shell-kits`
     — the core ✓ master, root, Клип and the ten natives listed alike as debts; root's process stopped → the panel's header (y 30, 57 px)
     and footer («© 2026 Fractera», y 3225) drawn, no console errors (`logs/eyes/2026-11-12T18-01-47-605Z.png`); root started again, 200.
-  - 3a-2 NEXT (found measuring 3a): CONFIG — a native element — reads «the menus as now» and the languages from root's `/api/shell`
+  - 3a-2 BUILT (CONFIG v1.2.43 `53ec40e`, installer `546b568c`, pin `c6dc8871`) and LIVE on the node (core `6c2e4023`, 2026-11-12
+    18:25). Proven so far with root running: CONFIG's `/api/shell/ru` answers (top 2, footer, languages); its editor's sign-in link is its
+    own `/login?lang=ru` (was root's). Waiting: the proof with root's process stopped (the auto-mode guard refuses `pm2 stop` without the
+    owner's word) and the signed-in editor (eyes has no session — the owner's Chrome). Found for 3d: CONFIG's menu «Кастомные элементы»
+    names root «Главный сайт».
+  - 3a-2 (as found measuring 3a): CONFIG — a native element — reads «the menus as now» and the languages from root's `/api/shell`
     (`loadProjectShell`, `PROJECT_SHELL_URL`), and the installer gives every element `PROJECT_SHELL_URL`, `PROJECT_MENU_URL`,
     `PROJECT_SITE_URL` as root's doors. A native depending on a custom element. Measured: root's `/api/shell` is only root's OWN shell
     data (its app config, its copy of CONFIG's settings, the node's catalogue) — every custom element computes the same for itself.
