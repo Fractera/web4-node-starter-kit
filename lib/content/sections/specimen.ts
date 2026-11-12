@@ -1248,6 +1248,12 @@ export const SPECIMEN: SpecimenSection[] = [
     body: [{ kind: 'deployBoard', lang: 'en' }],
   },
   {
+    kind: 'toolsTab',
+    when: 'The tools of the core on the main agent\'s tab: what tools are, the cards five at a time, a look in the one modal, edit and add through one terminal drawer. The list is asked in the browser; the page stays prerendered.',
+    whenRu: 'Инструменты ядра на вкладке главного агента: что такое инструменты, карточки по пять, показ в единственном окне, правка и добавление через один ящик терминала. Список спрашивается в браузере, страница остаётся предрендеренной.',
+    body: [{ kind: 'toolsTab', lang: 'en' }],
+  },
+  {
     kind: 'projectsBoard',
     when: 'The projects table of the node: every element, native and custom, with its service address, meta title and description, own domain, last commit, measured state, number of commits, a link to the site and a link to its page in the core. Filters native/custom and a search by address and description; asked in the browser, the page stays prerendered.',
     whenRu: 'Таблица проектов узла: каждый элемент, нативный и кастомный, со служебным адресом, заголовком и описанием из мета, своим доменом, последним коммитом, измеренным состоянием, числом коммитов, ссылкой на сайт и на его страницу в ядре. Отбор нативные/кастомные и поиск по адресу и описанию; спрашивается в браузере, страница остаётся предрендеренной.',

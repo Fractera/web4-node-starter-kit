@@ -1117,6 +1117,20 @@
       "usedOn": []
     },
     {
+      "id": "0069",
+      "codes": [
+        "toolsTab01"
+      ],
+      "kind": "toolsTab",
+      "type": "workspace",
+      "shape": "table",
+      "fields": "lang: string",
+      "title": "the tools of the core: cards, a look, edit and add",
+      "description": "**Type:** Workspace. The working part of the main agent's «Рабочие процессы → Инструменты» (node step 725-8).\n\n**The owner's word, 2026-11-12:** «Нажатие на кнопку инструмента справа откроет карточки с описанием инструмента какое они задачи решают\nгде могут быть использованы и то самое полное описание … по пять инструментов с кнопкой показать ещё … кнопка добавить инструмент …\nзапускается терминал … На одном экране не более одного терминала».\n\nAn accordion «what tools are» (a tool vs a section vs a widget), the core's tools from `_tools/TOOLS.json` with the measured `usedBy` of\nthe parts map, five at a time; «Show» opens the tool in AppDialog (live on sample data only when it needs nothing beyond the browser),\n«Edit» opens the main agent's terminal drawer with the edit task in its paste window, «Add a tool» takes the person's words by voice or\ntext and starts the development in the same drawer. One terminal on the screen at a time. Every element has the same tab\n(`components/tools-tab/`).",
+      "hasCard": true,
+      "usedOn": []
+    },
+    {
       "id": null,
       "codes": [
         "projectsBoard01"

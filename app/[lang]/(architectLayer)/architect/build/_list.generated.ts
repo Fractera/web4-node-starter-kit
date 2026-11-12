@@ -24,12 +24,13 @@ import { data as p18 } from './subscription/_data'
 import { data as p19 } from './task-add/_data'
 import { data as p20 } from './telegram/_data'
 import { data as p21 } from './terminal/_data'
-import { data as p22 } from './translation-debt/_data'
+import { data as p22 } from './tools/_data'
+import { data as p23 } from './translation-debt/_data'
 import { PAGES as c1, TREE as t1 } from './automation/_list.generated'
 import { PAGES as c12, TREE as t12 } from './messenger/_list.generated'
 import { PAGES as c13, TREE as t13 } from './settings/_list.generated'
 
-export const PAGES: WorkspacePageData[] = [p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22]
+export const PAGES: WorkspacePageData[] = [p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23]
 
 /** Each child together with its own children — see the law in the generator. */
 export const TREE: CollectionBranch[] = [
@@ -56,4 +57,5 @@ export const TREE: CollectionBranch[] = [
   { page: p20, children: [] },
   { page: p21, children: [] },
   { page: p22, children: [] },
+  { page: p23, children: [] },
 ]

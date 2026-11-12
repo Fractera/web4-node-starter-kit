@@ -21,7 +21,7 @@
 и только карточка говорит, что он выдержит** — сколько элементов, что ломается за пределом, когда
 его не брать. Есть карточка — прочти её перед использованием.
 
-Видов: **73** · рендереров: **72** · карточек: **47**
+Видов: **74** · рендереров: **73** · карточек: **48**
 
 | Код | Вид | Семейство | Что это | Поля | Правила владельца |
 |---|---|---|---|---|---|
@@ -88,6 +88,7 @@
 | `servicePort01` | `servicePort` | Workspace | — | serviceId: string; words: import('@/components/services/service-port.i18n').ServicePortWords | — |
 | `designSection01` | `designSection` | Workspace | a design editor of the site element | lang: string; section: 'colors' \| 'fonts' \| 'type' \| 'shape' | [карточка](kinds/designSection.md) |
 | `deployBoard01` | `deployBoard` | Workspace | the deployment board of the node | lang: string | [карточка](kinds/deployBoard.md) |
+| `toolsTab01` | `toolsTab` | Workspace | the tools of the core: cards, a look, edit and add | lang: string | [карточка](kinds/toolsTab.md) |
 | `projectsBoard01` | `projectsBoard` | Page material | the projects table of the node | lang: string | [карточка](kinds/projectsBoard.md) |
 | `machineBoard01` | `machineBoard` | Page material | this computer: the machine, the memory per element, the Tier-2 comparison | lang: string | [карточка](kinds/machineBoard.md) |
 | `subscriptionsBoard01` | `subscriptionsBoard` | Page material | all subscriptions of the node: services × the elements that use them × their state | lang: string | [карточка](kinds/subscriptionsBoard.md) |

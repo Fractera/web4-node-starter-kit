@@ -1,0 +1,43 @@
+{
+  "_": "Cards of the reusable parts of this folder (node step 725-8). One card per part; the map is lib/parts/PARTS.json.",
+  "parts": [
+    {
+      "id": "tools-tab",
+      "kind": "composite",
+      "path": "components/tools-tab/tools-tab.client.tsx",
+      "export": "ToolsTab",
+      "what": {
+        "en": "The «Tools» tab of the core and of every element: what tools are (an accordion), the tool cards five at a time, a look in the one modal, edit and add a tool through one terminal drawer.",
+        "ru": "Вкладка «Инструменты» ядра и каждого элемента: что такое инструменты (аккордеон), карточки по пять, показ в единственном модальном окне, правка и добавление инструмента через один ящик терминала."
+      },
+      "how": "<ToolsTab item service place lang {...toolsTabProps(lang, service)} /> — the server assembles words, the terminal kit and the demo samples (props.server.ts); the list is asked from /api/node/tools.",
+      "words": { "en": ["tools tab", "tools catalog", "add a tool"], "ru": ["вкладка инструментов", "каталог инструментов", "добавить инструмент"] }
+    },
+    {
+      "id": "tool-card",
+      "kind": "composite",
+      "internal": true,
+      "path": "components/tools-tab/tool-card.client.tsx",
+      "export": "ToolCard",
+      "what": {
+        "en": "One tool card: what it solves, where it is used, what it needs, the full discovery text folded, Show and Edit.",
+        "ru": "Карточка одного инструмента: что решает, где используется, что ему нужно, полное описание свёрнуто, «Показать» и «Редактировать»."
+      },
+      "how": "Inside ToolsTab only.",
+      "words": { "en": ["tool card", "tool description"], "ru": ["карточка инструмента", "описание инструмента"] }
+    },
+    {
+      "id": "tool-demo",
+      "kind": "composite",
+      "internal": true,
+      "path": "components/tools-tab/tool-demo.client.tsx",
+      "export": "ToolDemo",
+      "what": {
+        "en": "The look of one tool in AppDialog: live on sample data when it needs nothing beyond the browser, its words and needs otherwise.",
+        "ru": "Показ одного инструмента в AppDialog: живьём на примере, если ему хватает браузера, иначе — что он умеет и что ему нужно."
+      },
+      "how": "Inside ToolsTab only.",
+      "words": { "en": ["tool demo", "tool preview"], "ru": ["показ инструмента", "превью инструмента"] }
+    }
+  ]
+}

@@ -124,6 +124,8 @@ export type LeafItem =
   // агента службы, он живёт в папке маршрута службы (`architect/<служба>/_agent-kit/`) и встаёт на страницу
   // полем `widget` вида `workspace`. Мастер — `architect/kits/_agent-kit/`.
   | { kind: 'deployBoard'; lang: string }
+  // 725-8: the main agent's «Tools» tab — the core's tools, a look, edit and add through one terminal; the list is asked in the browser.
+  | { kind: 'toolsTab'; lang: string }
   // 339: таблица всех WEB4 ITEMS узла (Dashboard → Проекты); строки спрашиваются в браузере у `/api/node/projects`.
   | { kind: 'projectsBoard'; lang: string }
   // 572: Dashboard → «Этот компьютер» — машина, память по элементам, сравнение с Tier-2; числа спрашивает островок у /api/node/machine.

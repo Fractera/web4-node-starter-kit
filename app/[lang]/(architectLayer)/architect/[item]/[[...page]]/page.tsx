@@ -95,6 +95,8 @@ import { ReverseEngineering } from '@/components/element-docs/reverse-engineerin
 import { CapabilityCards } from '../../../_components/capability-cards.client'
 import { capabilityCardUi } from '../../../_i18n/capability-card.i18n'
 import { reverseEngineeringUi } from '../../../_i18n/reverse-engineering.i18n'
+import { ToolsTab } from '@/components/tools-tab/tools-tab.client'
+import { toolsTabProps } from '@/components/tools-tab/props.server'
 import { agentTerminalWords } from '@/app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/words/agent-terminal.i18n'
 
 // ОДНА СТРАНИЦА НА ВСЕ АДРЕСА ВСЕХ ЧЕРНОВИКОВ (314-1): `/architect/<id>`, `/architect/<id>/<раздел>`,
@@ -520,6 +522,10 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   // 539-3, переделано 556-9 (владелец 2026-10-23: «Представь все просто в формате карточек аккордеон») и 594-6 (владелец 2026-10-25:
   // разборы — «внутри каждого элемента»): карточки адреса и страниц, «Начать реверс-инжиниринг» — справа терминал агента ЭТОГО элемента
   // в проходе разбора, ниже — его `study/`; одна страница ядра для каждого элемента.
+  // 725-8: «Строительство → Инструменты» — инструменты элемента (список — из его папки через /api/node/tools), один терминал его агента.
+  const tools = key === 'build/tools'
+    ? <ToolsTab item={item} service={item} place="element" lang={lang} {...toolsTabProps(lang, item)} />
+    : null
   const reverseEngineering = key === 'product-design/reverse-engineering'
     ? <ReverseEngineering item={item} lang={lang} words={reverseEngineeringUi(lang)}
         kit={{ terminalWords: agentTerminalWords(lang), dialogUi: appDialogUi(lang), keyHref: openAiKeyHref(item, lang) }} />
@@ -586,7 +592,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       lead={words.lead}
       // 721-2: шапка страницы элемента (видна в компактном режиме) — его имя для людей, не адрес; найдено глазами после обновления.
       pageTitle={elementLabel(item, lang)}
-      widget={<>{offNote}{bar}{lagrix}{about}{list}{preview}{github}{deployPanel}{copyNote}{deploymentsNote}{environment}{domainSettings}{settings}{siteSettings}{designPage}{agent}{passport}{capabilities}{doc}{orders}{messengerSettings}{payments}{productQuiz}{reverseEngineering}{backupSettings}{users}</>}
+      widget={<>{offNote}{bar}{lagrix}{about}{list}{preview}{github}{deployPanel}{copyNote}{deploymentsNote}{environment}{domainSettings}{settings}{siteSettings}{designPage}{agent}{passport}{capabilities}{doc}{orders}{messengerSettings}{payments}{productQuiz}{reverseEngineering}{tools}{backupSettings}{users}</>}
       children={[...dashboardBlocks, ...tables]}
     />
   )

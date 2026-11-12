@@ -29,6 +29,8 @@ export const MAIN_AGENT_PLACE: Record<string, string> = {
   subscription: 'construction',
   terminal: 'construction',
   deployments: 'construction',
+  // 725-8 (владелец 2026-11-12): «Инструменты» — инструменты ядра, карточки, показ, правка и добавление через один терминал.
+  tools: 'construction',
   documents: 'construction',
   // «Документы» — в порядке документов элемента.
   instruction: 'documents',
