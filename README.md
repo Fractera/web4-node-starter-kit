@@ -77,6 +77,14 @@ node's deep memory and stores. It is not a doctor or a licensed adviser, and it 
 
 ## Killer features
 
+### 108 design skills compete for your element
+
+Fractera keeps 108 design skills by third-party developers, each with a link to its GitHub repository. Pick a few for an element, show
+a screenshot or a link of a site you like, and each skill builds its own test page of that element in about ten minutes. You flip
+through the results, fine-tune the one that wins and approve it: its colours, fonts and shapes become the element's design, and the
+agent builds every other page in it. The whole path works from Telegram. A family of elements can share one look, or each can keep its
+own.
+
 ### Reverse engineering and the product quiz: one cycle
 
 Name a popular site or SDK, and the node studies how it works: its pages, user flows, API and data. It handles sites, npm and Python
@@ -258,8 +266,8 @@ run it again.
    `===LAUNCH_FAILED=== <stage>` and the reason printed above it — show the person that reason. `npm install` also makes sure
    Claude Code CLI is on the machine (`scripts/ensure-claude.mjs`): `===CLAUDE_CLI_FAILED===` — the launch goes on, but tell the
    person the printed reason and command: without the CLI the agent terminals on the node's pages will not start.
-4. **What the start does:** the first `serve:start` also installs the node's elements (sign-in `auth`, data `data`,
-   the site `root`) from their own repositories — it takes a few minutes; wait for it. Then it puts the node on the internet
+4. **What the start does:** the first `serve:start` also installs the node's elements (the native ones such as sign-in
+   `auth` and data `data`, and the custom element `root`) from their own repositories — it takes a few minutes; wait for it. Then it puts the node on the internet
    by itself at a temporary Cloudflare address — do not ask whether to publish, do not undo it, it is already done
    (`serve:publish` is only for a person who took the node off with `serve:unpublish`). It is safe by design: on the temporary
    address the panel is **read-only** — every request that changes something (terminals, the Claude subscription, keys,
@@ -291,13 +299,13 @@ npm run serve:remove -- --yes  # take the node off this computer (its processes 
 ```
 
 **The node's elements arrive on the first start.** This repository carries only their list,
-`WEB4-ITEMS-REGISTRY/web4-items.json`: sign-in (`auth`), data (`data`) and the site at the root of your
-domain (`root`). Each is its own repository, and `serve:start` clones any that are missing at the
-pinned tag into `WEB4-ITEMS/core/<id>` (the same as `npm run services:install`). They come from the
+`WEB4-ITEMS-REGISTRY/web4-items.json`: the native elements (sign-in `auth`, data `data` and the others) and
+the custom element `root`. Each is its own repository, and `serve:start` clones any that are missing at the
+pinned tag into `WEB4-ITEMS/<kind>/<id>` (the same as `npm run services:install`). They come from the
 Fractera repositories on GitHub; a node that is already installed does not need GitHub to run.
 
-The node runs in **production**: its control panel on **http://localhost:24680**, the site (`root`) and every other element
-on their own ports from the same section — pages are pre-built and served in milliseconds, nothing is compiled while you browse.
+The node runs in **production**: its control panel on **http://localhost:24680**, every element
+on its own port from the same section — pages are pre-built and served in milliseconds, nothing is compiled while you browse.
 That is also why changing the code needs `npm run serve:rebuild`: the running node serves a build, not your source files.
 
 The panel runs on **http://localhost:24680**. That port is deliberate: `3000` is the busiest port in
@@ -405,7 +413,7 @@ The other repositories of the project and what they do:
 | `Fractera/fractera-config-starter` | project settings, menu, node mode (built-in `config`) |
 | `Fractera/fractera-redis-cache-starter` | the fast store for counters and queues (built-in `cache`) |
 | `Fractera/fractera-stripe-starter` | card payments through the owner's Stripe account (built-in `stripe`) |
-| `Fractera/fractera-root-starter` | the site at the root of the domain (`root`) |
+| `Fractera/fractera-root-starter` | the repository of the custom element `root`, an ordinary custom element |
 | `Fractera/fractera-custom-item-starter` | the template every new custom element is born from |
 | `Fractera/fractera-native-item-starter` | the template of native elements |
 
