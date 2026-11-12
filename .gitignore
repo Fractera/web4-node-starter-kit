@@ -107,3 +107,6 @@ public/fonts/
 .claude/launch-tools.txt
 .claude/launch-model.txt
 .claude/launch-effort.txt
+
+# 727-1: the shell kit is built in prebuild (scripts/build-shell-kit.mjs)
+/.shell-kit/

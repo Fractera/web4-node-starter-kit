@@ -5,6 +5,13 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-97 (2026-11-12, tandem) — 727 IN WORK, the owner chose A («Да, берём A, начинай»; plan `new-steps/727/`). 727-1 BUILT in the
+working copy, NOT pushed: `_tools/shell-kit/` (card, 12th tool), `scripts/build-shell-kit.mjs` (prebuild; `.shell-kit/` gitignored),
+doors `/api/shell-kit/<lang>` and `/api/shell-kit/asset/<file>` (node key). Proven so far: render with the live site's data (2 groups,
+brand, 48 ms) and eyes on a scratch harness — desktop dropdowns, mobile sheet, dark by the kit's own toggle. Measured: browser bundle
+109 KB gz (react-dom ~55), CSS 46 KB / 7 KB gz. OPEN: the door live on the node (200 with the key, 401 without) after the owner's word on
+push + node update; then 727-2 (stub + the note how an element drops it).**
+
 **NOW-96 (2026-11-12) — 726-1 CLOSED (summary `completed-steps/726-1.md`; live on the node `7b4cc6e7`: two real calls → two lines,
 `npm run money` names `i18n/translate` and `voice-input` with `no-funds (credit_balance_exhausted)`; CI green). NEXT: 726-3 «Все
 подписки» on the Dashboard (an interface: `interface-design`, `use-primitives`, `use-shadcn` first; eyes in both themes).**

@@ -128,6 +128,31 @@
       }
     },
     {
+      "id": "shell-kit",
+      "entry": "client/shell-kit.client.tsx",
+      "dir": "_tools/shell-kit",
+      "needs": [
+        "browser"
+      ],
+      "npmDeps": [],
+      "usedBy": [
+        "app/api/shell-kit/[lang]",
+        "the custom element template: components/shell-kit (727-2)"
+      ],
+      "en": {
+        "title": "Project shell",
+        "what": "The project's header, account drawer and footer as one tool of the core that every element takes at run time. The core draws them to HTML for the element's language and page, and one script brings them to life in the visitor's browser: the menu, the account, the theme, width and language switches.",
+        "how": "One code: `components/shell/` of the core plus this folder, built by `scripts/build-shell-kit.mjs` into `.shell-kit/` — a server bundle the door `/api/shell-kit/<lang>` renders with, a browser bundle with the same React that hydrates it, and the Tailwind utilities of these files on the element's own tokens. `next/link` and `next/navigation` are shims. An element's stub asks the door over loopback with the node key while its static page renders and hands the files to the browser through its own `/shell-kit/*`; without the core the stub draws a plain header and footer from the element's own settings.",
+        "value": "A change of the menu, the account or the footer is made once in the core and reaches every element at its next render, with no element rebuilt and no copies drifting apart. The element keeps its own design: the tool paints with the element's tokens. An element that wants its own header drops the stub and draws its own, and stops receiving the core's changes."
+      },
+      "ru": {
+        "title": "Оболочка проекта",
+        "what": "Шапка, ящик кабинета и подвал проекта как один инструмент ядра, который каждый элемент берёт во время работы. Ядро рисует их в HTML для языка и страницы элемента, а один скрипт оживляет их в браузере посетителя: меню, кабинет, переключатели темы, ширины и языка.",
+        "how": "Один код: `components/shell/` ядра и эта папка, собранные `scripts/build-shell-kit.mjs` в `.shell-kit/`: пакет сервера, которым рисует дверь `/api/shell-kit/<язык>`, пакет браузера с тем же React, который оживляет нарисованное, и утилиты Tailwind этих файлов на собственных токенах элемента. `next/link` и `next/navigation` заменены прокладками. Заглушка элемента спрашивает дверь по петле с ключом узла, пока рисуется его статическая страница, и отдаёт файлы браузеру через свою `/shell-kit/*`. Без ядра заглушка рисует простую шапку и подвал из настроек самого элемента.",
+        "value": "Меню, кабинет или подвал меняются один раз в ядре и доходят до каждого элемента при его следующей отрисовке. Ни один элемент не пересобирается, копии не расходятся. Дизайн остаётся своим у элемента: инструмент красит его токенами. Элемент, которому нужна своя шапка, убирает заглушку и рисует свою, и после этого перестаёт получать изменения ядра."
+      }
+    },
+    {
       "id": "socials-ai",
       "entry": "client/socials-ai-dialog.client.tsx",
       "dir": "_tools/socials-ai",
