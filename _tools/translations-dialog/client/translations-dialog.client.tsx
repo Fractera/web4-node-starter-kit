@@ -58,7 +58,7 @@ export type { TranslatableField, Drafts }
 // что у панели (/code/CLAUDE.md §4д).
 
 export function TranslationsDialog(
-  { open, lang, fields, ui, dialogUi, errors, billingUrl, onSave, onSkip }: {
+  { open, lang, fields, ui, dialogUi, errors, billingUrl, onSave, onSkip, lookDoor }: {
     open: boolean
     /** Язык интерфейса — он же язык исходных значений. */
     lang: string
@@ -73,13 +73,15 @@ export function TranslationsDialog(
     /** Сохранить переводы ОДНОГО языка. Возвращает успех. */
     onSave: (drafts: Drafts) => Promise<boolean>
     onSkip: () => void
+    /** 733-8b: a look — «translate» goes to this address instead, which refuses; no model is called. */
+    lookDoor?: string
   },
 ) {
   const t = ui
   const [active, setActive] = useState(0)
   const [savingLang, setSavingLang] = useState<string | null>(null)
   const { targets, drafts, setCell, translate, busy, error, refusal, saved, markSaved } =
-    useTranslations(fields, lang)
+    useTranslations(fields, lang, lookDoor)
 
   if (!open || SINGLE_LANG_MODE || targets.length === 0) return null
 

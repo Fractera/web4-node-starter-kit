@@ -137,7 +137,7 @@
       "id": "fact-draft",
       "entry": "client/fact-draft.client.tsx",
       "dir": "_tools/fact-draft",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "parts": [
         {
           "id": "voice-control",
@@ -267,7 +267,7 @@
       "id": "socials-ai",
       "entry": "client/socials-ai-dialog.client.tsx",
       "dir": "_tools/socials-ai",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "parts": [
         {
           "id": "app-dialog",
@@ -402,7 +402,7 @@
       "id": "translations-dialog",
       "entry": "client/translations-dialog.client.tsx",
       "dir": "_tools/translations-dialog",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "parts": [
         {
           "id": "app-dialog",
@@ -452,7 +452,7 @@
       "id": "video-trim",
       "entry": "client/video-trimmer.client.tsx",
       "dir": "_tools/video-trim",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "parts": [
         {
           "id": "app-dialog",

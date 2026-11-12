@@ -29,6 +29,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import { Loader2, Play, Scissors } from "lucide-react";
 import { AppDialog } from "@/components/dialog/app-dialog.client";
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n";
@@ -43,7 +44,7 @@ const fill = (t: string, vars: Record<string, string>) =>
   t.replace(/\{(\w+)\}/g, (m, k) => vars[k] ?? m);
 
 export function VideoTrimmer(
-  { mediaBase, itemId, name, serverDuration, labels, dialogUi, onClose }: {
+  { mediaBase, itemId, name, serverDuration, labels, dialogUi, onClose, sampleSrc }: {
     mediaBase: string;
     /**
      * Слова ОБЩЕГО окна продукта (`appDialogUi(lang)`).
@@ -64,6 +65,8 @@ export function VideoTrimmer(
     serverDuration?: number | null;
     labels: TrimmerLabels;
     onClose: () => void;
+    /** 725-8: a look on a sample — the file comes from this address, not the media library; «Trim» then has nothing to cut. */
+    sampleSrc?: string;
   },
 ) {
   const router = useRouter();
@@ -75,7 +78,7 @@ export function VideoTrimmer(
   const [applying, setApplying] = useState(false);
 
   // Обход кеша: адрес стабилен, но байты за ним меняются на каждом монтаже.
-  const src = `${mediaBase}/media/${itemId}/file?v=${Date.now()}`;
+  const src = sampleSrc ?? `${mediaBase}/media/${itemId}/file?v=${Date.now()}`;
 
   useEffect(() => {
     if (typeof serverDuration === "number" && serverDuration > 0) {
@@ -122,6 +125,8 @@ export function VideoTrimmer(
       toast.error(labels.tooShort);
       return;
     }
+    // 725-8: a sample look sends nothing anywhere — the window closes as it would after a cut.
+    if (sampleSrc) { onClose(); return; }
     setApplying(true);
     try {
       // Прямо в слой данных, как и все прочие операции медиатеки: тот же cookie,
@@ -167,11 +172,10 @@ export function VideoTrimmer(
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <span className="w-10 text-[10px] text-muted-foreground">{labels.start}</span>
-                <input
-                  type="range" min={0} max={duration} step={0.05} value={start}
+                <Slider
+                  min={0} max={duration} step={0.05} value={[start]}
                   aria-label={labels.start}
-                  onChange={(e) => {
-                    const v = Number(e.target.value);
+                  onValueChange={([v]) => {
                     setStart(Math.min(v, end - 0.2));
                     if (videoRef.current) videoRef.current.currentTime = v;
                   }}
@@ -181,11 +185,10 @@ export function VideoTrimmer(
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-10 text-[10px] text-muted-foreground">{labels.end}</span>
-                <input
-                  type="range" min={0} max={duration} step={0.05} value={end}
+                <Slider
+                  min={0} max={duration} step={0.05} value={[end]}
                   aria-label={labels.end}
-                  onChange={(e) => {
-                    const v = Number(e.target.value);
+                  onValueChange={([v]) => {
                     setEnd(Math.max(v, start + 0.2));
                     if (videoRef.current) videoRef.current.currentTime = v;
                   }}

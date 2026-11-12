@@ -8,11 +8,11 @@
     "en": "Tools tab",
     "ru": "Вкладка «Инструменты»"
    },
-   "version": "1.0.2",
+   "version": "1.0.3",
    "parts": [
     {
      "id": "tool-demo",
-     "version": "1.0.2"
+     "version": "1.0.3"
     },
     {
      "id": "tool-terminal-drawer",
@@ -73,7 +73,7 @@
     "en": "Tool look",
     "ru": "Показ инструмента"
    },
-   "version": "1.0.2",
+   "version": "1.0.3",
    "parts": [
     {
      "id": "app-dialog",
@@ -81,7 +81,7 @@
     },
     {
      "id": "tool-looks",
-     "version": "1.0.0"
+     "version": "1.1.0"
     }
    ],
    "scope": "panel",
@@ -111,7 +111,7 @@
     "en": "Live tool looks",
     "ru": "Живые виды инструментов"
    },
-   "version": "1.0.0",
+   "version": "1.1.0",
    "parts": [
     {
      "id": "app-dialog",
@@ -144,6 +144,22 @@
     {
      "id": "voice-textarea",
      "version": "1.0.0"
+    },
+    {
+     "id": "tool-fact-draft",
+     "version": "1.1.0"
+    },
+    {
+     "id": "tool-socials-ai",
+     "version": "1.1.0"
+    },
+    {
+     "id": "tool-translations-dialog",
+     "version": "1.1.0"
+    },
+    {
+     "id": "tool-video-trim",
+     "version": "1.1.0"
     }
    ],
    "scope": "panel",
@@ -151,8 +167,8 @@
    "path": "components/tools-tab/tool-looks.client.tsx",
    "export": "ToolLook",
    "what": {
-    "en": "Each tool that can run on samples, shown as itself: the sample window, the table over the tab's own list, chat, code view, the crop over a sample picture, the three voice fields posting to the look door. A look never spends money and never writes.",
-    "ru": "Каждый инструмент, который можно запустить на примере, — он сам: пример окна, таблица над списком вкладки, чат, просмотр кода, обрезка картинки-примера, три голосовых поля, отправляющие запись в дверь показа. Показ никогда не тратит денег и ничего не записывает."
+    "en": "Each tool that can run on samples, shown as itself: the sample window, the table over the tab's own list, chat, code view, the crop over a sample picture, the three voice fields, the fact draft, socials from a phrase and the translations dialog posting to the look door, the video trimmer over a sample clip. A look never spends money and never writes.",
+    "ru": "Каждый инструмент, который можно запустить на примере, — он сам: пример окна, таблица над списком вкладки, чат, просмотр кода, обрезка картинки-примера, три голосовых поля, черновик факта, соцсети из фразы и окно переводов, отправляющие действие в дверь показа, видеообрезка над роликом-примером. Показ никогда не тратит денег и ничего не записывает."
    },
    "how": "Inside ToolDemo only: <ToolLook tool tools lang words ui kit />; LIVE_LOOKS names the keys it shows; the voice tools get apiUrl /api/node/tools/look.",
    "words": {

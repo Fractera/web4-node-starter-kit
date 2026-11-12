@@ -25,7 +25,7 @@ export type Drafts = Record<string, Record<string, string>>
 export type TranslateError = string | null
 export type TranslateRefusal = { words: string; link: string | null; linkLabel: string | null }
 
-export function useTranslations(fields: TranslatableField[], baseLang: string) {
+export function useTranslations(fields: TranslatableField[], baseLang: string, lookDoor?: string) {
   // Языки, на которые переводим: все языки приложения, кроме базового — базовый
   // и есть само значение.
   const targets = useMemo(
@@ -81,7 +81,7 @@ export function useTranslations(fields: TranslatableField[], baseLang: string) {
     setError(null)
     setRefusal(null)
     try {
-      const res = await fetch("/api/i18n/translate", {
+      const res = await fetch(lookDoor ?? "/api/i18n/translate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -113,7 +113,7 @@ export function useTranslations(fields: TranslatableField[], baseLang: string) {
     } finally {
       setBusy(false)
     }
-  }, [fields, targets, baseLang])
+  }, [fields, targets, baseLang, lookDoor])
 
   return { targets, drafts, setCell, translate, busy, error, refusal, setError, saved, markSaved }
 }

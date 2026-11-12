@@ -36,9 +36,12 @@ export function FactDraft({
   lang,
   labels,
   onDraft,
+  lookDoor,
 }: {
   lang: string
   labels: FactDraftLabels
+  /** 733-8b: a look — every action of the tool (the draft and its microphone) goes to this address instead, which refuses. */
+  lookDoor?: string
   /** Разобранное уезжает наружу. Инструмент сам ничего не сохраняет. */
   onDraft: (draft: Record<string, string>, notes: string) => void
 }) {
@@ -52,7 +55,7 @@ export function FactDraft({
     setFailure("")
     setOpenai("")
     try {
-      const r = await fetch("/api/architect/fact-draft", {
+      const r = await fetch(lookDoor ?? "/api/architect/fact-draft", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ words, lang }),
@@ -93,6 +96,7 @@ export function FactDraft({
         lang={lang}
         placeholder={labels.placeholder}
         disabled={busy}
+        apiUrl={lookDoor}
       />
 
       {failure && (

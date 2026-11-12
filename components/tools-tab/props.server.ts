@@ -2,6 +2,9 @@ import "server-only"
 import { appDialogUi } from "@/components/dialog/app-dialog.i18n"
 import { chatUi } from "@/sections/chat.i18n"
 import { tableUi } from "@/sections/table.i18n"
+import { translationsUi } from "@/_tools/translations-dialog/types/translations-dialog.i18n"
+import { OPENAI_BILLING_URL, platformErrors } from "@/lib/i18n/platform-errors"
+import { toolLooksUi } from "./tool-looks.i18n"
 import { agentTerminalWords } from "@/app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/words/agent-terminal.i18n"
 import { openAiKeyHref } from "@/app/[lang]/(architectLayer)/architect/[item]/_agent-kit/widgets"
 import type { TerminalKit } from "@/_tools/terminal-drawer/types/terminal-drawer"
@@ -18,6 +21,10 @@ export function toolsTabProps(lang: string, service: string): { words: ToolsTabW
     demo: {
       chatUi: chatUi(lang),
       tableUi: tableUi(lang),
+      looks: toolLooksUi(lang),
+      translationsUi: translationsUi(lang),
+      platformErrors: platformErrors(lang),
+      billingUrl: OPENAI_BILLING_URL,
       chatSample: [
         { id: "d1", from: "user", text: ru ? "Покажи, как ты выглядишь в ленте." : "Show how you look in a feed.", who: ru ? "Архитектор" : "Architect" },
         { id: "d2", from: "assistant", text: ru ? "Вот так: сообщения, кто их написал и когда. С обработчиком отправки внизу появляется поле ввода." : "Like this: messages, who wrote them and when. Given a send handler, an input appears below.", who: "Claude" },

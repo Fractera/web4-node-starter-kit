@@ -22,5 +22,8 @@ export async function POST(req: NextRequest) {
   const words = toolsTabUi(lang)
   const needs = (url.searchParams.get("needs") ?? "").split(",").filter((n) => NEED.test(n))
   const named = needs.map((n) => words.needNames[n] ?? n).join(", ")
-  return NextResponse.json({ ok: false, reason: "look", words: words.demoHeld.replace("{needs}", named || "—") }, { status: 409, headers: HEADERS })
+  const said = words.demoHeld.replace("{needs}", named || "—")
+  // Every tool reads its refusal in its own field: the voice tools and the translations dialog `words`, the fact draft and socials
+  // `openaiWords`; `error` is the translations dialog's code. One answer carries all three.
+  return NextResponse.json({ ok: false, reason: "look", error: "look", words: said, openaiWords: said }, { status: 409, headers: HEADERS })
 }

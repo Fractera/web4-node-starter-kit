@@ -78,6 +78,7 @@ export function SocialsAiDialog({
   dialogUi,
   onAdd,
   disabled,
+  lookDoor,
 }: {
   lang: string
   ui: SocialsAiUi
@@ -85,6 +86,8 @@ export function SocialsAiDialog({
   /** Принятая запись едет в конструктор; сохраняет её владелец кнопкой формы. */
   onAdd: (link: ResolvedSocial) => void
   disabled?: boolean
+  /** 733-8b: a look — «recognize» goes to this address instead, which refuses; no model is called. */
+  lookDoor?: string
 }) {
   const [open, setOpen] = useState(false)
   const [phrase, setPhrase] = useState("")
@@ -106,7 +109,7 @@ export function SocialsAiDialog({
     setNote(null)
     setProposal(null)
     try {
-      const res = await fetch("/api/architect/social-resolve", {
+      const res = await fetch(lookDoor ?? "/api/architect/social-resolve", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

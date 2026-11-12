@@ -3,7 +3,7 @@
   "counts": {
     "tool": 34,
     "composite": 26,
-    "primitive": 33,
+    "primitive": 34,
     "section": 74
   },
   "parts": [
@@ -1007,7 +1007,7 @@
         "en": "Tool look",
         "ru": "Показ инструмента"
       },
-      "version": "1.0.2",
+      "version": "1.0.3",
       "parts": [
         {
           "id": "app-dialog",
@@ -1015,7 +1015,7 @@
         },
         {
           "id": "tool-looks",
-          "version": "1.0.0"
+          "version": "1.1.0"
         }
       ],
       "scope": "panel",
@@ -1060,7 +1060,7 @@
         "en": "Typed draft from words",
         "ru": "Типизированный черновик из слов"
       },
-      "version": "1.0.0",
+      "version": "1.1.0",
       "parts": [
         {
           "id": "voice-control",
@@ -1090,7 +1090,10 @@
         "browser",
         "openai-key"
       ],
-      "usedBy": [],
+      "usedBy": [
+        "components/tools-tab/tool-looks.client.tsx",
+        "components/tools-tab/tool-looks.i18n.ts"
+      ],
       "body": [
         "_tools/fact-draft/client/fact-draft.client.tsx",
         "_tools/fact-draft/server/draft.ts",
@@ -1104,7 +1107,7 @@
         "lib/openai-key",
         "lib/usage-ledger.cjs"
       ],
-      "bodyHash": "95ebaa3de4e25935"
+      "bodyHash": "db40bdad9630c81d"
     },
     {
       "id": "tool-image-crop",
@@ -1146,7 +1149,8 @@
         "browser"
       ],
       "usedBy": [
-        "components/tools-tab/tool-looks.client.tsx"
+        "components/tools-tab/tool-looks.client.tsx",
+        "components/tools-tab/tool-looks.i18n.ts"
       ],
       "body": [
         "_tools/image-crop/client/image-cropper.client.tsx"
@@ -1164,7 +1168,7 @@
         "en": "Live tool looks",
         "ru": "Живые виды инструментов"
       },
-      "version": "1.0.0",
+      "version": "1.1.0",
       "parts": [
         {
           "id": "app-dialog",
@@ -1197,6 +1201,22 @@
         {
           "id": "voice-textarea",
           "version": "1.0.0"
+        },
+        {
+          "id": "tool-fact-draft",
+          "version": "1.1.0"
+        },
+        {
+          "id": "tool-socials-ai",
+          "version": "1.1.0"
+        },
+        {
+          "id": "tool-translations-dialog",
+          "version": "1.1.0"
+        },
+        {
+          "id": "tool-video-trim",
+          "version": "1.1.0"
         }
       ],
       "scope": "panel",
@@ -1204,8 +1224,8 @@
       "path": "components/tools-tab/tool-looks.client.tsx",
       "export": "ToolLook",
       "what": {
-        "en": "Each tool that can run on samples, shown as itself: the sample window, the table over the tab's own list, chat, code view, the crop over a sample picture, the three voice fields posting to the look door. A look never spends money and never writes.",
-        "ru": "Каждый инструмент, который можно запустить на примере, — он сам: пример окна, таблица над списком вкладки, чат, просмотр кода, обрезка картинки-примера, три голосовых поля, отправляющие запись в дверь показа. Показ никогда не тратит денег и ничего не записывает."
+        "en": "Each tool that can run on samples, shown as itself: the sample window, the table over the tab's own list, chat, code view, the crop over a sample picture, the three voice fields, the fact draft, socials from a phrase and the translations dialog posting to the look door, the video trimmer over a sample clip. A look never spends money and never writes.",
+        "ru": "Каждый инструмент, который можно запустить на примере, — он сам: пример окна, таблица над списком вкладки, чат, просмотр кода, обрезка картинки-примера, три голосовых поля, черновик факта, соцсети из фразы и окно переводов, отправляющие действие в дверь показа, видеообрезка над роликом-примером. Показ никогда не тратит денег и ничего не записывает."
       },
       "how": "Inside ToolDemo only: <ToolLook tool tools lang words ui kit />; LIVE_LOOKS names the keys it shows; the voice tools get apiUrl /api/node/tools/look.",
       "words": {
@@ -1223,6 +1243,7 @@
       "usedBy": [],
       "body": [
         "components/tools-tab/tool-looks.client.tsx",
+        "components/tools-tab/tool-looks.i18n.ts",
         "components/tools-tab/tools-tab.i18n.ts"
       ],
       "requires": [
@@ -1232,7 +1253,7 @@
         "lib/parts/tools-catalog",
         "sections/table.i18n"
       ],
-      "bodyHash": "0b95a1bb7ce4ac05"
+      "bodyHash": "64f93b106cdc5b0e"
     },
     {
       "id": "tool-shell-kit",
@@ -1301,7 +1322,7 @@
         "en": "Social links from a phrase",
         "ru": "Соцсети из фразы"
       },
-      "version": "1.0.0",
+      "version": "1.1.0",
       "parts": [
         {
           "id": "app-dialog",
@@ -1331,7 +1352,10 @@
         "browser",
         "openai-key"
       ],
-      "usedBy": [],
+      "usedBy": [
+        "components/tools-tab/tool-looks.client.tsx",
+        "components/tools-tab/tool-looks.i18n.ts"
+      ],
       "body": [
         "_tools/socials-ai/client/socials-ai-dialog.client.tsx",
         "_tools/socials-ai/server/resolve.ts",
@@ -1350,7 +1374,7 @@
         "lib/socials/catalogue",
         "lib/usage-ledger.cjs"
       ],
-      "bodyHash": "26dd361d6447937a"
+      "bodyHash": "b1db887fbe7ff829"
     },
     {
       "id": "tool-terminal-drawer",
@@ -1484,7 +1508,7 @@
         "en": "Translations dialog",
         "ru": "Диалог переводов"
       },
-      "version": "1.0.0",
+      "version": "1.1.0",
       "parts": [
         {
           "id": "app-dialog",
@@ -1518,7 +1542,11 @@
         "browser",
         "openai-key"
       ],
-      "usedBy": [],
+      "usedBy": [
+        "components/tools-tab/props.server.ts",
+        "components/tools-tab/tool-looks.client.tsx",
+        "components/tools-tab/tool-looks.i18n.ts"
+      ],
       "body": [
         "_tools/translations-dialog/client/translation-cell.client.tsx",
         "_tools/translations-dialog/client/translations-dialog.client.tsx",
@@ -1535,7 +1563,7 @@
         "lib/i18n/platform-errors",
         "lib/runtime-urls"
       ],
-      "bodyHash": "3d8c0420b5290688"
+      "bodyHash": "e9259e49ec555038"
     },
     {
       "id": "tool-video-trim",
@@ -1547,7 +1575,7 @@
         "en": "Video trimming",
         "ru": "Монтаж видео"
       },
-      "version": "1.0.0",
+      "version": "1.1.0",
       "parts": [
         {
           "id": "app-dialog",
@@ -1577,15 +1605,19 @@
         "browser",
         "ffmpeg"
       ],
-      "usedBy": [],
+      "usedBy": [
+        "components/tools-tab/tool-looks.client.tsx",
+        "components/tools-tab/tool-looks.i18n.ts"
+      ],
       "body": [
         "_tools/video-trim/client/video-trimmer.client.tsx"
       ],
       "requires": [
         "components/dialog/app-dialog.i18n",
-        "components/ui/button"
+        "components/ui/button",
+        "components/ui/slider"
       ],
-      "bodyHash": "8db19caf128a43c3"
+      "bodyHash": "0b318c2978dd6c7d"
     },
     {
       "id": "tool-voice-input",
@@ -1651,11 +1683,11 @@
         "en": "Tools tab",
         "ru": "Вкладка «Инструменты»"
       },
-      "version": "1.0.2",
+      "version": "1.0.3",
       "parts": [
         {
           "id": "tool-demo",
-          "version": "1.0.2"
+          "version": "1.0.3"
         },
         {
           "id": "tool-terminal-drawer",
@@ -3716,6 +3748,32 @@
         "components/element-design/design-flow.client.tsx",
         "components/element-design/design-stage.client.tsx",
         "components/element-settings/site-settings.client.tsx"
+      ]
+    },
+    {
+      "id": "ui-slider",
+      "kind": "primitive",
+      "path": "components/ui/slider.tsx",
+      "export": "Slider",
+      "what": {
+        "en": "A range slider with one or more thumbs (a value, a start and an end).",
+        "ru": "Ползунок диапазона с одним или несколькими бегунками (значение, начало и конец)."
+      },
+      "how": "import { Slider } from \"@/components/ui/slider\" — value is an array, onValueChange gets an array; never a raw <input type=\"range\">.",
+      "words": {
+        "en": [
+          "slider",
+          "range",
+          "scrubber"
+        ],
+        "ru": [
+          "ползунок",
+          "диапазон",
+          "бегунок"
+        ]
+      },
+      "usedBy": [
+        "_tools/video-trim/client/video-trimmer.client.tsx"
       ]
     },
     {

@@ -1,7 +1,7 @@
 {
   "id": "video-trim",
   "entry": "client/video-trimmer.client.tsx",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "parts": [
     {
       "id": "app-dialog",
