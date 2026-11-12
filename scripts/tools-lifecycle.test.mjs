@@ -109,7 +109,7 @@ try {
   if (KEEP) say(`· kept: ${born.join(", ") || "nothing"} (delete them in the panel or by the door)`)
   else for (const id of born) {
     try {
-      const base = `http://127.0.0.1:${port()}/api/architect/items/${id}`
+      const base = `http://localhost:${port()}/api/architect/items/${id}`  // the core listens on localhost (127.0.0.1 failed, 2026-11-12)
       const g = await (await fetch(base)).json()
       const d = await fetch(base, { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ confirm: g.address }) })
       say(`· ${id} deleted through the core's door: ${d.status}`)

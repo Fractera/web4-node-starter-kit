@@ -72,6 +72,21 @@ Four points, each with its measure:
   - B3: use-tools in both templates opens with the cycle (find → take → change → create); the element instruction source names both
     commands; `instruction:element -- templates` resealed both (root's copy went to a scratch folder — root is stage E's).
   - B4 the proof script `scripts/tools-lifecycle.test.mjs` (`npm run test:tools-lifecycle`) — by hand on the node after the update.
+- **A and B LIVE on the node** (update 22:17–22:22 UTC, node core `6c41a216` ⊃ `0b749ffe`). Proof of A: the node's MCP from an empty
+  folder, «modal window» → «Lives in the core — … npm run tool:take -- app-dialog» (never «Yours»). Proof of B — **`npm run
+  test:tools-lifecycle` on the node: `===TOOLS_LIFECYCLE_OK=== G1 G2 G3`** (A = ylwj9, B = kwwyf, born from v0.3.201): both `_tools/`
+  only `.gitkeep`; A took voice-textarea with its recipe, maps and `check:shadcn-parts` green, type errors outside `.next` 0 → 0; one
+  appended line → «was edited» red; `tool:own -- voice-textarea --as tool-voice-note` → green, the edit kept; `tool:new -- demo-counter`
+  → maps green; `parts -- --as kwwyf` → «Lives in the element ylwj9 … --from ylwj9»; B took it, source ylwj9; the node's index written.
+  The script's own clean-up failed (it asked 127.0.0.1; the core listens on localhost) — both deleted by the door by hand (all steps
+  ok); the script fixed. On the node the matrix in the prebuild says SKIPPED (the node's workshop clones lack the new tags — by design).
+- **C done (released, not yet on the node)** — all 8 natives through `c-native.mjs` (the file plan: island out, 23 paths in where
+  their parts exist, 8 same-as-old files replaced, package.json scripts + prebuild guards, check-routes' two doors, ELEMENT_KEY), the
+  instruction (`instruction:element -- element`), the core's shell kit, the words map allowing the shell's two comment lines (the
+  core's own allowance), maps; importers outside the island 0 in all 8; each: its whole prebuild 0, tsc outside `.next` 0, the take
+  matrix on its tree **13 of 13** (was 4). auth: a card for `components/shell/shell-init.tsx` + 3 duplicate groups frozen; config: 4
+  frozen. Tags: auth v2.4.34, data v2.2.27, storage v1.1.47, embeddings v0.1.28, config v1.2.45, cache v0.1.40, memory v2.2.47,
+  stripe v1.3.38 — pinned in the registry in one commit.
 
 ## Where it stands — measured 2026-11-12 on the node (core `566cad15`), not read from code
 
