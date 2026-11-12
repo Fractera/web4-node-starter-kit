@@ -5,6 +5,12 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-104 (2026-11-12 ~11:55) — AUTONOMOUS RUN. The owner, verbatim: «Сейчас я буду недоступен следующее время до тех пор пока сам тебе
+не скажу что я вернулся ты продолжаешь без остановки разрабатывать случаи возникновения проблемы выбираешь наилучшее из твоей точки зрения
+решения а не самое простое и продолжаешь работать до того момента пока либо не выполнишь все задачи либо пока не из расходую контекстное
+окно.. Помни что тебе запрещено прерываться». Queue: v0.3.192 → 732 → 725 (725-1, 725-7, 725-2, 725-3, 725-4, 725-5, 725-6, 725-8) →
+727-4. Syncs, pushes and node updates are mine; my own reset only `session -- clear --continue` with the letter written first.**
+
 **NOW-103 (2026-11-12 ~11:50) — the owner: «Да, утверждаю план 725 и такой порядок, and» (cut at «and» — asked). Order: v0.3.192 →
 732 → 725 (maximum effort) → 727-4. NOW: template v0.3.192.**
 
