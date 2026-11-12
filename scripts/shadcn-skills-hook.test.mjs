@@ -28,6 +28,12 @@ expect("not an interface file — allowed", hook("lib/x.ts", []), 0)
 expect("shadcn's own source — allowed", hook("components/ui/button.tsx", []), 0)
 expect("a design skill's territory (a section) — allowed", hook("components/sections/section-hero/hero.tsx", []), 0)
 expect("a design skill's territory (a prototype) — allowed", hook("app/[lang]/(protectedLayer)/prototypes/_pages/p1/sections/a.tsx", []), 0)
+// 725-4: the architect's panel asks interface-design too.
+fs.mkdirSync(path.join(root, ".claude/skills/interface-design"), { recursive: true }); fs.writeFileSync(path.join(root, ".claude/skills/interface-design/SKILL.md"), "x")
+expect("a panel file without interface-design is refused", hook("app/[lang]/(architectLayer)/_components/x.client.tsx", ["use-primitives", "use-shadcn"]), 2, "«interface-design»")
+expect("a panel file with the three skills — allowed", hook("components/architect/x.client.tsx", ["use-primitives", "use-shadcn", "interface-design"]), 0)
+expect("outside the panel interface-design is not asked", hook("components/x/a.client.tsx", ["use-primitives", "use-shadcn"]), 0)
+fs.rmSync(path.join(root, ".claude/skills/interface-design"), { recursive: true })
 fs.rmSync(path.join(root, ".claude/skills/use-primitives"), { recursive: true })
 expect("a project without use-primitives asks only for use-shadcn", hook("components/x/a.client.tsx", ["use-shadcn"]), 0)
 // 730-4: элемент — навыки в группе, вызов с приставкой группы.

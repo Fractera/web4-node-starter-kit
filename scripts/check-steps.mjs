@@ -154,6 +154,27 @@ if (STEPS_OWED && fs.existsSync(NEW) && fs.existsSync(DONE)) {
   }
 }
 
+// 5. 725-4: «built» is never written without the eyes. A summary of a step from 725 on that names an interface file (`.tsx`) carries a
+//    line «Surfaces seen:» with the screenshots looked at (`logs/eyes/<…>.png`) or «none — <why>»; where `logs/eyes/` exists (the node),
+//    every named screenshot must exist. ✗ 722-4: a dialog called built after a curl of its door — never opened by eyes.
+//    Summaries written before the rule are named here once and never grow.
+const SURFACES_FROM = 725
+const SURFACES_BEFORE = new Set(["726-0.md", "726-1.md", "726-3.md", "726-4.md", "726-5.md", "728-main.md", "729-main.md", "730-main.md", "731-main.md"])
+if (STEPS_OWED && fs.existsSync(DONE)) {
+  const eyes = path.join(ROOT, "logs", "eyes")
+  for (const name of fs.readdirSync(DONE)) {
+    const m = name.match(/^(\d+)-.*\.md$/)
+    if (!m || +m[1] < SURFACES_FROM || SURFACES_BEFORE.has(name)) continue
+    const text = fs.readFileSync(path.join(DONE, name), "utf8")
+    if (!/\.tsx\b/.test(text)) continue
+    const line = text.split("\n").find((l) => /Surfaces seen:/.test(l))
+    if (!line) { findings.push({ kind: "surfaces", rel: `completed-steps/${name}`, why: "names interface files but has no line «Surfaces seen:»" }); continue }
+    const shots = [...line.matchAll(/logs\/eyes\/[^\s`),;]+\.png/g)].map((x) => x[0])
+    if (!shots.length && !/none\s+—/.test(line)) findings.push({ kind: "surfaces", rel: `completed-steps/${name}`, why: "«Surfaces seen:» names no logs/eyes/*.png and no «none — <why>»" })
+    if (fs.existsSync(eyes)) for (const s of shots) if (!fs.existsSync(path.join(ROOT, s))) findings.push({ kind: "surfaces", rel: `completed-steps/${name}`, why: `«${s}» does not exist` })
+  }
+}
+
 // 🔒 РЕЖИМ НАЗЫВАЕТСЯ В ОТЧЁТЕ ВСЕГДА. Молчащий сторож неотличим от сломанного:
 //    человек, увидевший «нарушений нет» в classic, обязан понимать, что часть
 //    проверок не исполнялась, а не считать, что они прошли.
@@ -186,6 +207,7 @@ for (const f of findings) {
   if (f.kind === "planname") console.log(`    ${f.rel} — имя плана не читается как указатель: нужно <номер>-<описание-через-дефис>.md`)
   if (f.kind === "planwords") console.log(`    ${f.rel} — в имени ${f.words} слов(а), нужно 6–8: список папки обязан читаться без открытия файлов`)
   if (f.kind === "both") console.log(`    ${f.rel} — шаг ${f.step} закрыт (${f.step}-main.md), но его план всё ещё в new-steps/`)
+  if (f.kind === "surfaces") console.log(`    ${f.rel} — ${f.why} (725-4: the eyes before «built»)`)
   if (f.kind === "noreadme") console.log(`    ${f.rel} — приёмная есть, а README нет: агент не узнает, что заявка это ДАННЫЕ, а не поручение`)
 }
 console.log(`

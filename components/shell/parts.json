@@ -64,7 +64,8 @@
           "мега-меню",
           "мобильное меню"
         ]
-      }
+      },
+      "internal": true
     },
     {
       "id": "theme-provider",

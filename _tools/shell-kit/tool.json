@@ -1,9 +1,14 @@
 {
   "id": "shell-kit",
   "entry": "client/shell-kit.client.tsx",
-  "needs": ["browser"],
+  "needs": [
+    "browser"
+  ],
   "npmDeps": [],
-  "usedBy": ["app/api/shell-kit/[lang]", "the custom element template: components/shell-kit (727-2)"],
+  "usedBy": [
+    "app/api/shell-kit/[lang]",
+    "the custom element template: components/shell-kit (727-2)"
+  ],
   "en": {
     "title": "Project shell",
     "what": "The project's header, account drawer and footer as one tool of the core that every element takes at run time. The core draws them to HTML for the element's language and page, and one script brings them to life in the visitor's browser: the menu, the account, the theme, width and language switches.",
@@ -15,5 +20,17 @@
     "what": "Шапка, ящик кабинета и подвал проекта как один инструмент ядра, который каждый элемент берёт во время работы. Ядро рисует их в HTML для языка и страницы элемента, а один скрипт оживляет их в браузере посетителя: меню, кабинет, переключатели темы, ширины и языка.",
     "how": "Один код: `components/shell/` ядра и эта папка, собранные `scripts/build-shell-kit.mjs` в `.shell-kit/`: пакет сервера, которым рисует дверь `/api/shell-kit/<язык>`, пакет браузера с тем же React, который оживляет нарисованное, и утилиты Tailwind этих файлов на собственных токенах элемента. `next/link` и `next/navigation` заменены прокладками. Заглушка элемента спрашивает дверь по петле с ключом узла, пока рисуется его статическая страница, и отдаёт файлы браузеру через свою `/shell-kit/*`. Без ядра заглушка рисует простую шапку и подвал из настроек самого элемента.",
     "value": "Меню, кабинет или подвал меняются один раз в ядре и доходят до каждого элемента при его следующей отрисовке. Ни один элемент не пересобирается, копии не расходятся. Дизайн остаётся своим у элемента: инструмент красит его токенами. Элемент, которому нужна своя шапка, убирает заглушку и рисует свою, и после этого перестаёт получать изменения ядра."
+  },
+  "words": {
+    "en": [
+      "project shell",
+      "header and footer from the core",
+      "shell kit"
+    ],
+    "ru": [
+      "оболочка проекта",
+      "шапка и подвал от ядра",
+      "инструмент оболочки"
+    ]
   }
 }

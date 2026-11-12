@@ -8,7 +8,7 @@
       "export": "AppDialog",
       "what": {
         "en": "The ONE modal window of the product: portal, scrim, focus trap, Escape, scroll lock, a scrolling body with the actions always visible.",
-        "ru": "ЕДИНСТВЕННОЕ модальное окно продукта: портал, затемнение, ловушка фокуса, Escape, блок прокрутки, прокручиваемое тело с видимыми кнопками."
+        "ru": "ЕДИНСТВЕННОЕ модальное окно продукта: портал, затемнение, ловушка фокуса, Escape, запрет прокрутки, прокручиваемое тело с видимыми кнопками."
       },
       "how": "<AppDialog open onOpenChange title ui={appDialogUi(lang)}>…</AppDialog>; the ui words come from the server (app-dialog.i18n), never imported by value into a client file.",
       "words": {

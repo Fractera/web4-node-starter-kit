@@ -1,9 +1,14 @@
 {
   "id": "terminal-paste",
   "entry": "client/terminal-paste-dialog.client.tsx",
-  "needs": ["browser", "openai-key"],
+  "needs": [
+    "browser",
+    "openai-key"
+  ],
   "npmDeps": [],
-  "usedBy": ["architect/kits/_agent-kit/core/client/agent-terminal"],
+  "usedBy": [
+    "architect/kits/_agent-kit/core/client/agent-terminal"
+  ],
   "en": {
     "title": "Paste into the terminal",
     "what": "The window that puts text into an agent's terminal: a large field that takes typing, pasting and voice, and two buttons — insert, or insert and send. Without a running session the buttons wait and the text stays in the window.",
@@ -15,5 +20,17 @@
     "what": "Окно, которое кладёт текст в терминал агента: большое поле для набора, вставки и голоса и две кнопки — вставить или вставить и отправить. Пока сессия не запущена, кнопки ждут, а текст остаётся в окне.",
     "how": "AppDialog с VoiceControl в виде области: надиктованное встаёт туда, где стоял курсор, и дописывается, а не заменяет; без ключа OpenAI строка голоса ведёт на поле ключа. Сокета окно не знает: его владелец получает onInsert(send) и сам делает вставку в режиме bracketed paste, поэтому управляющие символы и Enter остаются заботой терминала.",
     "value": "Терминал сам вставлять не умеет, а человек, только что надиктовавший задачу, часто хочет добавить ещё одну мысль перед отправкой. Одно окно для всех терминалов узла — страницы элемента, страницы службы и ящика рядом с Preview — вместо копии внутри каждого."
+  },
+  "words": {
+    "en": [
+      "paste window",
+      "paste into terminal",
+      "send text to terminal"
+    ],
+    "ru": [
+      "окно вставки",
+      "вставить в терминал",
+      "отправить текст в терминал"
+    ]
   }
 }

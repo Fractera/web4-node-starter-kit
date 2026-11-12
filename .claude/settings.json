@@ -62,6 +62,15 @@
             "command": "node .claude/hooks/shadcn-skills.mjs"
           }
         ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/parts-gate.mjs"
+          }
+        ]
       }
     ]
   }

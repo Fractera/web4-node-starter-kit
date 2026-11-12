@@ -7,8 +7,8 @@
       "path": "components/preview/element-preview.client.tsx",
       "export": "ElementPreview",
       "what": {
-        "en": "The preview of a node element inside the core: its live site in a frame, the highlight of blocks, the block task window and the element's terminal in a side drawer.",
-        "ru": "Просмотр элемента узла внутри ядра: его живой сайт во фрейме, подсветка блоков, окно задачи блока и терминал элемента в боковом ящике."
+        "en": "The preview of a node element inside the core: its live site in a frame, the highlight of page parts, the task window of a highlighted part and the element's terminal in a side drawer.",
+        "ru": "Просмотр элемента узла внутри ядра: его живой сайт во фрейме, подсветка частей страницы, окно задачи выделенной части и терминал элемента в боковом ящике."
       },
       "how": "<ElementPreview id lang />.",
       "words": {

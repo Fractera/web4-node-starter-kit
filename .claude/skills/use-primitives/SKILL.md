@@ -36,6 +36,9 @@ The owner, 2026-11-11: «каждый раз когда ты пытаешься 
 `components/ui/` — shadcn/ui plus `lucide-react` icons plus Sonner for toasts. No other UI library.
 Twenty-four primitives live there today; read the folder rather than guessing what exists.
 
+Before a single new interface file: **`parts_find`** (or `npm run parts -- <words>`) — the parts map knows every owner, composites
+included (the voice textarea, AppDialog, TableTools), and the gate `parts-gate` refuses a birth that did not ask (725).
+
 The rule underneath all of it: **if a kind of thing has an owner, you use the owner.** A second
 implementation of the same thing is not extra work, it is a fork of the product's look that nobody
 declared.

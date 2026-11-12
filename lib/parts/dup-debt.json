@@ -1,0 +1,36 @@
+{
+  "_": "Frozen second copies of long class strings (725-7); the sweep 725-6 extracts them. Written by node scripts/check-parts-dup.mjs --freeze.",
+  "groups": {
+    "bg-destructive/5 border border-destructive/40 flex flex-col gap-2 p-3 rounded-lg": [
+      "app/[lang]/(architectLayer)/_components/element-github.client.tsx",
+      "components/domain/domain-list.client.tsx",
+      "components/wallet/node-wallet.client.tsx"
+    ],
+    "bg-destructive/5 border border-destructive/40 flex flex-wrap gap-3 items-center p-4 rounded-lg": [
+      "components/official/official-account.client.tsx",
+      "components/super-node/super-node-status.client.tsx"
+    ],
+    "bg-emerald-500/[0.06] border border-emerald-500/40 flex gap-2.5 items-center px-3.5 py-2.5 rounded-lg": [
+      "app/[lang]/(architectLayer)/architect/build/github/_connect/panel/default-template/step-3/page.tsx",
+      "app/[lang]/(architectLayer)/architect/build/github/_connect/panel/default-template/step-4/page.tsx",
+      "app/[lang]/(architectLayer)/architect/build/github/_connect/ui/step-form.client.tsx"
+    ],
+    "bg-primary/5 border border-primary/40 flex flex-col gap-3 p-4 rounded-xl": [
+      "app/[lang]/(architectLayer)/architect/build/github/_github/client/element-repos.client.tsx",
+      "components/domain/static-copy.client.tsx"
+    ],
+    "border border-border flex flex-col gap-2 px-4 py-3 rounded-lg": [
+      "app/[lang]/(architectLayer)/_components/cron-calendar.client.tsx",
+      "app/[lang]/(architectLayer)/_components/element-passport.tsx",
+      "app/[lang]/(architectLayer)/architect/build/github/_github/client/github-binding.client.tsx"
+    ],
+    "border border-border flex gap-3 items-center justify-between px-3 py-2 rounded-md": [
+      "_tools/socials-ai/client/socials-ai-dialog.client.tsx",
+      "components/deploy/core-deploy.client.tsx"
+    ],
+    "border border-border hover:text-foreground px-4 py-2 rounded-md text-[length:var(--fs-small)] text-muted-foreground transition-colors": [
+      "components/dialog/dialog-sample.client.tsx",
+      "components/request/pre-step-request.client.tsx"
+    ]
+  }
+}

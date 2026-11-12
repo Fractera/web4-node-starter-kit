@@ -15,6 +15,9 @@ import fs from "node:fs"
 import path from "node:path"
 
 const REQUIRED = ["use-primitives", "use-shadcn"]
+// 725-4: the architect's panel is craft work — `interface-design` too (✗ 722: panel screens built without it looked foreign to the panel).
+const PANEL = [/^app\/\[lang\]\/\(architectLayer\)\//, /^components\/architect\//, /^components\/dashboard\//]
+const PANEL_REQUIRED = ["interface-design"]
 const AREAS = /^(components|app|_tools|sections|_widgets)\//
 const FREE = [/^components\/ui\//, /^components\/ai-elements\//, /^components\/sections\//, /\/_widgets\//, /^_widgets\//, /\/prototypes\/_pages\//]
 
@@ -34,7 +37,7 @@ if (rel.startsWith("..") || !AREAS.test(rel) || FREE.some((f) => f.test(rel))) p
 const groups = () => { try { return fs.readdirSync(path.join(root, ".claude", "skills")) } catch { return [] } }
 const skillHere = (name) => fs.existsSync(path.join(root, ".claude", "skills", name, "SKILL.md")) ||
   groups().some((g) => fs.existsSync(path.join(root, ".claude", "skills", g, "skills", name, "SKILL.md")))
-const need = REQUIRED.filter(skillHere)
+const need = [...REQUIRED, ...(PANEL.some((p) => p.test(rel)) ? PANEL_REQUIRED : [])].filter(skillHere)
 if (!need.length) process.exit(0)
 let log = ""
 try { log = fs.readFileSync(call?.transcript_path ?? "", "utf8") } catch { process.exit(0) }

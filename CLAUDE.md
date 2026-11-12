@@ -331,6 +331,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   route widget, a platform primitive. When working with code you have tools, the sections, the design system and the right to create a
   widget (`check:page-composition`).
 - An interface is needed — first a section the core or the element already has; none — a new section of its own set, then its reuse.
+- An interface piece — `parts_find` first (the parts map `lib/parts/PARTS.json`: tools, composites, primitives, sections); a ready part is
+  taken, never rebuilt; a new interface file says at birth `// @part <id>` with its card or `// @local` (hook `parts-gate`,
+  `check:parts-map`, `check:parts-dup`).
 - A design element that exists in shadcn is taken from shadcn; own markup only from a design skill in its territory, with its `@design`
   mark (`check:shadcn-parts`, the hook `shadcn-skills`: `use-primitives` and `use-shadcn` load before an interface file).
 - A number about the machine is never printed into a prebuilt page — the browser asks for it; the architect's pages ask nothing without a

@@ -7,8 +7,8 @@
       "path": "components/workspace/workspace-shell.tsx",
       "export": "WorkspaceShell",
       "what": {
-        "en": "The working screen layout of a block and its pages: the menu on the left, the content, the top row of tabs.",
-        "ru": "Раскладка рабочего экрана блока и его страниц: меню слева, содержимое, верхний ряд вкладок."
+        "en": "The working screen layout of an element's pages: the menu on the left, the content, the top row of tabs.",
+        "ru": "Раскладка рабочего экрана страниц элемента: меню слева, содержимое, верхний ряд вкладок."
       },
       "how": "<WorkspaceShell …> around a working page.",
       "words": {
@@ -18,7 +18,9 @@
         ],
         "ru": [
           "рабочий экран",
-          "раскладка с меню"
+          "раскладка с меню",
+          "левое меню",
+          "боковое меню"
         ]
       }
     },

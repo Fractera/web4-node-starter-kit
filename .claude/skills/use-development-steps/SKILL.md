@@ -74,7 +74,9 @@ A step with substeps lives in `new-steps/<N>/`. Eight stages, in order, each lea
 5. one result — one substep, sliced VERTICALLY through the layers (all doors, then all screens, gives nothing to show until the end);
 6. order, dependencies and the address of the work (repository and branch, named before the code);
 7. every substep unfolded into `<N>-k.md`: what is built (files and doors by name) · what counts as done (one sentence) · how it is
-   proven — two planes named IN ADVANCE, one with a negative control (skill `use-testing`) · what it rests on · what is NOT in it;
+   proven — two planes named IN ADVANCE, one with a negative control (skill `use-testing`) · what it rests on · what is NOT in it ·
+   **Parts born here** (725-7): every new interface piece, asked of `parts_find` first, named as `@part <id>` (reusable, carded) or
+   `@local` (why), or «none»;
 8. acceptance of the plan by this checklist;
 9. **the owner's approval before the first line of code** — the substeps in 15–20 words each, your own decisions in one line each, what
    is not included; in the same choice window as any question; his answer verbatim into `<N>-main.md`. A one-file fix needs no window.
@@ -96,7 +98,8 @@ A step with substeps lives in `new-steps/<N>/`. Eight stages, in order, each lea
    pushed. The owner, 2026-11-04, on 13 «Run failed» letters nobody had looked at: «Разве ты не можешь получать информацию из GitHub о
    этих ошибках и как ты реагировать на них?»
 3. The summary `completed-steps/<N>-<k>.md`: the hash and repository · what was done and how · the two proofs verbatim · **mistakes**
-   (a step without them reads like work that never happened) · **evolution of skills** (nothing to improve — one written line).
+   (a step without them reads like work that never happened) · **evolution of skills** (nothing to improve — one written line) ·
+   **Parts born here** — the parts this substep created, with their cards, so the next session finds them.
    **The pattern — a closed substep and a closed step, on step 1 of a fresh node: `references/closed-step-example.md`.** A fresh node has
    no closed step to look at; copy that form (the owner, 2026-11-04, step 644: the node's agent «как будто бы был недостаточно паттернов
    для того чтобы правильно … оформить документы закрытого шага»).
