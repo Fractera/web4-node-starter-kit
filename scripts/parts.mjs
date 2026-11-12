@@ -6,6 +6,11 @@ import { findParts, partsText } from "../lib/parts/parts-find.mjs"
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..")
 const args = process.argv.slice(2)
+if (args.includes("--audit")) {
+  const { audit, report } = await import("./parts-audit.mjs")
+  console.log(report(audit()))
+  process.exit(0)
+}
 const ki = args.indexOf("--kind")
 const kinds = ki >= 0 ? [args[ki + 1]] : undefined
 const query = args.filter((a, i) => a !== "--kind" && i !== ki + 1).join(" ").trim()
