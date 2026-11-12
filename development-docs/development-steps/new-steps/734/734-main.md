@@ -70,8 +70,14 @@ then ~17:35: «да, утверждаю, начинай с правила». The
       writes the newborn's DESIGN-CONFIG and settings copy from it (3b-1), `sync-site-design.mjs` reads it (3b-2), guard
       `check:element-equality` (in the prebuild; negative control: the old code → FAILED naming item-birth :193 :201 and
       sync-site-design :30; `--self-test` catches a planted `x.id === 'root'`). The core's chain (without the install-only
-      check-local/check-origin) 55 guards green + next build. NEXT: fork sync, node update; proofs on the node — the core build prints
-      «совпадает с оформлением проекта («config»)»; a test birth with root stopped; the test element removed after the owner's word.
+      check-local/check-origin) 55 guards green + next build. LIVE (core `ca3ad41e`, 2026-11-12 19:20) and PROVEN with root's
+      process stopped (the owner stopped it, `npm run power` reason «1»): the update's core chain printed `ELEMENT_EQUALITY_OK` and
+      «[sync-site-design] оформление ядра уже совпадает с оформлением проекта («config»)» (3b-2); a test birth `pm990` («Проба рождения
+      734», `--look project --no-wake`) — its settings copy `from http://127.0.0.1:24685/mcp`, version `2490a7aaa9f8` ≠ root's copy
+      `7d1437bf1cba`, received 19:23:43 with root down; its page 200 with the project shell, #2563eb, no console errors
+      (`logs/eyes/2026-11-12T19-24-03-746Z.png`). LIMIT said aloud: the template's DESIGN-CONFIG is byte-equal to the project's, so
+      the colour cannot tell the source, and the create command swallows the birth's stage lines; the static guard and the 3b-2 live
+      line carry that part. Root back by `npm run power -- root on` (200). The test element waits for the owner's «удаляй».
   - 3c the bare domain: a setting in the node's domain record names the element (or the core) that answers it; every reader
     (activate, reach, preview-url, dashboard, check-addresses, main-agent-cli, services-install) reads the setting, never the id. Today's
     node keeps root there by the setting.
