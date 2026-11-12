@@ -5,6 +5,13 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-109 (2026-11-12 ~16:00, the owner: «go to finish non stop») — core pushed to `cafd2e7a` (733-1 rewritten, 733-2, 733-3,
+pins custom v0.3.197, native v0.1.64 — CI ubuntu+windows green, macOS never got a runner and was cancelled; macOS proven by the local dry
+release —, root v3.0.53). Local, not pushed: `b342223c` (733-4 index + 733-5 take door, §4 resealed), `54162346` (a held part stands in).
+NOW: the templates (733-5 element command `tool:take`, 733-6 empty `_tools/`, the core's parts code, the instruction's parts_find line).
+Decided by me, for the owner's review: a copy keeps its source's folder name (`_tools/image-crop/`), the element's `tool-<name>` rule
+(the owner 2026-10-07) holds for tools born in the element. Then 733-7 root, node update + live proofs, 733-8 tab, 733-9.**
+
 **NOW-108 (2026-11-12) — 733-1 REWRITTEN by the owner's correction (a tool = a task + its own interface; tools nest; a combination is a
 recipe with references; elements must understand it even more than the core): core `903a7975`, templates custom v0.3.197, native v0.1.64,
 root v3.0.53 pinned. STOP for the owner: he reads the words; then the node update (fork sync, core build ~4 min, the terminal goes dark)
