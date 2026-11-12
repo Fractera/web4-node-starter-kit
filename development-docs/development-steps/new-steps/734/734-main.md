@@ -27,7 +27,13 @@ then ~17:35: «да, утверждаю, начинай с правила». The
     owner's word) and the signed-in editor (eyes has no session — the owner's Chrome). ROOT STOPPED (the owner's yes, 18:3x): root's
     health 000; CONFIG's `/api/shell/ru` still answers — top «Нативные элементы | Кастомные элементы», the languages; in the owner's
     Chrome `/ru/architect/header` and `/ru/architect/languages` render 200 with the shell, no console errors; root started again, 200.
-    Left: the editors' content behind sign-in (that Chrome is not signed in to CONFIG — the owner signs in). Found for 3d: CONFIG's menu «Кастомные элементы»
+    Found then (the owner: localhost must not ask sign-in): config's own doors used the cookie-only `sessionOf` since v1.0.0 —
+    `/api/me` 200 as architect, `/api/settings/app` 401. FIXED in config v1.2.44 (`809fddc`: `lib/config-store/architect-of.ts`, the
+    owner at the machine first, in five doors), pinned (`ccc1d4bf`), LIVE (core `1ed36613`, 18:53). Proven: `curl
+    localhost:24685/api/settings/app` 200; negative control with `cf-connecting-ip` / `x-forwarded-host: example.com` → 401
+    `no-session` (`cf-ray` → 400 `no-session`); the owner's Chrome, no sign-in — «Языки» (2 chosen, the list) and «Шапка» (the menu
+    items with their addresses) drawn, no console errors. Not repeated: the editors' content with root stopped (the guard refused a
+    second `pm2 stop`); the shell door and the pages were proven without root before. Found for 3d: CONFIG's menu «Кастомные элементы»
     names root «Главный сайт».
   - 3a-2 (as found measuring 3a): CONFIG — a native element — reads «the menus as now» and the languages from root's `/api/shell`
     (`loadProjectShell`, `PROJECT_SHELL_URL`), and the installer gives every element `PROJECT_SHELL_URL`, `PROJECT_MENU_URL`,
