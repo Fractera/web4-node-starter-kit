@@ -17,10 +17,17 @@ then ~17:35: «да, утверждаю, начинай с правила». The
 - **734-3 the core's code without root — substeps for the owner's yes:**
   - 3a-1 BUILT (`b38b4111`, the owner's yes 2026-11-12 ~18:00): the core is the shell's master — check:shell-kits compares every
     element with the core (root like any element, a drift is a debt), shell-kit:add copies from the core, the shell-kit GET draws
-    coreShellData, the lock's «home» → the bare domain; negative control: no master → FAILED. Proof on the node after the update.
+    coreShellData, the lock's «home» → the bare domain; negative control: no master → FAILED. PROVEN on the node (core `4ea8dcd4`,
+    2026-11-12 18:01): the update built although root's copy now differs (the old guard failed the core's build on that); `check:shell-kits`
+    — the core ✓ master, root, Клип and the ten natives listed alike as debts; root's process stopped → the panel's header (y 30, 57 px)
+    and footer («© 2026 Fractera», y 3225) drawn, no console errors (`logs/eyes/2026-11-12T18-01-47-605Z.png`); root started again, 200.
   - 3a-2 NEXT (found measuring 3a): CONFIG — a native element — reads «the menus as now» and the languages from root's `/api/shell`
     (`loadProjectShell`, `PROJECT_SHELL_URL`), and the installer gives every element `PROJECT_SHELL_URL`, `PROJECT_MENU_URL`,
-    `PROJECT_SITE_URL` as root's doors. A native depending on a custom element — the core must answer the project shell itself.
+    `PROJECT_SITE_URL` as root's doors. A native depending on a custom element. Measured: root's `/api/shell` is only root's OWN shell
+    data (its app config, its copy of CONFIG's settings, the node's catalogue) — every custom element computes the same for itself.
+    CONFIG takes from it the menus «as now», the languages, and its login and policy links point at root. Variants for the owner: (B, my
+    pick) CONFIG reads the menus and languages from its own store, links sign-in to the auth element, the installer hands out no root
+    address — a CONFIG release + the installer; (A) the core computes a project shell door from CONFIG's settings for everyone.
   - 3a (as planned) the shell: the core's `components/shell` is the master; `check:shell-kits` and `shell-kit:add` compare and copy from the core,
     never root; the core's panel draws its shell data itself (CONFIG and its own catalogue), not root's `/api/shell`; the panel's «home»
     link is the core's own. Proof: root turned off — the panel keeps its header and footer.
