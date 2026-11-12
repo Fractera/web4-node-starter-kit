@@ -1071,6 +1071,9 @@ if (cmd === 'create') {
   if (vectorFile) {
     if (!existsSync(vectorFile)) fail(`no file ${vectorFile}`)
     const v = readFileSync(vectorFile, 'utf8').replace(/\r\n/g, '\n').trim()
+    // 735: the vector lands in the element's CLAUDE.md, whose guard (check:dev-docs) refuses Cyrillic outside quotes — refused here, before
+    // a birth that would fail at its install (2026-11-12, «Хранилище картинок»).
+    if (/[А-Яа-яЁё]/.test(v.replace(/«[^»]*»/g, ''))) fail('--vector-file is written in English (the element\'s instruction is English; the person\'s words only inside «»)')
     if (!v || v.split('\n').length > 40 || v.length > 4000) fail(`--vector-file: 1–40 lines and up to 4000 characters (now ${v.split('\n').length} lines, ${v.length} characters) — it is loaded into every session of the element`)
   }
   if (!role || !brief) fail('create --role "<one sentence>" --name "<the name people see in the menu>" --vector-file <path> [--describe "<what it is for, 1–3 sentences, for the passport and the header>"] [--look own|project | --look-like <id>] [--close-after-first-session] (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--different "<their words>" --boundary owner|money|secrets|control|face|channel|sleep|visibility] [--native] [--supervise main|architect] [--no-wake]')
