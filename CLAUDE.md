@@ -185,7 +185,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   `element-permission`; no answer in 8 minutes — the element gets a deny by itself.
 - **i2i:** element agents start talking without MCP or API, but their task is to agree quickly on their own API or MCP and then call each
   other directly, without you. They cannot find each other by themselves: you suggest the neighbour (skill `route-to-element`) and follow
-  the progress when needed.
+  the progress when needed. Tools are the exception: an element's `parts_find` reads the node's index itself — the core's tools of scope
+  «any» and, on a single project, its neighbours' — cards only, never code (step 733).
 - **Doors between elements:** `/api/<name>` on loopback with the key `X-Node-Key`; a door is added by the element's `door:add`, the A2A card
   names every door (guard `check:a2a-card`).
 - **Buying an element in Lagrix (f2f)** is not possible yet: the search `npm run lagrix` is a simulation, say so.

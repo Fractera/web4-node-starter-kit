@@ -105,6 +105,8 @@ export function readCard(id) {
       version: raw.version,
       parts: raw.parts.map((x) => ({ id: x.id, version: x.version })),
       scope: raw.scope,
+      // 733-5: a copy taken from the core or a neighbour keeps where it came from — its body is not edited (733-9).
+      ...(raw.source && typeof raw.source === "object" ? { source: raw.source } : {}),
       needs,
       npmDeps: Array.isArray(raw.npmDeps) ? raw.npmDeps : [],
       usedBy: Array.isArray(raw.usedBy) ? raw.usedBy : [],
