@@ -50,8 +50,8 @@ into `WEB4-ITEMS/<kind>/<id>/`; then commit, tag, bump the version in `WEB4-ITEM
 
 | Variable | Value |
 |---|---|
-| `PROJECT_SHELL_URL` | the site's loopback + `/api/shell` (the shell adds `/<lang>`) |
-| `PROJECT_SITE_URL` | the site's public address on the own domain, otherwise its loopback |
+| `PROJECT_SHELL_URL` | empty since step 734: the data is the element's own (`siteShellData`) or the core's Project shell tool (727) |
+| `PROJECT_SITE_URL` | the element's own address — public on the own domain, otherwise `localhost:<its port>` (step 734) |
 
 ## Wire it (Next, root layout with the language in the address)
 

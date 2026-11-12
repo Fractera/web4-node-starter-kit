@@ -18,19 +18,19 @@
           "the service's repository or fork — not WEB4-ITEMS/: a reinstall would reset that folder to its tag"
         ],
         [
-          "--from <site folder>",
-          "where to take the view from; by default the node's own site element"
+          "--from <master folder>",
+          "where to take the view from; by default the core (the only master, step 734)"
         ],
         [
           "PROJECT_SHELL_URL",
-          "the site's shell door (/api/shell); the node installer gives it"
+          "no longer given (734): the data is the element's own (siteShellData) or the core's Project shell tool (727)"
         ],
         [
           "PROJECT_SITE_URL",
-          "where the links lead (the site); the node installer gives it"
+          "the element's OWN address for its sign-in links (734); the node installer gives it"
         ]
       ],
-      "sample": "Live sample: the header and footer of this very page are the shell, drawn from [the site's](/en/architect/root/preview) data.",
+      "sample": "Live sample: the header and footer of this very page are the shell, drawn by the core from its own data.",
       "detailsTitle": "Project shell — in detail",
       "details": [
         {
@@ -65,19 +65,19 @@
           "репозиторий службы или её форк, а не WEB4-ITEMS/: переустановка вернула бы ту папку к тегу"
         ],
         [
-          "--from <папка сайта>",
-          "откуда взять вид; по умолчанию — элемент сайта этого узла"
+          "--from <папка образца>",
+          "откуда взять вид; по умолчанию — ядро (единственный образец, шаг 734)"
         ],
         [
           "PROJECT_SHELL_URL",
-          "дверь оболочки сайта (/api/shell); выдаёт установщик узла"
+          "больше не выдаётся (734): данные — свои у элемента (siteShellData) или инструмент ядра «Оболочка проекта» (727)"
         ],
         [
           "PROJECT_SITE_URL",
-          "куда ведут ссылки (сайт); выдаёт установщик узла"
+          "СВОЙ адрес элемента для ссылок входа (734); выдаёт установщик узла"
         ]
       ],
-      "sample": "Живой образец: шапка и подвал этой самой страницы — оболочка, нарисованная по данным [сайта](/ru/architect/root/preview).",
+      "sample": "Живой образец: шапка и подвал этой самой страницы — оболочка, которую ядро рисует по своим данным.",
       "detailsTitle": "Оболочка проекта — подробно",
       "details": [
         {

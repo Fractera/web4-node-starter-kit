@@ -418,22 +418,19 @@ function derivedValue(name, ctx) {
     // 367-5: собственный репозиторий элемента, рождённого из репозитория человека (`born.url` реестра); у остальных — пусто.
     case 'ELEMENT_REPO_URL': return registry.services.find((s) => s.id === id)?.born?.url ?? ''
     case 'ARCHITECT_URL': return nodeUrl
-    // 283-2: стандартный хедер и футер — меню проекта у двери сайта, ссылки — на сайт. Сервер службы
-    // спрашивает сайт по петле; браузер человека идёт на публичный адрес сайта, если домен подключён.
-    case 'PROJECT_MENU_URL': {
-      const root = registry.services.find((x) => x.id === 'root')
-      return root && Number.isInteger(root.port) ? `http://127.0.0.1:${root.port}/api/menu` : ''
-    }
-    // 285-3: оболочка проекта (шапка и подвал) — статическая дверь сайта, по петле машины.
-    case 'PROJECT_SHELL_URL': {
-      const root = registry.services.find((x) => x.id === 'root')
-      return root && Number.isInteger(root.port) ? `http://127.0.0.1:${root.port}/api/shell` : ''
-    }
+    // 🔒 НИ ОДНОМУ ЭЛЕМЕНТУ — АДРЕС ДРУГОГО (шаг 734-3a-2). ✗ 283-2 и 285-3 выдавали каждому элементу двери элемента `root` (меню,
+    // оболочку, адрес «сайта»): CONFIG — источник настроек — читал их у одного кастомного элемента. Владелец 2026-11-12: «У нас есть
+    // элемент CONFIG создан специально для того чтобы ядро и все элементы которые не включили собственные настройки брали из него
+    // настройки». Шапка и подвал элемента — его собственные данные (`siteShellData`) или инструмент ядра «Оболочка проекта» (727);
+    // настройки — из CONFIG. Двери меню и оболочки больше никто не читает — пусто.
+    case 'PROJECT_MENU_URL': return ''
+    case 'PROJECT_SHELL_URL': return ''
+    // Адрес «сайта» для ссылок входа — СВОЙ адрес элемента: его `/login` ведёт через его же прокси на службу входа. На своём домене —
+    // его публичный адрес (та же формула, что SERVICE_PUBLIC_URL), иначе его порт на localhost (cookie входа — на том же хосте).
     case 'PROJECT_SITE_URL': {
       const pub = publicAuth(ROOT)
-      if (pub && pub.architectHost) return `https://${pub.siteHost}`
-      const root = registry.services.find((x) => x.id === 'root')
-      return root && Number.isInteger(root.port) ? `http://localhost:${root.port}` : ''
+      if (pub && pub.architectHost) return id === 'root' ? `https://${pub.siteHost}` : `https://${addressOf(id)}.${pub.zone}`
+      return Number.isInteger(port) ? `http://localhost:${port}` : ''
     }
     case 'NEXT_PUBLIC_AUTH_URL': {
       const auth = registry.services.find((s) => s.id === 'auth')

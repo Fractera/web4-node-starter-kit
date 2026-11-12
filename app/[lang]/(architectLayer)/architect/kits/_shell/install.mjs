@@ -76,5 +76,5 @@ if (added.length) {
 console.log('  подключение (корневой макет с языком в адресе):')
 console.log('    <ThemeProvider> из "@/components/shell/theme-provider.client" вокруг страницы')
 console.log('    <ProjectHeader data={shell} surface={…} /> … <ProjectFooter data={shell} surface={…} />')
-console.log('    данные — дверь сайта PROJECT_SHELL_URL/<язык> на сборке; адреса сделать абсолютными на PROJECT_SITE_URL')
+console.log('    данные — свои (siteShellData элемента) или инструмент ядра «Оболочка проекта» (727); ссылки входа — на свой адрес PROJECT_SITE_URL')
 console.log('===SHELL_KIT_OK===')

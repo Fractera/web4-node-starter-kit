@@ -5,7 +5,7 @@
 // РЕДАКТОР ШАПКИ ИЛИ ПОДВАЛА (шаг 299-5): группы header · footer редактора aifa.dev/ru/architect/app-config.
 // Перенесены как есть `FeaturesEditor` (выключатель меню — PLATFORM-CONFIG) и `NavEditor` (пункты — APP-CONFIG `nav.<место>`).
 // Разница с aifa.dev одна — откуда берутся страницы: у элемента настроек своих страниц сайта нет, поэтому кандидаты и
-// меню «как сейчас» приходят из оболочки проекта, которую сайт отдаёт всем элементам (`PROJECT_SHELL_URL`).
+// меню «как сейчас» приходят из собственной двери оболочки ЭТОГО элемента (`/api/shell/<язык>`, `app/api/node/element-settings`) — у каждого свои (734).
 import { useEffect, useMemo, useState } from 'react'
 import { FeaturesEditor } from './features-editor.client'
 import { NavEditor } from './nav-editor.client'
