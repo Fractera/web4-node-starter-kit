@@ -40,7 +40,7 @@ for (const kind of onlyKind ? [onlyKind] : Object.keys(KINDS)) {
     git(clone, ["archive", "--format=tar", "-o", tar, version])
     execFileSync("tar", ["-xf", tar, "-C", tmp], { stdio: "ignore", windowsHide: true })
     rmSync(tar)
-    // 735 D13: the installer's `# kind:` sticks to every variable after it — an ELEMENT_KEY block put before SETTINGS_SECRET gave the
+    // 735 D13: the installer's `# kind:` sticks to every variable after it — ELEMENT_KEY and its comment put before SETTINGS_SECRET gave the
     // node key of 8 natives an element key's value and their doors answered 401. Only ELEMENT_KEY may be of kind element-key.
     if (existsSync(join(tmp, ".env.example"))) {
       let k = null
