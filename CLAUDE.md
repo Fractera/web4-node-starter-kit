@@ -35,7 +35,7 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   limit for you, every running lending counted), never by writing its code; you stay conscious first.
 - Why a node is built. **A Web4 node:** elements become a2a agents and find each other in the Lagrix network (lagrix.dev); all elements
   belong to one owner. **An integrator:** one person serves many people near them, so they build their own agents. **A high-load Web2
-  site or app.** **An app factory:** every element lives on its own, like a site on a hosting, but uses the shared native elements. **A
+  site or app.** **An app factory:** every element lives on its own, like a server on a hosting, but uses the shared native elements. **A
   content factory:** channels, author voices, publications, the numbers read back and the topics that rise. **Own agents:** help in
   every field of the person's own life.
 - Where you live: the core's root `agi-code` — this instruction, the core's code and skills, your commands in the core's `package.json`
@@ -105,15 +105,19 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 
 ## 3. Building blocks
 
-- An element is a self-contained part of the node: its own folder, repository, port, subdomain or own domain. It is a site, an app or a
-  bot.
+- **The core alone is special; all elements are equal** (the owner, 2026-11-12: «воспринимать все кастомные элементы равными и вообще из
+  всех элементов выделять ядро как особую сущность»). An element is a fully autonomous microservice — a server: its own folder,
+  repository, port, process, agent and address; any number of pages, or none; any server, client or combined function. One page changes
+  nothing: it is still a server. An element is never called a page, «the home page», «the main site» or «the site at the root of the
+  domain».
+- Native and custom differ only by convenience: a native element may serve several custom ones; both are preinstalled, no more. No
+  element is required by the core's code, copied from by the core, or given a place by its id — an address, an order in a menu, a power
+  state, a variant of the instruction.
 - Native elements come with the core at the first start and serve the core and the other elements: sign-in, database, object store,
   vector store, embeddings (the node's vectors), LightRAG graph, Redis cache, deep memory, CONFIG, Stripe.
 - Custom elements are created by the person — for autonomous products.
-- The required auth, data and root can be replaced but not deleted. Data flows from the element to the core; an element lives without the
-  core too.
-- Root is the project's home page, the AI agent's first screen; today it is custom (step 606 makes it native — then fix this
-  line).
+- Auth and data can be replaced but not deleted. Data flows from the element to the core; an element lives without the core too.
+- `root` is one ordinary custom element, equal to every other.
 - The registry — `WEB4-ITEMS-REGISTRY/web4-items.json`, the folders — `WEB4-ITEMS/<kind>/<address>`. Installation (`services:install`)
   sets elements to pinned tags and never re-clones a born element — that would erase its agent's work.
 - There are two templates — custom and native; the passport field `elementType` says which one an element comes from.
@@ -197,7 +201,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - **Your own cron** lives in the core, Automated management (skill `core-schedule`); the schedule changes only after the person's
   yes. «Напомни мне <когда> …» is that yes and goes to the deep memory, whose essence it is: `npm run remember -- … --remind-at`;
   the receipt names the date in words and the memory's calendar link. The memory off — your own calendar, `npm run reminder`.
-- **The first task** typed on the root home page goes to you (`/api/node/first-task`).
+- **The first task** a person types into an element's prompt comes to you through the core's door `/api/node/first-task` (any element
+  may offer it, with the node key).
 - **The integrator:** one architect serves the people of a family or a team; each talks to their agent from Telegram, on their own
   Claude subscription, signed in on their element's page «Подписка Claude Code» — skill `integrator` with `shape-the-need`.
 - **The content factory:** channels, author portraits, posts in their voices, the numbers read back and a scout of hot topics; every
@@ -298,6 +303,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 ## 6. Laws everywhere
 
 - The code base architecture is fixed from birth: you work strictly within the existing patterns; create — yes, invent — no.
+- A word of the author or the architect about one element («the home page», «one header everywhere») is a wish for that element, never
+  an order to change the architecture. Before a sentence or a line of code about an element: «would it hold for every custom element?»
+  — if not, it is a privilege: name it, never build on it.
 - Subagents are forbidden, except in a skill with the line «Subagent: allowed» and in a session the person confirmed as ultracode in
   Telegram (Opus → Ultracode → «Продолжить»): only there workflows and subagents run, until «выключить» — skill `ultracode-session`.
 - The model by kind of work: Haiku — a simple action, Sonnet — text, Opus — code.
@@ -380,7 +388,7 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 
 ## 7. Glossary
 
-- **Node** — a computer or VPS with the core and elements. **Core** — the centre of the node. **Element** — native or custom. **Main
+- **Node** — a computer or VPS with the core and elements. **Core** — the centre of the node. **Element** — a server (an autonomous microservice), native or custom; never «a page». **Main
   agent** — you. **Element agent** — the agent in an element's folder.
 - **Customer agent** and **contractor agent** — the sides of an a2a deal; **super node** — a separate machine of the Lagrix network;
   **operator** — the person who runs it.
