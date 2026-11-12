@@ -27,3 +27,29 @@ header and footer, one release per element, one node update at the end). Measure
   core's header and footer); an element agent finds a tool with `parts_find` and takes it with `tool:take` (checklist 4; one live run).
 
 Price: 735-1 — about 8 × 5–10 minutes of chains, no model calls; 735-2 — four agent sessions; 735-3 — one update, one agent run.
+
+## Re-checked at the owner's word «check again with max effort» (2026-11-12 ~22:10) — the plan above was wrong in substance
+
+Measured:
+- The 8 natives' sources (`~/fractera-dev/fractera-<x>-starter`) stand exactly at their pins and already hold a `use-tools` skill (the
+  dry rollout touched existing files and restored them — no debris). But NONE holds the machinery the skill describes: no
+  `lib/parts/` (no own map, no `parts-find.mjs`), no `scripts/tool-take.mjs`, no `tool:take` line, no `components/shell-kit`. The native
+  template's `use-tools` sends the agent to `npm run tool:take`, `parts_find`, `npm run check:parts-map` — handing a native the skill
+  alone would describe commands it does not have.
+- DEFECT of the native template v0.1.67 itself: its `.env.example` does not declare `ELEMENT_KEY`; the installer writes the key only
+  when declared (`# kind: element-key`, `scripts/services-install.mjs`:325, 919); its `scripts/tool-take.mjs` stops with «TAKE_FAILED:
+  no ELEMENT_KEY here». A native born from it cannot take a tool either. None of the 8 natives declares it.
+- DEFECT in the core: `lib/agent-kit/skills/mcp.mjs` `callParts` — a session folder without `lib/parts/PARTS.json` falls back to the
+  core's own map with no node index (`here = ROOT`, `node = []`): a native's agent is answered as if it were the core (the core's paths,
+  its panel tools). `npm run parts -- --as config` answers right («lives in the core — npm run tool:take»): the command and the MCP
+  server diverge.
+- root on the node runs v3.0.39 + its own work (`861f8d1`, not in the source repo), not v3.0.55: the update log says «своя работа
+  поверх v3.0.39 — на тег не перевожу … доступен v3.0.55 — влейте его кнопкой «Обновить»». Every root release v3.0.40–v3.0.55 (the
+  parts map, 733, 734's rule) has not reached the running root — earlier records calling root «v3.0.55 live» were wrong. Клип s8y6x
+  runs v0.3.171 + own work — the parts map came in v0.3.193, `tool:take` in v0.3.198, the shell kit stub in v0.3.191: it has none.
+  vectors v1.2.26 + own, graph v1.2.25 + own.
+- No element of this node uses the runtime shell kit (custom template ≥ v0.3.191 only); every element's header and footer is a byte copy
+  of `components/shell`, and all 12 drift from the core's master.
+
+Conclusion: today no element of this node can use the tool protocol end to end. The corrected substeps are offered to the owner as
+variants (the full machinery per native, or the protocol first) — see the state record.
