@@ -5,6 +5,10 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-101 (2026-11-12 ~11:36) — 732 OPENED (plan only, `new-steps/732/732-main.md`): the owner wants colour marks in the main agent's
+answers (element answered / worked / fixed / needs solving / needs HIS decision), terminal and Telegram; «В работу после завершения этой
+сессии». No green or orange triangle emoji exists — fork A circles (my pick) / B triangles, his choice first.**
+
 **NOW-100 (2026-11-12 ~10:50, tandem) — 727-2 BUILT: template v0.3.191 released and pinned (`4b3cd87`); the core: POST door with the
 element's own data, the kit's drawer buttons, old kit files kept (12). Proofs on a harness in `new-steps/727/727-2.md`. NEXT: the owner's
 word on the node update → 727-3 (a live custom element shows the core's header; a change only in the core seen there with no rebuild).**
