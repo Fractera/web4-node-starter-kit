@@ -70,6 +70,14 @@ tool-translations-dialog, tool-video-trim, tool-voice-input, voice-control, voic
   v1.2.26 + own, graph v1.2.25 + own, Клип v0.3.171 + own (`npm run node:readiness`; the update log: «своя работа поверх … — на тег
   не перевожу»). Earlier records that called root «v3.0.55 live» were wrong. These four are not touched by this plan until stage E.
 
+- **D9 an element's paid calls never reach the node's ledger.** `lib/usage-ledger.cjs` writes `data/node/usage/<day>.jsonl` under
+  `process.cwd()`; an element runs as a Next standalone server whose `server.js` does `process.chdir(__dirname)` (seen in config's built
+  `.next/standalone/server.js`) — its lines land in the build folder, wiped by every rebuild; `npm run money` (`scripts/money.mjs`
+  `readDay()`) reads only the core's folder. The core's ledger today holds only the core's own calls (2026-11-11: i18n/translate
+  gpt-5-mini 1, voice-input 1; 2026-11-12: voice-input 1). Measured by the build artifact; no element has written a ledger line yet.
+- **D10 the natives' dead island keeps a live, unledgered OpenAI door:** `app/api/tools/tool-voice-input/route.ts` (staff roles) →
+  the old `transcribe.ts` with the deprecated `gpt-4o-transcribe` and no ledger. Removing the island (C) closes it.
+
 ## Rules for the executor (each was paid for in 733)
 
 1. A stage is closed only by its model-free proof printed in full, with the number it names, and by the negative control turning it
@@ -113,6 +121,12 @@ tool-translations-dialog, tool-video-trim, tool-voice-input, voice-control, voic
   its last sentence about DATA_SECRET dropped — a native keeps the data key); the three libraries of D5 from the custom template
   (they are copies of the core's kit — the guard that keeps the custom's copies identical gets the native's too). Proof:
   `===TOOLS_PROTOCOL_OK=== custom 13/13, native 13/13`.
+- **B1b D9 — the ledger of every element reaches the node:** `lib/usage-ledger.cjs` writes under `SERVICE_DATA_DIR` when it is set
+  (`<SERVICE_DATA_DIR>/usage/<day>.jsonl` — the installer gives every element `data/services/<id>`, outside its build folder), the
+  core's own process keeps `data/node/usage/`; `scripts/money.mjs` reads the core's lines and every `data/services/*/usage/`, each line
+  named by its element. The core's copy, the agent kit's 12 copies (the guard OPENAI_CALLS keeps them identical) and both templates
+  move together. Proof: a line written by a standalone process with `SERVICE_DATA_DIR` set appears in `npm run money` under that
+  element; negative control: without it the line stays in the process folder and money does not show it.
 - **B2 D6, two commands in both templates** (small scripts beside `scripts/tool-take.mjs`, model-free, the core's parts code):
   - `npm run tool:own -- <id> [--as tool-<name>]` — a taken copy becomes the element's own tool: `source` leaves the card, `origin:
     { from, id, version }` stays as the lineage, the id and the folder take the new name when given, the version starts at 1.0.0, both
@@ -184,6 +198,20 @@ repeat.
 root (16 releases behind: v3.0.39 → v3.0.55), vectors, graph, Клип: each takes its newest tag by the «Обновить» button, the conflicts
 go to its own agent (the update log names this way). Root first — it is the largest. Four agent sessions; none starts without its
 price said.
+
+## Decisions — taken by me for the night run (the owner, 2026-11-12 ~23:45, verbatim: «to do tools non stop , not find me , i am go
+## to sleep , to do all steps for tools strategy»)
+
+1. Yes — the old copies leave the 8 natives (no importer; closes D10).
+2. Yes — `tool:own` and `tool:new`.
+3. Yes — the owner asked for more on this one before he left; what he gets (said to him in the chat): the four files are
+   `lib/openai-error.cjs` (128 lines, the node's one reader of OpenAI's refusals — «no money», «limit», «key» told apart),
+   `lib/usage-ledger.cjs` (99 lines, one line per paid call, never a key or a text), `lib/i18n/openai-error.i18n.ts` (64 lines) and its
+   `.json` (4 KB) — byte-identical to the core's, no dependency of their own. Without them a native can take 6 of the 13 tools; with
+   them all 13 (the voice fields, the fact draft, socials, translations). The natives' own code calls OpenAI nowhere today. With D9
+   fixed in the same stage, a native's spending becomes visible in `npm run money` — today no element's is.
+4. «All steps»: E runs after D is green, each of the four agent sessions with its price written into the record before it starts;
+   a subscription limit stops the run — the node wakes it after the reset (686-5).
 
 ## Decisions for the owner (my pick first)
 
