@@ -40,6 +40,16 @@ for (const kind of onlyKind ? [onlyKind] : Object.keys(KINDS)) {
     git(clone, ["archive", "--format=tar", "-o", tar, version])
     execFileSync("tar", ["-xf", tar, "-C", tmp], { stdio: "ignore", windowsHide: true })
     rmSync(tar)
+    // 735 D13: the installer's `# kind:` sticks to every variable after it — an ELEMENT_KEY block put before SETTINGS_SECRET gave the
+    // node key of 8 natives an element key's value and their doors answered 401. Only ELEMENT_KEY may be of kind element-key.
+    if (existsSync(join(tmp, ".env.example"))) {
+      let k = null
+      for (const l of readFileSync(join(tmp, ".env.example"), "utf8").split(/\r?\n/)) {
+        const m = l.match(/^#\s*kind:\s*(\S+)\s*$/); if (m) { k = m[1]; continue }
+        const v = l.match(/^([A-Z_][A-Z0-9_]*)=/)
+        if (v && k === "element-key" && v[1] !== "ELEMENT_KEY") red.push(`${kind} ${version} · .env.example: ${v[1]} falls under «# kind: element-key» — it would get the element's key; start its group with its own # kind:`)
+      }
+    }
     let ok = 0
     for (const t of tools) {
       const plan = planTake({ source: ROOT, from: "core", receiver: tmp, tool: t.id })

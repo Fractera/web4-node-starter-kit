@@ -87,6 +87,15 @@ Four points, each with its measure:
   matrix on its tree **13 of 13** (was 4). auth: a card for `components/shell/shell-init.tsx` + 3 duplicate groups frozen; config: 4
   frozen. Tags: auth v2.4.34, data v2.2.27, storage v1.1.47, embeddings v0.1.28, config v1.2.45, cache v0.1.40, memory v2.2.47,
   stripe v1.3.38 — pinned in the registry in one commit.
+- **C LIVE (update 22:34–22:47 UTC, core `132e4f3b`):** the 8 at their tags, `check:shell-kits` ✓ for all 8, `parts -- --as <id>
+  "modal window"` → «Lives in the core» for all 8. **D13 FOUND by the live status (my regression):** vectors /health 503 — embeddings'
+  `/api/embed-status` 401 «send the node key». The installer's `# kind:` sticks to every following variable; B1 and C put the
+  ELEMENT_KEY block between DATA_SECRET and SETTINGS_SECRET, so SETTINGS_SECRET (the node key) of the native template v0.1.68 and of
+  all 8 natives got kind element-key — the element's key — and every node-key door of the natives refused the core and the neighbours.
+  Fixed: the block after SETTINGS_SECRET (a script proved every variable keeps the kind it had at the tag before C); the matrix test
+  now refuses any variable but ELEMENT_KEY under element-key (red on v0.1.68, green on v0.1.69). Native template v0.1.69 pinned;
+  natives auth v2.4.35, data v2.2.28, storage v1.1.48, embeddings v0.1.29, config v1.2.46, cache v0.1.41, memory v2.2.48, stripe
+  v1.3.39 (each its whole prebuild) pinned; a node update follows.
 
 ## Where it stands — measured 2026-11-12 on the node (core `566cad15`), not read from code
 
