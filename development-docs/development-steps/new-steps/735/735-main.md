@@ -96,6 +96,11 @@ Four points, each with its measure:
   now refuses any variable but ELEMENT_KEY under element-key (red on v0.1.68, green on v0.1.69). Native template v0.1.69 pinned;
   natives auth v2.4.35, data v2.2.28, storage v1.1.48, embeddings v0.1.29, config v1.2.46, cache v0.1.41, memory v2.2.48, stripe
   v1.3.39 (each its whole prebuild) pinned; a node update follows.
+- **D13 LIVE (update 22:54–23:07 UTC, core `1101232a`):** vectors /health 200 again (embeddings accepts the node key), the 8 at the
+  fixed tags. **D — price before the start (23:10):** the node's subscription stands at 74 % of five hours (reset 02:40 UTC), 10 % of
+  the week; one config build session on Sonnet, a small bounded task, estimated 5–10 % of the five hours — the forecast keeps ≥ 15 %
+  for the main agent. **E — not possible tonight for three of four:** root, vectors and graph run on root's own login, its WEEKLY
+  limit at 99 % until 13.11 11:00 (their last turns were cut by it at 12:24); Клип runs on the node's subscription.
 
 ## Where it stands — measured 2026-11-12 on the node (core `566cad15`), not read from code
 
