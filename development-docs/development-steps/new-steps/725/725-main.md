@@ -62,6 +62,8 @@ Repository: the core's working copy, then the custom and native templates and ro
 5. 725-4 the craft in the flow — `interface-design` required for the panel's files; surfaces seen named in the summary.
 6. 725-5 the elements — the same map, tool and gate in the custom and native templates and root.
 7. 725-6 the sweep — the core's panel audited with `parts_find` for hand-built duplicates; a list for the owner.
+8. 725-8 the «Tools» tab (the owner's word 2026-11-12) — the map seen, tried in a window, created and edited through one terminal, in
+   the main agent's advanced settings and in every element (`725-8.md`).
 
 ## 7. Not in this step
 
