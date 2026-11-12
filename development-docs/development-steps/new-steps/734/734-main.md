@@ -15,7 +15,13 @@ then ~17:35: «да, утверждаю, начинай с правила». The
   instruction and seal by `instruction:element -- element` (uncommitted — the rollout leaves Клип alone: its HEAD `7001737` is past its pin
   v0.3.171, the element's own work; its agent commits the two files).
 - **734-3 the core's code without root — substeps for the owner's yes:**
-  - 3a the shell: the core's `components/shell` is the master; `check:shell-kits` and `shell-kit:add` compare and copy from the core,
+  - 3a-1 BUILT (`b38b4111`, the owner's yes 2026-11-12 ~18:00): the core is the shell's master — check:shell-kits compares every
+    element with the core (root like any element, a drift is a debt), shell-kit:add copies from the core, the shell-kit GET draws
+    coreShellData, the lock's «home» → the bare domain; negative control: no master → FAILED. Proof on the node after the update.
+  - 3a-2 NEXT (found measuring 3a): CONFIG — a native element — reads «the menus as now» and the languages from root's `/api/shell`
+    (`loadProjectShell`, `PROJECT_SHELL_URL`), and the installer gives every element `PROJECT_SHELL_URL`, `PROJECT_MENU_URL`,
+    `PROJECT_SITE_URL` as root's doors. A native depending on a custom element — the core must answer the project shell itself.
+  - 3a (as planned) the shell: the core's `components/shell` is the master; `check:shell-kits` and `shell-kit:add` compare and copy from the core,
     never root; the core's panel draws its shell data itself (CONFIG and its own catalogue), not root's `/api/shell`; the panel's «home»
     link is the core's own. Proof: root turned off — the panel keeps its header and footer.
   - 3b birth: a new element with the project look takes design and settings from CONFIG, never root's folder. Proof: a dry birth with
