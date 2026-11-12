@@ -45,6 +45,21 @@ export type ToolsTabWords = {
   usedMore: string
   usedAll: string
   newer: string
+  // 733-8b: the live looks — a look never spends money and never writes; a held action says so in these words.
+  demoHeld: string
+  demoSampleOpen: string
+  demoSampleTitle: string
+  demoSampleBody: string
+  demoCropOpen: string
+  demoCropDone: string
+  demoTableCaption: string
+  demoColTool: string
+  demoColScope: string
+  demoColVersion: string
+  demoScopeAny: string
+  demoVoiceTitle: string
+  demoVoiceHint: string
+  demoVoicePlaceholder: string
 }
 
 const EN: ToolsTabWords = {
@@ -93,6 +108,20 @@ const EN: ToolsTabWords = {
   usedMore: "and {n} more in the full description",
   usedAll: "Every file that uses it ({n})",
   newer: "The core has a newer version v{version} — your copy is updated by its agent, only while it is unedited:",
+  demoHeld: "In the look this does not run — it needs {needs}.",
+  demoSampleOpen: "Open a sample window",
+  demoSampleTitle: "A sample window",
+  demoSampleBody: "This is the one modal window of the project: a title, a body, a close button, focus kept inside, Escape and a click outside close it.",
+  demoCropOpen: "Crop a sample picture",
+  demoCropDone: "Cropped. In the look the picture is not saved anywhere.",
+  demoTableCaption: "The tools of this place, as sample rows",
+  demoColTool: "Tool",
+  demoColScope: "Where",
+  demoColVersion: "Version",
+  demoScopeAny: "any element",
+  demoVoiceTitle: "Your text",
+  demoVoiceHint: "Type here, or hold the microphone and speak.",
+  demoVoicePlaceholder: "A few words…",
   readOnly: "These are the core's tools: the core is Fractera's, so on your node they are shown and taken into your elements as copies, never changed here. Your own tools live in each element's «Tools» tab.",
 }
 
@@ -142,6 +171,20 @@ const RU: ToolsTabWords = {
   usedMore: "и ещё {n} — в полном описании",
   usedAll: "Все файлы, где он используется ({n})",
   newer: "В ядре есть версия новее — v{version}. Копию обновляет агент элемента, и только пока её не правили:",
+  demoHeld: "В показе это не выполняется — нужно: {needs}.",
+  demoSampleOpen: "Открыть пример окна",
+  demoSampleTitle: "Пример окна",
+  demoSampleBody: "Это единственное модальное окно проекта: заголовок, содержимое, кнопка закрытия, фокус остаётся внутри, Escape и щелчок снаружи закрывают его.",
+  demoCropOpen: "Обрезать пример картинки",
+  demoCropDone: "Обрезано. В показе картинка никуда не сохраняется.",
+  demoTableCaption: "Инструменты этого места — как строки примера",
+  demoColTool: "Инструмент",
+  demoColScope: "Где",
+  demoColVersion: "Версия",
+  demoScopeAny: "любой элемент",
+  demoVoiceTitle: "Ваш текст",
+  demoVoiceHint: "Напечатайте здесь или зажмите микрофон и говорите.",
+  demoVoicePlaceholder: "Несколько слов…",
   readOnly: "Это инструменты ядра: ядро принадлежит Fractera, поэтому на вашем узле их можно посмотреть и взять копией в свои элементы, но не менять здесь. Ваши собственные инструменты — на вкладке «Инструменты» каждого элемента.",
 }
 

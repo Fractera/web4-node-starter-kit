@@ -1,112 +1,172 @@
 {
-  "_": "Cards of the reusable parts of this folder (node step 725-8). One card per part; the map is lib/parts/PARTS.json.",
-  "parts": [
+ "_": "Cards of the reusable parts of this folder (node step 725-8). One card per part; the map is lib/parts/PARTS.json.",
+ "parts": [
+  {
+   "id": "tools-tab",
+   "kind": "tool",
+   "title": {
+    "en": "Tools tab",
+    "ru": "Вкладка «Инструменты»"
+   },
+   "version": "1.0.2",
+   "parts": [
     {
-      "id": "tools-tab",
-      "kind": "tool",
-      "title": {
-        "en": "Tools tab",
-        "ru": "Вкладка «Инструменты»"
-      },
-      "version": "1.0.1",
-      "parts": [
-        {
-          "id": "tool-demo",
-          "version": "1.0.1"
-        },
-        {
-          "id": "tool-terminal-drawer",
-          "version": "1.0.0"
-        },
-        {
-          "id": "voice-textarea",
-          "version": "1.0.0"
-        }
-      ],
-      "scope": "panel",
-      "path": "components/tools-tab/tools-tab.client.tsx",
-      "export": "ToolsTab",
-      "what": {
-        "en": "The «Tools» tab of the core and of every element: what tools are (an accordion), the tool cards five at a time, a look in the one modal, edit and add a tool through one terminal drawer.",
-        "ru": "Вкладка «Инструменты» ядра и каждого элемента: что такое инструменты (аккордеон), карточки по пять, показ в единственном модальном окне, правка и добавление инструмента через один ящик терминала."
-      },
-      "how": "<ToolsTab item service place lang {...toolsTabProps(lang, service)} /> — the server assembles words, the terminal kit and the demo samples (props.server.ts); the list is asked from /api/node/tools.",
-      "words": {
-        "en": [
-          "tools tab",
-          "tools catalog",
-          "add a tool"
-        ],
-        "ru": [
-          "вкладка инструментов",
-          "каталог инструментов",
-          "добавить инструмент"
-        ]
-      }
+     "id": "tool-demo",
+     "version": "1.0.2"
     },
     {
-      "id": "tool-card",
-      "kind": "composite",
-      "internal": true,
-      "path": "components/tools-tab/tool-card.client.tsx",
-      "export": "ToolCard",
-      "what": {
-        "en": "One tool card: what it solves, where it is used, what it needs, the full discovery text folded, Show and Edit.",
-        "ru": "Карточка одного инструмента: что решает, где используется, что ему нужно, полное описание свёрнуто, «Показать» и «Редактировать»."
-      },
-      "how": "Inside ToolsTab only.",
-      "words": {
-        "en": [
-          "tool card",
-          "tool description"
-        ],
-        "ru": [
-          "карточка инструмента",
-          "описание инструмента"
-        ]
-      }
+     "id": "tool-terminal-drawer",
+     "version": "1.0.0"
     },
     {
-      "id": "tool-demo",
-      "kind": "tool",
-      "title": {
-        "en": "Tool look",
-        "ru": "Показ инструмента"
-      },
-      "version": "1.0.1",
-      "parts": [
-        {
-          "id": "app-dialog",
-          "version": "1.0.0"
-        },
-        {
-          "id": "tool-chat",
-          "version": "1.0.0"
-        },
-        {
-          "id": "tool-code-view",
-          "version": "1.0.0"
-        }
-      ],
-      "scope": "panel",
-      "internal": true,
-      "path": "components/tools-tab/tool-demo.client.tsx",
-      "export": "ToolDemo",
-      "what": {
-        "en": "The look of one tool in AppDialog: live on sample data when it needs nothing beyond the browser, its words and needs otherwise.",
-        "ru": "Показ одного инструмента в AppDialog: живьём на примере, если ему хватает браузера, иначе — что он умеет и что ему нужно."
-      },
-      "how": "Inside ToolsTab only.",
-      "words": {
-        "en": [
-          "tool demo",
-          "tool preview"
-        ],
-        "ru": [
-          "показ инструмента",
-          "превью инструмента"
-        ]
-      }
+     "id": "voice-textarea",
+     "version": "1.0.0"
     }
-  ]
+   ],
+   "scope": "panel",
+   "path": "components/tools-tab/tools-tab.client.tsx",
+   "export": "ToolsTab",
+   "what": {
+    "en": "The «Tools» tab of the core and of every element: what tools are (an accordion), the tool cards five at a time, a look in the one modal, edit and add a tool through one terminal drawer.",
+    "ru": "Вкладка «Инструменты» ядра и каждого элемента: что такое инструменты (аккордеон), карточки по пять, показ в единственном модальном окне, правка и добавление инструмента через один ящик терминала."
+   },
+   "how": "<ToolsTab item service place lang {...toolsTabProps(lang, service)} /> — the server assembles words, the terminal kit and the demo samples (props.server.ts); the list is asked from /api/node/tools.",
+   "words": {
+    "en": [
+     "tools tab",
+     "tools catalog",
+     "add a tool"
+    ],
+    "ru": [
+     "вкладка инструментов",
+     "каталог инструментов",
+     "добавить инструмент"
+    ]
+   }
+  },
+  {
+   "id": "tool-card",
+   "kind": "composite",
+   "internal": true,
+   "path": "components/tools-tab/tool-card.client.tsx",
+   "export": "ToolCard",
+   "what": {
+    "en": "One tool card: what it solves, where it is used, what it needs, the full discovery text folded, Show and Edit.",
+    "ru": "Карточка одного инструмента: что решает, где используется, что ему нужно, полное описание свёрнуто, «Показать» и «Редактировать»."
+   },
+   "how": "Inside ToolsTab only.",
+   "words": {
+    "en": [
+     "tool card",
+     "tool description"
+    ],
+    "ru": [
+     "карточка инструмента",
+     "описание инструмента"
+    ]
+   }
+  },
+  {
+   "id": "tool-demo",
+   "kind": "tool",
+   "title": {
+    "en": "Tool look",
+    "ru": "Показ инструмента"
+   },
+   "version": "1.0.2",
+   "parts": [
+    {
+     "id": "app-dialog",
+     "version": "1.0.0"
+    },
+    {
+     "id": "tool-looks",
+     "version": "1.0.0"
+    }
+   ],
+   "scope": "panel",
+   "internal": true,
+   "path": "components/tools-tab/tool-demo.client.tsx",
+   "export": "ToolDemo",
+   "what": {
+    "en": "The look of one tool in AppDialog: live on samples when it can run there (tool-looks), an action that needs more than the browser answers «in the look this does not run — it needs …»; its words and needs otherwise.",
+    "ru": "Показ одного инструмента в AppDialog: живьём на примере, если его можно там запустить (tool-looks), а действие, которому нужно больше браузера, отвечает «в показе не выполняется — нужно …»; иначе — что он умеет и что ему нужно."
+   },
+   "how": "Inside ToolsTab only.",
+   "words": {
+    "en": [
+     "tool demo",
+     "tool preview"
+    ],
+    "ru": [
+     "показ инструмента",
+     "превью инструмента"
+    ]
+   }
+  },
+  {
+   "id": "tool-looks",
+   "kind": "tool",
+   "title": {
+    "en": "Live tool looks",
+    "ru": "Живые виды инструментов"
+   },
+   "version": "1.0.0",
+   "parts": [
+    {
+     "id": "app-dialog",
+     "version": "1.0.0"
+    },
+    {
+     "id": "table-tools",
+     "version": "1.0.0"
+    },
+    {
+     "id": "tool-chat",
+     "version": "1.0.0"
+    },
+    {
+     "id": "tool-code-view",
+     "version": "1.0.0"
+    },
+    {
+     "id": "tool-image-crop",
+     "version": "1.0.0"
+    },
+    {
+     "id": "voice-control",
+     "version": "1.0.0"
+    },
+    {
+     "id": "voice-field",
+     "version": "1.0.0"
+    },
+    {
+     "id": "voice-textarea",
+     "version": "1.0.0"
+    }
+   ],
+   "scope": "panel",
+   "internal": true,
+   "path": "components/tools-tab/tool-looks.client.tsx",
+   "export": "ToolLook",
+   "what": {
+    "en": "Each tool that can run on samples, shown as itself: the sample window, the table over the tab's own list, chat, code view, the crop over a sample picture, the three voice fields posting to the look door. A look never spends money and never writes.",
+    "ru": "Каждый инструмент, который можно запустить на примере, — он сам: пример окна, таблица над списком вкладки, чат, просмотр кода, обрезка картинки-примера, три голосовых поля, отправляющие запись в дверь показа. Показ никогда не тратит денег и ничего не записывает."
+   },
+   "how": "Inside ToolDemo only: <ToolLook tool tools lang words ui kit />; LIVE_LOOKS names the keys it shows; the voice tools get apiUrl /api/node/tools/look.",
+   "words": {
+    "en": [
+     "live tool look",
+     "tool sample",
+     "look door"
+    ],
+    "ru": [
+     "живой показ инструмента",
+     "пример инструмента",
+     "дверь показа"
+    ]
+   }
+  }
+ ]
 }
