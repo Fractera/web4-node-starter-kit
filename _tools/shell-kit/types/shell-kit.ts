@@ -9,9 +9,14 @@ export type ShellKitSurface = {
   languages?: string[]
 }
 
+/** Подписи кнопки бокового ящика элемента: ящик живёт у элемента, кнопка — в шапке инструмента (727-2). */
+export type ShellKitDrawerLabels = { open: string; close: string }
+
 export type ShellKitProps = {
   data: ShellData
   surface: ShellKitSurface
+  /** Боковые ящики элемента, если они есть: кнопки рисует инструмент, открывает их элемент по событию окна (`drawer-events.ts`). */
+  drawers?: { left?: ShellKitDrawerLabels; right?: ShellKitDrawerLabels }
   /** Путь страницы, для которой нарисован фрагмент: им живёт переключатель языка до первого кадра в браузере. */
   path: string
 }

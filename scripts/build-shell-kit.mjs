@@ -12,7 +12,7 @@ import { build } from 'esbuild'
 import postcss from 'postcss'
 import tailwind from '@tailwindcss/postcss'
 import { createHash } from 'node:crypto'
-import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 
 const ROOT = process.cwd()
@@ -80,9 +80,22 @@ async function buildCss() {
 
 const hash = (s) => createHash('sha256').update(s).digest('hex').slice(0, 10)
 
+// 🔒 ФАЙЛЫ ПРЕЖНИХ ВЕРСИЙ ЖИВУТ (727-2). Страница элемента закэширована вместе с именами файлов инструмента (ISR + кэш запросов Next,
+// ✗ измерено 2026-11-12: ответ ядра лежит в кэше элемента 300 с, страница — `revalidate` 600 с). Сотри ядро прежние файлы при своей
+// сборке — страницы элементов до четверти часа живут без стилей и без скрипта шапки. Поэтому новая сборка стирает только своё
+// служебное, а файлы `shell-kit.<хэш>.js|css` хранит: последние KEEP по времени, остальные — прочь.
+const KEEP = 12
+const ASSET_FILE = /^shell-kit\.[0-9a-f]{10}\.(js|css)$/
+
+function pruneOldAssets() {
+  const old = readdirSync(OUT).filter((f) => ASSET_FILE.test(f))
+    .map((f) => ({ f, t: statSync(join(OUT, f)).mtimeMs })).sort((a, b) => b.t - a.t)
+  for (const { f } of old.slice(KEEP)) rmSync(join(OUT, f), { force: true })
+}
+
 export async function buildShellKit() {
-  rmSync(OUT, { recursive: true, force: true })
   mkdirSync(OUT, { recursive: true })
+  for (const f of readdirSync(OUT)) if (!ASSET_FILE.test(f)) rmSync(join(OUT, f), { recursive: true, force: true })
 
   const server = await build({ ...common, entryPoints: [join(KIT, 'server', 'render.tsx')], platform: 'node', format: 'esm', target: 'node20',
     // react-dom/server.node — CommonJS с `require('util')`: ESM-пакету нужен свой require.
@@ -105,6 +118,7 @@ export async function buildShellKit() {
   writeFileSync(join(OUT, files.css), css)
   writeFileSync(join(OUT, 'manifest.json'), JSON.stringify({ version, builtAt: new Date().toISOString(), ...files }, null, 2) + '\n')
   rmSync(join(OUT, 'kit.entry.css'), { force: true })
+  pruneOldAssets()
   return { version, files, sizes: { js: js.length, css: css.length } }
 }
 
