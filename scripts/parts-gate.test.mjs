@@ -4,8 +4,10 @@ import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
 import { spawnSync } from "node:child_process"
+import { fileURLToPath } from "node:url"
 
-const HOOK = path.join(path.dirname(new URL(import.meta.url).pathname), "..", ".claude", "hooks", "parts-gate.mjs")
+// fileURLToPath, not URL.pathname: ✗ windows-latest read «/D:/a/…» and joined it into «D:\\D:\\a\\…».
+const HOOK = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", ".claude", "hooks", "parts-gate.mjs")
 const root = fs.mkdtempSync(path.join(os.tmpdir(), "parts-gate-"))
 fs.mkdirSync(path.join(root, "lib/parts"), { recursive: true })
 fs.writeFileSync(path.join(root, "lib/parts/PARTS.json"), "{}")
