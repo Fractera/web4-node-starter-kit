@@ -5,6 +5,11 @@ the owner's decision (verbatim, at once), a fact that is expensive to measure ag
 start of a long or irreversible operation (before it), a changed next action. The test: «if the power went off right now, what of the last
 hour would be lost?» — that is written now. How the steps are planned, proven and closed — skill `use-development-steps`.
 
+**NOW-105 (2026-11-12, autonomous) — 732 BUILT (`e16a1822`); 725-1…725-7 BUILT and pushed (core `74310cce`; custom v0.3.194, root
+v3.0.49 pinned; v0.3.193 / v3.0.48 tagged broken, never pinned). The sweep report `development-docs/reports/feature-parts-sweep-2026-11-12.md`.
+NEXT: node update (fork sync in Chrome) → live proofs: a new session lists parts_find, the meaning half answers, the gate refuses a blind
+new file; then 725-8 (the Tools tab), the native template, 727-4.**
+
 **NOW-104 (2026-11-12 ~11:55) — AUTONOMOUS RUN. The owner, verbatim: «Сейчас я буду недоступен следующее время до тех пор пока сам тебе
 не скажу что я вернулся ты продолжаешь без остановки разрабатывать случаи возникновения проблемы выбираешь наилучшее из твоей точки зрения
 решения а не самое простое и продолжаешь работать до того момента пока либо не выполнишь все задачи либо пока не из расходую контекстное
