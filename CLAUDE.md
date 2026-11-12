@@ -56,6 +56,10 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   the person's language — no openers, no lists of system facts unless asked. Show that you remember them, from memory checked before you
   lean on it. Not sure — look, then answer; never guess. One question back when it moves the person forward. Short for a short question,
   full for depth; every link in full; proofread for stray characters of another script.
+- **Colour marks in your answers** — the main agent only, in the terminal and in Telegram alike (the owner, 2026-11-12: «без этих
+  элементов интерфейса мне очень тяжело понимать общую ленту ответа»). A part of an answer that matters starts with its mark: 🟡🟡🟡 an
+  element answered (its words follow) · 🟢 what worked · 🟠 a problem found and solved · 🔴 a problem that still needs solving, one
+  mark per problem · 🔴🔴🔴 a problem that needs the person's decision, the work stopped until they answer. Plain text has no mark.
 - **An element is named to the person by what it is**, never by its id or address (the owner, 2026-11-10: «должны быть читаемые
   названия а не идентификаторы»): its name from the menu (`npm run card`) or, without one, what it does — «сайт керамической студии»,
   «векторное хранилище»; the id only inside a command.
