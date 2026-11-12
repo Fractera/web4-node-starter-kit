@@ -86,7 +86,8 @@
       "requires": [
         "components/ui/dialog",
         "lib/utils"
-      ]
+      ],
+      "bodyHash": "d0b405f9d9610ee2"
     },
     {
       "id": "core-terminal",
@@ -152,7 +153,8 @@
       "requires": [
         "app/[lang]/(architectLayer)/_components/live-log.client",
         "components/ui/button"
-      ]
+      ],
+      "bodyHash": "d10323e1332428ba"
     },
     {
       "id": "design-colors",
@@ -199,7 +201,8 @@
         "components/ui/input",
         "lib/design/color-schemes",
         "lib/design/contrast"
-      ]
+      ],
+      "bodyHash": "7a52c83d16ac6916"
     },
     {
       "id": "design-fonts",
@@ -244,7 +247,8 @@
         "components/design/design-save-context.client",
         "components/ui/button",
         "lib/design/font-catalogue"
-      ]
+      ],
+      "bodyHash": "dc4717773e93504a"
     },
     {
       "id": "design-shape",
@@ -290,7 +294,8 @@
         "components/design/design-save-context.client",
         "components/ui/button",
         "components/ui/input"
-      ]
+      ],
+      "bodyHash": "91f65a6a993bc0cc"
     },
     {
       "id": "design-type",
@@ -336,7 +341,8 @@
         "components/design/design-save-context.client",
         "components/ui/button",
         "components/ui/input"
-      ]
+      ],
+      "bodyHash": "7a7d673d9c590bd3"
     },
     {
       "id": "element-doc",
@@ -387,7 +393,8 @@
       "requires": [
         "components/ui/typography",
         "lib/web4-items/element-docs"
-      ]
+      ],
+      "bodyHash": "203a598f606e4c6a"
     },
     {
       "id": "element-orders",
@@ -436,7 +443,8 @@
         "components/ui/typography",
         "lib/web4-items/element-docs",
         "sections/table.i18n"
-      ]
+      ],
+      "bodyHash": "66a255dc1e8a4505"
     },
     {
       "id": "element-preview",
@@ -493,7 +501,8 @@
         "components/ui/popover",
         "components/ui/tooltip",
         "lib/auth/owner-at-machine"
-      ]
+      ],
+      "bodyHash": "13519093249b06bb"
     },
     {
       "id": "environment-panel",
@@ -537,7 +546,8 @@
         "components/ui/button",
         "components/ui/input",
         "lib/env-file"
-      ]
+      ],
+      "bodyHash": "282636dae7281267"
     },
     {
       "id": "node-wallet",
@@ -587,7 +597,8 @@
         "components/ui/input",
         "components/ui/spinner",
         "lib/lagrix-docs"
-      ]
+      ],
+      "bodyHash": "5d92b24e8061d84c"
     },
     {
       "id": "passport-door",
@@ -626,7 +637,8 @@
       "requires": [
         "components/ui/button",
         "components/ui/typography"
-      ]
+      ],
+      "bodyHash": "6d0e4288b08ec97c"
     },
     {
       "id": "product-quiz",
@@ -679,7 +691,8 @@
         "components/ui/popover",
         "components/ui/typography",
         "lib/web4-items/product-quiz"
-      ]
+      ],
+      "bodyHash": "3af875ac3a2a6f15"
     },
     {
       "id": "remote-settings",
@@ -715,7 +728,8 @@
       "body": [
         "components/element-settings/remote.client.tsx"
       ],
-      "requires": []
+      "requires": [],
+      "bodyHash": "f1d7c228971cea50"
     },
     {
       "id": "reverse-engineering",
@@ -770,7 +784,8 @@
         "components/ui/popover",
         "components/ui/spinner",
         "components/ui/typography"
-      ]
+      ],
+      "bodyHash": "2f82a33852666a6b"
     },
     {
       "id": "table-tools",
@@ -817,7 +832,8 @@
         "components/ui/pagination",
         "components/ui/typography",
         "sections/table.i18n"
-      ]
+      ],
+      "bodyHash": "9456b3a10b554fe3"
     },
     {
       "id": "tool-block-task",
@@ -881,7 +897,8 @@
         "components/ui/accordion",
         "components/ui/button",
         "components/ui/typography"
-      ]
+      ],
+      "bodyHash": "c1f6e63bbea129a7"
     },
     {
       "id": "tool-chat",
@@ -934,7 +951,8 @@
         "components/ai-elements/conversation",
         "components/ai-elements/message",
         "components/ai-elements/prompt-input"
-      ]
+      ],
+      "bodyHash": "162406646b52bcb5"
     },
     {
       "id": "tool-code-view",
@@ -977,7 +995,8 @@
         "_tools/code-view/client/code-view.client.tsx",
         "_tools/code-view/types/code-view.ts"
       ],
-      "requires": []
+      "requires": [],
+      "bodyHash": "4a5acc94ff1d4159"
     },
     {
       "id": "tool-demo",
@@ -1030,7 +1049,8 @@
         "components/ui/badge",
         "components/ui/typography",
         "lib/parts/tools-catalog"
-      ]
+      ],
+      "bodyHash": "0830f3ae0f144701"
     },
     {
       "id": "tool-fact-draft",
@@ -1085,7 +1105,8 @@
         "lib/openai-error.cjs",
         "lib/openai-key",
         "lib/usage-ledger.cjs"
-      ]
+      ],
+      "bodyHash": "95ebaa3de4e25935"
     },
     {
       "id": "tool-image-crop",
@@ -1133,7 +1154,8 @@
       "requires": [
         "components/dialog/app-dialog.i18n",
         "components/ui/button"
-      ]
+      ],
+      "bodyHash": "13004eeffc472a01"
     },
     {
       "id": "tool-shell-kit",
@@ -1189,7 +1211,8 @@
         "components/shell/shell-types",
         "components/shell/theme-provider.client",
         "components/ui/button"
-      ]
+      ],
+      "bodyHash": "fc4f3a6af0ebc541"
     },
     {
       "id": "tool-socials-ai",
@@ -1249,7 +1272,8 @@
         "lib/openai-key",
         "lib/socials/catalogue",
         "lib/usage-ledger.cjs"
-      ]
+      ],
+      "bodyHash": "26dd361d6447937a"
     },
     {
       "id": "tool-terminal-drawer",
@@ -1301,7 +1325,8 @@
         "app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/words/agent-terminal.i18n",
         "components/dialog/app-dialog.i18n",
         "components/ui/button"
-      ]
+      ],
+      "bodyHash": "8e3633b050ee3e89"
     },
     {
       "id": "tool-terminal-paste",
@@ -1369,7 +1394,8 @@
       "requires": [
         "components/dialog/app-dialog.i18n",
         "components/ui/button"
-      ]
+      ],
+      "bodyHash": "2dd1ccbcb0edc713"
     },
     {
       "id": "tool-translations-dialog",
@@ -1431,7 +1457,8 @@
         "config/translations/translations.config",
         "lib/i18n/platform-errors",
         "lib/runtime-urls"
-      ]
+      ],
+      "bodyHash": "3d8c0420b5290688"
     },
     {
       "id": "tool-video-trim",
@@ -1480,7 +1507,8 @@
       "requires": [
         "components/dialog/app-dialog.i18n",
         "components/ui/button"
-      ]
+      ],
+      "bodyHash": "8db19caf128a43c3"
     },
     {
       "id": "tool-voice-input",
@@ -1536,7 +1564,8 @@
         "lib/i18n/voice-field.i18n",
         "lib/openai-error.cjs",
         "lib/usage-ledger.cjs"
-      ]
+      ],
+      "bodyHash": "b44000de0c65b122"
     },
     {
       "id": "tools-tab",
@@ -1595,7 +1624,8 @@
         "components/ui/button",
         "components/ui/typography",
         "lib/parts/tools-catalog"
-      ]
+      ],
+      "bodyHash": "7a311847643e5531"
     },
     {
       "id": "voice-control",
@@ -1658,7 +1688,8 @@
         "components/ui/textarea",
         "components/ui/tooltip",
         "components/ui/typography"
-      ]
+      ],
+      "bodyHash": "6be33b82c56c4f0d"
     },
     {
       "id": "voice-field",
@@ -1707,7 +1738,8 @@
       "requires": [
         "components/ui/field",
         "components/ui/typography"
-      ]
+      ],
+      "bodyHash": "b5bcdb159740459b"
     },
     {
       "id": "voice-textarea",
@@ -1761,7 +1793,8 @@
       "requires": [
         "components/ui/field",
         "components/ui/typography"
-      ]
+      ],
+      "bodyHash": "375ddffd00288d73"
     },
     {
       "id": "accordion-section",
