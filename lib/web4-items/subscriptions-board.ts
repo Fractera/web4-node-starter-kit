@@ -15,8 +15,9 @@ import money from "@/lib/money-day.cjs"
 // `/api/node/subscriptions`. The rows themselves are built by the pure `lib/subscriptions-board.cjs` (proven over a fixture).
 //
 // Sources: the core (its ledger `data/node/usage/`, the main agent's `data/main-agent/OWN-SERVICE-PROPS/SUBSCRIPTIONS.json`) and every
-// element of the registry (its `OWN-SERVICE-PROPS/SUBSCRIPTIONS.json` through the passport reader, its own ledger written by its agent
-// kit). 🔒 Keys: only the NAMES of the set variables (`setNames`), never a value.
+// element of the registry (its `OWN-SERVICE-PROPS/SUBSCRIPTIONS.json` through the passport reader, its own ledger — since 735 B1b in its
+// data folder `data/services/<id>/usage/`, before it in its folder's `data/node/usage/`). 🔒 Keys: only the NAMES of the set variables
+// (`setNames`), never a value.
 
 /** How far back the ledger is read: the last seven days the ledger holds. */
 export const WINDOW_DAYS = 7
@@ -46,6 +47,12 @@ function recent(root?: string): Line[] {
   return (ledger.days(root) as string[]).slice(0, WINDOW_DAYS).flatMap((d) => ledger.readDay(d, root) as Line[])
 }
 
+/** 735 B1b: an element's process writes its ledger into its data folder `data/services/<id>/usage/` (outside its build). */
+function recentOfElement(id: string, folder: string): Line[] {
+  const at = join(process.cwd(), "data", "services", id, "usage")
+  return [...(ledger.daysAt(at) as string[]).slice(0, WINDOW_DAYS).flatMap((d) => ledger.readDayAt(d, at) as Line[]), ...recent(folder)]
+}
+
 export function subscriptionsBoard(lang: string): { rows: BoardRow[]; windowDays: number } {
   const core = setNames("core")
   if (openAiKey() && !core.includes("OPENAI_API_KEY")) core.push("OPENAI_API_KEY")
@@ -60,7 +67,7 @@ export function subscriptionsBoard(lang: string): { rows: BoardRow[]; windowDays
       label: elementLabel(entry.id, lang),
       href: `/architect/${entry.id}/workflow/process/subscriptions`,
       subscriptions: elementPassport(entry.id)?.subscriptions ?? null,
-      ledger: recent(paths.entryDir(entry)),
+      ledger: recentOfElement(entry.id, paths.entryDir(entry)),
       setNames: setNames(entry.id),
     })),
   ]

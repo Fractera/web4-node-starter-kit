@@ -47,7 +47,31 @@ Four points, each with its measure:
   taken copy is judged as the element's new code, the element's build fails. voice-input avoids shadcn ON PURPOSE (an archive that
   works wherever it is unpacked). Fix → B (B1c): the element's guard does not judge the body of an UNEDITED taken copy (its card's
   `source.bodyHash` equals the body) — the debt is its source's; a copy made own (`tool:own`) or edited is judged like any code.
-- The core's whole chain green (55 guards).
+- The core's whole chain green (55 guards). Committed `0ed132ab`, pushed.
+- **B done (23:10), not yet on the node** — templates custom **v0.3.201** (`b220c29`), native **v0.1.68** (`8a113b9`), both released
+  through their whole prebuild (`template release`, then pushed by git — the workshop has no node token file), type check clean
+  outside a stale `.next/`; pinned `417d0bb8`, `c0eec657` — `template pin` ran the matrix: `custom 13/13`, `native 13/13`. The matrix
+  is now in the core's prebuild: `===TOOLS_PROTOCOL_OK=== custom 13/13, native 13/13`.
+  - B1 native: `ELEMENT_KEY` declared; the four library files byte-identical to the core's (there is no guard comparing template
+    copies — my plan's words were wrong; the matrix holds the requirement instead).
+  - B1b D9: `lib/usage-ledger.cjs` writes `<SERVICE_DATA_DIR>/usage/` for an element's process; `ledgers(root)`, `readDayAt`,
+    `daysAt`; `npm run money` and the subscriptions board read every `data/services/<id>/usage/`; the kit master + 12 copies (the
+    installer needs element folders the working copy lacks — copied and the manifests moved by hand, `check:agent-kits` 12 in order).
+    Test `scripts/usage-ledger.test.mjs` in the prebuild (real processes; HEAD's code → `===USAGE_LEDGER_FAILED=== 2`).
+  - B1c D11: the templates' `check:shadcn-parts` leaves an UNEDITED taken copy to its source (body hash from the parts map), an edited
+    or owned one is judged; +2 cases in its test; proven in a scratch newborn (green with the copy; one appended line → 4 findings).
+  - **D12 FOUND and fixed:** `scripts/tool-take.mjs` of both templates (733-5) dropped its first argument when `--from` was absent
+    (`fi + 1` = 0) — `npm run tool:take -- <id>` printed its usage and never took anything; 733 had proven only the door.
+  - B2: `tool:own -- <id> [--as <new id>]` (source → origin, v1.0.0, the recipes holding it moved, the copy's old fingerprint dropped
+    from the map so the guard starts its history, maps rebuilt, a warning when the shadcn guard now judges it; `--as` of a `_tools`
+    folder rewrites the element's own imports and refuses while an unedited copy imports it); `tool:new -- <name> "<task>"` (the
+    three questions printed; the element's map + the node's tools via the core's `node-index.mjs` found by NODE_DOMAIN_FILE; a close
+    tool refuses unless `--new-anyway`; card + empty entry with `// @part`; maps rebuilt). build-tools-map lets an owned copy keep its
+    source's folder name (`origin`). Proven in a scratch newborn: edit → red «was edited» → own → green, edit kept; new → green; the
+    same task again → refused naming the tool; `--as` over an imported folder → refused naming voice-control.
+  - B3: use-tools in both templates opens with the cycle (find → take → change → create); the element instruction source names both
+    commands; `instruction:element -- templates` resealed both (root's copy went to a scratch folder — root is stage E's).
+  - B4 the proof script `scripts/tools-lifecycle.test.mjs` (`npm run test:tools-lifecycle`) — by hand on the node after the update.
 
 ## Where it stands — measured 2026-11-12 on the node (core `566cad15`), not read from code
 
