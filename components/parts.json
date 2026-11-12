@@ -46,6 +46,94 @@
           "нет страницы"
         ]
       }
+    },
+    {
+      "id": "project-header",
+      "kind": "composite",
+      "path": "components/shell/project-header.tsx",
+      "export": "ProjectHeader",
+      "what": {
+        "en": "The project's header — one for the site, sign-in, the core and every element: brand, menu groups, account, slots for side drawers. Elements take it from the core's shell kit (727).",
+        "ru": "Шапка проекта — одна у сайта, входа, ядра и каждого элемента: бренд, группы меню, кабинет, слоты боковых ящиков. Элементы берут её из инструмента ядра (727)."
+      },
+      "how": "<ProjectHeader data={ShellData} surface />; in an element — <CoreShellHeader lang /> of components/shell-kit.",
+      "words": {
+        "en": [
+          "header",
+          "top menu",
+          "navigation bar"
+        ],
+        "ru": [
+          "шапка",
+          "верхнее меню",
+          "навигация"
+        ]
+      }
+    },
+    {
+      "id": "project-footer",
+      "kind": "composite",
+      "path": "components/shell/project-footer.tsx",
+      "export": "ProjectFooter",
+      "what": {
+        "en": "The project's footer — one for the site, sign-in, the core and every element: footer pages, socials, theme, width and language switches, the Fractera mark.",
+        "ru": "Подвал проекта — один у сайта, входа, ядра и каждого элемента: страницы подвала, соцсети, переключатели темы, ширины и языка, знак Fractera."
+      },
+      "how": "<ProjectFooter data={ShellData} surface />; in an element — <CoreShellFooter lang />.",
+      "words": {
+        "en": [
+          "footer",
+          "bottom bar"
+        ],
+        "ru": [
+          "подвал",
+          "нижняя панель"
+        ]
+      }
+    },
+    {
+      "id": "shell-menu",
+      "kind": "composite",
+      "path": "components/shell/shell-menu.client.tsx",
+      "export": "DesktopNav, MobileMenu, useVisibleGroups, isPublicGroup",
+      "what": {
+        "en": "The top menu of the shell: the band of groups from 780px and the mobile menu below it, the groups visible by role.",
+        "ru": "Верхнее меню оболочки: полоса групп от 780px и мобильное меню уже, группы видны по роли."
+      },
+      "how": "Inside ProjectHeader; not on its own.",
+      "words": {
+        "en": [
+          "mega menu",
+          "mobile menu"
+        ],
+        "ru": [
+          "мега-меню",
+          "мобильное меню"
+        ]
+      },
+      "internal": true
+    },
+    {
+      "id": "theme-provider",
+      "kind": "composite",
+      "path": "components/shell/theme-provider.client.tsx",
+      "export": "ThemeProvider, useTheme",
+      "what": {
+        "en": "The theme provider of the shell: light, dark or system, kept in the browser, the class on <html>.",
+        "ru": "Поставщик темы оболочки: светлая, тёмная или системная, хранится в браузере, класс на <html>."
+      },
+      "how": "Wrap the body in <ThemeProvider>; read with useTheme().",
+      "words": {
+        "en": [
+          "theme provider",
+          "dark mode"
+        ],
+        "ru": [
+          "тема",
+          "тёмная тема",
+          "переключение темы"
+        ]
+      }
     }
   ]
 }
