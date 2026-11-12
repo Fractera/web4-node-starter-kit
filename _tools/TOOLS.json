@@ -12,7 +12,7 @@
         },
         {
           "id": "voice-control",
-          "version": "1.1.0"
+          "version": "1.1.1"
         }
       ],
       "scope": "panel",
@@ -141,7 +141,7 @@
       "parts": [
         {
           "id": "voice-control",
-          "version": "1.1.0"
+          "version": "1.1.1"
         }
       ],
       "scope": "any",
@@ -361,7 +361,7 @@
         },
         {
           "id": "voice-control",
-          "version": "1.1.0"
+          "version": "1.1.1"
         }
       ],
       "scope": "panel",

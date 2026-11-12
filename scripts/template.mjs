@@ -153,6 +153,10 @@ if (cmd === 'pin') {
   const rel = `WEB4-ITEMS-REGISTRY/${KINDS[kind]}`
   const headText = git(ROOT, ['show', `HEAD:${rel}`])
   const next = JSON.stringify({ ...JSON.parse(headText), version }, null, 2) + '\n'
+  // 735 A1: a template whose newborn cannot take every «any» tool of the core is not pinned (the matrix test; no clone here — skipped).
+  try { console.log(execFileSync(process.execPath, [join(ROOT, 'scripts', 'tools-protocol.test.mjs'), kind, version], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true }).trim()) } catch (e) {
+    fail('PROTOCOL', `${String(e.stderr || '').trim().split('\n').slice(-4).join(' | ').slice(0, 600)} — fix the template (or the core's tool), release the next patch, pin that`)
+  }
   if (DRY) { console.log(`===TEMPLATE_DRY_OK=== would pin ${kind} ${pin.version} → ${version}: one file (${rel}) in one commit`); process.exit(0) }
   writeFileSync(pinFile, next)
   const commit = commitOne(rel, next, `Pin the ${kind} element template at ${version} (npm run template -- pin)`)

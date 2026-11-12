@@ -8,11 +8,14 @@
         "en": "Table with search and pages",
         "ru": "Таблица с поиском и страницами"
       },
-      "version": "1.0.0",
+      "version": "1.0.1",
       "parts": [],
       "scope": "any",
       "path": "components/table/table-tools.client.tsx",
       "export": "TableTools",
+      "also": [
+        "sections/table.i18n.ts"
+      ],
       "what": {
         "en": "The full table set of the node: search on top, pages below, rows per page, the toggles — the standard every list of the panel uses.",
         "ru": "Полный набор таблицы узла: поиск сверху, страницы снизу, строк на странице, переключатели — стандарт каждого списка панели."

@@ -21,6 +21,34 @@ Four points, each with its measure:
 - **G3 creates** — nothing fits → it creates a tool with a complete card, and neighbours can find and take it.
 - **G4 clear and efficient** — one search, one command per act, no dead ends; the whole cycle is proven by a script with no model.
 
+## State of the night run (executed by Opus from 2026-11-12 21:46 UTC; rewritten in place after every stage)
+
+- **A1 — the measure first, written before any fix** (21:50): the matrix test on HEAD `e518eb89` printed
+  `===TOOLS_PROTOCOL_FAILED=== custom 7/13, native 4/13` — the plan's numbers. After A2–A4: `custom 13/13, native 6/13` (native: only
+  D5 — `lib/openai-error.cjs`, `lib/usage-ledger.cjs`, `lib/i18n/openai-error.i18n`). Negative control: the same test file in a
+  worktree of HEAD → 7/13, 4/13 again. `npm run template -- pin` runs it for the version it pins (dry: native v0.1.66 refused with
+  ===TEMPLATE_PROTOCOL===, custom v0.3.199 passes). **Deviation:** the test is NOT in the core's prebuild yet — native stays red until
+  B1 by this plan's own words, and a red prebuild would stop the node update between A and B; it joins the prebuild in B4.
+- **A2** done as planned: mic-icon's card removed; the same-folder rule pulls it into voice-control's body; voice-control 1.1.1, 7
+  recipes moved.
+- **A3 deviation:** moving the words and editing `table-tools.client.tsx` tripped `check:shadcn-parts` — both table files are frozen
+  debt (19 raw controls), and the owner's law of the touched file (730-1) wants a touched file clean, i.e. the panel's standard table
+  rewritten onto shadcn: a visible change of every list of the panel, not this step's. Done instead without touching them: the card
+  of table-tools names `also: ["sections/table.i18n.ts"]` — the words are in the tool's body and travel with it (a taker gets
+  `sections/table.i18n.ts`); table-tools 1.0.1, 2 recipes moved.
+- **A4** done: the asked tool whole of the element's own → ok, nothing written, «the element's own files stand in»; a partial presence
+  still refuses. `take.test.mjs` +3 cases (whole own → ok and untouched; partly held → refused, nothing written).
+- **A5** done: `callParts` asks the session's folder unless it is the core's root. Test in `parts-find.test.mjs` (the MCP server
+  spawned in a mapless temp folder: «Lives in the core … tool:take -- app-dialog», never «Yours»); negative control: HEAD's
+  `mcp.mjs` → `===PARTS_FIND_FAILED=== 2`.
+- **D11 FOUND (new, reproduced):** 6 of the 13 «any» tools carry the core's frozen shadcn debt in their bodies (table-tools,
+  image-crop, translations-dialog, video-trim, voice-input, voice-control — and through recipes voice-field, voice-textarea,
+  fact-draft). A newborn custom that takes voice-textarea: its `check:shadcn-parts` goes from OK to 4 findings «новый код» — the
+  taken copy is judged as the element's new code, the element's build fails. voice-input avoids shadcn ON PURPOSE (an archive that
+  works wherever it is unpacked). Fix → B (B1c): the element's guard does not judge the body of an UNEDITED taken copy (its card's
+  `source.bodyHash` equals the body) — the debt is its source's; a copy made own (`tool:own`) or edited is judged like any code.
+- The core's whole chain green (55 guards).
+
 ## Where it stands — measured 2026-11-12 on the node (core `566cad15`), not read from code
 
 | | newborn custom (template v0.3.200) | newborn native (template v0.1.67) | the 8 natives at their pins |

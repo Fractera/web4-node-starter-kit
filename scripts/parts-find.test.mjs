@@ -3,6 +3,7 @@
 // and the negative control keeps «nothing ready» honest.
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
+import { spawn } from "node:child_process"
 import fs from "node:fs"
 import os from "node:os"
 import { findParts, partsText } from "../lib/parts/parts-find.mjs"
@@ -39,9 +40,32 @@ if (none.length) bad.push(`«бронирование столика» must find
   if (!/A newer version v1\.1\.0 is in the core .*--update/.test(await said("1.1.0"))) bad.push("a copy at 1.0.0 with the core at 1.1.0 does not say «a newer version … --update»")
   if (/A newer version/.test(await said("1.0.0"))) bad.push("a copy at the core's own version says «a newer version» (negative control)")
 }
+// 735 A5 (D1): the core's MCP server, started in an element's folder that has NO map of its own (a newborn, a native before its parts
+// machinery), answers as that element — the core's tool «Lives in the core» with its take command — and never «Yours» (the old line
+// fell back to the core's own map and called the core's modal the element's). Words only: the folder has no vectors.
+{
+  const el = fs.mkdtempSync(join(os.tmpdir(), "parts-mcp-"))
+  const said = await new Promise((done) => {
+    const p = spawn(process.execPath, [join(ROOT, "lib", "agent-kit", "skills", "mcp.mjs")], { cwd: el, stdio: ["pipe", "pipe", "ignore"], env: { ...process.env, SKILLS_MCP_ROOT: "" } })
+    let out = ""
+    const timer = setTimeout(() => { p.kill(); done("TIMEOUT") }, 30000)
+    p.stdout.on("data", (c) => {
+      out += c
+      const i = out.indexOf("\n")
+      if (i < 0) return
+      clearTimeout(timer)
+      p.kill()
+      try { done(JSON.parse(out.slice(0, i)).result?.content?.[0]?.text ?? out) } catch { done(out) }
+    })
+    p.stdin.write(JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/call", params: { name: "parts_find", arguments: { query: "modal window" } } }) + "\n")
+  })
+  fs.rmSync(el, { recursive: true, force: true })
+  if (!/Lives in the core .*npm run tool:take -- app-dialog/.test(said)) bad.push(`MCP parts_find from a folder with no map does not say «Lives in the core … tool:take -- app-dialog»: ${String(said).slice(0, 160)}`)
+  if (/Yours — it is in this repository/.test(said)) bad.push("MCP parts_find from a folder with no map calls the core's part «Yours» (the old fallback to the core's map)")
+}
 if (bad.length) {
   for (const b of bad) console.error(`  ✗ ${b}`)
   console.error(`===PARTS_FIND_FAILED=== ${bad.length}`)
   process.exit(1)
 }
-console.log(`===PARTS_FIND_OK=== ${CASES.length} queries find their part, the negative control finds nothing`)
+console.log(`===PARTS_FIND_OK=== ${CASES.length} queries find their part, the negative control finds nothing; MCP from a mapless folder says «Lives in the core»`)

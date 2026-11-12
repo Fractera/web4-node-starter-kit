@@ -8,7 +8,7 @@
         "en": "Voice input control",
         "ru": "Голосовой ввод"
       },
-      "version": "1.1.0",
+      "version": "1.1.1",
       "parts": [
         {
           "id": "tool-voice-input",
@@ -56,7 +56,7 @@
       "parts": [
         {
           "id": "voice-control",
-          "version": "1.1.0"
+          "version": "1.1.1"
         }
       ],
       "scope": "any",
@@ -97,7 +97,7 @@
       "parts": [
         {
           "id": "voice-control",
-          "version": "1.1.0"
+          "version": "1.1.1"
         }
       ],
       "scope": "any",
@@ -147,28 +147,6 @@
         "ru": [
           "секция поля с голосом",
           "островок голоса"
-        ]
-      },
-      "internal": true
-    },
-    {
-      "id": "mic-icon",
-      "kind": "composite",
-      "path": "components/form/mic-icon.tsx",
-      "export": "MicIcon",
-      "what": {
-        "en": "The microphone icon of the voice controls — one for both containers of the form.",
-        "ru": "Значок микрофона голосовых элементов — один на оба контейнера формы."
-      },
-      "how": "Inside the voice controls only; elsewhere the lucide Mic icon.",
-      "words": {
-        "en": [
-          "microphone icon",
-          "mic glyph"
-        ],
-        "ru": [
-          "значок микрофона",
-          "иконка микрофона"
         ]
       },
       "internal": true

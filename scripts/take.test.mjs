@@ -15,11 +15,13 @@ put(core, "lib/parts/PARTS.json", { parts: [
   T("app-dialog", "any", ["components/dialog/app-dialog.client.tsx"], { requires: ["components/ui/button"] }),
   T("tool-term", "panel", ["_tools/term/x.tsx"]),
   T("table", "any", ["components/table/table.tsx"], { requires: ["sections/table.i18n"] }),
+  T("tool-two", "any", ["_tools/two/a.tsx", "_tools/two/b.tsx"]),
 ] })
 put(core, "_tools/crop/x.tsx", "export default function Crop() { return null }\n")
 put(core, "_tools/crop/tool.json", { id: "crop", entry: "x.tsx", version: "1.0.0", parts: [{ id: "app-dialog", version: "1.0.0" }], scope: "any" })
 put(core, "components/dialog/app-dialog.client.tsx", "export function AppDialog() { return null }\n")
 put(core, "_tools/term/x.tsx", "x\n"); put(core, "components/table/table.tsx", "x\n")
+put(core, "_tools/two/a.tsx", "a\n"); put(core, "_tools/two/b.tsx", "b\n")
 const fresh = () => { const r = tmp("el"); put(r, "components/ui/button.tsx", "x\n"); return r }
 
 let failed = 0
@@ -48,10 +50,15 @@ expect("a missing requirement refuses, naming it", !plan.ok && /sections\/table\
 put(el, "components/dialog/app-dialog.client.tsx", "my own\n")
 plan = planTake({ source: core, from: "core", receiver: el, tool: "tool-crop" })
 expect("a part the element has whole of its own stands in, not overwritten", plan.ok && plan.copies.map((c) => c.id).join(",") === "tool-crop" && /stand in/.test(plan.skipped.join(" ")), JSON.stringify(plan))
+// 735 A4 (D7): the asked tool whole of the element's own (both templates carry the one modal) — an answer, not an error; nothing written.
 put(el, "_tools/crop/x.tsx", "my own crop\n")
 plan = planTake({ source: core, from: "core", receiver: el, tool: "tool-crop" })
-expect("the taken tool's own path held by something else refuses", !plan.ok && /already here and is not/.test(plan.refused.join(" ")), JSON.stringify(plan.refused))
-expect("a refused take writes nothing", fs.readFileSync(path.join(el, "_tools/crop/x.tsx"), "utf8") === "my own crop\n" && !fs.existsSync(path.join(el, "_tools/crop/tool.json")))
+expect("the asked tool whole of its own stands in: ok, nothing to copy", plan.ok && plan.copies.length === 0 && /tool-crop — the element's own files stand in/.test(plan.skipped.join(" ")), JSON.stringify(plan))
+expect("…and nothing is overwritten", doTake({ source: core, from: "core", receiver: el, plan }).length === 0 && fs.readFileSync(path.join(el, "_tools/crop/x.tsx"), "utf8") === "my own crop\n")
+put(el, "_tools/two/a.tsx", "my own a\n")
+plan = planTake({ source: core, from: "core", receiver: el, tool: "tool-two" })
+expect("a tool whose path is PARTLY held by something else refuses", !plan.ok && /_tools\/two\/a\.tsx is already here and is not/.test(plan.refused.join(" ")), JSON.stringify(plan.refused))
+expect("a refused take writes nothing", fs.readFileSync(path.join(el, "_tools/two/a.tsx"), "utf8") === "my own a\n" && !fs.existsSync(path.join(el, "_tools/two/b.tsx")))
 plan = planTake({ source: core, from: "core", receiver: el, tool: "nothing" })
 expect("an unknown tool is refused (negative control)", !plan.ok && plan.copies.length === 0, JSON.stringify(plan))
 

@@ -69,6 +69,7 @@
     "test:node-index": "node scripts/node-index.test.mjs",
     "test:take": "node scripts/take.test.mjs",
     "test:parts-find": "node scripts/parts-find.test.mjs",
+    "test:tools-protocol": "node scripts/tools-protocol.test.mjs",
     "test:parts-gate": "node scripts/parts-gate.test.mjs",
     "build:shell-kit": "node scripts/build-shell-kit.mjs",
     "check:tools-map": "node scripts/check-tools-map.mjs",
