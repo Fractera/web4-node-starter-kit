@@ -57,7 +57,13 @@ const { browser, via } = await launch()
 const width = Number(one('width', 1440))
 const height = Number(one('height', 900))
 const noJs = args.includes('--no-js')
-const context = await browser.newContext({ viewport: { width, height }, colorScheme: args.includes('--dark') ? 'dark' : 'light', javaScriptEnabled: !noJs })
+const dark = args.includes('--dark')
+const context = await browser.newContext({ viewport: { width, height }, colorScheme: dark ? 'dark' : 'light', javaScriptEnabled: !noJs })
+// 🔒 ТЕМА — ВЫБОРОМ ПОСЕТИТЕЛЯ, НЕ ТОЛЬКО СХЕМОЙ СИСТЕМЫ. ✗ Измерено 2026-11-12 (725, живая проверка вкладки «Инструменты»):
+// `--dark` ставил лишь `prefers-color-scheme`, а тема по умолчанию — «light» (`NEXT_PUBLIC_DEFAULT_THEME`, `shell-init.tsx`) и
+// схему системы не читает — каждый «тёмный» скриншот был светлым, и проверка «обе темы» молча проверяла одну. Теперь «глаза» ставят
+// cookie выбора `fractera-theme` (тот же, что пишет переключатель, `shared-prefs.ts`) в ту тему, что названа в строке ===EYES===.
+await context.addCookies([{ name: 'fractera-theme', value: dark ? 'dark' : 'light', url: new URL(url).origin }])
 const page = await context.newPage()
 const problems = []
 page.on('console', (m) => { if (m.type() === 'error') problems.push(`console: ${m.text().slice(0, 200)}`) })
@@ -103,7 +109,7 @@ const name = (el) => el
   ? `${el.tagName.toLowerCase()}${el.getAttribute?.('data-block') ? `[data-block=${el.getAttribute('data-block')}]` : ''}${el.getAttribute?.('data-slot') ? `[data-slot=${el.getAttribute('data-slot')}]` : ''}${typeof el.className === 'string' && el.className ? `.${el.className.trim().split(/\s+/).slice(0, 3).join('.')}` : ''}`
   : 'ничего'
 
-console.log(`===EYES=== ${via} ${browser.version()} · ${status} · «${await page.title()}» · ${width}×${height}${args.includes('--dark') ? ' тёмная' : ''}${noJs ? ' · без JavaScript' : ''}`)
+console.log(`===EYES=== ${via} ${browser.version()} · ${status} · «${await page.title()}» · ${width}×${height}${dark ? ' тёмная' : ''}${noJs ? ' · без JavaScript' : ''}`)
 console.log(`скриншот: ${out}`)
 for (const css of many('measure')) {
   const found = await page.evaluate(({ css, nameSrc }) => {
