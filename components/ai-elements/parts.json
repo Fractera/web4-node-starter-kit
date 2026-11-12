@@ -22,7 +22,13 @@
           "переписка",
           "сообщения"
         ]
-      }
+      },
+      "also": [
+        "components/ai-elements/attachments.tsx",
+        "components/ai-elements/message.tsx",
+        "components/ai-elements/prompt-input.tsx",
+        "components/ai-elements/web-preview.tsx"
+      ]
     }
   ]
 }

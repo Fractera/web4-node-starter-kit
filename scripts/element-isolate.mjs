@@ -37,6 +37,8 @@ const coreDirs = readdirSync(ROOT, { withFileTypes: true }).filter((d) => d.isDi
 const rootFiles = readdirSync(ROOT, { withFileTypes: true }).filter((d) => d.isFile()).map((d) => d.name)
 const HOOK = join(ROOT, 'scripts', 'element-boundary-hook.mjs').replace(/\\/g, '/')
 const SKILLS_HOOK = join(ROOT, '.claude', 'hooks', 'shadcn-skills.mjs').replace(/\\/g, '/')
+// 725-5: the gate of a new interface file (parts_find asked, the birth declared) — idle in an element until it has its parts map.
+const PARTS_HOOK = join(ROOT, '.claude', 'hooks', 'parts-gate.mjs').replace(/\\/g, '/')
 const foreign = foreignOff()
 const readText = (f) => { try { return readFileSync(f, 'utf8') } catch { return '' } }
 
@@ -123,7 +125,7 @@ for (const dir of only ? [] : elements) {
   // зависший сторож закрывает вызов, а не пропускает его («don't count on a stalled hook to act as a gate», code.claude.com/docs/en/hooks,
   // прочитано 2026-11-09). Тот же сценарий на `PermissionRequest` (без matcher — любой инструмент): вопрос по правилу `ask` выше и любой
   // другой вопрос Claude Code в сессии элемента идёт главному агенту ядра, а не висит в терминале.
-  const isSkills = (m) => (m.hooks ?? []).some((h) => String(h.command ?? '').includes('shadcn-skills.mjs'))
+  const isSkills = (m) => (m.hooks ?? []).some((h) => String(h.command ?? '').includes('shadcn-skills.mjs') || String(h.command ?? '').includes('parts-gate.mjs'))
   const isBoundary = (m) => (m.hooks ?? []).some((h) => String(h.command ?? '').includes('element-boundary-hook.mjs'))
   const boundaryHook = { type: 'command', command: hookCmd, timeout: 600, onFailure: 'block' }
   const pre = (s.hooks?.PreToolUse ?? []).filter((m) => !isBoundary(m))
@@ -132,7 +134,8 @@ for (const dir of only ? [] : elements) {
     ...(s.hooks ?? {}),
     // 730-4: интерфейсный файл элемента пишется только после навыка `use-shadcn` этой сессии (хук ядра, `.claude/hooks/shadcn-skills.mjs`).
     PreToolUse: [...pre.filter((m) => !isSkills(m)), { matcher: 'Bash|PowerShell|Write|Edit|MultiEdit|NotebookEdit', hooks: [boundaryHook] },
-      { matcher: 'Write|Edit|MultiEdit', hooks: [{ type: 'command', command: `node "${SKILLS_HOOK}"` }] }],
+      { matcher: 'Write|Edit|MultiEdit', hooks: [{ type: 'command', command: `node "${SKILLS_HOOK}"` }] },
+      { matcher: 'Write', hooks: [{ type: 'command', command: `node "${PARTS_HOOK}"` }] }],
     PermissionRequest: [...perm, { hooks: [boundaryHook] }],
   }
 

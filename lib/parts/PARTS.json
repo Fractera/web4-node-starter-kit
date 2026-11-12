@@ -452,6 +452,12 @@
           "сообщения"
         ]
       },
+      "also": [
+        "components/ai-elements/attachments.tsx",
+        "components/ai-elements/message.tsx",
+        "components/ai-elements/prompt-input.tsx",
+        "components/ai-elements/web-preview.tsx"
+      ],
       "usedBy": [
         "_tools/chat/client/chat.client.tsx"
       ]
@@ -1725,7 +1731,7 @@
         "en": "Collapsible bands in a panel — several items, one or many open; the «what is it» note above a list.",
         "ru": "Раскрывающиеся полосы в панели — несколько пунктов, открыт один или несколько; пояснение «что это» над списком."
       },
-      "how": "import { Accordion } from \"@/components/ui/accordion\" — one owner per kind (use-primitives).",
+      "how": "import { Accordion } from \"@/components/ui/accordion\" — one owner per kind.",
       "words": {
         "en": [
           "accordion",
@@ -1768,7 +1774,7 @@
         "en": "A small label: a state, a role, a count.",
         "ru": "Маленькая метка: состояние, роль, число."
       },
-      "how": "import { Badge } from \"@/components/ui/badge\" — one owner per kind (use-primitives).",
+      "how": "import { Badge } from \"@/components/ui/badge\" — one owner per kind.",
       "words": {
         "en": [
           "badge",
@@ -1813,7 +1819,7 @@
         "en": "The one button of the product: variants default, outline, secondary, ghost, destructive, link; sizes including icon.",
         "ru": "Единственная кнопка продукта: варианты default, outline, secondary, ghost, destructive, link; размеры, включая значок."
       },
-      "how": "import { Button } from \"@/components/ui/button\" — one owner per kind (use-primitives).",
+      "how": "import { Button } from \"@/components/ui/button\" — one owner per kind.",
       "words": {
         "en": [
           "button",
@@ -2047,7 +2053,7 @@
         "en": "Buttons joined into one group, e.g. a segmented choice.",
         "ru": "Кнопки, собранные в одну группу, например выбор из сегментов."
       },
-      "how": "import { ButtonGroup } from \"@/components/ui/button-group\" — one owner per kind (use-primitives).",
+      "how": "import { ButtonGroup } from \"@/components/ui/button-group\" — one owner per kind.",
       "words": {
         "en": [
           "button group",
@@ -2072,7 +2078,7 @@
         "en": "A card: a framed group with a title, a description, content and actions.",
         "ru": "Карточка: обрамлённая группа с заголовком, описанием, содержимым и действиями."
       },
-      "how": "import { Card } from \"@/components/ui/card\" — one owner per kind (use-primitives).",
+      "how": "import { Card } from \"@/components/ui/card\" — one owner per kind.",
       "words": {
         "en": [
           "card",
@@ -2124,7 +2130,7 @@
         "en": "Charts on the theme's tokens (recharts inside).",
         "ru": "Графики на токенах темы (внутри recharts)."
       },
-      "how": "import { ChartContainer } from \"@/components/ui/chart\" — one owner per kind (use-primitives).",
+      "how": "import { ChartContainer } from \"@/components/ui/chart\" — one owner per kind.",
       "words": {
         "en": [
           "chart",
@@ -2156,7 +2162,7 @@
         "en": "A checkbox — a yes/no choice or one of a list.",
         "ru": "Флажок — выбор да/нет или один из списка."
       },
-      "how": "import { Checkbox } from \"@/components/ui/checkbox\" — one owner per kind (use-primitives).",
+      "how": "import { Checkbox } from \"@/components/ui/checkbox\" — one owner per kind.",
       "words": {
         "en": [
           "checkbox",
@@ -2186,7 +2192,7 @@
         "en": "One part that opens and closes («more», details).",
         "ru": "Одна часть, которая раскрывается и сворачивается («подробнее», детали)."
       },
-      "how": "import { Collapsible } from \"@/components/ui/collapsible\" — one owner per kind (use-primitives).",
+      "how": "import { Collapsible } from \"@/components/ui/collapsible\" — one owner per kind.",
       "words": {
         "en": [
           "collapsible",
@@ -2213,7 +2219,7 @@
         "en": "A searchable list with arrow keys (cmdk) — with Popover it is the combobox under a field.",
         "ru": "Список с поиском и стрелками (cmdk); вместе с Popover — выпадающий список под полем."
       },
-      "how": "import { Command } from \"@/components/ui/command\" — one owner per kind (use-primitives).",
+      "how": "import { Command } from \"@/components/ui/command\" — one owner per kind.",
       "words": {
         "en": [
           "combobox",
@@ -2241,7 +2247,7 @@
         "en": "The shadcn dialog primitive — NOT used directly: every modal is AppDialog.",
         "ru": "Примитив диалога shadcn — напрямую НЕ используется: каждое модальное окно — AppDialog."
       },
-      "how": "import { Dialog } from \"@/components/ui/dialog\" — one owner per kind (use-primitives).",
+      "how": "import { Dialog } from \"@/components/ui/dialog\" — one owner per kind.",
       "words": {
         "en": [
           "dialog primitive",
@@ -2266,7 +2272,7 @@
         "en": "A menu that drops from a button: actions, a choice, a switch.",
         "ru": "Меню, выпадающее от кнопки: действия, выбор, переключатель."
       },
-      "how": "import { DropdownMenu } from \"@/components/ui/dropdown-menu\" — one owner per kind (use-primitives).",
+      "how": "import { DropdownMenu } from \"@/components/ui/dropdown-menu\" — one owner per kind.",
       "words": {
         "en": [
           "dropdown menu",
@@ -2294,7 +2300,7 @@
         "en": "The empty state of a list or a page: an icon, words and the next action.",
         "ru": "Пустое состояние списка или страницы: значок, слова и следующее действие."
       },
-      "how": "import { EmptyState } from \"@/components/ui/empty-state\" — one owner per kind (use-primitives).",
+      "how": "import { EmptyState } from \"@/components/ui/empty-state\" — one owner per kind.",
       "words": {
         "en": [
           "empty state",
@@ -2319,7 +2325,7 @@
         "en": "A form field with its label, description and error; FieldGroup for a form.",
         "ru": "Поле формы с подписью, описанием и ошибкой; FieldGroup для формы."
       },
-      "how": "import { Field } from \"@/components/ui/field\" — one owner per kind (use-primitives).",
+      "how": "import { Field } from \"@/components/ui/field\" — one owner per kind.",
       "words": {
         "en": [
           "form field",
@@ -2353,7 +2359,7 @@
         "en": "A card that appears on hover — a preview of a link or a person.",
         "ru": "Карточка при наведении — превью ссылки или человека."
       },
-      "how": "import { HoverCard } from \"@/components/ui/hover-card\" — one owner per kind (use-primitives).",
+      "how": "import { HoverCard } from \"@/components/ui/hover-card\" — one owner per kind.",
       "words": {
         "en": [
           "hover card",
@@ -2378,7 +2384,7 @@
         "en": "A one-line text input (16px — Safari does not zoom).",
         "ru": "Однострочное поле ввода (16px — Safari не увеличивает страницу)."
       },
-      "how": "import { Input } from \"@/components/ui/input\" — one owner per kind (use-primitives).",
+      "how": "import { Input } from \"@/components/ui/input\" — one owner per kind.",
       "words": {
         "en": [
           "input",
@@ -2473,7 +2479,7 @@
         "en": "A field with buttons or icons inside it (search with a clear button).",
         "ru": "Поле с кнопками или значками внутри (поиск с кнопкой очистки)."
       },
-      "how": "import { InputGroup } from \"@/components/ui/input-group\" — one owner per kind (use-primitives).",
+      "how": "import { InputGroup } from \"@/components/ui/input-group\" — one owner per kind.",
       "words": {
         "en": [
           "input group",
@@ -2502,7 +2508,7 @@
         "en": "The label of a control.",
         "ru": "Подпись элемента управления."
       },
-      "how": "import { Label } from \"@/components/ui/label\" — one owner per kind (use-primitives).",
+      "how": "import { Label } from \"@/components/ui/label\" — one owner per kind.",
       "words": {
         "en": [
           "label",
@@ -2561,7 +2567,7 @@
         "en": "The browser's own select styled by the theme — works without JavaScript.",
         "ru": "Собственный список браузера в стиле темы — работает без JavaScript."
       },
-      "how": "import { NativeSelect } from \"@/components/ui/native-select\" — one owner per kind (use-primitives).",
+      "how": "import { NativeSelect } from \"@/components/ui/native-select\" — one owner per kind.",
       "words": {
         "en": [
           "native select",
@@ -2585,7 +2591,7 @@
         "en": "The site navigation with dropdown panels (the shell's mega menu).",
         "ru": "Навигация сайта с выпадающими панелями (мега-меню оболочки)."
       },
-      "how": "import { NavigationMenu } from \"@/components/ui/navigation-menu\" — one owner per kind (use-primitives).",
+      "how": "import { NavigationMenu } from \"@/components/ui/navigation-menu\" — one owner per kind.",
       "words": {
         "en": [
           "navigation menu",
@@ -2609,7 +2615,7 @@
         "en": "Page numbers and back/next — inside TableTools for lists.",
         "ru": "Номера страниц и назад/вперёд — для списков внутри TableTools."
       },
-      "how": "import { Pagination } from \"@/components/ui/pagination\" — one owner per kind (use-primitives).",
+      "how": "import { Pagination } from \"@/components/ui/pagination\" — one owner per kind.",
       "words": {
         "en": [
           "pagination",
@@ -2636,7 +2642,7 @@
         "en": "A floating panel anchored to a trigger — never a hand-built absolute div.",
         "ru": "Плавающая панель у кнопки — никогда не самодельный absolute div."
       },
-      "how": "import { Popover } from \"@/components/ui/popover\" — one owner per kind (use-primitives).",
+      "how": "import { Popover } from \"@/components/ui/popover\" — one owner per kind.",
       "words": {
         "en": [
           "popover",
@@ -2666,7 +2672,7 @@
         "en": "A scrolling area with the theme's scrollbar.",
         "ru": "Прокручиваемая область со скроллбаром темы."
       },
-      "how": "import { ScrollArea } from \"@/components/ui/scroll-area\" — one owner per kind (use-primitives).",
+      "how": "import { ScrollArea } from \"@/components/ui/scroll-area\" — one owner per kind.",
       "words": {
         "en": [
           "scroll area",
@@ -2688,7 +2694,7 @@
         "en": "A styled select — one of several values.",
         "ru": "Стилизованный список выбора — одно из нескольких значений."
       },
-      "how": "import { Select } from \"@/components/ui/select\" — one owner per kind (use-primitives).",
+      "how": "import { Select } from \"@/components/ui/select\" — one owner per kind.",
       "words": {
         "en": [
           "select",
@@ -2721,7 +2727,7 @@
         "en": "A thin line between groups.",
         "ru": "Тонкая линия между группами."
       },
-      "how": "import { Separator } from \"@/components/ui/separator\" — one owner per kind (use-primitives).",
+      "how": "import { Separator } from \"@/components/ui/separator\" — one owner per kind.",
       "words": {
         "en": [
           "separator",
@@ -2755,7 +2761,7 @@
         "en": "A side panel sliding from an edge — drawers, a deal's details, the terminal drawer.",
         "ru": "Боковая панель, выезжающая с края — ящики, подробности сделки, ящик терминала."
       },
-      "how": "import { Sheet } from \"@/components/ui/sheet\" — one owner per kind (use-primitives).",
+      "how": "import { Sheet } from \"@/components/ui/sheet\" — one owner per kind.",
       "words": {
         "en": [
           "sheet",
@@ -2783,7 +2789,7 @@
         "en": "A grey placeholder while something loads.",
         "ru": "Серая заглушка, пока что-то грузится."
       },
-      "how": "import { Skeleton } from \"@/components/ui/skeleton\" — one owner per kind (use-primitives).",
+      "how": "import { Skeleton } from \"@/components/ui/skeleton\" — one owner per kind.",
       "words": {
         "en": [
           "skeleton",
@@ -2818,7 +2824,7 @@
         "en": "The spinning sign of a running action.",
         "ru": "Крутящийся знак идущего действия."
       },
-      "how": "import { Spinner } from \"@/components/ui/spinner\" — one owner per kind (use-primitives).",
+      "how": "import { Spinner } from \"@/components/ui/spinner\" — one owner per kind.",
       "words": {
         "en": [
           "spinner",
@@ -2887,7 +2893,7 @@
         "en": "An on/off switch. (shadcn/ui)",
         "ru": "Переключатель вкл/выкл."
       },
-      "how": "import { Switch } from \"@/components/ui/switch\" — one owner per kind (use-primitives).",
+      "how": "import { Switch } from \"@/components/ui/switch\" — one owner per kind.",
       "words": {
         "en": [
           "switch",
@@ -2921,7 +2927,7 @@
         "en": "The table primitive — for a list with search and pages take TableTools.",
         "ru": "Примитив таблицы — для списка с поиском и страницами берите TableTools."
       },
-      "how": "import { Table } from \"@/components/ui/table\" — one owner per kind (use-primitives).",
+      "how": "import { Table } from \"@/components/ui/table\" — one owner per kind.",
       "words": {
         "en": [
           "table",
@@ -2947,7 +2953,7 @@
         "en": "Tabs — switch between views of one place.",
         "ru": "Вкладки — переключение видов одного места."
       },
-      "how": "import { Tabs } from \"@/components/ui/tabs\" — one owner per kind (use-primitives).",
+      "how": "import { Tabs } from \"@/components/ui/tabs\" — one owner per kind.",
       "words": {
         "en": [
           "tabs",
@@ -2973,7 +2979,7 @@
         "en": "A multi-line text area; with voice — VoiceTextarea.",
         "ru": "Многострочная область текста; с голосом — VoiceTextarea."
       },
-      "how": "import { Textarea } from \"@/components/ui/textarea\" — one owner per kind (use-primitives).",
+      "how": "import { Textarea } from \"@/components/ui/textarea\" — one owner per kind.",
       "words": {
         "en": [
           "textarea",
@@ -3004,7 +3010,7 @@
         "en": "A hint on hover or focus — never title= on a button.",
         "ru": "Подсказка при наведении или фокусе — никогда не title= на кнопке."
       },
-      "how": "import { Tooltip } from \"@/components/ui/tooltip\" — one owner per kind (use-primitives).",
+      "how": "import { Tooltip } from \"@/components/ui/tooltip\" — one owner per kind.",
       "words": {
         "en": [
           "tooltip",
@@ -3043,7 +3049,7 @@
         "en": "The text primitives: headings and paragraphs with the project's scale — never a hand-classed heading.",
         "ru": "Примитивы текста: заголовки и абзацы со шкалой проекта — никогда не заголовок со своими классами."
       },
-      "how": "import { H1 } from \"@/components/ui/typography\" — one owner per kind (use-primitives).",
+      "how": "import { H1 } from \"@/components/ui/typography\" — one owner per kind.",
       "words": {
         "en": [
           "heading",
@@ -3179,7 +3185,7 @@
         "en": "Page material section «a2aFeed» (text): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "the agents' conversation feed of the node — **Type:** Page material. The working part of «Dashboard → Agents' conversation» (step 408)."
       },
-      "how": "A page names the kind «a2aFeed» in its language cell with the fields lang: string (skill use-sections).",
+      "how": "A page names the kind «a2aFeed» in its language cell with the fields lang: string.",
       "words": {
         "en": [
           "a2aFeed",
@@ -3201,7 +3207,7 @@
         "en": "Page material section «accordion» (list): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "раскрывающиеся полосы — Заголовок раздела и несколько свёрнутых полос: видно всё оглавление, читается выбранное. Внутрь"
       },
-      "how": "A page names the kind «accordion» in its language cell with the fields title?: string; lead?: string; capped?: boolean; cards?: boolean; tone?: 'question'; children: PageItem[] (skill use-sections).",
+      "how": "A page names the kind «accordion» in its language cell with the fields title?: string; lead?: string; capped?: boolean; cards?: boolean; tone?: 'question'; children: PageItem[].",
       "words": {
         "en": [
           "accordion",
@@ -3223,7 +3229,7 @@
         "en": "Page material section «accordionItem» (text): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "Материал страницы"
       },
-      "how": "A page names the kind «accordionItem» in its language cell with the fields summary: string; open?: boolean; details?: { title: string; children: PageItem[] }; children: PageItem[] (skill use-sections).",
+      "how": "A page names the kind «accordionItem» in its language cell with the fields summary: string; open?: boolean; details?: { title: string; children: PageItem[] }; children: PageItem[].",
       "words": {
         "en": [
           "accordionItem",
@@ -3245,7 +3251,7 @@
         "en": "Workspace section «authGoogleSetup» (steps): A working screen rather than a page to read: a menu on the left, content on the right. This is what dashboards and project tools are built from.",
         "ru": "Рабочий экран"
       },
-      "how": "A page names the kind «authGoogleSetup» in its language cell with the fields words: import('@/components/auth/google-setup.i18n').GoogleSetupWords (skill use-sections).",
+      "how": "A page names the kind «authGoogleSetup» in its language cell with the fields words: import('@/components/auth/google-setup.i18n').GoogleSetupWords.",
       "words": {
         "en": [
           "authGoogleSetup",
@@ -3267,7 +3273,7 @@
         "en": "Workspace section «authResendSetup» (steps): A working screen rather than a page to read: a menu on the left, content on the right. This is what dashboards and project tools are built from.",
         "ru": "Рабочий экран"
       },
-      "how": "A page names the kind «authResendSetup» in its language cell with the fields words: import('@/components/auth/resend-setup.i18n').ResendSetupWords (skill use-sections).",
+      "how": "A page names the kind «authResendSetup» in its language cell with the fields words: import('@/components/auth/resend-setup.i18n').ResendSetupWords.",
       "words": {
         "en": [
           "authResendSetup",
@@ -3289,7 +3295,7 @@
         "en": "Benefits and value section «badges» (badges): The key benefit for the user, told as claims with icons.",
         "ru": "a row of capability labels — **Type:** Benefits and value (2). The shortest way to say \"it can do all of this\" without a paragraph."
       },
-      "how": "A page names the kind «badges» in its language cell with the fields items: BadgeItem[] (skill use-sections).",
+      "how": "A page names the kind «badges» in its language cell with the fields items: BadgeItem[].",
       "words": {
         "en": [
           "badges",
@@ -3311,7 +3317,7 @@
         "en": "Benefits and value section «benefitCards» (cards): The key benefit for the user, told as claims with icons.",
         "ru": "карточки возможностей со ссылкой — Ряд ячеек: заголовок · черта · текст · ссылка внизу. Форма перенесена с главной витрины"
       },
-      "how": "A page names the kind «benefitCards» in its language cell with the fields title?: string; note?: string; cols?: 2 | 3; items: { title: string; text: string; href?: string; linkLabel?: string }[] (skill use-sections).",
+      "how": "A page names the kind «benefitCards» in its language cell with the fields title?: string; note?: string; cols?: 2 | 3; items: { title: string; text: string; href?: string; linkLabel?: string }[].",
       "words": {
         "en": [
           "benefitCards",
@@ -3333,7 +3339,7 @@
         "en": "Page material section «callout» (callout): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "Материал страницы"
       },
-      "how": "A page names the kind «callout» in its language cell with the fields title: string; text: string; action?: { href: string; label: string; external?: boolean } (skill use-sections).",
+      "how": "A page names the kind «callout» in its language cell with the fields title: string; text: string; action?: { href: string; label: string; external?: boolean }.",
       "words": {
         "en": [
           "callout",
@@ -3355,7 +3361,7 @@
         "en": "Page material section «card» (panel): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "Материал страницы"
       },
-      "how": "A page names the kind «card» in its language cell with the fields tone?: Tone; children: PageItem[] (skill use-sections).",
+      "how": "A page names the kind «card» in its language cell with the fields tone?: Tone; children: PageItem[].",
       "words": {
         "en": [
           "card",
@@ -3377,7 +3383,7 @@
         "en": "Benefits and value section «cards» (cards): The key benefit for the user, told as claims with icons.",
         "ru": "a section made of cards — **Type:** Benefits and value (2). Answers \"what is this made of\" or \"what are my options\" — with"
       },
-      "how": "A page names the kind «cards» in its language cell with the fields badge?: string; title: string; note?: string; cols?: 2 | 3; children: PageItem[] (skill use-sections).",
+      "how": "A page names the kind «cards» in its language cell with the fields badge?: string; title: string; note?: string; cols?: 2 | 3; children: PageItem[].",
       "words": {
         "en": [
           "cards",
@@ -3399,7 +3405,7 @@
         "en": "How it works section «carousel» (figure): A step-by-step explanation of the purchase, the interaction or the service.",
         "ru": "Как это работает"
       },
-      "how": "A page names the kind «carousel» in its language cell with the fields title?: string; note?: string; slides: { image?: string; alt?: string; title: string; text?: string }[] (skill use-sections).",
+      "how": "A page names the kind «carousel» in its language cell with the fields title?: string; note?: string; slides: { image?: string; alt?: string; title: string; text?: string }[].",
       "words": {
         "en": [
           "carousel",
@@ -3421,7 +3427,7 @@
         "en": "Charts section «chartArea» (chart): Numbers shown as a picture: how a value moved over time, how a whole splits into parts, how several measures compare at once.",
         "ru": "область: как менялось целое и из чего оно состояло — Карточка с заголовком, описанием и выпадающим списком отрезков в шапке. Ниже — две области с"
       },
-      "how": "A page names the kind «chartArea» in its language cell with the fields title: string; description?: string; rows?: ChartRow[]; labels?: { a?: string; b?: string }; ranges?: ChartRange[] (skill use-sections).",
+      "how": "A page names the kind «chartArea» in its language cell with the fields title: string; description?: string; rows?: ChartRow[]; labels?: { a?: string; b?: string }; ranges?: ChartRange[].",
       "words": {
         "en": [
           "chartArea",
@@ -3443,7 +3449,7 @@
         "en": "Charts section «chartBar» (chart): Numbers shown as a picture: how a value moved over time, how a whole splits into parts, how several measures compare at once.",
         "ru": "столбцы: сравнить величины поточечно — Карточка, у которой вместо заголовка — две кнопки с итогами рядов. Нажатая кнопка меняет ряд, и"
       },
-      "how": "A page names the kind «chartBar» in its language cell with the fields title: string; description?: string; rows?: ChartRow[]; labels?: { a?: string; b?: string } (skill use-sections).",
+      "how": "A page names the kind «chartBar» in its language cell with the fields title: string; description?: string; rows?: ChartRow[]; labels?: { a?: string; b?: string }.",
       "words": {
         "en": [
           "chartBar",
@@ -3465,7 +3471,7 @@
         "en": "Charts section «chartLine» (chart): Numbers shown as a picture: how a value moved over time, how a whole splits into parts, how several measures compare at once.",
         "ru": "линия: увидеть форму движения — Та же шапка с двумя итогами, что у `chartBar`, и линия вместо столбцов: сглаживание `monotone`,"
       },
-      "how": "A page names the kind «chartLine» in its language cell with the fields title: string; description?: string; rows?: ChartRow[]; labels?: { a?: string; b?: string } (skill use-sections).",
+      "how": "A page names the kind «chartLine» in its language cell with the fields title: string; description?: string; rows?: ChartRow[]; labels?: { a?: string; b?: string }.",
       "words": {
         "en": [
           "chartLine",
@@ -3487,7 +3493,7 @@
         "en": "Charts section «chartPie» (chart): Numbers shown as a picture: how a value moved over time, how a whole splits into parts, how several measures compare at once.",
         "ru": "круговая: из чего состоит целое — Квадратная область, подписи долей прямо на секторах, подсказка без строки заголовка, две строки"
       },
-      "how": "A page names the kind «chartPie» in its language cell with the fields title: string; description?: string; shares?: ChartShareRow[]; footer?: { note?: string; hint?: string } (skill use-sections).",
+      "how": "A page names the kind «chartPie» in its language cell with the fields title: string; description?: string; shares?: ChartShareRow[]; footer?: { note?: string; hint?: string }.",
       "words": {
         "en": [
           "chartPie",
@@ -3509,7 +3515,7 @@
         "en": "Charts section «chartRadar» (chart): Numbers shown as a picture: how a value moved over time, how a whole splits into parts, how several measures compare at once.",
         "ru": "лепестковая: профиль по нескольким мерам — Фигура по кругу: у каждой меры своя ось, два ряда наложены. Легенда снизу, подвал под ней."
       },
-      "how": "A page names the kind «chartRadar» in its language cell with the fields title: string; description?: string; rows?: ChartRow[]; labels?: { a?: string; b?: string }; footer?: { note?: string; hint?: string } (skill use-sections).",
+      "how": "A page names the kind «chartRadar» in its language cell with the fields title: string; description?: string; rows?: ChartRow[]; labels?: { a?: string; b?: string }; footer?: { note?: string; hint?: string }.",
       "words": {
         "en": [
           "chartRadar",
@@ -3531,7 +3537,7 @@
         "en": "Charts section «chartRadial» (chart): Numbers shown as a picture: how a value moved over time, how a whole splits into parts, how several measures compare at once.",
         "ru": "радиальные полосы: доля и её величина сразу — Кольцо полос, у каждой своя дорожка. Подписи лежат внутри полос, подвал под диаграммой."
       },
-      "how": "A page names the kind «chartRadial» in its language cell with the fields title: string; description?: string; shares?: ChartShareRow[]; footer?: { note?: string; hint?: string } (skill use-sections).",
+      "how": "A page names the kind «chartRadial» in its language cell with the fields title: string; description?: string; shares?: ChartShareRow[]; footer?: { note?: string; hint?: string }.",
       "words": {
         "en": [
           "chartRadial",
@@ -3553,7 +3559,7 @@
         "en": "Charts section «chartTooltip» (chart): Numbers shown as a picture: how a value moved over time, how a whole splits into parts, how several measures compare at once.",
         "ru": "подсказка, видимая без наведения — Шесть дней, два ряда с накоплением, и открытая подсказка на второй точке. Указателя у подсказки"
       },
-      "how": "A page names the kind «chartTooltip» in its language cell with the fields title: string; description?: string; rows?: ChartRow[]; labels?: { a?: string; b?: string }; openAt?: number (skill use-sections).",
+      "how": "A page names the kind «chartTooltip» in its language cell with the fields title: string; description?: string; rows?: ChartRow[]; labels?: { a?: string; b?: string }; openAt?: number.",
       "words": {
         "en": [
           "chartTooltip",
@@ -3575,7 +3581,7 @@
         "en": "Workspace section «chat» (list): A working screen rather than a page to read: a menu on the left, content on the right. This is what dashboards and project tools are built from.",
         "ru": "`chat` — переписка как секция страницы — Лента сообщений: кто, когда, что написал и что приложил. Рисует её **инструмент проекта**"
       },
-      "how": "A page names the kind «chat» in its language cell with the fields title?: string; note?: string; size?: 'compact' | 'tall'; messages: ChatBlockMessage[] (skill use-sections).",
+      "how": "A page names the kind «chat» in its language cell with the fields title?: string; note?: string; size?: 'compact' | 'tall'; messages: ChatBlockMessage[].",
       "words": {
         "en": [
           "chat",
@@ -3597,7 +3603,7 @@
         "en": "Page material section «code» (code): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "Материал страницы"
       },
-      "how": "A page names the kind «code» in its language cell with the fields text: string (skill use-sections).",
+      "how": "A page names the kind «code» in its language cell with the fields text: string.",
       "words": {
         "en": [
           "code",
@@ -3619,7 +3625,7 @@
         "en": "Page material section «columns» (two-columns): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "Материал страницы"
       },
-      "how": "A page names the kind «columns» in its language cell with the fields children: PageItem[]; cols?: 2 | 3 (skill use-sections).",
+      "how": "A page names the kind «columns» in its language cell with the fields children: PageItem[]; cols?: 2 | 3.",
       "words": {
         "en": [
           "columns",
@@ -3641,7 +3647,7 @@
         "en": "Page material section «cta» (cta): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "призыв к действию — Кнопка там, где читателю предлагают следующий шаг. Одна на все такие места:"
       },
-      "how": "A page names the kind «cta» in its language cell with the fields text?: string; href: string; label: string; secondary?: { href: string; label: string } (skill use-sections).",
+      "how": "A page names the kind «cta» in its language cell with the fields text?: string; href: string; label: string; secondary?: { href: string; label: string }.",
       "words": {
         "en": [
           "cta",
@@ -3663,7 +3669,7 @@
         "en": "Workspace section «deployBoard» (table): A working screen rather than a page to read: a menu on the left, content on the right. This is what dashboards and project tools are built from.",
         "ru": "the deployment board of the node — **Type:** Page material. The working part of «Core → Deployments»."
       },
-      "how": "A page names the kind «deployBoard» in its language cell with the fields lang: string (skill use-sections).",
+      "how": "A page names the kind «deployBoard» in its language cell with the fields lang: string.",
       "words": {
         "en": [
           "deployBoard",
@@ -3685,7 +3691,7 @@
         "en": "Workspace section «designSection» (panel): A working screen rather than a page to read: a menu on the left, content on the right. This is what dashboards and project tools are built from.",
         "ru": "a design editor of the site element — **Type:** Page material. A working part of the architect layer: one of four editors carried over from"
       },
-      "how": "A page names the kind «designSection» in its language cell with the fields lang: string; section: 'colors' | 'fonts' | 'type' | 'shape' (skill use-sections).",
+      "how": "A page names the kind «designSection» in its language cell with the fields lang: string; section: 'colors' | 'fonts' | 'type' | 'shape'.",
       "words": {
         "en": [
           "designSection",
@@ -3707,7 +3713,7 @@
         "en": "Dialogs section «dialogSample» (panel): A window over the page that interrupts for one question or one piece of reference, and says how it closes.",
         "ru": "a sample of the project's one modal window — **Type:** Dialogs. One setting of `AppDialog` opened by a button — plain, with a footer, long, cannot be dismissed. Carried over from the dialogs catalogue of fractera-next-starter (aifa.dev, `architect/design?section=dialogs`) on the owner's word 2026-09-25: «почему нет модальных окон». The real window, not a picture of it."
       },
-      "how": "A page names the kind «dialogSample» in its language cell with the fields lang: string; sample: 'plain' | 'footer' | 'long' | 'locked' (skill use-sections).",
+      "how": "A page names the kind «dialogSample» in its language cell with the fields lang: string; sample: 'plain' | 'footer' | 'long' | 'locked'.",
       "words": {
         "en": [
           "dialogSample",
@@ -3729,7 +3735,7 @@
         "en": "Page material section «docref» (docref): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "a card that leads somewhere: a document to download or a page to open — **Type:** Navigation. A named destination with one sentence of what is there and one button."
       },
-      "how": "A page names the kind «docref» in its language cell with the fields title: string; summary: string; href: string; label?: string; kicker?: string; navigate?: boolean (skill use-sections).",
+      "how": "A page names the kind «docref» in its language cell with the fields title: string; summary: string; href: string; label?: string; kicker?: string; navigate?: boolean.",
       "words": {
         "en": [
           "docref",
@@ -3751,7 +3757,7 @@
         "en": "Workspace section «domainLadder» (steps): A working screen rather than a page to read: a menu on the left, content on the right. This is what dashboards and project tools are built from.",
         "ru": "Рабочий экран"
       },
-      "how": "A page names the kind «domainLadder» in its language cell with the fields lang: string; words: import('@/components/domain/domain-ladder.i18n').DomainLadderWords (skill use-sections).",
+      "how": "A page names the kind «domainLadder» in its language cell with the fields lang: string; words: import('@/components/domain/domain-ladder.i18n').DomainLadderWords.",
       "words": {
         "en": [
           "domainLadder",
@@ -3773,7 +3779,7 @@
         "en": "Workspace section «elementPreview» (figure): A working screen rather than a page to read: a menu on the left, content on the right. This is what dashboards and project tools are built from.",
         "ru": "a live preview of an element — **Type:** Page material. The first page of each element section of the architect layer (Root, Authorization,"
       },
-      "how": "A page names the kind «elementPreview» in its language cell with the fields lang: string; serviceId: string (skill use-sections).",
+      "how": "A page names the kind «elementPreview» in its language cell with the fields lang: string; serviceId: string.",
       "words": {
         "en": [
           "elementPreview",
@@ -3795,7 +3801,7 @@
         "en": "Page material section «faq» (faq): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "questions and answers, last on the page — **Type:** Page material (11). Not a landing section: it can close any page — a post, a legal page, the"
       },
-      "how": "A page names the kind «faq» in its language cell with the fields title?: string; items: FaqPair[] (skill use-sections).",
+      "how": "A page names the kind «faq» in its language cell with the fields title?: string; items: FaqPair[].",
       "words": {
         "en": [
           "faq",
@@ -3817,7 +3823,7 @@
         "en": "Benefits and value section «featureGrid» (cards): The key benefit for the user, told as claims with icons.",
         "ru": "Преимущества и ценности"
       },
-      "how": "A page names the kind «featureGrid» in its language cell with the fields badge?: string; title?: string; note?: string; items: { icon?: FeatureIcon; title: string; label?: string; tone?: Tone; text: string }[] (skill use-sections).",
+      "how": "A page names the kind «featureGrid» in its language cell with the fields badge?: string; title?: string; note?: string; items: { icon?: FeatureIcon; title: string; label?: string; tone?: Tone; text: string }[].",
       "words": {
         "en": [
           "featureGrid",
@@ -3839,7 +3845,7 @@
         "en": "Page material section «figure» (figure): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "картинка или видео с подписью — Иллюстрация в теле страницы. Показывает и файл проекта, и файл из хранилища — на экране разницы нет."
       },
-      "how": "A page names the kind «figure» in its language cell with the fields media: 'image' | 'video'; src: string; alt: string; caption?: string; href?: string (skill use-sections).",
+      "how": "A page names the kind «figure» in its language cell with the fields media: 'image' | 'video'; src: string; alt: string; caption?: string; href?: string.",
       "words": {
         "en": [
           "figure",
@@ -3861,7 +3867,7 @@
         "en": "How it works section «flow» (steps): A step-by-step explanation of the purchase, the interaction or the service.",
         "ru": "how it works, step by step — **Type:** How it works (3). The only kind in this type today."
       },
-      "how": "A page names the kind «flow» in its language cell with the fields badge?: string; title: string; note?: string; steps: [FlowStep, FlowStep, FlowStep] }; | { kind: 'personaCases'; badge?: string; title: string; note?: string; personas: [Persona, Persona, Persona] }; | { kind: 'statement'; text: string }; | { kind: 'invite'; href: string; label: string }; | {; title?: string; note?: string; cols?: 2 | 3; items: { title: string; text: string; href?: string; linkLabel?: string }[] (skill use-sections).",
+      "how": "A page names the kind «flow» in its language cell with the fields badge?: string; title: string; note?: string; steps: [FlowStep, FlowStep, FlowStep] }; | { kind: 'personaCases'; badge?: string; title: string; note?: string; personas: [Persona, Persona, Persona] }; | { kind: 'statement'; text: string }; | { kind: 'invite'; href: string; label: string }; | {; title?: string; note?: string; cols?: 2 | 3; items: { title: string; text: string; href?: string; linkLabel?: string }[].",
       "words": {
         "en": [
           "flow",
@@ -3883,7 +3889,7 @@
         "en": "Testimonials and social proof section «founder» (quote): Confirming quality through the real experience of other people.",
         "ru": "the owner's quote, signed from settings — **Type:** Testimonials and social proof (8). The only kind in this type today, and it carries ONE voice —"
       },
-      "how": "A page names the kind «founder» in its language cell with the fields text: string (skill use-sections).",
+      "how": "A page names the kind «founder» in its language cell with the fields text: string.",
       "words": {
         "en": [
           "founder",
@@ -3905,7 +3911,7 @@
         "en": "Page material section «group» (text): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "Материал страницы"
       },
-      "how": "A page names the kind «group» in its language cell with the fields children: PageItem[] (skill use-sections).",
+      "how": "A page names the kind «group» in its language cell with the fields children: PageItem[].",
       "words": {
         "en": [
           "group",
@@ -3927,7 +3933,7 @@
         "en": "Page material section «h2» (heading): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "Материал страницы"
       },
-      "how": "A page names the kind «h2» in its language cell with the fields text: string (skill use-sections).",
+      "how": "A page names the kind «h2» in its language cell with the fields text: string.",
       "words": {
         "en": [
           "h2",
@@ -3949,7 +3955,7 @@
         "en": "Page material section «h3» (heading): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "Материал страницы"
       },
-      "how": "A page names the kind «h3» in its language cell with the fields text: string; id?: string (skill use-sections).",
+      "how": "A page names the kind «h3» in its language cell with the fields text: string; id?: string.",
       "words": {
         "en": [
           "h3",
@@ -3971,7 +3977,7 @@
         "en": "Page material section «h4» (heading): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "Материал страницы"
       },
-      "how": "A page names the kind «h4» in its language cell with the fields text: string (skill use-sections).",
+      "how": "A page names the kind «h4» in its language cell with the fields text: string.",
       "words": {
         "en": [
           "h4",
@@ -3993,7 +3999,7 @@
         "en": "Page material section «h5» (heading): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "Материал страницы"
       },
-      "how": "A page names the kind «h5» in its language cell with the fields text: string (skill use-sections).",
+      "how": "A page names the kind «h5» in its language cell with the fields text: string.",
       "words": {
         "en": [
           "h5",
@@ -4015,7 +4021,7 @@
         "en": "Hero section «heroBadge» (hero): First impression, clear positioning and the main offer above the fold.",
         "ru": "the mark and the eyebrow above the title — **Type:** Hero (1). The quietest of the two hero kinds: it carries no words of its own beyond one short"
       },
-      "how": "A page names the kind «heroBadge» in its language cell with the fields pill?: string (skill use-sections).",
+      "how": "A page names the kind «heroBadge» in its language cell with the fields pill?: string.",
       "words": {
         "en": [
           "heroBadge",
@@ -4037,7 +4043,7 @@
         "en": "Hero section «heroSplit» (hero-split): First impression, clear positioning and the main offer above the fold.",
         "ru": "the landing first screen: words left, picture right — **Type:** Hero (1). The only kind meant to open a landing page."
       },
-      "how": "A page names the kind «heroSplit» in its language cell with the fields title: string; description: string; pill?: string; image: 'homePage' | 'web4Node'; imageAlt: string; diagram?: { core: string; ring: [string, string, string, string]; peers: string }; mark?: boolean; cta?: { href: string; label: string; secondary?: { href: string; label: string } } (skill use-sections).",
+      "how": "A page names the kind «heroSplit» in its language cell with the fields title: string; description: string; pill?: string; image: 'homePage' | 'web4Node'; imageAlt: string; diagram?: { core: string; ring: [string, string, string, string]; peers: string }; mark?: boolean; cta?: { href: string; label: string; secondary?: { href: string; label: string } }.",
       "words": {
         "en": [
           "heroSplit",
@@ -4059,7 +4065,7 @@
         "en": "Page material section «invite» (invite): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "приглашение в пунктирной рамке — Место, где чего-то ещё нет, и это можно занять. Вся карточка — ссылка."
       },
-      "how": "A page names the kind «invite» in its language cell with the fields href: string; label: string (skill use-sections).",
+      "how": "A page names the kind «invite» in its language cell with the fields href: string; label: string.",
       "words": {
         "en": [
           "invite",
@@ -4081,7 +4087,7 @@
         "en": "Trust and logos section «languageMarquee» (marquee): Reading the scale and reliability of the brand at a glance.",
         "ru": "the language ribbon, closing the page — **Type:** Trust and logos (10). An outro section: it ends a page, it does not open one."
       },
-      "how": "A page names the kind «languageMarquee» in its language cell with the fields title: string; note?: string (skill use-sections).",
+      "how": "A page names the kind «languageMarquee» in its language cell with the fields title: string; note?: string.",
       "words": {
         "en": [
           "languageMarquee",
@@ -4103,7 +4109,7 @@
         "en": "Page material section «list» (list): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "Материал страницы"
       },
-      "how": "A page names the kind «list» in its language cell with the fields items: string[] (skill use-sections).",
+      "how": "A page names the kind «list» in its language cell with the fields items: string[].",
       "words": {
         "en": [
           "list",
@@ -4125,7 +4131,7 @@
         "en": "Cases and portfolio section «logoCards» (cards): Measurable results of the work, or the look of what was made.",
         "ru": "Кейсы и портфолио"
       },
-      "how": "A page names the kind «logoCards» in its language cell with the fields title?: string; note?: string; items: { title: string; text: string; source?: string }[] (skill use-sections).",
+      "how": "A page names the kind «logoCards» in its language cell with the fields title?: string; note?: string; items: { title: string; text: string; source?: string }[].",
       "words": {
         "en": [
           "logoCards",
@@ -4147,7 +4153,7 @@
         "en": "Page material section «machineBoard» (text): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "this computer: the machine, the memory per element, the Tier-2 comparison — **Type:** Page material. The working part of «Dashboard → This computer» (step 572)."
       },
-      "how": "A page names the kind «machineBoard» in its language cell with the fields lang: string (skill use-sections).",
+      "how": "A page names the kind «machineBoard» in its language cell with the fields lang: string.",
       "words": {
         "en": [
           "machineBoard",
@@ -4169,7 +4175,7 @@
         "en": "Trust and logos section «metrics» (numbers): Reading the scale and reliability of the brand at a glance.",
         "ru": "the numbers that prove it — **Type:** Trust and logos (10). Answers the reader's \"is that actually true?\" with a short number"
       },
-      "how": "A page names the kind «metrics» in its language cell with the fields items: { value: string; label: string }[] (skill use-sections).",
+      "how": "A page names the kind «metrics» in its language cell with the fields items: { value: string; label: string }[].",
       "words": {
         "en": [
           "metrics",
@@ -4191,7 +4197,7 @@
         "en": "Pricing and plans section «noBill» (statement): An honest view of prices, what each package holds and how payment works.",
         "ru": "the invoices that will not come — **Type:** Pricing and plans (7). The only kind in this type today, and it argues about price from the"
       },
-      "how": "A page names the kind «noBill» in its language cell with the fields badge?: string; heading: string; note?: string; items: { vendor: string; text: string; badge: BadgeItem }[]; title: string; text: string; cta?: { page: 'm2m' } (skill use-sections).",
+      "how": "A page names the kind «noBill» in its language cell with the fields badge?: string; heading: string; note?: string; items: { vendor: string; text: string; badge: BadgeItem }[]; title: string; text: string; cta?: { page: 'm2m' }.",
       "words": {
         "en": [
           "noBill",
@@ -4213,7 +4219,7 @@
         "en": "Page material section «nodePassport» (text): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "the node passport: the Lagrix rating of the node and of its elements — **Type:** Page material. The working part of the core page «Passport» (step 478-1)."
       },
-      "how": "A page names the kind «nodePassport» in its language cell with the fields lang: string (skill use-sections).",
+      "how": "A page names the kind «nodePassport» in its language cell with the fields lang: string.",
       "words": {
         "en": [
           "nodePassport",
@@ -4235,7 +4241,7 @@
         "en": "Page material section «note» (callout): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "Материал страницы"
       },
-      "how": "A page names the kind «note» in its language cell with the fields text: string (skill use-sections).",
+      "how": "A page names the kind «note» in its language cell with the fields text: string.",
       "words": {
         "en": [
           "note",
@@ -4257,7 +4263,7 @@
         "en": "Page material section «olist» (list): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "Материал страницы"
       },
-      "how": "A page names the kind «olist» in its language cell with the fields items: string[] (skill use-sections).",
+      "how": "A page names the kind «olist» in its language cell with the fields items: string[].",
       "words": {
         "en": [
           "olist",
@@ -4279,7 +4285,7 @@
         "en": "Product in action section «orbitLayers» (cards): Showing the interface, the physical product or a key feature.",
         "ru": "орбита: четыре опоры как одна конструкция — Ярлык, заголовок с акцентной второй половиной, подзаголовок. Ниже — орбита: три кольца, медленно"
       },
-      "how": "A page names the kind «orbitLayers» in its language cell with the fields badge?: string; title: string; accent?: string; lead?: string; core?: FeatureIcon; cards: [OrbitLayerCard, OrbitLayerCard, OrbitLayerCard, OrbitLayerCard] (skill use-sections).",
+      "how": "A page names the kind «orbitLayers» in its language cell with the fields badge?: string; title: string; accent?: string; lead?: string; core?: FeatureIcon; cards: [OrbitLayerCard, OrbitLayerCard, OrbitLayerCard, OrbitLayerCard].",
       "words": {
         "en": [
           "orbitLayers",
@@ -4301,7 +4307,7 @@
         "en": "Page material section «p» (text): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "Материал страницы"
       },
-      "how": "A page names the kind «p» in its language cell with the fields text: string (skill use-sections).",
+      "how": "A page names the kind «p» in its language cell with the fields text: string.",
       "words": {
         "en": [
           "p",
@@ -4323,7 +4329,7 @@
         "en": "Page material section «panel» (panel): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "Материал страницы"
       },
-      "how": "A page names the kind «panel» in its language cell with the fields tone?: 'plain' | 'warn' | 'accent'; eyebrow?: string; title: string; children: PageItem[] (skill use-sections).",
+      "how": "A page names the kind «panel» in its language cell with the fields tone?: 'plain' | 'warn' | 'accent'; eyebrow?: string; title: string; children: PageItem[].",
       "words": {
         "en": [
           "panel",
@@ -4345,7 +4351,7 @@
         "en": "Workspace section «personaCases» (cards): A working screen rather than a page to read: a menu on the left, content on the right. This is what dashboards and project tools are built from.",
         "ru": "one deal, told three times — **Type:** How it works (3). Its neighbours are `flow` and `problemSolution`."
       },
-      "how": "A page names the kind «personaCases» in its language cell with the fields badge?: string; title: string; note?: string; personas: [Persona, Persona, Persona] }; | { kind: 'statement'; text: string }; | { kind: 'invite'; href: string; label: string }; | {; title?: string; note?: string; cols?: 2 | 3; items: { title: string; text: string; href?: string; linkLabel?: string }[] (skill use-sections).",
+      "how": "A page names the kind «personaCases» in its language cell with the fields badge?: string; title: string; note?: string; personas: [Persona, Persona, Persona] }; | { kind: 'statement'; text: string }; | { kind: 'invite'; href: string; label: string }; | {; title?: string; note?: string; cols?: 2 | 3; items: { title: string; text: string; href?: string; linkLabel?: string }[].",
       "words": {
         "en": [
           "personaCases",
@@ -4367,7 +4373,7 @@
         "en": "Benefits and value section «platformGrid» (cards): The key benefit for the user, told as claims with icons.",
         "ru": "сетка площадок, светящаяся из щелей — Ярлык рубрики, заголовок, описание. Ниже сетка: две колонки на телефоне, три на мониторе. В каждой"
       },
-      "how": "A page names the kind «platformGrid» in its language cell with the fields badge?: string; title: string; note?: string; cards: { title: string; subtitle: string; company?: string }[]; disclaimer?: string (skill use-sections).",
+      "how": "A page names the kind «platformGrid» in its language cell with the fields badge?: string; title: string; note?: string; cards: { title: string; subtitle: string; company?: string }[]; disclaimer?: string.",
       "words": {
         "en": [
           "platformGrid",
@@ -4389,7 +4395,7 @@
         "en": "Pricing and plans section «priceTable» (cards): An honest view of prices, what each package holds and how payment works.",
         "ru": "тарифы с переключателем периода — Заголовок и описание, переключатель «месяц / год», ряд карточек: ярлык с названием, крупная цена,"
       },
-      "how": "A page names the kind «priceTable» in its language cell with the fields title: string; note?: string; periodLabels?: { monthly: string; yearly: string }; plans: {; name: string; monthlyPrice: string; yearlyPrice?: string; monthlyPeriod?: string; yearlyPeriod?: string; features: string[]; cta?: { href: string; label: string }; highlighted?: boolean; }[] (skill use-sections).",
+      "how": "A page names the kind «priceTable» in its language cell with the fields title: string; note?: string; periodLabels?: { monthly: string; yearly: string }; plans: {; name: string; monthlyPrice: string; yearlyPrice?: string; monthlyPeriod?: string; yearlyPeriod?: string; features: string[]; cta?: { href: string; label: string }; highlighted?: boolean; }[].",
       "words": {
         "en": [
           "priceTable",
@@ -4411,7 +4417,7 @@
         "en": "Comparison section «problemSolution» (two-columns): Setting the product apart from competitors or from the old way of solving the problem.",
         "ru": "cases on the left, the chosen one broken down on the right — **Type:** Comparison (6). The only kind in this type today."
       },
-      "how": "A page names the kind «problemSolution» in its language cell with the fields badge?: string; title: string; note?: string; demandLabel: string; answerLabel: string; items: { title: string; demand: string; answer: string }[] }; | { kind: 'flow'; badge?: string; title: string; note?: string; steps: [FlowStep, FlowStep, FlowStep] }; | { kind: 'personaCases'; badge?: string; title: string; note?: string; personas: [Persona, Persona, Persona] }; | { kind: 'statement'; text: string }; | { kind: 'invite'; href: string; label: string }; | {; title?: string; note?: string; cols?: 2 | 3; items: { title: string; text: string; href?: string; linkLabel?: string }[] (skill use-sections).",
+      "how": "A page names the kind «problemSolution» in its language cell with the fields badge?: string; title: string; note?: string; demandLabel: string; answerLabel: string; items: { title: string; demand: string; answer: string }[] }; | { kind: 'flow'; badge?: string; title: string; note?: string; steps: [FlowStep, FlowStep, FlowStep] }; | { kind: 'personaCases'; badge?: string; title: string; note?: string; personas: [Persona, Persona, Persona] }; | { kind: 'statement'; text: string }; | { kind: 'invite'; href: string; label: string }; | {; title?: string; note?: string; cols?: 2 | 3; items: { title: string; text: string; href?: string; linkLabel?: string }[].",
       "words": {
         "en": [
           "problemSolution",
@@ -4433,7 +4439,7 @@
         "en": "Page material section «projectsBoard» (text): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "the projects table of the node — **Type:** Page material. The working part of «Dashboard → Projects» (step 339)."
       },
-      "how": "A page names the kind «projectsBoard» in its language cell with the fields lang: string (skill use-sections).",
+      "how": "A page names the kind «projectsBoard» in its language cell with the fields lang: string.",
       "words": {
         "en": [
           "projectsBoard",
@@ -4455,7 +4461,7 @@
         "en": "Trust and logos section «projectTypeMarquee» (marquee): Reading the scale and reliability of the brand at a glance.",
         "ru": "the ribbon of directions — **Type:** Trust and logos (10). Deliberately the same breed of section as the language ribbon."
       },
-      "how": "A page names the kind «projectTypeMarquee» in its language cell with the fields title?: string; note?: string (skill use-sections).",
+      "how": "A page names the kind «projectTypeMarquee» in its language cell with the fields title?: string; note?: string.",
       "words": {
         "en": [
           "projectTypeMarquee",
@@ -4477,7 +4483,7 @@
         "en": "Trust and logos section «promoBand» (two-columns): Reading the scale and reliability of the brand at a glance.",
         "ru": "полоса с текстом слева и картинкой справа — Заголовок, абзац и кнопка со значком слева, изображение справа, акцентная черта в четыре пикселя"
       },
-      "how": "A page names the kind «promoBand» in its language cell with the fields title: string; text: string; cta?: { href: string; label: string; icon?: 'github' | 'link' }; image?: string; alt?: string (skill use-sections).",
+      "how": "A page names the kind «promoBand» in its language cell with the fields title: string; text: string; cta?: { href: string; label: string; icon?: 'github' | 'link' }; image?: string; alt?: string.",
       "words": {
         "en": [
           "promoBand",
@@ -4499,7 +4505,7 @@
         "en": "Page material section «quote» (quote): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "Материал страницы"
       },
-      "how": "A page names the kind «quote» in its language cell with the fields text: string; cite?: string; lead?: string (skill use-sections).",
+      "how": "A page names the kind «quote» in its language cell with the fields text: string; cite?: string; lead?: string.",
       "words": {
         "en": [
           "quote",
@@ -4521,7 +4527,7 @@
         "en": "Page material section «separator» (text): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "a horizontal line between sections — **Type:** Page material. A visible boundary between two parts of a page (owner, 2026-09-25: «не видно границ блоков»). No fields."
       },
-      "how": "A page names the kind «separator» in its language cell with the fields  (skill use-sections).",
+      "how": "A page names the kind «separator» in its language cell with the fields .",
       "words": {
         "en": [
           "separator",
@@ -4543,7 +4549,7 @@
         "en": "Workspace section «servicePort» (panel): A working screen rather than a page to read: a menu on the left, content on the right. This is what dashboards and project tools are built from.",
         "ru": "Рабочий экран"
       },
-      "how": "A page names the kind «servicePort» in its language cell with the fields serviceId: string; words: import('@/components/services/service-port.i18n').ServicePortWords (skill use-sections).",
+      "how": "A page names the kind «servicePort» in its language cell with the fields serviceId: string; words: import('@/components/services/service-port.i18n').ServicePortWords.",
       "words": {
         "en": [
           "servicePort",
@@ -4565,7 +4571,7 @@
         "en": "Use cases section «showcaseCarousel» (figure): Segmenting the audience: how the product solves the tasks of a role or an industry.",
         "ru": "Сценарии использования"
       },
-      "how": "A page names the kind «showcaseCarousel» in its language cell with the fields badge?: string; title?: string; note?: string; slides: {; image?: string; label: string; sublabel: string; title: string; description: string; }[] (skill use-sections).",
+      "how": "A page names the kind «showcaseCarousel» in its language cell with the fields badge?: string; title?: string; note?: string; slides: {; image?: string; label: string; sublabel: string; title: string; description: string; }[].",
       "words": {
         "en": [
           "showcaseCarousel",
@@ -4587,7 +4593,7 @@
         "en": "Product in action section «splitPair» (two-columns): Showing the interface, the physical product or a key feature.",
         "ru": "Продукт в действии"
       },
-      "how": "A page names the kind «splitPair» in its language cell with the fields title?: string; note?: string; left: { image?: string; alt?: string; title: string; text: string }; right: { image?: string; alt?: string; title: string; text: string } (skill use-sections).",
+      "how": "A page names the kind «splitPair» in its language cell with the fields title?: string; note?: string; left: { image?: string; alt?: string; title: string; text: string }; right: { image?: string; alt?: string; title: string; text: string }.",
       "words": {
         "en": [
           "splitPair",
@@ -4609,7 +4615,7 @@
         "en": "Comparison section «spotlightPair» (two-columns): Setting the product apart from competitors or from the old way of solving the problem.",
         "ru": "пара, между которой ходит подсветка — Две половины рядом: картинка, заголовок, черта с полосой отсчёта, абзац. Активная занимает 7/10"
       },
-      "how": "A page names the kind «spotlightPair» in its language cell with the fields badge?: string; title?: string; note?: string; left: SpotlightHalf; right: SpotlightHalf (skill use-sections).",
+      "how": "A page names the kind «spotlightPair» in its language cell with the fields badge?: string; title?: string; note?: string; left: SpotlightHalf; right: SpotlightHalf.",
       "words": {
         "en": [
           "spotlightPair",
@@ -4631,7 +4637,7 @@
         "en": "Page material section «statement» (statement): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "крупное утверждение в разрядку — То, ради чего написан раздел: одна фраза, набранная так, что её читают до чтения остального."
       },
-      "how": "A page names the kind «statement» in its language cell with the fields text: string (skill use-sections).",
+      "how": "A page names the kind «statement» in its language cell with the fields text: string.",
       "words": {
         "en": [
           "statement",
@@ -4653,7 +4659,7 @@
         "en": "Page material section «subscriptionsBoard» (text): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "all subscriptions of the node: services × the elements that use them × their state — **Type:** Page material. The working part of «Dashboard → All subscriptions» (step 726-3)."
       },
-      "how": "A page names the kind «subscriptionsBoard» in its language cell with the fields lang: string (skill use-sections).",
+      "how": "A page names the kind «subscriptionsBoard» in its language cell with the fields lang: string.",
       "words": {
         "en": [
           "subscriptionsBoard",
@@ -4675,7 +4681,7 @@
         "en": "Pricing and plans section «support» (cards): An honest view of prices, what each package holds and how payment works.",
         "ru": "поддержка проекта: ряд тарифов со звёздочками — Ярлык рубрики, заголовок, один-два абзаца вступления. Ниже ряд из трёх: крупная сумма и период по"
       },
-      "how": "A page names the kind «support» in its language cell with the fields badge?: string; title: string; body?: string[]; tiers: {; amount: string; period?: string; sublabel: string; badge?: string; perks: string[]; cta?: { href: string; label: string }; }[]; note?: string; link?: { label: string; text: string; href: string } (skill use-sections).",
+      "how": "A page names the kind «support» in its language cell with the fields badge?: string; title: string; body?: string[]; tiers: {; amount: string; period?: string; sublabel: string; badge?: string; perks: string[]; cta?: { href: string; label: string }; }[]; note?: string; link?: { label: string; text: string; href: string }.",
       "words": {
         "en": [
           "support",
@@ -4697,7 +4703,7 @@
         "en": "Page material section «table» (table): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "Материал страницы"
       },
-      "how": "A page names the kind «table» in its language cell with the fields headers: string[]; rows: string[][]; caption?: string (skill use-sections).",
+      "how": "A page names the kind «table» in its language cell with the fields headers: string[]; rows: string[][]; caption?: string.",
       "words": {
         "en": [
           "table",
@@ -4719,7 +4725,7 @@
         "en": "Page material section «toc» (toc): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "the table of contents of a page — **Type:** Page material (11). Built by the page factory, never by the author — the one kind of the"
       },
-      "how": "A page names the kind «toc» in its language cell with the fields items: TocItem[] (skill use-sections).",
+      "how": "A page names the kind «toc» in its language cell with the fields items: TocItem[].",
       "words": {
         "en": [
           "toc",
@@ -4741,7 +4747,7 @@
         "en": "Page material section «voiceField» (text): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "a text field that can be dictated — **Type:** Page material (11). The first kind of the catalogue that TAKES something from a visitor"
       },
-      "how": "A page names the kind «voiceField» in its language cell with the fields variant?: 'line' | 'area'; title: string; hint?: string; comment?: string; placeholder?: string (skill use-sections).",
+      "how": "A page names the kind «voiceField» in its language cell with the fields variant?: 'line' | 'area'; title: string; hint?: string; comment?: string; placeholder?: string.",
       "words": {
         "en": [
           "voiceField",
@@ -4763,7 +4769,7 @@
         "en": "Workspace section «workspace» (two-columns): A working screen rather than a page to read: a menu on the left, content on the right. This is what dashboards and project tools are built from.",
         "ru": "рабочий экран — Меню слева, содержимое справа. Из него строятся дашборды, инструменты проекта и"
       },
-      "how": "A page names the kind «workspace» in its language cell with the fields menuTitle?: string; menu: WorkspaceItem[]; title: string; lead?: string; notes?: WorkspaceNote[]; tabs?: WorkspaceItem[]; children: PageItem[]; widget?: import('react').ReactNode (skill use-sections).",
+      "how": "A page names the kind «workspace» in its language cell with the fields menuTitle?: string; menu: WorkspaceItem[]; title: string; lead?: string; notes?: WorkspaceNote[]; tabs?: WorkspaceItem[]; children: PageItem[]; widget?: import('react').ReactNode.",
       "words": {
         "en": [
           "workspace",
