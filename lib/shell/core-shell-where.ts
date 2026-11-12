@@ -1,14 +1,12 @@
 import "server-only"
-import { serviceUrl } from "@/lib/microservices/registry"
 import { publicAuth } from "@/lib/domain/public-auth.cjs"
 
-// ГДЕ ЯДРО БЕРЁТ ОБОЛОЧКУ ПРОЕКТА (285-3). Службам адреса выдаёт установщик (`PROJECT_SHELL_URL`,
-// `PROJECT_SITE_URL`); ядро знает их само: сервер ядра спрашивает сайт по петле машины, а ссылки ведут туда,
-// до чего дотянется браузер человека — на своём домене корень зоны, иначе петля с портом сайта.
-// Заменяет `lib/menu/site-menu-remote.ts` (283-1): меню теперь часть оболочки, а не отдельная дверь.
-export function coreShellWhere(): { shellUrl: string | null; siteUrl: string | null } {
-  const local = serviceUrl("root")
+// КУДА ВЕДЁТ «НА ГЛАВНУЮ» ЗАМКА ЯДРА (294, шаг 734-3a). Главная ядра сама под этим замком (✗ владелец 2026-09-24: «перебрасывает
+// снова на этот же сайт … бесконечный цикл»), поэтому кнопка ведёт ВОН из ядра — на голый домен узла, что бы на нём ни отвечало.
+// ✗ До 734 сюда подставлялся адрес элемента `root` по его id, и ядро зависело от одного кастомного элемента (владелец 2026-11-12:
+// «из всех элементов выделять ядро как особую сущность»). Замок отказывает только на своём домене (этот компьютер и временный
+// адрес открыты, `access-gate.client.tsx`), а там голый домен известен; без своего домена — `null`, и замок берёт `/<язык>`.
+export function coreHomeOutside(): string | null {
   const pub = publicAuth(process.cwd())
-  const siteUrl = pub?.architectHost ? `https://${pub.siteHost}` : local?.replace("127.0.0.1", "localhost") ?? null
-  return { shellUrl: local ? `${local.replace(/\/+$/, "")}/api/shell` : null, siteUrl }
+  return pub?.architectHost && pub.siteHost ? `https://${pub.siteHost}` : null
 }

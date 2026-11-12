@@ -1,8 +1,7 @@
 // @api render the project header and footer for an element
 import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
-import { loadProjectShell } from "@/components/shell/remote-shell"
-import { coreShellWhere } from "@/lib/shell/core-shell-where"
+import { coreShellData } from "@/lib/shell/core-shell-data"
 import { kitManifest, kitRender } from "@/lib/shell-kit/kit"
 import type { ShellData } from "@/components/shell/shell-types"
 import type { ShellKitDrawerLabels, ShellKitProps, ShellKitSurface } from "@/_tools/shell-kit/types/shell-kit"
@@ -11,9 +10,11 @@ import type { ShellKitDrawerLabels, ShellKitProps, ShellKitSurface } from "@/_to
 // остальные элементы должны получить его нативно». Сервер элемента спрашивает эту дверь по петле при отрисовке своей статической
 // страницы (заглушка `components/shell-kit/` шаблона): ответ — готовый HTML шапки и подвала проекта, пропсы для оживления и имена
 // файлов пакета (их элемент отдаёт браузеру через свою же дверь `/shell-kit/*`, браузер к ядру не ходит).
-// Данные — оболочка проекта, которую сайт уже отдаёт всем (`/api/shell/<язык>`); адреса входа — свои у поверхности, в запросе.
+// Адреса входа — свои у поверхности, в запросе.
 // 727-2 (план 727: «код общий, данные у каждого элемента свои»): POST несёт ДАННЫЕ САМОГО ЭЛЕМЕНТА — его `siteShellData(язык)`, его
-// поверхность и подписи его боковых ящиков; ядро рисует их своим кодом. GET — оболочка проекта с сайта (так её видит ядро).
+// поверхность и подписи его боковых ящиков; ядро рисует их своим кодом. GET — собственные данные ядра (`coreShellData`, 553):
+// ✗ до 734-3a GET брал оболочку у элемента `root` — ядро зависело от одного кастомного элемента (владелец 2026-11-12: «из всех
+// элементов выделять ядро как особую сущность»).
 // 🔒 КЛЮЧ УЗЛА (`X-Node-Key`): дверь между элементами по петле; наружу двери ядра закрыты (`proxy.ts`).
 export const dynamic = "force-dynamic"
 
@@ -100,8 +101,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ lang
   const { lang } = await params
   if (!LANG.test(lang)) return NextResponse.json({ ok: false, error: "bad language" }, { status: 400, headers: HEADERS })
 
-  const data = await loadProjectShell(lang, coreShellWhere())
-  if (!data) return NextResponse.json({ ok: false, error: "the site gave no project shell" }, { status: 502, headers: HEADERS })
+  const data = coreShellData(lang)
 
   const q = req.nextUrl.searchParams
   const path = q.get("path")

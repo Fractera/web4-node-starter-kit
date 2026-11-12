@@ -1,12 +1,13 @@
 // УСТАНОВКА ОБОЛОЧКИ ПРОЕКТА (ШАПКА И ПОДВАЛ) В СЛУЖБУ НА NEXT (шаг 285-3).
 //
 //   npm run shell-kit:add -- <папка исходника службы>
-//   npm run shell-kit:add -- <папка исходника службы> --from <папка сайта>
+//   npm run shell-kit:add -- <папка исходника службы> --from <папка образца>
 //
-// 🔒 ИСТОЧНИК — САЙТ, А НЕ ЭТА ПАПКА. Вид шапки и подвала живёт в `components/shell/` сайта (элемент root) и
-// копируется в службу байт в байт; по умолчанию сайт — папка элемента `root` узла (`WEB4-ITEMS/<kind>/root`).
-// Своей мастер-копии у ядра нет намеренно: две копии вида и дали «калейдоскоп» (слово владельца 2026-09-24).
-// Сторож `npm run check:shell-kits` сверяет копии с сайтом.
+// 🔒 ИСТОЧНИК — ЯДРО (шаг 734-3a). Вид шапки и подвала живёт в `components/shell/` ядра — образец, из которого собирается и
+// инструмент «Оболочка проекта» (727), — и копируется в элемент байт в байт. Один образец на узел («калейдоскоп» — слово
+// владельца 2026-09-24 о двух копиях вида); ✗ до 734 образцом была папка элемента `root`, и ядро зависело от одного кастомного
+// элемента — владелец 2026-11-12: «из всех элементов выделять ядро как особую сущность». Сторож `npm run check:shell-kits`
+// сверяет копии элементов с ядром.
 //
 // 🔒 СТАВИТСЯ В ИСХОДНИК СЛУЖБЫ (её репозиторий или форк), а не в WEB4-ITEMS/: папка элемента — клон по тегу.
 // Примитивы shadcn и `lib/utils` копируются, только если их у службы НЕТ — свои службы не перезаписываются.
@@ -24,12 +25,9 @@ const fromArg = fromIdx >= 0 ? args[fromIdx + 1] : null
 // первый же аргумент, и `npm run shell-kit:add -- .` отвечал «укажите папку».
 const target = args.find((a, i) => !a.startsWith('--') && !(fromIdx >= 0 && i === fromIdx + 1))
 
+// Образец — ядро узла (эта папка лежит в нём); `--from` — другая папка с тем же устройством (рабочая копия ядра).
 function siteDir() {
-  if (fromArg) return resolve(fromArg)
-  const reg = JSON.parse(readFileSync(join(NODE, 'WEB4-ITEMS-REGISTRY', 'web4-items.json'), 'utf8'))
-  const root = (reg.services ?? []).find((s) => s.id === 'root')
-  if (!root) return null
-  return join(NODE, 'WEB4-ITEMS', root.kind === 'user' ? 'user' : 'core', 'root')
+  return fromArg ? resolve(fromArg) : NODE
 }
 
 if (!target || !existsSync(target)) {
@@ -38,14 +36,14 @@ if (!target || !existsSync(target)) {
 }
 const site = siteDir()
 if (!site || !existsSync(join(site, 'components', 'shell', 'shell-types.ts'))) {
-  console.error(`shell-kit: у сайта нет components/shell (${site ?? 'сайта нет в реестре'}) — нужен сайт v1.7.1+`)
+  console.error(`shell-kit: у образца нет components/shell (${site})`)
   process.exit(1)
 }
 
 const dst = resolve(target)
 rmSync(join(dst, 'components', 'shell'), { recursive: true, force: true })
 cpSync(join(site, 'components', 'shell'), join(dst, 'components', 'shell'), { recursive: true })
-console.log(`shell-kit: components/shell скопирована с сайта (${site}) в ${dst}`)
+console.log(`shell-kit: components/shell скопирована с ядра (${site}) в ${dst}`)
 
 // 553: мега-меню оболочки — navigation-menu; поиск языка — input.
 const PRIMITIVES = ['components/ui/button.tsx', 'components/ui/sheet.tsx', 'components/ui/separator.tsx', 'components/ui/badge.tsx', 'components/ui/dropdown-menu.tsx', 'components/ui/navigation-menu.tsx', 'components/ui/input.tsx', 'lib/utils.ts']
@@ -53,7 +51,7 @@ for (const p of PRIMITIVES) {
   if (existsSync(join(dst, p))) continue
   mkdirSync(dirname(join(dst, p)), { recursive: true })
   cpSync(join(site, p), join(dst, p))
-  console.log(`  + ${p} (не было у службы — взят у сайта)`)
+  console.log(`  + ${p} (не было у элемента — взят у ядра)`)
 }
 
 // 285-4: кнопка сайта стоит на @base-ui/react — без него сборка службы падает «Can't resolve '@base-ui/react/button'».

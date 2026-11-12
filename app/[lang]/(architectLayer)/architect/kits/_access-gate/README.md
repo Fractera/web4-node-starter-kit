@@ -31,7 +31,7 @@ scripts/check-shell-kits.mjs             guard: the core's copy must equal the s
 
 ```tsx
 <AccessGate roles={ARCHITECT_LAYER_ROLES} lang={lang} ui={accessGateUi(lang)} dialogUi={appDialogUi(lang)}
-  homeHref={projectRoot /* e.g. `${coreShellWhere().siteUrl}/${lang}` in the core */}>
+  homeHref={projectRoot /* e.g. `${coreHomeOutside()}/${lang}` in the core */}>
   {children}
 </AccessGate>
 ```
