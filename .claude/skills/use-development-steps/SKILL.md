@@ -75,10 +75,10 @@ A step with substeps lives in `new-steps/<N>/`. Eight stages, in order, each lea
 6. order, dependencies and the address of the work (repository and branch, named before the code);
 7. every substep unfolded into `<N>-k.md`: what is built (files and doors by name) · what counts as done (one sentence) · how it is
    proven — two planes named IN ADVANCE, one with a negative control (skill `use-testing`) · what it rests on · what is NOT in it ·
-   **Works this needs** (733-1, BEFORE the code): every job the substep needs, said as «verb + object» («crop a picture», «turn
-   speech into text»), each asked of `parts_find` — found: taken as it is; not found: it is born here as a TOOL (`_tools/<id>/`, its
-   card first; skill `use-tools`, the three questions); **Parts born here** (725-7): every new interface piece named as a tool, a
-   `@part <id>` control (reusable, carded) or `@local` (why), or «none»;
+   **Tasks this needs** (733-1, BEFORE the code): every task the substep's interface solves, each asked of `parts_find` — found:
+   taken as it is; not found: born here as a TOOL (`_tools/<id>/`, its card first; skill `use-tools`), its parts before it, from the
+   inside out; **Parts born here** (725-7): every new interface piece named as a tool (with its parts), a `@part <id>` part
+   (reusable, carded) or `@local` (why), or «none»;
 8. acceptance of the plan by this checklist;
 9. **the owner's approval before the first line of code** — the substeps in 15–20 words each, your own decisions in one line each, what
    is not included; in the same choice window as any question; his answer verbatim into `<N>-main.md`. A one-file fix needs no window.

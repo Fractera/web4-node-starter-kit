@@ -20,33 +20,41 @@ hidden in a feature folder — those are invisible, and invisible is the same as
 
 ## 🔒 What a tool is — decided at its birth, not after (step 733)
 
-The owner, 2026-11-12: «модели не понимают когда их создавать и куда их складывать и вторая задача более первичная чем первая». A
-search finds only what was born as a tool; a tool written inside a feature is invisible forever. So the question comes FIRST, at the
-moment you are about to write code, and it has a fixed answer — the definition in the panel glossary (`architect-home.i18n.ts`, «Tool»):
+The owner, 2026-11-12: «модели не понимают когда их создавать и куда их складывать и вторая задача более первичная чем первая» — a
+search finds only what was born as a tool. The definition is his and lives in the panel glossary (`architect-home.i18n.ts`, «Tool»):
 
-> **A tool is a job, not a place**: one job you can name with a verb and an object without naming a page («crop a picture», «turn speech
-> into text», «translate fields»). Its material comes from outside, its result goes back out, and it does not know who holds it.
+> «Инструмент это то что решает задачу и используют для этого визуальный интерфейс. Один инструмент может быть частью другого»
 
-Every tool already here proves it in its own card: the translations dialog «connects to any entity with translatable fields», the fact
-draft gets «the schema of fields as a parameter», the terminal paste window «does not know the socket», the image crop «the server
-learns only the result».
+**A tool solves a task and shows its own interface for it.** It does not know which page it stands on: its material comes from outside
+and its result goes back out — the translations dialog «connects to any entity with translatable fields», the terminal paste window
+«does not know the socket». That is why any element can use it.
+
+**Tools nest.** The owner's example: an image-editing form is a modal window; inside it the crop; beside it the voice input that turns
+speech into text («перерисуй это изображение в таком стиле»); and the call to the image technology that carries the words out. Four
+tools, one inside another — and the form is a tool too.
+
+**A combination is kept as a recipe**: its own code (the glue) and its parts by id and version, never copies of the parts inside it.
+Every part is kept once and found on its own: who needs only the crop takes the crop; who needs the form takes the form, and the form
+brings its parts.
+
+**Not a tool:** a shadcn primitive (a button or a field solves no task by itself); a section (how a page's content looks); a widget (code
+of one page address — it reads that page's data; the tools it holds are taken, not written inside it). A server job without a screen of
+its own (transcription, a model call) is not a separate tool — it is a part of the tool whose interface calls it.
 
 **Three questions, in this order, about the piece you are about to write — each a yes or a no, no guessing about the future:**
 
 1. Is it how the content of a page looks (a hero, prices, questions)? → a **section** (`use-sections`).
-2. Does it read this route's data or know where it stands? → a **widget** of that route (`use-widgets`).
-3. Does it do one job «verb + object», take its material from outside and give its result back out? → a **tool**, even when only one
-   place needs it today. «Needed in the future» is not a forecast: the shape of the contract already says it.
+2. Is it bound to this page — reads its data, knows where it stands? → a **widget** of that route (`use-widgets`); the tools inside it
+   are taken or born as tools, never written into the widget.
+3. Does it solve a task with its own interface, its material coming from outside? → a **tool**, even when one place needs it today.
+   Made of other tools — they are its parts: each found by `parts_find` or born first as a tool of its own, from the inside out.
 
-A job born INSIDE a widget or a section is taken out into a tool, and the widget calls it — the row «state dot + element name» was
-written three times in one step (722) because nobody asked the third question at the first copy.
+A task solved INSIDE a widget is taken out into a tool, and the widget holds it — the row «state dot + element name» was written three
+times in one step (722) because nobody asked the third question at the first copy. The same set of tools combined in a second place
+becomes a combination tool of its own.
 
-**A composite is not a tool** (`components/<folder>/`): it is a ready CONTROL that holds a value of a form and produces no result of its
-own — the voice textarea holds text; the job, transcription, belongs to the voice tool under it. A composite that produces a result is a
-tool. (The owner confirms this boundary at 733-1's review.)
-
-**Where it goes:** `_tools/<id>/` with its card `tool.json` in the same commit — in the element where it is born. On a person's node the
-core is Fractera's and takes no new tools (CLAUDE.md §6); the core's own tools come with Fractera's releases.
+**Where it goes:** `_tools/<id>/` with its card `tool.json` first (the task, the interface, its parts) — in the element where it is born.
+On a person's node the core is Fractera's and takes no new tools (CLAUDE.md §6); the core's own tools come with Fractera's releases.
 
 ## Where to look, in this repository
 

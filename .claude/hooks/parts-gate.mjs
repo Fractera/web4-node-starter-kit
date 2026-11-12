@@ -46,12 +46,14 @@ if (asked && declared) process.exit(0)
 
 const why = []
 if (!asked) why.push("ask the parts map first — the tool parts_find (or npm run parts -- <words>) with what you are about to build: a ready part is taken as it is, never built a second time")
-if (tool && !carded) why.push(`write the tool's card _tools/${tool[1]}/tool.json first — its job «verb + object», what comes in, what goes out — then its code`)
+if (tool && !carded) why.push(`write the tool's card _tools/${tool[1]}/tool.json first — the task it solves, its interface, the tools it is made of — then its code`)
 else if (!declared) why.push("say on the file's first lines what is being born: `// @part <id> — <what it does>` (a reusable control, its card in the folder's parts.json in the same commit) or `// @local — <why no one else needs it>`")
 process.stderr.write(
   `New interface file ${rel}: ${why.join("; then ")}. Before it is born, answer three questions (skill use-tools): 1) is it how a page's ` +
-  `content looks? → a section; 2) does it read this route's data or know where it stands? → a widget of that route; 3) does it do one ` +
-  `job «verb + object», take its material from outside and give its result back out? → a TOOL: _tools/<id>/ with its card, even when one ` +
-  `place needs it today. The owner, 2026-11-12: «модели не понимают когда их создавать и куда их складывать». Node step 733.\n`,
+  `content looks? → a section; 2) is it bound to this page — reads its data, knows where it stands? → a widget, and the tools inside ` +
+  `it are taken or born as tools, never written into it; 3) does it solve a task with its own interface, its material from outside? → ` +
+  `a TOOL: _tools/<id>/ with its card first, even when one place needs it today; made of other tools — they are its parts, each found ` +
+  `or born first. The owner, 2026-11-12: «Инструмент это то что решает задачу и используют для этого визуальный интерфейс. Один ` +
+  `инструмент может быть частью другого». Node step 733.\n`,
 )
 process.exit(2)
