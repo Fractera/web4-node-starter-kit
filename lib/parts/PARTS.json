@@ -1005,7 +1005,7 @@
         "en": "Tool look",
         "ru": "Показ инструмента"
       },
-      "version": "1.0.0",
+      "version": "1.0.1",
       "parts": [
         {
           "id": "app-dialog",
@@ -1050,7 +1050,7 @@
         "components/ui/typography",
         "lib/parts/tools-catalog"
       ],
-      "bodyHash": "0830f3ae0f144701"
+      "bodyHash": "b47527891874cb6b"
     },
     {
       "id": "tool-fact-draft",
@@ -1574,11 +1574,11 @@
         "en": "Tools tab",
         "ru": "Вкладка «Инструменты»"
       },
-      "version": "1.0.0",
+      "version": "1.0.1",
       "parts": [
         {
           "id": "tool-demo",
-          "version": "1.0.0"
+          "version": "1.0.1"
         },
         {
           "id": "tool-terminal-drawer",
@@ -1625,7 +1625,7 @@
         "components/ui/typography",
         "lib/parts/tools-catalog"
       ],
-      "bodyHash": "7a311847643e5531"
+      "bodyHash": "a45a205f676cd42f"
     },
     {
       "id": "voice-control",

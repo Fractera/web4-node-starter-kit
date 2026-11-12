@@ -8,11 +8,11 @@
         "en": "Tools tab",
         "ru": "Вкладка «Инструменты»"
       },
-      "version": "1.0.0",
+      "version": "1.0.1",
       "parts": [
         {
           "id": "tool-demo",
-          "version": "1.0.0"
+          "version": "1.0.1"
         },
         {
           "id": "tool-terminal-drawer",
@@ -73,7 +73,7 @@
         "en": "Tool look",
         "ru": "Показ инструмента"
       },
-      "version": "1.0.0",
+      "version": "1.0.1",
       "parts": [
         {
           "id": "app-dialog",

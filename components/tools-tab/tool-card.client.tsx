@@ -40,6 +40,11 @@ export function ToolCard({ tool, lang, words, onShow, onEdit, onTake, editBlocke
           {tool.scope === "panel" && <Badge variant="outline">{words.scopePanel}</Badge>}
         </div>
         <CardDescription className="font-mono text-xs">{tool.dir}</CardDescription>
+        {tool.newer && (
+          <Small data-tool-newer className="text-foreground">
+            {words.newer.replace("{version}", tool.newer.version)} <code className="font-mono text-xs">{tool.newer.command}</code>
+          </Small>
+        )}
       </CardHeader>
       <CardContent data-block="tool-card-body" className="flex flex-col gap-3">
         <P>{t.what}</P>

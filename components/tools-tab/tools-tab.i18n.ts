@@ -44,6 +44,7 @@ export type ToolsTabWords = {
   readOnly: string
   usedMore: string
   usedAll: string
+  newer: string
 }
 
 const EN: ToolsTabWords = {
@@ -91,6 +92,7 @@ const EN: ToolsTabWords = {
   take: "Take into an element",
   usedMore: "and {n} more in the full description",
   usedAll: "Every file that uses it ({n})",
+  newer: "The core has a newer version v{version} — your copy is updated by its agent, only while it is unedited:",
   readOnly: "These are the core's tools: the core is Fractera's, so on your node they are shown and taken into your elements as copies, never changed here. Your own tools live in each element's «Tools» tab.",
 }
 
@@ -139,6 +141,7 @@ const RU: ToolsTabWords = {
   take: "Взять в элемент",
   usedMore: "и ещё {n} — в полном описании",
   usedAll: "Все файлы, где он используется ({n})",
+  newer: "В ядре есть версия новее — v{version}. Копию обновляет агент элемента, и только пока её не правили:",
   readOnly: "Это инструменты ядра: ядро принадлежит Fractera, поэтому на вашем узле их можно посмотреть и взять копией в свои элементы, но не менять здесь. Ваши собственные инструменты — на вкладке «Инструменты» каждого элемента.",
 }
 

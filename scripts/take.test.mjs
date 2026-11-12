@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // npm run test:take — taking a tool (733-5): the tool and the parts of its recipe, each a copy with its provenance; a part already here
-// at the same version is skipped; a panel tool, a missing requirement or a taken path refuse the whole take and write nothing.
+// at the same version is skipped; an update replaces an unedited older copy, never a fork (733-9-2); a panel tool, a missing requirement or a taken path refuse the whole take and write nothing.
 import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
@@ -54,6 +54,36 @@ expect("the taken tool's own path held by something else refuses", !plan.ok && /
 expect("a refused take writes nothing", fs.readFileSync(path.join(el, "_tools/crop/x.tsx"), "utf8") === "my own crop\n" && !fs.existsSync(path.join(el, "_tools/crop/tool.json")))
 plan = planTake({ source: core, from: "core", receiver: el, tool: "nothing" })
 expect("an unknown tool is refused (negative control)", !plan.ok && plan.copies.length === 0, JSON.stringify(plan))
+
+// 733-9-2: an update. The element holds a copy of tool-crop at 1.0.0; the core moves to 1.1.0 with a new body.
+el = fresh()
+doTake({ source: core, from: "core", receiver: el, plan: planTake({ source: core, from: "core", receiver: el, tool: "tool-crop" }) })
+const taken = JSON.parse(fs.readFileSync(path.join(el, "_tools/crop/tool.json"), "utf8")).source
+const dialogSrc = JSON.parse(fs.readFileSync(path.join(el, "components/dialog/parts.json"), "utf8")).parts[0].source
+const elMap = () => put(el, "lib/parts/PARTS.json", { parts: [
+  { ...T("tool-crop", "any", ["_tools/crop/x.tsx"], { parts: [{ id: "app-dialog", version: "1.0.0" }] }), source: taken },
+  { ...T("app-dialog", "any", ["components/dialog/app-dialog.client.tsx"]), source: dialogSrc },
+] })
+elMap()
+const core2 = tmp("core2")
+fs.cpSync(core, core2, { recursive: true })
+const map2 = JSON.parse(fs.readFileSync(path.join(core2, "lib/parts/PARTS.json"), "utf8"))
+map2.parts = map2.parts.map((p) => (p.id === "tool-crop" ? { ...p, version: "1.1.0", body: ["_tools/crop/x.tsx", "_tools/crop/y.ts"] } : p))
+put(core2, "lib/parts/PARTS.json", map2)
+put(core2, "_tools/crop/x.tsx", "export default function Crop() { return 'v1.1' }\n"); put(core2, "_tools/crop/y.ts", "export const y = 1\n")
+plan = planTake({ source: core2, from: "core", receiver: el, tool: "tool-crop" })
+expect("an older copy without --update is refused, naming --update", !plan.ok && /--update/.test(plan.refused.join(" ")), JSON.stringify(plan.refused))
+plan = planTake({ source: core2, from: "core", receiver: el, tool: "tool-crop", update: true })
+expect("--update replaces an unedited older copy; its unchanged part is skipped", plan.ok && plan.copies.map((c) => `${c.id}@${c.version}<${c.replaces}`).join(",") === "tool-crop@1.1.0<1.0.0" && /app-dialog v1\.0\.0 — already here/.test(plan.skipped.join(" ")), JSON.stringify(plan))
+doTake({ source: core2, from: "core", receiver: el, plan })
+const after = JSON.parse(fs.readFileSync(path.join(el, "_tools/crop/tool.json"), "utf8")).source
+expect("the update writes the new body and the new source", fs.readFileSync(path.join(el, "_tools/crop/x.tsx"), "utf8").includes("v1.1") && fs.existsSync(path.join(el, "_tools/crop/y.ts")) && after.version === "1.1.0" && after.bodyHash !== taken.bodyHash, JSON.stringify(after))
+el = fresh()
+doTake({ source: core, from: "core", receiver: el, plan: planTake({ source: core, from: "core", receiver: el, tool: "tool-crop" }) })
+elMap()
+put(el, "_tools/crop/x.tsx", "export default function Crop() { return 'mine' }\n")
+plan = planTake({ source: core2, from: "core", receiver: el, tool: "tool-crop", update: true })
+expect("an edited copy is a fork: --update refuses it and writes nothing", !plan.ok && /fork/.test(plan.refused.join(" ")) && plan.copies.length === 0, JSON.stringify(plan))
 
 if (failed) { console.error(`===TAKE_FAILED=== ${failed}`); process.exit(1) }
 console.log("===TAKE_OK===")

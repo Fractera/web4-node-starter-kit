@@ -26,6 +26,8 @@ export type ToolRow = {
   words: { en: string[]; ru: string[] }
   en: ToolText
   ru: ToolText
+  /** 733-9-2: a copy taken from the core whose source now holds a newer version — what the element's agent may update to. */
+  newer?: { version: string; command: string }
 }
 
 type Lang2 = { en?: string; ru?: string }
@@ -33,6 +35,7 @@ type RawTool = { id: string; dir?: string; version?: string; needs?: string[]; u
 type RawPart = {
   id: string; kind: string; path?: string; version?: string; scope?: "panel" | "any"; parts?: { id: string; version: string }[]
   title?: Lang2 | string; what?: Lang2; how?: string; needs?: string[]; usedBy?: string[]; words?: { en?: string[]; ru?: string[] }
+  source?: { from?: string; tool?: string; version?: string }
 }
 
 const readJson = <T,>(file: string): T | null => {
@@ -51,16 +54,28 @@ function fromPart(p: RawPart, lang: "en" | "ru"): ToolText {
   return { title, what: p.what?.[lang] ?? p.what?.en ?? "", how: p.how ?? "", value: "" }
 }
 
-/** The tools of the folder `dir` (the core's root or an element's folder), or null when it has no map. */
-export function readTools(dir: string | null): ToolRow[] | null {
+const newerThan = (a: string, b: string) => {
+  const x = a.split(".").map(Number), y = b.split(".").map(Number)
+  for (let i = 0; i < 3; i++) if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0)
+  return false
+}
+
+/** The tools of the folder `dir` (the core's root or an element's folder), or null when it has no map. `core` — the core's folder, for an
+ *  element: its copies are compared with their source (733-9-2). */
+export function readTools(dir: string | null, core?: string): ToolRow[] | null {
   if (!dir) return null
   const hasTools = existsSync(join(dir, "_tools", "TOOLS.json"))
   const hasParts = existsSync(join(dir, "lib", "parts", "PARTS.json"))
   if (!hasTools && !hasParts) return null
   const folder = new Map((readJson<{ tools?: RawTool[] }>(join(dir, "_tools", "TOOLS.json"))?.tools ?? []).map((t) => [bare(t.id), t]))
   const parts = (readJson<{ parts?: RawPart[] }>(join(dir, "lib", "parts", "PARTS.json"))?.parts ?? []).filter((p) => p.kind === "tool")
+  const source = new Map(core && core !== dir
+    ? (readJson<{ parts?: RawPart[] }>(join(core, "lib", "parts", "PARTS.json"))?.parts ?? []).filter((p) => p.kind === "tool").map((p) => [p.id, p.version ?? ""])
+    : [])
   const rows: ToolRow[] = parts.map((p) => {
     const key = bare(p.id)
+    const now = p.source?.from === "core" && p.source.tool ? source.get(p.source.tool) : undefined
+    const newer = now && p.source?.version && newerThan(now, p.source.version) ? { version: now, command: `npm run tool:take -- ${p.source.tool} --update` } : undefined
     const t = folder.get(key)
     folder.delete(key)
     return {
@@ -75,6 +90,7 @@ export function readTools(dir: string | null): ToolRow[] | null {
       words: { en: p.words?.en ?? t?.words?.en ?? [], ru: p.words?.ru ?? t?.words?.ru ?? [] },
       en: t?.en ?? fromPart(p, "en"),
       ru: t?.ru ?? fromPart(p, "ru"),
+      ...(newer ? { newer } : {}),
     }
   })
   // A place whose parts map is older than its tools map (an element born before 725) still shows its folder tools.

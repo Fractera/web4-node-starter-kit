@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
   const item = req.nextUrl.searchParams.get("item") ?? ""
   const dir = item === "build" ? process.cwd() : (() => { const id = idOfAddress(item); return id ? elementDir(id) : null })()
   if (!dir) return NextResponse.json({ ok: false, error: "unknown element" }, { status: 404, headers: HEADERS })
-  const tools = readTools(dir)
+  const tools = readTools(dir, process.cwd())
   if (!tools) return NextResponse.json({ ok: false, error: "no tools map" }, { status: 404, headers: HEADERS })
   const root = process.cwd()
   const editable = item !== "build" || !onNode(root) || (await ownerState(root)).owner === true
