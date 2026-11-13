@@ -17,7 +17,7 @@ mkdir -p "$BACKUP/nginx"
 STOPPED=0
 if command -v pm2 >/dev/null; then
   pm2 jlist > "$BACKUP/pm2.json" 2>/dev/null || echo '[]' > "$BACKUP/pm2.json"
-  STOPPED="$(python3 -c 'import json,sys; t=open(sys.argv[1]).read(); print(len(json.loads(t[t.index("["):])) if "[" in t else 0)' "$BACKUP/pm2.json" 2>/dev/null || echo 0)"
+  STOPPED="$(python3 -c 'import json,sys; t=open(sys.argv[1]).read(); print(len([p for p in json.loads(t[t.index("["):]) if not p.get("pm2_env", {}).get("pmx_module")]) if "[" in t else 0)' "$BACKUP/pm2.json" 2>/dev/null || echo 0)"
   run pm2 delete all >/dev/null 2>&1 || true
   run pm2 save --force >/dev/null 2>&1 || true
   run pm2 unstartup systemd >/dev/null 2>&1 || true

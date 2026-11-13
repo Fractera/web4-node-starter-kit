@@ -8,6 +8,7 @@ import type { ServerMoveWords } from "@/components/hosting/server-move.i18n"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
+import { Spinner } from "@/components/ui/spinner"
 import { Small } from "@/components/ui/typography"
 
 // A SERVER THAT IS NOT EMPTY (node step 737-7). The owner, 2026-11-13: «если мы обнаружили что сервер занят то … вернуть соответствующее
@@ -32,13 +33,26 @@ export function ServerBusy({ busy, words, dialogUi, disabled, onStart }: { busy:
     await onStart(rung, rung === "clear" ? { confirm: host } : {})
   }
 
+  // The owner's run, 2026-11-13 16:26: the server was freed and probed again, but the same red panel with the same buttons stayed — «похоже
+  // ничего не работает». A freed server shows one calm line; while freeing, a spinner says what happens.
+  if (busy.clear?.state === "done") {
+    return (
+      <p className="mt-3 rounded-lg border border-primary/40 bg-primary/5 p-3 text-foreground text-sm" data-block="server-move-freed">
+        {words.cleared.replace("{n}", String(busy.clear.stopped ?? 0)).replace("{backup}", busy.clear.backup ?? "")}
+      </p>
+    )
+  }
   return (
     <div className="mt-3 flex flex-col gap-2 rounded-lg border border-destructive/40 bg-destructive/5 p-3" data-block="server-move-busy">
       <p className="font-medium text-foreground text-sm">{words.title}</p>
       <Small className="text-muted-foreground">{words.text}</Small>
-      {clearing ? <Small className="text-muted-foreground">{words.clearing}</Small> : null}
+      {clearing ? (
+        <p className="flex items-center gap-2 text-foreground text-sm" data-block="server-move-clearing" role="status">
+          <Spinner className="size-4" />
+          {words.clearing}
+        </p>
+      ) : null}
       {busy.clear?.state === "failed" ? <Small className="break-all text-destructive">{words.failed} {busy.clear.detail}</Small> : null}
-      {busy.clear?.state === "done" ? <Small className="text-foreground">{words.cleared.replace("{n}", String(busy.clear.stopped ?? 0)).replace("{backup}", busy.clear.backup ?? "")}</Small> : null}
       <div className="flex flex-wrap gap-2">
         <Button disabled={disabled || clearing} onClick={() => setOpen("clear")} size="sm" variant="destructive">{words.clear}</Button>
         <Button disabled={disabled || clearing} onClick={() => setOpen("cancel")} size="sm" variant="outline">{words.cancel}</Button>

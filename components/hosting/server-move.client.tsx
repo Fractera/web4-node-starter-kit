@@ -106,7 +106,7 @@ export function ServerMove({ words, domainWords, dialogUi, lang, channelWords }:
   const stale = Date.now() - Date.parse(view.state.updatedAt ?? "") > 30 * 60_000
   const earlier = Object.keys(rungs).length > 0 && !running && !moved && !independent && current >= 0 && (rungs[view.rungs[current]]?.state === "failed" || stale)
   const withPlan = (r: string, x: Record<string, unknown> = {}) => start(r, r === "copy" && road === "new" ? { ...plan, ...x } : x)
-  const taken = (sitesItem || othersItem || view.state.clear?.state === "running") && !started
+  const taken = (sitesItem || othersItem || view.state.clear?.state) && !started
     ? { host: view.state.server?.host, sites: String(sitesItem?.value ?? "").split(", ").filter(Boolean), programs: Number(othersItem?.value ?? 0), clear: view.state.clear }
     : null
   return (

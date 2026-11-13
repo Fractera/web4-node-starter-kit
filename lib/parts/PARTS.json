@@ -3925,6 +3925,7 @@
         "components/deploy/deploy-board.client.tsx",
         "components/element-docs/element-orders.client.tsx",
         "components/element-docs/reverse-engineering.client.tsx",
+        "components/hosting/server-move-busy.client.tsx",
         "components/hosting/stage-log.tsx",
         "components/node-state/node-state.client.tsx",
         "components/node-users/node-users.client.tsx",

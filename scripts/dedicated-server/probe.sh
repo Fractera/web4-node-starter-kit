@@ -7,7 +7,8 @@
 # ✗ Paid 2026-11-13 on the owner's test server: an earlier Fractera install lived there (12 pm2 processes of root, nginx sites
 # «fractera» and «fractera-custom» on 80/443) and the probe said «ports ok» because nginx held them — prepare would have overwritten
 # that install's nginx site of the same name. Now the probe names every nginx site that is not the node's own and the processes root's
-# pm2 runs, and measures the memory AVAILABLE, not the total.
+# pm2 runs, and measures the memory AVAILABLE, not the total. pm2's own modules (pm2-logrotate) are not programs of an install: they
+# stay after `pm2 delete all` and once made a freed server read «busy» again (the owner's run, 2026-11-13 16:26).
 # Arguments: [node folder name] [ssh port]
 FOLDER="${1:-web4-node-starter-kit}"
 SSH_PORT="${2:-22}"
@@ -23,7 +24,7 @@ IPV6="$([ -f /proc/net/if_inet6 ] && echo true || echo false)" \
 PORT80="$(busy 80)" PORT443="$(busy 443)" \
 NGINX="$(command -v nginx >/dev/null && echo true || echo false)" \
 FOREIGN_SITES="$(for f in /etc/nginx/sites-enabled/* /etc/nginx/conf.d/*.conf; do [ -f "$f" ] || continue; grep -q 'Managed by the Fractera node (step 737)' "$f" && continue; basename "$f"; done 2>/dev/null | paste -sd, -)" \
-PM2_ROOT="$( (command -v pm2 >/dev/null && pm2 jlist 2>/dev/null | python3 -c 'import json,sys; t=sys.stdin.read(); print(len(json.loads(t[t.index("["):])))') 2>/dev/null || echo 0)" \
+PM2_ROOT="$( (command -v pm2 >/dev/null && pm2 jlist 2>/dev/null | python3 -c 'import json,sys; t=sys.stdin.read(); print(len([p for p in json.loads(t[t.index("["):]) if not p.get("pm2_env", {}).get("pmx_module")])))') 2>/dev/null || echo 0)" \
 SYSTEMD="$([ -d /run/systemd/system ] && echo true || echo false)" \
 NODE_VERSION="$(node --version 2>/dev/null || true)" \
 PUBLIC_IP="$([ "${DRY_RUN:-0}" = 1 ] || curl -s --max-time 6 https://api.ipify.org 2>/dev/null || true)" \
