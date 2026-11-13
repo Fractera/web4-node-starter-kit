@@ -149,7 +149,7 @@ export function RecordsStep({ view, words, keyWords, busy, dialogUi, onCheck, on
   return (
     <div className="flex flex-col gap-3" data-block="server-ladder-records" data-way={view.way ?? ""}>
       <div className="flex flex-wrap items-start justify-between gap-2">
-        <Small className="max-w-prose text-foreground">{fill(cf ? w.hereCf : w.hereDns, map)}</Small>
+        <Small className="max-w-prose text-foreground">{fill(cf ? w.hereCf : view.way === "migrate" ? w.hereMigrate : w.hereDns, map)}</Small>
         <WhyNotCloudflare words={w.why} />
       </div>
       {view.way === "migrate" ? (
@@ -159,6 +159,7 @@ export function RecordsStep({ view, words, keyWords, busy, dialogUi, onCheck, on
           {d?.mx.length ? <Small className="break-all text-foreground">{w.migrate.mail} <span className="font-mono">{d.mx.join(" · ")}</span></Small> : null}
           {d?.txt.length ? <Small className="break-all text-foreground">{w.migrate.txt} <span className="font-mono">{d.txt.join(" · ")}</span></Small> : null}
           {d?.ds ? <Small className="text-destructive">{w.migrate.ds}</Small> : null}
+          {!d?.mx.length && !d?.txt.length ? <Small className="text-muted-foreground">{w.migrate.nothing}</Small> : null}
         </div>
       ) : null}
       <Accordion collapsible defaultValue="quick" type="single">

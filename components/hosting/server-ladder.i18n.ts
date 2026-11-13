@@ -19,13 +19,13 @@ export type ServerLadderWords = {
   }
   who: { question: string; option: Record<LadderWay, string>; note: Record<LadderWay, string>; copy: string; copied: string; instruction: string; instructionCf: string }
   records: {
-    hereDns: string; hereCf: string
+    hereDns: string; hereCf: string; hereMigrate: string
     quick: { title: string; badge: string; stepsDns: string[]; stepsCf: string[]; at: string; star: string; conflicts: string }
     full: { title: string; text: string; example: string }
     table: { type: string; name: string; value: string; state: string; optional: string; copy: string; copied: string }
     state: Record<"ok" | "missing" | "elsewhere" | "aaaa" | "unknown" | "unchecked", string>
     auto: { title: string; text: string; button: string; noKey: string; keyLabel: string; keySave: string; confirmTitle: string; confirmItems: string[]; confirm: string; notNow: string; done: string; failed: string }
-    migrate: { title: string; items: string[]; mail: string; txt: string; ds: string }
+    migrate: { title: string; items: string[]; mail: string; txt: string; ds: string; nothing: string }
     why: { button: string; title: string; points: string[] }
     check: string
     checkedAt: string
@@ -90,6 +90,7 @@ const en: ServerLadderWords = {
   records: {
     hereDns: "This domain's DNS is kept by {ns}. Usually that is the registrar's account{registrar}: a section called «DNS», «DNS records» or «Manage DNS».",
     hereCf: "The records go into Cloudflare: open the domain {zone} and its «DNS» section.",
+    hereMigrate: "The domain's DNS is kept by Cloudflare now. Once it is back at the registrar{registrar}, the records go there, into its «DNS» section.",
     quick: {
       title: "Quick way: two records",
       badge: "recommended",
@@ -123,7 +124,7 @@ const en: ServerLadderWords = {
     migrate: {
       title: "Give DNS back to the registrar",
       items: [
-        "First carry to the registrar every record the domain needs besides the site's: they are listed below.",
+        "If the domain has mail or other records, carry them to the registrar first: the node lists them below.",
         "At the registrar{registrar}, in «Name servers» («Nameservers»), choose its own servers, usually the «default» option.",
         "There, add the site's two records as in the quick way below.",
         "The change spreads through the internet within {hours} h. The node shows when it is over: «Check again» in step 2.",
@@ -131,6 +132,7 @@ const en: ServerLadderWords = {
       mail: "Mail, MX records:",
       txt: "TXT records:",
       ds: "The domain has DNSSEC on. Switch it off at the registrar before changing the name servers, or the domain stops opening at all.",
+      nothing: "The node sees no mail and no other records on this domain: nothing to carry.",
     },
     why: {
       button: "Why not Cloudflare?",
@@ -212,6 +214,7 @@ const ru: ServerLadderWords = {
   records: {
     hereDns: "DNS этого домена ведут серверы {ns}. Обычно это кабинет регистратора{registrar}: раздел «DNS», «DNS-записи» или «Управление DNS».",
     hereCf: "Записи вносятся в Cloudflare: откройте домен {zone} и раздел «DNS».",
+    hereMigrate: "Сейчас DNS домена ведёт Cloudflare. Когда DNS вернётся к регистратору{registrar}, записи вносятся там, в разделе «DNS».",
     quick: {
       title: "Быстрый способ: две записи",
       badge: "рекомендуем",
@@ -245,7 +248,7 @@ const ru: ServerLadderWords = {
     migrate: {
       title: "Вернуть DNS регистратору",
       items: [
-        "Сначала перенесите к регистратору все записи, которые нужны домену кроме записей сайта: они перечислены ниже.",
+        "Если у домена есть почта или другие записи, сначала перенесите их к регистратору: узел перечислит их ниже.",
         "У регистратора{registrar} в разделе «Серверы имён» («Nameservers») выберите его собственные серверы, обычно это вариант «по умолчанию».",
         "Там же добавьте две записи сайта, как в быстром способе ниже.",
         "Смена расходится по интернету за {hours} ч. Узел покажет, когда она закончится: кнопка «Проверить ещё раз» в шаге 2.",
@@ -253,6 +256,7 @@ const ru: ServerLadderWords = {
       mail: "Почта, записи MX:",
       txt: "Записи TXT:",
       ds: "У домена включён DNSSEC. Выключите его у регистратора до смены серверов имён, иначе домен перестанет открываться совсем.",
+      nothing: "Почты и других записей у домена узел не видит: переносить нечего.",
     },
     why: {
       button: "Почему не Cloudflare?",
