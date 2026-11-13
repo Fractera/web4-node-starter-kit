@@ -41,6 +41,8 @@ export type NodeStateWords = {
   placeServer: string
   placeServerText: string
   placeFromYou: string
+  /** 737-9: the move itself recorded the place — not the person's words */
+  placeMoved: string
   placeNotSet: string
   placeChange: string
   /** группа 3 — изоляция */
@@ -81,6 +83,7 @@ const DICT: Record<string, NodeStateWords> = {
     placeServer: "Dedicated server",
     placeServerText: "The place to invite other developers to.",
     placeFromYou: "as you stated",
+    placeMoved: "recorded by the move",
     placeNotSet: "not stated yet",
     placeChange: "Change",
     isolationTitle: "Isolation",
@@ -118,6 +121,7 @@ const DICT: Record<string, NodeStateWords> = {
     placeServer: "Выделенный сервер",
     placeServerText: "Сюда можно приглашать других разработчиков.",
     placeFromYou: "с ваших слов",
+    placeMoved: "записано переездом",
     placeNotSet: "пока не указано",
     placeChange: "Изменить",
     isolationTitle: "Изоляция",

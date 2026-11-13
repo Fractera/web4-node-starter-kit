@@ -95,6 +95,26 @@ await t('move: the last copy brings the bot token, the mark turns live; negative
   assert.equal(JSON.parse(readFileSync(join(remote, 'data/node/server.json'), 'utf8')).phase, 'live')
   assert.ok(!existsSync(join(node, 'data', 'node', 'moved.json')))
 })
+await t('return (dry): the «server» copy comes home, the server is marked returned; this computer\'s key survives the road back', async () => {
+  writeFileSync(join(remote, 'data/node/memory-written-on-server.txt'), 'made on the server after the move')
+  const r = await run('return')
+  assert.equal(r.status, 0, r.stdout + r.stderr)
+  assert.ok(existsSync(join(node, 'data/node/memory-written-on-server.txt')), 'the server\'s new data did not come home')
+  assert.ok(existsSync(join(node, 'data/node/server/id_ed25519')), 'the road back erased this computer\'s key')
+  assert.equal(JSON.parse(readFileSync(join(remote, 'data/node/server.json'), 'utf8')).phase, 'returned')
+  assert.equal(state().return.state, 'done')
+})
+await t('negative: a node that never moved cannot «return» — refused before any action', async () => {
+  const r = await new Promise((resolve) => {
+    const child = spawn(process.execPath, [runner, 'return'], { env: { ...env, FRACTERA_MOVE_NODE_ROOT: '' } })
+    let stderr = ''
+    child.stderr.on('data', (d) => { stderr += d })
+    child.on('close', (status) => resolve({ status, stderr }))
+    child.stdin.end()
+  })
+  assert.equal(r.status, 2, r.stderr)
+  assert.ok(r.stderr.includes('===MOVE_RETURN_REFUSED==='))
+})
 await t('negative: the password is in no file of the node or of the «server»', async () => {
   const grep = spawnSync('grep', ['-rl', PASSWORD, node, remote, rootDir], { encoding: 'utf8' })
   assert.equal(grep.stdout.trim(), '', grep.stdout)

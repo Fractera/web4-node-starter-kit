@@ -254,8 +254,62 @@ async function allChecks(client) {
   return [...(await outsideChecks(server().host, { commit })), ...(await insideChecks(client, root))]
 }
 
-if (!rungs[rung]) {
-  console.log('Ступени: connect · probe · prepare · copy · claude · rehearse · move   [--dry]')
-  process.exit(rung ? 2 : 0)
+// NOT RUNGS — the roads after a move, run from this computer in a terminal (its core is stopped: no panel here); the person's explicit word.
+const roads = {
+  // The node comes home: the server's node stops and is forgotten there, its copy comes back by the same rules (the bots' tokens too),
+  // this computer's env files are written again for this machine, the node starts here. The server's copy stays as it was (cold).
+  async return() {
+    const moved = (() => { try { return JSON.parse(readFileSync(path.join(root, 'data', 'node', 'moved.json'), 'utf8')) } catch { return null } })()
+    if (!moved && !dry) { console.error('===MOVE_RETURN_REFUSED=== this node has not moved'); process.exit(2) }
+    patchMove(root, (s) => { s.return = { state: 'running', at: now() } })
+    const { client } = await asNode()
+    try {
+      await exec(client, dry ? 'true' : 'pm2 stop all || true; pm2 delete all || true; pm2 save --force || true', { timeoutMs: 180_000 })
+      const c = await copyPhase({ root, host: server().host, port: server().port, phase: 'live', back: true, ...(dry ? { target: `${REMOTE_ROOT}/` } : {}) })
+      if (c.code !== 0) throw new Error(`rsync ${c.code}: ${c.tail.slice(-200)}`)
+      await exec(client, `printf '%s\\n' ${q(JSON.stringify({ ...readServerMark(), phase: 'returned', returnedAt: now() }))} > ${q(`${REMOTE_ROOT}/data/node/server.json`)}`)
+      if (!dry) {
+        rmSync(path.join(root, 'data', 'node', 'moved.json'), { force: true })
+        const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+        execSync(`${npm} run services:install`, { cwd: root, stdio: 'inherit' })
+        execSync(`${process.execPath} scripts/serve.mjs start`, { cwd: root, stdio: 'inherit' })
+        execSync(process.platform === 'win32' ? 'pm2.cmd save' : 'pm2 save', { cwd: root, stdio: 'inherit' })
+      }
+      patchMove(root, (s) => { s.return = { state: 'done', at: now() }; s.rungs.move = { ...(s.rungs.move ?? {}), state: 'idle' } })
+      console.log('===MOVE_RETURNED=== the node lives on this computer again')
+    } catch (e) {
+      patchMove(root, (s) => { s.return = { state: 'failed', at: now(), detail: String(e.message).slice(0, 300) } })
+      console.error(`===MOVE_RETURN_FAILED=== ${String(e.message).slice(0, 300)}`)
+      process.exitCode = 1
+    } finally { client.end() }
+  },
+
+  // A window into the server's node from this computer: SSH forwards the core's and every element's port one to one, so
+  // http://localhost:<core port> opens the server's panel with owner rights (the request reaches the server's loopback without nginx and
+  // without the edge mark — the holder of the node's key is the owner). Before the domain this is the owner's panel; Ctrl+C closes it.
+  async window() {
+    const corePort = (() => { try { return JSON.parse(readFileSync(path.join(root, 'logs', 'runtime.json'), 'utf8')).port || 24680 } catch { return 24680 } })()
+    const { installedElements } = await import('../../lib/hosting/hostnames.mjs')
+    const ports = [corePort, ...installedElements(root).map((e) => e.port)]
+    const { createServer } = await import('node:net')
+    const busy = []
+    for (const p of ports) {
+      const free = await new Promise((resolve) => { const s = createServer().once('error', () => resolve(false)).once('listening', () => s.close(() => resolve(true))).listen(p, '127.0.0.1') })
+      if (!free) busy.push(p)
+    }
+    if (busy.length) { console.error(`===MOVE_WINDOW_REFUSED=== ports busy here: ${busy.join(' ')} — the node still runs on this computer`); process.exit(2) }
+    const key = path.join(serverDir(root), 'id_ed25519')
+    const known = path.join(serverDir(root), 'known_hosts')
+    const forwards = ports.flatMap((p) => ['-L', `${p}:127.0.0.1:${p}`])
+    console.log(`Окно в узел на сервере: http://localhost:${corePort} — закрыть: Ctrl+C · A window into the server's node: http://localhost:${corePort}`)
+    const { spawn } = await import('node:child_process')
+    const child = spawn('ssh', ['-N', ...forwards, '-i', key, '-p', String(server().port), '-o', 'BatchMode=yes', '-o', 'IdentitiesOnly=yes', '-o', 'StrictHostKeyChecking=yes', '-o', `UserKnownHostsFile=${known}`, '-o', 'ExitOnForwardFailure=yes', `${REMOTE_USER}@${server().host}`], { stdio: 'inherit' })
+    child.on('close', (code) => process.exit(code ?? 0))
+  },
 }
-await rungs[rung]()
+
+if (roads[rung]) await roads[rung]()
+else if (!rungs[rung]) {
+  console.log('Ступени: connect · probe · prepare · copy · claude · rehearse · move · дороги: return · window   [--dry]')
+  process.exit(rung ? 2 : 0)
+} else await rungs[rung]()

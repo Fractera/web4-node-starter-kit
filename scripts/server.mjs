@@ -5,6 +5,9 @@
 //   dns   --ip <IPv4> [--domain <name>] [--root …]   the A records to write at the registrar, per zone, with the `*` shortcut (737-1)
 //   nginx [--write]                                    the server's nginx site from the names and the certificates present (737-2)
 //   phase                                              silent · live · none — this node's phase on a dedicated server (737-4)
+//   status                                             the move's ladder: each rung's state and the server (737-7)
+//   return                                             after a move: bring the node back to this computer (737-9)
+//   window                                             after a move: the server's panel on this computer through SSH (737-9)
 import { spawnSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
@@ -98,9 +101,29 @@ function phase() {
   console.log(`===SERVER_PHASE=== ${nodePhase(root) ?? 'none'}`)
 }
 
-const verbs = { names, dns, nginx, phase }
+function status() {
+  const s = readJson(path.join(root, 'data', 'node', 'server', 'move.json')) ?? { rungs: {} }
+  const order = ['connect', 'probe', 'prepare', 'copy', 'claude', 'rehearse', 'move']
+  console.log(`сервер: ${s.server?.host ?? '—'}${s.server?.port && s.server.port !== 22 ? `:${s.server.port}` : ''}`)
+  for (const id of order) {
+    const r = s.rungs?.[id] ?? {}
+    console.log(`  ${id.padEnd(9)} ${String(r.state ?? 'idle').padEnd(8)} ${r.detail ? String(r.detail).slice(0, 120) : ''}`)
+  }
+  const moved = readJson(path.join(root, 'data', 'node', 'moved.json'))
+  console.log(`===SERVER_STATUS=== ${moved ? `moved ${moved.to}` : order.find((id) => s.rungs?.[id]?.state !== 'done') ?? 'moved'}`)
+}
+
+/** The roads after a move live in the runner; the person's terminal sees them as they go. */
+function road(name) {
+  return () => {
+    const r = spawnSync(process.execPath, [path.join(here, 'dedicated-server', 'move.mjs'), name], { stdio: 'inherit', cwd: root })
+    process.exit(r.status ?? 1)
+  }
+}
+
+const verbs = { names, dns, nginx, phase, status, return: road('return'), window: road('window') }
 if (!verbs[verb]) {
-  console.log('Команды: names · dns · nginx · phase   (npm run server -- names --domain example.org)')
+  console.log('Команды: names · dns · nginx · phase · status · return · window   (npm run server -- names --domain example.org)')
   process.exit(verb ? 1 : 0)
 }
 verbs[verb]()

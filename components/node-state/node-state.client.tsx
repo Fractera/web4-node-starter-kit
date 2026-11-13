@@ -175,7 +175,7 @@ export function NodeStateIndicator({ lang, words }: { lang: string; words: NodeS
   const place = data.place?.kind
   const placeFoot = (
     <>
-      {place === "home" || place === "server" ? words.placeFromYou : words.placeNotSet} ·{" "}
+      {data.place?.source === "moved" ? words.placeMoved : place === "home" || place === "server" ? words.placeFromYou : words.placeNotSet} ·{" "}
       <a className="text-primary underline decoration-primary/40 underline-offset-2" href={`/${lang}/architect/hosting/hosting`}>
         {words.placeChange}
       </a>

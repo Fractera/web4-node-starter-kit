@@ -116,6 +116,19 @@ function ensureElements() {
 }
 
 async function start() {
+  // 737-9: THE NODE MOVED TO ITS DEDICATED SERVER — this computer keeps a cold copy as of the move and never raises it by itself: two live
+  // copies of one node split its bots (409) and its data. The road back is the person's explicit word: `npm run server -- return`.
+  {
+    let moved = null
+    try { moved = JSON.parse(readFileSync(path.join(root, 'data', 'node', 'moved.json'), 'utf8')) } catch { /* not moved */ }
+    if (moved) {
+      console.error(`Узел переехал на свой сервер (${moved.to}, ${moved.at}) и живёт там: http://${moved.to}/`)
+      console.error('Здесь — его копия на момент переезда. Вернуть узел на этот компьютер: npm run server -- return')
+      console.error(`The node moved to its server (${moved.to}); this folder is its copy as of the move. To bring it back: npm run server -- return`)
+      console.error(`===SERVE_MOVED=== ${moved.to}`)
+      process.exit(1)
+    }
+  }
   // 553: оборванная сборка при «закрытой крышке» оставила узел остановленным — список в data/node/quiet-build.json.
   openLid(root)
   // 369: не в облачной сессии Claude Code; 368: только из прямого форка оригинала Fractera — обе проверки до установки элементов.

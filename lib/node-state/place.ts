@@ -21,13 +21,32 @@ const FILE = path.join(ROOT, 'data', 'node', 'place.json')
 /** Где стоит узел. `unknown` — «человек ещё не сказал», а не «нигде». */
 export type PlaceKind = 'home' | 'server' | 'unknown'
 
-export type Place = { kind: PlaceKind; source: 'declared' | 'unknown'; changedAt: string | null }
+export type Place = { kind: PlaceKind; source: 'declared' | 'moved' | 'unknown'; changedAt: string | null }
+
+// 737-9 (the owner, 2026-11-13: «после того как проект обнаружит себя что он тоже работает на удалённом сервере он соответствующем
+// образом переключить режим в режим выделенный сервер»): THE MOVE ITSELF RECORDS THE PLACE. The tool that carried the node to its server
+// writes `data/node/server.json` there (phase silent or live) — a fact written by the act, not a guess from signs, so the rule above
+// («это не измеряется ничем») still holds: nothing is guessed. That record outranks a declaration; a node put on a server by hand still
+// declares it here.
+const SERVER_MARK = path.join(ROOT, 'data', 'node', 'server.json')
+function movedHere(): Place | null {
+  try {
+    const m = JSON.parse(readFileSync(SERVER_MARK, 'utf8')) as { phase?: unknown; movedAt?: unknown; at?: unknown }
+    if (m.phase !== 'live' && m.phase !== 'silent') return null
+    const at = typeof m.movedAt === 'string' ? m.movedAt : typeof m.at === 'string' ? m.at : null
+    return { kind: 'server', source: 'moved', changedAt: at }
+  } catch {
+    return null
+  }
+}
 
 function isKind(value: unknown): value is 'home' | 'server' {
   return value === 'home' || value === 'server'
 }
 
 export function readPlace(): Place {
+  const moved = movedHere()
+  if (moved) return moved
   if (!existsSync(FILE)) return { kind: 'unknown', source: 'unknown', changedAt: null }
   try {
     const raw = JSON.parse(readFileSync(FILE, 'utf8')) as { place?: unknown; changedAt?: unknown }
