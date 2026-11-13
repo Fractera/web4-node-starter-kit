@@ -4,7 +4,8 @@ import { join } from "node:path"
 import { isDnsLabel } from "@/lib/web4-items/dns-label.mjs"
 import { envValue } from "@/lib/web4-items/element-delete"
 import { nodeZone } from "@/lib/web4-items/drafts"
-import { accountOfZone, deleteAddressRecords, deleteTunnelRecord, getIngress, listZones, setIngress, upsertTunnelRecord, zoneByName, type IngressRule } from "@/lib/domain/cloudflare"
+import { accountOfZone, deleteAddressRecords, deleteTunnelRecord, getIngress, listZones, setIngress, upsertServerRecord, upsertTunnelRecord, zoneByName, type IngressRule } from "@/lib/domain/cloudflare"
+import { spawnSync } from "node:child_process"
 import { serviceUrl } from "@/lib/microservices/registry"
 import { addressOf } from "@/lib/web4-items/address-file.mjs"
 import { extraDomains } from "@/lib/domain/node-domains"
@@ -30,7 +31,8 @@ export type DomainState =
   | { state: "cloudflare-error"; reason: string }
   | { state: DomainShape }
 
-const DATA = join(process.cwd(), "data", "services")
+const ROOT = process.cwd()
+const DATA = join(ROOT, "data", "services")
 
 /** Привести ввод к имени: строчные, без пробелов по краям и без точки в конце. */
 export function normalizeDomain(input: string): string {
@@ -180,6 +182,12 @@ export async function redrawElement(id: string): Promise<boolean> {
 export async function attachDomain(id: string, input: string): Promise<{ ok: true; domain: string } | Fail> {
   const name = normalizeDomain(input)
   if (!extraDomains().some((d) => d.name === name)) return { ok: false, error: "not-in-list" }
+  // 737-17 (the owner, 2026-11-13: «в существующем процессе подключения собственных доменов мы должны подтверждать что в случае если это
+  // решение которое работает на сервере предварительно мы должны добавить запись на регистратор»): a node whose domain is held by its own
+  // server's nginx — the element's domain gets A records to the server (written by the node when the zone is on its Cloudflare account),
+  // nginx learns the names, certificates follow when DNS points here (`name-up.mjs`). No tunnel.
+  const viaServer = (() => { try { return JSON.parse(readFileSync(join(ROOT, "logs", "domain.json"), "utf8")).via === "server" } catch { return false } })()
+  if (viaServer) return attachOnServer(id, name)
   const s = await checkDomain(name, id)
   if (s.state !== "ready") return { ok: false, error: s.state }
   if (!serviceUrl(id)) return { ok: false, error: "no-port" }
@@ -245,4 +253,25 @@ export async function detachDomain(id: string): Promise<{ ok: true } | Fail> {
   // копия и её маршрут снимаются.
   startStaticCopy(process.cwd(), id, hadSub ? [] : ["--remove"])
   return { ok: true }
+}
+
+/** 737-17: the element's own domain on a server node — A records (by the node's token when possible), the domain file, nginx and its
+ *  certificate through `name-up.mjs`. Without the token the answer names the two records the person writes. */
+async function attachOnServer(id: string, name: string): Promise<{ ok: true; domain: string; add?: Array<{ type: string; name: string; value: string }> } | Fail> {
+  let ip = ""
+  try { ip = String(JSON.parse(readFileSync(join(ROOT, "data", "node", "server.json"), "utf8")).ip ?? "") } catch { /* not a server */ }
+  if (!/^\d{1,3}(\.\d{1,3}){3}$/.test(ip)) return { ok: false, error: "no-server-ip" }
+  const names = [name, `www.${name}`]
+  const token = envValue("CLOUDFLARE_API_TOKEN")
+  let written = false
+  if (token) {
+    const zone = await zoneByName(token, name)
+    if (zone.ok && zone.result) {
+      written = true
+      for (const host of names) if (!(await upsertServerRecord(token, zone.result.id, host, ip, null)).ok) written = false
+    }
+  }
+  if (!writeDomainFile(id, name, "domain")) return { ok: false, error: "write-failed" }
+  spawnSync(process.execPath, [join(ROOT, "scripts", "spawn-free.mjs"), join(ROOT, "scripts", "dedicated-server", "name-up.mjs")], { cwd: ROOT, stdio: "ignore", timeout: 10_000, windowsHide: true })
+  return { ok: true, domain: name, ...(written ? {} : { add: names.map((h) => ({ type: "A", name: h, value: ip })) }) }
 }

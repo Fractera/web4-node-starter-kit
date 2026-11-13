@@ -346,7 +346,8 @@ spawnSync(process.execPath, [join(ROOT, 'scripts', 'element-isolate.mjs')], { cw
 async function connectAddress({ wait = true } = {}) {
   let domain = null
   try { domain = JSON.parse(readFileSync(join(ROOT, 'logs', 'domain.json'), 'utf8')) } catch { /* своего домена нет */ }
-  if (!domain?.zone || !domain?.tunnelId) return { url: 'local', note: `адрес только на этой машине: http://localhost:${port} (у узла нет своего домена)` }
+  // 737-16: a domain held by the node's own server (via «server») is a domain too — the same door gives the name its record and certificate.
+  if (!domain?.zone || (!domain?.tunnelId && domain?.via !== 'server')) return { url: 'local', note: `адрес только на этой машине: http://localhost:${port} (у узла нет своего домена)` }
   let core = null
   try { core = JSON.parse(readFileSync(join(ROOT, 'logs', 'runtime.json'), 'utf8')).port } catch { /* ядро не запущено */ }
   const manual = 'страница элемента → «Адрес в интернете» → «Подключить»'

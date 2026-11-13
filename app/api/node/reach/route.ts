@@ -6,7 +6,8 @@ import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
 import { getService, serviceUrl } from "@/lib/microservices/registry"
-import { accountOfZone, getIngress, hasDnsRecord, listZones, setIngress, upsertTunnelRecord } from "@/lib/domain/cloudflare"
+import { accountOfZone, getIngress, hasDnsRecord, listZones, setIngress, upsertServerRecord, upsertTunnelRecord, zoneByName } from "@/lib/domain/cloudflare"
+import { spawnSync } from "node:child_process"
 import { addressOf } from "@/lib/web4-items/address-file.mjs"
 import { startStaticCopy } from "@/lib/web4-items/static-copy-start.cjs"
 
@@ -37,7 +38,7 @@ function envValue(name: string): string | null {
   return process.env[name]?.trim() || null
 }
 
-type Domain = { zone?: string; hostname?: string; tunnelId?: string; architectHostname?: string }
+type Domain = { zone?: string; hostname?: string; tunnelId?: string; architectHostname?: string; via?: string }
 function readDomain(): Domain | null {
   try { return JSON.parse(readFileSync(join(ROOT, "logs", "domain.json"), "utf8")) as Domain } catch { return null }
 }
@@ -153,6 +154,9 @@ export async function POST(req: NextRequest) {
   const local = serviceUrl(id)
   if (!local) return NextResponse.json({ ok: false, reason: "not-installed" }, { status: 409 })
   const d = readDomain()
+  // 737-16: the node's domain held by its own server's nginx — the name gets an A record (by the node's Cloudflare token when the zone is
+  // there, else the record is named for the person), nginx learns it and its certificate follows (detached: minutes).
+  if (d?.zone && d.via === "server") return serverReach(id, d)
   if (!d?.zone || !d.tunnelId) return NextResponse.json({ ok: false, reason: "no-tunnel" }, { status: 409 })
   const cf = await cloudflare(d)
   if ("reason" in cf) return NextResponse.json({ ok: false, reason: cf.reason }, { status: 409 })
@@ -171,4 +175,23 @@ export async function POST(req: NextRequest) {
   }
   startStaticCopy(process.cwd(), id) // 385-3: поддомен элемента подключён — копия его статических страниц в Cloudflare
   return NextResponse.json(await measure(id))
+}
+
+
+async function serverReach(id: string, d: Domain) {
+  const host = hostnameFor(id, d)
+  let ip = ""
+  try { ip = String(JSON.parse(readFileSync(join(ROOT, "data", "node", "server.json"), "utf8")).ip ?? "") } catch { /* not a server node */ }
+  if (!host || !/^\d{1,3}(\.\d{1,3}){3}$/.test(ip)) return NextResponse.json({ ok: false, reason: "no-server-ip" }, { status: 409 })
+  const token = envValue("CLOUDFLARE_API_TOKEN")
+  let record: { written: boolean; reason?: string } = { written: false, reason: "no-cloudflare-token" }
+  if (token) {
+    const zone = await zoneByName(token, d.zone as string)
+    if (zone.ok && zone.result) {
+      const r = await upsertServerRecord(token, zone.result.id, host, ip, null)
+      record = r.ok ? { written: true } : { written: false, reason: (r as { reason?: string }).reason }
+    } else record = { written: false, reason: "zone-not-on-cloudflare" }
+  }
+  spawnSync(process.execPath, [join(ROOT, "scripts", "spawn-free.mjs"), join(ROOT, "scripts", "dedicated-server", "name-up.mjs")], { cwd: ROOT, stdio: "ignore", timeout: 10_000, windowsHide: true })
+  return NextResponse.json({ ok: true, url: `https://${host}`, server: true, record, ...(record.written ? {} : { add: { type: "A", name: host, value: ip } }) })
 }

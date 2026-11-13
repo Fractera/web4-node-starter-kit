@@ -29,6 +29,8 @@ export function ElementDomain({ id, lang, ui, current: record }: { id: string; l
   const [picked, setPicked] = useState("")
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // 737-17: on a server node the answer may name the A records the person writes at the registrar.
+  const [toAdd, setToAdd] = useState<string | null>(null)
 
   useEffect(() => {
     fetch(`${BASE}/api/domain/list`, { cache: "no-store" })
@@ -54,7 +56,8 @@ export function ElementDomain({ id, lang, ui, current: record }: { id: string; l
     setError(null)
     try {
       const r = await fetch(`${BASE}/api/architect/items/${id}/domain`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name: picked }) })
-      const j = (await r.json().catch(() => null)) as { ok?: boolean; error?: string } | null
+      const j = (await r.json().catch(() => null)) as { ok?: boolean; error?: string; add?: Array<{ type: string; name: string; value: string }> } | null
+      if (j?.ok && j.add?.length) setToAdd(`${w.errors["server-add"]} ${j.add.map((a) => `${a.type} ${a.name} → ${a.value}`).join(" · ")}`)
       if (j?.ok) { setPicked(""); router.refresh(); setBusy(false); return }
       setError(w.errors[j?.error ?? ""] ?? `${w.errors.failed} ${j?.error ?? r.status}`)
     } catch { setError(w.errors.failed) }
@@ -145,6 +148,7 @@ export function ElementDomain({ id, lang, ui, current: record }: { id: string; l
         </>
       )}
       {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
+      {toAdd && <p className="text-sm text-foreground" data-block="element-domain-server-add">{toAdd}</p>}
       <a className="w-fit text-sm font-medium text-primary underline-offset-4 hover:underline" href={`/${lang}/architect/hosting/domain?for=${encodeURIComponent(id)}#domain-add`} data-domain-add>{w.add}</a>
       <div className="text-sm text-muted-foreground" data-domain-add-hint>
         <p>{w.addHint}</p>
