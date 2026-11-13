@@ -350,3 +350,86 @@ proxied. Execution order: 737-18 → 737-15/15c → 737-17 → 737-16 → 737-11
 - **For the clean run (737-13):** a fresh clone's install time on 8 GB; pm2 processes of an earlier node moved aside (do `serve:start`'s
   names replace them?); the first registration on a server without a domain (the bare IP is read-only — the way is its domain, from its
   own bot, or the window).
+
+## 11. 737-19 — ONE DOMAIN LADDER for the computer and the server (planned 2026-11-13 ~19:50 UTC at max effort; execute at normal effort)
+
+### 11.1 The owner's words (verbatim, the order of his messages)
+- «Тебе вообще что ли нету никакого понимания как сделать так чтобы человек это понял? … Что это за записи? Где они находятся как их
+  внести сделать выпадающие список два аккордеона быстрые и удобный способ с инструкций с небольшой второй вариант полный список.»
+- «я тебе давал задачу связанную с интерфейсом … почему ты не сделал красиво аккордеон который предлагает бы быстрое решение и
+  альтернативное решение где ты с короткими комментариями и примерами нормально рассказываешь о том как это сделать.»
+- Cloudflare: «нам нужен был простой способ обеспечить работу компьютера с закрытой крышкой, потому что у нас не было собственного IP …
+  некоторые его IP-адреса заблокированы например … когда идёт чемпионат по футболу в Испании»; «Не думаю что у этого способа есть хоть
+  какие-то плюсы если мы уже переехали на собственный сервер»; «мы убираем всю информацию о Cloud Flyer но вместо этого можем сделать
+  небольшой оранжевый кнопку вопрос почему мы не используем Cloud флеер».
+- «что если у меня нету доступа к регистратору а есть доступ только к Cloud Flyer где сейчас работает этот домен»
+- The ladder he sketched: «ввести имя домена подтвердить, изменить · Запрос к домену проверка … кто его возвращает регистратор или
+  Cloud Flyer · выбор у меня есть доступ к регистратору или … нету … если нету доступа к регистратору не к Cloud Flyer … отказать ·
+  … путь который мы уже построили в самом приложении для получения какого-то токена … · И только если ты строишь подключение к
+  регистратору то тогда делаешь то что мы согласовали выше.»
+- Tests: «aifa.dev … test with registr flow, for test with cloudeflare will use fractera.ai … finaly for use fractera.ai»; «на первом тесте
+  мы поднимем aifa а потом сделаем полную переустановку сервера и поднимем Fractera»; this server «станет основным сервером для Fractera».
+- Working rule (memory feedback-batch-before-rebuild): everything into ONE node update, each UI piece checked against his words first.
+
+### 11.2 Measured (2026-11-13 19:40–19:50 UTC, DoH 1.1.1.1 JSON, curl, IANA RDAP bootstrap)
+| fact | value | what it changes |
+|---|---|---|
+| aifa.dev NS | jaxson/kehlani.ns.cloudflare.com, **TTL 86400** | leaving Cloudflare's DNS may take up to 24 h for resolvers that cached it |
+| aifa.dev A | 188.114.96/97.5 (Cloudflare proxy), TTL 300; live site 200 «From Vibe-Coded MVP … \| Fractera»; MX none, TXT none, DS none | the owner accepts losing it (test domain); its NS move has no mail/DNSSEC trap |
+| fractera.ai NS | ignacio/kay.ns.cloudflare.com, TTL 86400 (a different NS pair — likely another Cloudflare account) | Cloudflare branch test |
+| fractera.ai | apex 301 → www; www.fractera.ai 200 «Fractera \| Agentic Automation Platform…»; **MX = Google Workspace (5 records)**; DS none | the final move replaces the live site; NS must never move without copying MX; showcase mode (256-2, `lib/showcase.ts`) opens the architect pages on fractera.ai |
+| zone apex of a subdomain | DoH A for node.aifa.dev → Authority SOA name «aifa.dev» | record names relative to the real zone are computable (node, *.node) |
+| RDAP | IANA bootstrap: .dev → pubapi.registry.google, .ai → rdap.identitydigital.services, .com → verisign; .ru absent. Neutral probes: google.dev → «MarkMonitor Inc.», expiry 2027-06-13; nic.ai → registrar answered | «where was it bought» answered by the registry; unknown for TLDs without RDAP |
+| code | `upsertServerRecord` writes **proxied: true** (lib/domain/cloudflare.ts ~l.390, 737-15 D14) | contradicts the owner's decision → DNS only for the server |
+| code | token path exists: `components/domain/token-how-to.client.tsx` (template link) + door `/api/domain/key` (checks with Cloudflare → zones → stores; owner at the keyboard only) | reuse, never a second token UI |
+| code | two domain UIs for one job: `server-move-records.client.tsx` (computer, before the move) and `server-domain.client.tsx` (server, five steps after it) | one ladder, two doors |
+
+### 11.3 The ladder (both places; on the computer under rung 1, on the server instead of the five steps)
+1. **Домен** — type / confirm / change; apex or a subdomain. If the name answers with a site now: «По aifa.dev сейчас открывается сайт
+   «<title>». После переключения он перестанет открываться» → [Всё равно этот] [Взять поддомен …].
+2. **Где живут записи** — detected, no questions: bought at <registrar from RDAP | unknown>; DNS kept by <Cloudflare | the NS names>;
+   names now lead <to the server | through Cloudflare's proxy | elsewhere | nowhere>; mail present (MX) and DNSSEC (DS) named when present;
+   NS from 1.1.1.1 and 8.8.8.8 differ → «серверы имён сейчас меняются, подождите» (a transition, measured TTL shown).
+3. **Кто внесёт записи** — one question, only the options of the case:
+   DNS elsewhere → «Есть вход к регистратору/хостингу» · «Нет входа». DNS at Cloudflare → «Есть вход в Cloudflare» · «Только к
+   регистратору» · «Нет ни того, ни другого». No access → refusal that is not a dead end: [Скопировать инструкцию для того, у кого доступ].
+4. **Записи** by branch:
+   - manual (registrar / other DNS / Cloudflare): accordion ▼ «Быстрый способ — две записи» (open; A @ ip, A * ip, copy buttons, what
+     @ and * mean with this domain's examples, «delete an old A/AAAA of the same name») ▶ «Альтернатива — каждое имя отдельно» (example
+     line + full table with states). The words name the real DNS host. The grey-cloud line («DNS only») exists ONLY in the Cloudflare branch.
+   - «Пусть узел сделает сам» (Cloudflare only): the node's key used at once if it already sees the zone; else TokenHowTo + `/api/domain/key`;
+     records written **DNS only** after one confirmation; foreign CNAMEs still refused.
+   - «Только к регистратору» while DNS is at Cloudflare = a migration checklist: copy every record first (MX/TXT named from step 2), DS off,
+     put the server records on BOTH sides, then change NS; «до 24 часов» from the measured NS TTL.
+   - the orange [Почему не Cloudflare?] popover (token `warning`, shadcn Popover) with the agreed text.
+5. **Проверка и сертификаты** — [Проверить DNS], per name: ведёт сюда / ещё нет; certificates issued by the server itself (computer:
+   runner `domain` over SSH; server: `certs.mjs`); on the server also HTTPS from the internet and «switch on» (the old steps 4–5).
+
+### 11.4 Stages, each with a proof that reading code cannot pass
+| # | result | proof |
+|---|---|---|
+| 19a | `lib/hosting/domain-detect.mjs` — apex (SOA authority), NS from two resolvers, dnsHost, A class (server / Cloudflare range — vendored list with its source URL and date / elsewhere / none), MX, DS, RDAP registrar + expiry (IANA bootstrap cached in data/), live title; doors: records `?detect=1` (computer) and the server's domain door | unit tests on recorded DoH/RDAP JSON fixtures (no network) incl. negatives: .ru without RDAP → null; NS mismatch → «changing»; a probe script prints the live numbers for aifa.dev and fractera.ai into the step summary |
+| 19b | server records DNS only: `upsertServerRecord(..., { proxied: false })` on the server paths; the tunnel activation keeps its own | fetch mocked: body.proxied === false on the server path; negative: the tunnel path still true |
+| 19c | record names relative to the detected zone (apex → @, *; node.aifa.dev → node, *.node) in `dnsRecords` | unit test both + a mutation (zone = typed name) turns it red |
+| 19d | one `ServerDomainLadder` island, two doors, parts reused (LadderStep, DnsRecords, CertsStep, TokenHowTo); `server-move-records` and `server-domain` folded into it; words ru/en through humanizer | check:* gates; eyes on the real node in each branch met in T1/T2 (light, dark, narrow), screenshots looked at |
+| 19e | [Скопировать инструкцию] — plain text: the domain, where, the two records, what to press | unit test of the text for apex and subdomain |
+| 19f | test:hosting-move + test:hosting extended; chain green; ONE push → CI → fork sync → ONE node update | numbers in the summary |
+
+### 11.5 Test plan (the owner's order)
+- **Now, in parallel with the build (the slow part first):** aifa.dev → its registrar's own DNS. Before switching NS put `A @` and `A *` →
+  213.199.61.7 **DNS only** in Cloudflare too, so resolvers that keep Cloudflare's NS (TTL 86400) and the new ones agree. Done in his
+  Chrome with him (skill help-in-browser) — never described from memory.
+- **T1 aifa.dev, registrar branch, on the existing server (not a clean proof, accepted):** node update with 737-19 → «Копировать заново»
+  (core only, ~11 min) → the ladder: detection = registrar DNS → records at the registrar through the ladder's instruction → check →
+  certificates → rehearse → telegram → move. Pass: https://aifa.dev from outside answers with this node's commit, a valid certificate.
+- **Between the tests:** «Отменить установку» on the tab FIRST (the node forgets the old host key; after an OS reinstall connect would
+  refuse `host-key-changed`), then the OS reinstall in the provider's panel (his access needed).
+- **T2 fractera.ai, Cloudflare branch, from scratch = the final:** connect … → fractera.ai: detection = Cloudflare, live www site, MX →
+  «Есть вход в Cloudflare» (manual or «узел сам») → DNS only → certificates → move. Pass: https://fractera.ai from the server with a valid
+  certificate; MX unchanged (DoH before/after); the showcase mode on fractera.ai confirmed by him beforehand.
+
+### 11.6 Decisions (my pick first)
+D15 one ladder for the computer and the server — yes, now. D16 priority = where the records live now; the move of DNS to the registrar is
+an optional branch with a checklist. D17 the server's records DNS only, also through the token. D18 the token is used at once when it already
+sees the zone, otherwise offered as «узел сам» — never the main road. D19 a subdomain base supported (protects live sites). D20 detection
+asks two resolvers to see an NS transition.
