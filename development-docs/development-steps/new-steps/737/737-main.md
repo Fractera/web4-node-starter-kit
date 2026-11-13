@@ -239,3 +239,30 @@ counts as contaminated (an earlier Fractera install, swap added by hand up to 15
 node on a server: a GitHub token with write to the fork kept by the node (yes), or the owner taps «Sync fork» on the phone; D10 — the
 architect of an empty server = the first registration through `npm run server -- window` (the SSH window is «this computer» by the
 law of §2), yes.
+
+## 10. The domain in parallel with the move, and the place detected — the owner's message of ~14:40 UTC (verbatim) and the design
+
+«Процесс идёт очень долго и было бы неплохо чтобы параллельно в этом процессе пользователя была возможность настроить свой домен то есть
+подключить к нему необходимые записи “a” для каждого существующего субдомена а также разместить информацию о том что при создании каждого
+нового элемента придётся вновь создавать новые записи. Также это скорее всего требует создания дополнительного шага … когда в
+существующем процессе подключения собственных доменов мы должны подтверждать что в случае если это решение которое работает на сервере
+предварительно мы должны добавить запись на регистратор. Также важно давать возможность проверить подключился регистратор или нет. Также
+важно доводить информацию о том что если раньше этот домен использовался вами на другом сервере то переключение может занять до 24
+часов, в то время как новые домены подключаются чаще всего мгновенно. … очень важно теперь найти способ нативно отслеживать является ли
+данное состояние локальным или это выделенный сервер потому что до сих пор у нас существует вкладка где мы все это переключали руками.
+Больше этого быть не должно согласен?» — **Agreed.**
+
+**Measured (2026-11-13):** public DoH answers carry `TTL` (`example.org` A → TTL 152 s) — the waiting time is measured, not promised.
+Element birth looks for the tunnel (`scripts/item-birth.mjs:349` `!domain?.tunnelId` → «address only on this machine») and `POST
+/api/node/reach` creates a tunnel route + a Cloudflare record + a Workers copy — wrong on a server node. Place-dependent code today:
+103 files ask «temporary address», 19 the Workers copy, 12 the tunnels, 11 `trycloudflare`, 5 the declared place, 6 the server phase.
+
+| # | Result | Proof |
+|---|---|---|
+| 737-15 | **The domain opens right after «Подключение»** (the IP is known): the records table per domain with the `*` line, «Проверить DNS», and per name: points here · nowhere yet · elsewhere (IP shown) with the **measured TTL** — «the old answer lives in caches up to N min» instead of «24 hours»; a new name → «now». Two cases: a **new domain** — written now, certificates right after «Подготовка» (nginx serves the ACME path from then), so they are ready when the copy ends; a **domain this node already serves** (tunnel) — its records switch at the move rung (earlier would send the live site to an empty server), with the TTL shown beforehand | clean run: DNS written during the copy → the certificates are issued before the rehearsal; a changed record shows the measured TTL; negative: a domain in use is never switched before the move |
+| 737-16 | **New elements on a server node** — birth asks the place: with the `*` record the node itself adds the name to nginx, issues its certificate and checks https from outside (nothing for the person to do); without it the birth names the one A record to add and waits for DNS; the tab says this once, beside the records table | a born element on the server answers by https within minutes with `*`; without `*` the birth line names the record; negative: no Cloudflare call on a server node |
+| 737-17 | **Every domain flow asks the place first:** «Активация домена» (tunnel), an element's own domain, the node's extra domains — on a server each starts with «add the A record at the registrar → check» and ends with the certificate; on the computer they stay as they are | each flow driven on the server by the CLI/door and on the computer; the same door refuses the tunnel road on a server |
+| 737-18 | **The place is detected, never declared:** the manual switch «Где размещён ваш проект?» and `data/node/place.json` go (its return under the ladder in `2d42766d` is undone). The place = the record written by the act that put the node there (the move, the «Новый сервер» road, the server installer); a node set up on a Linux server by hand is recorded by `launch` itself when the machine holds a public IPv4 on its own interface or a cloud metadata service answers; macOS and Windows — the computer. Per request the edge mark says whether it came through the server's nginx. One function `nodePlace()` — every place-dependent behaviour reads it (the 103/19/12/11 files above are the audit list) | fixtures: a server record → server; macOS → computer; Linux with a private IP and no record → computer; negative: no file and no switch can make this computer «server» |
+
+**Decisions (my pick first):** D11 — the `*` record recommended by default (new elements need nothing at the registrar); D12 — a domain the
+node already serves switches at the move rung, never earlier; D13 — the manual place switch removed now (the owner agreed).
