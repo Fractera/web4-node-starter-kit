@@ -201,6 +201,13 @@ side, under one domain, and gives each of them the technical part that search an
 
 ## How to install
 
+> [!IMPORTANT]
+> **A computer with 8 GB of memory: the first install may take about 30 minutes.** Building the node's core needs about 13–14 GB of
+> memory and swap together — measured on an 8 GB Linux server on 2026-11-13: 7.7 GB in memory plus 5.9 GB moved to swap. With less
+> memory the system moves the rest to disk (the page file on Windows, swap on macOS and Linux), so the build slows down but does not
+> break. Let it run and keep the terminal open. On a Linux server the node adds the swap it needs by itself (memory plus swap of at
+> least 16 GB).
+
 1. **Install Claude Code.** One line in a terminal, from [code.claude.com/docs/en/setup](https://code.claude.com/docs/en/setup):
    `curl -fsSL https://claude.ai/install.sh | bash` on macOS and Linux, `irm https://claude.ai/install.ps1 | iex` in Windows
    PowerShell. You need the Pro plan or higher ($20 a month), which includes Claude Code.
