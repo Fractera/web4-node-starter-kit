@@ -7,8 +7,9 @@ import { spawn } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import ssh2 from 'ssh2'
+import { readableKeyPair } from '../lib/hosting/ssh.mjs'
 
-export function startTestSshServer({ home, password, hostKey = ssh2.utils.generateKeyPairSync('ed25519').private, port = 0, state = { passwordAllowed: true } }) {
+export function startTestSshServer({ home, password, hostKey = readableKeyPair().private, port = 0, state = { passwordAllowed: true } }) {
   return new Promise((resolve) => {
     const server = new ssh2.Server({ hostKeys: [hostKey] }, (client) => {
       client.on('authentication', (ctx) => {

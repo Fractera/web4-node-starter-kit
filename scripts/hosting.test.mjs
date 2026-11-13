@@ -8,6 +8,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { dnsRecords, isHostName, nodeNames, primaryZone } from '../lib/hosting/hostnames.mjs'
+import { readableKeyPair } from '../lib/hosting/ssh.mjs'
 
 let passed = 0
 const t = (name, fn) => {
@@ -192,7 +193,7 @@ if (process.platform === 'win32') {
   const { startTestSshServer } = await import('./hosting-test-ssh.mjs')
   const sshState = { passwordAllowed: true }
   const sshServer = async (hostKey, port = 0) => (await startTestSshServer({ home, password: SECRET, hostKey, port, state: sshState })).server
-  const hostKeyA = ssh2.utils.generateKeyPairSync('ed25519').private
+  const hostKeyA = readableKeyPair().private
   let srv = await sshServer(hostKeyA)
   const sshPort = srv.address().port
 
@@ -229,7 +230,7 @@ if (process.platform === 'win32') {
   })
   await ta('negative: the same address with a different server key is refused as `host-key-changed`', async () => {
     await new Promise((r) => srv.close(r))
-    srv = await sshServer(ssh2.utils.generateKeyPairSync('ed25519').private, sshPort)
+    srv = await sshServer(readableKeyPair().private, sshPort)
     await assert.rejects(sshLib.connect({ root: nodeRoot, host: '127.0.0.1', port: sshPort }), (e) => e.reason === 'host-key-changed')
   })
   await new Promise((r) => srv.close(r))
