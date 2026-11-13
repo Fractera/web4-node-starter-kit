@@ -1,6 +1,6 @@
 // TESTS OF THE DEDICATED-SERVER LIBRARY (node step 737). `npm run test:hosting`. Fixtures live in the system's temp folder, never inside
 // the project (a copy of code inside the project is code to the core's build — ANTI-PATTERNS «All systems»).
-// Every block has its negative control: the thing that must NOT happen is asserted, not only the thing that must.
+// Every group of cases has its negative control: the thing that must NOT happen is asserted, not only the thing that must.
 import assert from 'node:assert/strict'
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -170,6 +170,90 @@ t('negative: a certificate path that could inject a directive, a bad port, a bad
   assert.throws(() => nginxSite({ table: { zone: null, corePort: 70000, rows: [] } }))
   assert.throws(() => letsEncryptPaths('../etc'))
 })
+
+console.log('737-3 the SSH road (a real ssh2 server in this process, commands run by bash in a temporary home)')
+const ta = async (name, fn) => {
+  try { await fn(); passed += 1; console.log(`  ✓ ${name}`) } catch (e) { console.error(`  ✗ ${name}\n    ${e.message}`); process.exitCode = 1 }
+}
+const { default: ssh2 } = await import('ssh2')
+const { spawn } = await import('node:child_process')
+const { readdirSync, readFileSync, statSync } = await import('node:fs')
+const sshLib = await import('../lib/hosting/ssh.mjs')
+const SECRET = 'correct-horse-737'
+const home = mkdtempSync(join(tmpdir(), 'hosting-ssh-home-'))
+const nodeRoot = mkdtempSync(join(tmpdir(), 'hosting-ssh-node-'))
+roots.push(home, nodeRoot)
+let passwordAllowed = true
+function sshServer(hostKey, port = 0) {
+  return new Promise((resolve) => {
+    const server = new ssh2.Server({ hostKeys: [hostKey] }, (client) => {
+      client.on('authentication', (ctx) => {
+        if (ctx.method === 'password') return passwordAllowed && ctx.username === 'root' && ctx.password === SECRET ? ctx.accept() : ctx.reject()
+        if (ctx.method === 'publickey') {
+          let lines = []
+          try { lines = readFileSync(join(home, '.ssh', 'authorized_keys'), 'utf8').split('\n').filter(Boolean) } catch { /* none yet */ }
+          const key = lines.map((l) => ssh2.utils.parseKey(l)).find((k) => !(k instanceof Error) && k.type === ctx.key.algo && k.getPublicSSH().equals(ctx.key.data))
+          if (!key) return ctx.reject()
+          if (ctx.signature) return key.verify(ctx.blob, ctx.signature, ctx.hashAlgo) === true ? ctx.accept() : ctx.reject()
+          return ctx.accept()
+        }
+        return ctx.reject(['password', 'publickey'])
+      }).on('ready', () => {
+        client.on('session', (accept) => {
+          accept().on('exec', (acceptExec, _reject, info) => {
+            const stream = acceptExec()
+            const child = spawn('bash', ['-c', info.command], { env: { HOME: home, PATH: process.env.PATH } })
+            child.stdout.pipe(stream, { end: false })
+            child.stderr.pipe(stream.stderr, { end: false })
+            child.on('close', (code) => { stream.exit(code ?? 1); stream.end() })
+          })
+        })
+      }).on('error', () => { /* a refused client */ })
+    })
+    server.listen(port, '127.0.0.1', () => resolve(server))
+  })
+}
+const hostKeyA = ssh2.utils.generateKeyPairSync('ed25519').private
+let srv = await sshServer(hostKeyA)
+const sshPort = srv.address().port
+
+await ta('negative: a wrong password is refused as `auth`', async () => {
+  await assert.rejects(sshLib.connect({ root: nodeRoot, host: '127.0.0.1', port: sshPort, password: 'wrong' }), (e) => e.reason === 'auth')
+})
+await ta('the password once: the node key lands in authorized_keys, a key-only login proves it, the server key is pinned', async () => {
+  const r = await sshLib.installKey({ root: nodeRoot, host: '127.0.0.1', port: sshPort, password: SECRET })
+  assert.match(r.fingerprint, /^SHA256:/)
+  const keys = readFileSync(join(home, '.ssh', 'authorized_keys'), 'utf8')
+  assert.ok(keys.includes(' fractera-node'), keys)
+  const pin = JSON.parse(readFileSync(join(nodeRoot, 'data', 'node', 'server', 'known-host.json'), 'utf8'))
+  assert.equal(pin.fingerprint, r.fingerprint)
+  assert.equal(statSync(join(nodeRoot, 'data', 'node', 'server', 'id_ed25519')).mode & 0o777, 0o600)
+})
+await ta('negative: with password login off, the password is refused and the key alone works', async () => {
+  passwordAllowed = false
+  await assert.rejects(sshLib.connect({ root: nodeRoot, host: '127.0.0.1', port: sshPort, password: SECRET }), (e) => e.reason === 'auth')
+  const { client } = await sshLib.connect({ root: nodeRoot, host: '127.0.0.1', port: sshPort })
+  const out = await sshLib.exec(client, 'echo hello-from-server; exit 3')
+  client.end()
+  assert.equal(out.stdout.trim(), 'hello-from-server')
+  assert.equal(out.code, 3)
+})
+await ta('a second install adds no second line', async () => {
+  passwordAllowed = true
+  await sshLib.installKey({ root: nodeRoot, host: '127.0.0.1', port: sshPort, password: SECRET })
+  const lines = readFileSync(join(home, '.ssh', 'authorized_keys'), 'utf8').split('\n').filter((l) => l.includes('fractera-node'))
+  assert.equal(lines.length, 1)
+})
+await ta('negative: the password is in no file of the node', async () => {
+  const walk = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap((d) => (d.isDirectory() ? walk(join(dir, d.name)) : [join(dir, d.name)]))
+  for (const f of walk(nodeRoot)) assert.ok(!readFileSync(f, 'utf8').includes(SECRET), f)
+})
+await ta('negative: the same address with a different server key is refused as `host-key-changed`', async () => {
+  await new Promise((r) => srv.close(r))
+  srv = await sshServer(ssh2.utils.generateKeyPairSync('ed25519').private, sshPort)
+  await assert.rejects(sshLib.connect({ root: nodeRoot, host: '127.0.0.1', port: sshPort }), (e) => e.reason === 'host-key-changed')
+})
+await new Promise((r) => srv.close(r))
 
 for (const r of roots) rmSync(r, { recursive: true, force: true })
 console.log(`${passed} passed${process.exitCode ? ', FAILED' : ''}`)
