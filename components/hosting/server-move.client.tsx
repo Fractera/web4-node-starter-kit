@@ -1,7 +1,7 @@
 "use client"
 // @local — the move ladder of the tab «Выделенный сервер» (one route); its pieces are the parts ladder-step and stage-log
 
-import { useCallback, useEffect, useState } from "react"
+import { type ReactNode, useCallback, useEffect, useState } from "react"
 import { LadderLocked, LadderStep } from "@/components/hosting/ladder-step"
 import type { ServerMoveWords } from "@/components/hosting/server-move.i18n"
 import { RungBody, type MoveState } from "@/components/hosting/server-move-rung.client"
@@ -22,7 +22,7 @@ import { isTemporaryHostname } from "@/lib/auth/temporary-address"
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 type View = { ok: boolean; state: MoveState; rungs: Array<keyof ServerMoveWords["rung"]>; phase: "silent" | "live" | null; moved: boolean }
 
-export function ServerMove({ words, domainWords }: { words: ServerMoveWords; domainWords: ServerDomainWords }) {
+export function ServerMove({ words, domainWords, place }: { words: ServerMoveWords; domainWords: ServerDomainWords; place?: ReactNode }) {
   const [view, setView] = useState<View | null>(null)
   const [silent, setSilent] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -100,6 +100,7 @@ export function ServerMove({ words, domainWords }: { words: ServerMoveWords; dom
           </p>
         </div>
       ) : null}
+      {place ? <div className="mt-6" data-block="server-move-place">{place}</div> : null}
     </div>
   )
 }

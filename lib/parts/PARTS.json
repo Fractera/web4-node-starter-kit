@@ -2215,7 +2215,8 @@
         ]
       },
       "usedBy": [
-        "app/[lang]/(architectLayer)/architect/page.tsx"
+        "app/[lang]/(architectLayer)/architect/page.tsx",
+        "components/hosting/widgets.tsx"
       ]
     },
     {
