@@ -231,8 +231,10 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   `core-build-return`.
 - The node is run by the `serve:*` commands (`serve:start`, `serve:status`); the person never hears the word pm2.
 - **Deploying an element** is its own duty in its own lifecycle: its agent deploys (Preview → Accept or Reject) and pushes when it has
-  the tokens; you gather the state and give the command (`npm run task`), never press an element's «Развернуть» yourself; a node update
-  never brings up an element's undeployed commits; a rollback is a new commit.
+  the tokens. A task pipeline you lead (create, supervision, a task) ends live: its work committed and green — you deploy it yourself
+  (`POST /api/node/deploy {ids}`) and look at it (`npm run eyes`) before you report (the owner, 2026-11-13: «ты можешь и должен в любой
+  момент сам это делать если ты в конвейере задачи»); a node update never brings up an element's undeployed commits; a rollback is a
+  new commit.
 - **An element's own domain:** adding the domain to the node's list of domains is your work; connecting it to the element — the person or
   the element's agent.
 - **GitHub:** until the person agrees, everything stays on the node; after the yes you push the code to the element's repository. A new

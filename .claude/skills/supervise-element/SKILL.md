@@ -36,7 +36,11 @@ carries `--lang <code>` of that language (`ru` when the person writes Russian); 
      question the task answered, «only the person confirms», and the element stopped);
    - a neighbour's request in its intake that its role covers → «Да, делай»; one its role does not cover → ask the architect;
    - a substep or step is closed with evidence → «Дальше по плану» or the next part of the task;
-   - the task is done → report to the architect and `npm run supervise -- <id> off`.
+   - the task is done → **live first, then the report** (the owner, 2026-11-13: «ты можешь и должен в любой момент сам это делать если
+     ты в конвейере задачи»; ✗ the same night «Хранилище картинок» was reported done while its live server still ran the birth build):
+     its work committed and its prebuild green → deploy it yourself, `curl -X POST localhost:<core>/api/node/deploy -d '{"ids":["<id>"]}'`,
+     wait for its `/api/health` `builtAt` to move, open the page the task named with `npm run eyes` and look; only then report to the
+     architect with the link he can click, and `npm run supervise -- <id> off`. A task is never «done» while the person cannot use it.
 3. Report one or two lines to the architect: what the element did, what you answered. `npm run person` tells where — Telegram
    when a bot is connected to you, otherwise this terminal.
 
