@@ -367,3 +367,30 @@ export async function listAccounts(token: string) {
   if (!r.ok) return r
   return { ok: true as const, result: r.result.map((a) => ({ id: a.id, name: a.name })) }
 }
+
+// ── A NAME OF THE NODE MOVES TO ITS OWN SERVER (737-15, D14) ─────────────────
+//
+// 🔒 The owner, 2026-11-13: the records switch right after the server is connected, so DNS has woken by the move; until the move the
+// server answers 503 and Cloudflare's copy of the pages covers the gap («До завершения переезда у нас CloudFlare поддерживает статическую
+// видимость этих страниц»). Hence `proxied: true` — the copy's Worker stands in front only of proxied names, and visitors keep resolving
+// to Cloudflare, so the switch takes effect at its edge at once. Only THIS node's tunnel CNAME on the name is removed; any other record
+// stays and is reported.
+
+/** Point one name of the node at the server: this node's tunnel CNAME removed, an A record to the server's IPv4 (proxied). */
+export async function upsertServerRecord(token: string, zoneId: string, name: string, ip: string, tunnelId: string | null) {
+  if (tunnelId) {
+    const off = await deleteTunnelRecord(token, zoneId, name, tunnelId)
+    if (!off.ok) return off
+  }
+  const cname = await send<Array<{ id: string; content: string }>>("GET", `/zones/${zoneId}/dns_records?name=${encodeURIComponent(name)}&type=CNAME`, token)
+  if (!cname.ok) return cname
+  if (cname.result.length > 0) return { ok: false as const, reason: `foreign-cname ${cname.result[0].content}` }
+  const existing = await send<Array<{ id: string; content: string; proxied?: boolean }>>("GET", `/zones/${zoneId}/dns_records?name=${encodeURIComponent(name)}&type=A`, token)
+  if (!existing.ok) return existing
+  const body = { type: "A", name, content: ip, proxied: true, ttl: 1 }
+  if (existing.result.length > 0) {
+    if (existing.result[0].content === ip && existing.result[0].proxied) return { ok: true as const, result: { id: existing.result[0].id, unchanged: true } }
+    return send<{ id: string }>("PUT", `/zones/${zoneId}/dns_records/${existing.result[0].id}`, token, body)
+  }
+  return send<{ id: string }>("POST", `/zones/${zoneId}/dns_records`, token, body)
+}

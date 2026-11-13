@@ -6,6 +6,7 @@ import { LadderLocked, LadderStep } from "@/components/hosting/ladder-step"
 import type { ServerMoveWords } from "@/components/hosting/server-move.i18n"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import { ServerBusy } from "@/components/hosting/server-move-busy.client"
+import { ServerRecords } from "@/components/hosting/server-move-records.client"
 import { RungBody, type MoveState } from "@/components/hosting/server-move-rung.client"
 import { ServerDomain } from "@/components/hosting/server-domain.client"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
@@ -107,6 +108,8 @@ export function ServerMove({ words, domainWords, dialogUi }: { words: ServerMove
           </LadderStep>
         )
       })}
+      {/* 737-15: the domain's records switch while the copy runs — from the moment the server's IP is known until the move. */}
+      {rungs.connect?.state === "done" && !moved ? <ServerRecords dialogUi={dialogUi} words={words.records} /> : null}
       {moved ? (
         <div className="rounded-lg border border-primary/40 bg-primary/5 p-4" data-block="server-move-moved">
           <p className="font-medium text-foreground text-sm">{words.movedTitle}</p>

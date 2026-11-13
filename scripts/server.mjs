@@ -91,7 +91,9 @@ function nginx() {
   const certs = Object.fromEntries(table.rows.map((r) => [r.host, certFor(r.host, list)]).filter(([, c]) => c))
   const server = readJson(path.join(root, 'data', 'node', 'server.json')) ?? {}
   const architect = table.rows.find((r) => r.kind === 'architect')?.host ?? table.zone
-  const text = nginxSite({ table, certs, active: server.domainActive === true, architectHost: architect, ipv6: existsSync('/proc/net/if_inet6'), nginxVersion: nginxVersion() })
+  // 737-15: the names serve the node only once it lives here; before that they answer 503 and Cloudflare's copy covers them.
+  const live = createRequire(import.meta.url)('../lib/hosting/phase.cjs').nodePhase(root) === 'live'
+  const text = nginxSite({ table, certs, active: server.domainActive === true, architectHost: architect, ipv6: existsSync('/proc/net/if_inet6'), nginxVersion: nginxVersion(), live })
   if (!args.includes('--write')) { process.stdout.write(text); return }
   const dir = path.join(root, 'data', 'node', 'server-side', 'nginx')
   mkdirSync(dir, { recursive: true })

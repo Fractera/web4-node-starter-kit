@@ -537,5 +537,29 @@ console.log('737-18 the place is detected, never declared')
   })
 }
 
+console.log('737-15 the names before the move')
+{
+  const { nginxSite } = await import('../lib/hosting/nginx.mjs')
+  const dom = await import('../lib/hosting/server-domain.mjs')
+  const table = { zone: 'example.org', corePort: 24680, rows: [{ host: 'example.org', service: 'root', port: 24683, redirectTo: null }] }
+  const certs = { 'example.org': { fullchain: '/etc/letsencrypt/live/example.org/fullchain.pem', privkey: '/etc/letsencrypt/live/example.org/privkey.pem' } }
+  t('before the move every name answers 503 on 80 and 443 with the ACME path open; after it the name serves the node', () => {
+    const held = nginxSite({ table, certs, live: false })
+    const site = held.slice(held.indexOf('# example.org'))
+    assert.ok(!site.includes('proxy_pass'), 'a held name must not reach the rehearsal node')
+    assert.equal((site.match(/return 503/g) ?? []).length, 2)
+    assert.ok(site.includes('/.well-known/acme-challenge/'))
+    assert.ok(nginxSite({ table, certs, live: true }).includes('proxy_pass http://127.0.0.1:24683'))
+  })
+  t('readiness: a name pointing here without a certificate waits; one on the tunnel or elsewhere does not hold the move', () => {
+    const r = dom.readiness({ zone: 'example.org', rows: [
+      { host: 'example.org', dns: 'ok', cert: 'ok' }, { host: 'auth.example.org', dns: 'ok', cert: 'missing' },
+      { host: 'data.example.org', dns: 'elsewhere', cert: 'missing' }, { host: 'www.example.org', dns: 'missing', cert: 'missing' }] })
+    assert.deepEqual(r.waiting, ['auth.example.org'])
+    assert.deepEqual(r.elsewhere, ['data.example.org'])
+    assert.deepEqual(r.unknown, ['www.example.org'])
+  })
+}
+
 for (const r of roots) rmSync(r, { recursive: true, force: true })
 console.log(`${passed} passed${process.exitCode ? ', FAILED' : ''}`)

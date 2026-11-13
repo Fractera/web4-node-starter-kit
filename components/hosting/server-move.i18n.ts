@@ -13,6 +13,8 @@ export type ServerMoveWords = {
   failed: string
   again: string
   copyAgain: string
+  names: { summary: string; waiting: string; later: string }
+  records: { title: string; none: string; text: string; switch: string; check: string; checkedNote: string; confirmTitle: string; confirmItems: string[]; confirm: string; notNow: string; done: string; failed: string; elsewhere: string; manual: string; table: { zone: string; type: string; name: string; value: string; state: string; optional: string; wildcard: string }; state: Record<"ok" | "missing" | "elsewhere" | "aaaa" | "unknown", string> }
   copyAgainNote: string
   host: string
   port: string
@@ -54,6 +56,29 @@ const en: ServerMoveWords = {
   failed: "Stopped:",
   again: "Try again",
   copyAgain: "Copy again",
+  names: { summary: "Domain {zone}: {p} of {n} names point to the server, {c} have a certificate.", waiting: "The move waits for certificates of:", later: "Still on the old address (the tunnel comes to the server with the node, so they keep working):" },
+  records: {
+    title: "Your domain {zone} — switch its records now",
+    none: "The node has no own domain yet: it can get one on the server after the move (the five steps of the domain there).",
+    text: "DNS wakes up while the copy runs. Until the move Cloudflare keeps showing the public pages from its copy; sign-in and the panel by the domain pause until the server takes over.",
+    switch: "Switch the records in Cloudflare…",
+    check: "Check DNS",
+    checkedNote: "Answers of public DNS:",
+    confirmTitle: "Point {zone} at the server {ip}?",
+    confirmItems: [
+      "Every name of {zone} gets an A record to {ip}, through Cloudflare's proxy; only this node's tunnel record is removed, nothing else in the zone changes.",
+      "Until the move, visitors see the public pages from Cloudflare's copy; sign-in, the panel and the live parts by the domain wait for the move.",
+      "Write the records yourself instead if the domain is not on this node's Cloudflare account.",
+    ],
+    confirm: "Switch the records",
+    notNow: "Not now",
+    done: "Switched: {n} names now point at the server.",
+    failed: "Not switched:",
+    elsewhere: "Write these at their own registrar:",
+    manual: "Write these A records at the registrar, then check:",
+    table: { zone: "Domain {zone}", type: "Type", name: "Name", value: "Value", state: "State", optional: "optional", wildcard: "Or one line for every subdomain, present and future (the @ line is still needed):" },
+    state: { ok: "points here", missing: "no record", elsewhere: "points elsewhere", aaaa: "remove the AAAA record", unknown: "DNS did not answer" },
+  },
   copyAgainNote: "After this node was updated, the server needs the same code: only the changes travel, the core is rebuilt (about 11 minutes on 8 GB).",
   host: "Server IP address",
   port: "SSH port",
@@ -116,6 +141,29 @@ const ru: ServerMoveWords = {
   failed: "Остановлено:",
   again: "Повторить",
   copyAgain: "Скопировать заново",
+  names: { summary: "Домен {zone}: на сервер ведут {p} из {n} имён, с сертификатом — {c}.", waiting: "Переезд ждёт сертификатов для:", later: "Ещё на старом адресе (туннель переедет на сервер вместе с узлом, они продолжат работать):" },
+  records: {
+    title: "Ваш домен {zone} — переключите записи сейчас",
+    none: "Своего домена у узла пока нет: его можно подключить на сервере после переезда (пять шагов домена там).",
+    text: "Пока идёт копия, DNS успевает проснуться. До переезда Cloudflare показывает публичные страницы из своей копии; вход и панель по домену ждут, пока сервер не примет узел.",
+    switch: "Переключить записи в Cloudflare…",
+    check: "Проверить DNS",
+    checkedNote: "Ответы публичного DNS:",
+    confirmTitle: "Направить {zone} на сервер {ip}?",
+    confirmItems: [
+      "Каждое имя {zone} получит запись A на {ip} через прокси Cloudflare; снимается только запись туннеля этого узла, остальное в зоне не меняется.",
+      "До переезда посетители видят публичные страницы из копии Cloudflare; вход, панель и живые части по домену ждут переезда.",
+      "Если домен не в аккаунте Cloudflare этого узла — впишите записи сами.",
+    ],
+    confirm: "Переключить записи",
+    notNow: "Не сейчас",
+    done: "Переключено: {n} имён ведут на сервер.",
+    failed: "Не переключено:",
+    elsewhere: "Эти впишите у их регистратора:",
+    manual: "Впишите эти записи A у регистратора и проверьте:",
+    table: { zone: "Домен {zone}", type: "Тип", name: "Имя", value: "Значение", state: "Состояние", optional: "по желанию", wildcard: "Или одной строкой для всех поддоменов, нынешних и будущих (строка @ всё равно нужна):" },
+    state: { ok: "ведёт сюда", missing: "нет записи", elsewhere: "ведёт в другое место", aaaa: "уберите запись AAAA", unknown: "DNS не ответил" },
+  },
   copyAgainNote: "После обновления этого узла серверу нужен тот же код: переносятся только изменения, ядро пересобирается (около 11 минут на 8 ГБ).",
   host: "IP-адрес сервера",
   port: "Порт SSH",

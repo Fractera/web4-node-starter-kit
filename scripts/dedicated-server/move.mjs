@@ -128,7 +128,10 @@ const rungs = {
       setRung(root, 'copy', { stages: [{ id: 'copy', state: 'running', at: now() }] })
       const c = await copyPhase({ root, host: server().host, port: server().port, phase: 'silent', ...(dry ? { target: `${REMOTE_ROOT}/` } : {}) })
       if (c.code !== 0) return end('copy', false, { detail: `rsync ${c.code}: ${c.tail.slice(-300)}` })
-      const mark = JSON.stringify({ phase: 'silent', ip: server().host, sshPort: server().port, user: REMOTE_USER, folder: FOLDER, from: os.hostname(), at: now() }, null, 2)
+      // 737-15: the server learns this node's domain now (the silent copy carries no logs/domain.json), so its names, records and
+      // certificates can be ready before the move.
+      const zone = (() => { try { return JSON.parse(readFileSync(path.join(root, 'logs', 'domain.json'), 'utf8')).zone || null } catch { return null } })()
+      const mark = JSON.stringify({ phase: 'silent', ip: server().host, sshPort: server().port, user: REMOTE_USER, folder: FOLDER, from: os.hostname(), at: now(), ...(zone ? { domain: zone } : {}) }, null, 2)
       await exec(client, `mkdir -p ${q(`${REMOTE_ROOT}/data/node`)} ${q(`${REMOTE_ROOT}/logs/dedicated-server`)} && printf '%s\\n' ${q(mark)} > ${q(`${REMOTE_ROOT}/data/node/server.json`)} && rm -f ${q(`${REMOTE_ROOT}/logs/dedicated-server/install.progress.jsonl`)}`)
       const copied = { id: 'copy', state: 'done', at: now(), detail: `${c.files ?? '?'} files, ${Math.round((c.bytes ?? 0) / 1048576)} MB` }
       // ✗ The owner's test server 2026-11-13: a copy after a rehearsal built the core beside the rehearsal's 16 running processes and was
@@ -195,7 +198,10 @@ const rungs = {
       const r = await startServer(client, 'silent')
       if (!r.ok) return end('rehearse', false, { stages: r.stages, detail: `${r.failed?.id}: ${String(r.failed?.detail).slice(-300)}` })
       const checks = await allChecks(client)
-      patchMove(root, (s) => { s.checks = checks })
+      // 737-15: the names are made ready here, before the move — DNS asked publicly, certificates issued for every name already pointing
+      // here. Not a failure of the rehearsal: a domain may wake later; the move rung holds only what would break.
+      const names = await namesReady(client)
+      patchMove(root, (s) => { s.checks = checks; s.names = names })
       end('rehearse', checks.every((c) => c.ok), { stages: r.stages, detail: checks.filter((c) => !c.ok).map((c) => c.id).join(' ') })
     } catch (e) {
       end('rehearse', false, { detail: String(e.reason ?? e.message).slice(0, 300) })
@@ -208,6 +214,12 @@ const rungs = {
     // The server is reached BEFORE this computer stops: a network that fails here leaves the node where it is.
     let client
     try { ({ client } = await asNode()) } catch (e) { return end('move', false, { detail: `server: ${e.reason ?? e.message}` }) }
+    // 737-15c — no black screen (the owner, 2026-11-13): a name that already points straight at the server must have its certificate
+    // before this computer stops; otherwise nothing stops and the rung names what waits. A name still on the tunnel is safe: the tunnel
+    // comes to the server with the node.
+    const names = await namesReady(client)
+    patchMove(root, (s) => { s.names = names })
+    if (names.waiting?.length) { client.end(); return end('move', false, { detail: `certificates still missing: ${names.waiting.join(' ')}` }) }
     const stopped = dry ? [] : stopAll(root)
     setRung(root, 'move', { stopped })
     const page = dry ? null : await serveStatusPage(root, corePort)
@@ -244,6 +256,16 @@ let serverMark = null
 function readServerMark() {
   serverMark = serverMark ?? { ip: server().host, sshPort: server().port, user: REMOTE_USER, folder: FOLDER, from: os.hostname(), at: now() }
   return serverMark
+}
+
+/** The server's own answer on its names (`names-ready.mjs`); an empty answer when it cannot tell (it never holds the move by itself). */
+async function namesReady(client) {
+  try {
+    const r = await exec(client, `cd ${q(REMOTE_ROOT)} && node scripts/dedicated-server/names-ready.mjs${dry ? ' --dry' : ''}`, { timeoutMs: 45 * 60_000 })
+    return JSON.parse(r.stdout.trim().split('\n').pop())
+  } catch (e) {
+    return { zone: null, error: String(e.reason ?? e.message).slice(0, 200), waiting: [] }
+  }
 }
 
 async function startServer(client, phase) {

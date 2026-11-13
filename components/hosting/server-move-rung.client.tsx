@@ -23,6 +23,7 @@ export type MoveState = {
   checks?: Array<{ id: string; ok: boolean; value?: unknown }>
   claude?: { url?: string | null; email?: string | null }
   clear?: { state?: string; detail?: string; stopped?: number; backup?: string }
+  names?: { zone?: string | null; names?: number; pointing?: string[]; certified?: string[]; waiting?: string[]; elsewhere?: string[]; unknown?: string[] }
 }
 type RungId = keyof ServerMoveWords["rung"]
 type Start = (rung: string, extra?: Record<string, unknown>) => Promise<void>
@@ -115,6 +116,14 @@ export function RungBody({ id, rung, state, words, busy, onStart }: { id: RungId
         </ul>
       ) : null}
 
+      {(id === "rehearse" || id === "move") && state.names?.zone ? (
+        // 737-15: the domain's names as the server sees them — pointing here, certified, waiting; the move holds on «waiting».
+        <div className="flex flex-col gap-1 text-sm" data-block="server-move-names">
+          <span className="text-foreground">{words.names.summary.replace("{zone}", state.names.zone).replace("{p}", String(state.names.pointing?.length ?? 0)).replace("{n}", String(state.names.names ?? 0)).replace("{c}", String(state.names.certified?.length ?? 0))}</span>
+          {state.names.waiting?.length ? <span className="text-destructive">{words.names.waiting} <span className="font-mono">{state.names.waiting.join(" ")}</span></span> : null}
+          {[...(state.names.elsewhere ?? []), ...(state.names.unknown ?? [])].length ? <span className="text-muted-foreground">{words.names.later} <span className="font-mono">{[...(state.names.elsewhere ?? []), ...(state.names.unknown ?? [])].join(" ")}</span></span> : null}
+        </div>
+      ) : null}
       {id === "move" && !done && !running ? <p className="rounded-md border border-border bg-muted/40 px-3 py-2 text-foreground text-sm">{words.moveWarn}</p> : null}
 
       {rung.state === "failed" ? (
