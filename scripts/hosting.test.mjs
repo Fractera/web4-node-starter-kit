@@ -102,5 +102,74 @@ t('host names by the rules of DNS and the node\'s policy (no IDN `xn--`, lib/web
   for (const bad of ['org', 'a..org', '-a.org', 'a.123', 'a b.org', 'a.org.', '', 'xn--80ak6aa92e.com']) assert.ok(!isHostName(bad), bad)
 })
 
+console.log('737-2 the edge law and the generated nginx')
+// The `.ts` modules are read by Node's own type stripping (Node ≥ 22.18); its «typeless package» notice is not a failure.
+process.removeAllListeners('warning')
+const { isBareIpHostname, isTemporaryHostname } = await import('../components/shell/temporary-host.ts')
+const { isOwnerAtMachine } = await import('../lib/auth/owner-at-machine.ts')
+const { nginxSite, http2Directive, letsEncryptPaths } = await import('../lib/hosting/nginx.mjs')
+const req = (headers) => ({ headers: { get: (n) => headers[n.toLowerCase()] ?? null } })
+
+t('a bare public IP is a temporary (read-only) address; loopback and names are not', () => {
+  for (const yes of ['203.0.113.7', '203.0.113.7:80', '[2001:db8::1]', '[2001:db8::1]:8080']) assert.ok(isBareIpHostname(yes) && isTemporaryHostname(yes), yes)
+  for (const no of ['127.0.0.1', '127.1.2.3:24680', 'localhost', '[::1]', '[::1]:24680', 'example.org', '0.0.0.0']) assert.ok(!isBareIpHostname(no), no)
+  assert.ok(!isTemporaryHostname('example.org') && !isTemporaryHostname('localhost:24680'))
+})
+t('the lost backslash: a quick tunnel name with a port is temporary', () => {
+  assert.ok(isTemporaryHostname('word-word-word-word.trycloudflare.com:443'))
+})
+t('the owner at the keyboard: loopback with no marks — yes', () => {
+  assert.equal(isOwnerAtMachine(req({ host: 'localhost:24680' })), true)
+})
+t('negative: Host localhost through the server\'s nginx (the edge mark) — NOT the owner', () => {
+  assert.equal(isOwnerAtMachine(req({ host: 'localhost', 'x-fractera-edge': '1' })), false)
+  assert.equal(isOwnerAtMachine(req({ host: 'localhost', 'x-fractera-edge': '1', 'x-forwarded-host': 'localhost' })), false)
+})
+t('negative: Cloudflare marks and a public name stay outside', () => {
+  assert.equal(isOwnerAtMachine(req({ host: 'localhost', 'cf-ray': 'x' })), false)
+  assert.equal(isOwnerAtMachine(req({ host: '203.0.113.7' })), false)
+})
+
+const NAMES = nodeNames({ root: fixture({ services: SERVICES, runtime: { port: 24680 }, domain: 'example.org' }) })
+const NOW = '2026-11-13T00:00:00Z'
+const count = (text, needle) => text.split(needle).length - 1
+t('IP stage: one default server to the core, the edge mark, loopback refused, ACME open, no stapling', () => {
+  const site = nginxSite({ table: { zone: null, corePort: 24680, rows: [] }, generatedAt: NOW })
+  assert.equal(count(site, 'server {'), 1)
+  assert.ok(site.includes('listen 80 default_server;') && site.includes('listen [::]:80 default_server;'))
+  assert.ok(site.includes('proxy_pass http://127.0.0.1:24680;'))
+  assert.ok(site.includes('proxy_set_header x-fractera-edge 1;'))
+  assert.ok(site.includes('return 444;') && site.includes('/.well-known/acme-challenge/'))
+  assert.ok(site.includes('client_max_body_size 200m;'))
+  assert.ok(!site.includes('ssl_stapling'))
+})
+t('domain stage: 443 only for names with a certificate, 503 for the others, every proxy carries the edge mark', () => {
+  const certs = { 'example.org': letsEncryptPaths('example.org'), 'architect.example.org': letsEncryptPaths('architect.example.org'), 'www.example.org': letsEncryptPaths('www.example.org') }
+  const site = nginxSite({ table: NAMES, certs, generatedAt: NOW, nginxVersion: '1.24.0' })
+  assert.ok(site.includes('server_name example.org;') && site.includes('ssl_certificate /etc/letsencrypt/live/example.org/fullchain.pem;'))
+  assert.equal(count(site, 'listen 443 ssl http2;'), 3)
+  assert.ok(site.includes('return 301 https://example.org$request_uri;'), 'www → apex')
+  assert.equal(count(site, 'proxy_pass '), count(site, 'proxy_set_header x-fractera-edge 1;'))
+  assert.equal(count(site, 'return 444;'), count(site, 'server {'))
+  const authBlock = site.slice(site.indexOf('# auth.example.org'), site.indexOf('# data.example.org'))
+  assert.ok(authBlock.includes('return 503') && !authBlock.includes('443'), authBlock)
+})
+t('switched on: the bare IP sends to the architect name', () => {
+  const site = nginxSite({ table: NAMES, active: true, architectHost: 'architect.example.org', generatedAt: NOW })
+  assert.ok(site.split('# example.org')[0].includes('return 301 https://architect.example.org$request_uri;'))
+})
+t('http2: `http2 on` from nginx 1.25.1, the listen flag before it; no IPv6 listens when the server has none', () => {
+  assert.equal(http2Directive('1.24.0'), 'legacy')
+  assert.equal(http2Directive('1.25.1'), 'modern')
+  assert.equal(http2Directive('1.28.0'), 'modern')
+  const site = nginxSite({ table: NAMES, certs: { 'example.org': letsEncryptPaths('example.org') }, nginxVersion: '1.26.3', ipv6: false, generatedAt: NOW })
+  assert.ok(site.includes('http2 on;') && site.includes('listen 443 ssl;') && !site.includes('[::]'))
+})
+t('negative: a certificate path that could inject a directive, a bad port, a bad host — refused', () => {
+  assert.throws(() => nginxSite({ table: NAMES, certs: { 'example.org': { fullchain: '/x; include /etc/passwd', privkey: '/y' } } }))
+  assert.throws(() => nginxSite({ table: { zone: null, corePort: 70000, rows: [] } }))
+  assert.throws(() => letsEncryptPaths('../etc'))
+})
+
 for (const r of roots) rmSync(r, { recursive: true, force: true })
 console.log(`${passed} passed${process.exitCode ? ', FAILED' : ''}`)

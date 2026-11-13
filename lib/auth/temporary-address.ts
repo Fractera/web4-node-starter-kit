@@ -26,7 +26,8 @@ import type { NextRequest } from "next/server"
 // остаётся и работает первым — он не требует публичного адреса вовсе.
 
 /** Домены, которые Cloudflare раздаёт быстрым туннелям. Ровно они, без поддоменов третьих лиц. */
-import { TEMPORARY_SUFFIXES } from "@/components/shell/temporary-host"
+// 737-2: и голый IP выделенного сервера до его домена — тот же закон «только чтение» (`isBareIpHostname`, единое место знания).
+import { TEMPORARY_SUFFIXES, isBareIpHostname } from "@/components/shell/temporary-host"
 
 /**
  * Принадлежит ли ИМЯ ХОСТА быстрому туннелю — единственное место, где это знание
@@ -43,7 +44,7 @@ import { TEMPORARY_SUFFIXES } from "@/components/shell/temporary-host"
  */
 export function isTemporaryHostname(hostname: string): boolean {
   const bare = (hostname ?? "").trim().toLowerCase().replace(/:\d+$/, "")
-  return TEMPORARY_SUFFIXES.some((suffix) => bare.endsWith(suffix))
+  return TEMPORARY_SUFFIXES.some((suffix) => bare.endsWith(suffix)) || isBareIpHostname(hostname)
 }
 
 /**
