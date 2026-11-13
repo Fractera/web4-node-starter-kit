@@ -9,11 +9,14 @@
 //   copy                                      the silent copy (no bot tokens, no named tunnel) → install and build on the server
 //   claude                                    Claude Code signed in on the server: its link shown here, the code pasted here
 //   rehearse                                  the silent start on the server and the checks from outside and inside
+//   (telegram)                                the node's main bot on the server: moved with the node, the server's own, or later —
+//                                             the person's choice, kept by the door `app/api/node/server` (no runner: nothing to run)
 //   move                                      this computer stops, the last changes go, the server starts whole; failure → back here
 //   clear · cancel                            a server that is not empty: freed (stopped and kept, never erased) and probed again,
 //                                             or the installation cancelled (the node's key leaves the server, the server is forgotten)
 // `--dry` runs the server scripts with DRY_RUN=1 (every command printed, none run) — the rehearsal of the runner itself.
 import { execSync } from 'node:child_process'
+import { createRequire } from 'node:module'
 import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -22,12 +25,13 @@ import { insideChecks, outsideChecks } from '../../lib/hosting/checks.mjs'
 import { isHostName } from '../../lib/hosting/hostnames.mjs'
 import { judge, residentMb } from '../../lib/hosting/judge.mjs'
 import { forget, serveStatusPage, startAgain, stopAll } from '../../lib/hosting/local-node.mjs'
-import { mayStart, patchMove, readMove, setRung } from '../../lib/hosting/move-state.mjs'
+import { mayStart, patchMove, readMove, serverKeeps, setRung } from '../../lib/hosting/move-state.mjs'
 import { follow, q, startDetached } from '../../lib/hosting/remote.mjs'
 import { connect, ensureKeyPair, exec, installKey, serverDir, upload } from '../../lib/hosting/ssh.mjs'
 import { copyPhase, measure, remoteRootOf, REMOTE_USER } from '../../lib/hosting/transfer.mjs'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
+const nodeLine = createRequire(import.meta.url)('../../lib/agent-kit/node-line.cjs') // 698: the head of every message of the node to an agent
 const args = process.argv.slice(2)
 const rung = args[0]
 const dry = args.includes('--dry')
@@ -126,7 +130,7 @@ const rungs = {
     try {
       await exec(client, `mkdir -p ${q(REMOTE_ROOT)}`)
       setRung(root, 'copy', { stages: [{ id: 'copy', state: 'running', at: now() }] })
-      const c = await copyPhase({ root, host: server().host, port: server().port, phase: 'silent', ...(dry ? { target: `${REMOTE_ROOT}/` } : {}) })
+      const c = await copyPhase({ root, host: server().host, port: server().port, phase: 'silent', keep: serverKeeps(readMove(root)), ...(dry ? { target: `${REMOTE_ROOT}/` } : {}) })
       if (c.code !== 0) return end('copy', false, { detail: `rsync ${c.code}: ${c.tail.slice(-300)}` })
       // 737-15: the server learns this node's domain now (the silent copy carries no logs/domain.json), so its names, records and
       // certificates can be ready before the move.
@@ -231,7 +235,7 @@ const rungs = {
     }
     try {
       await exec(client, PM2_STOP, { timeoutMs: 120_000 })
-      const c = await copyPhase({ root, host: server().host, port: server().port, phase: 'live', ...(dry ? { target: `${REMOTE_ROOT}/` } : {}) })
+      const c = await copyPhase({ root, host: server().host, port: server().port, phase: 'live', keep: serverKeeps(readMove(root)), ...(dry ? { target: `${REMOTE_ROOT}/` } : {}) })
       if (c.code !== 0) return await back(`rsync ${c.code}`)
       const mark = JSON.stringify({ ...readServerMark(), phase: 'live', movedAt: now() }, null, 2)
       await exec(client, `printf '%s\\n' ${q(mark)} > ${q(`${REMOTE_ROOT}/data/node/server.json`)}`)
@@ -240,6 +244,10 @@ const rungs = {
       const checks = await allChecks(client)
       patchMove(root, (s) => { s.checks = checks })
       if (!checks.every((x) => x.ok)) return await back(`checks: ${checks.filter((x) => !x.ok).map((x) => x.id).join(' ')}`)
+      // 737-11a: «приходит сообщение в Telegram приветствующие о готовности начать разработку но прежде знакомству» (the owner) — the
+      // server's main agent is woken by the node and greets the person through the bot that now answers there. Never a reason to roll back.
+      const welcome = await greet(client)
+      patchMove(root, (s) => { s.welcome = welcome })
       if (!dry) {
         writeFileSync(path.join(root, 'data', 'node', 'moved.json'), `${JSON.stringify({ to: server().host, port: server().port, user: REMOTE_USER, folder: FOLDER, at: now() }, null, 2)}\n`)
         forget(root)
@@ -256,6 +264,23 @@ let serverMark = null
 function readServerMark() {
   serverMark = serverMark ?? { ip: server().host, sshPort: server().port, user: REMOTE_USER, folder: FOLDER, from: os.hostname(), at: now() }
   return serverMark
+}
+
+/**
+ * 737-11a — the welcome after the live start: only when the server has the main bot (moved with the node, or its own). The main agent
+ * there is woken by the node's own word (`wakeMainByNode`: the door `alarm`, no question in Telegram) and writes the first message.
+ */
+async function greet(client) {
+  const t = readMove(root).telegram ?? {}
+  if (!t.bot || (t.choice !== 'move' && t.choice !== 'new')) return { ok: false, reason: 'no-bot', at: now() }
+  if (dry) return { ok: true, dry: true, at: now() }
+  const text = `${nodeLine.head('moved', 'build')}Node: the move has finished — this node now lives on its dedicated server ${server().host}, and the person's Telegram bot @${t.bot} answers from here. Write the person one short greeting in that chat, in their language: the node lives on its server now and is ready to go on with development. If you hold no picture of the person yet (skill know-the-architect), get acquainted first, before any development. Then the conversation is theirs.`
+  try {
+    const r = await exec(client, `cd ${q(REMOTE_ROOT)} && node -e ${q("require('./lib/deploy/agent-return.cjs').wakeMainByNode(process.cwd(), process.argv[1]).then((r) => console.log(JSON.stringify({ ok: !r, reason: r || null })))")} ${q(text)}`, { timeoutMs: 90_000 })
+    return { ...JSON.parse(r.stdout.trim().split('\n').pop()), at: now() }
+  } catch (e) {
+    return { ok: false, reason: String(e.reason ?? e.message).slice(0, 200), at: now() }
+  }
 }
 
 /** The server's own answer on its names (`names-ready.mjs`); an empty answer when it cannot tell (it never holds the move by itself). */
@@ -347,7 +372,7 @@ const roads = {
     const { client } = await asNode()
     try {
       await exec(client, dry ? 'true' : 'pm2 stop all || true; pm2 delete all || true; pm2 save --force || true', { timeoutMs: 180_000 })
-      const c = await copyPhase({ root, host: server().host, port: server().port, phase: 'live', back: true, ...(dry ? { target: `${REMOTE_ROOT}/` } : {}) })
+      const c = await copyPhase({ root, host: server().host, port: server().port, phase: 'live', back: true, keep: serverKeeps(readMove(root)), ...(dry ? { target: `${REMOTE_ROOT}/` } : {}) })
       if (c.code !== 0) throw new Error(`rsync ${c.code}: ${c.tail.slice(-200)}`)
       await exec(client, `printf '%s\\n' ${q(JSON.stringify({ ...readServerMark(), phase: 'returned', returnedAt: now() }))} > ${q(`${REMOTE_ROOT}/data/node/server.json`)}`)
       if (!dry) {
@@ -393,6 +418,6 @@ const roads = {
 if (before[rung]) await before[rung]()
 else if (roads[rung]) await roads[rung]()
 else if (!rungs[rung]) {
-  console.log('Ступени: connect · probe · prepare · copy · claude · rehearse · move · до переезда: clear · cancel · дороги: return · window   [--dry]')
+  console.log('Ступени: connect · probe · prepare · copy · claude · rehearse · (telegram — выбор во вкладке) · move · до переезда: clear · cancel · дороги: return · window   [--dry]')
   process.exit(rung ? 2 : 0)
 } else await rungs[rung]()

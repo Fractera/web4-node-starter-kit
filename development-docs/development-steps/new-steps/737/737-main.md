@@ -298,3 +298,24 @@ empty server = the first registration through `npm run server -- window`; D11 th
 «Подключение» (the owner's reversal); D13 the manual place switch removed; D14 a zone on Cloudflare — the node writes the records itself,
 proxied. Execution order: 737-18 → 737-15/15c → 737-17 → 737-16 → 737-11a → 737-11b; each committed after the chain; the clean runs
 (737-13) need the owner's OS reinstall at the end.
+
+### 10.3 737-11a as built (2026-11-13 ~15:30 UTC) — measured in the session that built it
+
+- **Measured:** the core starts the main agent's bot poller at its own start (`lib/agent-kit/mount.cjs` walks every kit copy, `build`
+  included) and the poller reads the token at every 3-s tick → a token saved on the server is read with no restart (the letter's
+  `pm2 restart` dropped). The bot's «Запустить» button and «/on» reach `bridge.wake` through `telegram.setStarter`, NOT through
+  `__web4AgentWake` → mount.cjs's silent gate never covered them: harmless while the silent copy carried no token, open the moment a
+  server holds its own bot → the poller's own gate (`telegram.cjs` `silentServer()`): admits by the link, answers one line, buttons only
+  acknowledged.
+- **Built:** rung `telegram` between `rehearse` and `move`; the choice `move | later | reset` in the ladder's door, `new` recorded by
+  `/api/node/server/telegram` when the person is admitted there (relay `scripts/dedicated-server/telegram.mjs`: browser → door → relay
+  stdin → SSH stdin → `curl --data-binary @-` on the server's loopback channel door; the suggested handle gets `_srv`); the kit's
+  `TelegramChannel` takes `remote` (12 copies synced, byte-identical); `serverKeeps` → the silent copy, the move and the road home leave
+  a server's own bot folder untouched; after the live start the node wakes the server's main agent to greet (`greet` →
+  `wakeMainByNode`, recorded in `move.json` → `welcome`).
+- **Proofs:** `test:hosting` 63 (6 new: the order, the rules file, real rsync with its negative control, the poller's gate on the real
+  module with Telegram replaced — mutation check: the gate disabled → 2 red); `test:hosting-move` 13 (the relay over the in-process SSH
+  server — the token never in a command line, the server silent → `server-silent`; the move refused before the choice).
+- **Left for the clean run (737-13):** a new bot admitted through the tab on a real server and its greeting after the move; the minutes
+  of the new bot's three steps; whether the server's `session-lost` also wakes the main agent after the move (its session record travels
+  with the copy, its Claude conversation does not).

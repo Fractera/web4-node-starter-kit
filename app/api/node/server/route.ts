@@ -1,12 +1,12 @@
 // @api read the move ladder and start its next rung
 import { spawn, spawnSync } from "node:child_process"
-import { existsSync, mkdirSync, writeFileSync } from "node:fs"
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
-import { mayCancel, mayClear, mayStart, readMove, RUNGS, settle } from "@/lib/hosting/move-state.mjs"
+import { mayCancel, mayClear, mayStart, patchMove, readMove, RUNGS, settle } from "@/lib/hosting/move-state.mjs"
 import phase from "@/lib/hosting/phase.cjs"
 
 // THE MOVE TO A DEDICATED SERVER — THE DOOR OF ITS LADDER (node step 737-7). The owner, 2026-11-13: «настройка которая принимает
@@ -22,6 +22,8 @@ export const dynamic = "force-dynamic"
 const ROOT = process.cwd()
 const RUNNER = join(ROOT, "scripts", "dedicated-server", "move.mjs")
 const noStore = { headers: { "Cache-Control": "no-store" } }
+/** The part of `move.json` these doors write (the module is JavaScript: its record is typed here). */
+type MoveRecord = { telegram?: Record<string, unknown>; rungs: Record<string, Record<string, unknown> | undefined> }
 const IPV4 = /^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/
 const HOST = /^(?=.{4,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/
 
@@ -35,8 +37,30 @@ function cleanEnv(): NodeJS.ProcessEnv {
   return Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith("NEXT_") && k !== "PORT" && k !== "__NEXT_PROCESSED_ENV")) as NodeJS.ProcessEnv
 }
 
+const readJson = (file: string): Record<string, unknown> | null => { try { return JSON.parse(readFileSync(file, "utf8")) } catch { return null } }
+
+/**
+ * 737-11a: this node's main bot as the rung «Telegram» needs it — its handle and how many people it admits; never the token. Connected =
+ * a token and at least one admitted person (the same definition as `connected()` of the agent kit's telegram.cjs).
+ */
+function homeBot(): { username: string; allowed: number } | null {
+  const dir = join(ROOT, "data", "services", "build", "channel", "telegram")
+  const username = readJson(join(dir, "bot.json"))?.username
+  const allow = readJson(join(dir, "access.json"))?.allowFrom
+  const allowed = Array.isArray(allow) ? allow.length : 0
+  return typeof username === "string" && username && allowed > 0 && existsSync(join(dir, ".env")) ? { username, allowed } : null
+}
+
+/** Where the server's panel will answer after the move — the links in the server bot's own status lines start there. */
+function serverOrigin(host: string | undefined): string | null {
+  const zone = readJson(join(ROOT, "logs", "domain.json"))?.zone
+  if (typeof zone === "string" && zone) return `https://architect.${zone}`
+  return host ? `http://${host}` : null
+}
+
 function view() {
-  return { ok: true, state: settle(readMove(ROOT)), rungs: RUNGS, phase: phase.nodePhase(ROOT), moved: existsSync(join(ROOT, "data", "node", "moved.json")) }
+  const state = settle(readMove(ROOT))
+  return { ok: true, state, rungs: RUNGS, phase: phase.nodePhase(ROOT), moved: existsSync(join(ROOT, "data", "node", "moved.json")), homeBot: homeBot(), serverOrigin: serverOrigin(state.server?.host) }
 }
 
 export async function GET(req: NextRequest) {
@@ -59,7 +83,7 @@ export async function POST(req: NextRequest) {
   const denied = await guard(req)
   if (denied) return denied
   if (phase.nodePhase(ROOT)) return NextResponse.json({ ok: false, reason: "on-server" }, { status: 409, ...noStore })
-  const body = (await req.json().catch(() => null)) as { rung?: unknown; host?: unknown; port?: unknown; password?: unknown; code?: unknown; confirm?: unknown } | null
+  const body = (await req.json().catch(() => null)) as { rung?: unknown; host?: unknown; port?: unknown; password?: unknown; code?: unknown; confirm?: unknown; choice?: unknown } | null
   const rung = typeof body?.rung === "string" ? body.rung : ""
 
   if (rung === "connect") {
@@ -93,6 +117,29 @@ export async function POST(req: NextRequest) {
     if (rung === "cancel" && !mayCancel(state)) return NextResponse.json({ ok: false, reason: "order" }, { status: 409, ...noStore })
     spawnSync(process.execPath, [join(ROOT, "scripts", "spawn-free.mjs"), RUNNER, rung], { cwd: ROOT, env: cleanEnv(), stdio: "ignore", timeout: 10_000, windowsHide: true })
     return NextResponse.json({ ...view(), started: rung }, { status: 202, ...noStore })
+  }
+
+  if (rung === "telegram") {
+    // 737-11a: the rung has no runner — the person's choice is the whole act. «move» needs this node's connected bot; «new» is done by the
+    // server's own channel (`/api/node/server/telegram` records it when the person is admitted there); «reset» reopens the choice until
+    // the move starts.
+    const state = settle(readMove(ROOT))
+    const choice = typeof body?.choice === "string" ? body.choice : ""
+    const at = new Date().toISOString()
+    if (choice === "reset") {
+      if (state.rungs?.move?.state === "done" || RUNGS.some((r) => state.rungs?.[r]?.state === "running")) return NextResponse.json({ ok: false, reason: "order" }, { status: 409, ...noStore })
+      patchMove(ROOT, (s: MoveRecord) => { delete s.telegram; delete s.rungs.telegram })
+      return NextResponse.json(view(), noStore)
+    }
+    if (choice !== "move" && choice !== "later") return NextResponse.json({ ok: false, reason: "bad-choice" }, { status: 400, ...noStore })
+    if (!mayStart(state, "telegram")) return NextResponse.json({ ok: false, reason: "order" }, { status: 409, ...noStore })
+    const bot = homeBot()
+    if (choice === "move" && !bot) return NextResponse.json({ ok: false, reason: "no-bot" }, { status: 409, ...noStore })
+    patchMove(ROOT, (s: MoveRecord) => {
+      s.telegram = { choice, bot: choice === "move" ? bot?.username ?? null : null, at }
+      s.rungs.telegram = { state: "done", startedAt: at, endedAt: at, detail: choice === "move" ? `@${bot?.username}` : "later" }
+    })
+    return NextResponse.json(view(), noStore)
   }
 
   if (!RUNGS.includes(rung) || rung === "connect") return NextResponse.json({ ok: false, reason: "unknown-rung", allowed: RUNGS }, { status: 400, ...noStore })

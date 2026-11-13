@@ -24,6 +24,8 @@ export type MoveState = {
   claude?: { url?: string | null; email?: string | null }
   clear?: { state?: string; detail?: string; stopped?: number; backup?: string }
   names?: { zone?: string | null; names?: number; pointing?: string[]; certified?: string[]; waiting?: string[]; elsewhere?: string[]; unknown?: string[] }
+  // 737-11a: the person's choice at the rung «Telegram» (no token here, ever).
+  telegram?: { choice?: "move" | "new" | "later"; bot?: string | null; allowed?: number }
 }
 type RungId = keyof ServerMoveWords["rung"]
 type Start = (rung: string, extra?: Record<string, unknown>) => Promise<void>

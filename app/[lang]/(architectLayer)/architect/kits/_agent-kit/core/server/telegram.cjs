@@ -341,6 +341,9 @@ async function statusMessage(service) {
 // ── УЗЕЛ ЧИТАЕТ БОТА, ПОКА ТЕРМИНАЛ ВЫКЛЮЧЕН ─────────────────────────────────
 
 const idleKey = (service) => `__web4TelegramIdle:${service}`
+// 737-11a: a node on its dedicated server rehearsing (phase «silent», `lib/hosting/phase.cjs`) — read as a file here: this module is bundled
+// with the channel door, and a require by a computed path does not build (✗ 552-6).
+const silentServer = () => readJson(path.join(ROOT, 'data', 'node', 'server.json'), {})?.phase === 'silent'
 
 async function idleTick(service) {
   const token = storedToken(service)
@@ -356,7 +359,12 @@ async function idleTick(service) {
   const nonce = a && Date.now() - a.createdAt < ACTIVATION_LIFETIME_MS ? a.nonce : ''
   const answered = new Set()
   for (const u of updates) {
-    if (u.callback_query) { await onButton(service, token, u.callback_query); continue }
+    if (u.callback_query) {
+      // 737-11a: nothing is started from a rehearsing server — a stray button only gets its acknowledgement.
+      if (silentServer()) { await tg(token, 'answerCallbackQuery', { callback_query_id: u.callback_query.id }); continue }
+      await onButton(service, token, u.callback_query)
+      continue
+    }
     const msg = u.message
     if (!msg || msg.chat?.type !== 'private' || !msg.from) continue
     const sender = String(msg.from.id)
@@ -375,6 +383,17 @@ async function idleTick(service) {
     // plugin's own menu).
     if (activated && service === 'build') {
       try { await nodeCommands().applyMenu(token, [sender], personLang(service)) } catch { /* the menu is a convenience — `npm run commands -- menu` sets it again */ }
+    }
+    // 737-11a (владелец 2026-11-13: «После подтверждения сервер сразу стартует установленный на него Telegram»): бот выделенного сервера
+    // во время репетиции впускает по ссылке и отвечает одной строкой — узел ещё живёт на компьютере человека, и ни один агент здесь не
+    // стартует до переезда (замок `lib/agent-kit/mount.cjs` закрывает двери пробуждения, а этот — кнопки и «/on» самого бота).
+    if (silentServer()) {
+      if (answered.has(msg.chat.id)) continue
+      answered.add(msg.chat.id)
+      const t = await askTable(service)
+      if (activated) await sendKept(token, { chat_id: msg.chat.id, text: t.silentServer ?? ASK.en.silentServer }) // 639: остаётся — итог допуска
+      else await sendVanishing(token, { chat_id: msg.chat.id, text: t.silentServer ?? ASK.en.silentServer }) // 639: исчезает — состояние
+      continue
     }
     // 409-4 (владелец 2026-10-05: агент просыпается «и на сообщение в Telegram», с подтверждением до старта): текст
     // допущенного при выключенном терминале — не «терминал не активен», а тот же вопрос с кнопками; после «Запустить» агент
@@ -602,6 +621,8 @@ const ASK = {
     keySaved: 'OpenAI accepted the key — the node keeps it, and the message with the key is deleted.',
     keyRejected: (why) => `OpenAI did not accept the key (${why}) — the old key stays.`,
     keyNotDeleted: 'The bot could not delete the message with the key — delete it yourself.',
+    // 737-11a: the bot of a dedicated server that is still rehearsing.
+    silentServer: 'This bot is connected to your dedicated server. The project still runs on your computer — after the move the main agent will answer you here.',
     trustLine: 'Its folder is not trusted in Claude Code yet — «Turn on» trusts it as well.',
     waitingTerminal: (a, link) => `Agent ${a} is waiting for your answer in the terminal: ${link}`,
     // 597-4: «turn on» typed to a sleeping agent's bot — the agent starts with no task.
@@ -653,6 +674,7 @@ const ASK = {
     keySaved: 'OpenAI принял ключ — узел его сохранил, сообщение с ключом удалено.',
     keyRejected: (why) => `OpenAI не принял ключ (${why}) — остаётся прежний.`,
     keyNotDeleted: 'Бот не смог удалить сообщение с ключом — удалите его сами.',
+    silentServer: 'Этот бот подключён к вашему выделенному серверу. Проект пока работает на вашем компьютере — после переезда здесь вам ответит главный агент.',
     trustLine: 'Его папка ещё не подтверждена в Claude Code — «Включить» подтвердит и её.',
     waitingTerminal: (a, link) => `Агент ${a} ждёт вашего ответа в терминале: ${link}`,
     onNow: (a) => `Агент ${a} включён — пишите ему.`,
@@ -1301,6 +1323,8 @@ async function answerTrustHere(service, token, chatId) {
 module.exports = {
   // 639: итог остаётся, служебное исчезает; вопросы закрытой сессии исчезают.
   sendKept, sendVanishing, sessionEnded,
+  // 737-11a: one read of the bot — its test proves the rehearsing server's bot admits and answers one line, and starts nothing.
+  idleTick,
   // 604: доверие папке — вопросом в чате главного агента.
   tellTrust, clearTrust, trustPending, trustYes,
   // 614-1: канал разбуженной сессии не встал.

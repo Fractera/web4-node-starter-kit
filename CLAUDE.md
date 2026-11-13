@@ -238,9 +238,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   new commit.
 - **An element's own domain:** adding the domain to the node's list of domains is your work; connecting it to the element — the person or
   the element's agent.
-- **The move to a dedicated server:** the tab «Выделенный сервер» — seven model-free rungs, the password typed once in the tab, a silent
-  rehearsal, then the move that stops this computer; there the domain's five steps and a certificate per name (`npm run server`, skill
-  `dedicated-server`).
+- **The move to a dedicated server:** the tab «Выделенный сервер» — eight model-free rungs, the password typed once in the tab, a silent
+  rehearsal, the bot moved or a new one, then the move that stops this computer; there the domain's five steps and a certificate per
+  name (`npm run server`, skill `dedicated-server`).
 - **GitHub:** until the person agrees, everything stays on the node; after the yes you push the code to the element's repository. A new
   Fractera tag for an element — the Update button.
 - **The node's fork:** syncing it with Fractera before `npm run node:update` is your work, never the person's — with the Claude in Chrome

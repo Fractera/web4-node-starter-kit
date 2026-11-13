@@ -17,7 +17,7 @@ description: "Build process for the person, work process for you. The node moves
 - The runner `scripts/dedicated-server/move.mjs` (one rung per call, detached), its state `data/node/server/move.json`; the server's mark
   `data/node/server.json` (phase `silent` | `live`, ip, user), this computer's mark after the move `data/node/moved.json`.
 
-## The move — seven rungs, each measured, each resumable
+## The move — eight rungs, each measured, each resumable
 
 1. **connect** — the server's IP and root password, typed by the person **in the tab** (never in chat, never by you): the password is used
    once, the node puts its own key on the server and pins the server's key; from then on only the key.
@@ -29,8 +29,15 @@ description: "Build process for the person, work process for you. The node moves
 5. **claude** — Claude Code signed in on the server: its link shown in the tab, the code pasted in the tab.
 6. **rehearse** — the server's node starts **silent** (every agent wake refused there, bots asleep) and is checked from outside and inside
    while this computer keeps working.
-7. **move** — this computer's agents and node stop, the last changes are copied, the server starts whole and takes Telegram; a failed
-   check brings this computer back by itself.
+7. **telegram** — who answers the person in Telegram there (the owner, 2026-11-13: «переносить этот Telegram на сервер или создать
+   другой»): **move** this node's bot (it starts there at the move — one reader per bot), a **new** bot of the server's own (an accordion
+   in the tab: BotFather → the token → the link; each action goes to the server's own channel door over SSH, the token on stdin, never
+   here) or **later** (only without a bot here). The rehearsing server's bot admits and answers one line — it starts no agent. Every
+   later copy, the move and the road home leave a server's own bot folder untouched. A choice, not a run: `POST /api/node/server
+   {rung: "telegram", choice: "move"|"later"|"reset"}`; «new» is recorded by `/api/node/server/telegram` once the person is admitted.
+8. **move** — this computer's agents and node stop, the last changes are copied, the server starts whole and takes Telegram; a failed
+   check brings this computer back by itself. With a bot there, the node wakes the server's main agent to greet the person (first
+   contact by `know-the-architect` when it holds no picture) — `move.json` → `welcome` says whether it went.
 
 `npm run server -- status` — the rungs and where it stopped. A rung is started from the tab, or by you after the person's yes:
 the door `POST /api/node/server {rung}`. Before the move rung, warn: the agents' conversations here end; on the server they start

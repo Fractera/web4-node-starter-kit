@@ -53,8 +53,12 @@ function Locked({ text }: { text: string }) {
 
 // 552-6: `slot` — ещё один бот элемента (`h2h` · `orders` · `work`, `_agent-kit/server/telegram-slots.cjs`): те же ступени 1–3, а
 // ступень 4 без терминала — как с ботом работать, владелец решит потом. Без `slot` — бот H2A, как прежде.
-export function TelegramChannel({ service, lang, words, slot }: { service: string; lang: string; words: TelegramChannelWords; slot?: string }) {
-  const door = `${BASE}/${lang}/architect/${service}/agent-api/channel${slot ? `?slot=${slot}` : ""}`
+// 737-11a: `remote` — бот главного агента ВЫДЕЛЕННОГО СЕРВЕРА, настраиваемый с этого компьютера во вкладке «Выделенный сервер»: те же
+// ступени 1–3 через дверь `remote.door` (она пересылает каждое действие двери канала сервера), ссылки системных строк — от адреса сервера
+// `remote.origin`, ступень 4 — строка `remote.doneText` без терминала этого компьютера.
+export type TelegramRemote = { door: string; origin: string; doneText: string }
+export function TelegramChannel({ service, lang, words, slot, remote }: { service: string; lang: string; words: TelegramChannelWords; slot?: string; remote?: TelegramRemote }) {
+  const door = remote ? remote.door : `${BASE}/${lang}/architect/${service}/agent-api/channel${slot ? `?slot=${slot}` : ""}`
   const [state, setState] = useState<State | null | "forbidden">(null)
   const [token, setToken] = useState("")
   const [busy, setBusy] = useState<string | null>(null)
@@ -123,7 +127,7 @@ export function TelegramChannel({ service, lang, words, slot }: { service: strin
   useEffect(() => {
     // 552-6: тексты системного сообщения — только бота H2A; бот ячейки отвечает своей строкой (`telegram-slots.cjs`).
     if (!configured || slot) return
-    const base = `${window.location.origin}${BASE}/${lang}`
+    const base = `${remote?.origin || window.location.origin}${BASE}/${lang}`
     // `configured` уже сузил `state` до `State` (✗ 547: сравнение с "forbidden" здесь — ошибка типов, сборка упала).
     const links = state.links ?? { terminal: `/architect/${service}/terminal`, subscription: `/architect/${service}/claude-code` }
     const fill = (t: string) => t.replace("{subscription}", `${base}${links.subscription}`).replace("{terminal}", `${base}${links.terminal}`)
@@ -136,7 +140,7 @@ export function TelegramChannel({ service, lang, words, slot }: { service: strin
         messages: { active: fill(words.msgActive), inactive: fill(words.msgInactive), noSubscription: fill(words.msgNoSubscription), lang },
       }),
     }).catch(() => null)
-  }, [configured, door, slot, service, lang, words.msgActive, words.msgInactive, words.msgNoSubscription])
+  }, [configured, door, slot, service, lang, remote?.origin, words.msgActive, words.msgInactive, words.msgNoSubscription])
 
   // Допуск делает узел сам; страница каждые 3 с спрашивает состояние — и нажатие START, и запуск или
   // остановку терминала человек видит здесь без перезагрузки.
@@ -260,9 +264,9 @@ export function TelegramChannel({ service, lang, words, slot }: { service: strin
       <Step n={4} title={words.step4Title}>
         {!activated ? (
           <Locked text={words.locked} />
-        ) : slot ? (
-          <div className="flex flex-col gap-3" data-tg-slot={slot}>
-            <p className="text-muted-foreground text-sm">{words.slotStep4Text}</p>
+        ) : slot || remote ? (
+          <div className="flex flex-col gap-3" data-tg-slot={slot ?? "remote"}>
+            <p className="text-muted-foreground text-sm">{remote?.doneText ?? words.slotStep4Text}</p>
             {state.botUsername && (
               <div>
                 <a href={`https://t.me/${state.botUsername}`} target="_blank" rel="noreferrer" className={buttonVariants({})} data-open-bot>

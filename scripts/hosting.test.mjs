@@ -2,9 +2,11 @@
 // the project (a copy of code inside the project is code to the core's build — ANTI-PATTERNS «All systems»).
 // Every group of cases has its negative control: the thing that must NOT happen is asserted, not only the thing that must.
 import assert from 'node:assert/strict'
+import { spawnSync } from 'node:child_process'
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { dnsRecords, isHostName, nodeNames, primaryZone } from '../lib/hosting/hostnames.mjs'
 
 let passed = 0
@@ -559,6 +561,121 @@ console.log('737-15 the names before the move')
     assert.deepEqual(r.elsewhere, ['data.example.org'])
     assert.deepEqual(r.unknown, ['www.example.org'])
   })
+}
+
+console.log('737-11a the node\'s main bot on the server')
+{
+  const { RUNGS, mayStart, serverKeeps, SERVER_BOT_DIR } = await import('../lib/hosting/move-state.mjs')
+  const { writeExcludes, hasRsync } = await import('../lib/hosting/transfer.mjs')
+  const upTo = (n) => ({ rungs: Object.fromEntries(RUNGS.slice(0, n).map((r) => [r, { state: 'done' }])) })
+  t('the rung «Telegram» stands between the rehearsal and the move; the move waits for the choice', () => {
+    assert.deepEqual(RUNGS.slice(-3), ['rehearse', 'telegram', 'move'])
+    assert.equal(mayStart(upTo(RUNGS.indexOf('telegram')), 'telegram'), true)
+    assert.equal(mayStart(upTo(RUNGS.indexOf('telegram') - 1), 'telegram'), false, 'chosen before the rehearsal')
+    assert.equal(mayStart(upTo(RUNGS.indexOf('telegram')), 'move'), false, 'the move started without the choice')
+    assert.equal(mayStart(upTo(RUNGS.indexOf('move')), 'move'), true)
+  })
+  t('only a bot of the server\'s own is kept there by every copy; the rules file names it only then', () => {
+    assert.deepEqual(serverKeeps({ telegram: { choice: 'new', bot: 'x' } }), [SERVER_BOT_DIR])
+    for (const choice of ['move', 'later', undefined]) assert.deepEqual(serverKeeps({ telegram: { choice } }), [])
+    assert.deepEqual(serverKeeps({}), [])
+    const dir = mkdtempSync(join(tmpdir(), 'hosting-test-'))
+    roots.push(dir)
+    assert.ok(readFileSync(writeExcludes(dir, 'live', [SERVER_BOT_DIR]), 'utf8').split('\n').includes(SERVER_BOT_DIR))
+    assert.ok(!readFileSync(writeExcludes(dir, 'live'), 'utf8').split('\n').includes(SERVER_BOT_DIR))
+    assert.ok(readFileSync(writeExcludes(dir, 'silent', [SERVER_BOT_DIR]), 'utf8').includes('/data/services/*/channel/telegram*/.env'))
+  })
+  if (hasRsync()) {
+    t('rsync with the keep rule: the server\'s own bot survives the live copy; negative — without it this computer\'s token overwrites it', () => {
+      const once = (keep) => {
+        const home = mkdtempSync(join(tmpdir(), 'hosting-test-'))
+        const server = mkdtempSync(join(tmpdir(), 'hosting-test-'))
+        const rulesDir = mkdtempSync(join(tmpdir(), 'hosting-test-'))
+        roots.push(home, server, rulesDir)
+        const w = (root, rel, text) => { mkdirSync(join(root, rel, '..'), { recursive: true }); writeFileSync(join(root, rel), text) }
+        w(home, 'data/services/build/channel/telegram/.env', 'TELEGRAM_BOT_TOKEN=this-computer\n')
+        w(home, 'data/services/build/channel/telegram/bot.json', '{"username":"home_bot"}')
+        w(home, 'data/services/auth/channel/telegram/.env', 'TELEGRAM_BOT_TOKEN=element\n')
+        w(server, 'data/services/build/channel/telegram/.env', 'TELEGRAM_BOT_TOKEN=server-own\n')
+        w(server, 'data/services/build/channel/telegram/access.json', '{"allowFrom":["7"]}')
+        const r = spawnSync('rsync', ['-rlpt', '--delete', `--exclude-from=${writeExcludes(rulesDir, 'live', keep)}`, `${home}/`, `${server}/`], { encoding: 'utf8' })
+        assert.equal(r.status, 0, r.stderr)
+        const bot = join(server, 'data/services/build/channel/telegram')
+        return { env: readFileSync(join(bot, '.env'), 'utf8'), access: existsSync(join(bot, 'access.json')), element: readFileSync(join(server, 'data/services/auth/channel/telegram/.env'), 'utf8') }
+      }
+      const kept = once([SERVER_BOT_DIR])
+      assert.match(kept.env, /=server-own/)
+      assert.equal(kept.access, true, 'the server\'s admitted people were deleted')
+      assert.match(kept.element, /=element/, 'an element\'s bot must still travel with the move')
+      const lost = once([])
+      assert.match(lost.env, /=this-computer/)
+      assert.equal(lost.access, false)
+    })
+  }
+
+  // The agent kit's own poller (the master copy; the 12 copies are identical — `check:agent-kits`), its Telegram replaced in this process.
+  const project = fileURLToPath(new URL('..', import.meta.url))
+  const node = mkdtempSync(join(tmpdir(), 'hosting-test-'))
+  roots.push(node)
+  const w = (rel, text) => { mkdirSync(join(node, rel, '..'), { recursive: true }); writeFileSync(join(node, rel), text) }
+  const BOT = 'data/services/build/channel/telegram'
+  w(`${BOT}/.env`, 'TELEGRAM_BOT_TOKEN=123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n')
+  w(`${BOT}/bot.json`, '{"username":"srv_test_bot"}')
+  w(`${BOT}/access.json`, '{"dmPolicy":"allowlist","allowFrom":[],"groups":{},"pending":{}}')
+  w(`${BOT}/activation.json`, JSON.stringify({ createdAt: Date.now(), nonce: 'nonce737' }))
+  w('data/node/server.json', '{"phase":"silent"}')
+  const here = process.cwd()
+  const realFetch = globalThis.fetch
+  const sent = []
+  let updates = []
+  globalThis.fetch = async (url, init) => {
+    const method = String(url).split('/').pop()
+    const params = JSON.parse(init?.body ?? '{}')
+    let result = true
+    if (method === 'getUpdates') { result = params.offset ? [] : updates; if (!params.offset) updates = [] }
+    // The fake Telegram keeps every outgoing message of the poller (its only «send…» method) for the asserts below.
+    if (/^send/.test(method)) { sent.push(params); result = { message_id: sent.length } }
+    return { json: async () => ({ ok: true, result }) }
+  }
+  const msg = (id, text) => ({ update_id: id, message: { message_id: id, chat: { id: 7, type: 'private' }, from: { id: 7, first_name: 'Test' }, text } })
+  process.env.TELEGRAM_VANISH_MS = '1'
+  process.chdir(node)
+  try {
+    const kit = createRequire(import.meta.url)(join(project, 'app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/server/telegram.cjs'))
+    const started = []
+    kit.setStarter(async (service) => { started.push(service); return { ok: false, reason: 'test' } })
+    // Asynchronous cases run one after another here; `t` takes a function that throws — the awaited part is done before it.
+    updates = [msg(1, '/start nonce737')]
+    await kit.idleTick('build')
+    const afterStart = sent.slice()
+    updates = [msg(2, '/on'), msg(3, 'hello')]
+    await kit.idleTick('build')
+    const afterWords = sent.slice(afterStart.length)
+    const silentLine = 'This bot is connected to your dedicated server.'
+    t('rehearsing server: the link admits the person and the bot answers one line of its state', () => {
+      assert.deepEqual(JSON.parse(readFileSync(join(node, BOT, 'access.json'), 'utf8')).allowFrom, ['7'])
+      assert.equal(afterStart.length, 1, JSON.stringify(afterStart))
+      assert.ok(afterStart[0].text.startsWith(silentLine), afterStart[0].text)
+    })
+    t('rehearsing server: «/on» and words start nothing — no starter, no buttons, one line per chat', () => {
+      assert.equal(started.length, 0, 'an agent was started on a rehearsing server')
+      assert.equal(afterWords.length, 1, JSON.stringify(afterWords))
+      assert.ok(afterWords[0].text.startsWith(silentLine))
+      assert.ok([...afterStart, ...afterWords].every((m) => !m.reply_markup), 'a question with buttons was sent')
+    })
+    rmSync(join(node, 'data/node/server.json'))
+    const before = sent.length
+    updates = [msg(4, 'hello')]
+    await kit.idleTick('build')
+    t('negative: the same words on a node that is not rehearsing never get the line — the old road answers them', () => {
+      const reply = sent.slice(before)
+      assert.ok(reply.length + started.length > 0, 'nothing answered at all')
+      assert.ok(reply.every((m) => !String(m.text).startsWith(silentLine)), JSON.stringify(reply))
+    })
+  } finally {
+    process.chdir(here)
+    globalThis.fetch = realFetch
+  }
 }
 
 for (const r of roots) rmSync(r, { recursive: true, force: true })

@@ -7,7 +7,7 @@ export type ServerMoveWords = {
   loading: string
   silent: string
   onServer: string
-  rung: Record<"connect" | "probe" | "prepare" | "copy" | "claude" | "rehearse" | "move", { title: string; text: string; button: string }>
+  rung: Record<"connect" | "probe" | "prepare" | "copy" | "claude" | "rehearse" | "telegram" | "move", { title: string; text: string; button: string }>
   locked: string
   running: string
   failed: string
@@ -32,6 +32,7 @@ export type ServerMoveWords = {
   movedTitle: string
   movedText: string
   rolledBack: string
+  telegram: { moveBot: string; moveNote: string; newTitle: string; newNote: string; newNoteHome: string; later: string; laterNote: string; doneMove: string; doneNew: string; doneLater: string; change: string; remoteDone: string }
   busy: { title: string; text: string; clear: string; cancel: string; clearTitle: string; risks: string[]; agree: string; clearConfirm: string; cancelTitle: string; cancelText: string; cancelConfirm: string; notNow: string; clearing: string; cleared: string; failed: string }
   stage: Record<string, string>
 }
@@ -49,6 +50,7 @@ const en: ServerMoveWords = {
     copy: { title: "Copy and build", text: "The node is copied without its bots' tokens and built for Linux: packages, the core, every element. About 35–40 minutes on a server with 8 GB (measured: 36 min — the core 11, the elements 25); a repeat copies only the changes.", button: "Copy and build" },
     claude: { title: "Claude Code on the server", text: "Sign the server in to your Claude subscription: open the link, approve, paste the code here. A couple of minutes — the link waits 20 minutes.", button: "Get the sign-in link" },
     rehearse: { title: "Rehearsal", text: "The server's copy starts silent and is checked from outside and from inside. About 1–2 minutes (measured: 1 min 17 s). Your computer keeps working.", button: "Start the rehearsal" },
+    telegram: { title: "Telegram", text: "Who answers you in Telegram once the node lives on the server: your bot moves with the node, or the server gets a bot of its own (three steps in Telegram, a few minutes). Until the move the server's bot only admits you and answers one line.", button: "Choose" },
     move: { title: "Move", text: "This computer stops the node, the last changes are copied, the server starts whole and takes Telegram. Any failure brings the node back here by itself.", button: "Move now" },
   },
   locked: "Opens after the step above.",
@@ -96,6 +98,20 @@ const en: ServerMoveWords = {
   movedTitle: "The node lives on its server",
   movedText: "Open it by IP: {url}. Telegram answers from the server. Your domain and its certificates are set up on the server's own tab.",
   rolledBack: "The move did not finish — the node is back on this computer:",
+  telegram: {
+    moveBot: "Move the bot {bot} to the server",
+    moveNote: "It goes with the node at the move: a bot has one reader at a time, so it answers from the server once this computer stops.",
+    newTitle: "A new bot for the server",
+    newNote: "The server gets a bot of its own: the three steps below.",
+    newNoteHome: "The server gets a bot of its own, and {bot} stays with this computer.",
+    later: "Without Telegram for now",
+    laterNote: "A bot can be connected later in the server's panel — the main agent's «Telegram» page.",
+    doneMove: "The bot {bot} moves with the node and answers from the server after the move.",
+    doneNew: "The server's own bot {bot} is connected, people admitted: {n}. After the move the main agent greets you there.",
+    doneLater: "No Telegram on the server for now.",
+    change: "Change the choice",
+    remoteDone: "The bot is connected to the server. Until the move it answers one line; after the move the main agent writes to you here.",
+  },
   busy: {
     title: "The server is taken by another installation",
     text: "Other programs and sites already run on this server. The node can free it for itself — or cancel the installation and leave without touching anything.",
@@ -134,6 +150,7 @@ const ru: ServerMoveWords = {
     copy: { title: "Копия и сборка", text: "Узел копируется без токенов ботов и собирается под Linux: пакеты, ядро, каждый элемент. Около 35–40 минут на сервере с 8 ГБ (замер: 36 мин — ядро 11, элементы 25); повтор копирует только изменения.", button: "Скопировать и собрать" },
     claude: { title: "Claude Code на сервере", text: "Подключите сервер к своей подписке Claude: откройте ссылку, подтвердите, вставьте код сюда. Пара минут — ссылка ждёт 20 минут.", button: "Получить ссылку входа" },
     rehearse: { title: "Репетиция", text: "Копия на сервере запускается молча и проверяется снаружи и изнутри. Около 1–2 минут (замер: 1 мин 17 с). Ваш компьютер продолжает работать.", button: "Начать репетицию" },
+    telegram: { title: "Telegram", text: "Кто ответит вам в Telegram, когда узел будет жить на сервере: ваш бот переедет вместе с узлом, или у сервера будет свой (три шага в Telegram, несколько минут). До переезда бот сервера только впускает вас и отвечает одной строкой.", button: "Выбрать" },
     move: { title: "Переезд", text: "Этот компьютер останавливает узел, последние изменения копируются, сервер запускается целиком и берёт Telegram. При любом сбое узел сам возвращается сюда.", button: "Переехать" },
   },
   locked: "Откроется после шага выше.",
@@ -181,6 +198,20 @@ const ru: ServerMoveWords = {
   movedTitle: "Узел живёт на своём сервере",
   movedText: "Откройте его по IP: {url}. Telegram отвечает уже с сервера. Домен и его сертификаты подключаются на этой же вкладке сервера.",
   rolledBack: "Переезд не завершился — узел вернулся на этот компьютер:",
+  telegram: {
+    moveBot: "Перенести бот {bot} на сервер",
+    moveNote: "Он переедет вместе с узлом: у бота один читатель, поэтому с сервера он заговорит, когда остановится этот компьютер.",
+    newTitle: "Новый бот для сервера",
+    newNote: "У сервера будет свой бот — три шага ниже.",
+    newNoteHome: "У сервера будет свой бот, а {bot} останется у этого компьютера.",
+    later: "Пока без Telegram",
+    laterNote: "Бота можно подключить позже в панели сервера — страница «Telegram» главного агента.",
+    doneMove: "Бот {bot} переедет вместе с узлом и ответит с сервера после переезда.",
+    doneNew: "Свой бот сервера {bot} подключён, допущено: {n}. После переезда главный агент поприветствует вас там.",
+    doneLater: "На сервере пока без Telegram.",
+    change: "Изменить выбор",
+    remoteDone: "Бот подключён к серверу. До переезда он отвечает одной строкой, после переезда здесь напишет главный агент.",
+  },
   busy: {
     title: "Сервер занят другой установкой",
     text: "На сервере уже работают другие программы и сайты. Узел может освободить сервер для себя — или отменить установку и уйти, ничего не трогая.",

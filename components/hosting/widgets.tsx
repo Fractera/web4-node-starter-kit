@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { telegramChannelWords } from "@/app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/words/telegram-channel.i18n"
 import { appDialogUi } from "@/components/dialog/app-dialog.i18n"
 import { ServerMove } from "./server-move.client"
 import { serverDomainWords } from "./server-domain.i18n"
@@ -8,5 +9,5 @@ import { serverMoveWords } from "./server-move.i18n"
 // server, and one set of words goes to the browser (`check:lang-delivery`). The tab's `_components/index.ts` stays a module without JSX,
 // like every page of the layer (the same move as `components/node-state/widgets.tsx`).
 export function serverMoveWidget(lang: string): ReactNode {
-  return <ServerMove dialogUi={appDialogUi(lang)} domainWords={serverDomainWords(lang)} words={serverMoveWords(lang)} />
+  return <ServerMove channelWords={telegramChannelWords(lang)} dialogUi={appDialogUi(lang)} domainWords={serverDomainWords(lang)} lang={lang} words={serverMoveWords(lang)} />
 }

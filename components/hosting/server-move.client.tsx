@@ -8,6 +8,8 @@ import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import { ServerBusy } from "@/components/hosting/server-move-busy.client"
 import { ServerRecords } from "@/components/hosting/server-move-records.client"
 import { RungBody, type MoveState } from "@/components/hosting/server-move-rung.client"
+import { ServerTelegram, type HomeBot } from "@/components/hosting/server-move-telegram.client"
+import type { TelegramChannelWords } from "@/app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/words/telegram-channel.i18n"
 import { ServerDomain } from "@/components/hosting/server-domain.client"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import { isTemporaryHostname } from "@/lib/auth/temporary-address"
@@ -23,9 +25,9 @@ import { isTemporaryHostname } from "@/lib/auth/temporary-address"
 // 🔒 ON THE SERVER ITSELF (phase live) THE MOVE IS OVER: the tab shows the domain's five steps instead (737-8).
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
-type View = { ok: boolean; state: MoveState; rungs: Array<keyof ServerMoveWords["rung"]>; phase: "silent" | "live" | null; moved: boolean }
+type View = { ok: boolean; state: MoveState; rungs: Array<keyof ServerMoveWords["rung"]>; phase: "silent" | "live" | null; moved: boolean; homeBot: HomeBot; serverOrigin: string | null }
 
-export function ServerMove({ words, domainWords, dialogUi }: { words: ServerMoveWords; domainWords: ServerDomainWords; dialogUi: AppDialogUi }) {
+export function ServerMove({ words, domainWords, dialogUi, lang, channelWords }: { words: ServerMoveWords; domainWords: ServerDomainWords; dialogUi: AppDialogUi; lang: string; channelWords: TelegramChannelWords }) {
   const [view, setView] = useState<View | null>(null)
   const [silent, setSilent] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -91,7 +93,7 @@ export function ServerMove({ words, domainWords, dialogUi }: { words: ServerMove
   const items = view.state.verdict?.items ?? []
   const sitesItem = items.find((i) => i.id === "sites")
   const othersItem = items.find((i) => i.id === "others")
-  const started = ["prepare", "copy", "claude", "rehearse", "move"].some((r) => rungs[r]?.state)
+  const started = ["prepare", "copy", "claude", "rehearse", "telegram", "move"].some((r) => rungs[r]?.state)
   const taken = (sitesItem || othersItem || view.state.clear?.state === "running") && !started
     ? { host: view.state.server?.host, sites: String(sitesItem?.value ?? "").split(", ").filter(Boolean), programs: Number(othersItem?.value ?? 0), clear: view.state.clear }
     : null
@@ -103,7 +105,11 @@ export function ServerMove({ words, domainWords, dialogUi }: { words: ServerMove
         if (!open) return <LadderLocked key={id} n={i + 1} text={words.locked} title={words.rung[id].title} />
         return (
           <LadderStep key={id} done={rungs[id]?.state === "done"} id={id} n={i + 1} title={words.rung[id].title}>
-            <RungBody busy={busy} id={id} onStart={start} rung={rungs[id] ?? {}} state={view.state} words={words} />
+            {id === "telegram" ? (
+              <ServerTelegram busy={busy} channelWords={channelWords} homeBot={view.homeBot ?? null} lang={lang} onStart={start} origin={view.serverOrigin ?? null} state={view.state} text={words.rung.telegram.text} words={words.telegram} />
+            ) : (
+              <RungBody busy={busy} id={id} onStart={start} rung={rungs[id] ?? {}} state={view.state} words={words} />
+            )}
             {id === "probe" && taken ? <ServerBusy busy={taken} dialogUi={dialogUi} disabled={busy} onStart={start} words={words.busy} /> : null}
           </LadderStep>
         )

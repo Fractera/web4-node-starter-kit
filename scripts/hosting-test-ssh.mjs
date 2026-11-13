@@ -2,6 +2,7 @@
 // system picks. Password login for `root` while `state.passwordAllowed`; public-key login for any user whose key is in
 // `<home>/.ssh/authorized_keys` (the signature verified); every exec runs `bash -c <command>` on THIS machine with HOME=<home>.
 // 🛑 Commands therefore act on this computer: a test sends only harmless ones or dry runs (`move.mjs --dry` replaces every acting one).
+// `state.commands` — every command line the «server» was asked to run (737-11a: a secret must never be among them).
 import { spawn } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -27,10 +28,13 @@ export function startTestSshServer({ home, password, hostKey = ssh2.utils.genera
           session.on('pty', (ok) => ok?.())
           session.on('exec', (acceptExec, _reject, info) => {
             const stream = acceptExec()
+            state.commands?.push(info.command)
             const child = spawn('bash', ['-c', info.command], { env: { HOME: home, PATH: process.env.PATH, ...(process.env.DRY_RUN ? { DRY_RUN: process.env.DRY_RUN } : {}) } })
             child.stdout.pipe(stream, { end: false })
             child.stderr.pipe(stream.stderr, { end: false })
             stream.on('data', (d) => child.stdin.write(d))
+            // 737-11a: the client's end of input (a token sent on stdin) ends the command's stdin — `curl --data-binary @-` waits for it.
+            stream.on('end', () => child.stdin.end())
             child.on('close', (code) => { stream.exit(code ?? 1); stream.end() })
           })
           session.on('sftp', (acceptSftp) => sftpOnDisk(acceptSftp()))

@@ -87,6 +87,57 @@ await t('claude and rehearse (dry): done in order', async () => {
   assert.equal(r.status, 0, r.stdout + r.stderr)
   assert.ok(state().rungs.rehearse.stages.some((x) => x.id === 'serve' && x.state === 'done'))
 })
+await t('negative: the move waits for the Telegram choice', async () => {
+  const r = await run('move')
+  assert.equal(r.status, 2, r.stdout + r.stderr)
+  assert.ok(r.stderr.includes('===MOVE_REFUSED==='))
+})
+await t('telegram, the server\'s own bot: the relay carries each action to the server\'s channel door over SSH; the token rides stdin, never a command line', async () => {
+  // The server's channel door of its main agent, played by a small HTTP server on this machine's loopback; its port is the server's own
+  // runtime record (never copied from this computer).
+  const { createServer } = await import('node:http')
+  const seen = []
+  const door = createServer((req, res) => {
+    let body = ''
+    req.on('data', (d) => { body += d })
+    req.on('end', () => {
+      seen.push({ method: req.method, url: req.url, body })
+      res.setHeader('content-type', 'application/json')
+      if (req.method === 'GET') return res.end(JSON.stringify({ ok: true, configured: true, botUsername: 'srv_bot', allowed: 1 }))
+      const b = JSON.parse(body || '{}')
+      res.end(JSON.stringify(b.action === 'token' ? { ok: true, tail: String(b.token).slice(-4), username: 'srv_bot' } : { ok: true }))
+    })
+  })
+  await new Promise((resolve) => door.listen(0, '127.0.0.1', resolve))
+  mkdirSync(join(remote, 'logs'), { recursive: true })
+  writeFileSync(join(remote, 'logs', 'runtime.json'), JSON.stringify({ port: door.address().port }))
+  const relay = (input) => new Promise((resolve) => {
+    const child = spawn(process.execPath, [join(here, 'dedicated-server', 'telegram.mjs'), '--dry'], { env })
+    let out = ''
+    child.stdout.on('data', (d) => { out += d })
+    child.on('close', () => resolve(JSON.parse(out.trim().split('\n').pop() || '{}')))
+    child.stdin.end(JSON.stringify(input))
+  })
+  ssh.state.commands = []
+  const TOKEN = '123456789:SERVER_TOKEN_must_never_be_in_a_command_line'
+  const a = await relay({ method: 'POST', lang: 'ru', body: { action: 'token', token: TOKEN } })
+  assert.equal(a.ok, true, JSON.stringify(a))
+  assert.equal(a.username, 'srv_bot')
+  assert.ok(seen.some((x) => x.method === 'POST' && x.url === '/ru/architect/build/agent-api/channel' && x.body.includes(TOKEN)), JSON.stringify(seen))
+  assert.ok(ssh.state.commands.length > 0, 'the relay ran nothing on the server')
+  assert.ok(ssh.state.commands.every((c) => !c.includes(TOKEN)), 'the token was in a command line on the server')
+  assert.equal((await relay({ method: 'GET', lang: 'ru' })).allowed, 1)
+  await new Promise((resolve) => door.close(resolve))
+  // Negative: the server's core silent — the relay says so and never invents an answer.
+  assert.equal((await relay({ method: 'GET', lang: 'ru' })).error, 'server-silent')
+  ssh.state.commands = undefined
+})
+await t('telegram: the choice «move» recorded as the ladder\'s door records it — the move may start', async () => {
+  const s = state()
+  s.telegram = { choice: 'move', bot: 'test_bot', at: new Date().toISOString() }
+  s.rungs.telegram = { state: 'done' }
+  writeFileSync(join(node, 'data', 'node', 'server', 'move.json'), JSON.stringify(s))
+})
 await t('move: the last copy brings the bot token, the mark turns live; negative — a dry run never marks this computer moved', async () => {
   const r = await run('move')
   assert.equal(r.status, 0, r.stdout + r.stderr)
@@ -94,6 +145,8 @@ await t('move: the last copy brings the bot token, the mark turns live; negative
   assert.ok(existsSync(join(remote, 'data/services/build/channel/telegram/.env')))
   assert.equal(JSON.parse(readFileSync(join(remote, 'data/node/server.json'), 'utf8')).phase, 'live')
   assert.ok(!existsSync(join(node, 'data', 'node', 'moved.json')))
+  // 737-11a: the bot moved with the node → the server's main agent is woken to greet the person (a dry run only records it).
+  assert.equal(state().welcome?.dry, true, JSON.stringify(state().welcome))
 })
 await t('return (dry): the «server» copy comes home, the server is marked returned; this computer\'s key survives the road back', async () => {
   writeFileSync(join(remote, 'data/node/memory-written-on-server.txt'), 'made on the server after the move')
