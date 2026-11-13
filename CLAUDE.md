@@ -69,7 +69,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - Node = core + elements. The core is the centre of the node: it is not an element, it is never replaced, and it keeps the registry,
   discovery and installation of elements.
 - The node runs on a temporary Cloudflare address or on its own domain. The temporary address changes, so move to an own domain as soon as
-  possible, otherwise a link to the project cannot be shared (`/api/domain/activate`).
+  possible, otherwise a link to the project cannot be shared (`/api/domain/activate`). Or it moves whole to the person's own Ubuntu server:
+  there it answers by IP, read-only like a temporary address, then by its domain through nginx (step 737).
 - The tunnel: the node's first start raises a temporary address by itself. Errors 1016 and 1033 mean a new address is needed — they are
   not repaired. Delivering code does not touch the tunnel. Self-healing that changes the address is forbidden: a link the person already
   gave away would die silently, so a failure is only named aloud (`serve:publish`, `serve:status`).
@@ -237,6 +238,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   new commit.
 - **An element's own domain:** adding the domain to the node's list of domains is your work; connecting it to the element — the person or
   the element's agent.
+- **The move to a dedicated server:** the tab «Выделенный сервер» — seven model-free rungs, the password typed once in the tab, a silent
+  rehearsal, then the move that stops this computer; there the domain's five steps and a certificate per name (`npm run server`, skill
+  `dedicated-server`).
 - **GitHub:** until the person agrees, everything stays on the node; after the yes you push the code to the element's repository. A new
   Fractera tag for an element — the Update button.
 - **The node's fork:** syncing it with Fractera before `npm run node:update` is your work, never the person's — with the Claude in Chrome
@@ -434,7 +438,7 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   `ask-element`; a capability an element lacks — `handle-need` (a bare yes or no with no question in this session — `npm run needs`
   first); an element waits for a permission — `element-permission`; the node type — `node-type`; an element on or off — `element-power`; how a product or SDK works — `study-for-element`; a
   skill the person heard of — `adopt-suggested-skill`; a clock and reminders — `core-schedule`; a core build and who comes back — `core-build-return`; page sections, colours, fonts, menus of an element — `design-and-settings-of-elements`;
-  an administration panel, a dashboard or a settings tab of the core — `interface-design` (vendored; the core's primitives and tokens win); routing a need — `route-to-element`; a new element — `create-element`; people near the architect, a family or a team — `integrator`; channels, voices and trends — `content-factory`; agents for the person themselves — `own-agents`; a research of an outside product — `research`; why Fractera and not a platform — `fractera-vs-anthropic`; a person stuck in someone else's interface — `help-in-browser`
+  an administration panel, a dashboard or a settings tab of the core — `interface-design` (vendored; the core's primitives and tokens win); routing a need — `route-to-element`; a new element — `create-element`; people near the architect, a family or a team — `integrator`; channels, voices and trends — `content-factory`; agents for the person themselves — `own-agents`; a research of an outside product — `research`; why Fractera and not a platform — `fractera-vs-anthropic`; the node's move to a VPS and its domain there — `dedicated-server`; a person stuck in someone else's interface — `help-in-browser`
   (their Chrome on this computer); a request against a provider's rules, a warning or a ban — `provider-rules`; a session confirmed as ultracode — `ultracode-session`; a template release and its rollout to the elements — `release-template` (the elements' sealed
   instruction comes from `npm run instruction:element`).
 - The rest — in the skills of the job being done: own domain — `use-domain`; analytics — `connect-google-analytics`; tools —

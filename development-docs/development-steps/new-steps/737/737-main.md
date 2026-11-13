@@ -150,3 +150,7 @@ session journals (agents start fresh on the server, their records carry the work
 ## 7. State
 
 - 2026-11-13 06:50 — plan written; research `737-research.md`. Building starts at 737-1 without waiting (the owner's word above).
+- 2026-11-13 ~10:30 — built and pushed: 737-1…5, 737-7, 737-8 (`72c8f06e`), 737-9, 737-10 (the words). Summaries in `completed-steps/737-*.md`.
+  OPEN, waiting for the owner's test server (IP + root password typed in the tab, never in chat) and a test domain: 737-6 (install and
+  start on a real Ubuntu), the live proofs of 737-4 prepare, 737-7 rungs prepare → move, Claude's sign-in there, 737-8 certificates from
+  Let's Encrypt. The plan stays until those proofs; decisions D1–D4 above wait for the owner.

@@ -69,6 +69,22 @@ would be a lie the day the tunnel rotates. The address arrives with a real domai
 (see `/architect/hosting/domain`).
 
 
+## What this tab runs (step 737)
+
+| Where the tab is opened | What it shows | Its door |
+|---|---|---|
+| the person's computer | the move ladder: connect · probe · prepare · copy · claude · rehearse · move | `/api/node/server` (the architect, never a public address) |
+| the server, as the owner (`npm run server -- window`) | the domain's five steps: domain · records · certificates · HTTPS · switch on | `/api/node/server/domain` |
+| the server's bare IP | the same five steps, read-only — the records to write at the registrar | `/api/node/server/domain` (GET only) |
+
+The islands live in `components/hosting/` (`server-move.client.tsx`, `server-domain.client.tsx`, the parts `ladder-step`, `stage-log`,
+`dns-records`); the words in their `.i18n.ts` files, chosen on the server (`widgets.tsx`). The runners: `scripts/dedicated-server/move.mjs`
+and `certs.mjs`, both detached. How the main agent leads it: skill `dedicated-server`.
+
+**Build cost and caching.** The page is prerendered like every page of the layer; nothing about the machine is printed into the build.
+The move ladder asks its door every 15 s while the tab is open (every 3 s while a rung works); the domain's steps ask once on opening,
+after each act, and every 4 s only while certificates are being issued. A closed tab costs nothing.
+
 ## Renaming or moving
 
 Rename the folder and change `meta.slug` to match — `npm run check:architect-routes`
