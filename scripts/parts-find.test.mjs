@@ -45,8 +45,9 @@ if (none.length) bad.push(`«бронирование столика» must find
 // fell back to the core's own map and called the core's modal the element's). Words only: the folder has no vectors.
 {
   const el = fs.mkdtempSync(join(os.tmpdir(), "parts-mcp-"))
+  let child = null
   const said = await new Promise((done) => {
-    const p = spawn(process.execPath, [join(ROOT, "lib", "agent-kit", "skills", "mcp.mjs")], { cwd: el, stdio: ["pipe", "pipe", "ignore"], env: { ...process.env, SKILLS_MCP_ROOT: "" } })
+    const p = (child = spawn(process.execPath, [join(ROOT, "lib", "agent-kit", "skills", "mcp.mjs")], { cwd: el, stdio: ["pipe", "pipe", "ignore"], env: { ...process.env, SKILLS_MCP_ROOT: "" } }))
     let out = ""
     const timer = setTimeout(() => { p.kill(); done("TIMEOUT") }, 30000)
     p.stdout.on("data", (c) => {
@@ -59,7 +60,10 @@ if (none.length) bad.push(`«бронирование столика» must find
     })
     p.stdin.write(JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/call", params: { name: "parts_find", arguments: { query: "modal window" } } }) + "\n")
   })
-  fs.rmSync(el, { recursive: true, force: true })
+  // ✗ CI windows 2026-11-13 (run of ed332078): `kill` is asynchronous, and a child that still holds its working folder makes Windows
+  // refuse the removal (EBUSY) — wait for its exit (at most 5 s), then remove with retries.
+  if (child && child.exitCode === null && child.signalCode === null) await new Promise((r) => { child.once("close", r); setTimeout(r, 5000) })
+  fs.rmSync(el, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 })
   if (!/Lives in the core .*npm run tool:take -- app-dialog/.test(said)) bad.push(`MCP parts_find from a folder with no map does not say «Lives in the core … tool:take -- app-dialog»: ${String(said).slice(0, 160)}`)
   if (/Yours — it is in this repository/.test(said)) bad.push("MCP parts_find from a folder with no map calls the core's part «Yours» (the old fallback to the core's map)")
 }
