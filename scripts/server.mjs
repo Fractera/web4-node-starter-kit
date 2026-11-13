@@ -3,9 +3,16 @@
 // main agent only calls it (from Telegram too) and reads the marked last line. Verbs of later substeps join this file.
 //   names [--domain <name>] [--root <node folder>]   every public name of the node, its port and its DNS label (737-1)
 //   dns   --ip <IPv4> [--domain <name>] [--root …]   the A records to write at the registrar, per zone, with the `*` shortcut (737-1)
+//   nginx [--write]                                    the server's nginx site from the names and the certificates present (737-2)
+//   phase                                              silent · live · none — this node's phase on a dedicated server (737-4)
+import { spawnSync } from 'node:child_process'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { certFor, parseCertList } from '../lib/hosting/certs.mjs'
 import { dnsRecords, nodeNames } from '../lib/hosting/hostnames.mjs'
+import { nginxSite } from '../lib/hosting/nginx.mjs'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const args = process.argv.slice(2)
@@ -57,9 +64,43 @@ function dns() {
   console.log(`===SERVER_DNS=== ${count} ${table.zone}`)
 }
 
-const verbs = { names, dns }
+const HELPER = '/usr/local/sbin/fractera-root'
+const readJson = (file) => { try { return JSON.parse(readFileSync(file, 'utf8')) } catch { return null } }
+
+/** The certificates the root helper sees; none on a machine without the helper (the person's computer). */
+function certList() {
+  if (!existsSync(HELPER)) return []
+  const r = spawnSync('sudo', ['-n', HELPER, 'cert-list'], { encoding: 'utf8' })
+  return r.status === 0 ? parseCertList(r.stdout) : []
+}
+
+function nginxVersion() {
+  const r = spawnSync('nginx', ['-v'], { encoding: 'utf8' })
+  return String(r.stderr || r.stdout || '').match(/nginx\/([\d.]+)/)?.[1] ?? '1.24.0'
+}
+
+function nginx() {
+  const table = nodeNames({ root })
+  const list = certList()
+  const certs = Object.fromEntries(table.rows.map((r) => [r.host, certFor(r.host, list)]).filter(([, c]) => c))
+  const server = readJson(path.join(root, 'data', 'node', 'server.json')) ?? {}
+  const architect = table.rows.find((r) => r.kind === 'architect')?.host ?? table.zone
+  const text = nginxSite({ table, certs, active: server.domainActive === true, architectHost: architect, ipv6: existsSync('/proc/net/if_inet6'), nginxVersion: nginxVersion() })
+  if (!args.includes('--write')) { process.stdout.write(text); return }
+  const dir = path.join(root, 'data', 'node', 'server-side', 'nginx')
+  mkdirSync(dir, { recursive: true })
+  writeFileSync(path.join(dir, 'fractera.conf'), text)
+  console.log(`===SERVER_NGINX=== written ${table.rows.length} names, ${Object.keys(certs).length} with a certificate`)
+}
+
+function phase() {
+  const { nodePhase } = createRequire(import.meta.url)('../lib/hosting/phase.cjs')
+  console.log(`===SERVER_PHASE=== ${nodePhase(root) ?? 'none'}`)
+}
+
+const verbs = { names, dns, nginx, phase }
 if (!verbs[verb]) {
-  console.log('Команды: names · dns   (npm run server -- names --domain example.org)')
+  console.log('Команды: names · dns · nginx · phase   (npm run server -- names --domain example.org)')
   process.exit(verb ? 1 : 0)
 }
 verbs[verb]()
