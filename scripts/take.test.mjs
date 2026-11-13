@@ -59,6 +59,11 @@ put(el, "_tools/two/a.tsx", "my own a\n")
 plan = planTake({ source: core, from: "core", receiver: el, tool: "tool-two" })
 expect("a tool whose path is PARTLY held by something else refuses", !plan.ok && /_tools\/two\/a\.tsx is already here and is not/.test(plan.refused.join(" ")), JSON.stringify(plan.refused))
 expect("a refused take writes nothing", fs.readFileSync(path.join(el, "_tools/two/a.tsx"), "utf8") === "my own a\n" && !fs.existsSync(path.join(el, "_tools/two/b.tsx")))
+// 736 (D15): the folder's name finds the tool; a near miss names the id instead of a bare «no».
+plan = planTake({ source: core, from: "core", receiver: fresh(), tool: "crop" })
+expect("a tool is found by its name without «tool-» (the folder's name)", plan.ok && plan.tool === "tool-crop" && plan.copies.some((c) => c.id === "tool-crop"), JSON.stringify(plan))
+plan = planTake({ source: core, from: "core", receiver: fresh(), tool: "crop-thing" })
+expect("an unknown id names the closest ids (did you mean tool-crop)", !plan.ok && /did you mean tool-crop/.test(plan.refused.join(" ")), JSON.stringify(plan.refused))
 plan = planTake({ source: core, from: "core", receiver: el, tool: "nothing" })
 expect("an unknown tool is refused (negative control)", !plan.ok && plan.copies.length === 0, JSON.stringify(plan))
 

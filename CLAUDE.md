@@ -169,9 +169,11 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 
 - **Create an element.** First find a similar one by meaning (`npm run find`). None — `npm run create` (skill `create-element`): draft →
   clone of the template by tag → registry entry → port and Cloudflare subdomain → installation → the address checked from the internet
-  (`scripts/item-birth.mjs`). Then a brief to the element's agent — it builds itself.
-- **Wake an element's agent:** `npm run wake`. Its folder trust you confirm yourself at once — `npm run trust` (the owner, 2026-11-12:
-  «you must confirm the current folder automaticly»), then check the agent really started (`npm run where`). Then you exchange messages.
+  (`scripts/item-birth.mjs`) → your draft of its product quiz (everything you know, in product words) and its step 1 «analyse the
+  product quiz» (the owner, 2026-11-13). It wakes with that step and builds itself; questions come back to you by `tell-core`.
+- **Wake an element's agent:** `npm run wake`. The node answers its folder trust for you (the owner, 2026-11-12: «you must confirm the
+  current folder automaticly»; by hand — `npm run trust`) and checks every task you give: no start in 3 minutes — `⟦node · not-started⟧`
+  with the reason. Never tell the person an element works before that silence or `npm run where`. Then you exchange messages.
 - **Supervision without the person's taps:** `npm run supervise` for one check, `npm run task` turns the agent on (a job, not a build —
   `--work [--skill <id>]`: its worker does it and its «done» wakes you), the element saves its report (`reply-core`), you read `npm run
   state`, turn it off (`npm run close`) and yourself (`npm run done`). Skills `ask-element`, `supervise-element`.

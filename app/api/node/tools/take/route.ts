@@ -41,8 +41,8 @@ export async function POST(req: NextRequest) {
   if (written.length) {
     try {
       mkdirSync(join(process.cwd(), "data", "node"), { recursive: true })
-      appendFileSync(join(process.cwd(), "data", "node", "tools-take.jsonl"), JSON.stringify({ at: new Date().toISOString(), element: caller, tool, from, copies: plan.copies.map((c) => `${c.id}@${c.version}${c.replaces ? ` (was ${c.replaces})` : ""}`) }) + "\n")
+      appendFileSync(join(process.cwd(), "data", "node", "tools-take.jsonl"), JSON.stringify({ at: new Date().toISOString(), element: caller, tool: plan.tool ?? tool, from, copies: plan.copies.map((c) => `${c.id}@${c.version}${c.replaces ? ` (was ${c.replaces})` : ""}`) }) + "\n")
     } catch { /* the journal is a record, not a condition */ }
   }
-  return NextResponse.json({ ok: plan.ok, element: caller, from, tool, copies: plan.copies.map((c) => ({ id: c.id, version: c.version, ...(c.replaces ? { replaces: c.replaces } : {}) })), skipped: plan.skipped, refused: plan.refused, written }, { status: plan.ok ? 200 : 409, headers: HEADERS })
+  return NextResponse.json({ ok: plan.ok, element: caller, from, tool: plan.tool ?? tool, copies: plan.copies.map((c) => ({ id: c.id, version: c.version, ...(c.replaces ? { replaces: c.replaces } : {}) })), skipped: plan.skipped, refused: plan.refused, written }, { status: plan.ok ? 200 : 409, headers: HEADERS })
 }

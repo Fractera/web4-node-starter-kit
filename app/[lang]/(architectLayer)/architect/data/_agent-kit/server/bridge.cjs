@@ -493,7 +493,12 @@ function pressTrust(s) {
  */
 async function askTrust(s) {
   const out = await telegram.tellTrust(s.service)
-  if (!out || !out.trust) return
+  if (!out || !out.trust) {
+    // 736 (✗ 2026-11-12 23:42, «Хранилище картинок»): a node without the main agent's Telegram bot — the question went nowhere and the
+    // agent stood on it for 7 minutes while the main agent reported it working. The main agent hears it in any case.
+    if (modes.baseOf(s.service) !== MAIN_AGENT) tellMain('trust', s.service.replace(/--.*$/, ''), `Узел: агент элемента ${s.service.replace(/--.*$/, '')} стоит на вопросе Claude Code о доверии своей папке. Подтверди сам: npm run trust -- ${s.service.replace(/--.*$/, '')} (CLAUDE.md §4).`)
+    return
+  }
   const main = session.current('build')
   if (!main || main === s) return
   const id = s.service.replace(/--.*$/, '')
@@ -588,6 +593,71 @@ const perSessionMb = () => Number(process.env.AGENT_SESSION_MB) || 300
  * 614-1: `ready` — ещё условие; с ним по истечении `maxMs` текст не вставляется (Enter ответил бы на вопрос, который стоит на экране).
  * Обещание: true — вставлено, false — не вставлено (сессии нет или вопрос не ушёл с экрана).
  */
+// ── 736: A TASK OF THE MAIN AGENT IS DELIVERED AND ITS START IS CHECKED ────────────────────────────────────────────────────────────
+// The owner, 2026-11-13: «почему сразу после подтверждения не идёт запуск в работу. И почему у тебя нету задачи через некоторое время
+// сделать дополнительно ход и посмотреть запустилась там или нет или там висит проблема». ✗ 2026-11-12 23:42: a task pasted while the
+// folder's trust question stood on the element's screen waited 120 s and was dropped with one line in the core's log; the command said
+// «pasted», and nothing ever looked again. Now: the trust question of a session the main agent leads is answered at once (the owner:
+// «you must confirm the current folder automaticly»); any other question — the task waits up to 10 minutes; not delivered — the main
+// agent is told; delivered — in `startCheckMs` the node looks whether the element's conversation took it, and tells the main agent if
+// not. One check per task, model-free: the conversation file and the screen, no polling of the agent.
+const MAIN_FROM = 'main agent'
+const startCheckMs = () => Number(process.env.AGENT_START_CHECK_MS) || 3 * 60_000
+const hhmm = (ms) => { const d = new Date(ms); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}` }
+
+/** The words of the question on the screen, one short line — for the main agent, never a guess. */
+function questionLine(buffer) {
+  const tail = plainScreen(buffer.slice(-3000))
+  const m = /(Do you want to [^?]{0,160}\?|Is this a project you created or one you trust\?|[^.?!]{0,120}Enter to confirm)/.exec(tail)
+  return (m ? m[1] : tail.slice(-160)).trim()
+}
+
+/** Did the element's conversation take anything after `at` — Claude Code writes the transcript when a message is submitted. */
+function conversationSince(s, element, at) {
+  try {
+    const dir = path.join(ownClaudeDir(element) || path.join(os.homedir(), '.claude'), 'projects', String(s.cwd).replace(/[:\\/]/g, '-'))
+    return readdirSync(dir).some((f) => f.endsWith('.jsonl') && statSync(path.join(dir, f)).mtimeMs >= at - 1000)
+  } catch { return false }
+}
+
+/** A line of the node to the main agent: pasted into its live session, or it is woken with it. */
+function tellMain(kind, element, words) {
+  try {
+    const nodeLine = require(path.join(process.cwd(), 'lib', 'agent-kit', 'node-line.cjs'))
+    void wake(MAIN_AGENT, { text: nodeLine.head(kind, element) + words, from: 'node' }).catch(() => {})
+  } catch (e) { console.log(`[agents] ${element}: строка главному агенту не ушла — ${e instanceof Error ? e.message : e}`) }
+}
+
+/** A task into a live session: the trust question answered when the main agent leads; never dropped silently. */
+function deliver(live, element, text, { confirmed, from, about } = {}) {
+  const byMain = from === MAIN_FROM
+  if (byMain && confirmed && trustOnScreen(live.buffer)) {
+    live.trustOk = true
+    live.trustDone = true
+    pressTrust(live)
+    console.log(`[agents/wake] ${live.service}: папка подтверждена — задача главного агента (736)`)
+  }
+  const at = Date.now()
+  void pasteWhenReady(live, text, { quietMs: 500, maxMs: byMain ? 10 * 60_000 : 120_000, ready: () => !questionOnScreen(live.buffer) }).then((ok) => {
+    if (!byMain) return
+    if (ok) return watchStart(live, element, at, about)
+    if (session.current(live.service) !== live) return tellMain('not-started', element, `Узел: задача главного агента элементу ${element} («${about ?? ''}», ${hhmm(at)}) НЕ вставлена — его сессии больше нет. Разбуди его той же задачей: npm run task -- ${element} "<задача>".`)
+    tellMain('not-started', element, `Узел: задача главного агента элементу ${element} («${about ?? ''}», ${hhmm(at)}) НЕ вставлена за 10 мин — на его экране вопрос: «${questionLine(live.buffer)}». Реши его (npm run permit — если это вопрос разрешения) и дай задачу снова: npm run task -- ${element} "<задача>".`)
+  })
+}
+
+/** In `startCheckMs` after a task: the element's conversation took it — silence; not — the main agent is told why. */
+function watchStart(s, element, at, about) {
+  const t = setTimeout(() => {
+    const same = session.current(s.service) === s
+    if (same && conversationSince(s, element, at)) return console.log(`[agents/start] ${s.service}: работа началась (задача ${hhmm(at)})`)
+    const why = !same ? 'его сессии больше нет' : questionOnScreen(s.buffer) ? `на его экране вопрос: «${questionLine(s.buffer)}»` : 'задачи нет в его разговоре — ход не начался'
+    console.log(`[agents/start] ${s.service}: НЕ начал за ${Math.round(startCheckMs() / 60000)} мин — ${why}`)
+    tellMain('not-started', element, `Узел: агент элемента ${element} не начал работу через ${Math.round(startCheckMs() / 60000)} мин после твоей задачи («${about ?? ''}», ${hhmm(at)}): ${why}. Реши сейчас: вопрос разрешения — npm run permit; доверие папке — npm run trust -- ${element}; хода нет или сессии нет — npm run task -- ${element} "<задача>" ещё раз.`)
+  }, startCheckMs())
+  t.unref?.()
+}
+
 function pasteWhenReady(s, text, { quietMs = 3000, maxMs = 120_000, ready = null } = {}) {
   return new Promise((resolve) => {
     const t0 = Date.now()
@@ -878,7 +948,7 @@ async function wake(element, { text, from, about, declineUrl, confirmed, taskUrl
       return { ok: true, queued: pass, running: live.pass ?? 'main' }
     }
     rememberTasks(live, urls)
-    if (text && task) pasteWhenReady(live, text, { quietMs: 500, ready: () => !questionOnScreen(live.buffer) })
+    if (text && task) deliver(live, element, text, { confirmed, from, about })
     // 615-6: вставка узла (надзор, запрос элемента) в живую сессию главного агента — после неё человеку положен доклад (`done` сторожит).
     if (text && task && from && modes.baseOf(service) === MAIN_AGENT) live.nodePasteAt = Date.now()
     return { ok: true, already: true }
@@ -906,6 +976,8 @@ async function wake(element, { text, from, about, declineUrl, confirmed, taskUrl
   // 547: агент включён пробуждением; кнопка «Включить» в Telegram — согласие и на папку.
   r.session.viaWake = true
   r.session.trustOk = Boolean(confirmed)
+  // 736: a task of the main agent is checked — did the agent start it (`watchStart`).
+  if (text && task && from === MAIN_FROM) watchStart(r.session, element, Date.now(), about)
   // 409-5 (владелец: «timeout more then 60 min»): через 60 минут от пробуждения — вопрос «закрыть терминал?». Только для
   // пробуждённых сессий; сама сессия не закрывается — закрывает агент по ответу человека. Переменная — для прибора.
   const born = r.session

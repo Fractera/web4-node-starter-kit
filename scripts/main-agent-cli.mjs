@@ -760,7 +760,7 @@ if (cmd === 'task') {
   // 670-2: рабочая сессия закрывается сама своим «закончил» (552-4) — её не отмечаем.
   if (b.ok && !b.pending && !work) markWoken(id, !b.already)
   const its = work ? `its worker (${session})` : 'its agent'
-  console.log(b.ok ? (b.pending ? `===TASK_OK=== ${id}: asked its person in Telegram to turn ${work ? 'its worker' : 'the agent'} on` : b.already ? `===TASK_OK=== ${id}: pasted into the live session ${session}` : `===TASK_OK=== ${id}: ${its} woke with the ${work ? 'job' : 'task'}${work ? ' — its «done» wakes you with its report (npm run state)' : ''}`) : `===TASK_FAIL=== ${id}: ${b.reason ?? r.status}${b.freeMb ? ` (free ${b.freeMb} MB, needs ${b.perSessionMb} MB — try later)` : ''}`)
+  console.log(b.ok ? (b.pending ? `===TASK_OK=== ${id}: asked its person in Telegram to turn ${work ? 'its worker' : 'the agent'} on` : b.already ? `===TASK_OK=== ${id}: queued for the live session ${session} — the node pastes it when its screen is free (its folder question answered for you), and in 3 minutes tells you with ⟦node · not-started⟧ if it did not start (736)` : `===TASK_OK=== ${id}: ${its} woke with the ${work ? 'job' : 'task'}${work ? ' — its «done» wakes you with its report (npm run state)' : ''}`) : `===TASK_FAIL=== ${id}: ${b.reason ?? r.status}${b.freeMb ? ` (free ${b.freeMb} MB, needs ${b.perSessionMb} MB — try later)` : ''}`)
   process.exit(b.ok ? 0 : 1)
 }
 
@@ -1076,7 +1076,27 @@ if (cmd === 'create') {
     if (/[А-Яа-яЁё]/.test(v.replace(/«[^»]*»/g, ''))) fail('--vector-file is written in English (the element\'s instruction is English; the person\'s words only inside «»)')
     if (!v || v.split('\n').length > 40 || v.length > 4000) fail(`--vector-file: 1–40 lines and up to 4000 characters (now ${v.split('\n').length} lines, ${v.length} characters) — it is loaded into every session of the element`)
   }
-  if (!role || !brief) fail('create --role "<one sentence>" --name "<the name people see in the menu>" --vector-file <path> [--describe "<what it is for, 1–3 sentences, for the passport and the header>"] [--look own|project | --look-like <id>] [--close-after-first-session] (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--different "<their words>" --boundary owner|money|secrets|control|face|channel|sleep|visibility] [--native] [--supervise main|architect] [--no-wake]')
+  // 736 (the owner, 2026-11-13: «при создании нового элемента ты опишешь все что тебе ясно об этом элементе в продуктовом Quiz. Создашь
+  // первый шаг которому будет описано что разработка проекта начинается с анализа существующего продуктового Quiz»): the main agent's
+  // draft of the element's product quiz (`development-docs/product/quiz.json`, the form of the element's skill product-quiz) — read and
+  // checked BEFORE the birth; the birth writes it with step 1 «analyse the product quiz». ✗ 2026-11-12: «Хранилище картинок» was born with
+  // no quiz and «Active step: none» — the owner found its role written nowhere in it.
+  const quizFile = flag('--quiz-file')
+  if (role && brief && !quizFile) fail('--quiz-file <path> is required: your draft of the element\'s product quiz — everything you know about it in product words (the form: skill create-element, «The quiz draft»)')
+  let quizDraft = null
+  if (quizFile) {
+    if (!existsSync(quizFile)) fail(`no file ${quizFile}`)
+    try { quizDraft = JSON.parse(readFileSync(quizFile, 'utf8')) } catch (e) { fail(`--quiz-file is not JSON: ${e.message}`) }
+    const q = quizDraft ?? {}
+    const bad = []
+    if (typeof q.vision?.text !== 'string' || q.vision.text.trim().length < 40) bad.push('vision.text — what the product is and for whom, in product words (40+ characters)')
+    if (q.vision?.status !== 'draft') bad.push('vision.status is «draft» (the architect confirms it, not you)')
+    if (!Array.isArray(q.decisions) || !q.decisions.some((d) => /«[^»]+»/.test(String(d?.said ?? '')) && d?.date && d?.gist)) bad.push('decisions — at least one { date, said: «the person\'s words verbatim», gist }')
+    if (!Array.isArray(q.stages) || !q.stages.length || q.stages.some((s, i) => s?.n !== i || !s?.name || !s?.works || !s?.ready)) bad.push('stages — [{ n: 0, 1, … in order, name, works, ready, items: [], status: "draft" }]')
+    for (const k of ['actors', 'modules', 'openQuestions', 'notNow']) if (!Array.isArray(q[k])) bad.push(`${k} — a list ([] when empty)`)
+    if (bad.length) fail(`--quiz-file: ${bad.join('; ')}`)
+  }
+  if (!role || !brief) fail('create --role "<one sentence>" --name "<the name people see in the menu>" --vector-file <path> --quiz-file <path> [--describe "<what it is for, 1–3 sentences, for the passport and the header>"] [--look own|project | --look-like <id>] [--close-after-first-session] (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--different "<their words>" --boundary owner|money|secrets|control|face|channel|sleep|visibility] [--native] [--supervise main|architect] [--no-wake]')
   if (!['main', 'architect'].includes(by)) fail('--supervise main|architect')
   // 670-3: область нового элемента — проверяется до рождения, пишется вместе с ролью.
   const newArea = areaPatch(flag('--area'), flag('--grows'))
@@ -1175,6 +1195,72 @@ if (cmd === 'create') {
     '',
   ].join('\n'), 'utf8')
 
+  // 4b. 736: the quiz draft, step 1 and the state record — the element starts with an active step, not «none». Written by the core into
+  // the newborn (like the intake); its agent commits them. Its own guards judge them at once, and the passport fragment is its own command.
+  const step1 = '1-analyse-the-product-quiz.md'
+  const firstStep = { written: [], checks: [] }
+  if (quizDraft) {
+    const productDir = join(dir, 'development-docs', 'product')
+    mkdirSync(join(productDir, 'modules'), { recursive: true })
+    writeFileSync(join(productDir, 'quiz.json'), JSON.stringify(quizDraft, null, 2) + '\n', 'utf8')
+    firstStep.written.push('development-docs/product/quiz.json')
+    mkdirSync(join(dir, 'development-docs', 'steps-new'), { recursive: true })
+    writeFileSync(join(dir, 'development-docs', 'steps-new', step1), [
+      '# Step 1 — Analyse the product quiz',
+      '',
+      `Asked: the core's main agent created this element for the architect's request (\`development-docs/pre-steps/${name}\`) and drafted`,
+      'its product quiz from everything it knew (`development-docs/product/quiz.json`). Development starts here (node step 736).',
+      '',
+      'Serves: none',
+      '',
+      '## Substeps',
+      '',
+      '1. Read `development-docs/product/quiz.json` and the request in `development-docs/pre-steps/` — nothing else yet: no code, guards',
+      '   or scripts. Pass: main.',
+      '2. Enough to build its first stage → plan step 2 by the skill `use-development-docs` (the items of the quiz\'s stage 0, its',
+      '   `Serves:` and `Stage:` lines) and give whoever leads you the three confirming lines; the plan waits for the «yes». Pass: main.',
+      '3. Not enough → every question into the quiz\'s `openQuestions` (`Q-NN`), then ONE message to the core\'s main agent:',
+      '   `npm run tell-core -- "<the questions, numbered>"` — it answers with the architect\'s words or passes them to the architect; stop',
+      '   until the answer comes. Pass: main.',
+      '4. Close: `steps-done/1.md` and `current-step.md` in one commit. Pass: main.',
+      '',
+      '## Done when',
+      '',
+      '- step 2 is planned and waits for the «yes», or the questions are with the main agent;',
+      '- `npm run check:product` and `npm run check:dev-docs` are green.',
+      '',
+    ].join('\n'), 'utf8')
+    firstStep.written.push(`development-docs/steps-new/${step1}`)
+    writeFileSync(join(dir, 'development-docs', 'current-step.md'), [
+      '# Current step',
+      '',
+      `**Active step:** 1 — analyse the product quiz (\`development-docs/steps-new/${step1}\`).`,
+      '',
+      `**Last change:** born ${now.toISOString().slice(0, 10)} from the template; the core's main agent drafted the product quiz and this first step.`,
+      '',
+      '**Next action:** read the quiz and the request; enough → plan step 2 for the «yes»; not enough → the questions to the main agent',
+      '(`npm run tell-core`).',
+      '',
+      '**Queue:** empty.',
+      '',
+      "## The person's latest decisions (verbatim)",
+      '',
+      ...quizDraft.decisions.filter((d) => /«[^»]+»/.test(String(d?.said ?? ''))).map((d) => `- ${d.date}: ${d.said} — ${d.gist}`),
+      '',
+    ].join('\n'), 'utf8')
+    firstStep.written.push('development-docs/current-step.md')
+    const run = (args) => spawnSync(process.execPath, args, { cwd: dir, encoding: 'utf8', windowsHide: true, timeout: 120_000 })
+    if (existsSync(join(dir, 'scripts', 'development.mjs'))) {
+      const d = run([join(dir, 'scripts', 'development.mjs'), '--steps', '1', '--current', '1', '--state', 'planning', '--next', 'analyse the product quiz; enough - plan step 2, not enough - questions to the main agent'])
+      firstStep.checks.push(`passport fragment ${d.status === 0 ? 'written' : `NOT written (${String(d.stdout + d.stderr).trim().split('\n').pop()})`}`)
+    }
+    for (const g of ['check-product.mjs', 'check-dev-docs.mjs']) {
+      if (!existsSync(join(dir, 'scripts', g))) continue
+      const r = run([join(dir, 'scripts', g)])
+      firstStep.checks.push(`${g.replace(/\.mjs$/, '').replace('check-', 'check:')} ${r.status === 0 ? 'green' : `RED — ${String(r.stdout + r.stderr).trim().split('\n').filter((l) => /✗|problem|—/.test(l)).slice(0, 3).join(' | ').slice(0, 400)}`}`)
+    }
+  }
+
   // 5. Кто ведёт.
   supervision.set(id, by, { root: ROOT, brief: role })
 
@@ -1186,7 +1272,7 @@ if (cmd === 'create') {
       : 'Ведёт тебя архитектор: три подтверждающие строки — ему, начинай после его «да».'
     // 548-14: первая сессия коротка — ✗ замерено 2026-10-20: с «опиши себя в паспорте» и «квиз и план шага» в одном поручении агент
     // нового элемента потратил 11 запросов модели и 850 тыс. токенов кэша на чтение своего кода, паспорта и сторожей до первого вопроса.
-    const text = `${modes.WORDS.build} Тебя создал главный агент узла под задание архитектора. Твоя роль: ${role} Задание лежит в твоей приёмной: development-docs/pre-steps/${name}. Первая сессия — коротко, по своей инструкции: назови задание; ядро уже проверило узел и сеть для твоей роли — никто её не делает, она твоя: порядок «Before you build a new capability» (CLAUDE.md, «Steps», 1b) и \`npm run need\` — только для возможности ВНЕ твоей роли (шаг 682: ✗ 2026-11-07 пять из девяти новых элементов спросили ядро о собственной роли); затем задай первый вопрос продуктового квиза (навык product-quiz, пункт «The first session of a new element») и остановись. Код, сторожа и скрипты до утверждения квиза не читай; паспорт опишешь в первом шаге, когда квиз утверждён. ${lead}`
+    const text = `${modes.WORDS.build} Тебя создал главный агент узла под задание архитектора. Твоя роль: ${role} Задание лежит в твоей приёмной: development-docs/pre-steps/${name}. Ядро уже проверило узел и сеть для твоей роли — никто её не делает, она твоя: \`npm run need\` — только для возможности ВНЕ твоей роли (шаг 682). ${quizDraft ? `Главный агент записал в твой квиз продукта всё, что о тебе ясно (development-docs/product/quiz.json), и твой первый шаг (development-docs/current-step.md, development-docs/steps-new/${step1}): разработка начинается с анализа квиза (шаг 736). Сделай шаг 1 по его плану: хватает — спланируй шаг 2 и дай три подтверждающие строки; не хватает — вопросы одним сообщением главному агенту (npm run tell-core) и остановись. Код, сторожа и скрипты до плана шага 2 не читай.` : 'Первая сессия — коротко: назови задание, задай первый вопрос продуктового квиза (навык product-quiz) и остановись.'} ${lead}`
     const r = await core('/api/agents/wake', { method: 'POST', body: JSON.stringify({ service: id, text, from: 'main agent', about: role, reason: 'main-agent-create', supervised: by === 'main' }) }).catch((e) => ({ body: { ok: false, reason: e.message } }))
     const b = r.body ?? {}
     woke = b.ok ? (b.pending ? 'its person was asked in Telegram to turn it on' : 'its agent started with the task') : `not woken: ${b.reason}${b.freeMb ? ` (free ${b.freeMb} MB, needs ${b.perSessionMb} MB)` : ''} — run later: npm run task -- ${id} "<the same task>"`
@@ -1211,6 +1297,7 @@ if (cmd === 'create') {
     const m = /### From the core\n([\s\S]*?)\n### The laws of this element/.exec(t)
     console.log(m ? `vector: section 11 «From the core» of its CLAUDE.md, ${m[1].trim().split('\n').length} lines` : 'vector: NOT in its CLAUDE.md — tell its agent the vector with npm run task') }
   console.log(`task: development-docs/pre-steps/${name}`)
+  if (firstStep.written.length) console.log(`first step: ${firstStep.written.join(', ')} · ${firstStep.checks.join(' · ')}`)
   console.log(`agent: ${woke}`)
   console.log(`led by: ${by === 'main' ? 'you (the main agent): its «done» wakes you — skill supervise-element' : 'the architect'}`)
   console.log(`the architect continues here: terminal ${terminalOf(id)} · development documents ${ORIGIN}/${LANG}/${addressOf(id)}/build/documents/instruction · a Telegram bot is connected on ${ORIGIN}/${LANG}/${addressOf(id)}/messenger/h2a/telegram`)

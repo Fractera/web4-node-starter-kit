@@ -49,8 +49,23 @@ The owner of Fractera, 2026-10-23: «не всегда в наш проект п
    Custom by default. Native (`--native`) only for a job of the node itself that is never sold and never leaves it.
 4. **Create.** Write the task into a file in this folder (no shell quoting of the person's words), then:
    ```
-   npm run create -- --role "<one sentence>" --name "<the name the person sees in the menu>" --vector-file vector-<words>.md --describe "<what it is for in this node, 1–3 sentences>" --look own|project --area "<the field>" --grows "<a job>; <another>" --brief-file task-<words>.md [--close-after-first-session] [--supervise main] [--native]
+   npm run create -- --role "<one sentence>" --name "<the name the person sees in the menu>" --vector-file vector-<words>.md --quiz-file quiz-<words>.json --describe "<what it is for in this node, 1–3 sentences>" --look own|project --area "<the field>" --grows "<a job>; <another>" --brief-file task-<words>.md [--close-after-first-session] [--supervise main] [--native]
    ```
+   **The quiz draft** (core step 736; the owner, 2026-11-13: «при создании нового элемента ты опишешь все что тебе ясно об этом
+   элементе в продуктовом Quiz. Создашь первый шаг которому будет описано что разработка проекта начинается с анализа существующего
+   продуктового Quiz, есть информация недостаточно агент начинает взаимодействия с главным элементом чтобы тот передал вопросы
+   архитектору»). Everything you know about the element, in product words, English, the person's words verbatim in «» — the form of
+   the element's skill product-quiz: `{ "vision": { "text", "status": "draft" }, "actors": [{ "id": "A-01", "name", "text" }],
+   "modules": [], "openQuestions": [{ "id": "Q-01", "text", "about": [] }], "notNow": [{ "id": "N-01", "text" }], "stages": [{ "n": 0,
+   "name", "works", "ready", "items": [], "status": "draft" }], "decisions": [{ "date", "said": "«…»", "gist" }] }` — what is unclear goes
+   into `openQuestions`, never guessed into the vision. The birth writes it with step 1 «analyse the product quiz» (`current-step.md`,
+   `steps-new/1-…`) and the passport's development fragment, and runs the element's `check:product` and `check:dev-docs` (the line
+   `first step:` says green or red). The newborn's agent does step 1: enough → plan step 2 and three confirming lines; not enough → one
+   `tell-core` message with the questions — you answer from the person's words or pass them to the person.
+   **Never `--no-wake` and then a separate `npm run wake` + `npm run task` for the newborn's first work** (✗ 2026-11-12 23:42,
+   «Хранилище картинок»: the task met the folder's trust question and was dropped; the command said «pasted»). `create` wakes it with
+   step 1 itself. The node answers its folder question for you and checks its start: no work 3 minutes after a task —
+   `⟦node · not-started⟧` comes to you with the reason; until that silence never tell the person it is working (CLAUDE.md §4).
    **The starting vector** (core step 701; the owner, 2026-11-08: «ты должен дописать в инструкцию агенту элемента послание которые
    создаст базовое понимание того что он должен делать … как он должен создавать маршруты где будет находиться область публичного
    взаимодействия … где будут находиться внутренние страницы какие они будут нести нагрузки»). The birth writes it into section 11

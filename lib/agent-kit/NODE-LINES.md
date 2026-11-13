@@ -21,6 +21,8 @@ commit. Messages to the PERSON have their own closed list (`lib/main-agent-cron/
 | `tell-core` | an element (`npm run tell-core`) | the main agent | passes the words to the architect, naming the element |
 | `need` | an element (`npm run need`) | the main agent | finds who does it or asks the architect, skill `handle-need` |
 | `permission` | the core's boundary guard of an element (`scripts/element-boundary-hook.mjs` → `/api/agents/permission`, `lib/agent-kit/permission.cjs`, step 704) | the main agent | judges the command itself, then `npm run permit -- <token> allow\|deny "<why>"`; no answer by the deadline — the element gets a deny by itself (skill `element-permission`) |
+| `not-started` | the bridge (step 736): a task of the main agent not delivered in 10 minutes (a question on the element's screen, its session gone), or delivered and not in its conversation `AGENT_START_CHECK_MS` (3 min) later | the main agent | reads the named reason and acts at once: `npm run permit` / `npm run trust -- <id>` / the same task again with `npm run task` — never reports the element as working before this line's silence |
+| `trust` | the bridge (step 736): an element agent stands on Claude Code's folder trust question and no Telegram bot carried it | the main agent | confirms it itself — `npm run trust -- <id>` (CLAUDE.md §4, the owner 2026-11-12) |
 
 The elements' words carry the head right after the process word («Build process: ⟦node · need · s8y6x · 18:17⟧ …»): the bridge picks the
 session by that word first (step 699).
