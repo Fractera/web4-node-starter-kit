@@ -29,6 +29,9 @@ export function ServerMove({ words, domainWords, dialogUi, place }: { words: Ser
   const [silent, setSilent] = useState(false)
   const [busy, setBusy] = useState(false)
   const [publicAddress, setPublicAddress] = useState(false)
+  // ✗ The owner's test 2026-11-13: one unanswered request (the core busy) stopped the polling for good and the screen kept «Идёт
+  // работа…» of a rung finished long before. Every answer — or its absence — counts as a tick, and the next ask follows it.
+  const [tick, setTick] = useState(0)
 
   const load = useCallback(async () => {
     try {
@@ -38,6 +41,8 @@ export function ServerMove({ words, domainWords, dialogUi, place }: { words: Ser
       setSilent(false)
     } catch {
       setSilent(true)
+    } finally {
+      setTick((n) => n + 1)
     }
   }, [])
 
@@ -47,11 +52,12 @@ export function ServerMove({ words, domainWords, dialogUi, place }: { words: Ser
   }, [load])
 
   useEffect(() => {
-    if (!view) return
+    if (!tick) return
+    if (!view) { const t = setTimeout(() => void load(), 5000); return () => clearTimeout(t) }
     const running = Object.values(view.state.rungs ?? {}).some((r) => r?.state === "running") || view.state.clear?.state === "running"
     const t = setTimeout(() => void load(), running ? 3000 : 15000)
     return () => clearTimeout(t)
-  }, [view, load])
+  }, [tick, view, load])
 
   async function start(rung: string, extra: Record<string, unknown> = {}) {
     setBusy(true)

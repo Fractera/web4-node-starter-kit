@@ -22,10 +22,11 @@ stage apt-lock "mkdir -p /etc/apt/apt.conf.d && printf 'DPkg::Lock::Timeout \"60
 # Swap before anything heavy: ✗ easy starter 2026-08-23, 956 MB and no swap — `npm install` was killed (137) at 33 %.
 # ✗ Paid again 2026-11-13 on the owner's 8 GB test server: the core is ONE Next app (126 pages, 1671 source files) and its Turbopack build
 # peaks at ≈7.7 GB resident + ≈5.9 GB swapped (measured: `/usr/bin/time -v`, exit 0 in 9:37 with 10 GB of swap; killed twice with 4 GB).
-# The old Fractera survived the same server because it was many SMALL apps built one by one. Rule: memory + swap ≥ 16 GB; the missing
-# part becomes /swapfile-fractera (the probe counts its disk). swappiness 10 keeps the running node in memory.
+# The old Fractera survived the same server because it was many SMALL apps built one by one. A second build of the same code peaked at
+# ≈14.8 GiB (7.2 resident + 7.7 swapped) — the peak varies run to run. Rule: memory + swap ≥ 24 GiB; the missing part becomes
+# /swapfile-fractera (the probe counts its disk). swappiness 10 keeps the running node in memory.
 stage swap 'mem=$(awk "/MemTotal/ {print int(\$2/1024)}" /proc/meminfo); sw=$(awk "/SwapTotal/ {print int(\$2/1024)}" /proc/meminfo);
-  add=$(( (16384 - mem - sw + 1023) / 1024 ));
+  add=$(( (24576 - mem - sw + 1023) / 1024 ));
   if [ "$add" -gt 0 ] && [ ! -f /swapfile-fractera ]; then
     fallocate -l ${add}G /swapfile-fractera || dd if=/dev/zero of=/swapfile-fractera bs=1M count=$((add * 1024)); chmod 600 /swapfile-fractera;
     mkswap /swapfile-fractera; swapon /swapfile-fractera;

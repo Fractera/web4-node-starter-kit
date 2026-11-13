@@ -12,6 +12,8 @@ export type ServerMoveWords = {
   running: string
   failed: string
   again: string
+  copyAgain: string
+  copyAgainNote: string
   host: string
   port: string
   password: string
@@ -51,6 +53,8 @@ const en: ServerMoveWords = {
   running: "Working…",
   failed: "Stopped:",
   again: "Try again",
+  copyAgain: "Copy again",
+  copyAgainNote: "After this node was updated, the server needs the same code: only the changes travel, the core is rebuilt (about 11 minutes on 8 GB).",
   host: "Server IP address",
   port: "SSH port",
   password: "Root password",
@@ -111,6 +115,8 @@ const ru: ServerMoveWords = {
   running: "Идёт работа…",
   failed: "Остановлено:",
   again: "Повторить",
+  copyAgain: "Скопировать заново",
+  copyAgainNote: "После обновления этого узла серверу нужен тот же код: переносятся только изменения, ядро пересобирается (около 11 минут на 8 ГБ).",
   host: "IP-адрес сервера",
   port: "Порт SSH",
   password: "Пароль root",

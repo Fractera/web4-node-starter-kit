@@ -134,6 +134,13 @@ export function RungBody({ id, rung, state, words, busy, onStart }: { id: RungId
         >
           {rung.state === "failed" ? words.again : words.rung[id].button}
         </Button>
+      ) : id === "copy" && state.rungs?.move?.state !== "done" ? (
+        // 737-7 (the owner's test, 2026-11-13: «Повторить … not exist this button»): after an update of this node the server needs the
+        // same code again — a done copy may run once more; only the changes travel.
+        <div className="flex flex-col gap-1" data-block="server-move-copy-again">
+          <Button className="w-fit" disabled={busy} onClick={() => onStart("copy")} size="sm" variant="outline">{words.copyAgain}</Button>
+          <Small className="text-muted-foreground">{words.copyAgainNote}</Small>
+        </div>
       ) : null}
     </div>
   )

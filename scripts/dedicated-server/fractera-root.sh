@@ -23,6 +23,8 @@ case "$verb" in
     [ -f "$src" ] || { echo "no generated site at $src" >&2; exit 2; }
     [ "$(stat -c %s "$src")" -lt 2000000 ] || { echo "site file too large" >&2; exit 2; }
     mkdir -p "$ACME_ROOT"
+    # The «the node is updating» page nginx shows while the node rebuilds (from the node's own folder, a fixed path).
+    [ -f "$NODE_DIR/scripts/dedicated-server/updating.html" ] && install -D -m 0644 -o root -g root "$NODE_DIR/scripts/dedicated-server/updating.html" /var/www/fractera-maint/.fractera-updating.html
     [ -f "$SITE" ] && cp -a "$SITE" "$SITE.previous"
     install -m 0644 -o root -g root "$src" "$SITE"
     ln -sf "$SITE" /etc/nginx/sites-enabled/fractera

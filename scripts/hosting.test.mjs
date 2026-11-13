@@ -486,6 +486,12 @@ console.log('737-7 a busy server: free it or cancel')
     assert.equal(mayCancel({ ...busy, rungs: { ...busy.rungs, move: { state: 'done' } } }), false)
     assert.equal(mayCancel({ rungs: {} }), false)
   })
+  t('a done copy may run again before the move (only the changes travel); negative: after the move no rung runs again', async () => {
+    const { mayStart } = await import('../lib/hosting/move-state.mjs')
+    const ready = { rungs: { connect: { state: 'done' }, probe: { state: 'done' }, prepare: { state: 'done' }, copy: { state: 'done' }, claude: { state: 'done' }, rehearse: { state: 'failed' } } }
+    assert.equal(mayStart(ready, 'copy'), true)
+    assert.equal(mayStart({ rungs: { ...ready.rungs, rehearse: { state: 'done' }, move: { state: 'done' } } }, 'copy'), false)
+  })
   if (process.platform !== 'win32') {
     const { spawnSync } = await import('node:child_process')
     t('clear.sh is valid bash and erases nothing by its own words (no rm -rf, no apt purge, no dropdb)', () => {

@@ -131,6 +131,11 @@ const rungs = {
       const mark = JSON.stringify({ phase: 'silent', ip: server().host, sshPort: server().port, user: REMOTE_USER, folder: FOLDER, from: os.hostname(), at: now() }, null, 2)
       await exec(client, `mkdir -p ${q(`${REMOTE_ROOT}/data/node`)} ${q(`${REMOTE_ROOT}/logs/dedicated-server`)} && printf '%s\\n' ${q(mark)} > ${q(`${REMOTE_ROOT}/data/node/server.json`)} && rm -f ${q(`${REMOTE_ROOT}/logs/dedicated-server/install.progress.jsonl`)}`)
       const copied = { id: 'copy', state: 'done', at: now(), detail: `${c.files ?? '?'} files, ${Math.round((c.bytes ?? 0) / 1048576)} MB` }
+      // ✗ The owner's test server 2026-11-13: a copy after a rehearsal built the core beside the rehearsal's 16 running processes and was
+      // killed for memory. Before the move nothing on the server is live: the earlier copy stops before the build (the rehearsal starts it).
+      // ✗ Same day: a copy started while the previous run's installer still built → «Another next build still in progress». One installer
+      // at a time: the earlier one, its build and Next's build lock go first (never in a dry run — its «server» is this machine).
+      await exec(client, dry ? PM2_STOP : `${PM2_STOP}; pkill -f 'dedicated-server/[i]nstall.sh'; pkill -f '[n]ext build'; sleep 2; rm -f ${q(`${REMOTE_ROOT}/.next/lock`)}; true`, { timeoutMs: 120_000 })
       await startDetached(client, `${DRY}bash ${q(`${REMOTE_ROOT}/scripts/dedicated-server/install.sh`)}`, `${REMOTE_ROOT}/logs/dedicated-server/install.out`)
       const r = await follow(client, `${REMOTE_ROOT}/logs/dedicated-server/install.progress.jsonl`, 'install', { script: 'install.sh', everyMs: POLL, timeoutMs: 150 * 60_000, onStages: (stages) => setRung(root, 'copy', { stages: [copied, ...stages], heartbeat: now() }) })
       end('copy', r.ok, { stages: [copied, ...r.stages], detail: r.failed ? `${r.failed.id}: ${String(r.failed.detail).slice(-300)}` : '' })

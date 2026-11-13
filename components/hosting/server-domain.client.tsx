@@ -37,21 +37,26 @@ export function ServerDomain({ words, fallback }: { words: ServerDomainWords; fa
   const [error, setError] = useState("")
   const [name, setName] = useState("")
 
+  // An unanswered request keeps the last known state on screen and asks again (the same lesson as the move ladder, 2026-11-13).
+  const [tick, setTick] = useState(0)
   const load = useCallback(async () => {
     try {
       const r = await fetch(`${BASE}/api/node/server/domain`, { cache: "no-store" })
-      setView(r.ok ? ((await r.json()) as View) : { ok: false, phase: null, readOnly: true })
+      if (r.ok) setView((await r.json()) as View)
+      else setView((v) => v ?? { ok: false, phase: null, readOnly: true })
     } catch {
-      setView({ ok: false, phase: null, readOnly: true })
+      setView((v) => v ?? { ok: false, phase: null, readOnly: true })
+    } finally {
+      setTick((n) => n + 1)
     }
   }, [])
 
   useEffect(() => { void load() }, [load])
   useEffect(() => {
-    if (!view?.certsRun?.running) return
+    if (!tick || !view?.certsRun?.running) return
     const t = setTimeout(() => void load(), 4000)
     return () => clearTimeout(t)
-  }, [view, load])
+  }, [tick, view, load])
 
   async function act(action: string, extra: Record<string, unknown> = {}) {
     setBusy(true)

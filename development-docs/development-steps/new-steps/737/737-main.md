@@ -154,3 +154,88 @@ session journals (agents start fresh on the server, their records carry the work
   OPEN, waiting for the owner's test server (IP + root password typed in the tab, never in chat) and a test domain: 737-6 (install and
   start on a real Ubuntu), the live proofs of 737-4 prepare, 737-7 rungs prepare → move, Claude's sign-in there, 737-8 certificates from
   Let's Encrypt. The plan stays until those proofs; decisions D1–D4 above wait for the owner.
+
+## 8. Added 2026-11-13 ~14:00 — 737-11 Telegram on the server (the owner's words, verbatim)
+
+«стоило бы подумать о том что если уже подключён Telegram то спросить: переносить этот Telegram на сервер или создать другой если
+пользователь скажет перенести то значит переносим так если нет то значит вызываем процедуру создание нового телеграмм бота прямо в этом
+окне как опциональное решение размещённое в аккордеоне. После подтверждения сервер сразу стартует установленный на него Telegram. О чем
+приходит сообщение в Telegram приветствующие о готовности начать разработку но прежде знакомству … это же действие если пользователя до
+сих пор нет на локальном компьютере Telegram на сервере он может понадобится. Также важно помнить что чаще всего … пользователи однажды
+устанавливают на свой домашний компьютер Fractera и в будущем поднимает множество независящих от него серверов. … включим этот шаг чтобы
+при последующем чистом прогоне мы все эти действия повторили».
+
+**Design (my picks; D5, D6 for the owner):**
+- A new rung **«Telegram»** after «Claude Code on the server» (the welcome is written by the server's main agent — it needs Claude).
+- It reads this node's main bot (`data/services/build/channel/telegram/`): with a bot — the choice «move this bot to the server» or
+  «a new bot for the server»; without one — only the new bot. The new bot's steps (BotFather → /newbot → name → the token pasted in the
+  tab, never in chat) live in an accordion of the rung; the token goes to the server over SSH into the same file the server's poller reads.
+- **A new bot = the server is independent:** it starts its Telegram at once (no 409: this computer keeps its own bot); the server's main
+  agent writes the first message — a welcome and the first contact (skill `know-the-architect`) before any development. Elements' bots
+  never travel to an independent server (the silent copy already carries no token).
+- **The same bot = the move:** the bot starts on the server only at the «Move» rung, when this computer stops (two readers of one bot split
+  the person's messages — telegram.cjs 409).
+- **D5 — what an independent server receives:** (a) a clone of this node — elements, data, memory, without bots and the domain; (b) a fresh
+  node — the core and the native elements from the person's fork, nothing personal. My pick: (b) for «many independent servers» (each is
+  its own project and owner boundary), (a) only for the move. Changes the copy rung: (b) clones the fork on the server instead of rsync.
+- **D6 — the ladder's name:** «Выделенный сервер» keeps the move; the independent server becomes the second road of the same tab
+  («Новый сервер»), sharing connect · probe · prepare · claude · telegram.
+- Proof: the clean run on a fresh Ubuntu repeats every rung with both Telegram choices; a welcome message arrives from the server's bot.
+
+## 9. The live test of 2026-11-13 — what it found, the clean-run rule, and the plan to finish (written at max effort, for execution)
+
+**The owner's rule, ~14:15 UTC, verbatim:** «again and again you try start not from scratch, and we have a lot of problem from this
+idea. will beterr stop all and as rule create process always from scratch?» — **Yes.** A test run starts from a freshly reinstalled OS,
+I only observe and measure; a defect → stop, fix the code, reinstall, run every rung again. Every rung also cleans its own leftovers
+when re-run (a person's network does break). Memory: `feedback-test-from-scratch`. The run on 213.199.61.7 was stopped at 14:15 and
+counts as contaminated (an earlier Fractera install, swap added by hand up to 15 GiB, processes killed by hand).
+
+**D5 decided by the owner (~14:10):** «both variant for choose. and if it will clon need second question - replace data or not».
+
+### 9.1 Defects found live, with their state
+
+| # | Defect (measured) | State |
+|---|---|---|
+| 1 | probe said «ok» on a server running another install (nginx sites fractera, fractera-custom; 14 pm2 of root) | fixed `882fd6f5`, on the node; free-or-cancel dialog seen live |
+| 2 | the core's Turbopack build killed for memory (8 GB + 4 GB swap); peaks measured 13.6 GiB and ≈14.8 GiB | swap rule memory+swap ≥ 24 GiB — working copy (16 GiB was pushed in `7d7b8996`) |
+| 3 | `experimental.turbopackMemoryLimit` tried: killed at the same 7.7 GB | rejected, reverted |
+| 4 | Claude sign-in link stored as `{how,url}` → the tab opened `/[object Object]` | fixed `9f979cc6`, on the node, test |
+| 5 | «same version» failed on a records-only commit made after the copy | fixed `9f979cc6`, on the node |
+| 6 | no way to re-run a done copy after this node updated | «Скопировать заново» — working copy |
+| 7 | a copy after a rehearsal built beside the rehearsal's 16 running processes → OOM | copy stops the server's earlier copy first — working copy |
+| 8 | two installers on one build (`Another next build still in progress`, stale `.next/lock`) | copy clears the previous installer, build and lock — working copy |
+| 9 | a rung could run after the move (a copy would stop the live server) | `mayStart` refuses after the move + test — working copy |
+| 10 | one unanswered request stopped the tab's polling for good («Идёт работа…» of a finished rung) | both islands keep polling — working copy |
+| 11 | a core rebuild on the server would answer visitors a bare 502 for ~12 min | nginx 503 page «updating» + Retry-After, `nginx -t` passed on the server — working copy |
+| 12 | `s8y6x`, `bd5ln` installed on the server without OPENAI_API_KEY | OPEN — compare the services-install warnings on this computer with the server's before deciding |
+| 13 | fork sync for a node that lives on a server (no Chrome there) | OPEN — D9 |
+
+### 9.2 Measured facts the remaining design stands on (this node, 2026-11-13)
+
+- Accounts, the architect included: `data/services/auth/auth.db` (+ WAL). Node identity: `data/node-code.json`. Wallets:
+  `data/services/<id>/wallet/wallet.json` (`lib/web4-items/node-wallet.ts:47`).
+- Stores: the data element's SQLite under `WEB4-ITEMS/core/data/data` (1.1 MB), storage files (376 KB), vectors (20 MB), the graph
+  `data/services/graph` (14 MB); `data/services/embeddings` 240 MB is the model cache, not personal data; `data/workshop` 971 MB is the
+  owner's template workshop — never for an independent server.
+- Saving a bot token through `build/agent-api/channel` starts the poller only for a BORN element (`INSTALLED === "__BORN__"`), not for
+  the core's main agent → on the server the poller must be started after the token (a core restart, or a door that calls
+  `startIdlePoller`). Measure on the clean run before choosing.
+- `lib/agent-kit/mount.cjs:122` refuses every agent wake in phase `silent` → a server that gets its OWN bot is phase `live` from its first
+  start (it is independent: this computer keeps its bot, no 409).
+- Durations measured: connect 4 s, probe 4 s, prepare 27 s (a server that already had the packages), copy+build 36:35 on 8 GB (core
+  10:51–12:31, 13 elements 25:26), Claude sign-in 12:48 (the person's own pace), rehearsal 1:17. The move — not measured yet.
+
+### 9.3 What remains — substeps (each with a model-free proof that reading code cannot pass)
+
+| # | Result | Proof |
+|---|---|---|
+| 737-12 | commit the working-copy fixes 6–11 + the 24 GiB rule + README numbers; chain; push; CI | `test:hosting` ≥ 53 green incl. the new cases; CI three systems |
+| 737-11a | rung **«Telegram»** after «Claude Code on the server», road «Переезд»: the node's bot found → «перенести этот бот» (it starts on the server only at the move rung) or «новый бот» (accordion = the core's own `TelegramChannel` with an optional `door` prop pointing at a new door `/api/node/server/telegram` that forwards each action over SSH to the server's `build/agent-api/channel` on loopback) | clean run: the token is accepted on the server (`getMe` there), START admits the owner, the server's main agent sends the welcome + first contact (`know-the-architect`) — the owner sees it in Telegram and the server's diary has it; negative: the moved bot never answers from the server before the move rung |
+| 737-11b | road **«Новый сервер»** in the same tab (shares connect · probe · prepare · claude · telegram): **fresh** (the person's fork cloned on the server + the server installer, nothing personal) or **clone** (this node's silent copy) with the second question **«перенести данные этого узла?»** — yes: accounts, stores, memory travel; no: those paths are excluded and the server starts empty (its first registration through `npm run server -- window` is its architect). Re-deploy to the same server: yes = replace the server's data, no = code only. Never travels to an independent server: bot tokens, `data/node-code.json` (a new one is made), wallets, `data/workshop`, `logs/domain.json`, `data/node/server/` | clean run of each: fresh → the server has no `auth.db` from here and a new node code; clone without data → same elements, empty accounts (negative: this computer's accounts absent); clone with data → the same user count; this computer keeps working throughout |
+| 737-13 | the clean runs: the owner reinstalls Ubuntu 24.04 in the provider's panel; the cancel road here (`node scripts/dedicated-server/move.mjs cancel`, or the tab's «Отменить установку») forgets the old server key — it resets even when the reinstalled server refuses the old key; road «Переезд» from zero (measure the move rung's time, then `return`), then road «Новый сервер» fresh with a new bot | every rung from zero with no hand on the server; durations recorded into the rung texts |
+| 737-14 | the owner's Windows reinstall (6–8 GB) — the core's build time and whether it finished | his report: finished / minutes |
+
+**Decisions waiting for the owner (my pick first):** D6 — one tab, two roads «Переезд» · «Новый сервер» (yes); D9 — fork sync for a
+node on a server: a GitHub token with write to the fork kept by the node (yes), or the owner taps «Sync fork» on the phone; D10 — the
+architect of an empty server = the first registration through `npm run server -- window` (the SSH window is «this computer» by the
+law of §2), yes.
