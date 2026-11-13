@@ -19,13 +19,18 @@ emit prepare running
 # apt waits for the provider's own first-boot upgrades instead of failing on their lock (easy starter: DPkg::Lock::Timeout + fuser).
 stage apt-lock "mkdir -p /etc/apt/apt.conf.d && printf 'DPkg::Lock::Timeout \"600\";\\n' > /etc/apt/apt.conf.d/99fractera-lock-timeout"
 
-# Swap before anything heavy: ✗ easy starter 2026-08-23, 956 MB and no swap — `npm install` was killed (137) at 33 %. The node itself
-# holds ≈2.3 GB and a Next build peaks above that, so under 8 GB of memory without swap the node gets 4 GB of it.
+# Swap before anything heavy: ✗ easy starter 2026-08-23, 956 MB and no swap — `npm install` was killed (137) at 33 %.
+# ✗ Paid again 2026-11-13 on the owner's 8 GB test server: the core is ONE Next app (126 pages, 1671 source files) and its Turbopack build
+# peaks at ≈7.7 GB resident + ≈5.9 GB swapped (measured: `/usr/bin/time -v`, exit 0 in 9:37 with 10 GB of swap; killed twice with 4 GB).
+# The old Fractera survived the same server because it was many SMALL apps built one by one. Rule: memory + swap ≥ 16 GB; the missing
+# part becomes /swapfile-fractera (the probe counts its disk). swappiness 10 keeps the running node in memory.
 stage swap 'mem=$(awk "/MemTotal/ {print int(\$2/1024)}" /proc/meminfo); sw=$(awk "/SwapTotal/ {print int(\$2/1024)}" /proc/meminfo);
-  if [ "$mem" -lt 8000 ] && [ "$sw" -lt 1024 ] && [ ! -f /swapfile ]; then
-    fallocate -l 4G /swapfile || dd if=/dev/zero of=/swapfile bs=1M count=4096; chmod 600 /swapfile; mkswap /swapfile; swapon /swapfile;
-    grep -q "^/swapfile" /etc/fstab || echo "/swapfile none swap sw 0 0" >> /etc/fstab; sysctl -w vm.swappiness=10;
-  fi'
+  add=$(( (16384 - mem - sw + 1023) / 1024 ));
+  if [ "$add" -gt 0 ] && [ ! -f /swapfile-fractera ]; then
+    fallocate -l ${add}G /swapfile-fractera || dd if=/dev/zero of=/swapfile-fractera bs=1M count=$((add * 1024)); chmod 600 /swapfile-fractera;
+    mkswap /swapfile-fractera; swapon /swapfile-fractera;
+    grep -q "^/swapfile-fractera" /etc/fstab || echo "/swapfile-fractera none swap sw 0 0" >> /etc/fstab; sysctl -w vm.swappiness=10;
+  fi; swapon --show=NAME,SIZE --noheadings'
 stage apt 'wait_for_apt; apt-get update -qq && apt-get install -y -qq git curl ca-certificates rsync nginx ufw build-essential python3 python3-venv openssl psmisc'
 # Node 22 — the major the node runs on everywhere (macOS 22.19 measured); NodeSource as the easy starter did.
 stage node 'v=$(node --version 2>/dev/null | cut -d. -f1); if [ "$v" != "v22" ]; then wait_for_apt; curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get install -y -qq nodejs; fi; node --version'
