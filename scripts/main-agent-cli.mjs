@@ -1183,7 +1183,9 @@ if (cmd === 'create') {
   const p2 = (n) => String(n).padStart(2, '0')
   const name = `${p2(now.getDate())}-${p2(now.getMonth() + 1)}-${now.getFullYear()}_${p2(now.getHours())}-${p2(now.getMinutes())}-${p2(now.getSeconds())}.md`
   const off = -now.getTimezoneOffset() / 60
-  const one = brief.replace(/\s*\r?\n\s*/g, ' / ').replace(/»/g, '»»')
+  // 736 (✗ 2026-11-13 01:28, the second «Хранилище картинок»): a brief that quotes the person inside «…» broke the intake's «…» — the
+  // element's check:dev-docs saw Cyrillic outside quotes. The inner quotes become "…", which the guard reads as quotes too.
+  const one = brief.replace(/\s*\r?\n\s*/g, ' / ').replace(/«/g, '"').replace(/»/g, '"')
   const intakeDir = join(dir, 'development-docs', 'pre-steps')
   mkdirSync(intakeDir, { recursive: true })
   writeFileSync(join(intakeDir, name), [
