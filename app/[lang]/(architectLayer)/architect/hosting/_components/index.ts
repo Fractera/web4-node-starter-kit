@@ -1,4 +1,6 @@
 import type { PageItem } from '@/lib/content/sections/types'
+import links from '@/lib/helpful-links.json'
+import { hostingNotes } from './hosting-notes.i18n'
 
 // СОДЕРЖИМОЕ СТРАНИЦЫ «Domain and hosting».
 //
@@ -13,6 +15,21 @@ import type { PageItem } from '@/lib/content/sections/types'
 //
 // 🛑 СЛОВА ОТСЮДА НЕ ПИШУТСЯ: любая строка, которую увидит человек, приходит
 // параметром из `_data` — иначе она не переводится и её не видит сторож словарей.
-export function content(_lang: string): PageItem[] {
-  return []
+// 737 (the owner, 2026-11-13): a preface and two cards closed by default — the own domain and the dedicated server.
+export function content(lang: string): PageItem[] {
+  const n = hostingNotes(lang)
+  const card = (summary: string, text: string[]): PageItem => ({ kind: 'accordionItem', summary, children: text.filter(Boolean).map((t): PageItem => ({ kind: 'p', text: t })) })
+  return [
+    ...n.preface.map((text): PageItem => ({ kind: 'p', text })),
+    { kind: 'accordion', title: n.title, cards: true, children: [card(n.domain.summary, n.domain.text), card(n.server.summary, [...n.server.text, serverLink(n.server.link, lang)])] },
+  ]
 }
+
+/** The owner's partner link to a server (`lib/helpful-links.json`, one place for every node) with its disclosure, in the page's language. */
+function serverLink(label: string, lang: string): string {
+  const link = links.links.find((l) => l.id === 'contabo-vps')
+  if (!link) return ''
+  const note = (links.disclosure as Record<string, string>)[lang] ?? links.disclosure.en
+  return `[${label}](${link.url})${link.referral ? ` (${note})` : ''}`
+}
+

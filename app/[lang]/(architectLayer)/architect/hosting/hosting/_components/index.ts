@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react'
 import type { PageItem } from '@/lib/content/sections/types'
+import links from '@/lib/helpful-links.json'
+import { moveCases } from './move-cases.i18n'
 import { serverMoveWidget } from '@/components/hosting/widgets'
 
 // СОДЕРЖИМОЕ СТРАНИЦЫ «Hosting activation».
@@ -15,9 +17,25 @@ import { serverMoveWidget } from '@/components/hosting/widgets'
 //
 // 🛑 СЛОВА ОТСЮДА НЕ ПИШУТСЯ: любая строка, которую увидит человек, приходит
 // параметром из `_data` — иначе она не переводится и её не видит сторож словарей.
-export function content(_lang: string): PageItem[] {
-  return []
+// 737 (the owner, 2026-11-13): a light preface and four cards closed by default — why a server, and which road below takes each case.
+export function content(lang: string): PageItem[] {
+  const n = moveCases(lang)
+  const card = (c: { summary: string; text: string[] }): PageItem => ({ kind: 'accordionItem', summary: c.summary, children: c.text.map((text): PageItem => ({ kind: 'p', text })) })
+  return [
+    ...n.preface.map((text): PageItem => ({ kind: 'p', text })),
+    { kind: 'p', text: serverLink(n.link, lang) },
+    { kind: 'accordion', title: n.title, cards: true, children: [card(n.whole), card(n.shared), card(n.friends), card(n.home)] },
+  ]
 }
+
+/** The owner's partner link to a server (`lib/helpful-links.json`, one place for every node) with its disclosure, in the page's language. */
+function serverLink(label: string, lang: string): string {
+  const link = links.links.find((l) => l.id === 'contabo-vps')
+  if (!link) return ''
+  const note = (links.disclosure as Record<string, string>)[lang] ?? links.disclosure.en
+  return `[${label}](${link.url})${link.referral ? ` (${note})` : ''}`
+}
+
 
 // 🔒 737-7 (владелец 2026-11-13: «после того как проект обнаружит себя что он тоже работает на удалённом сервере он соответствующем
 // образом переключить режим в режим выделенный сервер»): ЗДЕСЬ ТЕПЕРЬ ЛЕСТНИЦА ПЕРЕЕЗДА, А НЕ ОБЪЯВЛЕНИЕ. «Где стоит узел» больше не

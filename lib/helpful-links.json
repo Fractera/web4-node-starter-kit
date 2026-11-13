@@ -6,15 +6,28 @@
   },
   "links": [
     {
-      "id": "contabo-cloud-vps-10",
+      "id": "contabo-vps",
       "kind": "vps",
-      "words": ["vps", "server", "hosting", "virtual server", "cloud server", "24/7", "сервер", "хостинг", "впс", "виртуальный сервер", "облачный сервер", "круглосуточно"],
-      "name": "Contabo Cloud VPS 10",
-      "url": "https://contabo.com/en/vps/cloud-vps-10/?image=ubuntu.332&qty=1&contract=12&storage-type=cloud-vps-10-150-gb-ssd",
-      "referral": false,
+      "words": [
+        "vps",
+        "server",
+        "hosting",
+        "virtual server",
+        "cloud server",
+        "24/7",
+        "сервер",
+        "хостинг",
+        "впс",
+        "виртуальный сервер",
+        "облачный сервер",
+        "круглосуточно"
+      ],
+      "name": "Contabo VPS",
+      "url": "https://contabo.com/en/vps/?utm_source=cj&utm_medium=affiliate&utm_campaign=vps",
+      "referral": true,
       "for": "A rented server in a data centre, so the node and its Telegram bots keep working when this computer is off.",
-      "verdict": "The link opens the plan with Ubuntu, a 150 GB SSD and a 12-month contract already chosen. Before paying, check its memory on the page against the node's needs: a node asks for care on 5–12 GB of memory (npm run launch).",
-      "added": "2026-11-12",
+      "verdict": "The owner's partner link to Contabo's VPS plans. His recommended minimum for a node: 8 GB of memory and 4 cores; compare the plan's memory on the page before paying (the core's build peaks above 13 GiB, so the move adds swap on an 8 GB server).",
+      "added": "2026-11-13",
       "by": "the owner"
     }
   ]

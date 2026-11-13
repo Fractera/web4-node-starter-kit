@@ -93,3 +93,7 @@ the menu is `meta.order`, never the alphabet of folder names.
 
 Mechanism: `../../../lib/collection/README.md`. Layer skeleton and recovery:
 `../../README.md`.
+
+## The words above the ladders (2026-11-13)
+
+The group page «Домен и хостинг» opens with a preface and two cards closed by default (`hosting/_components/hosting-notes.i18n.ts`): the own domain and the dedicated server. «Выделенный сервер» opens with a short preface, the owner's partner link to a server and four cards closed by default, one per reason for a server and the road of the ladder each takes (`hosting/_components/move-cases.i18n.ts`). The link lives in `lib/helpful-links.json` with its disclosure; a price of an outside service is quoted only from its own page, with the date.

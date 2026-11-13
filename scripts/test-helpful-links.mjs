@@ -38,7 +38,7 @@ console.log('the real list:')
 for (const l of LIST.links) {
   say(/^https:\/\//.test(l.url) && l.for && l.verdict && l.kind && Array.isArray(l.words) && typeof l.referral === 'boolean', `${l.id}: url, for, verdict, kind, words, referral`)
 }
-say(findLinks('мне нужен сервер для узла').some((l) => l.id === 'contabo-cloud-vps-10'), 'a node that must run 24/7 on a server → Contabo Cloud VPS 10')
+say(findLinks('мне нужен сервер для узла').some((l) => l.id === 'contabo-vps'), 'a node that must run 24/7 on a server → Contabo VPS (the owner\'s partner link)')
 const none = execFileSync('node', ['scripts/recommend.mjs', 'поиск в интернете для агента'], { encoding: 'utf8' })
 say(none.includes('===RECOMMEND_NONE==='), 'the command: a need no real link fits → RECOMMEND_NONE')
 
