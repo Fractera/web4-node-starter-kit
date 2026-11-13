@@ -1,7 +1,7 @@
 "use client"
 // @local — the move ladder of the tab «Выделенный сервер» (one route); its pieces are the parts ladder-step and stage-log
 
-import { useCallback, useEffect, useState } from "react"
+import { Fragment, useCallback, useEffect, useState } from "react"
 import { LadderLocked, LadderStep } from "@/components/hosting/ladder-step"
 import type { ServerMoveWords } from "@/components/hosting/server-move.i18n"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
@@ -119,8 +119,12 @@ export function ServerMove({ words, domainWords, dialogUi, lang, channelWords }:
       {view.rungs.map((id, i) => {
         const open = view.rungs.slice(0, i).every((p) => rungs[p]?.state === "done")
         if (!open) return <LadderLocked key={id} n={i + 1} text={words.locked} title={words.rung[id].title} />
+        // 737-15: the domain right under «Подключение» (the owner, 2026-11-13: «подними блок домена под шаг 1») — from the moment the
+        // server's IP is known until the move, so DNS wakes while the server is prepared and copied.
+        const domainHere = id === "connect" && rungs.connect?.state === "done" && !moved && road === "move"
         return (
-          <LadderStep key={id} done={rungs[id]?.state === "done"} id={id} n={i + 1} title={words.rung[id].title}>
+          <Fragment key={id}>
+          <LadderStep done={rungs[id]?.state === "done"} id={id} n={i + 1} title={words.rung[id].title}>
             {id === "copy" && road === "new" && rungs.copy?.state !== "running" ? <CopyPlanChoice busy={busy} onChange={setPlan} plan={plan} words={words.plan} /> : null}
             {id === "telegram" ? (
               <ServerTelegram busy={busy} canMove={road === "move"} channelWords={channelWords} homeBot={view.homeBot ?? null} lang={lang} onStart={start} origin={view.serverOrigin ?? null} state={view.state} text={words.rung.telegram.text} words={words.telegram} />
@@ -129,10 +133,10 @@ export function ServerMove({ words, domainWords, dialogUi, lang, channelWords }:
             )}
             {id === "probe" && taken ? <ServerBusy busy={taken} dialogUi={dialogUi} disabled={busy} onStart={start} words={words.busy} /> : null}
           </LadderStep>
+          {domainHere ? <ServerRecords dialogUi={dialogUi} words={words.records} /> : null}
+          </Fragment>
         )
       })}
-      {/* 737-15: the domain's records switch while the copy runs — from the moment the server's IP is known until the move. */}
-      {rungs.connect?.state === "done" && !moved && road === "move" ? <ServerRecords dialogUi={dialogUi} words={words.records} /> : null}
       {independent ? (
         // 737-11b: the independent server runs on its own; the tab may be freed for the next one once its bot is chosen.
         <div className="flex flex-col gap-2 rounded-lg border border-primary/40 bg-primary/5 p-4" data-block="server-move-independent">
