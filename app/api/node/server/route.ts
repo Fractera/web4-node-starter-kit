@@ -1,12 +1,12 @@
 // @api read the move ladder and start its next rung
 import { spawn, spawnSync } from "node:child_process"
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
-import { mayCancel, mayClear, mayStart, patchMove, readMove, RUNGS, settle } from "@/lib/hosting/move-state.mjs"
+import { ALL_RUNGS, mayCancel, mayChooseRoad, mayClear, mayStart, moveFile, patchMove, readMove, roadOf, rungsOf, settle } from "@/lib/hosting/move-state.mjs"
 import phase from "@/lib/hosting/phase.cjs"
 
 // THE MOVE TO A DEDICATED SERVER — THE DOOR OF ITS LADDER (node step 737-7). The owner, 2026-11-13: «настройка которая принимает
@@ -23,7 +23,7 @@ const ROOT = process.cwd()
 const RUNNER = join(ROOT, "scripts", "dedicated-server", "move.mjs")
 const noStore = { headers: { "Cache-Control": "no-store" } }
 /** The part of `move.json` these doors write (the module is JavaScript: its record is typed here). */
-type MoveRecord = { telegram?: Record<string, unknown>; rungs: Record<string, Record<string, unknown> | undefined> }
+type MoveRecord = { telegram?: Record<string, unknown>; road?: string; copyPlan?: { variant: string; data: boolean }; rungs: Record<string, Record<string, unknown> | undefined> }
 const IPV4 = /^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/
 const HOST = /^(?=.{4,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/
 
@@ -60,7 +60,7 @@ function serverOrigin(host: string | undefined): string | null {
 
 function view() {
   const state = settle(readMove(ROOT))
-  return { ok: true, state, rungs: RUNGS, phase: phase.nodePhase(ROOT), moved: existsSync(join(ROOT, "data", "node", "moved.json")), homeBot: homeBot(), serverOrigin: serverOrigin(state.server?.host) }
+  return { ok: true, state, road: roadOf(state), rungs: rungsOf(state), phase: phase.nodePhase(ROOT), moved: existsSync(join(ROOT, "data", "node", "moved.json")), homeBot: homeBot(), serverOrigin: serverOrigin(state.server?.host) }
 }
 
 export async function GET(req: NextRequest) {
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
   const denied = await guard(req)
   if (denied) return denied
   if (phase.nodePhase(ROOT)) return NextResponse.json({ ok: false, reason: "on-server" }, { status: 409, ...noStore })
-  const body = (await req.json().catch(() => null)) as { rung?: unknown; host?: unknown; port?: unknown; password?: unknown; code?: unknown; confirm?: unknown; choice?: unknown } | null
+  const body = (await req.json().catch(() => null)) as { rung?: unknown; host?: unknown; port?: unknown; password?: unknown; code?: unknown; confirm?: unknown; choice?: unknown; road?: unknown; variant?: unknown; data?: unknown } | null
   const rung = typeof body?.rung === "string" ? body.rung : ""
 
   if (rung === "connect") {
@@ -119,6 +119,27 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ...view(), started: rung }, { status: 202, ...noStore })
   }
 
+  if (rung === "road") {
+    // 737-11b: the move of this node, or a new independent server — chosen before anything is done on the server.
+    const state = settle(readMove(ROOT))
+    if (!mayChooseRoad(state)) return NextResponse.json({ ok: false, reason: "order" }, { status: 409, ...noStore })
+    patchMove(ROOT, (s: MoveRecord) => { s.road = body?.road === "new" ? "new" : "move" })
+    return NextResponse.json(view(), noStore)
+  }
+
+  if (rung === "forget") {
+    // 737-11b: an independent server that runs is left to live on its own; its record is kept aside and the tab is free for another
+    // server. The node's key stays on that server (a copy again is a new road to the same address).
+    const state = settle(readMove(ROOT))
+    if (roadOf(state) !== "new" || state.rungs?.start?.state !== "done" || ALL_RUNGS.some((r) => state.rungs?.[r]?.state === "running")) {
+      return NextResponse.json({ ok: false, reason: "order" }, { status: 409, ...noStore })
+    }
+    const kept = join(ROOT, "data", "node", "server", "done")
+    mkdirSync(kept, { recursive: true, mode: 0o700 })
+    renameSync(moveFile(ROOT), join(kept, `${String(state.server?.host ?? "server").replace(/[^a-z0-9.-]/gi, "_")}-${Date.now()}.json`))
+    return NextResponse.json(view(), noStore)
+  }
+
   if (rung === "telegram") {
     // 737-11a: the rung has no runner — the person's choice is the whole act. «move» needs this node's connected bot; «new» is done by the
     // server's own channel (`/api/node/server/telegram` records it when the person is admitted there); «reset» reopens the choice until
@@ -127,7 +148,7 @@ export async function POST(req: NextRequest) {
     const choice = typeof body?.choice === "string" ? body.choice : ""
     const at = new Date().toISOString()
     if (choice === "reset") {
-      if (state.rungs?.move?.state === "done" || RUNGS.some((r) => state.rungs?.[r]?.state === "running")) return NextResponse.json({ ok: false, reason: "order" }, { status: 409, ...noStore })
+      if (state.rungs?.move?.state === "done" || ALL_RUNGS.some((r: string) => state.rungs?.[r]?.state === "running")) return NextResponse.json({ ok: false, reason: "order" }, { status: 409, ...noStore })
       patchMove(ROOT, (s: MoveRecord) => { delete s.telegram; delete s.rungs.telegram })
       return NextResponse.json(view(), noStore)
     }
@@ -135,6 +156,8 @@ export async function POST(req: NextRequest) {
     if (!mayStart(state, "telegram")) return NextResponse.json({ ok: false, reason: "order" }, { status: 409, ...noStore })
     const bot = homeBot()
     if (choice === "move" && !bot) return NextResponse.json({ ok: false, reason: "no-bot" }, { status: 409, ...noStore })
+    // An independent server never takes this node's bot: two readers of one bot split the person's messages (409).
+    if (choice === "move" && roadOf(state) === "new") return NextResponse.json({ ok: false, reason: "not-on-this-road" }, { status: 409, ...noStore })
     patchMove(ROOT, (s: MoveRecord) => {
       s.telegram = { choice, bot: choice === "move" ? bot?.username ?? null : null, at }
       s.rungs.telegram = { state: "done", startedAt: at, endedAt: at, detail: choice === "move" ? `@${bot?.username}` : "later" }
@@ -142,8 +165,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(view(), noStore)
   }
 
-  if (!RUNGS.includes(rung) || rung === "connect") return NextResponse.json({ ok: false, reason: "unknown-rung", allowed: RUNGS }, { status: 400, ...noStore })
+  if (!ALL_RUNGS.includes(rung) || rung === "connect") return NextResponse.json({ ok: false, reason: "unknown-rung", allowed: ALL_RUNGS }, { status: 400, ...noStore })
   if (!mayStart(settle(readMove(ROOT)), rung)) return NextResponse.json({ ok: false, reason: "order" }, { status: 409, ...noStore })
+  if (rung === "copy" && roadOf(readMove(ROOT)) === "new") {
+    // 737-11b, D5 (the owner): «both variant for choose. and if it will clon need second question - replace data or not».
+    const variant = body?.variant === "fresh" ? "fresh" : body?.variant === "clone" ? "clone" : null
+    if (!variant) return NextResponse.json({ ok: false, reason: "no-plan" }, { status: 400, ...noStore })
+    patchMove(ROOT, (s: MoveRecord) => { s.copyPlan = { variant, data: variant === "clone" && body?.data === true } })
+  }
   spawnSync(process.execPath, [join(ROOT, "scripts", "spawn-free.mjs"), RUNNER, rung], { cwd: ROOT, env: cleanEnv(), stdio: "ignore", timeout: 10_000, windowsHide: true })
   return NextResponse.json({ ...view(), started: rung }, { status: 202, ...noStore })
 }

@@ -3020,8 +3020,10 @@
         "components/hosting/server-domain.client.tsx",
         "components/hosting/server-move-busy.client.tsx",
         "components/hosting/server-move-records.client.tsx",
+        "components/hosting/server-move-road.client.tsx",
         "components/hosting/server-move-rung.client.tsx",
         "components/hosting/server-move-telegram.client.tsx",
+        "components/hosting/server-move.client.tsx",
         "components/menu/footer/admin-link.client.tsx",
         "components/menu/footer/cookie-settings-button.client.tsx",
         "components/menu/shared/drawer-toggle.client.tsx",
@@ -3075,7 +3077,8 @@
       },
       "usedBy": [
         "components/ai-elements/message.tsx",
-        "components/form/voice-control.client.tsx"
+        "components/form/voice-control.client.tsx",
+        "components/hosting/server-move-road.client.tsx"
       ]
     },
     {
@@ -3189,6 +3192,7 @@
         "components/dashboard/a2a-feed.client.tsx",
         "components/element-settings/site/editors/feature-switches.client.tsx",
         "components/hosting/server-move-busy.client.tsx",
+        "components/hosting/server-move-road.client.tsx",
         "components/node-users/node-users.client.tsx",
         "components/node-users/user-dialog.client.tsx",
         "components/shell/starter-banner.client.tsx"
@@ -3574,6 +3578,7 @@
         "components/element-settings/site/config/socials-field.client.tsx",
         "components/element-settings/site/editors/feature-switches.client.tsx",
         "components/hosting/server-move-busy.client.tsx",
+        "components/hosting/server-move-road.client.tsx",
         "components/node-users/user-dialog.client.tsx",
         "components/shell/starter-banner.client.tsx"
       ]
@@ -4192,8 +4197,10 @@
         "components/hosting/server-domain.client.tsx",
         "components/hosting/server-move-busy.client.tsx",
         "components/hosting/server-move-records.client.tsx",
+        "components/hosting/server-move-road.client.tsx",
         "components/hosting/server-move-rung.client.tsx",
         "components/hosting/server-move-telegram.client.tsx",
+        "components/hosting/server-move.client.tsx",
         "components/node-state/node-place.client.tsx",
         "components/node-state/node-state.client.tsx",
         "components/not-found-content.tsx",

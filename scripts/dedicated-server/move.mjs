@@ -12,6 +12,8 @@
 //   (telegram)                                the node's main bot on the server: moved with the node, the server's own, or later —
 //                                             the person's choice, kept by the door `app/api/node/server` (no runner: nothing to run)
 //   move                                      this computer stops, the last changes go, the server starts whole; failure → back here
+//   start                                     737-11b, the road «Новый сервер»: the independent server starts live at once (no move)
+//   greet                                     the server's main agent is woken to greet the person through the server's bot
 //   clear · cancel                            a server that is not empty: freed (stopped and kept, never erased) and probed again,
 //                                             or the installation cancelled (the node's key leaves the server, the server is forgotten)
 // `--dry` runs the server scripts with DRY_RUN=1 (every command printed, none run) — the rehearsal of the runner itself.
@@ -25,7 +27,7 @@ import { insideChecks, outsideChecks } from '../../lib/hosting/checks.mjs'
 import { isHostName } from '../../lib/hosting/hostnames.mjs'
 import { judge, residentMb } from '../../lib/hosting/judge.mjs'
 import { forget, serveStatusPage, startAgain, stopAll } from '../../lib/hosting/local-node.mjs'
-import { mayStart, patchMove, readMove, serverKeeps, setRung } from '../../lib/hosting/move-state.mjs'
+import { mayStart, newRoadExcludes, patchMove, readMove, roadOf, serverKeeps, setRung } from '../../lib/hosting/move-state.mjs'
 import { follow, q, startDetached } from '../../lib/hosting/remote.mjs'
 import { connect, ensureKeyPair, exec, installKey, serverDir, upload } from '../../lib/hosting/ssh.mjs'
 import { copyPhase, measure, remoteRootOf, REMOTE_USER } from '../../lib/hosting/transfer.mjs'
@@ -125,19 +127,31 @@ const rungs = {
   },
 
   async copy() {
-    begin('copy')
+    const s0 = begin('copy')
+    const road = roadOf(s0)
+    const plan = s0.copyPlan ?? { variant: 'clone', data: true }
+    // 737-11b: a copy again on the road «Новый сервер» replaces what runs there — its start is pressed again afterwards.
+    if (road === 'new') patchMove(root, (s) => { delete s.rungs.start })
     const { client } = await asNode()
     try {
-      await exec(client, `mkdir -p ${q(REMOTE_ROOT)}`)
-      setRung(root, 'copy', { stages: [{ id: 'copy', state: 'running', at: now() }] })
-      const c = await copyPhase({ root, host: server().host, port: server().port, phase: 'silent', keep: serverKeeps(readMove(root)), ...(dry ? { target: `${REMOTE_ROOT}/` } : {}) })
-      if (c.code !== 0) return end('copy', false, { detail: `rsync ${c.code}: ${c.tail.slice(-300)}` })
+      if (road === 'new' && plan.variant === 'fresh') {
+        const f = await freshClone(client)
+        if (!f.ok) return end('copy', false, { detail: f.detail })
+        setRung(root, 'copy', { stages: [{ id: 'clone', state: 'done', at: now(), detail: f.detail }] })
+      } else {
+        await exec(client, `mkdir -p ${q(REMOTE_ROOT)}`)
+        setRung(root, 'copy', { stages: [{ id: 'copy', state: 'running', at: now() }] })
+        const keep = road === 'new' ? newRoadExcludes(plan) : serverKeeps(readMove(root))
+        const c = await copyPhase({ root, host: server().host, port: server().port, phase: 'silent', keep, ...(dry ? { target: `${REMOTE_ROOT}/` } : {}) })
+        if (c.code !== 0) return end('copy', false, { detail: `rsync ${c.code}: ${c.tail.slice(-300)}` })
+        setRung(root, 'copy', { stages: [{ id: 'copy', state: 'done', at: now(), detail: `${c.files ?? '?'} files, ${Math.round((c.bytes ?? 0) / 1048576)} MB` }] })
+      }
       // 737-15: the server learns this node's domain now (the silent copy carries no logs/domain.json), so its names, records and
-      // certificates can be ready before the move.
-      const zone = (() => { try { return JSON.parse(readFileSync(path.join(root, 'logs', 'domain.json'), 'utf8')).zone || null } catch { return null } })()
+      // certificates can be ready before the move. An independent server has no domain of this node (737-11b).
+      const zone = road === 'new' ? null : (() => { try { return JSON.parse(readFileSync(path.join(root, 'logs', 'domain.json'), 'utf8')).zone || null } catch { return null } })()
       const mark = JSON.stringify({ phase: 'silent', ip: server().host, sshPort: server().port, user: REMOTE_USER, folder: FOLDER, from: os.hostname(), at: now(), ...(zone ? { domain: zone } : {}) }, null, 2)
       await exec(client, `mkdir -p ${q(`${REMOTE_ROOT}/data/node`)} ${q(`${REMOTE_ROOT}/logs/dedicated-server`)} && printf '%s\\n' ${q(mark)} > ${q(`${REMOTE_ROOT}/data/node/server.json`)} && rm -f ${q(`${REMOTE_ROOT}/logs/dedicated-server/install.progress.jsonl`)}`)
-      const copied = { id: 'copy', state: 'done', at: now(), detail: `${c.files ?? '?'} files, ${Math.round((c.bytes ?? 0) / 1048576)} MB` }
+      const copied = readMove(root).rungs?.copy?.stages?.[0] ?? { id: 'copy', state: 'done', at: now() }
       // ✗ The owner's test server 2026-11-13: a copy after a rehearsal built the core beside the rehearsal's 16 running processes and was
       // killed for memory. Before the move nothing on the server is live: the earlier copy stops before the build (the rehearsal starts it).
       // ✗ Same day: a copy started while the previous run's installer still built → «Another next build still in progress». One installer
@@ -212,6 +226,25 @@ const rungs = {
     } finally { client.end() }
   },
 
+  // 737-11b — THE ROAD «НОВЫЙ СЕРВЕР»: the independent node starts live at once (this computer keeps working and keeps its bot), and is
+  // checked from outside and inside. The commit check holds only for a copy of this node; a fresh node runs its fork's own version.
+  async start() {
+    const s0 = begin('start')
+    if (roadOf(s0) !== 'new') return end('start', false, { detail: 'the road of this server is the move' })
+    const { client } = await asNode()
+    try {
+      const mark = JSON.stringify({ phase: 'live', independent: true, ip: server().host, sshPort: server().port, user: REMOTE_USER, folder: FOLDER, from: os.hostname(), at: now() }, null, 2)
+      await exec(client, `mkdir -p ${q(`${REMOTE_ROOT}/data/node`)} && printf '%s\\n' ${q(mark)} > ${q(`${REMOTE_ROOT}/data/node/server.json`)}`)
+      const r = await startServer(client, 'live', 'start')
+      if (!r.ok) return end('start', false, { stages: r.stages, detail: `${r.failed?.id}: ${String(r.failed?.detail).slice(-300)}` })
+      const checks = (await allChecks(client)).filter((c) => (s0.copyPlan?.variant === 'fresh' ? c.id !== 'commit' : true))
+      patchMove(root, (s) => { s.checks = checks })
+      end('start', checks.every((c) => c.ok), { stages: r.stages, detail: checks.filter((c) => !c.ok).map((c) => c.id).join(' ') || `http://${server().host}/` })
+    } catch (e) {
+      end('start', false, { detail: String(e.reason ?? e.message).slice(0, 300) })
+    } finally { client.end() }
+  },
+
   async move() {
     begin('move')
     const corePort = (() => { try { return JSON.parse(readFileSync(path.join(root, 'logs', 'runtime.json'), 'utf8')).port || 24680 } catch { return 24680 } })()
@@ -266,6 +299,33 @@ function readServerMark() {
   return serverMark
 }
 
+/** This node's fork as a clean public address — never a credential that may sit in the remote's URL. */
+function forkUrl() {
+  try {
+    const raw = execSync('git remote get-url origin', { cwd: root, encoding: 'utf8' }).trim()
+    const m = /github\.com[/:]([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+?)(?:\.git)?$/.exec(raw)
+    return m ? `https://github.com/${m[1]}/${m[2]}.git` : null
+  } catch { return null }
+}
+
+/**
+ * 737-11b, «Свежий узел»: the person's fork cloned on the server as a new install would clone it — nothing of this node travels, the
+ * fork is checked as at every install (`check-origin`), the starter's history stripped (`fresh-project`), a new `.env.local` of its own
+ * (`ensure-env`). An earlier folder there is moved aside, never erased. The installer and the build follow as for a copy.
+ */
+async function freshClone(client) {
+  const url = forkUrl()
+  if (!url) return { ok: false, detail: 'this node has no GitHub fork to clone' }
+  const aside = `${REMOTE_ROOT}.before-${now().replace(/[:.]/g, '-')}`
+  const clone = dry ? `mkdir -p ${q(REMOTE_ROOT)}` : `git clone --quiet ${q(url)} ${q(REMOTE_ROOT)}`
+  const setup = dry ? 'true' : 'node scripts/ensure-env.mjs && node scripts/check-origin.mjs && node scripts/fresh-project.mjs'
+  const r = await exec(client, `${PM2_STOP}; if [ -e ${q(REMOTE_ROOT)} ]; then mv ${q(REMOTE_ROOT)} ${q(aside)}; fi; ${clone} && cd ${q(REMOTE_ROOT)} && ${setup}`, { timeoutMs: 15 * 60_000 })
+  if (r.code !== 0) return { ok: false, detail: `clone ${r.code}: ${(r.stderr || r.stdout).slice(-300)}` }
+  // The installer comes with the clone; in a dry run the «server» folder is empty — the scripts are put there as the copy would.
+  if (dry) execSync(`mkdir -p ${q(`${REMOTE_ROOT}/scripts`)} && cp -R ${q(path.join(root, 'scripts', 'dedicated-server'))} ${q(`${REMOTE_ROOT}/scripts/`)}`)
+  return { ok: true, detail: url }
+}
+
 /**
  * 737-11a — the welcome after the live start: only when the server has the main bot (moved with the node, or its own). The main agent
  * there is woken by the node's own word (`wakeMainByNode`: the door `alarm`, no question in Telegram) and writes the first message.
@@ -274,7 +334,10 @@ async function greet(client) {
   const t = readMove(root).telegram ?? {}
   if (!t.bot || (t.choice !== 'move' && t.choice !== 'new')) return { ok: false, reason: 'no-bot', at: now() }
   if (dry) return { ok: true, dry: true, at: now() }
-  const text = `${nodeLine.head('moved', 'build')}Node: the move has finished — this node now lives on its dedicated server ${server().host}, and the person's Telegram bot @${t.bot} answers from here. Write the person one short greeting in that chat, in their language: the node lives on its server now and is ready to go on with development. If you hold no picture of the person yet (skill know-the-architect), get acquainted first, before any development. Then the conversation is theirs.`
+  const where = roadOf(readMove(root)) === 'new'
+    ? `this node has just started on its own server ${server().host} as an independent node of the person (set up from their computer, which keeps its own node), and its own Telegram bot @${t.bot} answers here`
+    : `the move has finished — this node now lives on its dedicated server ${server().host}, and the person's Telegram bot @${t.bot} answers from here`
+  const text = `${nodeLine.head('moved', 'build')}Node: ${where}. Write the person one short greeting in that chat, in their language: the node is ready to start development. If you hold no picture of the person yet (skill know-the-architect), get acquainted first, before any development. Then the conversation is theirs.`
   try {
     const r = await exec(client, `cd ${q(REMOTE_ROOT)} && node -e ${q("require('./lib/deploy/agent-return.cjs').wakeMainByNode(process.cwd(), process.argv[1]).then((r) => console.log(JSON.stringify({ ok: !r, reason: r || null })))")} ${q(text)}`, { timeoutMs: 90_000 })
     return { ...JSON.parse(r.stdout.trim().split('\n').pop()), at: now() }
@@ -293,11 +356,11 @@ async function namesReady(client) {
   }
 }
 
-async function startServer(client, phase) {
+async function startServer(client, phase, rungId = null) {
   const progress = `${REMOTE_ROOT}/logs/dedicated-server/start-${phase}.progress.jsonl`
   await exec(client, `rm -f ${q(progress)}`)
   await startDetached(client, `${DRY}bash ${q(`${REMOTE_ROOT}/scripts/dedicated-server/start.sh`)} ${phase}`, `${REMOTE_ROOT}/logs/dedicated-server/start-${phase}.out`)
-  const id = phase === 'silent' ? 'rehearse' : 'move'
+  const id = rungId ?? (phase === 'silent' ? 'rehearse' : 'move')
   return follow(client, progress, 'start', { script: 'start.sh', everyMs: POLL, timeoutMs: 60 * 60_000, onStages: (stages) => setRung(root, id, { stages, heartbeat: now() }) })
 }
 
@@ -363,6 +426,19 @@ const before = {
 
 // NOT RUNGS — the roads after a move, run from this computer in a terminal (its core is stopped: no panel here); the person's explicit word.
 const roads = {
+  // 737-11b: on the road «Новый сервер» the server is live before its bot exists — its main agent greets once the person is admitted
+  // there (started by the door `/api/node/server/telegram`).
+  async greet() {
+    const s = readMove(root)
+    if (roadOf(s) !== 'new' || s.rungs?.start?.state !== 'done') { console.error('===MOVE_GREET_REFUSED=== only an independent server that runs'); process.exit(2) }
+    const { client } = await asNode()
+    try {
+      const welcome = await greet(client)
+      patchMove(root, (x) => { x.welcome = welcome })
+      console.log(`===MOVE_GREETED=== ${JSON.stringify(welcome)}`)
+    } finally { client.end() }
+  },
+
   // The node comes home: the server's node stops and is forgotten there, its copy comes back by the same rules (the bots' tokens too),
   // this computer's env files are written again for this machine, the node starts here. The server's copy stays as it was (cold).
   async return() {
@@ -404,11 +480,15 @@ const roads = {
       const free = await new Promise((resolve) => { const s = createServer().once('error', () => resolve(false)).once('listening', () => s.close(() => resolve(true))).listen(p, '127.0.0.1') })
       if (!free) busy.push(p)
     }
-    if (busy.length) { console.error(`===MOVE_WINDOW_REFUSED=== ports busy here: ${busy.join(' ')} — the node still runs on this computer`); process.exit(2) }
+    // 737-11b: an independent server is opened while this node keeps running here — its core's panel comes on a shifted port (+10000);
+    // its elements answer by their own addresses there. The move's window keeps every port one to one (this computer's node is stopped).
+    const independent = roadOf(readMove(root)) === 'new'
+    if (busy.length && !independent) { console.error(`===MOVE_WINDOW_REFUSED=== ports busy here: ${busy.join(' ')} — the node still runs on this computer`); process.exit(2) }
     const key = path.join(serverDir(root), 'id_ed25519')
     const known = path.join(serverDir(root), 'known_hosts')
-    const forwards = ports.flatMap((p) => ['-L', `${p}:127.0.0.1:${p}`])
-    console.log(`Окно в узел на сервере: http://localhost:${corePort} — закрыть: Ctrl+C · A window into the server's node: http://localhost:${corePort}`)
+    const local = busy.length ? corePort + 10000 : corePort
+    const forwards = busy.length ? ['-L', `${local}:127.0.0.1:${corePort}`] : ports.flatMap((p) => ['-L', `${p}:127.0.0.1:${p}`])
+    console.log(`Окно в узел на сервере: http://localhost:${local} — закрыть: Ctrl+C · A window into the server's node: http://localhost:${local}`)
     const { spawn } = await import('node:child_process')
     const child = spawn('ssh', ['-N', ...forwards, '-i', key, '-p', String(server().port), '-o', 'BatchMode=yes', '-o', 'IdentitiesOnly=yes', '-o', 'StrictHostKeyChecking=yes', '-o', `UserKnownHostsFile=${known}`, '-o', 'ExitOnForwardFailure=yes', `${REMOTE_USER}@${server().host}`], { stdio: 'inherit' })
     child.on('close', (code) => process.exit(code ?? 0))
@@ -418,6 +498,6 @@ const roads = {
 if (before[rung]) await before[rung]()
 else if (roads[rung]) await roads[rung]()
 else if (!rungs[rung]) {
-  console.log('Ступени: connect · probe · prepare · copy · claude · rehearse · (telegram — выбор во вкладке) · move · до переезда: clear · cancel · дороги: return · window   [--dry]')
+  console.log('Переезд: connect · probe · prepare · copy · claude · rehearse · (telegram — выбор во вкладке) · move · Новый сервер: … · claude · start · (telegram) · до переезда: clear · cancel · дороги: return · window · greet   [--dry]')
   process.exit(rung ? 2 : 0)
 } else await rungs[rung]()

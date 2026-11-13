@@ -1,11 +1,11 @@
 // @api set up the dedicated server's own Telegram bot from here
-import { spawn } from "node:child_process"
+import { spawn, spawnSync } from "node:child_process"
 import { join } from "node:path"
 import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
-import { patchMove, readMove, settle } from "@/lib/hosting/move-state.mjs"
+import { patchMove, readMove, roadOf, settle } from "@/lib/hosting/move-state.mjs"
 import phase from "@/lib/hosting/phase.cjs"
 
 // THE SERVER'S OWN BOT, FROM THE TAB «ВЫДЕЛЕННЫЙ СЕРВЕР» (node step 737-11a). The owner, 2026-11-13: «вызываем процедуру создание нового
@@ -25,7 +25,7 @@ const ROOT = process.cwd()
 const RELAY = join(ROOT, "scripts", "dedicated-server", "telegram.mjs")
 const noStore = { headers: { "Cache-Control": "no-store" } }
 /** The part of `move.json` these doors write (the module is JavaScript: its record is typed here). */
-type MoveRecord = { telegram?: Record<string, unknown>; rungs: Record<string, Record<string, unknown> | undefined> }
+type MoveRecord = { telegram?: Record<string, unknown>; road?: string; welcome?: Record<string, unknown>; rungs: Record<string, Record<string, unknown> | undefined> }
 const ACTIONS = new Set(["token", "activation-link", "messages"])
 type Answer = { ok?: boolean; error?: string; configured?: boolean; botUsername?: string | null; allowed?: number; username?: string; suggestion?: { name: string; username: string } } & Record<string, unknown>
 
@@ -39,7 +39,8 @@ function closed(): string | null {
   if (phase.nodePhase(ROOT)) return "on-server"
   const s = settle(readMove(ROOT))
   if (!s.server?.host) return "no-server"
-  if (s.rungs?.rehearse?.state !== "done") return "not-rehearsed"
+  // The server's core must run: after the rehearsal (the move), after its start (737-11b, an independent server).
+  if (roadOf(s) === "new" ? s.rungs?.start?.state !== "done" : s.rungs?.rehearse?.state !== "done") return "not-started"
   // A move that rolled back leaves the choice open again; a running or finished one closes it.
   if (s.rungs?.move?.state === "running" || s.rungs?.move?.state === "done") return "moved"
   return null
@@ -80,10 +81,14 @@ export async function GET(req: NextRequest) {
   // Admitted on the server → the rung is done: the choice and the handle are recorded here, the token stays there.
   if (a.ok && a.configured && a.botUsername && (a.allowed ?? 0) > 0) {
     const at = new Date().toISOString()
+    let greet = false
     patchMove(ROOT, (s: MoveRecord) => {
       s.telegram = { choice: "new", bot: a.botUsername, allowed: a.allowed, at }
       if (s.rungs.telegram?.state !== "done") s.rungs.telegram = { state: "done", startedAt: at, endedAt: at, detail: `@${a.botUsername}` }
+      // 737-11b: an independent server is already live — its main agent greets the person now, once (the move greets after its own start).
+      if (s.road === "new" && !s.welcome) { s.welcome = { state: "running", at }; greet = true }
     })
+    if (greet) spawnSync(process.execPath, [join(ROOT, "scripts", "spawn-free.mjs"), join(ROOT, "scripts", "dedicated-server", "move.mjs"), "greet"], { cwd: ROOT, env: cleanEnv(), stdio: "ignore", timeout: 10_000, windowsHide: true })
   }
   return NextResponse.json(a, noStore)
 }

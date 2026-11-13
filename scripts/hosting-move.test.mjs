@@ -173,6 +173,62 @@ await t('negative: the password is in no file of the node or of the «server»',
   assert.equal(grep.stdout.trim(), '', grep.stdout)
 })
 
+console.log('737-11b the road «Новый сервер», dry, on the same «server»')
+const writeState = (fn) => { const s = state(); fn(s); writeFileSync(join(node, 'data', 'node', 'server', 'move.json'), JSON.stringify(s)) }
+await t('copy of this node without its data: accounts, stores and the node\'s identity stay here; the code travels', async () => {
+  put('data/services/auth/auth.db', 'accounts')
+  put('data/node-code.json', '{"code":"home1"}')
+  put('WEB4-ITEMS/core/data/data/main.sqlite', 'store')
+  put('WEB4-ITEMS/core/data/app.js', 'code')
+  writeState((s) => {
+    s.road = 'new'
+    s.copyPlan = { variant: 'clone', data: false }
+    s.rungs = { connect: { state: 'done' }, probe: { state: 'done' }, prepare: { state: 'done' } }
+    delete s.telegram
+    delete s.welcome
+  })
+  const r = await run('copy')
+  assert.equal(r.status, 0, r.stdout + r.stderr)
+  assert.ok(existsSync(join(remote, 'WEB4-ITEMS/core/data/app.js')))
+  for (const f of ['data/services/auth/auth.db', 'data/node-code.json', 'WEB4-ITEMS/core/data/data/main.sqlite']) assert.ok(!existsSync(join(remote, f)), `travelled ${f}`)
+})
+await t('negative: the new road never rehearses — the rung is refused', async () => {
+  assert.equal((await run('claude')).status, 0)
+  const r = await run('rehearse')
+  assert.equal(r.status, 2, r.stdout + r.stderr)
+  assert.ok(r.stderr.includes('===MOVE_REFUSED==='))
+})
+await t('start: the independent server is marked live at once and started; this computer is never marked moved', async () => {
+  const r = await run('start')
+  assert.equal(r.status, 0, r.stdout + r.stderr)
+  const mark = JSON.parse(readFileSync(join(remote, 'data/node/server.json'), 'utf8'))
+  assert.equal(mark.phase, 'live')
+  assert.equal(mark.independent, true)
+  assert.equal(state().rungs.start.state, 'done')
+  assert.ok(!existsSync(join(node, 'data', 'node', 'moved.json')))
+})
+await t('greet: once the server\'s own bot admits the person, its main agent is woken to greet (a dry run records it)', async () => {
+  writeState((s) => { s.telegram = { choice: 'new', bot: 'srv_bot' }; s.rungs.telegram = { state: 'done' } })
+  const r = await run('greet')
+  assert.equal(r.status, 0, r.stdout + r.stderr)
+  assert.equal(state().welcome?.dry, true, JSON.stringify(state().welcome))
+})
+await t('a fresh node: the fork is cloned there, nothing of this node travels; the earlier folder is moved aside, never erased', async () => {
+  spawnSync('git', ['init', '-q'], { cwd: node })
+  spawnSync('git', ['remote', 'add', 'origin', 'https://github.com/example/web4-node-starter-kit.git'], { cwd: node })
+  writeState((s) => { s.copyPlan = { variant: 'fresh', data: false }; delete s.rungs.copy; delete s.rungs.claude; delete s.rungs.start; delete s.rungs.telegram })
+  const r = await run('copy')
+  assert.equal(r.status, 0, r.stdout + r.stderr)
+  assert.equal(state().rungs.copy.stages[0].detail, 'https://github.com/example/web4-node-starter-kit.git')
+  assert.ok(!existsSync(join(remote, 'WEB4-ITEMS/core/data/app.js')), 'this node\'s code travelled into a fresh node')
+  assert.equal(state().rungs.start, undefined, 'a copy again must ask for the start again')
+  const { readdirSync } = await import('node:fs')
+  const aside = readdirSync(join(remote, '..')).filter((n) => n.startsWith(`${remote.split('/').pop()}.before-`))
+  assert.equal(aside.length, 1, 'the earlier folder was not kept')
+  assert.ok(existsSync(join(remote, '..', aside[0], 'WEB4-ITEMS/core/data/app.js')))
+  rmSync(join(remote, '..', aside[0]), { recursive: true, force: true })
+})
+
 ssh.server.close()
 for (const d of [home, node, remote, rootDir]) rmSync(d, { recursive: true, force: true })
 console.log(`${passed} passed${process.exitCode ? ', FAILED' : ''}`)

@@ -73,7 +73,7 @@ would be a lie the day the tunnel rotates. The address arrives with a real domai
 
 | Where the tab is opened | What it shows | Its door |
 |---|---|---|
-| the person's computer | the move ladder: connect · probe · prepare · copy · claude · rehearse · telegram · move | `/api/node/server` (the architect, never a public address); the server's own bot — `/api/node/server/telegram` (to the server's channel door over SSH) |
+| the person's computer | the road first (737-11b): the move ladder connect · probe · prepare · copy · claude · rehearse · telegram · move, or a new independent server connect · probe · prepare · copy (this node with or without its data, or a fresh node from the fork) · claude · start · telegram | `/api/node/server` (the architect, never a public address); the server's own bot — `/api/node/server/telegram` (to the server's channel door over SSH) |
 | the server, as the owner (`npm run server -- window`) | the domain's five steps: domain · records · certificates · HTTPS · switch on | `/api/node/server/domain` |
 | the server's bare IP | the same five steps, read-only — the records to write at the registrar | `/api/node/server/domain` (GET only) |
 

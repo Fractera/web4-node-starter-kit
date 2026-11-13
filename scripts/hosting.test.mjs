@@ -678,5 +678,59 @@ console.log('737-11a the node\'s main bot on the server')
   }
 }
 
+console.log('737-11b the road «Новый сервер»')
+{
+  const ms = await import('../lib/hosting/move-state.mjs')
+  const { writeExcludes, hasRsync } = await import('../lib/hosting/transfer.mjs')
+  const done = (ids, extra = {}) => ({ ...extra, rungs: Object.fromEntries(ids.map((r) => [r, { state: 'done' }])) })
+  t('each road has its own order: the new server starts after Claude, its bot after its start; it never rehearses or moves', () => {
+    assert.deepEqual(ms.rungsOf({ road: 'new' }), ['connect', 'probe', 'prepare', 'copy', 'claude', 'start', 'telegram'])
+    assert.deepEqual(ms.rungsOf({}), ms.RUNGS)
+    const upToClaude = done(['connect', 'probe', 'prepare', 'copy', 'claude'], { road: 'new' })
+    assert.equal(ms.mayStart(upToClaude, 'start'), true)
+    assert.equal(ms.mayStart(upToClaude, 'telegram'), false, 'the bot before the server runs')
+    assert.equal(ms.mayStart(upToClaude, 'rehearse'), false, 'a rehearsal on the new road')
+    assert.equal(ms.mayStart(done(['connect', 'probe', 'prepare', 'copy', 'claude']), 'start'), false, 'a start on the move road')
+    assert.equal(ms.mayChooseRoad(done(['connect', 'probe'])), true)
+    assert.equal(ms.mayChooseRoad(done(['connect', 'probe', 'prepare'])), false, 'the road changed after the server was prepared')
+  })
+  if (hasRsync()) {
+    const home = mkdtempSync(join(tmpdir(), 'hosting-test-'))
+    roots.push(home)
+    const w = (rel, text = 'x') => { mkdirSync(join(home, rel, '..'), { recursive: true }); writeFileSync(join(home, rel), text) }
+    const code = ['WEB4-ITEMS-REGISTRY/web4-items.json', 'WEB4-ITEMS/core/data/app.js', 'WEB4-ITEMS/core/data/data/.gitkeep', 'WEB4-ITEMS/user/abc12/storage/.gitkeep',
+      'data/services/abc12/project-settings.json', 'logs/origin.json', 'data/services/embeddings/model/weights.bin']
+    const personal = ['data/services/auth/auth.db', 'data/services/auth/auth.db-wal', 'WEB4-ITEMS/core/data/data/main.sqlite', 'WEB4-ITEMS/user/abc12/storage/photo.png',
+      'WEB4-ITEMS/user/abc12/database.sqlite', 'data/services/build/memory/m.md', 'data/node/memory/diary.jsonl', 'data/main-agent/CLAUDE.user.md',
+      'data/services/graph/lightrag/g.json', 'data/node/permissions.jsonl']
+    const never = ['data/services/build/channel/telegram/.env', 'data/services/build/channel/telegram/bot.json', 'data/node-code.json',
+      'data/services/abc12/wallet/wallet.json', 'data/workshop/x/y.txt', 'data/services/build/session-mode.json', 'data/node/place.json']
+    for (const f of [...code, ...personal, ...never]) w(f)
+    const copy = (keep, phase = 'silent') => {
+      const server = mkdtempSync(join(tmpdir(), 'hosting-test-'))
+      const rulesDir = mkdtempSync(join(tmpdir(), 'hosting-test-'))
+      roots.push(server, rulesDir)
+      const r = spawnSync('rsync', ['-rlpt', '--delete', `--exclude-from=${writeExcludes(rulesDir, phase, keep)}`, `${home}/`, `${server}/`], { encoding: 'utf8' })
+      assert.equal(r.status, 0, r.stderr)
+      return (f) => existsSync(join(server, f))
+    }
+    t('a copy without the data: the code, the elements and their settings travel; accounts, stores, memory and the diary stay here', () => {
+      const has = copy(ms.newRoadExcludes({ variant: 'clone', data: false }))
+      for (const f of code) assert.ok(has(f), `missing ${f}`)
+      for (const f of [...personal, ...never]) assert.ok(!has(f), `travelled ${f}`)
+    })
+    t('a copy with the data: the person\'s data travels too; bots, wallets, the node\'s identity and the workshop never do', () => {
+      const has = copy(ms.newRoadExcludes({ variant: 'clone', data: true }))
+      for (const f of [...code, ...personal]) assert.ok(has(f), `missing ${f}`)
+      for (const f of never) assert.ok(!has(f), `travelled ${f}`)
+    })
+    t('negative: the move\'s own copy keeps carrying everything but the tokens (the new road\'s rules never leak into it)', () => {
+      const has = copy(ms.serverKeeps({ road: 'move', telegram: { choice: 'move' } }))
+      for (const f of [...code, ...personal, 'data/node-code.json', 'data/services/abc12/wallet/wallet.json']) assert.ok(has(f), `missing ${f}`)
+      assert.ok(!has('data/services/build/channel/telegram/.env'))
+    })
+  }
+}
+
 for (const r of roots) rmSync(r, { recursive: true, force: true })
 console.log(`${passed} passed${process.exitCode ? ', FAILED' : ''}`)

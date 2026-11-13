@@ -26,6 +26,10 @@ export type MoveState = {
   names?: { zone?: string | null; names?: number; pointing?: string[]; certified?: string[]; waiting?: string[]; elsewhere?: string[]; unknown?: string[] }
   // 737-11a: the person's choice at the rung «Telegram» (no token here, ever).
   telegram?: { choice?: "move" | "new" | "later"; bot?: string | null; allowed?: number }
+  // 737-11b: the road and the new server's copy plan; the greeting's result.
+  road?: "move" | "new"
+  copyPlan?: { variant: "clone" | "fresh"; data: boolean }
+  welcome?: { ok?: boolean; state?: string; reason?: string | null }
 }
 type RungId = keyof ServerMoveWords["rung"]
 type Start = (rung: string, extra?: Record<string, unknown>) => Promise<void>
@@ -106,7 +110,7 @@ export function RungBody({ id, rung, state, words, busy, onStart }: { id: RungId
       ) : null}
       {id === "claude" && done && state.claude?.email ? <Small className="text-muted-foreground">{words.claudeSigned} {state.claude.email}</Small> : null}
 
-      {(id === "rehearse" || id === "move") && state.checks && (done || rung.state === "failed") ? (
+      {(id === "rehearse" || id === "move" || id === "start") && state.checks && (done || rung.state === "failed") ? (
         <ul className="flex flex-col gap-1" data-block="server-move-checks">
           {state.checks.map((c) => (
             <li key={c.id} className="flex items-center gap-2 text-sm" data-check={c.id} data-ok={c.ok ? "1" : "0"}>

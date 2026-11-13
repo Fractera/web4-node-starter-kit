@@ -9,10 +9,13 @@ import { ServerBusy } from "@/components/hosting/server-move-busy.client"
 import { ServerRecords } from "@/components/hosting/server-move-records.client"
 import { RungBody, type MoveState } from "@/components/hosting/server-move-rung.client"
 import { ServerTelegram, type HomeBot } from "@/components/hosting/server-move-telegram.client"
+import { CopyPlanChoice, RoadChoice, type CopyPlan, type Road } from "@/components/hosting/server-move-road.client"
 import type { TelegramChannelWords } from "@/app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/words/telegram-channel.i18n"
 import { ServerDomain } from "@/components/hosting/server-domain.client"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import { isTemporaryHostname } from "@/lib/auth/temporary-address"
+import { Button } from "@/components/ui/button"
+import { Small } from "@/components/ui/typography"
 
 // THE MOVE TO A DEDICATED SERVER — THE LADDER (node step 737-7). The owner, 2026-11-13: «настройка которая принимает IP-адрес сервера и
 // которая принимает пароль с сервера а затем создают процесс при котором шаг за шагом автоматически … весь проект переносится на
@@ -25,13 +28,15 @@ import { isTemporaryHostname } from "@/lib/auth/temporary-address"
 // 🔒 ON THE SERVER ITSELF (phase live) THE MOVE IS OVER: the tab shows the domain's five steps instead (737-8).
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
-type View = { ok: boolean; state: MoveState; rungs: Array<keyof ServerMoveWords["rung"]>; phase: "silent" | "live" | null; moved: boolean; homeBot: HomeBot; serverOrigin: string | null }
+type View = { ok: boolean; state: MoveState; road: Road; rungs: Array<keyof ServerMoveWords["rung"]>; phase: "silent" | "live" | null; moved: boolean; homeBot: HomeBot; serverOrigin: string | null }
 
 export function ServerMove({ words, domainWords, dialogUi, lang, channelWords }: { words: ServerMoveWords; domainWords: ServerDomainWords; dialogUi: AppDialogUi; lang: string; channelWords: TelegramChannelWords }) {
   const [view, setView] = useState<View | null>(null)
   const [silent, setSilent] = useState(false)
   const [busy, setBusy] = useState(false)
   const [publicAddress, setPublicAddress] = useState(false)
+  // 737-11b: the new server's copy plan — no data by default: a person's data goes to another machine only by an explicit tick.
+  const [plan, setPlan] = useState<CopyPlan>({ variant: "clone", data: false })
   // ✗ The owner's test 2026-11-13: one unanswered request (the core busy) stopped the polling for good and the screen kept «Идёт
   // работа…» of a rung finished long before. Every answer — or its absence — counts as a tick, and the next ask follows it.
   const [tick, setTick] = useState(0)
@@ -93,29 +98,51 @@ export function ServerMove({ words, domainWords, dialogUi, lang, channelWords }:
   const items = view.state.verdict?.items ?? []
   const sitesItem = items.find((i) => i.id === "sites")
   const othersItem = items.find((i) => i.id === "others")
-  const started = ["prepare", "copy", "claude", "rehearse", "telegram", "move"].some((r) => rungs[r]?.state)
+  const started = ["prepare", "copy", "claude", "rehearse", "start", "telegram", "move"].some((r) => rungs[r]?.state)
+  const road: Road = view.road === "new" ? "new" : "move"
+  const independent = road === "new" && rungs.start?.state === "done"
+  const withPlan = (r: string, x: Record<string, unknown> = {}) => start(r, r === "copy" && road === "new" ? { ...plan, ...x } : x)
   const taken = (sitesItem || othersItem || view.state.clear?.state === "running") && !started
     ? { host: view.state.server?.host, sites: String(sitesItem?.value ?? "").split(", ").filter(Boolean), programs: Number(othersItem?.value ?? 0), clear: view.state.clear }
     : null
   return (
     <div className="my-6 flex flex-col gap-3" data-block="server-move">
       <p className="text-foreground text-sm">{words.lead}</p>
+      <RoadChoice busy={busy} onChoose={(r) => void start("road", { road: r })} open={!started} road={road} words={words.road} />
       {view.rungs.map((id, i) => {
         const open = view.rungs.slice(0, i).every((p) => rungs[p]?.state === "done")
         if (!open) return <LadderLocked key={id} n={i + 1} text={words.locked} title={words.rung[id].title} />
         return (
           <LadderStep key={id} done={rungs[id]?.state === "done"} id={id} n={i + 1} title={words.rung[id].title}>
+            {id === "copy" && road === "new" && rungs.copy?.state !== "running" ? <CopyPlanChoice busy={busy} onChange={setPlan} plan={plan} words={words.plan} /> : null}
             {id === "telegram" ? (
-              <ServerTelegram busy={busy} channelWords={channelWords} homeBot={view.homeBot ?? null} lang={lang} onStart={start} origin={view.serverOrigin ?? null} state={view.state} text={words.rung.telegram.text} words={words.telegram} />
+              <ServerTelegram busy={busy} canMove={road === "move"} channelWords={channelWords} homeBot={view.homeBot ?? null} lang={lang} onStart={start} origin={view.serverOrigin ?? null} state={view.state} text={words.rung.telegram.text} words={words.telegram} />
             ) : (
-              <RungBody busy={busy} id={id} onStart={start} rung={rungs[id] ?? {}} state={view.state} words={words} />
+              <RungBody busy={busy} id={id} onStart={withPlan} rung={rungs[id] ?? {}} state={view.state} words={words} />
             )}
             {id === "probe" && taken ? <ServerBusy busy={taken} dialogUi={dialogUi} disabled={busy} onStart={start} words={words.busy} /> : null}
           </LadderStep>
         )
       })}
       {/* 737-15: the domain's records switch while the copy runs — from the moment the server's IP is known until the move. */}
-      {rungs.connect?.state === "done" && !moved ? <ServerRecords dialogUi={dialogUi} words={words.records} /> : null}
+      {rungs.connect?.state === "done" && !moved && road === "move" ? <ServerRecords dialogUi={dialogUi} words={words.records} /> : null}
+      {independent ? (
+        // 737-11b: the independent server runs on its own; the tab may be freed for the next one once its bot is chosen.
+        <div className="flex flex-col gap-2 rounded-lg border border-primary/40 bg-primary/5 p-4" data-block="server-move-independent">
+          <p className="font-medium text-foreground text-sm">{words.newDone.title}</p>
+          <p className="text-foreground text-sm">
+            {words.newDone.text.split("{url}")[0]}
+            <a className="underline" href={url}>{url}</a>
+            {words.newDone.text.split("{url}")[1] ?? ""}
+          </p>
+          {rungs.telegram?.state === "done" ? (
+            <div className="flex flex-col gap-1" data-block="server-move-forget">
+              <Button className="w-fit" disabled={busy} onClick={() => void start("forget")} size="sm" variant="outline">{words.newDone.forget}</Button>
+              <Small className="text-muted-foreground">{words.newDone.note}</Small>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
       {moved ? (
         <div className="rounded-lg border border-primary/40 bg-primary/5 p-4" data-block="server-move-moved">
           <p className="font-medium text-foreground text-sm">{words.movedTitle}</p>

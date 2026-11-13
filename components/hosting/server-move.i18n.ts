@@ -7,7 +7,7 @@ export type ServerMoveWords = {
   loading: string
   silent: string
   onServer: string
-  rung: Record<"connect" | "probe" | "prepare" | "copy" | "claude" | "rehearse" | "telegram" | "move", { title: string; text: string; button: string }>
+  rung: Record<"connect" | "probe" | "prepare" | "copy" | "claude" | "rehearse" | "start" | "telegram" | "move", { title: string; text: string; button: string }>
   locked: string
   running: string
   failed: string
@@ -32,6 +32,9 @@ export type ServerMoveWords = {
   movedTitle: string
   movedText: string
   rolledBack: string
+  road: { title: string; move: string; new: string; moveNote: string; newNote: string }
+  plan: { clone: string; fresh: string; cloneNote: string; freshNote: string; data: string; dataYes: string; dataNo: string }
+  newDone: { title: string; text: string; forget: string; note: string }
   telegram: { moveBot: string; moveNote: string; newTitle: string; newNote: string; newNoteHome: string; later: string; laterNote: string; doneMove: string; doneNew: string; doneLater: string; change: string; remoteDone: string }
   busy: { title: string; text: string; clear: string; cancel: string; clearTitle: string; risks: string[]; agree: string; clearConfirm: string; cancelTitle: string; cancelText: string; cancelConfirm: string; notNow: string; clearing: string; cleared: string; failed: string }
   stage: Record<string, string>
@@ -50,6 +53,7 @@ const en: ServerMoveWords = {
     copy: { title: "Copy and build", text: "The node is copied without its bots' tokens and built for Linux: packages, the core, every element. About 35–40 minutes on a server with 8 GB (measured: 36 min — the core 11, the elements 25); a repeat copies only the changes.", button: "Copy and build" },
     claude: { title: "Claude Code on the server", text: "Sign the server in to your Claude subscription: open the link, approve, paste the code here. A couple of minutes — the link waits 20 minutes.", button: "Get the sign-in link" },
     rehearse: { title: "Rehearsal", text: "The server's copy starts silent and is checked from outside and from inside. About 1–2 minutes (measured: 1 min 17 s). Your computer keeps working.", button: "Start the rehearsal" },
+    start: { title: "Start", text: "The new server starts its own node at once and is checked from outside and inside. This computer keeps working.", button: "Start the server" },
     telegram: { title: "Telegram", text: "Who answers you in Telegram once the node lives on the server: your bot moves with the node, or the server gets a bot of its own (three steps in Telegram, a few minutes). Until the move the server's bot only admits you and answers one line.", button: "Choose" },
     move: { title: "Move", text: "This computer stops the node, the last changes are copied, the server starts whole and takes Telegram. Any failure brings the node back here by itself.", button: "Move now" },
   },
@@ -98,6 +102,28 @@ const en: ServerMoveWords = {
   movedTitle: "The node lives on its server",
   movedText: "Open it by IP: {url}. Telegram answers from the server. Your domain and its certificates are set up on the server's own tab.",
   rolledBack: "The move did not finish — the node is back on this computer:",
+  road: {
+    title: "What the server is for",
+    move: "Move this node",
+    new: "A new independent server",
+    moveNote: "This node moves whole: after the move it lives on the server, and this computer keeps a cold copy and the road back.",
+    newNote: "A separate node of yours on the server: this computer keeps working and keeps its bot, the server gets a bot of its own.",
+  },
+  plan: {
+    clone: "A copy of this node",
+    fresh: "A fresh node",
+    cloneNote: "The same core and elements as here, built for the server. Bots, wallets, this node's identity and the template workshop never travel.",
+    freshNote: "Your fork cloned on the server as a new install: the core and the native elements, nothing of this node.",
+    data: "Move this node's data",
+    dataYes: "Accounts, the elements' stores, the agents' memory and the diary travel too.",
+    dataNo: "Accounts, stores, memory and the diary stay here: the server starts empty, and its first registration is its architect.",
+  },
+  newDone: {
+    title: "The independent server runs",
+    text: "Its address: {url}. From here you talk to it in Telegram: the server's bot leads to its own main agent (its domain, its first registration).",
+    forget: "Connect another server",
+    note: "The server keeps running on its own; this tab is freed for the next one.",
+  },
   telegram: {
     moveBot: "Move the bot {bot} to the server",
     moveNote: "It goes with the node at the move: a bot has one reader at a time, so it answers from the server once this computer stops.",
@@ -150,6 +176,7 @@ const ru: ServerMoveWords = {
     copy: { title: "Копия и сборка", text: "Узел копируется без токенов ботов и собирается под Linux: пакеты, ядро, каждый элемент. Около 35–40 минут на сервере с 8 ГБ (замер: 36 мин — ядро 11, элементы 25); повтор копирует только изменения.", button: "Скопировать и собрать" },
     claude: { title: "Claude Code на сервере", text: "Подключите сервер к своей подписке Claude: откройте ссылку, подтвердите, вставьте код сюда. Пара минут — ссылка ждёт 20 минут.", button: "Получить ссылку входа" },
     rehearse: { title: "Репетиция", text: "Копия на сервере запускается молча и проверяется снаружи и изнутри. Около 1–2 минут (замер: 1 мин 17 с). Ваш компьютер продолжает работать.", button: "Начать репетицию" },
+    start: { title: "Запуск", text: "Новый сервер сразу запускает свой узел и проверяется снаружи и изнутри. Этот компьютер продолжает работать.", button: "Запустить сервер" },
     telegram: { title: "Telegram", text: "Кто ответит вам в Telegram, когда узел будет жить на сервере: ваш бот переедет вместе с узлом, или у сервера будет свой (три шага в Telegram, несколько минут). До переезда бот сервера только впускает вас и отвечает одной строкой.", button: "Выбрать" },
     move: { title: "Переезд", text: "Этот компьютер останавливает узел, последние изменения копируются, сервер запускается целиком и берёт Telegram. При любом сбое узел сам возвращается сюда.", button: "Переехать" },
   },
@@ -198,6 +225,28 @@ const ru: ServerMoveWords = {
   movedTitle: "Узел живёт на своём сервере",
   movedText: "Откройте его по IP: {url}. Telegram отвечает уже с сервера. Домен и его сертификаты подключаются на этой же вкладке сервера.",
   rolledBack: "Переезд не завершился — узел вернулся на этот компьютер:",
+  road: {
+    title: "Для чего этот сервер",
+    move: "Переезд этого узла",
+    new: "Новый независимый сервер",
+    moveNote: "Узел переезжает целиком: после переезда он живёт на сервере, а этот компьютер хранит холодную копию и дорогу обратно.",
+    newNote: "Отдельный ваш узел на сервере: этот компьютер продолжает работать и оставляет себе свой бот, у сервера будет свой.",
+  },
+  plan: {
+    clone: "Копия этого узла",
+    fresh: "Свежий узел",
+    cloneNote: "То же ядро и те же элементы, что здесь, собранные для сервера. Боты, кошельки, код этого узла и мастерская шаблонов не переезжают никогда.",
+    freshNote: "Ваш форк, склонированный на сервер как новая установка: ядро и нативные элементы, ничего от этого узла.",
+    data: "Перенести данные этого узла",
+    dataYes: "Учётные записи, хранилища элементов, память агентов и дневник тоже переедут.",
+    dataNo: "Учётные записи, хранилища, память и дневник останутся здесь: сервер начнёт пустым, его первая регистрация — его архитектор.",
+  },
+  newDone: {
+    title: "Независимый сервер работает",
+    text: "Его адрес: {url}. Дальше с ним говорят из Telegram: бот сервера ведёт к его собственному главному агенту (свой домен, первая регистрация).",
+    forget: "Подключить другой сервер",
+    note: "Сервер продолжит работать сам, а вкладка освободится для следующего.",
+  },
   telegram: {
     moveBot: "Перенести бот {bot} на сервер",
     moveNote: "Он переедет вместе с узлом: у бота один читатель, поэтому с сервера он заговорит, когда остановится этот компьютер.",

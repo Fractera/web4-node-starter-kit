@@ -43,6 +43,26 @@ description: "Build process for the person, work process for you. The node moves
 the door `POST /api/node/server {rung}`. Before the move rung, warn: the agents' conversations here end; on the server they start
 fresh from their records, and this terminal stops with this computer's node.
 
+## The second road — «Новый сервер» (737-11b)
+
+The owner, 2026-11-13: «пользователи однажды устанавливают на свой домашний компьютер Fractera и в будущем поднимает множество
+независящих от него серверов». The tab's first choice — «Переезд этого узла» or «Новый независимый сервер» (`POST /api/node/server
+{rung: "road", road: "move"|"new"}`, only until the server is prepared). The new road: connect · probe · prepare · copy · claude ·
+**start** · telegram — this computer keeps working and keeps its bot.
+- **copy** asks its plan (`{rung: "copy", variant, data}`): **«Копия этого узла»** — this node's core and elements; the second question
+  «Перенести данные этого узла?» (D5, the owner: «replace data or not»): no — accounts, every element's `data/` `storage/`
+  `database.sqlite*`, the agents' memory, the diary and the person's own instructions stay here, the server starts empty and its first
+  registration is its architect; yes — they travel. Never, either way: bots, wallets, `data/node-code.json` (a new one is made there),
+  the template workshop, the session marks. **«Свежий узел»** — the person's fork cloned there as a new install (check-origin,
+  fresh-project, its own `.env.local`), nothing of this node; an earlier folder there is moved aside, never erased. A copy again asks
+  for the start again.
+- **start** — the server's node goes live at once (`data/node/server.json` `independent: true`) and is checked; no rehearsal, no move.
+- **telegram** — only a new bot or later (this node's bot stays here). Once the person is admitted, the node wakes the server's main
+  agent to greet (`move.mjs greet`).
+- Then «Подключить другой сервер» (`{rung: "forget"}`): the record goes to `data/node/server/done/`, the server keeps running on its own,
+  the tab is free. From here the person talks to that server through its own bot; `npm run server -- window` opens its core's panel on
+  this computer at the core's port + 10000 (this node keeps its own ports).
+
 ## After the move
 
 - This computer keeps a cold copy; `npm run serve:start` refuses while `moved.json` stands (`===SERVE_MOVED===`).

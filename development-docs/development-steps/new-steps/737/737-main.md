@@ -319,3 +319,25 @@ proxied. Execution order: 737-18 → 737-15/15c → 737-17 → 737-16 → 737-11
 - **Left for the clean run (737-13):** a new bot admitted through the tab on a real server and its greeting after the move; the minutes
   of the new bot's three steps; whether the server's `session-lost` also wakes the main agent after the move (its session record travels
   with the copy, its Claude conversation does not).
+
+### 10.4 737-11b as built (2026-11-13 ~15:50 UTC) — the road «Новый сервер», my picks (§10.2)
+
+- **The road is the tab's first choice** (`move.json` → `road`, changeable until `prepare` starts): «Переезд этого узла» keeps the eight
+  rungs; «Новый независимый сервер» runs connect · probe · prepare · copy · claude · **start** · telegram (`NEW_RUNGS`, `rungsOf`).
+- **copy's plan** (D5): «Копия этого узла» + «Перенести данные этого узла?» (unticked by default — a person's data goes to another
+  machine only by an explicit tick). Measured in all 15 templates' `.gitignore`: every element keeps its data in `data/*`, `storage/*`,
+  `database.sqlite*` → `DATA_EXCLUDES` (with `+` rules for the `.gitkeep`s), plus `auth.db*`, the agents' `memory/`, `context.json`, the
+  graph's `lightrag/` and `spaces/`, `data/node/memory/`, `usage/`, `*.jsonl`, `data/main-agent/`. `NEW_EXCLUDES` always: every bot dir,
+  `data/node-code.json`, wallets, `data/workshop/`, session marks, `place.json`. «Свежий узел»: `git clone` of this node's fork URL
+  (credentials stripped) + `ensure-env` + `check-origin` + `fresh-project` + the same installer (`launch` refuses a server: its first
+  step is `check-local`); an earlier folder is moved aside as `<folder>.before-<time>`.
+- **start**: `server.json` `{ phase: 'live', independent: true }`, `start.sh live`, the checks (the commit check only for a copy).
+- **telegram**: «move» refused on this road (409); admitted → the door starts `move.mjs greet` once (`welcome`).
+- **forget**: «Подключить другой сервер» → the record into `data/node/server/done/`; the window road gives an independent server's core
+  on port + 10000 (this node keeps its own ports; elements answer by their own addresses there).
+- **Proofs:** `test:hosting` 67 (order per road; real rsync of a fixture node: without data / with data / the move's own rules as the
+  negative control); `test:hosting-move` 18 (the new road dry over the in-process SSH server: copy without data, rehearsal refused,
+  start live + independent, greet, fresh clone with the earlier folder kept aside).
+- **For the clean run (737-13):** a fresh clone's install time on 8 GB; pm2 processes of an earlier node moved aside (do `serve:start`'s
+  names replace them?); the first registration on a server without a domain (the bare IP is read-only — the way is its domain, from its
+  own bot, or the window).

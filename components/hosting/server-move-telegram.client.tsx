@@ -22,9 +22,11 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 type Start = (rung: string, extra?: Record<string, unknown>) => Promise<void>
 export type HomeBot = { username: string; allowed: number } | null
 
-export function ServerTelegram({ state, homeBot, origin, lang, text, words, channelWords, busy, onStart }: {
+export function ServerTelegram({ state, homeBot, canMove = true, origin, lang, text, words, channelWords, busy, onStart }: {
   state: MoveState
   homeBot: HomeBot
+  // 737-11b: an independent server never takes this node's bot (two readers of one bot split the person's messages).
+  canMove?: boolean
   origin: string | null
   lang: string
   text: string
@@ -36,7 +38,7 @@ export function ServerTelegram({ state, homeBot, origin, lang, text, words, chan
   const t = state.telegram ?? {}
   const done = state.rungs?.telegram?.state === "done"
   // Without a bot here the new one is the main road: its accordion stands open.
-  const [open, setOpen] = useState(t.choice === "new" || !homeBot ? "new" : "")
+  const [open, setOpen] = useState(t.choice === "new" || !homeBot || !canMove ? "new" : "")
 
   if (done) {
     const line = t.choice === "move"
@@ -60,7 +62,7 @@ export function ServerTelegram({ state, homeBot, origin, lang, text, words, chan
   return (
     <div className="flex flex-col gap-3" data-block="server-move-telegram">
       <p className="text-muted-foreground text-sm">{text}</p>
-      {homeBot ? (
+      {homeBot && canMove ? (
         <div className="flex flex-col gap-1" data-block="server-move-telegram-move">
           <Button className="w-fit" disabled={busy} onClick={() => onStart("telegram", { choice: "move" })} size="sm">
             {words.moveBot.replace("{bot}", `@${homeBot.username}`)}
@@ -84,7 +86,7 @@ export function ServerTelegram({ state, homeBot, origin, lang, text, words, chan
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-      {!homeBot ? (
+      {!homeBot || !canMove ? (
         <div className="flex flex-col gap-1" data-block="server-move-telegram-later">
           <Button className="w-fit" disabled={busy} onClick={() => onStart("telegram", { choice: "later" })} size="sm" variant="outline">
             {words.later}
