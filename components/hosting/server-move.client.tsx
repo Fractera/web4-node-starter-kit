@@ -6,13 +6,14 @@ import { LadderLocked, LadderStep } from "@/components/hosting/ladder-step"
 import type { ServerMoveWords } from "@/components/hosting/server-move.i18n"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import { ServerBusy } from "@/components/hosting/server-move-busy.client"
-import { ServerRecords } from "@/components/hosting/server-move-records.client"
 import { RungBody, type MoveState } from "@/components/hosting/server-move-rung.client"
 import { ServerTelegram, type HomeBot } from "@/components/hosting/server-move-telegram.client"
 import { CopyPlanChoice, EarlierRun, RoadChoice, type CopyPlan, type Road } from "@/components/hosting/server-move-road.client"
 import type { TelegramChannelWords } from "@/app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/words/telegram-channel.i18n"
-import { ServerDomain } from "@/components/hosting/server-domain.client"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
+import type { DomainLadderWords } from "@/components/domain/domain-ladder.i18n"
+import { ServerLadder } from "@/components/hosting/server-ladder.client"
+import type { ServerLadderWords } from "@/components/hosting/server-ladder.i18n"
 import { isTemporaryHostname } from "@/lib/auth/temporary-address"
 import { Button } from "@/components/ui/button"
 import { Small } from "@/components/ui/typography"
@@ -30,7 +31,8 @@ import { Small } from "@/components/ui/typography"
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 type View = { ok: boolean; state: MoveState; road: Road; rungs: Array<keyof ServerMoveWords["rung"]>; phase: "silent" | "live" | null; moved: boolean; homeBot: HomeBot; serverOrigin: string | null }
 
-export function ServerMove({ words, domainWords, dialogUi, lang, channelWords }: { words: ServerMoveWords; domainWords: ServerDomainWords; dialogUi: AppDialogUi; lang: string; channelWords: TelegramChannelWords }) {
+export function ServerMove({ words, domainWords, ladderWords, keyWords, dialogUi, lang, channelWords }: { words: ServerMoveWords; domainWords: ServerDomainWords; ladderWords: ServerLadderWords; keyWords: DomainLadderWords; dialogUi: AppDialogUi; lang: string; channelWords: TelegramChannelWords }) {
+  const ladder = (mode: "move" | "server", fallback?: string) => <ServerLadder dialogUi={dialogUi} domainWords={domainWords} fallback={fallback} keyWords={keyWords} mode={mode} words={ladderWords} />
   const [view, setView] = useState<View | null>(null)
   const [silent, setSilent] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -79,14 +81,14 @@ export function ServerMove({ words, domainWords, dialogUi, lang, channelWords }:
     }
   }
 
-  if (publicAddress) return <ServerDomain fallback={words.lead} words={domainWords} />
+  if (publicAddress) return ladder("server", words.lead)
   if (!view) return <p className="my-6 text-muted-foreground text-sm" data-block="server-move-loading">{silent ? "—" : words.loading}</p>
   if (view.phase === "silent") return <p className="my-6 text-foreground text-sm" data-block="server-move-on-server">{words.silent}</p>
   if (view.phase === "live") {
     return (
       <div data-block="server-move-on-server">
         <p className="my-6 text-foreground text-sm">{words.onServer}</p>
-        <ServerDomain words={domainWords} />
+        {ladder("server")}
       </div>
     )
   }
@@ -133,7 +135,7 @@ export function ServerMove({ words, domainWords, dialogUi, lang, channelWords }:
             )}
             {id === "probe" && taken ? <ServerBusy busy={taken} dialogUi={dialogUi} disabled={busy} onStart={start} words={words.busy} /> : null}
           </LadderStep>
-          {domainHere ? <ServerRecords dialogUi={dialogUi} words={words.records} /> : null}
+          {domainHere ? ladder("move") : null}
           </Fragment>
         )
       })}

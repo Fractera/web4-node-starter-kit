@@ -433,3 +433,19 @@ D15 one ladder for the computer and the server — yes, now. D16 priority = wher
 an optional branch with a checklist. D17 the server's records DNS only, also through the token. D18 the token is used at once when it already
 sees the zone, otherwise offered as «узел сам» — never the main road. D19 a subdomain base supported (protects live sites). D20 detection
 asks two resolvers to see an NS transition.
+
+### 11.7 737-19 as built (2026-11-13 ~20:40 UTC, the owner: «да, строй по плану, витрину оставляем»)
+- 19a `lib/hosting/domain-detect.mjs` — live probe: aifa.dev → zone aifa.dev, Porkbun LLC until 2027-06-13, DNS Cloudflare (TTL 86400),
+  proxied, live site; node.aifa.dev → zone aifa.dev, sub node, nothing on it; fractera.ai → GoDaddy until 2027-12-25, Cloudflare, MX 5,
+  TXT 2, live site; 0.5–1.7 s each. Doors: records `?detect=1` (computer, kept in move.json `detect`), domain `action: detect` (server,
+  `server-side/detect.json`); who writes = `domainWay` (move.json / the server's mark, carried by the move's mark).
+- 19b `upsertServerRecord` writes `proxied: false` for every server path (records door, element-domain, reach); the shared writer
+  `lib/hosting/server-records-cf.ts` adds `*`. Mutation: proxied true → the test red.
+- 19c `dnsRecords(table, ip, dnsZone)` — names relative to the detected zone (node, auth.node, *.node); negative without the zone.
+- 19d one island `components/hosting/server-ladder.client.tsx` (modes move/server) + steps, records (accordion quick/full, copy buttons,
+  «узел сам» on the existing TokenHowTo + `/api/domain/key`, the migrate checklist with the zone's MX/TXT/DS), end steps (computer: check +
+  certificates; server: the former certs · HTTPS · switch on), the orange «Почему не Cloudflare?» Popover; words `server-ladder.i18n.ts`.
+  Removed: `server-move-records.client.tsx`, `server-domain.client.tsx`, the move's `records` words.
+- 19e the instruction for whoever holds the access (copy button) in step 3 «Нет доступа».
+- Proofs: test:hosting 74 (7 new, fixtures recorded from the live probe, negatives), test:hosting-move 20, chain green, tsc clean.
+  Not yet seen: the ladder on screen (eyes after the node update), T1 and T2 live.

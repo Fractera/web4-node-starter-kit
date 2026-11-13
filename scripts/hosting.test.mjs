@@ -733,5 +733,70 @@ console.log('737-11b the road «Новый сервер»')
   }
 }
 
+console.log('737-19 the domain ladder: detection, record names, DNS only')
+{
+  const det = await import('../lib/hosting/domain-detect.mjs')
+  // A fake internet: DoH answers by «name type» and resolver, one registry, one site. Recorded from the live probe of 2026-11-13.
+  const fakeNet = (zones) => async (url) => {
+    const u = new URL(url)
+    const json = (body, status = 200) => ({ ok: status < 400, status, json: async () => body, text: async () => JSON.stringify(body) })
+    if (u.hostname === 'data.iana.org') return json({ services: [[['dev'], ['https://pubapi.registry.google/rdap/']]] })
+    if (u.hostname === 'pubapi.registry.google') return json({ entities: [{ roles: ['registrar'], vcardArray: ['vcard', [['fn', {}, 'text', 'Porkbun LLC']]] }], events: [{ eventAction: 'expiration', eventDate: '2027-06-13T10:50:14Z' }] })
+    if (u.pathname === '/' && !u.searchParams.has('name')) return { ok: true, status: 200, text: async () => '<html><title>Live &amp; well</title></html>' }
+    const name = u.searchParams.get('name')
+    const type = u.searchParams.get('type')
+    const which = u.hostname === 'dns.google' ? 'google' : 'cf'
+    const z = zones[which]?.[`${name} ${type}`] ?? zones.any?.[`${name} ${type}`]
+    return json(z ?? { Status: 3, Answer: [], Authority: [{ name: 'aifa.dev.', type: 6, data: 'jaxson.ns.cloudflare.com. dns.cloudflare.com.' }] })
+  }
+  const ns = (a, b) => ({ Status: 0, Answer: [{ name: 'aifa.dev.', type: 2, TTL: 86400, data: `${a}.` }, { name: 'aifa.dev.', type: 2, TTL: 86400, data: `${b}.` }] })
+  const base = {
+    'aifa.dev SOA': { Status: 0, Answer: [{ name: 'aifa.dev.', type: 6, data: 'jaxson.ns.cloudflare.com. dns.cloudflare.com. 1 2 3 4 5' }] },
+    'aifa.dev A': { Status: 0, Answer: [{ name: 'aifa.dev.', type: 1, TTL: 300, data: '188.114.96.5' }] },
+    'aifa.dev MX': { Status: 0, Answer: [] }, 'aifa.dev TXT': { Status: 0, Answer: [] }, 'aifa.dev DS': { Status: 0, Answer: [] },
+  }
+  await ta('detect: an apex on Cloudflare behind the proxy — the registrar from the registry, the live site named', async () => {
+    const d = await det.detectDomain('aifa.dev', { ip: '203.0.113.7', fetchImpl: fakeNet({ any: { ...base, 'aifa.dev NS': ns('jaxson.ns.cloudflare.com', 'kehlani.ns.cloudflare.com') } }) })
+    assert.equal(d.zone, 'aifa.dev'); assert.equal(d.sub, ''); assert.equal(d.dnsHost, 'cloudflare'); assert.equal(d.aKind, 'cloudflare')
+    assert.equal(d.registrar, 'Porkbun LLC'); assert.equal(d.nsTtl, 86400); assert.equal(d.changing, false)
+    assert.equal(d.site?.title, 'Live & well')
+  })
+  await ta('detect: a subdomain belongs to its zone (SOA of the authority); nothing answers on it → no site', async () => {
+    const d = await det.detectDomain('node.aifa.dev', { ip: '203.0.113.7', fetchImpl: fakeNet({ any: { ...base, 'aifa.dev NS': ns('jaxson.ns.cloudflare.com', 'kehlani.ns.cloudflare.com'), 'node.aifa.dev A': { Status: 3, Answer: [] } } }) })
+    assert.equal(d.zone, 'aifa.dev'); assert.equal(d.sub, 'node'); assert.equal(d.aKind, 'none'); assert.equal(d.site, null)
+  })
+  await ta('detect: two resolvers disagree on the name servers → «changing»; the server\'s own IP → «server»; DNS elsewhere → «other»', async () => {
+    const d = await det.detectDomain('aifa.dev', { ip: '203.0.113.7', fetchImpl: fakeNet({
+      cf: { ...base, 'aifa.dev NS': ns('curitiba.ns.porkbun.com', 'fortaleza.ns.porkbun.com'), 'aifa.dev A': { Status: 0, Answer: [{ name: 'aifa.dev.', type: 1, data: '203.0.113.7' }] } },
+      google: { ...base, 'aifa.dev NS': ns('jaxson.ns.cloudflare.com', 'kehlani.ns.cloudflare.com') },
+    }) })
+    assert.equal(d.changing, true); assert.equal(d.aKind, 'server'); assert.equal(d.dnsHost, 'other'); assert.equal(d.site, null)
+  })
+  await ta('negative: a TLD without RDAP and silent resolvers → unknown fields, never a guess', async () => {
+    const d = await det.detectDomain('example.ru', { ip: '203.0.113.7', fetchImpl: async () => { throw new Error('offline') } })
+    assert.equal(d.registrar, null); assert.equal(d.dnsHost, 'none'); assert.equal(d.aKind, 'unknown')
+  })
+  t('Cloudflare ranges: 188.114.96.5 inside, the server and a neighbour outside', () => {
+    assert.equal(det.inRanges('188.114.96.5'), true); assert.equal(det.inRanges('104.21.26.12'), true)
+    assert.equal(det.inRanges('213.199.61.7'), false); assert.equal(det.inRanges('188.114.112.1'), false)
+  })
+  const { dnsRecords } = await import('../lib/hosting/hostnames.mjs')
+  const rows = (zone) => [{ host: zone, zone, label: '@', kind: 'apex', optional: false }, { host: `auth.${zone}`, zone, label: 'auth', kind: 'auth', optional: false }]
+  t('record names: an apex → @ and *; a subdomain base → node, auth.node and *.node inside its zone', () => {
+    const apex = dnsRecords({ zone: 'aifa.dev', rows: rows('aifa.dev') }, '1.2.3.4', 'aifa.dev')[0]
+    assert.deepEqual([apex.zone, apex.records.map((r) => r.name), apex.wildcard.name], ['aifa.dev', ['@', 'auth'], '*'])
+    const sub = dnsRecords({ zone: 'node.aifa.dev', rows: rows('node.aifa.dev') }, '1.2.3.4', 'aifa.dev')[0]
+    assert.deepEqual([sub.zone, sub.records.map((r) => r.name), sub.wildcard.name], ['aifa.dev', ['node', 'auth.node'], '*.node'])
+    // Negative: without the zone the old labels stay (a subdomain base would get «@» — what a registrar of aifa.dev would read as aifa.dev).
+    assert.equal(dnsRecords({ zone: 'node.aifa.dev', rows: rows('node.aifa.dev') }, '1.2.3.4')[0].records[0].name, '@')
+  })
+  t('DNS only: the server\'s records are written with proxied:false (737-19b); the tunnel record keeps its own rule', () => {
+    const src = readFileSync(new URL('../lib/domain/cloudflare.ts', import.meta.url), 'utf8')
+    const fn = src.slice(src.indexOf('export async function upsertServerRecord'), src.indexOf('\n}\n', src.indexOf('export async function upsertServerRecord')))
+    assert.match(fn, /proxied: false, ttl: 1/)
+    assert.doesNotMatch(fn, /proxied: true/)
+  })
+}
+
 for (const r of roots) rmSync(r, { recursive: true, force: true })
 console.log(`${passed} passed${process.exitCode ? ', FAILED' : ''}`)

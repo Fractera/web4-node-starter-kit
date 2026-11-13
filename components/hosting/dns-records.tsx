@@ -8,7 +8,7 @@ import { Small } from "@/components/ui/typography"
 // they are, the state of each name from the node's own check — never a guess of this part. No server code here: a server file and an
 // island both render it.
 
-export type DnsRecord = { type: string; name: string; value: string; host: string; optional?: boolean }
+export type DnsRecord = { type: string; name: string; value: string; host: string; kind?: string; optional?: boolean }
 export type DnsZone = { zone: string; records: DnsRecord[]; wildcard?: { type: string; name: string; value: string } | null }
 export type DnsRecordState = { text: string; tone: "default" | "secondary" | "destructive" | "outline" }
 export type DnsRecordsWords = { zone: string; type: string; name: string; value: string; state: string; optional: string; wildcard: string }

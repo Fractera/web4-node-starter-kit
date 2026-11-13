@@ -1,4 +1,4 @@
-// @api list and switch the domain records to the dedicated server
+// @api the domain ladder of the move: detect, choose, check and write records
 import { spawnSync } from "node:child_process"
 import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
@@ -6,29 +6,35 @@ import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
-import { upsertServerRecord, zoneByName } from "@/lib/domain/cloudflare"
 import { checkNames } from "@/lib/hosting/dns-check.mjs"
+import { detectDomain } from "@/lib/hosting/domain-detect.mjs"
 import { dnsRecords, nodeNames } from "@/lib/hosting/hostnames.mjs"
 import { mayDomain, patchMove, readMove } from "@/lib/hosting/move-state.mjs"
+import { pointNamesAtServer } from "@/lib/hosting/server-records-cf"
 import { cleanDomain } from "@/lib/hosting/server-domain.mjs"
 
-// THE DOMAIN'S RECORDS MOVE TO THE SERVER EARLY (node step 737-15, D14). The owner, 2026-11-13: the records switch right after the
-// server is connected, so DNS has woken by the time of the move; until the move Cloudflare's copy shows the pages («До завершения переезда
-// у нас CloudFlare поддерживает статическую видимость этих страниц»).
-// 🔒 ON THIS COMPUTER, FOR THE ARCHITECT ONLY, never on a public address. GET — the names of the node's zone with the A record each needs
-// (the server's IPv4), and with `?check=1` what public DNS answers for each. POST {confirm: <zone>} — for a zone on the node's
-// Cloudflare account, every name of THAT zone is pointed at the server (proxied; only this node's tunnel CNAME is removed). Names of
-// other zones (an element's own domain elsewhere) are listed for the person to write at their registrar.
-// 737-15, A NEW DOMAIN (the owner, 2026-11-13: «установку домена где-то в начале пока ставится сервер»): a node with no domain of its
-// own gets one for the server here — POST {domain} keeps it in `move.json` and starts the runner's `domain` (saved until the copy; after
-// it the server learns it now and issues a certificate for every name already pointing there). The same POST again checks and issues anew.
+// THE DOMAIN LADDER OF THE MOVE — ITS DOOR ON THIS COMPUTER (node steps 737-15, 737-19). The owner, 2026-11-13: «установку домена где-то в
+// начале пока ставится сервер»; the ladder he drew: the domain · where its records live («кто его возвращает регистратор или Cloud Flyer»)
+// · who writes them · the records · the check. The same ladder runs on the server through `/api/node/server/domain`.
+// 🔒 ON THIS COMPUTER, FOR THE ARCHITECT ONLY, never on a public address.
+//   GET — the domain (the node's own, else the one typed for the server: `move.json` → `domain`), the server's IP, the last detection, the
+//         person's choice of who writes the records, the last DNS check, the names' records; `?detect=1` asks the internet anew
+//         (`domain-detect.mjs`), `?check=1` asks public DNS for every name.
+//   POST {domain} — keep a typed domain, start the runner's `domain` (the server learns it: its mark, nginx, DNS, certificates).
+//   POST {way}    — who writes the records: `dns` (the person, where DNS is kept), `cloudflare` (the person, in Cloudflare), `migrate`
+//                   (DNS goes back to the registrar first), `none` (nobody has access).
+//   POST {confirm: <zone>} — the node writes the records itself with its Cloudflare key: every name and `*`, DNS ONLY (737-19b).
 // 🔒 The Cloudflare token is read here, in the core, and never leaves it (the same way as `app/api/domain/activate`).
 export const dynamic = "force-dynamic"
 
 const ROOT = process.cwd()
+const RUNNER = join(ROOT, "scripts", "dedicated-server", "move.mjs")
+const WAYS = ["dns", "cloudflare", "migrate", "none"] as const
 const noStore = { headers: { "Cache-Control": "no-store" } }
 const IPV4 = /^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/
 const json = (body: unknown, status = 200) => NextResponse.json(body, { status, ...noStore })
+type Detect = Awaited<ReturnType<typeof detectDomain>>
+type Check = { at: string; zone: string; results: Array<{ host: string; state: string }> }
 
 function envValue(name: string): string | null {
   const fromProcess = process.env[name]?.trim()
@@ -42,14 +48,13 @@ function envValue(name: string): string | null {
   return null
 }
 
+function cleanEnv(): NodeJS.ProcessEnv {
+  return Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith("NEXT_") && k !== "PORT" && k !== "__NEXT_PROCESSED_ENV")) as NodeJS.ProcessEnv
+}
+
 async function guard(req: NextRequest) {
   if (isTemporaryPublicAddress(req)) return json({ ok: false, reason: "public-address" }, 403)
   return requireRoles(req, ["architect"] as const)
-}
-
-const RUNNER = join(ROOT, "scripts", "dedicated-server", "move.mjs")
-function cleanEnv(): NodeJS.ProcessEnv {
-  return Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith("NEXT_") && k !== "PORT" && k !== "__NEXT_PROCESSED_ENV")) as NodeJS.ProcessEnv
 }
 
 function context() {
@@ -59,44 +64,79 @@ function context() {
   // The node's own domain wins; without one, the domain the person typed for the server (737-15).
   const table = own ? nodeNames({ root: ROOT }) : nodeNames({ root: ROOT, domain: typeof move.domain === "string" ? move.domain : null })
   const tunnelId = (() => { try { return JSON.parse(readFileSync(join(ROOT, "logs", "domain.json"), "utf8")).tunnelId ?? null } catch { return null } })()
-  return { ip: IPV4.test(ip) ? ip : null, table, own: Boolean(own), move, tunnelId: typeof tunnelId === "string" ? tunnelId : null }
+  const detect = (move.detect as Detect | undefined)?.name === table.zone ? (move.detect as Detect) : null
+  const check = (move.dnsCheck as Check | undefined)?.zone === table.zone ? (move.dnsCheck as Check) : null
+  return { ip: IPV4.test(ip) ? ip : null, table, own: Boolean(own), move, detect, check, tunnelId: typeof tunnelId === "string" ? tunnelId : null }
 }
 
 export async function GET(req: NextRequest) {
   const denied = await guard(req)
   if (denied) return denied
-  const { ip, table, own, move } = context()
-  const typed = { own, mayType: !own && mayDomain(move), run: move.domainRun ?? null, names: move.names ?? null }
-  if (!ip || !table.zone) return json({ ok: true, zone: table.zone, ip, records: [], dns: null, cloudflare: Boolean(envValue("CLOUDFLARE_API_TOKEN")), ...typed })
-  const dns = req.nextUrl.searchParams.get("check") === "1" ? await checkNames(table, ip) : null
-  return json({ ok: true, zone: table.zone, ip, records: dnsRecords(table, ip), dns, cloudflare: Boolean(envValue("CLOUDFLARE_API_TOKEN")), ...typed })
+  const c = context()
+  let { detect, check } = c
+  const { ip, table, own, move } = c
+  if (ip && table.zone && req.nextUrl.searchParams.get("detect") === "1") {
+    const d = await detectDomain(table.zone, { ip })
+    detect = d
+    patchMove(ROOT, (s: Record<string, unknown>) => { s.detect = d })
+  }
+  if (ip && table.zone && req.nextUrl.searchParams.get("check") === "1") {
+    const k: Check = { at: new Date().toISOString(), zone: table.zone, results: (await checkNames(table, ip)).map((r) => ({ host: r.host, state: r.state })) }
+    check = k
+    patchMove(ROOT, (s: Record<string, unknown>) => { s.dnsCheck = k })
+  }
+  return json({
+    ok: true,
+    zone: table.zone,
+    ip,
+    own,
+    mayType: !own && mayDomain(move),
+    run: move.domainRun ?? null,
+    names: move.names ?? null,
+    detect,
+    way: typeof move.domainWay === "string" ? move.domainWay : null,
+    check,
+    records: ip && table.zone ? dnsRecords(table, ip, detect?.zone ?? null) : [],
+    key: Boolean(envValue("CLOUDFLARE_API_TOKEN")),
+  })
 }
 
 export async function POST(req: NextRequest) {
   const denied = await guard(req)
   if (denied) return denied
-  const { ip, table, tunnelId, own, move } = context()
-  const body = (await req.json().catch(() => null)) as { confirm?: unknown; domain?: unknown } | null
+  const { ip, table, tunnelId, own, move, detect } = context()
+  const body = (await req.json().catch(() => null)) as { confirm?: unknown; domain?: unknown; way?: unknown } | null
   if (!ip) return json({ ok: false, reason: "no-server" }, 409)
+
   if (body && "domain" in body) {
     if (own) return json({ ok: false, reason: "node-has-domain" }, 409)
     const domain = cleanDomain(body.domain)
     if (!domain) return json({ ok: false, reason: "bad-domain" }, 400)
     if (!mayDomain(move)) return json({ ok: false, reason: "order" }, 409)
-    patchMove(ROOT, (s: Record<string, unknown>) => { s.domain = domain; s.domainRun = { state: "starting", at: new Date().toISOString(), zone: domain } })
+    // A new domain starts its ladder anew: what was learned and chosen about the old one does not carry over.
+    patchMove(ROOT, (s: Record<string, unknown>) => {
+      if (s.domain !== domain) for (const k of ["detect", "dnsCheck", "domainWay"]) delete s[k]
+      s.domain = domain
+      s.domainRun = { state: "starting", at: new Date().toISOString(), zone: domain }
+    })
     spawnSync(process.execPath, [join(ROOT, "scripts", "spawn-free.mjs"), RUNNER, "domain"], { cwd: ROOT, env: cleanEnv(), stdio: "ignore", timeout: 10_000, windowsHide: true })
     return json({ ok: true, domain })
   }
+
+  if (body && "way" in body) {
+    const way = WAYS.find((w) => w === body.way)
+    if (!way || !table.zone) return json({ ok: false, reason: "bad-way" }, 400)
+    patchMove(ROOT, (s: Record<string, unknown>) => { s.domainWay = way })
+    return json({ ok: true, way })
+  }
+
   if (!table.zone || body?.confirm !== table.zone) return json({ ok: false, reason: "not-confirmed" }, 409)
   const token = envValue("CLOUDFLARE_API_TOKEN")
   if (!token) return json({ ok: false, reason: "no-cloudflare-token" }, 409)
-  const zone = await zoneByName(token, table.zone)
-  if (!zone.ok || !zone.result) return json({ ok: false, reason: zone.ok ? "zone-not-on-cloudflare" : zone.reason }, 409)
-  const results: Array<{ host: string; ok: boolean; reason?: string }> = []
-  for (const row of table.rows.filter((r: { zone: string }) => r.zone === table.zone)) {
-    const r = await upsertServerRecord(token, zone.result.id, row.host, ip, tunnelId)
-    results.push({ host: row.host, ok: r.ok, ...(r.ok ? {} : { reason: (r as { reason?: string }).reason }) })
-  }
+  // A subdomain base writes inside the zone it belongs to (its SOA, measured by the detection).
+  const hosts = table.rows.filter((r: { zone: string }) => r.zone === table.zone).map((r: { host: string }) => r.host)
+  const r = await pointNamesAtServer({ token, dnsZone: detect?.zone ?? table.zone, base: table.zone, hosts, ip, tunnelId })
+  if (!r.results) return json({ ok: false, reason: r.reason }, 409)
   const elsewhere = table.rows.filter((r: { zone: string }) => r.zone !== table.zone).map((r: { host: string }) => r.host)
-  return json({ ok: results.every((x) => x.ok), results, elsewhere })
+  return json({ ok: r.ok, results: r.results, elsewhere })
 }

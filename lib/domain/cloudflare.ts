@@ -370,13 +370,14 @@ export async function listAccounts(token: string) {
 
 // ── A NAME OF THE NODE MOVES TO ITS OWN SERVER (737-15, D14) ─────────────────
 //
-// 🔒 The owner, 2026-11-13: the records switch right after the server is connected, so DNS has woken by the move; until the move the
-// server answers 503 and Cloudflare's copy of the pages covers the gap («До завершения переезда у нас CloudFlare поддерживает статическую
-// видимость этих страниц»). Hence `proxied: true` — the copy's Worker stands in front only of proxied names, and visitors keep resolving
-// to Cloudflare, so the switch takes effect at its edge at once. Only THIS node's tunnel CNAME on the name is removed; any other record
-// stays and is reported.
+// 🔒 DNS ONLY — NEVER THROUGH CLOUDFLARE'S PROXY (737-19b, D17). The owner, 2026-11-13: «Не думаю что у этого способа есть хоть какие-то
+// плюсы если мы уже переехали на собственный сервер» — Cloudflare was the computer's way to the internet (no IP of its own, the lid
+// closed); a server has its own IP, and Cloudflare's addresses get blocked in whole ranges (Spain during football matches). So the name
+// points straight at the server (the grey cloud): Cloudflare only tells the address, the visitor goes to the server, and the server issues
+// its own certificates. ✗ Until 737-19 this wrote `proxied: true` (737-15 D14, the static copy in front) — reversed by the owner.
+// Only THIS node's tunnel CNAME on the name is removed; any other record stays and is reported.
 
-/** Point one name of the node at the server: this node's tunnel CNAME removed, an A record to the server's IPv4 (proxied). */
+/** Point one name of the node at the server: this node's tunnel CNAME removed, an A record to the server's IPv4, DNS only. */
 export async function upsertServerRecord(token: string, zoneId: string, name: string, ip: string, tunnelId: string | null) {
   if (tunnelId) {
     const off = await deleteTunnelRecord(token, zoneId, name, tunnelId)
@@ -387,9 +388,9 @@ export async function upsertServerRecord(token: string, zoneId: string, name: st
   if (cname.result.length > 0) return { ok: false as const, reason: `foreign-cname ${cname.result[0].content}` }
   const existing = await send<Array<{ id: string; content: string; proxied?: boolean }>>("GET", `/zones/${zoneId}/dns_records?name=${encodeURIComponent(name)}&type=A`, token)
   if (!existing.ok) return existing
-  const body = { type: "A", name, content: ip, proxied: true, ttl: 1 }
+  const body = { type: "A", name, content: ip, proxied: false, ttl: 1 }
   if (existing.result.length > 0) {
-    if (existing.result[0].content === ip && existing.result[0].proxied) return { ok: true as const, result: { id: existing.result[0].id, unchanged: true } }
+    if (existing.result[0].content === ip && existing.result[0].proxied === false) return { ok: true as const, result: { id: existing.result[0].id, unchanged: true } }
     return send<{ id: string }>("PUT", `/zones/${zoneId}/dns_records/${existing.result[0].id}`, token, body)
   }
   return send<{ id: string }>("POST", `/zones/${zoneId}/dns_records`, token, body)

@@ -1,6 +1,6 @@
-// @api read and run the five steps of the server's own domain
+// @api read and run the domain ladder of the node on its server
 import { spawnSync } from "node:child_process"
-import { mkdirSync, rmSync, writeFileSync } from "node:fs"
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 import { revalidatePath } from "next/cache"
 import { NextRequest, NextResponse } from "next/server"
@@ -9,7 +9,9 @@ import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { nodeNames } from "@/lib/hosting/hostnames.mjs"
 import phase from "@/lib/hosting/phase.cjs"
-import { cleanDomain, domainState, HELPER, runDnsCheck, runHttpsCheck, serverMark, writeServerMark } from "@/lib/hosting/server-domain.mjs"
+import { detectDomain } from "@/lib/hosting/domain-detect.mjs"
+import { cleanDomain, domainState, HELPER, readSide, runDnsCheck, runHttpsCheck, serverMark, writeServerMark, writeSide } from "@/lib/hosting/server-domain.mjs"
+import { pointNamesAtServer } from "@/lib/hosting/server-records-cf"
 import { activateServerDomain, applyNginx, deactivateServerDomain } from "@/lib/hosting/server-domain-switch"
 
 // THE DOMAIN OF A NODE ON ITS SERVER — THE DOOR OF ITS FIVE STEPS (node step 737-8). The owner, 2026-11-13: «Внизу появится требования
@@ -30,6 +32,27 @@ const PEM_CERT = /^-----BEGIN CERTIFICATE-----[\s\S]+-----END CERTIFICATE-----\s
 const PEM_KEY = /^-----BEGIN (RSA |EC )?PRIVATE KEY-----[\s\S]+-----END (RSA |EC )?PRIVATE KEY-----\s*$/
 const json = (body: unknown, status = 200) => NextResponse.json(body, { status, ...noStore })
 
+// 737-19: the ladder's own state on the server — the last detection (`server-side/detect.json`), who writes the records (the mark's
+// `domainWay`), and whether the node holds a Cloudflare key (never the key).
+const WAYS = ["dns", "cloudflare", "migrate", "none"] as const
+function envValue(name: string): string | null {
+  const fromProcess = process.env[name]?.trim()
+  if (fromProcess) return fromProcess
+  const file = join(ROOT, ".env.local")
+  if (!existsSync(file)) return null
+  for (const line of readFileSync(file, "utf8").split(/\r?\n/)) {
+    const m = line.match(/^([A-Z_][A-Z0-9_]*)=(.*)$/)
+    if (m && m[1] === name && m[2].trim()) return m[2].trim()
+  }
+  return null
+}
+function ladder(readOnly: boolean) {
+  const zone = domainState(ROOT, { certs: null }).zone
+  const d = readSide(ROOT, "detect")
+  const way = serverMark(ROOT).domainWay
+  return { detect: d && d.name === zone ? d : null, way: typeof way === "string" ? way : null, ...(readOnly ? {} : { key: Boolean(envValue("CLOUDFLARE_API_TOKEN")) }) }
+}
+
 function cleanEnv(): NodeJS.ProcessEnv {
   return Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith("NEXT_") && k !== "PORT" && k !== "__NEXT_PROCESSED_ENV")) as NodeJS.ProcessEnv
 }
@@ -42,10 +65,10 @@ export async function GET(req: NextRequest) {
   }
   const p = phase.nodePhase(ROOT)
   if (p !== "live") return json({ ok: true, phase: p, readOnly })
-  return json({ ok: true, phase: p, readOnly, ...domainState(ROOT) })
+  return json({ ok: true, phase: p, readOnly, ...domainState(ROOT), ...ladder(readOnly) })
 }
 
-type Body = { action?: unknown; name?: unknown; host?: unknown; fullchain?: unknown; privkey?: unknown }
+type Body = { action?: unknown; name?: unknown; host?: unknown; fullchain?: unknown; privkey?: unknown; way?: unknown }
 
 export async function POST(req: NextRequest) {
   if (isTemporaryPublicAddress(req)) return json({ ok: false, reason: "public-address" }, 403)
@@ -60,11 +83,34 @@ export async function POST(req: NextRequest) {
     if (active) return json({ ok: false, reason: "active" }, 409)
     const name = cleanDomain(body?.name)
     if (!name) return json({ ok: false, reason: "bad-domain" }, 400)
-    writeServerMark(ROOT, { domain: name })
-    return json({ ok: true, ...domainState(ROOT) })
+    // A new domain starts its ladder anew: who writes the records is asked again.
+    writeServerMark(ROOT, { domain: name, ...(serverMark(ROOT).domain !== name ? { domainWay: undefined } : {}) })
+    return json({ ok: true, ...domainState(ROOT), ...ladder(false) })
   }
   if (!domainState(ROOT, { certs: null }).zone) return json({ ok: false, reason: "no-domain" }, 409)
 
+  if (action === "detect") {
+    const zone = domainState(ROOT, { certs: null }).zone as string
+    const ip = typeof serverMark(ROOT).ip === "string" ? serverMark(ROOT).ip : null
+    writeSide(ROOT, "detect", await detectDomain(zone, { ip }))
+    return json({ ok: true, ...domainState(ROOT), ...ladder(false) })
+  }
+  if (action === "way") {
+    const way = WAYS.find((w) => w === body?.way)
+    if (!way) return json({ ok: false, reason: "bad-way" }, 400)
+    writeServerMark(ROOT, { domainWay: way })
+    return json({ ok: true, ...domainState(ROOT), ...ladder(false) })
+  }
+  if (action === "cloudflare-write") {
+    const token = envValue("CLOUDFLARE_API_TOKEN")
+    if (!token) return json({ ok: false, reason: "no-cloudflare-token" }, 409)
+    const state = domainState(ROOT, { certs: null })
+    const ip = typeof serverMark(ROOT).ip === "string" ? (serverMark(ROOT).ip as string) : ""
+    const d = readSide(ROOT, "detect")
+    const hosts = state.rows.filter((r: { zone: string }) => r.zone === state.zone).map((r: { host: string }) => r.host)
+    const r = await pointNamesAtServer({ token, dnsZone: d && d.name === state.zone ? d.zone : state.zone, base: state.zone as string, hosts, ip, tunnelId: null })
+    return json({ ...r, ...domainState(ROOT), ...ladder(false) }, r.ok ? 200 : 409)
+  }
   if (action === "dns-check") {
     await runDnsCheck(ROOT)
     return json({ ok: true, ...domainState(ROOT) })
@@ -107,5 +153,5 @@ export async function POST(req: NextRequest) {
     if (r.ok) revalidatePath("/[lang]", "layout")
     return json({ ...r, ...domainState(ROOT) }, r.ok ? 200 : 422)
   }
-  return json({ ok: false, reason: "unknown-action", allowed: ["domain", "dns-check", "certs", "upload", "check", "activate", "deactivate"] }, 400)
+  return json({ ok: false, reason: "unknown-action", allowed: ["domain", "detect", "way", "cloudflare-write", "dns-check", "certs", "upload", "check", "activate", "deactivate"] }, 400)
 }

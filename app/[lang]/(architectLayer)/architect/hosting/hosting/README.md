@@ -77,7 +77,7 @@ would be a lie the day the tunnel rotates. The address arrives with a real domai
 | the server, as the owner (`npm run server -- window`) | the domain's five steps: domain · records · certificates · HTTPS · switch on | `/api/node/server/domain` |
 | the server's bare IP | the same five steps, read-only — the records to write at the registrar | `/api/node/server/domain` (GET only) |
 
-The islands live in `components/hosting/` (`server-move.client.tsx`, `server-domain.client.tsx`, the parts `ladder-step`, `stage-log`,
+The islands live in `components/hosting/` (`server-move.client.tsx`, the domain ladder `server-ladder.client.tsx` with its steps — one ladder before and after the move, 737-19 — the parts `ladder-step`, `stage-log`,
 `dns-records`); the words in their `.i18n.ts` files, chosen on the server (`widgets.tsx`). The runners: `scripts/dedicated-server/move.mjs`
 and `certs.mjs`, both detached. How the main agent leads it: skill `dedicated-server`.
 

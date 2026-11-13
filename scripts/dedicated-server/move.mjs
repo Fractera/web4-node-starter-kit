@@ -299,7 +299,9 @@ function readServerMark() {
   // ✗ Found 2026-11-13 while building the domain field: the move and the rollback wrote the mark without `domain` — the server forgot
   // the zone the copy had given it, and its names, nginx and certificates with it. The mark always carries the node's zone.
   const zone = zoneOf()
-  return { ...serverMark, ...(zone ? { domain: zone } : {}) }
+  // 737-19: who writes the records travels with the domain, so the server's ladder does not ask again after the move.
+  const way = typeof readMove(root).domainWay === 'string' && zone ? readMove(root).domainWay : null
+  return { ...serverMark, ...(zone ? { domain: zone } : {}), ...(way ? { domainWay: way } : {}) }
 }
 
 /**
@@ -420,6 +422,7 @@ const before = {
     try {
       ({ client } = await asNode())
       const mark = `import { writeServerMark } from './lib/hosting/server-domain.mjs'; writeServerMark(process.cwd(), { domain: ${JSON.stringify(zone)} })`
+      // (the choice of who writes the records reaches the server with the copy's and the move's mark — readServerMark)
       const w = await exec(client, `cd ${q(REMOTE_ROOT)} && node --input-type=module -e ${q(mark)}`, { timeoutMs: 30_000 })
       if (w.code !== 0) throw new Error(`the server's mark: ${`${w.stdout}${w.stderr}`.trim().slice(-240)}`)
       const r = await exec(client, `cd ${q(REMOTE_ROOT)} && node scripts/dedicated-server/${dry ? 'names-ready.mjs --dry' : 'name-up.mjs'}`, { timeoutMs: 45 * 60_000 })
