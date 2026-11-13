@@ -1,0 +1,152 @@
+# Step 737 — the node moves to a dedicated server
+
+## 1. Retelling and decisions
+
+The owner, 2026-11-13 ~06:20 UTC, verbatim: «У нас есть вкладка выделенный сервер наша задача заключается в том, чтобы текущий проект мог
+переехать на выделенный сервер. То есть нужно собрать инструмент который перенесёт полностью настроенный проект по в vps на убунту. То здесь
+должна быть настройка которая принимает IP-адрес сервера и которая принимает пароль с сервера а затем создают процесс при котором шаг за
+шагом автоматически и по возможности без искусственного интеллекта весь проект переносится на сервер и запускается там сначала по
+IP-адресу. Позже если пользователь предоставит домик доброй получает сертификаты на каждый из существующих Суб доменов . Значит этой
+вкладка будет также позже отвечать за выпуску сертификатов. Это означает что после того как проект обнаружит себя что он тоже работает на
+удалённом сервере он соответствующем образом переключить режим в режим выделенный сервер. Внизу появится требования прописать о записи ко
+всем существующим доменом на регистраторе. После этого ты вызываешь кнопку проверки в наличии сертификатов если нет дополнение ших и после
+этого весь проект должен работать. Скажу тебе о том что в истории Старых версий примерно апрель или май весь этот процесс существовал то
+что касается настройки а то что касается установки то он и сейчас существует в Fractera easy starter можешь посмотреть репозитории.
+Создавай один огромный шаг в результате которого наш проект сможет переезжать на выделенный сервер.»
+
+Then (~06:40): «…была вкладка домен которая имела пять шагов и определяла процесс миграции с IP-адреса на домен. Все было построено и все
+работало» and «Собираем максимально информации создавай интерфейсы заливай готовь все что ты можешь сделать без меня я все ещё сплю
+продолжай без остановки из сессии сессию пока не закончишь не будешь готов тестирование чтобы я дал тебе тесто доступ к серверу».
+
+**The goal behind the words:** a node that lives on the person's computer moves — whole, with its elements, data, bots and memory — to
+an Ubuntu VPS, without a model doing the work; it answers there by IP first; later the person's domain gets DNS records for every name
+of the node and a certificate for each, and the node works on the server around the clock, managed from Telegram.
+
+I assume that:
+- the VPS gives SSH as `root` with a password (Contabo, Hetzner, Timeweb — the common case; the easy starter assumed the same);
+- the node being moved is the node the tool runs on (no «copy someone else's node»);
+- «по IP-адресу» is plain HTTP on port 80 at the server's address, the panel read-only there (the same law as the temporary address);
+- the domain stage is the old five-step wizard reborn for the new architecture (the owner's second message).
+
+## 2. Measured state (2026-11-13, this node; details in `737-research.md`)
+
+- The tab «Выделенный сервер» = `app/[lang]/(architectLayer)/architect/hosting/hosting/` — only words + the widget «where is the project»
+  (`components/node-state/node-place.client.tsx`, door `app/api/node/place`, file `data/node/place.json`, «declared, not measured»).
+- The node: core `fractera-web4` + 5 helper processes + 11 elements, **17 pm2 processes, ≈2.3 GB resident** (embeddings 471 MB, core 300
+  MB, each element ≈130 MB), Claude Code sessions and builds on top. Temporary address only; **no own domain** (`logs/domain.json` absent).
+- The domain layout of the node (`app/api/domain/activate/route.ts`): apex → `root`, `architect.<zone>` → core, `auth.<zone>` → auth,
+  `<address>.<zone>` → every other element; elements' own domains; extra node domains (`data/node/domains.json`). Today only through a
+  Cloudflare named tunnel.
+- **The owner rule is a hole behind a proxy:** `lib/auth/owner-at-machine.ts` grants the architect layer without sign-in to `Host:
+  localhost` with no `cf-*` headers. Behind nginx on a server a stranger sending `Host: localhost` to `http://<IP>/` would get the terminal.
+  Must be closed before the first start by IP.
+- Telegram: all bot pollers start in `lib/agent-kit/mount.cjs` at the core's start; two readers of one bot = 409 (`telegram.cjs:349` yields
+  quietly) — two live copies would split the person's messages.
+- The install chain is Linux-ready: `ensure-claude.mjs` (official `install.sh` → `~/.local/bin/claude`), `ensure-cloudflared`, `ensure-pty`,
+  `ensure-eyes` (Linux needs `playwright install-deps` as root), `services:install` (npm ci + build of every element whose build is
+  missing; born elements' code untouched; element env files regenerated with this machine's paths), `serve:start`, `serve:autostart`
+  (systemd via `pm2 startup`). `fresh-project.mjs` must never run on a moved node — its mark `logs/fresh-project.json` travels.
+- The graph keeps Python in `.uv/` + `.venv/` inside its folder (macOS binaries) — excluded, its prebuild reinstalls on Linux.
+- Absolute Mac paths live only in history (agent prompts, logs, diary) — nothing functional to rewrite.
+- `ssh2` is not in the core's dependencies; macOS ships OpenSSH 8.6 and rsync 2.6.9.
+
+## 3. Reused (paths that open)
+
+- The five-step wizard, last living version core `999b2f9d` (2026-08-07): `bridges/app/_components/coding-workspace/domain-wizard.client.tsx`,
+  doors `bridges/app/app/api/config/domain/{route,wizard-state,dns-check,health-check,activate,deactivate}/route.ts`, `bridges/app/lib/
+  {server-ip,firewall,cert-info,runtime-urls}.ts`; certbot lock wait `b5641206` (origin/new-step-330). Its laws: every step's state is
+  MEASURED (DNS through a public resolver, the certificate file, the env), never remembered; a per-host list for DNS and for the certificate;
+  the issue button locked with a countdown; the last error shown with its likely cause; an own certificate may be uploaded (RU МинЦифры RSA
+  yes, GOST no); the switch is atomic with a 30 s rollback watcher; «Change domain» before activation; «back to IP».
+- The installer: github.com/Fractera/fractera-easy-starter `lib/deploy.ts` (ssh2: password → sftp the script → `setsid bash … &`) and
+  `lib/bootstrap.sh` (hardware probe first — a warning, not a refusal; swap under 2 GB; apt lock wait; Node 22; pm2; resolver pin 1.1.1.1;
+  ufw; `git config http.version HTTP/1.1`; clone with retries; nginx IP config with `client_max_body_size 200m`; a health loop).
+- The node: `components/domain/domain-ladder.client.tsx` (the ladder law: a rung opens after the previous one; a locked rung names what
+  appears and after what; the state is asked from the node), `scripts/spawn-free.mjs` (a detached runner that survives the core),
+  `_agent-kit/core/client/terminal-auth.mjs` (the Claude login link out of a terminal), `lib/domain/*` (DoH checks, zone layout),
+  `scripts/serve.mjs` (`unpublish` mark, `autostart`), `scripts/services-install.mjs`.
+
+## 4. Known limits (the laws this step must not break)
+
+- One node per computer — and never two live copies of one node: before the server's bots and clocks run, the Mac's are stopped.
+- Never read `.env.local`; never print or keep the server password; the key never leaves the computer that made it, never enters git.
+- Elements are not edited by the core; the core's own code only. Doors only asynchronous; long work detached (`spawn-free`), child
+  environment cleaned of `NEXT_*`/`PORT` (ANTI-PATTERNS «All systems»).
+- No copy of `.ts` inside the project (a backup or a test target lives outside it). A test of an installer never touches the live pm2.
+- The temporary address and the server's bare IP are read-only; sign-in never over plain HTTP.
+- A claim about Let's Encrypt, Claude Code, Ubuntu — only from the primary source (`737-research.md` names each).
+- Texts through translations (`_data`, `.i18n.ts`), `data-block` on every container, components ≤ 250 lines, every door `// @api`,
+  `parts_find` before every interface file, shadcn primitives first.
+
+## 5. Design (my picks; the owner decides the marked ones)
+
+1. **Transport.** `ssh2` (npm; the easy starter's choice; pure JS on all three systems): the password once → the node makes an ed25519 key
+   in `data/node/server/` (0600, outside git), installs its public half for `root`, pins the host key; every later call by the key. Files:
+   `rsync` over the system `ssh` with that key where both ends have it (macOS, Linux), `tar` over ssh2 otherwise (Windows).
+2. **Who runs the node on the server:** a user `fractera` (Claude Code refuses bypass mode as root — code.claude.com/docs/en/permission-modes;
+   the browser terminal must not be a root shell). Root only for the system layer, through one root-owned helper with fixed verbs
+   (`/usr/local/sbin/fractera-root`: nginx apply, cert issue/list/delete, firewall status) allowed by one sudoers line.
+3. **Front:** nginx. IP stage — one `default_server` on :80 → the core; every proxied request carries `X-Fractera-Edge: 1` (set by nginx,
+   a client cannot remove it); loopback `Host` names → 444. Domain stage — one server block per name from the name table, HTTP→HTTPS, the
+   ACME path from a webroot. No `ssl_stapling` (Let's Encrypt certificates carry CRL only — letsencrypt.org/docs/profiles, 2026-10-04).
+4. **Certificates:** certbot (`certonly --webroot`, one lineage per name, `--keep-until-expiring`, `--register-unsafely-without-email` —
+   Let's Encrypt ended expiry e-mails on 2025-06-04). One name failing does not block the others; the button «check and add missing» maps
+   one-to-one; renewals are exempt from the 50-per-week limit. An own certificate may be uploaded instead (the old Step 2B).
+5. **One table of names** (`lib/hosting/hostnames.mjs`) — the DNS list, nginx, certificates and the end-to-end check read it; nothing keeps
+   its own list (the old wizard's 197.1 desync: the checks wanted 9 names while certbot issued 7).
+6. **The move is a ladder of rungs**, each measured, resumable, model-free: 1 address and password → 2 the server is checked (OS, CPU,
+   RAM vs the node's measured 2.3 GB, disk vs the copy's size, ports 80/443) → 3 the server is prepared → 4 the copy and the build →
+   5 Claude Code signed in on the server (its login link shown here, the code pasted here) → 6 a rehearsal: the server's node starts
+   **silent** (no bots, no tunnel, no clocks; panel read-only by IP) and is checked from outside → 7 **the move**: the Mac's agents and
+   node stop, the last changes are copied, the server starts whole, its bots take Telegram, the checks run again; failure → the Mac comes
+   back by itself → 8 done: «your node lives at http://IP», with «return to this computer».
+7. **The mode switch is detected, not declared:** the move writes `data/node/server.json` on the server (ip, user, when, from) and
+   `data/node/moved.json` on the Mac. The place reads them: Linux + the marker + this machine owns that IP → «dedicated server (moved
+   <date>)». The Mac's `serve:start` refuses while `moved.json` stands and names `npm run server -- return`.
+8. **The domain on the server = the old five steps, in the server's tab** (shown when the mode is dedicated): 1 the domain → 2 the DNS
+   records for every name (A to the server's IP; optional `*` shortcut) with «check DNS» (public DoH) → 3 certificates: check, add the
+   missing, or upload your own → 4 the end-to-end HTTPS check per name → 5 switch on (nginx TLS, `logs/domain.json` with `via: "server"`,
+   `APP-CONFIG` url, auth env, rebuild) with a 30 s rollback, and «back to IP». The main agent runs the same steps from Telegram:
+   `npm run server -- dns|certs|check|activate`.
+9. **The Cloudflare tunnel after the move:** the quick tunnel is off on the server (`logs/tunnel.json unpublished`), the Mac's stops with
+   the Mac's node. A node already on a Cloudflare domain may instead move its named tunnel to the server (no DNS change, Cloudflare's
+   certificates) — offered as an alternative, not built in this step.
+10. **Rollback:** before the move rung nothing on the Mac changed; during it a failed check brings the Mac back by itself; after it
+    `npm run server -- return` copies the server's data back and starts the Mac.
+11. **What stays on the Mac:** the whole folder as a cold copy as of the move, the SSH key, `moved.json`; `npm run server -- window`
+    opens the server's panel on this computer through SSH (owner rights without TLS, before the domain).
+
+**Decisions for the owner (my pick first):** D1 the shortcut `*` record shown beside the explicit list — yes; D2 HTTPS by bare IP with a
+6-day certificate (`shortlived` profile, certbot ≥ 5.4 `--ip-address`) — not now, later; D3 SSH password login turned off on the server
+after the key works — offered as a button with his yes, never by itself; D4 test the whole ladder first in a disposable Ubuntu container
+on this Mac (colima is installed; ≈2–3 GB RAM while it runs) — only with his word.
+
+## 6. Substeps (vertical, each with its proof planned in advance)
+
+| # | Result one can show | Proof (two planes, a negative control) |
+|---|---|---|
+| 737-1 | `npm run server -- names [--domain x]` prints every public name of this node with its port and DNS label | unit test on fixtures (root absent → apex to the core; an element without address → its id; a deleted element never appears) + the live table of this node |
+| 737-2 | The edge law: behind nginx no request is «the owner at the keyboard»; the bare server IP is read-only; nginx configs generated | unit test of the generators (444 for loopback names, the edge header in every location, no stapling) + a live door call with `x-fractera-edge` refused while the same call without it passes |
+| 737-3 | The SSH road: password once → key → key only; streamed commands; detached scripts | a local ssh2 test server: wrong password refused; after the key is installed the password is refused and the key works; the password never in a file |
+| 737-4 | The server's own scripts: probe, prepare (packages, user, helper, firewall, swap, resolver), the root helper | `bash -n` + a dry run listing every command + (with access) a run on the test server |
+| 737-5 | The copy: phase 1 live, phase 2 frozen, the exclusions, the size measured first | a local rsync into a scratch folder outside the project: no `node_modules`/`.next*`/`.venv`/key; `.git`, `data`, marks present |
+| 737-6 | Install and start on the server: core, elements, eyes, Claude CLI; silent start; autostart | on the test server: `/api/health` of the core and every element on the server's loopback + `http://IP/` 200 read-only |
+| 737-7 | The ladder in the tab «Выделенный сервер» (the Mac side) with its doors and the detached runner | eyes on every rung state (fixture) in both themes; doors refuse without the owner and on the temporary address |
+| 737-8 | The domain on the server: the five steps, DNS list, certificates, end-to-end check, switch and back | unit tests (DNS list, cert coverage) + on the test server with a test domain |
+| 737-9 | Detected mode and the Mac after the move: markers, place, refusing start, `return`, `window` | fixture tests of the place reader + `serve:start` refused with `moved.json` and passing without it |
+| 737-10 | Words: skill `dedicated-server`, CLAUDE.md lines, README of the tab | `check:instruction`, `check:dev-docs`, the skill found by its words |
+
+Order: 1 → 2 → 3 → 5 → 4 → 9 → 7 → 6 → 8 → 10. Repository: the working copy `~/fractera-dev/web4-node-starter-kit`, branch `main`, pushed to
+Fractera; the node takes it by `node:update`. Everything that needs no server is built and proven before the owner's access; the rest
+waits for it with its proof written in advance.
+
+**Parts born here:** `components/hosting/ladder-step` (the rung of a ladder, taken out of the domain ladder — @part), the server ladder,
+the DNS records table (@part, reused by the domain ladder later), the live stage log (@part).
+
+**Not in this step:** moving the Cloudflare named tunnel to the server; HTTPS by bare IP; containers for elements; moving the Claude
+session journals (agents start fresh on the server, their records carry the work); several servers; Windows as the source of a move
+(tar fallback written, not proven).
+
+## 7. State
+
+- 2026-11-13 06:50 — plan written; research `737-research.md`. Building starts at 737-1 without waiting (the owner's word above).
