@@ -299,7 +299,7 @@ empty server = the first registration through `npm run server -- window`; D11 th
 proxied. Execution order: 737-18 → 737-15/15c → 737-17 → 737-16 → 737-11a → 737-11b; each committed after the chain; the clean runs
 (737-13) need the owner's OS reinstall at the end.
 
-### 10.3 737-11a as built (2026-11-13 ~15:30 UTC) — measured in the session that built it
+### 10.3 737-11a as built (2026-11-13 ~15:00 UTC) — measured in the session that built it
 
 - **Measured:** the core starts the main agent's bot poller at its own start (`lib/agent-kit/mount.cjs` walks every kit copy, `build`
   included) and the poller reads the token at every 3-s tick → a token saved on the server is read with no restart (the letter's
@@ -320,7 +320,7 @@ proxied. Execution order: 737-18 → 737-15/15c → 737-17 → 737-16 → 737-11
   of the new bot's three steps; whether the server's `session-lost` also wakes the main agent after the move (its session record travels
   with the copy, its Claude conversation does not).
 
-### 10.4 737-11b as built (2026-11-13 ~15:50 UTC) — the road «Новый сервер», my picks (§10.2)
+### 10.4 737-11b as built (2026-11-13 ~15:15 UTC) — the road «Новый сервер», my picks (§10.2)
 
 - **The road is the tab's first choice** (`move.json` → `road`, changeable until `prepare` starts): «Переезд этого узла» keeps the eight
   rungs; «Новый независимый сервер» runs connect · probe · prepare · copy · claude · **start** · telegram (`NEW_RUNGS`, `rungsOf`).
