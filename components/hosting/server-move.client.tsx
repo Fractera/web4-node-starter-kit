@@ -9,7 +9,7 @@ import { ServerBusy } from "@/components/hosting/server-move-busy.client"
 import { ServerRecords } from "@/components/hosting/server-move-records.client"
 import { RungBody, type MoveState } from "@/components/hosting/server-move-rung.client"
 import { ServerTelegram, type HomeBot } from "@/components/hosting/server-move-telegram.client"
-import { CopyPlanChoice, RoadChoice, type CopyPlan, type Road } from "@/components/hosting/server-move-road.client"
+import { CopyPlanChoice, EarlierRun, RoadChoice, type CopyPlan, type Road } from "@/components/hosting/server-move-road.client"
 import type { TelegramChannelWords } from "@/app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/words/telegram-channel.i18n"
 import { ServerDomain } from "@/components/hosting/server-domain.client"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
@@ -101,6 +101,10 @@ export function ServerMove({ words, domainWords, dialogUi, lang, channelWords }:
   const started = ["prepare", "copy", "claude", "rehearse", "start", "telegram", "move"].some((r) => rungs[r]?.state)
   const road: Road = view.road === "new" ? "new" : "move"
   const independent = road === "new" && rungs.start?.state === "done"
+  const running = Object.values(rungs).some((r) => r?.state === "running")
+  const current = view.rungs.findIndex((r) => rungs[r]?.state !== "done")
+  const stale = Date.now() - Date.parse(view.state.updatedAt ?? "") > 30 * 60_000
+  const earlier = Object.keys(rungs).length > 0 && !running && !moved && !independent && current >= 0 && (rungs[view.rungs[current]]?.state === "failed" || stale)
   const withPlan = (r: string, x: Record<string, unknown> = {}) => start(r, r === "copy" && road === "new" ? { ...plan, ...x } : x)
   const taken = (sitesItem || othersItem || view.state.clear?.state === "running") && !started
     ? { host: view.state.server?.host, sites: String(sitesItem?.value ?? "").split(", ").filter(Boolean), programs: Number(othersItem?.value ?? 0), clear: view.state.clear }
@@ -108,6 +112,9 @@ export function ServerMove({ words, domainWords, dialogUi, lang, channelWords }:
   return (
     <div className="my-6 flex flex-col gap-3" data-block="server-move">
       <p className="text-foreground text-sm">{words.lead}</p>
+      {earlier ? (
+        <EarlierRun at={new Date(view.state.updatedAt ?? Date.now()).toLocaleString()} busy={busy} host={view.state.server?.host ?? "—"} n={current + 1} onRestart={() => void start("restart")} step={words.rung[view.rungs[current]].title} words={words.earlier} />
+      ) : null}
       <RoadChoice busy={busy} onChoose={(r) => void start("road", { road: r })} open={!started} road={road} words={words.road} />
       {view.rungs.map((id, i) => {
         const open = view.rungs.slice(0, i).every((p) => rungs[p]?.state === "done")

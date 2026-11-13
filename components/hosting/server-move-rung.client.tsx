@@ -28,6 +28,7 @@ export type MoveState = {
   telegram?: { choice?: "move" | "new" | "later"; bot?: string | null; allowed?: number }
   // 737-11b: the road and the new server's copy plan; the greeting's result.
   road?: "move" | "new"
+  updatedAt?: string
   copyPlan?: { variant: "clone" | "fresh"; data: boolean }
   welcome?: { ok?: boolean; state?: string; reason?: string | null }
 }

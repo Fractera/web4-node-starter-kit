@@ -35,6 +35,7 @@ export type ServerMoveWords = {
   road: { title: string; move: string; new: string; moveNote: string; newNote: string }
   plan: { clone: string; fresh: string; cloneNote: string; freshNote: string; data: string; dataYes: string; dataNo: string }
   newDone: { title: string; text: string; forget: string; note: string }
+  earlier: { title: string; text: string; restart: string; note: string }
   telegram: { moveBot: string; moveNote: string; newTitle: string; newNote: string; newNoteHome: string; later: string; laterNote: string; doneMove: string; doneNew: string; doneLater: string; change: string; remoteDone: string }
   busy: { title: string; text: string; clear: string; cancel: string; clearTitle: string; risks: string[]; agree: string; clearConfirm: string; cancelTitle: string; cancelText: string; cancelConfirm: string; notNow: string; clearing: string; cleared: string; failed: string }
   stage: Record<string, string>
@@ -117,6 +118,12 @@ const en: ServerMoveWords = {
     data: "Move this node's data",
     dataYes: "Accounts, the elements' stores, the agents' memory and the diary travel too.",
     dataNo: "Accounts, stores, memory and the diary stay here: the server starts empty, and its first registration is its architect.",
+  },
+  earlier: {
+    title: "An earlier run is on this page",
+    text: "Server {host}: it stopped at step {n} «{step}», {at}. Go on from that step, or start again from the road choice.",
+    restart: "Start again",
+    note: "Nothing on the server is touched: the record of this run goes to the archive, and you start from the first step with the password.",
   },
   newDone: {
     title: "The independent server runs",
@@ -240,6 +247,12 @@ const ru: ServerMoveWords = {
     data: "Перенести данные этого узла",
     dataYes: "Учётные записи, хранилища элементов, память агентов и дневник тоже переедут.",
     dataNo: "Учётные записи, хранилища, память и дневник останутся здесь: сервер начнёт пустым, его первая регистрация — его архитектор.",
+  },
+  earlier: {
+    title: "На странице прошлый прогон",
+    text: "Сервер {host}: он остановился на шаге {n} «{step}», {at}. Продолжите с этого шага или начните заново с выбора дороги.",
+    restart: "Начать заново",
+    note: "На сервере ничего не трогается: запись этого прогона уходит в архив, и вы начинаете с первого шага с паролем.",
   },
   newDone: {
     title: "Независимый сервер работает",

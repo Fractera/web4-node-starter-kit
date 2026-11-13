@@ -51,3 +51,19 @@ export function CopyPlanChoice({ plan, busy, words, onChange }: { plan: CopyPlan
     </div>
   )
 }
+
+// 737 (the owner, 2026-11-13: «если я открываю вкладку … эта страница должна быть чистой если я начинаю с нуля а если ты хочешь чтобы я
+// продолжал то эта часть должна быть понятна»): a run left unfinished — its last step failed, or nothing moved for 30 minutes — is named
+// at the top with the way to set it aside.
+export function EarlierRun({ host, n, step, at, busy, words, onRestart }: { host: string; n: number; step: string; at: string; busy: boolean; words: ServerMoveWords["earlier"]; onRestart: () => void }) {
+  return (
+    <div className="flex flex-col gap-2 rounded-lg border border-warning/50 bg-warning/10 p-4" data-block="server-move-earlier">
+      <p className="font-medium text-foreground text-sm">{words.title}</p>
+      <p className="text-foreground text-sm">{words.text.replace("{host}", host).replace("{n}", String(n)).replace("{step}", step).replace("{at}", at)}</p>
+      <div className="flex flex-col gap-1" data-block="server-move-earlier-restart">
+        <Button className="w-fit" disabled={busy} onClick={onRestart} size="sm" variant="outline">{words.restart}</Button>
+        <Small className="text-muted-foreground">{words.note}</Small>
+      </div>
+    </div>
+  )
+}

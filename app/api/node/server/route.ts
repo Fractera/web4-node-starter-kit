@@ -127,6 +127,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(view(), noStore)
   }
 
+  if (rung === "restart") {
+    // 737 (the owner, 2026-11-13: «каждый раз эта страница должна быть чистой если я начинаю с нуля»): an unfinished run is set aside
+    // whole — its record goes to `data/node/server/done/`, the ladder starts from the road choice. The server is not touched.
+    const state = settle(readMove(ROOT))
+    if (state.rungs?.move?.state === "done" || ALL_RUNGS.some((r: string) => state.rungs?.[r]?.state === "running") || !existsSync(moveFile(ROOT))) {
+      return NextResponse.json({ ok: false, reason: "order" }, { status: 409, ...noStore })
+    }
+    const kept = join(ROOT, "data", "node", "server", "done")
+    mkdirSync(kept, { recursive: true, mode: 0o700 })
+    renameSync(moveFile(ROOT), join(kept, `${String(state.server?.host ?? "server").replace(/[^a-z0-9.-]/gi, "_")}-unfinished-${Date.now()}.json`))
+    return NextResponse.json(view(), noStore)
+  }
+
   if (rung === "forget") {
     // 737-11b: an independent server that runs is left to live on its own; its record is kept aside and the tab is free for another
     // server. The node's key stays on that server (a copy again is a new road to the same address).
