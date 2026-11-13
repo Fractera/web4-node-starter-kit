@@ -650,7 +650,9 @@ function deliver(live, element, text, { confirmed, from, about } = {}) {
 function watchStart(s, element, at, about) {
   const t = setTimeout(() => {
     const same = session.current(s.service) === s
-    if (same && conversationSince(s, element, at)) return console.log(`[agents/start] ${s.service}: работа началась (задача ${hhmm(at)})`)
+    // ✗ 2026-11-13 06:12 (D17): the agent did the task and was closed by the main agent before the check — «its session is gone» was a
+    // false alarm. The conversation moved after the task — it started, whether the session still lives or not.
+    if (conversationSince(s, element, at)) return console.log(`[agents/start] ${s.service}: работа началась (задача ${hhmm(at)})`)
     const why = !same ? 'его сессии больше нет' : questionOnScreen(s.buffer) ? `на его экране вопрос: «${questionLine(s.buffer)}»` : 'задачи нет в его разговоре — ход не начался'
     console.log(`[agents/start] ${s.service}: НЕ начал за ${Math.round(startCheckMs() / 60000)} мин — ${why}`)
     tellMain('not-started', element, `Узел: агент элемента ${element} не начал работу через ${Math.round(startCheckMs() / 60000)} мин после твоей задачи («${about ?? ''}», ${hhmm(at)}): ${why}. Реши сейчас: вопрос разрешения — npm run permit; доверие папке — npm run trust -- ${element}; хода нет или сессии нет — npm run task -- ${element} "<задача>" ещё раз.`)
