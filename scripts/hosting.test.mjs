@@ -181,43 +181,15 @@ if (process.platform === 'win32') {
 } else {
   console.log('737-3 the SSH road (a real ssh2 server in this process, commands run by bash in a temporary home)')
   const { default: ssh2 } = await import('ssh2')
-  const { spawn } = await import('node:child_process')
   const { readdirSync, readFileSync, statSync } = await import('node:fs')
   const sshLib = await import('../lib/hosting/ssh.mjs')
   const SECRET = 'correct-horse-737'
   const home = mkdtempSync(join(tmpdir(), 'hosting-ssh-home-'))
   const nodeRoot = mkdtempSync(join(tmpdir(), 'hosting-ssh-node-'))
   roots.push(home, nodeRoot)
-  let passwordAllowed = true
-  function sshServer(hostKey, port = 0) {
-    return new Promise((resolve) => {
-      const server = new ssh2.Server({ hostKeys: [hostKey] }, (client) => {
-        client.on('authentication', (ctx) => {
-          if (ctx.method === 'password') return passwordAllowed && ctx.username === 'root' && ctx.password === SECRET ? ctx.accept() : ctx.reject()
-          if (ctx.method === 'publickey') {
-            let lines = []
-            try { lines = readFileSync(join(home, '.ssh', 'authorized_keys'), 'utf8').split('\n').filter(Boolean) } catch { /* none yet */ }
-            const key = lines.map((l) => ssh2.utils.parseKey(l)).find((k) => !(k instanceof Error) && k.type === ctx.key.algo && k.getPublicSSH().equals(ctx.key.data))
-            if (!key) return ctx.reject()
-            if (ctx.signature) return key.verify(ctx.blob, ctx.signature, ctx.hashAlgo) === true ? ctx.accept() : ctx.reject()
-            return ctx.accept()
-          }
-          return ctx.reject(['password', 'publickey'])
-        }).on('ready', () => {
-          client.on('session', (accept) => {
-            accept().on('exec', (acceptExec, _reject, info) => {
-              const stream = acceptExec()
-              const child = spawn('bash', ['-c', info.command], { env: { HOME: home, PATH: process.env.PATH } })
-              child.stdout.pipe(stream, { end: false })
-              child.stderr.pipe(stream.stderr, { end: false })
-              child.on('close', (code) => { stream.exit(code ?? 1); stream.end() })
-            })
-          })
-        }).on('error', () => { /* a refused client */ })
-      })
-      server.listen(port, '127.0.0.1', () => resolve(server))
-    })
-  }
+  const { startTestSshServer } = await import('./hosting-test-ssh.mjs')
+  const sshState = { passwordAllowed: true }
+  const sshServer = async (hostKey, port = 0) => (await startTestSshServer({ home, password: SECRET, hostKey, port, state: sshState })).server
   const hostKeyA = ssh2.utils.generateKeyPairSync('ed25519').private
   let srv = await sshServer(hostKeyA)
   const sshPort = srv.address().port
@@ -235,7 +207,7 @@ if (process.platform === 'win32') {
     assert.equal(statSync(join(nodeRoot, 'data', 'node', 'server', 'id_ed25519')).mode & 0o777, 0o600)
   })
   await ta('negative: with password login off, the password is refused and the key alone works', async () => {
-    passwordAllowed = false
+    sshState.passwordAllowed = false
     await assert.rejects(sshLib.connect({ root: nodeRoot, host: '127.0.0.1', port: sshPort, password: SECRET }), (e) => e.reason === 'auth')
     const { client } = await sshLib.connect({ root: nodeRoot, host: '127.0.0.1', port: sshPort })
     const out = await sshLib.exec(client, 'echo hello-from-server; exit 3')
@@ -244,7 +216,7 @@ if (process.platform === 'win32') {
     assert.equal(out.code, 3)
   })
   await ta('a second install adds no second line', async () => {
-    passwordAllowed = true
+    sshState.passwordAllowed = true
     await sshLib.installKey({ root: nodeRoot, host: '127.0.0.1', port: sshPort, password: SECRET })
     const lines = readFileSync(join(home, '.ssh', 'authorized_keys'), 'utf8').split('\n').filter((l) => l.includes('fractera-node'))
     assert.equal(lines.length, 1)

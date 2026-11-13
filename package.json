@@ -69,6 +69,7 @@
     "test:node-index": "node scripts/node-index.test.mjs",
     "test:take": "node scripts/take.test.mjs",
     "test:hosting": "node scripts/hosting.test.mjs",
+    "test:hosting-move": "node scripts/hosting-move.test.mjs",
     "test:parts-find": "node scripts/parts-find.test.mjs",
     "test:tools-protocol": "node scripts/tools-protocol.test.mjs",
     "test:usage-ledger": "node scripts/usage-ledger.test.mjs",

@@ -19,7 +19,7 @@ PORT80="$(busy 80)" PORT443="$(busy 443)" \
 NGINX="$(command -v nginx >/dev/null && echo true || echo false)" \
 SYSTEMD="$([ -d /run/systemd/system ] && echo true || echo false)" \
 NODE_VERSION="$(node --version 2>/dev/null || true)" \
-PUBLIC_IP="$(curl -s --max-time 6 https://api.ipify.org 2>/dev/null || true)" \
+PUBLIC_IP="$([ "${DRY_RUN:-0}" = 1 ] || curl -s --max-time 6 https://api.ipify.org 2>/dev/null || true)" \
 NODE_THERE="$([ -d "/home/fractera/$FOLDER" ] && echo true || echo false)" \
 UFW="$(ufw status 2>/dev/null | head -1 | grep -qi active && echo active || echo inactive)" \
 SSH_PORT="$SSH_PORT" \
