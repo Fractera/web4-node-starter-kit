@@ -496,5 +496,18 @@ console.log('737-7 a busy server: free it or cancel')
   }
 }
 
+console.log('737-7 the Claude sign-in link (the owner\'s test server 2026-11-13: the tab opened /[object Object])')
+{
+  const { pathToFileURL } = await import('node:url')
+  const src = readFileSync(join(import.meta.dirname, 'dedicated-server', 'move.mjs'), 'utf8')
+  const kit = join(import.meta.dirname, '..', 'app', '[lang]', '(architectLayer)', 'architect', 'kits', '_agent-kit', 'core', 'client', 'terminal-auth.mjs')
+  const { extractAuthUrl } = await import(pathToFileURL(kit).href)
+  t('the extractor gives { how, url }; the runner stores only the address string', () => {
+    const got = extractAuthUrl('\x1b]8;;https://claude.com/cai/oauth/authorize?code=true&client_id=x&state=Ab3dEf9\x07Sign in\x1b]8;;\x07\n')
+    assert.equal(typeof got?.url, 'string')
+    assert.ok(/extractAuthUrl\(buf\)\?\.url/.test(src), 'move.mjs must keep `.url` of the extractor, not the pair')
+  })
+}
+
 for (const r of roots) rmSync(r, { recursive: true, force: true })
 console.log(`${passed} passed${process.exitCode ? ', FAILED' : ''}`)

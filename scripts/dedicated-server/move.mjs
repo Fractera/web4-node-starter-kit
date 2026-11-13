@@ -165,7 +165,7 @@ const rungs = {
           stream.on('data', (d) => {
             buf += d.toString()
             if (!shown) {
-              const url = extractAuthUrl(buf)
+              const url = extractAuthUrl(buf)?.url ?? null
               if (url) { shown = true; patchMove(root, (s) => { s.claude = { url, at: now() } }) }
             }
           })
@@ -253,7 +253,17 @@ async function allChecks(client) {
   if (dry) return [{ id: 'dry', ok: true }]
   let commit = null
   try { commit = execSync('git rev-parse HEAD', { cwd: root, encoding: 'utf8' }).trim() } catch { /* no git */ }
-  return [...(await outsideChecks(server().host, { commit })), ...(await insideChecks(client, root))]
+  const outside = await outsideChecks(server().host, { commit })
+  // ✗ The owner's test server 2026-11-13: the rehearsal failed «commit» because this node had written a state record (a commit touching
+  // only development-docs/) after the copy. The same code is what matters: a difference of records alone keeps the check green.
+  const c = outside.find((x) => x.id === 'commit')
+  if (c && !c.ok && c.value && /^[0-9a-f]{7,40}$/.test(String(c.value))) {
+    try {
+      const changed = execSync(`git diff --name-only ${c.value} HEAD`, { cwd: root, encoding: 'utf8' }).split('\n').filter(Boolean)
+      if (changed.every((f) => f.startsWith('development-docs/'))) Object.assign(c, { ok: true, recordsOnly: changed.length })
+    } catch { /* the server's commit is unknown here: a different version */ }
+  }
+  return [...outside, ...(await insideChecks(client, root))]
 }
 
 // BEFORE THE MOVE — WHEN THE SERVER IS NOT EMPTY (the owner, 2026-11-13: «если мы обнаружили что сервер занят … очистить сервер и
