@@ -66,13 +66,15 @@ function hostname() {
 
 const token = envValue('CLOUDFLARE_TUNNEL_TOKEN')
 const host = hostname()
+// 737-8: на своём сервере домен держит nginx узла (`via: "server"`), а не туннель — житель спит, иначе два пути вели бы к одному имени.
+const viaServer = (() => { try { return JSON.parse(readFileSync(domainFile, 'utf8')).via === 'server' } catch { return false } })()
 
 // 🛑 НЕЧЕГО ПОДНИМАТЬ — ЭТО НЕ ОШИБКА, А ЗАКОННОЕ СОСТОЯНИЕ. Домен ещё не
 // подключали. Житель обязан спокойно уснуть, а не падать в вечный цикл
 // перезапусков: упавший процесс в pm2 выглядит поломкой продукта.
-if (!token || !host) {
-  log('домен не подключён — засыпаю. Подключение: вкладка «Активация домена».')
-  saveState({ running: false, reason: 'not-configured', checkedAt: new Date().toISOString() })
+if (!token || !host || viaServer) {
+  log(viaServer ? 'домен подключён на своём сервере через nginx — туннель не нужен, засыпаю.' : 'домен не подключён — засыпаю. Подключение: вкладка «Активация домена».')
+  saveState({ running: false, reason: viaServer ? 'via-server' : 'not-configured', checkedAt: new Date().toISOString() })
   setInterval(() => {}, 1 << 30)
 } else {
   const bin = findCloudflared()

@@ -355,5 +355,100 @@ if (!transfer.hasRsync()) {
   })
 }
 
+console.log('737-8 the domain on the server: DNS, certificates, HTTPS, the five steps')
+{
+  const dom = await import('../lib/hosting/server-domain.mjs')
+  const { checkNames } = await import('../lib/hosting/dns-check.mjs')
+  const IP = '203.0.113.7'
+  // A fake public resolver: a table host → { A, AAAA }; a host marked `down` makes every resolver fail.
+  const resolver = (zone) => async (url) => {
+    const u = new URL(url)
+    const host = u.searchParams.get('name')
+    const type = u.searchParams.get('type')
+    const rec = zone[host] ?? {}
+    if (rec.down) throw new Error('resolver down')
+    const data = rec[type] ?? []
+    return { ok: true, json: async () => ({ Answer: data.map((d) => ({ type: type === 'A' ? 1 : 28, data: d })) }) }
+  }
+  const serverRoot = (extra = {}) => fixture({ services: SERVICES, runtime: { port: 24680 }, server: { phase: 'live', ip: IP, domain: 'example.org', ...extra } })
+  await ta('DNS: ok / missing / elsewhere / AAAA elsewhere / no resolver answered — each named', async () => {
+    const table = nodeNames({ root: serverRoot() })
+    const zone = { 'example.org': { A: [IP] }, 'architect.example.org': { A: [IP], AAAA: ['2001:db8::1'] }, 'auth.example.org': { A: ['198.51.100.1'] }, 'data.example.org': { down: true } }
+    const res = await checkNames(table, IP, null, resolver(zone))
+    const st = Object.fromEntries(res.map((r) => [r.host, r.state]))
+    assert.equal(st['example.org'], 'ok')
+    assert.equal(st['architect.example.org'], 'aaaa')
+    assert.equal(st['auth.example.org'], 'elsewhere')
+    assert.equal(st['data.example.org'], 'unknown')
+    assert.equal(st['config.example.org'], 'missing')
+    // negative: the server's own IPv6 in AAAA is no trap
+    assert.equal((await checkNames(table, IP, '2001:db8::1', resolver(zone))).find((r) => r.host === 'architect.example.org').state, 'ok')
+  })
+  await ta('the five steps are measured: a DNS answer for another IP counts as «not checked»; all ok → steps open in order', async () => {
+    const root = serverRoot()
+    const all = Object.fromEntries(nodeNames({ root }).rows.map((r) => [r.host, { A: [IP] }]))
+    await dom.runDnsCheck(root, resolver(all))
+    let st = dom.domainState(root, { certs: [] })
+    assert.equal(st.steps.domain, true)
+    assert.equal(st.steps.dns, true)
+    assert.equal(st.steps.certs, false)
+    assert.ok(st.records.length >= 1 && st.records[0].records.every((r) => r.value === IP))
+    assert.ok(!JSON.stringify(st).includes('2468'), 'a port leaked into the domain state')
+    // negative: the server's IP changed → the old answer is not a proof
+    dom.writeServerMark(root, { ip: '203.0.113.8' })
+    st = dom.domainState(root, { certs: [] })
+    assert.equal(st.steps.dns, false)
+    assert.ok(st.rows.every((r) => r.dns === 'unchecked'))
+  })
+  await ta('certificates to issue: only names whose DNS points here and which have none or under 30 days', async () => {
+    const root = serverRoot()
+    const zone = Object.fromEntries(nodeNames({ root }).rows.map((r) => [r.host, { A: [r.host === 'auth.example.org' ? '198.51.100.1' : IP] }]))
+    await dom.runDnsCheck(root, resolver(zone))
+    const st = dom.domainState(root, { certs: LIST })
+    const issue = dom.namesToIssue(st)
+    assert.ok(!issue.includes('example.org'), 'the apex has a valid certificate')
+    assert.ok(!issue.includes('auth.example.org'), 'auth points elsewhere')
+    assert.ok(!issue.includes('data.example.org'), 'covered by the wildcard')
+  })
+  await ta('HTTPS from outside: 200 and 301 answer, nginx 503 and a TLS refusal do not', async () => {
+    const root = serverRoot()
+    const answers = { 'example.org': 200, 'www.example.org': 301, 'architect.example.org': 503 }
+    const fake = async (url) => {
+      const host = new URL(url).hostname
+      if (host === 'auth.example.org') throw Object.assign(new Error('fetch failed'), { cause: { code: 'ERR_TLS_CERT_ALTNAME_INVALID' } })
+      return { status: answers[host] ?? 200 }
+    }
+    const rec = await dom.runHttpsCheck(root, fake)
+    const by = Object.fromEntries(rec.results.map((r) => [r.host, r]))
+    assert.equal(by['example.org'].ok, true)
+    assert.equal(by['www.example.org'].ok, true)
+    assert.equal(by['architect.example.org'].ok, false)
+    assert.equal(by['auth.example.org'].error, 'ERR_TLS_CERT_ALTNAME_INVALID')
+    assert.equal(dom.domainState(root, { certs: [] }).steps.check, false)
+  })
+  t('the domain typed by a person is cleaned; negative: not a domain → null', () => {
+    assert.equal(dom.cleanDomain(' https://Example.ORG/path?x=1 '), 'example.org')
+    assert.equal(dom.cleanDomain('example.org.'), 'example.org')
+    assert.equal(dom.cleanDomain('localhost'), null)
+    assert.equal(dom.cleanDomain('a b.org'), null)
+    assert.equal(dom.cleanDomain('203.0.113.7'), null)
+  })
+  await ta('the certificate runner (dry): nginx before and after, one cert-issue per name to issue; negative: a name pointing elsewhere is never issued', async () => {
+    const { spawnSync } = await import('node:child_process')
+    const root = serverRoot()
+    const zone = Object.fromEntries(nodeNames({ root }).rows.map((r) => [r.host, { A: [r.host === 'auth.example.org' ? '198.51.100.1' : IP] }]))
+    await dom.runDnsCheck(root, resolver(zone))
+    const r = spawnSync(process.execPath, [join(import.meta.dirname, 'dedicated-server', 'certs.mjs'), '--dry', '--root', root], { encoding: 'utf8' })
+    assert.equal(r.status, 0, r.stderr + r.stdout)
+    const run = dom.readSide(root, 'certs')
+    assert.equal(run.running, false)
+    assert.equal(run.commands[0], 'fractera-root nginx-apply')
+    assert.equal(run.commands.at(-1), 'fractera-root nginx-apply')
+    assert.ok(run.commands.includes('fractera-root cert-issue example.org'))
+    assert.ok(!run.commands.some((c) => c.includes('auth.example.org')), 'issued for a name that points elsewhere')
+    assert.ok(run.hosts.every((h) => h.state === 'done'))
+  })
+}
+
 for (const r of roots) rmSync(r, { recursive: true, force: true })
 console.log(`${passed} passed${process.exitCode ? ', FAILED' : ''}`)

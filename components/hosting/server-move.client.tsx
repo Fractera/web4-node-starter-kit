@@ -5,6 +5,8 @@ import { useCallback, useEffect, useState } from "react"
 import { LadderLocked, LadderStep } from "@/components/hosting/ladder-step"
 import type { ServerMoveWords } from "@/components/hosting/server-move.i18n"
 import { RungBody, type MoveState } from "@/components/hosting/server-move-rung.client"
+import { ServerDomain } from "@/components/hosting/server-domain.client"
+import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import { isTemporaryHostname } from "@/lib/auth/temporary-address"
 
 // THE MOVE TO A DEDICATED SERVER — THE LADDER (node step 737-7). The owner, 2026-11-13: «настройка которая принимает IP-адрес сервера и
@@ -13,12 +15,14 @@ import { isTemporaryHostname } from "@/lib/auth/temporary-address"
 // 🔒 THE LADDER LAW (the domain ladder, 259-1): a rung opens when the one before it is done; a closed one is a grey line naming what
 // appears there. The state is the node's (`/api/node/server` reads `data/node/server/move.json`), never this island's memory: opened from
 // another device, the ladder shows the same truth. While a rung works the island asks every 3 s; otherwise every 15 s.
-// 🔒 ON A PUBLIC ADDRESS NOTHING IS ASKED: the door refuses there, and the island says so instead of showing a broken ladder.
+// 🔒 ON A PUBLIC ADDRESS THE LADDER IS NOT ASKED: its door refuses there. The server's bare IP is such an address too — there the domain's
+// five steps show read-only (737-8: the records to write are what the person opening the IP wants to see).
+// 🔒 ON THE SERVER ITSELF (phase live) THE MOVE IS OVER: the tab shows the domain's five steps instead (737-8).
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 type View = { ok: boolean; state: MoveState; rungs: Array<keyof ServerMoveWords["rung"]>; phase: "silent" | "live" | null; moved: boolean }
 
-export function ServerMove({ words }: { words: ServerMoveWords }) {
+export function ServerMove({ words, domainWords }: { words: ServerMoveWords; domainWords: ServerDomainWords }) {
   const [view, setView] = useState<View | null>(null)
   const [silent, setSilent] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -59,9 +63,17 @@ export function ServerMove({ words }: { words: ServerMoveWords }) {
     }
   }
 
-  if (publicAddress) return <p className="my-6 text-muted-foreground text-sm" data-block="server-move-public">{words.lead}</p>
+  if (publicAddress) return <ServerDomain fallback={words.lead} words={domainWords} />
   if (!view) return <p className="my-6 text-muted-foreground text-sm" data-block="server-move-loading">{silent ? "—" : words.loading}</p>
-  if (view.phase) return <p className="my-6 text-foreground text-sm" data-block="server-move-on-server">{view.phase === "silent" ? words.silent : words.onServer}</p>
+  if (view.phase === "silent") return <p className="my-6 text-foreground text-sm" data-block="server-move-on-server">{words.silent}</p>
+  if (view.phase === "live") {
+    return (
+      <div data-block="server-move-on-server">
+        <p className="my-6 text-foreground text-sm">{words.onServer}</p>
+        <ServerDomain words={domainWords} />
+      </div>
+    )
+  }
 
   const rungs = view.state.rungs ?? {}
   const moved = rungs.move?.state === "done"

@@ -12,8 +12,20 @@
       },
       "how": "<LadderStep n={1} title done id>body</LadderStep>; <LadderLocked n={2} title text /> for a rung that opens after the one above.",
       "words": {
-        "en": ["ladder", "wizard", "stepper", "steps", "rung"],
-        "ru": ["лестница", "мастер", "шаги", "ступень", "пошагово"]
+        "en": [
+          "ladder",
+          "wizard",
+          "stepper",
+          "steps",
+          "rung"
+        ],
+        "ru": [
+          "лестница",
+          "мастер",
+          "шаги",
+          "ступень",
+          "пошагово"
+        ]
       }
     },
     {
@@ -27,8 +39,45 @@
       },
       "how": "<StageLog stages={[{ id, state, detail }]} labels={{ id: 'label' }} /> — the stages come from the operation's own progress lines.",
       "words": {
-        "en": ["progress", "stages", "log", "status"],
-        "ru": ["ход", "стадии", "журнал", "состояние"]
+        "en": [
+          "progress",
+          "stages",
+          "log",
+          "status"
+        ],
+        "ru": [
+          "ход",
+          "стадии",
+          "журнал",
+          "состояние"
+        ]
+      }
+    },
+    {
+      "id": "dns-records",
+      "kind": "composite",
+      "path": "components/hosting/dns-records.tsx",
+      "export": "DnsRecords",
+      "what": {
+        "en": "The DNS records a person writes at the registrar, one table per domain (type, name, value), each name with its measured state, and the one-line wildcard shortcut.",
+        "ru": "Записи DNS, которые человек прописывает у регистратора: таблица на каждый домен (тип, имя, значение), у каждого имени его измеренное состояние, и строка-шорткат «*»."
+      },
+      "how": "<DnsRecords zones={[{ zone, records: [{ type, name, value, host, optional }], wildcard }]} states={{ host: { text, tone } }} words={…} /> — zones from lib/hosting/hostnames.mjs dnsRecords(), states from the node's own DNS check.",
+      "words": {
+        "en": [
+          "dns",
+          "records",
+          "registrar",
+          "domain",
+          "table"
+        ],
+        "ru": [
+          "dns",
+          "записи",
+          "регистратор",
+          "домен",
+          "таблица"
+        ]
       }
     }
   ]

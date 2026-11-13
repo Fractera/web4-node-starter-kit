@@ -8,6 +8,9 @@
 //   status                                             the move's ladder: each rung's state and the server (737-7)
 //   return                                             after a move: bring the node back to this computer (737-9)
 //   window                                             after a move: the server's panel on this computer through SSH (737-9)
+//   domain [<name>] · dns-check · certs · check · activate · deactivate
+//                                                      the server's own domain, its five steps (737-8): on the server itself, as
+//                                                      the owner at the keyboard — a loopback call of /api/node/server/domain
 import { spawnSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
@@ -121,9 +124,49 @@ function road(name) {
   }
 }
 
-const verbs = { names, dns, nginx, phase, status, return: road('return'), window: road('window') }
+const STEP_WORDS = { domain: 'домен', dns: 'записи DNS', certs: 'сертификаты', check: 'HTTPS снаружи', active: 'включён' }
+const DNS_WORDS = { ok: 'ведёт сюда', missing: 'нет записи', elsewhere: 'ведёт в другое место', aaaa: 'лишняя запись AAAA', unknown: 'DNS не ответил', unchecked: 'не проверено' }
+
+/** The five steps of the server's domain, from the node's own door on loopback (the owner at the keyboard of the server). */
+function domainStep(action) {
+  return async () => {
+    const url = `http://localhost:${readJson(path.join(root, 'logs', 'runtime.json'))?.port ?? 24680}/api/node/server/domain`
+    const body = action === 'show' ? null : { action, ...(action === 'domain' ? { name: args[1] ?? '' } : {}) }
+    let r
+    try {
+      r = await fetch(url, body ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) } : {})
+    } catch (e) {
+      console.error(`Ядро узла не ответило: ${e.message}`)
+      console.error('===SERVER_DOMAIN_FAILED=== core-silent')
+      process.exit(1)
+    }
+    const s = await r.json().catch(() => ({}))
+    if (!r.ok && !s.zone) {
+      console.error(`===SERVER_DOMAIN_FAILED=== ${s.reason ?? r.status}`)
+      process.exit(1)
+    }
+    if (action === 'certs') { console.log('Сертификаты выпускаются (минуты): npm run server -- domain — посмотреть ход.'); console.log('===SERVER_DOMAIN=== certs started'); return }
+    console.log(`домен: ${s.zone ?? '—'}   сервер: ${s.ip ?? '—'}`)
+    for (const row of s.rows ?? []) {
+      const cert = row.cert === 'ok' || row.cert === 'expiring' ? `сертификат ${row.daysLeft} дн.` : row.cert === 'missing' ? 'без сертификата' : 'сертификат —'
+      const https = row.https === true ? `HTTPS ${row.status}` : row.https === false ? 'HTTPS не отвечает' : ''
+      console.log(`  ${row.host.padEnd(40)} ${DNS_WORDS[row.dns] ?? row.dns}; ${cert}${https ? `; ${https}` : ''}${row.optional ? '  · по желанию' : ''}`)
+    }
+    for (const h of s.certsRun?.hosts ?? []) if (h.state !== 'done') console.log(`  сертификат ${h.host}: ${h.state}${h.detail ? ` — ${h.detail}` : ''}`)
+    const steps = s.steps ?? {}
+    console.log(Object.entries(STEP_WORDS).map(([k, w]) => `${steps[k] ? '✓' : '·'} ${w}`).join('   '))
+    console.log(`===SERVER_DOMAIN=== ${r.ok ? (s.reason ?? 'ok') : `refused ${s.reason ?? r.status}`} ${Object.keys(STEP_WORDS).filter((k) => steps[k]).join(',') || 'none'}`)
+    if (!r.ok) process.exit(1)
+  }
+}
+
+const verbs = {
+  names, dns, nginx, phase, status, return: road('return'), window: road('window'),
+  domain: args[1] ? domainStep('domain') : domainStep('show'),
+  'dns-check': domainStep('dns-check'), certs: domainStep('certs'), check: domainStep('check'), activate: domainStep('activate'), deactivate: domainStep('deactivate'),
+}
 if (!verbs[verb]) {
-  console.log('Команды: names · dns · nginx · phase · status · return · window   (npm run server -- names --domain example.org)')
+  console.log('Команды: names · dns · nginx · phase · status · return · window · domain [<имя>] · dns-check · certs · check · activate · deactivate')
   process.exit(verb ? 1 : 0)
 }
 verbs[verb]()
