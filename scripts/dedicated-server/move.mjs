@@ -487,7 +487,10 @@ const roads = {
     const key = path.join(serverDir(root), 'id_ed25519')
     const known = path.join(serverDir(root), 'known_hosts')
     const local = busy.length ? corePort + 10000 : corePort
-    const forwards = busy.length ? ['-L', `${local}:127.0.0.1:${corePort}`] : ports.flatMap((p) => ['-L', `${p}:127.0.0.1:${p}`])
+    // The core listens on the NAME `localhost` (measured on Ubuntu 24.04: `[::1]` only), the elements on 127.0.0.1 — sshd tries every
+    // address the name resolves to.
+    const target = (p) => (p === corePort ? 'localhost' : '127.0.0.1')
+    const forwards = busy.length ? ['-L', `${local}:localhost:${corePort}`] : ports.flatMap((p) => ['-L', `${p}:${target(p)}:${p}`])
     console.log(`Окно в узел на сервере: http://localhost:${local} — закрыть: Ctrl+C · A window into the server's node: http://localhost:${local}`)
     const { spawn } = await import('node:child_process')
     const child = spawn('ssh', ['-N', ...forwards, '-i', key, '-p', String(server().port), '-o', 'BatchMode=yes', '-o', 'IdentitiesOnly=yes', '-o', 'StrictHostKeyChecking=yes', '-o', `UserKnownHostsFile=${known}`, '-o', 'ExitOnForwardFailure=yes', `${REMOTE_USER}@${server().host}`], { stdio: 'inherit' })

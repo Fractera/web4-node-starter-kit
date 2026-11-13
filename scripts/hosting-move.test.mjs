@@ -123,7 +123,7 @@ await t('telegram, the server\'s own bot: the relay carries each action to the s
   const a = await relay({ method: 'POST', lang: 'ru', body: { action: 'token', token: TOKEN } })
   assert.equal(a.ok, true, JSON.stringify(a))
   assert.equal(a.username, 'srv_bot')
-  assert.ok(seen.some((x) => x.method === 'POST' && x.url === '/ru/architect/build/agent-api/channel' && x.body.includes(TOKEN)), JSON.stringify(seen))
+  assert.ok(seen.some((x) => x.method === 'POST' && x.url === '/ru/build/agent-api/channel' && x.body.includes(TOKEN)), JSON.stringify(seen))
   assert.ok(ssh.state.commands.length > 0, 'the relay ran nothing on the server')
   assert.ok(ssh.state.commands.every((c) => !c.includes(TOKEN)), 'the token was in a command line on the server')
   assert.equal((await relay({ method: 'GET', lang: 'ru' })).allowed, 1)

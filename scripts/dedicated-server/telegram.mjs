@@ -2,8 +2,11 @@
 // телеграмм бота прямо в этом окне … После подтверждения сервер сразу стартует установленный на него Telegram».
 // One call of the door `app/api/node/server/telegram` = one run of this relay: it reads `{ method, lang, body }` from stdin, reaches the
 // server as the node's user by the node's key, and asks the server's OWN channel door of the main agent on its loopback
-// (`/<lang>/architect/build/agent-api/channel` — the same door the server's panel uses; a loopback request without the edge mark is the
-// owner at that machine, `lib/auth/owner-at-machine.ts`). It prints the server's answer as one JSON line.
+// (`/<lang>/build/agent-api/channel` — the same door the server's panel uses; a loopback request without the edge mark is the owner at
+// that machine, `lib/auth/owner-at-machine.ts`). It prints the server's answer as one JSON line.
+// ✗ MEASURED ON THE OWNER'S RUN 2026-11-13 17:45 UTC (Ubuntu 24.04): the relay asked `127.0.0.1` and `/architect/…` and got nothing — the
+// core listens on the NAME `localhost` (there it was `[::1]` only, `ss -ltn`), and the old `/architect/` address answers 307 to the clean
+// one (285-6), an empty body to `curl` without `-L`. So: the host the server's core wrote into its own `runtime.json` and the clean path.
 // 🔒 THE TOKEN NEVER ENTERS AN ARGV: the browser → the door's request body → this relay's stdin → the SSH channel's stdin → `curl --data-binary
 // @-` on the server. Neither process list (here or there) shows it, and nothing writes it to a file here.
 // 🔒 THE SERVER'S POLLER IS ALREADY RUNNING: the core starts one for the main agent at its own start and reads the token at every tick
@@ -37,8 +40,13 @@ async function relay() {
     // The server's core port is the server's own record (`logs/runtime.json` never travels: each machine writes its own at start).
     const rt = await exec(client, `cat ${q(`${REMOTE_ROOT}/logs/runtime.json`)} 2>/dev/null || true`, { timeoutMs: 15_000 })
     let port = 24680
-    try { port = Number(JSON.parse(rt.stdout).port) || port } catch { /* the default port */ }
-    const url = `http://127.0.0.1:${port}/${lang}/architect/build/agent-api/channel`
+    let host = 'localhost'
+    try {
+      const own = JSON.parse(rt.stdout)
+      port = Number(own.port) || port
+      if (typeof own.hostname === 'string' && /^[a-z0-9.:-]+$/i.test(own.hostname) && !['0.0.0.0', '::'].includes(own.hostname)) host = own.hostname
+    } catch { /* the default port and name */ }
+    const url = `http://${host.includes(':') ? `[${host}]` : host}:${port}/${lang}/build/agent-api/channel`
     const r = method === 'GET'
       ? await exec(client, `curl -s --max-time 25 ${q(url)}`, { timeoutMs: 40_000 })
       : await exec(client, `curl -s --max-time 25 -X POST -H 'content-type: application/json' --data-binary @- ${q(url)}`, { timeoutMs: 40_000, stdin: JSON.stringify(input?.body ?? {}) })
