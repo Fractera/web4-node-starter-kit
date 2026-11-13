@@ -1,9 +1,11 @@
 "use client"
 
-import { Check, ChevronDown, CircleAlert, ExternalLink, TriangleAlert } from "lucide-react"
-import { type ReactNode, useEffect, useState } from "react"
+import { ChevronDown, CircleAlert, ExternalLink } from "lucide-react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { H3, Small } from "@/components/ui/typography"
+import { Input } from "@/components/ui/input"
+import { LadderLocked as Locked, LadderStep as Step } from "@/components/hosting/ladder-step"
+import { Small } from "@/components/ui/typography"
 import { isTemporaryHostname } from "@/lib/auth/temporary-address"
 import type { DomainLadderWords } from "@/components/domain/domain-ladder.i18n"
 import { TokenHowTo } from "./token-how-to.client"
@@ -67,30 +69,6 @@ type State = {
   active?: boolean
   nodeUrl: string | null
   quickTunnel: string | null
-}
-
-function Step({ children, done, n, title }: { children: ReactNode; done?: boolean; n: number; title: string }) {
-  return (
-    <section className="rounded-lg border border-border bg-card p-4" data-step={n}>
-      <H3 className="mb-2 flex items-center gap-2" variant="ui">
-        <span className={`inline-flex size-6 items-center justify-center rounded-full text-xs ${done ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
-          {done ? <Check className="size-3.5" aria-hidden /> : n}
-        </span>
-        {title}
-      </H3>
-      {children}
-    </section>
-  )
-}
-
-/** Серая строка на месте закрытой ступени: что здесь появится и после чего. */
-function Locked({ n, text }: { n: number; text: string }) {
-  return (
-    <p className="flex items-center gap-2 rounded-lg border border-border border-dashed px-4 py-3 text-muted-foreground text-sm" data-step-locked={n}>
-      <TriangleAlert className="size-4 shrink-0" aria-hidden />
-      {text}
-    </p>
-  )
 }
 
 export function DomainLadder({ lang, words }: { lang: string; words: DomainLadderWords }) {
@@ -336,9 +314,9 @@ export function DomainLadder({ lang, words }: { lang: string; words: DomainLadde
             <div className="mt-3 flex flex-col gap-2" data-domain-form>
               <Small className="text-muted-foreground">{words.domainLabel}</Small>
               <div className="flex flex-wrap gap-2">
-                <input
+                <Input
                   autoComplete="off"
-                  className="min-w-0 flex-1 rounded-md border border-border bg-background px-3 py-2 font-mono text-sm"
+                  className="min-w-0 flex-1 font-mono"
                   onChange={(e) => setWanted(e.target.value)}
                   placeholder={words.hostPlaceholder}
                   type="text"
@@ -360,15 +338,16 @@ export function DomainLadder({ lang, words }: { lang: string; words: DomainLadde
           ) : null}
           {s.n === 1 ? (
             <div className="mt-3 rounded-md border border-border bg-muted/40 p-3" data-registrars>
-              <button
+              <Button
                 aria-expanded={registrars}
-                className="flex w-full items-center justify-between gap-2 text-left"
+                className="h-auto w-full justify-between gap-2 px-0 py-0 text-left hover:bg-transparent"
                 onClick={() => setRegistrars((v) => !v)}
                 type="button"
+                variant="ghost"
               >
                 <Small className="font-semibold text-foreground">{words.registrarsTitle}</Small>
                 <ChevronDown className={`size-4 shrink-0 text-muted-foreground transition-transform ${registrars ? "rotate-180" : ""}`} aria-hidden />
-              </button>
+              </Button>
               {registrars ? (<>
               <p className="mt-1 text-muted-foreground text-sm">
                 <a className="underline" href={CLOUDFLARE_REGISTRAR} rel="noreferrer noopener" target="_blank">Cloudflare Registrar</a>
@@ -380,15 +359,16 @@ export function DomainLadder({ lang, words }: { lang: string; words: DomainLadde
                   <span className="font-semibold">{words.fastPath}</span>{" "}{words.fastPathSaving}
                 </p>
               </div>
-              <button
+              <Button
                 aria-expanded={cfLimits}
-                className="mt-2 inline-flex items-center gap-1.5 text-left text-foreground text-sm underline"
+                className="mt-2 h-auto w-fit gap-1.5 px-0 py-0 text-left text-foreground text-sm underline"
                 onClick={() => setCfLimits((v) => !v)}
                 type="button"
+                variant="link"
               >
                 <CircleAlert className="size-4 shrink-0 text-primary" aria-hidden />
                 {words.cfLimitsToggle}
-              </button>
+              </Button>
               {cfLimits ? (
                 <div className="mt-2 rounded-md border border-border bg-muted/40 p-3" data-cf-limits>
                   <p className="text-foreground text-sm">{words.cfLimitsLead}</p>
@@ -481,9 +461,9 @@ export function DomainLadder({ lang, words }: { lang: string; words: DomainLadde
               </a>
               <TokenHowTo words={words} />
               <div className="flex flex-wrap gap-2">
-                <input
+                <Input
                   autoComplete="off"
-                  className="field-pulse min-w-0 flex-1 rounded-md border border-border bg-background px-3 py-2 font-mono text-sm"
+                  className="field-pulse min-w-0 flex-1 font-mono"
                   onChange={(e) => setToken(e.target.value)}
                   placeholder={words.keyPlaceholder}
                   type="password"
