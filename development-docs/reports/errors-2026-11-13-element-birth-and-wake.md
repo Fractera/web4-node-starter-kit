@@ -37,6 +37,26 @@ The agent built the service in 5 minutes — and WROTE ITS OWN CROPPER (`_tools/
 - `npm run tool:take -- image-crop --dry` → «no tool «image-crop» in core» — **D15**: the folder's name is not the map id. Fixed in the
   core's `lib/parts/take.mjs`: found by id, by `tool-<name>`, by its folder; nothing found — «did you mean …». Test: take.test +2.
 
+## The second birth — the proof (element bd5ln, node core a6d1d8db, template v0.3.202)
+
+- 01:28:53 born by `create` with the quiz draft: `first step: quiz.json, steps-new/1-analyse-the-product-quiz.md, current-step.md ·
+  passport fragment written · check:product green · check:dev-docs RED` — my brief nested «» inside the intake's «»; fixed in create
+  (`bd11bae0`: inner quotes become "…"; proven green, the old form red). `npm run where`: «шаг 1 (planning)».
+- It started by itself: no stop on the folder question; `[agents/start] bd5ln: работа началась` at 01:31:53 (3 min after the task)
+  and 01:33:37 (after my answer).
+- Step 1 alone: read the quiz, four questions with its own proposals by `tell-core`; I answered «да на все четыре» within the owner's
+  words; it planned step 2 with checks 2-1…2-4. I missed its plan for 50 minutes (took the 01:31 «done» for a repeat) — my error.
+- **The tool protocol live:** `parts_find` (MCP) → `tool:take -- image-crop` → `data/node/tools-take.jsonl`: `bd5ln took tool-image-crop
+  from core` (02:23:33, the folder name accepted — D15). Then it judged the core's crop unfit — fixed ratios only, at most 1200 px, always
+  JPEG (true: `_tools/image-crop/client/image-cropper.client.tsx` :76–81, :149) — removed the copy and bore its own
+  `tool-image-frame-crop` by `tool:new` (free frame, full resolution, the format kept). A legitimate «create»; the cleaner path keeps the
+  lineage — `tool:own` and extend.
+- **D16 found:** its first `tool:new -- image-crop` bore `tool-image-crop` beside the core's tool of the same id (the long task sentence
+  diluted the search). Fixed in both templates (custom v0.3.203, native v0.1.71): a node tool's id refuses; the name alone is searched.
+- Its checks: prebuild green; 2-3 the save door — 401 a stranger, 413 eleven megabytes, 415 a text as JPEG and a GIF, 200 a crop; 2-4
+  the link — 200, image/jpeg 800 × 600, the bytes equal. NOT deployed: the architect presses «Выкатить» (its rule); the link answers on
+  this computer only (no public address of the node).
+
 ## Not done by this report
 
 The second birth of «Хранилище картинок» after the node update is the proof of all seven together (the owner: «удали этот элемент и
