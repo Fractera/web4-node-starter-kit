@@ -255,5 +255,53 @@ await ta('negative: the same address with a different server key is refused as `
 })
 await new Promise((r) => srv.close(r))
 
+console.log('737-5 the copy (a real rsync into a local target with the same rules)')
+const transfer = await import('../lib/hosting/transfer.mjs')
+const { existsSync } = await import('node:fs')
+if (!transfer.hasRsync()) {
+  console.log('  · rsync is not on this machine (Windows): the copy is proven on macOS and Linux')
+} else {
+  const src = mkdtempSync(join(tmpdir(), 'hosting-copy-src-'))
+  const dst = mkdtempSync(join(tmpdir(), 'hosting-copy-dst-'))
+  roots.push(src, dst)
+  const put = (rel, text = 'x') => { mkdirSync(join(src, rel, '..'), { recursive: true }); writeFileSync(join(src, rel), text) }
+  const travels = ['.git/HEAD', '.env.local', 'data/services/data/app.sqlite', 'data/node/memory/diary.jsonl', 'logs/fresh-project.json',
+    'logs/origin.json', 'logs/launch.json', 'logs/domain.json', 'WEB4-ITEMS/user/bd5ln/.git/HEAD', 'WEB4-ITEMS/user/bd5ln/app/page.tsx',
+    'WEB4-ITEMS/core/graph/services/graph/requirements.txt', 'WEB4-ITEMS-REGISTRY/web4-items.json']
+  const stays = ['node_modules/next/index.js', 'WEB4-ITEMS/user/bd5ln/node_modules/a/b.js', '.next/BUILD_ID', 'WEB4-ITEMS/user/bd5ln/.next-a/BUILD_ID',
+    'WEB4-ITEMS/core/graph/.venv/bin/python', 'WEB4-ITEMS/core/graph/.uv/uv', 'data/node/server/id_ed25519', 'data/node/server/known_hosts',
+    'data/node/moved.json', 'logs/runtime.json', 'logs/tunnel.json', 'logs/web4-out.log', 'WEB4-ITEMS/user/bd5ln/logs/x.log', 'logs/eyes/shot.png', '.DS_Store']
+  for (const f of [...travels, ...stays]) put(f, `content of ${f}`)
+
+  await ta('measured before the copy: only what travels is counted', async () => {
+    const m = transfer.measure(src)
+    const bytes = travels.reduce((n, f) => n + `content of ${f}`.length, 0)
+    assert.equal(m.bytes, bytes)
+  })
+  await ta('phase 1: everything that is the node arrives', async () => {
+    const r = await transfer.copyPhase({ root: src, host: 'unused', target: `${dst}/` })
+    assert.equal(r.code, 0, r.tail)
+    for (const f of travels) assert.ok(existsSync(join(dst, f)), `missing ${f}`)
+  })
+  await ta('negative: the SSH key, packages, builds, the graph\'s Python, this computer\'s marks and logs never travel', async () => {
+    for (const f of stays) assert.ok(!existsSync(join(dst, f)), `travelled ${f}`)
+  })
+  await ta('phase 2: a deleted file disappears, a new one arrives, the server\'s own packages are not touched', async () => {
+    rmSync(join(src, 'data/node/memory/diary.jsonl'))
+    put('data/services/data/new.sqlite')
+    mkdirSync(join(dst, 'node_modules', 'own'), { recursive: true })
+    writeFileSync(join(dst, 'node_modules', 'own', 'linux.node'), 'built on the server')
+    const r = await transfer.copyPhase({ root: src, host: 'unused', target: `${dst}/` })
+    assert.equal(r.code, 0, r.tail)
+    assert.ok(!existsSync(join(dst, 'data/node/memory/diary.jsonl')))
+    assert.ok(existsSync(join(dst, 'data/services/data/new.sqlite')))
+    assert.ok(existsSync(join(dst, 'node_modules/own/linux.node')))
+  })
+  t('negative: a node folder with a space in its path is refused for the ssh road', () => {
+    assert.throws(() => transfer.rsyncArgs({ root: '/Users/a b/node', host: 'h', excludeFile: '/tmp/x' }))
+    assert.equal(transfer.remoteRootOf('/Users/r/web4-node-starter-kit'), '/home/fractera/web4-node-starter-kit')
+  })
+}
+
 for (const r of roots) rmSync(r, { recursive: true, force: true })
 console.log(`${passed} passed${process.exitCode ? ', FAILED' : ''}`)
