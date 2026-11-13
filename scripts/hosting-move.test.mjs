@@ -23,6 +23,8 @@ put('logs/runtime.json', JSON.stringify({ port: 24680 }))
 put('data/services/build/channel/telegram/.env', 'TELEGRAM_BOT_TOKEN=test-token-not-real\n')
 put('data/services/build/channel/telegram/bot.json', '{"username":"test_bot"}')
 cpSync(join(here, 'dedicated-server'), join(node, 'scripts', 'dedicated-server'), { recursive: true })
+// 737-15: the server's own scripts read its mark through lib/hosting (names-ready → server-domain): the copy carries them as on a real node.
+for (const dir of ['hosting', 'web4-items']) cpSync(join(here, '..', 'lib', dir), join(node, 'lib', dir), { recursive: true })
 const PASSWORD = 'dry-run-password-737'
 const ssh = await startTestSshServer({ home, password: PASSWORD })
 const env = { ...process.env, FRACTERA_MOVE_NODE_ROOT: node, FRACTERA_MOVE_REMOTE_ROOT: remote, FRACTERA_MOVE_ROOT_DIR: rootDir, FRACTERA_MOVE_POLL_MS: '200' }
@@ -87,6 +89,28 @@ await t('claude and rehearse (dry): done in order', async () => {
   assert.equal(r.status, 0, r.stdout + r.stderr)
   assert.ok(state().rungs.rehearse.stages.some((x) => x.id === 'serve' && x.state === 'done'))
 })
+await t('domain (737-15): a domain typed after the copy reaches the server now — its mark learns it, its names are made ready', async () => {
+  const s = state()
+  s.domain = 'example.org'
+  writeFileSync(join(node, 'data', 'node', 'server', 'move.json'), JSON.stringify(s))
+  const r = await run('domain')
+  assert.equal(r.status, 0, r.stdout + r.stderr)
+  assert.equal(JSON.parse(readFileSync(join(remote, 'data/node/server.json'), 'utf8')).domain, 'example.org')
+  assert.equal(JSON.parse(readFileSync(join(remote, 'data/node/server.json'), 'utf8')).phase, 'silent', 'the mark kept its phase')
+  assert.equal(state().domainRun.state, 'done', JSON.stringify(state().domainRun))
+  assert.equal(state().names.zone, 'example.org')
+})
+await t('domain: who may type one — the move road, nothing running, not moved; a dead run frees itself', async () => {
+  const { mayDomain, domainBusy } = await import('../lib/hosting/move-state.mjs')
+  const base = { server: { host: '203.0.113.7' }, rungs: { copy: { state: 'done' } } }
+  assert.equal(mayDomain(base), true)
+  assert.equal(mayDomain({ ...base, road: 'new' }), false, 'an independent server has no domain of this node')
+  assert.equal(mayDomain({ ...base, rungs: { move: { state: 'done' } } }), false, 'after the move the domain is the server\'s five steps')
+  assert.equal(mayDomain({ ...base, rungs: { copy: { state: 'running' } } }), false, 'a rung runs')
+  const fresh = { ...base, domainRun: { state: 'running', at: new Date().toISOString() } }
+  assert.equal(mayDomain(fresh), false)
+  assert.equal(domainBusy({ ...base, domainRun: { state: 'running', at: new Date(Date.now() - 60 * 60_000).toISOString() } }), false, 'a run silent for an hour is dead')
+})
 await t('negative: the move waits for the Telegram choice', async () => {
   const r = await run('move')
   assert.equal(r.status, 2, r.stdout + r.stderr)
@@ -144,6 +168,8 @@ await t('move: the last copy brings the bot token, the mark turns live; negative
   assert.equal(state().rungs.move.state, 'done')
   assert.ok(existsSync(join(remote, 'data/services/build/channel/telegram/.env')))
   assert.equal(JSON.parse(readFileSync(join(remote, 'data/node/server.json'), 'utf8')).phase, 'live')
+  // ✗ before 737-15's domain field the live mark was written without `domain` — the server forgot its zone at the move.
+  assert.equal(JSON.parse(readFileSync(join(remote, 'data/node/server.json'), 'utf8')).domain, 'example.org', 'the live mark lost the domain')
   assert.ok(!existsSync(join(node, 'data', 'node', 'moved.json')))
   // 737-11a: the bot moved with the node → the server's main agent is woken to greet the person (a dry run only records it).
   assert.equal(state().welcome?.dry, true, JSON.stringify(state().welcome))

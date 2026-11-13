@@ -14,7 +14,7 @@ export type ServerMoveWords = {
   again: string
   copyAgain: string
   names: { summary: string; waiting: string; later: string }
-  records: { title: string; none: string; text: string; switch: string; check: string; checkedNote: string; confirmTitle: string; confirmItems: string[]; confirm: string; notNow: string; done: string; failed: string; elsewhere: string; manual: string; table: { zone: string; type: string; name: string; value: string; state: string; optional: string; wildcard: string }; state: Record<"ok" | "missing" | "elsewhere" | "aaaa" | "unknown", string> }
+  records: { title: string; none: string; text: string; switch: string; check: string; checkedNote: string; confirmTitle: string; confirmItems: string[]; confirm: string; notNow: string; done: string; failed: string; elsewhere: string; manual: string; table: { zone: string; type: string; name: string; value: string; state: string; optional: string; wildcard: string }; state: Record<"ok" | "missing" | "elsewhere" | "aaaa" | "unknown", string>; form: { title: string; text: string; label: string; placeholder: string; submit: string; change: string; certs: string; errors: Record<string, string> }; run: Record<"saved" | "starting" | "running" | "done" | "failed", string> }
   copyAgainNote: string
   host: string
   port: string
@@ -66,7 +66,7 @@ const en: ServerMoveWords = {
   names: { summary: "Domain {zone}: {p} of {n} names point to the server, {c} have a certificate.", waiting: "The move waits for certificates of:", later: "Still on the old address (the tunnel comes to the server with the node, so they keep working):" },
   records: {
     title: "Your domain {zone} — switch its records now",
-    none: "The node has no own domain yet: it can get one on the server after the move (the five steps of the domain there).",
+    none: "Your own domain can be connected here as soon as the server is connected.",
     text: "DNS wakes up while the copy runs. Until the move Cloudflare keeps showing the public pages from its copy; sign-in and the panel by the domain pause until the server takes over.",
     switch: "Switch the records in Cloudflare…",
     check: "Check DNS",
@@ -85,6 +85,23 @@ const en: ServerMoveWords = {
     manual: "Write these A records at the registrar, then check:",
     table: { zone: "Domain {zone}", type: "Type", name: "Name", value: "Value", state: "State", optional: "optional", wildcard: "Or one line for every subdomain, present and future (the @ line is still needed):" },
     state: { ok: "points here", missing: "no record", elsewhere: "points elsewhere", aaaa: "remove the AAAA record", unknown: "DNS did not answer" },
+    form: {
+      title: "Your own domain for the server",
+      text: "Type it now, while the server is being set up: the node shows the A records for your registrar and issues a certificate for every name as soon as DNS points here. A new domain usually wakes within minutes; one that pointed elsewhere before — within its TTL. Until the move every name answers with a waiting page.",
+      label: "Domain",
+      placeholder: "example.com",
+      submit: "Connect the domain",
+      change: "Another domain",
+      certs: "Check DNS and issue certificates",
+      errors: { "bad-domain": "That does not look like a domain: for example, example.com.", order: "Not now: a step is running on the server. Try again when it ends.", "node-has-domain": "This node already has its own domain.", network: "The node did not answer." },
+    },
+    run: {
+      saved: "The domain is kept: the copy brings it to the server.",
+      starting: "The server is taking the domain: nginx, DNS, certificates — up to a few minutes…",
+      running: "The server is taking the domain: nginx, DNS, certificates — up to a few minutes…",
+      done: "Certificates: {c} of {n} names. Waiting for DNS: {w}.",
+      failed: "Did not work:",
+    },
   },
   copyAgainNote: "After this node was updated, the server needs the same code: only the changes travel, the core is rebuilt (about 11 minutes on 8 GB).",
   host: "Server IP address",
@@ -195,7 +212,7 @@ const ru: ServerMoveWords = {
   names: { summary: "Домен {zone}: на сервер ведут {p} из {n} имён, с сертификатом — {c}.", waiting: "Переезд ждёт сертификатов для:", later: "Ещё на старом адресе (туннель переедет на сервер вместе с узлом, они продолжат работать):" },
   records: {
     title: "Ваш домен {zone} — переключите записи сейчас",
-    none: "Своего домена у узла пока нет: его можно подключить на сервере после переезда (пять шагов домена там).",
+    none: "Свой домен можно подключить здесь, как только сервер подключён.",
     text: "Пока идёт копия, DNS успевает проснуться. До переезда Cloudflare показывает публичные страницы из своей копии; вход и панель по домену ждут, пока сервер не примет узел.",
     switch: "Переключить записи в Cloudflare…",
     check: "Проверить DNS",
@@ -214,6 +231,23 @@ const ru: ServerMoveWords = {
     manual: "Впишите эти записи A у регистратора и проверьте:",
     table: { zone: "Домен {zone}", type: "Тип", name: "Имя", value: "Значение", state: "Состояние", optional: "по желанию", wildcard: "Или одной строкой для всех поддоменов, нынешних и будущих (строка @ всё равно нужна):" },
     state: { ok: "ведёт сюда", missing: "нет записи", elsewhere: "ведёт в другое место", aaaa: "уберите запись AAAA", unknown: "DNS не ответил" },
+    form: {
+      title: "Свой домен для сервера",
+      text: "Впишите его сейчас, пока сервер собирается: узел покажет записи A для регистратора и выпустит сертификат на каждое имя, как только DNS поведёт сюда. Новый домен обычно просыпается за минуты; домен, который раньше вёл в другое место, — за время своего TTL. До переезда каждое имя отвечает страницей ожидания.",
+      label: "Домен",
+      placeholder: "example.com",
+      submit: "Подключить домен",
+      change: "Другой домен",
+      certs: "Проверить DNS и выпустить сертификаты",
+      errors: { "bad-domain": "Это не похоже на домен: например, example.com.", order: "Сейчас нельзя: на сервере идёт шаг. Попробуйте, когда он закончится.", "node-has-domain": "У этого узла уже есть свой домен.", network: "Узел не ответил." },
+    },
+    run: {
+      saved: "Домен сохранён: копия передаст его серверу.",
+      starting: "Сервер принимает домен: nginx, DNS, сертификаты — до нескольких минут…",
+      running: "Сервер принимает домен: nginx, DNS, сертификаты — до нескольких минут…",
+      done: "Сертификаты: {c} из {n} имён. Ждут DNS: {w}.",
+      failed: "Не получилось:",
+    },
   },
   copyAgainNote: "После обновления этого узла серверу нужен тот же код: переносятся только изменения, ядро пересобирается (около 11 минут на 8 ГБ).",
   host: "IP-адрес сервера",

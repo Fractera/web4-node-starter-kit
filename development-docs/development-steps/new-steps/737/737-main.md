@@ -291,6 +291,15 @@ copy, but it also serves no live node (a tunnel needs Cloudflare) — only a fre
 **D12 (reversed by the owner):** the records switch right after «Подключение». **D14 (my pick):** for a zone on Cloudflare the node
 writes the records itself through the API and keeps them proxied; the person confirms once.
 
+**737-15, the new-domain half — missed at the first build, built 2026-11-13 ~18:40 UTC.** The owner, after his run reached the Telegram
+rung on a node with only a temporary address: «ты сделаешь установку домена где-то в начале пока ставится сервер почему ты проигнорировал
+эту задачу?». The first build covered only a domain the node already serves; a node with none got one line «after the move». Now: from
+«Подключение» the tab asks for a domain (`move.json` → `domain`, door `records` POST {domain}); before the copy it is kept and the copy's
+mark carries it; after the copy the runner's `domain` writes the server's mark, runs `name-up.mjs` (nginx → DNS → certificates) and records
+`names`. Found on the way: the move and the rollback wrote the server's mark WITHOUT `domain` (the server forgot its zone at the move) —
+`readServerMark()` now always carries `zoneOf()`. Proofs: test:hosting-move 20 (2 new + the move's mark keeps the domain; mutation: the
+old mark → the move test red), test:hosting 67, chain green. Left for the live run: a real domain's certificates on 213.199.61.7.
+
 ### 10.2 2026-11-13 ~15:10 UTC — the owner: «your choose go non stop»
 
 All open decisions take my pick: D6 one tab, two roads; D9 a GitHub token with write to the fork kept by the node; D10 the architect of an

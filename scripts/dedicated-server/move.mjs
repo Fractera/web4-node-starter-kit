@@ -148,7 +148,7 @@ const rungs = {
       }
       // 737-15: the server learns this node's domain now (the silent copy carries no logs/domain.json), so its names, records and
       // certificates can be ready before the move. An independent server has no domain of this node (737-11b).
-      const zone = road === 'new' ? null : (() => { try { return JSON.parse(readFileSync(path.join(root, 'logs', 'domain.json'), 'utf8')).zone || null } catch { return null } })()
+      const zone = zoneOf()
       const mark = JSON.stringify({ phase: 'silent', ip: server().host, sshPort: server().port, user: REMOTE_USER, folder: FOLDER, from: os.hostname(), at: now(), ...(zone ? { domain: zone } : {}) }, null, 2)
       await exec(client, `mkdir -p ${q(`${REMOTE_ROOT}/data/node`)} ${q(`${REMOTE_ROOT}/logs/dedicated-server`)} && printf '%s\\n' ${q(mark)} > ${q(`${REMOTE_ROOT}/data/node/server.json`)} && rm -f ${q(`${REMOTE_ROOT}/logs/dedicated-server/install.progress.jsonl`)}`)
       const copied = readMove(root).rungs?.copy?.stages?.[0] ?? { id: 'copy', state: 'done', at: now() }
@@ -296,7 +296,23 @@ const rungs = {
 let serverMark = null
 function readServerMark() {
   serverMark = serverMark ?? { ip: server().host, sshPort: server().port, user: REMOTE_USER, folder: FOLDER, from: os.hostname(), at: now() }
-  return serverMark
+  // ✗ Found 2026-11-13 while building the domain field: the move and the rollback wrote the mark without `domain` — the server forgot
+  // the zone the copy had given it, and its names, nginx and certificates with it. The mark always carries the node's zone.
+  const zone = zoneOf()
+  return { ...serverMark, ...(zone ? { domain: zone } : {}) }
+}
+
+/**
+ * The domain the server is to answer by (737-15): the one this node already serves (`logs/domain.json` → `zone`), else the one the person
+ * typed on the tab for the server (`move.json` → `domain`). An independent server has no domain of this node (737-11b).
+ */
+function zoneOf() {
+  const s = readMove(root)
+  if (roadOf(s) === 'new') return null
+  let own = null
+  try { own = JSON.parse(readFileSync(path.join(root, 'logs', 'domain.json'), 'utf8')).zone || null } catch { /* no domain here */ }
+  const typed = typeof s.domain === 'string' && isHostName(s.domain) ? s.domain : null
+  return (typeof own === 'string' && isHostName(own) ? own : null) ?? typed
 }
 
 /** This node's fork as a clean public address — never a credential that may sit in the remote's URL. */
@@ -385,6 +401,41 @@ async function allChecks(client) {
 // подготовить к установке нового приложения Fractera или отменить установку … очистить должно иметь подтверждающий диалог»). Both are
 // started from the tab's dialog (the door checks the confirmation); neither runs once the move rung has started.
 const before = {
+  // 737-15, A NEW DOMAIN WHILE THE SERVER IS BEING SET UP (the owner, 2026-11-13: «ты сделаешь установку домена где-то в начале пока
+  // ставится сервер»). The person typed it on the tab (`move.json` → `domain`, the door `records`). Before the copy the server holds
+  // neither the node's scripts nor its folder: the copy's mark carries the domain and the rehearsal makes its names ready. After the copy
+  // it goes to the server now: the mark learns the domain, nginx learns every name (503 until the move, the ACME path open), public DNS
+  // is asked, and a certificate is issued for every name already pointing there (`name-up.mjs` → `names-ready.mjs` → `certs.mjs`).
+  async domain() {
+    const s = readMove(root)
+    const zone = zoneOf()
+    if (!zone) { console.error('===MOVE_DOMAIN=== no domain'); process.exit(2) }
+    if (s.rungs?.prepare?.state !== 'done' || s.rungs?.copy?.state !== 'done') {
+      patchMove(root, (x) => { x.domainRun = { state: 'saved', at: now(), zone } })
+      console.log(`===MOVE_DOMAIN=== ${zone} saved: the copy brings it to the server`)
+      return
+    }
+    patchMove(root, (x) => { x.domainRun = { state: 'running', at: now(), zone, pid: process.pid } })
+    let client
+    try {
+      ({ client } = await asNode())
+      const mark = `import { writeServerMark } from './lib/hosting/server-domain.mjs'; writeServerMark(process.cwd(), { domain: ${JSON.stringify(zone)} })`
+      const w = await exec(client, `cd ${q(REMOTE_ROOT)} && node --input-type=module -e ${q(mark)}`, { timeoutMs: 30_000 })
+      if (w.code !== 0) throw new Error(`the server's mark: ${`${w.stdout}${w.stderr}`.trim().slice(-240)}`)
+      const r = await exec(client, `cd ${q(REMOTE_ROOT)} && node scripts/dedicated-server/${dry ? 'names-ready.mjs --dry' : 'name-up.mjs'}`, { timeoutMs: 45 * 60_000 })
+      const line = r.stdout.trim().split('\n').pop() ?? ''
+      let names = null
+      try { names = JSON.parse(line.replace(/^===NAME_UP===\s*/, '')) } catch { /* not the readiness line */ }
+      patchMove(root, (x) => {
+        if (names) x.names = names
+        x.domainRun = { state: names?.zone === zone ? 'done' : 'failed', at: now(), zone, ...(names?.zone === zone ? {} : { detail: `${r.stdout}${r.stderr}`.slice(-300) }) }
+      })
+      console.log(`===MOVE_DOMAIN=== ${zone} ${names?.zone === zone ? `certified ${names.certified?.length ?? 0} of ${names.names}` : 'failed'}`)
+    } catch (e) {
+      patchMove(root, (x) => { x.domainRun = { state: 'failed', at: now(), zone, detail: String(e.reason ?? e.message).slice(0, 300) } })
+    } finally { client?.end() }
+  },
+
   // Free the server: root's pm2 programs and every foreign nginx site stopped and kept in a backup folder there (`clear.sh` — nothing
   // erased), then the probe runs again on the freed server.
   async clear() {
