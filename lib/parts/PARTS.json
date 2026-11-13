@@ -5860,7 +5860,7 @@
         "en": "Workspace section «workspace» (two-columns): A working screen rather than a page to read: a menu on the left, content on the right. This is what dashboards and project tools are built from.",
         "ru": "рабочий экран — Меню слева, содержимое справа. Из него строятся дашборды, инструменты проекта и"
       },
-      "how": "A page names the kind «workspace» in its language cell with the fields menuTitle?: string; menu: WorkspaceItem[]; title: string; lead?: string; notes?: WorkspaceNote[]; tabs?: WorkspaceItem[]; children: PageItem[]; widget?: import('react').ReactNode.",
+      "how": "A page names the kind «workspace» in its language cell with the fields menuTitle?: string; menu: WorkspaceItem[]; title: string; lead?: string; notes?: WorkspaceNote[]; tabs?: WorkspaceItem[]; children: PageItem[]; widget?: import('react').ReactNode; contentFirst?: boolean.",
       "words": {
         "en": [
           "workspace",

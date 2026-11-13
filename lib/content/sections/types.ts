@@ -992,6 +992,8 @@ export type ContainerItem =
        * общий каталог видов не входит: удалили маршрут — ушла и она. Не задан — экрана это не касается.
        */
       widget?: import('react').ReactNode
+      /** 737 (the owner, 2026-11-13): the page's sections stand ABOVE its island — a preface and cards that explain the island below. */
+      contentFirst?: boolean
     }
 
 export type PageItem = LeafItem | ContainerItem

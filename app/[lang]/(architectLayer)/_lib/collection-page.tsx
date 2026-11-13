@@ -25,6 +25,7 @@ export function CollectionPage({
   page,
   content,
   widget,
+  contentFirst = false,
   hideTopics = false,
   tabs: tabsOverride,
 }: {
@@ -49,6 +50,8 @@ export function CollectionPage({
    * (комплект агента службы). Есть островок — третье состояние «скоро будет построено» не наступает.
    */
   widget?: ReactNode
+  /** The page's sections above its island (737, «Выделенный сервер»: the preface and the cards explain the ladder below them). */
+  contentFirst?: boolean
   /**
    * Скрыть темы страницы и их ряд вкладок (324-1). Слово владельца 2026-09-27 о «Что меняет постоянный адрес» на «Активации
    * домена»: «он актуален до того как подключён первый домен сразу подключению скрывает этот текст он только путает».
@@ -121,6 +124,7 @@ export function CollectionPage({
       tabs={tabs}
       children={children}
       widget={widget}
+      contentFirst={contentFirst}
     />
   )
 }

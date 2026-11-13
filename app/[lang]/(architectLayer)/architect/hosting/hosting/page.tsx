@@ -12,5 +12,5 @@ export const generateMetadata = collectionMetadata(data, '/architect/hosting')
 
 export default async function Page({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params
-  return <CollectionPage lang={lang} dir="/architect/hosting" page={data} content={content(lang)} widget={widget(lang)} />
+  return <CollectionPage lang={lang} dir="/architect/hosting" page={data} content={content(lang)} widget={widget(lang)} contentFirst />
 }

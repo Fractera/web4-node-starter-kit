@@ -37,6 +37,7 @@ export function ArchitectPage({
   pageLead,
   tabs,
   widget,
+  contentFirst = false,
 }: {
   lang: string
   /** Адрес БЕЗ языка, ровно как в источнике меню: по нему отмечается активный пункт. */
@@ -70,6 +71,8 @@ export function ArchitectPage({
   tabs?: WorkspaceItem[]
   /** Собственный островок маршрута (271) — рисуется в рабочем экране над секциями. */
   widget?: ReactNode
+  /** The sections above the island (737): a page that explains its island first. */
+  contentFirst?: boolean
 }) {
   const ui = architectLayerUi(lang)
 
@@ -88,6 +91,7 @@ export function ArchitectPage({
       lead: lead ?? (children.length > 0 || widget ? undefined : ui.emptyLead),
       children,
       widget,
+      contentFirst,
     },
   ]
 

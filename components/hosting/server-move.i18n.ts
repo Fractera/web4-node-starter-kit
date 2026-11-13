@@ -42,7 +42,7 @@ export type ServerMoveWords = {
 
 const en: ServerMoveWords = {
   title: "Move the project to a dedicated server",
-  lead: "The node moves whole — elements, data, bots, memory — to your Ubuntu server, step by step and without a model. It answers there by the server's IP first; your domain comes later, with a certificate for every name.",
+  lead: "Choose the road, then the node takes the steps itself, one at a time: each opens when the one before it is done.",
   loading: "Asking the node…",
   silent: "This copy rehearses on its server: it is silent — no bots, no agents — while your computer still runs the node.",
   onServer: "This node lives on its dedicated server.",
@@ -165,7 +165,7 @@ const en: ServerMoveWords = {
 
 const ru: ServerMoveWords = {
   title: "Переезд проекта на выделенный сервер",
-  lead: "Узел переезжает целиком — элементы, данные, боты, память — на ваш сервер Ubuntu, шаг за шагом и без искусственного интеллекта. Сначала он отвечает там по IP-адресу; домен подключается позже, с сертификатом на каждое имя.",
+  lead: "Выберите дорогу, дальше узел проходит шаги сам, по одному: каждый открывается, когда готов предыдущий.",
   loading: "Спрашиваю узел…",
   silent: "Эта копия репетирует на своём сервере: она молчит — ни ботов, ни агентов, — пока узел работает на вашем компьютере.",
   onServer: "Этот узел живёт на своём выделенном сервере.",
