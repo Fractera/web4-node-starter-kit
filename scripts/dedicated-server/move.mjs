@@ -10,6 +10,8 @@
 //   claude                                    Claude Code signed in on the server: its link shown here, the code pasted here
 //   rehearse                                  the silent start on the server and the checks from outside and inside
 //   move                                      this computer stops, the last changes go, the server starts whole; failure → back here
+//   clear · cancel                            a server that is not empty: freed (stopped and kept, never erased) and probed again,
+//                                             or the installation cancelled (the node's key leaves the server, the server is forgotten)
 // `--dry` runs the server scripts with DRY_RUN=1 (every command printed, none run) — the rehearsal of the runner itself.
 import { execSync } from 'node:child_process'
 import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
@@ -254,6 +256,49 @@ async function allChecks(client) {
   return [...(await outsideChecks(server().host, { commit })), ...(await insideChecks(client, root))]
 }
 
+// BEFORE THE MOVE — WHEN THE SERVER IS NOT EMPTY (the owner, 2026-11-13: «если мы обнаружили что сервер занят … очистить сервер и
+// подготовить к установке нового приложения Fractera или отменить установку … очистить должно иметь подтверждающий диалог»). Both are
+// started from the tab's dialog (the door checks the confirmation); neither runs once the move rung has started.
+const before = {
+  // Free the server: root's pm2 programs and every foreign nginx site stopped and kept in a backup folder there (`clear.sh` — nothing
+  // erased), then the probe runs again on the freed server.
+  async clear() {
+    patchMove(root, (s) => { s.clear = { state: 'running', at: now(), pid: process.pid } })
+    let client
+    try {
+      ({ client } = await asRoot())
+      await exec(client, `mkdir -p ${q(ROOT_DIR)} && chmod 700 ${q(ROOT_DIR)}`)
+      await upload(client, `${ROOT_DIR}/clear.sh`, readFileSync(path.join(here, 'clear.sh')), 0o700)
+      const r = await exec(client, `${DRY}bash ${ROOT_DIR}/clear.sh`, { timeoutMs: 180_000 })
+      const out = JSON.parse(r.stdout.trim().split('\n').pop())
+      patchMove(root, (s) => { s.clear = { state: 'done', at: now(), ...out } })
+      console.log(`===MOVE_CLEARED=== ${out.stopped} programs stopped, sites moved: ${out.sites.join(',') || 'none'}, backup ${out.backup}`)
+    } catch (e) {
+      patchMove(root, (s) => { s.clear = { state: 'failed', at: now(), detail: String(e.reason ?? e.message).slice(0, 300) } })
+      console.error(`===MOVE_CLEAR_FAILED=== ${String(e.reason ?? e.message).slice(0, 200)}`)
+      process.exitCode = 1
+      return
+    } finally { client?.end() }
+    await rungs.probe()
+  },
+
+  // Cancel the installation: the node's key leaves the server's authorized_keys, its work folder there is removed, and this computer
+  // forgets the server (the move's state). Nothing else on the server is touched; what prepare already installed stays.
+  async cancel() {
+    if (readMove(root).rungs?.move?.state === 'done' || existsSync(path.join(root, 'data', 'node', 'moved.json'))) { console.error('===MOVE_CANCEL_REFUSED=== the node has moved — the road back is `return`'); process.exit(2) }
+    const pub = readFileSync(path.join(serverDir(root), 'id_ed25519.pub'), 'utf8').trim()
+    let detail = ''
+    try {
+      const { client } = await asRoot()
+      try { await exec(client, `${dry ? 'true' : `grep -vxF ${q(pub)} ~/.ssh/authorized_keys > ~/.ssh/authorized_keys.fractera-tmp; cat ~/.ssh/authorized_keys.fractera-tmp > ~/.ssh/authorized_keys; rm -f ~/.ssh/authorized_keys.fractera-tmp; rm -rf ${q(ROOT_DIR)}`}`) } finally { client.end() }
+    } catch (e) { detail = `server not reached: ${e.reason ?? e.message}` }
+    patchMove(root, (s) => { for (const k of Object.keys(s)) delete s[k]; s.rungs = {}; s.cancelled = { at: now(), detail } })
+    rmSync(path.join(serverDir(root), 'known_hosts'), { force: true })
+    rmSync(path.join(serverDir(root), 'known-host.json'), { force: true })
+    console.log(`===MOVE_CANCELLED=== ${detail || 'the node key removed from the server, the server forgotten here'}`)
+  },
+}
+
 // NOT RUNGS — the roads after a move, run from this computer in a terminal (its core is stopped: no panel here); the person's explicit word.
 const roads = {
   // The node comes home: the server's node stops and is forgotten there, its copy comes back by the same rules (the bots' tokens too),
@@ -308,8 +353,9 @@ const roads = {
   },
 }
 
-if (roads[rung]) await roads[rung]()
+if (before[rung]) await before[rung]()
+else if (roads[rung]) await roads[rung]()
 else if (!rungs[rung]) {
-  console.log('Ступени: connect · probe · prepare · copy · claude · rehearse · move · дороги: return · window   [--dry]')
+  console.log('Ступени: connect · probe · prepare · copy · claude · rehearse · move · до переезда: clear · cancel · дороги: return · window   [--dry]')
   process.exit(rung ? 2 : 0)
 } else await rungs[rung]()

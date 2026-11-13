@@ -22,6 +22,7 @@ export type MoveState = {
   verdict?: { level: "ok" | "warn" | "fail"; items: Array<{ id: string; level: string; value?: unknown; need?: unknown }> }
   checks?: Array<{ id: string; ok: boolean; value?: unknown }>
   claude?: { url?: string | null; email?: string | null }
+  clear?: { state?: string; detail?: string; stopped?: number; backup?: string }
 }
 type RungId = keyof ServerMoveWords["rung"]
 type Start = (rung: string, extra?: Record<string, unknown>) => Promise<void>

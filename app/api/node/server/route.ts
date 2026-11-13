@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
-import { mayStart, readMove, RUNGS, settle } from "@/lib/hosting/move-state.mjs"
+import { mayCancel, mayClear, mayStart, readMove, RUNGS, settle } from "@/lib/hosting/move-state.mjs"
 import phase from "@/lib/hosting/phase.cjs"
 
 // THE MOVE TO A DEDICATED SERVER — THE DOOR OF ITS LADDER (node step 737-7). The owner, 2026-11-13: «настройка которая принимает
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
   const denied = await guard(req)
   if (denied) return denied
   if (phase.nodePhase(ROOT)) return NextResponse.json({ ok: false, reason: "on-server" }, { status: 409, ...noStore })
-  const body = (await req.json().catch(() => null)) as { rung?: unknown; host?: unknown; port?: unknown; password?: unknown; code?: unknown } | null
+  const body = (await req.json().catch(() => null)) as { rung?: unknown; host?: unknown; port?: unknown; password?: unknown; code?: unknown; confirm?: unknown } | null
   const rung = typeof body?.rung === "string" ? body.rung : ""
 
   if (rung === "connect") {
@@ -83,6 +83,16 @@ export async function POST(req: NextRequest) {
     mkdirSync(join(ROOT, "data", "node", "server"), { recursive: true, mode: 0o700 })
     writeFileSync(join(ROOT, "data", "node", "server", "claude-code.txt"), code, { mode: 0o600 })
     return NextResponse.json({ ok: true }, noStore)
+  }
+
+  if (rung === "clear" || rung === "cancel") {
+    // 🔒 A BUSY SERVER (737-7, the owner 2026-11-13: «очистить должно иметь подтверждающий диалог»): the dialog sends back the server's
+    // address the person saw in it — a stray call without it frees nothing.
+    const state = settle(readMove(ROOT))
+    if (rung === "clear" && (body?.confirm !== state.server?.host || !mayClear(state))) return NextResponse.json({ ok: false, reason: body?.confirm !== state.server?.host ? "not-confirmed" : "order" }, { status: 409, ...noStore })
+    if (rung === "cancel" && !mayCancel(state)) return NextResponse.json({ ok: false, reason: "order" }, { status: 409, ...noStore })
+    spawnSync(process.execPath, [join(ROOT, "scripts", "spawn-free.mjs"), RUNNER, rung], { cwd: ROOT, env: cleanEnv(), stdio: "ignore", timeout: 10_000, windowsHide: true })
+    return NextResponse.json({ ...view(), started: rung }, { status: 202, ...noStore })
   }
 
   if (!RUNGS.includes(rung) || rung === "connect") return NextResponse.json({ ok: false, reason: "unknown-rung", allowed: RUNGS }, { status: 400, ...noStore })

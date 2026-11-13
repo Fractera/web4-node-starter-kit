@@ -2,7 +2,7 @@
 // the project (a copy of code inside the project is code to the core's build — ANTI-PATTERNS «All systems»).
 // Every group of cases has its negative control: the thing that must NOT happen is asserted, not only the thing that must.
 import assert from 'node:assert/strict'
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { dnsRecords, isHostName, nodeNames, primaryZone } from '../lib/hosting/hostnames.mjs'
@@ -448,6 +448,52 @@ console.log('737-8 the domain on the server: DNS, certificates, HTTPS, the five 
     assert.ok(!run.commands.some((c) => c.includes('auth.example.org')), 'issued for a name that points elsewhere')
     assert.ok(run.hosts.every((h) => h.state === 'done'))
   })
+}
+
+console.log('737-7 the judge of a server (the owner\'s test server, 2026-11-13: another install lived there)')
+{
+  const { judge } = await import('../lib/hosting/judge.mjs')
+  const base = { os: { id: 'ubuntu', pretty: 'Ubuntu 24.04', arch: 'x86_64' }, cores: 4, ramMb: 7941, availMb: 5838, diskFreeGb: 69, port80Busy: true, port443Busy: true, nginx: true, systemd: true, publicIp: '203.0.113.7' }
+  const needs = { ramMb: 2549, copyBytes: 826e6 }
+  t('another site on nginx is a refusal, root\'s pm2 processes a warning; the memory judged is the AVAILABLE one', () => {
+    const v = judge({ ...base, foreignSites: ['fractera', 'fractera-custom'], pm2Root: 14 }, needs, '203.0.113.7')
+    assert.equal(v.level, 'fail')
+    assert.equal(v.items.find((i) => i.id === 'sites').value, 'fractera, fractera-custom')
+    assert.equal(v.items.find((i) => i.id === 'others').level, 'warn')
+    assert.equal(v.items.find((i) => i.id === 'memory').value, 5838)
+    assert.equal(judge({ ...base, availMb: 2000 }, needs, '203.0.113.7').items.find((i) => i.id === 'memory').level, 'fail')
+  })
+  t('negative: a clean server with nginx of its own — no «sites», no «others», ok', () => {
+    const v = judge({ ...base, port80Busy: false, port443Busy: false, foreignSites: [], pm2Root: 0 }, needs, '203.0.113.7')
+    assert.equal(v.level, 'ok')
+    assert.ok(!v.items.some((i) => i.id === 'sites' || i.id === 'others'))
+  })
+}
+
+console.log('737-7 a busy server: free it or cancel')
+{
+  const { mayClear, mayCancel } = await import('../lib/hosting/move-state.mjs')
+  const busy = { server: { host: '203.0.113.7' }, verdict: { items: [{ id: 'sites', level: 'fail' }] }, rungs: { connect: { state: 'done' }, probe: { state: 'failed' } } }
+  t('a probe that named another install opens «free the server»; cancel is open while nothing has moved', () => {
+    assert.equal(mayClear(busy), true)
+    assert.equal(mayCancel(busy), true)
+  })
+  t('negative: no foreign install, a rung running, or preparation started — no freeing; after the move — no cancel', () => {
+    assert.equal(mayClear({ ...busy, verdict: { items: [{ id: 'ports', level: 'ok' }] } }), false)
+    assert.equal(mayClear({ ...busy, rungs: { ...busy.rungs, probe: { state: 'running' } } }), false)
+    assert.equal(mayClear({ ...busy, rungs: { ...busy.rungs, prepare: { state: 'done' } } }), false)
+    assert.equal(mayClear({ ...busy, clear: { state: 'running' } }), false)
+    assert.equal(mayCancel({ ...busy, rungs: { ...busy.rungs, move: { state: 'done' } } }), false)
+    assert.equal(mayCancel({ rungs: {} }), false)
+  })
+  if (process.platform !== 'win32') {
+    const { spawnSync } = await import('node:child_process')
+    t('clear.sh is valid bash and erases nothing by its own words (no rm -rf, no apt purge, no dropdb)', () => {
+      assert.equal(spawnSync('bash', ['-n', join(import.meta.dirname, 'dedicated-server', 'clear.sh')]).status, 0)
+      const text = readFileSync(join(import.meta.dirname, 'dedicated-server', 'clear.sh'), 'utf8')
+      assert.ok(!/rm -rf|apt(-get)? (purge|remove)|dropdb|DROP DATABASE/i.test(text))
+    })
+  }
 }
 
 for (const r of roots) rmSync(r, { recursive: true, force: true })

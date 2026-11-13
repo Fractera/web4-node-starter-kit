@@ -28,6 +28,7 @@ export type ServerMoveWords = {
   movedTitle: string
   movedText: string
   rolledBack: string
+  busy: { title: string; text: string; clear: string; cancel: string; clearTitle: string; risks: string[]; agree: string; clearConfirm: string; cancelTitle: string; cancelText: string; cancelConfirm: string; notNow: string; clearing: string; cleared: string; failed: string }
   stage: Record<string, string>
 }
 
@@ -56,7 +57,7 @@ const en: ServerMoveWords = {
   passwordNote: "Proof you can check yourself: change the server's password after the move — the node keeps working, it uses its own key.",
   fingerprint: "Server key",
   verdict: { ok: "The server fits.", warn: "The server will do — read the notes.", fail: "The node cannot live on this server:" },
-  item: { os: "System", arch: "Processor", memory: "Memory, MB (the node holds)", disk: "Free disk, GB (needed)", cores: "Cores", ports: "Ports 80/443", address: "Public address", systemd: "Autostart (systemd)", earlier: "A copy of an earlier attempt is there — it will be updated" },
+  item: { os: "System", arch: "Processor", memory: "Free memory, MB (the node holds)", disk: "Free disk, GB (needed)", cores: "Cores", ports: "Ports 80/443", address: "Public address", systemd: "Autostart (systemd)", earlier: "A copy of an earlier attempt is there — it will be updated", sites: "nginx already serves other sites — the node would break them; free the server first", others: "Programs of another installation run as root (pm2 processes)" },
   claudeOpen: "Open the sign-in page",
   claudeCode: "Code from the page",
   claudeSend: "Send the code",
@@ -66,6 +67,28 @@ const en: ServerMoveWords = {
   movedTitle: "The node lives on its server",
   movedText: "Open it by IP: {url}. Telegram answers from the server. Your domain and its certificates are set up on the server's own tab.",
   rolledBack: "The move did not finish — the node is back on this computer:",
+  busy: {
+    title: "The server is taken by another installation",
+    text: "Other programs and sites already run on this server. The node can free it for itself — or cancel the installation and leave without touching anything.",
+    clear: "Free the server…",
+    cancel: "Cancel the installation…",
+    clearTitle: "Free the server {host}?",
+    risks: [
+      "The sites on this server stop answering at once: {sites}.",
+      "{n} programs of the earlier installation (pm2 processes) stop and do not come back after a reboot.",
+      "Nothing is deleted: the programs' folders and databases stay; the list of programs and the sites' files are kept in /root/fractera-cleared-… — everything can be put back by hand.",
+      "If something you or other people need runs on this server, cancel and take a clean server instead.",
+    ],
+    agree: "I understand: the sites and programs on {host} stop",
+    clearConfirm: "Stop them and free the server",
+    cancelTitle: "Cancel the installation on {host}?",
+    cancelText: "The node removes its key from the server and forgets it. Nothing else on the server changes; what the preparation already installed stays. You can start again from step 1.",
+    cancelConfirm: "Cancel the installation",
+    notNow: "Not now",
+    clearing: "Freeing the server…",
+    cleared: "Freed: {n} programs stopped, the sites moved to {backup}. The server check runs again.",
+    failed: "Freeing failed:",
+  },
   stage: { "apt-lock": "Package queue", swap: "Swap", apt: "System packages", node: "Node.js 22", pm2: "Process manager", certbot: "Certbot", user: "The node's user", git: "Git", helper: "Root helper", nginx: "nginx", firewall: "Firewall", resolver: "DNS resolver", "pm2-startup": "Autostart", prepare: "Preparation", copy: "Copy", marks: "Marks", deps: "The node's packages", eyes: "The agent's eyes", build: "The core's build", elements: "Elements", install: "Install", serve: "Start", save: "Process list saved", "launch-mark": "Install mark", start: "Start" },
 }
 
@@ -94,7 +117,7 @@ const ru: ServerMoveWords = {
   passwordNote: "Проверьте сами: смените пароль сервера после переезда — узел продолжит работать, он ходит своим ключом.",
   fingerprint: "Ключ сервера",
   verdict: { ok: "Сервер подходит.", warn: "Сервер подойдёт — прочитайте замечания.", fail: "Узел не сможет жить на этом сервере:" },
-  item: { os: "Система", arch: "Процессор", memory: "Память, МБ (узел держит)", disk: "Свободный диск, ГБ (нужно)", cores: "Ядра", ports: "Порты 80/443", address: "Публичный адрес", systemd: "Автозапуск (systemd)", earlier: "Там копия прошлой попытки — она будет обновлена" },
+  item: { os: "Система", arch: "Процессор", memory: "Свободная память, МБ (узел держит)", disk: "Свободный диск, ГБ (нужно)", cores: "Ядра", ports: "Порты 80/443", address: "Публичный адрес", systemd: "Автозапуск (systemd)", earlier: "Там копия прошлой попытки — она будет обновлена", sites: "nginx уже обслуживает другие сайты — узел их сломает; сначала освободите сервер", others: "Работают программы другой установки от root (процессы pm2)" },
   claudeOpen: "Открыть страницу входа",
   claudeCode: "Код со страницы",
   claudeSend: "Отправить код",
@@ -104,6 +127,28 @@ const ru: ServerMoveWords = {
   movedTitle: "Узел живёт на своём сервере",
   movedText: "Откройте его по IP: {url}. Telegram отвечает уже с сервера. Домен и его сертификаты подключаются на этой же вкладке сервера.",
   rolledBack: "Переезд не завершился — узел вернулся на этот компьютер:",
+  busy: {
+    title: "Сервер занят другой установкой",
+    text: "На сервере уже работают другие программы и сайты. Узел может освободить сервер для себя — или отменить установку и уйти, ничего не трогая.",
+    clear: "Очистить сервер…",
+    cancel: "Отменить установку…",
+    clearTitle: "Очистить сервер {host}?",
+    risks: [
+      "Сразу перестанут отвечать сайты на этом сервере: {sites}.",
+      "Остановятся программы прежней установки ({n} процессов pm2) и не запустятся после перезагрузки.",
+      "Ничего не удаляется: папки программ и базы данных остаются; список программ и файлы сайтов сохраняются в /root/fractera-cleared-… — по ним всё можно вернуть руками.",
+      "Если на этом сервере работает что-то нужное вам или другим людям — отмените установку и возьмите чистый сервер.",
+    ],
+    agree: "Я понимаю: сайты и программы на {host} остановятся",
+    clearConfirm: "Остановить и освободить",
+    cancelTitle: "Отменить установку на {host}?",
+    cancelText: "Узел уберёт свой ключ с сервера и забудет его. На сервере больше ничего не меняется; то, что уже поставила подготовка, остаётся. Начать заново можно с первого шага.",
+    cancelConfirm: "Отменить установку",
+    notNow: "Не сейчас",
+    clearing: "Освобождаю сервер…",
+    cleared: "Освобождено: остановлено программ — {n}, сайты перенесены в {backup}. Проверка сервера идёт заново.",
+    failed: "Очистка не прошла:",
+  },
   stage: { "apt-lock": "Очередь пакетов", swap: "Подкачка", apt: "Системные пакеты", node: "Node.js 22", pm2: "Менеджер процессов", certbot: "Certbot", user: "Пользователь узла", git: "Git", helper: "Помощник root", nginx: "nginx", firewall: "Файрвол", resolver: "DNS-резолвер", "pm2-startup": "Автозапуск", prepare: "Подготовка", copy: "Копия", marks: "Метки", deps: "Пакеты узла", eyes: "Глаза агента", build: "Сборка ядра", elements: "Элементы", install: "Установка", serve: "Запуск", save: "Сохранение списка", "launch-mark": "Отметка установки", start: "Старт" },
 }
 

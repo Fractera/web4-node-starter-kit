@@ -4,6 +4,8 @@
 import { type ReactNode, useCallback, useEffect, useState } from "react"
 import { LadderLocked, LadderStep } from "@/components/hosting/ladder-step"
 import type { ServerMoveWords } from "@/components/hosting/server-move.i18n"
+import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
+import { ServerBusy } from "@/components/hosting/server-move-busy.client"
 import { RungBody, type MoveState } from "@/components/hosting/server-move-rung.client"
 import { ServerDomain } from "@/components/hosting/server-domain.client"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
@@ -22,7 +24,7 @@ import { isTemporaryHostname } from "@/lib/auth/temporary-address"
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 type View = { ok: boolean; state: MoveState; rungs: Array<keyof ServerMoveWords["rung"]>; phase: "silent" | "live" | null; moved: boolean }
 
-export function ServerMove({ words, domainWords, place }: { words: ServerMoveWords; domainWords: ServerDomainWords; place?: ReactNode }) {
+export function ServerMove({ words, domainWords, dialogUi, place }: { words: ServerMoveWords; domainWords: ServerDomainWords; dialogUi: AppDialogUi; place?: ReactNode }) {
   const [view, setView] = useState<View | null>(null)
   const [silent, setSilent] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -46,7 +48,7 @@ export function ServerMove({ words, domainWords, place }: { words: ServerMoveWor
 
   useEffect(() => {
     if (!view) return
-    const running = Object.values(view.state.rungs ?? {}).some((r) => r?.state === "running")
+    const running = Object.values(view.state.rungs ?? {}).some((r) => r?.state === "running") || view.state.clear?.state === "running"
     const t = setTimeout(() => void load(), running ? 3000 : 15000)
     return () => clearTimeout(t)
   }, [view, load])
@@ -78,6 +80,14 @@ export function ServerMove({ words, domainWords, place }: { words: ServerMoveWor
   const rungs = view.state.rungs ?? {}
   const moved = rungs.move?.state === "done"
   const url = view.state.server?.host ? `http://${view.state.server.host}/` : ""
+  // 737-7: the probe found another installation — the choice to free the server or cancel, before anything is prepared.
+  const items = view.state.verdict?.items ?? []
+  const sitesItem = items.find((i) => i.id === "sites")
+  const othersItem = items.find((i) => i.id === "others")
+  const started = ["prepare", "copy", "claude", "rehearse", "move"].some((r) => rungs[r]?.state)
+  const taken = (sitesItem || othersItem || view.state.clear?.state === "running") && !started
+    ? { host: view.state.server?.host, sites: String(sitesItem?.value ?? "").split(", ").filter(Boolean), programs: Number(othersItem?.value ?? 0), clear: view.state.clear }
+    : null
   return (
     <div className="my-6 flex flex-col gap-3" data-block="server-move">
       <p className="text-foreground text-sm">{words.lead}</p>
@@ -87,6 +97,7 @@ export function ServerMove({ words, domainWords, place }: { words: ServerMoveWor
         return (
           <LadderStep key={id} done={rungs[id]?.state === "done"} id={id} n={i + 1} title={words.rung[id].title}>
             <RungBody busy={busy} id={id} onStart={start} rung={rungs[id] ?? {}} state={view.state} words={words} />
+            {id === "probe" && taken ? <ServerBusy busy={taken} dialogUi={dialogUi} disabled={busy} onStart={start} words={words.busy} /> : null}
           </LadderStep>
         )
       })}
