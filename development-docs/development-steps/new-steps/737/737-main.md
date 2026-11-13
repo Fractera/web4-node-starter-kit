@@ -266,3 +266,24 @@ Element birth looks for the tunnel (`scripts/item-birth.mjs:349` `!domain?.tunne
 
 **Decisions (my pick first):** D11 — the `*` record recommended by default (new elements need nothing at the registrar); D12 — a domain the
 node already serves switches at the move rung, never earlier; D13 — the manual place switch removed now (the owner agreed).
+
+### 10.1 Correction by the owner (~14:55 UTC, verbatim) — D12 reversed: the records switch EARLY
+
+«Одна из причин почему я тебя попросил перенести эти записи сразу заключается в том … некоторые записи будут переезжать в течение
+несколько времени и чаще всего даже старой записи переезжают в течение 20 минут. Как раз это времени нужно нам для того чтобы к моменту
+начало и завершения переезда домен уже проснулся. Хотя и отработать сценарий при котором он ещё не проснулся тоже надо чтобы не получилось
+так что после переезда у нас чёрный экран и все пропало и нужно повторять всю процедуру завтра».
+
+My «switch only at the move» was wrong: it made the person wait for DNS at the worst moment. Both ends are solved by forwarding, so no
+visitor sees the empty server or a dead tunnel, whatever DNS caches hold:
+
+| # | Result | Proof |
+|---|---|---|
+| 737-15a | **Before the move — the server bridges to this computer.** The records switch right after «Подключение» (for a zone on Cloudflare the node writes them itself with the token it already holds — `lib/domain/cloudflare.ts` has list/delete, an A-record upsert joins them; elsewhere the person writes them, «Проверить DNS» confirms). Until the move, the server's nginx sends every name of the node back to THIS computer through an SSH reverse forward kept by a small resident here (ports offset by +10000 on the server, so the silent rehearsal keeps its own ports; the edge mark rides along, so nobody gets owner rights through it). Certificates are issued as soon as a name points to the server (nginx serves the ACME path in every state) — before the move | clean run: a name switched during the copy answers by https from outside with THIS computer's content before the move; its certificate exists before the move; negative: the bridge request carries the edge mark and gets no architect rights |
+| 737-15b | **At the move — this computer relays the late ones.** The move keeps this computer's domain tunnel resident alive (`stopAll` stops it today — `lib/hosting/local-node.mjs:30`), and forwards its local ports to the server through SSH: a visitor whose cache still points to the tunnel reaches the server. The relay ends by itself when public DNS shows every name at the server and the longest measured TTL has passed; the tab shows «N names still on the old address, their caches end in M min» | clean run with a deliberately late name: before and after the move it answers from outside; negative: the relay never runs while this computer's own node is up |
+| 737-15c | **The move refuses a black screen:** this computer stops only when the rehearsal is green AND every name that already resolves to the server has its certificate (a name pointing to the server without one would greet visitors with a TLS error); otherwise the rung says which names wait and why, and nothing stops | negative: a name at the server without a certificate holds the move with its name in the message |
+
+**D12 (reversed by the owner):** the records switch right after «Подключение»; the bridge (before) and the relay (after) cover DNS in
+flight. **D14 (new, my pick):** for a zone on Cloudflare the node switches the records itself through the API, as DNS-only records (the
+server's own Let's Encrypt certificates); the person confirms once. Price: one resident here while the bridge or the relay lives (an SSH
+process); it ends by itself.
