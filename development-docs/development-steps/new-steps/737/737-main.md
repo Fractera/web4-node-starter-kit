@@ -290,3 +290,11 @@ copy, but it also serves no live node (a tunnel needs Cloudflare) — only a fre
 
 **D12 (reversed by the owner):** the records switch right after «Подключение». **D14 (my pick):** for a zone on Cloudflare the node
 writes the records itself through the API and keeps them proxied; the person confirms once.
+
+### 10.2 2026-11-13 ~15:10 UTC — the owner: «your choose go non stop»
+
+All open decisions take my pick: D6 one tab, two roads; D9 a GitHub token with write to the fork kept by the node; D10 the architect of an
+empty server = the first registration through `npm run server -- window`; D11 the `*` record recommended; D12 records switch right after
+«Подключение» (the owner's reversal); D13 the manual place switch removed; D14 a zone on Cloudflare — the node writes the records itself,
+proxied. Execution order: 737-18 → 737-15/15c → 737-17 → 737-16 → 737-11a → 737-11b; each committed after the chain; the clean runs
+(737-13) need the owner's OS reinstall at the end.

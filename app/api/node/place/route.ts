@@ -1,9 +1,9 @@
-// @api read or set where this node stands
+// @api read where this node stands as the node detects it
 import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
-import { readPlace, writePlace } from "@/lib/node-state/place"
+import { readPlace } from "@/lib/node-state/place"
 
 // ГДЕ СТОИТ УЗЕЛ — ОБЪЯВЛЕНИЕ ЧЕЛОВЕКА (276-3).
 //
@@ -34,14 +34,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ ok: true, place: readPlace() }, noStore)
 }
 
-export async function POST(req: NextRequest) {
-  const denied = await guard(req, true)
-  if (denied) return denied
-  const body = (await req.json().catch(() => null)) as { place?: unknown } | null
-  const saved = writePlace(body?.place)
-  // Слово не из списка — отказ с названием допустимых, а не молчаливая запись чужого состояния.
-  if (!saved) {
-    return NextResponse.json({ ok: false, error: "unknown-place", allowed: ["home", "server"] }, { status: 400 })
-  }
-  return NextResponse.json({ ok: true, place: saved }, noStore)
+// 737-18: the place is detected (`lib/hosting/place.mjs`), never declared — a declaration is refused with the reason.
+export async function POST() {
+  return NextResponse.json({ ok: false, reason: "detected-not-declared", place: readPlace() }, { status: 410, ...noStore })
 }

@@ -1,110 +1,42 @@
 "use client"
+// @local — where the project is hosted, as the node detects it (read-only since 737-18)
 
 import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
 import { Small } from "@/components/ui/typography"
 import type { NodePlaceWords } from "@/components/node-state/node-place.i18n"
-import { isTemporaryHostname } from "@/lib/auth/temporary-address"
 
-// ЭКРАН ОБЪЯВЛЕНИЯ: ГДЕ СТОИТ УЗЕЛ (276-3).
-//
-// 🔒 ОСТРОВОК, А НЕ ФОРМА НА СЕРВЕРЕ: страница предрендерена, и выбранное значение застыло бы в HTML.
-// 🔒 ЧЕТЫРЕ СОСТОЯНИЯ: спрашиваю · знаю · сохраняю · дверь не ответила. Последнее значит «не знаю».
-// 🛑 ЗДЕСЬ ЖЕ СКАЗАНО ВСЛУХ, ЧТО ОТВЕТ НЕ ПРОВЕРЯЕТСЯ. Человек вправе знать, что узел верит ему на
-// слово и не может проверить: иначе он прочитает свою же строку в индикаторе как измеренный факт.
+// ГДЕ СТОИТ УЗЕЛ — ПОКАЗ, НЕ ВЫБОР (737-18; был экраном объявления 276-3). Владелец 2026-11-13: «до сих пор у нас существует вкладка
+// где мы все это переключали руками. Больше этого быть не должно». Островок спрашивает узел (`/api/node/place`) и называет, как узел
+// это знает — запись переезда или замер машины (`lib/hosting/place.mjs`). Кнопок нет: дверь отказывает объявлению (410).
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
 type Kind = "home" | "server" | "unknown"
-type Answer = { ok?: boolean; place?: { kind?: Kind; changedAt?: string | null } }
-type State = "asking" | "known" | "saving" | "unknown"
+type Answer = { ok?: boolean; place?: { kind?: Kind; detail?: string } }
 
-export function NodePlace({ lang, words }: { lang: string; words: NodePlaceWords }) {
-  const [state, setState] = useState<State>("asking")
-  const [kind, setKind] = useState<Kind>("unknown")
-  const [changedAt, setChangedAt] = useState<string | null>(null)
-  // 652-2: на временном адресе пульт только для просмотра — дверь отдаёт ответ, но не принимает выбор.
-  const [readOnly, setReadOnly] = useState(false)
-  useEffect(() => setReadOnly(isTemporaryHostname(window.location.hostname)), [])
+export function NodePlace({ words }: { lang?: string; words: NodePlaceWords }) {
+  const [answer, setAnswer] = useState<Answer["place"] | null>(null)
+  const [silent, setSilent] = useState(false)
 
   useEffect(() => {
     let alive = true
     fetch(`${BASE}/api/node/place`, { cache: "no-store" })
       .then((r) => (r.ok ? (r.json() as Promise<Answer>) : Promise.reject(new Error(String(r.status)))))
-      .then((a) => {
-        if (!alive) return
-        setKind(a.place?.kind ?? "unknown")
-        setChangedAt(a.place?.changedAt ?? null)
-        setState("known")
-      })
-      .catch(() => alive && setState("unknown"))
-    return () => {
-      alive = false
-    }
+      .then((a) => { if (alive) setAnswer(a.place ?? {}) })
+      .catch(() => alive && setSilent(true))
+    return () => { alive = false }
   }, [])
 
-  async function choose(value: "home" | "server") {
-    setState("saving")
-    try {
-      const res = await fetch(`${BASE}/api/node/place`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ place: value }),
-      })
-      if (!res.ok) throw new Error(String(res.status))
-      const a = (await res.json()) as Answer
-      setKind(a.place?.kind ?? value)
-      setChangedAt(a.place?.changedAt ?? null)
-      setState("known")
-    } catch {
-      setState("unknown")
-    }
-  }
-
-  if (state === "asking") {
-    return (
-      <div className="my-6" data-node-place="asking">
-        <p className="text-muted-foreground text-sm">{words.loading}</p>
-      </div>
-    )
-  }
-
-  if (state === "unknown") {
-    return (
-      <div className="my-6" data-node-place="unknown">
-        <p className="text-foreground text-sm">{words.doorSilent}</p>
-      </div>
-    )
-  }
-
-  const at = (() => {
-    if (!changedAt) return ""
-    try {
-      return new Date(changedAt).toLocaleString(lang === "ru" ? "ru-RU" : "en-GB")
-    } catch {
-      return ""
-    }
-  })()
-
-  const current =
-    kind === "home" ? words.currentHome : kind === "server" ? words.currentServer : words.currentUnknown
-
+  if (silent) return <p className="my-6 text-foreground text-sm" data-block="node-place-silent">{words.doorSilent}</p>
+  if (!answer) return <p className="my-6 text-muted-foreground text-sm" data-block="node-place-loading">{words.loading}</p>
+  const kind = answer.kind ?? "unknown"
+  const how = String(answer.detail ?? "").split(" ")[0] as keyof NodePlaceWords["how"]
   return (
-    <div className="my-6 flex flex-col gap-3" data-node-place={kind} data-state={state}>
-      <p className="text-foreground text-sm font-medium">{words.title}</p>
-      <p className="text-foreground text-sm">{current}</p>
-      <div className="flex flex-wrap gap-3">
-        <Button variant={kind === "home" ? "default" : "outline"} disabled={state === "saving" || readOnly} onClick={() => choose("home")}>
-          {words.chooseHome}
-        </Button>
-        <Button variant={kind === "server" ? "default" : "outline"} disabled={state === "saving" || readOnly} onClick={() => choose("server")}>
-          {words.chooseServer}
-        </Button>
-      </div>
-      <Small className="text-muted-foreground">
-        {words.note}
-        {at ? ` · ${words.changedAt.replace("{at}", at)}` : ""}
-      </Small>
+    <div className="my-6 flex flex-col gap-2" data-block="node-place" data-node-place={kind}>
+      <p className="font-medium text-foreground text-sm">{words.title}</p>
+      <p className="text-foreground text-sm">{kind === "home" ? words.currentHome : kind === "server" ? words.currentServer : words.currentUnknown}</p>
+      {words.how[how] ? <Small className="text-muted-foreground">{words.how[how]}</Small> : null}
+      <Small className="text-muted-foreground">{words.note}</Small>
     </div>
   )
 }

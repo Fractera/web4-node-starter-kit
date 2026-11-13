@@ -515,5 +515,27 @@ console.log('737-7 the Claude sign-in link (the owner\'s test server 2026-11-13:
   })
 }
 
+console.log('737-18 the place is detected, never declared')
+{
+  const { nodePlace, isPublicIpv4 } = await import('../lib/hosting/place.mjs')
+  const nic = (address) => ({ eth0: [{ family: 'IPv4', address, internal: false }], lo: [{ family: 'IPv4', address: '127.0.0.1', internal: true }] })
+  t('a move record → server; macOS and Windows → computer; Linux with a public IPv4 → server, behind a private one → computer', () => {
+    assert.equal(nodePlace(fixture({ services: SERVICES, server: { phase: 'live', at: '2026-11-13T11:00:00Z' } }), { platform: 'darwin' }).kind, 'server')
+    const bare = fixture({ services: SERVICES })
+    assert.equal(nodePlace(bare, { platform: 'darwin', interfaces: nic('213.199.61.7') }).kind, 'home')
+    assert.equal(nodePlace(bare, { platform: 'win32' }).kind, 'home')
+    assert.equal(nodePlace(bare, { platform: 'linux', interfaces: nic('213.199.61.7') }).detail, 'public-ip 213.199.61.7')
+    assert.equal(nodePlace(bare, { platform: 'linux', interfaces: nic('192.168.1.20') }).kind, 'home')
+  })
+  t('negative: a declaration file never makes this computer «server»; private, shared and loopback ranges are not public', () => {
+    const declared = fixture({ services: SERVICES })
+    mkdirSync(join(declared, 'data', 'node'), { recursive: true })
+    writeFileSync(join(declared, 'data', 'node', 'place.json'), JSON.stringify({ place: 'server' }))
+    assert.equal(nodePlace(declared, { platform: 'darwin' }).kind, 'home')
+    for (const ip of ['10.0.0.1', '172.20.1.1', '100.64.0.1', '169.254.1.1', '127.0.0.1']) assert.equal(isPublicIpv4(ip), false, ip)
+    assert.equal(isPublicIpv4('213.199.61.7'), true)
+  })
+}
+
 for (const r of roots) rmSync(r, { recursive: true, force: true })
 console.log(`${passed} passed${process.exitCode ? ', FAILED' : ''}`)

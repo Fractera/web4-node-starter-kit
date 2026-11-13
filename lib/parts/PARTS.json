@@ -2216,8 +2216,7 @@
         ]
       },
       "usedBy": [
-        "app/[lang]/(architectLayer)/architect/page.tsx",
-        "components/hosting/widgets.tsx"
+        "app/[lang]/(architectLayer)/architect/page.tsx"
       ]
     },
     {
@@ -3023,7 +3022,6 @@
         "components/menu/footer/cookie-settings-button.client.tsx",
         "components/menu/shared/drawer-toggle.client.tsx",
         "components/node-state/github-token-alarm.client.tsx",
-        "components/node-state/node-place.client.tsx",
         "components/node-state/node-state.client.tsx",
         "components/node-state/open-on-this-computer.client.tsx",
         "components/node-users/batch-bar.client.tsx",
