@@ -5,7 +5,10 @@ before-numbers: `./probes/` (`RESULTS.md` first). Repository: the core only (Fra
 update together with 743-7 (the interface-skills gate, built, not yet live here). Every interface file is written with `interface-design`,
 `use-primitives`, `use-shadcn` loaded.
 
-**Status: waiting for the owner's approval of 744-1…9 and D44–D52.**
+**Approved 2026-11-14 ~16:40 UTC** — the owner, to «Утверждаешь 744-1…9 и D44–D52?»: «Теперь запомни будем идти на этом плане от начало до
+конца. Если я буду находить какие-то проблемы то мы будем их записывать в лист пожеланий и пока не закроем эту ветку мелочи исправлять не
+будем потом пройдём отдельно исправим мелочи которые найдём» · «go». **The branch rule:** whatever he finds outside these substeps goes to
+`wishes.md` (verbatim, dated) and is NOT fixed until 744 closes; then a separate pass.
 
 ## 1. The owner's goal (verbatim, 2026-11-14) — the WHOLE chain is the plan
 - «Я тебе повторю почему я потребовал тебя запуск нова плана потому что ты чем ты сейчас занимаешься это всего лишь навсего ветка того
