@@ -18,6 +18,7 @@ import { createRequire } from 'node:module'
 import paths from '../lib/web4-items/paths.cjs'
 import deployLock from '../lib/deploy/deploy-lock.cjs'
 import { PROGRESS_ENV, progress } from './progress.mjs'
+import { migratePlaceRecord } from '../lib/hosting/place.mjs'
 // 553: сборка ядра при «закрытой крышке» — все процессы узла, кроме туннеля, на время сборки остановлены.
 const { closeLid, openLid, backupNext, restoreNext, dropBackup, itemsAside, itemsBack, redrawCore } = createRequire(import.meta.url)('../lib/deploy/quiet-build.cjs')
 // 642-2: чтец сборки — журнал сборки ядра этому компьютеру, пока крышка закрыта (`lib/deploy/build-reader.cjs`).
@@ -148,6 +149,12 @@ async function start() {
       console.log('737: the move mark is set aside (data/node/server/done/) — this computer starts as always')
     }
   }
+  // 741-2: a node installed before 741 records where it lives at its first start — from the launch's mark or the measurement; a
+  // version-2 record (written by the installation) is never overwritten. The retired declaration of 276-3 is replaced here.
+  try {
+    const rec = migratePlaceRecord(root)
+    if (rec) console.log(`741-2: the node recorded where it lives — ${rec.place} (${rec.by})`)
+  } catch (e) { console.log(`741-2: the place record was not written — ${e.message}`) }
   // 553: оборванная сборка при «закрытой крышке» оставила узел остановленным — список в data/node/quiet-build.json.
   openLid(root)
   // 369: не в облачной сессии Claude Code; 368: только из прямого форка оригинала Fractera — обе проверки до установки элементов.

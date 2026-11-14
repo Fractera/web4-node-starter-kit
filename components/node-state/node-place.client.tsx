@@ -7,12 +7,13 @@ import type { NodePlaceWords } from "@/components/node-state/node-place.i18n"
 
 // ГДЕ СТОИТ УЗЕЛ — ПОКАЗ, НЕ ВЫБОР (737-18; был экраном объявления 276-3). Владелец 2026-11-13: «до сих пор у нас существует вкладка
 // где мы все это переключали руками. Больше этого быть не должно». Островок спрашивает узел (`/api/node/place`) и называет, как узел
-// это знает — запись переезда или замер машины (`lib/hosting/place.mjs`). Кнопок нет: дверь отказывает объявлению (410).
+// это знает — запись установки, метка запуска сервера или замер машины (`lib/hosting/place.mjs`, 741-2); расхождение замера с записью и
+// запись с чужой машины называются отдельной строкой. Кнопок нет: дверь отказывает объявлению (410).
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
 type Kind = "home" | "server" | "unknown"
-type Answer = { ok?: boolean; place?: { kind?: Kind; detail?: string } }
+type Answer = { ok?: boolean; place?: { kind?: Kind; detail?: string; mismatch?: string; foreign?: boolean } }
 
 export function NodePlace({ words }: { lang?: string; words: NodePlaceWords }) {
   const [answer, setAnswer] = useState<Answer["place"] | null>(null)
@@ -31,11 +32,15 @@ export function NodePlace({ words }: { lang?: string; words: NodePlaceWords }) {
   if (!answer) return <p className="my-6 text-muted-foreground text-sm" data-block="node-place-loading">{words.loading}</p>
   const kind = answer.kind ?? "unknown"
   const how = String(answer.detail ?? "").split(" ")[0] as keyof NodePlaceWords["how"]
+  // 741-2: the measurement only checks the installation's record — a disagreement or a copied record is said, never hidden.
+  const measured = String(answer.mismatch ?? "").split(" ")[0] as keyof NodePlaceWords["how"]
   return (
     <div className="my-6 flex flex-col gap-2" data-block="node-place" data-node-place={kind}>
       <p className="font-medium text-foreground text-sm">{words.title}</p>
       <p className="text-foreground text-sm">{kind === "home" ? words.currentHome : kind === "server" ? words.currentServer : words.currentUnknown}</p>
       {words.how[how] ? <Small className="text-muted-foreground">{words.how[how]}</Small> : null}
+      {answer.mismatch ? <Small className="text-foreground" data-block="node-place-mismatch">{words.mismatch.replace("{how}", words.how[measured] ?? answer.mismatch)}</Small> : null}
+      {answer.foreign ? <Small className="text-foreground" data-block="node-place-foreign">{words.foreign}</Small> : null}
       <Small className="text-muted-foreground">{words.note}</Small>
     </div>
   )

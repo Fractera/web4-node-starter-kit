@@ -15,6 +15,8 @@ emit install running
 
 # No quick tunnel on the server: its public face is nginx (the IP, then the domain). `serve:start` reads this mark (serve.mjs, `unpublished`).
 stage marks 'printf "{\n  \"url\": null,\n  \"unpublished\": true,\n  \"reason\": \"dedicated-server\"\n}\n" > logs/tunnel.json'
+# 741-2: the act that makes a server says so — the node's record of where it lives (`lib/hosting/place.mjs`), before anything starts.
+stage place 'node scripts/place-record.mjs --server'
 # preinstall: check-local, ensure-env, ensure-claude (the official installer → ~/.local/bin/claude), ensure-cloudflared;
 # postinstall: ensure-pty (node-pty builds with build-essential + python3), ensure-eyes (Chromium; its system libraries come next).
 stage deps 'lock=$(sha256sum package-lock.json | cut -c1-16); if [ ! -d node_modules ] || [ "$(cat logs/dedicated-server/deps.sha 2>/dev/null)" != "$lock" ]; then npm ci --no-audit --no-fund && echo "$lock" > logs/dedicated-server/deps.sha; fi'

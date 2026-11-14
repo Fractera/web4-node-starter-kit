@@ -155,6 +155,8 @@ if (head && readStamp().build === head && existsSync(path.join(root, '.next', 'B
 }
 
 step(6, 'запуск узла и выход в интернет (первый раз 5–15 минут: ставятся элементы)', 'start (first time 5–15 min: elements install)')
+// 741-2: the installation on a person's computer records where the node lives — once; a server's record is never turned into «home».
+node('place-record.mjs', '--home')
 // Узел уже отвечает на эту сборку — не перезапускать: `serve:start` поднял бы процессы заново ради ничего; адреса даёт `serve:status`.
 if (readStamp().started === head && (await nodeAnswers())) {
   console.log('узел уже работает — показываю адреса')
