@@ -15,7 +15,7 @@ import assert from 'node:assert/strict'
 import { mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
-import { dirname, join, relative, resolve } from 'node:path'
+import { dirname, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { currentOf, openOf } from '../lib/hosting/ladder-rule.mjs'
 
@@ -57,7 +57,8 @@ const walk = (dir) => readdirSync(dir).flatMap((n) => {
   const p = join(dir, n)
   return statSync(p).isDirectory() ? walk(p) : /\.(tsx?|mjs)$/.test(n) ? [p] : []
 })
-const read = (dir) => walk(join(ROOT, dir)).map((p) => [relative(ROOT, p), readFileSync(p, 'utf8')])
+// paths as git writes them — forward slashes on every system (✗ 2026-11-14, CI windows: `components\\domain\\…` never matched)
+const read = (dir) => walk(join(ROOT, dir)).map((p) => [relative(ROOT, p).split(sep).join('/'), readFileSync(p, 'utf8')])
 
 await t('no file of components/hosting decides which rung is open; negative: the 738 table and the 737-19 idiom planted there are refused', () => {
   const hosting = read('components/hosting').filter(([rel]) => !rel.endsWith('.i18n.ts'))

@@ -7,7 +7,7 @@
 //          `final = finalCheck(state)` (`lib/hosting/final-check.mjs`); no other function of the file reads `words.ready`.
 // Negative controls in `scripts/final-check.test.mjs` (a ready word planted before the check, the check removed, another file reading them).
 import { readdirSync, readFileSync, statSync } from 'node:fs'
-import { dirname, join, relative, resolve } from 'node:path'
+import { dirname, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 export const END = 'components/hosting/server-launch-end.client.tsx'
@@ -50,7 +50,8 @@ const walk = (dir) => readdirSync(dir).flatMap((n) => {
   return statSync(p).isDirectory() ? walk(p) : /\.(tsx?|mjs)$/.test(n) ? [p] : []
 })
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const files = ['components', 'app'].flatMap((d) => walk(join(ROOT, d))).map((p) => [relative(ROOT, p), readFileSync(p, 'utf8')])
+  // paths as git writes them — forward slashes on every system (a Windows `relative` gives backslashes)
+  const files = ['components', 'app'].flatMap((d) => walk(join(ROOT, d))).map((p) => [relative(ROOT, p).split(sep).join('/'), readFileSync(p, 'utf8')])
   const problems = readyWordsProblems(files)
   if (problems.length) {
     for (const p of problems) console.error(`  ✗ ${p}`)
