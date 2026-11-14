@@ -1,7 +1,7 @@
 // THE TRANSITION IS TESTED, NOT ONLY THE DESTINATION (node step 743-6; runs in CI on three systems, D42 — not in the node's prebuild).
 // ✗ 2026-11-14: a node ran its own old updater, so a fix in the target never ran (the test server rolled back at the merge); a transition
 // hung on one entry point was missed; a collision was discovered minutes into an update. Fixtures are built from this commit's own files
-// (`git archive`, so a shallow CI checkout is enough): a fork = this commit + one change; nodes = this commit + their own commit (as every
+// (`git archive` without eol conversion — Windows' autocrlf — so a shallow CI checkout is enough): a fork = this commit + one change; nodes = this commit + their own commit (as every
 // install makes one), with no git identity they may use. A fake `npm` (a named seam) stops the update at its guards: the build stages are
 // proven live, never here. Cases:
 //   (a) stage 0 → the TARGET's updater runs (its canary printed, `updater` = the target), the merge is the machine's, the ledger written,
@@ -39,7 +39,7 @@ Object.assign(env, { HOME: home, USERPROFILE: home, XDG_CONFIG_HOME: home, GIT_C
 try {
   // the fork: this commit's files as one commit (independent of the checkout's depth)
   const work = join(base, 'forkwork'); mkdirSync(work)
-  const tar = spawnSync('git', ['archive', '--format=tar', 'HEAD'], { cwd: REPO, maxBuffer: 512 * 1024 * 1024 })
+  const tar = spawnSync('git', ['-c', 'core.autocrlf=false', 'archive', '--format=tar', 'HEAD'], { cwd: REPO, maxBuffer: 512 * 1024 * 1024 })
   assert.equal(tar.status, 0, String(tar.stderr))
   assert.equal(spawnSync('tar', ['-xf', '-'], { cwd: work, input: tar.stdout }).status, 0)
   git(work, 'init', '-q', '-b', 'main'); git(work, 'add', '-A'); git(work, ...T('commit', '-q', '-m', 'base'))
@@ -67,7 +67,7 @@ try {
   const before = copies()
   const ours = () => [...copies()].filter((f) => !before.has(f)).length
 
-  const canary = target('canary', (w) => edit(w, 'scripts/node-update.mjs', "stage('check', 'проверка')\n", "stage('check', 'проверка')\nsay('CANARY-TARGET-UPDATER')\n"))
+  const canary = target('canary', (w) => edit(w, 'scripts/node-update.mjs', "stage('check', 'проверка')", "stage('check', 'проверка'); say('CANARY-TARGET-UPDATER')"))
   t('(a) stage 0: the target\'s own updater runs, its merge is the machine\'s, the ledger is written, no worktree is left', () => {
     const dir = node('a')
     const r = run(dir, 'node-update-stage0.mjs')
@@ -105,7 +105,7 @@ try {
     assert.equal(git(dir, 'rev-parse', 'HEAD'), head); assert.equal(git(dir, 'status', '--porcelain'), '')
   })
 
-  target('a target without the handoff mark', (w) => edit(w, 'scripts/node-update.mjs', '// @handoff v1\n', ''))
+  target('a target without the handoff mark', (w) => edit(w, 'scripts/node-update.mjs', '// @handoff v1', '// (the handoff mark removed)'))
   t('(d) a target without «// @handoff v1»: the node\'s own updater runs, said in one line', () => {
     const r = run(node('d'), 'node-update-stage0.mjs')
     assert.match(r.stdout, /this node's own updater \(the target has no @handoff v1\)/)
