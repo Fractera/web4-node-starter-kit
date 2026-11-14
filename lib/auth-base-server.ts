@@ -5,7 +5,7 @@
 // which has no app rebuild. Deriving from the request host works in both modes
 // with one build.
 //
-// - IP / localhost (insecure mode): same host, auth on port 3001.
+// - IP / localhost: the registry's address on this machine; without it, "" (sign-in not switched on — 741-3 removed the old :3001).
 // - Domain (Secure mode): the auth service is the sibling subdomain auth.<apex>
 //   on 443 (no port). Building <host>:3001 on a domain would yield
 //   https://admin.<domain>:3001 → ERR_SSL_PROTOCOL_ERROR (3001 has no TLS).
@@ -68,23 +68,14 @@ export function authBaseFromHost(host: string | null, proto: string): string {
   if (!host) return "";
   const hostname = host.split(":")[0];
   const scheme = proto === "https" ? "https" : "http";
-  // SERVER-LINE-ADDRESS: линия aifa.dev, реестра там нет, порт 3001 законен.
-  if (isIpHost(hostname)) return `${scheme}://${hostname}:3001`;
+  // 🪦 741-3: the old server line's `<IP>:3001` is gone — a node always has the registry's address above; an IP or a loopback name
+  // without it means «sign-in is not switched on here» (""), never a knock on a port nobody listens to.
+  if (isIpHost(hostname)) return "";
   return `${scheme}://auth.${apexFrom(hostname)}`;
 }
 
-// Projects service base, the BROWSER-facing sibling of authBaseFromHost (step 211).
-// The Projects layer (§3.12) left this slot in step 197 and runs in its own process
-// (fractera-projects :3003 / projects.<apex>). The slot's proxy redirects any
-// /projects* request here so the natural URL keeps working — IP mode: <host>:3003;
-// Secure mode: projects.<apex> on 443. Mirror of projectsBase() in runtime-urls.ts.
-export function projectsBaseFromHost(host: string | null, proto: string): string {
-  if (!host) return "http://localhost:3003";
-  const hostname = host.split(":")[0];
-  const scheme = proto === "https" ? "https" : "http";
-  if (isIpHost(hostname)) return `${scheme}://${hostname}:3003`;
-  return `${scheme}://projects.${apexFrom(hostname)}`;
-}
+// 🪦 `projectsBaseFromHost` (step 211) removed in 741-3 with the proxy's `/projects` bridge: it pointed at `<host>:3003` /
+// `projects.<apex>` — a Projects service of the old server line a node does not have (measured: `/ru/projects` → `localhost:3003`).
 import { authUrl as nodeAuthUrl } from "@/lib/microservices/urls";
 
 

@@ -69,7 +69,7 @@ screen, and deletion stays with `architect` because it is destructive.
 
 On a node authentication is bypassed in `NODE_ENV=development`, and on `localhost` the owner at the
 keyboard opens the architect layer without signing in (`lib/auth/owner-at-machine.ts`) — both hand you
-`architect`. `FRACTERA_IP_NODOMAIN_MODE` belongs to the old server line; a node never sets it. So a page
+`architect`. The old server line's `FRACTERA_IP_NODOMAIN_MODE` is no longer read (741-3). So a page
 tested on this computer is tested for the case that never fails. Say which mode you were in; it is one sentence, and it is the difference between a
 proof and a habit.
 

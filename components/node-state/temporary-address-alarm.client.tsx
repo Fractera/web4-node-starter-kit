@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react"
 import { ExternalLink, Siren } from "lucide-react"
 import type { TemporaryAddressAlarmWords } from "./temporary-address-alarm.i18n"
-import { isTemporaryHostname } from "@/lib/auth/temporary-address"
+import { isTemporaryHostname } from "@/components/shell/temporary-host"
 import { OpenOnThisComputerButton } from "./open-on-this-computer.client"
 import { useSnooze } from "./snooze"
+import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 // ТРЕВОЖНАЯ ПОЛОСА «ПРОЕКТ В ИНТЕРНЕТЕ ПО ВРЕМЕННОМУ АДРЕСУ» НАД СЛОЕМ АРХИТЕКТОРА (шаг 371-1).
 //
@@ -61,9 +63,11 @@ export function TemporaryAddressAlarm({ words, lang }: { words: TemporaryAddress
         <a href={`${BASE}/${lang}/hosting/domain`} className="font-medium underline">
           {words.connect}
         </a>
-        <button type="button" onClick={snooze} title={words.hideTitle} className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground" data-temporary-address-hide>
-          {words.hide}
-        </button>
+        <TooltipProvider><Tooltip><TooltipTrigger asChild>
+          <Button type="button" variant="link" size="xs" onClick={snooze} className="h-auto px-0 text-muted-foreground underline hover:text-foreground" data-temporary-address-hide>
+            {words.hide}
+          </Button>
+        </TooltipTrigger><TooltipContent className="max-w-xs">{words.hideTitle}</TooltipContent></Tooltip></TooltipProvider>
       </div>
     </div>
   )

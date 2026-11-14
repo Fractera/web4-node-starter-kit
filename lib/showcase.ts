@@ -1,5 +1,3 @@
-import type { NextRequest } from "next/server"
-
 // ВИТРИНА FRACTERA — ЕДИНСТВЕННЫЙ АДРЕС, ГДЕ ПРОДУКТ ПОКАЗЫВАЕТ СЕБЯ ЦЕЛИКОМ (256-1).
 //
 // 🔒 РЕШЕНИЕ ВЛАДЕЛЬЦА 2026-09-20, дословно: «Мы везде будем просто ставить
@@ -65,17 +63,7 @@ export function isShowcaseHostname(hostname: string | undefined | null): boolean
   return bare === SHOWCASE_HOSTNAME
 }
 
-/**
- * Пришёл ли запрос НА витрину.
- *
- * Запроса нет (серверный вызов внутри процесса) — `false`: молчаливая выдача прав
- * тому, чьё происхождение неизвестно, и есть тот класс дефекта, которым оплачен
- * `auth-bypass.ts`. Имя хоста берётся так же, как в правиле хозяина и в признаке
- * туннеля: сначала то, что назвал поставленный человеком прокси, потом `Host`.
- */
-export function isShowcaseRequest(req?: NextRequest): boolean {
-  if (!req) return false
-  const forwarded = (req.headers.get("x-forwarded-host") ?? "").trim().toLowerCase()
-  const host = (req.headers.get("host") ?? "").trim().toLowerCase()
-  return isShowcaseHostname(forwarded || host)
-}
+// 741-3 (владелец утвердил 2026-11-14): `isShowcaseRequest` переехал в `lib/showcase.server.ts` и теперь требует ДВУХ фактов — узел
+// НАСТРОЕН как витрина (`isShowcaseOrigin` адреса сайта из его настроек) И запрос пришёл по её имени. ✗ Одного имени было мало: через
+// nginx сервера любой присылал `Host: fractera.ai` и получал сессию витрины со всеми ролями на чужом узле (измерено 2026-11-14).
+// Этот файл уезжает и в браузер — в нём остаются только сверки адреса и имени.

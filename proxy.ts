@@ -4,10 +4,10 @@ import { NextResponse } from "next/server";
 import { shouldBypassAuthEdge } from "@/lib/auth/auth-bypass.edge";
 import { isOwnerAtMachine } from "@/lib/auth/owner-at-machine";
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address";
-import { isShowcaseRequest } from "@/lib/showcase";
+import { isShowcaseRequest } from "@/lib/showcase.server";
 import { mirrorTarget } from "@/lib/domain/mirror-redirect";
 import { getSession } from "@/lib/auth/get-session";
-import { authBaseFromHost, connectedDomainAuthBase, projectsBaseFromHost, publicAuthBaseFor } from "@/lib/auth-base-server";
+import { authBaseFromHost, connectedDomainAuthBase, publicAuthBaseFor } from "@/lib/auth-base-server";
 import { authUrl as nodeAuthUrl } from "@/lib/microservices/urls";
 import { temporaryAddressPage } from "@/lib/auth/temporary-address.page";
 import { signInClosedPage } from "@/lib/auth/sign-in-closed.mjs";
@@ -526,26 +526,9 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(target);
   }
 
-  // Job 0.5 — bridge the Projects layer to its own service (step 211). The Projects
-  // layer (§3.12) left this slot in step 197 and runs in fractera-projects (:3003 /
-  // projects.<apex>). A request that still lands here for /projects — the owner's
-  // muscle-memory URL, a stale link, or a /[lang]/projects hit — is redirected to
-  // that service instead of 404-ing (projects are NOT under [lang] on the slot, so
-  // the language router would rewrite /projects → /<lang>/projects and 404). This is
-  // future-proof: EVERY project path (including projects not yet created) bridges
-  // automatically, so a newly composed project is reachable the moment it deploys —
-  // no per-project wiring. Projects are monolingual → strip any leading /<lang>.
-  {
-    const segs = pathname.split("/").filter(Boolean);
-    const langLess = segs[0] && SUPPORTED_LANGUAGES.includes(segs[0]) ? segs.slice(1) : segs;
-    if (langLess[0] === "projects") {
-      const proto = request.headers.get("x-forwarded-proto") ?? request.nextUrl.protocol.replace(":", "");
-      const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
-      const projPath = "/" + langLess.join("/");
-      const qs = request.nextUrl.search;
-      return NextResponse.redirect(`${projectsBaseFromHost(host, proto)}${projPath}${qs}`);
-    }
-  }
+  // 🪦 Job 0.5 (the `/projects` bridge of step 211) removed in 741-3: it sent `/projects` and `/<lang>/projects` to a separate Projects
+  // service of the old server line (`<host>:3003` / `projects.<apex>`), which a node does not have. ✗ Measured 2026-11-14 on this node:
+  // `/ru/projects` → 307 `http://localhost:3003/projects`, a dead address. The node's projects live under «Дашборд → Проекты».
 
   // Job 1 — API auth gate.
   if (pathname.startsWith("/api")) {

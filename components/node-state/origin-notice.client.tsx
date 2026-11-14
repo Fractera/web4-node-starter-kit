@@ -5,7 +5,9 @@ import { CircleCheck, ExternalLink, RefreshCw, TriangleAlert } from "lucide-reac
 import type { OriginNoticeWords } from "./origin-notice.i18n"
 import { useSnooze } from "./snooze"
 import { OpenOnThisComputerButton } from "./open-on-this-computer.client"
-import { isTemporaryHostname } from "@/lib/auth/temporary-address"
+import { isTemporaryHostname } from "@/components/shell/temporary-host"
+import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 // ПОЛОСА «ВЕРСИЯ УСТАРЕЛА» НАД СЛОЕМ АРХИТЕКТОРА (шаги 368, 632-4). Слово владельца 2026-10-01: «никакой запрет представить не будем,
 // но … будем выводить уведомления что … ваша версия уже устарела … или продолжите». Владелец 2026-11-03: «синхронизацию я уже
@@ -111,21 +113,24 @@ export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: 
           {words.rebuild}
         </a>
       ) : (
-        <button type="button" disabled title={forkBehind ? words.rebuildWaitSync : words.rebuildNothing} className="rounded-md border border-border px-3 py-1.5 font-medium text-muted-foreground opacity-60" data-node-update-rebuild="off">
-          {words.rebuild}
-        </button>
+        // A disabled button fires no pointer events — the hint hangs on a focusable wrapper.
+        <TooltipProvider><Tooltip><TooltipTrigger asChild><span className="inline-flex" tabIndex={0}>
+          <Button type="button" variant="outline" disabled data-node-update-rebuild="off">
+            {words.rebuild}
+          </Button>
+        </span></TooltipTrigger><TooltipContent className="max-w-xs">{forkBehind ? words.rebuildWaitSync : words.rebuildNothing}</TooltipContent></Tooltip></TooltipProvider>
       ))}
       {onTemporary && <OpenOnThisComputerButton open={words.openHere} />}
       {canCheck && !onTemporary && (
-        <button type="button" onClick={() => void check()} disabled={busy !== null} className="inline-flex items-center gap-1 underline disabled:opacity-60" data-node-update-check>
-          <RefreshCw className="size-3" aria-hidden />
+        <Button type="button" variant="link" size="sm" onClick={() => void check()} disabled={busy !== null} className="h-auto px-0 text-foreground underline" data-node-update-check>
+          <RefreshCw data-icon="inline-start" aria-hidden />
           {busy === "check" ? words.checking : words.check}
-        </button>
+        </Button>
       )}
       {(even || (done && !hidden && !forkBehind && d.nodeBehind === 0)) && (
-        <button type="button" onClick={even ? evenSnooze.snooze : snooze} className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground">
+        <Button type="button" variant="link" size="xs" onClick={even ? evenSnooze.snooze : snooze} className="h-auto px-0 text-muted-foreground underline hover:text-foreground">
           {words.hide}
-        </button>
+        </Button>
       )}
     </div>
   )

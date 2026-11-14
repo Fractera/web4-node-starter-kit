@@ -26,8 +26,10 @@ import { useEffect, useState } from 'react'
 import { Download, X } from 'lucide-react'
 import type { InstallStrings } from './install-prompt.i18n'
 import { readStored, writeStored } from '@/lib/safe-storage'
-import { isTemporaryHostname } from '@/lib/auth/temporary-address'
+import { isTemporaryHostname } from '@/components/shell/temporary-host'
 import { isLoopbackHostname } from '@/lib/auth/owner-at-machine'
+import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 // Событие нестандартное: в типах TypeScript его нет, потому что в спецификации
 // оно не описано — это дополнение поставщиков браузеров. Объявляем ровно то, чем
@@ -165,23 +167,15 @@ export function InstallPrompt({ strings }: { strings: InstallStrings }) {
 
   return (
     <div className="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-full border border-border bg-background/95 px-3 py-2 shadow-lg backdrop-blur">
-      <button
-        type="button"
-        onClick={install}
-        className="inline-flex items-center gap-2 rounded-full bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
-      >
-        <Download size={14} className="shrink-0" />
+      <Button type="button" size="sm" onClick={install} className="rounded-full">
+        <Download data-icon="inline-start" />
         {strings.install}
-      </button>
-      <button
-        type="button"
-        onClick={dismiss}
-        title={strings.dismiss}
-        aria-label={strings.dismiss}
-        className="rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-      >
-        <X size={14} />
-      </button>
+      </Button>
+      <TooltipProvider><Tooltip><TooltipTrigger asChild>
+        <Button type="button" variant="ghost" size="icon-sm" onClick={dismiss} aria-label={strings.dismiss} className="rounded-full text-muted-foreground">
+          <X />
+        </Button>
+      </TooltipTrigger><TooltipContent>{strings.dismiss}</TooltipContent></Tooltip></TooltipProvider>
     </div>
   )
 }

@@ -3,7 +3,7 @@ import { NextRequest } from "next/server"
 import { shouldBypassAuth } from "@/lib/auth/auth-bypass"
 import { isOwnerAtMachine } from "@/lib/auth/owner-at-machine"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
-import { isShowcaseRequest } from "@/lib/showcase"
+import { isShowcaseRequest } from "@/lib/showcase.server"
 import { ALL_ROLES } from "@/lib/roles"
 
 export type AppSession = {

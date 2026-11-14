@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { isTemporaryHostname } from '@/lib/auth/temporary-address'
+import { isTemporaryHostname } from '@/components/shell/temporary-host'
 import { isLoopbackHostname } from '@/lib/auth/owner-at-machine'
 import { isShowcaseHostname } from '@/lib/showcase'
 

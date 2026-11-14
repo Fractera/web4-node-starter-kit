@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react"
 import { ExternalLink, Siren } from "lucide-react"
 import type { DeadAddressAlarmWords } from "./dead-address-alarm.i18n"
-import { isTemporaryHostname } from "@/lib/auth/temporary-address"
+import { isTemporaryHostname } from "@/components/shell/temporary-host"
+import { Button } from "@/components/ui/button"
 
 // ПОЛОСА «ВРЕМЕННЫЙ АДРЕС УМЕР» НАД СЛОЕМ АРХИТЕКТОРА (узел, шаг 632-5). Владелец 2026-11-03: «Похоже для этого нужно делать баннер,
 // который будет предупреждать об этой проблеме и кнопка которую этой проблемы будет решать?» ✗ Замерено в тот же день: адрес был мёртв
@@ -71,9 +72,9 @@ export function DeadAddressAlarm({ words, lang }: { words: DeadAddressAlarmWords
       </div>
       <div className="flex flex-col items-start gap-2 self-center">
         {!result?.url && (
-          <button type="button" onClick={raise} disabled={busy} className="rounded-md bg-destructive px-3 py-1.5 font-medium text-white disabled:opacity-60" data-dead-address-raise>
+          <Button type="button" variant="destructive" onClick={raise} disabled={busy} data-dead-address-raise>
             {busy ? words.raising : words.raise}
-          </button>
+          </Button>
         )}
         <a href={`${BASE}/${lang}/architect/hosting/domain`} className="font-medium underline">
           {words.connect}

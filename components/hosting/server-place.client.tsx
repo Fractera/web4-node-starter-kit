@@ -9,7 +9,7 @@ import { ServerLadder } from "@/components/hosting/server-ladder.client"
 import type { ServerLadderWords } from "@/components/hosting/server-ladder.i18n"
 import { ServerLaunch } from "@/components/hosting/server-launch.client"
 import type { ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
-import { isTemporaryHostname } from "@/lib/auth/temporary-address"
+import { isTemporaryHostname } from "@/components/shell/temporary-host"
 
 // WHERE THIS PAGE IS OPENED (node step 738-4). On the person's computer it launches servers; on a server node it is that server's own
 // domain (737-8: its five steps, read-only on its bare IP); on a public address nothing is launched — the door refuses there.

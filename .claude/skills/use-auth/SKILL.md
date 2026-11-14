@@ -79,7 +79,7 @@ description of it.
 | `lib/auth/get-session.ts` | how a session becomes `{ userId, email, roles }`: one call to `:3001/api/session` with the visitor's cookie. This is the only reader of the session in the whole app |
 | `lib/auth/require-roles.ts` | the real lock of a door: `requireRoles(req, [...])` → 401 / 403 / null, plus `groupsOf()` when the answer is "what exactly may they do" |
 | `lib/auth/require-role.ts`, `require-admin.ts` | older single-role variants of the same idea |
-| `lib/auth/auth-bypass.ts` (+ `.edge.ts`) | why a locked page opens with no login at all: on a node the bypass is on only in `NODE_ENV=development`; `FRACTERA_IP_NODOMAIN_MODE` is the old server line's flag, a node never sets it (the installer leaves it empty) |
+| `lib/auth/auth-bypass.ts` (+ `.edge.ts`) | why a locked page opens with no login at all: on a node the bypass is on only in `NODE_ENV=development`; the old server line's flag `FRACTERA_IP_NODOMAIN_MODE` is no longer read (removed in 741-3 — it opened the whole node) |
 | `lib/auth-base-server.ts` | the address of `:3001` derived from the REQUEST host — `<ip>:3001` on an IP, `auth.<apex>` on a domain |
 | `lib/runtime-urls.ts` | the same address derived in the BROWSER from `window.location`, plus `registerRedirectUrl()` which builds the sign-up link with `callbackUrl` |
 | `components/auth/access-gate.client.tsx` | the visible half: what a person is told when their role is not enough |

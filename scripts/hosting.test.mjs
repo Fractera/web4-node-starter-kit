@@ -551,6 +551,43 @@ console.log('737-18 the place is detected, never declared')
   })
 }
 
+console.log('741-3 the core\'s second wall: the request\'s signs read the place and the configured site')
+{
+  const { requestHostname, temporaryFor, showcaseFor } = await import('../lib/auth/request-signs.mjs')
+  const { isShowcaseOrigin, isShowcaseHostname } = await import('../lib/showcase.ts')
+  const { placeKind, writePlaceRecord } = await import('../lib/hosting/place.mjs')
+  const head = (h) => (name) => h[name] ?? null
+  const TUNNEL = 'four-random-words-here.trycloudflare.com'
+  // [Host, the computer's answer, the server's answer] — the computer keeps the owner's trade of 243, the server gives no identity.
+  const table = [[TUNNEL, true, false], ['203.0.113.7', true, false], ['[2001:db8::1]:80', true, false], ['example.org', false, false],
+    ['fractera.ai', false, false], ['localhost:24680', false, false]]
+  t('741-3: a tunnel name or a bare IP is a temporary address on a computer and a forgery on a server', () => {
+    for (const [host, home, server] of table) {
+      const name = requestHostname(head({ host }))
+      assert.equal(temporaryFor('home', name, isTemporaryHostname), home, `home ${host}`)
+      assert.equal(temporaryFor('server', name, isTemporaryHostname), server, `server ${host}`)
+    }
+  })
+  t('741-3: the showcase needs BOTH — the node configured as fractera.ai and the request by that name', () => {
+    const name = (host, xfh) => requestHostname(head({ host, ...(xfh ? { 'x-forwarded-host': xfh } : {}) }))
+    assert.equal(showcaseFor('https://fractera.ai', name('fractera.ai'), isShowcaseOrigin, isShowcaseHostname), true)
+    assert.equal(showcaseFor('https://fractera.ai/', name('FRACTERA.AI:443'), isShowcaseOrigin, isShowcaseHostname), true)
+    // negative: the name alone on a guest node (measured live on 2026-11-14 as all roles) — now nothing
+    assert.equal(showcaseFor('https://throughsongs.com', name('fractera.ai'), isShowcaseOrigin, isShowcaseHostname), false)
+    assert.equal(showcaseFor('', name('nobody', 'fractera.ai'), isShowcaseOrigin, isShowcaseHostname), false)
+    // negative: the showcase node reached by another name is not the showcase
+    assert.equal(showcaseFor('https://fractera.ai', name('www.fractera.ai'), isShowcaseOrigin, isShowcaseHostname), false)
+  })
+  t('741-3: the request path asks the record first; a foreign record falls back to the launch\'s mark and the measurement', () => {
+    const srv = fixture({ services: SERVICES })
+    writePlaceRecord(srv, 'server', 'dedicated-server', { machine: null })
+    assert.equal(placeKind(srv), 'server')
+    const moved = fixture({ services: SERVICES, server: { phase: 'live' } })
+    writePlaceRecord(moved, 'home', 'launch', { machine: 'ffffffffffffffff' })
+    assert.equal(placeKind(moved), 'server', 'a foreign record is skipped; the launch\'s mark stands')
+  })
+}
+
 console.log('737-15 the names before the move')
 {
   const { nginxSite } = await import('../lib/hosting/nginx.mjs')

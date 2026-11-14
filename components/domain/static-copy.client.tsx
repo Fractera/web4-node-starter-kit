@@ -4,7 +4,7 @@ import { Check, CircleAlert, Clock, ExternalLink, LoaderCircle, Minus, RefreshCw
 import { useCallback, useEffect, useState } from "react"
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
-import { isTemporaryHostname } from "@/lib/auth/temporary-address"
+import { isTemporaryHostname } from "@/components/shell/temporary-host"
 import type { StaticCopyWords } from "@/components/domain/domain-ladder.i18n"
 
 // КОПИЯ В CLOUDFLARE ПО КАЖДОМУ АДРЕСУ УЗЛА (шаг 385-3). Возврат владельца 2026-10-04: «нажатие кнопки обновить вообще не показала
