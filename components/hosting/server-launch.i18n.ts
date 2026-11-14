@@ -19,6 +19,7 @@ export type ServerLaunchWords = {
   passwordNote: string
   connect: string
   connecting: string
+  doing: Record<string, string>
   another: string
   locked: string
   step: Record<LaunchStep, string>
@@ -79,6 +80,7 @@ const en: ServerLaunchWords = {
   passwordNote: "Opens access to this server for one day: the server itself closes it at the deadline. The password is used once and kept nowhere; while the access lasts, this browser needs no password for this server.",
   connect: "Check the server",
   connecting: "Connecting and checking the server… up to a minute.",
+  doing: { any: "Working on the server…", clear: "Freeing the server… under a minute.", domain: "Checking the domain…", detect: "Looking up where the domain's records live…", way: "Saving the way…", "dns-check": "Asking public DNS for every name…", dns: "Asking public DNS for every name…", certs: "Issuing certificates… about a minute per name.", check: "Checking HTTPS of every name from the internet…", activate: "Switching the domain on… sign-in restarts, up to a minute.", install: "Starting the installation…", state: "Reading the server…" },
   another: "Another server",
   locked: "opens when the step before it is done",
   step: { server: "The server", check: "Check the server", domain: "Domain activation", install: "Server installation", recheck: "Second check of the records", certs: "Security certificates", ready: "The server is ready" },
@@ -91,6 +93,7 @@ const en: ServerLaunchWords = {
   access: { until: "Access until {time} (24 h at most)", close: "Close access", closing: "Closing the access…" },
   window: { open: "Open the server's panel", opening: "Opening an SSH window…", link: "The server's panel: {url}", note: "Through SSH, on this computer only, while the access lasts; «Close access» closes it too." },
   errors: {
+    "not-ready": "Not every name is ready yet: each needs a certificate, and HTTPS where it is due (step 6).", "check-first": "The server's own node has not counted the names as ready: run «Check HTTPS from the internet» in step 6. If it stays, update the server in step 4 — its version may be older than this computer's.", "auth-not-answering": "Sign-in on the server did not answer after the switch: check again in a minute.", "nginx-refused": "The server's web server did not accept the new settings.", "door-silent": "The server's node gave no answer.", "door-refused": "The server's node refused the step.",
     auth: "The server refused the password.", "need-password": "This browser has no open access to this server: type the root password — access lasts a day.", "no-password-login": "This server takes no password login (the provider switched it off). Switch password login for root on in the provider's panel, or reinstall the server with a password — the node never uses a provider's keys.", "key-refused": "The server's SSH does not know an access deadline (OpenSSH older than 8.2): the node gives no access without one. Update the server's system.", "visit-install": "The access could not be written on the server.", unrelated: "This server holds a state not related to this node: delete the previous state first.", "domain-not-ready": "The domain (step 3) is not ready yet: finish it, then install.", unreachable: "The server does not answer on this address and port.",
     timeout: "The server did not answer in time.", "bad-address": "That is not a server address.", "bad-password": "The password cannot contain line breaks.",
     running: "A launch is already running on this server.", "server-unfit": "The node cannot live on this server: see the check.", "no-ip": "The server's IPv4 address is unknown.", "no-fork": "This node has no GitHub fork to install from.",
@@ -134,7 +137,7 @@ const en: ServerLaunchWords = {
     clearTitle: "Free the server {host}?",
     risks: [
       "The sites on this server stop answering at once: {sites}.",
-      "{n} programs of the earlier installation (pm2 processes) stop and do not come back after a reboot.",
+      "The programs of the earlier installation ({n}) stop and do not come back after a reboot.",
       "Nothing is deleted: the programs' folders and databases stay; the list of programs and the sites' files are kept in /root/fractera-cleared-… — everything can be put back by hand.",
       "If something you or other people need runs on this server, take a clean server instead.",
     ],
@@ -158,6 +161,7 @@ const ru: ServerLaunchWords = {
   passwordNote: "Открывает доступ к этому серверу на сутки: в срок его закрывает сам сервер. Пароль нужен один раз и нигде не хранится; пока доступ открыт, этому браузеру пароль для этого сервера не нужен.",
   connect: "Проверить сервер",
   connecting: "Подключаюсь и проверяю сервер… до минуты.",
+  doing: { any: "Выполняю шаг на сервере…", clear: "Освобождаю сервер… меньше минуты.", domain: "Проверяю домен…", detect: "Ищу, где живут записи домена…", way: "Сохраняю способ…", "dns-check": "Спрашиваю публичные DNS о каждом имени…", dns: "Спрашиваю публичные DNS о каждом имени…", certs: "Выпускаю сертификаты… около минуты на имя.", check: "Проверяю HTTPS каждого имени из интернета…", activate: "Включаю домен… вход перезапускается, до минуты.", install: "Запускаю установку…", state: "Читаю состояние сервера…" },
   another: "Другой сервер",
   locked: "откроется, когда будет готов предыдущий шаг",
   step: { server: "Сервер", check: "Проверка сервера", domain: "Активация домена", install: "Установка сервера", recheck: "Повторная проверка записей", certs: "Сертификаты безопасности", ready: "Сервер готов" },
@@ -170,6 +174,7 @@ const ru: ServerLaunchWords = {
   access: { until: "Доступ до {time} (не больше 24 ч)", close: "Закрыть доступ", closing: "Закрываю доступ…" },
   window: { open: "Открыть пульт сервера", opening: "Открываю окно SSH…", link: "Пульт сервера: {url}", note: "Через SSH, только на этом компьютере, пока открыт доступ; «Закрыть доступ» закрывает и его." },
   errors: {
+    "not-ready": "Ещё не все имена готовы: каждому нужен сертификат, а где положено — HTTPS (шаг 6).", "check-first": "Узел сервера ещё не считает имена готовыми: нажмите «Проверить HTTPS из интернета» в шаге 6. Если не помогло, обновите сервер в шаге 4 — его версия может быть старше, чем у этого компьютера.", "auth-not-answering": "Вход на сервере не ответил после включения: проверьте ещё раз через минуту.", "nginx-refused": "Веб-сервер на сервере не принял новые настройки.", "door-silent": "Узел сервера ничего не ответил.", "door-refused": "Узел сервера отказал в этом шаге.",
     auth: "Сервер не принял пароль.", "need-password": "У этого браузера нет открытого доступа к этому серверу: введите пароль root — доступ откроется на сутки.", "no-password-login": "Этот сервер не принимает вход по паролю (провайдер его выключил). Включите вход по паролю для root в панели провайдера или переустановите сервер с паролем — ключи провайдера узел не использует.", "key-refused": "SSH сервера не знает срока доступа (OpenSSH старше 8.2): без срока узел доступа не даёт. Обновите систему сервера.", "visit-install": "Не удалось записать доступ на сервер.", unrelated: "На сервере состояние, не связанное с этим узлом: сначала удалите прежнее состояние.", "domain-not-ready": "Домен (шаг 3) ещё не готов: закончите его, затем установка.", unreachable: "Сервер не отвечает на этом адресе и порту.",
     timeout: "Сервер не ответил вовремя.", "bad-address": "Это не адрес сервера.", "bad-password": "В пароле не может быть переносов строки.",
     running: "На этом сервере уже идёт запуск.", "server-unfit": "Узел не сможет жить на этом сервере: смотрите проверку.", "no-ip": "IPv4-адрес сервера неизвестен.", "no-fork": "У этого узла нет форка на GitHub, из которого ставить.",
@@ -213,7 +218,7 @@ const ru: ServerLaunchWords = {
     clearTitle: "Очистить сервер {host}?",
     risks: [
       "Сразу перестанут отвечать сайты на этом сервере: {sites}.",
-      "Остановятся программы прежней установки ({n} процессов pm2) и не запустятся после перезагрузки.",
+      "Остановятся программы прежней установки (их {n}) и не запустятся после перезагрузки.",
       "Ничего не удаляется: папки программ и базы данных остаются; список программ и файлы сайтов сохраняются в /root/fractera-cleared-… — по ним всё можно вернуть руками.",
       "Если на этом сервере работает что-то нужное вам или другим людям — возьмите чистый сервер.",
     ],

@@ -19,6 +19,7 @@ import type { Stage } from "@/components/hosting/stage-log"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { Spinner } from "@/components/ui/spinner"
 import { H2, Small } from "@/components/ui/typography"
 
 // «ЗАПУСТИТЬ СЕРВЕР» (node step 738-4). The owner, 2026-11-14: «входит у неё заново обнаруживает пустой страницу и до того момента пока он
@@ -63,6 +64,8 @@ export function ServerLaunch({ words, ladderWords, domainWords, keyWords, dialog
   const [state, setState] = useState<LaunchState | null>(null)
   const [key, setKey] = useState(false)
   const [busy, setBusy] = useState(false)
+  // 744 wishes: the act that runs now — its own line beside the greyed buttons, never a silent page
+  const [doing, setDoing] = useState("")
   const [closing, setClosing] = useState(false)
   const [panel, setPanel] = useState<{ url: string | null; opening: boolean }>({ url: null, opening: false })
   const [error, setError] = useState("")
@@ -89,6 +92,7 @@ export function ServerLaunch({ words, ladderWords, domainWords, keyWords, dialog
   const act = useCallback(async (action: string, extra: Record<string, unknown> = {}) => {
     if (!target) return
     setBusy(true)
+    setDoing(action)
     try {
       const a = await post({ action, host: target.host, port: target.port, ...extra })
       say(a)
@@ -96,7 +100,7 @@ export function ServerLaunch({ words, ladderWords, domainWords, keyWords, dialog
       if (a?.reason === "need-password") { setTarget(null); setState(null); setPanel({ url: null, opening: false }); return a }
       if (a?.state) setState({ ...a.state, host: target.host, cleared: action === "clear" ? (a.cleared ? { state: "done", ...a.cleared } : { state: "failed", detail: a.reason }) : state?.cleared ?? null })
       return a
-    } finally { setBusy(false) }
+    } finally { setBusy(false); setDoing("") }
   }, [target, post, say, state?.cleared])
 
   async function closeAccess() {
@@ -221,6 +225,7 @@ export function ServerLaunch({ words, ladderWords, domainWords, keyWords, dialog
     <section className="my-6 flex flex-col gap-3" data-block="server-launch" data-host={target.host}>
       <H2 variant="ui">{words.title}</H2>
       {error ? <Small className="text-destructive" data-block="server-launch-error">{error}</Small> : null}
+      {busy && doing ? <Small className="flex items-center gap-2 text-muted-foreground" data-block="server-launch-doing" role="status"><Spinner className="size-4" />{words.doing[doing] ?? words.doing.any}</Small> : null}
       <Ladder id="launch" locked={words.locked} rungs={LAUNCH_ORDER.map((id) => ({ id, title: words.step[id], done: done[id], summary: summary[id], body: body[id] }))} />
     </section>
   )

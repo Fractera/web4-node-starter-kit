@@ -22,3 +22,14 @@ here is fixed until 744 is closed; then one separate pass takes them in order (a
   what is happening; the page should say «Освобождаю сервер…» / «Проверяю домен…».
 - 2026-11-14 18:50 UTC, 744-9: the panel polls GET /api/node/menu-stamp about every 3 s while the page is open (35 calls in ~2 min) —
   check whether that rhythm is intended.
+
+## The pass of 2026-11-14 ~20:40 UTC (the owner: «переходи к повторному исправлению тех мелких недостатков»)
+- limit-resume woke a working session — FIXED: pulse.cjs cancels a pending `resume-<element>-*` written before a new turn of the same
+  element (turn-start). Proven on a scratch root: only that element's older resume goes; another element's, a future one and a daily stay.
+- the clear dialog «сайты: —.» and «pm2» — FIXED: a line about sites or programs the server lacks is not shown; the word pm2 is gone.
+- silent grey buttons — FIXED: one line with a spinner says what runs («Освобождаю сервер…», «Включаю домен…», …).
+- menu-stamp every 3 s — INTENDED: the owner's word 2026-11-07 (678-3, the live left menu), only while the tab is visible. Not changed.
+- the stale page after the core update — OPEN: the page answers `x-nextjs-cache: HIT` with `stale-while-revalidate`; the first request
+  after a build may get the previous prerender while it refreshes behind. Needs a measured look at the prerender cache across a build.
+- found on the way: the server door's refusal reached the page as «Узел не ответил» — FIXED in the runner (its reason, silence = failure),
+  words for not-ready, check-first, auth-not-answering, nginx-refused, door-silent, door-refused; test:hosting-launch 22 (negative done).

@@ -28,7 +28,9 @@ export function ServerBusy({ busy, words, dialogUi, disabled, onStart }: { busy:
   const fill = (t: string) => t.replace("{host}", host).replace("{sites}", busy.sites.join(", ") || "—").replace("{n}", String(busy.programs)).replace("{nodes}", (busy.nodes ?? []).join(", "))
   // 744-4: a Fractera node not related to this one — «delete the previous state», its own risk first.
   const node = (busy.nodes ?? []).length > 0
-  const risks = node ? [words.nodeRisk, ...words.risks] : words.risks
+  // 744 wishes: a line about sites or programs the server does not have is not shown («сайты: —.», «0 программ» read as nonsense)
+  const has = (r: string) => (!r.includes("{sites}") || busy.sites.length > 0) && (!r.includes("{n}") || busy.programs > 0)
+  const risks = (node ? [words.nodeRisk, ...words.risks] : words.risks).filter(has)
   const clearing = busy.clear?.state === "running"
 
   async function go() {

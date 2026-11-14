@@ -226,12 +226,13 @@ await t('negative: nothing per server is written on the computer — no key (744
 })
 
 console.log('744-6 never «available» before every certificate and the final check')
-await t('the domain is switched on only over ready names (negative: a name without its certificate → not-ready, named); with the names ready but sign-in elsewhere → no «launched» mark on this computer', async () => {
+await t('the domain is switched on only over ready names (negative: a name without its certificate → not-ready, named); with the names ready but sign-in elsewhere → no «launched» mark on this computer; the server door\'s refusal keeps its reason, its silence fails', async () => {
   const D = await server()
   assert.equal((await run(D, 'connect', [], { password: PASSWORD })).a?.ok, true)
   // D's own node: its mark (live, the domain on) and its door on loopback, answering as a live node's /api/node/server/domain does
   let core = { zone: 'ready.invalid', rows: [{ host: 'ready.invalid', zone: 'ready.invalid', optional: false, dns: 'ok', cert: 'missing', https: null }], steps: { domain: true, dns: true, certs: false, check: false, active: true }, certsRun: null, helper: true }
-  const door = createServer((req, res) => { res.setHeader('content-type', 'application/json'); res.end(JSON.stringify(core)) })
+  let refuse = null // 744-9: what the server node's door answers to an act (POST); null — it answers like a GET
+  const door = createServer((req, res) => { res.setHeader('content-type', 'application/json'); res.end(req.method === 'POST' && refuse !== null ? refuse : JSON.stringify(core)) })
   await new Promise((r) => door.listen(0, '127.0.0.1', r))
   const own = tmp('launch-ready-node-')
   mkdirSync(join(own, 'data', 'node'), { recursive: true })
@@ -247,6 +248,14 @@ await t('the domain is switched on only over ready names (negative: a name witho
     const s = await run(D, 'signin') // asked from the internet: auth.ready.invalid never answers (RFC 2606)
     assert.deepEqual([s.a?.ok, s.a?.ready?.ok, s.a?.ready?.missing], [true, false, [{ host: 'auth.ready.invalid', what: 'signin' }]], s.out)
     assert.equal(existsSync(launched), false, 'no «launched» mark without the final check')
+    // 744-9: the server node's own refusal reaches the page with its reason; a door that answers nothing is a failure, never ok
+    refuse = JSON.stringify({ ok: false, reason: 'check-first' })
+    const refused = await run(D, 'door', [], { key: D.key, body: { action: 'activate' } })
+    assert.deepEqual([refused.a?.ok, refused.a?.reason], [false, 'check-first'], refused.out)
+    refuse = 'not json'
+    const silent = await run(D, 'door', [], { key: D.key, body: { action: 'activate' } })
+    assert.deepEqual([silent.a?.ok, silent.a?.reason], [false, 'door-silent'], silent.out)
+    assert.equal(existsSync(launched), false, 'a refused or silent switch-on leaves no «launched» mark')
   } finally {
     delete process.env.STATE_NODE_DIR
     door.close()

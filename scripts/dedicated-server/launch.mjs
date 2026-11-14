@@ -188,7 +188,8 @@ async function writeDomain(client, value) {
 /** One act of the server node's own domain door on its loopback (the owner at that machine's keyboard); its JSON answer, or null. */
 async function serverDoor(client, body) {
   const node = `/home/${REMOTE_USER}/${FOLDER}`
-  const cmd = `port=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["port"])' ${q(`${node}/logs/runtime.json`)} 2>/dev/null) && curl -s --max-time 170 -X POST -H 'content-type: application/json' --data-binary @- "http://localhost:$port/api/node/server/domain"`
+  // the node's folder as state.sh reads it: STATE_NODE_DIR (the tests' planted node) or the server node's own folder
+  const cmd = `node_dir="\${STATE_NODE_DIR:-${node}}"; port=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["port"])' "$node_dir/logs/runtime.json" 2>/dev/null) && curl -s --max-time 170 -X POST -H 'content-type: application/json' --data-binary @- "http://localhost:$port/api/node/server/domain"`
   const r = await exec(client, cmd, { timeoutMs: 180_000, stdin: JSON.stringify(body) })
   try { return JSON.parse(r.stdout) } catch { return null }
 }
@@ -369,6 +370,11 @@ const verbs = {
         if (!names.ok) return fail('not-ready', { missing: names.missing, state: s })
       }
       const answer = await serverDoor(client, body.action === 'upload' ? { action: 'upload', host: body.name, fullchain: body.fullchain, privkey: body.privkey } : { action: body.action })
+      // 744-9: the server door's own refusal reaches the page with its reason; silence is a failure, never «ok».
+      // ✗ Measured 2026-11-14: activate refused by the server node («check-first», its code older than this computer's rule) and the
+      // page said «Узел не ответил» — the reason was lost here, and a door that answered nothing passed as ok.
+      if (!answer) return fail('door-silent', { state: await readState(client) })
+      if (answer.ok === false) return fail(typeof answer.reason === 'string' ? answer.reason : 'door-refused', { answer, state: await readState(client) })
       if (body.action === 'activate' && answer?.ok) {
         // The auth element restarts with its public address: a few seconds before it answers there.
         await new Promise((r) => setTimeout(r, dry ? 10 : 8000))
