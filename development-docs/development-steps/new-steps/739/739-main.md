@@ -1,4 +1,6 @@
-# 739 — sign-in on an own domain, and the architect's claim on a server (plan, waits for the owner's yes)
+# 739 — sign-in on an own domain, and the architect's claim on a server
+
+**Approved 2026-11-14:** the owner, to «План 739 и решения D27–D30 утверждаете?» — «да, утверждаю, начинай 739».
 
 Planned 2026-11-14. Repositories: the core (Fractera/web4-node-starter-kit, main) and the sign-in template (Fractera/fractera-auth-starter,
 main, a release by the skill `release-template`). One node update at the end.
