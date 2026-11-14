@@ -15,6 +15,12 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+// The rows were recorded on a node of two languages — the languages of `.env.local.example`, which CI copies and a fresh node starts
+// with. The language router reads them from the environment at load (and warns into the log the test counts when the default is
+// missing), so the test fixes them here, whatever runs it: ✗ 2026-11-14, CI of aef69493 — the runner had no set (one language → every
+// `/en/…` row a 301), while an agent's shell inherits the core's own `NEXT_PUBLIC_*` and passed.
+process.env.NEXT_PUBLIC_SUPPORTED_LANGUAGES = 'en,ru'
+process.env.NEXT_PUBLIC_DEFAULT_LOCALE = 'en'
 const req = createRequire(join(ROOT, 'package.json'))
 let passed = 0
 const t = async (name, fn) => {
