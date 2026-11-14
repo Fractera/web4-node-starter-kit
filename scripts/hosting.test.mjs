@@ -643,6 +643,47 @@ console.log('741-4 a server never opens a quick tunnel')
   })
 }
 
+console.log('741-8 a server node merges its updates with a neutral identity')
+{
+  const { identityEnv, NODE_IDENTITY } = await import('../lib/deploy/git-identity.mjs')
+  const base = mkdtempSync(join(tmpdir(), 'identity-'))
+  roots.push(base)
+  const emptyHome = join(base, 'home')
+  mkdirSync(emptyHome)
+  // Nobody's identity: no global or system config, and no guessing from the user and the host name (the server's failure class).
+  const bare = { PATH: process.env.PATH, HOME: emptyHome, XDG_CONFIG_HOME: emptyHome, GIT_CONFIG_NOSYSTEM: '1',
+    GIT_CONFIG_COUNT: '1', GIT_CONFIG_KEY_0: 'user.useConfigOnly', GIT_CONFIG_VALUE_0: 'true' }
+  const setup = { ...bare, GIT_AUTHOR_NAME: 'Setup', GIT_AUTHOR_EMAIL: 'setup@test.invalid', GIT_COMMITTER_NAME: 'Setup', GIT_COMMITTER_EMAIL: 'setup@test.invalid' }
+  const g = (cwd, env, ...a) => spawnSync('git', a, { cwd, env, encoding: 'utf8' })
+  const fork = join(base, 'fork')
+  mkdirSync(fork)
+  g(fork, setup, 'init', '-q', '-b', 'main')
+  writeFileSync(join(fork, 'a.txt'), 'a\n'); g(fork, setup, 'add', '.'); g(fork, setup, 'commit', '-q', '-m', 'a')
+  const node = join(base, 'node')
+  g(base, setup, 'clone', '-q', fork, node)
+  writeFileSync(join(node, 'letter.md'), 'the node keeps its own letter\n'); g(node, setup, 'add', '.'); g(node, setup, 'commit', '-q', '-m', 'letter')
+  writeFileSync(join(fork, 'b.txt'), 'b\n'); g(fork, setup, 'add', '.'); g(fork, setup, 'commit', '-q', '-m', 'b')
+  g(node, bare, 'fetch', '-q', 'origin')
+  t('741-8 negative: without an identity the merge over the node\'s own commit fails — the test server\'s rollback, reproduced', () => {
+    const r = g(node, bare, 'merge', '--no-edit', 'origin/main')
+    assert.notEqual(r.status, 0)
+    assert.match(r.stderr + r.stdout, /identity|who you are|auto-detection is disabled/i)
+    g(node, bare, 'merge', '--abort')
+  })
+  t('741-8: with the node\'s identity the same merge succeeds, authored «Fractera node <node@fractera.invalid>»', () => {
+    const add = identityEnv(node, bare)
+    assert.deepEqual(add.GIT_AUTHOR_EMAIL, NODE_IDENTITY.email)
+    const r = g(node, { ...bare, ...add }, 'merge', '--no-edit', 'origin/main')
+    assert.equal(r.status, 0, r.stderr)
+    assert.equal(g(node, bare, 'log', '-1', '--format=%an <%ae>').stdout.trim(), 'Fractera node <node@fractera.invalid>')
+  })
+  t('741-8 negative: a configured identity wins — nothing is added', () => {
+    g(node, bare, 'config', 'user.name', 'Owner Of This Node')
+    g(node, bare, 'config', 'user.email', 'owner@example.invalid')
+    assert.deepEqual(identityEnv(node, bare), {})
+  })
+}
+
 console.log('737-15 the names before the move')
 {
   const { nginxSite } = await import('../lib/hosting/nginx.mjs')

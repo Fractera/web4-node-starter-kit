@@ -25,6 +25,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, rmdirSync, wr
 import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { identityEnv } from '../lib/deploy/git-identity.mjs'
 
 const require = createRequire(import.meta.url)
 // 642-4: причина отказа простыми словами.
@@ -51,6 +52,9 @@ const BACKUP = join(ROOT, 'logs', 'node-update', startedAt.replace(/[:.]/g, '-')
 // Родитель может быть сервером Next ядра: его метки в окружении заставили бы сборки не читать свой `.env.local` (ANTI-PATTERNS).
 const env = { ...process.env }
 for (const k of Object.keys(env)) if (/^(__NEXT|NEXT_|AGI_|WEB4_COMMIT)/.test(k) || ['PORT', 'HOSTNAME', 'NODE_ENV'].includes(k)) delete env[k]
+// 741-8: a node without a git identity (a server's node user) merges and commits as «Fractera node <node@fractera.invalid>»; a configured
+// identity always wins (`lib/deploy/git-identity.mjs`). ✗ Without it the test server's update rolled back at the merge (2026-11-14).
+Object.assign(env, identityEnv(ROOT, env))
 
 let current = 'check'
 const say = (s) => console.log(s)
