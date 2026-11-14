@@ -14,7 +14,7 @@
 //   4. Neither header → passes: not a browser (curl, the node's scripts and services, Telegram, an element's door with its key).
 // 🛑 `same-site` IS REFUSED TOO: on an own domain every element is a subdomain of the same site, and an element's page that could press
 // the core's buttons would cross the element boundary (CLAUDE.md §6). Measured 2026-11-14: no element page calls the core over HTTP —
-// the block highlighter speaks to the panel by `postMessage`, and the core answers CORS nowhere.
+// the section highlighter of an element's page speaks to the panel by `postMessage`, and the core answers CORS nowhere.
 // 🛑 THE HOST IS COMPARED, NEVER THE SCHEME: TLS ends at nginx, the request reaches the core as http while the page's Origin is https.
 // nginx sets `Host` and `X-Forwarded-Host` to the server's own name (lib/hosting/nginx.mjs); cloudflared keeps the visitor's `Host`.
 // No imports: the proxy calls it and the test imports it as it is (scripts/cross-site-wall.test.mjs).

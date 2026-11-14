@@ -13,7 +13,7 @@
 // страницу, и все девять — предзагрузка, которой никто не просил.
 //
 // Чинить по одной ссылке бессмысленно: следующая появится через месяц. Список
-// адресов уже существует и живёт в `proxy.ts` (`AUTH_FORM_PATHS`) — сторож читает
+// адресов уже существует и живёт в общей половине прокси `proxy/common.ts` (`AUTH_FORM_PATHS`, 744-1) — сторож читает
 // ЕГО, а не свою копию, поэтому новый адрес авторизации попадает под правило сам.
 
 import fs from "node:fs";
@@ -22,11 +22,11 @@ import path from "node:path";
 const ROOT = path.resolve(import.meta.dirname, "..");
 const errors = [];
 
-// ── Список адресов берётся из proxy.ts, а не дублируется здесь ───────────────
-const proxySrc = fs.readFileSync(path.join(ROOT, "proxy.ts"), "utf8");
+// ── Список адресов берётся из proxy/common.ts, а не дублируется здесь ─────────
+const proxySrc = fs.readFileSync(path.join(ROOT, "proxy", "common.ts"), "utf8");
 const listMatch = proxySrc.match(/AUTH_FORM_PATHS\s*=\s*new Set\(\[([^\]]*)\]/);
 if (!listMatch) {
-  console.log("  ОШИБКА: не найден AUTH_FORM_PATHS в proxy.ts — проверять нечего");
+  console.log("  ОШИБКА: не найден AUTH_FORM_PATHS в proxy/common.ts — проверять нечего");
   console.log("\n===LINKS_FAILED=== ошибок: 1");
   process.exit(1);
 }

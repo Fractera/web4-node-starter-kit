@@ -75,7 +75,7 @@ description of it.
 
 | File | What it decides |
 |---|---|
-| `proxy.ts` | the gate on every request: which paths are public, which need a session cookie, and that `/login`, `/register`, `/guest-login`, `/logout` (`AUTH_FORM_PATHS`) are **never served by this app** — they belong to the auth host |
+| `proxy.ts` → `proxy/common.ts` | the gate on every request (the entry chooses the file of the node's place, 744-1; the gate itself is common): which paths are public, which need a session cookie, and that `/login`, `/register`, `/guest-login`, `/logout` (`AUTH_FORM_PATHS`) are **never served by this app** — they belong to the auth host |
 | `lib/auth/get-session.ts` | how a session becomes `{ userId, email, roles }`: one call to `:3001/api/session` with the visitor's cookie. This is the only reader of the session in the whole app |
 | `lib/auth/require-roles.ts` | the real lock of a door: `requireRoles(req, [...])` → 401 / 403 / null, plus `groupsOf()` when the answer is "what exactly may they do" |
 | `lib/auth/require-role.ts`, `require-admin.ts` | older single-role variants of the same idea |

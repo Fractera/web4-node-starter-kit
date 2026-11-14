@@ -5,8 +5,8 @@
 // 🪦 Прежнее объяснение отдельного файла — «прокси исполняется в Edge, где нет `node:fs`» — неверно для Next.js 16.2: прокси работает в
 // Node.js (`node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/proxy.md:219`). Файл оставлен ради импортов прокси.
 //
-// 🚫 НЕ ИМПОРТИРОВАТЬ ЭТОТ ФАЙЛ НИГДЕ, КРОМЕ `proxy.ts`. Любое место, где решается доступ по существу, берёт `shouldBypassAuth` из
-// `auth-bypass.ts`.
+// 🚫 НЕ ИМПОРТИРОВАТЬ ЭТОТ ФАЙЛ НИГДЕ, КРОМЕ ПРОКСИ — его общей половины `proxy/common.ts` (744-1: прокси — вход `proxy.ts` и файлы
+// места). Любое место, где решается доступ по существу, берёт `shouldBypassAuth` из `auth-bypass.ts`.
 export function shouldBypassAuthEdge(): boolean {
   return process.env.NODE_ENV === "development"
 }

@@ -4,11 +4,13 @@
 // ✗ Before 741 each widget decided by itself: the hosting page read a quick-tunnel name as «server» (measured 2026-11-14), and an SSH
 // window to a server said «localhost» — «this computer» — on a server. This guard refuses a NEW file that decides it on its own:
 //   A. reading `data/node/server.json` for its `phase` / `independent` (the server's launch mark) outside the reader;
-//   B. asking `isTemporaryHostname` / `isLoopbackHostname` about `window.location.hostname` (or a `host` taken from it).
+//   B. asking `isTemporaryHostname` / `isLoopbackHostname` about `window.location.hostname` (or a `host` taken from it);
+//   C. (744-1) a place check in `proxy/common.ts` — the proxy is two files, `proxy/computer.ts` and `proxy/server.ts`, chosen once by the
+//      entry `proxy.ts`; what both do may not ask where it runs (the place, the place-aware temporary address), its comments aside.
 // The files below may keep doing it — each says WHY: they name the ADDRESS the person came by, or decide something about the BROWSER
 // itself, never where the node lives. A new entry is a decision with its reason, not a way around the guard.
 // `node scripts/check-place-readers.mjs [--root <folder>]` → `===PLACE_READERS_OK===` or `===PLACE_READERS_FAILED=== <n>`.
-import { readdirSync, readFileSync, statSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
 
 const args = process.argv.slice(2)
@@ -40,7 +42,7 @@ const ALLOW_B = new Map([
   ['components/shell/shell-account.client.tsx', 'names the address: sign-in is closed on a temporary address (the shell kit)'],
 ])
 
-const SCAN = ['app', 'lib', 'components', 'scripts', '_tools', 'sections']
+const SCAN = ['app', 'lib', 'components', 'scripts', '_tools', 'sections', 'proxy']
 const EXT = /\.(ts|tsx|mjs|cjs|js|sh)$/
 const files = []
 const walk = (dir) => {
@@ -60,7 +62,11 @@ for (const f of ['proxy.ts', 'server.js']) { try { statSync(join(ROOT, f)); file
 
 const SELF = 'scripts/check-place-readers.mjs'
 const RULE_B = /is(Temporary|Loopback)Hostname\((window\.location\.hostname|host)\)/
+const COMMON = 'proxy/common.ts'
+const RULE_C = /\b(placeKind|nodePlace|measurePlace|isTemporaryPublicAddress|temporaryFor|isTemporaryHostname|isBareIpHostname)\b|hosting\/place\.mjs|auth\/temporary-address/
+const code = (text) => text.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '')
 const bad = []
+let commonSeen = false
 for (const file of files) {
   const rel = relative(ROOT, file).split('\\').join('/')
   if (rel === SELF) continue
@@ -71,7 +77,13 @@ for (const file of files) {
   if (RULE_B.test(text) && !ALLOW_B.has(rel)) {
     bad.push(`  ✗ ${rel}: decides from the address bar — where the node lives comes from useNodePlace() (components/node-state/use-node-place.client.ts)`)
   }
+  if (rel === COMMON) {
+    commonSeen = true
+    const hit = code(text).match(RULE_C)
+    if (hit) bad.push(`  ✗ ${rel}: asks where the node lives («${hit[0]}») — a rule of one place goes to proxy/computer.ts or proxy/server.ts`)
+  }
 }
+if (existsSync(join(ROOT, 'proxy.ts')) && existsSync(join(ROOT, 'proxy')) && !commonSeen) bad.push(`  ✗ ${COMMON}: not found — the proxy's common half moved?`)
 console.log('check-place-readers — one reader of «where the node lives» (741-7)')
 if (bad.length) {
   console.log(bad.join('\n'))
