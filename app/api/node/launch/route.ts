@@ -8,6 +8,7 @@ import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import phase from "@/lib/hosting/phase.cjs"
 import { pointNamesAtServer } from "@/lib/hosting/server-records-cf"
+import { closeWindowProcess, openWindowProcess } from "@/lib/hosting/window-process.mjs"
 
 // «АКТИВАЦИЯ ВЫДЕЛЕННОГО СЕРВЕРА» — THE DOOR (node step 738-4). The owner, 2026-11-14: «Никакого переезда нет есть просто запуск сервера …
 // в данном локальном компьютере меняться ничего не должно … в любой момент перезагрузить эту страницу и пока идёт какой-то из процессов
@@ -22,7 +23,9 @@ import { pointNamesAtServer } from "@/lib/hosting/server-records-cf"
 // a server node launches nothing.
 // 🔒 SECRETS GO TO THE RUNNER BY STDIN and nowhere else — not argv (the process list shows it), not the environment, not a file.
 //   POST { action: "connect", host, port, password?, trust? }   the password → a visit of a day; empty — this browser's visit → the state
-//   POST { action: "close", host, port }                        the visit closed now (its line leaves the server, the cookie goes)
+//   POST { action: "close", host, port }                        the visit closed now (its line leaves the server, the cookie goes, the
+//                                                              window closes)
+//   POST { action: "window", host, port }                       the server's own panel through SSH while the visit lasts (744-3, D45)
 //   POST { action: "state" | "probe", host, port }              the server's state; the server checked again
 //   POST { action: "install", host, port, mode }                the launch started on the server (install · update)
 //   POST { action: "domain" | "way" | "detect" | "dns", host, port, name?, way? }   the domain step, kept on the server
@@ -139,7 +142,20 @@ export async function POST(req: NextRequest) {
     if (trust.length && !password) return json({ ok: false, reason: "need-password" }, 400)
     return answer("connect", [...at, ...trust], password ? { password } : {})
   }
-  if (action === "close") return answer("close", at)
+  if (action === "close") {
+    closeWindowProcess({ root: ROOT, host, port })
+    return answer("close", at)
+  }
+  if (action === "window") {
+    if (!visit) return answer("state", at)
+    const w = await openWindowProcess({ root: ROOT, host, port, key: visit.key, until: Math.floor(Date.parse(visit.deadline) / 1000), env: cleanEnv() })
+    if (!w.ok && (w.reason === "auth" || w.reason === "need-password")) {
+      const res = json({ ok: false, reason: "need-password", key })
+      dropVisit(res, host, port)
+      return res
+    }
+    return json({ ok: w.ok, ...(w.ok ? { window: { url: w.url } } : { reason: w.reason }), visit: { deadline: visit.deadline }, key })
+  }
   if (["state", "probe", "detect", "dns", "signin"].includes(action)) return answer(action, at)
   if (action === "install") return answer("install", [...at, "--mode", body?.mode === "update" ? "update" : "install"])
   if (action === "domain") return answer("domain", [...at, "--name", String(body?.name ?? "").slice(0, 260)])

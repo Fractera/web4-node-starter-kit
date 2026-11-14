@@ -7,14 +7,14 @@
 //   dns   --ip <IPv4> [--domain <name>] [--root …]   the A records to write at the registrar, per zone, with the `*` shortcut (737-1)
 //   nginx [--write]                                    the server's nginx site from the names and the certificates present (737-2)
 //   phase                                              live · none — this node's phase on a dedicated server (737-4, 738)
-//   window --ip <IPv4> [--port <local>] [--user <name>] [--folder <name>]
+//   window --ip <IPv4> [--port <local>] [--user <name>] [--folder <name>] [--key-stdin --until <epoch s> --close-file <path>]
 //                                                      741-5: the server's own panel at http://localhost:<port> through the node's
 //                                                      pinned key (no nginx, no edge mark — the owner); holds until Ctrl+C
 //   domain [<name>] · dns-check · certs · check · activate · deactivate
 //                                                      the server's own domain, its five steps (737-8): on the server itself, as
 //                                                      the owner at the keyboard — a loopback call of /api/node/server/domain
 import { spawnSync } from 'node:child_process'
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -211,9 +211,12 @@ async function windowVerb() {
   const stop = async (why) => { console.log(`===WINDOW_CLOSED=== ${why}`); w.close(); await end(); process.exit(0) }
   process.on('SIGINT', () => void stop('closed by Ctrl+C'))
   process.on('SIGTERM', () => void stop('closed'))
-  // A window lives no longer than the visit it rides on (`--until <epoch seconds>` from the caller of `--key-stdin`).
+  // A window lives no longer than the visit it rides on (`--until <epoch seconds>` from the caller of `--key-stdin`), and the page closes
+  // it by a signal file (`--close-file`) — never by a process id that may belong to someone else by then.
   const until = Number(opt('until'))
   if (until > 0) setTimeout(() => void stop('the visit ended'), Math.max(0, until * 1000 - Date.now())).unref?.()
+  const closeFile = opt('close-file')
+  if (closeFile) setInterval(() => { if (existsSync(closeFile)) { try { rmSync(closeFile, { force: true }) } catch { /* gone */ } void stop('closed from the page') } }, 1500).unref?.()
 }
 
 const verbs = {

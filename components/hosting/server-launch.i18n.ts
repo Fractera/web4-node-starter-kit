@@ -23,6 +23,10 @@ export type ServerLaunchWords = {
   locked: string
   step: Record<LaunchStep, string>
   connected: string
+  /** 744-3: access for one day — `{time}` the deadline in the person's own clock */
+  access: { until: string; close: string; closing: string }
+  /** 744-3, D45: the server's own panel through an SSH window opened from this page while the access lasts — `{url}` its address */
+  window: { open: string; opening: string; link: string; note: string }
   errors: Record<string, string>
   changed: { title: string; text: string; seen: string; pinned: string; trust: string }
   verdict: Record<Verdict, string>
@@ -64,16 +68,18 @@ const en: ServerLaunchWords = {
   host: "Server IP address",
   port: "SSH port",
   password: "Root password",
-  passwordNote: "Used once to install this node's own key on the server and never kept. Leave it empty for a server this computer has already connected.",
+  passwordNote: "Opens access to this server for one day: the server itself closes it at the deadline. The password is used once and kept nowhere; while the access lasts, this browser needs no password for this server.",
   connect: "Check the server",
   connecting: "Connecting and checking the server… up to a minute.",
   another: "Another server",
   locked: "opens when the step before it is done",
   step: { server: "The server", check: "Check the server", domain: "Domain activation", install: "Server installation", recheck: "Second check of the records", certs: "Security certificates", ready: "The server is ready" },
-  connected: "Server {host} is connected by this node's key. The server's key fingerprint: {fp}.",
+  connected: "Server {host} is connected. The server's key fingerprint: {fp}.",
+  access: { until: "Access until {time} (24 h at most)", close: "Close access", closing: "Closing the access…" },
+  window: { open: "Open the server's panel", opening: "Opening an SSH window…", link: "The server's panel: {url}", note: "Through SSH, on this computer only, while the access lasts; «Close access» closes it too." },
   errors: {
-    auth: "The server refused the password.", "need-password": "This computer has no key on this server yet: type the root password once.", unreachable: "The server does not answer on this address and port.",
-    timeout: "The server did not answer in time.", "bad-address": "That is not a server address.", "bad-password": "The password cannot contain line breaks.", "key-install": "The node's key could not be written on the server.",
+    auth: "The server refused the password.", "need-password": "This browser has no open access to this server: type the root password — access lasts a day.", "no-password-login": "This server takes no password login (the provider switched it off). Switch password login for root on in the provider's panel, or reinstall the server with a password — the node never uses a provider's keys.", "key-refused": "The server's SSH does not know an access deadline (OpenSSH older than 8.2): the node gives no access without one. Update the server's system.", "visit-install": "The access could not be written on the server.", unreachable: "The server does not answer on this address and port.",
+    timeout: "The server did not answer in time.", "bad-address": "That is not a server address.", "bad-password": "The password cannot contain line breaks.",
     running: "A launch is already running on this server.", "server-unfit": "The node cannot live on this server: see the check.", "no-ip": "The server's IPv4 address is unknown.", "no-fork": "This node has no GitHub fork to install from.",
     "le-limit": "Let's Encrypt's weekly limit would be passed: {week} certificates this week, {want} more needed{over}. Wait until the week frees up.", "not-live": "The server's node does not run yet.",
     "not-confirmed": "The address in the dialog does not match.", "public-address": "This address is read-only.", "on-server": "A server node launches nothing.", network: "The node did not answer.", unreadable: "The answer could not be read.",
@@ -128,16 +134,18 @@ const ru: ServerLaunchWords = {
   host: "IP-адрес сервера",
   port: "Порт SSH",
   password: "Пароль root",
-  passwordNote: "Нужен один раз, чтобы поставить на сервер собственный ключ этого узла, и нигде не хранится. Для сервера, который этот компьютер уже подключал, оставьте пустым.",
+  passwordNote: "Открывает доступ к этому серверу на сутки: в срок его закрывает сам сервер. Пароль нужен один раз и нигде не хранится; пока доступ открыт, этому браузеру пароль для этого сервера не нужен.",
   connect: "Проверить сервер",
   connecting: "Подключаюсь и проверяю сервер… до минуты.",
   another: "Другой сервер",
   locked: "откроется, когда будет готов предыдущий шаг",
   step: { server: "Сервер", check: "Проверка сервера", domain: "Активация домена", install: "Установка сервера", recheck: "Повторная проверка записей", certs: "Сертификаты безопасности", ready: "Сервер готов" },
-  connected: "Сервер {host} подключён ключом этого узла. Отпечаток ключа сервера: {fp}.",
+  connected: "Сервер {host} подключён. Отпечаток ключа сервера: {fp}.",
+  access: { until: "Доступ до {time} (не больше 24 ч)", close: "Закрыть доступ", closing: "Закрываю доступ…" },
+  window: { open: "Открыть пульт сервера", opening: "Открываю окно SSH…", link: "Пульт сервера: {url}", note: "Через SSH, только на этом компьютере, пока открыт доступ; «Закрыть доступ» закрывает и его." },
   errors: {
-    auth: "Сервер не принял пароль.", "need-password": "У этого компьютера ещё нет ключа на этом сервере: введите пароль root один раз.", unreachable: "Сервер не отвечает на этом адресе и порту.",
-    timeout: "Сервер не ответил вовремя.", "bad-address": "Это не адрес сервера.", "bad-password": "В пароле не может быть переносов строки.", "key-install": "Не удалось записать ключ узла на сервер.",
+    auth: "Сервер не принял пароль.", "need-password": "У этого браузера нет открытого доступа к этому серверу: введите пароль root — доступ откроется на сутки.", "no-password-login": "Этот сервер не принимает вход по паролю (провайдер его выключил). Включите вход по паролю для root в панели провайдера или переустановите сервер с паролем — ключи провайдера узел не использует.", "key-refused": "SSH сервера не знает срока доступа (OpenSSH старше 8.2): без срока узел доступа не даёт. Обновите систему сервера.", "visit-install": "Не удалось записать доступ на сервер.", unreachable: "Сервер не отвечает на этом адресе и порту.",
+    timeout: "Сервер не ответил вовремя.", "bad-address": "Это не адрес сервера.", "bad-password": "В пароле не может быть переносов строки.",
     running: "На этом сервере уже идёт запуск.", "server-unfit": "Узел не сможет жить на этом сервере: смотрите проверку.", "no-ip": "IPv4-адрес сервера неизвестен.", "no-fork": "У этого узла нет форка на GitHub, из которого ставить.",
     "le-limit": "Будет превышен недельный лимит Let's Encrypt: за неделю {week} сертификатов, нужно ещё {want}{over}. Дождитесь, пока неделя освободится.", "not-live": "Узел на сервере ещё не работает.",
     "not-confirmed": "Адрес в диалоге не совпадает.", "public-address": "Этот адрес только для чтения.", "on-server": "Узел на сервере ничего не запускает.", network: "Узел не ответил.", unreadable: "Ответ не удалось прочитать.",

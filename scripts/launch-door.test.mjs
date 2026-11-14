@@ -5,7 +5,7 @@
 // runner is a stand-in: it answers by what it reads on stdin and writes down what it was given — so the test sees exactly which secret
 // crossed which boundary. Negative controls: no cookie, an expired cookie, a closed visit, the key looked for in every answer body.
 import assert from 'node:assert/strict'
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
@@ -41,6 +41,22 @@ else if (verb === 'close') say(input.key === ${JSON.stringify(KEY)} ? { ok: true
 else say(input.key === ${JSON.stringify(KEY)} ? { ok: true, state: { seen: true } } : { ok: false, reason: 'need-password' })
 `)
 const calls = () => readFileSync(LOG, 'utf8').trim().split('\n').map((l) => JSON.parse(l))
+// The stand-in window (`scripts/server.mjs window --key-stdin`): its marker line, then alive until its close file appears.
+const WLOG = join(node, 'window-calls.jsonl')
+writeFileSync(join(node, 'scripts', 'server.mjs'), `
+import { appendFileSync, existsSync, rmSync } from 'node:fs'
+const args = process.argv.slice(2)
+const opt = (n) => { const i = args.indexOf('--' + n); return i >= 0 ? args[i + 1] : null }
+let key = ''
+for await (const c of process.stdin) key += c
+appendFileSync(${JSON.stringify(WLOG)}, JSON.stringify({ argv: args, gotKey: key.includes('PRIVATE KEY') }) + '\\n')
+if (!key.includes('PRIVATE KEY')) { console.log('===WINDOW_FAILED=== auth'); process.exit(1) }
+console.log('===WINDOW=== http://localhost:25681/ru — the panel of the server ' + opt('ip'))
+const f = opt('close-file')
+setInterval(() => { if (existsSync(f)) { rmSync(f); console.log('===WINDOW_CLOSED=== closed from the page'); process.exit(0) } }, 100)
+setTimeout(() => process.exit(0), 20000)
+`)
+const windowCalls = () => (existsSync(WLOG) ? readFileSync(WLOG, 'utf8').trim().split('\n').filter(Boolean).map((l) => JSON.parse(l)) : [])
 
 const built = await esbuild.build({ entryPoints: [join(ROOT, 'app/api/node/launch/route.ts')], bundle: true, platform: 'node', format: 'cjs', target: 'node20', packages: 'external', write: false, absWorkingDir: ROOT, logLevel: 'silent' })
 const text = built.outputFiles[0].text.replace(/require\("([^".][^"]*)"\)/g, (all, spec) => (spec.startsWith('node:') ? all : `require(${JSON.stringify(req.resolve(spec))})`))
@@ -100,10 +116,28 @@ await t('negative: a cookie past its deadline is not used', async () => {
   assert.equal(calls().at(-1).input.key, null)
   assert.match(setCookie(res), /Max-Age=0/i, 'a refused visit takes the cookie away')
 })
-await t('close: the runner closes the visit with the key, the cookie is taken away; over https the cookie is Secure', async () => {
+await t('the window from the page: the visit key on the stdin of the window (never its argv), its local address back; a second press — the same window', async () => {
+  const res = await post({ action: 'window' }, { cookie })
+  const body = await res.json()
+  assert.equal(body.window?.url, 'http://localhost:25681/ru', JSON.stringify(body))
+  const again = await (await post({ action: 'window' }, { cookie })).json()
+  assert.equal(again.window?.url, 'http://localhost:25681/ru')
+  assert.equal(windowCalls().length, 1, 'a second window was started')
+  assert.ok(windowCalls()[0].gotKey && !windowCalls()[0].argv.join(' ').includes('PRIVATE'))
+  assert.ok(windowCalls()[0].argv.includes('--until'), 'the window must end with the visit')
+})
+await t('negative: the window without a visit → `need-password`, no window started', async () => {
+  const res = await post({ action: 'window' })
+  assert.equal((await res.json()).reason, 'need-password')
+  assert.equal(windowCalls().length, 1)
+})
+await t('close: the runner closes the visit with the key, the cookie is taken away, the window closes; over https the cookie is Secure', async () => {
   const res = await post({ action: 'close' }, { cookie })
   assert.equal((await res.json()).closed, true)
   assert.match(setCookie(res), /Max-Age=0/i)
+  let closed = false
+  for (let i = 0; i < 40 && !closed; i++) { await new Promise((r) => setTimeout(r, 100)); closed = readFileSync(join(node, 'logs', 'windows', '203.0.113.7-22.log'), 'utf8').includes('WINDOW_CLOSED') }
+  assert.ok(closed, 'the window did not close with the access')
   const again = await post({ action: 'connect', password: PASSWORD }, { https: true })
   assert.match(setCookie(again), /;\s*Secure/i)
 })

@@ -15,7 +15,7 @@ import type { LaunchStep, ServerLaunchWords } from "@/components/hosting/server-
 import type { Detect } from "@/components/hosting/server-ladder.client"
 import type { LadderWay, ServerLadderWords } from "@/components/hosting/server-ladder.i18n"
 import type { Stage } from "@/components/hosting/stage-log"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { H2, Small } from "@/components/ui/typography"
@@ -48,8 +48,10 @@ export type LaunchState = {
   records: DnsZone[]
   week: number | null
 }
-type Answer = { ok?: boolean; reason?: string; state?: LaunchState; fingerprint?: string; seen?: string | null; pinned?: string | null; key?: boolean; cleared?: LaunchState["cleared"]; week?: number; want?: number; over?: string[] }
-type Target = { host: string; port: number; fingerprint: string | null }
+type Answer = { ok?: boolean; reason?: string; state?: LaunchState; fingerprint?: string; seen?: string | null; pinned?: string | null; key?: boolean; cleared?: LaunchState["cleared"]; week?: number; want?: number; over?: string[]; visit?: { deadline: string } | null }
+/** 744-3: `until` — the end of this browser's access to the server (the server's own deadline); the key itself never reaches the page. */
+type Target = { host: string; port: number; fingerprint: string | null; until: string | null }
+const untilText = (iso: string) => new Date(iso).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" })
 
 export function ServerLaunch({ words, ladderWords, domainWords, keyWords, dialogUi }: { words: ServerLaunchWords; ladderWords: ServerLadderWords; domainWords: ServerDomainWords; keyWords: DomainLadderWords; dialogUi: AppDialogUi }) {
   const [form, setForm] = useState({ host: "", port: "22", password: "" })
@@ -57,6 +59,8 @@ export function ServerLaunch({ words, ladderWords, domainWords, keyWords, dialog
   const [state, setState] = useState<LaunchState | null>(null)
   const [key, setKey] = useState(false)
   const [busy, setBusy] = useState(false)
+  const [closing, setClosing] = useState(false)
+  const [panel, setPanel] = useState<{ url: string | null; opening: boolean }>({ url: null, opening: false })
   const [error, setError] = useState("")
   const [changed, setChanged] = useState<{ seen: string; pinned: string | null } | null>(null)
 
@@ -82,10 +86,35 @@ export function ServerLaunch({ words, ladderWords, domainWords, keyWords, dialog
     try {
       const a = await post({ action, host: target.host, port: target.port, ...extra })
       say(a)
+      // 744-3: the access ended (its deadline, or closed elsewhere) — back to step 1, the password again.
+      if (a?.reason === "need-password") { setTarget(null); setState(null); setPanel({ url: null, opening: false }); return a }
       if (a?.state) setState({ ...a.state, host: target.host, cleared: action === "clear" ? (a.cleared ? { state: "done", ...a.cleared } : { state: "failed", detail: a.reason }) : state?.cleared ?? null })
       return a
     } finally { setBusy(false) }
   }, [target, post, say, state?.cleared])
+
+  async function closeAccess() {
+    if (!target) return
+    setBusy(true)
+    setClosing(true)
+    try {
+      await post({ action: "close", host: target.host, port: target.port })
+      setTarget(null)
+      setState(null)
+      setError("")
+      setPanel({ url: null, opening: false })
+    } finally { setBusy(false); setClosing(false) }
+  }
+
+  // 744-3, D45: the server's own panel through SSH, opened by the door with this browser's visit; it ends with the access.
+  async function openPanel() {
+    if (!target) return
+    setPanel({ url: null, opening: true })
+    const a = await post({ action: "window", host: target.host, port: target.port })
+    say(a)
+    if (a?.reason === "need-password") { setTarget(null); setState(null) }
+    setPanel({ url: a?.ok ? (a as { window?: { url?: string } }).window?.url ?? null : null, opening: false })
+  }
 
   async function connect(trust: string | null = null) {
     const host = form.host.trim().toLowerCase()
@@ -98,7 +127,7 @@ export function ServerLaunch({ words, ladderWords, domainWords, keyWords, dialog
       if (a?.reason === "host-key-changed" && a.seen) setChanged({ seen: a.seen, pinned: a.pinned ?? null })
       if (a?.ok && a.state) {
         setChanged(null)
-        setTarget({ host, port, fingerprint: a.fingerprint ?? null })
+        setTarget({ host, port, fingerprint: a.fingerprint ?? null, until: a.visit?.deadline ?? null })
         setState({ ...a.state, host })
       }
     } finally {
@@ -165,9 +194,19 @@ export function ServerLaunch({ words, ladderWords, domainWords, keyWords, dialog
   const order: LaunchStep[] = ["server", "check", "domain", "install", "recheck", "certs", "ready"]
   const body: Record<LaunchStep, ReactNode> = {
     server: (
-      <div className="flex flex-wrap items-center gap-3">
-        <Small className="break-all text-foreground">{words.connected.replace("{host}", target.host).replace("{fp}", target.fingerprint ?? "—")}</Small>
-        <Button disabled={busy} onClick={() => { setTarget(null); setState(null); setError("") }} size="sm" variant="outline">{words.another}</Button>
+      <div className="flex flex-col gap-2" data-block="server-launch-access">
+        <Small className="break-all text-muted-foreground">{words.connected.replace("{host}", target.host).replace("{fp}", target.fingerprint ?? "—")}</Small>
+        <div className="flex flex-wrap items-center gap-3" data-block="server-launch-access-actions">
+          {target.until ? <Small className="font-medium text-foreground tabular-nums">{words.access.until.replace("{time}", untilText(target.until))}</Small> : null}
+          <Button disabled={busy} onClick={() => void closeAccess()} size="sm" variant="outline">{closing ? words.access.closing : words.access.close}</Button>
+          <Button disabled={busy} onClick={() => { setTarget(null); setState(null); setError(""); setPanel({ url: null, opening: false }) }} size="sm" variant="ghost">{words.another}</Button>
+        </div>
+        <div className="flex flex-wrap items-center gap-3" data-block="server-launch-panel">
+          {panel.url
+            ? <a className={buttonVariants({ variant: "link", size: "sm", className: "px-0" })} href={panel.url} rel="noopener noreferrer" target="_blank">{words.window.link.replace("{url}", panel.url)}</a>
+            : <Button disabled={busy || panel.opening} onClick={() => void openPanel()} size="sm" variant="outline">{panel.opening ? words.window.opening : words.window.open}</Button>}
+          <Small className="text-muted-foreground">{words.window.note}</Small>
+        </div>
       </div>
     ),
     check: <CheckStep busy={busy} dialogUi={dialogUi} onAct={async (a, x) => { await act(a, x) }} state={state} words={words} />,
