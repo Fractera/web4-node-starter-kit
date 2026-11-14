@@ -13,9 +13,9 @@ import { fileURLToPath } from 'node:url'
 const args = process.argv.slice(2)
 const at = args.indexOf('--root')
 const ROOT = resolve(at >= 0 && args[at + 1] ? args[at + 1] : join(dirname(fileURLToPath(import.meta.url)), '..'))
-const extra = args.filter((a, i) => a !== '--root' && i !== at + 1)
-if (extra.some((a) => a !== '--preflight')) {
-  console.error(`===NODE_UPDATE_REFUSED=== неизвестные аргументы: ${extra.join(' ')} — ничего не тронуто`)
+const extra = args.filter((a, i) => a !== '--root' && (at < 0 || i !== at + 1))
+if (extra.some((a) => a !== '--preflight') || (at >= 0 && !/^[^-]/.test(args[at + 1] ?? ''))) {
+  console.error(`===NODE_UPDATE_REFUSED=== неизвестные аргументы: ${args.join(' ')} — есть только --root <папка узла> и --preflight; ничего не тронуто`)
   process.exit(2)
 }
 if (process.env.CLAUDECODE && !process.env.FRACTERA_BUILD_LOG) {

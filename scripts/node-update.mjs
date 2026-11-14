@@ -166,8 +166,8 @@ function mergeRegistry(theirs, ours) {
 // начал настоящее обновление (аргументов скрипт не читал), а минуту спустя главный агент запустил его своим фоновым ребёнком — крышка
 // сборки убила ядро, агента и само обновление посреди сборки, и никто не записал конец. Агент Claude Code несёт `CLAUDECODE=1`; правильный
 // запуск (`scripts/node-update-run.mjs` через `spawn-free`, кнопка узла) ставит `FRACTERA_BUILD_LOG`.
-const UNKNOWN = ARGV.filter((a, i) => a !== '--root' && a !== '--preflight' && i !== ROOT_AT + 1)
-if (UNKNOWN.length || (ROOT_AT >= 0 && !ARGV[ROOT_AT + 1])) {
+const UNKNOWN = ARGV.filter((a, i) => a !== '--root' && a !== '--preflight' && (ROOT_AT < 0 || i !== ROOT_AT + 1))
+if (UNKNOWN.length || (ROOT_AT >= 0 && !/^[^-]/.test(ARGV[ROOT_AT + 1] ?? ''))) {
   console.error(`===NODE_UPDATE_REFUSED=== неизвестные аргументы: ${ARGV.join(' ')} — у обновления узла есть только --root <папка узла> и --preflight; ничего не тронуто`)
   process.exit(2)
 }
