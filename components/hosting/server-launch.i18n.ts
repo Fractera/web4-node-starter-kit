@@ -46,7 +46,7 @@ export type ServerLaunchWords = {
   install: { text: string; install: string; update: string; again: string; running: string; done: string; failed: string; leave: string; silent: string; ask: string }
   stage: Record<string, string>
   recheck: { text: string; button: string; gate: string; noDomain: string }
-  certs: { budget: string; limit: string; checklist: string; name: string; dns: string; cert: string; https: string; httpsButton: string }
+  certs: { budget: string; limit: string; checklist: string; name: string; dns: string; cert: string; https: string; httpsButton: string; off: string; afterOn: string; notDue: string }
   /** 744-6: `done` · `links` · `site` · `panel` · `signin` · `next` and the claim words are drawn only under a passed final check
    *  (`ReadyWords`, `check:ready-words`); `missing` names what the check still lacks — `{host}` */
   ready: { text: string; activate: string; activating: string; signinOk: string; signinFail: string; signinButton: string; links: string; site: string; panel: string; signin: string; next: string; first: string; done: string; claimButton: string; claimNew: string; claimText: string; claimed: string; missing: { title: string; cert: string; https: string; signin: string } }
@@ -115,7 +115,7 @@ const en: ServerLaunchWords = {
   },
   stage: STAGE_EN,
   recheck: { text: "Every name of the node is asked of two public DNS resolvers. Until every required name points to the server, the certificates cannot start.", button: "Check the records", gate: "Not every required name points to the server yet.", noDomain: "No domain is chosen: the server answers only by its IP." },
-  certs: { budget: "This week {week} of 50 Let's Encrypt certificates were issued for {domain}.", limit: "Limits: 50 per domain per week, 5 per name per week (letsencrypt.org).", checklist: "Checklist", name: "Name", dns: "DNS", cert: "Certificate", https: "HTTPS", httpsButton: "Check HTTPS from the internet" },
+  certs: { budget: "This week {week} of 50 Let's Encrypt certificates were issued for {domain}.", limit: "Limits: 50 per domain per week, 5 per name per week (letsencrypt.org).", checklist: "Checklist", name: "Name", dns: "DNS", cert: "Certificate", https: "HTTPS", httpsButton: "Check HTTPS from the internet", off: "switched off", afterOn: "after the domain is on", notDue: "Grey lines are not errors: a switched-off element answers once you switch it on, and sign-in answers once the domain is on. Their certificates are already in place." },
   ready: {
     text: "Switch the domain on: sign-in moves to https://auth.{zone}, the bare IP leads to the panel, the elements learn their addresses.", activate: "Switch the domain on", activating: "Switching on…",
     signinOk: "Sign-in leads to https://auth.{zone}.", signinFail: "Sign-in does not lead to https://auth.{zone} yet: {detail}", signinButton: "Check sign-in again", links: "Links:", site: "Site", panel: "Panel", signin: "Sign-in",
@@ -194,7 +194,7 @@ const ru: ServerLaunchWords = {
   },
   stage: STAGE_RU,
   recheck: { text: "Каждое имя узла спрашивается у двух публичных DNS. Пока хоть одно обязательное имя не ведёт на сервер, к сертификатам перейти нельзя.", button: "Проверить записи", gate: "Ещё не все обязательные имена ведут на сервер.", noDomain: "Домен не выбран: сервер отвечает только по своему IP." },
-  certs: { budget: "На этой неделе для {domain} выпущено {week} из 50 сертификатов Let's Encrypt.", limit: "Лимиты: 50 на домен в неделю, 5 на одно имя в неделю (letsencrypt.org).", checklist: "Чек-лист", name: "Имя", dns: "DNS", cert: "Сертификат", https: "HTTPS", httpsButton: "Проверить HTTPS из интернета" },
+  certs: { budget: "На этой неделе для {domain} выпущено {week} из 50 сертификатов Let's Encrypt.", limit: "Лимиты: 50 на домен в неделю, 5 на одно имя в неделю (letsencrypt.org).", checklist: "Чек-лист", name: "Имя", dns: "DNS", cert: "Сертификат", https: "HTTPS", httpsButton: "Проверить HTTPS из интернета", off: "выключен", afterOn: "после включения домена", notDue: "Серые строки — не ошибка: выключенный элемент ответит, когда вы его включите, а вход — после включения домена. Сертификаты у них уже есть." },
   ready: {
     text: "Включите домен: вход переедет на https://auth.{zone}, голый IP поведёт в панель, элементы узнают свои адреса.", activate: "Включить домен", activating: "Включаю…",
     signinOk: "Вход ведёт на https://auth.{zone}.", signinFail: "Вход ещё не ведёт на https://auth.{zone}: {detail}", signinButton: "Проверить вход ещё раз", links: "Ссылки:", site: "Сайт", panel: "Панель", signin: "Вход",

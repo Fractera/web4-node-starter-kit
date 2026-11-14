@@ -12,7 +12,7 @@ import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { finalCheck, namesReady } from '../lib/hosting/final-check.mjs'
+import { finalCheck, httpsDue, namesReady } from '../lib/hosting/final-check.mjs'
 import { END, readyWordsProblems } from './check-ready-words.mjs'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -45,6 +45,25 @@ await t('negative: the names ready but the domain off or sign-in elsewhere — t
   assert.deepEqual([namesReady(off).ok, finalCheck(off).ok], [true, false])
   assert.equal(finalCheck(null).ok, false)
   assert.equal(finalCheck({ core: { zone: 'example.org', rows: [] } }).ok, false, 'nothing measured is not ready')
+})
+
+await t('744-9: a fresh server before the domain is on — auth 503, cache and stripe off by the registry: the names are ready, the server is not', () => {
+  // measured 2026-11-14 on the test server: auth «Sign-in is not switched on yet» 503, cache and stripe nginx 503 — activation never came
+  const fresh = state({
+    signin: null,
+    core: {
+      rows: [row('example.org'), row('architect.example.org'), row('auth.example.org', { kind: 'auth', https: false, status: 503 }),
+        row('cache.example.org', { kind: 'element', https: false, status: 503, off: true }), row('stripe.example.org', { kind: 'element', https: false, status: 503, off: true })],
+      steps: { domain: true, dns: true, certs: true, check: false, active: false },
+    },
+  })
+  assert.deepEqual(namesReady(fresh), { ok: true, missing: [] })
+  assert.deepEqual(finalCheck(fresh).missing, [{ host: 'auth.example.org', what: 'signin' }])
+  assert.deepEqual([httpsDue({ kind: 'auth' }), httpsDue({ kind: 'element', off: true }), httpsDue({ kind: 'element' }), httpsDue({ kind: 'www', optional: true })], [false, false, true, false])
+})
+await t('744-9 negative: a running element with 503 still holds the names; an off element without a certificate still holds them', () => {
+  const s = state({ core: { rows: [row('example.org'), row('data.example.org', { kind: 'element', https: false, status: 503 }), row('stripe.example.org', { kind: 'element', cert: 'missing', https: false, off: true })] } })
+  assert.deepEqual(namesReady(s).missing, [{ host: 'data.example.org', what: 'https' }, { host: 'stripe.example.org', what: 'cert' }])
 })
 
 // LF whatever the checkout (a Windows one gives CRLF), so the planted copies below find their lines

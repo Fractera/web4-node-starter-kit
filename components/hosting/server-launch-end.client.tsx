@@ -1,13 +1,13 @@
 "use client"
 // @local — steps 4–7 of the launch ladder (one route: «Активация выделенного сервера»): installation, the records again, certificates, ready
 
-import { Check, X } from "lucide-react"
+import { Check, Info, X } from "lucide-react"
 import { CertsStep } from "@/components/hosting/server-domain-certs.client"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import type { Strategy } from "@/components/hosting/server-launch-check.client"
 import type { LaunchState } from "@/components/hosting/server-launch.client"
 import { installedOf } from "@/components/hosting/server-launch-rungs"
-import { finalCheck } from "@/lib/hosting/final-check.mjs"
+import { finalCheck, httpsDue } from "@/lib/hosting/final-check.mjs"
 import type { ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
 import { StageLog } from "@/components/hosting/stage-log"
 import { Badge } from "@/components/ui/badge"
@@ -81,6 +81,8 @@ export function CertsLaunchStep({ state, words, domainWords, busy, onAct }: { st
   if (!core) return null
   const w = words.certs
   const domain = state.domain?.detect?.zone ?? core.zone ?? ""
+  // 744-9: a name whose HTTPS is not due yet (off, or sign-in before the domain is on) is grey with its reason, never a red cross
+  const waits = (r: (typeof core.rows)[number]) => !httpsDue(r) && !(r.kind === "auth" && core.steps.active)
   const act = async (action: string, extra?: Record<string, unknown>) => { await onAct(action, action === "upload" ? { name: extra?.host, fullchain: extra?.fullchain, privkey: extra?.privkey } : extra) }
   return (
     <div className="flex flex-col gap-3" data-block="server-launch-certs">
@@ -98,11 +100,12 @@ export function CertsLaunchStep({ state, words, domainWords, busy, onAct }: { st
                 <TableCell className="font-mono text-xs">{r.host}</TableCell>
                 <TableCell>{r.dns === "ok" ? <Check aria-label="ok" className="size-4 text-primary" /> : <X aria-label={r.dns} className="size-4 text-destructive" />}</TableCell>
                 <TableCell className="text-xs">{domainWords.certState[r.cert as keyof ServerDomainWords["certState"]] ?? r.cert}{r.daysLeft !== null ? ` · ${domainWords.daysLeft.replace("{n}", String(r.daysLeft))}` : ""}{r.certSource ? ` · ${r.certSource === "own" ? domainWords.own : "Let's Encrypt"}` : ""}</TableCell>
-                <TableCell>{r.https === null ? "—" : r.https ? <Check aria-label="ok" className="size-4 text-primary" /> : <X aria-label="fail" className="size-4 text-destructive" />}</TableCell>
+                <TableCell>{r.https === true ? <Check aria-label="ok" className="size-4 text-primary" /> : waits(r) ? <Small className="inline-flex items-center gap-1 text-muted-foreground"><Info aria-hidden className="size-4" />{r.off ? w.off : w.afterOn}</Small> : r.https === null ? "—" : <X aria-label="fail" className="size-4 text-destructive" />}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+        {core.rows.some((r) => r.https !== true && waits(r)) ? <Small className="text-muted-foreground" data-block="server-launch-not-due">{w.notDue}</Small> : null}
         <div className="flex flex-wrap items-center gap-3">
           <Button disabled={busy || Boolean(core.certsRun?.running)} onClick={() => void onAct("check")} size="sm" variant="outline">{w.httpsButton}</Button>
           {core.checkAt ? <Small className="text-muted-foreground">{domainWords.checkedAt} {new Date(core.checkAt).toLocaleString()}</Small> : null}

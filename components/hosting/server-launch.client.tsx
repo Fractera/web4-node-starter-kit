@@ -32,7 +32,7 @@ import { H2, Small } from "@/components/ui/typography"
 // (`server-launch-rungs.ts`). D46: the installation opens after the domain, never past an empty step 3.
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
-type CoreRow = CertRow & { zone: string; label: string; kind: string; https: boolean | null; status: number | null }
+type CoreRow = CertRow & { zone: string; label: string; kind: string; https: boolean | null; status: number | null; off?: boolean }
 export type LaunchState = {
   host?: string
   cleared?: { state?: string; detail?: string; stopped?: number; backup?: string } | null

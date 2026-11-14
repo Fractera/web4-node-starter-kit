@@ -11,7 +11,7 @@ import type { LaunchState } from "@/components/hosting/server-launch.client"
 import type { LadderView } from "@/components/hosting/server-ladder.client"
 import type { LaunchStep, ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
 import type { ServerLadderWords } from "@/components/hosting/server-ladder.i18n"
-import { finalCheck } from "@/lib/hosting/final-check.mjs"
+import { finalCheck, httpsDue, namesReady } from "@/lib/hosting/final-check.mjs"
 import { domainSteps } from "@/lib/hosting/launch-domain.mjs"
 
 export const LAUNCH_ORDER: LaunchStep[] = ["server", "check", "domain", "install", "recheck", "certs", "ready"]
@@ -45,7 +45,8 @@ export function launchDone(s: LaunchState, strategy: Strategy): Record<LaunchSte
     domain: Object.values(domainSteps(s.domain)).every(Boolean),
     install: installedOf(s, strategy) && Boolean(s.core),
     recheck: Boolean(s.core?.steps.dns),
-    certs: Boolean(s.core?.steps.certs && s.core?.steps.check),
+    // 744-9: one reading with the runner's gate — a certificate for every required name, HTTPS where it is due (`httpsDue`)
+    certs: namesReady(s).ok,
     // 744-6: the last step is done only by the final check (every required name: a certificate and HTTPS; the domain on; sign-in)
     ready: finalCheck(s).ok,
   }
@@ -67,7 +68,7 @@ export function launchSummary(s: LaunchState, target: { host: string; until: str
       : undefined,
     install: fill(w.install, { head }),
     recheck: fill(w.recheck, count((r) => r.dns === "ok")),
-    certs: fill(w.certs, count((r) => (r.cert === "ok" || r.cert === "expiring") && r.https === true)),
+    certs: fill(w.certs, count((r) => (r.cert === "ok" || r.cert === "expiring") && (r.https === true || !httpsDue(r)))),
   }
   return summary
 }

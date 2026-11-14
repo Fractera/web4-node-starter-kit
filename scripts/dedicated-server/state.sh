@@ -77,6 +77,15 @@ if mark and mark.get("phase") == "live" and isinstance(port, int):
         core = json.loads(out) if out.strip().startswith("{") else None
     except Exception:
         core = None
+# 744-9: an element off by the server node's registry (`off`, step 567) — nginx holds its name with 503 by design; its row says so,
+# and the computer's final check does not wait for its HTTPS (lib/hosting/final-check.mjs httpsDue). Read here, not trusted from the
+# server node's code: a server installed before 744-9 does not mark it.
+if isinstance(core, dict) and isinstance(core.get("rows"), list) and core.get("zone"):
+    reg = read(os.path.join(node, "WEB4-ITEMS-REGISTRY", "web4-items.json")) or {}
+    off = {f"{(e.get('address') or e.get('id'))}.{core['zone']}" for e in (reg.get("services") or []) if isinstance(e, dict) and isinstance(e.get("off"), dict)}
+    for r in core["rows"]:
+        if isinstance(r, dict):
+            r["off"] = r.get("host") in off
 print(json.dumps({
     "probe": read(os.path.join(d, "probe.json")),
     "preflight": read(os.path.join(d, "preflight.json")),
