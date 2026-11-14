@@ -45,7 +45,7 @@ export type ServerDomainWords = {
 const en: ServerDomainWords = {
   title: "The domain of the node on its server",
   lead: "The node answers by its IP now. Give it a domain: records at the registrar, a certificate for every name, a check from the internet — then switch it on.",
-  readOnly: "Read-only view. The steps are run by the architect: `npm run server -- window` on the computer the node came from, or the main agent in Telegram.",
+  readOnly: "Read-only view. The steps are run by the architect: `npm run server -- window --ip <IP>` on the computer that launched this server, or the main agent in Telegram.",
   loading: "Asking the server…",
   locked: "opens after the step above",
   step: { domain: "The domain", dns: "Records at the registrar", certs: "Certificates", check: "HTTPS from the internet", active: "Switch on" },
@@ -88,7 +88,7 @@ const en: ServerDomainWords = {
 const ru: ServerDomainWords = {
   title: "Домен узла на его сервере",
   lead: "Сейчас узел отвечает по IP. Дайте ему домен: записи у регистратора, сертификат на каждое имя, проверка из интернета — и включение.",
-  readOnly: "Только просмотр. Шаги выполняет архитектор: `npm run server -- window` на компьютере, откуда узел переехал, или главный агент в Telegram.",
+  readOnly: "Только просмотр. Шаги выполняет архитектор: `npm run server -- window --ip <IP>` на компьютере, с которого запущен этот сервер, или главный агент в Telegram.",
   loading: "Спрашиваю сервер…",
   locked: "откроется после шага выше",
   step: { domain: "Домен", dns: "Записи у регистратора", certs: "Сертификаты", check: "HTTPS из интернета", active: "Включение" },

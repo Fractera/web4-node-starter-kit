@@ -20,7 +20,7 @@ import { activateServerDomain, applyNginx, deactivateServerDomain } from "@/lib/
 // — дополняешь, и после этого весь проект должен работать».
 // 🔒 READING IS OPEN ON THE BARE IP, ACTING IS NOT: the server's IP is a read-only address (`components/shell/temporary-host.ts`), and the
 // person opening it wants to see which records to write — host names and the IP, which DNS will publish anyway; never a port. Every act
-// is the architect's, and never on a public address (on the server: through `npm run server -- window`, or the main agent's CLI on
+// is the architect's, and never on a public address (on the server: through `npm run server -- window --ip <IP>` from the computer that launched it, or the main agent's CLI on
 // loopback — `npm run server -- domain …`).
 // 🔒 ONLY ON A LIVE SERVER: a rehearsing copy or the person's computer has no domain of the server to run.
 // 🔒 THE LONG ACT IS DETACHED: certificates take minutes (`scripts/dedicated-server/certs.mjs` through `spawn-free`); the screen follows

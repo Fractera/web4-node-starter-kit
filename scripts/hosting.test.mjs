@@ -282,6 +282,40 @@ if (process.platform === 'win32') {
     const walk = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap((d) => (d.isDirectory() ? walk(join(dir, d.name)) : [join(dir, d.name)]))
     for (const f of walk(nodeRoot)) assert.ok(!readFileSync(f, 'utf8').includes(SECRET), f)
   })
+  // 741-5: the SSH window — the server's core reached through the pinned key, without nginx, so without the edge mark.
+  const { openWindow, windowPortAllowed, WINDOW_FIRST, WINDOW_LAST } = await import('../lib/hosting/window.mjs')
+  const http = await import('node:http')
+  const fakeCore = http.createServer((req, res) => res.end(JSON.stringify({ host: req.headers.host, edge: req.headers['x-fractera-edge'] ?? null })))
+  await new Promise((r) => fakeCore.listen(0, '127.0.0.1', r))
+  const fakeNode = mkdtempSync(join(tmpdir(), 'hosting-window-node-'))
+  roots.push(fakeNode)
+  mkdirSync(join(fakeNode, 'logs'), { recursive: true })
+  writeFileSync(join(fakeNode, 'logs', 'runtime.json'), JSON.stringify({ port: fakeCore.address().port }))
+  await ta('741-5: the window — a local port of 25680–25689, the request reaches the core with a loopback Host and NO edge mark', async () => {
+    const w = await openWindow({ root: nodeRoot, ip: '127.0.0.1', nodeDir: fakeNode })
+    assert.equal(w.ok, true, String(w.reason ?? ""))
+    try {
+      assert.ok(w.port >= WINDOW_FIRST && w.port <= WINDOW_LAST, String(w.port))
+      const seen = await (await fetch(`http://127.0.0.1:${w.port}/api/me`)).json()
+      assert.equal(seen.edge, null, 'through SSH there is no nginx, so no edge mark — the owner at that keyboard')
+      assert.equal(seen.host, `127.0.0.1:${w.port}`)
+    } finally { w.close() }
+  })
+  await ta('741-5 negative: a busy first port moves the window up, never into the node\'s range; no pin or a bad port — refused', async () => {
+    const busy = http.createServer(() => {})
+    const taken = await new Promise((r) => { busy.once('error', () => r(false)); busy.listen(WINDOW_FIRST, '127.0.0.1', () => r(true)) })
+    const w = await openWindow({ root: nodeRoot, ip: '127.0.0.1', nodeDir: fakeNode })
+    try {
+      assert.equal(w.ok, true)
+      if (taken) assert.notEqual(w.port, WINDOW_FIRST)
+      assert.ok(w.port >= WINDOW_FIRST && w.port <= WINDOW_LAST)
+    } finally { w.close(); busy.close() }
+    assert.equal((await openWindow({ root: nodeRoot, ip: '203.0.113.9', nodeDir: fakeNode })).reason, 'no-pin')
+    assert.equal((await openWindow({ root: nodeRoot, ip: '127.0.0.1', nodeDir: fakeNode, localPort: 24680 })).reason, 'bad-port')
+    for (const p of [3000, 24680, 25679, 49152]) assert.equal(windowPortAllowed(p), false, String(p))
+    assert.equal((await openWindow({ root: nodeRoot, ip: '127.0.0.1', nodeDir: join(fakeNode, 'missing') })).reason, 'no-core-port')
+  })
+  await new Promise((r) => fakeCore.close(r))
   await ta('negative: the same address with a different server key is refused as `host-key-changed`', async () => {
     await new Promise((r) => srv.close(r))
     srv = await sshServer(readableKeyPair().private, sshPort)

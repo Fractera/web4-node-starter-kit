@@ -4,6 +4,7 @@
 // 🛑 Commands therefore act on this computer: a test sends only harmless ones or dry runs (`move.mjs --dry` replaces every acting one).
 // `state.commands` — every command line the «server» was asked to run (737-11a: a secret must never be among them).
 import { spawn } from 'node:child_process'
+import net from 'node:net'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import ssh2 from 'ssh2'
@@ -24,6 +25,14 @@ export function startTestSshServer({ home, password, hostKey = readableKeyPair()
         }
         return ctx.reject(['password', 'publickey'])
       }).on('ready', () => {
+        // 741-5: the window's forwarding (`direct-tcpip`) — to this machine's loopback only, the way sshd connects for `ssh -L`.
+        client.on('tcpip', (accept, reject, info) => {
+          if (!['127.0.0.1', 'localhost', '::1'].includes(info.destIP)) return reject()
+          const stream = accept()
+          const sock = net.connect({ host: info.destIP === 'localhost' ? '127.0.0.1' : info.destIP, port: info.destPort })
+          sock.on('error', () => stream.end())
+          stream.pipe(sock).pipe(stream)
+        })
         client.on('session', (accept) => {
           const session = accept()
           session.on('pty', (ok) => ok?.())

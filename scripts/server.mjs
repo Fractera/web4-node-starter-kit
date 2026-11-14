@@ -1,11 +1,15 @@
 // THE DEDICATED SERVER — ONE COMMAND FOR THE MAIN AGENT AND THE PERSON (node step 737). `npm run server -- <verb>`.
 // The owner, 2026-11-13: «шаг за шагом автоматически и по возможности без искусственного интеллекта» — every verb is plain code; the
 // main agent only calls it (from Telegram too) and reads the marked last line. 738: a server is LAUNCHED from the page «Активация
-// выделенного сервера» (`scripts/dedicated-server/launch.mjs`), never moved to — the move's verbs (status, return, window) are gone.
+// выделенного сервера» (`scripts/dedicated-server/launch.mjs`), never moved to — the move's verbs (status, return) are gone; the window
+// came back in 741-5 (it is not a part of a move: it is how the owner sees a server before its domain).
 //   names [--domain <name>] [--root <node folder>]   every public name of the node, its port and its DNS label (737-1)
 //   dns   --ip <IPv4> [--domain <name>] [--root …]   the A records to write at the registrar, per zone, with the `*` shortcut (737-1)
 //   nginx [--write]                                    the server's nginx site from the names and the certificates present (737-2)
 //   phase                                              live · none — this node's phase on a dedicated server (737-4, 738)
+//   window --ip <IPv4> [--port <local>] [--user <name>] [--folder <name>]
+//                                                      741-5: the server's own panel at http://localhost:<port> through the node's
+//                                                      pinned key (no nginx, no edge mark — the owner); holds until Ctrl+C
 //   domain [<name>] · dns-check · certs · check · activate · deactivate
 //                                                      the server's own domain, its five steps (737-8): on the server itself, as
 //                                                      the owner at the keyboard — a loopback call of /api/node/server/domain
@@ -140,13 +144,36 @@ function domainStep(action) {
   }
 }
 
+// 741-5 (the owner approved 2026-11-14): the SSH window — `lib/hosting/window.mjs`.
+const WINDOW_WHY = {
+  'no-pin': 'this computer has not launched that server (no pinned key) — launch it from the page «Активация выделенного сервера»',
+  auth: 'the server does not accept the node key — the launch page puts it back',
+  'host-key-changed': "the server's key changed (a reinstalled server?) — the launch page shows both keys before trusting the new one",
+  'no-core-port': "the server's core has not written its port yet (logs/runtime.json) — is the node started there?",
+  'no-free-port': 'ports 25680–25689 on this computer are all busy',
+  'bad-port': 'the local port must be outside 24680–25679, not 3000, below 49152',
+}
+async function windowVerb() {
+  const ip = opt('ip')
+  if (!ip || !IPV4.test(ip)) { console.log('===WINDOW_FAILED=== bad-ip — npm run server -- window --ip <IPv4>'); process.exit(2) }
+  const { openWindow } = await import('../lib/hosting/window.mjs')
+  const localPort = opt('port') ? Number(opt('port')) : null
+  const w = await openWindow({ root, ip, user: opt('user') ?? 'fractera', folder: opt('folder') ?? path.basename(root), localPort,
+    onDrop: () => { console.log('===WINDOW_CLOSED=== the SSH link dropped'); process.exit(1) } })
+  if (!w.ok) { console.log(`===WINDOW_FAILED=== ${w.reason}${WINDOW_WHY[w.reason] ? ` — ${WINDOW_WHY[w.reason]}` : ''}`); process.exit(1) }
+  console.log(`===WINDOW=== http://localhost:${w.port}/ru — the panel of the server ${ip} (its core listens on its own port ${w.corePort}); Ctrl+C closes it`)
+  const stop = (why) => { console.log(`===WINDOW_CLOSED=== ${why}`); w.close(); process.exit(0) }
+  process.on('SIGINT', () => stop('closed by Ctrl+C'))
+  process.on('SIGTERM', () => stop('closed'))
+}
+
 const verbs = {
-  names, dns, nginx, phase,
+  names, dns, nginx, phase, window: windowVerb,
   domain: args[1] ? domainStep('domain') : domainStep('show'),
   'dns-check': domainStep('dns-check'), certs: domainStep('certs'), check: domainStep('check'), activate: domainStep('activate'), deactivate: domainStep('deactivate'),
 }
 if (!verbs[verb]) {
-  console.log('Команды: names · dns · nginx · phase · domain [<имя>] · dns-check · certs · check · activate · deactivate')
+  console.log('Команды: names · dns · nginx · phase · window --ip <IPv4> · domain [<имя>] · dns-check · certs · check · activate · deactivate')
   process.exit(verb ? 1 : 0)
 }
 verbs[verb]()
