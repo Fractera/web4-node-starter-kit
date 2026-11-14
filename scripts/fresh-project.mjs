@@ -15,6 +15,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
+import { machineArgs } from '../lib/deploy/git-identity.mjs'
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..')
 const MARK = path.join(root, 'logs', 'fresh-project.json')
@@ -115,11 +116,10 @@ in the same commit. The form of both — skill \`use-development-steps\`, \`refe
 mkdirSync(path.dirname(MARK), { recursive: true })
 writeFileSync(MARK, JSON.stringify({ at: new Date().toISOString(), removed }, null, 2) + '\n', 'utf8')
 
-// Коммит — чтобы дерево узла было чистым: следующие пересборки и развёртывания сверяются с git. Нет имени автора в git на чистом
-// компьютере — коммит от имени узла, только для этого коммита (`-c`), глобальные настройки человека не трогаются.
+// Коммит — чтобы дерево узла было чистым: следующие пересборки и развёртывания сверяются с git. 743-1 (D38): коммит машины подписан
+// машиной (`lib/deploy/git-identity.mjs`), только этот коммит (`-c`), глобальные настройки человека не трогаются.
 const git = (...args) => spawnSync('git', ['-C', root, ...args], { encoding: 'utf8', windowsHide: true })
-const named = git('config', 'user.email').stdout.trim() !== ''
-const identity = named ? [] : ['-c', 'user.name=Fractera node', '-c', 'user.email=node@localhost']
+const identity = machineArgs()
 git('add', '-A', '--', 'development-docs/development-steps', 'development-docs/CANCELLED.md')
 const commit = git(...identity, 'commit', '-m', 'Fresh project: start without the starter development history; step 1 is the first launch', '--', 'development-docs/development-steps', 'development-docs/CANCELLED.md')
 console.log(`===FRESH_OK=== removed ${removed.length} starter step files; step 1 written${commit.status === 0 ? ', committed' : ' (not committed: ' + (commit.stderr || commit.stdout).trim().split('\n')[0] + ')'}`)

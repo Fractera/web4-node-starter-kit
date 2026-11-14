@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process"
 import { readFileSync, renameSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 import { syncRegistryMap } from "@/lib/web4-items/registry-map.mjs"
+import { machineArgs } from "@/lib/deploy/git-identity.mjs"
 import { storedToken } from "@/app/[lang]/(architectLayer)/architect/build/github/_github/server/token.cjs"
 
 // КАРТА ПРОЕКТА УЕЗЖАЕТ В ФОРК ЧЕЛОВЕКА (шаг 374-1/374-5). Слово владельца 2026-10-02: «Если нужно восстановить весь проект то
@@ -49,7 +50,7 @@ export function saveNodeMap(): NodeMapResult {
   if (!token) return { ok: true, written, pushed: false, reason: "no-token" }
   if (git(["diff", "--quiet", "HEAD", "--", SNAPSHOT]).rc !== 0 || git(["ls-files", "--error-unmatch", SNAPSHOT]).rc !== 0) {
     if (git(["add", "--", SNAPSHOT]).rc !== 0) return { ok: false, written, pushed: false, reason: "commit-failed" }
-    const c = git(["-c", "user.name=Fractera node", "-c", "user.email=node@fractera.local", "commit", "--quiet", "-m", "WEB4 ITEMS map (step 374)", "--", SNAPSHOT])
+    const c = git([...machineArgs(), "commit", "--quiet", "-m", "WEB4 ITEMS map (step 374)", "--", SNAPSHOT])
     if (c.rc !== 0) return { ok: false, written, pushed: false, reason: "commit-failed" }
   }
   const p = git(["push", `https://x-access-token:${token}@github.com/${origin.slug}.git`, `HEAD:refs/heads/${origin.branch || "main"}`])

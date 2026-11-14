@@ -24,6 +24,7 @@ import { spawnSync } from 'node:child_process'
 import { existsSync, readFileSync, writeFileSync, statSync, readdirSync, rmSync } from 'node:fs'
 import { join, dirname, relative, basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { machineArgs } from '../lib/deploy/git-identity.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const JOURNALS = ['development-docs/owner-decisions-on-skill-changes.md', 'lib/main-agent/owner-decisions-on-skill-changes.md']
@@ -127,7 +128,8 @@ if (revert !== null) {
   const added = git(['add', '--', JOURNAL])
   if (added.rc !== 0) fail(`git add: ${cut(added.err, 300)}`)
   const message = `evolve(${label}): revert ${short} — ${why}\n\nUndoes the change of ${full} to ${T.path}; the row «reverted — do not repeat» is in ${JOURNAL}.\n`
-  const made = git(['commit', '-q', '-F', '-', '--', T.path, JOURNAL], message)
+  // 743-1 (D38): the revert is the machine's commit — signed by the machine, never left to an identity the node may not have.
+  const made = git([...machineArgs(), 'commit', '-q', '-F', '-', '--', T.path, JOURNAL], message)
   if (made.rc !== 0) fail(`git commit: ${cut(made.err || made.out, 400)}`)
   console.log(`===EVOLUTION_REVERTED=== ${git(['rev-parse', '--short=7', 'HEAD']).out.trim()} undoes ${short} on ${T.path}`)
   process.exit(0)

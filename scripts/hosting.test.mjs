@@ -643,9 +643,9 @@ console.log('741-4 a server never opens a quick tunnel')
   })
 }
 
-console.log('741-8 a server node merges its updates with a neutral identity')
+console.log('743-1 the machine signs what the machine does (D38)')
 {
-  const { identityEnv, NODE_IDENTITY } = await import('../lib/deploy/git-identity.mjs')
+  const { machineEnv, machineArgs, MACHINE } = await import('../lib/deploy/git-identity.mjs')
   const base = mkdtempSync(join(tmpdir(), 'identity-'))
   roots.push(base)
   const emptyHome = join(base, 'home')
@@ -670,17 +670,21 @@ console.log('741-8 a server node merges its updates with a neutral identity')
     assert.match(r.stderr + r.stdout, /identity|who you are|auto-detection is disabled/i)
     g(node, bare, 'merge', '--abort')
   })
-  t('741-8: with the node\'s identity the same merge succeeds, authored «Fractera node <node@fractera.invalid>»', () => {
-    const add = identityEnv(node, bare)
-    assert.deepEqual(add.GIT_AUTHOR_EMAIL, NODE_IDENTITY.email)
-    const r = g(node, { ...bare, ...add }, 'merge', '--no-edit', 'origin/main')
+  t('743-1: with the machine\'s env the same merge succeeds, authored and committed «Fractera node <node@fractera.invalid>»', () => {
+    assert.equal(machineEnv().GIT_COMMITTER_EMAIL, MACHINE.email)
+    const r = g(node, { ...bare, ...machineEnv() }, 'merge', '--no-edit', 'origin/main')
     assert.equal(r.status, 0, r.stderr)
-    assert.equal(g(node, bare, 'log', '-1', '--format=%an <%ae>').stdout.trim(), 'Fractera node <node@fractera.invalid>')
+    assert.equal(g(node, bare, 'log', '-1', '--format=%an <%ae> / %cn <%ce>').stdout.trim(), 'Fractera node <node@fractera.invalid> / Fractera node <node@fractera.invalid>')
   })
-  t('741-8 negative: a configured identity wins — nothing is added', () => {
+  t('743-1 (D38): a configured identity does not change a machine commit; a plain commit by hand keeps the person\'s', () => {
     g(node, bare, 'config', 'user.name', 'Owner Of This Node')
     g(node, bare, 'config', 'user.email', 'owner@example.invalid')
-    assert.deepEqual(identityEnv(node, bare), {})
+    writeFileSync(join(node, 'c.txt'), 'c\n'); g(node, bare, 'add', 'c.txt')
+    assert.equal(g(node, bare, ...machineArgs(), 'commit', '-q', '-m', 'machine').status, 0)
+    assert.equal(g(node, bare, 'log', '-1', '--format=%an <%ae>').stdout.trim(), 'Fractera node <node@fractera.invalid>')
+    writeFileSync(join(node, 'd.txt'), 'd\n'); g(node, bare, 'add', 'd.txt')
+    assert.equal(g(node, bare, 'commit', '-q', '-m', 'by hand').status, 0)
+    assert.equal(g(node, bare, 'log', '-1', '--format=%an <%ae>').stdout.trim(), 'Owner Of This Node <owner@example.invalid>')
   })
 }
 

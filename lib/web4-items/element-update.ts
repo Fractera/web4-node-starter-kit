@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process"
 import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import paths from "@/lib/web4-items/paths.cjs"
+import { machineArgs } from "@/lib/deploy/git-identity.mjs"
 
 // ОБНОВЛЕНИЕ ОБЯЗАТЕЛЬНОГО ЭЛЕМЕНТА С НОВОГО ТЕГА FRACTERA (шаг 374-7). Слово владельца 2026-10-02: элементы ядра «пользователь их
 // меняет … прогрессирует ровно точно также как и любой другой WEB4 ITEMS»; конфликт слияния — «fix with ai agent».
@@ -66,7 +67,7 @@ export function updateElement(id: string): UpdateResult {
   const buildOwned = git(dir, ["ls-files", "-m"]).out.split(/\r?\n/).map((l) => l.trim()).filter((f) => /(^|\/)(tsconfig\.json|next-env\.d\.ts)$/.test(f))
   if (buildOwned.length) git(dir, ["checkout", "--quiet", "--", ...buildOwned])
   if (git(dir, ["status", "--porcelain", "--untracked-files=no"]).out.trim()) return { ok: false, error: "dirty" }
-  const m = git(dir, ["-c", "user.name=Fractera node", "-c", "user.email=node@fractera.local", "merge", "--no-edit", "-m", `update to ${e.version} (Fractera)`, `tags/${e.version}`])
+  const m = git(dir, [...machineArgs(), "merge", "--no-edit", "-m", `update to ${e.version} (Fractera)`, `tags/${e.version}`])
   if (m.rc === 0) return { ok: true, mode: "merged", commit: git(dir, ["rev-parse", "--short", "HEAD"]).out.trim() }
   const files = git(dir, ["diff", "--name-only", "--diff-filter=U"]).out.split(/\r?\n/).filter(Boolean)
   if (files.length === 0) {

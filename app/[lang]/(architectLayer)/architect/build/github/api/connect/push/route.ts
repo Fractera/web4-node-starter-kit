@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import fs from "node:fs";
+import { machineArgs } from "@/lib/deploy/git-identity.mjs";
 import { requireAuth } from "../../../_connect/shell/require-auth";
 import { flowValue, flowVerified, setFlowPushed, flowPushedAt, isLaunchPath, PATH_INPUTS } from "../../../_connect/server/launch-flow";
 import type { LaunchPath } from "../../../_connect/server/launch-flow";
@@ -77,8 +78,7 @@ export async function POST(req: NextRequest) {
     // это НЕ отказ отправки — просто отправлять будем то, что уже закоммичено.
     await run("git", [
       "-C", APP_DIR,
-      "-c", "user.email=panel@fractera.local",
-      "-c", "user.name=Fractera panel",
+      ...machineArgs(),
       "commit", "-m", "Project sent from the Fractera panel",
     ]).catch(() => undefined);
 

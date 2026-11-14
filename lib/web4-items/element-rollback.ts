@@ -4,6 +4,7 @@ import { join } from "node:path"
 import { elementDir } from "@/lib/web4-items/element-github"
 import { elementCodeState } from "@/lib/web4-items/element-code-state"
 import deployLock from "@/lib/deploy/deploy-lock.cjs"
+import { machineArgs } from "@/lib/deploy/git-identity.mjs"
 import previewLock from "@/lib/deploy/preview-lock.cjs"
 
 // ОТКАТ РОЖДЁННОГО ЭЛЕМЕНТА К ВЫБРАННОЙ ВЕРСИИ — НОВЫМ КОММИТОМ (шаг 322). Владелец 2026-09-27: «я у тебя не увидел кнопку
@@ -15,7 +16,7 @@ import previewLock from "@/lib/deploy/preview-lock.cjs"
 // Сборка — тем же путём, что «Развернуть» (`scripts/deploy-elements.mjs` вне дерева ядра: соседняя папка, без простоя; неудача —
 // работает прежняя). Идёт развёртывание или ждёт предпросмотр — отказ словами, ничего не меняется.
 
-const IDENT = ["-c", "user.name=Fractera node", "-c", "user.email=node@fractera.local"]
+const IDENT = machineArgs()
 // Те же файлы узла, что `NODE_WRITES` (element-code-state.ts), — пути для git.
 const EXCLUDE = [
   ":(exclude)DESIGN-CONFIG", ":(exclude)APP-CONFIG", ":(exclude)PLATFORM-CONFIG",

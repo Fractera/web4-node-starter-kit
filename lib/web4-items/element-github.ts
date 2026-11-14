@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process"
 import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 import paths from "@/lib/web4-items/paths.cjs"
+import { machineArgs } from "@/lib/deploy/git-identity.mjs"
 import { NODE_WRITES } from "@/lib/web4-items/element-code-state"
 import { checkAccess } from "@/app/[lang]/(architectLayer)/architect/build/github/_github/server/github.cjs"
 import { SHAPE, storedToken } from "@/app/[lang]/(architectLayer)/architect/build/github/_github/server/token.cjs"
@@ -218,7 +219,7 @@ export function pushElement(id: string, commit: boolean) {
   const dirty = pending.length
   if (dirty > 0 && !commit) return { ok: false as const, error: "dirty", dirty }
   if (dirty > 0) {
-    const ident = ["-c", "user.name=Fractera node", "-c", "user.email=node@fractera.local"]
+    const ident = machineArgs()
     // Коммитятся правки, но не след сборки (он остаётся незакоммиченным, как и был). 🛑 `next-env.d.ts` в пути НЕ
     // называть: он в `.gitignore` элемента, и одно его упоминание делает `git add` кодом 1 (замерено 319-5).
     if (git(dir, ["add", "-A", "--", ...pending]).rc !== 0) {

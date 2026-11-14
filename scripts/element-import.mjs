@@ -19,6 +19,7 @@ import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync 
 import { dirname, join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import paths from '../lib/web4-items/paths.cjs'
+import { machineArgs } from '../lib/deploy/git-identity.mjs'
 import { syncRegistryMap } from '../lib/web4-items/registry-map.mjs'
 import elementPower from '../lib/web4-items/element-power.cjs'
 
@@ -77,7 +78,7 @@ const importToken = typed ? readToken(join(ghDir, '.env')) : readToken(join(ghDi
 const oldToken = (typed ? readToken(join(ghDir, '.env.previous')) : readToken(join(ghDir, '.env'))) || nodeToken || importToken
 if (!state.repo || state.repo === target) fail('у элемента нет прежнего репозитория — сначала создайте его («Создать репозитории»), иначе прежняя история пропадёт')
 if (!oldToken) fail('нет ключа, которым выгрузить прежнюю историю')
-const ident = ['-c', 'user.name=Fractera node', '-c', 'user.email=node@fractera.local']
+const ident = machineArgs()
 if (git(['status', '--porcelain'], dir).out.trim()) {
   git(['add', '-A', '--', '.', ':(exclude)tsconfig.json'], dir)
   git([...ident, 'commit', '--quiet', '-m', `before import of ${target}`], dir)

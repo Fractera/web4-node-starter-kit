@@ -19,6 +19,7 @@ import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node
 import { dirname, join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { createRequire } from 'node:module'
+import { machineArgs } from '../lib/deploy/git-identity.mjs'
 
 const require = createRequire(import.meta.url)
 const { REGISTRY_FILE, itemDir, entryDir } = require('../lib/web4-items/paths.cjs')
@@ -215,7 +216,7 @@ if (look === 'project') {
   }
 }
 
-const ident = ['-c', 'user.name=Fractera node', '-c', 'user.email=node@fractera.local']
+const ident = machineArgs()
 // 367-4: у репозитория человека история его — один коммит с файлами узла поверх неё; у шаблона — своя история с нуля.
 const historySteps = repoUrl
   ? [['add', '-A'], [...ident, 'commit', '--quiet', '-m', 'Fractera: element files (passport, launcher, agent instruction)']]
