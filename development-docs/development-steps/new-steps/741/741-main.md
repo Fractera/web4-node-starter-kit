@@ -5,7 +5,9 @@ Planned 2026-11-14 at max effort as a PLAN ONLY (the owner's rule: the maximum m
 Repositories: the core only (Fractera/web4-node-starter-kit, main). No template release in this step (D33). Replaces the queued file
 `new-steps/741-one-record-of-where-the-node-lives.md` (deleted in the same commit; its text is §1 and §2 here).
 
-**Status: WAITING for the owner's approval of the substeps and D31–D37.**
+**Approved 2026-11-14 ~12:50 UTC:** the owner, to «Утверждаешь план 741 и решения D31–D37?» — «да, утверждаю 741 и D31–D37 -> go».
+Execution order by D34: 741-1 alone first (push, fork sync, the test server's own `node:update`), then 741-2…7 in one push and ONE node
+update of this computer at the end (741-1 changes nothing on a computer, so this computer is not updated for it).
 
 ## 1. The owner's words (verbatim)
 - 2026-11-14, the queue of 741: «решил ли ты на фундаментальном уровне проблема разделения например это точно приложение запущенные на

@@ -110,7 +110,7 @@ console.log('737-2 the edge law and the generated nginx')
 process.removeAllListeners('warning')
 const { isBareIpHostname, isTemporaryHostname } = await import('../components/shell/temporary-host.ts')
 const { isOwnerAtMachine } = await import('../lib/auth/owner-at-machine.ts')
-const { nginxSite, http2Directive, letsEncryptPaths } = await import('../lib/hosting/nginx.mjs')
+const { nginxSite, http2Directive, letsEncryptPaths, rejectHandshake } = await import('../lib/hosting/nginx.mjs')
 const req = (headers) => ({ headers: { get: (n) => headers[n.toLowerCase()] ?? null } })
 
 t('a bare public IP is a temporary (read-only) address; loopback and names are not', () => {
@@ -136,15 +136,69 @@ t('negative: Cloudflare marks and a public name stay outside', () => {
 const NAMES = nodeNames({ root: fixture({ services: SERVICES, runtime: { port: 24680 }, domain: 'example.org' }) })
 const NOW = '2026-11-13T00:00:00Z'
 const count = (text, needle) => text.split(needle).length - 1
-t('IP stage: one default server to the core, the edge mark, loopback refused, ACME open, no stapling', () => {
+t('IP stage: one default server — a card and /api/health only (741-1, D31), the edge mark, loopback refused, ACME open, no stapling', () => {
   const site = nginxSite({ table: { zone: null, corePort: 24680, rows: [] }, generatedAt: NOW })
   assert.equal(count(site, 'server {'), 1)
   assert.ok(site.includes('listen 80 default_server;') && site.includes('listen [::]:80 default_server;'))
-  assert.ok(site.includes('proxy_pass http://localhost:24680;'), 'the core by its name')
+  assert.equal(count(site, 'proxy_pass '), 1, 'the core is reached by IP for its health only')
+  assert.ok(site.includes('location = /api/health {') && site.includes('proxy_pass http://localhost:24680;'), 'the core by its name')
   assert.ok(site.includes('proxy_set_header x-fractera-edge 1;'))
   assert.ok(site.includes('return 444;') && site.includes('/.well-known/acme-challenge/'))
-  assert.ok(site.includes('client_max_body_size 200m;'))
-  assert.ok(!site.includes('ssl_stapling'))
+  assert.ok(site.includes("return 200 '<!doctype html>") && site.includes('being connected to its domain'), 'the card without a domain')
+  assert.ok(!site.includes('ssl_stapling') && !site.includes('443'), 'no certificate — nothing on 443')
+})
+
+// 741-1 (the owner approved 2026-11-14): nginx forwards only the name it matched. The negative control — the generator of 82a074ed
+// passed `$host` — is recorded in completed-steps/741-1.md.
+const CERTS_ALL = { 'example.org': letsEncryptPaths('example.org'), 'architect.example.org': letsEncryptPaths('architect.example.org'), 'www.example.org': letsEncryptPaths('www.example.org') }
+const servers = (site) => site.split('\nserver {').slice(1).map((b) => b.slice(0, b.indexOf('\n}')))
+t('741-1: no proxied location passes the client\'s name; a named server passes its own, the IP its address', () => {
+  for (const version of ['1.18.0', '1.22.1', '1.24.0', '1.26.3']) {
+    for (const site of [nginxSite({ table: NAMES, certs: CERTS_ALL, nginxVersion: version, generatedAt: NOW }), nginxSite({ table: NAMES, nginxVersion: version, generatedAt: NOW })]) {
+      assert.ok(!/proxy_set_header (Host|X-Forwarded-Host) \$host;/.test(site), `$host forwarded (nginx ${version})`)
+      for (const b of servers(site)) {
+        const name = b.match(/server_name (\S+);/)?.[1]
+        const hosts = [...b.matchAll(/proxy_set_header Host (\S+);/g)].map((m) => m[1])
+        const forwarded = [...b.matchAll(/proxy_set_header X-Forwarded-Host (\S+);/g)].map((m) => m[1])
+        assert.deepEqual(forwarded, hosts)
+        for (const h of hosts) assert.equal(h, name === '_' ? '$fractera_ip_host' : name, `server ${name}`)
+      }
+    }
+  }
+  const site = nginxSite({ table: NAMES, certs: CERTS_ALL, generatedAt: NOW })
+  assert.ok(site.includes('map $server_addr $fractera_ip_host { "~:" "[$server_addr]"; default $server_addr; }'), 'IPv6 in brackets')
+  assert.ok(site.includes('return 301 https://example.org$request_uri;') && !site.includes('https://$host'), 'port 80 sends to its own name')
+})
+t('741-1: a default server on 443 refuses unknown names — the handshake from nginx 1.19.4, a certificate and 444 before it', () => {
+  assert.equal(rejectHandshake('1.18.0'), false)
+  assert.equal(rejectHandshake('1.19.3'), false)
+  assert.equal(rejectHandshake('1.19.4'), true)
+  assert.equal(rejectHandshake('1.24.0'), true)
+  assert.equal(rejectHandshake('2.0.0'), true)
+  const modern = nginxSite({ table: NAMES, certs: CERTS_ALL, nginxVersion: '1.24.0', generatedAt: NOW })
+  const deflt = servers(modern).filter((b) => b.includes('default_server') && b.includes('443'))
+  assert.equal(deflt.length, 1)
+  assert.ok(deflt[0].includes('listen 443 ssl http2 default_server;') && deflt[0].includes('listen [::]:443 ssl http2 default_server;'))
+  assert.ok(deflt[0].includes('ssl_reject_handshake on;') && deflt[0].includes('return 444;') && !deflt[0].includes('proxy_pass'))
+  const old = nginxSite({ table: NAMES, certs: CERTS_ALL, nginxVersion: '1.18.0', ipv6: false, generatedAt: NOW })
+  const oldDefault = servers(old).find((b) => b.includes('default_server') && b.includes('443'))
+  assert.ok(!old.includes('ssl_reject_handshake'), 'nginx 1.18 does not know the directive')
+  assert.ok(oldDefault.includes('ssl_certificate /etc/letsencrypt/live/') && oldDefault.includes('return 444;') && !oldDefault.includes('proxy_pass'))
+  const modernHttp2 = nginxSite({ table: NAMES, certs: CERTS_ALL, nginxVersion: '1.26.3', ipv6: false, generatedAt: NOW })
+  assert.ok(modernHttp2.includes('listen 443 ssl default_server;'), 'http2 on: the flag is not on listen')
+  // negative: no certificate — no 443 at all, so no default server there either
+  assert.ok(!nginxSite({ table: NAMES, nginxVersion: '1.24.0', generatedAt: NOW }).includes('443'))
+})
+t('741-1: the IP card names the domain, carries no $ or quote, and is replaced by the redirect once the domain is on', () => {
+  const site = nginxSite({ table: { ...NAMES, zone: 'example.org' }, generatedAt: NOW })
+  const ip = servers(site)[0]
+  const card = ip.slice(ip.indexOf("return 200 '") + 12, ip.lastIndexOf("';"))
+  assert.ok(card.includes('https://example.org') && card.includes('lang="ru"'))
+  assert.ok(!/['$\\]/.test(card), card)
+  const evil = nginxSite({ table: { zone: '$evil.org', corePort: 24680, rows: [] }, generatedAt: NOW })
+  assert.ok(!evil.includes('$evil') && evil.includes('being connected to its domain'), 'an invalid zone never enters the card')
+  const on = nginxSite({ table: NAMES, certs: CERTS_ALL, active: true, architectHost: 'architect.example.org', generatedAt: NOW })
+  assert.ok(!servers(on)[0].includes("return 200 '") && !servers(on)[0].includes('proxy_pass'), 'switched on: the IP only redirects')
 })
 t('domain stage: 443 only for names with a certificate, 503 for the others, every proxy carries the edge mark', () => {
   const certs = { 'example.org': letsEncryptPaths('example.org'), 'architect.example.org': letsEncryptPaths('architect.example.org'), 'www.example.org': letsEncryptPaths('www.example.org') }

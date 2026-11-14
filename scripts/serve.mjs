@@ -30,6 +30,26 @@ const agentReturn = createRequire(import.meta.url)('../lib/deploy/agent-return.c
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const root = path.join(here, '..')
+
+// 741-1 (the owner approved 2026-11-14: «да, утверждаю 741 и D31–D37 -> go») — A SERVER'S NGINX FOLLOWS THE CORE'S GENERATOR. ✗ Before,
+// only the launch, a new element name, certificates and the domain switch wrote it: a server launched earlier kept forwarding the
+// client's name after every update (`lib/hosting/nginx.mjs`, F10 of the research). Now every start and every finished rebuild on a
+// live server writes the file again and applies it only when it changed; `fractera-root nginx-apply` checks it with `nginx -t` and
+// keeps the previous file when the new one fails. On a computer (no server phase) nothing happens. A failure is said, never fatal.
+function reapplyServerEdge() {
+  const { nodePhase } = createRequire(import.meta.url)('../lib/hosting/phase.cjs')
+  if (nodePhase(root) !== 'live') return
+  const last = (r) => String(r.stderr || r.stdout || r.error?.message || '').trim().split('\n').pop()
+  const w = spawnSync(process.execPath, [path.join(root, 'scripts', 'server.mjs'), 'nginx', '--write', '--root', root], { cwd: root, encoding: 'utf8', timeout: 60_000 })
+  if (w.status !== 0) { console.log(`741-1: nginx not regenerated — ${last(w)}`); return }
+  const body = (text) => text.split('\n').filter((l) => !l.startsWith('# Managed by the Fractera node')).join('\n')
+  let applied = ''
+  try { applied = readFileSync('/etc/nginx/sites-available/fractera', 'utf8') } catch { /* never applied */ }
+  const fresh = readFileSync(path.join(root, 'data', 'node', 'server-side', 'nginx', 'fractera.conf'), 'utf8')
+  if (body(applied) === body(fresh)) return
+  const a = spawnSync('sudo', ['-n', '/usr/local/sbin/fractera-root', 'nginx-apply'], { encoding: 'utf8', timeout: 60_000 })
+  console.log(a.status === 0 ? "741-1: the server's nginx re-applied from the core's generator" : `741-1: nginx NOT applied, the previous file stays — ${last(a)}`)
+}
 const runtimeFile = path.join(root, 'logs', 'runtime.json')
 const ecosystem = path.join(root, 'ecosystem.config.cjs')
 const tunnelFile = path.join(root, 'logs', 'tunnel.json')
@@ -185,6 +205,7 @@ async function start() {
     progress('tunnel')
     await publish({ quietPrice: true })
   }
+  reapplyServerEdge()
   // 🪦 551-5 «при первом запуске рождаются два платёжных кастомных элемента» снято шагом 573-2 (владелец 2026-10-22: «платёжный шлюз в
   // страйп сделать нативного элементом доступным по умолчанию … По умолчанию … он остается выключен»): Stripe — нативный элемент реестра,
   // его ставит установщик выключенным; второй платёжный элемент владелец удаляет сам.
@@ -649,6 +670,8 @@ async function rebuild() {
   // Прежняя оборванная сборка оставила узел остановленным — сначала поднять его (список — в data/node/quiet-build.json).
   stopReader(root)
   openLid(root)
+  // 741-1: the edge first — nginx is plain code, not the build; a failed or cut build must not leave a server forwarding forged names.
+  reapplyServerEdge()
   console.log("Собираю сайт заново. На время сборки узел остановлен: пульт и сайты этого компьютера не отвечают, в интернете — копии страниц.")
   const backedUp = backupNext(root)
   const buildWhat = process.env.FRACTERA_BUILD_WHAT || "core"
