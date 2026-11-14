@@ -70,6 +70,7 @@
     "test:take": "node scripts/take.test.mjs",
     "test:hosting": "node scripts/hosting.test.mjs",
     "test:hosting-launch": "node scripts/hosting-launch.test.mjs",
+    "test:launch-footprint": "node scripts/launch-footprint.test.mjs",
     "test:cross-site-wall": "node scripts/cross-site-wall.test.mjs",
     "test:proxy-split": "node scripts/proxy-split.test.mjs",
     "test:launch-door": "node scripts/launch-door.test.mjs",
