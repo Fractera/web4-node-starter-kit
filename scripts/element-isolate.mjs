@@ -37,6 +37,8 @@ const coreDirs = readdirSync(ROOT, { withFileTypes: true }).filter((d) => d.isDi
 const rootFiles = readdirSync(ROOT, { withFileTypes: true }).filter((d) => d.isFile()).map((d) => d.name)
 const HOOK = join(ROOT, 'scripts', 'element-boundary-hook.mjs').replace(/\\/g, '/')
 const SKILLS_HOOK = join(ROOT, '.claude', 'hooks', 'shadcn-skills.mjs').replace(/\\/g, '/')
+// 743-7: every element's session starts with the reminder of the interface skills (the gate above is the law)
+const START_HOOK = join(ROOT, '.claude', 'hooks', 'interface-design-start.mjs').replace(/\\/g, '/')
 // 725-5: the gate of a new interface file (parts_find asked, the birth declared) — idle in an element until it has its parts map.
 const PARTS_HOOK = join(ROOT, '.claude', 'hooks', 'parts-gate.mjs').replace(/\\/g, '/')
 const foreign = foreignOff()
@@ -134,9 +136,11 @@ for (const dir of only ? [] : elements) {
     ...(s.hooks ?? {}),
     // 730-4: интерфейсный файл элемента пишется только после навыка `use-shadcn` этой сессии (хук ядра, `.claude/hooks/shadcn-skills.mjs`).
     PreToolUse: [...pre.filter((m) => !isSkills(m)), { matcher: 'Bash|PowerShell|Write|Edit|MultiEdit|NotebookEdit', hooks: [boundaryHook] },
-      { matcher: 'Write|Edit|MultiEdit', hooks: [{ type: 'command', command: `node "${SKILLS_HOOK}"` }] },
+      // 743-7: a .tsx written through the shell is held the same way
+      { matcher: 'Write|Edit|MultiEdit|Bash|PowerShell', hooks: [{ type: 'command', command: `node "${SKILLS_HOOK}"` }] },
       { matcher: 'Write', hooks: [{ type: 'command', command: `node "${PARTS_HOOK}"` }] }],
     PermissionRequest: [...perm, { hooks: [boundaryHook] }],
+    SessionStart: [...(s.hooks?.SessionStart ?? []).filter((m) => !(m.hooks ?? []).some((h) => String(h.command ?? '').includes('interface-design-start.mjs'))), { matcher: '*', hooks: [{ type: 'command', command: `node "${START_HOOK}"` }] }],
   }
 
   // Чужое — вон из списка; вендорные навыки — по имени; бюджет — под свои описания.

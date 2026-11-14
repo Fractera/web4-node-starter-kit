@@ -40,6 +40,10 @@
           {
             "type": "command",
             "command": "node .claude/hooks/context-resume.mjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/interface-design-start.mjs"
           }
         ]
       }
@@ -55,7 +59,7 @@
         ]
       },
       {
-        "matcher": "Edit|Write|MultiEdit",
+        "matcher": "Edit|Write|MultiEdit|Bash|PowerShell",
         "hooks": [
           {
             "type": "command",
