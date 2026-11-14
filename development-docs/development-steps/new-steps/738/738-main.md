@@ -3,6 +3,10 @@
 Planned 2026-11-14 at max effort (second, deeper pass at the owner's «repeat research more deep»). Execute at normal effort; ONE node
 update at the end. Probes that produced the numbers: §9.
 
+## 0. Approved (2026-11-14)
+The owner, to «План 738 и решения D21–D26 утверждаете?»: «1- use effort xhigh | 2 - early aifa.dev yesterday 23:20 + | http://throughsongs.com»
+— the plan and D21–D26 approved; the black screen was aifa.dev from 23:20 (§2); throughsongs.com is the domain for step 739.
+
 ## 1. The owner's words (verbatim, 2026-11-14)
 - «после так называемого переезда я ночью оказался в состоянии когда ты завис … твой терминал находился в бесконечно процессе сборки
   ядра я прождал несколько часов … В то же самое время сайт возвращал чёрный экран. Это ситуация никуда не годится.»
@@ -154,3 +158,10 @@ address he looked at (or a screenshot) before naming it.
 - `gh api repos/{Fractera,aifa-agi}/web4-node-starter-kit/compare/87f5a242...main` → 404; `compare/e2466632...main` → ahead 1.
 - Registries of the fork and Fractera (contents API) → 11 services each (10 natives + root, Fractera template repos).
 - letsencrypt.org/docs/rate-limits (fetched); crt.sh `%.aifa.dev` newest 2026-09-27.
+
+## 10. Built (2026-11-14) — core `ff570015`, summary `completed-steps/738-1-8.md`
+| # | state |
+|---|---|
+| 738-1…5, 7, 8 | built, tested (test:hosting-launch 14, test:hosting 54, tsc, chain green); eyes after the node update |
+| 738-6 | the switch-on and the sign-in check built; D23 (the claim) waits for the owner's word on the sign-in template; «never loopback» before the switch-on → 739 |
+| 738-9 | the owner's clean run (T2) |
