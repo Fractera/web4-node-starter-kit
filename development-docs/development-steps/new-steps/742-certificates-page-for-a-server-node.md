@@ -43,7 +43,7 @@ OPEN: 742-8 path 1 (the launch page «Обновить») on the next edit; this
 timer (root-helper verb and its delivery); Claude Code auto-update on the server (npm prefix); the hosting overview text; monitoring page;
 the element's own second domain on a server; the server ladder's HTTPS rung shows open (hrdvz not yet checked — press the check).
 
-## 742-10 — the owner's yes 2026-11-14 ~22:50 UTC: «Да, начинай 742-10»
+## 742-10 — the owner's yes 2026-11-14 ~22:50 UTC: «Да, начинай 742-10» — CLOSED `d4025c0b`, live on aifa.dev (summary completed-steps/742-10.md)
 His words (verbatim, 22:35–22:48): «https://architect.aifa.dev/ru/hosting/domain // В какой-то причине здесь опять написано что авторизация
 не отвечает почему?»; «Ну также я увидел на вкладке активации домена текст Pro Cloud Flyer которые очевидно не должен существовать в потоке
 выделенного сервера?»; the orange highlight of the hosting cards — «cancel for last task was my error» (NOT built); «https://architect.aifa.dev/ru/hosting/monitoring
@@ -83,3 +83,9 @@ Substeps of 742-10 (one batch, one build):
 Not in it: the elements' templates' own sw.js (a template release, only by the owner's word); «Вернуться на IP» re-check; the
 hosting cards' highlight (cancelled).
 Parts born here: none (Badge, the machine board and the words of the launch page are reused).
+
+## Wishes seen during 742-10 (fixed after 742 closes)
+- The plural of «изменений»: the server's banner said «Форк синхронизирован: 2 изменений ждут этот узел» and «5 изменений форка»
+  (`components/node-state/origin-notice.i18n.ts` `nodeBehind`, `scripts/node-update.mjs` summaries) — Russian needs 1 изменение · 2–4
+  изменения · 5+ изменений (`Intl.PluralRules`).
+- The elements' templates carry their own `public/sw.js`: the same HTTP-cache defect lives there (a template release, by the owner's word).
