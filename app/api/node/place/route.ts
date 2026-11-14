@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { readPlace } from "@/lib/node-state/place"
+import { readLaunched } from "@/lib/hosting/launched.mjs"
 
 // ГДЕ СТОИТ УЗЕЛ — ОБЪЯВЛЕНИЕ ЧЕЛОВЕКА (276-3).
 //
@@ -31,7 +32,9 @@ async function guard(req: NextRequest, write: boolean) {
 export async function GET(req: NextRequest) {
   const denied = await guard(req, false)
   if (denied) return denied
-  return NextResponse.json({ ok: true, place: readPlace() }, noStore)
+  // 741-6, D36: the live servers this computer launched — domain and time only (the browser needs no IP).
+  const launched = readLaunched(process.cwd()).map(({ domain, readyAt }) => ({ domain, readyAt }))
+  return NextResponse.json({ ok: true, place: readPlace(), launched }, noStore)
 }
 
 // 737-18: the place is detected (`lib/hosting/place.mjs`), never declared — a declaration is refused with the reason.

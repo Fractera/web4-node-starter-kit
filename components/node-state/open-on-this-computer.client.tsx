@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { ExternalLink, Monitor } from "lucide-react"
 import { buttonVariants } from "@/components/ui/button"
 import { isLoopbackHostname } from "@/lib/auth/owner-at-machine"
+import { askNodePlace } from "./use-node-place.client"
 
 // ВЫХОД ИЗ ОТКАЗА НА ВРЕМЕННОМ АДРЕСЕ: «ОТКРЫТЬ НА ЭТОМ КОМПЬЮТЕРЕ» (шаг 372-2).
 //
@@ -24,12 +25,18 @@ function useLocalHref(): string | null {
   const [href, setHref] = useState<string | null>(null)
   useEffect(() => {
     if (isLoopbackHostname(window.location.hostname)) return
-    fetch(`${BASE}/api/domain/state`, { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d: { nodeUrl?: string | null } | null) => {
-        if (d?.nodeUrl) setHref(`${d.nodeUrl.replace(/\/+$/, "")}${window.location.pathname}${window.location.search}`)
-      })
-      .catch(() => setHref(null))
+    let alive = true
+    // 741-6: a server has no «this computer» to open — the visitor's own computer is not the node's.
+    void askNodePlace().then((place) => {
+      if (!alive || place?.kind === "server") return
+      return fetch(`${BASE}/api/domain/state`, { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d: { nodeUrl?: string | null } | null) => {
+          if (alive && d?.nodeUrl) setHref(`${d.nodeUrl.replace(/\/+$/, "")}${window.location.pathname}${window.location.search}`)
+        })
+        .catch(() => setHref(null))
+    })
+    return () => { alive = false }
   }, [])
   return href
 }

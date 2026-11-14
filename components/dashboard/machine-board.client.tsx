@@ -5,12 +5,17 @@ import { RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { TestTable, type TestRow } from "@/components/super-node/test-table"
 import type { SuperNodeWords } from "@/components/super-node/super-node.i18n"
+import { useNodePlace } from "@/components/node-state/use-node-place.client"
 
 // «ЭТОТ КОМПЬЮТЕР» В DASHBOARD (572). Владелец 2026-10-22: «покажи в нём технические характеристики компьютера»; поля — «Машина + что ест
 // память», сравнение с супер-узлом — «Да, строкой сравнения». Страница предрендерена: числа о машине спрашиваются у `/api/node/machine` при
 // открытии и по кнопке «Обновить» (таймеров нет). Таблица Tier-2 — тот же вид, что в «Супер узел → Статус» (`TestTable`).
+// 741-6 — слово владельца 2026-11-14: «На вкладке ядро/дашборд/этот компьютер/ нужно сделать внутри баннер карточку на которой сразу под
+// заголовком написать на оранжевом фоне! Приложение работает на локальном компьютере|| приложение работает на удалённом сервере».
+// Место — от узла (`useNodePlace`, запись установки 741-2), не от адресной строки; оранжевый — токен темы `warning`, не литерал.
 
 type Machine = {
   platform: string; cpus: number; cpuModel: string; aes: boolean | null; ramGb: number; ramFreeGb: number
@@ -40,6 +45,9 @@ export type MachineBoardWords = {
   tier2Lead: string
   tier2: { title: string; ok: string; short: string; head: [string, string, string, string] }
   superNode: SuperNodeWords
+  /** 741-6: the place card under the page heading */
+  placeHome: string
+  placeServer: string
 }
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
@@ -59,6 +67,13 @@ export function MachineBoard({ words, lang }: { words: MachineBoardWords; lang: 
 
   useEffect(() => { load() }, [load])
 
+  const place = useNodePlace()
+  const placeCard = place ? (
+    <Card className="border-0 bg-warning text-background" data-block="machine-board-place" data-node-place={place.kind}>
+      <CardContent className="text-xl font-semibold">{place.kind === "server" ? words.placeServer : words.placeHome}</CardContent>
+    </Card>
+  ) : null
+
   const refresh = (
     <Button variant="outline" size="sm" onClick={load} disabled={busy} data-machine-refresh>
       <RefreshCw className={busy ? "animate-spin" : undefined} aria-hidden /> {words.refresh}
@@ -69,6 +84,7 @@ export function MachineBoard({ words, lang }: { words: MachineBoardWords; lang: 
     // 567-7: форма будущих карточек, пока узел отвечает.
     return (
       <div className="flex flex-col gap-4" role="status" aria-label={words.loading} data-machine-skeleton>
+        {placeCard}
         {[6, 8, 8].map((n, i) => (
           <Card key={i}>
             <CardHeader><Skeleton className="h-6 w-56" /><Skeleton className="h-4 w-3/4" /></CardHeader>
@@ -78,7 +94,7 @@ export function MachineBoard({ words, lang }: { words: MachineBoardWords; lang: 
       </div>
     )
   }
-  if (state === "failed") return <p className="text-sm text-destructive" role="alert">{words.unavailable}</p>
+  if (state === "failed") return <div className="flex flex-col gap-4">{placeCard}<p className="text-sm text-destructive" role="alert">{words.unavailable}</p></div>
 
   const m = state.machine
   const gb = (n: number | null) => (typeof n === "number" ? `${n} GB` : words.notMeasured)
@@ -101,6 +117,7 @@ export function MachineBoard({ words, lang }: { words: MachineBoardWords; lang: 
 
   return (
     <div className="flex flex-col gap-4" data-machine-board>
+      {placeCard}
       <Card>
         <CardHeader>
           <CardTitle className="text-xl font-semibold">{words.machineTitle}</CardTitle>
@@ -129,25 +146,27 @@ export function MachineBoard({ words, lang }: { words: MachineBoardWords; lang: 
             <p className="text-sm text-muted-foreground">{words.memoryUnavailable}</p>
           ) : (
             <div className="overflow-x-auto rounded-lg border border-border">
-              <table className="w-full text-left text-sm" data-machine-memory={rows.length}>
-                <thead className="border-b border-border bg-muted/40">
-                  <tr>{words.memoryHead.map((h) => <th key={h} scope="col" className={`${cell} font-semibold text-foreground`}>{h}</th>)}</tr>
-                </thead>
-                <tbody>
+              <Table className="text-left" data-machine-memory={rows.length}>
+                <TableHeader className="bg-muted/40">
+                  <TableRow>{words.memoryHead.map((h) => <TableHead key={h} scope="col" className={`${cell} font-semibold text-foreground`}>{h}</TableHead>)}</TableRow>
+                </TableHeader>
+                <TableBody>
                   {rows.map((r) => (
-                    <tr key={r.id} className="border-b border-border last:border-0 text-muted-foreground" data-memory-row={r.id}>
-                      <td className={`${cell} text-foreground`}>{name(r)}</td>
-                      <td className={cell}>{r.mb} MB</td>
-                      <td className={cell}>{r.watchMb ? `${r.watchMb} MB` : "—"}</td>
-                      <td className={`${cell} font-medium text-foreground`}>{r.mb + r.watchMb} MB</td>
-                      <td className={cell}>{words.status[r.status] ?? r.status}</td>
-                    </tr>
+                    <TableRow key={r.id} className="text-muted-foreground" data-memory-row={r.id}>
+                      <TableCell className={`${cell} text-foreground`}>{name(r)}</TableCell>
+                      <TableCell className={cell}>{r.mb} MB</TableCell>
+                      <TableCell className={cell}>{r.watchMb ? `${r.watchMb} MB` : "—"}</TableCell>
+                      <TableCell className={`${cell} font-medium text-foreground`}>{r.mb + r.watchMb} MB</TableCell>
+                      <TableCell className={cell}>{words.status[r.status] ?? r.status}</TableCell>
+                    </TableRow>
                   ))}
-                  <tr className="bg-muted/40 font-semibold text-foreground">
-                    <td className={cell}>{words.total}</td><td className={cell} /><td className={cell} /><td className={cell}>{sum} MB</td><td className={cell} />
-                  </tr>
-                </tbody>
-              </table>
+                </TableBody>
+                <TableFooter className="bg-muted/40">
+                  <TableRow className="font-semibold text-foreground">
+                    <TableCell className={cell}>{words.total}</TableCell><TableCell className={cell} /><TableCell className={cell} /><TableCell className={cell}>{sum} MB</TableCell><TableCell className={cell} />
+                  </TableRow>
+                </TableFooter>
+              </Table>
             </div>
           )}
         </CardContent>

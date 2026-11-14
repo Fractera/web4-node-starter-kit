@@ -5,6 +5,7 @@ import { ExternalLink, Siren } from "lucide-react"
 import type { DeadAddressAlarmWords } from "./dead-address-alarm.i18n"
 import { isTemporaryHostname } from "@/components/shell/temporary-host"
 import { Button } from "@/components/ui/button"
+import { useNodePlace } from "./use-node-place.client"
 
 // ПОЛОСА «ВРЕМЕННЫЙ АДРЕС УМЕР» НАД СЛОЕМ АРХИТЕКТОРА (узел, шаг 632-5). Владелец 2026-11-03: «Похоже для этого нужно делать баннер,
 // который будет предупреждать об этой проблеме и кнопка которую этой проблемы будет решать?» ✗ Замерено в тот же день: адрес был мёртв
@@ -24,6 +25,7 @@ export function DeadAddressAlarm({ words, lang }: { words: DeadAddressAlarmWords
   const [state, setState] = useState<State | null>(null)
   const [busy, setBusy] = useState(false)
   const [result, setResult] = useState<{ url?: string; error?: string } | null>(null)
+  const place = useNodePlace() // 741-6: a server has no quick tunnel to die or to raise again
 
   useEffect(() => {
     if (isTemporaryHostname(window.location.hostname)) return
@@ -35,7 +37,7 @@ export function DeadAddressAlarm({ words, lang }: { words: DeadAddressAlarmWords
       .catch(() => setState(null))
   }, [])
 
-  if (!state?.dead) return null
+  if (!state?.dead || place?.kind === "server") return null
   const since = state.since ? new Date(state.since).toLocaleString(lang === "ru" ? "ru-RU" : "en-GB", { dateStyle: "short", timeStyle: "short" }) : ""
 
   const raise = async () => {

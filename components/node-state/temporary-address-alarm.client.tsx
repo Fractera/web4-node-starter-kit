@@ -6,6 +6,7 @@ import type { TemporaryAddressAlarmWords } from "./temporary-address-alarm.i18n"
 import { isTemporaryHostname } from "@/components/shell/temporary-host"
 import { OpenOnThisComputerButton } from "./open-on-this-computer.client"
 import { useSnooze } from "./snooze"
+import { useNodePlace } from "./use-node-place.client"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
@@ -26,6 +27,9 @@ export function TemporaryAddressAlarm({ words, lang }: { words: TemporaryAddress
   const [url, setUrl] = useState<string | null>(null)
   // 391: «Больше не показывать» — на этом компьютере на сутки (localStorage); владелец 2026-10-04 снял «не сворачивается» 371-1.
   const { hidden, snooze } = useSnooze("temporary-address-alarm")
+  // 741-6 (the owner, 2026-11-14: «проверь чтобы этот баннер не конфликтовал с режимом работы на удалённом сервере»): a server has no
+  // temporary address — the alarm never shows there, whatever the address bar says.
+  const place = useNodePlace()
 
   useEffect(() => {
     fetch(`${BASE}/api/domain/state`, { cache: "no-store" })
@@ -36,7 +40,7 @@ export function TemporaryAddressAlarm({ words, lang }: { words: TemporaryAddress
       .catch(() => setUrl(null))
   }, [])
 
-  if (!url || hidden) return null
+  if (!url || hidden || place?.kind === "server") return null
   const onTemporary = isTemporaryHostname(window.location.hostname)
   return (
     <div

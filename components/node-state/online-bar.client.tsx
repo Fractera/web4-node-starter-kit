@@ -3,6 +3,8 @@
 import { ChevronDown, LoaderCircle, RefreshCw } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
 import { isLoopbackHostname } from "@/lib/auth/owner-at-machine"
+import { Button } from "@/components/ui/button"
+import { useNodePlace } from "./use-node-place.client"
 import type { OnlineBarWords } from "./online-bar.i18n"
 
 // ПОЛОСА «ВАШ САЙТ В СЕТИ / НЕ В СЕТИ» НАД ШАПКОЙ — ТОЛЬКО НА ЭТОМ КОМПЬЮТЕРЕ (шаг 386-2). Владелец 2026-10-04: «новую сущность
@@ -34,6 +36,10 @@ export function OnlineBar({ words: w, lang }: { words: OnlineBarWords; lang: str
   const [open, setOpen] = useState(false)
   // 634 (владелец 2026-11-03: «никак не могу понять где мой текущий адрес»): без своего домена полоса показывает сам временный адрес.
   const [quick, setQuick] = useState<string | null>(null)
+  // 741-6: the bar is the person's computer's own. On a server (reached through the SSH window the address is «localhost» too) it never
+  // shows; and once this computer launched a live server, it hides — the owner, 2026-11-14: «дополнительные верхнее меню которое
+  // показывает сайт в интернете по временному адресу автоматически скрывается если у нас существует удалённая версия» (D36).
+  const place = useNodePlace()
 
   const ask = useCallback(async () => {
     setAsking(true)
@@ -50,7 +56,8 @@ export function OnlineBar({ words: w, lang }: { words: OnlineBarWords; lang: str
   }, [])
 
   useEffect(() => {
-    if (!isLoopbackHostname(window.location.hostname)) return
+    if (place === undefined || !isLoopbackHostname(window.location.hostname)) return
+    if (place?.kind === "server" || (place?.launched.length ?? 0) > 0) return
     setHere(true)
     const prev = document.body.style.paddingTop
     document.body.style.paddingTop = HEIGHT
@@ -62,7 +69,7 @@ export function OnlineBar({ words: w, lang }: { words: OnlineBarWords; lang: str
     return () => {
       document.body.style.paddingTop = prev
     }
-  }, [ask])
+  }, [ask, place])
 
   if (!here) return null
 
@@ -82,7 +89,7 @@ export function OnlineBar({ words: w, lang }: { words: OnlineBarWords; lang: str
     <div className="fixed inset-x-0 top-0 z-[60]" data-online-bar={state}>
       <style>{`[data-project-header]{top:${HEIGHT}}`}</style>
       <div className={`flex h-[30px] items-center justify-between gap-2 px-3 text-xs font-medium ${tone}`}>
-        <button type="button" className="flex min-w-0 items-center gap-1.5 truncate" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
+        <Button type="button" variant="ghost" size="xs" className="h-auto min-w-0 justify-start gap-1.5 truncate px-0 text-current hover:bg-transparent hover:text-current" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
           {asking ? <LoaderCircle className="size-3.5 shrink-0 animate-spin" aria-hidden /> : null}
           <span className="truncate">{text}</span>
           {state === "none" && quick ? (
@@ -91,17 +98,19 @@ export function OnlineBar({ words: w, lang }: { words: OnlineBarWords; lang: str
             </a>
           ) : null}
           {data?.domain ? <ChevronDown className={`size-3.5 shrink-0 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden /> : null}
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
-          className="flex shrink-0 items-center gap-1 rounded border border-current/40 px-2 py-0.5 hover:bg-white/15 disabled:opacity-60"
+          variant="outline"
+          size="xs"
+          className="shrink-0 border-current/40 bg-transparent text-current hover:bg-white/15 hover:text-current"
           onClick={() => void ask()}
           disabled={asking}
           data-online-bar-ask
         >
           <RefreshCw className={`size-3 ${asking ? "animate-spin" : ""}`} aria-hidden />
           {w.ask}
-        </button>
+        </Button>
       </div>
       {open && data?.domain ? (
         <div className="border-b border-border bg-background px-3 py-2 text-xs text-foreground shadow-md" data-online-bar-details>

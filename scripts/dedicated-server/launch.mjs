@@ -31,6 +31,7 @@ import { dnsRecords, isHostName } from '../../lib/hosting/hostnames.mjs'
 import { judge } from '../../lib/hosting/judge.mjs'
 import { q, startDetached } from '../../lib/hosting/remote.mjs'
 import { cleanDomain } from '../../lib/hosting/server-domain.mjs'
+import { markLaunched } from '../../lib/hosting/launched.mjs'
 import { connect, ensureKeyPair, exec, installKey, serverDir, upload } from '../../lib/hosting/ssh.mjs'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
@@ -289,6 +290,8 @@ const verbs = {
         await new Promise((r) => setTimeout(r, dry ? 10 : 8000))
         const d = await readDomain(client)
         await writeDomain(client, { ...d, signin: await signinCheck(s.core.zone) })
+        // 741-6, D36: this computer remembers the server it launched lives at its domain — its online bar stops offering a temporary address.
+        markLaunched(root, { ip: ipOf(s), domain: s.core.zone })
       }
       done({ ok: answer?.ok !== false, answer, state: await readState(client) })
     } finally { client.end() }
@@ -302,6 +305,7 @@ const verbs = {
       if (!zone || s.mark?.domainActive !== true) return fail('not-live', { state: s })
       const d = await readDomain(client)
       await writeDomain(client, { ...d, signin: await signinCheck(zone) })
+      markLaunched(root, { ip: ipOf(s), domain: zone }) // 741-6, D36: a live server, seen live
       done({ ok: true, state: await readState(client) })
     } finally { client.end() }
   },

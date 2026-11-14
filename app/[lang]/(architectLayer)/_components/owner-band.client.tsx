@@ -5,6 +5,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { isTemporaryHostname } from '@/components/shell/temporary-host'
 import { isLoopbackHostname } from '@/lib/auth/owner-at-machine'
 import { isShowcaseHostname } from '@/lib/showcase'
+import { useNodePlace } from '@/components/node-state/use-node-place.client'
 
 // ПРЕДУПРЕЖДЕНИЕ СЛОЯ: «ВЫ ЗДЕСЬ БЕЗ АВТОРИЗАЦИИ, И ЭТО ВРЕМЕННОЕ СОСТОЯНИЕ».
 //
@@ -70,6 +71,8 @@ export function OwnerBand({
   bodyMachine,
   titleTemporary,
   bodyTemporary,
+  titleWindow,
+  reasonWindow,
 }: {
   title: string
   reasonMachine: string
@@ -80,8 +83,12 @@ export function OwnerBand({
   reasonTemporary: string
   reasonShowcase: string
   body: string
+  titleWindow: string
+  reasonWindow: string
 }) {
   const [mode, setMode] = useState<Mode>(null)
+  // 741-6: «localhost» on a SERVER is the SSH window (`npm run server -- window`), not this computer — the node says where it lives.
+  const onServer = useNodePlace()?.kind === 'server'
 
   // Определяется после гидратации: при серверном рендере адреса браузера нет, и
   // выдуманное умолчание показало бы предупреждение тому, кому оно не адресовано.
@@ -91,6 +98,8 @@ export function OwnerBand({
   // 387-3: на этом компьютере — свой заголовок и вывод с настоящим адресом страницы, без «состояние временное».
   const host = typeof window === 'undefined' ? '' : window.location.host
   const machine = mode === 'machine'
+  const titleHere = onServer ? titleWindow : titleMachine
+  const reasonHere = onServer ? reasonWindow : reasonMachine
 
   return (
     <Accordion type="single" collapsible className="mb-4">
@@ -101,12 +110,12 @@ export function OwnerBand({
         <AccordionTrigger className="py-2 text-[length:var(--fs-small)] text-amber-900 hover:no-underline dark:text-amber-200">
           <span>
             <span aria-hidden="true">⚠ </span>
-            {machine ? titleMachine.replace('{host}', host) : mode === 'temporary' ? titleTemporary : title}
+            {machine ? titleHere.replace('{host}', host) : mode === 'temporary' ? titleTemporary : title}
           </span>
         </AccordionTrigger>
         <AccordionContent className="pb-3 text-[length:var(--fs-small)] text-amber-900 dark:text-amber-200">
           <p className="mb-2">
-            {machine ? reasonMachine.replace('{host}', host) : mode === 'showcase' ? reasonShowcase : reasonTemporary}
+            {machine ? reasonHere.replace('{host}', host) : mode === 'showcase' ? reasonShowcase : reasonTemporary}
           </p>
           {/* 🔒 ВЫВОД О МИКРОСЕРВИСЕ АВТОРИЗАЦИИ АДРЕСОВАН ХОЗЯИНУ УЗЛА, А НЕ
               ПРОХОЖЕМУ. На витрине его нет: человеку, пришедшему из поиска,

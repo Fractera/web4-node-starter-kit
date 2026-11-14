@@ -24,6 +24,8 @@ const WORDS: Record<string, Omit<MachineBoardWords, 'superNode'>> = {
     tier2Title: 'This computer and the super-node profile',
     tier2Lead: 'Lagrix Tier-2 is the starting point for a super-node server (document 14). A super-node runs on its own machine; this is only a comparison.',
     tier2: { title: 'Measured {date}', ok: 'This computer satisfies the measured part of the Tier-2 profile.', short: 'Below the Tier-2 profile: {list}.', head: ['Parameter', 'Tier-2', 'This computer', 'Lagrix'] },
+    placeHome: 'The app runs on a local computer',
+    placeServer: 'The app runs on a remote server',
   },
   ru: {
     loading: 'Меряю этот компьютер…',
@@ -45,6 +47,8 @@ const WORDS: Record<string, Omit<MachineBoardWords, 'superNode'>> = {
     tier2Title: 'Этот компьютер и профиль супер-узла',
     tier2Lead: 'Lagrix Tier-2 — отправная точка для сервера супер-узла (документ 14). Супер-узел работает на своей машине; здесь только сравнение.',
     tier2: { title: 'Замер {date}', ok: 'Этот компьютер удовлетворяет измеренной части профиля Tier-2.', short: 'Ниже профиля Tier-2: {list}.', head: ['Параметр', 'Tier-2', 'Этот компьютер', 'Lagrix'] },
+    placeHome: 'Приложение работает на локальном компьютере',
+    placeServer: 'Приложение работает на удалённом сервере',
   },
 }
 

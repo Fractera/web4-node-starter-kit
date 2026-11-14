@@ -684,6 +684,22 @@ console.log('741-8 a server node merges its updates with a neutral identity')
   })
 }
 
+console.log('741-6 the servers this computer launched (D36)')
+{
+  const { markLaunched, readLaunched } = await import('../lib/hosting/launched.mjs')
+  t('741-6: a live server is remembered by its IP and domain only; invalid values are never written; newest first', () => {
+    const root = fixture({ services: SERVICES })
+    assert.deepEqual(readLaunched(root), [])
+    assert.equal(markLaunched(root, { ip: '203.0.113.7', domain: 'example.org' }), true)
+    assert.equal(markLaunched(root, { ip: 'not-an-ip', domain: 'example.org' }), false)
+    assert.equal(markLaunched(root, { ip: '203.0.113.8', domain: 'bad domain' }), false)
+    const list = readLaunched(root)
+    assert.deepEqual(list.map((l) => [l.ip, l.domain]), [['203.0.113.7', 'example.org']])
+    const raw = readFileSync(join(root, 'data', 'node', 'server', 'launched.json'), 'utf8')
+    assert.ok(!/password|token|key/i.test(raw), 'nothing but the address and the time')
+  })
+}
+
 console.log('737-15 the names before the move')
 {
   const { nginxSite } = await import('../lib/hosting/nginx.mjs')

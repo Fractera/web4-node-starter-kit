@@ -64,6 +64,31 @@
           "статус узла"
         ]
       }
+    },
+    {
+      "id": "node-place-reader",
+      "kind": "composite",
+      "path": "components/node-state/use-node-place.client.ts",
+      "export": "useNodePlace, askNodePlace, NodePlaceAnswer",
+      "what": {
+        "en": "Where the node lives — a person's computer or a dedicated server — for the browser, from one /api/node/place request per page shared by every widget; also the live servers this computer launched.",
+        "ru": "Где живёт узел — компьютер человека или выделенный сервер — для браузера, из одного запроса /api/node/place на страницу, общего для всех виджетов; плюс живые серверы, запущенные этим компьютером."
+      },
+      "how": "const place = useNodePlace() — undefined while asking, null when the node did not answer; place.kind === \"server\" hides the computer's alarms.",
+      "words": {
+        "en": [
+          "computer or server",
+          "where the node lives",
+          "node place",
+          "launched server"
+        ],
+        "ru": [
+          "компьютер или сервер",
+          "где живёт узел",
+          "место узла",
+          "запущенный сервер"
+        ]
+      }
     }
   ]
 }

@@ -11,6 +11,8 @@ export type ServerLaunchWords = {
   title: string
   lead: string
   readOnly: string
+  /** 741-6, D36: a live server this computer launched — `{url}` is its address */
+  launchedOn: string
   host: string
   port: string
   password: string
@@ -55,6 +57,7 @@ const STAGE_RU = {
 const en: ServerLaunchWords = {
   title: "Launch a server",
   readOnly: "This address is read-only: servers are launched from the node's own computer, at its keyboard or by its domain after sign-in.",
+  launchedOn: "Your node runs on a server: {url}",
   lead: "Type the server's address and the root password from your provider's letter. The page keeps nothing: after a reload it is empty again, and the same address brings the same server back with everything it is doing now. Several servers can be launched one after another.",
   host: "Server IP address",
   port: "SSH port",
@@ -117,6 +120,7 @@ const en: ServerLaunchWords = {
 const ru: ServerLaunchWords = {
   title: "Запустить сервер",
   readOnly: "Этот адрес только для чтения: серверы запускаются с компьютера самого узла, за его клавиатурой или по его домену после входа.",
+  launchedOn: "Ваш узел работает на сервере: {url}",
   lead: "Введите адрес сервера и пароль root из письма провайдера. Страница ничего не хранит: после перезагрузки она снова пустая, а тот же адрес возвращает тот же сервер со всем, что он сейчас делает. Можно запускать несколько серверов по очереди.",
   host: "IP-адрес сервера",
   port: "Порт SSH",

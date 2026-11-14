@@ -3,9 +3,11 @@
 import { useCallback, useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import { GitBranch } from "lucide-react"
-import { buttonVariants } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import type { GithubTokenAlarmWords } from "./github-token-alarm.i18n"
 import { useSnooze } from "./snooze"
+import { useNodePlace } from "./use-node-place.client"
 
 // ТРЕВОЖНАЯ ПОЛОСА «РАБОТА НЕ СОХРАНЯЕТСЯ В GITHUB» НАД СЛОЕМ АРХИТЕКТОРА (шаг 374-9).
 //
@@ -30,6 +32,9 @@ export function GithubTokenAlarm({ words, lang }: { words: GithubTokenAlarmWords
   const [state, setState] = useState<{ token: boolean; missing: string[] } | null>(null)
   // 391: «Больше не показывать» — на этом компьютере на сутки (localStorage).
   const { hidden, snooze } = useSnooze("github-token-alarm")
+  // 741-6 (the owner, 2026-11-14: «Проверь что этот баннер не конфликтует и также правильно работает на удалённом сервере»): the same
+  // alarm on a server says «this server» — its logic (no key, or elements not saved) is the same on both places.
+  const onServer = useNodePlace()?.kind === "server"
 
   const pathname = usePathname()
   const load = useCallback(() => {
@@ -55,17 +60,19 @@ export function GithubTokenAlarm({ words, lang }: { words: GithubTokenAlarmWords
     >
       <GitBranch className="mt-0.5 size-4 shrink-0 text-destructive" aria-hidden />
       <div className="flex flex-1 flex-col gap-1">
-        <p className="font-medium">{state.token ? words.leadSome.replace("{n}", String(state.missing.length)) : words.lead}</p>
+        <p className="font-medium">{state.token ? words.leadSome.replace("{n}", String(state.missing.length)) : onServer ? words.leadServer : words.lead}</p>
         {state.token && <p className="font-mono text-sm" data-github-missing>{state.missing.join(", ")}</p>}
-        <p>{state.token ? words.whySome : words.why}</p>
+        <p>{state.token ? (onServer ? words.whySomeServer : words.whySome) : onServer ? words.whyServer : words.why}</p>
       </div>
       <div className="flex flex-col items-start gap-2 self-center">
         <a href={`${BASE}/${lang}/build/github`} className={buttonVariants({ size: "sm" })} data-github-token-connect>
           {state.token ? words.open : words.connect}
         </a>
-        <button type="button" onClick={snooze} title={words.hideTitle} className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground" data-github-token-hide>
-          {words.hide}
-        </button>
+        <TooltipProvider><Tooltip><TooltipTrigger asChild>
+          <Button type="button" variant="link" size="xs" onClick={snooze} className="h-auto px-0 text-muted-foreground underline hover:text-foreground" data-github-token-hide>
+            {words.hide}
+          </Button>
+        </TooltipTrigger><TooltipContent className="max-w-xs">{words.hideTitle}</TooltipContent></Tooltip></TooltipProvider>
       </div>
     </div>
   )
