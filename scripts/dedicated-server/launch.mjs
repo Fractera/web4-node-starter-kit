@@ -12,7 +12,8 @@
 //                                   the domain chosen for the server, kept ON the server (`/root/.fractera/domain.json`); once the
 //                                   server's node lives, the same acts go to its own domain door too
 //   door                            one act of the server node's own domain door (stdin: its JSON body) — dns-check · certs · check ·
-//                                   activate · upload; a certificate run is refused here past the Let's Encrypt weekly limits (738-5)
+//                                   activate · upload · claim (739-5: the architect's one-time code, passed back once, kept nowhere here);
+//                                   a certificate run is refused here past the Let's Encrypt weekly limits (738-5)
 //   signin                          where sign-in leads, asked from the internet (738-6)
 //   clear --confirm <host>          a server taken by another installation: freed (stopped and kept, never erased), then checked again
 // 🔒 THE COMPUTER KEEPS NO STATE OF A SERVER (738): only the node's key and the map of pins (`lib/hosting/ssh.mjs`), and the ledger of
@@ -268,7 +269,7 @@ const verbs = {
 
   async door() {
     const body = JSON.parse((await readStdin()) || '{}')
-    if (!['dns-check', 'certs', 'check', 'activate', 'upload'].includes(body?.action)) return fail('bad-action')
+    if (!['dns-check', 'certs', 'check', 'activate', 'upload', 'claim'].includes(body?.action)) return fail('bad-action')
     const { client } = await connect({ root, host, port })
     try {
       const s = await readState(client)

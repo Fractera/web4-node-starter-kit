@@ -61,6 +61,9 @@ export function authBaseFromHost(host: string | null, proto: string): string {
   // стук в пустоту. Реестра нет только на линии `aifa.dev`, и там работает
   // прежняя ветка ниже.
   const assigned = nodeAuthUrl();
+  // 🔒 739-4: a request by a public name never gets the registry's loopback address (the visitor's own computer) — "" means «sign-in is
+  // not switched on here yet»; the proxy says so in one page (`lib/auth/sign-in-closed.mjs`).
+  if (assigned && loopbackForPublic(host, assigned)) return "";
   if (assigned) return assigned;
   if (!host) return "";
   const hostname = host.split(":")[0];
@@ -86,3 +89,4 @@ import { authUrl as nodeAuthUrl } from "@/lib/microservices/urls";
 
 
 import { publicAuth } from "@/lib/domain/public-auth.cjs";
+import { loopbackForPublic } from "@/lib/auth/sign-in-closed.mjs";

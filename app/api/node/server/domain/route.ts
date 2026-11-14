@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache"
 import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
+import { serviceUrl } from "@/lib/microservices/registry"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { nodeNames } from "@/lib/hosting/hostnames.mjs"
 import phase from "@/lib/hosting/phase.cjs"
@@ -148,10 +149,25 @@ export async function POST(req: NextRequest) {
     if (r.ok) revalidatePath("/[lang]", "layout")
     return json({ ...r, ...domainState(ROOT) }, r.ok ? 200 : 422)
   }
+  if (action === "claim") {
+    // 739-5 (D27): the architect's one-time code of this fresh server — made and kept (hashed) by the sign-in element behind its own door
+    // with the architect's key; the code passes through here once and is stored nowhere in the core.
+    const base = serviceUrl("auth")
+    const token = process.env.ARCHITECT_TOKEN?.trim()
+    if (!base || !token) return json({ ok: false, reason: base ? "no-architect-token" : "no-auth-element" }, 503)
+    try {
+      const r = await fetch(`${base.replace(/\/+$/, "")}/api/claim`, { method: "POST", headers: { "x-architect-token": token }, cache: "no-store", signal: AbortSignal.timeout(15_000) })
+      const a = (await r.json().catch(() => null)) as { ok?: boolean; code?: string; error?: string } | null
+      if (!r.ok || !a?.code) return json({ ok: false, reason: a?.error ?? `auth-${r.status}` }, r.status === 409 ? 409 : 502)
+      return json({ ok: true, code: a.code, register: `https://auth.${domainState(ROOT, { certs: null }).zone}/register` })
+    } catch {
+      return json({ ok: false, reason: "auth-not-answering" }, 502)
+    }
+  }
   if (action === "deactivate") {
     const r = deactivateServerDomain()
     if (r.ok) revalidatePath("/[lang]", "layout")
     return json({ ...r, ...domainState(ROOT) }, r.ok ? 200 : 422)
   }
-  return json({ ok: false, reason: "unknown-action", allowed: ["domain", "detect", "way", "cloudflare-write", "dns-check", "certs", "upload", "check", "activate", "deactivate"] }, 400)
+  return json({ ok: false, reason: "unknown-action", allowed: ["domain", "detect", "way", "cloudflare-write", "dns-check", "certs", "upload", "check", "activate", "claim", "deactivate"] }, 400)
 }

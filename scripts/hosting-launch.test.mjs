@@ -168,11 +168,32 @@ await t('a silent core is «a build» only while its reader answered or for thre
   assert.equal(silenceVerdict({ since: now - 10 * 3600_000, now, readerSeen: true }), 'build')
 })
 
+console.log('739-4/5 sign-in never leads a public visitor to loopback; the architect code passes through, kept nowhere')
+await t('a public name with the registry\'s loopback sign-in → closed; negative: loopback requests and a real auth name stay as they are', async () => {
+  const { loopbackForPublic, signInClosedPage } = await import('../lib/auth/sign-in-closed.mjs')
+  assert.equal(loopbackForPublic('architect.aifa.dev', 'http://127.0.0.1:24681'), true)
+  assert.equal(loopbackForPublic('aifa.dev:443', 'http://localhost:24681'), true)
+  assert.equal(loopbackForPublic('localhost:24680', 'http://127.0.0.1:24681'), false)
+  assert.equal(loopbackForPublic('127.0.0.1:24680', 'http://127.0.0.1:24681'), false)
+  assert.equal(loopbackForPublic('architect.aifa.dev', 'https://auth.aifa.dev'), false)
+  assert.ok(signInClosedPage('ru').includes('Вход ещё не включён') && signInClosedPage('en').includes('not switched on'))
+  const base = readFileSync(join(here, '..', 'lib', 'auth-base-server.ts'), 'utf8')
+  assert.ok(/if \(assigned && loopbackForPublic\(host, assigned\)\) return ""/.test(base))
+})
+await t('the claim goes server door → sign-in element with the architect key; the computer keeps no code', async () => {
+  const door = readFileSync(join(here, '..', 'app', 'api', 'node', 'server', 'domain', 'route.ts'), 'utf8')
+  assert.ok(door.includes('action === "claim"') && door.includes('"x-architect-token": token') && door.includes('/api/claim'))
+  const runner = readFileSync(join(here, 'dedicated-server', 'launch.mjs'), 'utf8')
+  assert.ok(!/writeFileSync\([^)]*code/.test(runner) && runner.includes("'claim'"))
+  const reg = JSON.parse(readFileSync(join(here, '..', 'WEB4-ITEMS-REGISTRY', 'web4-items.json'), 'utf8'))
+  assert.equal(reg.services.find((x) => x.id === 'auth').version, 'v2.4.36')
+})
+
 console.log('738-7 the move road is gone')
 await t('serve:start sets a 737 move mark aside and never refuses; no code reads the move\'s state any more', async () => {
   const serve = readFileSync(join(here, 'serve.mjs'), 'utf8')
   assert.ok(serve.includes("renameSync(mark, path.join(kept, `moved-${Date.now()}.json`))") && !serve.includes('SERVE_MOVED'))
-  const left = spawnSync('git', ['grep', '-l', '-e', 'move-state', '-e', 'local-node.mjs', '-e', 'transfer.mjs', '--', 'app', 'lib', 'components', 'scripts/*.mjs', 'scripts/dedicated-server'], { cwd: join(here, '..'), encoding: 'utf8' })
+  const left = spawnSync('git', ['grep', '-l', '-e', 'move-state', '-e', 'local-node.mjs', '-e', 'transfer.mjs', '--', 'app', 'lib', 'components', 'scripts/*.mjs', 'scripts/dedicated-server', ':!scripts/hosting-launch.test.mjs'], { cwd: join(here, '..'), encoding: 'utf8' })
   assert.equal(left.stdout.trim(), '', left.stdout)
 })
 

@@ -55,7 +55,9 @@ prints every name with its DNS, certificate and HTTPS state. Never tell the pers
 - Root acts only through `/usr/local/sbin/fractera-root` (nginx-apply, cert-issue, cert-list, cert-delete, cert-upload, playwright-deps,
   pm2-startup, firewall-status) — no other root command from the node.
 - Behind nginx nobody is «the owner at the keyboard» (the edge mark); the bare IP is read-only like a temporary address.
-- The first registration on a server's domain becomes its architect for good: the person registers right after step 7.
+- The first registration on a server's domain becomes its architect for good — and only with the architect's one-time code (739): step 7
+  asks the server's sign-in element for it (its door `/api/claim`, the architect's key, loopback), shows it once; a new code replaces the
+  old. Until the domain is switched on, a public name says «Вход ещё не включён» — never a redirect to 127.0.0.1.
 - A server to rent: skill `helpful-links` (partner links disclosed). A claim about Let's Encrypt, Ubuntu or a provider — from its primary
   source (letsencrypt.org/docs/rate-limits for the limits).
 

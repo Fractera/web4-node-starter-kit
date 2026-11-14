@@ -21,7 +21,8 @@ import { pointNamesAtServer } from "@/lib/hosting/server-records-cf"
 //   POST { action: "state" | "probe", host, port }              the server's state; the server checked again
 //   POST { action: "install", host, port, mode }                the launch started on the server (install · update)
 //   POST { action: "domain" | "way" | "detect" | "dns", host, port, name?, way? }   the domain step, kept on the server
-//   POST { action: "dns-check" | "certs" | "check" | "activate", host, port }       the server node's own domain door
+//   POST { action: "dns-check" | "certs" | "check" | "activate" | "claim", host, port }   the server node's own domain door; `claim`
+//                                                              returns the architect's one-time code once (739-5), kept nowhere here
 //   POST { action: "upload", host, port, name, fullchain, privkey }                  the person's own certificate for one name (stdin)
 //   POST { action: "signin", host, port }                      where sign-in leads, asked from the internet
 //   POST { action: "cloudflare-write", host, port }            the records written with this node's Cloudflare key, DNS only (737-19b)
@@ -36,7 +37,7 @@ const json = (body: unknown, status = 200) => NextResponse.json(body, { status, 
 const IPV4 = /^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/
 const HOST = /^(?=.{4,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/
 const FINGERPRINT = /^SHA256:[A-Za-z0-9+/]{43}$/
-const DOOR_ACTIONS = ["dns-check", "certs", "check", "activate"]
+const DOOR_ACTIONS = ["dns-check", "certs", "check", "activate", "claim"]
 // How long each act may take: the check of a server measures its version over the network; a certificate run starts detached there.
 const TIMEOUT: Record<string, number> = { connect: 150_000, probe: 150_000, state: 60_000, install: 120_000, domain: 120_000, way: 60_000, detect: 90_000, dns: 90_000, door: 200_000, signin: 90_000, clear: 240_000 }
 

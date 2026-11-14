@@ -10,6 +10,7 @@ import { getSession } from "@/lib/auth/get-session";
 import { authBaseFromHost, connectedDomainAuthBase, projectsBaseFromHost, publicAuthBaseFor } from "@/lib/auth-base-server";
 import { authUrl as nodeAuthUrl } from "@/lib/microservices/urls";
 import { temporaryAddressPage } from "@/lib/auth/temporary-address.page";
+import { signInClosedPage } from "@/lib/auth/sign-in-closed.mjs";
 import {
   SUPPORTED_LANGUAGES,
   DEFAULT_LANGUAGE,
@@ -514,7 +515,14 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
       if (!search.has("requireRole")) search.set("requireRole", "user");
     }
     const qs = search.toString();
-    const target = `${authBaseFromHost(host, proto)}${pathname}${qs ? `?${qs}` : ""}`;
+    const base = authBaseFromHost(host, proto);
+    // 🔒 739-4: no sign-in address for this public name yet (the domain is not switched on) — one honest page, never a redirect to the
+    // machine's loopback or to a relative path that would come back here.
+    if (!base) {
+      const langRaw = search.get("lang") ?? request.cookies.get(LOCALE_COOKIE)?.value ?? DEFAULT_LANGUAGE;
+      return new NextResponse(signInClosedPage(SUPPORTED_LANGUAGES.includes(langRaw) ? langRaw : DEFAULT_LANGUAGE), { status: 503, headers: { "content-type": "text/html; charset=utf-8", "Cache-Control": "no-store" } });
+    }
+    const target = `${base}${pathname}${qs ? `?${qs}` : ""}`;
     return NextResponse.redirect(target);
   }
 

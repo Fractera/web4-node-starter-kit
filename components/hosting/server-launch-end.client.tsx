@@ -2,6 +2,7 @@
 // @local — steps 4–7 of the launch ladder (one route: «Активация выделенного сервера»): installation, the records again, certificates, ready
 
 import { Check, X } from "lucide-react"
+import { useState } from "react"
 import { CertsStep } from "@/components/hosting/server-domain-certs.client"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import type { Strategy } from "@/components/hosting/server-launch-check.client"
@@ -125,9 +126,34 @@ export function ReadyStep({ state, words, busy, onAct }: { state: LaunchState; w
       <Small className="text-foreground">
         {w.links} <a className="underline" href={`https://${zone}/`}>{w.site}</a> · <a className="underline" href={`https://${architect}/`}>{w.panel}</a> · <a className="underline" href={`https://auth.${zone}/`}>{w.signin}</a>
       </Small>
+      <Claim busy={busy} onAct={onAct} words={words} zone={zone} />
       <Small className="text-muted-foreground">{w.next}</Small>
-      <Small className="text-foreground">{w.first}</Small>
       <div><Button disabled={busy} onClick={() => void onAct("signin")} size="sm" variant="outline">{w.signinButton}</Button></div>
+    </div>
+  )
+}
+
+/** 739-5: the architect's one-time code, asked of the server's sign-in element and shown here once — this island's memory only. */
+function Claim({ zone, words, busy, onAct }: { zone: string; words: ServerLaunchWords; busy: boolean; onAct: Act }) {
+  const w = words.ready
+  const [code, setCode] = useState<string | null>(null)
+  const [claimed, setClaimed] = useState(false)
+  async function get() {
+    const a = (await onAct("claim")) as { answer?: { code?: string; reason?: string } } | undefined
+    if (a?.answer?.code) setCode(a.answer.code)
+    else if (a?.answer?.reason === "claimed") setClaimed(true)
+  }
+  if (claimed) return <Small className="text-foreground" data-block="server-launch-claimed">{w.claimed}</Small>
+  return (
+    <div className="flex flex-col gap-2 rounded-md bg-muted/40 p-3" data-block="server-launch-claim">
+      <Small className="text-foreground">{w.first}</Small>
+      {code ? (
+        <>
+          <p className="font-mono font-semibold text-foreground text-lg tracking-widest" data-block="server-launch-claim-code">{code}</p>
+          <Small className="text-foreground">{w.claimText.split("{url}")[0]}<a className="underline" href={`https://auth.${zone}/register`}>{`https://auth.${zone}/register`}</a>{w.claimText.split("{url}")[1] ?? ""}</Small>
+        </>
+      ) : null}
+      <div><Button disabled={busy} onClick={() => void get()} size="sm" variant={code ? "outline" : "default"}>{code ? w.claimNew : w.claimButton}</Button></div>
     </div>
   )
 }
