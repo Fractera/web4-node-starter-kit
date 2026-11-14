@@ -504,6 +504,20 @@ console.log('737-8 the domain on the server: DNS, certificates, HTTPS, the five 
     assert.equal(by['auth.example.org'].error, 'ERR_TLS_CERT_ALTNAME_INVALID')
     assert.equal(dom.domainState(root, { certs: [] }).steps.check, false)
   })
+  await ta('742-10: after the switch-on the check waits for sign-in; negative: the check taken at once keeps its 503', async () => {
+    const root = serverRoot()
+    const isAuth = (url) => new URL(url).hostname === 'auth.example.org'
+    const at = await dom.runHttpsCheck(root, async (url) => ({ status: isAuth(url) ? 503 : 200 }))
+    assert.equal(at.results.find((r) => r.host === 'auth.example.org').ok, false)
+    let asked = 0
+    const restarting = async (url) => (isAuth(url) ? { status: ++asked <= 2 ? 503 : 307 } : { status: 200 })
+    const rec = await dom.checkAfterSwitch(root, restarting, { tries: 5, pauseMs: 1 })
+    assert.deepEqual([rec.results.find((r) => r.host === 'auth.example.org').status, asked], [307, 4])
+    assert.equal(dom.readSide(root, 'check').results.find((r) => r.host === 'auth.example.org').ok, true)
+    // sign-in never comes up: the tries run out and the check says what it saw — a 503, never an invented «ok»
+    const down = await dom.checkAfterSwitch(root, async (url) => ({ status: isAuth(url) ? 503 : 200 }), { tries: 2, pauseMs: 1 })
+    assert.equal(down.results.find((r) => r.host === 'auth.example.org').ok, false)
+  })
   t('the domain typed by a person is cleaned; negative: not a domain → null', () => {
     assert.equal(dom.cleanDomain(' https://Example.ORG/path?x=1 '), 'example.org')
     assert.equal(dom.cleanDomain('example.org.'), 'example.org')

@@ -36,6 +36,10 @@ export type ServerDomainWords = {
   checkButton: string
   httpsOk: string
   httpsFail: string
+  /** 742-10: a row that does not answer and is not failing (`httpsWaits`) — off by the registry, or sign-in before the switch-on */
+  httpsOff: string
+  httpsAfterOn: string
+  httpsNotDue: string
   activeText: string
   activate: string
   activeOn: string
@@ -76,6 +80,9 @@ const en: ServerDomainWords = {
   checkButton: "Check HTTPS",
   httpsOk: "answers",
   httpsFail: "does not answer",
+  httpsOff: "switched off",
+  httpsAfterOn: "after the domain is on",
+  httpsNotDue: "Grey lines are not errors: a switched-off element answers once you switch it on, and sign-in answers once the domain is on. Their certificates are already in place.",
   activeText: "The panel moves to https://{architect}, sign-in to auth.{zone}, search engines get the permanent address, and the bare IP sends visitors to the domain. Elements that remember old addresses rebuild beside the running ones.",
   activate: "Switch on",
   activeOn: "The domain is on: {url}",
@@ -120,6 +127,9 @@ const ru: ServerDomainWords = {
   checkButton: "Проверить HTTPS",
   httpsOk: "отвечает",
   httpsFail: "не отвечает",
+  httpsOff: "выключен",
+  httpsAfterOn: "после включения домена",
+  httpsNotDue: "Серые строки — не ошибка: выключенный элемент ответит, когда вы его включите, а вход — после включения домена. Сертификаты у них уже есть.",
   activeText: "Панель переедет на https://{architect}, вход — на auth.{zone}, поисковики получат постоянный адрес, а голый IP будет отправлять на домен. Элементы, помнящие старые адреса, пересоберутся рядом с работающими.",
   activate: "Включить",
   activeOn: "Домен включён: {url}",

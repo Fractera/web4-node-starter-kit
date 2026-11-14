@@ -12,7 +12,7 @@ import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { finalCheck, httpsDue, namesReady } from '../lib/hosting/final-check.mjs'
+import { finalCheck, httpsDue, httpsWaits, namesReady } from '../lib/hosting/final-check.mjs'
 import { END, readyWordsProblems } from './check-ready-words.mjs'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -64,6 +64,13 @@ await t('744-9: a fresh server before the domain is on — auth 503, cache and s
 await t('744-9 negative: a running element with 503 still holds the names; an off element without a certificate still holds them', () => {
   const s = state({ core: { rows: [row('example.org'), row('data.example.org', { kind: 'element', https: false, status: 503 }), row('stripe.example.org', { kind: 'element', cert: 'missing', https: false, off: true })] } })
   assert.deepEqual(namesReady(s).missing, [{ host: 'data.example.org', what: 'https' }, { host: 'stripe.example.org', what: 'cert' }])
+})
+await t('742-10: a row that waits is grey on both screens — off, or sign-in before the switch-on; sign-in after it must answer', () => {
+  const off = { kind: 'element', off: true }
+  const auth = { kind: 'auth' }
+  assert.deepEqual([httpsWaits(off, false), httpsWaits(off, true), httpsWaits(auth, false)], [true, true, true])
+  // negative: sign-in once the domain is on, and a running element — a silence there is a failure, never grey
+  assert.deepEqual([httpsWaits(auth, true), httpsWaits({ kind: 'element' }, true), httpsWaits({ kind: 'apex' }, false)], [false, false, false])
 })
 
 // LF whatever the checkout (a Windows one gives CRLF), so the planted copies below find their lines

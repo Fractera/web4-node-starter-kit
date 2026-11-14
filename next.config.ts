@@ -33,6 +33,11 @@ const nextConfig: NextConfig = {
     return [
       { source: "/:lang/architecture", destination: "/:lang/m2m", permanent: true },
       { source: "/:lang/architecture/index.md", destination: "/:lang/m2m/index.md", permanent: true },
+      // 742-10: Dashboard → «Этот компьютер» moved to «Домен и хостинг» → «Мониторинг сервера» (the owner, 2026-11-14: «продублируй
+      // информацию сюда а в дашборд она не нужна»). Both forms of the old address, before the `/architect` rule below; temporary — a 308
+      // would stay in browsers for good.
+      { source: "/:lang([a-z]{2})/architect/dashboard/this-computer", destination: "/:lang/hosting/monitoring", permanent: false },
+      { source: "/:lang([a-z]{2})/dashboard/this-computer", destination: "/:lang/hosting/monitoring", permanent: false },
       // 🔒 285-6: THE ARCHITECT PAGES LIVE AT THE ROOT OF THE CORE — owner 2026-09-24: «должно быть так:
       // https://architect.throughsongs.com/ru/». The folder stays `(architectLayer)/architect/` (424 places build
       // their links from it); the address loses `/architect`: an old address answers with a redirect to the clean one,

@@ -1,6 +1,6 @@
 # machineBoard — this computer: the machine, the memory per element, the Tier-2 comparison
 
-**Type:** Page material. The working part of «Dashboard → This computer» (step 572).
+**Type:** Page material. The working part of «Домен и хостинг → Мониторинг сервера» (742-10; until then «Dashboard → This computer», step 572).
 
 **Decision of the owner, 2026-10-22:** «У нас в проекте есть дашборд, покажи в нём технические характеристики компьютера»; fields —
 «Машина + что ест память (Рекомендую)»; the super-node comparison — «Да, строкой сравнения».

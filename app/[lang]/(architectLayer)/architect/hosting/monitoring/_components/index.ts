@@ -13,6 +13,9 @@ import type { PageItem } from '@/lib/content/sections/types'
 //
 // 🛑 СЛОВА ОТСЮДА НЕ ПИШУТСЯ: любая строка, которую увидит человек, приходит
 // параметром из `_data` — иначе она не переводится и её не видит сторож словарей.
-export function content(_lang: string): PageItem[] {
-  return []
+// 742-10 (the owner, 2026-11-14: «Это часть у нас уже реализовано и подсвечивается на вкладке Dashboard продублируй информацию сюда а в
+// дашборд она не нужна»): the machine board of the former Dashboard → «Этот компьютер» (572) lives here; its old address redirects
+// here (`next.config.ts`). Numbers of the machine are asked by the browser at `/api/node/machine` (law 264), never at the build.
+export function content(lang: string): PageItem[] {
+  return [{ kind: 'machineBoard', lang }]
 }

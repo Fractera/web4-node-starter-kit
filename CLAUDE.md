@@ -158,7 +158,7 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   project has one wallet.
 - Capability cards, the first-contact fee and the element's description are the element's data; the description reaches the core by the
   element's command `describe:publish`.
-- Pages of the core: Passport, Dashboard (Projects, This computer), Super node, How it works.
+- Pages of the core: Passport, Dashboard (Projects), Domain and hosting (Server monitoring: the machine), Super node, How it works.
 - An element's menu: Live site · Messenger · Working process · Product design · Build · Settings (`lib/web4-items/item-tree.ts`). Yours:
   Automated management · Working processes (building the node and coordinating the agents) · Settings — no Working process and no
   i2i of your own (step 709).

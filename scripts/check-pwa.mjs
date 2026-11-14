@@ -101,6 +101,12 @@ if (sw) {
   if (/caches\.match\([^)]*\)\s*\|\|\s*fetch/.test(sw) || /const\s+cached\s*=\s*await\s+caches\.match[\s\S]{0,200}return\s+cached[\s\S]{0,200}fetch\(/.test(docBranch)) {
     errors.push("public/sw.js: документы отдаются из кеша раньше сети — приложение будет показывать вчерашний сайт");
   }
+  // 742-10: «сеть первой» через HTTP-кеш браузера — не сеть: Next шлёт stale-while-revalidate на год, и Chrome отдаёт прошлую сборку
+  // при первом переходе после обновления (измерено 2026-11-14, aifa.dev: deliveryType «cache», transferSize 0).
+  const docCode = docBranch.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+  if (/fetch\(\s*req\s*\)/.test(docCode) || !/fetch\(\s*req\s*,\s*\{[^}]*cache:\s*['"]no-cache['"]/.test(docCode)) {
+    errors.push('public/sw.js: документы берутся без cache: "no-cache" — HTTP-кеш браузера отдаст страницу прошлой сборки');
+  }
   if (!/mode\s*===\s*['"]navigate['"]/.test(sw)) {
     warnings.push("public/sw.js: не различает переходы по страницам — проверьте, что стратегия применяется к документам");
   }

@@ -5,6 +5,8 @@
 // 🔒 FACTS: the domain's price is porkbun.com's own page, read 2026-11-13 («.COM from $11.81» a year); the copy of the public pages and its
 // limits — `domain/_components/home-hosting-notes.i18n.ts`; the temporary address closes sign-in (CLAUDE.md §2); the minimum of the
 // server — the owner's word (8 GB, 4 cores), the build's own measure (peaks of 13.6–14.8 GiB, so prepare adds swap — step 737).
+// 742-10: the preface is true on a computer and on a server alike (the page is one for both; on aifa.dev it spoke of «ваш домашний
+// компьютер» and its Cloudflare copy).
 
 export type HostingNotes = {
   preface: string[]
@@ -15,8 +17,8 @@ export type HostingNotes = {
 
 const en: HostingNotes = {
   preface: [
-    "Fractera turns your home computer into a real server. While the computer is on, the node runs its whole architecture: dynamic pages, sign-in, protected pages, data that partners can open and edit.",
-    "When the computer is off or asleep, the site does not disappear. Its public pages answer instantly from a copy kept in your Cloudflare account, as a reference site. Nobody can register or change anything there until the computer is back.",
+    "Fractera turns a computer into a real server, your home one or a rented one. While the machine runs, the node runs its whole architecture: dynamic pages, sign-in, protected pages, data that partners can open and edit.",
+    "A home computer is sometimes off or asleep. The site does not disappear then: its public pages answer instantly from a copy kept in your Cloudflare account, as a reference site, and registering or changing anything waits until the computer is back. A dedicated server runs around the clock and needs no such copy.",
   ],
   title: "Which address and which machine",
   domain: {
@@ -39,8 +41,8 @@ const en: HostingNotes = {
 
 const ru: HostingNotes = {
   preface: [
-    "Fractera превращает ваш домашний компьютер в настоящий сервер. Пока компьютер включён, узел работает во всю силу: динамические страницы, вход, закрытые страницы, данные, которые партнёры могут открыть и править.",
-    "Когда компьютер выключен или спит, сайт не исчезает. Его публичные страницы мгновенно открываются из копии в вашем аккаунте Cloudflare, как справочный сайт. Зарегистрироваться или что-то изменить там нельзя, пока компьютер не вернётся.",
+    "Fractera превращает компьютер в настоящий сервер, ваш домашний или арендованный. Пока машина работает, узел работает во всю силу: динамические страницы, вход, закрытые страницы, данные, которые партнёры могут открыть и править.",
+    "Домашний компьютер иногда выключается или спит. Сайт при этом не исчезает: его публичные страницы мгновенно открываются из копии в вашем аккаунте Cloudflare, как справочный сайт, а зарегистрироваться или что-то изменить можно, когда компьютер вернётся. Выделенному серверу, который работает круглосуточно, такая копия не нужна.",
   ],
   title: "Какой адрес и какая машина",
   domain: {

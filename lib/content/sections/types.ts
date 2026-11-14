@@ -128,7 +128,7 @@ export type LeafItem =
   | { kind: 'toolsTab'; lang: string }
   // 339: таблица всех WEB4 ITEMS узла (Dashboard → Проекты); строки спрашиваются в браузере у `/api/node/projects`.
   | { kind: 'projectsBoard'; lang: string }
-  // 572: Dashboard → «Этот компьютер» — машина, память по элементам, сравнение с Tier-2; числа спрашивает островок у /api/node/machine.
+  // 572 → 742-10: «Мониторинг сервера» (до того Dashboard → «Этот компьютер») — машина, память по элементам, сравнение с Tier-2; числа спрашивает островок у /api/node/machine.
   | { kind: 'machineBoard'; lang: string }
   // 726-3: Dashboard → «Все подписки» — сервисы × элементы × состояние; строки спрашивает островок у /api/node/subscriptions.
   | { kind: 'subscriptionsBoard'; lang: string }

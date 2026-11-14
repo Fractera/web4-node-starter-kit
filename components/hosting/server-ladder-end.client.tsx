@@ -7,7 +7,7 @@ import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Small } from "@/components/ui/typography"
-import { httpsDue } from "@/lib/hosting/final-check.mjs"
+import { httpsDue, httpsWaits } from "@/lib/hosting/final-check.mjs"
 
 // 737-8, 737-19: on the server itself, its own three steps — certificates, HTTPS from the internet, switching the domain on. The launch page
 // of the person's computer runs the same three through the server's door over SSH (`server-launch-end.client.tsx`, 738).
@@ -36,6 +36,13 @@ export function serverEndRungs({ end, words, busy, readOnly, zone, onAct }: {
   const due = need.filter(httpsDue)
   const checked = words.summary.check.replace("{ok}", String(due.filter((r) => r.https === true).length)).replace("{all}", String(due.length))
   const summary = { certs: count(words.summary.certs, (r) => r.cert === "ok" || r.cert === "expiring"), check: checked, active: null }
+  // 742-10: a row that waits (off by the registry, sign-in before the switch-on) is grey, the way the launch page shows it since 744-9
+  const waits = (r: Row) => r.https === false && httpsWaits(r, end.steps.active)
+  const badge = (r: Row) =>
+    r.https === null ? null
+    : r.https ? <Badge variant="default">{`${words.httpsOk} · ${r.status}`}</Badge>
+    : waits(r) ? <Badge variant="secondary">{r.off ? words.httpsOff : words.httpsAfterOn}</Badge>
+    : <Badge variant="destructive">{words.httpsFail}</Badge>
   const body = {
     certs: <CertsStep busy={busy} helper={end.helper} onAct={onAct} readOnly={readOnly} rows={end.rows} run={end.certsRun} words={words} />,
     check: (
@@ -45,10 +52,11 @@ export function serverEndRungs({ end, words, busy, readOnly, zone, onAct }: {
           {end.rows.map((r) => (
             <li className="flex flex-wrap items-center gap-2 text-sm" key={r.host}>
               <span className="font-mono text-foreground">{r.host}</span>
-              {r.https === null ? null : <Badge variant={r.https ? "default" : "destructive"}>{r.https ? `${words.httpsOk} · ${r.status}` : words.httpsFail}</Badge>}
+              {badge(r)}
             </li>
           ))}
         </ul>
+        {end.rows.some(waits) ? <Small className="text-muted-foreground" data-block="server-ladder-not-due">{words.httpsNotDue}</Small> : null}
         <div className="flex flex-wrap items-center gap-3">
           <Button disabled={busy || readOnly} onClick={() => void onAct("check")} size="sm">{words.checkButton}</Button>
           {end.checkAt ? <Small className="text-muted-foreground">{words.checkedAt} {when(end.checkAt)}</Small> : null}

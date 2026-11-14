@@ -7,7 +7,7 @@ import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import type { Strategy } from "@/components/hosting/server-launch-check.client"
 import type { LaunchState } from "@/components/hosting/server-launch.client"
 import { installedOf } from "@/components/hosting/server-launch-rungs"
-import { finalCheck, httpsDue } from "@/lib/hosting/final-check.mjs"
+import { finalCheck, httpsWaits } from "@/lib/hosting/final-check.mjs"
 import type { ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
 import { StageLog } from "@/components/hosting/stage-log"
 import { Badge } from "@/components/ui/badge"
@@ -81,8 +81,9 @@ export function CertsLaunchStep({ state, words, domainWords, busy, onAct }: { st
   if (!core) return null
   const w = words.certs
   const domain = state.domain?.detect?.zone ?? core.zone ?? ""
-  // 744-9: a name whose HTTPS is not due yet (off, or sign-in before the domain is on) is grey with its reason, never a red cross
-  const waits = (r: (typeof core.rows)[number]) => !httpsDue(r) && !(r.kind === "auth" && core.steps.active)
+  // 744-9: a name whose HTTPS is not due yet (off, or sign-in before the domain is on) is grey with its reason, never a red cross;
+  // 742-10: the rule is one for this page and the server's own rung (`httpsWaits`)
+  const waits = (r: (typeof core.rows)[number]) => httpsWaits(r, core.steps.active)
   const act = async (action: string, extra?: Record<string, unknown>) => { await onAct(action, action === "upload" ? { name: extra?.host, fullchain: extra?.fullchain, privkey: extra?.privkey } : extra) }
   return (
     <div className="flex flex-col gap-3" data-block="server-launch-certs">

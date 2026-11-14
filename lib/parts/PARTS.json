@@ -5333,7 +5333,7 @@
       "export": "machineBoard",
       "what": {
         "en": "Page material section «machineBoard» (text): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
-        "ru": "this computer: the machine, the memory per element, the Tier-2 comparison — **Type:** Page material. The working part of «Dashboard → This computer» (step 572)."
+        "ru": "this computer: the machine, the memory per element, the Tier-2 comparison — **Type:** Page material. The working part of «Домен и хостинг → Мониторинг сервера» (742-10; until then «Dashboard → This computer», step 572)."
       },
       "how": "A page names the kind «machineBoard» in its language cell with the fields lang: string.",
       "words": {

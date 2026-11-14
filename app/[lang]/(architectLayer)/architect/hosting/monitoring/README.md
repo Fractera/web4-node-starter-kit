@@ -1,4 +1,12 @@
-# `/architect/hosting/monitoring` — a section page
+# `/architect/hosting/monitoring` — server monitoring (742-10)
+
+The owner, 2026-11-14: «Это часть у нас уже реализовано и подсвечивается на вкладке Dashboard продублируй информацию сюда а в дашборд
+она не нужна». One section: `machineBoard` (`sections/kinds/machine-board.server.tsx` → island
+`components/dashboard/machine-board.client.tsx`), moved here from Dashboard → «Этот компьютер» (step 572, the folder deleted; its
+address `/{lang}/dashboard/this-computer` answers 307 to this page — `next.config.ts`). The island asks `GET /api/node/machine`
+(architect/admin) when opened and on «Обновить»; the door is `lib/web4-items/machine.ts`. Three cards: the machine (with the orange
+«Приложение работает на удалённом сервере» on a server) · what uses the memory (pm2, per element) · the Tier-2 comparison. No timer;
+build cost — none beyond the static shell, the numbers are never baked in.
 
 One page of the architect layer. Everything about it lives in this folder; nothing
 about it is written anywhere else.
@@ -7,12 +15,11 @@ about it is written anywhere else.
 
 | Path | Role |
 |---|---|
-| `page.tsx` | thin entry: names its own folder and its parent, exports metadata |
 | `_data/meta.ts` | `slug` (must equal the folder name) and `order` (position in the menu) |
 | `_data/en.ts` | the base language — mandatory |
 | `_data/ru.ts` | an override |
 | `_data/index.ts` | ties them together; **this file is what makes the folder a page** |
-| `_components/` | the working part; returns `[]` until something is built here |
+| `_components/` | the working part: the machine board |
 
 ## The three states of this page
 

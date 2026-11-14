@@ -11,7 +11,7 @@ import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { nodeNames } from "@/lib/hosting/hostnames.mjs"
 import phase from "@/lib/hosting/phase.cjs"
 import { detectDomain } from "@/lib/hosting/domain-detect.mjs"
-import { cleanDomain, domainState, HELPER, readSide, runDnsCheck, runHttpsCheck, serverMark, writeServerMark, writeSide } from "@/lib/hosting/server-domain.mjs"
+import { checkAfterSwitch, cleanDomain, domainState, HELPER, readSide, runDnsCheck, runHttpsCheck, serverMark, writeServerMark, writeSide } from "@/lib/hosting/server-domain.mjs"
 import { pointNamesAtServer } from "@/lib/hosting/server-records-cf"
 import { activateServerDomain, applyNginx, deactivateServerDomain } from "@/lib/hosting/server-domain-switch"
 
@@ -146,7 +146,11 @@ export async function POST(req: NextRequest) {
     if (active) return json({ ok: false, reason: "active" }, 409)
     if (!domainState(ROOT).steps.check) return json({ ok: false, reason: "check-first" }, 409)
     const r = activateServerDomain()
-    if (r.ok) revalidatePath("/[lang]", "layout")
+    if (r.ok) {
+      revalidatePath("/[lang]", "layout")
+      // 742-10: the switch-on changes what sign-in answers — the check is taken again once it answers, never left from before it
+      await checkAfterSwitch(ROOT)
+    }
     return json({ ...r, ...domainState(ROOT) }, r.ok ? 200 : 422)
   }
   if (action === "claim") {

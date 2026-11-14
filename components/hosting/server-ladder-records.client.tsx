@@ -145,12 +145,16 @@ export function RecordsStep({ view, words, keyWords, busy, dialogUi, onCheck, on
   const hours = String(Math.max(1, Math.ceil((d?.nsTtl ?? 86400) / 3600)))
   const conflicts = all.filter((r) => view.dns[r.host] === "elsewhere" || view.dns[r.host] === "aaaa").map((r) => r.name)
   const map = { zone: d?.zone ?? name, name, ip: view.ip ?? "", at, star, example: sample, ns: (d?.ns ?? []).join(", "), registrar, hours }
+  // 742-10 (the owner, 2026-11-14: «текст про Cloudflare … очевидно не должен существовать в потоке выделенного сервера»): the launch page
+  // (`view.server` null — a computer that lived on Cloudflare's tunnel) always asks it; the server's own panel only where the domain's
+  // records live at Cloudflare — there the grey-cloud way is the legal one.
+  const whyCf = view.server === null || cf || view.way === "migrate" || d?.dnsHost === "cloudflare"
 
   return (
     <div className="flex flex-col gap-3" data-block="server-ladder-records" data-way={view.way ?? ""}>
       <div className="flex flex-wrap items-start justify-between gap-2">
         <Small className="max-w-prose text-foreground">{fill(cf ? w.hereCf : view.way === "migrate" ? w.hereMigrate : w.hereDns, map)}</Small>
-        <WhyNotCloudflare words={w.why} />
+        {whyCf ? <WhyNotCloudflare words={w.why} /> : null}
       </div>
       {view.way === "migrate" ? (
         <div className="flex flex-col gap-2 rounded-md border border-border bg-muted/40 p-3" data-block="server-ladder-migrate">

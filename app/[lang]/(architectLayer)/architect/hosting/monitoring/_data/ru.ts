@@ -2,5 +2,5 @@ import type { WorkspacePageWords } from '@/lib/collection/types'
 
 export const ru: WorkspacePageWords = {
   title: 'Мониторинг сервера',
-  lead: 'Жив ли узел, отвечает ли он и что делал, пока никто не смотрел.',
+  lead: 'Машина, на которой работает узел: её память и диск, что держит каждый элемент и как она выглядит рядом с профилем супер-узла.',
 }
