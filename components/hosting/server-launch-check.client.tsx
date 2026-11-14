@@ -13,11 +13,13 @@ import { Small } from "@/components/ui/typography"
 // какая версия … насколько она отстает. От этого строится стратегия». The numbers are the server's own (`probe.sh`, kept there); the verdict
 // is the node's judge (`lib/hosting/judge.mjs`): a refusal only where a node cannot live, a warning with numbers everywhere else.
 
-export type Strategy = "install" | "update" | "latest" | "running"
+export type Strategy = "install" | "update" | "latest" | "running" | "clear"
 
-/** What the next step does on this server: a fresh install, an update of an older one, nothing — or a launch already running there. */
+/** What the next step does on this server: a fresh install, an update of an older one, nothing, a launch already running there — or,
+ *  744-4, the previous state deleted first when the server is not related to this node. */
 export function strategyOf(s: LaunchState): Strategy {
   if (s.launch?.state === "running" || s.probe?.fractera?.launching) return "running"
+  if (s.relation?.kind === "unrelated") return "clear"
   const f = s.probe?.fractera
   if (!f?.head) return "install"
   if (f.behind === 0 && s.mark?.phase === "live") return "latest"
@@ -29,13 +31,23 @@ export function CheckStep({ state, words, dialogUi, busy, onAct }: { state: Laun
   const f = state.probe?.fractera ?? null
   const strategy = strategyOf(state)
   const items = v?.items ?? []
-  const sites = items.find((i) => i.id === "sites")
-  const others = items.find((i) => i.id === "others")
-  const taken = sites || others
-    ? { host: state.host, sites: String(sites?.value ?? "").split(", ").filter(Boolean), programs: Number(others?.value ?? 0), clear: state.cleared ?? undefined }
+  // 744-4: the clear follows the verdict — the node itself when it is not related, only the strangers beside a related one.
+  const rel = state.relation ?? null
+  const why = (id: string) => rel?.reasons.find((r) => r.id === id)
+  const taken = rel?.kind === "unrelated"
+    ? { host: state.host, sites: why("foreign-sites")?.sites ?? [], programs: why("root-programs")?.count ?? 0, nodes: rel.nodes ?? [], clear: state.cleared ?? undefined }
     : null
+  const reasonText = (r: NonNullable<typeof rel>["reasons"][number]) => (words.reason[r.id as keyof typeof words.reason] ?? r.id)
+    .replace("{from}", r.from ?? "?").replace("{date}", r.at ? new Date(r.at).toLocaleDateString(undefined, { day: "numeric", month: "long" }) : "?")
+    .replace("{origin}", r.origin ?? "?").replace("{folders}", (r.folders ?? []).join(", ")).replace("{sites}", (r.sites ?? []).join(", ")).replace("{n}", String(r.count ?? 0))
   return (
     <div className="flex flex-col gap-3" data-block="server-launch-check">
+      {rel ? (
+        <div className="flex flex-col gap-1" data-block="server-launch-relation" data-relation={rel.kind}>
+          <p className="font-medium text-foreground text-sm">{words.relation[rel.kind]}</p>
+          {rel.reasons.length ? <ul className="flex list-disc flex-col gap-0.5 pl-5 text-muted-foreground text-sm">{rel.reasons.map((r) => <li key={r.id}>{reasonText(r)}</li>)}</ul> : null}
+        </div>
+      ) : null}
       {v ? <p className="text-foreground text-sm">{words.verdict[v.level]}</p> : null}
       <ul className="flex flex-col gap-1" data-block="server-launch-verdict">
         {items.filter((i) => i.id !== "sites" && i.id !== "others").map((i) => (

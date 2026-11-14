@@ -6,7 +6,7 @@ import assert from 'node:assert/strict'
 import { spawn, spawnSync } from 'node:child_process'
 import { mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { basename, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { readableKeyPair } from '../lib/hosting/ssh.mjs'
 import { startTestSshServer } from './hosting-test-ssh.mjs'
@@ -156,6 +156,17 @@ await t('the domain chosen on the page is kept on the server: a typed address is
   const s = (await run(A, 'state')).a?.state
   assert.deepEqual(s.records[0].records.map((x) => x.name), ['@', 'www', 'architect', 'auth'])
   assert.equal(s.records[0].wildcard.name, '*')
+})
+await t('744-4 a server whose node is a 737 move of a computer: «unrelated, moved», the reasons named; negative: install is refused', async () => {
+  const kept = readFileSync(join(B.dir, 'probe.json'), 'utf8')
+  const p = JSON.parse(kept)
+  writeFileSync(join(B.dir, 'probe.json'), JSON.stringify({ ...p, fractera: { head: 'a'.repeat(40), ahead: 351, behind: 0, phase: 'live', origin: FORK, movedFrom: { from: 'MacBook-Pro-de-Roman.local', at: '2026-11-13T22:45:16Z' }, launching: false } }))
+  writeFileSync(join(B.dir, 'launch.json'), JSON.stringify({ state: 'done', mode: 'install' }))
+  const s = (await run(B, 'state')).a?.state
+  assert.deepEqual([s.relation.kind, s.relation.reasons.map((r) => r.id), s.relation.nodes], ['unrelated', ['moved'], [basename(node)]])
+  assert.equal((await run(B, 'install', ['--mode', 'update'])).a?.reason, 'unrelated')
+  writeFileSync(join(B.dir, 'probe.json'), kept)
+  assert.equal((await run(B, 'state')).a?.state.relation.kind, 'clean', 'the same server without the move: clean')
 })
 await t('negative: a wrong way, a bad domain, and the server node\'s door before its node lives', async () => {
   assert.equal((await run(A, 'way', ['--way', 'telepathy'])).a?.reason, 'bad-way')

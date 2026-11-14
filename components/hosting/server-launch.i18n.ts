@@ -32,7 +32,10 @@ export type ServerLaunchWords = {
   verdict: Record<Verdict, string>
   item: Record<string, string>
   fractera: { none: string; there: string; behind: string; latest: string; unknown: string; launching: string }
-  strategy: { install: string; update: string; latest: string; running: string }
+  strategy: { install: string; update: string; latest: string; running: string; clear: string }
+  /** 744-4 (D49): what the server is to this node, and why */
+  relation: { clean: string; related: string; unrelated: string }
+  reason: Record<"moved" | "other-fork" | "no-origin" | "other-nodes" | "foreign-sites" | "root-programs", string>
   /** 743-4: the trial merge of the update on the server, before the button. `{files}` — where it would stop. */
   preflight: { ok: string; stop: string; unknown: string }
   recheckServer: string
@@ -42,7 +45,7 @@ export type ServerLaunchWords = {
   recheck: { text: string; button: string; gate: string; noDomain: string }
   certs: { budget: string; limit: string; checklist: string; name: string; dns: string; cert: string; https: string; httpsButton: string }
   ready: { text: string; activate: string; activating: string; signinOk: string; signinFail: string; signinButton: string; links: string; site: string; panel: string; signin: string; next: string; first: string; done: string; claimButton: string; claimNew: string; claimText: string; claimed: string }
-  busy: { title: string; text: string; clear: string; clearTitle: string; risks: string[]; agree: string; clearConfirm: string; notNow: string; clearing: string; cleared: string; failed: string }
+  busy: { title: string; text: string; clear: string; clearTitle: string; risks: string[]; agree: string; clearConfirm: string; notNow: string; clearing: string; cleared: string; failed: string; nodeTitle: string; nodeText: string; nodeClear: string; nodeRisk: string }
 }
 
 const STAGE_EN = {
@@ -78,7 +81,7 @@ const en: ServerLaunchWords = {
   access: { until: "Access until {time} (24 h at most)", close: "Close access", closing: "Closing the access…" },
   window: { open: "Open the server's panel", opening: "Opening an SSH window…", link: "The server's panel: {url}", note: "Through SSH, on this computer only, while the access lasts; «Close access» closes it too." },
   errors: {
-    auth: "The server refused the password.", "need-password": "This browser has no open access to this server: type the root password — access lasts a day.", "no-password-login": "This server takes no password login (the provider switched it off). Switch password login for root on in the provider's panel, or reinstall the server with a password — the node never uses a provider's keys.", "key-refused": "The server's SSH does not know an access deadline (OpenSSH older than 8.2): the node gives no access without one. Update the server's system.", "visit-install": "The access could not be written on the server.", unreachable: "The server does not answer on this address and port.",
+    auth: "The server refused the password.", "need-password": "This browser has no open access to this server: type the root password — access lasts a day.", "no-password-login": "This server takes no password login (the provider switched it off). Switch password login for root on in the provider's panel, or reinstall the server with a password — the node never uses a provider's keys.", "key-refused": "The server's SSH does not know an access deadline (OpenSSH older than 8.2): the node gives no access without one. Update the server's system.", "visit-install": "The access could not be written on the server.", unrelated: "This server holds a state not related to this node: delete the previous state first.", unreachable: "The server does not answer on this address and port.",
     timeout: "The server did not answer in time.", "bad-address": "That is not a server address.", "bad-password": "The password cannot contain line breaks.",
     running: "A launch is already running on this server.", "server-unfit": "The node cannot live on this server: see the check.", "no-ip": "The server's IPv4 address is unknown.", "no-fork": "This node has no GitHub fork to install from.",
     "le-limit": "Let's Encrypt's weekly limit would be passed: {week} certificates this week, {want} more needed{over}. Wait until the week frees up.", "not-live": "The server's node does not run yet.",
@@ -88,8 +91,10 @@ const en: ServerLaunchWords = {
   changed: { title: "The server shows a different key", text: "The key this server shows is not the one this computer remembers. If you reinstalled the system, trust the new key: type the root password and press the button. If you did not, stop here — someone may be in the middle.", seen: "Now:", pinned: "Remembered:", trust: "The server was reinstalled — trust the new key" },
   verdict: { ok: "The server fits.", warn: "The server will do — read the notes.", fail: "The node cannot live on this server:" },
   item: { os: "System", arch: "Processor", memory: "Free memory, MB (a fresh node holds)", disk: "Free disk, GB (needed)", cores: "Cores (recommended)", ram: "Memory, MB (recommended)", ports: "Ports 80/443", address: "Public address", systemd: "Autostart (systemd)", sites: "nginx already serves other sites — the node would break them; free the server first", others: "Programs of another installation run as root (pm2 processes)" },
-  fractera: { none: "Fractera is not installed here.", there: "Fractera is installed: version {head}.", behind: "It is {n} commits behind Fractera.", latest: "It is the latest version of Fractera.", unknown: "How far behind it is could not be measured (GitHub did not answer).", launching: "A launch is running on this server now." },
-  strategy: { install: "Next: install a fresh Fractera from your fork.", update: "Next: update it ({n} behind).", latest: "Next: nothing to install — go on to the domain.", running: "Next: follow the launch below." },
+  fractera: { none: "Fractera is not installed here.", there: "Fractera is installed: version {head}.", behind: "It is {n} commits behind your fork.", latest: "It has everything your fork has.", unknown: "How far behind it is could not be measured (GitHub did not answer).", launching: "A launch is running on this server now." },
+  strategy: { install: "Next: install a fresh Fractera from your fork.", update: "Next: update it ({n} behind).", latest: "Next: nothing to install — go on to the domain.", running: "Next: follow the launch below.", clear: "Next: delete the previous state — a copy of it stays on the server." },
+  relation: { clean: "A clean server: no Fractera, no other sites or programs.", related: "Related to this node: Fractera from your fork.", unrelated: "Not related to this node:" },
+  reason: { moved: "a copy moved here from {from} on {date} (the old move, not a launch from your fork)", "other-fork": "a node from another fork: {origin}", "no-origin": "a node without a GitHub source", "other-nodes": "other Fractera nodes: {folders}", "foreign-sites": "nginx sites: {sites}", "root-programs": "programs of root in pm2: {n}" },
   preflight: { ok: "A trial merge on the server passed: the update will go through.", stop: "A trial merge on the server stops on files changed both there and in Fractera: {files}. The update would be refused; the server is untouched.", unknown: "Could not check in advance whether the update will pass." },
   recheckServer: "Check again",
   domainNote: "The domain does not hold the installation: DNS wakes up while the server is being installed.",
@@ -107,6 +112,10 @@ const en: ServerLaunchWords = {
     claimButton: "Get the architect code", claimNew: "Get a new code", claimText: "Register at {url} with this code — you become the server's architect. The code is shown once: after a reload get a new one (the old one stops working).", claimed: "The architect is already registered on this server.",
   },
   busy: {
+    nodeTitle: "This server holds a Fractera node that is not this node's",
+    nodeText: "Delete the previous state: the node stops and is set aside whole — nothing is erased — and a fresh node from your fork goes in its place.",
+    nodeClear: "Delete the previous state…",
+    nodeRisk: "The node {nodes} stops at once and its folder moves whole into /root/fractera-cleared-… — its data, keys and history stay there; its sites stop answering until the new node is installed.",
     title: "The server is taken by another installation",
     text: "Other programs and sites already run on this server. The node can free it for itself — or you simply do not go on.",
     clear: "Free the server…",
@@ -144,7 +153,7 @@ const ru: ServerLaunchWords = {
   access: { until: "Доступ до {time} (не больше 24 ч)", close: "Закрыть доступ", closing: "Закрываю доступ…" },
   window: { open: "Открыть пульт сервера", opening: "Открываю окно SSH…", link: "Пульт сервера: {url}", note: "Через SSH, только на этом компьютере, пока открыт доступ; «Закрыть доступ» закрывает и его." },
   errors: {
-    auth: "Сервер не принял пароль.", "need-password": "У этого браузера нет открытого доступа к этому серверу: введите пароль root — доступ откроется на сутки.", "no-password-login": "Этот сервер не принимает вход по паролю (провайдер его выключил). Включите вход по паролю для root в панели провайдера или переустановите сервер с паролем — ключи провайдера узел не использует.", "key-refused": "SSH сервера не знает срока доступа (OpenSSH старше 8.2): без срока узел доступа не даёт. Обновите систему сервера.", "visit-install": "Не удалось записать доступ на сервер.", unreachable: "Сервер не отвечает на этом адресе и порту.",
+    auth: "Сервер не принял пароль.", "need-password": "У этого браузера нет открытого доступа к этому серверу: введите пароль root — доступ откроется на сутки.", "no-password-login": "Этот сервер не принимает вход по паролю (провайдер его выключил). Включите вход по паролю для root в панели провайдера или переустановите сервер с паролем — ключи провайдера узел не использует.", "key-refused": "SSH сервера не знает срока доступа (OpenSSH старше 8.2): без срока узел доступа не даёт. Обновите систему сервера.", "visit-install": "Не удалось записать доступ на сервер.", unrelated: "На сервере состояние, не связанное с этим узлом: сначала удалите прежнее состояние.", unreachable: "Сервер не отвечает на этом адресе и порту.",
     timeout: "Сервер не ответил вовремя.", "bad-address": "Это не адрес сервера.", "bad-password": "В пароле не может быть переносов строки.",
     running: "На этом сервере уже идёт запуск.", "server-unfit": "Узел не сможет жить на этом сервере: смотрите проверку.", "no-ip": "IPv4-адрес сервера неизвестен.", "no-fork": "У этого узла нет форка на GitHub, из которого ставить.",
     "le-limit": "Будет превышен недельный лимит Let's Encrypt: за неделю {week} сертификатов, нужно ещё {want}{over}. Дождитесь, пока неделя освободится.", "not-live": "Узел на сервере ещё не работает.",
@@ -154,8 +163,10 @@ const ru: ServerLaunchWords = {
   changed: { title: "Сервер показывает другой ключ", text: "Ключ, который показывает сервер, не тот, что помнит этот компьютер. Если вы переустановили систему, доверьтесь новому ключу: введите пароль root и нажмите кнопку. Если не переустанавливали, остановитесь: посередине может быть кто-то чужой.", seen: "Сейчас:", pinned: "Помню:", trust: "Сервер переустановлен — доверять новому ключу" },
   verdict: { ok: "Сервер подходит.", warn: "Сервер подойдёт — прочитайте замечания.", fail: "Узел не сможет жить на этом сервере:" },
   item: { os: "Система", arch: "Процессор", memory: "Свободная память, МБ (свежий узел держит)", disk: "Свободный диск, ГБ (нужно)", cores: "Ядра (рекомендуется)", ram: "Память, МБ (рекомендуется)", ports: "Порты 80/443", address: "Публичный адрес", systemd: "Автозапуск (systemd)", sites: "nginx уже обслуживает другие сайты — узел их сломает; сначала освободите сервер", others: "Работают программы другой установки от root (процессы pm2)" },
-  fractera: { none: "Fractera здесь не установлена.", there: "Fractera установлена: версия {head}.", behind: "Отстаёт от Fractera на {n} коммитов.", latest: "Это последняя версия Fractera.", unknown: "Насколько отстаёт, измерить не удалось (GitHub не ответил).", launching: "На этом сервере сейчас идёт запуск." },
-  strategy: { install: "Дальше: установить свежую Fractera из вашего форка.", update: "Дальше: обновить (отстаёт на {n}).", latest: "Дальше: ставить нечего, переходите к домену.", running: "Дальше: следите за запуском ниже." },
+  fractera: { none: "Fractera здесь не установлена.", there: "Fractera установлена: версия {head}.", behind: "Отстаёт от вашего форка на {n} коммитов.", latest: "В нём всё, что есть в вашем форке.", unknown: "Насколько отстаёт, измерить не удалось (GitHub не ответил).", launching: "На этом сервере сейчас идёт запуск." },
+  strategy: { install: "Дальше: установить свежую Fractera из вашего форка.", update: "Дальше: обновить (отстаёт на {n}).", latest: "Дальше: ставить нечего, переходите к домену.", running: "Дальше: следите за запуском ниже.", clear: "Дальше: удалить прежнее состояние — его копия останется на сервере." },
+  relation: { clean: "Чистый сервер: ни Fractera, ни других сайтов и программ.", related: "Связан с этим узлом: Fractera из вашего форка.", unrelated: "Не связан с этим узлом:" },
+  reason: { moved: "копия, перенесённая сюда с {from} {date} (старый переезд, а не запуск из вашего форка)", "other-fork": "узел из другого форка: {origin}", "no-origin": "узел без источника на GitHub", "other-nodes": "другие узлы Fractera: {folders}", "foreign-sites": "сайты nginx: {sites}", "root-programs": "программ root в pm2: {n}" },
   preflight: { ok: "Пробное слияние на сервере прошло: обновление пройдёт.", stop: "Пробное слияние на сервере останавливается на файлах, изменённых и там, и в Fractera: {files}. Обновление было бы отклонено; сервер не тронут.", unknown: "Заранее проверить, пройдёт ли обновление, не удалось." },
   recheckServer: "Проверить ещё раз",
   domainNote: "Домен не держит установку: DNS просыпается, пока сервер ставится.",
@@ -173,6 +184,10 @@ const ru: ServerLaunchWords = {
     claimButton: "Получить код архитектора", claimNew: "Выдать новый код", claimText: "Зарегистрируйтесь на {url} с этим кодом — вы станете архитектором сервера. Код показывается один раз: после перезагрузки страницы выдайте новый (старый перестанет действовать).", claimed: "Архитектор на этом сервере уже зарегистрирован.",
   },
   busy: {
+    nodeTitle: "На сервере узел Fractera, не связанный с этим узлом",
+    nodeText: "Удалить прежнее состояние: узел остановится и целиком уйдёт в копию на сервере — ничего не стирается, — а на его место встанет свежий узел из вашего форка.",
+    nodeClear: "Удалить прежнее состояние…",
+    nodeRisk: "Узел {nodes} сразу остановится, его папка целиком уйдёт в /root/fractera-cleared-… — данные, ключи и история останутся там; его сайты перестанут отвечать, пока не встанет новый узел.",
     title: "Сервер занят другой установкой",
     text: "На сервере уже работают другие программы и сайты. Узел может освободить сервер для себя — или вы просто не продолжаете.",
     clear: "Очистить сервер…",

@@ -17,7 +17,8 @@
 //                                   activate · upload · claim (739-5: the architect's one-time code, passed back once, kept nowhere here);
 //                                   a certificate run is refused here past the Let's Encrypt weekly limits (738-5)
 //   signin                          where sign-in leads, asked from the internet (738-6)
-//   clear --confirm <host>          a server taken by another installation: freed (stopped and kept, never erased), then checked again
+//   clear --confirm <host>          a server taken by another installation: freed (stopped and kept, never erased), then checked again;
+//                                   744-4: a node not related to this one is set aside whole (`clear.sh --node`)
 // 🔒 THE COMPUTER KEEPS NO STATE OF A SERVER (738) AND NO KEY TO IT (744-3): only the map of pins (`lib/hosting/ssh.mjs`) and the ledger
 // of certificates issued per domain (`data/node/server/le-ledger.json`) — Let's Encrypt counts per domain across every server and every
 // reinstall, and nothing else on this machine could know it.
@@ -33,6 +34,7 @@ import { detectDomain } from '../../lib/hosting/domain-detect.mjs'
 import { checkNames } from '../../lib/hosting/dns-check.mjs'
 import { dnsRecords, isHostName } from '../../lib/hosting/hostnames.mjs'
 import { judge } from '../../lib/hosting/judge.mjs'
+import { relationOf } from '../../lib/hosting/relation.mjs'
 import { q, startDetached } from '../../lib/hosting/remote.mjs'
 import { cleanDomain } from '../../lib/hosting/server-domain.mjs'
 import { markLaunched } from '../../lib/hosting/launched.mjs'
@@ -95,6 +97,9 @@ async function readState(client) {
   const line = r.stdout.trim().split('\n').pop() ?? ''
   const s = JSON.parse(line)
   s.verdict = s.probe ? judge(s.probe, { ramMb: null, copyBytes: null }, host) : null
+  // 744-4 (D49): what the server IS to this node — clean · related · unrelated with its reasons — before anything is offered.
+  s.relation = s.probe ? relationOf(s.probe, forkUrl()) : null
+  if (s.relation?.nodeUnrelated) s.relation.nodes = [...(s.probe?.fractera ? [FOLDER] : []), ...(s.probe?.otherNodes ?? [])]
   s.records = launchRecords(s.domain?.domain ?? null, ipOf(s), s.domain?.detect?.zone ?? null)
   if (s.core) {
     recordIssued(s)
@@ -255,6 +260,8 @@ const verbs = {
     try {
       const s = await readState(client)
       if (s.launch?.state === 'running') return fail('running', { state: s })
+      // 744-4: a server not related to this node is cleared first — the page opens nothing else, and neither does this runner.
+      if (s.relation?.kind === 'unrelated') return fail('unrelated', { state: s })
       // (a dry run's «server» is this very machine: its numbers are not a server's, so only a real run is judged here)
       if (!dry && s.verdict?.level === 'fail') return fail('server-unfit', { state: s })
       const ip = ipOf(s)
@@ -369,8 +376,11 @@ const verbs = {
     if (opt('confirm') !== host) return fail('not-confirmed')
     const { client } = await byKey()
     try {
+      // 744-4: an unrelated node is set aside whole; beside a related node only the strangers go.
+      const s0 = await readState(client)
+      const nodes = s0.relation?.nodes ?? []
       await scripts(client, ['clear.sh'])
-      const r = await exec(client, `${DRY}bash ${q(`${DIR}/clear.sh`)}`, { timeoutMs: 180_000 })
+      const r = await exec(client, `${DRY}bash ${q(`${DIR}/clear.sh`)} --dir ${q(DIR)}${nodes.map((n) => ` --node ${q(n)}`).join('')}`, { timeoutMs: 180_000 })
       let cleared = null
       try { cleared = JSON.parse(r.stdout.trim().split('\n').pop()) } catch { /* the script said nothing readable */ }
       await probe(client)

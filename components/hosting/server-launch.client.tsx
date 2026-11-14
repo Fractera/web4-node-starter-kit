@@ -34,7 +34,9 @@ type CoreRow = CertRow & { zone: string; label: string; kind: string; https: boo
 export type LaunchState = {
   host?: string
   cleared?: { state?: string; detail?: string; stopped?: number; backup?: string } | null
-  probe: { publicIp?: string | null; fractera: { head: string | null; ahead: number | null; behind: number | null; phase: string | null; launching: boolean } | null } | null
+  probe: { publicIp?: string | null; otherNodes?: string[]; fractera: { head: string | null; ahead: number | null; behind: number | null; phase: string | null; launching: boolean; origin?: string | null; movedFrom?: { from?: string | null; at?: string | null } | null } | null } | null
+  /** 744-4 (D49): what the server is to this node — `lib/hosting/relation.mjs`, computed by the runner from the probe */
+  relation?: { kind: "clean" | "related" | "unrelated"; nodeUnrelated: boolean; nodes?: string[]; reasons: Array<{ id: string; from?: string | null; at?: string | null; origin?: string; folders?: string[]; sites?: string[]; count?: number }> } | null
   launch: { state: "running" | "done" | "failed"; mode?: string; failed?: string | null; detail?: string; version?: { head: string; behind: number | null } | null } | null
   progress: Stage[]
   sub: Stage[]
@@ -182,7 +184,8 @@ export function ServerLaunch({ words, ladderWords, domainWords, keyWords, dialog
   const installed = state.launch?.state === "done" || strategy === "latest"
   const done: Record<LaunchStep, boolean> = {
     server: true,
-    check: state.verdict?.level !== "fail" && Boolean(state.verdict),
+    // 744-4: nothing goes on while the server holds a state not related to this node — only its clear is open.
+    check: state.verdict?.level !== "fail" && Boolean(state.verdict) && state.relation?.kind !== "unrelated",
     domain: Boolean(state.domain?.domain && state.domain?.check),
     install: installed,
     recheck: Boolean(state.core?.steps.dns),

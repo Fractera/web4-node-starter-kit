@@ -22,14 +22,21 @@ FOLDER="${1:-web4-node-starter-kit}"
 SSH_PORT="${2:-22}"
 OUT="${3:-}"
 NODE_DIR="/home/fractera/$FOLDER"
-HEAD_SHA="" AHEAD="" BEHIND="" PHASE=""
+# 744-4 (D49, D52): WHO this node is — its origin (the fork it follows, credentials stripped), a 737 move's trace in its mark (`from`,
+# `movedAt`: a copy of another computer, not a node launched from a fork) — and «behind» counted against ITS OWN FORK's main, the very
+# branch its update merges (✗ measured 2026-11-14: counted against the original it said 25 while the update merged 23).
+HEAD_SHA="" AHEAD="" BEHIND="" PHASE="" ORIGIN="" MOVED=""
 if [ -d "$NODE_DIR/.git" ] && [ "${DRY_RUN:-0}" != 1 ] && id -u fractera >/dev/null 2>&1 && command -v runuser >/dev/null 2>&1; then
   HEAD_SHA="$(runuser -u fractera -- git -C "$NODE_DIR" rev-parse HEAD 2>/dev/null)"
-  if timeout 40 runuser -u fractera -- git -C "$NODE_DIR" fetch --quiet https://github.com/Fractera/web4-node-starter-kit.git main >/dev/null 2>&1; then
-    read -r AHEAD BEHIND <<< "$(runuser -u fractera -- git -C "$NODE_DIR" rev-list --left-right --count HEAD...FETCH_HEAD 2>/dev/null)"
+  ORIGIN="$(runuser -u fractera -- git -C "$NODE_DIR" remote get-url origin 2>/dev/null | sed -E 's#^(https?://)[^/@]*@#\1#')"
+  if timeout 40 runuser -u fractera -- git -C "$NODE_DIR" fetch --quiet origin main >/dev/null 2>&1; then
+    read -r AHEAD BEHIND <<< "$(runuser -u fractera -- git -C "$NODE_DIR" rev-list --left-right --count HEAD...origin/main 2>/dev/null)"
   fi
   PHASE="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("phase") or "")' "$NODE_DIR/data/node/server.json" 2>/dev/null)"
+  MOVED="$(python3 -c 'import json,sys; m=json.load(open(sys.argv[1])); print(json.dumps({"from": m.get("from"), "at": m.get("movedAt")}) if m.get("movedAt") else "")' "$NODE_DIR/data/node/server.json" 2>/dev/null)"
 fi
+# Other Fractera nodes in the node user's home (another fork's folder name): a server holding one is not this computer's.
+OTHER_NODES="$(for d in /home/fractera/*/; do d="${d%/}"; [ "$d" = "$NODE_DIR" ] && continue; [ -f "$d/scripts/dedicated-server/launch.sh" ] && basename "$d"; done 2>/dev/null | paste -sd, -)"
 . /etc/os-release 2>/dev/null
 busy() { ss -ltnH "( sport = :$1 )" 2>/dev/null | grep -q . && echo true || echo false; }
 OS_ID="${ID:-unknown}" OS_VERSION="${VERSION_ID:-}" OS_PRETTY="${PRETTY_NAME:-Linux}" ARCH="$(uname -m)" \
@@ -48,7 +55,7 @@ NODE_VERSION="$(node --version 2>/dev/null || true)" \
 PUBLIC_IP="$([ "${DRY_RUN:-0}" = 1 ] || curl -s --max-time 6 https://api.ipify.org 2>/dev/null || true)" \
 NODE_THERE="$([ -d "/home/fractera/$FOLDER" ] && echo true || echo false)" \
 UFW="$(ufw status 2>/dev/null | head -1 | grep -qi active && echo active || echo inactive)" \
-SSH_PORT="$SSH_PORT" HEAD_SHA="$HEAD_SHA" AHEAD="$AHEAD" BEHIND="$BEHIND" PHASE="$PHASE" \
+SSH_PORT="$SSH_PORT" HEAD_SHA="$HEAD_SHA" AHEAD="$AHEAD" BEHIND="$BEHIND" PHASE="$PHASE" ORIGIN="$ORIGIN" MOVED="$MOVED" OTHER_NODES="$OTHER_NODES" \
 LAUNCHING="$(pgrep -f '[f]ractera/launch.sh' >/dev/null 2>&1 && echo true || echo false)" \
 python3 -c '
 import json, os
@@ -85,7 +92,9 @@ print(json.dumps({
   "foreignSites": [x for x in (e.get("FOREIGN_SITES") or "").split(",") if x], "pm2Root": n("PM2_ROOT"),
   "fractera": {"head": e.get("HEAD_SHA") or None, "ahead": int(e["AHEAD"]) if e.get("AHEAD", "").isdigit() else None,
                "behind": int(e["BEHIND"]) if e.get("BEHIND", "").isdigit() else None, "phase": e.get("PHASE") or None,
+               "origin": e.get("ORIGIN") or None, "movedFrom": json.loads(e["MOVED"]) if e.get("MOVED") else None,
                "launching": b("LAUNCHING")} if b("NODE_THERE") else None,
+  "otherNodes": [x for x in (e.get("OTHER_NODES") or "").split(",") if x],
   "access": access(),
   "at": __import__("time").strftime("%Y-%m-%dT%H:%M:%SZ", __import__("time").gmtime()),
 }))' | { if [ -n "$OUT" ]; then tee "$OUT.tmp" && mv "$OUT.tmp" "$OUT"; else cat; fi; }
