@@ -9,8 +9,9 @@ Method: model-free reading of the working copy at `82a074ed` — `proxy.ts` (654
 `lib/auth/temporary-address.ts`, `components/shell/temporary-host.ts`, `lib/auth/get-session.ts`, `lib/showcase.ts`,
 `lib/auth-base-server.ts`, `lib/domain/public-auth.cjs`, `lib/hosting/{edge,nginx,place}.mjs`, `scripts/server.mjs`,
 `scripts/dedicated-server/{launch.sh,prepare.sh,fractera-root.sh}`, the GET doors of `app/api`. Primary source for certificates:
-letsencrypt.org (posts of 2026-01-15 and 2026-03-11, docs/profiles). **Nothing below was measured on a live server yet** — every
-finding marked ⚠ was a reading; F1–F3 were then measured on the test server (§1a).
+letsencrypt.org (posts of 2026-01-15 and 2026-03-11, docs/profiles). Findings marked ⚠ began as readings; F1–F3 were then measured
+on the test server (§1a). The second, deeper pass (§8) measured the elements, the computer plane and the update path, and corrected the
+pick on the IP certificate; the plan built on both passes is `development-steps/new-steps/741/`.
 
 ## 1. Answer in one paragraph
 
@@ -21,8 +22,10 @@ domain in `logs/domain.json`. All four were designed for the person's computer b
 so two of the four signs — temporary and showcase — become forgeable on a server. The clean server variant does not need a second
 proxy: it needs **one answer to «where do I live» read by the proxy** (step 741), **nginx that tells the core the name it matched, never
 the client's**, and on a server the two «computer only» signs switched off. Access by bare IP over plain HTTP should shrink to a status
-page; the lawful way to act before a domain is an SSH window (now) and, as the target, a Let's Encrypt IP certificate (160-hour,
-certbot ≥ 5.4) that turns the IP into a real HTTPS address where the architect code of 739 can be claimed from the phone.
+card; the lawful way to act before a domain is an SSH window. A Let's Encrypt IP certificate (160-hour, certbot ≥ 5.4) could turn the
+IP into a real HTTPS address — after the second pass my pick is NOT to build it now (§8, D32 of the plan): the launch flow never uses
+the IP, and the certificate would only shorten the minutes before DNS answers, at the price of a sign-in template release and a
+renewal every few days whose failure darkens the IP.
 
 ## 1a. Measured on the test server 213.199.61.7, 2026-11-14 ~11:55 UTC (read only, nothing changed there)
 
@@ -108,19 +111,19 @@ domain (nginx 443 with a certificate); **SI** = a server by its bare IP over pla
 
 | Variant | What it gives | Risk / price | Verdict |
 |---|---|---|---|
-| A. IP read-only over HTTP (today, narrowed) | the person sees that the server is up and which records to write | nothing secret on it after the narrowing; plain HTTP can be read and altered on the way — only public facts may be shown | **keep, narrowed** (§4.4) |
+| A. IP read-only over HTTP (today, narrowed) | the person sees that the server is up and which records to write | nothing secret on it after the narrowing; plain HTTP can be read and altered on the way — only public facts may be shown | **narrowed further: a static card from nginx, nothing of the core** (plan D31) |
 | B. Password / architect code over plain HTTP | sign-in before a domain | the code or password crosses the internet readable; the session cookie cannot be `Secure`; browsers mark the form «not secure»; contradicts the law «a password never crosses plain HTTP» (`temporary-host.ts`) | **reject** |
 | C. SSH window (`ssh -L` to the server's loopback) | full architect rights before a domain, by the owner's key; the edge mark is absent, so `isOwnerAtMachine` already admits it | needs the computer that holds the key — not from the phone; nothing new to secure | **restore now** (F4) |
-| D. Let's Encrypt IP certificate | `https://<IP>` is a real secure origin: the 739 architect code can be claimed and the panel used from the phone in the first minutes, before DNS | 160-hour certificates (letsencrypt.org, 2026-01-15: IP certificates must be short-lived, IPv4 and IPv6); certbot ≥ 5.4 with `--webroot --ip-address` (letsencrypt.org, 2026-03-11 — the nginx plugin does not support IP yet, renewal needs a `--deploy-hook` that reloads nginx); renewal failure = the IP goes dark in ≤ 6 days, so it needs the monitoring of 742; the sign-in element is built for `auth.<zone>` and needs an IP mode (host-only cookie, a second port such as 8443 under the same certificate — a template release) | **the target**, after 741, as part of 742 |
+| D. Let's Encrypt IP certificate | `https://<IP>` is a real secure origin: the 739 architect code can be claimed and the panel used from the phone in the first minutes, before DNS | 160-hour certificates (letsencrypt.org, 2026-01-15: IP certificates must be short-lived, IPv4 and IPv6); certbot ≥ 5.4 with `--webroot --ip-address` (letsencrypt.org, 2026-03-11 — the nginx plugin does not support IP yet, renewal needs a `--deploy-hook` that reloads nginx); renewal failure = the IP goes dark in ≤ 6 days, so it needs the monitoring of 742; the sign-in element is built for `auth.<zone>` and needs an IP mode (host-only cookie, a second port such as 8443 under the same certificate — a template release) | **not now** — an option for 742 (plan D32; §8 F15, F17) |
 | E. Self-signed certificate on the IP | encryption | the browser's red warning on every visit; trains the person to click through warnings | reject |
 
 The server already installs certbot from the snap «5.x … IP certificates and profiles need ≥ 5.4» (`prepare.sh:39`) and serves the
 ACME webroot on the IP block — the ground for D is laid; only issuance, renewal hook, the nginx 443 block for the IP and the sign-in IP
 mode are missing.
 
-My pick: **A narrowed + C now, D as the destination.** Honest weighing: D matters only for the first minutes–hours before the domain
-answers; the domain is needed anyway to share the project. If those minutes are not worth a sign-in template release, A + C close the
-security and D waits.
+First-pass pick (superseded by §8 and the plan's D31/D32): A narrowed + C now, D as the destination. After the second pass:
+**the IP shows a static card from nginx (A becomes «nothing of the core by IP»), C now, D not now** — the launch flow never uses the
+IP (F15), so D only shortens the minutes before DNS answers, for a template release and a renewal every few days.
 
 ## 6. GET doors that do not refuse a temporary address themselves (49, by reading)
 
@@ -138,12 +141,42 @@ question.
 
 ## 7. How it plugs into 741
 
-741 owns the record and its reader (§4.1). This research adds three substeps to its plan: (a) the proxy and `get-session` read the place
-and switch off the forgeable signs on a server (§4.3) — proof: on the test server `curl -k https://<IP>/api/users -H 'Host: fractera.ai'`
-and `-H 'Host: x.trycloudflare.com'` → 401/421 after, and the same calls measured BEFORE the change as the negative control; (b) nginx
-canonical host + 443 `default_server` with `ssl_reject_handshake` (§4.2) — proof: `openssl s_client -servername unknown.example
--connect <IP>:443` refused; (c) the IP allow-list and server words (§4.4, F6) — proof: eyes on `http://<IP>/ru` shows the status page,
-`/ru/hosting` 404 by IP. The dead branches (F5) and the window (F4) go in the same push. D (IP certificate) goes to 742 with its own plan.
+Superseded by the plan `development-steps/new-steps/741/741-main.md` (substeps 741-1…7, decisions D31–D37). The first action this
+section asked for — measuring F1 and F2 on the test server — was done (§1a, and again with the saved probe in §8).
 
-First action of 741 after the owner's yes: measure F1 and F2 on the test server (two `curl`s, no change) — if they hold, they are a
-security defect of the live product and go first.
+## 8. Second pass (2026-11-14 ~12:00–12:40 UTC, max effort) — what the first pass missed
+
+Probes saved beside the plan: `development-steps/new-steps/741/probes/` (`host-forgery.sh`, `tunnel-forgery.sh`, the numbers in its
+README).
+
+- **F8 — the elements carry the same forgeable signs.** All 15 templates in `~/fractera-dev/fractera-*-starter` have their own
+  `lib/showcase.ts`, `lib/auth/{temporary-address,owner-at-machine,get-session}.ts` and `proxy.ts`; none knows `x-fractera-edge`.
+  Measured on the test server's 443 (the root element answers there): forged `Host: x.trycloudflare.com` → `owner@temporary`
+  (architect), forged `Host: fractera.ai` → the showcase session with all roles; forged `Host: 10.0.0.1` → 401 (that element's shell kit
+  predates the bare-IP sign). Their owner sign holds behind nginx only because nginx drops loopback names (444, measured for
+  `localhost`, `localhost.`, `127.0.0.1:24680`, `[::1]`) and replaces a forged `X-Forwarded-Host` (measured).
+- **F9 — the fix can live at the edge for everyone at once.** nginx is generated by the core (`lib/hosting/nginx.mjs`). If every proxied
+  location passes its block's own name instead of `$host`, and a 443 `default_server` drops unknown names, no forged name reaches the core
+  or any element — without one template release. nginx routes an unmatched name to the default server of the port (nginx.org, request
+  processing), so the default block is the closing piece; `ssl_reject_handshake` exists since 1.19.4 (nginx.org) — Ubuntu 22.04 and
+  Debian 11 ship 1.18.0 (packages.ubuntu.com, packages.debian.org), so a fallback is needed there (the first real certificate +
+  `return 444`).
+- **F10 — a running server keeps its nginx after an update.** Only the launch (`start.sh`), a new name (`name-up.mjs`), certificates
+  (`certs.mjs`) and the domain switch regenerate it; `node:update` merges and then runs the NEW `serve.mjs rebuild` — the place to
+  re-apply nginx.
+- **F11 — the computer plane is clean (negative control).** Forged `Host` through this node's quick tunnel → 403 from Cloudflare; the
+  tunnel's own name → `owner@temporary` as accepted in 243.
+- **F12 — the hosting page decides «server» from the address bar** (`components/hosting/server-place.client.tsx:23`): through the
+  computer's quick tunnel it renders the server ladder.
+- **F13 — the old IP-mode switch still opens everything.** `FRACTERA_IP_NODOMAIN_MODE=true` in `.env.local` makes `getSession` grant the
+  architect role to every caller and opens the proxy gate; a node never sets it — a dead switch that opens the whole node is removed, not
+  kept.
+- **F14 — a stale declaration on this Mac.** `data/node/place.json` = «server» (2026-11-13 10:15), unread since 737-18; a record with the
+  same name must replace it (version 2), never trust it.
+- **F15 — the bare IP is not needed by the flow.** The launch tooling reaches the server only by SSH and loopback
+  (`launch.mjs:127`, `state.sh:76`); the launch page links only `https://<zone>`, `https://<architect>` and `https://auth.<zone>`. The
+  server's ports 24680/24681 are closed from outside (measured). So the IP can show a static card from nginx and nothing of the core.
+- **F16 — Next.js 16.2 runs `proxy.ts` in the Node.js runtime** (bundled docs `proxy.md:219`): the proxy can read the place record from
+  a file.
+- **F17 — no phone path to a fresh server before its domain** (no Telegram bot is set up by the launch). The IP certificate would open one;
+  so would the server's own bot. Named for 742 and the strategy map, not built in 741.
