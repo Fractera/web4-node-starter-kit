@@ -1,104 +1,68 @@
 ---
 name: dedicated-server
-description: "Build process for the person, work process for you. The node moves from the person's computer to an Ubuntu VPS of their own and lives there around the clock — first by the server's IP, later on their domain with a certificate for every name. Load it when the person wants the node to work while the computer is off, asks about a VPS, a dedicated server, «переехать на сервер», a server's IP and password, the tab «Выделенный сервер», the records to write at a registrar for the server, certificates, «вернуть узел на компьютер», or when `npm run server` prints a marked line you must explain."
+description: "Build process for the person, work process for you. A Fractera node is LAUNCHED on an Ubuntu VPS of the person's own — a fresh node from their fork that lives there around the clock, by its IP and then on its domain with a certificate for every name; the person's computer changes nothing and can launch one server after another. Load it when the person wants something to work while the computer is off, asks about a VPS, a dedicated server, «запустить сервер», «переехать на сервер», a server's IP and password, the page «Активация выделенного сервера», the records to write at a registrar for the server, certificates, sign-in on a server's domain, or when `npm run server` prints a marked line you must explain."
 ---
 
-# The node on its dedicated server (step 737)
+# A node launched on a dedicated server (steps 737, 738)
 
-**The owner, 2026-11-13:** «нужно собрать инструмент который перенесёт полностью настроенный проект на VPS на Ubuntu … шаг за шагом
-автоматически и по возможности без искусственного интеллекта … запускается там сначала по IP-адресу … получает сертификаты на каждый из
-существующих поддоменов». Everything below is plain code; you call it and read its marked last line. No model does the move.
+**The owner, 2026-11-14:** «Никакого переезда нет есть просто запуск сервера … в данном локальном компьютере меняться ничего не должно …
+в любой момент перезагрузить эту страницу и пока идёт какой-то из процессов начать работать со вторым … с 10-м и с 100-м сервером».
+Everything below is plain code; you call it and read its marked line. No model installs a server.
 
 ## Where it lives
 
-- The tab «Выделенный сервер» of the core (`/architect/hosting/hosting`): on the person's computer — the move ladder; on the server — the
-  domain's five steps; on the server's bare IP — the same five steps read-only (the records to write).
-- One command: `npm run server -- <verb>` (`scripts/server.mjs`); every verb ends with `===SERVER_…===`.
-- The runner `scripts/dedicated-server/move.mjs` (one rung per call, detached), its state `data/node/server/move.json`; the server's mark
-  `data/node/server.json` (phase `silent` | `live`, ip, user), this computer's mark after the move `data/node/moved.json`.
+- The page «Активация выделенного сервера» of the core (`/architect/hosting/hosting`): on the person's computer — the launch (empty on
+  every visit: the IP and the root password, then seven steps); on a server node — that server's own domain steps; on its bare IP — the
+  same steps read-only.
+- The door `/api/node/launch` (stateless: every call names the server) → the runner `scripts/dedicated-server/launch.mjs` (one act per
+  call, awaited; the last line `===LAUNCH=== <json>`).
+- **The state of a server lives on that server**: `/root/.fractera/probe.json` (its check and its Fractera version), `launch.json` +
+  `launch.progress.jsonl` (the launch), `domain.json` (the domain chosen on the page, who writes the records, the first check, where
+  sign-in leads); the server node's own mark `data/node/server.json` (phase `live`, `independent: true`, domain, switched on). Read by
+  `state.sh` there.
+- The computer keeps only the node's SSH key (`data/node/server/id_ed25519`), the map of pins (`known-hosts.json` + `known_hosts`, one
+  entry per server) and the ledger of Let's Encrypt certificates per domain (`le-ledger.json`). Never a run record.
 
-## The move — eight rungs, each measured, each resumable
+## The seven steps
 
-1. **connect** — the server's IP and root password, typed by the person **in the tab** (never in chat, never by you): the password is used
-   once, the node puts its own key on the server and pins the server's key; from then on only the key.
-2. **probe** — the server measured against this node's own needs (memory the node really holds, disk the copy really takes, ports 80/443,
-   Ubuntu, systemd) → a verdict with numbers; a warning is not a refusal.
-3. **prepare** — as root: swap, packages, Node 22, pm2, certbot, the user `fractera`, nginx, the firewall (22/80/443), the root helper
-   with fixed verbs and one sudoers line.
-4. **copy** — the silent copy (no bot tokens, no named tunnel) and the install and build there.
-5. **claude** — Claude Code signed in on the server: its link shown in the tab, the code pasted in the tab.
-6. **rehearse** — the server's node starts **silent** (every agent wake refused there, bots asleep) and is checked from outside and inside
-   while this computer keeps working.
-7. **telegram** — who answers the person in Telegram there (the owner, 2026-11-13: «переносить этот Telegram на сервер или создать
-   другой»): **move** this node's bot (it starts there at the move — one reader per bot), a **new** bot of the server's own (an accordion
-   in the tab: BotFather → the token → the link; each action goes to the server's own channel door over SSH, the token on stdin, never
-   here) or **later** (only without a bot here). The rehearsing server's bot admits and answers one line — it starts no agent. Every
-   later copy, the move and the road home leave a server's own bot folder untouched. A choice, not a run: `POST /api/node/server
-   {rung: "telegram", choice: "move"|"later"|"reset"}`; «new» is recorded by `/api/node/server/telegram` once the person is admitted.
-8. **move** — this computer's agents and node stop, the last changes are copied, the server starts whole and takes Telegram; a failed
-   check brings this computer back by itself. With a bot there, the node wakes the server's main agent to greet the person (first
-   contact by `know-the-architect` when it holds no picture) — `move.json` → `welcome` says whether it went.
-
-`npm run server -- status` — the rungs and where it stopped. A rung is started from the tab, or by you after the person's yes:
-the door `POST /api/node/server {rung}`. Before the move rung, warn: the agents' conversations here end; on the server they start
-fresh from their records, and this terminal stops with this computer's node.
-
-## The second road — «Новый сервер» (737-11b)
-
-The owner, 2026-11-13: «пользователи однажды устанавливают на свой домашний компьютер Fractera и в будущем поднимает множество
-независящих от него серверов». The tab's first choice — «Переезд этого узла» or «Новый независимый сервер» (`POST /api/node/server
-{rung: "road", road: "move"|"new"}`, only until the server is prepared). The new road: connect · probe · prepare · copy · claude ·
-**start** · telegram — this computer keeps working and keeps its bot.
-- **copy** asks its plan (`{rung: "copy", variant, data}`): **«Копия этого узла»** — this node's core and elements; the second question
-  «Перенести данные этого узла?» (D5, the owner: «replace data or not»): no — accounts, every element's `data/` `storage/`
-  `database.sqlite*`, the agents' memory, the diary and the person's own instructions stay here, the server starts empty and its first
-  registration is its architect; yes — they travel. Never, either way: bots, wallets, `data/node-code.json` (a new one is made there),
-  the template workshop, the session marks. **«Свежий узел»** — the person's fork cloned there as a new install (check-origin,
-  fresh-project, its own `.env.local`), nothing of this node; an earlier folder there is moved aside, never erased. A copy again asks
-  for the start again.
-- **start** — the server's node goes live at once (`data/node/server.json` `independent: true`) and is checked; no rehearsal, no move.
-- **telegram** — only a new bot or later (this node's bot stays here). Once the person is admitted, the node wakes the server's main
-  agent to greet (`move.mjs greet`).
-- Then «Подключить другой сервер» (`{rung: "forget"}`): the record goes to `data/node/server/done/`, the server keeps running on its own,
-  the tab is free. From here the person talks to that server through its own bot; `npm run server -- window` opens its core's panel on
-  this computer at the core's port + 10000 (this node keeps its own ports).
-
-## After the move
-
-- This computer keeps a cold copy; `npm run serve:start` refuses while `moved.json` stands (`===SERVE_MOVED===`).
-- `npm run server -- window` — the server's panel on this computer through SSH, with the owner's rights (before the domain, the only way
-  to act on the server from a browser).
-- `npm run server -- return` — the server's data comes home by the same rules and this computer starts again.
-
-## The domain on the server — five steps
-
-On the server, as the owner at its keyboard (you there, from Telegram), or in the tab through `window`:
-
-| Step | Command | What decides it |
+| Step | What runs | Done when |
 |---|---|---|
-| 1 the domain | `npm run server -- domain example.org` | the server's mark keeps it; changeable until switched on |
-| 2 records at the registrar | `npm run server -- dns --ip <IP>` to list, `dns-check` to check | public DNS (Cloudflare, then Google): every required name has an A record to the server's IP; an AAAA elsewhere is named «remove it» |
-| 3 certificates | `npm run server -- certs` (minutes, detached), `domain` to follow | one Let's Encrypt certificate per name whose DNS is ok; a failing name never stops the others; an own certificate may be uploaded in the tab |
-| 4 HTTPS from outside | `npm run server -- check` | every name answers by HTTPS with strict TLS, under 500 |
-| 5 switch on | `npm run server -- activate` · back: `deactivate` | refused until step 4; nginx can refuse and the old site stays |
+| 1 the server | the password once → the node's key in root's `authorized_keys`, the server's key pinned (`installKey`) | connected by the key |
+| 2 check | `probe.sh` as root: system, memory (8 GB and 4 cores recommended — the owner's minimum), disk, ports, other sites, a Fractera install with its commit and «behind N» against Fractera's main (`git fetch` + `rev-list` on the server) | the judge says no «fail»; the strategy: install · update · latest |
+| 3 domain | the 737-19 ladder: the domain · where its DNS lives · who writes the records · the records (`@`, `*`, or each name) + a first check from public resolvers | chosen and checked once — the install never waits for DNS |
+| 4 installation | `launch.sh` as root, detached: prepare · source (clone of the fork + a fresh `.env.local` + check-origin + fresh-project) · install (`install.sh`) · mark · start (`start.sh live`) · version; an older install: prepare · `npm run node:update` there · mark · start · version | `launch.json` → `done` |
+| 5 records again | the server node's `dns-check` | every required name points to the server — the gate |
+| 6 certificates | the server node's `certs` (one per name, a failing name never stops the others), refused past Let's Encrypt's week (50 per domain, 5 per name); then `check` — HTTPS from the internet; the checklist name · DNS · certificate · HTTPS | every required name certified and answering by HTTPS |
+| 7 ready | the server node's `activate` (sign-in moves to `auth.<zone>`, nginx regenerated) and the sign-in check from the internet: `https://auth.<zone>/api/auth/providers` 200 and the architect pages redirect there | sign-in leads to `https://auth.<zone>` |
 
-`npm run server -- domain` alone prints every name with its DNS, certificate and HTTPS state. The records the person writes: give them
-the table from `dns --ip`, per domain (each domain at its own registrar), and the `*` shortcut as an option (the `@` line is still
-needed). Never tell the person a name works before `check` said so.
+A reinstalled server shows a new key: the page names both fingerprints; the person types the password and trusts the key they saw
+(`--trust <fingerprint>`) — never whatever answers. A busy server (other nginx sites, another install's pm2): «Очистить» behind a dialog
+(`clear.sh` stops and keeps everything in `/root/fractera-cleared-…`, erases nothing).
+
+## On the server itself — `npm run server -- <verb>`
+
+As the owner at that machine's keyboard (you there, from Telegram): `domain [<name>]` · `dns-check` · `certs` · `check` · `activate` ·
+`deactivate` (the server node's door on loopback), `names` · `dns --ip <IP>` · `nginx [--write]` · `phase`. `npm run server -- domain` alone
+prints every name with its DNS, certificate and HTTPS state. Never tell the person a name works before `check` said so.
 
 ## Laws
 
-- The password goes from the person into the tab only; you never ask for it in chat and never type it (a credential in a field is the
+- The password goes from the person into the page only; you never ask for it in chat and never type it (a credential in a field is the
   person's act).
-- Never two live copies of one node: the server's bots run only after this computer stopped (the move rung does it).
+- The computer is never stopped, rebuilt or marked for a server (737's move did all three — ✗ 2026-11-13: ten hours of a stopped core
+  drawn as «сборка ядра»). A legacy `data/node/moved.json` is set aside by `serve:start`.
+- A server gets a fresh node from the fork — its own identity, keys and accounts; this computer's data never travels.
 - Root acts only through `/usr/local/sbin/fractera-root` (nginx-apply, cert-issue, cert-list, cert-delete, cert-upload, playwright-deps,
   pm2-startup, firewall-status) — no other root command from the node.
 - Behind nginx nobody is «the owner at the keyboard» (the edge mark); the bare IP is read-only like a temporary address.
+- The first registration on a server's domain becomes its architect for good: the person registers right after step 7.
 - A server to rent: skill `helpful-links` (partner links disclosed). A claim about Let's Encrypt, Ubuntu or a provider — from its primary
-  source (`development-docs/development-steps/new-steps/737/737-research.md` while the step is open).
+  source (letsencrypt.org/docs/rate-limits for the limits).
 
 ## Proven and not yet
 
-Proven without a server: the names table, nginx generation, the edge law, the SSH road on a real in-process ssh2 server, the copy rules
-with a real rsync, the runner end to end dry (`npm run test:hosting`, `npm run test:hosting-move`). Waiting for a real Ubuntu server:
-prepare → move with real packages, Claude's sign-in there, certificates from Let's Encrypt. Say which side a question is on.
+Proven without a server: the map of pins (two servers, system ssh to the first after the second; a reinstalled key refused until the
+seen one is trusted), the launch end to end dry on in-process ssh2 servers, two servers in parallel, the domain kept on the server, the
+weekly count, the sign-in check, the silent-core verdict (`npm run test:hosting-launch`, `npm run test:hosting`). Waiting for a reinstalled
+Ubuntu (the owner's T2, fractera.ai): the fresh install live, certificates from Let's Encrypt, the switch-on and sign-in there. Say which
+side a question is on.

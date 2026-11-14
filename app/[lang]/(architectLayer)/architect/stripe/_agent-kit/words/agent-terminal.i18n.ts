@@ -55,6 +55,8 @@ export type AgentTerminalWords = {
   buildBack: string
   /** 675-4: молчат и ядро, и чтец */
   buildSilent: string
+  coreSilent: string
+  coreSilentText: string
   buildCloseStart: string
   buildClose: string
   buildWoke: string
@@ -114,6 +116,8 @@ const DICT: Record<string, AgentTerminalWords> = {
     buildEnded: "The core build has ended",
     buildBack: "The core answers again.",
     buildSilent: "The core does not answer — a build or a restart is under way. The page waits for it.",
+    coreSilent: "The core does not answer",
+    coreSilentText: "Nothing is being built: neither the core nor the build reader has answered for over three minutes. The core is stopped or has fallen — on this computer `npm run serve:status` says what happened, `npm run serve:start` brings it up. The page goes on waiting.",
     buildCloseStart: "Close and start the agent",
     buildClose: "Close",
     buildWoke: "The agent came back by itself, in the same conversation — connecting…",
@@ -171,6 +175,8 @@ const DICT: Record<string, AgentTerminalWords> = {
     buildEnded: "Сборка ядра закончилась",
     buildBack: "Ядро снова отвечает.",
     buildSilent: "Ядро не отвечает — идёт сборка или перезапуск. Страница ждёт его.",
+    coreSilent: "Ядро не отвечает",
+    coreSilentText: "Сборки нет: ни ядро, ни чтец сборки не отвечают больше трёх минут. Ядро остановлено или упало — на этом компьютере `npm run serve:status` скажет, что с ним, а `npm run serve:start` поднимет его. Страница продолжает ждать.",
     buildCloseStart: "Закрыть и запустить агента",
     buildClose: "Закрыть",
     buildWoke: "Агент вернулся сам, в тот же разговор, — подключаюсь…",

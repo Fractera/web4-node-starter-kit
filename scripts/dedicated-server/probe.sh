@@ -9,9 +9,25 @@
 # that install's nginx site of the same name. Now the probe names every nginx site that is not the node's own and the processes root's
 # pm2 runs, and measures the memory AVAILABLE, not the total. pm2's own modules (pm2-logrotate) are not programs of an install: they
 # stay after `pm2 delete all` and once made a freed server read «busy» again (the owner's run, 2026-11-13 16:26).
-# Arguments: [node folder name] [ssh port]
+# 738-3 (the owner, 2026-11-14: «ты получишь состояние установлено ли уже Fractera …, если установлена то какая версия … насколько она
+# отстает. От этого строится стратегия»): an install found here is measured ON THE SERVER — its commit, and how far it is from Fractera's
+# main: `git fetch` of Fractera's main by the node's user, then `rev-list --left-right --count` (measured on 213.199.61.7: 1.4 s). A copy
+# of a computer runs a commit GitHub never saw (compare → 404), so only the server itself can count. The fetch runs as the node's user:
+# root's files in its .git would break the node's own updates later.
+# The answer is ALSO kept on the server (`/root/.fractera/probe.json`) — the state of a server lives on that server, never on the computer.
+# Arguments: [node folder name] [ssh port] [where to keep the answer]
 FOLDER="${1:-web4-node-starter-kit}"
 SSH_PORT="${2:-22}"
+OUT="${3:-}"
+NODE_DIR="/home/fractera/$FOLDER"
+HEAD_SHA="" AHEAD="" BEHIND="" PHASE=""
+if [ -d "$NODE_DIR/.git" ] && [ "${DRY_RUN:-0}" != 1 ] && id -u fractera >/dev/null 2>&1 && command -v runuser >/dev/null 2>&1; then
+  HEAD_SHA="$(runuser -u fractera -- git -C "$NODE_DIR" rev-parse HEAD 2>/dev/null)"
+  if timeout 40 runuser -u fractera -- git -C "$NODE_DIR" fetch --quiet https://github.com/Fractera/web4-node-starter-kit.git main >/dev/null 2>&1; then
+    read -r AHEAD BEHIND <<< "$(runuser -u fractera -- git -C "$NODE_DIR" rev-list --left-right --count HEAD...FETCH_HEAD 2>/dev/null)"
+  fi
+  PHASE="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("phase") or "")' "$NODE_DIR/data/node/server.json" 2>/dev/null)"
+fi
 . /etc/os-release 2>/dev/null
 busy() { ss -ltnH "( sport = :$1 )" 2>/dev/null | grep -q . && echo true || echo false; }
 OS_ID="${ID:-unknown}" OS_VERSION="${VERSION_ID:-}" OS_PRETTY="${PRETTY_NAME:-Linux}" ARCH="$(uname -m)" \
@@ -30,7 +46,8 @@ NODE_VERSION="$(node --version 2>/dev/null || true)" \
 PUBLIC_IP="$([ "${DRY_RUN:-0}" = 1 ] || curl -s --max-time 6 https://api.ipify.org 2>/dev/null || true)" \
 NODE_THERE="$([ -d "/home/fractera/$FOLDER" ] && echo true || echo false)" \
 UFW="$(ufw status 2>/dev/null | head -1 | grep -qi active && echo active || echo inactive)" \
-SSH_PORT="$SSH_PORT" \
+SSH_PORT="$SSH_PORT" HEAD_SHA="$HEAD_SHA" AHEAD="$AHEAD" BEHIND="$BEHIND" PHASE="$PHASE" \
+LAUNCHING="$(pgrep -f '[f]ractera/launch.sh' >/dev/null 2>&1 && echo true || echo false)" \
 python3 -c '
 import json, os
 e = os.environ
@@ -43,4 +60,8 @@ print(json.dumps({
   "nodeVersion": e.get("NODE_VERSION") or None, "publicIp": e.get("PUBLIC_IP") or None, "nodeThere": b("NODE_THERE"),
   "ufw": e["UFW"], "sshPort": n("SSH_PORT"),
   "foreignSites": [x for x in (e.get("FOREIGN_SITES") or "").split(",") if x], "pm2Root": n("PM2_ROOT"),
-}))'
+  "fractera": {"head": e.get("HEAD_SHA") or None, "ahead": int(e["AHEAD"]) if e.get("AHEAD", "").isdigit() else None,
+               "behind": int(e["BEHIND"]) if e.get("BEHIND", "").isdigit() else None, "phase": e.get("PHASE") or None,
+               "launching": b("LAUNCHING")} if b("NODE_THERE") else None,
+  "at": __import__("time").strftime("%Y-%m-%dT%H:%M:%SZ", __import__("time").gmtime()),
+}))' | { if [ -n "$OUT" ]; then tee "$OUT.tmp" && mv "$OUT.tmp" "$OUT"; else cat; fi; }

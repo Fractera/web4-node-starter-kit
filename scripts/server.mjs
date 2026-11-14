@@ -1,13 +1,11 @@
 // THE DEDICATED SERVER — ONE COMMAND FOR THE MAIN AGENT AND THE PERSON (node step 737). `npm run server -- <verb>`.
 // The owner, 2026-11-13: «шаг за шагом автоматически и по возможности без искусственного интеллекта» — every verb is plain code; the
-// main agent only calls it (from Telegram too) and reads the marked last line. Verbs of later substeps join this file.
+// main agent only calls it (from Telegram too) and reads the marked last line. 738: a server is LAUNCHED from the page «Активация
+// выделенного сервера» (`scripts/dedicated-server/launch.mjs`), never moved to — the move's verbs (status, return, window) are gone.
 //   names [--domain <name>] [--root <node folder>]   every public name of the node, its port and its DNS label (737-1)
 //   dns   --ip <IPv4> [--domain <name>] [--root …]   the A records to write at the registrar, per zone, with the `*` shortcut (737-1)
 //   nginx [--write]                                    the server's nginx site from the names and the certificates present (737-2)
-//   phase                                              silent · live · none — this node's phase on a dedicated server (737-4)
-//   status                                             the move's ladder: each rung's state and the server (737-7)
-//   return                                             after a move: bring the node back to this computer (737-9)
-//   window                                             after a move: the server's panel on this computer through SSH (737-9)
+//   phase                                              live · none — this node's phase on a dedicated server (737-4, 738)
 //   domain [<name>] · dns-check · certs · check · activate · deactivate
 //                                                      the server's own domain, its five steps (737-8): on the server itself, as
 //                                                      the owner at the keyboard — a loopback call of /api/node/server/domain
@@ -106,26 +104,6 @@ function phase() {
   console.log(`===SERVER_PHASE=== ${nodePhase(root) ?? 'none'}`)
 }
 
-function status() {
-  const s = readJson(path.join(root, 'data', 'node', 'server', 'move.json')) ?? { rungs: {} }
-  const order = ['connect', 'probe', 'prepare', 'copy', 'claude', 'rehearse', 'move']
-  console.log(`сервер: ${s.server?.host ?? '—'}${s.server?.port && s.server.port !== 22 ? `:${s.server.port}` : ''}`)
-  for (const id of order) {
-    const r = s.rungs?.[id] ?? {}
-    console.log(`  ${id.padEnd(9)} ${String(r.state ?? 'idle').padEnd(8)} ${r.detail ? String(r.detail).slice(0, 120) : ''}`)
-  }
-  const moved = readJson(path.join(root, 'data', 'node', 'moved.json'))
-  console.log(`===SERVER_STATUS=== ${moved ? `moved ${moved.to}` : order.find((id) => s.rungs?.[id]?.state !== 'done') ?? 'moved'}`)
-}
-
-/** The roads after a move live in the runner; the person's terminal sees them as they go. */
-function road(name) {
-  return () => {
-    const r = spawnSync(process.execPath, [path.join(here, 'dedicated-server', 'move.mjs'), name], { stdio: 'inherit', cwd: root })
-    process.exit(r.status ?? 1)
-  }
-}
-
 const STEP_WORDS = { domain: 'домен', dns: 'записи DNS', certs: 'сертификаты', check: 'HTTPS снаружи', active: 'включён' }
 const DNS_WORDS = { ok: 'ведёт сюда', missing: 'нет записи', elsewhere: 'ведёт в другое место', aaaa: 'лишняя запись AAAA', unknown: 'DNS не ответил', unchecked: 'не проверено' }
 
@@ -163,12 +141,12 @@ function domainStep(action) {
 }
 
 const verbs = {
-  names, dns, nginx, phase, status, return: road('return'), window: road('window'),
+  names, dns, nginx, phase,
   domain: args[1] ? domainStep('domain') : domainStep('show'),
   'dns-check': domainStep('dns-check'), certs: domainStep('certs'), check: domainStep('check'), activate: domainStep('activate'), deactivate: domainStep('deactivate'),
 }
 if (!verbs[verb]) {
-  console.log('Команды: names · dns · nginx · phase · status · return · window · domain [<имя>] · dns-check · certs · check · activate · deactivate')
+  console.log('Команды: names · dns · nginx · phase · domain [<имя>] · dns-check · certs · check · activate · deactivate')
   process.exit(verb ? 1 : 0)
 }
 verbs[verb]()

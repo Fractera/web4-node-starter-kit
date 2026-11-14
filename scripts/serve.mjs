@@ -10,7 +10,7 @@
 // признать.
 
 import { spawnSync } from 'node:child_process'
-import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdirSync, existsSync, renameSync, rmSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import os from 'node:os'
@@ -116,17 +116,16 @@ function ensureElements() {
 }
 
 async function start() {
-  // 737-9: THE NODE MOVED TO ITS DEDICATED SERVER — this computer keeps a cold copy as of the move and never raises it by itself: two live
-  // copies of one node split its bots (409) and its data. The road back is the person's explicit word: `npm run server -- return`.
+  // 738-7: THERE IS NO MOVE ANY MORE (the owner, 2026-11-14: «Никакого переезда нет есть просто запуск сервера … в данном локальном
+  // компьютере меняться ничего не должно»). A mark left by 737's move (`data/node/moved.json`) is set aside, never obeyed: ✗ that night
+  // it kept this computer's node down from 23:14 until someone moved it away by hand at 08:40. This computer always starts.
   {
-    let moved = null
-    try { moved = JSON.parse(readFileSync(path.join(root, 'data', 'node', 'moved.json'), 'utf8')) } catch { /* not moved */ }
-    if (moved) {
-      console.error(`Узел переехал на свой сервер (${moved.to}, ${moved.at}) и живёт там: http://${moved.to}/`)
-      console.error('Здесь — его копия на момент переезда. Вернуть узел на этот компьютер: npm run server -- return')
-      console.error(`The node moved to its server (${moved.to}); this folder is its copy as of the move. To bring it back: npm run server -- return`)
-      console.error(`===SERVE_MOVED=== ${moved.to}`)
-      process.exit(1)
+    const mark = path.join(root, 'data', 'node', 'moved.json')
+    if (existsSync(mark)) {
+      const kept = path.join(root, 'data', 'node', 'server', 'done')
+      mkdirSync(kept, { recursive: true })
+      renameSync(mark, path.join(kept, `moved-${Date.now()}.json`))
+      console.log('737: the move mark is set aside (data/node/server/done/) — this computer starts as always')
     }
   }
   // 553: оборванная сборка при «закрытой крышке» оставила узел остановленным — список в data/node/quiet-build.json.

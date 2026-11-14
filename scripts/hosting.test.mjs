@@ -205,8 +205,8 @@ if (process.platform === 'win32') {
     assert.match(r.fingerprint, /^SHA256:/)
     const keys = readFileSync(join(home, '.ssh', 'authorized_keys'), 'utf8')
     assert.ok(keys.includes(' fractera-node'), keys)
-    const pin = JSON.parse(readFileSync(join(nodeRoot, 'data', 'node', 'server', 'known-host.json'), 'utf8'))
-    assert.equal(pin.fingerprint, r.fingerprint)
+    const pins = JSON.parse(readFileSync(join(nodeRoot, 'data', 'node', 'server', 'known-hosts.json'), 'utf8'))
+    assert.equal(pins[`127.0.0.1:${sshPort}`].fingerprint, r.fingerprint)
     assert.equal(statSync(join(nodeRoot, 'data', 'node', 'server', 'id_ed25519')).mode & 0o777, 0o600)
   })
   await ta('negative: with password login off, the password is refused and the key alone works', async () => {
@@ -231,7 +231,8 @@ if (process.platform === 'win32') {
   await ta('negative: the same address with a different server key is refused as `host-key-changed`', async () => {
     await new Promise((r) => srv.close(r))
     srv = await sshServer(readableKeyPair().private, sshPort)
-    await assert.rejects(sshLib.connect({ root: nodeRoot, host: '127.0.0.1', port: sshPort }), (e) => e.reason === 'host-key-changed')
+    // 738-2: the refusal names both fingerprints — the page shows them before the person trusts a reinstalled server.
+    await assert.rejects(sshLib.connect({ root: nodeRoot, host: '127.0.0.1', port: sshPort }), (e) => e.reason === 'host-key-changed' && /^SHA256:/.test(e.seen) && /^SHA256:/.test(e.pinned) && e.seen !== e.pinned)
   })
   await new Promise((r) => srv.close(r))
 }
@@ -296,65 +297,6 @@ if (process.platform !== 'win32') {
     }
     const last = readText(join(scripts, 'prepare.progress.jsonl'), 'utf8').trim().split('\n').map((l) => JSON.parse(l)).pop()
     assert.equal(last.state, 'failed')
-  })
-}
-
-console.log('737-5 the copy (a real rsync into a local target with the same rules)')
-const transfer = await import('../lib/hosting/transfer.mjs')
-const { existsSync } = await import('node:fs')
-if (!transfer.hasRsync()) {
-  console.log('  · rsync is not on this machine (Windows): the copy is proven on macOS and Linux')
-} else {
-  const src = mkdtempSync(join(tmpdir(), 'hosting-copy-src-'))
-  const dst = mkdtempSync(join(tmpdir(), 'hosting-copy-dst-'))
-  roots.push(src, dst)
-  const put = (rel, text = 'x') => { mkdirSync(join(src, rel, '..'), { recursive: true }); writeFileSync(join(src, rel), text) }
-  const travels = ['.git/HEAD', '.env.local', 'data/services/data/app.sqlite', 'data/node/memory/diary.jsonl', 'logs/fresh-project.json',
-    'logs/origin.json', 'logs/launch.json', 'logs/domain.json', 'WEB4-ITEMS/user/bd5ln/.git/HEAD', 'WEB4-ITEMS/user/bd5ln/app/page.tsx',
-    'WEB4-ITEMS/core/graph/services/graph/requirements.txt', 'WEB4-ITEMS-REGISTRY/web4-items.json']
-  const stays = ['node_modules/next/index.js', 'WEB4-ITEMS/user/bd5ln/node_modules/a/b.js', '.next/BUILD_ID', 'WEB4-ITEMS/user/bd5ln/.next-a/BUILD_ID',
-    'WEB4-ITEMS/core/graph/.venv/bin/python', 'WEB4-ITEMS/core/graph/.uv/uv', 'data/node/server/id_ed25519', 'data/node/server/known_hosts',
-    'data/node/moved.json', 'logs/runtime.json', 'logs/tunnel.json', 'logs/web4-out.log', 'WEB4-ITEMS/user/bd5ln/logs/x.log', 'logs/eyes/shot.png', '.DS_Store']
-  for (const f of [...travels, ...stays]) put(f, `content of ${f}`)
-
-  await ta('measured before the copy: only what travels is counted', async () => {
-    const m = transfer.measure(src)
-    const bytes = travels.reduce((n, f) => n + `content of ${f}`.length, 0)
-    assert.equal(m.bytes, bytes)
-  })
-  await ta('phase 1: everything that is the node arrives', async () => {
-    const r = await transfer.copyPhase({ root: src, host: 'unused', target: `${dst}/` })
-    assert.equal(r.code, 0, r.tail)
-    for (const f of travels) assert.ok(existsSync(join(dst, f)), `missing ${f}`)
-  })
-  await ta('negative: the SSH key, packages, builds, the graph\'s Python, this computer\'s marks and logs never travel', async () => {
-    for (const f of stays) assert.ok(!existsSync(join(dst, f)), `travelled ${f}`)
-  })
-  await ta('phase 2: a deleted file disappears, a new one arrives, the server\'s own packages are not touched', async () => {
-    rmSync(join(src, 'data/node/memory/diary.jsonl'))
-    put('data/services/data/new.sqlite')
-    mkdirSync(join(dst, 'node_modules', 'own'), { recursive: true })
-    writeFileSync(join(dst, 'node_modules', 'own', 'linux.node'), 'built on the server')
-    const r = await transfer.copyPhase({ root: src, host: 'unused', target: `${dst}/` })
-    assert.equal(r.code, 0, r.tail)
-    assert.ok(!existsSync(join(dst, 'data/node/memory/diary.jsonl')))
-    assert.ok(existsSync(join(dst, 'data/services/data/new.sqlite')))
-    assert.ok(existsSync(join(dst, 'node_modules/own/linux.node')))
-  })
-  await ta('the rehearsal is silent by construction: no bot token and no named tunnel travel; the move brings them', async () => {
-    const tokens = ['data/services/build/channel/telegram/.env', 'data/services/bd5ln/channel/telegram-orders/.env', 'logs/domain.json']
-    for (const f of [...tokens, 'data/services/build/channel/telegram/bot.json']) put(f, `content of ${f}`)
-    const silent = mkdtempSync(join(tmpdir(), 'hosting-copy-silent-'))
-    roots.push(silent)
-    assert.equal((await transfer.copyPhase({ root: src, host: 'unused', target: `${silent}/`, phase: 'silent' })).code, 0)
-    for (const f of tokens) assert.ok(!existsSync(join(silent, f)), `travelled in the rehearsal: ${f}`)
-    assert.ok(existsSync(join(silent, 'data/services/build/channel/telegram/bot.json')))
-    assert.equal((await transfer.copyPhase({ root: src, host: 'unused', target: `${silent}/`, phase: 'live' })).code, 0)
-    for (const f of tokens) assert.ok(existsSync(join(silent, f)), `missing after the move: ${f}`)
-  })
-  t('negative: a node folder with a space in its path is refused for the ssh road', () => {
-    assert.throws(() => transfer.rsyncArgs({ root: '/Users/a b/node', host: 'h', excludeFile: '/tmp/x' }))
-    assert.equal(transfer.remoteRootOf('/Users/r/web4-node-starter-kit'), '/home/fractera/web4-node-starter-kit')
   })
 }
 
@@ -473,28 +415,8 @@ console.log('737-7 the judge of a server (the owner\'s test server, 2026-11-13: 
   })
 }
 
-console.log('737-7 a busy server: free it or cancel')
+console.log('737-7 a busy server: freed, never erased')
 {
-  const { mayClear, mayCancel } = await import('../lib/hosting/move-state.mjs')
-  const busy = { server: { host: '203.0.113.7' }, verdict: { items: [{ id: 'sites', level: 'fail' }] }, rungs: { connect: { state: 'done' }, probe: { state: 'failed' } } }
-  t('a probe that named another install opens «free the server»; cancel is open while nothing has moved', () => {
-    assert.equal(mayClear(busy), true)
-    assert.equal(mayCancel(busy), true)
-  })
-  t('negative: no foreign install, a rung running, or preparation started — no freeing; after the move — no cancel', () => {
-    assert.equal(mayClear({ ...busy, verdict: { items: [{ id: 'ports', level: 'ok' }] } }), false)
-    assert.equal(mayClear({ ...busy, rungs: { ...busy.rungs, probe: { state: 'running' } } }), false)
-    assert.equal(mayClear({ ...busy, rungs: { ...busy.rungs, prepare: { state: 'done' } } }), false)
-    assert.equal(mayClear({ ...busy, clear: { state: 'running' } }), false)
-    assert.equal(mayCancel({ ...busy, rungs: { ...busy.rungs, move: { state: 'done' } } }), false)
-    assert.equal(mayCancel({ rungs: {} }), false)
-  })
-  t('a done copy may run again before the move (only the changes travel); negative: after the move no rung runs again', async () => {
-    const { mayStart } = await import('../lib/hosting/move-state.mjs')
-    const ready = { rungs: { connect: { state: 'done' }, probe: { state: 'done' }, prepare: { state: 'done' }, copy: { state: 'done' }, claude: { state: 'done' }, rehearse: { state: 'failed' } } }
-    assert.equal(mayStart(ready, 'copy'), true)
-    assert.equal(mayStart({ rungs: { ...ready.rungs, rehearse: { state: 'done' }, move: { state: 'done' } } }, 'copy'), false)
-  })
   if (process.platform !== 'win32') {
     const { spawnSync } = await import('node:child_process')
     t('clear.sh is valid bash and erases nothing by its own words (no rm -rf, no apt purge, no dropdb)', () => {
@@ -503,19 +425,6 @@ console.log('737-7 a busy server: free it or cancel')
       assert.ok(!/rm -rf|apt(-get)? (purge|remove)|dropdb|DROP DATABASE/i.test(text))
     })
   }
-}
-
-console.log('737-7 the Claude sign-in link (the owner\'s test server 2026-11-13: the tab opened /[object Object])')
-{
-  const { pathToFileURL } = await import('node:url')
-  const src = readFileSync(join(import.meta.dirname, 'dedicated-server', 'move.mjs'), 'utf8')
-  const kit = join(import.meta.dirname, '..', 'app', '[lang]', '(architectLayer)', 'architect', 'kits', '_agent-kit', 'core', 'client', 'terminal-auth.mjs')
-  const { extractAuthUrl } = await import(pathToFileURL(kit).href)
-  t('the extractor gives { how, url }; the runner stores only the address string', () => {
-    const got = extractAuthUrl('\x1b]8;;https://claude.com/cai/oauth/authorize?code=true&client_id=x&state=Ab3dEf9\x07Sign in\x1b]8;;\x07\n')
-    assert.equal(typeof got?.url, 'string')
-    assert.ok(/extractAuthUrl\(buf\)\?\.url/.test(src), 'move.mjs must keep `.url` of the extractor, not the pair')
-  })
 }
 
 console.log('737-18 the place is detected, never declared')
@@ -562,175 +471,6 @@ console.log('737-15 the names before the move')
     assert.deepEqual(r.elsewhere, ['data.example.org'])
     assert.deepEqual(r.unknown, ['www.example.org'])
   })
-}
-
-console.log('737-11a the node\'s main bot on the server')
-{
-  const { RUNGS, mayStart, serverKeeps, SERVER_BOT_DIR } = await import('../lib/hosting/move-state.mjs')
-  const { writeExcludes, hasRsync } = await import('../lib/hosting/transfer.mjs')
-  const upTo = (n) => ({ rungs: Object.fromEntries(RUNGS.slice(0, n).map((r) => [r, { state: 'done' }])) })
-  t('the rung «Telegram» stands between the rehearsal and the move; the move waits for the choice', () => {
-    assert.deepEqual(RUNGS.slice(-3), ['rehearse', 'telegram', 'move'])
-    assert.equal(mayStart(upTo(RUNGS.indexOf('telegram')), 'telegram'), true)
-    assert.equal(mayStart(upTo(RUNGS.indexOf('telegram') - 1), 'telegram'), false, 'chosen before the rehearsal')
-    assert.equal(mayStart(upTo(RUNGS.indexOf('telegram')), 'move'), false, 'the move started without the choice')
-    assert.equal(mayStart(upTo(RUNGS.indexOf('move')), 'move'), true)
-  })
-  t('only a bot of the server\'s own is kept there by every copy; the rules file names it only then', () => {
-    assert.deepEqual(serverKeeps({ telegram: { choice: 'new', bot: 'x' } }), [SERVER_BOT_DIR])
-    for (const choice of ['move', 'later', undefined]) assert.deepEqual(serverKeeps({ telegram: { choice } }), [])
-    assert.deepEqual(serverKeeps({}), [])
-    const dir = mkdtempSync(join(tmpdir(), 'hosting-test-'))
-    roots.push(dir)
-    assert.ok(readFileSync(writeExcludes(dir, 'live', [SERVER_BOT_DIR]), 'utf8').split('\n').includes(SERVER_BOT_DIR))
-    assert.ok(!readFileSync(writeExcludes(dir, 'live'), 'utf8').split('\n').includes(SERVER_BOT_DIR))
-    assert.ok(readFileSync(writeExcludes(dir, 'silent', [SERVER_BOT_DIR]), 'utf8').includes('/data/services/*/channel/telegram*/.env'))
-  })
-  if (hasRsync()) {
-    t('rsync with the keep rule: the server\'s own bot survives the live copy; negative — without it this computer\'s token overwrites it', () => {
-      const once = (keep) => {
-        const home = mkdtempSync(join(tmpdir(), 'hosting-test-'))
-        const server = mkdtempSync(join(tmpdir(), 'hosting-test-'))
-        const rulesDir = mkdtempSync(join(tmpdir(), 'hosting-test-'))
-        roots.push(home, server, rulesDir)
-        const w = (root, rel, text) => { mkdirSync(join(root, rel, '..'), { recursive: true }); writeFileSync(join(root, rel), text) }
-        w(home, 'data/services/build/channel/telegram/.env', 'TELEGRAM_BOT_TOKEN=this-computer\n')
-        w(home, 'data/services/build/channel/telegram/bot.json', '{"username":"home_bot"}')
-        w(home, 'data/services/auth/channel/telegram/.env', 'TELEGRAM_BOT_TOKEN=element\n')
-        w(server, 'data/services/build/channel/telegram/.env', 'TELEGRAM_BOT_TOKEN=server-own\n')
-        w(server, 'data/services/build/channel/telegram/access.json', '{"allowFrom":["7"]}')
-        const r = spawnSync('rsync', ['-rlpt', '--delete', `--exclude-from=${writeExcludes(rulesDir, 'live', keep)}`, `${home}/`, `${server}/`], { encoding: 'utf8' })
-        assert.equal(r.status, 0, r.stderr)
-        const bot = join(server, 'data/services/build/channel/telegram')
-        return { env: readFileSync(join(bot, '.env'), 'utf8'), access: existsSync(join(bot, 'access.json')), element: readFileSync(join(server, 'data/services/auth/channel/telegram/.env'), 'utf8') }
-      }
-      const kept = once([SERVER_BOT_DIR])
-      assert.match(kept.env, /=server-own/)
-      assert.equal(kept.access, true, 'the server\'s admitted people were deleted')
-      assert.match(kept.element, /=element/, 'an element\'s bot must still travel with the move')
-      const lost = once([])
-      assert.match(lost.env, /=this-computer/)
-      assert.equal(lost.access, false)
-    })
-  }
-
-  // The agent kit's own poller (the master copy; the 12 copies are identical — `check:agent-kits`), its Telegram replaced in this process.
-  const project = fileURLToPath(new URL('..', import.meta.url))
-  const node = mkdtempSync(join(tmpdir(), 'hosting-test-'))
-  roots.push(node)
-  const w = (rel, text) => { mkdirSync(join(node, rel, '..'), { recursive: true }); writeFileSync(join(node, rel), text) }
-  const BOT = 'data/services/build/channel/telegram'
-  w(`${BOT}/.env`, 'TELEGRAM_BOT_TOKEN=123456789:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n')
-  w(`${BOT}/bot.json`, '{"username":"srv_test_bot"}')
-  w(`${BOT}/access.json`, '{"dmPolicy":"allowlist","allowFrom":[],"groups":{},"pending":{}}')
-  w(`${BOT}/activation.json`, JSON.stringify({ createdAt: Date.now(), nonce: 'nonce737' }))
-  w('data/node/server.json', '{"phase":"silent"}')
-  const here = process.cwd()
-  const realFetch = globalThis.fetch
-  const sent = []
-  let updates = []
-  globalThis.fetch = async (url, init) => {
-    const method = String(url).split('/').pop()
-    const params = JSON.parse(init?.body ?? '{}')
-    let result = true
-    if (method === 'getUpdates') { result = params.offset ? [] : updates; if (!params.offset) updates = [] }
-    // The fake Telegram keeps every outgoing message of the poller (its only «send…» method) for the asserts below.
-    if (/^send/.test(method)) { sent.push(params); result = { message_id: sent.length } }
-    return { json: async () => ({ ok: true, result }) }
-  }
-  const msg = (id, text) => ({ update_id: id, message: { message_id: id, chat: { id: 7, type: 'private' }, from: { id: 7, first_name: 'Test' }, text } })
-  process.env.TELEGRAM_VANISH_MS = '1'
-  process.chdir(node)
-  try {
-    const kit = createRequire(import.meta.url)(join(project, 'app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/server/telegram.cjs'))
-    const started = []
-    kit.setStarter(async (service) => { started.push(service); return { ok: false, reason: 'test' } })
-    // Asynchronous cases run one after another here; `t` takes a function that throws — the awaited part is done before it.
-    updates = [msg(1, '/start nonce737')]
-    await kit.idleTick('build')
-    const afterStart = sent.slice()
-    updates = [msg(2, '/on'), msg(3, 'hello')]
-    await kit.idleTick('build')
-    const afterWords = sent.slice(afterStart.length)
-    const silentLine = 'This bot is connected to your dedicated server.'
-    t('rehearsing server: the link admits the person and the bot answers one line of its state', () => {
-      assert.deepEqual(JSON.parse(readFileSync(join(node, BOT, 'access.json'), 'utf8')).allowFrom, ['7'])
-      assert.equal(afterStart.length, 1, JSON.stringify(afterStart))
-      assert.ok(afterStart[0].text.startsWith(silentLine), afterStart[0].text)
-    })
-    t('rehearsing server: «/on» and words start nothing — no starter, no buttons, one line per chat', () => {
-      assert.equal(started.length, 0, 'an agent was started on a rehearsing server')
-      assert.equal(afterWords.length, 1, JSON.stringify(afterWords))
-      assert.ok(afterWords[0].text.startsWith(silentLine))
-      assert.ok([...afterStart, ...afterWords].every((m) => !m.reply_markup), 'a question with buttons was sent')
-    })
-    rmSync(join(node, 'data/node/server.json'))
-    const before = sent.length
-    updates = [msg(4, 'hello')]
-    await kit.idleTick('build')
-    t('negative: the same words on a node that is not rehearsing never get the line — the old road answers them', () => {
-      const reply = sent.slice(before)
-      assert.ok(reply.length + started.length > 0, 'nothing answered at all')
-      assert.ok(reply.every((m) => !String(m.text).startsWith(silentLine)), JSON.stringify(reply))
-    })
-  } finally {
-    process.chdir(here)
-    globalThis.fetch = realFetch
-  }
-}
-
-console.log('737-11b the road «Новый сервер»')
-{
-  const ms = await import('../lib/hosting/move-state.mjs')
-  const { writeExcludes, hasRsync } = await import('../lib/hosting/transfer.mjs')
-  const done = (ids, extra = {}) => ({ ...extra, rungs: Object.fromEntries(ids.map((r) => [r, { state: 'done' }])) })
-  t('each road has its own order: the new server starts after Claude, its bot after its start; it never rehearses or moves', () => {
-    assert.deepEqual(ms.rungsOf({ road: 'new' }), ['connect', 'probe', 'prepare', 'copy', 'claude', 'start', 'telegram'])
-    assert.deepEqual(ms.rungsOf({}), ms.RUNGS)
-    const upToClaude = done(['connect', 'probe', 'prepare', 'copy', 'claude'], { road: 'new' })
-    assert.equal(ms.mayStart(upToClaude, 'start'), true)
-    assert.equal(ms.mayStart(upToClaude, 'telegram'), false, 'the bot before the server runs')
-    assert.equal(ms.mayStart(upToClaude, 'rehearse'), false, 'a rehearsal on the new road')
-    assert.equal(ms.mayStart(done(['connect', 'probe', 'prepare', 'copy', 'claude']), 'start'), false, 'a start on the move road')
-    assert.equal(ms.mayChooseRoad(done(['connect', 'probe'])), true)
-    assert.equal(ms.mayChooseRoad(done(['connect', 'probe', 'prepare'])), false, 'the road changed after the server was prepared')
-  })
-  if (hasRsync()) {
-    const home = mkdtempSync(join(tmpdir(), 'hosting-test-'))
-    roots.push(home)
-    const w = (rel, text = 'x') => { mkdirSync(join(home, rel, '..'), { recursive: true }); writeFileSync(join(home, rel), text) }
-    const code = ['WEB4-ITEMS-REGISTRY/web4-items.json', 'WEB4-ITEMS/core/data/app.js', 'WEB4-ITEMS/core/data/data/.gitkeep', 'WEB4-ITEMS/user/abc12/storage/.gitkeep',
-      'data/services/abc12/project-settings.json', 'logs/origin.json', 'data/services/embeddings/model/weights.bin']
-    const personal = ['data/services/auth/auth.db', 'data/services/auth/auth.db-wal', 'WEB4-ITEMS/core/data/data/main.sqlite', 'WEB4-ITEMS/user/abc12/storage/photo.png',
-      'WEB4-ITEMS/user/abc12/database.sqlite', 'data/services/build/memory/m.md', 'data/node/memory/diary.jsonl', 'data/main-agent/CLAUDE.user.md',
-      'data/services/graph/lightrag/g.json', 'data/node/permissions.jsonl']
-    const never = ['data/services/build/channel/telegram/.env', 'data/services/build/channel/telegram/bot.json', 'data/node-code.json',
-      'data/services/abc12/wallet/wallet.json', 'data/workshop/x/y.txt', 'data/services/build/session-mode.json', 'data/node/place.json']
-    for (const f of [...code, ...personal, ...never]) w(f)
-    const copy = (keep, phase = 'silent') => {
-      const server = mkdtempSync(join(tmpdir(), 'hosting-test-'))
-      const rulesDir = mkdtempSync(join(tmpdir(), 'hosting-test-'))
-      roots.push(server, rulesDir)
-      const r = spawnSync('rsync', ['-rlpt', '--delete', `--exclude-from=${writeExcludes(rulesDir, phase, keep)}`, `${home}/`, `${server}/`], { encoding: 'utf8' })
-      assert.equal(r.status, 0, r.stderr)
-      return (f) => existsSync(join(server, f))
-    }
-    t('a copy without the data: the code, the elements and their settings travel; accounts, stores, memory and the diary stay here', () => {
-      const has = copy(ms.newRoadExcludes({ variant: 'clone', data: false }))
-      for (const f of code) assert.ok(has(f), `missing ${f}`)
-      for (const f of [...personal, ...never]) assert.ok(!has(f), `travelled ${f}`)
-    })
-    t('a copy with the data: the person\'s data travels too; bots, wallets, the node\'s identity and the workshop never do', () => {
-      const has = copy(ms.newRoadExcludes({ variant: 'clone', data: true }))
-      for (const f of [...code, ...personal]) assert.ok(has(f), `missing ${f}`)
-      for (const f of never) assert.ok(!has(f), `travelled ${f}`)
-    })
-    t('negative: the move\'s own copy keeps carrying everything but the tokens (the new road\'s rules never leak into it)', () => {
-      const has = copy(ms.serverKeeps({ road: 'move', telegram: { choice: 'move' } }))
-      for (const f of [...code, ...personal, 'data/node-code.json', 'data/services/abc12/wallet/wallet.json']) assert.ok(has(f), `missing ${f}`)
-      assert.ok(!has('data/services/build/channel/telegram/.env'))
-    })
-  }
 }
 
 console.log('737-19 the domain ladder: detection, record names, DNS only')

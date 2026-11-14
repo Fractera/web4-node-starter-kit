@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { CoreTerminal, type CoreTerminalWords } from "@/components/deploy/core-terminal.client"
 import { LiveLog } from "@/app/[lang]/(architectLayer)/_components/live-log.client"
 import type { AgentTerminalWords } from "../words/agent-terminal.i18n"
+import { silenceVerdict } from "@/lib/deploy/core-silence.mjs"
 
 // ИДЁТ СБОРКА ЯДРА — ВМЕСТО КНОПКИ «ЗАПУСТИТЬ АГЕНТА» (675-2). Владелец 2026-11-07: «вместо кнопки запустить агента, была бы индикация
 // того что идёт сборка проекта … перенести сюда на вкладку терминали … чтобы не было иллюзия повторно нажать запуска агента»; «если нет
@@ -16,6 +17,8 @@ import type { AgentTerminalWords } from "../words/agent-terminal.i18n"
 // строки — от чтеца, а конец — «ядро снова отвечает», без вердикта.
 // 🔒 СПРАШИВАЕТ, ТОЛЬКО ПОКА АГЕНТ НЕ РАБОТАЕТ (`active`): работающему терминалу показывать нечего. После сборки — свои кнопки; главный
 // агент, которого сборка остановила, возвращается сам (675-1) — тогда страница перезагружается и подключается к нему.
+// 🔒 738-8: МОЛЧАНИЕ ЯДРА — НЕ СБОРКА САМО ПО СЕБЕ. Голая сборка без единого ответа чтеца дольше трёх минут называется «ядро не отвечает»
+// (`lib/deploy/core-silence.mjs`): ✗ 2026-11-13 переезд 737 остановил ядро, и терминал десять часов говорил «идёт сборка».
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 const READER = "http://127.0.0.1:25680/status" // READER_PORT в lib/deploy/build-reader.cjs
@@ -57,6 +60,8 @@ export function CoreBuildWatch({ active, words, build: terminalWords, sessionUrl
   const [end, setEnd] = useState<End>(null)
   const [woke, setWoke] = useState(false)
   const [lines, setLines] = useState<string[]>([])
+  const [readerSeen, setReaderSeen] = useState(false)
+  const [silent, setSilent] = useState(false)
 
   useEffect(() => {
     if (!active || !terminalWords || build) return
@@ -74,9 +79,10 @@ export function CoreBuildWatch({ active, words, build: terminalWords, sessionUrl
     const t = setInterval(async () => {
       const r = await json<{ lines?: string[] }>(READER, 2500)
       if (stop) return
-      if (r) { if (r.lines?.length) setLines(r.lines); return }
+      if (r) { setReaderSeen(true); setSilent(false); if (r.lines?.length) setLines(r.lines); return }
       const u = await json<{ update: Rec | null }>(`${BASE}/api/node/update?tail=1`)
-      if (!u || stop) return
+      if (stop) return
+      if (!u) { setSilent(silenceVerdict({ since: build.since, readerSeen }) === "silent"); return }
       // Ядро ответило: итог — у записи, которая шла, когда ядро замолчало (кнопка «Развернуть ядро», обновление); нет такой — «ядро снова отвечает».
       const d = await json<{ core?: { deploy: Rec | null } }>(`${BASE}/api/node/deploy?progress=1&core=1`)
       // ✗ Снято наблюдателем 2026-11-07: ядро отвечает раньше, чем сборка пишет итог (сначала возвращаются агенты) — запись ещё «running»,
@@ -87,7 +93,7 @@ export function CoreBuildWatch({ active, words, build: terminalWords, sessionUrl
       setEnd(rec?.state === "done" ? "done" : rec ? "failed" : "back")
     }, 1500)
     return () => { stop = true; clearInterval(t) }
-  }, [build, end])
+  }, [build, end, readerSeen])
 
   // После удачной сборки: главный агент, которого сборка остановила, возвращается сам (675-1) — подключиться к нему.
   useEffect(() => {
@@ -109,12 +115,12 @@ export function CoreBuildWatch({ active, words, build: terminalWords, sessionUrl
     window.location.assign(url.toString())
   }
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border bg-muted/40 p-5" data-block="core-build-watch" data-core-build={end ?? "running"}>
+    <div className="flex flex-col gap-3 rounded-lg border border-border bg-muted/40 p-5" data-block="core-build-watch" data-core-build={end ?? (silent ? "silent" : "running")}>
       <div className="flex items-center gap-2 font-medium text-sm">
         <Hammer className="size-4" aria-hidden />
-        {end ? words.buildEnded : words.buildRunning}
+        {end ? words.buildEnded : silent ? words.coreSilent : words.buildRunning}
       </div>
-      {!end && <p className="text-muted-foreground text-sm">{words.buildNoStart}</p>}
+      {!end && <p className="text-muted-foreground text-sm">{silent ? words.coreSilentText : words.buildNoStart}</p>}
       {build.mode === "bare"
         ? <LiveLog title={end === "done" ? terminalWords.done : end === "failed" ? terminalWords.failed : end ? words.buildBack : lines.length ? terminalWords.building : words.buildSilent} lines={lines.length ? lines : ["…"]} done={Boolean(end)} failed={end === "failed"} />
         : <CoreTerminal words={terminalWords} mode={build.mode} since={build.since} noReload onEnd={setEnd} />}

@@ -1,6 +1,7 @@
 import type { PageItem } from '@/lib/content/sections/types'
 import links from '@/lib/helpful-links.json'
 import { hostingNotes } from './hosting-notes.i18n'
+import { serverReasons } from './server-reasons.i18n'
 
 // СОДЕРЖИМОЕ СТРАНИЦЫ «Domain and hosting».
 //
@@ -15,13 +16,16 @@ import { hostingNotes } from './hosting-notes.i18n'
 //
 // 🛑 СЛОВА ОТСЮДА НЕ ПИШУТСЯ: любая строка, которую увидит человек, приходит
 // параметром из `_data` — иначе она не переводится и её не видит сторож словарей.
-// 737 (the owner, 2026-11-13): a preface and two cards closed by default — the own domain and the dedicated server.
+// 737 (the owner, 2026-11-13): a preface and two cards closed by default — the own domain and the dedicated server. 738 (2026-11-14):
+// «Четыре причины для сервера … перенеси на вкладку доменных хостин … после раздела какой адрес и какая машина» — their four cards follow.
 export function content(lang: string): PageItem[] {
   const n = hostingNotes(lang)
+  const r = serverReasons(lang)
   const card = (summary: string, text: string[]): PageItem => ({ kind: 'accordionItem', summary, children: text.filter(Boolean).map((t): PageItem => ({ kind: 'p', text: t })) })
   return [
     ...n.preface.map((text): PageItem => ({ kind: 'p', text })),
     { kind: 'accordion', title: n.title, cards: true, children: [card(n.domain.summary, n.domain.text), card(n.server.summary, [...n.server.text, serverLink(n.server.link, lang)])] },
+    { kind: 'accordion', title: r.title, cards: true, children: [r.whole, r.shared, r.friends, r.home].map((c) => card(c.summary, c.text)) },
   ]
 }
 

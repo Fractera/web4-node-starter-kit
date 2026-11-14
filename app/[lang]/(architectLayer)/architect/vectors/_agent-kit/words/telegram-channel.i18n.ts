@@ -63,6 +63,7 @@ export type TelegramChannelWords = {
 
   locked: string
   errors: Record<string, string>
+  retry: string
 }
 
 const DICT: Record<string, TelegramChannelWords> = {
@@ -139,7 +140,10 @@ const DICT: Record<string, TelegramChannelWords> = {
       "no-activation": "The link has expired. Get a new one.",
       "no-token": "Save the token first.",
       network: "The node did not answer.",
+      "server-silent": "The server's node did not answer. It may still be starting: try again in a minute.",
+      "server-unreachable": "The server cannot be reached over SSH. Check that it is on.",
     },
+    retry: "Try again",
   },
   ru: {
     loading: "Спрашиваю узел…",
@@ -214,7 +218,10 @@ const DICT: Record<string, TelegramChannelWords> = {
       "no-activation": "Ссылка истекла. Получите новую.",
       "no-token": "Сначала сохраните токен.",
       network: "Узел не ответил.",
+      "server-silent": "Узел на сервере не ответил. Возможно, он ещё запускается: попробуйте через минуту.",
+      "server-unreachable": "Сервер недоступен по SSH. Проверьте, что он включён.",
     },
+    retry: "Повторить",
   },
 }
 

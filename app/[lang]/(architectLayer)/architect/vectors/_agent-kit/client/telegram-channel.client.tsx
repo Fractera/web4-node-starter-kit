@@ -59,7 +59,7 @@ function Locked({ text }: { text: string }) {
 export type TelegramRemote = { door: string; origin: string; doneText: string }
 export function TelegramChannel({ service, lang, words, slot, remote }: { service: string; lang: string; words: TelegramChannelWords; slot?: string; remote?: TelegramRemote }) {
   const door = remote ? remote.door : `${BASE}/${lang}/architect/${service}/agent-api/channel${slot ? `?slot=${slot}` : ""}`
-  const [state, setState] = useState<State | null | "forbidden">(null)
+  const [state, setState] = useState<State | null | "forbidden" | "silent">(null)
   const [token, setToken] = useState("")
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -71,11 +71,20 @@ export function TelegramChannel({ service, lang, words, slot, remote }: { servic
     try {
       const res = await fetch(door, { cache: "no-store" })
       if (res.status === 401 || res.status === 403) return setState("forbidden")
-      setState((await res.json()) as State)
+      // ✗ 737, the owner's run 2026-11-13: a remote door answered `{ ok: false, error: "server-silent" }` and this island took it for a
+      // state — `state.suggestion.name` threw and the whole tab fell to the error page. A refusal is said aloud, never drawn as a state.
+      const data = (await res.json().catch(() => null)) as (Partial<State> & { ok?: boolean; error?: string }) | null
+      if (!data || data.ok === false || !data.suggestion) {
+        setState((prev) => (prev && typeof prev === "object" ? prev : "silent"))
+        return setError(words.errors[data?.error ?? ""] ?? words.errors.network)
+      }
+      setError(null)
+      setState(data as State)
     } catch {
+      setState((prev) => (prev && typeof prev === "object" ? prev : "silent"))
       setError(words.errors.network)
     }
-  }, [door, words.errors.network])
+  }, [door, words.errors])
 
   useEffect(() => {
     load()
@@ -104,8 +113,8 @@ export function TelegramChannel({ service, lang, words, slot, remote }: { servic
     [door, slot, words.errors],
   )
 
-  const configured = state !== null && state !== "forbidden" && state.configured && !!state.botUsername
-  const activated = state !== null && state !== "forbidden" && state.allowed > 0
+  const configured = state !== null && state !== "forbidden" && state !== "silent" && state.configured && !!state.botUsername
+  const activated = state !== null && state !== "forbidden" && state !== "silent" && state.allowed > 0
 
   // ── АКТИВАЦИЯ: ссылка берётся сама, как только ступень открылась (как в памяти) ──
   useEffect(() => {
@@ -170,6 +179,17 @@ export function TelegramChannel({ service, lang, words, slot, remote }: { servic
 
   if (state === "forbidden") return <ForbiddenWithExit reason={words.forbidden} why={words.exitWhy} open={words.exitOpen} />
   if (state === null) return <p className="my-6 text-muted-foreground text-sm">{words.loading}</p>
+  if (state === "silent")
+    return (
+      <div className="my-6 flex flex-col gap-2" data-telegram-channel data-silent>
+        <p className="rounded-lg border border-destructive/40 px-4 py-3 text-destructive text-sm" role="status" data-tg-error>
+          {error ?? words.errors.network}
+        </p>
+        <Button className="w-fit" onClick={() => { setState(null); void load() }} size="sm" variant="outline">
+          {words.retry}
+        </Button>
+      </div>
+    )
 
   const terminalHref = `/${lang}${state.links?.terminal ?? `/architect/${service}/terminal`}`
 

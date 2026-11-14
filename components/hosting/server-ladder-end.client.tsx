@@ -1,20 +1,16 @@
 "use client"
-// @local — the last steps of the server's domain ladder (one route: the tab «Выделенный сервер»): the check and certificates before the move, certificates · HTTPS · switch on after it
+// @local — the last steps of a server node's own domain ladder (one route: the tab of the server itself): certificates · HTTPS · switch on
 
 import { LadderLocked, LadderStep } from "@/components/hosting/ladder-step"
-import type { LadderView } from "@/components/hosting/server-ladder.client"
-import type { ServerLadderWords } from "@/components/hosting/server-ladder.i18n"
 import { CertsStep, type CertRow, type CertsRun } from "@/components/hosting/server-domain-certs.client"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Small } from "@/components/ui/typography"
 
-// 737-19. Before the move the server takes certificates through the runner over SSH (`move.mjs domain` → name-up → certs), and the move
-// waits for every name that already points there (737-15c). After the move the server's own three steps stay as they were (737-8):
-// certificates, HTTPS from the internet, switching the domain on — taken over from the former five-step island unchanged.
+// 737-8, 737-19: on the server itself, its own three steps — certificates, HTTPS from the internet, switching the domain on. The launch page
+// of the person's computer runs the same three through the server's door over SSH (`server-launch-end.client.tsx`, 738).
 
-const fill = (t: string, map: Record<string, string>) => Object.entries(map).reduce((s, [k, v]) => s.split(`{${k}}`).join(v), t)
 type Row = CertRow & { zone: string; label: string; kind: string; https: boolean | null; status: number | null }
 export type ServerEnd = {
   rows: Row[]
@@ -22,31 +18,6 @@ export type ServerEnd = {
   certsRun: CertsRun
   helper: boolean
   checkAt: string | null
-}
-
-export function ReadyStep({ view, words, busy, onCheck, onIssue }: { view: LadderView; words: ServerLadderWords; busy: boolean; onCheck: () => unknown; onIssue: () => unknown }) {
-  const w = words.ready
-  const all = (view.records[0]?.records ?? []).filter((r) => !r.optional)
-  const pointing = all.filter((r) => view.dns[r.host] === "ok").map((r) => r.host)
-  const names = view.names?.zone === view.zone ? view.names : null
-  const certified = pointing.filter((h) => names?.certified?.includes(h))
-  const waiting = pointing.filter((h) => !certified.includes(h))
-  const checked = Object.keys(view.dns).length > 0
-  return (
-    <div className="flex flex-col gap-2" data-block="server-ladder-ready">
-      {checked ? (
-        <>
-          <Small className="text-foreground">{fill(w.summary, { p: String(pointing.length), n: String(all.length) })}</Small>
-          {pointing.length ? <Small className="text-foreground">{fill(w.certs, { c: String(certified.length), p: String(pointing.length) })}</Small> : null}
-          {waiting.length ? <Small className="text-muted-foreground">{fill(w.waiting, { names: waiting.join(", ") })}</Small> : null}
-        </>
-      ) : <Small className="text-muted-foreground">{w.unchecked}</Small>}
-      <div className="flex flex-wrap gap-2">
-        <Button disabled={busy} onClick={() => void onCheck()} size="sm" variant="outline">{words.records.check}</Button>
-        <Button disabled={busy || pointing.length === 0} onClick={() => void onIssue()} size="sm" variant="outline">{w.issue}</Button>
-      </div>
-    </div>
-  )
 }
 
 export function ServerEndSteps({ end, words, busy, readOnly, first, zone, onAct }: {

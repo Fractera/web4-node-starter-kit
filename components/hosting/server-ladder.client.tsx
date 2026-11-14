@@ -1,12 +1,12 @@
 "use client"
-// @local — the domain ladder of the tab «Выделенный сервер» (one route): on this computer under rung 1 before the move, on the server after it
+// @local — the domain ladder of a server node's own panel (one route: the tab of the server itself); the launch page reuses its steps
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import type { DomainLadderWords } from "@/components/domain/domain-ladder.i18n"
 import type { DnsZone } from "@/components/hosting/dns-records"
 import { LadderLocked, LadderStep } from "@/components/hosting/ladder-step"
-import { ServerEndSteps, ReadyStep, type ServerEnd } from "@/components/hosting/server-ladder-end.client"
+import { ServerEndSteps, type ServerEnd } from "@/components/hosting/server-ladder-end.client"
 import { RecordsStep } from "@/components/hosting/server-ladder-records.client"
 import { DomainStep, WhereStep, WhoStep } from "@/components/hosting/server-ladder-steps.client"
 import type { LadderWay, ServerLadderWords } from "@/components/hosting/server-ladder.i18n"
@@ -17,8 +17,8 @@ import { H2, Small } from "@/components/ui/typography"
 // подтвердить, изменить · Запрос к домену проверка … кто его возвращает регистратор или Cloud Flyer · выбор у меня есть доступ к
 // регистратору или … нету … · путь … для получения какого-то токена … · И только если ты строишь подключение к регистратору то тогда
 // делаешь то что мы согласовали выше» (two accordions: the quick way and the alternative, with short comments and examples).
-// 🔒 TWO DOORS, ONE SHAPE: before the move `/api/node/server/records` (this computer reaches the server over SSH), after it
-// `/api/node/server/domain` (the server itself). Each answer is turned into one view here; the steps never know which door spoke.
+// 🔒 ONE SHAPE FOR EVERY DOOR: here the server's own `/api/node/server/domain`; the launch page of the person's computer builds the same
+// view from the server's state read over SSH (`server-launch-domain.client.tsx`, 738). The steps never know which door spoke.
 // 🔒 THE LADDER LAW: a step opens when the one before it is done; the state is the node's, measured there, never this island's.
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
@@ -35,15 +35,6 @@ export type LadderView = {
 }
 type Raw = Record<string, unknown>
 
-function fromMove(a: Raw): LadderView {
-  const check = a.check as { at: string; results: Array<{ host: string; state: string }> } | null
-  return {
-    zone: (a.zone as string) ?? null, ip: (a.ip as string) ?? null, readOnly: false, own: Boolean(a.own), canType: Boolean(a.mayType),
-    detect: (a.detect as Detect) ?? null, way: (a.way as LadderWay) ?? null, key: Boolean(a.key), records: (a.records as DnsZone[]) ?? [],
-    dns: Object.fromEntries((check?.results ?? []).map((r) => [r.host, r.state])), dnsAt: check?.at ?? null,
-    run: (a.run as Run) ?? null, names: (a.names as Names) ?? null, server: null,
-  }
-}
 function fromServer(a: Raw): LadderView | null {
   if (a.phase !== "live" || !a.steps) return null
   const rows = (a.rows as ServerEnd["rows"]) ?? []
@@ -56,10 +47,10 @@ function fromServer(a: Raw): LadderView | null {
   }
 }
 
-export function ServerLadder({ mode, words, domainWords, keyWords, dialogUi, fallback }: {
-  mode: "move" | "server"; words: ServerLadderWords; domainWords: ServerDomainWords; keyWords: DomainLadderWords; dialogUi: AppDialogUi; fallback?: string
+export function ServerLadder({ words, domainWords, keyWords, dialogUi, fallback }: {
+  words: ServerLadderWords; domainWords: ServerDomainWords; keyWords: DomainLadderWords; dialogUi: AppDialogUi; fallback?: string
 }) {
-  const door = mode === "move" ? `${BASE}/api/node/server/records` : `${BASE}/api/node/server/domain`
+  const door = `${BASE}/api/node/server/domain`
   const [view, setView] = useState<LadderView | null>(null)
   const [answered, setAnswered] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -67,7 +58,7 @@ export function ServerLadder({ mode, words, domainWords, keyWords, dialogUi, fal
   const [prefill, setPrefill] = useState<string | null>(null)
   const detected = useRef<string | null>(null)
 
-  const read = useCallback((a: Raw) => setView(mode === "move" ? fromMove(a) : fromServer(a)), [mode])
+  const read = useCallback((a: Raw) => setView(fromServer(a)), [])
   const load = useCallback(async (query = "") => {
     try {
       const r = await fetch(`${door}${query}`, { cache: "no-store" })
@@ -95,12 +86,11 @@ export function ServerLadder({ mode, words, domainWords, keyWords, dialogUi, fal
   }
 
   const acts = {
-    domain: (name: string) => (mode === "move" ? post({ domain: name }) : post({ action: "domain", name })),
-    detect: async () => { setBusy(true); try { if (mode === "move") await load("?detect=1"); else await post({ action: "detect" }) } finally { setBusy(false) } },
-    way: (way: LadderWay) => (mode === "move" ? post({ way }) : post({ action: "way", way })),
-    check: async () => { setBusy(true); try { if (mode === "move") await load("?check=1"); else await post({ action: "dns-check" }) } finally { setBusy(false) } },
-    issue: () => (mode === "move" ? post({ domain: view?.zone ?? "" }) : post({ action: "certs" })),
-    cloudflare: () => (mode === "move" ? post({ confirm: view?.zone ?? "" }) : post({ action: "cloudflare-write" })),
+    domain: (name: string) => post({ action: "domain", name }),
+    detect: async () => { setBusy(true); try { await post({ action: "detect" }) } finally { setBusy(false) } },
+    way: (way: LadderWay) => post({ action: "way", way }),
+    check: async () => { setBusy(true); try { await post({ action: "dns-check" }) } finally { setBusy(false) } },
+    cloudflare: () => post({ action: "cloudflare-write" }),
     server: async (action: string, extra: Raw = {}) => { await post({ action, ...extra }) },
   }
 
@@ -120,29 +110,25 @@ export function ServerLadder({ mode, words, domainWords, keyWords, dialogUi, fal
   }, [working, load])
 
   if (!view) return answered && fallback ? <p className="my-6 text-muted-foreground text-sm" data-block="server-ladder-none">{fallback}</p> : null
-  if (!view.ip && mode === "move") return null
 
   const required = (view.records[0]?.records ?? []).filter((r) => !r.optional).map((r) => r.host)
   const pointing = required.length > 0 && required.every((h) => view.dns[h] === "ok")
-  const certified = Boolean(view.names?.zone === view.zone && required.every((h) => view.names?.certified?.includes(h)))
   const done = {
     domain: Boolean(view.zone),
     where: Boolean(view.detect && view.detect.dnsHost !== "none"),
     who: Boolean(view.way && view.way !== "none"),
     records: pointing,
-    ready: pointing && certified,
   }
-  const order = (mode === "move" ? ["domain", "where", "who", "records", "ready"] : ["domain", "where", "who", "records"]) as Array<keyof typeof done>
+  const order = ["domain", "where", "who", "records"] as Array<keyof typeof done>
   const body = {
     domain: <DomainStep busy={busy} onSave={(n) => { setPrefill(null); return acts.domain(n) }} prefill={prefill} view={view} words={words} />,
     where: <WhereStep busy={busy} onAgain={acts.detect} onSub={(name) => setPrefill(name)} view={view} words={words} />,
     who: <WhoStep busy={busy} onChoose={acts.way} view={view} words={words} />,
     records: <RecordsStep busy={busy} dialogUi={dialogUi} keyWords={keyWords} onCheck={acts.check} onKeySaved={() => load()} onWrite={acts.cloudflare} view={view} words={words} />,
-    ready: <ReadyStep busy={busy} onCheck={acts.check} onIssue={acts.issue} view={view} words={words} />,
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border p-4" data-block="server-ladder" data-mode={mode}>
+    <div className="flex flex-col gap-3 rounded-lg border border-border p-4" data-block="server-ladder">
       <H2 variant="ui">{words.title}</H2>
       <Small className="text-foreground">{words.lead.replace("{ip}", view.ip ?? "")}</Small>
       {error ? <Small className="text-destructive" data-block="server-ladder-error">{error}</Small> : null}
@@ -151,7 +137,7 @@ export function ServerLadder({ mode, words, domainWords, keyWords, dialogUi, fal
         if (!open) return <LadderLocked key={id} n={i + 1} text={words.locked} title={words.step[id]} />
         return <LadderStep done={done[id]} id={`domain-${id}`} key={id} n={i + 1} title={words.step[id]}>{body[id]}</LadderStep>
       })}
-      {mode === "server" && view.server && done.who ? (
+      {view.server && done.who ? (
         <ServerEndSteps busy={busy} end={view.server} first={order.length + 1} onAct={acts.server} readOnly={view.readOnly} words={domainWords} zone={view.zone} />
       ) : null}
     </div>

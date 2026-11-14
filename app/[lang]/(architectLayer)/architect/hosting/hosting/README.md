@@ -69,22 +69,25 @@ would be a lie the day the tunnel rotates. The address arrives with a real domai
 (see `/architect/hosting/domain`).
 
 
-## What this tab runs (step 737)
+## What this page runs (steps 737, 738)
 
-| Where the tab is opened | What it shows | Its door |
+The owner, 2026-11-14: «Никакого переезда нет есть просто запуск сервера … в данном локальном компьютере меняться ничего не должно».
+
+| Where the page is opened | What it shows | Its door |
 |---|---|---|
-| the person's computer | the road first (737-11b): the move ladder connect · probe · prepare · copy · claude · rehearse · telegram · move, or a new independent server connect · probe · prepare · copy (this node with or without its data, or a fresh node from the fork) · claude · start · telegram | `/api/node/server` (the architect, never a public address); the server's own bot — `/api/node/server/telegram` (to the server's channel door over SSH); the domain from «Подключение» on (737-15) — `/api/node/server/records`: the node's own domain switched early, or a new one typed for the server (kept in `move.json`, sent to the server by the runner's `domain` once the copy is done: its mark, nginx, DNS, certificates) |
-| the server, as the owner (`npm run server -- window`) | the domain's five steps: domain · records · certificates · HTTPS · switch on | `/api/node/server/domain` |
-| the server's bare IP | the same five steps, read-only — the records to write at the registrar | `/api/node/server/domain` (GET only) |
+| the person's computer | the preconditions (8 GB, 4 cores, the partner link, Ubuntu), then «Запустить сервер» — empty on every visit: the IP, the SSH port and the root password → seven steps: the server · its check (with the installed Fractera version and «behind N») · the domain (detect, who writes the records, the records, a first check) · installation · the records again · certificates with the checklist · ready (switch-on, sign-in checked) | `/api/node/launch` (the architect, never a public address): stateless — every call names the server, the answer is the server's own state over SSH (`scripts/dedicated-server/launch.mjs` → `state.sh` there) |
+| a server node, as the owner | that server's own domain steps: domain · records · certificates · HTTPS · switch on | `/api/node/server/domain` |
+| a server's bare IP, a temporary address | the same steps read-only — the records to write at the registrar | `/api/node/server/domain` (GET only) |
 
-The islands live in `components/hosting/` (`server-move.client.tsx`, the domain ladder `server-ladder.client.tsx` with its steps — one ladder before and after the move, 737-19 — the parts `ladder-step`, `stage-log`,
-`dns-records`); the words in their `.i18n.ts` files, chosen on the server (`widgets.tsx`). The runners: `scripts/dedicated-server/move.mjs`
-and `certs.mjs`, both detached. How the main agent leads it: skill `dedicated-server`.
+The islands live in `components/hosting/` (`server-place.client.tsx` picks the launch or the server's own ladder; `server-launch*.client.tsx`
+the launch; `server-ladder*.client.tsx` the 737-19 domain steps it reuses; the parts `ladder-step`, `stage-log`, `dns-records`); the words
+in their `.i18n.ts` files, chosen on the server (`widgets.tsx`). On the server: `launch.sh` (detached, as root), `probe.sh`, `state.sh`,
+`certs.mjs`. How the main agent leads it: skill `dedicated-server`.
 
 **Build cost and caching.** The page is prerendered like every page of the layer; nothing about the machine is printed into the build.
-The move ladder asks its door every 15 s while the tab is open (every 3 s while a rung works); the domain's steps ask once on opening,
-after each act, and every 4 s only while certificates are being issued; the move's domain field every 5 s only while the server takes a
-typed domain. A closed tab costs nothing.
+The launch asks nothing until the person presses «Проверить сервер»; then once per act, and every 5 s only while the server installs or
+issues certificates. The server's own ladder asks once on opening, after each act, and every 4 s while certificates are issued. A closed
+page costs nothing.
 
 ## Renaming or moving
 
@@ -95,6 +98,9 @@ the menu is `meta.order`, never the alphabet of folder names.
 Mechanism: `../../../lib/collection/README.md`. Layer skeleton and recovery:
 `../../README.md`.
 
-## The words above the ladders (2026-11-13)
+## The words above the launch (2026-11-14)
 
-The group page «Домен и хостинг» opens with a preface and two cards closed by default (`hosting/_components/hosting-notes.i18n.ts`): the own domain and the dedicated server. «Выделенный сервер» opens with a short preface, the owner's partner link to a server and four cards closed by default, one per reason for a server and the road of the ladder each takes (`hosting/_components/move-cases.i18n.ts`). The link lives in `lib/helpful-links.json` with its disclosure; a price of an outside service is quoted only from its own page, with the date.
+«Активация выделенного сервера» opens with its preconditions (`_components/launch-notes.i18n.ts` of this folder): a server of 8 GB and 4 cores with
+the owner's partner link, Ubuntu, the IP and root password. «Четыре причины для сервера» moved to the group page «Домен и хостинг», right
+after «Какой адрес и какая машина» (`../_components/server-reasons.i18n.ts`). The link lives in `lib/helpful-links.json` with its
+disclosure; a price of an outside service is quoted only from its own page, with the date.
