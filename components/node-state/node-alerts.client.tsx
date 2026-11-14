@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
+import { askNodePlace } from "@/components/node-state/use-node-place.client"
 
 // ТРЕВОГИ ПУНКТОВ ЛЕВОГО МЕНЮ (632-2). Владелец 2026-11-03: «до тех пор пока не подключён собственный домен на вкладке основное в левом
 // меню вкладку доме на хостинг подсвечивает красным шрифтом». Пункт несёт `data-alert` из `meta.alert` своей страницы; этот островок
@@ -20,6 +21,12 @@ export function NodeAlerts() {
         else document.documentElement.dataset.noOwnDomain = ""
       })
       .catch(() => { /* узел не ответил — тревоги нет: ложная красная хуже отсутствующей */ })
+    // 742-3: where the node lives — a page of one place only hides its menu item in the other (`styles/globals.css`, `meta.place`)
+    void askNodePlace().then((p) => {
+      if (!alive || p === null) return
+      if (p.kind === "server") document.documentElement.dataset.nodePlace = "server"
+      else delete document.documentElement.dataset.nodePlace
+    })
     // 677: репозиторий узла — та же дверь и тот же вердикт, что у страницы GitHub «Строительства» (`own` и `foreign-host` — спокойно).
     // 705 (владелец 2026-11-09: «эта вкладка должна светиться красным если не подключён Token»): спокойно только вместе — свой
     // репозиторий И токен GitHub узла (`token.configured` той же двери). ✗ До 705 узел из своего форка без токена горел спокойно, хотя

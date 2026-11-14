@@ -15,7 +15,7 @@ export type ElementSettingsUi = {
     /** 443-5 */ noFree: string; addHint: string; addSteps: string[]
     kinds: Record<"ready" | "waiting" | "taken" | "current", string>; errors: Record<string, string>
   }
-  addressCard: { current: string; label: string; free: string; "bad-shape": string; taken: string; suggest: string; renaming: string; failed: string; note: string; restart: string; repoNote: string; repoRenamed: string; repoFailed: string }
+  addressCard: { current: string; label: string; free: string; "bad-shape": string; taken: string; suggest: string; renaming: string; failed: string; note: string; restart: string; repoNote: string; repoRenamed: string; repoFailed: string; internet: string; cert: string; noCert: string; own: string }
   describeCard: { empty: string; take: string; taking: string; taken: string; takenAt: string; how: string; errors: Record<string, string> }
   address: Card
   mirror: Card
@@ -86,6 +86,10 @@ const DICT: Record<string, ElementSettingsUi> = {
       },
     },
     addressCard: {
+      internet: "On the internet:",
+      cert: "certificate {source} · {n} d. left",
+      noCert: "no certificate yet",
+      own: "your own",
       current: "Address in the core:",
       label: "New address",
       free: "The name is free.",
@@ -272,6 +276,10 @@ const DICT: Record<string, ElementSettingsUi> = {
       },
     },
     addressCard: {
+      internet: "В интернете:",
+      cert: "сертификат {source} · осталось {n} дн.",
+      noCert: "сертификата ещё нет",
+      own: "ваш собственный",
       current: "Адрес в ядре:",
       label: "Новый адрес",
       free: "Имя свободно.",

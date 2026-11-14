@@ -1121,6 +1121,10 @@ html[data-app-width="narrow"] { --app-w: 64rem; }
 /* 632-2: тревога пункта левого меню — `data-alert` ставит оболочка из `meta.alert` страницы, признак на `<html>` — островок `NodeAlerts`,
    спросив узел в браузере. Пока своего домена нет, «Домен и хостинг», «Активация домена» и зона «Основное» — цветом тревоги. */
 html[data-no-own-domain] [data-alert~="no-domain"] { color: var(--color-destructive); }
+/* 742-3: a page of one place only — the other place hides its menu item (the place comes from `NodeAlerts`; until it answers a
+   server-only item stays hidden and a home-only one shows, the common case) */
+html[data-node-place="server"] [data-place="home"], html:not([data-node-place="server"]) [data-place="server"] { display: none; }
+html[data-node-place="server"] li:has(> [data-place="home"]), html:not([data-node-place="server"]) li:has(> [data-place="server"]) { display: none; }
 /* 677: ярлык «GitHub» — узел не работает со своим репозиторием; 705 — или у узла нет токена GitHub (ярлык, пункт «Строительства» и
    подпись зоны). */
 html[data-no-github] [data-alert~="no-github"] { color: var(--color-destructive); }

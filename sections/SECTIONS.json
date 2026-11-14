@@ -1068,7 +1068,7 @@
       "kind": "domainLadder",
       "type": "workspace",
       "shape": "steps",
-      "fields": "lang: string; words: import('@/components/domain/domain-ladder.i18n').DomainLadderWords",
+      "fields": "lang: string; words: import('@/components/domain/domain-ladder.i18n').DomainLadderWords; /** 742-2: sections that belong to the computer's ladder and hide with it on a server */ notes?: PageItem[]",
       "title": null,
       "description": null,
       "hasCard": false,

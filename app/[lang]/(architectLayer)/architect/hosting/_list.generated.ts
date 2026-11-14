@@ -2,15 +2,17 @@
 // Rewritten on every build and every dev start (npm prebuild / predev).
 // Lists every child folder of this one that carries _data/index.ts.
 import type { WorkspacePageData, CollectionBranch } from '@/lib/collection/types'
-import { data as p0 } from './domain/_data'
-import { data as p1 } from './hosting/_data'
-import { data as p2 } from './monitoring/_data'
+import { data as p0 } from './certificates/_data'
+import { data as p1 } from './domain/_data'
+import { data as p2 } from './hosting/_data'
+import { data as p3 } from './monitoring/_data'
 
-export const PAGES: WorkspacePageData[] = [p0, p1, p2]
+export const PAGES: WorkspacePageData[] = [p0, p1, p2, p3]
 
 /** Each child together with its own children — see the law in the generator. */
 export const TREE: CollectionBranch[] = [
   { page: p0, children: [] },
   { page: p1, children: [] },
   { page: p2, children: [] },
+  { page: p3, children: [] },
 ]

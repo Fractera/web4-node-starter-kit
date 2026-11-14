@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { type ReactElement, useEffect, useRef, useState } from "react"
 import { OpenOnThisComputerButton } from "@/components/node-state/open-on-this-computer.client"
 import { isLoopbackHostname } from "@/lib/auth/owner-at-machine"
+import { askNodePlace } from "@/components/node-state/use-node-place.client"
 import { CircleHelp, Copy, ExternalLink, Globe, Highlighter, Monitor, RefreshCw, Search, SquareTerminal } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -135,6 +136,8 @@ export function ElementPreview({ serviceId, terminalService, lang, words, task, 
   // 336, слово владельца: «как только происходит разделение экрана на две части кнопки … потеряли свой текст но сохранили
   // иконки» — пока открыт ящик терминала, в шапке просмотра только значки; имя кнопки — в подсказке и для чтения голосом.
   const compact = drawerText !== null
+  // the button's name as a hint while only its icon shows (a Tooltip — never `title=`, `check:shadcn-parts`)
+  const hint = (node: ReactElement, text: string) => (compact ? <Tooltip><TooltipTrigger asChild>{node}</TooltipTrigger><TooltipContent>{text}</TooltipContent></Tooltip> : node)
   const frameRef = useRef<HTMLIFrameElement | null>(null)
   // 334: фрейм шириной окна ядра, уменьшенный до места (`use-screen-scale.client.ts`).
   const { boxRef, fit } = useScreenScale<HTMLDivElement>()
@@ -145,12 +148,24 @@ export function ElementPreview({ serviceId, terminalService, lang, words, task, 
   const [previewKey, setPreviewKey] = useState(0)
   const pendingBid = useRef<string | null>(null)
   const findTimer = useRef<number | null>(null)
+  // 742-9 (the owner, 2026-11-14, on aifa.dev: «Preview работает только в пульте, открытом на этом компьютере» on a server): a server node
+  // has no «this computer» for the person — its element answers at its public address, so the frame shows that address. 373-2 (preview
+  // only on the computer's loopback) stays the rule of a person's computer.
+  const [onServer, setOnServer] = useState(false)
 
   useEffect(() => {
     let alive = true
     fetch(`${BASE}/api/node/preview-url?id=${encodeURIComponent(serviceId)}&lang=${encodeURIComponent(lang)}`, { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((d: PreviewAnswer) => alive && setState(d))
+      .then(async (d: PreviewAnswer) => {
+        const place = await askNodePlace()
+        if (place?.kind === "server" && d.publicUrl) {
+          const u = new URL(d.url)
+          d = { ...d, url: `${d.publicUrl}${u.pathname}${u.search}${u.hash}` }
+          if (alive) setOnServer(true)
+        }
+        if (alive) setState(d)
+      })
       .catch(() => alive && setState("failed"))
     return () => {
       alive = false
@@ -219,7 +234,7 @@ export function ElementPreview({ serviceId, terminalService, lang, words, task, 
   // кнопка»). Адрес элемента — всегда петля машины (дверь `preview-url`); страница ядра не на петле (свой домен, временный адрес)
   // её не загрузит НИКОГДА (Private Network Access: «The connection is blocked because it was initiated by a public page…», замерено
   // 2026-10-01). Вместо пустой рамки — причина и та же страница пульта на этом компьютере.
-  if (!isLoopbackHostname(window.location.hostname)) {
+  if (!isLoopbackHostname(window.location.hostname) && !onServer) {
     return (
       <div className="flex flex-col gap-2 rounded-lg border border-warning/50 bg-warning/10 p-3 text-sm" role="status" data-preview-blocked>
         <p className="text-foreground">{words.blockedHttps}</p>
@@ -361,12 +376,15 @@ export function ElementPreview({ serviceId, terminalService, lang, words, task, 
               должен на ту самую вкладку». Разработка — «Развёртывания» (Предпросмотр того, что сделал агент); продакшн — работающая
               версия: адрес элемента в интернете, без своего домена — та же сборка на этом компьютере. */}
           <Popover>
-            <PopoverTrigger asChild>
-              <Button type="button" variant="outline" size="sm" className="shrink-0 gap-1.5" aria-label={words.openNew} title={compact ? words.openNew : undefined} data-preview-open>
-                <ExternalLink className="size-4" aria-hidden />
-                {!compact && words.openNew}
-              </Button>
-            </PopoverTrigger>
+            {hint(
+              <PopoverTrigger asChild>
+                <Button type="button" variant="outline" size="sm" className="shrink-0 gap-1.5" aria-label={words.openNew} data-preview-open>
+                  <ExternalLink className="size-4" aria-hidden />
+                  {!compact && words.openNew}
+                </Button>
+              </PopoverTrigger>,
+              words.openNew,
+            )}
             <PopoverContent align="start" className="flex w-72 flex-col gap-1 p-2" data-preview-open-menu>
               <a href={`${BASE}${devHref}`} className="flex gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted" data-preview-open-dev>
                 {/* 399 (владелец 2026-10-05): слева иконка — компьютер у режима разработки, глобус у продакшна. */}
@@ -385,14 +403,20 @@ export function ElementPreview({ serviceId, terminalService, lang, words, task, 
               </a>
             </PopoverContent>
           </Popover>
-          <Button type="button" variant="outline" size="sm" className="shrink-0 gap-1.5" onClick={redraw} disabled={reload === "busy"} aria-label={words.reload} title={compact ? words.reload : undefined} data-preview-reload>
-            <RefreshCw className={`size-4${reload === "busy" ? " animate-spin" : ""}`} aria-hidden />
-            {!compact && words.reload}
-          </Button>
-          <Button type="button" variant={highlight ? "default" : "outline"} size="sm" className="shrink-0 gap-1.5" onClick={toggleHighlight} aria-pressed={highlight} aria-label={words.highlight} title={compact ? words.highlight : undefined} data-preview-highlight>
-            <Highlighter className="size-4" aria-hidden />
-            {!compact && words.highlight}
-          </Button>
+          {hint(
+            <Button type="button" variant="outline" size="sm" className="shrink-0 gap-1.5" onClick={redraw} disabled={reload === "busy"} aria-label={words.reload} data-preview-reload>
+              <RefreshCw className={`size-4${reload === "busy" ? " animate-spin" : ""}`} aria-hidden />
+              {!compact && words.reload}
+            </Button>,
+            words.reload,
+          )}
+          {hint(
+            <Button type="button" variant={highlight ? "default" : "outline"} size="sm" className="shrink-0 gap-1.5" onClick={toggleHighlight} aria-pressed={highlight} aria-label={words.highlight} data-preview-highlight>
+              <Highlighter className="size-4" aria-hidden />
+              {!compact && words.highlight}
+            </Button>,
+            words.highlight,
+          )}
         </WebPreviewNavigation>
         <div ref={boxRef} className="relative min-h-0 flex-1 overflow-hidden" data-preview-scale={fit ? fit.scale.toFixed(3) : undefined}>
           <WebPreviewBody

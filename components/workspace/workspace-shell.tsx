@@ -57,6 +57,8 @@ export type WorkspaceShellItem = {
   newTab?: boolean
   /** 632-2: тревога пункта (`data-alert`) — закон у поля `alert` вида `workspace`. */
   alert?: string
+  /** 742-3: the place this item lives in (`data-place`) — the other place hides it (`styles/globals.css`). */
+  place?: 'home' | 'server'
   /** 722-2: состояние элемента — закон у поля `state` вида `workspace`. */
   state?: { kind: MenuStateKind; label: string }
 }
@@ -144,13 +146,13 @@ function Item({
     // странице, и плавность ей даёт `scroll-smooth`, а не роутер.
     if (item.href.startsWith('#')) {
       return (
-        <a href={item.href} aria-current={item.active ? 'page' : undefined} data-alert={item.alert} className={cls}>
+        <a href={item.href} aria-current={item.active ? 'page' : undefined} data-alert={item.alert} data-place={item.place} className={cls}>
           {body}
         </a>
       )
     }
     return (
-      <NavLink reload={item.reload} newTab={item.newTab} href={item.href} aria-current={item.active ? 'page' : undefined} data-alert={item.alert} className={cls}>
+      <NavLink reload={item.reload} newTab={item.newTab} href={item.href} aria-current={item.active ? 'page' : undefined} data-alert={item.alert} data-place={item.place} className={cls}>
         {body}
       </NavLink>
     )
@@ -211,7 +213,7 @@ export function WorkspaceShell({
       {/* 🔒 ПЕРЕКЛЮЧАТЕЛЬ СТОИТ ПЕРВЫМ СРЕДИ СОСЕДЕЙ. Правило `peer-checked:`
           читает только ПРЕДШЕСТВУЮЩЕГО соседа; поставь его после меню — класс
           написан, эффекта нет, и отказ будет молчаливым. */}
-      <input id={drawer} type="checkbox" className="peer sr-only" aria-hidden tabIndex={-1} />
+      <input id={drawer} type="checkbox" className="peer sr-only" aria-hidden tabIndex={-1} />{/* @no-js the left menu opens and folds with no JavaScript */}
 
       {/* Кнопка ящика. Существует только до `md`: на широком экране меню и так на
           виду, и кнопка к нему была бы предложением открыть открытое. */}
@@ -276,7 +278,7 @@ export function WorkspaceShell({
                 // 560-2: подзона-пункт («Память»): значок, подпись и стрелка, как у раскрывающейся группы; флажок тот же, что у зоны.
                 <label className="flex cursor-pointer items-center justify-between gap-2 rounded-md px-[9px] py-2 text-[length:var(--fs-body)] text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground [&:has(input:checked)_svg.chevron]:rotate-180" data-menu-zone={item.zoneHead.id}>
                   <span className="flex min-w-0 items-center gap-2"><MenuIcon name={item.icon} /><span className="truncate">{item.label}</span></span>
-                  <input type="checkbox" className="peer sr-only" data-zone-toggle={item.zoneHead.id} defaultChecked={item.zoneHead.open} aria-label={item.label} />
+                  <input type="checkbox" className="peer sr-only" data-zone-toggle={item.zoneHead.id} defaultChecked={item.zoneHead.open} aria-label={item.label} />{/* @no-js the left menu opens and folds with no JavaScript */}
                   <ChevronDown size={14} aria-hidden className="chevron shrink-0 transition-transform duration-200" />
                 </label>
               ) : item.zoneHead ? (
@@ -284,13 +286,13 @@ export function WorkspaceShell({
                 // вкладок»: 18 px полужирным против 16 px пунктов; кнопка «Создать…» внутри зоны — 14 px.
                 <label className="mt-2 flex cursor-pointer items-center justify-between gap-2 border-t border-border px-[9px] pt-2 text-[length:var(--fs-lead)] font-semibold text-foreground transition-colors hover:text-primary [&:has(input:checked)_svg]:rotate-180" data-menu-zone={item.zoneHead.id}>
                   <span data-alert={item.alert}>{item.label}</span>
-                  <input type="checkbox" className="peer sr-only" data-zone-toggle={item.zoneHead.id} defaultChecked={item.zoneHead.open} aria-label={item.label} />
+                  <input type="checkbox" className="peer sr-only" data-zone-toggle={item.zoneHead.id} defaultChecked={item.zoneHead.open} aria-label={item.label} />{/* @no-js the left menu opens and folds with no JavaScript */}
                   <ChevronDown size={16} aria-hidden className="shrink-0 transition-transform duration-200" />
                 </label>
               ) : item.node ? (
                 item.node
               ) : item.children && item.children.length > 0 ? (
-                <details open={item.open ?? item.active} className="group/sub">
+                <details open={item.open ?? item.active} className="group/sub">{/* @no-js the left menu opens and folds with no JavaScript */}
                   <summary
                     className={
                       'flex cursor-pointer list-none items-center justify-between gap-2 rounded-md px-[9px] py-2 text-[length:var(--fs-body)] transition-colors [&::-webkit-details-marker]:hidden hover:bg-muted/60' +
@@ -338,7 +340,7 @@ export function WorkspaceShell({
                              уровень»). Тот же серверный `<details>`, что у второго: работает без JavaScript; заголовок —
                              ссылка на страницу раздела с тем же подчёркиванием «вы здесь», стрелка — переключатель; открыт,
                              когда человек внутри раздела. */
-                          <details open={sub.open ?? sub.active} className="group/sub3">
+                          <details open={sub.open ?? sub.active} className="group/sub3">{/* @no-js the left menu opens and folds with no JavaScript */}
                             <summary className="flex cursor-pointer list-none items-center justify-between gap-2 py-1 [&::-webkit-details-marker]:hidden">
                               {sub.href ? (
                                 <NavLink
@@ -372,7 +374,7 @@ export function WorkspaceShell({
                                        человек на одной из его страниц. 528-1: у подраздела дерева элемента есть своя страница (H2H,
                                        «A2A ваша работа», «Документы») — подпись становится ссылкой с той же отметкой «вы здесь»; без
                                        адреса остаётся подписью. Его страница с детьми (Подписки → сервисы, 463) раскрывается пятым уровнем. */
-                                    <details open={leaf.open ?? leaf.active} className="group/sub4">
+                                    <details open={leaf.open ?? leaf.active} className="group/sub4">{/* @no-js the left menu opens and folds with no JavaScript */}
                                       <summary className="flex cursor-pointer list-none items-center gap-1 py-0.5 text-[length:var(--fs-small)] text-muted-foreground hover:text-foreground [&::-webkit-details-marker]:hidden">
                                         {leaf.href ? (
                                           <Item
@@ -391,7 +393,7 @@ export function WorkspaceShell({
                                         {leaf.children.map((g, q) => (
                                           <li key={`${id}-m-${i}-${j}-${k}-${q}`}>
                                             {g.children && g.children.length > 0 ? (
-                                              <details open={g.open ?? g.active} className="group/sub5">
+                                              <details open={g.open ?? g.active} className="group/sub5">{/* @no-js the left menu opens and folds with no JavaScript */}
                                                 <summary className="flex cursor-pointer list-none items-center gap-1 py-0.5 text-[length:var(--fs-small)] [&::-webkit-details-marker]:hidden">
                                                   <Item
                                                     item={g}

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { askNodePlace } from "@/components/node-state/use-node-place.client"
 import type { ElementSettingsUi } from "../_i18n/element-settings.i18n"
 
 // «АДРЕС ЭЛЕМЕНТА» (325-3). Поле нового имени, проверка свободы на лету (дверь `address`, GET) с вариантами, если занято;
@@ -33,6 +34,28 @@ export function ElementAddress({ id, lang, ui, current, internet }: {
   const value = name.trim().toLowerCase()
   const same = value === current
   const [repoDone, setRepoDone] = useState<RepoRename | null>(null)
+  // 742-5 (the owner, 2026-11-14: the tab named neither the element's public address nor its certificate): the address on the internet,
+  // and on a server node its certificate — read from the server's own door; a computer's domain runs through Cloudflare.
+  const [online, setOnline] = useState<{ url: string; cert: string | null } | null>(null)
+  useEffect(() => {
+    let alive = true
+    void (async () => {
+      const place = await askNodePlace()
+      const ask = (u: string) => fetch(`${BASE}${u}`, { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null)
+      const host = (zone: string) => (internet.includes(".") ? internet : `${internet}.${zone}`)
+      if (place?.kind === "server") {
+        const a = (await ask("/api/node/server/domain")) as { zone?: string; rows?: Array<{ host: string; cert: string; daysLeft: number | null; certSource: string | null }> } | null
+        if (!alive || !a?.zone) return
+        const row = (a.rows ?? []).find((r) => r.host === host(a.zone as string))
+        const valid = row && (row.cert === "ok" || row.cert === "expiring")
+        setOnline({ url: `https://${host(a.zone)}`, cert: row ? (valid ? w.cert.replace("{source}", row.certSource === "own" ? w.own : "Let's Encrypt").replace("{n}", String(row.daysLeft ?? "—")) : w.noCert) : null })
+      } else if (place) {
+        const d = (await ask("/api/domain/state")) as { active?: boolean; zone?: string | null } | null
+        if (alive && d?.active && d.zone) setOnline({ url: `https://${host(d.zone)}`, cert: null })
+      }
+    })()
+    return () => { alive = false }
+  }, [internet, w])
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem(repoKey(id))
@@ -79,6 +102,11 @@ export function ElementAddress({ id, lang, ui, current, internet }: {
 
   return (
     <div className="flex flex-col gap-2" data-element-address={current}>
+      {online ? (
+        <p className="text-sm text-foreground" data-element-internet>
+          {w.internet} <a className="font-mono underline" href={online.url} rel="noopener noreferrer" target="_blank">{online.url}</a>{online.cert ? ` · ${online.cert}` : ""}
+        </p>
+      ) : null}
       <p className="text-sm text-foreground">
         {w.current} <span className="font-mono">/{lang}/{current}</span>
       </p>

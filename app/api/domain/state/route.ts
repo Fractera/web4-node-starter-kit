@@ -52,6 +52,7 @@ export async function GET() {
   const quick = readJson("logs/tunnel.json") ?? {}
 
   const port = typeof runtime.port === "number" ? runtime.port : null
+  const onServer = domain.via === "server"
 
   return NextResponse.json({
     // Ступени 1-3 человек делает вне узла; проверить их можно только ключом,
@@ -67,8 +68,12 @@ export async function GET() {
     tunnel: typeof domain.tunnelName === "string" ? domain.tunnelName : null,
     hostname: typeof domain.hostname === "string" ? domain.hostname : null,
     // 443: узел уже работает на своём домене — лестница не предлагает сменить его (смена не построена).
-    active: typeof domain.zone === "string" && !!domain.zone && !!domain.activatedAt && !!domain.tunnelId,
-    nodeUrl: port ? `http://localhost:${port}` : null,
+    // 742-1: a server's domain runs through its nginx (`via: "server"`, written by the server's switch-on), never a tunnel. ✗ Measured
+    // 2026-11-14 on aifa.dev: the domain on and working, this door said `active: false` and the menu item «Домен и хостинг» burned red.
+    active: typeof domain.zone === "string" && !!domain.zone && !!domain.activatedAt && (!!domain.tunnelId || onServer),
+    server: onServer,
+    // a server's loopback is nobody's address to show — the page names its domain instead
+    nodeUrl: port && !onServer ? `http://localhost:${port}` : null,
     quickTunnel: quick.dead === true || typeof quick.url !== "string" ? null : quick.url,
     // 632-5: временный адрес умер (дозорный `scripts/tunnel.mjs` пишет `dead` и `deadSince` в `logs/tunnel.json`) — полоса тревоги
     // с кнопкой «Поднять новый адрес»; мёртвый адрес наружу не отдаётся, только факт и время.

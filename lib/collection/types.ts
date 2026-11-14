@@ -64,6 +64,11 @@ export type WorkspacePageMeta = {
    * `no-github` (677, 705) — узел не работает со своим репозиторием (привязка не `own` и не `foreign-host`, тот же вердикт, что у страницы GitHub) или у него нет токена GitHub.
    */
   alert?: 'no-domain' | 'no-github'
+  /**
+   * 742-3: the page lives only on a person's computer (`home`) or only on a server node (`server`); the other place hides its menu
+   * item. The place is asked in the browser (`NodeAlerts` → `html[data-node-place]`), never baked into the build (law 264).
+   */
+  place?: 'home' | 'server'
 }
 
 /** One theme of a page: a heading with its own anchor, its text, and its label in the top row. */

@@ -1,4 +1,6 @@
+import type { ReactNode } from 'react'
 import type { PageItem } from '@/lib/content/sections/types'
+import { domainPlaceWidget } from '@/components/hosting/widgets'
 import { domainLadderWords } from '@/components/domain/domain-ladder.i18n'
 import { homeHostingNotes } from './home-hosting-notes.i18n'
 
@@ -19,9 +21,14 @@ export function content(lang: string): PageItem[] {
     kind: 'accordionItem', summary: x.summary, children: x.text.map((text): PageItem => ({ kind: 'p', text })),
   })
   return [
-    { kind: 'domainLadder', lang, words: domainLadderWords(lang) },
     // 344-5: когда подходит сайт с домашнего компьютера и что делать при посетителях из России — свёрнуто по умолчанию
     // (слово владельца: «По умолчанию эти карточки должны быть закрыты … пусть нажимает раскрыть если ему интересно»).
-    { kind: 'accordion', title: n.title, cards: true, children: [item(n.home), item(n.russia)] },
+    // 742-2: the notes are the computer's — they ride inside its ladder and hide with it on a server.
+    { kind: 'domainLadder', lang, words: domainLadderWords(lang), notes: [{ kind: 'accordion', title: n.title, cards: true, children: [item(n.home), item(n.russia)] }] },
   ]
+}
+
+/** 742-2: on a server node the page is the server's own domain ladder (the island decides by the node's place). */
+export function widget(lang: string): ReactNode {
+  return domainPlaceWidget(lang)
 }

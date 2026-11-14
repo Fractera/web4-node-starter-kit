@@ -1,7 +1,7 @@
 import { CollectionPage } from '../../../_lib/collection-page'
 import { collectionMetadata } from '../../../_lib/collection-metadata'
 import { data } from './_data'
-import { content } from './_components'
+import { content, widget } from './_components'
 import { primaryConnected } from '@/lib/domain/node-domains'
 
 // РАЗДЕЛ «Domain activation» — `/{lang}/architect/hosting/domain`.
@@ -13,5 +13,5 @@ export const generateMetadata = collectionMetadata(data, '/architect/hosting')
 
 export default async function Page({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params
-  return <CollectionPage lang={lang} dir="/architect/hosting" page={data} content={content(lang)} hideTopics={primaryConnected()} />
+  return <CollectionPage lang={lang} dir="/architect/hosting" page={data} content={content(lang)} widget={widget(lang)} hideTopics={primaryConnected()} />
 }

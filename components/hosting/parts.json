@@ -81,6 +81,52 @@
           "таблица"
         ]
       }
+    },
+    {
+      "id": "server-certificates",
+      "kind": "composite",
+      "path": "components/hosting/server-certificates.client.tsx",
+      "export": "ServerCertificates",
+      "what": {
+        "en": "Every certificate of a server node in one table — state, days left, issuer, HTTPS — with «check and complete» and the person's own certificate.",
+        "ru": "Все сертификаты узла на сервере одной таблицей — состояние, сколько осталось, кто выдал, HTTPS — с «Проверить и дополнить» и своим сертификатом."
+      },
+      "how": "<ServerCertificates words={serverCertificatesWords(lang)} domainWords={serverDomainWords(lang)} /> — through serverCertificatesWidget(lang); on a computer it says the page is a server's.",
+      "words": {
+        "en": [
+          "certificates",
+          "ssl",
+          "renewal",
+          "let's encrypt"
+        ],
+        "ru": [
+          "сертификаты",
+          "безопасность",
+          "продление",
+          "ssl"
+        ]
+      }
+    },
+    {
+      "id": "hosting-widgets",
+      "kind": "composite",
+      "path": "components/hosting/widgets.tsx",
+      "export": "serverLaunchWidget, domainPlaceWidget, serverCertificatesWidget",
+      "what": {
+        "en": "The entries of the hosting pages into their islands: the language chosen on the server, one set of words to the browser.",
+        "ru": "Входы страниц хостинга в их островки: язык выбирается на сервере, в браузер уходит один набор слов."
+      },
+      "how": "serverCertificatesWidget(lang) in a page's _components/index.ts widget(lang).",
+      "words": {
+        "en": [
+          "hosting widget",
+          "island entry"
+        ],
+        "ru": [
+          "виджет хостинга",
+          "вход островка"
+        ]
+      }
     }
   ]
 }

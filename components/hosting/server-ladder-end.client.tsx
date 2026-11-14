@@ -7,12 +7,13 @@ import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Small } from "@/components/ui/typography"
+import { httpsDue } from "@/lib/hosting/final-check.mjs"
 
 // 737-8, 737-19: on the server itself, its own three steps — certificates, HTTPS from the internet, switching the domain on. The launch page
 // of the person's computer runs the same three through the server's door over SSH (`server-launch-end.client.tsx`, 738).
 // 744-7: they are rungs of the server's one ladder (`server-ladder.client.tsx`) — which one is open is the part's rule, not this file's.
 
-type Row = CertRow & { zone: string; label: string; kind: string; https: boolean | null; status: number | null }
+type Row = CertRow & { zone: string; label: string; kind: string; https: boolean | null; status: number | null; off?: boolean }
 export type ServerEnd = {
   rows: Row[]
   steps: { domain: boolean; dns: boolean; certs: boolean; check: boolean; active: boolean }
@@ -30,7 +31,11 @@ export function serverEndRungs({ end, words, busy, readOnly, zone, onAct }: {
   const when = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : "")
   const need = end.rows.filter((r) => !r.optional)
   const count = (t: string, ok: (r: Row) => boolean) => t.replace("{ok}", String(need.filter(ok).length)).replace("{all}", String(need.length))
-  const summary = { certs: count(words.summary.certs, (r) => r.cert === "ok" || r.cert === "expiring"), check: count(words.summary.check, (r) => r.https === true), active: null }
+  // 742-6: HTTPS is counted over the names it is due for (`httpsDue`) — sign-in before the switch-on and an element off by the registry
+  // are not «failing». ✗ Seen 2026-11-14 on aifa.dev: «HTTPS отвечает на 9 из 12 имён» with everything working.
+  const due = need.filter(httpsDue)
+  const checked = words.summary.check.replace("{ok}", String(due.filter((r) => r.https === true).length)).replace("{all}", String(due.length))
+  const summary = { certs: count(words.summary.certs, (r) => r.cert === "ok" || r.cert === "expiring"), check: checked, active: null }
   const body = {
     certs: <CertsStep busy={busy} helper={end.helper} onAct={onAct} readOnly={readOnly} rows={end.rows} run={end.certsRun} words={words} />,
     check: (

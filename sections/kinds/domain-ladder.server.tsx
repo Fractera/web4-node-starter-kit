@@ -14,6 +14,13 @@ import { domainListWords } from '@/components/domain/domain-list.i18n'
 // известен странице, и словарь остаётся на сервере целиком.
 // 324-1: ДОМЕНЫ УЗЛА СПИСКОМ — лестница стала первой карточкой аккордеона (основной домен), за ней дополнительные домены и
 // «Добавить домен». Вид секции тот же: второй вид ради одной обёртки завёл бы вторую точку входа того же знания.
-export const domainLadder: SectionRenderer<'domainLadder'> = (b, { key: k }) => (
-  <DomainList key={k} lang={b.lang} words={domainListWords(b.lang)} ladderWords={b.words} ladder={<DomainLadder lang={b.lang} words={b.words} />} />
+// 742-2: the computer's ladder (Cloudflare, a tunnel, a copy for an offline computer) and its notes live only on a person's computer —
+// `data-place="home"` hides them on a server node, whose own ladder the page's island shows instead (`styles/globals.css`, `NodeAlerts`).
+// ✗ Measured 2026-11-14 on aifa.dev: a server with its domain on showed «Ключ Cloudflare узла требует внимания» and «Адрес узла:
+// http://localhost:24680».
+export const domainLadder: SectionRenderer<'domainLadder'> = (b, { key: k, lang, ui, renderPage }) => (
+  <div key={k} data-block="domain-ladder-home" data-place="home">
+    <DomainList lang={b.lang} words={domainListWords(b.lang)} ladderWords={b.words} ladder={<DomainLadder lang={b.lang} words={b.words} />} />
+    {b.notes ? renderPage(b.notes, lang, ui, `${k}-notes`) : null}
+  </div>
 )
