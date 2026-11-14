@@ -18,7 +18,8 @@ import { createRequire } from 'node:module'
 import paths from '../lib/web4-items/paths.cjs'
 import deployLock from '../lib/deploy/deploy-lock.cjs'
 import { PROGRESS_ENV, progress } from './progress.mjs'
-import { migratePlaceRecord, placeKind, tunnelAllowed } from '../lib/hosting/place.mjs'
+import { placeKind, tunnelAllowed } from '../lib/hosting/place.mjs'
+import { runMigrations } from '../lib/deploy/migrations.mjs'
 // 553: сборка ядра при «закрытой крышке» — все процессы узла, кроме туннеля, на время сборки остановлены.
 const { closeLid, openLid, backupNext, restoreNext, dropBackup, itemsAside, itemsBack, redrawCore } = createRequire(import.meta.url)('../lib/deploy/quiet-build.cjs')
 // 642-2: чтец сборки — журнал сборки ядра этому компьютеру, пока крышка закрыта (`lib/deploy/build-reader.cjs`).
@@ -149,12 +150,8 @@ async function start() {
       console.log('737: the move mark is set aside (data/node/server/done/) — this computer starts as always')
     }
   }
-  // 741-2: a node installed before 741 records where it lives at its first start — from the launch's mark or the measurement; a
-  // version-2 record (written by the installation) is never overwritten. The retired declaration of 276-3 is replaced here.
-  try {
-    const rec = migratePlaceRecord(root)
-    if (rec) console.log(`741-2: the node recorded where it lives — ${rec.place} (${rec.by})`)
-  } catch (e) { console.log(`741-2: the place record was not written — ${e.message}`) }
+  // 743-3: the transitions of a new version (the place record of 741-2 among them) — one ledger, whichever entry point comes first.
+  try { await runMigrations(root, 'start') } catch (e) { console.log(`migrations were not run — ${e.message}`) }
   // 553: оборванная сборка при «закрытой крышке» оставила узел остановленным — список в data/node/quiet-build.json.
   openLid(root)
   // 369: не в облачной сессии Claude Code; 368: только из прямого форка оригинала Fractera — обе проверки до установки элементов.
@@ -680,9 +677,9 @@ async function rebuild() {
   openLid(root)
   // 741-1: the edge first — nginx is plain code, not the build; a failed or cut build must not leave a server forwarding forged names.
   reapplyServerEdge()
-  // 741-2: a node updated to 741 records where it lives here too — `node:update` runs `rebuild`, not `start` (✗ measured on this Mac
-  // 2026-11-14: after its update the 276-3 declaration «server» still stood until the migration was run by hand).
-  try { migratePlaceRecord(root) } catch { /* the indicator measures until the next start */ }
+  // 743-3: the same ledger as `start` — `node:update` runs `rebuild`, not `start` (✗ 2026-11-14: the place migration hung on `start` only
+  // and was missed after this Mac's update; one door now, not a copy per entry point).
+  try { await runMigrations(root, 'rebuild') } catch (e) { console.log(`migrations were not run — ${e.message}`) }
   console.log("Собираю сайт заново. На время сборки узел остановлен: пульт и сайты этого компьютера не отвечают, в интернете — копии страниц.")
   const backedUp = backupNext(root)
   const buildWhat = process.env.FRACTERA_BUILD_WHAT || "core"

@@ -289,6 +289,12 @@ const retired = retiredNatives(theirsRegistry, oursRegistry)
 writeFileSync(REGISTRY, JSON.stringify(registry, null, 2) + '\n')
 if (retired.length) say(`нативные элементы, которых больше нет у Fractera: ${retired.join(', ')} — сняты с реестра узла, их процессы и папки уйдут на шаге элементов`)
 
+// ── 5½. переходы новой версии — один журнал (743-3, `lib/migrations/`) ─────────────────────────────────────────────────────────
+// Файл исполнителя — уже новой версии (дерево узла после слияния); упавшая миграция записана и будет повторена, обновление идёт дальше.
+const warnings = []
+stage('migrate', 'переходы новой версии — журнал миграций')
+if (!run(process.execPath, [join(ROOT, 'scripts', 'migrate.mjs'), '--by', 'update', '--root', ROOT], 'npm run migrate')) warnings.push('журнал миграций не запустился: npm run migrate')
+
 // ── 6. зависимости и сторожа — до остановки узла ────────────────────────────────────────────────────────────────────────────
 const depsOf = (rev) => { const j = JSON.parse(git(['show', `${rev}:package.json`]).out || '{}'); return JSON.stringify([j.dependencies, j.devDependencies, j.optionalDependencies]) }
 if (depsOf(oldHead) !== depsOf('HEAD')) {
@@ -300,7 +306,6 @@ if (!run(npm, ['run', 'prebuild'], 'npm run prebuild')) rollback('сторожа
 
 // ── 7. элементы ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 stage('elements', 'элементы на закрепления — без остановки служб')
-const warnings = []
 // 716: the retired natives first — past the last rollback (the guards), so a moved folder never meets a restored registry.
 if (retired.length) {
   const r = node('element-retire.mjs', ...retired)
