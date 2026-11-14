@@ -24,7 +24,8 @@
 // of the target from a throwaway worktree with `--root <node>`; the mark below tells stage 0 that this file knows that contract.
 // @handoff v1
 import { spawnSync } from 'node:child_process'
-import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, rmdirSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, readdirSync, realpathSync, rmSync, rmdirSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { createRequire } from 'node:module'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -41,6 +42,8 @@ const ARGV = process.argv.slice(2)
 const ROOT_AT = ARGV.indexOf('--root')
 const HERE = dirname(fileURLToPath(import.meta.url))
 const ROOT = ROOT_AT >= 0 && ARGV[ROOT_AT + 1] ? resolve(ARGV[ROOT_AT + 1]) : join(HERE, '..')
+// 743-4: `--preflight` — only the verdict «will the merge pass?», nothing written, nothing touched, nobody woken.
+const PREFLIGHT = ARGV.includes('--preflight')
 const UPDATER = spawnSync('git', ['-C', HERE, 'rev-parse', '--short=8', 'HEAD'], { encoding: 'utf8', windowsHide: true }).stdout?.trim() || null
 const IS_WIN = process.platform === 'win32'
 const STATE = join(ROOT, 'data', 'node', 'node-update.json')
@@ -68,6 +71,7 @@ Object.assign(env, machineEnv())
 let current = 'check'
 const say = (s) => console.log(s)
 const write = (s) => {
+  if (PREFLIGHT) return
   mkdirSync(dirname(STATE), { recursive: true })
   writeFileSync(STATE, JSON.stringify({ pid: process.pid, startedAt, stage: current, updater: UPDATER, ...s }, null, 2) + '\n')
 }
@@ -80,6 +84,10 @@ function wakeIfStopped(state, why) {
   spawnSync(process.execPath, [join(ROOT, 'scripts', 'spawn-free.mjs'), join(ROOT, 'scripts', 'agent-return.mjs'), '--update-stopped', state, String(why ?? '').slice(0, 600)], { cwd: ROOT, windowsHide: true })
 }
 function finish(state, extra = {}) {
+  if (PREFLIGHT) {
+    console.log(`===NODE_UPDATE_PREFLIGHT=== ${JSON.stringify({ ok: state === 'done', state, stage: current, updater: UPDATER, ...extra })}`)
+    process.exit(0)
+  }
   // 642-4: отказ — с причиной простыми словами по своему журналу (`FRACTERA_BUILD_LOG` — его ставит запуск по кнопке).
   if (state !== 'done' && process.env.FRACTERA_BUILD_LOG) {
     try { extra = { ...extra, cause: causeOf(readFileSync(process.env.FRACTERA_BUILD_LOG, 'utf8').split(/\r?\n/)) } } catch { /* журнала нет */ }
@@ -158,9 +166,9 @@ function mergeRegistry(theirs, ours) {
 // начал настоящее обновление (аргументов скрипт не читал), а минуту спустя главный агент запустил его своим фоновым ребёнком — крышка
 // сборки убила ядро, агента и само обновление посреди сборки, и никто не записал конец. Агент Claude Code несёт `CLAUDECODE=1`; правильный
 // запуск (`scripts/node-update-run.mjs` через `spawn-free`, кнопка узла) ставит `FRACTERA_BUILD_LOG`.
-const UNKNOWN = ARGV.filter((a, i) => a !== '--root' && i !== ROOT_AT + 1)
+const UNKNOWN = ARGV.filter((a, i) => a !== '--root' && a !== '--preflight' && i !== ROOT_AT + 1)
 if (UNKNOWN.length || (ROOT_AT >= 0 && !ARGV[ROOT_AT + 1])) {
-  console.error(`===NODE_UPDATE_REFUSED=== неизвестные аргументы: ${ARGV.join(' ')} — у обновления узла есть только --root <папка узла>; ничего не тронуто`)
+  console.error(`===NODE_UPDATE_REFUSED=== неизвестные аргументы: ${ARGV.join(' ')} — у обновления узла есть только --root <папка узла> и --preflight; ничего не тронуто`)
   process.exit(2)
 }
 if (process.env.CLAUDECODE && !process.env.FRACTERA_BUILD_LOG) {
@@ -182,6 +190,40 @@ must(git(['fetch', '--quiet', 'origin']), 'git fetch origin (сеть или д�
 const forkCommits = must(git(['rev-list', `HEAD..${FORK}`]), 'git rev-list').split('\n').filter(Boolean)
 if (forkCommits.length === 0) finish('done', { summary: 'узел уже на версии форка — обновлять нечего', changes: 0 })
 say(`в форке нового: ${forkCommits.length}`)
+
+// ── 1½. предпроверка — пробное слияние во временной копии, ДО копии несохранённого и любой правки (743-4) ─────────────────────────
+// ✗ До 743 столкновение своего коммита узла с форком выяснялось на шаге слияния — после копии и разбора, и кончалось откатом. Замер
+// 2026-11-14 (`new-steps/743/probes/dry-merge.sh`): копия HEAD вне проекта, слияние там, вердикт, копия убрана — 2,2 с, узел не тронут.
+// git 2.37 (Apple) не знает `merge-tree --write-tree` (нужен 2.38), поэтому копия, а не дерево в памяти.
+function dryMerge() {
+  const prefix = join(realpathSync(tmpdir()), 'fractera-dry-')
+  const alive = (pid) => { try { process.kill(pid, 0); return true } catch (e) { return e.code === 'EPERM' } }
+  for (const line of git(['worktree', 'list', '--porcelain']).out.split('\n')) {
+    const p = line.startsWith('worktree ') ? resolve(line.slice(9).trim()) : ''
+    const pid = Number(/-(\d+)$/.exec(p)?.[1])
+    if (p.startsWith(prefix) && pid && !alive(pid)) { git(['worktree', 'remove', '--force', p]); rmSync(p, { recursive: true, force: true }) }
+  }
+  const wt = `${prefix}${oldHead.slice(0, 8)}-${process.pid}`
+  const add = git(['worktree', 'add', '--quiet', '--detach', wt, 'HEAD'])
+  if (!add.ok) return { foreign: [], error: `временная копия не создана: ${add.err.slice(0, 200)}` }
+  try {
+    const inWt = (args) => spawnSync('git', ['-C', wt, ...args], { encoding: 'utf8', env, windowsHide: true })
+    const m = inWt(['merge', '--no-commit', '--no-ff', FORK])
+    if (m.status === 0) return { foreign: [] }
+    const conflicts = (inWt(['diff', '--name-only', '--diff-filter=U']).stdout ?? '').split('\n').filter(Boolean)
+    if (!conflicts.length) return { foreign: [], error: String(m.stderr || m.stdout || '').trim().slice(0, 200) }
+    // the node's own files (its steps, the registry) are resolved by the real merge as today — only the others stop it
+    return { foreign: conflicts.filter((p) => !p.startsWith(STEPS) && p !== REGISTRY_REL && !NODE_OWN.includes(p)) }
+  } finally {
+    git(['worktree', 'remove', '--force', wt]); rmSync(wt, { recursive: true, force: true }); git(['worktree', 'prune'])
+  }
+}
+stage('preflight', 'пробное слияние во временной копии — до любой правки')
+const dry = dryMerge()
+if (dry.foreign.length) finish('refused', { reason: `слияние остановится на файлах: ${dry.foreign.slice(0, 10).join(', ')}${dry.foreign.length > 10 ? ` и ещё ${dry.foreign.length - 10}` : ''} — узел не тронут`, conflicts: dry.foreign, behind: forkCommits.length })
+if (dry.error) finish('refused', { reason: `пробное слияние не прошло: ${dry.error} — узел не тронут`, conflicts: [], behind: forkCommits.length })
+if (PREFLIGHT) finish('done', { summary: `обновление пройдёт: ${forkCommits.length} изменений форка`, conflicts: [], behind: forkCommits.length })
+say('пробное слияние прошло — обновляю')
 
 // ── 2. копия несохранённого ─────────────────────────────────────────────────────────────────────────────────────────────────
 stage('backup', `копия несохранённого — ${BACKUP.slice(ROOT.length + 1)}`)
