@@ -279,8 +279,12 @@ await t('Let\'s Encrypt week: the ledger plus young certificates it never saw; o
 await t('sign-in leads to https://auth.<zone>; negative: a loopback address or a silent auth element is a failure', async () => {
   const net = (location, providers = 200) => async (url) => {
     if (url.endsWith('/api/auth/providers')) return { status: providers, headers: new Headers() }
+    // as measured on aifa.dev 2026-11-14: the architect pages end on the lock window (200, no redirect); /login leads to sign-in
     if (url === 'https://architect.example.org/architect') return { status: 307, headers: new Headers({ location: '/en/architect' }) }
-    return { status: 307, headers: new Headers({ location }) }
+    if (url === 'https://architect.example.org/en/architect') return { status: 307, headers: new Headers({ location: '/en' }) }
+    if (url === 'https://architect.example.org/en') return { status: 200, headers: new Headers() }
+    if (url === 'https://architect.example.org/login') return { status: 307, headers: new Headers({ location }) }
+    return { status: 404, headers: new Headers() }
   }
   assert.equal((await launch.signinCheck('example.org', net('https://auth.example.org/login?requireRole=architect'))).ok, true)
   assert.equal((await launch.signinCheck('example.org', net('http://127.0.0.1:24681/login?requireRole=architect'))).ok, false)

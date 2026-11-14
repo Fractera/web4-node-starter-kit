@@ -132,7 +132,9 @@ export async function signinCheck(zone, fetchImpl = fetch) {
   const auth = `https://auth.${zone}`
   let providers = null
   try { providers = (await fetchImpl(`${auth}/api/auth/providers`, { signal: AbortSignal.timeout(15_000), cache: 'no-store' })).status } catch (e) { providers = String(e?.cause?.code ?? e?.message ?? e).slice(0, 80) }
-  let url = `https://architect.${zone}/architect`
+  // 744-9: the panel's own sign-in door. ✗ Measured 2026-11-14 on aifa.dev: /architect → /en/architect → /en answers 200 with the lock
+  // window (AccessGate) and no redirect — by design, so a check that started there could never pass; /login → https://auth.<zone>/login.
+  let url = `https://architect.${zone}/login`
   let location = null
   for (let i = 0; i < 6; i++) {
     try {
