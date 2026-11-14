@@ -33,7 +33,15 @@ update at the end. Probes that produced the numbers: §9.
 | 22:45 → 08:40 | pm2 journal silent; the Mac did NOT reboot (boot time 2026-09-27) | pm2.log 26924→26925; `sysctl kern.boottime` |
 | before 08:40 (11-14) | `data/node/moved.json` set aside as `data/node/server/moved.json.paused-2026-11-14` — not by any code of the node (only `return` removes the mark) | find + git grep |
 | 08:40:05 | all 17 processes started again (new pm2 ids 0–16); the session-lost return woke the main agent at 08:40:16 | pm2.log 26925+, logs/agent-return.log |
-The «black screen» is NOT reproduced. Candidates: the server's 503 page «Сайт обновляется» is near-black in a dark system theme (`updating.html`:
+**The owner, 2026-11-14: the black screen was aifa.dev «yesterday 23:20 +».** The server's own record: elements 23:01:35, core build
+23:01:35→23:13:27, serve 23:13:50, nginx 23:13:51 — everything up before 23:20; the root element restarted once (23:13:33). Its log after:
+«[settings] элемент настроек не ответил: unreachable — работаю по прежней копии» (00:01, 00:13), «подписка на сигнал CONFIG не удалась»,
+`metadataBase … using "http://localhost:24683"` (APP-CONFIG url unset until the switch-on), and «Failed to find Server Action» (stale clients,
+bot probes). Still not reproduced; the strongest candidate stays the name servers: aifa.dev's NS TTL was 86400 s, so a resolver that cached
+Cloudflare's NS kept asking Cloudflare's old zone for hours after the switch to Porkbun (the old proxied records), while public resolvers
+already answered the server. → 738-5/6: the ready step opens the site from outside with the node's eyes (a screenshot, not just a status
+code) on two resolvers' answers, and names a stale cache as «ваш интернет ещё помнит старый адрес» with the measured TTL.
+Earlier candidates: the server's 503 page «Сайт обновляется» is near-black in a dark system theme (`updating.html`:
 `@media (prefers-color-scheme: dark) { background: #111 }`) and is served by nginx while the server's core is down or rebuilding; the
 computer's temporary address after its tunnel stopped at 22:45:03; the computer's panel after its core stopped. → ask the owner which
 address he looked at (or a screenshot) before naming it.
