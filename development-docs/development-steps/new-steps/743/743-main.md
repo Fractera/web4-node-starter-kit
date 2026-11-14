@@ -5,7 +5,8 @@ Planned 2026-11-14 at max effort as a PLAN ONLY (the owner's rule: the maximum m
 the server proofs of 741 (D41): the test server 213.199.61.7 is the only real node installed before 741-8 — the live fixture of 743-5 —
 and is neither updated nor cleared until 743 is live.
 
-**Status: waiting for the owner's approval of 743-1…6 and D38–D43.**
+**Approved 2026-11-14 ~13:45 UTC:** the owner, to «Утверждаешь план 743 и решения D38–D43?» — «y go». Execution order as §5:
+743-1 → 743-3 → 743-2 → 743-4 → 743-6 → 743-5 (code), ONE push, CI, fork sync, ONE node update of this computer, then 743-5 live.
 
 ## 1. The owner's words (verbatim) and the retelling
 - 2026-11-14 ~13:20 UTC, the launch page showed «Fractera установлена: версия 97a15ca2. Отстаёт от Fractera на 9 коммитов. Дальше:
