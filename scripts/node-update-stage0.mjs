@@ -5,7 +5,7 @@
 // Contract v1: `node scripts/node-update-stage0.mjs [--root <node>] [--preflight]`; a target marked `// @handoff v1` gets
 // `--root <node> [--preflight]`; a target without it (older than 743) — the node's own updater runs, said in one line.
 import { spawnSync } from 'node:child_process'
-import { rmSync } from 'node:fs'
+import { realpathSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -23,11 +23,14 @@ if (process.env.CLAUDECODE && !process.env.FRACTERA_BUILD_LOG) {
   process.exit(2)
 }
 const git = (...a) => spawnSync('git', ['-C', ROOT, ...a], { encoding: 'utf8', windowsHide: true })
-const PREFIX = join(tmpdir(), 'fractera-update-')
-// A worktree left by a killed run is removed first (only this node's, only ours).
+const PREFIX = join(realpathSync(tmpdir()), 'fractera-update-') // git lists real paths (macOS: /tmp is /private/tmp)
+const alive = (pid) => { try { process.kill(pid, 0); return true } catch (e) { return e.code === 'EPERM' } }
+// A worktree left by a killed run is removed first — only this node's, only ours, only when its process is dead (a running update or
+// preflight keeps its own: the name carries the pid).
 for (const line of git('worktree', 'list', '--porcelain').stdout.split('\n')) {
-  const p = line.startsWith('worktree ') ? line.slice(9).trim() : ''
-  if (p && resolve(p).startsWith(PREFIX)) { git('worktree', 'remove', '--force', p); rmSync(p, { recursive: true, force: true }) }
+  const p = line.startsWith('worktree ') ? resolve(line.slice(9).trim()) : ''
+  const pid = Number(/-(\d+)$/.exec(p)?.[1])
+  if (p.startsWith(PREFIX) && pid && !alive(pid)) { git('worktree', 'remove', '--force', p); rmSync(p, { recursive: true, force: true }) }
 }
 git('worktree', 'prune')
 
@@ -36,8 +39,7 @@ let pass = extra // the node's own updater finds its root itself; an older one k
 let wt = null
 const target = git('fetch', '--quiet', 'origin').status === 0 ? git('rev-parse', 'origin/main').stdout.trim() : ''
 if (target && /^\/\/ @handoff v1$/m.test(git('show', `${target}:scripts/node-update.mjs`).stdout)) {
-  wt = `${PREFIX}${target.slice(0, 8)}`
-  rmSync(wt, { recursive: true, force: true })
+  wt = `${PREFIX}${target.slice(0, 8)}-${process.pid}`
   if (git('worktree', 'add', '--quiet', '--detach', wt, target).status === 0) { updater = join(wt, 'scripts', 'node-update.mjs'); pass = ['--root', ROOT, ...extra] } else wt = null
 }
 console.log(`stage 0: the update is run by ${wt ? `the target ${target.slice(0, 8)}` : `this node's own updater${target ? ' (the target has no @handoff v1)' : ' (the fork was not fetched)'}`}`)
