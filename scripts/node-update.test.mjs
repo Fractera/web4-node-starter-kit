@@ -19,7 +19,9 @@ const REPO = join(dirname(fileURLToPath(import.meta.url)), '..')
 const base = realpathSync(mkdtempSync(join(tmpdir(), 'node-update-test-')))
 const T = (...a) => ['-c', 'user.name=Test', '-c', 'user.email=test@test.invalid', ...a]
 const git = (cwd, ...a) => {
-  const r = spawnSync('git', a, { cwd, encoding: 'utf8', windowsHide: true, maxBuffer: 256 * 1024 * 1024 })
+  // the fixtures are made under the same git config as the updater runs with (✗ CI windows: the system autocrlf checked them out with
+  // CRLF, the updater without it saw them changed)
+  const r = spawnSync('git', a, { cwd, env, encoding: 'utf8', windowsHide: true, maxBuffer: 256 * 1024 * 1024 })
   if (r.status !== 0) throw new Error(`git ${a.join(' ')} in ${cwd}: ${r.stderr}`)
   return r.stdout.trim()
 }
