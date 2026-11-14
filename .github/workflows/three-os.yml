@@ -63,5 +63,8 @@ jobs:
       - name: Регистр в путях (на Windows и macOS всегда зелено — красным бывает только Linux)
         run: npm run check:case
 
+      - name: Переход между версиями — обновление делает версия, до которой обновляемся (шаг 743, D42)
+        run: node scripts/node-update.test.mjs
+
       - name: Сборка со всеми сторожами
         run: npm run build

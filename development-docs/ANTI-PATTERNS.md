@@ -60,6 +60,18 @@ warned earlier. The section stays short: a lesson that a guard or the code now h
   from a «Дизайн» with no decisions and stripped every element's theme to `{}` — 13 files, one per install step). Guard: `warmUp` env, step 668.
 - **A document that names a path is checked from the place that reads it.** A path inside a file a hook reads is relative to that file, not to
   the process; a relative data path of a standalone server ends up inside the build and dies with the next build — data paths are absolute.
+- **A fix to the updater that the old updater runs.** 2026-11-14, step 743: the 741-8 identity fix sat in the target while every node
+  ran its own old `node-update.mjs` — the test server rolled back at the merge again. The update is done by the version it updates to:
+  frozen stage 0 (`scripts/node-update-stage0.mjs`, sealed) hands it to the target's own updater; a change to the update goes into
+  `node-update.mjs` and is proven by `scripts/node-update.test.mjs`, never by a run of the old one.
+- **A transition hung on one entry point.** 2026-11-14: the place migration of 741-2 sat in `serve.mjs start`; the update runs `rebuild`,
+  so it was missed — and «fixed» by a second copy (8f165354). A one-time transition is a file in `lib/migrations/`, run by the ledger
+  from every entry point (`check:migrations`).
+- **A git identity written by hand.** 2026-11-14: 10 places, 4 emails, 2 policies, and a commit with none on a server. Every commit the
+  node's code makes is signed through `lib/deploy/git-identity.mjs` (`check:git-identity`); a fallback is found by a census, not added.
+- **A collision found minutes into an update.** Until 743 a node's own commit that met Fractera's surfaced at the merge, after the backup,
+  and ended in a rollback. The update's dry merge in a throwaway worktree outside the project answers in seconds, before anything is
+  touched — and the page shows it before the button.
 
 ## Windows
 
