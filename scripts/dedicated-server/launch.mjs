@@ -9,7 +9,8 @@
 //   close                           the visit closed now: its line leaves the server
 //   state                           the server's own state (`state.sh`): its check, its launch, its domain, its node's names and certificates
 //   probe                           the server checked again (`probe.sh`: system, memory, cores, disk, ports, an install and its version)
-//   install --mode install|update   `launch.sh` started on the server as root, detached; the page follows it by `state`
+//   install --mode install|update   `launch.sh` started on the server as root, detached; the page follows it by `state`; refused
+//                                   (`domain-not-ready`, 744-5) until step 3 is done — `domainSteps`, the page's own reading
 //   domain --name <domain> · way --way dns|cloudflare|migrate|none · detect · dns
 //                                   the domain chosen for the server, kept ON the server (`/root/.fractera/domain.json`); once the
 //                                   server's node lives, the same acts go to its own domain door too
@@ -34,6 +35,7 @@ import { detectDomain } from '../../lib/hosting/domain-detect.mjs'
 import { checkNames } from '../../lib/hosting/dns-check.mjs'
 import { dnsRecords, isHostName } from '../../lib/hosting/hostnames.mjs'
 import { judge } from '../../lib/hosting/judge.mjs'
+import { domainMissing } from '../../lib/hosting/launch-domain.mjs'
 import { relationOf } from '../../lib/hosting/relation.mjs'
 import { q, startDetached } from '../../lib/hosting/remote.mjs'
 import { cleanDomain } from '../../lib/hosting/server-domain.mjs'
@@ -96,6 +98,14 @@ async function readState(client) {
   const r = await exec(client, `bash ${q(`${DIR}/state.sh`)} ${q(FOLDER)} ${q(DIR)}`, { timeoutMs: 40_000 })
   const line = r.stdout.trim().split('\n').pop() ?? ''
   const s = JSON.parse(line)
+  // 744-5: ONE DOMAIN RECORD. The server's node holds a domain (its mark) and the page has no record of it — written once, from the mark,
+  // so the page and every act read the same domain and way. ✗ Measured 2026-11-14: the page read only domain.json (absent on the test
+  // server) while the mark held aifa.dev and its way.
+  if (!s.domain?.domain && typeof s.mark?.domain === 'string' && s.mark.domain) {
+    const record = { domain: s.mark.domain, ...(s.mark.domainWay ? { way: s.mark.domainWay } : {}), from: 'server', since: s.mark.at ?? null }
+    await writeDomain(client, record)
+    s.domain = { ...(s.domain ?? {}), ...record }
+  }
   s.verdict = s.probe ? judge(s.probe, { ramMb: null, copyBytes: null }, host) : null
   // 744-4 (D49): what the server IS to this node — clean · related · unrelated with its reasons — before anything is offered.
   s.relation = s.probe ? relationOf(s.probe, forkUrl()) : null
@@ -262,6 +272,9 @@ const verbs = {
       if (s.launch?.state === 'running') return fail('running', { state: s })
       // 744-4: a server not related to this node is cleared first — the page opens nothing else, and neither does this runner.
       if (s.relation?.kind === 'unrelated') return fail('unrelated', { state: s })
+      // 744-5, D46: the installation stands after the domain — refused here as the page keeps it closed, by the same reading of step 3.
+      const missing = domainMissing(s.domain)
+      if (missing.length) return fail('domain-not-ready', { state: s, missing })
       // (a dry run's «server» is this very machine: its numbers are not a server's, so only a real run is judged here)
       if (!dry && s.verdict?.level === 'fail') return fail('server-unfit', { state: s })
       const ip = ipOf(s)

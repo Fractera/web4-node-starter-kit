@@ -17,7 +17,8 @@ export type ServerLadderWords = {
     leads: string; aKind: Record<"server" | "cloudflare" | "elsewhere" | "none" | "unknown", string>; mail: string; mailYes: string; mailNo: string
     live: string; sub: string; again: string
   }
-  who: { question: string; option: Record<LadderWay, string>; note: Record<LadderWay, string>; copy: string; copied: string; instruction: string; instructionCf: string }
+  /** 744-5: two questions — the registrar first; Cloudflare only where the records are kept there (`lib/hosting/launch-domain.mjs`) */
+  who: { registrar: string; cloudflare: string; yes: string; no: string; option: Record<LadderWay, string>; note: Record<LadderWay, string>; copy: string; copied: string; instruction: string; instructionCf: string }
   records: {
     hereDns: string; hereCf: string; hereMigrate: string
     quick: { title: string; badge: string; stepsDns: string[]; stepsCf: string[]; at: string; star: string; conflicts: string }
@@ -74,7 +75,10 @@ const en: ServerLadderWords = {
     again: "Check again",
   },
   who: {
-    question: "Where can you change this domain's DNS records?",
+    registrar: "Do you have access to the domain's registrar?",
+    cloudflare: "Do you have access to Cloudflare? This domain's records are kept there now.",
+    yes: "Yes",
+    no: "No",
     option: { cloudflare: "I can sign in to Cloudflare", migrate: "Only at the registrar", dns: "At the registrar or the hosting", none: "I have no access" },
     note: {
       cloudflare: "You write the records in Cloudflare yourself, or let the node do it.",
@@ -198,7 +202,10 @@ const ru: ServerLadderWords = {
     again: "Проверить ещё раз",
   },
   who: {
-    question: "Где вы можете менять DNS-записи этого домена?",
+    registrar: "Есть ли у вас доступ к регистратору домена?",
+    cloudflare: "Есть ли у вас доступ к Cloudflare? Записи этого домена сейчас ведёт он.",
+    yes: "Да",
+    no: "Нет",
     option: { cloudflare: "Есть вход в Cloudflare", migrate: "Только у регистратора", dns: "У регистратора или хостинга", none: "Нет доступа" },
     note: {
       cloudflare: "Записи внесёте в Cloudflare сами или поручите это узлу.",

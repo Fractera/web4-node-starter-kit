@@ -58,7 +58,9 @@ export function startTestSshServer({ home, password, hostKey = readableKeyPair()
           session.on('exec', (acceptExec, _reject, info) => {
             const stream = acceptExec()
             state.commands?.push(info.command)
-            const child = spawn('bash', ['-c', info.command], { env: { HOME: home, PATH: process.env.PATH, ...(process.env.DRY_RUN ? { DRY_RUN: process.env.DRY_RUN } : {}) } })
+            // STATE_NODE_DIR (744-5): a test points `state.sh` at a «server's» own node folder (its mark), as DRY_RUN reaches the scripts
+            const pass = Object.fromEntries(['DRY_RUN', 'STATE_NODE_DIR'].filter((k) => process.env[k]).map((k) => [k, process.env[k]]))
+            const child = spawn('bash', ['-c', info.command], { env: { HOME: home, PATH: process.env.PATH, ...pass } })
             child.stdout.pipe(stream, { end: false })
             child.stderr.pipe(stream.stderr, { end: false })
             stream.on('data', (d) => child.stdin.write(d))

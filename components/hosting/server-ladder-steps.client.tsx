@@ -10,10 +10,11 @@ import { ButtonGroup } from "@/components/ui/button-group"
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Small } from "@/components/ui/typography"
+import { answersOf, wayOf } from "@/lib/hosting/launch-domain.mjs"
 
 // 737-19. Step 1 — the domain, typed once, changed by one button. Step 2 — what the internet answers about it, with no question to the
 // person (`lib/hosting/domain-detect.mjs`): where it was bought, who keeps its DNS, where it leads now, its mail, a live site on it.
-// Step 3 — the one question, with only the answers that fit the case; «no access» is not a dead end: the instruction is copied for
+// Step 3 — who writes the records: two questions since 744-5 (below); «no access» is not a dead end: the instruction is copied for
 // whoever has it.
 
 const fill = (t: string, map: Record<string, string>) => Object.entries(map).reduce((s, [k, v]) => s.split(`{${k}}`).join(v), t)
@@ -111,18 +112,47 @@ export function instructionText(view: LadderView, words: ServerLadderWords) {
   return view.detect?.dnsHost === "cloudflare" ? `${base} ${words.who.instructionCf}` : base
 }
 
-export function WhoStep({ view, words, busy, onChoose }: { view: LadderView; words: ServerLadderWords; busy: boolean; onChoose: (way: LadderWay) => unknown }) {
-  const [copied, setCopied] = useState(false)
-  const w = words.who
-  const ways: LadderWay[] = view.detect?.dnsHost === "cloudflare" ? ["cloudflare", "migrate", "none"] : ["dns", "none"]
+type Answer = "yes" | "no"
+
+/** 744-5: one question and its two answers, the chosen one filled; on a read-only view only the answer given. */
+function Question({ id, text, value, busy, readOnly, words, onAnswer }: {
+  id: string; text: string; value: Answer | null; busy: boolean; readOnly: boolean; words: ServerLadderWords["who"]; onAnswer: (a: Answer) => void
+}) {
   return (
-    <div className="flex flex-col gap-2" data-block="server-ladder-who" data-way={view.way ?? ""}>
-      <Small className="text-foreground">{w.question}</Small>
-      {view.readOnly ? null : (
+    <div className="flex flex-col gap-2" data-answer={value ?? ""} data-block={`server-ladder-who-${id}`}>
+      <Small className="text-foreground">{text}</Small>
+      {readOnly ? (value ? <Small className="font-medium text-foreground">{words[value]}</Small> : null) : (
         <ButtonGroup>
-          {ways.map((x) => <Button disabled={busy} key={x} onClick={() => void onChoose(x)} size="sm" variant={view.way === x ? "default" : "outline"}>{w.option[x]}</Button>)}
+          {(["yes", "no"] as const).map((a) => <Button disabled={busy} key={a} onClick={() => onAnswer(a)} size="sm" variant={value === a ? "default" : "outline"}>{words[a]}</Button>)}
         </ButtonGroup>
       )}
+    </div>
+  )
+}
+
+// 744-5. The owner, 2026-11-14: «спрашивать пользователя есть ли у неё доступ к регистратора и если нет у него доступа к регистратору то
+// есть у него доступ к Cloud Flyer». The registrar first; Cloudflare only where the domain's records are kept there (step 2 found it) —
+// there «only the registrar» means moving the records back to it (`migrate`), Cloudflare access writes them in place. `wayOf` decides.
+export function WhoStep({ view, words, busy, onChoose }: { view: LadderView; words: ServerLadderWords; busy: boolean; onChoose: (way: LadderWay) => unknown }) {
+  const [copied, setCopied] = useState(false)
+  const [asked, setAsked] = useState<{ registrar: Answer | null; cloudflare: Answer | null }>({ registrar: null, cloudflare: null })
+  const w = words.who
+  const cf = view.detect?.dnsHost === "cloudflare"
+  const told = answersOf(view.way, cf) as { registrar: Answer | null; cloudflare: Answer | null }
+  const registrar = asked.registrar ?? told.registrar
+  const cloudflare = asked.cloudflare ?? told.cloudflare
+  function answer(q: "registrar" | "cloudflare", a: Answer) {
+    const next = { registrar, cloudflare, [q]: a }
+    setAsked(next)
+    const way = wayOf({ cloudflareDns: cf, ...next })
+    if (way && way !== view.way) void onChoose(way)
+  }
+  return (
+    <div className="flex flex-col gap-3" data-block="server-ladder-who" data-way={view.way ?? ""}>
+      <Question busy={busy} id="registrar" onAnswer={(a) => answer("registrar", a)} readOnly={view.readOnly} text={w.registrar} value={registrar} words={w} />
+      {cf && (registrar || cloudflare) ? (
+        <Question busy={busy} id="cloudflare" onAnswer={(a) => answer("cloudflare", a)} readOnly={view.readOnly} text={w.cloudflare} value={cloudflare} words={w} />
+      ) : null}
       {view.way ? <Small className="text-muted-foreground">{w.note[view.way]}</Small> : null}
       {view.way === "none" ? (
         <div className="flex flex-col gap-2 rounded-md border border-border bg-muted/40 p-3" data-block="server-ladder-instruction">

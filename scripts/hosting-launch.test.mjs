@@ -4,10 +4,11 @@
 // running them, and each «server's» folder is a temporary folder of this machine.
 import assert from 'node:assert/strict'
 import { spawn, spawnSync } from 'node:child_process'
-import { mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { basename, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { domainMissing, wayOf } from '../lib/hosting/launch-domain.mjs'
 import { readableKeyPair } from '../lib/hosting/ssh.mjs'
 import { startTestSshServer } from './hosting-test-ssh.mjs'
 
@@ -47,6 +48,13 @@ const run = (srv, verb, extra = [], input = { key: srv.key }) => new Promise((re
   child.stdin.end(JSON.stringify(input))
 })
 const wait = (ms) => new Promise((r) => setTimeout(r, ms))
+const domainOf = (srv) => JSON.parse(readFileSync(join(srv.dir, 'domain.json'), 'utf8'))
+/** Step 3 done on a «server» as the page leaves it: a domain, where its records live, a way, the first check (744-5) — written as the
+ *  runner's `detect` and `dns` would (they ask the internet; this test does not). */
+const domainReady = (srv, over = {}) => writeFileSync(join(srv.dir, 'domain.json'), JSON.stringify({
+  domain: 'example.org', detect: { name: 'example.org', zone: 'example.org', dnsHost: 'other', ns: ['ns1.registrar.example'] }, way: 'dns',
+  check: { at: new Date().toISOString(), ip: '127.0.0.1', results: [{ host: 'example.org', state: 'missing' }] }, ...over,
+}))
 
 console.log('738-2 a map of pins: one per server')
 const A = await server()
@@ -123,6 +131,23 @@ await t('negative: an act without the visit key → need-password; with it → t
   assert.equal((await run(B, 'connect', [], { password: PASSWORD })).a?.ok, true)
 })
 
+console.log('744-5 the domain first: two questions, then the installation')
+await t('install before step 3 is refused with every missing fact named; «registrar no, Cloudflare yes» → `cloudflare` recorded; «no, no» → `none`, still refused; negative: step 3 done → the next case installs', async () => {
+  const r = await run(A, 'install', ['--mode', 'install'])
+  assert.deepEqual([r.a?.reason, r.a?.missing], ['domain-not-ready', ['domain', 'where', 'who', 'records']], r.out)
+  assert.equal((await run(A, 'domain', ['--name', 'example.org'])).a?.ok, true)
+  const yes = wayOf({ cloudflareDns: true, registrar: 'no', cloudflare: 'yes' })
+  assert.equal((await run(A, 'way', ['--way', yes])).a?.ok, true)
+  assert.equal(domainOf(A).way, 'cloudflare')
+  const no = wayOf({ cloudflareDns: true, registrar: 'no', cloudflare: 'no' })
+  assert.equal((await run(A, 'way', ['--way', no])).a?.ok, true)
+  assert.equal(domainOf(A).way, 'none')
+  const still = await run(A, 'install', ['--mode', 'install'])
+  assert.deepEqual([still.a?.reason, still.a?.missing], ['domain-not-ready', ['where', 'who', 'records']], still.out)
+  domainReady(A)
+  assert.deepEqual(domainMissing((await run(A, 'state')).a?.state.domain), [])
+})
+
 console.log('738-3/4 the launch: on the server, read back by its address')
 await t('install: launch.sh runs on the server (dry) — prepare · source · install · mark · start · version, all done; launch.json says done', async () => {
   const r = await run(A, 'install', ['--mode', 'install'])
@@ -134,6 +159,7 @@ await t('install: launch.sh runs on the server (dry) — prepare · source · in
   assert.equal(JSON.parse(readFileSync(join(A.dir, 'launch.json'), 'utf8')).fork, FORK)
 })
 await t('parallel servers: B launches while A shows its own finished launch — each answers from its own folder', async () => {
+  domainReady(B)
   const r = await run(B, 'install', ['--mode', 'install'])
   assert.equal(r.a?.ok, true, r.out)
   const a = (await run(A, 'state')).a?.state
@@ -167,6 +193,27 @@ await t('744-4 a server whose node is a 737 move of a computer: «unrelated, mov
   assert.equal((await run(B, 'install', ['--mode', 'update'])).a?.reason, 'unrelated')
   writeFileSync(join(B.dir, 'probe.json'), kept)
   assert.equal((await run(B, 'state')).a?.state.relation.kind, 'clean', 'the same server without the move: clean')
+})
+await t('744-5 a server whose node holds a domain and no record of the page: the record is written from its mark once (from: server, since); step 3 done without a detection or a check; negative: no mark → no record', async () => {
+  const C = await server()
+  assert.equal((await run(C, 'connect', [], { password: PASSWORD })).a?.ok, true)
+  assert.equal((await run(C, 'state')).a?.state.domain, null, 'no mark, no record')
+  // C's own «node» folder with its mark — never the shared one of A and B
+  const own = tmp('launch-held-node-')
+  mkdirSync(join(own, 'data', 'node'), { recursive: true })
+  writeFileSync(join(own, 'data', 'node', 'server.json'), JSON.stringify({ phase: 'live', domain: 'held.example.org', domainWay: 'migrate', domainActive: true, ip: '127.0.0.1', at: '2026-11-13T22:45:16Z' }))
+  process.env.STATE_NODE_DIR = own
+  try {
+    const d = (await run(C, 'state')).a?.state.domain
+    assert.deepEqual([d?.domain, d?.way, d?.from, d?.since], ['held.example.org', 'migrate', 'server', '2026-11-13T22:45:16Z'], JSON.stringify(d))
+    assert.equal(domainOf(C).from, 'server', 'kept on the server')
+    assert.deepEqual(domainMissing(d), [], JSON.stringify(d))
+    assert.deepEqual(domainMissing({ ...d, from: undefined }), ['where', 'records'], 'the same record typed on the page needs its detection and first check')
+  } finally {
+    delete process.env.STATE_NODE_DIR
+    rmSync(own, { recursive: true, force: true })
+    C.server.close()
+  }
 })
 await t('negative: a wrong way, a bad domain, and the server node\'s door before its node lives', async () => {
   assert.equal((await run(A, 'way', ['--way', 'telepathy'])).a?.reason, 'bad-way')

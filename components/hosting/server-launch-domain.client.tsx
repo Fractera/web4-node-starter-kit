@@ -7,17 +7,19 @@ import type { DomainLadderWords } from "@/components/domain/domain-ladder.i18n"
 import { Ladder } from "@/components/hosting/ladder-step"
 import type { LaunchState } from "@/components/hosting/server-launch.client"
 import { RecordsStep } from "@/components/hosting/server-ladder-records.client"
-import { domainDone, launchView } from "@/components/hosting/server-launch-rungs"
+import { launchView } from "@/components/hosting/server-launch-rungs"
 import { DomainStep, domainLines, WhereStep, WhoStep } from "@/components/hosting/server-ladder-steps.client"
 import type { ServerLadderWords } from "@/components/hosting/server-ladder.i18n"
 import { Small } from "@/components/ui/typography"
+import { domainSteps } from "@/lib/hosting/launch-domain.mjs"
 
 // THE DOMAIN OF A SERVER BEING LAUNCHED (node step 738-5): the 737-19 ladder (the owner drew it on 2026-11-13: the domain · «кто его
 // возвращает регистратор или Cloud Flyer» · who has access · the records) with a first check — «активация домена (… первая проверка)».
 // 🔒 ITS STATE IS THE SERVER'S: the choice lives in /root/.fractera/domain.json there and reaches the server node's mark at the launch
 // (`launch.sh`, stage mark); this island only shows what the server answered. The next step never waits for DNS.
 // 🔒 744-7, D46: step 3 of the launch is done when this ladder is — a domain, where its records live, a way to write them, the first check
-// of the records (its result is the second check's business): `domainDone` (`server-launch-rungs.ts`), read by this ladder and step 3 alike.
+// of the records (its result is the second check's business) — `domainSteps` (`lib/hosting/launch-domain.mjs`), read by this ladder, by
+// step 3's own line and by the runner's `install` alike; a domain the server already holds counts as connected (744-5).
 
 type Act = (action: string, extra?: Record<string, unknown>) => Promise<unknown>
 
@@ -34,7 +36,7 @@ export function LaunchDomain({ state, keyPresent, words, keyWords, dialogUi, not
     void onAct("detect")
   }, [view.zone, view.detect, onAct])
 
-  const done = domainDone(view)
+  const done = domainSteps(state.domain)
   const summary = domainLines(view, words)
   const body = {
     domain: <DomainStep busy={busy} onSave={(n) => { setPrefill(null); return onAct("domain", { name: n }) }} prefill={prefill} view={view} words={words} />,

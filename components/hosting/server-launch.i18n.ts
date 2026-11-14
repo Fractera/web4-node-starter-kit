@@ -23,7 +23,7 @@ export type ServerLaunchWords = {
   locked: string
   step: Record<LaunchStep, string>
   /** 744-7: one line of what a done step did, shown while it is closed — `{host}` `{time}` `{head}`, `{ok}` of `{all}` required names */
-  summary: { server: string; clean: string; related: string; warn: string; install: string; recheck: string; certs: string }
+  summary: { server: string; clean: string; related: string; warn: string; install: string; recheck: string; certs: string; since: string }
   connected: string
   /** 744-3: access for one day — `{time}` the deadline in the person's own clock */
   access: { until: string; close: string; closing: string }
@@ -83,12 +83,13 @@ const en: ServerLaunchWords = {
   summary: {
     server: "{host} · access until {time}", clean: "A clean server", related: "Fractera from your fork ({head})", warn: "read the notes",
     install: "Fractera {head} installed, the server's node answers", recheck: "{ok} of {all} names point to the server", certs: "{ok} of {all} names: a certificate and HTTPS",
+    since: "recorded {date}",
   },
   connected: "Server {host} is connected. The server's key fingerprint: {fp}.",
   access: { until: "Access until {time} (24 h at most)", close: "Close access", closing: "Closing the access…" },
   window: { open: "Open the server's panel", opening: "Opening an SSH window…", link: "The server's panel: {url}", note: "Through SSH, on this computer only, while the access lasts; «Close access» closes it too." },
   errors: {
-    auth: "The server refused the password.", "need-password": "This browser has no open access to this server: type the root password — access lasts a day.", "no-password-login": "This server takes no password login (the provider switched it off). Switch password login for root on in the provider's panel, or reinstall the server with a password — the node never uses a provider's keys.", "key-refused": "The server's SSH does not know an access deadline (OpenSSH older than 8.2): the node gives no access without one. Update the server's system.", "visit-install": "The access could not be written on the server.", unrelated: "This server holds a state not related to this node: delete the previous state first.", unreachable: "The server does not answer on this address and port.",
+    auth: "The server refused the password.", "need-password": "This browser has no open access to this server: type the root password — access lasts a day.", "no-password-login": "This server takes no password login (the provider switched it off). Switch password login for root on in the provider's panel, or reinstall the server with a password — the node never uses a provider's keys.", "key-refused": "The server's SSH does not know an access deadline (OpenSSH older than 8.2): the node gives no access without one. Update the server's system.", "visit-install": "The access could not be written on the server.", unrelated: "This server holds a state not related to this node: delete the previous state first.", "domain-not-ready": "The domain (step 3) is not ready yet: finish it, then install.", unreachable: "The server does not answer on this address and port.",
     timeout: "The server did not answer in time.", "bad-address": "That is not a server address.", "bad-password": "The password cannot contain line breaks.",
     running: "A launch is already running on this server.", "server-unfit": "The node cannot live on this server: see the check.", "no-ip": "The server's IPv4 address is unknown.", "no-fork": "This node has no GitHub fork to install from.",
     "le-limit": "Let's Encrypt's weekly limit would be passed: {week} certificates this week, {want} more needed{over}. Wait until the week frees up.", "not-live": "The server's node does not run yet.",
@@ -160,12 +161,13 @@ const ru: ServerLaunchWords = {
   summary: {
     server: "{host} · доступ до {time}", clean: "Чистый сервер", related: "Fractera из вашего форка ({head})", warn: "есть замечания",
     install: "Fractera {head} установлена, узел сервера отвечает", recheck: "{ok} из {all} имён ведут на сервер", certs: "{ok} из {all} имён: сертификат и HTTPS",
+    since: "записано {date}",
   },
   connected: "Сервер {host} подключён. Отпечаток ключа сервера: {fp}.",
   access: { until: "Доступ до {time} (не больше 24 ч)", close: "Закрыть доступ", closing: "Закрываю доступ…" },
   window: { open: "Открыть пульт сервера", opening: "Открываю окно SSH…", link: "Пульт сервера: {url}", note: "Через SSH, только на этом компьютере, пока открыт доступ; «Закрыть доступ» закрывает и его." },
   errors: {
-    auth: "Сервер не принял пароль.", "need-password": "У этого браузера нет открытого доступа к этому серверу: введите пароль root — доступ откроется на сутки.", "no-password-login": "Этот сервер не принимает вход по паролю (провайдер его выключил). Включите вход по паролю для root в панели провайдера или переустановите сервер с паролем — ключи провайдера узел не использует.", "key-refused": "SSH сервера не знает срока доступа (OpenSSH старше 8.2): без срока узел доступа не даёт. Обновите систему сервера.", "visit-install": "Не удалось записать доступ на сервер.", unrelated: "На сервере состояние, не связанное с этим узлом: сначала удалите прежнее состояние.", unreachable: "Сервер не отвечает на этом адресе и порту.",
+    auth: "Сервер не принял пароль.", "need-password": "У этого браузера нет открытого доступа к этому серверу: введите пароль root — доступ откроется на сутки.", "no-password-login": "Этот сервер не принимает вход по паролю (провайдер его выключил). Включите вход по паролю для root в панели провайдера или переустановите сервер с паролем — ключи провайдера узел не использует.", "key-refused": "SSH сервера не знает срока доступа (OpenSSH старше 8.2): без срока узел доступа не даёт. Обновите систему сервера.", "visit-install": "Не удалось записать доступ на сервер.", unrelated: "На сервере состояние, не связанное с этим узлом: сначала удалите прежнее состояние.", "domain-not-ready": "Домен (шаг 3) ещё не готов: закончите его, затем установка.", unreachable: "Сервер не отвечает на этом адресе и порту.",
     timeout: "Сервер не ответил вовремя.", "bad-address": "Это не адрес сервера.", "bad-password": "В пароле не может быть переносов строки.",
     running: "На этом сервере уже идёт запуск.", "server-unfit": "Узел не сможет жить на этом сервере: смотрите проверку.", "no-ip": "IPv4-адрес сервера неизвестен.", "no-fork": "У этого узла нет форка на GitHub, из которого ставить.",
     "le-limit": "Будет превышен недельный лимит Let's Encrypt: за неделю {week} сертификатов, нужно ещё {want}{over}. Дождитесь, пока неделя освободится.", "not-live": "Узел на сервере ещё не работает.",

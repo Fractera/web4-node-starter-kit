@@ -136,6 +136,11 @@ if (!esbuild) {
     assert.equal(open(server({ ...ready, core: core() })).certs, false)
     assert.equal(open(server({ ...ready, core: core(true) })).certs, true)
   })
+  await t('744-5 a domain the server already holds (its mark): step 3 done at once, the installation opens; negative: the same record typed on the page stays open', () => {
+    const held = { domain: 'aifa.dev', way: 'migrate', from: 'server', since: '2026-11-13T22:45:16Z' }
+    assert.deepEqual([open(server({ domain: held })).domain, open(server({ domain: held })).install], [true, true])
+    assert.equal(open(server({ domain: { ...held, from: undefined } })).install, false)
+  })
   await t('a server not related to this node: nothing past the check opens (744-4); negative: related → step 3 opens', () => {
     assert.equal(open(server({ relation: { kind: 'unrelated', nodeUnrelated: true, reasons: [{ id: 'moved' }] } })).domain, false)
     assert.equal(open(server({ relation: { kind: 'related', nodeUnrelated: false, reasons: [] } })).domain, true)
