@@ -110,9 +110,14 @@ All in the core, branch main of the working copy `~/fractera-dev/web4-node-start
 | 741-5 | the SSH window comes back as a verb; the three texts that name it become true | `741-5.md` |
 | 741-6 | the browser learns the place from the node: hosting page, online bar, alarms, update banner on both places | `741-6.md` |
 | 741-7 | the map of every behaviour that differs, and the guard `check:place-readers` | `741-7.md` |
+| 741-8 | (found on the way) a server node merges its updates and commits with a neutral git identity, never a personal one | `741-8.md` |
 
 Dependencies: 741-3, 741-4 and 741-6 read 741-2's reader; 741-6's server proof needs 741-5 (eyes through the window before sign-in);
 741-7 maps what 741-1…6 left. 741-1 depends on nothing.
+
+**Found 2026-11-14 ~13:25 (741-8):** the test server cannot take ANY update — no git identity for the merge over its own commit
+`87f5a242`; its old `node-update.mjs` rolls back. So the server-side proofs of 741-1…8 come from a FRESH LAUNCH from the page after the
+second push (the owner's rule «from scratch»; his IP and root password), never from a hand-set identity.
 
 Live proofs on the server need the core on it: Fractera push → fork sync (aifa-agi, Chrome or a token — mine) → `node:update` on the
 server (its own update banner or `npm run server -- …` from the computer) — the update's NEW `serve.mjs rebuild` applies 741-1's nginx.
