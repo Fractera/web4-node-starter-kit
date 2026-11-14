@@ -10,6 +10,7 @@ mkdirSync(join(ROOT, 'logs'), { recursive: true })
 const out = openSync(join(ROOT, 'logs', 'node-update.log'), 'w')
 // 642-3: сборка ядра внутри обновления отдаёт этот же журнал чтецу сборки (`lib/deploy/build-reader.cjs`), пока ядро остановлено.
 const env = { ...process.env, FRACTERA_BUILD_LOG: join(ROOT, 'logs', 'node-update.log'), FRACTERA_BUILD_WHAT: 'update' }
-const child = spawn(process.execPath, [join(ROOT, 'scripts', 'node-update.mjs')], { cwd: ROOT, env, stdio: ['ignore', out, out], windowsHide: true })
+// 743-2: through stage 0 — the target's own updater does the update (`scripts/node-update-stage0.mjs`).
+const child = spawn(process.execPath, [join(ROOT, 'scripts', 'node-update-stage0.mjs')], { cwd: ROOT, env, stdio: ['ignore', out, out], windowsHide: true })
 child.on('exit', (code) => process.exit(code ?? 1))
 child.on('error', () => process.exit(1))

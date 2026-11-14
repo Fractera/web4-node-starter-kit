@@ -20,10 +20,13 @@
 // Ход — в стандартный вывод (дверь пишет его в `logs/node-update.log`), итог — `data/node/node-update.json`:
 // state running → done | refused | failed, stage, summary | reason.
 // 🛑 Только в форке (`logs/origin.json` verdict `fork`): у оригинала и у машины автора история своя.
+// 743-2: the update is done by the version it updates to — `scripts/node-update-stage0.mjs` (frozen) fetches the fork and runs THIS file
+// of the target from a throwaway worktree with `--root <node>`; the mark below tells stage 0 that this file knows that contract.
+// @handoff v1
 import { spawnSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, rmdirSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
-import { dirname, join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { machineEnv } from '../lib/deploy/git-identity.mjs'
 
@@ -32,7 +35,13 @@ const require = createRequire(import.meta.url)
 const { causeOf } = require('../lib/deploy/build-failure.cjs')
 // 720-2: the node's records inside the core's git tree (the site settings, section 9 entries, its own steps) survive the merge.
 const records = require('../lib/deploy/node-records.cjs')
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
+// 743-2: `--root <node>` — the node this run updates (stage 0 runs the target's copy of this file from outside the node); without it,
+// the node this file stands in. The modules loaded above come from this file's own tree — the target's — which is the point.
+const ARGV = process.argv.slice(2)
+const ROOT_AT = ARGV.indexOf('--root')
+const HERE = dirname(fileURLToPath(import.meta.url))
+const ROOT = ROOT_AT >= 0 && ARGV[ROOT_AT + 1] ? resolve(ARGV[ROOT_AT + 1]) : join(HERE, '..')
+const UPDATER = spawnSync('git', ['-C', HERE, 'rev-parse', '--short=8', 'HEAD'], { encoding: 'utf8', windowsHide: true }).stdout?.trim() || null
 const IS_WIN = process.platform === 'win32'
 const STATE = join(ROOT, 'data', 'node', 'node-update.json')
 const REGISTRY_REL = 'WEB4-ITEMS-REGISTRY/web4-items.json'
@@ -60,7 +69,7 @@ let current = 'check'
 const say = (s) => console.log(s)
 const write = (s) => {
   mkdirSync(dirname(STATE), { recursive: true })
-  writeFileSync(STATE, JSON.stringify({ pid: process.pid, startedAt, stage: current, ...s }, null, 2) + '\n')
+  writeFileSync(STATE, JSON.stringify({ pid: process.pid, startedAt, stage: current, updater: UPDATER, ...s }, null, 2) + '\n')
 }
 const stage = (name, words) => { current = name; write({ state: 'running' }); say(`\n── ${words}`) }
 // 719: обновление, кончившееся до сборки ядра, будит главного агента само (`agent-return.mjs --update-stopped`, вне дерева ядра);
@@ -149,8 +158,9 @@ function mergeRegistry(theirs, ours) {
 // начал настоящее обновление (аргументов скрипт не читал), а минуту спустя главный агент запустил его своим фоновым ребёнком — крышка
 // сборки убила ядро, агента и само обновление посреди сборки, и никто не записал конец. Агент Claude Code несёт `CLAUDECODE=1`; правильный
 // запуск (`scripts/node-update-run.mjs` через `spawn-free`, кнопка узла) ставит `FRACTERA_BUILD_LOG`.
-if (process.argv.length > 2) {
-  console.error(`===NODE_UPDATE_REFUSED=== неизвестные аргументы: ${process.argv.slice(2).join(' ')} — у обновления узла аргументов нет; ничего не тронуто`)
+const UNKNOWN = ARGV.filter((a, i) => a !== '--root' && i !== ROOT_AT + 1)
+if (UNKNOWN.length || (ROOT_AT >= 0 && !ARGV[ROOT_AT + 1])) {
+  console.error(`===NODE_UPDATE_REFUSED=== неизвестные аргументы: ${ARGV.join(' ')} — у обновления узла есть только --root <папка узла>; ничего не тронуто`)
   process.exit(2)
 }
 if (process.env.CLAUDECODE && !process.env.FRACTERA_BUILD_LOG) {
@@ -160,6 +170,7 @@ if (process.env.CLAUDECODE && !process.env.FRACTERA_BUILD_LOG) {
 
 // ── 1. проверка и форк ──────────────────────────────────────────────────────────────────────────────────────────────────────
 stage('check', 'проверка')
+say(`обновляет: ${resolve(HERE, '..') === resolve(ROOT) ? 'сам узел' : `версия ${UPDATER} (из временной копии — stage 0)`}`)
 const origin = readJson(join(ROOT, 'logs', 'origin.json'))
 if (origin?.verdict !== 'fork') finish('refused', { reason: `это не форк (${origin?.verdict ?? 'проверки форка не было'}) — история этой копии своя, её обновляют git` })
 if (require('../lib/deploy/deploy-lock.cjs').isRunning()) finish('refused', { reason: 'идёт развёртывание элемента — повторите, когда оно закончится' })
