@@ -49,3 +49,12 @@ mkdir -p "$W/target"; git -C "$W/fork.git" archive "$TARGET" scripts/node-update
 cp "$W/target/scripts/node-update.mjs" "$W/b/scripts/node-update.mjs"; cp "$W/target/lib/deploy/"*.{cjs,mjs} "$W/b/lib/deploy/" 2>/dev/null
 run_update "$W/b" "$W/b/scripts/node-update.mjs"; report "$W/b" "$HB"
 echo "merge passed in B: $(grep -c 'узел на ' "$W/b.log") (the line «узел на <head>» is printed only after a successful merge)"
+
+echo "== C (743-5): stage 0 from OUTSIDE the node (as the launch page copies it to the server's /tmp) on the same old node"
+fixture "$W/c5"; HC="$(git -C "$W/c5" rev-parse HEAD)"
+git -C "$W/fork.git" show "$TARGET:scripts/node-update-stage0.mjs" > "$W/stage0-copy.mjs"
+env -i HOME="$W/home" PATH="$W/bin:/usr/local/bin:/usr/bin:/bin" GIT_CONFIG_NOSYSTEM=1 FRACTERA_NO_WAKE=1 \
+  node "$W/stage0-copy.mjs" --root "$W/c5" > "$W/c5.log" 2>&1
+grep -m1 "stage 0:" "$W/c5.log"; report "$W/c5" "$HC"
+M=$(git -C "$W/c5" reflog --format='%h %gs' | grep -m1 'merge origin/main' | cut -d' ' -f1)
+echo "merge ${M:-none} signed: $([ -n "$M" ] && git -C "$W/c5" log -1 --format='%an <%ae>' "$M")"
