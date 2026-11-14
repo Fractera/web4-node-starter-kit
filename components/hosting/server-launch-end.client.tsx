@@ -7,6 +7,7 @@ import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import type { Strategy } from "@/components/hosting/server-launch-check.client"
 import type { LaunchState } from "@/components/hosting/server-launch.client"
 import { installedOf } from "@/components/hosting/server-launch-rungs"
+import { finalCheck } from "@/lib/hosting/final-check.mjs"
 import type { ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
 import { StageLog } from "@/components/hosting/stage-log"
 import { Badge } from "@/components/ui/badge"
@@ -111,10 +112,15 @@ export function CertsLaunchStep({ state, words, domainWords, busy, onAct }: { st
   )
 }
 
-export function ReadyStep({ state, words, busy, onAct, claim, onClaim }: { state: LaunchState; words: ServerLaunchWords; busy: boolean; onAct: Act; claim: ClaimShown; onClaim: (c: ClaimShown) => void }) {
+type ReadyProps = { state: LaunchState; words: ServerLaunchWords; busy: boolean; onAct: Act; claim: ClaimShown; onClaim: (c: ClaimShown) => void }
+
+// 744-6. The owner, 2026-11-14: «мы не должны говорить пользу о том что сервер доступен если все сертификаты безопасности не установлены и на
+// последнем этапе заключительной проверки … мы эти проверки не завершили». «Ваш сервер готов», the links and the architect's code are
+// `ReadyWords`, drawn only under a passed `finalCheck` (every required name: a certificate and HTTPS; the domain on; sign-in leading to
+// auth.<zone>) — `check:ready-words` holds it; otherwise the step names what the check still misses.
+export function ReadyStep({ state, words, busy, onAct, claim, onClaim }: ReadyProps) {
   const w = words.ready
   const zone = state.core?.zone ?? ""
-  const architect = state.core?.rows.find((r) => r.kind === "architect")?.host ?? zone
   const s = state.domain?.signin
   if (!state.core?.steps.active) {
     return (
@@ -125,17 +131,37 @@ export function ReadyStep({ state, words, busy, onAct, claim, onClaim }: { state
       </div>
     )
   }
+  const final = finalCheck(state)
   return (
-    <div className="flex flex-col gap-2" data-block="server-launch-ready">
+    <div className="flex flex-col gap-2" data-block="server-launch-ready" data-ready={final.ok ? "1" : "0"}>
       {s ? <Small className={s.ok ? "text-foreground" : "break-all text-destructive"}>{s.ok ? fill(w.signinOk, { zone }) : fill(w.signinFail, { zone, detail: `${String(s.providers)} · ${s.location ?? "—"}` })}</Small> : null}
-      {s?.ok ? <p className="font-medium text-foreground text-sm" data-block="server-launch-done">{w.done}</p> : null}
+      {final.ok ? <ReadyWords busy={busy} claim={claim} onAct={onAct} onClaim={onClaim} state={state} words={words} /> : (
+        <div className="flex flex-col gap-1" data-block="server-launch-missing">
+          <Small className="text-foreground">{w.missing.title}</Small>
+          <ul className="flex list-disc flex-col gap-1 pl-5 text-sm text-muted-foreground">
+            {final.missing.map((m) => <li key={`${m.host}-${m.what}`}>{w.missing[m.what].replace("{host}", m.host ?? "?")}</li>)}
+          </ul>
+        </div>
+      )}
+      <div><Button disabled={busy} onClick={() => void onAct("signin")} size="sm" variant="outline">{w.signinButton}</Button></div>
+    </div>
+  )
+}
+
+/** The words that call the server usable — drawn only under a passed final check (744-6, `check:ready-words`). */
+function ReadyWords({ state, words, busy, onAct, claim, onClaim }: ReadyProps) {
+  const w = words.ready
+  const zone = state.core?.zone ?? ""
+  const architect = state.core?.rows.find((r) => r.kind === "architect")?.host ?? zone
+  return (
+    <>
+      <p className="font-medium text-foreground text-sm" data-block="server-launch-done">{w.done}</p>
       <Small className="text-foreground">
         {w.links} <a className="underline" href={`https://${zone}/`}>{w.site}</a> · <a className="underline" href={`https://${architect}/`}>{w.panel}</a> · <a className="underline" href={`https://auth.${zone}/`}>{w.signin}</a>
       </Small>
       <Claim busy={busy} onAct={onAct} onShown={onClaim} shown={claim} words={words} zone={zone} />
       <Small className="text-muted-foreground">{w.next}</Small>
-      <div><Button disabled={busy} onClick={() => void onAct("signin")} size="sm" variant="outline">{w.signinButton}</Button></div>
-    </div>
+    </>
   )
 }
 

@@ -4,7 +4,8 @@
 // running them, and each «server's» folder is a temporary folder of this machine.
 import assert from 'node:assert/strict'
 import { spawn, spawnSync } from 'node:child_process'
-import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { createServer } from 'node:http'
 import { tmpdir } from 'node:os'
 import { basename, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -222,6 +223,36 @@ await t('negative: a wrong way, a bad domain, and the server node\'s door before
 })
 await t('negative: nothing per server is written on the computer — no key (744-3), only the pins and (later) the certificate ledger', async () => {
   assert.deepEqual(readdirSync(join(node, 'data', 'node', 'server')).sort(), ['known-hosts.json', 'known_hosts'])
+})
+
+console.log('744-6 never «available» before every certificate and the final check')
+await t('the domain is switched on only over ready names (negative: a name without its certificate → not-ready, named); with the names ready but sign-in elsewhere → no «launched» mark on this computer', async () => {
+  const D = await server()
+  assert.equal((await run(D, 'connect', [], { password: PASSWORD })).a?.ok, true)
+  // D's own node: its mark (live, the domain on) and its door on loopback, answering as a live node's /api/node/server/domain does
+  let core = { zone: 'ready.invalid', rows: [{ host: 'ready.invalid', zone: 'ready.invalid', optional: false, dns: 'ok', cert: 'missing', https: null }], steps: { domain: true, dns: true, certs: false, check: false, active: true }, certsRun: null, helper: true }
+  const door = createServer((req, res) => { res.setHeader('content-type', 'application/json'); res.end(JSON.stringify(core)) })
+  await new Promise((r) => door.listen(0, '127.0.0.1', r))
+  const own = tmp('launch-ready-node-')
+  mkdirSync(join(own, 'data', 'node'), { recursive: true })
+  mkdirSync(join(own, 'logs'), { recursive: true })
+  writeFileSync(join(own, 'data', 'node', 'server.json'), JSON.stringify({ phase: 'live', domain: 'ready.invalid', domainWay: 'dns', domainActive: true, ip: '127.0.0.1', at: '2026-11-14T12:00:00Z' }))
+  writeFileSync(join(own, 'logs', 'runtime.json'), JSON.stringify({ port: door.address().port }))
+  const launched = join(node, 'data', 'node', 'server', 'launched.json')
+  process.env.STATE_NODE_DIR = own
+  try {
+    const r = await run(D, 'door', [], { key: D.key, body: { action: 'activate' } })
+    assert.deepEqual([r.a?.reason, r.a?.missing], ['not-ready', [{ host: 'ready.invalid', what: 'cert' }, { host: 'ready.invalid', what: 'https' }]], r.out)
+    core = { ...core, rows: [{ ...core.rows[0], cert: 'ok', https: true }], steps: { ...core.steps, certs: true, check: true } }
+    const s = await run(D, 'signin') // asked from the internet: auth.ready.invalid never answers (RFC 2606)
+    assert.deepEqual([s.a?.ok, s.a?.ready?.ok, s.a?.ready?.missing], [true, false, [{ host: 'auth.ready.invalid', what: 'signin' }]], s.out)
+    assert.equal(existsSync(launched), false, 'no «launched» mark without the final check')
+  } finally {
+    delete process.env.STATE_NODE_DIR
+    door.close()
+    rmSync(own, { recursive: true, force: true })
+    D.server.close()
+  }
 })
 
 console.log('738-5/6/8 the weekly budget, where sign-in leads, a silent core')

@@ -47,7 +47,9 @@ export type ServerLaunchWords = {
   stage: Record<string, string>
   recheck: { text: string; button: string; gate: string; noDomain: string }
   certs: { budget: string; limit: string; checklist: string; name: string; dns: string; cert: string; https: string; httpsButton: string }
-  ready: { text: string; activate: string; activating: string; signinOk: string; signinFail: string; signinButton: string; links: string; site: string; panel: string; signin: string; next: string; first: string; done: string; claimButton: string; claimNew: string; claimText: string; claimed: string }
+  /** 744-6: `done` · `links` · `site` · `panel` · `signin` · `next` and the claim words are drawn only under a passed final check
+   *  (`ReadyWords`, `check:ready-words`); `missing` names what the check still lacks — `{host}` */
+  ready: { text: string; activate: string; activating: string; signinOk: string; signinFail: string; signinButton: string; links: string; site: string; panel: string; signin: string; next: string; first: string; done: string; claimButton: string; claimNew: string; claimText: string; claimed: string; missing: { title: string; cert: string; https: string; signin: string } }
   busy: { title: string; text: string; clear: string; clearTitle: string; risks: string[]; agree: string; clearConfirm: string; notNow: string; clearing: string; cleared: string; failed: string; nodeTitle: string; nodeText: string; nodeClear: string; nodeRisk: string }
 }
 
@@ -118,6 +120,7 @@ const en: ServerLaunchWords = {
     text: "Switch the domain on: sign-in moves to https://auth.{zone}, the bare IP leads to the panel, the elements learn their addresses.", activate: "Switch the domain on", activating: "Switching on…",
     signinOk: "Sign-in leads to https://auth.{zone}.", signinFail: "Sign-in does not lead to https://auth.{zone} yet: {detail}", signinButton: "Check sign-in again", links: "Links:", site: "Site", panel: "Panel", signin: "Sign-in",
     next: "Next, in the server's own panel: its Claude Code subscription and its Telegram bot.", first: "The first registration on the server becomes its architect for good — and only with the architect code from this step.", done: "Your server is ready.",
+    missing: { title: "Not ready yet — the final check still misses:", cert: "{host}: no valid certificate", https: "{host}: HTTPS does not answer from the internet", signin: "sign-in does not lead to https://{host} yet" },
     claimButton: "Get the architect code", claimNew: "Get a new code", claimText: "Register at {url} with this code — you become the server's architect. The code is shown once: after a reload get a new one (the old one stops working).", claimed: "The architect is already registered on this server.",
   },
   busy: {
@@ -196,6 +199,7 @@ const ru: ServerLaunchWords = {
     text: "Включите домен: вход переедет на https://auth.{zone}, голый IP поведёт в панель, элементы узнают свои адреса.", activate: "Включить домен", activating: "Включаю…",
     signinOk: "Вход ведёт на https://auth.{zone}.", signinFail: "Вход ещё не ведёт на https://auth.{zone}: {detail}", signinButton: "Проверить вход ещё раз", links: "Ссылки:", site: "Сайт", panel: "Панель", signin: "Вход",
     next: "Дальше — в панели самого сервера: подписка Claude Code и Telegram-бот сервера.", first: "Первая регистрация на сервере навсегда становится его архитектором — и только с кодом архитектора с этого шага.", done: "Ваш сервер готов.",
+    missing: { title: "Пока не готов — финальной проверке не хватает:", cert: "{host}: нет действующего сертификата", https: "{host}: HTTPS не отвечает из интернета", signin: "вход пока не ведёт на https://{host}" },
     claimButton: "Получить код архитектора", claimNew: "Выдать новый код", claimText: "Зарегистрируйтесь на {url} с этим кодом — вы станете архитектором сервера. Код показывается один раз: после перезагрузки страницы выдайте новый (старый перестанет действовать).", claimed: "Архитектор на этом сервере уже зарегистрирован.",
   },
   busy: {

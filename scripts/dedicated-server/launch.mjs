@@ -18,6 +18,9 @@
 //                                   activate · upload · claim (739-5: the architect's one-time code, passed back once, kept nowhere here);
 //                                   a certificate run is refused here past the Let's Encrypt weekly limits (738-5)
 //   signin                          where sign-in leads, asked from the internet (738-6)
+//                                   744-6: `door activate` is refused (`not-ready`, the names missing) until every required name has a
+//                                   certificate and HTTPS; this computer's «launched» mark is written only when the final check passed
+//                                   (`lib/hosting/final-check.mjs`) — the answer carries `ready: { ok, missing }`
 //   clear --confirm <host>          a server taken by another installation: freed (stopped and kept, never erased), then checked again;
 //                                   744-4: a node not related to this one is set aside whole (`clear.sh --node`)
 // 🔒 THE COMPUTER KEEPS NO STATE OF A SERVER (738) AND NO KEY TO IT (744-3): only the map of pins (`lib/hosting/ssh.mjs`) and the ledger
@@ -35,6 +38,7 @@ import { detectDomain } from '../../lib/hosting/domain-detect.mjs'
 import { checkNames } from '../../lib/hosting/dns-check.mjs'
 import { dnsRecords, isHostName } from '../../lib/hosting/hostnames.mjs'
 import { judge } from '../../lib/hosting/judge.mjs'
+import { finalCheck, namesReady } from '../../lib/hosting/final-check.mjs'
 import { domainMissing } from '../../lib/hosting/launch-domain.mjs'
 import { relationOf } from '../../lib/hosting/relation.mjs'
 import { q, startDetached } from '../../lib/hosting/remote.mjs'
@@ -359,14 +363,23 @@ const verbs = {
         const over = want.filter((h) => (count.perName[h] ?? 0) >= LE_LIMITS.name)
         if (count.week + want.length > LE_LIMITS.domain || over.length) return fail('le-limit', { week: count.week, want: want.length, over, state: s })
       }
+      // 744-6: the domain is switched on only over names that are ready — a certificate and HTTPS for every required one.
+      if (body.action === 'activate') {
+        const names = namesReady(s)
+        if (!names.ok) return fail('not-ready', { missing: names.missing, state: s })
+      }
       const answer = await serverDoor(client, body.action === 'upload' ? { action: 'upload', host: body.name, fullchain: body.fullchain, privkey: body.privkey } : { action: body.action })
       if (body.action === 'activate' && answer?.ok) {
         // The auth element restarts with its public address: a few seconds before it answers there.
         await new Promise((r) => setTimeout(r, dry ? 10 : 8000))
         const d = await readDomain(client)
         await writeDomain(client, { ...d, signin: await signinCheck(s.core.zone) })
-        // 741-6, D36: this computer remembers the server it launched lives at its domain — its online bar stops offering a temporary address.
-        markLaunched(root, { ip: ipOf(s), domain: s.core.zone })
+        // 741-6, D36: this computer remembers the server it launched lives at its domain — its online bar stops offering a temporary
+        // address. 744-6: only once the final check passed on the server's fresh state.
+        const fresh = await readState(client)
+        const ready = finalCheck(fresh)
+        if (ready.ok) markLaunched(root, { ip: ipOf(fresh), domain: s.core.zone })
+        return done({ ok: true, answer, ready, state: fresh })
       }
       done({ ok: answer?.ok !== false, answer, state: await readState(client) })
     } finally { client.end() }
@@ -380,8 +393,11 @@ const verbs = {
       if (!zone || s.mark?.domainActive !== true) return fail('not-live', { state: s })
       const d = await readDomain(client)
       await writeDomain(client, { ...d, signin: await signinCheck(zone) })
-      markLaunched(root, { ip: ipOf(s), domain: zone }) // 741-6, D36: a live server, seen live
-      done({ ok: true, state: await readState(client) })
+      // 741-6, D36: a live server, seen live — 744-6: only when the final check passed on the server's fresh state
+      const fresh = await readState(client)
+      const ready = finalCheck(fresh)
+      if (ready.ok) markLaunched(root, { ip: ipOf(fresh), domain: zone })
+      done({ ok: true, ready, state: fresh })
     } finally { client.end() }
   },
 
