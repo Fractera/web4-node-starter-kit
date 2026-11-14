@@ -5,6 +5,7 @@ import { join } from "node:path"
 import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
+import { placeKind } from "@/lib/hosting/place.mjs"
 
 // НОВЫЙ ВРЕМЕННЫЙ АДРЕС ПО КНОПКЕ (узел, шаг 632-5). Владелец 2026-11-03 о мёртвом адресе: «Похоже для этого нужно делать баннер,
 // который будет предупреждать об этой проблеме и кнопка которую этой проблемы будет решать?»
@@ -39,6 +40,10 @@ function publishNew(): Promise<{ code: number | null; tail: string }> {
 export async function POST(req: NextRequest) {
   const denied = await requireRoles(req, ["architect", "admin"])
   if (denied) return denied
+  // 741-4: a server has no quick tunnel to replace — its face is nginx and its domain.
+  if (placeKind(ROOT) === "server") {
+    return NextResponse.json({ ok: false, error: "server-node", reason: "a node on a server has no temporary address — its face is nginx and its domain" }, { status: 409 })
+  }
   if (tunnel().dead !== true) {
     return NextResponse.json({ ok: false, error: "address-alive", reason: "the temporary address answers — it is not changed by a button" }, { status: 409 })
   }

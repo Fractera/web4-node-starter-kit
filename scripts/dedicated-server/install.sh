@@ -13,7 +13,8 @@ export PROGRESS="$NODE_DIR/logs/dedicated-server/install.progress.jsonl" LOG="$N
 export PATH="$HOME/.local/bin:$PATH" NODE_ENV=
 emit install running
 
-# No quick tunnel on the server: its public face is nginx (the IP, then the domain). `serve:start` reads this mark (serve.mjs, `unpublished`).
+# No quick tunnel on the server: its public face is nginx (the IP, then the domain). Since 741-4 the place record decides (`tunnelAllowed`,
+# `lib/hosting/place.mjs`); this mark stays for servers launched before 741 until their first start writes the record.
 stage marks 'printf "{\n  \"url\": null,\n  \"unpublished\": true,\n  \"reason\": \"dedicated-server\"\n}\n" > logs/tunnel.json'
 # 741-2: the act that makes a server says so — the node's record of where it lives (`lib/hosting/place.mjs`), before anything starts.
 stage place 'node scripts/place-record.mjs --server'

@@ -18,7 +18,7 @@ import { createRequire } from 'node:module'
 import paths from '../lib/web4-items/paths.cjs'
 import deployLock from '../lib/deploy/deploy-lock.cjs'
 import { PROGRESS_ENV, progress } from './progress.mjs'
-import { migratePlaceRecord } from '../lib/hosting/place.mjs'
+import { migratePlaceRecord, placeKind, tunnelAllowed } from '../lib/hosting/place.mjs'
 // 553: сборка ядра при «закрытой крышке» — все процессы узла, кроме туннеля, на время сборки остановлены.
 const { closeLid, openLid, backupNext, restoreNext, dropBackup, itemsAside, itemsBack, redrawCore } = createRequire(import.meta.url)('../lib/deploy/quiet-build.cjs')
 // 642-2: чтец сборки — журнал сборки ядра этому компьютеру, пока крышка закрыта (`lib/deploy/build-reader.cjs`).
@@ -208,7 +208,8 @@ async function start() {
   // Свой домен подключён — узел уже в интернете постоянным адресом, и временный открыл бы пульт без входа зря.
   let ownDomain = null
   try { ownDomain = JSON.parse(readFileSync(path.join(root, 'logs', 'domain.json'), 'utf8')).hostname || null } catch { /* домена нет */ }
-  if (!ownDomain && !readTunnel()?.unpublished) {
+  // 741-4: a server never opens a quick tunnel — its face is nginx; the decision lives in `lib/hosting/place.mjs` (`tunnelAllowed`).
+  if (tunnelAllowed({ kind: placeKind(root), unpublished: Boolean(readTunnel()?.unpublished), ownDomain })) {
     progress('tunnel')
     await publish({ quietPrice: true })
   }
@@ -815,6 +816,12 @@ function printAddressPrice() {
 // Поэтому: туннель жив и адрес отвечает → печатаем ТОТ ЖЕ адрес. Новый выдаётся
 // только по явной просьбе — `npm run serve:publish -- --new`.
 async function publish({ quietPrice = false } = {}) {
+  // 741-4: on a server the command refuses before it writes anything — `logs/tunnel.json` and its 371-1 mark stay as they are.
+  if (placeKind(root) === 'server') {
+    console.log('у узла на сервере лицо — nginx и его домен; временный адрес здесь не открывается (741-4)')
+    process.exitCode = 2
+    return
+  }
   const wantNew = process.argv.includes('--new')
 
   if (!wantNew) {

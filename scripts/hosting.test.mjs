@@ -588,6 +588,27 @@ console.log('741-3 the core\'s second wall: the request\'s signs read the place 
   })
 }
 
+console.log('741-4 a server never opens a quick tunnel')
+{
+  const { tunnelAllowed } = await import('../lib/hosting/place.mjs')
+  t('741-4: the start opens a tunnel only on a computer without its own domain and not after the person took the site off', () => {
+    assert.equal(tunnelAllowed({ kind: 'home' }), true)
+    assert.equal(tunnelAllowed({ kind: 'home', unpublished: true }), false, '371-1 kept')
+    assert.equal(tunnelAllowed({ kind: 'home', ownDomain: 'example.org' }), false)
+    assert.equal(tunnelAllowed({ kind: 'server' }), false, 'a server — never, whatever tunnel.json says')
+    assert.equal(tunnelAllowed({ kind: 'server', unpublished: false }), false)
+  })
+  t('741-4: serve:publish refuses on a server BEFORE it writes logs/tunnel.json; the new-address door refuses there too', () => {
+    const serve = readFileSync(new URL('./serve.mjs', import.meta.url), 'utf8')
+    const body = serve.slice(serve.indexOf('async function publish('))
+    assert.ok(body.indexOf("placeKind(root) === 'server'") > 0, 'publish asks the place')
+    assert.ok(body.indexOf("placeKind(root) === 'server'") < body.indexOf('writeFileSync('), 'the refusal comes before any write')
+    assert.ok(serve.includes('tunnelAllowed({ kind: placeKind(root)'), 'the start asks the same rule')
+    const door = readFileSync(new URL('../app/api/domain/new-address/route.ts', import.meta.url), 'utf8')
+    assert.ok(door.indexOf('placeKind(ROOT) === "server"') < door.indexOf('await publishNew()'), 'the door refuses before it publishes')
+  })
+}
+
 console.log('737-15 the names before the move')
 {
   const { nginxSite } = await import('../lib/hosting/nginx.mjs')
