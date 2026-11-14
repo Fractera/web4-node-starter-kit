@@ -47,7 +47,9 @@ await t('negative: the names ready but the domain off or sign-in elsewhere — t
   assert.equal(finalCheck({ core: { zone: 'example.org', rows: [] } }).ok, false, 'nothing measured is not ready')
 })
 
-const realFiles = () => [[END, readFileSync(join(ROOT, END), 'utf8')], ...['server-launch.client.tsx', 'server-launch-check.client.tsx', 'server-launch-rungs.ts', 'server-busy.client.tsx', 'server-place.client.tsx'].map((f) => [`components/hosting/${f}`, readFileSync(join(ROOT, 'components/hosting', f), 'utf8')])]
+// LF whatever the checkout (a Windows one gives CRLF), so the planted copies below find their lines
+const lf = (p) => readFileSync(p, 'utf8').replace(/\r\n/g, '\n')
+const realFiles = () => [[END, lf(join(ROOT, END))], ...['server-launch.client.tsx', 'server-launch-check.client.tsx', 'server-launch-rungs.ts', 'server-busy.client.tsx', 'server-place.client.tsx'].map((f) => [`components/hosting/${f}`, lf(join(ROOT, 'components/hosting', f))])]
 await t('the guard: the real files are clean; negatives — a ready word before the check, the check removed, another launch file reading the ready words', () => {
   const files = realFiles()
   assert.deepEqual(readyWordsProblems(files), [])

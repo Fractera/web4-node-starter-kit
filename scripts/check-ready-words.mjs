@@ -23,7 +23,9 @@ function fnText(text, name) {
 }
 
 /** @param {Array<[string, string]>} files `[path from the root, text]` @returns {string[]} the problems, none when clean */
-export function readyWordsProblems(files) {
+export function readyWordsProblems(input) {
+  // line ends as git keeps them: a Windows checkout gives CRLF, and a function's end is found by «\n}\n» (✗ 2026-11-14, CI windows)
+  const files = input.map(([rel, text]) => [rel, text.replace(/\r\n/g, '\n')])
   const out = []
   for (const [rel, text] of files) {
     if (rel === END || rel === DICT || !/\bServerLaunchWords\b/.test(text)) continue
