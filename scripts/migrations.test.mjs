@@ -60,9 +60,13 @@ try {
   await t('the real migrations on a throwaway node folder: all done, recorded with the entry point', async () => {
     const real = join(base, 'real')
     mkdirSync(real); spawnSync('git', ['init', '-q', real])
+    // 744-3, D45: a node that launched a server before 744-3 keeps its persistent key — the migration deletes both files, keeps the pins
+    mkdirSync(join(real, 'data', 'node', 'server'), { recursive: true })
+    for (const f of ['id_ed25519', 'id_ed25519.pub', 'known-hosts.json']) writeFileSync(join(real, 'data', 'node', 'server', f), f === 'id_ed25519' ? '-----BEGIN OPENSSH PRIVATE KEY-----\n' : '{}\n')
     const r = await runMigrations(real, 'install', quiet)
-    assert.ok(r.applied.includes('741-2-place-record') && r.applied.includes('743-1-repo-identity'), JSON.stringify(r))
+    assert.ok(r.applied.includes('741-2-place-record') && r.applied.includes('743-1-repo-identity') && r.applied.includes('744-3-retire-node-key'), JSON.stringify(r))
     assert.equal(r.failed.length, 0)
+    assert.deepEqual(readdirSync(join(real, 'data', 'node', 'server')), ['known-hosts.json'], 'the key gone, the pins kept')
     assert.ok(existsSync(join(real, 'data', 'node', 'place.json')))
     assert.ok(readLedger(real).applied.every((a) => a.by === 'install'))
   })
