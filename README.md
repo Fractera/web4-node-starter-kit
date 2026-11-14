@@ -27,6 +27,42 @@
   <img src="https://img.shields.io/badge/License-MIT-FACC15?style=for-the-badge" alt="MIT license">
 </p>
 
+## 🏗 Architecture for $480: How to write 1,000,000 lines of code without a million-dollar budget
+
+This repository (more than 16,000 files and 1,000,000 lines of code) was designed and written entirely by one developer in one year. The budget? **Two Claude subscriptions at $20 a month each.**
+
+With no investment, every token had to be saved. Most of the time the architecture was designed through targeted prompts, without expensive agents. These hard limits are exactly what led to an **extremely frugal and hyper-scalable platform** that today runs flawlessly on Web2 and is already designed as the foundation for a new environment — **Web4 Lagrix**.
+
+### 🧠 Anatomy of the intelligent core
+
+The secret of scalability is that the system does not breed duplicates. At the center is a powerful Core, with a shared registry (the orchestrator) deployed on top of it. The Core includes:
+
+*   **Multimodal shared memory:** one database for the whole project, object storage, a vector database, a Redis cache and the **LightRAG** graph store. Plus a universal memory for agents.
+*   **A universal role model (RBAC):** the Core contains a ready authorization system with guest and role access. Plug in a new microservice and you get native authorization out of the box — just declare the roles.
+*   **A built-in AI architect:** the main programming agent, relying on **6,000+ self-evolving cognitive skills** for logical reasoning.
+*   **Global modules (Plug & Play):** a configurator you can switch off, native multilingual support (82 languages) and a Design machine (108+ built-in UI skills).
+
+### 🚀 980+ instant microservices
+
+The architecture has room for **980+ microservices**, each of them an independent **Next.js 16.2** project running on its own port.
+
+Every new microservice starts instantly, already carrying all the memory, authorization, design system and routing of the Core under the hood. Moreover, the applications themselves are designed right inside the system:
+*   **Built-in Product Quiz and reverse engineering:** a dedicated system of documentation and questionnaires lets you systematically turn any microservice into a product on the level of an Airbnb or Uber clone.
+
+Because of the very high reuse of components, AI code generation of new features in this environment costs many times less than working with a "bare" model.
+
+### 🌐 From stable Web2 to Web4 (an invitation to collaborate)
+
+Right now the project performs all of its main functions and tasks, **running fully and stably on Web2 technologies**. At the same time, the architecture is ready for enormous loads:
+*   The total distributed context window can exceed **1,000,000,000 tokens** without losing focus.
+*   The system adapts: all tasks can run one after another on weak home PCs or in parallel on powerful clusters.
+
+**Web4 and the Agent-to-Agent (A2A) protocols are in active development right now.**
+Our goal is an autonomous network where every home computer can talk to the others directly, with no central nodes, using native A2A protocols.
+
+We are open to collaboration! Fork the project, run the stable Web2 version on your computer right now and join the development of Web4.
+
+
 <p align="center">
   <a href="https://github.com/Fractera/web4-node-starter-kit/fork"><img src="public/video/git-fork.gif" alt="Fork the project on GitHub" width="400"></a>
 </p>
