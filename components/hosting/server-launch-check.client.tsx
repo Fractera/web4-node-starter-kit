@@ -55,6 +55,11 @@ export function CheckStep({ state, words, dialogUi, busy, onAct }: { state: Laun
         ) : <Small className="text-foreground">{words.fractera.none}</Small>}
         {strategy === "running" ? <Small className="text-foreground">{words.fractera.launching}</Small> : null}
         <Small className="font-medium text-foreground" data-strategy={strategy}>{words.strategy[strategy].replace("{n}", String(f?.behind ?? "?"))}</Small>
+        {strategy === "update" && state.preflight ? (
+          <Small className={state.preflight.verdict && !state.preflight.verdict.ok ? "text-destructive" : "text-muted-foreground"} data-preflight={state.preflight.verdict ? (state.preflight.verdict.ok ? "ok" : "stop") : "unknown"}>
+            {!state.preflight.verdict ? words.preflight.unknown : state.preflight.verdict.ok ? words.preflight.ok : words.preflight.stop.replace("{files}", (state.preflight.verdict.conflicts ?? []).join(", ") || state.preflight.verdict.reason || "?")}
+          </Small>
+        ) : null}
       </div>
       {taken ? <ServerBusy busy={taken} dialogUi={dialogUi} disabled={busy} onStart={onAct} words={words.busy} /> : null}
       <div>

@@ -11,7 +11,10 @@ import { requireRoles } from "@/lib/auth/require-roles"
 // GET — без сети: отставание форка от оригинала (отметка `check-origin`, `logs/origin.json`), отставание узла от форка (`git rev-list`
 // по последней выборке), итог обновления (`data/node/node-update.json`, `running` без живого процесса — прервано).
 // POST { action: "check" } — «Проверить снова»: `check-origin` и `git fetch origin` (сеть — только по кнопке человека).
-// POST { action: "update" } — «Обновить узел»: `scripts/node-update.mjs` через `spawn-free` (сборка ядра остановит само ядро).
+// POST { action: "update" } — «Обновить узел»: stage 0 (`scripts/node-update-stage0.mjs`, 743-2: обновляет версия, до которой
+// обновляемся) через `spawn-free` (сборка ядра остановит само ядро).
+// POST { action: "preflight" } — 743-4: пробное слияние во временной копии, только вердикт (`--preflight`): ничего не пишет, никого не
+// будит; отказ, пока идёт обновление. Спрашивает полоса один раз при открытии, когда узел отстаёт; таймеров нет.
 // 🛑 Окружение детей очищается (ANTI-PATTERNS: дочерний процесс сервера Next иначе не читает свой `.env.local`); ожидание — без
 // синхронного вызова, сайт не замирает.
 export const dynamic = "force-dynamic"
@@ -88,6 +91,15 @@ export async function POST(req: NextRequest) {
     if (update()?.state === "running") return NextResponse.json({ ok: false, error: "running" }, { status: 409 })
     spawnSync(process.execPath, [join(ROOT, "scripts", "spawn-free.mjs"), join(ROOT, "scripts", "node-update-run.mjs")], { cwd: ROOT, env: childEnv(), windowsHide: true, stdio: "ignore", timeout: 10_000 })
     return NextResponse.json({ ok: true, started: true })
+  }
+  if (action === "preflight") {
+    if (update()?.state === "running") return NextResponse.json({ ok: false, error: "running" }, { status: 409 })
+    const r = await sh(process.execPath, [join(ROOT, "scripts", "node-update-stage0.mjs"), "--preflight"], 120_000)
+    const line = r.out.split("\n").reverse().find((l) => l.startsWith("===NODE_UPDATE_PREFLIGHT=== "))
+    try {
+      if (line) return NextResponse.json({ ok: true, preflight: JSON.parse(line.slice("===NODE_UPDATE_PREFLIGHT=== ".length)) }, { headers: { "Cache-Control": "no-store" } })
+    } catch { /* an unreadable verdict is no verdict */ }
+    return NextResponse.json({ ok: false, error: "no-verdict", detail: r.out.slice(-400) }, { status: 502 })
   }
   return NextResponse.json({ ok: false, error: "unknown-action" }, { status: 400 })
 }

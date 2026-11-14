@@ -37,6 +37,8 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
 type Update = { state: string; stage?: string; summary?: string; reason?: string; changes?: number; finishedAt?: string }
 type Body = { fork: boolean; behindBy: number; nodeBehind: number; repo: string | null; update: Update | null; checkedAt?: string | null }
+// 743-4: the trial merge of the update — asked once, when the node is behind its synced fork, before anyone presses.
+type Preflight = { ok: boolean; conflicts?: string[] } | "checking" | "unknown" | null
 
 const fill = (s: string, v: Record<string, string | number>) => s.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ""))
 
@@ -45,6 +47,7 @@ export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: 
   const [busy, setBusy] = useState<"check" | null>(null)
   const [refused, setRefused] = useState<string | null>(null)
   const [onTemporary, setOnTemporary] = useState(false)
+  const [preflight, setPreflight] = useState<Preflight>(null)
   const done = d?.update?.state === "done" && (d.update.changes ?? 0) > 0 ? d.update : null
   const { hidden, snooze } = useSnooze(`node-update-done-${done?.finishedAt ?? ""}`)
   const evenSnooze = useSnooze(`node-even-${d?.checkedAt ?? ""}`)
@@ -56,6 +59,16 @@ export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: 
       .then((b: Body | null) => setD(b))
       .catch(() => setD(null))
   }, [])
+
+  const askPreflight = !onTemporary && d?.fork === true && d.behindBy === 0 && d.nodeBehind > 0 && d.update?.state !== "running"
+  useEffect(() => {
+    if (!askPreflight || preflight !== null) return
+    setPreflight("checking")
+    fetch(`${BASE}/api/node/update`, { method: "POST", cache: "no-store", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "preflight" }) })
+      .then((r) => r.json())
+      .then((b: { ok?: boolean; preflight?: { ok: boolean; conflicts?: string[] } }) => setPreflight(b?.ok && b.preflight ? b.preflight : "unknown"))
+      .catch(() => setPreflight("unknown"))
+  }, [askPreflight, preflight])
 
   const check = async () => {
     setBusy("check")
@@ -100,6 +113,11 @@ export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: 
       {even ? <CircleCheck className="size-4 shrink-0 text-primary" aria-hidden /> : <TriangleAlert className="size-4 shrink-0 text-warning" aria-hidden />}
       <span className="flex-1">
         {text}
+        {askPreflight && preflight !== null ? (
+          <span className={typeof preflight === "object" && !preflight.ok ? "block text-destructive" : "block text-muted-foreground"} data-node-update-preflight={typeof preflight === "object" ? (preflight.ok ? "ok" : "stop") : preflight}>
+            {preflight === "checking" ? words.preflightChecking : preflight === "unknown" ? words.preflightUnknown : preflight.ok ? words.preflightOk : fill(words.preflightStop, { files: (preflight.conflicts ?? []).join(", ") })}
+          </span>
+        ) : null}
         {onTemporary ? <span className="block text-muted-foreground">{words.checkHere}</span> : refused ? <span className="block text-destructive">{fill(words.checkRefused, { reason: refused })}</span> : null}
       </span>
       {d.repo && !running && (

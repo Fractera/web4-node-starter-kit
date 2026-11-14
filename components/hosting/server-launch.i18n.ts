@@ -29,6 +29,8 @@ export type ServerLaunchWords = {
   item: Record<string, string>
   fractera: { none: string; there: string; behind: string; latest: string; unknown: string; launching: string }
   strategy: { install: string; update: string; latest: string; running: string }
+  /** 743-4: the trial merge of the update on the server, before the button. `{files}` — where it would stop. */
+  preflight: { ok: string; stop: string; unknown: string }
   recheckServer: string
   domainNote: string
   install: { text: string; install: string; update: string; again: string; running: string; done: string; failed: string; leave: string }
@@ -82,6 +84,7 @@ const en: ServerLaunchWords = {
   item: { os: "System", arch: "Processor", memory: "Free memory, MB (a fresh node holds)", disk: "Free disk, GB (needed)", cores: "Cores (recommended)", ram: "Memory, MB (recommended)", ports: "Ports 80/443", address: "Public address", systemd: "Autostart (systemd)", sites: "nginx already serves other sites — the node would break them; free the server first", others: "Programs of another installation run as root (pm2 processes)" },
   fractera: { none: "Fractera is not installed here.", there: "Fractera is installed: version {head}.", behind: "It is {n} commits behind Fractera.", latest: "It is the latest version of Fractera.", unknown: "How far behind it is could not be measured (GitHub did not answer).", launching: "A launch is running on this server now." },
   strategy: { install: "Next: install a fresh Fractera from your fork.", update: "Next: update it ({n} behind).", latest: "Next: nothing to install — go on to the domain.", running: "Next: follow the launch below." },
+  preflight: { ok: "A trial merge on the server passed: the update will go through.", stop: "A trial merge on the server stops on files changed both there and in Fractera: {files}. The update would be refused; the server is untouched.", unknown: "Could not check in advance whether the update will pass." },
   recheckServer: "Check again",
   domainNote: "The domain does not hold the installation: DNS wakes up while the server is being installed.",
   install: {
@@ -145,6 +148,7 @@ const ru: ServerLaunchWords = {
   item: { os: "Система", arch: "Процессор", memory: "Свободная память, МБ (свежий узел держит)", disk: "Свободный диск, ГБ (нужно)", cores: "Ядра (рекомендуется)", ram: "Память, МБ (рекомендуется)", ports: "Порты 80/443", address: "Публичный адрес", systemd: "Автозапуск (systemd)", sites: "nginx уже обслуживает другие сайты — узел их сломает; сначала освободите сервер", others: "Работают программы другой установки от root (процессы pm2)" },
   fractera: { none: "Fractera здесь не установлена.", there: "Fractera установлена: версия {head}.", behind: "Отстаёт от Fractera на {n} коммитов.", latest: "Это последняя версия Fractera.", unknown: "Насколько отстаёт, измерить не удалось (GitHub не ответил).", launching: "На этом сервере сейчас идёт запуск." },
   strategy: { install: "Дальше: установить свежую Fractera из вашего форка.", update: "Дальше: обновить (отстаёт на {n}).", latest: "Дальше: ставить нечего, переходите к домену.", running: "Дальше: следите за запуском ниже." },
+  preflight: { ok: "Пробное слияние на сервере прошло: обновление пройдёт.", stop: "Пробное слияние на сервере останавливается на файлах, изменённых и там, и в Fractera: {files}. Обновление было бы отклонено; сервер не тронут.", unknown: "Заранее проверить, пройдёт ли обновление, не удалось." },
   recheckServer: "Проверить ещё раз",
   domainNote: "Домен не держит установку: DNS просыпается, пока сервер ставится.",
   install: {

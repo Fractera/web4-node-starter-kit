@@ -109,6 +109,28 @@ export async function signinCheck(zone, fetchImpl = fetch) {
 async function probe(client) {
   await scripts(client, ['probe.sh', 'state.sh'])
   await exec(client, `${DRY}bash ${q(`${DIR}/probe.sh`)} ${q(FOLDER)} ${port} ${q(`${DIR}/probe.json`)}`, { timeoutMs: 90_000 })
+  if (!dry) await preflight(client)
+}
+
+/**
+ * 743-4: a node there that is behind — will its update pass? This computer's stage 0 runs on the server as the node's user with
+ * `--preflight`: the TARGET's updater merges in a throwaway copy and answers, nothing on the server is touched. The verdict is kept in
+ * `preflight.json` beside the probe (state.sh shows it); not behind or launching — the old verdict is removed.
+ */
+async function preflight(client) {
+  let f = null
+  try { f = JSON.parse((await exec(client, `cat ${q(`${DIR}/probe.json`)} 2>/dev/null || true`)).stdout)?.fractera ?? null } catch { /* no probe yet */ }
+  if (!f?.head || !(f.behind > 0) || f.launching) { await exec(client, `rm -f ${q(`${DIR}/preflight.json`)}`); return }
+  await upload(client, `${DIR}/node-update-stage0.mjs`, readFileSync(path.join(here, '..', 'node-update-stage0.mjs')), 0o700)
+  // the node's user cannot read /root/.fractera: a readable copy for this one run, removed after it
+  const tmp = `/tmp/fractera-stage0-${process.pid}-${Date.now()}.mjs`
+  const run = `node ${tmp} --root /home/${REMOTE_USER}/${FOLDER} --preflight`
+  const r = await exec(client, `install -m 644 ${q(`${DIR}/node-update-stage0.mjs`)} ${q(tmp)} && runuser -l ${REMOTE_USER} -c ${q(run)}; rm -f ${q(tmp)}`, { timeoutMs: 180_000 })
+  const line = String(r.stdout ?? '').split('\n').reverse().find((l) => l.startsWith('===NODE_UPDATE_PREFLIGHT=== '))
+  let verdict = null
+  try { verdict = line ? JSON.parse(line.slice('===NODE_UPDATE_PREFLIGHT=== '.length)) : null } catch { /* unreadable — no verdict */ }
+  const kept = { at: new Date().toISOString(), verdict, detail: verdict ? null : `${r.stdout ?? ''}${r.stderr ?? ''}`.slice(-300) }
+  await upload(client, `${DIR}/preflight.json`, `${JSON.stringify(kept)}\n`, 0o600)
 }
 
 /** The domain the page chose for this server, kept on the server; written whole and renamed. */
@@ -209,6 +231,8 @@ const verbs = {
       const fork = forkUrl()
       if (!fork) return fail('no-fork', { state: s })
       await scripts(client, ['launch.sh', 'prepare.sh', 'stages.sh', 'fractera-root.sh', 'state.sh'])
+      // 743-5: this computer's stage 0 — the update of a server of any version is done by the target's own updater
+      await upload(client, `${DIR}/node-update-stage0.mjs`, readFileSync(path.join(here, '..', 'node-update-stage0.mjs')), 0o700)
       await startDetached(client, `${DRY}bash ${q(`${DIR}/launch.sh`)} ${REMOTE_USER} ${q(FOLDER)} ${port} ${q(ensureKeyPair(root).publicLine)} ${q(fork)} ${mode} ${q(ip)}`, `${DIR}/launch.out`)
       await new Promise((r) => setTimeout(r, dry ? 300 : 1500))
       done({ ok: true, started: mode, state: await readState(client) })

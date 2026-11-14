@@ -27,6 +27,12 @@ export type OriginNoticeWords = {
   /** 651-1: the fork was never compared with the original. */
   evenNever: string
   hide: string
+  /** 743-4: the dry merge of the update, asked once when the node is behind — before anyone presses. */
+  preflightChecking: string
+  preflightOk: string
+  /** `{files}` — the files where the merge would stop. */
+  preflightStop: string
+  preflightUnknown: string
   stages: Record<string, string>
 }
 
@@ -51,7 +57,11 @@ const DICT: Record<"en" | "ru", OriginNoticeWords> = {
     even: "The node matches the original Fractera as of {date}. The node does not ask GitHub by itself: press «Check again» to see whether there are new changes.",
     evenNever: "The fork has not been compared with the original Fractera yet: press «Check again».",
     hide: "Hide",
-    stages: { check: "check", fetch: "taking the fork", backup: "backup", local: "local changes", merge: "merge", registry: "registry", deps: "dependencies", guards: "build guards", elements: "elements", core: "core build", skills: "skills base" },
+    preflightChecking: "Checking whether the update will pass…",
+    preflightOk: "A trial merge passed: the update will go through.",
+    preflightStop: "A trial merge stops on files changed both here and in Fractera: {files}. The update would be refused; the node is untouched.",
+    preflightUnknown: "Could not check in advance whether the update will pass.",
+    stages: { check: "check", fetch: "taking the fork", preflight: "trial merge", backup: "backup", local: "local changes", merge: "merge", registry: "registry", deps: "dependencies", guards: "build guards", elements: "elements", core: "core build", skills: "skills base" },
   },
   ru: {
     forkBehind: "В оригинале Fractera {n} новых изменений, которых пока нет в вашем форке. Нажмите «Синхронизировать форк», на GitHub — «Sync fork», затем здесь «Проверить снова». Всё продолжает работать как есть.",
@@ -73,7 +83,11 @@ const DICT: Record<"en" | "ru", OriginNoticeWords> = {
     even: "Узел совпадает с оригиналом Fractera на {date}. Сам узел GitHub не спрашивает: нажмите «Проверить снова», чтобы узнать, есть ли новые изменения.",
     evenNever: "Форк ещё не сравнивался с оригиналом Fractera: нажмите «Проверить снова».",
     hide: "Скрыть",
-    stages: { check: "проверка", fetch: "забираю форк", backup: "копия несохранённого", local: "разбор несохранённого", merge: "слияние", registry: "реестр", deps: "зависимости", guards: "сторожа сборки", elements: "элементы", core: "сборка ядра", skills: "база навыков" },
+    preflightChecking: "Проверяю, пройдёт ли обновление…",
+    preflightOk: "Пробное слияние прошло: обновление пройдёт.",
+    preflightStop: "Пробное слияние останавливается на файлах, изменённых и здесь, и в Fractera: {files}. Обновление было бы отклонено; узел не тронут.",
+    preflightUnknown: "Заранее проверить, пройдёт ли обновление, не удалось.",
+    stages: { check: "проверка", fetch: "забираю форк", preflight: "пробное слияние", backup: "копия несохранённого", local: "разбор несохранённого", merge: "слияние", registry: "реестр", deps: "зависимости", guards: "сторожа сборки", elements: "элементы", core: "сборка ядра", skills: "база навыков" },
   },
 }
 

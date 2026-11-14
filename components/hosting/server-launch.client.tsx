@@ -43,6 +43,8 @@ export type LaunchState = {
   mark: { phase?: string; domain?: string; domainActive?: boolean } | null
   core: { zone: string | null; rows: CoreRow[]; steps: { domain: boolean; dns: boolean; certs: boolean; check: boolean; active: boolean }; certsRun: CertsRun; helper: boolean; checkAt: string | null; dnsAt: string | null } | null
   verdict: { level: "ok" | "warn" | "fail"; items: Array<{ id: string; level: string; value?: unknown; need?: unknown }> } | null
+  /** 743-4: the trial merge of the update on the server (the target's own updater, `--preflight`), when a node there is behind. */
+  preflight?: { at: string; verdict: { ok: boolean; conflicts?: string[]; reason?: string } | null } | null
   records: DnsZone[]
   week: number | null
 }

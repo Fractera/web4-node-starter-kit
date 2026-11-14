@@ -79,6 +79,7 @@ if mark and mark.get("phase") == "live" and isinstance(port, int):
         core = None
 print(json.dumps({
     "probe": read(os.path.join(d, "probe.json")),
+    "preflight": read(os.path.join(d, "preflight.json")),
     "launch": launch,
     "progress": progress,
     "sub": sub,
