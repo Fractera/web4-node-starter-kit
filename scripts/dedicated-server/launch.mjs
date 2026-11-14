@@ -4,7 +4,9 @@
 // уже Fractera …, если установлена то какая версия … насколько она отстает. От этого строится стратегия.»
 // `node scripts/dedicated-server/launch.mjs <verb> --host <IPv4|name> [--port 22] […]`, started by the door `app/api/node/launch` and
 // awaited (seconds): every long act runs ON THE SERVER, detached; the computer only asks. The last line is `===LAUNCH=== <json>`.
-//   connect [--trust <SHA256:…>]   the root password once from stdin (empty: the node's key is already there) → the server checked
+//   connect [--trust <SHA256:…>] [--minutes <n>]   the root password → a visit for a day (744-3; `--minutes` shortens it, for a test),
+//                                   or this browser's visit key → the server checked; the answer carries the visit key for the door ONLY
+//   close                           the visit closed now: its line leaves the server
 //   state                           the server's own state (`state.sh`): its check, its launch, its domain, its node's names and certificates
 //   probe                           the server checked again (`probe.sh`: system, memory, cores, disk, ports, an install and its version)
 //   install --mode install|update   `launch.sh` started on the server as root, detached; the page follows it by `state`
@@ -16,10 +18,12 @@
 //                                   a certificate run is refused here past the Let's Encrypt weekly limits (738-5)
 //   signin                          where sign-in leads, asked from the internet (738-6)
 //   clear --confirm <host>          a server taken by another installation: freed (stopped and kept, never erased), then checked again
-// 🔒 THE COMPUTER KEEPS NO STATE OF A SERVER (738): only the node's key and the map of pins (`lib/hosting/ssh.mjs`), and the ledger of
-// certificates issued per domain (`data/node/server/le-ledger.json`) — Let's Encrypt counts per domain across every server and every
+// 🔒 THE COMPUTER KEEPS NO STATE OF A SERVER (738) AND NO KEY TO IT (744-3): only the map of pins (`lib/hosting/ssh.mjs`) and the ledger
+// of certificates issued per domain (`data/node/server/le-ledger.json`) — Let's Encrypt counts per domain across every server and every
 // reinstall, and nothing else on this machine could know it.
-// 🔒 THE PASSWORD comes on stdin and nowhere else; it is used once to install the node's key (`installKey`) and dropped.
+// 🔒 STDIN IS ONE JSON OBJECT `{ password?, key?, body? }` and nothing else carries a secret: the root password (used once by
+// `openVisit`, dropped), the browser's visit key (the door reads it from an HttpOnly cookie), the body of a door act. Not argv (the
+// process list shows it), not the environment, not a file.
 // `--dry`: the server scripts run with DRY_RUN=1 (every command printed, none run) — the test's «server» is this very machine.
 import { execSync } from 'node:child_process'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
@@ -32,7 +36,7 @@ import { judge } from '../../lib/hosting/judge.mjs'
 import { q, startDetached } from '../../lib/hosting/remote.mjs'
 import { cleanDomain } from '../../lib/hosting/server-domain.mjs'
 import { markLaunched } from '../../lib/hosting/launched.mjs'
-import { connect, ensureKeyPair, exec, installKey, serverDir, upload } from '../../lib/hosting/ssh.mjs'
+import { closeVisit, connect, exec, openVisit, serverDir, upload } from '../../lib/hosting/ssh.mjs'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const args = process.argv.slice(2)
@@ -55,10 +59,28 @@ export const LE_LIMITS = { domain: 50, name: 5 }
 const done = (obj) => { console.log(`===LAUNCH=== ${JSON.stringify(obj)}`) }
 const fail = (reason, extra = {}) => { done({ ok: false, reason, ...extra }); process.exitCode = 1 }
 
-async function readStdin() {
-  let text = ''
-  for await (const chunk of process.stdin) text += chunk
-  return text.replace(/\r?\n$/, '')
+let inputRead = null
+/** The caller's JSON on stdin, read once: `{ password?, key?, body? }`. */
+function input() {
+  inputRead ??= (async () => {
+    let text = ''
+    for await (const chunk of process.stdin) text += chunk
+    try {
+      const v = JSON.parse(text || '{}')
+      return v && typeof v === 'object' ? v : {}
+    } catch { return {} }
+  })()
+  return inputRead
+}
+
+/** A connection by this browser's visit key; none, expired or closed — `need-password` (the person types the root password again). */
+async function byKey() {
+  const { key } = await input()
+  try {
+    return await connect({ root, host, port, privateKey: typeof key === 'string' && key ? key : null })
+  } catch (e) {
+    throw e?.reason === 'auth' ? Object.assign(new Error('need-password'), { reason: 'need-password' }) : e
+  }
 }
 
 async function scripts(client, names) {
@@ -193,34 +215,43 @@ export function weekCount(ledger, domain, rows = [], ip = null, now = Date.now()
 
 const verbs = {
   async connect() {
-    const password = await readStdin()
+    const { password, key } = await input()
+    const typed = typeof password === 'string' && password ? password : null
     try {
-      let fingerprint = null
-      if (password) fingerprint = (await installKey({ root, host, port, password, expect: opt('trust') })).fingerprint
-      const { client, fingerprint: seen } = await connect({ root, host, port })
+      // 744-3: the password opens a visit (this browser's earlier key, if any, is replaced on the server); without one — the visit key.
+      const visit = typed ? await openVisit({ root, host, port, password: typed, expect: opt('trust'), previous: typeof key === 'string' && key ? key : null, minutes: opt('minutes') ?? undefined }) : null
+      const { client, fingerprint: seen } = visit ? await connect({ root, host, port, privateKey: visit.privateKey }) : await byKey()
       try {
         await probe(client)
-        done({ ok: true, fingerprint: fingerprint ?? seen, state: await readState(client) })
+        done({ ok: true, fingerprint: visit?.fingerprint ?? seen, visit: visit ? { key: visit.privateKey, deadline: visit.deadline } : null, state: await readState(client) })
       } finally { client.end() }
     } catch (e) {
-      // No key on the server and no password typed: the password is needed once (a fresh or reinstalled server).
-      fail(!password && e.reason === 'auth' ? 'need-password' : e.reason ?? 'unreachable', { seen: e.seen ?? null, pinned: e.pinned ?? null })
+      fail(e.reason ?? 'unreachable', { seen: e.seen ?? null, pinned: e.pinned ?? null })
+    }
+  },
+
+  async close() {
+    const { key } = await input()
+    try {
+      done({ ok: true, ...(await closeVisit({ root, host, port, privateKey: typeof key === 'string' && key ? key : null })) })
+    } catch (e) {
+      fail(e.reason === 'auth' ? 'need-password' : e.reason ?? 'unreachable')
     }
   },
 
   async state() {
-    const { client } = await connect({ root, host, port })
+    const { client } = await byKey()
     try { done({ ok: true, state: await readState(client) }) } finally { client.end() }
   },
 
   async probe() {
-    const { client } = await connect({ root, host, port })
+    const { client } = await byKey()
     try { await probe(client); done({ ok: true, state: await readState(client) }) } finally { client.end() }
   },
 
   async install() {
     const mode = opt('mode') === 'update' ? 'update' : 'install'
-    const { client } = await connect({ root, host, port })
+    const { client } = await byKey()
     try {
       const s = await readState(client)
       if (s.launch?.state === 'running') return fail('running', { state: s })
@@ -233,7 +264,7 @@ const verbs = {
       await scripts(client, ['launch.sh', 'prepare.sh', 'stages.sh', 'fractera-root.sh', 'state.sh'])
       // 743-5: this computer's stage 0 — the update of a server of any version is done by the target's own updater
       await upload(client, `${DIR}/node-update-stage0.mjs`, readFileSync(path.join(here, '..', 'node-update-stage0.mjs')), 0o700)
-      await startDetached(client, `${DRY}bash ${q(`${DIR}/launch.sh`)} ${REMOTE_USER} ${q(FOLDER)} ${port} ${q(ensureKeyPair(root).publicLine)} ${q(fork)} ${mode} ${q(ip)}`, `${DIR}/launch.out`)
+      await startDetached(client, `${DRY}bash ${q(`${DIR}/launch.sh`)} ${REMOTE_USER} ${q(FOLDER)} ${port} ${q(fork)} ${mode} ${q(ip)}`, `${DIR}/launch.out`)
       await new Promise((r) => setTimeout(r, dry ? 300 : 1500))
       done({ ok: true, started: mode, state: await readState(client) })
     } finally { client.end() }
@@ -242,7 +273,7 @@ const verbs = {
   async domain() {
     const name = cleanDomain(opt('name'))
     if (!name) return fail('bad-domain')
-    const { client } = await connect({ root, host, port })
+    const { client } = await byKey()
     try {
       const before = await readDomain(client)
       // A new domain starts its ladder anew: what was learned and chosen about the old one does not carry over.
@@ -256,7 +287,7 @@ const verbs = {
   async way() {
     const way = ['dns', 'cloudflare', 'migrate', 'none'].find((w) => w === opt('way'))
     if (!way) return fail('bad-way')
-    const { client } = await connect({ root, host, port })
+    const { client } = await byKey()
     try {
       const d = await readDomain(client)
       if (!d.domain) return fail('no-domain')
@@ -268,7 +299,7 @@ const verbs = {
   },
 
   async detect() {
-    const { client } = await connect({ root, host, port })
+    const { client } = await byKey()
     try {
       const d = await readDomain(client)
       if (!d.domain) return fail('no-domain')
@@ -281,7 +312,7 @@ const verbs = {
 
   // The first check (738, step 3): asked from here, through public resolvers, for the names a fresh node will have.
   async dns() {
-    const { client } = await connect({ root, host, port })
+    const { client } = await byKey()
     try {
       const d = await readDomain(client)
       if (!d.domain) return fail('no-domain')
@@ -293,9 +324,9 @@ const verbs = {
   },
 
   async door() {
-    const body = JSON.parse((await readStdin()) || '{}')
+    const body = (await input()).body ?? {}
     if (!['dns-check', 'certs', 'check', 'activate', 'upload', 'claim'].includes(body?.action)) return fail('bad-action')
-    const { client } = await connect({ root, host, port })
+    const { client } = await byKey()
     try {
       const s = await readState(client)
       if (s.mark?.phase !== 'live' || !s.core) return fail('not-live', { state: s })
@@ -322,7 +353,7 @@ const verbs = {
   },
 
   async signin() {
-    const { client } = await connect({ root, host, port })
+    const { client } = await byKey()
     try {
       const s = await readState(client)
       const zone = s.core?.zone
@@ -336,7 +367,7 @@ const verbs = {
 
   async clear() {
     if (opt('confirm') !== host) return fail('not-confirmed')
-    const { client } = await connect({ root, host, port })
+    const { client } = await byKey()
     try {
       await scripts(client, ['clear.sh'])
       const r = await exec(client, `${DRY}bash ${q(`${DIR}/clear.sh`)}`, { timeoutMs: 180_000 })
@@ -365,7 +396,7 @@ export function launchRecords(zone, ip, dnsZone = null) {
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   if (!verbs[verb]) {
-    console.log('Запуск сервера: connect · state · probe · install --mode install|update · domain --name · way --way · detect · dns · door · signin · clear --confirm')
+    console.log('Запуск сервера: connect · close · state · probe · install --mode install|update · domain --name · way --way · detect · dns · door · signin · clear --confirm')
     process.exit(verb ? 2 : 0)
   }
   if (!(IPV4.test(host) || isHostName(host)) || !Number.isInteger(port) || port < 1 || port > 65535) {

@@ -254,35 +254,80 @@ if (process.platform === 'win32') {
   await ta('negative: a wrong password is refused as `auth`', async () => {
     await assert.rejects(sshLib.connect({ root: nodeRoot, host: '127.0.0.1', port: sshPort, password: 'wrong' }), (e) => e.reason === 'auth')
   })
-  await ta('the password once: the node key lands in authorized_keys, a key-only login proves it, the server key is pinned', async () => {
-    const r = await sshLib.installKey({ root: nodeRoot, host: '127.0.0.1', port: sshPort, password: SECRET })
-    assert.match(r.fingerprint, /^SHA256:/)
-    const keys = readFileSync(join(home, '.ssh', 'authorized_keys'), 'utf8')
-    assert.ok(keys.includes(' fractera-node'), keys)
+  // 744-3: ACCESS FOR ONE DAY — the password once makes a VISIT key in memory; its line carries the server's own deadline.
+  const keysOf = () => readFileSync(join(home, '.ssh', 'authorized_keys'), 'utf8').split('\n').filter(Boolean)
+  const pad = (n) => String(n).padStart(2, '0')
+  const at = { root: nodeRoot, host: '127.0.0.1', port: sshPort }
+  let v1 = null
+  await ta('744-3 a visit: the line carries expiry-time by the server\'s own clock (≈ now + 24 h), a key-only login proves it, the server is pinned', async () => {
+    v1 = await sshLib.openVisit({ ...at, password: SECRET })
+    assert.match(v1.fingerprint, /^SHA256:/)
+    const line = keysOf().find((l) => l.includes('fractera-visit'))
+    assert.match(line, /^expiry-time="\d{12}" ssh-ed25519 [A-Za-z0-9+/]+=* fractera-visit \d{4}-/)
+    const left = Date.parse(v1.deadline) - Date.now()
+    assert.ok(left > 23.9 * 3600e3 && left <= 24 * 3600e3, `${left} ms left`)
+    // The «server» is this machine: its zone is ours, so the stamp in the line is the deadline in local time — minutes, no «Z».
+    const d = new Date(v1.deadline)
+    assert.equal(line.match(/expiry-time="(\d{12})"/)[1], `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}${pad(d.getHours())}${pad(d.getMinutes())}`)
+    assert.equal(v1.stamp, line.match(/expiry-time="(\d{12})"/)[1])
     const pins = JSON.parse(readFileSync(join(nodeRoot, 'data', 'node', 'server', 'known-hosts.json'), 'utf8'))
-    assert.equal(pins[`127.0.0.1:${sshPort}`].fingerprint, r.fingerprint)
-    assert.equal(statSync(join(nodeRoot, 'data', 'node', 'server', 'id_ed25519')).mode & 0o777, 0o600)
+    assert.equal(pins[`127.0.0.1:${sshPort}`].fingerprint, v1.fingerprint)
   })
-  await ta('negative: with password login off, the password is refused and the key alone works', async () => {
-    sshState.passwordAllowed = false
-    await assert.rejects(sshLib.connect({ root: nodeRoot, host: '127.0.0.1', port: sshPort, password: SECRET }), (e) => e.reason === 'auth')
-    const { client } = await sshLib.connect({ root: nodeRoot, host: '127.0.0.1', port: sshPort })
+  await ta('744-3 the visit key alone opens the server; negative: no key and no password → `need-password` before any connection', async () => {
+    const { client } = await sshLib.connect({ ...at, privateKey: v1.privateKey })
     const out = await sshLib.exec(client, 'echo hello-from-server; exit 3')
     client.end()
-    assert.equal(out.stdout.trim(), 'hello-from-server')
-    assert.equal(out.code, 3)
+    assert.deepEqual([out.stdout.trim(), out.code], ['hello-from-server', 3])
+    await assert.rejects(sshLib.connect(at), (e) => e.reason === 'need-password')
   })
-  await ta('a second install adds no second line', async () => {
-    sshState.passwordAllowed = true
-    await sshLib.installKey({ root: nodeRoot, host: '127.0.0.1', port: sshPort, password: SECRET })
-    const lines = readFileSync(join(home, '.ssh', 'authorized_keys'), 'utf8').split('\n').filter((l) => l.includes('fractera-node'))
-    assert.equal(lines.length, 1)
+  await ta('744-3 negative: a server with password login off is named `no-password-login`; the visit key still works there', async () => {
+    sshState.passwordAllowed = false
+    try {
+      await assert.rejects(sshLib.connect({ ...at, password: SECRET }), (e) => e.reason === 'no-password-login')
+      const { client } = await sshLib.connect({ ...at, privateKey: v1.privateKey })
+      client.end()
+    } finally { sshState.passwordAllowed = true }
   })
-  await ta('negative: the password is in no file of the node', async () => {
+  let v2 = null
+  let v3 = null
+  await ta('744-3 a new visit of this browser replaces its line; the persistent key of before and an expired visit leave; a stranger\'s key stays', async () => {
+    const stranger = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIStrangerStrangerStrangerStrangerStranger0 someone@laptop'
+    const legacy = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILegacyLegacyLegacyLegacyLegacyLegacyLega fractera-node'
+    const expired = 'expiry-time="200001010000" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIExpiredExpiredExpiredExpiredExpiredExpi fractera-visit 2000-01-01T00:00:00Z'
+    writeFileSync(join(home, '.ssh', 'authorized_keys'), `${keysOf().join('\n')}\n${stranger}\n${legacy}\n${expired}\n`)
+    v2 = await sshLib.openVisit({ ...at, password: SECRET, previous: v1.privateKey })
+    const keys = keysOf()
+    assert.ok(keys.includes(stranger), 'a key of someone else is never touched')
+    assert.ok(!keys.some((l) => l.endsWith(' fractera-node')), 'the persistent node key of before 744-3 is removed at the next visit (D45)')
+    assert.ok(!keys.some((l) => l.includes('200001010000')), 'an expired visit is removed')
+    assert.ok(!keys.some((l) => l.includes(sshLib.publicBody(v1.privateKey))), 'the replaced visit is removed')
+    assert.equal(keys.filter((l) => l.includes('fractera-visit')).length, 1)
+    v3 = await sshLib.openVisit({ ...at, password: SECRET })
+    assert.equal(keysOf().filter((l) => l.includes('fractera-visit')).length, 2, 'another browser\'s visit stays until its own deadline')
+  })
+  await ta('744-3 closing a visit removes its line now: the same key is refused (`auth`), the other visit still works', async () => {
+    assert.equal((await sshLib.closeVisit({ ...at, privateKey: v3.privateKey })).closed, true)
+    await assert.rejects(sshLib.connect({ ...at, privateKey: v3.privateKey }), (e) => e.reason === 'auth')
+    const { client } = await sshLib.connect({ ...at, privateKey: v2.privateKey })
+    client.end()
+  })
+  await ta('744-3 negative: an sshd that does not know expiry-time (older than 8.2) — the visit fails `key-refused` and leaves no line behind', async () => {
+    const before = keysOf()
+    sshState.legacySshd = true
+    try {
+      await assert.rejects(sshLib.openVisit({ ...at, password: SECRET }), (e) => e.reason === 'key-refused')
+    } finally { sshState.legacySshd = false }
+    assert.deepEqual(keysOf(), before)
+  })
+  await ta('negative: neither the password nor any key is in a file of the node — only the pins', async () => {
     const walk = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap((d) => (d.isDirectory() ? walk(join(dir, d.name)) : [join(dir, d.name)]))
-    for (const f of walk(nodeRoot)) assert.ok(!readFileSync(f, 'utf8').includes(SECRET), f)
+    for (const f of walk(nodeRoot)) {
+      const text = readFileSync(f, 'utf8')
+      assert.ok(!text.includes(SECRET) && !text.includes('PRIVATE KEY'), f)
+    }
+    assert.deepEqual(readdirSync(join(nodeRoot, 'data', 'node', 'server')).sort(), ['known-hosts.json', 'known_hosts'])
   })
-  // 741-5: the SSH window — the server's core reached through the pinned key, without nginx, so without the edge mark.
+  // 741-5: the SSH window — the server's core reached through the pinned server by a visit key (744-3), without nginx, so without the edge mark.
   const { openWindow, windowPortAllowed, WINDOW_FIRST, WINDOW_LAST } = await import('../lib/hosting/window.mjs')
   const http = await import('node:http')
   const fakeCore = http.createServer((req, res) => res.end(JSON.stringify({ host: req.headers.host, edge: req.headers['x-fractera-edge'] ?? null })))
@@ -292,7 +337,7 @@ if (process.platform === 'win32') {
   mkdirSync(join(fakeNode, 'logs'), { recursive: true })
   writeFileSync(join(fakeNode, 'logs', 'runtime.json'), JSON.stringify({ port: fakeCore.address().port }))
   await ta('741-5: the window — a local port of 25680–25689, the request reaches the core with a loopback Host and NO edge mark', async () => {
-    const w = await openWindow({ root: nodeRoot, ip: '127.0.0.1', nodeDir: fakeNode })
+    const w = await openWindow({ root: nodeRoot, ip: '127.0.0.1', nodeDir: fakeNode, privateKey: v2.privateKey })
     assert.equal(w.ok, true, String(w.reason ?? ""))
     try {
       assert.ok(w.port >= WINDOW_FIRST && w.port <= WINDOW_LAST, String(w.port))
@@ -304,7 +349,7 @@ if (process.platform === 'win32') {
   await ta('741-5 negative: a busy first port moves the window up, never into the node\'s range; no pin or a bad port — refused', async () => {
     const busy = http.createServer(() => {})
     const taken = await new Promise((r) => { busy.once('error', () => r(false)); busy.listen(WINDOW_FIRST, '127.0.0.1', () => r(true)) })
-    const w = await openWindow({ root: nodeRoot, ip: '127.0.0.1', nodeDir: fakeNode })
+    const w = await openWindow({ root: nodeRoot, ip: '127.0.0.1', nodeDir: fakeNode, privateKey: v2.privateKey })
     try {
       assert.equal(w.ok, true)
       if (taken) assert.notEqual(w.port, WINDOW_FIRST)
@@ -313,14 +358,15 @@ if (process.platform === 'win32') {
     assert.equal((await openWindow({ root: nodeRoot, ip: '203.0.113.9', nodeDir: fakeNode })).reason, 'no-pin')
     assert.equal((await openWindow({ root: nodeRoot, ip: '127.0.0.1', nodeDir: fakeNode, localPort: 24680 })).reason, 'bad-port')
     for (const p of [3000, 24680, 25679, 49152]) assert.equal(windowPortAllowed(p), false, String(p))
-    assert.equal((await openWindow({ root: nodeRoot, ip: '127.0.0.1', nodeDir: join(fakeNode, 'missing') })).reason, 'no-core-port')
+    assert.equal((await openWindow({ root: nodeRoot, ip: '127.0.0.1', nodeDir: join(fakeNode, 'missing'), privateKey: v2.privateKey })).reason, 'no-core-port')
+    assert.equal((await openWindow({ root: nodeRoot, ip: '127.0.0.1', nodeDir: fakeNode })).reason, 'need-password', '744-3: no key from the caller, no window')
   })
   await new Promise((r) => fakeCore.close(r))
   await ta('negative: the same address with a different server key is refused as `host-key-changed`', async () => {
     await new Promise((r) => srv.close(r))
     srv = await sshServer(readableKeyPair().private, sshPort)
     // 738-2: the refusal names both fingerprints — the page shows them before the person trusts a reinstalled server.
-    await assert.rejects(sshLib.connect({ root: nodeRoot, host: '127.0.0.1', port: sshPort }), (e) => e.reason === 'host-key-changed' && /^SHA256:/.test(e.seen) && /^SHA256:/.test(e.pinned) && e.seen !== e.pinned)
+    await assert.rejects(sshLib.connect({ root: nodeRoot, host: '127.0.0.1', port: sshPort, privateKey: v2.privateKey }), (e) => e.reason === 'host-key-changed' && /^SHA256:/.test(e.seen) && /^SHA256:/.test(e.pinned) && e.seen !== e.pinned)
   })
   await new Promise((r) => srv.close(r))
 }
@@ -369,17 +415,16 @@ if (process.platform !== 'win32') {
   const scripts = mkdtempSync(join(tmpdir(), 'hosting-scripts-'))
   roots.push(scripts)
   cpSync(new URL('./dedicated-server/', import.meta.url), scripts, { recursive: true })
-  const KEY = 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDryRunDryRunDryRunDryRunDryRunDryRun01 fractera-node'
   const run = (...a) => spawnSync('bash', [join(scripts, 'prepare.sh'), ...a], { encoding: 'utf8', env: { ...process.env, DRY_RUN: '1' } })
   t('prepare.sh: every stage runs in order and reports done; the progress lines are JSON', () => {
-    const r = run('fractera', 'web4-node-starter-kit', '22', KEY)
+    const r = run('fractera', 'web4-node-starter-kit', '22')
     assert.equal(r.status, 0, r.stderr)
     const lines = readText(join(scripts, 'prepare.progress.jsonl'), 'utf8').trim().split('\n').map((l) => JSON.parse(l))
     const done = lines.filter((l) => l.state === 'done').map((l) => l.id)
     assert.deepEqual(done, ['apt-lock', 'swap', 'apt', 'node', 'pm2', 'certbot', 'user', 'git', 'helper', 'nginx', 'firewall', 'resolver', 'pm2-startup', 'prepare'])
   })
-  t('negative: a command smuggled in place of the key, a bad user, a bad port — refused before any stage', () => {
-    for (const a of [['fractera', 'x', '22', "evil'; rm -rf / #"], ['Root;', 'x', '22', KEY], ['fractera', 'x', '22;reboot', KEY]]) {
+  t('negative: a command smuggled in place of the folder, a bad user, a bad port — refused before any stage', () => {
+    for (const a of [['fractera', "x'; rm -rf / #", '22'], ['Root;', 'x', '22'], ['fractera', 'x', '22;reboot']]) {
       const r = run(...a)
       assert.equal(r.status, 1, a.join(' '))
     }

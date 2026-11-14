@@ -29,7 +29,8 @@ async function server(hostKey = readableKeyPair().private, port = 0) {
   return { ...s, home, dir }
 }
 // Asynchronous on purpose: the «servers» live in THIS process — a blocking spawn would starve them.
-const run = (srv, verb, extra = [], input = '') => new Promise((resolve) => {
+// 744-3: stdin is one JSON object; by default it carries this «browser's» visit key of that server, kept from its last connect.
+const run = (srv, verb, extra = [], input = { key: srv.key }) => new Promise((resolve) => {
   const env = { ...process.env, FRACTERA_LAUNCH_NODE_ROOT: node, FRACTERA_LAUNCH_ROOT_DIR: srv.dir, FRACTERA_LAUNCH_FORK: FORK }
   const child = spawn(process.execPath, [runner, verb, '--dry', '--host', '127.0.0.1', '--port', String(srv.port), ...extra], { env })
   let out = ''
@@ -39,9 +40,11 @@ const run = (srv, verb, extra = [], input = '') => new Promise((resolve) => {
   child.on('close', (status) => {
     clearTimeout(timer)
     const line = out.split('\n').reverse().find((l) => l.startsWith('===LAUNCH=== '))
-    resolve({ status, out, a: line ? JSON.parse(line.slice(13)) : null })
+    const a = line ? JSON.parse(line.slice(13)) : null
+    if (a?.visit?.key) srv.key = a.visit.key
+    resolve({ status, out, a })
   })
-  child.stdin.end(input)
+  child.stdin.end(JSON.stringify(input))
 })
 const wait = (ms) => new Promise((r) => setTimeout(r, ms))
 
@@ -49,9 +52,9 @@ console.log('738-2 a map of pins: one per server')
 const A = await server()
 const B = await server()
 await t('two servers in turn: each pinned, neither forgets the other; system ssh to the FIRST still works', async () => {
-  const a = await run(A, 'connect', [], `${PASSWORD}\n`)
+  const a = await run(A, 'connect', [], { password: PASSWORD })
   assert.equal(a.a?.ok, true, a.out)
-  const b = await run(B, 'connect', [], `${PASSWORD}\n`)
+  const b = await run(B, 'connect', [], { password: PASSWORD })
   assert.equal(b.a?.ok, true, b.out)
   const pins = JSON.parse(readFileSync(join(node, 'data', 'node', 'server', 'known-hosts.json'), 'utf8'))
   assert.ok(pins[`127.0.0.1:${A.port}`] && pins[`127.0.0.1:${B.port}`], JSON.stringify(pins))
@@ -59,7 +62,9 @@ await t('two servers in turn: each pinned, neither forgets the other; system ssh
   assert.equal(known.length, 2)
   // The system's own ssh, asynchronously (the «server» answers from this very process), against the multi-line known_hosts.
   const ssh = await new Promise((resolve) => {
-    const c = spawn('ssh', ['-i', join(node, 'data', 'node', 'server', 'id_ed25519'), '-p', String(A.port), '-o', 'BatchMode=yes', '-o', 'IdentitiesOnly=yes', '-o', 'StrictHostKeyChecking=yes',
+    const keyFile = join(tmp('launch-visit-'), 'visit') // the «browser's» key, outside the node: the node keeps none
+    writeFileSync(keyFile, A.key, { mode: 0o600 })
+    const c = spawn('ssh', ['-i', keyFile, '-p', String(A.port), '-o', 'BatchMode=yes', '-o', 'IdentitiesOnly=yes', '-o', 'StrictHostKeyChecking=yes',
       '-o', `UserKnownHostsFile=${join(node, 'data', 'node', 'server', 'known_hosts')}`, 'root@127.0.0.1', 'echo FIRST_OK'])
     let o = ''
     c.stdout.on('data', (d) => { o += d })
@@ -71,7 +76,7 @@ await t('two servers in turn: each pinned, neither forgets the other; system ssh
 })
 await t('negative: no key on a new server and no password → «need-password», nothing pinned for it', async () => {
   const C = await server()
-  const r = await run(C, 'connect')
+  const r = await run(C, 'connect', [], {})
   assert.equal(r.a?.reason, 'need-password', r.out)
   C.server.close()
 })
@@ -82,17 +87,40 @@ await t('negative: a reinstalled server (a new key on the same address) is refus
   const r = await run(A, 'connect')
   assert.equal(r.a?.reason, 'host-key-changed', r.out)
   assert.ok(/^SHA256:/.test(r.a.seen) && /^SHA256:/.test(r.a.pinned) && r.a.seen !== r.a.pinned)
-  const wrong = await run(A, 'connect', ['--trust', r.a.pinned], `${PASSWORD}\n`)
+  const wrong = await run(A, 'connect', ['--trust', r.a.pinned], { password: PASSWORD })
   assert.equal(wrong.a?.ok, false, wrong.out)
   A.seen = r.a.seen
 })
 await t('trusting the key the person saw (with the password) re-pins this server only; the other pin stays', async () => {
-  const r = await run(A, 'connect', ['--trust', A.seen], `${PASSWORD}\n`)
+  const r = await run(A, 'connect', ['--trust', A.seen], { password: PASSWORD })
   assert.equal(r.a?.ok, true, r.out)
   const pins = JSON.parse(readFileSync(join(node, 'data', 'node', 'server', 'known-hosts.json'), 'utf8'))
   assert.equal(pins[`127.0.0.1:${A.port}`].fingerprint, A.seen)
   assert.ok(pins[`127.0.0.1:${B.port}`])
   assert.equal((await run(A, 'state')).a?.ok, true)
+})
+
+console.log('744-3 access for one day: the visit key goes back to the door only; without it — the password again')
+await t('connect with the password: the answer carries the visit key (for the cookie the door sets) and a deadline ≈ now + 24 h; `--minutes 1` ≈ + 1 min', async () => {
+  const D = await server()
+  const day = await run(D, 'connect', [], { password: PASSWORD })
+  assert.equal(day.a?.ok, true, day.out)
+  assert.match(day.a.visit.key, /OPENSSH PRIVATE KEY/)
+  const left = Date.parse(day.a.visit.deadline) - Date.now()
+  assert.ok(left > 23.9 * 3600e3 && left <= 24 * 3600e3, String(left))
+  const minute = await run(D, 'connect', ['--minutes', '1'], { password: PASSWORD, key: D.key })
+  const short = Date.parse(minute.a.visit.deadline) - Date.now()
+  assert.ok(short > 0 && short <= 60e3, String(short))
+  assert.equal(readFileSync(join(D.home, '.ssh', 'authorized_keys'), 'utf8').split('\n').filter((l) => l.includes('fractera-visit')).length, 1, 'the second visit replaced the first')
+  D.server.close()
+})
+await t('negative: an act without the visit key → need-password; with it → the state; close → the next act needs the password again', async () => {
+  assert.equal((await run(B, 'state', [], {})).a?.reason, 'need-password')
+  assert.equal((await run(B, 'state')).a?.ok, true)
+  const keep = B.key
+  assert.equal((await run(B, 'close')).a?.closed, true)
+  assert.equal((await run(B, 'state', [], { key: keep })).a?.reason, 'need-password')
+  assert.equal((await run(B, 'connect', [], { password: PASSWORD })).a?.ok, true)
 })
 
 console.log('738-3/4 the launch: on the server, read back by its address')
@@ -132,10 +160,10 @@ await t('the domain chosen on the page is kept on the server: a typed address is
 await t('negative: a wrong way, a bad domain, and the server node\'s door before its node lives', async () => {
   assert.equal((await run(A, 'way', ['--way', 'telepathy'])).a?.reason, 'bad-way')
   assert.equal((await run(A, 'domain', ['--name', 'not a domain'])).a?.reason, 'bad-domain')
-  assert.equal((await run(A, 'door', [], JSON.stringify({ action: 'certs' }))).a?.reason, 'not-live')
+  assert.equal((await run(A, 'door', [], { key: A.key, body: { action: 'certs' } })).a?.reason, 'not-live')
 })
-await t('negative: nothing per server is written on the computer — only the key, the pins and (later) the certificate ledger', async () => {
-  assert.deepEqual(readdirSync(join(node, 'data', 'node', 'server')).sort(), ['id_ed25519', 'id_ed25519.pub', 'known-hosts.json', 'known_hosts'])
+await t('negative: nothing per server is written on the computer — no key (744-3), only the pins and (later) the certificate ledger', async () => {
+  assert.deepEqual(readdirSync(join(node, 'data', 'node', 'server')).sort(), ['known-hosts.json', 'known_hosts'])
 })
 
 console.log('738-5/6/8 the weekly budget, where sign-in leads, a silent core')

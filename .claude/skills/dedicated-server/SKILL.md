@@ -20,14 +20,18 @@ Everything below is plain code; you call it and read its marked line. No model i
   `launch.progress.jsonl` (the launch), `domain.json` (the domain chosen on the page, who writes the records, the first check, where
   sign-in leads); the server node's own mark `data/node/server.json` (phase `live`, `independent: true`, domain, switched on). Read by
   `state.sh` there.
-- The computer keeps only the node's SSH key (`data/node/server/id_ed25519`), the map of pins (`known-hosts.json` + `known_hosts`, one
-  entry per server) and the ledger of Let's Encrypt certificates per domain (`le-ledger.json`). Never a run record.
+- The computer keeps NO key to a server (744-3): only the map of pins (`known-hosts.json` + `known_hosts`, one entry per server) and the
+  ledger of Let's Encrypt certificates per domain (`le-ledger.json`). Never a run record. Access is a VISIT of at most a day: the root
+  password typed by the person makes a key in memory, its line in root's `authorized_keys` carries `expiry-time` by the server's own
+  clock (sshd itself refuses it at the deadline), the key lives in the person's browser as an HttpOnly cookie of the launch door. You
+  cannot reach a server by yourself — that is the design (the owner: «в случае взлома пользователи получит доступ ко всем серверам»).
+  The SSH window (`npm run server -- window --ip`) asks the password in the person's own terminal.
 
 ## The seven steps
 
 | Step | What runs | Done when |
 |---|---|---|
-| 1 the server | the password once → the node's key in root's `authorized_keys`, the server's key pinned (`installKey`) | connected by the key |
+| 1 the server | the root password → a visit of a day (`openVisit`: the line with the server's own deadline, proven by a second connection, the server's key pinned); a server without password login is named, never worked around | connected by the visit key; «Доступ до HH:MM» |
 | 2 check | `probe.sh` as root: system, memory (8 GB and 4 cores recommended — the owner's minimum), disk, ports, other sites, a Fractera install with its commit and «behind N» against Fractera's main (`git fetch` + `rev-list` on the server) | the judge says no «fail»; the strategy: install · update · latest |
 | 3 domain | the 737-19 ladder: the domain · where its DNS lives · who writes the records · the records (`@`, `*`, or each name) + a first check from public resolvers | chosen and checked once — the install never waits for DNS |
 | 4 installation | `launch.sh` as root, detached: prepare · source (clone of the fork + a fresh `.env.local` + check-origin + fresh-project) · install (`install.sh`) · mark · start (`start.sh live`) · version; an older install: prepare · `npm run node:update` there · mark · start · version | `launch.json` → `done` |

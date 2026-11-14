@@ -15,6 +15,8 @@
 # of a computer runs a commit GitHub never saw (compare → 404), so only the server itself can count. The fetch runs as the node's user:
 # root's files in its .git would break the node's own updates later.
 # The answer is ALSO kept on the server (`/root/.fractera/probe.json`) — the state of a server lives on that server, never on the computer.
+# 744-3: OUR access, read from root's authorized_keys — the deadlines of the visits (the server's own `expiry-time`, its zone → UTC),
+# whether the persistent node key of before 744-3 is still there, and how many other keys exist (a count only — never a foreign key).
 # Arguments: [node folder name] [ssh port] [where to keep the answer]
 FOLDER="${1:-web4-node-starter-kit}"
 SSH_PORT="${2:-22}"
@@ -53,6 +55,27 @@ import json, os
 e = os.environ
 b = lambda k: e.get(k) == "true"
 n = lambda k: int(e.get(k) or 0)
+def access():
+  import re, time
+  try:
+    lines = open(os.path.expanduser("~/.ssh/authorized_keys")).read().splitlines()
+  except Exception:
+    lines = []
+  visit, legacy, others = [], False, 0
+  for l in (x.strip() for x in lines):
+    if not l or l.startswith("#"):
+      continue
+    if l.endswith(" fractera-node"):
+      legacy = True
+    elif "fractera-visit" in l:
+      m = re.search("expiry-time=.([0-9]{12}).", l)
+      try:
+        visit.append(time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(time.mktime(time.strptime(m.group(1), "%Y%m%d%H%M")))))
+      except Exception:
+        pass
+    else:
+      others += 1
+  return {"visit": sorted(visit), "legacy": legacy, "others": others}
 print(json.dumps({
   "os": {"id": e["OS_ID"], "version": e["OS_VERSION"], "pretty": e["OS_PRETTY"], "arch": e["ARCH"]},
   "cores": n("CORES"), "ramMb": n("RAM_MB"), "availMb": n("AVAIL_MB"), "swapMb": n("SWAP_MB"), "diskFreeGb": n("DISK_FREE_GB"),
@@ -63,5 +86,6 @@ print(json.dumps({
   "fractera": {"head": e.get("HEAD_SHA") or None, "ahead": int(e["AHEAD"]) if e.get("AHEAD", "").isdigit() else None,
                "behind": int(e["BEHIND"]) if e.get("BEHIND", "").isdigit() else None, "phase": e.get("PHASE") or None,
                "launching": b("LAUNCHING")} if b("NODE_THERE") else None,
+  "access": access(),
   "at": __import__("time").strftime("%Y-%m-%dT%H:%M:%SZ", __import__("time").gmtime()),
 }))' | { if [ -n "$OUT" ]; then tee "$OUT.tmp" && mv "$OUT.tmp" "$OUT"; else cat; fi; }

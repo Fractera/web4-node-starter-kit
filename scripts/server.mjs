@@ -144,27 +144,76 @@ function domainStep(action) {
   }
 }
 
-// 741-5 (the owner approved 2026-11-14): the SSH window — `lib/hosting/window.mjs`.
+// 741-5 (the owner approved 2026-11-14): the SSH window — `lib/hosting/window.mjs`. 744-3: the node keeps no key to a server, so the
+// window needs a visit: in the person's own terminal it asks the root password once (not shown, never kept) and opens a visit for its
+// own life, closed when the window closes; `--key-stdin` takes a visit key from its caller instead. Nobody else can open it.
 const WINDOW_WHY = {
   'no-pin': 'this computer has not launched that server (no pinned key) — launch it from the page «Активация выделенного сервера»',
-  auth: 'the server does not accept the node key — the launch page puts it back',
+  'need-password': 'the node keeps no key to a server (744-3) — run this command in your own terminal: it asks the root password once',
+  auth: 'the server refused the password or the visit key (expired or closed) — try again with the root password',
+  'no-password-login': 'the server takes no password login — switch password login for root on at the provider, or reinstall it with one',
+  'key-refused': "the server's sshd does not know expiry-time (OpenSSH older than 8.2) — the node grants no access without a deadline",
   'host-key-changed': "the server's key changed (a reinstalled server?) — the launch page shows both keys before trusting the new one",
   'no-core-port': "the server's core has not written its port yet (logs/runtime.json) — is the node started there?",
   'no-free-port': 'ports 25680–25689 on this computer are all busy',
   'bad-port': 'the local port must be outside 24680–25679, not 3000, below 49152',
 }
+
+/** The root password from the person's own terminal: raw mode, nothing echoed, held only by this process. */
+function askHidden(question) {
+  return new Promise((resolve) => {
+    const { stdin, stdout } = process
+    stdout.write(question)
+    stdin.setRawMode(true)
+    stdin.resume()
+    stdin.setEncoding('utf8')
+    let typed = ''
+    const onData = (chunk) => {
+      for (const ch of chunk) {
+        if (ch === '\r' || ch === '\n' || ch === '\u0004') { stdin.setRawMode(false); stdin.pause(); stdin.off('data', onData); stdout.write('\n'); resolve(typed); return }
+        if (ch === '\u0003') { stdin.setRawMode(false); stdout.write('\n'); process.exit(130) }
+        if (ch === '\u007f' || ch === '\b') typed = typed.slice(0, -1)
+        else typed += ch
+      }
+    }
+    stdin.on('data', onData)
+  })
+}
+
 async function windowVerb() {
   const ip = opt('ip')
-  if (!ip || !IPV4.test(ip)) { console.log('===WINDOW_FAILED=== bad-ip — npm run server -- window --ip <IPv4>'); process.exit(2) }
-  const { openWindow } = await import('../lib/hosting/window.mjs')
+  const failed = (reason) => { console.log(`===WINDOW_FAILED=== ${reason}${WINDOW_WHY[reason] ? ` — ${WINDOW_WHY[reason]}` : ''}`); process.exit(reason === 'bad-ip' ? 2 : 1) }
+  if (!ip || !IPV4.test(ip)) failed('bad-ip')
+  const { openWindow, pinFor } = await import('../lib/hosting/window.mjs')
+  const { closeVisit, openVisit } = await import('../lib/hosting/ssh.mjs')
+  const pin = pinFor(root, ip)
+  if (!pin) failed('no-pin')
+  let privateKey = null
+  let own = false
+  if (args.includes('--key-stdin')) {
+    let text = ''
+    for await (const chunk of process.stdin) text += chunk
+    privateKey = text.trim() ? `${text.trim()}\n` : null
+  } else if (process.stdin.isTTY) {
+    const password = await askHidden(`Root password of ${ip} (not shown, used once, kept nowhere): `)
+    try {
+      privateKey = (await openVisit({ root, host: ip, port: pin.port, password, minutes: 12 * 60 })).privateKey
+      own = true
+    } catch (e) { failed(e?.reason ?? 'unreachable') }
+  }
+  if (!privateKey) failed('need-password')
   const localPort = opt('port') ? Number(opt('port')) : null
-  const w = await openWindow({ root, ip, user: opt('user') ?? 'fractera', folder: opt('folder') ?? path.basename(root), localPort,
+  const end = async () => { if (own) await closeVisit({ root, host: ip, port: pin.port, privateKey }).catch(() => null) }
+  const w = await openWindow({ root, ip, privateKey, user: opt('user') ?? 'fractera', folder: opt('folder') ?? path.basename(root), localPort,
     onDrop: () => { console.log('===WINDOW_CLOSED=== the SSH link dropped'); process.exit(1) } })
-  if (!w.ok) { console.log(`===WINDOW_FAILED=== ${w.reason}${WINDOW_WHY[w.reason] ? ` — ${WINDOW_WHY[w.reason]}` : ''}`); process.exit(1) }
+  if (!w.ok) { await end(); failed(w.reason) }
   console.log(`===WINDOW=== http://localhost:${w.port}/ru — the panel of the server ${ip} (its core listens on its own port ${w.corePort}); Ctrl+C closes it`)
-  const stop = (why) => { console.log(`===WINDOW_CLOSED=== ${why}`); w.close(); process.exit(0) }
-  process.on('SIGINT', () => stop('closed by Ctrl+C'))
-  process.on('SIGTERM', () => stop('closed'))
+  const stop = async (why) => { console.log(`===WINDOW_CLOSED=== ${why}`); w.close(); await end(); process.exit(0) }
+  process.on('SIGINT', () => void stop('closed by Ctrl+C'))
+  process.on('SIGTERM', () => void stop('closed'))
+  // A window lives no longer than the visit it rides on (`--until <epoch seconds>` from the caller of `--key-stdin`).
+  const until = Number(opt('until'))
+  if (until > 0) setTimeout(() => void stop('the visit ended'), Math.max(0, until * 1000 - Date.now())).unref?.()
 }
 
 const verbs = {

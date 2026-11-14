@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # THE SERVER IS PREPARED FOR A FRACTERA NODE (node step 737-4). Run as root, detached (`setsid … &`), idempotent: a second run only
 # finishes what the first did not. Uploaded by the node with stages.sh and fractera-root.sh into /root/.fractera/.
-# Arguments: <node user> <node folder name> <ssh port> <the node's public key line>
+# Arguments: <node user> <node folder name> <ssh port>
+# 744-3: the node user gets no key of the computer (before 744-3 the persistent node key was added here; a visit removes it).
 # Lessons carried from the Fractera easy starter (lib/bootstrap.sh) are named at their stage.
 set -u
-NODE_USER="${1:?user}" FOLDER="${2:?folder}" SSH_PORT="${3:?ssh port}" PUBKEY="${4:?public key}"
+NODE_USER="${1:?user}" FOLDER="${2:?folder}" SSH_PORT="${3:?ssh port}"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 export PROGRESS="$HERE/prepare.progress.jsonl" LOG="$HERE/prepare.log"
 . "$HERE/stages.sh"
@@ -13,7 +14,6 @@ export DEBIAN_FRONTEND=noninteractive
 [[ "$NODE_USER" =~ ^[a-z][a-z0-9-]{1,30}$ ]] || { emit args failed "bad user name"; exit 1; }
 [[ "$FOLDER" =~ ^[A-Za-z0-9._-]{1,100}$ ]] || { emit args failed "bad folder name"; exit 1; }
 [[ "$SSH_PORT" =~ ^[0-9]{1,5}$ ]] || { emit args failed "bad ssh port"; exit 1; }
-[[ "$PUBKEY" =~ ^ssh-ed25519\ [A-Za-z0-9+/]+=*\ fractera-node$ ]] || { emit args failed "bad public key"; exit 1; }
 emit prepare running
 
 # apt waits for the provider's own first-boot upgrades instead of failing on their lock (easy starter: DPkg::Lock::Timeout + fuser).
@@ -39,10 +39,7 @@ stage pm2 'command -v pm2 >/dev/null || npm install -g pm2@latest; pm2 --version
 # certbot from the snap — the current release (5.x; Ubuntu 24.04 apt has 2.9): IP certificates and profiles need ≥ 5.4. apt is the
 # fallback where snapd cannot run (a container).
 soft_stage certbot 'command -v certbot >/dev/null || { snap install --classic certbot && ln -sf /snap/bin/certbot /usr/bin/certbot; } || { wait_for_apt; apt-get install -y -qq certbot; }; certbot --version'
-stage user "id -u $NODE_USER >/dev/null 2>&1 || useradd -m -s /bin/bash $NODE_USER;
-  install -d -m 0700 -o $NODE_USER -g $NODE_USER /home/$NODE_USER/.ssh;
-  touch /home/$NODE_USER/.ssh/authorized_keys; grep -qxF '$PUBKEY' /home/$NODE_USER/.ssh/authorized_keys || printf '%s\n' '$PUBKEY' >> /home/$NODE_USER/.ssh/authorized_keys;
-  chown $NODE_USER:$NODE_USER /home/$NODE_USER/.ssh/authorized_keys; chmod 600 /home/$NODE_USER/.ssh/authorized_keys"
+stage user "id -u $NODE_USER >/dev/null 2>&1 || useradd -m -s /bin/bash $NODE_USER"
 # git over HTTP/1.1: ✗ measured by the easy starter 2026-09-02 — «expected flush after ref listing» over HTTP/2 on one provider's network.
 stage git "su - $NODE_USER -c 'git config --global http.version HTTP/1.1'"
 stage helper "install -d -m 0755 /etc/fractera; printf 'NODE_USER=%s\nNODE_DIR=%s\n' '$NODE_USER' '$NODE_DIR' > /etc/fractera/node.env;

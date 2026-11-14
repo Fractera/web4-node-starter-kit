@@ -6,15 +6,16 @@
 # the computer (D21; a copy of a computer runs a commit GitHub never saw, so its version could never be compared). The computer is not
 # stopped, not rebuilt, not marked: it only watches this file.
 # 🔒 THE STATE IS THIS SERVER'S: /root/.fractera/launch.json (running · done · failed) and launch.progress.jsonl (one line per stage);
-# the page of any computer that holds the node's key reads them by this server's IP (`state.sh`). A second run continues: every stage
+# the page of any computer whose browser holds a visit to this server (744-3) reads them by this server's IP (`state.sh`). A second run continues: every stage
 # skips what is already done (prepare, the packages, the build — each by its own mark).
 #   install — no node here: prepare · source (clone of the fork, a fresh .env.local, the fork checked, the starter's history stripped) ·
 #             install (packages, the core's build, every element) · mark · start · version
 #   update  — a node is here and behind Fractera: prepare · update (743-5: this computer's stage 0 → the target's own updater: the fork merged, its records kept,
 #             the core rebuilt with the closed lid) · mark · start · version
-# Arguments: <node user> <node folder> <ssh port> <the node's public key line> <fork URL> <install|update> <server IP>
+# Arguments: <node user> <node folder> <ssh port> <fork URL> <install|update> <server IP>
+# 744-3: no key of the computer is given any more — the computer reaches this server by a visit of a day, never by a stored key.
 set -u
-NODE_USER="${1:?user}" FOLDER="${2:?folder}" SSH_PORT="${3:?ssh port}" PUBKEY="${4:?public key}" FORK="${5:?fork}" MODE="${6:?install|update}" IP="${7:-}"
+NODE_USER="${1:?user}" FOLDER="${2:?folder}" SSH_PORT="${3:?ssh port}" FORK="${4:?fork}" MODE="${5:?install|update}" IP="${6:-}"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 export PROGRESS="$HERE/launch.progress.jsonl" LOG="$HERE/launch.log"
 . "$HERE/stages.sh"
@@ -24,7 +25,6 @@ bad() { printf '{"state":"failed","mode":"%s","detail":"%s"}\n' "$MODE" "$1" > "
 [[ "$NODE_USER" =~ ^[a-z][a-z0-9-]{1,30}$ ]] || bad "bad user name"
 [[ "$FOLDER" =~ ^[A-Za-z0-9._-]{1,100}$ ]] || bad "bad folder name"
 [[ "$SSH_PORT" =~ ^[0-9]{1,5}$ ]] || bad "bad ssh port"
-[[ "$PUBKEY" =~ ^ssh-ed25519\ [A-Za-z0-9+/]+=*\ fractera-node$ ]] || bad "bad public key"
 [[ "$FORK" =~ ^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\.git$ ]] || bad "bad fork address"
 [[ "$MODE" = install || "$MODE" = update ]] || bad "mode is install or update"
 [[ -z "$IP" || "$IP" =~ ^[0-9]{1,3}(\.[0-9]{1,3}){3}$ ]] || bad "bad server address"
@@ -139,7 +139,7 @@ do_version() {
 }
 
 emit launch running
-stage prepare "bash '$HERE/prepare.sh' '$NODE_USER' '$FOLDER' '$SSH_PORT' '$PUBKEY'"
+stage prepare "bash '$HERE/prepare.sh' '$NODE_USER' '$FOLDER' '$SSH_PORT'"
 if [ "$MODE" = install ]; then
   stage source do_source
   stage install "as_node 'bash $NODE_DIR/scripts/dedicated-server/install.sh'"

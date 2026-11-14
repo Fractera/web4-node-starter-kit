@@ -10,15 +10,34 @@ import { join } from 'node:path'
 import ssh2 from 'ssh2'
 import { readableKeyPair } from '../lib/hosting/ssh.mjs'
 
+/**
+ * The key part of an `authorized_keys` line: options before it (`expiry-time="…"`, quoted values may hold spaces) are cut off the way
+ * sshd reads them. 744-3: `state.legacySshd` plays an OpenSSH older than 8.2, to which `expiry-time` is unknown — the whole line is
+ * dropped (the visit must then fail closed). Expiry itself is not enforced here: a real sshd proves it (probe 1 of step 744, and live).
+ */
+function keyPart(line, legacy) {
+  if (/^(ssh-|ecdsa-|sk-)/.test(line)) return line
+  let quoted = false
+  for (let i = 0; i < line.length; i++) {
+    if (line[i] === '"' && line[i - 1] !== '\\') quoted = !quoted
+    if (line[i] === ' ' && !quoted) return legacy ? null : line.slice(i + 1).trim()
+  }
+  return null
+}
+
 export function startTestSshServer({ home, password, hostKey = readableKeyPair().private, port = 0, state = { passwordAllowed: true } }) {
   return new Promise((resolve) => {
     const server = new ssh2.Server({ hostKeys: [hostKey] }, (client) => {
       client.on('authentication', (ctx) => {
-        if (ctx.method === 'password') return state.passwordAllowed && ctx.username === 'root' && ctx.password === password ? ctx.accept() : ctx.reject()
+        // The methods left are named as sshd names them: a refused password leaves «password» on the list only while password login is on.
+        if (ctx.method === 'password') {
+          if (!state.passwordAllowed) return ctx.reject(['publickey'])
+          return ctx.username === 'root' && ctx.password === password ? ctx.accept() : ctx.reject(['password', 'publickey'])
+        }
         if (ctx.method === 'publickey') {
           let lines = []
           try { lines = readFileSync(join(home, '.ssh', 'authorized_keys'), 'utf8').split('\n').filter(Boolean) } catch { /* none yet */ }
-          const key = lines.map((l) => ssh2.utils.parseKey(l)).find((k) => !(k instanceof Error) && k.type === ctx.key.algo && k.getPublicSSH().equals(ctx.key.data))
+          const key = lines.map((l) => keyPart(l, state.legacySshd)).filter(Boolean).map((l) => ssh2.utils.parseKey(l)).find((k) => !(k instanceof Error) && k.type === ctx.key.algo && k.getPublicSSH().equals(ctx.key.data))
           if (!key) return ctx.reject()
           if (ctx.signature) return key.verify(ctx.blob, ctx.signature, ctx.hashAlgo) === true ? ctx.accept() : ctx.reject()
           return ctx.accept()
