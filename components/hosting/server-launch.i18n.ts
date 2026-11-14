@@ -22,6 +22,8 @@ export type ServerLaunchWords = {
   another: string
   locked: string
   step: Record<LaunchStep, string>
+  /** 744-7: one line of what a done step did, shown while it is closed — `{host}` `{time}` `{head}`, `{ok}` of `{all}` required names */
+  summary: { server: string; clean: string; related: string; warn: string; install: string; recheck: string; certs: string }
   connected: string
   /** 744-3: access for one day — `{time}` the deadline in the person's own clock */
   access: { until: string; close: string; closing: string }
@@ -40,7 +42,8 @@ export type ServerLaunchWords = {
   preflight: { ok: string; stop: string; unknown: string }
   recheckServer: string
   domainNote: string
-  install: { text: string; install: string; update: string; again: string; running: string; done: string; failed: string; leave: string }
+  /** 744-7: `silent` — Fractera stands there, its node does not answer yet (the next step waits for it); `ask` reads the server again */
+  install: { text: string; install: string; update: string; again: string; running: string; done: string; failed: string; leave: string; silent: string; ask: string }
   stage: Record<string, string>
   recheck: { text: string; button: string; gate: string; noDomain: string }
   certs: { budget: string; limit: string; checklist: string; name: string; dns: string; cert: string; https: string; httpsButton: string }
@@ -77,6 +80,10 @@ const en: ServerLaunchWords = {
   another: "Another server",
   locked: "opens when the step before it is done",
   step: { server: "The server", check: "Check the server", domain: "Domain activation", install: "Server installation", recheck: "Second check of the records", certs: "Security certificates", ready: "The server is ready" },
+  summary: {
+    server: "{host} · access until {time}", clean: "A clean server", related: "Fractera from your fork ({head})", warn: "read the notes",
+    install: "Fractera {head} installed, the server's node answers", recheck: "{ok} of {all} names point to the server", certs: "{ok} of {all} names: a certificate and HTTPS",
+  },
   connected: "Server {host} is connected. The server's key fingerprint: {fp}.",
   access: { until: "Access until {time} (24 h at most)", close: "Close access", closing: "Closing the access…" },
   window: { open: "Open the server's panel", opening: "Opening an SSH window…", link: "The server's panel: {url}", note: "Through SSH, on this computer only, while the access lasts; «Close access» closes it too." },
@@ -97,10 +104,11 @@ const en: ServerLaunchWords = {
   reason: { moved: "a copy moved here from {from} on {date} (the old move, not a launch from your fork)", "other-fork": "a node from another fork: {origin}", "no-origin": "a node without a GitHub source", "other-nodes": "other Fractera nodes: {folders}", "foreign-sites": "nginx sites: {sites}", "root-programs": "programs of root in pm2: {n}" },
   preflight: { ok: "A trial merge on the server passed: the update will go through.", stop: "A trial merge on the server stops on files changed both there and in Fractera: {files}. The update would be refused; the server is untouched.", unknown: "Could not check in advance whether the update will pass." },
   recheckServer: "Check again",
-  domainNote: "The domain does not hold the installation: DNS wakes up while the server is being installed.",
+  domainNote: "The installation opens once the domain has a way to write its records and they were checked once. They need not answer yet: DNS wakes up while the server installs, and the second check waits for it.",
   install: {
     text: "Server preparation, a fresh Fractera from your fork, the build of the core and of every element, the start. About 40–50 minutes on a server with 8 GB. You may close the page and come back: the installation runs on the server.",
     install: "Install", update: "Update", again: "Continue the installation", running: "Installing on the server…", done: "Installed: version {head}.", failed: "The installation stopped at «{stage}».", leave: "You may close this page: the server goes on by itself.",
+    silent: "Fractera is installed, but the server's node does not answer yet: the next step waits for it.", ask: "Ask the server again",
   },
   stage: STAGE_EN,
   recheck: { text: "Every name of the node is asked of two public DNS resolvers. Until every required name points to the server, the certificates cannot start.", button: "Check the records", gate: "Not every required name points to the server yet.", noDomain: "No domain is chosen: the server answers only by its IP." },
@@ -149,6 +157,10 @@ const ru: ServerLaunchWords = {
   another: "Другой сервер",
   locked: "откроется, когда будет готов предыдущий шаг",
   step: { server: "Сервер", check: "Проверка сервера", domain: "Активация домена", install: "Установка сервера", recheck: "Повторная проверка записей", certs: "Сертификаты безопасности", ready: "Сервер готов" },
+  summary: {
+    server: "{host} · доступ до {time}", clean: "Чистый сервер", related: "Fractera из вашего форка ({head})", warn: "есть замечания",
+    install: "Fractera {head} установлена, узел сервера отвечает", recheck: "{ok} из {all} имён ведут на сервер", certs: "{ok} из {all} имён: сертификат и HTTPS",
+  },
   connected: "Сервер {host} подключён. Отпечаток ключа сервера: {fp}.",
   access: { until: "Доступ до {time} (не больше 24 ч)", close: "Закрыть доступ", closing: "Закрываю доступ…" },
   window: { open: "Открыть пульт сервера", opening: "Открываю окно SSH…", link: "Пульт сервера: {url}", note: "Через SSH, только на этом компьютере, пока открыт доступ; «Закрыть доступ» закрывает и его." },
@@ -169,10 +181,11 @@ const ru: ServerLaunchWords = {
   reason: { moved: "копия, перенесённая сюда с {from} {date} (старый переезд, а не запуск из вашего форка)", "other-fork": "узел из другого форка: {origin}", "no-origin": "узел без источника на GitHub", "other-nodes": "другие узлы Fractera: {folders}", "foreign-sites": "сайты nginx: {sites}", "root-programs": "программ root в pm2: {n}" },
   preflight: { ok: "Пробное слияние на сервере прошло: обновление пройдёт.", stop: "Пробное слияние на сервере останавливается на файлах, изменённых и там, и в Fractera: {files}. Обновление было бы отклонено; сервер не тронут.", unknown: "Заранее проверить, пройдёт ли обновление, не удалось." },
   recheckServer: "Проверить ещё раз",
-  domainNote: "Домен не держит установку: DNS просыпается, пока сервер ставится.",
+  domainNote: "Установка откроется, когда у домена будет выбран способ внести записи и они проверены один раз. Отвечать им пока не обязательно: DNS просыпается, пока сервер ставится, а повторная проверка их дождётся.",
   install: {
     text: "Подготовка сервера, свежая Fractera из вашего форка, сборка ядра и всех элементов, запуск. Около 40–50 минут на сервере с 8 ГБ. Страницу можно закрыть и вернуться: установка идёт на самом сервере.",
     install: "Установить", update: "Обновить", again: "Продолжить установку", running: "Идёт установка на сервере…", done: "Установлено: версия {head}.", failed: "Установка остановилась на этапе «{stage}».", leave: "Эту страницу можно закрыть: сервер продолжит сам.",
+    silent: "Fractera установлена, но узел сервера пока не отвечает: следующий шаг его ждёт.", ask: "Спросить сервер ещё раз",
   },
   stage: STAGE_RU,
   recheck: { text: "Каждое имя узла спрашивается у двух публичных DNS. Пока хоть одно обязательное имя не ведёт на сервер, к сертификатам перейти нельзя.", button: "Проверить записи", gate: "Ещё не все обязательные имена ведут на сервер.", noDomain: "Домен не выбран: сервер отвечает только по своему IP." },

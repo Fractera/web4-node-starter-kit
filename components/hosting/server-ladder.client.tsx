@@ -5,10 +5,10 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import type { DomainLadderWords } from "@/components/domain/domain-ladder.i18n"
 import type { DnsZone } from "@/components/hosting/dns-records"
-import { LadderLocked, LadderStep } from "@/components/hosting/ladder-step"
-import { ServerEndSteps, type ServerEnd } from "@/components/hosting/server-ladder-end.client"
+import { Ladder } from "@/components/hosting/ladder-step"
+import { type ServerEnd, serverEndRungs } from "@/components/hosting/server-ladder-end.client"
 import { RecordsStep } from "@/components/hosting/server-ladder-records.client"
-import { DomainStep, WhereStep, WhoStep } from "@/components/hosting/server-ladder-steps.client"
+import { DomainStep, domainLines, WhereStep, WhoStep } from "@/components/hosting/server-ladder-steps.client"
 import type { LadderWay, ServerLadderWords } from "@/components/hosting/server-ladder.i18n"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import { H2, Small } from "@/components/ui/typography"
@@ -19,7 +19,8 @@ import { H2, Small } from "@/components/ui/typography"
 // делаешь то что мы согласовали выше» (two accordions: the quick way and the alternative, with short comments and examples).
 // 🔒 ONE SHAPE FOR EVERY DOOR: here the server's own `/api/node/server/domain`; the launch page of the person's computer builds the same
 // view from the server's state read over SSH (`server-launch-domain.client.tsx`, 738). The steps never know which door spoke.
-// 🔒 THE LADDER LAW: a step opens when the one before it is done; the state is the node's, measured there, never this island's.
+// 🔒 THE LADDER LAW: a step opens when the one before it is done; the state is the node's, measured there, never this island's. 744-7: one
+// ladder of seven rungs, one open — which one is the part's rule (`Ladder`, `lib/hosting/ladder-rule.mjs`).
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 export type Detect = {
@@ -117,9 +118,10 @@ export function ServerLadder({ words, domainWords, keyWords, dialogUi, fallback 
     domain: Boolean(view.zone),
     where: Boolean(view.detect && view.detect.dnsHost !== "none"),
     who: Boolean(view.way && view.way !== "none"),
-    records: pointing,
+    // the server's own measure of every required name when it gave one (the certificates stood on it before 744-7), else this view's
+    records: view.server ? view.server.steps.dns : pointing,
   }
-  const order = ["domain", "where", "who", "records"] as Array<keyof typeof done>
+  const summary = domainLines(view, words)
   const body = {
     domain: <DomainStep busy={busy} onSave={(n) => { setPrefill(null); return acts.domain(n) }} prefill={prefill} view={view} words={words} />,
     where: <WhereStep busy={busy} onAgain={acts.detect} onSub={(name) => setPrefill(name)} view={view} words={words} />,
@@ -128,18 +130,19 @@ export function ServerLadder({ words, domainWords, keyWords, dialogUi, fallback 
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border p-4" data-block="server-ladder">
+    <div className="flex flex-col gap-3" data-block="server-ladder">
       <H2 variant="ui">{words.title}</H2>
       <Small className="text-foreground">{words.lead.replace("{ip}", view.ip ?? "")}</Small>
       {error ? <Small className="text-destructive" data-block="server-ladder-error">{error}</Small> : null}
-      {order.map((id, i) => {
-        const open = order.slice(0, i).every((p) => (p === "records" ? done.who : done[p]))
-        if (!open) return <LadderLocked key={id} n={i + 1} text={words.locked} title={words.step[id]} />
-        return <LadderStep done={done[id]} id={`domain-${id}`} key={id} n={i + 1} title={words.step[id]}>{body[id]}</LadderStep>
-      })}
-      {view.server && done.who ? (
-        <ServerEndSteps busy={busy} end={view.server} first={order.length + 1} onAct={acts.server} readOnly={view.readOnly} words={domainWords} zone={view.zone} />
-      ) : null}
+      <Ladder
+        focus={prefill ? "domain" : null}
+        id="server-domain"
+        locked={words.locked}
+        rungs={[
+          ...(["domain", "where", "who", "records"] as const).map((id) => ({ id, title: words.step[id], done: done[id], summary: summary[id], body: body[id] })),
+          ...(view.server ? serverEndRungs({ busy, end: view.server, onAct: acts.server, readOnly: view.readOnly, words: domainWords, zone: view.zone }) : []),
+        ]}
+      />
     </div>
   )
 }

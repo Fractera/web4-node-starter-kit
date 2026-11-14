@@ -2,11 +2,11 @@
 // @local — steps 4–7 of the launch ladder (one route: «Активация выделенного сервера»): installation, the records again, certificates, ready
 
 import { Check, X } from "lucide-react"
-import { useState } from "react"
 import { CertsStep } from "@/components/hosting/server-domain-certs.client"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import type { Strategy } from "@/components/hosting/server-launch-check.client"
 import type { LaunchState } from "@/components/hosting/server-launch.client"
+import { installedOf } from "@/components/hosting/server-launch-rungs"
 import type { ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
 import { StageLog } from "@/components/hosting/stage-log"
 import { Badge } from "@/components/ui/badge"
@@ -37,6 +37,12 @@ export function InstallStep({ state, strategy, words, busy, onAct }: { state: La
       {running ? <Small className="text-foreground">{w.running} {w.leave}</Small> : null}
       {l?.state === "done" ? <Small className="text-foreground">{fill(w.done, { head: head.slice(0, 8) })}</Small> : null}
       {l?.state === "failed" ? <Small className="break-all text-destructive">{fill(w.failed, { stage: words.stage[l.failed ?? ""] ?? l.failed ?? "?" })} {l.detail?.slice(-300)}</Small> : null}
+      {installedOf(state, strategy) && !state.core ? (
+        <div className="flex flex-wrap items-center gap-3" data-block="server-launch-silent">
+          <Small className="text-foreground">{w.silent}</Small>
+          <Button disabled={busy} onClick={() => void onAct("state")} size="sm" variant="outline">{w.ask}</Button>
+        </div>
+      ) : null}
       {strategy !== "latest" && !running ? (
         <div className="flex flex-wrap gap-2">
           <Button disabled={busy} onClick={() => void onAct("install", { mode: state.probe?.fractera?.head ? "update" : "install" })} size="sm">
@@ -105,7 +111,7 @@ export function CertsLaunchStep({ state, words, domainWords, busy, onAct }: { st
   )
 }
 
-export function ReadyStep({ state, words, busy, onAct }: { state: LaunchState; words: ServerLaunchWords; busy: boolean; onAct: Act }) {
+export function ReadyStep({ state, words, busy, onAct, claim, onClaim }: { state: LaunchState; words: ServerLaunchWords; busy: boolean; onAct: Act; claim: ClaimShown; onClaim: (c: ClaimShown) => void }) {
   const w = words.ready
   const zone = state.core?.zone ?? ""
   const architect = state.core?.rows.find((r) => r.kind === "architect")?.host ?? zone
@@ -126,22 +132,24 @@ export function ReadyStep({ state, words, busy, onAct }: { state: LaunchState; w
       <Small className="text-foreground">
         {w.links} <a className="underline" href={`https://${zone}/`}>{w.site}</a> · <a className="underline" href={`https://${architect}/`}>{w.panel}</a> · <a className="underline" href={`https://auth.${zone}/`}>{w.signin}</a>
       </Small>
-      <Claim busy={busy} onAct={onAct} words={words} zone={zone} />
+      <Claim busy={busy} onAct={onAct} onShown={onClaim} shown={claim} words={words} zone={zone} />
       <Small className="text-muted-foreground">{w.next}</Small>
       <div><Button disabled={busy} onClick={() => void onAct("signin")} size="sm" variant="outline">{w.signinButton}</Button></div>
     </div>
   )
 }
 
-/** 739-5: the architect's one-time code, asked of the server's sign-in element and shown here once — this island's memory only. */
-function Claim({ zone, words, busy, onAct }: { zone: string; words: ServerLaunchWords; busy: boolean; onAct: Act }) {
+/** 739-5: the architect's one-time code, asked of the server's sign-in element and shown here once — the launch island's memory only
+ *  (744-7: kept above the ladder, so a look back at another step does not lose it). */
+export type ClaimShown = { code: string | null; claimed: boolean }
+
+function Claim({ zone, words, busy, onAct, shown, onShown }: { zone: string; words: ServerLaunchWords; busy: boolean; onAct: Act; shown: ClaimShown; onShown: (c: ClaimShown) => void }) {
   const w = words.ready
-  const [code, setCode] = useState<string | null>(null)
-  const [claimed, setClaimed] = useState(false)
+  const { code, claimed } = shown
   async function get() {
     const a = (await onAct("claim")) as { answer?: { code?: string; reason?: string } } | undefined
-    if (a?.answer?.code) setCode(a.answer.code)
-    else if (a?.answer?.reason === "claimed") setClaimed(true)
+    if (a?.answer?.code) onShown({ code: a.answer.code, claimed: false })
+    else if (a?.answer?.reason === "claimed") onShown({ code: null, claimed: true })
   }
   if (claimed) return <Small className="text-foreground" data-block="server-launch-claimed">{w.claimed}</Small>
   return (

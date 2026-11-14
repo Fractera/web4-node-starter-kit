@@ -5,12 +5,13 @@ import { type ReactNode, useCallback, useEffect, useState } from "react"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import type { DomainLadderWords } from "@/components/domain/domain-ladder.i18n"
 import type { DnsZone } from "@/components/hosting/dns-records"
-import { LadderLocked, LadderStep } from "@/components/hosting/ladder-step"
+import { Ladder } from "@/components/hosting/ladder-step"
 import type { CertRow, CertsRun } from "@/components/hosting/server-domain-certs.client"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import { CheckStep, strategyOf } from "@/components/hosting/server-launch-check.client"
 import { LaunchDomain } from "@/components/hosting/server-launch-domain.client"
-import { CertsLaunchStep, InstallStep, ReadyStep, RecheckStep } from "@/components/hosting/server-launch-end.client"
+import { CertsLaunchStep, type ClaimShown, InstallStep, ReadyStep, RecheckStep } from "@/components/hosting/server-launch-end.client"
+import { LAUNCH_ORDER, launchDone, launchSummary, untilText } from "@/components/hosting/server-launch-rungs"
 import type { LaunchStep, ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
 import type { Detect } from "@/components/hosting/server-ladder.client"
 import type { LadderWay, ServerLadderWords } from "@/components/hosting/server-ladder.i18n"
@@ -26,8 +27,9 @@ import { H2, Small } from "@/components/ui/typography"
 // credentials».
 // 🔒 THE PAGE KEEPS NOTHING: the address lives in this island's memory only; a reload empties it. Everything shown is the server's own answer
 // (`/api/node/launch` → the server over SSH), so the same address on any visit shows the same truth, and other servers run on meanwhile.
-// 🔒 THE LADDER LAW (259-1): a step opens when the one before it is done; a closed one is a grey line naming what appears there. The domain
-// (step 3) holds nothing: the installation opens after the check, and DNS wakes while the server installs.
+// 🔒 THE LADDER LAW (259-1, 744-7): which step is open is the part's one rule (`Ladder`, `lib/hosting/ladder-rule.mjs`) — one step open, a
+// done one a line of what it did, a closed one a line of what opens it; this island only says what each step has done
+// (`server-launch-rungs.ts`). D46: the installation opens after the domain, never past an empty step 3.
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 type CoreRow = CertRow & { zone: string; label: string; kind: string; https: boolean | null; status: number | null }
@@ -53,7 +55,6 @@ export type LaunchState = {
 type Answer = { ok?: boolean; reason?: string; state?: LaunchState; fingerprint?: string; seen?: string | null; pinned?: string | null; key?: boolean; cleared?: LaunchState["cleared"]; week?: number; want?: number; over?: string[]; visit?: { deadline: string } | null }
 /** 744-3: `until` — the end of this browser's access to the server (the server's own deadline); the key itself never reaches the page. */
 type Target = { host: string; port: number; fingerprint: string | null; until: string | null }
-const untilText = (iso: string) => new Date(iso).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" })
 
 export function ServerLaunch({ words, ladderWords, domainWords, keyWords, dialogUi }: { words: ServerLaunchWords; ladderWords: ServerLadderWords; domainWords: ServerDomainWords; keyWords: DomainLadderWords; dialogUi: AppDialogUi }) {
   const [form, setForm] = useState({ host: "", port: "22", password: "" })
@@ -65,6 +66,8 @@ export function ServerLaunch({ words, ladderWords, domainWords, keyWords, dialog
   const [panel, setPanel] = useState<{ url: string | null; opening: boolean }>({ url: null, opening: false })
   const [error, setError] = useState("")
   const [changed, setChanged] = useState<{ seen: string; pinned: string | null } | null>(null)
+  // 739-5: the architect's one-time code, kept here and not in its step, so a look back at another step does not lose it (744-7).
+  const [claim, setClaim] = useState<(ClaimShown & { host: string }) | null>(null)
 
   const say = useCallback((a: Answer | null) => {
     if (!a || a.ok === false) {
@@ -148,10 +151,10 @@ export function ServerLaunch({ words, ladderWords, domainWords, keyWords, dialog
     return () => clearInterval(t)
   }, [target, working, post])
 
+  // 744-7: before a server is connected, step 1 is this form and the six steps after it stand closed — the whole way is seen from the start.
   if (!target || !state) {
-    return (
-      <section className="my-6 flex flex-col gap-4 rounded-lg border border-border p-4" data-block="server-launch-form">
-        <H2 variant="ui">{words.title}</H2>
+    const access = (
+      <div className="flex flex-col gap-4" data-block="server-launch-form">
         <Small className="text-foreground">{words.lead}</Small>
         <div className="grid gap-3 sm:grid-cols-[1fr_8rem]">
           <Field><FieldLabel htmlFor="launch-host">{words.host}</FieldLabel><Input autoComplete="off" id="launch-host" inputMode="decimal" onChange={(e) => setForm({ ...form, host: e.target.value })} placeholder="203.0.113.7" value={form.host} /></Field>
@@ -176,25 +179,19 @@ export function ServerLaunch({ words, ladderWords, domainWords, keyWords, dialog
           <Button disabled={busy || !form.host.trim()} onClick={() => void connect()}>{words.connect}</Button>
           {busy ? <Small className="text-muted-foreground">{words.connecting}</Small> : null}
         </div>
+      </div>
+    )
+    return (
+      <section className="my-6 flex flex-col gap-3" data-block="server-launch">
+        <H2 variant="ui">{words.title}</H2>
+        <Ladder id="launch" locked={words.locked} rungs={LAUNCH_ORDER.map((id) => ({ id, title: words.step[id], done: false, body: id === "server" ? access : null }))} />
       </section>
     )
   }
 
   const strategy = strategyOf(state)
-  const installed = state.launch?.state === "done" || strategy === "latest"
-  const done: Record<LaunchStep, boolean> = {
-    server: true,
-    // 744-4: nothing goes on while the server holds a state not related to this node — only its clear is open.
-    check: state.verdict?.level !== "fail" && Boolean(state.verdict) && state.relation?.kind !== "unrelated",
-    domain: Boolean(state.domain?.domain && state.domain?.check),
-    install: installed,
-    recheck: Boolean(state.core?.steps.dns),
-    certs: Boolean(state.core?.steps.certs && state.core?.steps.check),
-    ready: Boolean(state.core?.steps.active && state.domain?.signin?.ok),
-  }
-  // The domain holds nothing: the installation opens right after the check.
-  const opens: Record<LaunchStep, boolean> = { server: true, check: true, domain: done.check, install: done.check, recheck: done.install && Boolean(state.core), certs: done.recheck, ready: done.certs }
-  const order: LaunchStep[] = ["server", "check", "domain", "install", "recheck", "certs", "ready"]
+  const done = launchDone(state, strategy, key)
+  const summary = launchSummary(state, target, words, ladderWords)
   const body: Record<LaunchStep, ReactNode> = {
     server: (
       <div className="flex flex-col gap-2" data-block="server-launch-access">
@@ -217,15 +214,13 @@ export function ServerLaunch({ words, ladderWords, domainWords, keyWords, dialog
     install: <InstallStep busy={busy} onAct={act} state={state} strategy={strategy} words={words} />,
     recheck: <RecheckStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,
     certs: <CertsLaunchStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,
-    ready: <ReadyStep busy={busy} onAct={act} state={state} words={words} />,
+    ready: <ReadyStep busy={busy} claim={claim?.host === target.host ? claim : { code: null, claimed: false }} onAct={act} onClaim={(c) => setClaim({ ...c, host: target.host })} state={state} words={words} />,
   }
   return (
     <section className="my-6 flex flex-col gap-3" data-block="server-launch" data-host={target.host}>
       <H2 variant="ui">{words.title}</H2>
       {error ? <Small className="text-destructive" data-block="server-launch-error">{error}</Small> : null}
-      {order.map((id, i) => (opens[id]
-        ? <LadderStep done={done[id]} id={`launch-${id}`} key={id} n={i + 1} title={words.step[id]}>{body[id]}</LadderStep>
-        : <LadderLocked key={id} n={i + 1} text={words.locked} title={words.step[id]} />))}
+      <Ladder id="launch" locked={words.locked} rungs={LAUNCH_ORDER.map((id) => ({ id, title: words.step[id], done: done[id], summary: summary[id], body: body[id] }))} />
     </section>
   )
 }

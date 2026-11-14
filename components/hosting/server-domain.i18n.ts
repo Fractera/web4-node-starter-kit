@@ -10,6 +10,8 @@ export type ServerDomainWords = {
   loading: string
   locked: string
   step: Record<Steps, string>
+  /** 744-7: one line of what a done step did, shown while it is closed — `{ok}` of `{all}` required names */
+  summary: { certs: string; check: string }
   domainLabel: string
   domainHint: string
   domainSave: string
@@ -49,6 +51,7 @@ const en: ServerDomainWords = {
   loading: "Asking the server…",
   locked: "opens after the step above",
   step: { domain: "The domain", dns: "Records at the registrar", certs: "Certificates", check: "HTTPS from the internet", active: "Switch on" },
+  summary: { certs: "{ok} of {all} names have a certificate", check: "HTTPS answers on {ok} of {all} names" },
   domainLabel: "Domain",
   domainHint: "Without https:// and www — for example example.org. It can be changed until it is switched on.",
   domainSave: "Save",
@@ -92,6 +95,7 @@ const ru: ServerDomainWords = {
   loading: "Спрашиваю сервер…",
   locked: "откроется после шага выше",
   step: { domain: "Домен", dns: "Записи у регистратора", certs: "Сертификаты", check: "HTTPS из интернета", active: "Включение" },
+  summary: { certs: "Сертификат у {ok} из {all} имён", check: "HTTPS отвечает на {ok} из {all} имён" },
   domainLabel: "Домен",
   domainHint: "Без https:// и www — например example.org. Его можно сменить, пока он не включён.",
   domainSave: "Сохранить",

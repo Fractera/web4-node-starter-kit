@@ -1,13 +1,76 @@
-// @part ladder-step — one numbered rung of a step ladder: its number or a check, its title, its body; and the grey line that stands in place of a rung not open yet
-import { Check, TriangleAlert } from "lucide-react"
-import type { ReactNode } from "react"
+"use client"
+// @part ladder-step — a step ladder with one rung open at a time (an accordion): a done rung is one line of what it did, a locked rung one muted line of what opens it; and the older single rung with its grey line
+import { Check, Lock, TriangleAlert } from "lucide-react"
+import { type ReactNode, useState } from "react"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { H3 } from "@/components/ui/typography"
+import { currentOf, openOf } from "@/lib/hosting/ladder-rule.mjs"
+import { cn } from "@/lib/utils"
+
+// THE LADDER (node step 744-7, D46, D47). The owner, 2026-11-14: «каждый следующий шаг заблокирован до предыдущего … реализуй шаги в
+// формате аккордеона … только один шаг должен быть открыты все остальные должны быть скрыты».
+// 🔒 WHICH RUNG IS OPEN IS THE RULE'S (`lib/hosting/ladder-rule.mjs`), never the page's: a page only says what each rung has done. The
+// ladder stands on its current rung and follows it when a rung becomes done; a done rung opens again to look back (one at a time); a
+// locked rung cannot open — its line says what opens it (the law of 259-1, the owner's words 2026-09-17: a hidden rung without it reads
+// «непонятно что делать»). A closed rung's body is not mounted: a body keeps nothing it cannot ask again.
+// The older `LadderStep` / `LadderLocked` stay for the computer's own domain ladder until it moves here (745, D47).
+
+export type Rung = { id: string; title: string; done: boolean; summary?: string | null; body: ReactNode }
+type RungState = "done" | "current" | "locked"
+
+/** `focus` — a rung a body sends the person back to on purpose («take a subdomain instead»); without it the ladder follows its current rung. */
+export function Ladder({ id, rungs, locked, focus = null }: { id: string; rungs: Rung[]; locked: string; focus?: string | null }) {
+  const open = openOf(rungs)
+  const aim = focus ?? currentOf(rungs) ?? ""
+  const [value, setValue] = useState(aim)
+  const [followed, setFollowed] = useState(aim)
+  if (followed !== aim) {
+    setFollowed(aim)
+    setValue(aim)
+  }
+  return (
+    <Accordion className="rounded-lg border border-border bg-card" collapsible data-block={`ladder-${id}`} onValueChange={setValue} type="single" value={value}>
+      {rungs.map((r, i) => {
+        const state: RungState = !open[i] ? "locked" : r.done ? "done" : "current"
+        return (
+          <AccordionItem data-block={`ladder-${id}-${r.id}`} data-rung={state} data-step={i + 1} disabled={!open[i]} key={r.id} value={r.id}>
+            <AccordionTrigger className="px-4 py-3 disabled:opacity-100 [&:disabled>svg]:hidden [&>svg]:translate-y-1">
+              <span className="flex min-w-0 items-start gap-3">
+                <RungMark n={i + 1} state={state} />
+                <span className="flex min-w-0 flex-col gap-0.5 pt-0.5">
+                  <span className={state === "current" ? "font-semibold text-foreground" : state === "done" ? "text-foreground" : "text-muted-foreground"}>{r.title}</span>
+                  {state === "done" && r.summary && value !== r.id ? <span className="break-words font-normal text-muted-foreground">{r.summary}</span> : null}
+                  {state === "locked" ? (
+                    <span className="flex items-center gap-1.5 font-normal text-muted-foreground">
+                      <Lock aria-hidden className="size-3.5 shrink-0" />
+                      {locked}
+                    </span>
+                  ) : null}
+                </span>
+              </span>
+            </AccordionTrigger>
+            {open[i] ? <AccordionContent className="flex flex-col gap-3 pr-4 pl-13" data-block={`ladder-${id}-${r.id}-body`}>{r.body}</AccordionContent> : null}
+          </AccordionItem>
+        )
+      })}
+    </Accordion>
+  )
+}
+
+/** The rung's mark: a check when done, its number in the accent where the ladder stands, a muted number while locked. */
+function RungMark({ n, state }: { n: number; state: RungState }) {
+  const look = state === "done" ? "bg-primary text-primary-foreground" : state === "current" ? "border border-primary text-primary" : "bg-muted text-muted-foreground"
+  return (
+    <span aria-hidden className={cn("inline-flex size-6 shrink-0 items-center justify-center rounded-full text-xs tabular-nums", look)}>
+      {state === "done" ? <Check className="size-3.5" /> : n}
+    </span>
+  )
+}
 
 // THE RUNG OF A LADDER (node step 737-7), taken out of the domain ladder's own copy (`components/domain/domain-ladder.client.tsx`, 259-1)
-// for the move ladder and every ladder after it. Its law, paid by the owner's words 2026-09-17: a rung opens when the one before it is done;
-// in place of a closed one stands a grey line naming WHAT appears there and AFTER WHAT — a hidden rung without it reads «непонятно что
-// делать». The domain ladder takes it too (its own copy removed in 737-7 together with its four raw controls — `check:parts-dup`).
-
+// for the move ladder and every ladder after it; since 744-7 only that domain ladder uses it. Its law, paid by the owner's words
+// 2026-09-17: a rung opens when the one before it is done; in place of a closed one stands a grey line naming WHAT appears there and AFTER
+// WHAT — a hidden rung without it reads «непонятно что делать».
 export function LadderStep({ children, done, n, title, id }: { children: ReactNode; done?: boolean; n: number; title: string; id?: string }) {
   return (
     <section className="rounded-lg border border-border bg-card p-4" data-block={id ? `ladder-step-${id}` : "ladder-step"} data-step={n} data-done={done ? "1" : "0"}>

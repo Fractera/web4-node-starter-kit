@@ -1,7 +1,7 @@
 "use client"
 // @local — the last steps of a server node's own domain ladder (one route: the tab of the server itself): certificates · HTTPS · switch on
 
-import { LadderLocked, LadderStep } from "@/components/hosting/ladder-step"
+import type { Rung } from "@/components/hosting/ladder-step"
 import { CertsStep, type CertRow, type CertsRun } from "@/components/hosting/server-domain-certs.client"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import { Badge } from "@/components/ui/badge"
@@ -10,6 +10,7 @@ import { Small } from "@/components/ui/typography"
 
 // 737-8, 737-19: on the server itself, its own three steps — certificates, HTTPS from the internet, switching the domain on. The launch page
 // of the person's computer runs the same three through the server's door over SSH (`server-launch-end.client.tsx`, 738).
+// 744-7: they are rungs of the server's one ladder (`server-ladder.client.tsx`) — which one is open is the part's rule, not this file's.
 
 type Row = CertRow & { zone: string; label: string; kind: string; https: boolean | null; status: number | null }
 export type ServerEnd = {
@@ -20,14 +21,16 @@ export type ServerEnd = {
   checkAt: string | null
 }
 
-export function ServerEndSteps({ end, words, busy, readOnly, first, zone, onAct }: {
-  end: ServerEnd; words: ServerDomainWords; busy: boolean; readOnly: boolean; first: number; zone: string | null
+/** The server's last three rungs — what each has done, its one line and its body. */
+export function serverEndRungs({ end, words, busy, readOnly, zone, onAct }: {
+  end: ServerEnd; words: ServerDomainWords; busy: boolean; readOnly: boolean; zone: string | null
   onAct: (action: string, extra?: Record<string, unknown>) => Promise<void>
-}) {
+}): Rung[] {
   const architect = end.rows.find((r) => r.kind === "architect")?.host ?? zone ?? ""
   const when = (iso: string | null) => (iso ? new Date(iso).toLocaleString() : "")
-  const order = ["certs", "check", "active"] as const
-  const prev = { certs: end.steps.dns, check: end.steps.certs, active: end.steps.check }
+  const need = end.rows.filter((r) => !r.optional)
+  const count = (t: string, ok: (r: Row) => boolean) => t.replace("{ok}", String(need.filter(ok).length)).replace("{all}", String(need.length))
+  const summary = { certs: count(words.summary.certs, (r) => r.cert === "ok" || r.cert === "expiring"), check: count(words.summary.check, (r) => r.https === true), active: null }
   const body = {
     certs: <CertsStep busy={busy} helper={end.helper} onAct={onAct} readOnly={readOnly} rows={end.rows} run={end.certsRun} words={words} />,
     check: (
@@ -59,11 +62,5 @@ export function ServerEndSteps({ end, words, busy, readOnly, first, zone, onAct 
       </div>
     ),
   }
-  return (
-    <>
-      {order.map((id, i) => (prev[id]
-        ? <LadderStep done={end.steps[id]} id={`domain-${id}`} key={id} n={first + i} title={words.step[id]}>{body[id]}</LadderStep>
-        : <LadderLocked key={id} n={first + i} text={words.locked} title={words.step[id]} />))}
-    </>
-  )
+  return (["certs", "check", "active"] as const).map((id) => ({ id, title: words.step[id], done: end.steps[id], summary: summary[id], body: body[id] }))
 }

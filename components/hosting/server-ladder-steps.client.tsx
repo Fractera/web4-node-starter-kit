@@ -18,6 +18,17 @@ import { Small } from "@/components/ui/typography"
 
 const fill = (t: string, map: Record<string, string>) => Object.entries(map).reduce((s, [k, v]) => s.split(`{${k}}`).join(v), t)
 
+/** 744-7: one line of what each done rung of the domain ladder did — the server's own ladder and step 3 of the launch say it alike. */
+export function domainLines(view: LadderView, words: ServerLadderWords) {
+  const d = view.detect
+  return {
+    domain: view.zone ? fill(words.domain.line, { zone: view.zone, ip: view.ip ?? "" }) : null,
+    where: d ? `${words.where.dns} ${d.dnsHost === "cloudflare" ? words.where.cloudflare : d.ns.join(", ")}` : null,
+    who: view.way ? words.who.option[view.way] : null,
+    records: view.dnsAt ? fill(words.records.checkedAt, { time: new Date(view.dnsAt).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" }) }) : null,
+  }
+}
+
 /** The two names of the quick way for this domain: `@` and `*` on an apex, `node` and `*.node` on a subdomain. */
 export function quickNames(view: LadderView) {
   const w = view.records[0]?.wildcard?.name ?? "*"

@@ -5,26 +5,28 @@
       "id": "ladder-step",
       "kind": "composite",
       "path": "components/hosting/ladder-step.tsx",
-      "export": "LadderStep, LadderLocked",
+      "export": "Ladder, Rung, LadderStep, LadderLocked",
       "what": {
-        "en": "One numbered rung of a step ladder (its number turns into a check when done) and the grey line that stands in place of a rung not open yet, naming what appears there.",
-        "ru": "Одна нумерованная ступень пошаговой лестницы (номер становится галочкой, когда шаг сделан) и серая строка на месте ещё закрытой ступени — что там появится."
+        "en": "A step ladder with one rung open at a time (an accordion): which rung is open is the one rule of every ladder (a rung opens when every rung before it is done), a done rung is one line of what it did and opens again to look back, a locked rung one muted line of what opens it. LadderStep / LadderLocked — the older single rung and grey line, kept for the computer's domain ladder until it moves (745).",
+        "ru": "Пошаговая лестница, где открыта одна ступень (аккордеон): какая открыта — решает одно правило всех лестниц (ступень открывается, когда сделаны все до неё); сделанная ступень — одна строка того, что сделано, и открывается снова, чтобы посмотреть назад; закрытая — приглушённая строка, что её откроет. LadderStep / LadderLocked — прежняя одиночная ступень и серая строка, оставлены лестнице домена компьютера до её переезда (745)."
       },
-      "how": "<LadderStep n={1} title done id>body</LadderStep>; <LadderLocked n={2} title text /> for a rung that opens after the one above.",
+      "how": "<Ladder id=\"launch\" locked={words.locked} rungs={[{ id, title, done, summary, body }]} focus={null} /> — a page says only what each rung has done (done + its one-line summary); openOf/currentOf in lib/hosting/ladder-rule.mjs decide the rest. focus opens a done rung on purpose (a body that sends the person back).",
       "words": {
         "en": [
           "ladder",
           "wizard",
           "stepper",
           "steps",
-          "rung"
+          "rung",
+          "accordion"
         ],
         "ru": [
           "лестница",
           "мастер",
           "шаги",
           "ступень",
-          "пошагово"
+          "пошагово",
+          "аккордеон"
         ]
       }
     },
