@@ -29,3 +29,16 @@ and «Адрес узла: http://localhost:24680»; the server's own ladder wit
 - 742-7 live on aifa.dev: every page seen; one name renewed (its new notBefore by openssl).
 - 742-8 the core sync of a server both ways: the server's own panel update first, then the launch page's «Обновить» on the next edit;
   proof — the server's /api/health commit contains 742, the new page appears; before the update it is absent.
+
+## State 2026-11-14 22:31 UTC — 742-1…6, 742-9 live on aifa.dev; 742-8 path 2 PROVEN
+Pushed `6745d3c2` (CI green), the fork synced. The server updated ITSELF from its panel (banner «Проверить снова» → «Обновить сборку
+ядра» → «Обновить узел из форка (5)» → «Развернуть»): 1c260370 → `b01e811c` (built 22:24). Negative control before: /ru/hosting/certificates
+404, /api/domain/state active:false; after: 200 «Сертификаты безопасности», active:true, server:true, nodeUrl:null. Seen: the menu
+«Домен и хостинг» no longer red, «Активация выделенного сервера» hidden (data-place=home, html[data-node-place=server]), «Активация домена»
+= the server's ladder (the Cloudflare ladder display:none), the certificates table 13 names (Let's Encrypt, 88–89 d., HTTPS by httpsDue),
+«Живой сайт» frames https://hrdvz.aifa.dev/ru and «Подсветка» outlines blocks on hover («awaiting-title · Нажми для обновления»).
+The FIRST load after the build served the old prerender (no 742 at all) — a reload brought it: the open wish «stale page after a core
+build» is real and bites every update; it belongs before fractera.ai.
+OPEN: 742-8 path 1 (the launch page «Обновить») on the next edit; this computer's node not yet updated to 742; forced renewal + certbot
+timer (root-helper verb and its delivery); Claude Code auto-update on the server (npm prefix); the hosting overview text; monitoring page;
+the element's own second domain on a server; the server ladder's HTTPS rung shows open (hrdvz not yet checked — press the check).
