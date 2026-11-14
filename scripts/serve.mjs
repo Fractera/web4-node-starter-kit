@@ -680,6 +680,9 @@ async function rebuild() {
   openLid(root)
   // 741-1: the edge first — nginx is plain code, not the build; a failed or cut build must not leave a server forwarding forged names.
   reapplyServerEdge()
+  // 741-2: a node updated to 741 records where it lives here too — `node:update` runs `rebuild`, not `start` (✗ measured on this Mac
+  // 2026-11-14: after its update the 276-3 declaration «server» still stood until the migration was run by hand).
+  try { migratePlaceRecord(root) } catch { /* the indicator measures until the next start */ }
   console.log("Собираю сайт заново. На время сборки узел остановлен: пульт и сайты этого компьютера не отвечают, в интернете — копии страниц.")
   const backedUp = backupNext(root)
   const buildWhat = process.env.FRACTERA_BUILD_WHAT || "core"
