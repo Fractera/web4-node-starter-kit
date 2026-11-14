@@ -57,7 +57,9 @@ export function OnlineBar({ words: w, lang }: { words: OnlineBarWords; lang: str
 
   useEffect(() => {
     if (place === undefined || !isLoopbackHostname(window.location.hostname)) return
-    if (place?.kind === "server" || (place?.launched.length ?? 0) > 0) return
+    // 744-9: a server that becomes ready while the page is open hides the bar at once. ✗ Seen 2026-11-14: the bar stayed with its
+    // sentence and no address until a reload.
+    if (place?.kind === "server" || (place?.launched.length ?? 0) > 0) { setHere(false); return }
     setHere(true)
     const prev = document.body.style.paddingTop
     document.body.style.paddingTop = HEIGHT
