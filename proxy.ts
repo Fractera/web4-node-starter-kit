@@ -11,6 +11,7 @@ import { authBaseFromHost, connectedDomainAuthBase, publicAuthBaseFor } from "@/
 import { authUrl as nodeAuthUrl } from "@/lib/microservices/urls";
 import { temporaryAddressPage } from "@/lib/auth/temporary-address.page";
 import { signInClosedPage } from "@/lib/auth/sign-in-closed.mjs";
+import { crossSiteRefusal } from "@/lib/auth/cross-site-wall";
 import {
   SUPPORTED_LANGUAGES,
   DEFAULT_LANGUAGE,
@@ -354,6 +355,13 @@ function languageRouter(request: NextRequest): NextResponse {
 
 export async function proxy(request: NextRequest): Promise<NextResponse> {
   const { pathname } = request.nextUrl;
+
+  // ── Job −3: THE CROSS-SITE WALL (744-2) — first of all, on every path and every state-changing method ─────────────────────────────
+  // A page of another site open in the same browser must not press the node's buttons: the owner at the keyboard passes every gate
+  // without sign-in. ✗ Measured 2026-11-14: a text/plain POST from a foreign page ran SSH as root through /api/node/launch. Server actions
+  // and the architect's kit doors are POSTs to page addresses — so the wall stands before every job, not inside the `/api` gate.
+  const crossSite = crossSiteRefusal(request);
+  if (crossSite) return NextResponse.json({ ok: false, reason: "cross-site", site: crossSite }, { status: 403 });
 
   // ── Job −2: ГЛАВНОЕ ЗЕРКАЛО ЭЛЕМЕНТА — 301 НА ЕГО ДОМЕН (324-4) ─────────────
   // `www.<домен>` и прежний поддомен элемента туннель ведёт сюда, а не на элемент; здесь они уходят на `https://<домен>`

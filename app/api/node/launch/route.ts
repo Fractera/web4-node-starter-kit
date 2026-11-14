@@ -77,6 +77,8 @@ function run(verb: string, argv: string[], stdin = ""): Promise<Record<string, u
 
 export async function POST(req: NextRequest) {
   if (isTemporaryPublicAddress(req)) return json({ ok: false, reason: "public-address" }, 403)
+  // 744-2: JSON only — a cross-origin JSON POST needs a preflight the node never grants; the proxy's cross-site wall stands before this.
+  if (!(req.headers.get("content-type") ?? "").toLowerCase().startsWith("application/json")) return json({ ok: false, reason: "json-only" }, 415)
   const denied = await requireRoles(req, ["architect"] as const)
   if (denied) return denied
   if (phase.nodePhase(ROOT)) return json({ ok: false, reason: "on-server" }, 409)

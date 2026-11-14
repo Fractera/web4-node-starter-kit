@@ -92,6 +92,7 @@ change — never route around it.
 |---|---|---|
 | middleware | `proxy.ts` — never `middleware.ts` | deliberate convention for Next 16/Turbopack; an empty `middleware-manifest.json` is not evidence of breakage |
 | a guest-facing API door | its prefix in `PUBLIC_API_PREFIXES` (`proxy.ts`) | the gate closes `/api/*` whole; in bypass mode you cannot see it, so it breaks on the domain, at the customer |
+| a door another site's page may call | nowhere — the cross-site wall (`lib/auth/cross-site-wall.ts`, the first job of `proxy.ts`) answers 403 `cross-site` to every state-changing request a browser sends from another site or subdomain; an outside caller is a server with a key or a signature | 744-2: a foreign page's text/plain POST ran SSH as root through the launch door — the owner at the keyboard passes every gate without sign-in |
 | every table | the `SCHEMA` constant in `lib/db/index.ts` | both `makeLocalDb()` and `initRemoteSchema()` execute it, so local and server stay identical; there are no migration files and no button |
 | segment values (`revalidate`, `dynamic`, `dynamicParams`) | literally in `page.tsx` / `route.ts` | Next parses them statically and refuses a re-export from an object |
 | identity, SEO, branding, analytics | the configs, read at runtime (`npm run read:app-config`) | writing them into code is wrong twice: the app reads the file, and the file overwrites you |
