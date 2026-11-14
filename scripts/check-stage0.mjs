@@ -2,7 +2,7 @@
 // old nodes run forever (every later fix lives in the target's own updater), so it changes only by the owner's word: its text is sealed
 // in `scripts/node-update-stage0.seal`; `--seal` rewrites the seal and is run only after that word. Also held here: it stays ≤ 60 lines,
 // the updater carries the contract mark `// @handoff v1`, and every start of an update goes through stage 0 (the button's runner and
-// the npm script; 743-5 adds the launch page's update of a server).
+// the npm script, and the launch page's update of a server — 743-5).
 import { createHash } from 'node:crypto'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
@@ -29,6 +29,8 @@ if (lines > 60) problems.push(`scripts/node-update-stage0.mjs has ${lines} lines
 if (!/^\/\/ @handoff v1$/m.test(read('scripts/node-update.mjs'))) problems.push('scripts/node-update.mjs lost its mark «// @handoff v1» — stage 0 would run every node\'s own old updater again')
 if (!read('scripts/node-update-run.mjs').includes("'node-update-stage0.mjs'")) problems.push('scripts/node-update-run.mjs (the update button) does not start stage 0')
 if (!/"node:update":\s*"node scripts\/node-update-stage0\.mjs"/.test(read('package.json'))) problems.push('npm run node:update does not start stage 0')
+if (!/node \$s0 --root \$NODE_DIR/.test(read('scripts/dedicated-server/launch.sh'))) problems.push('scripts/dedicated-server/launch.sh updates a server without stage 0 — the server would run its own old updater (743-5)')
+if (!read('scripts/dedicated-server/launch.mjs').includes("'node-update-stage0.mjs'")) problems.push('scripts/dedicated-server/launch.mjs no longer uploads stage 0 to the server (743-5)')
 
 if (problems.length) {
   console.error(`===STAGE0_REFUSED=== ${problems.length}\n${problems.join('\n')}`)

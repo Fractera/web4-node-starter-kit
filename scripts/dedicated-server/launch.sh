@@ -10,7 +10,7 @@
 # skips what is already done (prepare, the packages, the build — each by its own mark).
 #   install — no node here: prepare · source (clone of the fork, a fresh .env.local, the fork checked, the starter's history stripped) ·
 #             install (packages, the core's build, every element) · mark · start · version
-#   update  — a node is here and behind Fractera: prepare · update (the node's own `npm run node:update`: the fork merged, its records kept,
+#   update  — a node is here and behind Fractera: prepare · update (743-5: this computer's stage 0 → the target's own updater: the fork merged, its records kept,
 #             the core rebuilt with the closed lid) · mark · start · version
 # Arguments: <node user> <node folder> <ssh port> <the node's public key line> <fork URL> <install|update> <server IP>
 set -u
@@ -87,8 +87,14 @@ do_source() {
 }
 
 do_update() {
-  # The node's own update (632-3): it refuses with a list when someone's own work is uncommitted there, and touches nothing then.
-  as_node "cd $NODE_DIR && npm run -s node:update"
+  # 743-5: never the server's own updater — this computer's stage 0 (uploaded beside this script) hands the update to the TARGET's own
+  # updater, whatever version the server runs (✗ 2026-11-14: the test server at 97a15ca2 ran its old updater and rolled back at the merge,
+  # the 741-8 fix sitting unused in the target). It refuses with a list when someone's own work is uncommitted there, touching nothing.
+  # The node's user cannot read this folder: a readable copy for this one run.
+  local s0="/tmp/fractera-stage0-$$.mjs"
+  install -m 644 "$HERE/node-update-stage0.mjs" "$s0" || return 1
+  as_node "cd $NODE_DIR && node $s0 --root $NODE_DIR"
+  rm -f "$s0"
   local s
   s="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("state",""))' "$NODE_DIR/data/node/node-update.json" 2>/dev/null)"
   if [ -n "$s" ] && [ "$s" != done ]; then echo "node:update: $s"; return 1; fi
