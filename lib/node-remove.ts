@@ -13,8 +13,10 @@ import { placeKind } from "@/lib/hosting/place.mjs"
 export async function nodeRemoveDenied(req: NextRequest): Promise<NextResponse | null> {
   const denied = await requireRoles(req, ["architect"])
   if (denied) return denied
-  if (!isOwnerAtMachine(req)) return NextResponse.json({ ok: false, error: "not-at-machine" }, { status: 403 })
+  // The place first: on a server «open the panel at localhost» would be a wrong way — its answer is «a server is cleared elsewhere»
+  // (seen on aifa.dev 2026-11-15).
   if (placeKind(process.cwd()) !== "home") return NextResponse.json({ ok: false, error: "server" }, { status: 403 })
+  if (!isOwnerAtMachine(req)) return NextResponse.json({ ok: false, error: "not-at-machine" }, { status: 403 })
   return null
 }
 
