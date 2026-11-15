@@ -457,7 +457,7 @@
         "en": "Element preview",
         "ru": "Предпросмотр элемента"
       },
-      "version": "1.0.1",
+      "version": "1.0.2",
       "parts": [
         {
           "id": "tool-block-task",
@@ -507,7 +507,7 @@
         "components/ui/tooltip",
         "lib/auth/owner-at-machine"
       ],
-      "bodyHash": "0b6eeee984b6a159"
+      "bodyHash": "77697a3036c5738e"
     },
     {
       "id": "environment-panel",

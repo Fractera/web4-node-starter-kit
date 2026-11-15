@@ -8,7 +8,7 @@
         "en": "Element preview",
         "ru": "Предпросмотр элемента"
       },
-      "version": "1.0.1",
+      "version": "1.0.2",
       "parts": [
         {
           "id": "tool-block-task",

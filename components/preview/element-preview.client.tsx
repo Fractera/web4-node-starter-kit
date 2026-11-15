@@ -330,34 +330,36 @@ export function ElementPreview({ serviceId, terminalService, lang, words, task, 
     reload === "busy" ? words.reloading : reload === "done" ? words.reloaded : reload === "unconfirmed" ? words.reloadUnconfirmed : null
 
   return (
+    // 757: ONE provider for every hint of the preview — the find help and the toolbar's names while the terminal drawer is open
+    // (`hint`). A Tooltip outside a provider throws «`Tooltip` must be used within `TooltipProvider`», and the whole page falls to
+    // the error screen: it did, on «Отправить» of a block task, from 742 (6745d3c2) on.
+    <TooltipProvider>
     <div className="flex flex-col gap-2" data-element-preview={serviceId}>
-      <TooltipProvider>
-        <form
-          className="flex items-center gap-2"
-          onSubmit={(e) => { e.preventDefault(); findBlock() }}
-          data-preview-find
-        >
-          <Input
-            value={findText}
-            onChange={(e) => { setFindText(e.target.value); if (find !== "waiting") setFind("idle") }}
-            placeholder={words.findPlaceholder}
-            aria-label={words.findPlaceholder}
-            className="h-8 flex-1 font-mono text-sm"
-          />
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button type="button" variant="ghost" size="icon" className="size-8 shrink-0" aria-label={words.findHelp} data-preview-find-help>
-                <CircleHelp className="size-4" aria-hidden />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent className="max-w-xs">{words.findHelp}</TooltipContent>
-          </Tooltip>
-          <Button type="submit" variant="outline" size="sm" className="shrink-0 gap-1.5" disabled={!findText.trim() || find === "waiting"}>
-            <Search className="size-4" aria-hidden />
-            {words.find}
-          </Button>
-        </form>
-      </TooltipProvider>
+      <form
+        className="flex items-center gap-2"
+        onSubmit={(e) => { e.preventDefault(); findBlock() }}
+        data-preview-find
+      >
+        <Input
+          value={findText}
+          onChange={(e) => { setFindText(e.target.value); if (find !== "waiting") setFind("idle") }}
+          placeholder={words.findPlaceholder}
+          aria-label={words.findPlaceholder}
+          className="h-8 flex-1 font-mono text-sm"
+        />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button type="button" variant="ghost" size="icon" className="size-8 shrink-0" aria-label={words.findHelp} data-preview-find-help>
+              <CircleHelp className="size-4" aria-hidden />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-xs">{words.findHelp}</TooltipContent>
+        </Tooltip>
+        <Button type="submit" variant="outline" size="sm" className="shrink-0 gap-1.5" disabled={!findText.trim() || find === "waiting"}>
+          <Search className="size-4" aria-hidden />
+          {words.find}
+        </Button>
+      </form>
       {findMessage && (
         <p className="text-muted-foreground text-sm" role="status" data-preview-find-state={find}>
           {findMessage}
@@ -490,5 +492,6 @@ export function ElementPreview({ serviceId, terminalService, lang, words, task, 
         </p>
       )}
     </div>
+    </TooltipProvider>
   )
 }
