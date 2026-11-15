@@ -48,6 +48,7 @@ import { siteRemoteWords } from '@/components/element-settings/site/words'
 import { ElementWeb4 } from '../../../_components/element-web4.client'
 import { addressOf, idOfAddress } from '@/lib/web4-items/element-address'
 import { elementLabel } from '@/lib/web4-items/element-name'
+import { isBornElement } from '@/lib/web4-items/element-delete'
 import { registryDescription, TASK as DESCRIBE_TASK } from '@/lib/web4-items/element-describe'
 import { terminalLink } from '@/app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/client/terminal-paste.mjs'
 import { ScheduleTask } from '@/app/[lang]/(architectLayer)/_components/schedule-task.client'
@@ -422,7 +423,10 @@ export default async function Page({ params }: { params: Promise<Params> }) {
           // 567: включение элемента — признак «выключен» в реестре узла (кнопка — выбор владельца 2026-10-22).
           power: <ElementPower id={item} lang={lang} ui={sui} dialogUi={appDialogUi(lang)} initial={(() => { const off = power.offOf(entry); return { on: !off, reason: off ? power.reasonIn(off, lang) : null, byDefault: Boolean(off?.byDefault) } })()} />,
           // 749-1: окно называет элемент его именем и ждёт имя; адрес в интернете — только у узла со своим доменом.
-          remove: <DeleteElementButton lang={lang} id={item} name={elementLabel(item, lang)} internet={nodeZone() ? address : null} ui={sui} dialogUi={appDialogUi(lang)} />,
+          // 750-4: кнопка — только у элемента, которого дверь удаления может удалить (родился в узле); у пришедшего с установкой — строка почему.
+          remove: isBornElement(item)
+            ? <DeleteElementButton lang={lang} id={item} name={elementLabel(item, lang)} internet={nodeZone() ? address : null} ui={sui} dialogUi={appDialogUi(lang)} />
+            : <p className="text-sm text-muted-foreground" data-delete-refused>{sui.removeRefused}</p>,
         }} />
       : <p className="my-4 text-sm text-muted-foreground">{sui.notBorn}</p>)
     : null

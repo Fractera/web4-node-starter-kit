@@ -24,6 +24,8 @@ export type ElementSettingsUi = {
   linkCard: { on: string; off: string; turnOn: string; turnOff: string; busy: string; failed: string; lineOn: string; lineOff: string }
   remove: Card
   /** 749-1: `title` carries `{name}` — the element's name for people; `addressLine` carries `{address}`, shown only with a node domain. */
+  /** 750-4: an element the door cannot delete (installed with the node, not born in it) — the line instead of the button. */
+  removeRefused: string
   removeDialog: { title: string; text: string; label: string; confirm: string; deleting: string; cancel: string; mismatch: string; failed: string; riskNever: string; riskAhead: string; riskNone: string; addressLine: string }
   /** 567: включение элемента — признак узла «выключен» с причиной. */
   power: Card
@@ -209,6 +211,7 @@ const DICT: Record<string, ElementSettingsUi> = {
       action: "Delete the element",
       pending: "Being built (step 325-5).",
     },
+    removeRefused: "This element came with the node's installation and was not born in it, so it cannot be deleted from here. You can turn it off with «Element power».",
     removeDialog: {
       title: "Delete «{name}» for good?",
       text: "Its process stops, its address on the internet and its record in the node disappear, and its folder with the code is erased. This cannot be undone. Type the element's name to confirm:",
@@ -400,6 +403,7 @@ const DICT: Record<string, ElementSettingsUi> = {
       action: "Удалить элемент",
       pending: "В работе (подшаг 325-5).",
     },
+    removeRefused: "Этот элемент пришёл с установкой узла, а не родился в нём, поэтому удалить его отсюда нельзя. Выключить его можно карточкой «Включение элемента».",
     removeDialog: {
       title: "Удалить «{name}» насовсем?",
       text: "Его процесс остановится, адрес в интернете и запись в узле исчезнут, папка с кодом будет стёрта. Отменить это нельзя. Для подтверждения введите название элемента:",
