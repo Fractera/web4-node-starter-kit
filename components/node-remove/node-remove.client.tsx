@@ -103,7 +103,7 @@ export function NodeRemoveButton({ w, dialogUi }: { w: NodeRemoveWords; dialogUi
             <section className="flex flex-col gap-2" aria-label={w.lostTitle}>
               <p className="text-sm font-semibold text-destructive">{w.lostTitle}</p>
               <ul className="flex flex-col gap-1.5 text-sm text-foreground">
-                <li>{w.folder}: <span className="font-mono break-all">{preview.folder}</span></li>
+                <li className="flex flex-col">{w.folder}:<span className="font-mono [overflow-wrap:anywhere]">{preview.folder}</span></li>
                 <li>{w.data}</li>
                 <li>{w.processes.replace("{n}", String(preview.processes.length))}</li>
                 <li>{w.journals.replace("{n}", String(preview.journals.length))}</li>
@@ -136,7 +136,7 @@ export function NodeRemoveButton({ w, dialogUi }: { w: NodeRemoveWords; dialogUi
             <Separator />
             <div className="flex flex-col gap-2">
               <Label htmlFor="confirm-node-remove">{w.label} <span className="font-mono select-all">{name}</span></Label>
-              <Input id="confirm-node-remove" value={typed} onChange={(e) => setTyped(e.target.value)} autoComplete="off" spellCheck={false} placeholder={name} />
+              <Input id="confirm-node-remove" value={typed} onChange={(e) => setTyped(e.target.value)} autoComplete="off" spellCheck={false} />
               <Label className="flex items-start gap-2 font-normal">
                 <Checkbox checked={understood} onCheckedChange={(v) => setUnderstood(v === true)} className="mt-0.5" data-node-remove-understood />
                 <span className="text-sm text-foreground">{w.understood}</span>
