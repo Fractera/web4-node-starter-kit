@@ -75,6 +75,7 @@
         "components/environment/environment-panel.client.tsx",
         "components/hosting/server-busy.client.tsx",
         "components/hosting/server-ladder-records.client.tsx",
+        "components/node-remove/node-remove.client.tsx",
         "components/node-users/batch-bar.client.tsx",
         "components/node-users/user-dialog.client.tsx",
         "components/project-types/project-type-marquee.client.tsx",
@@ -3122,6 +3123,7 @@
         "components/menu/footer/admin-link.client.tsx",
         "components/menu/footer/cookie-settings-button.client.tsx",
         "components/menu/shared/drawer-toggle.client.tsx",
+        "components/node-remove/node-remove.client.tsx",
         "components/node-state/dead-address-alarm.client.tsx",
         "components/node-state/github-token-alarm.client.tsx",
         "components/node-state/node-state.client.tsx",
@@ -3292,6 +3294,7 @@
         "components/dashboard/a2a-feed.client.tsx",
         "components/element-settings/site/editors/feature-switches.client.tsx",
         "components/hosting/server-busy.client.tsx",
+        "components/node-remove/node-remove.client.tsx",
         "components/node-users/node-users.client.tsx",
         "components/node-users/user-dialog.client.tsx",
         "components/shell/starter-banner.client.tsx"
@@ -3584,6 +3587,7 @@
         "components/hosting/server-ladder-records.client.tsx",
         "components/hosting/server-ladder-steps.client.tsx",
         "components/hosting/server-launch.client.tsx",
+        "components/node-remove/node-remove.client.tsx",
         "components/node-users/user-dialog.client.tsx",
         "components/official/official-account.client.tsx",
         "components/payments/stripe-keys.client.tsx",
@@ -3679,6 +3683,7 @@
         "components/element-settings/site/config/socials-field.client.tsx",
         "components/element-settings/site/editors/feature-switches.client.tsx",
         "components/hosting/server-busy.client.tsx",
+        "components/node-remove/node-remove.client.tsx",
         "components/node-users/user-dialog.client.tsx",
         "components/shell/starter-banner.client.tsx"
       ]
@@ -3874,6 +3879,7 @@
         "components/element-settings/site/editors/features-editor.client.tsx",
         "components/element-settings/site/editors/nav-editor.client.tsx",
         "components/element-settings/site/section-nav.client.tsx",
+        "components/node-remove/node-remove.client.tsx",
         "components/shell/shell-account.client.tsx",
         "sections/kinds/price-table.server.tsx",
         "sections/kinds/separator.server.tsx"
@@ -4029,6 +4035,7 @@
         "components/hosting/server-busy.client.tsx",
         "components/hosting/server-launch.client.tsx",
         "components/hosting/stage-log.tsx",
+        "components/node-remove/node-remove.client.tsx",
         "components/node-state/node-state.client.tsx",
         "components/node-users/node-users.client.tsx",
         "components/official/official-account.client.tsx",
