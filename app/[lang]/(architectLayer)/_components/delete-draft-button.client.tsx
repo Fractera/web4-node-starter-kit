@@ -7,18 +7,21 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { AppDialog } from "@/components/dialog/app-dialog.client"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
+import { sameName } from "@/lib/web4-items/name-match.mjs"
 import type { Web4DraftsUi } from "../_i18n/web4-drafts.i18n"
 
 // «УДАЛИТЬ» ЧЕРНОВИК (314-1). Слово владельца: «кнопку удалить которая должно вызывать модельное окно с подтверждением где
-// пользователь должен ввести созданный для него домен». Кнопка подтверждения неактивна, пока адрес не совпал буква в букву;
-// дверь сверяет адрес ещё раз сама — интерфейс не единственная защита.
+// пользователь должен ввести созданный для него домен». Кнопка подтверждения неактивна, пока ввод не совпал; дверь сверяет его ещё
+// раз сама — интерфейс не единственная защита. 749-1 (владелец 2026-11-15: «вместо того чтобы показать его название ты показываешь
+// его идентификатор»): вводится НАЗВАНИЕ черновика (его дают при создании, 749-2; у старого черновика без имени — его адрес).
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
-export function DeleteDraftButton({ lang, id, address, ui, dialogUi }: {
+export function DeleteDraftButton({ lang, id, name, ui, dialogUi }: {
   lang: string
   id: string
-  address: string
+  /** Имя черновика для людей (`elementLabel`). */
+  name: string
   ui: Web4DraftsUi
   dialogUi: AppDialogUi
 }) {
@@ -26,7 +29,7 @@ export function DeleteDraftButton({ lang, id, address, ui, dialogUi }: {
   const [typed, setTyped] = useState("")
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const match = typed.trim() === address
+  const match = sameName(typed, name)
 
   async function remove() {
     setBusy(true)
@@ -59,7 +62,7 @@ export function DeleteDraftButton({ lang, id, address, ui, dialogUi }: {
       <AppDialog
         open={open}
         onOpenChange={(v) => !busy && setOpen(v)}
-        title={ui.deleteTitle}
+        title={ui.deleteTitle.replace("{name}", name)}
         titleClassName="text-destructive"
         description={ui.deleteText}
         ui={dialogUi}
@@ -74,9 +77,9 @@ export function DeleteDraftButton({ lang, id, address, ui, dialogUi }: {
         }
       >
         <div className="flex flex-col gap-2">
-          <p className="font-mono text-sm text-foreground select-all">{address}</p>
+          <p className="text-sm font-semibold text-foreground select-all" data-delete-name>{name}</p>
           <Label htmlFor={`confirm-${id}`}>{ui.deleteLabel}</Label>
-          <Input id={`confirm-${id}`} value={typed} onChange={(e) => setTyped(e.target.value)} autoComplete="off" spellCheck={false} placeholder={address} />
+          <Input id={`confirm-${id}`} value={typed} onChange={(e) => setTyped(e.target.value)} autoComplete="off" spellCheck={false} />
           {error ? <p className="text-sm text-destructive" role="alert">{error}</p> : null}
         </div>
       </AppDialog>

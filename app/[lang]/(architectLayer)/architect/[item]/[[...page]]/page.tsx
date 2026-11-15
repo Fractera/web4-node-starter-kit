@@ -9,7 +9,7 @@ import { web4DraftsUi } from '../../../_i18n/web4-drafts.i18n'
 import { DraftCards } from '../../../_components/draft-cards'
 import { DeleteDraftButton } from '../../../_components/delete-draft-button.client'
 import { appDialogUi } from '@/components/dialog/app-dialog.i18n'
-import { draftAddress, getDraft } from '@/lib/web4-items/drafts'
+import { draftAddress, getDraft, nodeZone } from '@/lib/web4-items/drafts'
 import { findTreePath, movedPage, MOVED_WITH, treeLang, treeListed, treeVisible, type TreePage } from '@/lib/web4-items/item-tree'
 import { AccordionSection } from '@/components/accordion/accordion-section.client'
 import { getService, listServices, serviceUrl } from '@/lib/microservices/registry'
@@ -229,7 +229,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       <span className="rounded-md border border-border px-2 py-0.5 text-[length:var(--fs-small)] text-muted-foreground" data-item-badge={entry ? 'element' : 'draft'}>
         {entry ? ui.elementBadge : ui.draftBadge}
       </span>
-      {!entry && <DeleteDraftButton lang={lang} id={item} address={address} ui={ui} dialogUi={appDialogUi(lang)} />}
+      {!entry && <DeleteDraftButton lang={lang} id={item} name={elementLabel(item, lang)} ui={ui} dialogUi={appDialogUi(lang)} />}
     </div>
   )
 
@@ -420,7 +420,8 @@ export default async function Page({ params }: { params: Promise<Params> }) {
           // 706-1: связь с CONFIG переехала в «Строительство → Настройки сайта»; связи с Дизайном и Секциями сняты вместе с элементами.
           // 567: включение элемента — признак «выключен» в реестре узла (кнопка — выбор владельца 2026-10-22).
           power: <ElementPower id={item} lang={lang} ui={sui} dialogUi={appDialogUi(lang)} initial={(() => { const off = power.offOf(entry); return { on: !off, reason: off ? power.reasonIn(off, lang) : null, byDefault: Boolean(off?.byDefault) } })()} />,
-          remove: <DeleteElementButton lang={lang} id={item} address={address} ui={sui} dialogUi={appDialogUi(lang)} />,
+          // 749-1: окно называет элемент его именем и ждёт имя; адрес в интернете — только у узла со своим доменом.
+          remove: <DeleteElementButton lang={lang} id={item} name={elementLabel(item, lang)} internet={nodeZone() ? address : null} ui={sui} dialogUi={appDialogUi(lang)} />,
         }} />
       : <p className="my-4 text-sm text-muted-foreground">{sui.notBorn}</p>)
     : null

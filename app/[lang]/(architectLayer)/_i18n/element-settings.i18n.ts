@@ -23,7 +23,8 @@ export type ElementSettingsUi = {
   /** 713-3: `lineOn`/`lineOff` — the CONFIG link as one line on top of «Site settings». */
   linkCard: { on: string; off: string; turnOn: string; turnOff: string; busy: string; failed: string; lineOn: string; lineOff: string }
   remove: Card
-  removeDialog: { title: string; text: string; label: string; confirm: string; deleting: string; cancel: string; mismatch: string; failed: string; riskNever: string; riskAhead: string; riskNone: string }
+  /** 749-1: `title` carries `{name}` — the element's name for people; `addressLine` carries `{address}`, shown only with a node domain. */
+  removeDialog: { title: string; text: string; label: string; confirm: string; deleting: string; cancel: string; mismatch: string; failed: string; riskNever: string; riskAhead: string; riskNone: string; addressLine: string }
   /** 567: включение элемента — признак узла «выключен» с причиной. */
   power: Card
   /** 567-6: «Элемент в сети Web4» на «Настройках сайта». */
@@ -209,17 +210,18 @@ const DICT: Record<string, ElementSettingsUi> = {
       pending: "Being built (step 325-5).",
     },
     removeDialog: {
-      title: "Delete this WEB4 element for good?",
-      text: "Its process stops, its address on the internet and its record in the node disappear, and its folder with the code is erased. This cannot be undone. Type its address to confirm:",
-      label: "Address",
+      title: "Delete «{name}» for good?",
+      text: "Its process stops, its address on the internet and its record in the node disappear, and its folder with the code is erased. This cannot be undone. Type the element's name to confirm:",
+      label: "Name",
       confirm: "Delete for good",
       deleting: "Deleting…",
       cancel: "Cancel",
-      mismatch: "The address does not match — nothing was deleted.",
+      mismatch: "The name does not match — nothing was deleted.",
       failed: "The deletion did not finish at:",
       riskNever: "The element was never sent to GitHub: all {n} of its commits will be lost.",
       riskAhead: "{n} commit(s) of the element are not in GitHub — they will be lost.",
       riskNone: "Everything the element has is already in GitHub.",
+      addressLine: "Its address on the internet: {address}",
     },
   },
   ru: {
@@ -399,17 +401,18 @@ const DICT: Record<string, ElementSettingsUi> = {
       pending: "В работе (подшаг 325-5).",
     },
     removeDialog: {
-      title: "Удалить этот WEB4 элемент насовсем?",
-      text: "Его процесс остановится, адрес в интернете и запись в узле исчезнут, папка с кодом будет стёрта. Отменить это нельзя. Для подтверждения введите его адрес:",
-      label: "Адрес",
+      title: "Удалить «{name}» насовсем?",
+      text: "Его процесс остановится, адрес в интернете и запись в узле исчезнут, папка с кодом будет стёрта. Отменить это нельзя. Для подтверждения введите название элемента:",
+      label: "Название",
       confirm: "Удалить навсегда",
       deleting: "Удаляю…",
       cancel: "Отмена",
-      mismatch: "Адрес не совпал — ничего не удалено.",
+      mismatch: "Название не совпало — ничего не удалено.",
       failed: "Удаление не закончилось на этапах:",
       riskNever: "Элемент ни разу не выгружался в GitHub: все его коммиты ({n}) будут потеряны.",
       riskAhead: "Коммитов, которых нет в GitHub: {n} — они будут потеряны.",
       riskNone: "Всё, что есть у элемента, уже лежит в GitHub.",
+      addressLine: "Адрес в интернете: {address}",
     },
   },
 }
