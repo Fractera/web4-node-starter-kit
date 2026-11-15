@@ -31,6 +31,12 @@ export type ServicePortWords = {
     asking: string
     local: string
     cloudflare: string
+    /** 749-3: the node's domain is held by the dedicated server's nginx. */
+    server: string
+    /** 749-3: a dedicated server before its domain — no internet address yet, and never «localhost». */
+    serverNoDomain: string
+    /** 749-3: the record the person adds at the registrar when the node has no Cloudflare key: `{type} {name} → {value}`. */
+    addRecord: string
     address: string
     live: string
     notConnected: string
@@ -68,6 +74,9 @@ const DICT: Record<string, ServicePortWords> = {
       asking: "Checking the address…",
       local: "The node works on this machine only: it has no domain of its own. Address on this machine: {url}",
       cloudflare: "The node is served through Cloudflare.",
+      server: "The node runs on a dedicated server: its nginx serves this name.",
+      serverNoDomain: "The node runs on a dedicated server that has no domain of its own yet: the element gets an internet address once the domain is switched on in «Dedicated server activation».",
+      addRecord: "The record is not in DNS yet — add it at your registrar: {type} {name} → {value}. The certificate follows by itself once the name leads to the server.",
       address: "Address:",
       live: "The address answers from the internet.",
       notConnected: "The name is not connected yet:",
@@ -97,6 +106,9 @@ const DICT: Record<string, ServicePortWords> = {
       asking: "Проверяю адрес…",
       local: "Узел работает только на этой машине: своего домена у него нет. Адрес на машине: {url}",
       cloudflare: "Узел обслуживается через Cloudflare.",
+      server: "Узел работает на выделенном сервере: это имя обслуживает его nginx.",
+      serverNoDomain: "Узел работает на выделенном сервере, своего домена у него пока нет: адрес в интернете появится, когда домен будет подключён на странице «Активация выделенного сервера».",
+      addRecord: "Записи ещё нет в DNS — добавьте её у регистратора: {type} {name} → {value}. Сертификат появится сам, когда имя начнёт вести на сервер.",
       address: "Адрес:",
       live: "Адрес отвечает из интернета.",
       notConnected: "Имя ещё не подключено:",

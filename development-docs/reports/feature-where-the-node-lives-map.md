@@ -33,6 +33,7 @@ its machine, checked by a measurement, read by one reader** — `data/node/place
 | 23 | Telegram bots | one poller per token — the computer's | a server node needs its own bot (two pollers of one token conflict) | — | named, not built |
 | 24 | Eyes and Chrome | eyes and the person's Chrome with the extension | eyes only | `scripts/eyes.mjs` | — |
 | 25 | The tab «Этот компьютер» itself | true | its name is not true on a server | — | the owner's call when he sees the card |
+| 26 | «Адрес в интернете» of every element and service (749-3) | the named tunnel: DNS, route, answer; no domain — «только на этой машине» with localhost | nginx holds the name: an A record and the HTTPS answer; no domain yet — its own sentence, never localhost | `lib/domain/reach-road.mjs` `roadOf` ← `placeKind`, `app/api/node/reach/route.ts`, `components/services/service-reach.client.tsx` | `test:reach-road`; live on aifa.dev (before: `mode: "local"` on every service) |
 
 ## Not built here, named
 - HTTPS by bare IP (Let's Encrypt IP certificates, certbot ≥ 5.4) — D32: not now, an option for 742.

@@ -10,6 +10,8 @@ import { accountOfZone, getIngress, hasDnsRecord, listZones, setIngress, upsertS
 import { spawnSync } from "node:child_process"
 import { addressOf } from "@/lib/web4-items/address-file.mjs"
 import { startStaticCopy } from "@/lib/web4-items/static-copy-start.cjs"
+import { roadOf } from "@/lib/domain/reach-road.mjs"
+import { placeKind } from "@/lib/hosting/place.mjs"
 
 // АДРЕС СЛУЖБЫ В ИНТЕРНЕТЕ (шаг 289-2).
 //
@@ -17,8 +19,10 @@ import { startStaticCopy } from "@/lib/web4-items/static-copy-start.cjs"
 // вкладке службы … нужна кнопка проверить подключение». GET меряет, POST дописывает недостающее.
 //
 // 🔒 РЕЖИМ — ИЗМЕРЕННЫЙ, А НЕ ОБЪЯВЛЕННЫЙ: у узла свой туннель Cloudflare (logs/domain.json пишет активация) — «Cloudflare»;
-// нет — «только на этой машине». Имя: сайт (`root`) — корень зоны, прочие службы — `<id>.<зона>` (сертификат
-// Cloudflare покрывает `*.<зона>`, но не `x.y.<зона>`).
+// домен держит nginx выделенного сервера (`via: "server"`) — «server» (749-3: прежде такой узел читался «только на этой машине», и
+// карточка на aifa.dev показывала localhost и «своего домена у него нет»); сервер ещё без домена — «server» с `domain: false`;
+// компьютер без домена — «только на этой машине». Путь выбирает `reach-road.mjs`, место — `place.mjs` (741). Имя: сайт (`root`) —
+// корень зоны, прочие службы — `<id>.<зона>` (сертификат Cloudflare покрывает `*.<зона>`, но не `x.y.<зона>`).
 // 🔒 МАРШРУТ ДОПИСЫВАЕТСЯ К ПРОЧИТАННЫМ ПРАВИЛАМ (PUT заменяет список целиком) и только если имени ещё нет.
 // 🛑 ДВЕРИ СЛУЖБЫ ДАННЫХ НАРУЖУ НЕ ОТКРЫВАЮТСЯ её собственным сторожем (данные v1.3.2): имя публикует только страницу.
 export const dynamic = "force-dynamic"
@@ -111,9 +115,18 @@ async function measure(id: string) {
   const local = serviceUrl(id)
   const port = local ? Number(new URL(local).port) : null
   const d = readDomain()
-  if (!d?.zone || !d.tunnelId) return { ok: true, service: id, port, mode: "local" as const }
+  const road = roadOf(d, placeKind(ROOT))
+  if (road === "local") return { ok: true, service: id, port, mode: "local" as const }
+  if (road === "server-no-domain") return { ok: true, service: id, port, mode: "server" as const, domain: false }
+  if (!d?.zone) return { ok: true, service: id, port, mode: "local" as const } // the road had a zone; this only narrows the type
   const hostname = hostnameFor(id, d)
   const url = `https://${hostname}`
+  // 749-3: on a server the name is the server's nginx — an A record in public DNS and the HTTPS answer from the internet are the facts;
+  // there is no tunnel route to ask. «Подключить» is the same POST (`serverReach`, 737-16).
+  if (road === "server") {
+    const [ip, status] = await Promise.all([publicIp(hostname), answers(url)])
+    return { ok: true, service: id, port, mode: "server" as const, domain: true, zone: d.zone, hostname, url, dns: ip !== null, answers: status }
+  }
   const cf = await cloudflare(d)
   if ("reason" in cf) return { ok: true, service: id, port, mode: "cloudflare" as const, zone: d.zone, hostname, url, reason: cf.reason }
   const [rules, dns, status] = await Promise.all([getIngress(cf.key, cf.accountId, cf.tunnelId), hasDnsRecord(cf.key, cf.zoneId, hostname), answers(url)])
