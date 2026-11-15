@@ -1,6 +1,6 @@
 ---
 name: help-in-browser
-description: "Work skill. The person is stuck in someone else's interface — DNS records at a domain registrar, Resend, Google Cloud credentials, a form on a site, a button they cannot find in Google Docs — or asks you to do something there for them («помоги настроить DNS», «получи ключи Google», «не могу найти кнопку»). You do it in their Chrome on this computer with the Claude in Chrome tools: they sign in, you fill in and set up, irreversible steps stay theirs. Without Chrome and the extension you say what to install, or lead them by words step by step."
+description: "Work skill. The person is stuck in someone else's interface — DNS records at a domain registrar, Resend, Google Cloud credentials, a form on a site, a button they cannot find in Google Docs — or asks you to do something there for them («помоги настроить DNS», «получи ключи Google», «не могу найти кнопку»). You do it in their Chrome with the Claude in Chrome tools — on this computer, or on a dedicated server their Chrome on any computer through their Claude account: they sign in, you fill in and set up, irreversible steps stay theirs. Without Chrome and the extension you say what to install, or lead them by words step by step."
 ---
 
 # Help in someone else's interface through the person's Chrome
@@ -20,11 +20,33 @@ The node's own screens come first: the domain and the Cloudflare key (the core's
 people's sites: a domain registrar, Resend, Google Cloud Console, Google Docs, a form on a government or business site.
 
 ## First question — where is the person?
-Telegram does not tell you whether they write from a phone or from this computer, and the browser is Chrome **on this computer**. Before any
+Telegram does not tell you whether they write from a phone or from this computer, and the browser is Chrome **on this computer** (on a
+dedicated server — the person's Chrome on any computer, next section). Before any
 browser work ask one short question in their language: «Это делается в Chrome на компьютере, где работает узел. Вы сейчас за ним?» On a
 phone — suggest moving to the computer first (owner, 2026-10-30: «если ты общаешься с пользователем через мобильное устройство то такие задачи
 решить невозможно … навык должен предложить сначала перейти на общение через компьютер»): they can keep writing to you in Telegram there,
 but signing in and CAPTCHA need their hands at this computer. Start only after they say they are there; until then you may only explain.
+
+## On a dedicated server — the person's Chrome wherever they sit (node step 751, measured 2026-11-15)
+The owner, 2026-11-15: «считай что ноутбук не существует … если проект находится на сервере что доступно пользователю»; his scenario: an
+internet café, Chrome with the Claude extension signed in, Google Analytics open in one tab, the architect's terminal in the next —
+«посмотри в Google аналитике посещаемость за прошлую неделю».
+- **How it connects.** The terminal page is only a window onto `claude` running on the server; the browser has no terminal of its own. The
+  extension signs in to the person's Claude account, and a Claude Code session started with Chrome on (`claude --chrome`, or `/chrome` →
+  «Enabled by default: Yes» and a restart) lists the browsers connected to THAT account through Anthropic's service — on any machine.
+  Measured on aifa.dev 2026-11-15: with Chrome on, the server's agent showed «Status: Enabled · Extension: Not detected» and
+  «Select browser… → One browser is connected: Browser 1 · macOS» (the owner's Chrome on his Mac). Commands then go server → Anthropic →
+  the extension → the tab, and the result comes back the same way; the first connection asks the person «Connect» in the extension.
+- **What is proven and what is not.** Seen: the server's agent lists the person's browser. NOT yet proven: the server's agent acting in it
+  (the owner stopped the one-minute test). Until it is proven, say «should work, not yet tested here» — never a promise.
+- **Conditions — say the missing one.** The SAME Claude account in the extension and in the server's Claude Code; Chrome on for the
+  server's agent; Chrome open with the tab when the task runs. A phone has no extensions (mobile Chrome) — from a phone: by words, step by
+  step, or the official API.
+- **A public computer** (a café, someone else's laptop): after the task the person signs out of Claude in the extension and of the site —
+  otherwise the next visitor sits in a browser that can be driven in their name. Say it at the end of every such task.
+- **A recurring task is never a browser task.** «Посещаемость за неделю», reports, numbers, posts — the platform's official API (for
+  Google Analytics — its reporting API, connected once on a node screen) answers from the phone with every computer off. The browser is
+  for a one-time action in someone else's cabinet; offer the API once the same thing is asked twice.
 
 ## What must be true — say it in one message if it is not
 - **Google Chrome with the Claude extension** is open and signed in to the same claude.ai account as this node. Only Chrome: a person on

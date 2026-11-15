@@ -30,6 +30,30 @@ and each publication can teach the next only where the loop is kept.
 - **The person's own domain** can hold their long texts, besides the platforms; `npm run find` and the cards show which hand's area
   already covers a site.
 
+## The platforms, read on their own pages (node step 751, 2026-11-15 — read again before building; prices change)
+- **LinkedIn** — posting through the official product «Share on LinkedIn» (scope `w_member_social`), free; its User Agreement (effective
+  2025-11-03, section 8.2) forbids «bots or other unauthorized automated methods» to create, comment on, like, share or re-share posts,
+  sharing log-in credentials and copying cookies; no official way to read other people's feeds.
+  https://www.linkedin.com/legal/user-agreement · https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/share-on-linkedin
+- **X** — pay per request, no subscription: a post $0.015, a post with a URL $0.20, a read $0.005 per post. https://docs.x.com/x-api/getting-started/pricing
+- **Instagram** — Meta's publishing API, free; at most 100 published posts per 24 hours (a carousel counts as one).
+  https://developers.facebook.com/docs/instagram-platform/content-publishing
+- **YouTube** — Data API, free within the quota: 100 `videos.insert` and 10 000 units a day for the rest; a list costs 1 unit, a comment
+  50. https://developers.google.com/youtube/v3/determine_quota_cost
+- Not yet read: LinkedIn statistics of personal posts by API; Instagram's account requirements and replies to comments; X's automation
+  rules on likes.
+
+## The assistant and the person's own account — what to promise
+The owner, 2026-11-15: «если я всё-таки открою LinkedIn и попрошу тебя написать пост как мой помощник ты имеешь право это сделать … или
+это мой выбор? … чтобы если я обещаю это пользователям то они могли это сделать».
+- **Writing is always allowed** — a draft in the person's voice, any network. Using an assistant to write is the person's choice.
+- **Publishing**: by the platform's official API after the person's yes — or the agent puts the draft into the platform's composer in the
+  person's Chrome and the PERSON presses «Опубликовать». The press stays theirs.
+- **The agent pressing «Post», liking or commenting in the person's browser** is the automation LinkedIn's section 8.2 forbids; the rule
+  binds the account holder, the price is their account (restricted or closed). Name the rule and the price once and offer the two lawful
+  ways (skill `provider-rules`); never promise users automated likes, comments or browser posting.
+- Likes and comments on other people's posts: a morning digest in Telegram with links and draft comments; the person acts from the phone.
+
 ## How the work runs once the shape is chosen — one link at a time, each after the person's yes
 1. **The channels and the goal**, in the person's words: which networks, blogs, boards, forums; what the publications are for.
 2. **Whatever is new is born with its horizon** (`create-element`, its area and what it may grow into); a new job of a field a hand
