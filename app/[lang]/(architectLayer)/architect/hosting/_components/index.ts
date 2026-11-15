@@ -29,8 +29,9 @@ export function content(lang: string): PageItem[] {
   ]
 }
 
-/** The owner's partner link to a server (`lib/helpful-links.json`, one place for every node) with its disclosure, in the page's language. */
-function serverLink(label: string, lang: string): string {
+/** The owner's partner link to a server (`lib/helpful-links.json`, one place for every node) with its disclosure, in the page's language.
+ * Also read by the page «Переезд на другой сервер» (`move/`). */
+export function serverLink(label: string, lang: string): string {
   const link = links.links.find((l) => l.id === 'contabo-vps')
   if (!link) return ''
   const note = (links.disclosure as Record<string, string>)[lang] ?? links.disclosure.en
