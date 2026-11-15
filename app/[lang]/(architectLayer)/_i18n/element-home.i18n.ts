@@ -11,6 +11,8 @@ export type ElementHomeUi = {
   order: string
   /** Подпись красной точки у заголовка «Кошелёк». */
   alarmMark: string
+  /** 749-4: заголовок закрытой полосы, внутри которой вся часть про Lagrix, — слова владельца 2026-11-15 (только заглавные буквы). */
+  lagrixTitle: string
 }
 
 const DICT: Record<"en" | "ru", ElementHomeUi> = {
@@ -20,6 +22,7 @@ const DICT: Record<"en" | "ru", ElementHomeUi> = {
     noCard: "There is no A2A card: the element's passport has errors or no card body (Build → Documents → The element's own properties).",
     order: "Order a description",
     alarmMark: "The element needs a description",
+    lagrixTitle: "This element in the Lagrix Web4 networks (not built yet)",
   },
   ru: {
     alarmTitle: "Пока не создана карточка протокола A2A, этот элемент недоступен для обнаружения в сети WEB4.",
@@ -27,6 +30,7 @@ const DICT: Record<"en" | "ru", ElementHomeUi> = {
     noCard: "Нет визитки A2A: в паспорте элемента ошибки или нет тела карточки (Строительство → Документы → Собственные свойства элемента).",
     order: "Заказать описание",
     alarmMark: "Элементу нужно описание",
+    lagrixTitle: "Данный элемент в сетях Lagrix Web4 (пока не построена)",
   },
 }
 

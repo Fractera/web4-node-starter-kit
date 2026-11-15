@@ -269,7 +269,8 @@ export default async function Page({ params }: { params: Promise<Params> }) {
             const alarm = described && card
               ? null
               : <ElementDiscoveryAlarm ui={hu} described={described} card={card} orderHref={terminalLink({ lang, service: `${slug}/build`, text: DESCRIBE_TASK })} />
-            return <ElementHome id={item} rating={lagrixRatingUi(lang)} wallet={nodeWalletUi(lang)} alarm={alarm} alarmMark={hu.alarmMark} />
+            // 749-4: вся часть про Lagrix — в одной закрытой полосе со словами владельца; ничего не снято.
+            return <ElementHome id={item} title={hu.lagrixTitle} rating={lagrixRatingUi(lang)} wallet={nodeWalletUi(lang)} alarm={alarm} alarmMark={hu.alarmMark} />
           })()}
           {(!entry || brokenBirth) && <BirthButton id={item} ui={ui} dialogUi={appDialogUi(lang)} born={!!entry} suggested={nodeType.birthLook({ native: false }, process.cwd()) as "project" | "own"} nodeType={nodeType.readNodeType(process.cwd()) as "project" | "factory"} native={nativeDraft} />}
         </>}
