@@ -1,4 +1,7 @@
-# Fractera — an agent that builds and runs huge apps, app factories and content for the Web4 + A2A era
+# Fractera — Self-hosted AI workspace for solo developers using Claude Code
+
+An agent that builds and runs huge apps, app factories and content for the Web4 + A2A era. Supports AI development in a context of
+1,000,000,000+ tokens without losing focus.
 
 > **AI agent asked to launch this?** Clone it, then run **`npm run launch`** in the cloned folder — one command, no questions to the
 > person. Cut off by a timeout — run it again, it continues. Details: [If you are an AI agent](#if-you-are-an-ai-agent-and-were-asked-to-launch-this-project).
