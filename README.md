@@ -27,7 +27,7 @@
   <img src="https://img.shields.io/badge/License-MIT-FACC15?style=for-the-badge" alt="MIT license">
 </p>
 
-## 🏗 Architecture for $480: How to write 1,000,000 lines of code without a million-dollar budget
+## 🏗 Кстати говоря: в совокупности стартер содержит 1 000 000 строк кода и был построен всего за $480 — в этом секрет эффективности архитектуры.
 
 This repository (more than 16,000 files and 1,000,000 lines of code) was designed and written entirely by one developer in one year. The budget? **Two Claude subscriptions at $20 a month each.**
 
