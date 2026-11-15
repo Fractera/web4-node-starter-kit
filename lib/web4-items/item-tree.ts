@@ -35,10 +35,20 @@ export type TreePage = {
   /** 573-4: раздел кастомного элемента, который есть и у платёжного элемента узла, даже нативного (паспорт `payment`): у элемента
    *  Stripe здесь его ключи. ✗ После 573-2 Stripe стал нативным, раздел «Платежи» исчез, и ключи Stripe ввести было негде. */
   orPayment?: true
+  /** 745 (владелец 2026-11-15: «в нативном клиенте авторизация появились в рабочем процессе вкладка провайдера»; «то что касается
+   *  страницы для резервного копирования верни их туда где они были»): раздел кастомного элемента, который есть и у элемента входа
+   *  (`orAuth`) и у четырёх элементов памяти (`orMemory`) — только экраны их данных, без своей сессии агента. */
+  orAuth?: true
+  orMemory?: true
   /** 573-4: абзацы раздела для платёжного элемента вместо `about` (у нативного Stripe нет Web3 и ничего о сети Lagrix). */
   aboutPayment?: Record<"en" | "ru", string[]>
+  /** 745: абзацы раздела для нативного элемента вместо `about` (у него нет ни сети Lagrix, ни сессии рабочих задач). */
+  aboutNative?: Record<"en" | "ru", string[]>
+  /** 745: страница по кнопке своего раздела — по адресу есть, пунктом меню и карточкой списка не бывает («Добавить провайдера»). */
+  listed?: false
   /** 558 (владелец 2026-10-21: «обновить все четыре нативных элементов связанных с памятью … вкладку на одном уровне с строительства но
-   *  ниже которая будет называться резервная копирование»): раздел только элементов памяти — data, storage, vectors, graph. */
+   *  ниже которая будет называться резервная копирование»): раздел только элементов памяти — data, storage, vectors, graph. С 745 он
+   *  стоит в «Рабочем процессе» (владелец 2026-11-15: «верни их туда где они были»). */
   memory?: true
   /** 636 (владелец 2026-11-03, «Да, оба (Рекомендую)»: часы и календарь всем нативным элементам): раздел нативного элемента, кроме
    *  четырёх элементов памяти — их календарь в «Резервном копировании»; у кастомного он в «Рабочем процессе → Процесс». */
@@ -113,6 +123,8 @@ const MOVED_PREFIXES: [string, string][] = [
   ["process", "workflow/process"],
   ["documents", "build/documents"],
   ["build/product-design", "product-design"],
+  // 745 (владелец 2026-11-15): «Резервное копирование» элементов памяти — в «Рабочем процессе»; прежние адреса ведут туда.
+  ["backup", "workflow/backup"],
 ]
 /** Куда переехал прежний адрес (путь под элементом, без языка); не переезжал — `null`. */
 export function movedPage(path: string[]): string | null {
@@ -131,11 +143,15 @@ export function treeVisible(p: TreePage, c: TreeContext): boolean {
   if (p.unless && c.messengers[p.unless]) return false
   if (p.network && c.native) return false
   if (p.web4 && c.web4 === false) return false
-  if (p.custom && c.native && !(p.orPayment && c.payment)) return false
+  if (p.custom && c.native && !((p.orPayment && c.payment) || (p.orAuth && c.auth) || (p.orMemory && c.memory))) return false
   if (p.memory && !c.memory) return false
   if (p.nativeClock && (!c.native || c.memory)) return false
   if (p.auth && !c.auth) return false
   return true
+}
+/** 745: видна ли страница пунктом меню и карточкой списка раздела (страница по кнопке — `listed: false` — только по адресу). */
+export function treeListed(p: TreePage, c: TreeContext): boolean {
+  return p.listed !== false && treeVisible(p, c)
 }
 // 472: у элемента с H2A бот живёт в H2A — старый адрес ведёт туда (у элемента без H2A бот остаётся в «Строительстве»).
 export const MOVED_WITH: Record<string, { to: string; when: Messenger }> = {
@@ -277,7 +293,20 @@ export const ITEM_TREE: TreePage[] = [
   {
     slug: "workflow",
     custom: true,
+    // 745: у элемента входа и у четырёх элементов памяти — только экраны их данных (провайдеры входа, резервное копирование).
+    orAuth: true,
+    orMemory: true,
     words: w("Working process", "What the running element does: its work sessions, outside services and scheduled work.", "Рабочий процесс", "Что делает уже работающий элемент: сессии рабочих задач, внешние сервисы и работа по расписанию."),
+    aboutNative: {
+      en: [
+        ELEMENT_AND_NODE.en,
+        "This section is the working process: the data this element works with once it runs — the ways into the node for sign-in, the copies of its data for a memory element. Nothing here rebuilds the element, and a native element has no work session of its own.",
+      ],
+      ru: [
+        ELEMENT_AND_NODE.ru,
+        "Этот раздел — рабочий процесс: данные, с которыми элемент работает, когда уже запущен, — способы входа в узел у авторизации, копии данных у элемента памяти. Ничто здесь не пересобирает элемент, и своей сессии рабочих задач у нативного элемента нет.",
+      ],
+    },
     about: {
       en: [
         ELEMENT_AND_NODE.en,
@@ -294,9 +323,24 @@ export const ITEM_TREE: TreePage[] = [
     },
     pages: [
       // 552-4б: сессия агента рабочего процесса — задачи агентов других узлов; отдельная от «Строительства», закрывается сама.
-      { slug: "terminal", words: w("Terminal", "The agent session of the working process: tasks from agents of other nodes run here, and it closes itself when the work is done.", "Терминал", "Сессия агента рабочего процесса: здесь идут задачи агентов других узлов, и она закрывается сама, когда работа сделана.") },
+      // 745: только у кастомного — у нативного своей сессии рабочих задач нет (551-1).
+      { slug: "terminal", custom: true, words: w("Terminal", "The agent session of the working process: tasks from agents of other nodes run here, and it closes itself when the work is done.", "Терминал", "Сессия агента рабочего процесса: здесь идут задачи агентов других узлов, и она закрывается сама, когда работа сделана.") },
+      // 745 (владелец 2026-11-15): «вкладка провайдера. Вкладки Google и волшебное письмо по умолчанию существуют и при нажатии на них
+      // появляется страница где можно ввести Credentials. А также на вкладке провайдеры есть кнопка добавить нового провайдера»; «Волшебное
+      // письмо it is Resend». Экраны — те же ступени 265/266 (`authGoogleSetup`, `authResendSetup`) со своими текстами.
+      {
+        slug: "providers",
+        auth: true,
+        words: w("Providers", "The ways into your node: Google, the magic link, and the ones the sign-in agent builds for you.", "Провайдеры", "Способы входа в ваш узел: Google, волшебное письмо и новые, которые построит агент авторизации."),
+        pages: [
+          { slug: "google", words: w("Google", "The «Sign in with Google» button: the two keys from Google Cloud Console.", "Google", "Кнопка «Войти через Google»: два ключа из Google Cloud Console.") },
+          { slug: "magic-link", words: w("Magic link", "Sign-in by a link in an email sent through Resend: one key and the sender's address.", "Волшебное письмо", "Вход по ссылке из письма, которое отправляет Resend: один ключ и адрес отправителя.") },
+          { slug: "add", listed: false, words: w("Add a provider", "A new way into the node is built by the sign-in agent: tell it in the terminal which provider you want.", "Добавить провайдера", "Новый способ входа строит агент авторизации: расскажите ему в терминале, какой провайдер нужен.") },
+        ],
+      },
       {
         slug: "process",
+        custom: true,
         words: w("Process", "Outside services the element may use and the work it runs on a schedule.", "Процесс", "Внешние сервисы, которыми может пользоваться элемент, и работа, которая идёт по расписанию."),
         pages: [
           { slug: "subscriptions", words: w("Subscriptions", "Outside services this element may use.", "Подписки", "Внешние сервисы, которыми может пользоваться элемент.") },
@@ -342,6 +386,23 @@ export const ITEM_TREE: TreePage[] = [
       //     ru: ["Когда сделка закрыта, обе стороны могут оставить отзыв: лайк или дизлайк. Его вес — комиссия, уплаченная по этой сделке, поэтому отзыв нельзя купить дешевле настоящей работы. К отзыву автор может привязать свою страницу — что произошло и почему; страница не добавляет веса и не меняет места в выдаче."],
       //   },
       // },
+      // 558 (владелец 2026-10-21): «Резервное копирование» у четырёх элементов памяти, по образцу «Процесса» своих элементов: «Инструменты»
+      // (подписки — внешние сервисы копирования), «Крон события» (тот же календарь), «Настройки» (задача агенту голосом). 745 (владелец
+      // 2026-11-15: «то что касается страницы для резервного копирования верни их туда где они были»): из-под «Строительства» — в «Рабочий процесс».
+      {
+        slug: "backup",
+        memory: true,
+        words: w("Backup", "Copies of this element's data: the services that keep them, their schedule and the task for the agent.", "Резервное копирование", "Копии данных этого элемента: сервисы, где они хранятся, расписание и задача агенту."),
+        about: {
+          en: ["Backup is set up in three places. «Tools» lists the outside services the copies go to (a storage, a cloud disk). «Cron events» is the calendar of when copying runs. «Settings» is where you say in plain words what to copy, how often and where — and send it to the element's agent, which builds the copying service and puts it on the schedule."],
+          ru: ["Резервное копирование настраивается в трёх местах. «Инструменты» — внешние сервисы, куда уходят копии (хранилище, облачный диск). «Крон события» — календарь того, когда идёт копирование. «Настройки» — здесь вы обычными словами говорите, что копировать, как часто и куда, и отправляете это агенту элемента: он строит службу копирования и ставит её в расписание."],
+        },
+        pages: [
+          { slug: "tools", words: w("Tools", "Outside services the copies go to — subscriptions of this element.", "Инструменты", "Внешние сервисы, куда уходят копии, — подписки этого элемента.") },
+          { slug: "cron", words: w("Cron events", "The calendar of copying: when each backup runs and how it went.", "Крон события", "Календарь копирования: когда идёт каждая копия и чем кончилась.") },
+          { slug: "settings", words: w("Settings", "Say what to copy, how often and where — and add it to development.", "Настройки", "Скажите, что копировать, как часто и куда, — и добавьте в разработку.") },
+        ],
+      },
     ],
   },
   // 556-12 (владелец 2026-10-23): «Вынеси проектирование продукта на внешний слой каждого элемента чтобы он был в 1 линии … живой
@@ -485,22 +546,6 @@ export const ITEM_TREE: TreePage[] = [
     slug: "cron",
     nativeClock: true,
     words: w("Cron events", "This element's calendar: the reminders and tasks of its clock, and how each run went.", "Крон события", "Календарь элемента: напоминания и задачи его часов и чем кончился каждый запуск."),
-  },
-  // 558 (владелец 2026-10-21): «Резервное копирование» у четырёх элементов памяти — ниже «Строительства», по образцу «Процесса» своих
-  // элементов: «Инструменты» (подписки — внешние сервисы копирования), «Крон события» (тот же календарь), «Настройки» (задача агенту голосом).
-  {
-    slug: "backup",
-    memory: true,
-    words: w("Backup", "Copies of this element's data: the services that keep them, their schedule and the task for the agent.", "Резервное копирование", "Копии данных этого элемента: сервисы, где они хранятся, расписание и задача агенту."),
-    about: {
-      en: ["Backup is set up in three places. «Tools» lists the outside services the copies go to (a storage, a cloud disk). «Cron events» is the calendar of when copying runs. «Settings» is where you say in plain words what to copy, how often and where — and send it to the element's agent, which builds the copying service and puts it on the schedule."],
-      ru: ["Резервное копирование настраивается в трёх местах. «Инструменты» — внешние сервисы, куда уходят копии (хранилище, облачный диск). «Крон события» — календарь того, когда идёт копирование. «Настройки» — здесь вы обычными словами говорите, что копировать, как часто и куда, и отправляете это агенту элемента: он строит службу копирования и ставит её в расписание."],
-    },
-    pages: [
-      { slug: "tools", words: w("Tools", "Outside services the copies go to — subscriptions of this element.", "Инструменты", "Внешние сервисы, куда уходят копии, — подписки этого элемента.") },
-      { slug: "cron", words: w("Cron events", "The calendar of copying: when each backup runs and how it went.", "Крон события", "Календарь копирования: когда идёт каждая копия и чем кончилась.") },
-      { slug: "settings", words: w("Settings", "Say what to copy, how often and where — and add it to development.", "Настройки", "Скажите, что копировать, как часто и куда, — и добавьте в разработку.") },
-    ],
   },
   // 325 (слово владельца 2026-09-27): обязательная страница внизу — «Настройки», так называемый Danger zone. Всегда последняя.
   {

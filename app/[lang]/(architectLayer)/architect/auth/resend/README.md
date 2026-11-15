@@ -1,4 +1,9 @@
-# `/architect/auth/resend` — a section page
+# `/architect/auth/resend` — the source of a sign-in screen (745)
+
+Since 745 (the owner, 2026-11-15) the screen is the tab «Рабочий процесс → Провайдеры → Волшебное письмо» of the auth element
+(`workflow/providers/magic-link` in `lib/web4-items/item-tree.ts`): the element page reads this folder's `_components` (the
+setup section) and `_data` (title, lead, topics), and this address answers 307 to the tab (`next.config.ts`), where the
+element's menu is. The folder keeps `page.tsx` because the routes guard wants it beside `_data`.
 
 One page of the architect layer. Everything about it lives in this folder; nothing
 about it is written anywhere else.

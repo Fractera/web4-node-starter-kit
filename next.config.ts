@@ -38,6 +38,12 @@ const nextConfig: NextConfig = {
       // would stay in browsers for good.
       { source: "/:lang([a-z]{2})/architect/dashboard/this-computer", destination: "/:lang/hosting/monitoring", permanent: false },
       { source: "/:lang([a-z]{2})/dashboard/this-computer", destination: "/:lang/hosting/monitoring", permanent: false },
+      // 745: the sign-in screens are tabs of the auth element's «Рабочий процесс → Провайдеры» (the owner, 2026-11-15); their folders
+      // `architect/auth/google|resend` stay as the screens' source, and the old addresses lead to the tabs, where the element's menu is.
+      { source: "/:lang([a-z]{2})/architect/auth/google", destination: "/:lang/auth/workflow/providers/google", permanent: false },
+      { source: "/:lang([a-z]{2})/auth/google", destination: "/:lang/auth/workflow/providers/google", permanent: false },
+      { source: "/:lang([a-z]{2})/architect/auth/resend", destination: "/:lang/auth/workflow/providers/magic-link", permanent: false },
+      { source: "/:lang([a-z]{2})/auth/resend", destination: "/:lang/auth/workflow/providers/magic-link", permanent: false },
       // 🔒 285-6: THE ARCHITECT PAGES LIVE AT THE ROOT OF THE CORE — owner 2026-09-24: «должно быть так:
       // https://architect.throughsongs.com/ru/». The folder stays `(architectLayer)/architect/` (424 places build
       // their links from it); the address loses `/architect`: an old address answers with a redirect to the clean one,

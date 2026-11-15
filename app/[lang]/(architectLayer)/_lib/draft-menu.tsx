@@ -3,7 +3,7 @@ import type { WorkspaceItem } from '@/lib/content/sections/types'
 import { listDrafts } from '@/lib/web4-items/drafts'
 import { addressOf } from '@/lib/web4-items/element-address'
 import { elementLabel } from '@/lib/web4-items/element-name'
-import { ITEM_TREE, treeLang, treeVisible, type TreePage } from '@/lib/web4-items/item-tree'
+import { ITEM_TREE, treeLang, treeListed, type TreePage } from '@/lib/web4-items/item-tree'
 import { elementPassport, hasCatalog, isNativeElement } from '@/lib/a2a/element-passport'
 import { treeContextOf } from '@/lib/web4-items/tree-context'
 import { BUILT_IN_STATIC, MEMORY_GROUP, builtInDraft, builtInIds } from '@/lib/web4-items/built-in-elements'
@@ -90,7 +90,8 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
     const native = builtIn || d.native === true || isNativeElement(d.id)
     const ctx = { ...treeContextOf(d.id), catalog, native }
     // 412-2: пункт документа — только пока его файл есть в папке элемента.
-    const shownOf = (pages?: TreePage[]) => (pages ?? []).filter((p) => treeVisible(p, ctx) && (!p.doc || hasDoc(d.id, p.doc)))
+    // 745: страница по кнопке своего раздела (`listed: false`) пунктом меню не бывает.
+    const shownOf = (pages?: TreePage[]) => (pages ?? []).filter((p) => treeListed(p, ctx) && (!p.doc || hasDoc(d.id, p.doc)))
     // 528-1: раздел, подраздел и страница устроены одинаково — пункт со ссылкой; есть видимые дети — раскрывается; открыт, когда
     // человек на нём или внутри; «вы здесь» — только на самой странице.
     const node = (p: TreePage, base: string): WorkspaceItem => {

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 import type { PageItem, WorkspaceItem } from '@/lib/content/sections/types'
-import { type WorkspacePageData, wordsOf } from '@/lib/collection/types'
+import { type WorkspacePageData, type WorkspaceTopic, wordsOf } from '@/lib/collection/types'
 import { ArchitectPage } from './architect-page'
 import { architectLayerUi } from '../_i18n/architect-layer.i18n'
 
@@ -18,6 +18,20 @@ import { architectLayerUi } from '../_i18n/architect-layer.i18n'
 // 🛑 ГРУППА ВЫВОДИТСЯ ИЗ АДРЕСА, А НЕ ПЕРЕДАЁТСЯ СТРАНИЦЕЙ. Переданная руками,
 // она разошлась бы с местом папки на диске — и меню отметило бы не ту группу,
 // ничего при этом не сломав.
+
+/** Темы страницы — секции каталога: заголовок третьего уровня с явным якорем, текст, список (745: и вкладка дерева элемента берёт их). */
+export function topicItems(topics: WorkspaceTopic[]): PageItem[] {
+  return topics.flatMap((t): PageItem[] => [
+    { kind: 'h3', text: t.title, id: t.anchor },
+    { kind: 'p', text: t.text },
+    ...(t.points ? [{ kind: 'list' as const, items: t.points }] : []),
+  ])
+}
+
+/** Верхний ряд страницы — навигация по её темам; тем нет — ряда нет. */
+export function topicTabs(topics: WorkspaceTopic[]): WorkspaceItem[] | undefined {
+  return topics.length > 0 ? topics.map((t) => ({ label: t.tab, href: `#${t.anchor}` })) : undefined
+}
 
 export function CollectionPage({
   lang,
@@ -71,11 +85,7 @@ export function CollectionPage({
 
   // Темы страницы: заголовок третьего уровня с явным якорем, текст, список.
   // Темы из `_data` — текст, который пишут словами.
-  const fromTopics: PageItem[] = topics.flatMap((t): PageItem[] => [
-    { kind: 'h3', text: t.title, id: t.anchor },
-    { kind: 'p', text: t.text },
-    ...(t.points ? [{ kind: 'list' as const, items: t.points }] : []),
-  ])
+  const fromTopics: PageItem[] = topicItems(topics)
 
   // 🔒 ТРИ СОСТОЯНИЯ СТРАНИЦЫ, И ТРЕТЬЕ — ПОЛНОЦЕННОЕ, А НЕ ПОЛОМКА.
   //
@@ -113,7 +123,7 @@ export function CollectionPage({
   // Верхний ряд — навигация ПО ЭТОЙ странице. Тем нет — ряда нет вовсе, и это
   // законное состояние раздела, у которого ещё нет содержимого.
   const tabs: WorkspaceItem[] | undefined =
-    tabsOverride ?? (topics.length > 0 ? topics.map((t) => ({ label: t.tab, href: `#${t.anchor}` })) : undefined)
+    tabsOverride ?? topicTabs(topics)
 
   return (
     <ArchitectPage

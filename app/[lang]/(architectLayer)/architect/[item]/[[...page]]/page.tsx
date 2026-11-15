@@ -10,7 +10,7 @@ import { DraftCards } from '../../../_components/draft-cards'
 import { DeleteDraftButton } from '../../../_components/delete-draft-button.client'
 import { appDialogUi } from '@/components/dialog/app-dialog.i18n'
 import { draftAddress, getDraft } from '@/lib/web4-items/drafts'
-import { findTreePath, movedPage, MOVED_WITH, treeLang, treeVisible, type TreePage } from '@/lib/web4-items/item-tree'
+import { findTreePath, movedPage, MOVED_WITH, treeLang, treeListed, treeVisible, type TreePage } from '@/lib/web4-items/item-tree'
 import { AccordionSection } from '@/components/accordion/accordion-section.client'
 import { getService, listServices, serviceUrl } from '@/lib/microservices/registry'
 import { builtInDraft, builtInIds } from '@/lib/web4-items/built-in-elements'
@@ -98,6 +98,14 @@ import { reverseEngineeringUi } from '../../../_i18n/reverse-engineering.i18n'
 import { ToolsTab } from '@/components/tools-tab/tools-tab.client'
 import { toolsTabProps } from '@/components/tools-tab/props.server'
 import { agentTerminalWords } from '@/app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/words/agent-terminal.i18n'
+import { buttonVariants } from '@/components/ui/button'
+import { wordsOf } from '@/lib/collection/types'
+import { topicItems, topicTabs } from '../../../_lib/collection-page'
+// 745: «Рабочий процесс → Провайдеры» элемента входа — те же экраны 265/266: их слова и работающая часть живут в своих папках.
+import { content as googleContent } from '../../auth/google/_components'
+import { data as googleData } from '../../auth/google/_data'
+import { content as resendContent } from '../../auth/resend/_components'
+import { data as resendData } from '../../auth/resend/_data'
 
 // ОДНА СТРАНИЦА НА ВСЕ АДРЕСА ВСЕХ ЧЕРНОВИКОВ (314-1): `/architect/<id>`, `/architect/<id>/<раздел>`,
 // `/architect/<id>/<раздел>/<страница>`. Дерево — `lib/web4-items/item-tree.ts`, черновики — `data/web4-drafts.json`.
@@ -140,8 +148,8 @@ const hasSkillGroups = (id: string) => {
 }
 
 const SUBSCRIPTIONS = 'workflow/process/subscriptions'
-// 558: подписки элемента памяти — те же, но в разделе «Резервное копирование → Инструменты».
-const BACKUP_TOOLS = 'backup/tools'
+// 558: подписки элемента памяти — те же, но в разделе «Резервное копирование → Инструменты» (745: он в «Рабочем процессе»).
+const BACKUP_TOOLS = 'workflow/backup/tools'
 const SUBSCRIPTION_LISTS = [SUBSCRIPTIONS, BACKUP_TOOLS]
 
 // 325-3: сегмент пути — адрес элемента в ядре или его id (id неизменен; адрес — слой над ним, `lib/web4-items/element-address.ts`).
@@ -293,7 +301,8 @@ export default async function Page({ params }: { params: Promise<Params> }) {
     </li>
   )
   const treeCtx = treeContextOf(item)
-  const shown = (node.pages ?? []).filter((sp) => treeVisible(sp, treeCtx) && (!sp.doc || hasDoc(item, sp.doc)))
+  // 745: страница по кнопке своего раздела (`listed: false`) карточкой списка не бывает.
+  const shown = (node.pages ?? []).filter((sp) => treeListed(sp, treeCtx) && (!sp.doc || hasDoc(item, sp.doc)))
   const list = !r.service && shown.length > 0 ? (
     <nav aria-label={ui.sectionPages} className="flex flex-col gap-2">
       <p className="text-[length:var(--fs-small)] font-medium text-muted-foreground">{ui.sectionPages}</p>
@@ -304,7 +313,8 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   // свёрнуты в общий аккордеон продукта (shadcn), под ним список страниц.
   const slot = SLOT_PAGES[key] && entry && hasSkillGroups(item) ? SLOT_PAGES[key] : undefined
   // 573-4: у платёжного элемента («Платежи» нативного Stripe) — свои абзацы раздела, без Web3 и сети Lagrix.
-  const aboutText = r.service || slot ? undefined : (treeCtx.payment && node.aboutPayment ? node.aboutPayment[l] : node.about?.[l])
+  // 745: у нативного элемента («Рабочий процесс» элемента входа и элементов памяти) — свои абзацы раздела.
+  const aboutText = r.service || slot ? undefined : (treeCtx.payment && node.aboutPayment ? node.aboutPayment[l] : treeCtx.native && node.aboutNative ? node.aboutNative[l] : node.about?.[l])
   const about = aboutText?.length ? (
     <div className="mb-4 max-w-3xl" data-tree-about>
       <AccordionSection
@@ -490,7 +500,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   const PASSPORT_VIEWS: Record<string, PassportView> = {
     'build/i2i/api': 'api', 'build/i2i/mcp': 'mcp', 'build/i2i/catalog': 'catalog',
     'build/f2f/publish': 'publish', 'build/f2f/find': 'find', [SUBSCRIPTIONS]: 'subscriptions', 'workflow/process/cron': 'cron',
-    [BACKUP_TOOLS]: 'subscriptions', 'backup/cron': 'cron',
+    [BACKUP_TOOLS]: 'subscriptions', 'workflow/backup/cron': 'cron',
     // 636: календарь нативного элемента — свой раздел «Крон события».
     'cron': 'cron',
   }
@@ -559,7 +569,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       })()
     : undefined
   // 463: страница одного внешнего сервиса — `service`; ссылки списка «Подписки» строятся от `subscriptionsHref`.
-  const passport = passportView ? <ElementPassport view={passportView} passport={entry ? elementPassport(item) : null} ui={key === 'backup/cron' ? { ...elementPassportUi(lang), cron: backupCronUi(lang, elementPassportUi(lang).cron) } : elementPassportUi(lang)} lang={lang} nodeElements={nodeElements} service={r.service} subscriptionsHref={`/${lang}${dir}/${key.startsWith(BACKUP_TOOLS) ? BACKUP_TOOLS : SUBSCRIPTIONS}`} item={item} /> : null
+  const passport = passportView ? <ElementPassport view={passportView} passport={entry ? elementPassport(item) : null} ui={key === 'workflow/backup/cron' ? { ...elementPassportUi(lang), cron: backupCronUi(lang, elementPassportUi(lang).cron) } : elementPassportUi(lang)} lang={lang} nodeElements={nodeElements} service={r.service} subscriptionsHref={`/${lang}${dir}/${key.startsWith(BACKUP_TOOLS) ? BACKUP_TOOLS : SUBSCRIPTIONS}`} item={item} /> : null
   // 551-4 (владелец 2026-10-20): «Карточки возможностей» — одна оранжевая «Образец»: описание через ИИ (задача в терминал элемента) и три
   // цены; хранятся в паспорте элемента (`payments.web3["a2a-card"].sample`). Девять дверей визитки шаблона живут в визитке и в i2i → API.
   const cardUi = capabilityCardUi(lang)
@@ -571,9 +581,28 @@ export default async function Page({ params }: { params: Promise<Params> }) {
 
   // 558: «Резервное копирование → Настройки» — задача агенту элемента голосом; терминал встроенного — `architect/<id>/terminal` (557),
   // рождённого — под `build/`.
-  const backupSettings = key === 'backup/settings'
+  const backupSettings = key === 'workflow/backup/settings'
     ? <ScheduleTask lang={lang} service={builtInIds().includes(item) ? item : `${slug}/build`} words={backupTaskWords(lang)} />
     : null
+  // 745 (владелец 2026-11-15: «Вкладки Google и волшебное письмо по умолчанию существуют и при нажатии на них появляется страница где
+  // можно ввести Credentials. А также на вкладке провайдеры есть кнопка добавить нового провайдера … открывается страница с инструкцией
+  // пользуйтесь терминалом ссылка на терминал»): «Google» и «Волшебное письмо» (Resend) — экраны 265/266 с их темами и верхним рядом;
+  // «Провайдеры» несёт кнопку; её страница — инструкция и ссылка на терминал элемента входа (у встроенного — `architect/<id>/terminal`).
+  const providerScreen = key === 'workflow/providers/google' ? { content: googleContent(lang), words: wordsOf(googleData, lang) }
+    : key === 'workflow/providers/magic-link' ? { content: resendContent(lang), words: wordsOf(resendData, lang) }
+    : null
+  const providerItems: PageItem[] = providerScreen ? [...providerScreen.content, ...topicItems(providerScreen.words.topics ?? [])] : []
+  const providerTabs = providerScreen ? topicTabs(providerScreen.words.topics ?? []) : undefined
+  const providers = key === 'workflow/providers'
+    ? <div className="mt-4" data-block="providers-add"><Link href={`/${lang}${nodePath}/add`} className={buttonVariants()}>{ui.providers.add}</Link></div>
+    : key === 'workflow/providers/add'
+      ? (
+        <div className="my-4 flex max-w-3xl flex-col gap-3 text-sm leading-relaxed" data-block="providers-add-page">
+          {ui.providers.addText.map((t) => <p key={t.slice(0, 40)}>{t}</p>)}
+          <Link href={`/${lang}${dir}/terminal`} className={buttonVariants({ className: "self-start" })} data-providers-terminal>{ui.providers.terminal}</Link>
+        </div>
+      )
+      : null
   // 559: «Пользователи» элемента входа — все люди узла; таблицу спрашивает островок у двери ядра `/api/node/users`.
   const users = key === 'users' ? <NodeUsers lang={lang} ui={nodeUsersUi(lang)} table={tableUi(lang)} dialogUi={appDialogUi(lang)} /> : null
 
@@ -592,8 +621,9 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       lead={words.lead}
       // 721-2: шапка страницы элемента (видна в компактном режиме) — его имя для людей, не адрес; найдено глазами после обновления.
       pageTitle={elementLabel(item, lang)}
-      widget={<>{offNote}{bar}{lagrix}{about}{list}{preview}{github}{deployPanel}{copyNote}{deploymentsNote}{environment}{domainSettings}{settings}{siteSettings}{designPage}{agent}{passport}{capabilities}{doc}{orders}{messengerSettings}{payments}{productQuiz}{reverseEngineering}{tools}{backupSettings}{users}</>}
-      children={[...dashboardBlocks, ...tables]}
+      widget={<>{offNote}{bar}{lagrix}{about}{list}{preview}{github}{deployPanel}{copyNote}{deploymentsNote}{environment}{domainSettings}{settings}{siteSettings}{designPage}{agent}{passport}{capabilities}{doc}{orders}{messengerSettings}{payments}{productQuiz}{reverseEngineering}{tools}{backupSettings}{providers}{users}</>}
+      children={[...dashboardBlocks, ...tables, ...providerItems]}
+      tabs={providerTabs}
     />
   )
 }

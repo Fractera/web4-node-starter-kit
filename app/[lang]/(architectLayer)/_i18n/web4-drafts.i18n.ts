@@ -16,6 +16,8 @@ export type Web4DraftsUi = {
   aboutSummary: string
   /** 528-1: «A2A: ваши заказы → Сделки» — честная строка, пока источника заказов элемента нет. */
   ordersEmpty: string
+  /** 745: «Рабочий процесс → Провайдеры» элемента входа — кнопка нового провайдера и её страница с терминалом. */
+  providers: { add: string; addText: string[]; terminal: string }
   portTitle: string
   portLine: string
   addressTitle: string
@@ -118,6 +120,14 @@ const DICT: Record<string, Web4DraftsUi> = {
     sectionPages: "Pages of this section",
     aboutSummary: "More about this",
     ordersEmpty: "No orders yet. Work this element orders from other agents will appear here once it starts placing orders over A2A.",
+    providers: {
+      add: "Add a provider",
+      addText: [
+        "A new way into your node — GitHub, Apple, Telegram or any other — is built by the agent of the sign-in element.",
+        "Open its terminal and tell it which provider you want people to sign in to your node with: the agent builds it inside the sign-in element and asks you for the keys the provider gives.",
+      ],
+      terminal: "Open the terminal of the sign-in element",
+    },
     portTitle: "Port on this machine",
     portLine: "No port assigned yet: the draft has no process of its own.",
     addressTitle: "Address on the internet",
@@ -192,6 +202,14 @@ const DICT: Record<string, Web4DraftsUi> = {
     sectionPages: "Страницы раздела",
     aboutSummary: "Подробнее",
     ordersEmpty: "Заказов пока нет. Работа, которую элемент закажет у других агентов, появится здесь, когда он начнёт заказывать по A2A.",
+    providers: {
+      add: "Добавить провайдера",
+      addText: [
+        "Новый способ входа в ваш узел — через GitHub, Apple, Telegram или любой другой — строит агент элемента авторизации.",
+        "Откройте его терминал и расскажите, через какой провайдер вы хотите обеспечить вход в ваш узел: агент построит его внутри элемента авторизации и спросит у вас ключи, которые выдаёт провайдер.",
+      ],
+      terminal: "Открыть терминал элемента авторизации",
+    },
     portTitle: "Порт на этой машине",
     portLine: "Порт ещё не назначен: у черновика нет своего процесса.",
     addressTitle: "Адрес в интернете",

@@ -2956,6 +2956,7 @@
         "app/[lang]/(architectLayer)/_components/payment-elements.client.tsx",
         "app/[lang]/(architectLayer)/_components/schedule-task.client.tsx",
         "app/[lang]/(architectLayer)/_components/subscriptions-view.client.tsx",
+        "app/[lang]/(architectLayer)/architect/[item]/[[...page]]/page.tsx",
         "app/[lang]/(architectLayer)/architect/[item]/_agent-kit/agent-links.tsx",
         "app/[lang]/(architectLayer)/architect/[item]/_agent-kit/client/agent-terminal.client.tsx",
         "app/[lang]/(architectLayer)/architect/[item]/_agent-kit/client/claude-own-login.client.tsx",

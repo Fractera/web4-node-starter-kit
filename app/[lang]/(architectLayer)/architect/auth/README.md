@@ -78,6 +78,9 @@ Five sections live here today — Google, the Resend letter, the Claude Code
 subscription, the terminal and the Telegram bot. Each exists, opens and names itself;
 their content is a step of its own.
 
+745: «Вход через Google» and «Письмо-ключ (Resend)» are shown as the tabs «Рабочий процесс → Провайдеры → Google» and
+«… → Волшебное письмо» of the auth element; their folders here stay as the screens' source, their addresses lead to the tabs.
+
 🪦 This section used to be called "Growing children" and described the swap this page
 has already made: `CollectionPage` → `CollectionIndex`, with `PAGES` from the
 generated list. The rule behind it still holds for any childless folder — the

@@ -122,7 +122,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - The registry — `WEB4-ITEMS-REGISTRY/web4-items.json`, the folders — `WEB4-ITEMS/<kind>/<address>`. Installation (`services:install`)
   sets elements to pinned tags and never re-clones a born element — that would erase its agent's work.
 - There are two templates — custom and native; the passport field `elementType` says which one an element comes from.
-- A native element has no working process and no payments.
+- A native element has no work session of its own and no payments; its «Working process» holds only the screens of its data — the
+  sign-in providers of the auth element, the backup of data, storage, vectors and graph (the owner, 2026-11-15).
 - The data layer: the only door to data is the data element (SQLite); storage and vectors stand behind it. Each element opens only its
   own space in every store — its tables, files, vectors, graph and memory — with its own key (`X-Element-Key`); the node's data key
   (`X-Data-Secret`) — the core and the native elements. The LightRAG graph runs one operation per call and never calls a language model;

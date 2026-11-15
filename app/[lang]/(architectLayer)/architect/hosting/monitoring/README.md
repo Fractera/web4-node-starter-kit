@@ -15,6 +15,7 @@ about it is written anywhere else.
 
 | Path | Role |
 |---|---|
+| `page.tsx` | thin entry: names its own folder and its parent, exports metadata |
 | `_data/meta.ts` | `slug` (must equal the folder name) and `order` (position in the menu) |
 | `_data/en.ts` | the base language — mandatory |
 | `_data/ru.ts` | an override |
