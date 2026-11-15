@@ -1,7 +1,10 @@
 import "server-only"
+import { spawnSync } from "node:child_process"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
-import { accountOfZone, deleteTunnelRecord, getIngress, listZones, setIngress, upsertTunnelRecord } from "@/lib/domain/cloudflare"
+import { accountOfZone, deleteDnsRecords, deleteTunnelRecord, getIngress, listZones, setIngress, upsertServerRecord, upsertTunnelRecord, zoneByName } from "@/lib/domain/cloudflare"
+import { roadOf } from "@/lib/domain/reach-road.mjs"
+import { placeKind, publicIpOnInterfaces } from "@/lib/hosting/place.mjs"
 import { envValue } from "@/lib/web4-items/element-delete"
 import { serviceUrl } from "@/lib/microservices/registry"
 import { domainRecord } from "@/lib/web4-items/element-domain"
@@ -19,10 +22,11 @@ type Step = { step: string; ok: boolean; detail?: string }
 
 export async function moveSubdomain(id: string, from: string, to: string): Promise<{ moved: boolean; steps: Step[] }> {
   const steps: Step[] = []
-  let domain: { zone?: string; tunnelId?: string } | null = null
+  let domain: { zone?: string; tunnelId?: string; via?: string } | null = null
   try { domain = JSON.parse(readFileSync(join(process.cwd(), "logs", "domain.json"), "utf8")) } catch { /* узел без домена */ }
   const key = envValue("CLOUDFLARE_API_TOKEN")
   const local = serviceUrl(id)
+  if (from !== to && local && domain?.zone && roadOf(domain, placeKind(process.cwd())) === "server") return moveOnServer(id, from, to, domain.zone, key)
   if (!domain?.zone || !domain.tunnelId || !key || !local || from === to) return { moved: false, steps: [{ step: "subdomain", ok: true, detail: "nothing-to-move" }] }
   const zoneName = domain.zone
   const newHost = `${to}.${zoneName}`
@@ -52,4 +56,29 @@ export async function moveSubdomain(id: string, from: string, to: string): Promi
   }
   if (rec.ok) startStaticCopy(process.cwd(), id) // 385-3: адрес переехал — копия встаёт на новый, маршрут прежнего снимается
   return { moved: rec.ok, steps }
+}
+
+// 750-3: НА ВЫДЕЛЕННОМ СЕРВЕРЕ имя элемента держит nginx узла (`via: "server"`), туннеля нет. ✗ До 750 переименование здесь отвечало
+// `nothing-to-move`: новое имя оставалось без записи, без имени в nginx и без сертификата. Теперь: запись A нового имени на IP сервера
+// и снятие старых — ключом Cloudflare узла, если зона там; иначе новая запись названа в шаге (у регистратора узел не пишет); затем
+// `name-up.mjs` отсоединённо — nginx учит новое имя (старое уходит с перезаписью: имена берутся из реестра и адресов), сертификат догоняет.
+async function moveOnServer(id: string, from: string, to: string, zoneName: string, key: string | null): Promise<{ moved: boolean; steps: Step[] }> {
+  const steps: Step[] = []
+  const newHost = `${to}.${zoneName}`
+  const oldHosts = [...new Set([`${from}.${zoneName}`, `${id}.${zoneName}`])].filter((h) => h !== newHost && h !== domainRecord(id)?.domain)
+  const ip = publicIpOnInterfaces()
+  const zone = key ? await zoneByName(key, zoneName) : null
+  if (key && ip && zone?.ok && zone.result) {
+    const rec = await upsertServerRecord(key, zone.result.id, newHost, ip, null)
+    steps.push({ step: "dns-new", ok: rec.ok, detail: rec.ok ? newHost : (rec as { reason?: string }).reason })
+    for (const h of oldHosts) {
+      const del = await deleteDnsRecords(key, zone.result.id, h)
+      steps.push({ step: "dns-old", ok: del.ok, detail: del.ok ? `${h}:${del.result}` : (del as { reason?: string }).reason })
+    }
+  } else {
+    steps.push({ step: "dns-new", ok: true, detail: `record-to-add:A ${newHost} ${ip ?? "<server IP>"}` })
+  }
+  const r = spawnSync(process.execPath, [join(process.cwd(), "scripts", "spawn-free.mjs"), join(process.cwd(), "scripts", "dedicated-server", "name-up.mjs")], { cwd: process.cwd(), stdio: "ignore", timeout: 10_000, windowsHide: true })
+  steps.push({ step: "nginx", ok: r.status === 0, detail: "name-up-started" })
+  return { moved: r.status === 0, steps }
 }
