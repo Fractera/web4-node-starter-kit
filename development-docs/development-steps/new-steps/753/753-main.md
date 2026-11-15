@@ -1,9 +1,13 @@
-# 753 — «Powered by Fractera» under the footer of every element (plan — waits for the owner's yes)
+# 753 — «Powered by Fractera» under the footer of every element (plan — approved)
 
 ## The owner, verbatim (2026-11-15, read at 17:02 UTC)
 «Ещё достаточно простой и маленькое обновление для всех элементов они должны содержать внизу второй футляр в котором должен быть
 написано Powered by Fractera я думаю что это должны быть минимально из читаемых букв может быть шрифт восемь общее высота бордюра может
 быть 10 пикселей? Цвет чёрный background прозрачный ссылка передающая весна репозиторий.»
+
+**His yes, 2026-11-15 (read at 17:15 UTC), verbatim:** «Да, делай вариант B» — to the question «Делаю вариант A: цвет токеном,
+`tool:own` и `tool:new` в том же выпуске root?»: so variant B (A plus the ten native elements of this node, each its own starter,
+release and pin), the colour by token, and W1 (`tool:own`, `tool:new`) in root's v3.0.57.
 
 ## Reading
 - «второй футляр» — a second footer: a strip under the footer of every page. I assume «ссылка … на репозиторий» is
@@ -29,7 +33,10 @@
 - Inside the same `<footer>` (one contentinfo landmark), a hairline border above it, the text centred; no background.
 - The text is English in every language — a mark, like a logo; the link opens a new tab with `rel="noopener"`.
 
+- **753-5 (variant B)** — the ten native elements of this node (auth, data, storage, vectors, embeddings, config, graph, cache, memory,
+  stripe): the same file into each own starter, its chain, its next patch tag, its pin in the core. They move to the new tag with the
+  node update he publishes (an element at its pin is moved by `services:install`); one with its own work or local changes is named.
+  Proof: `check:shell-kits` «ok» per starter + chains + CI; live — after his update, `npm run eyes` on the sign-in page.
+
 ## Not included
-- The ten native elements of this node: the owner's rule of 735 — «Остальные элементы … останутся такими какие есть» — unless he
-  names them (each is its own starter, release and rebuild).
 - The node updates: he publishes them; 752 and 753 together in one update.
