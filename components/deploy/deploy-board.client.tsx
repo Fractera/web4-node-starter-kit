@@ -1,15 +1,30 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState, type ReactElement } from "react"
 import { Rocket } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { H2 } from "@/components/ui/typography"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import { LiveLog } from "@/app/[lang]/(architectLayer)/_components/live-log.client"
 import { CoreDeploy, type CoreDeployState, type CoreDeployWords } from "./core-deploy.client"
 import { FailureNote, type FailureCause, type FailureWords } from "./failure-note.client"
+
+// A hint on a button that may be disabled (step 730: a hint is a Tooltip, never `title=`): a disabled button gets no pointer events, so
+// the trigger is a focusable span around it. No text — the button alone.
+function Hint({ text, children }: { text?: string; children: ReactElement }) {
+  if (!text) return children
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild><span className="inline-flex" tabIndex={0}>{children}</span></TooltipTrigger>
+        <TooltipContent className="max-w-xs">{text}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  )
+}
 
 // ДАШБОРД РАЗВЁРТЫВАНИЙ (280-11b).
 //
@@ -94,6 +109,7 @@ export function DeployBoard({ words, lang, dialogUi }: { words: DeployBoardWords
   const [state, setState] = useState<State | "loading" | "failed">("loading")
   const [refused, setRefused] = useState(false)
   const [fork, setFork] = useState<Fork | null>(null)
+  const [forkKnown, setForkKnown] = useState(false) // 746 follow-up: the core's button waits for this answer
 
   // 641-3: отставание узла от форка — та же дверь, что у полосы обновления, один запрос без сети.
   const loadFork = useCallback(() => {
@@ -101,6 +117,7 @@ export function DeployBoard({ words, lang, dialogUi }: { words: DeployBoardWords
       .then((r) => (r.ok ? r.json() : null))
       .then((b: Fork | null) => setFork(b))
       .catch(() => setFork(null))
+      .finally(() => setForkKnown(true))
   }, [])
   useEffect(() => {
     loadFork()
@@ -216,17 +233,19 @@ export function DeployBoard({ words, lang, dialogUi }: { words: DeployBoardWords
           </span>
         )}
         {updating && <span className="text-foreground" data-core-updating>{words.nodeUpdating.replace("{stage}", fork?.update?.stage ?? "")}</span>}
-        <CoreDeploy words={words.coreDeploy} dialogUi={dialogUi} last={state.core.deploy ?? null} log={state.core.log ?? []} lang={lang} disabled={running || updating} forkChanges={forkChanges} inProgress={updating} onStarted={() => { loadFork(); setTimeout(load, 800) }} />
+        <CoreDeploy words={words.coreDeploy} dialogUi={dialogUi} last={state.core.deploy ?? null} log={state.core.log ?? []} lang={lang} disabled={running || updating} forkChanges={forkChanges} forkKnown={forkKnown} onOpen={loadFork} inProgress={updating} onStarted={() => { loadFork(); setTimeout(load, 800) }} />
       </section>
 
       <p className="text-muted-foreground text-sm">{words.intro}</p>
       <p className="text-muted-foreground text-sm">{words.what}</p>
 
       <div className="flex flex-wrap items-center gap-3">
-        <Button onClick={() => deploy(waiting.map((e) => e.id))} disabled={running || waiting.length === 0} title={waiting.length === 0 ? words.nothingWaiting : undefined} data-deploy-all={waiting.length}>
-          {running ? <Spinner className="mr-2" /> : <Rocket className="mr-2 size-4" aria-hidden />}
-          {words.deployAll}
-        </Button>
+        <Hint text={waiting.length === 0 ? words.nothingWaiting : undefined}>
+          <Button onClick={() => deploy(waiting.map((e) => e.id))} disabled={running || waiting.length === 0} data-deploy-all={waiting.length}>
+            {running ? <Spinner className="mr-2" /> : <Rocket className="mr-2 size-4" aria-hidden />}
+            {words.deployAll}
+          </Button>
+        </Hint>
         {running && dep?.current && <span className="text-sm text-foreground">{words.running.replace("{id}", dep.current)}</span>}
         {refused && <span className="text-sm text-muted-foreground">{words.busy}</span>}
       </div>
@@ -261,20 +280,17 @@ export function DeployBoard({ words, lang, dialogUi }: { words: DeployBoardWords
               <span className="ml-auto flex flex-wrap gap-2">
                 {/* 287: откат до предыдущей рабочей версии — та же команда, что с машины. */}
                 {e.previous && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => rollbackTo(e.id)}
-                    disabled={running}
-                    title={e.previous.source === "git" ? words.rollbackGit : undefined}
-                    data-deploy-rollback={e.id}
-                  >
-                    {words.rollback.replace("{version}", e.previous.version)}
-                  </Button>
+                  <Hint text={e.previous.source === "git" ? words.rollbackGit : undefined}>
+                    <Button variant="ghost" size="sm" onClick={() => rollbackTo(e.id)} disabled={running} data-deploy-rollback={e.id}>
+                      {words.rollback.replace("{version}", e.previous.version)}
+                    </Button>
+                  </Hint>
                 )}
-                <Button variant="outline" size="sm" onClick={() => deploy([e.id])} disabled={running || !e.installed || !e.pending} title={e.installed && !e.pending ? words.nothingWaiting : undefined} data-deploy-one={e.pending ? "on" : "off"}>
-                  {words.deployOne}
-                </Button>
+                <Hint text={e.installed && !e.pending ? words.nothingWaiting : undefined}>
+                  <Button variant="outline" size="sm" onClick={() => deploy([e.id])} disabled={running || !e.installed || !e.pending} data-deploy-one={e.pending ? "on" : "off"}>
+                    {words.deployOne}
+                  </Button>
+                </Hint>
               </span>
             </div>
             {lines && !hidden.has(e.id) && (now || result) && (

@@ -16,6 +16,10 @@ import { CoreTerminal, type CoreTerminalWords } from "./core-terminal.client"
 // (`scripts/node-update.mjs`: форк, элементы, сборка ядра, навыки); пересборка того, что уже на диске, изменений форка не забирает.
 // 641-4 (владелец 2026-11-04: «когда я закрыл модель окно то я все ещё вижу: обновить узел из Fork.? Хотя вверху написано что очевидно
 // запущено сборка … она меня путает»): после принятого запуска кнопки нет — только строка «началось», до перезагрузки страницы.
+// 🛑 ПОКА СОСТОЯНИЕ ФОРКА НЕ ИЗВЕСТНО — КНОПКА ЖДЁТ (2026-11-15, владелец: «исправь этот дефект с карточкой»). ✗ На aifa.dev баннер
+// «Обновить сборку ядра» открыл эту вкладку, карточка нарисовалась до ответа `/api/node/update` с `forkChanges = 0` — «Развернуть ядро»,
+// и сервер пересобрал СТАРЫЙ код, а шесть изменений форка остались ждать. Теперь до ответа — неактивное «Проверяю форк…», а открытие
+// окна спрашивает форк ещё раз (`onOpen`): заголовок и действие окна берутся из свежего ответа.
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
@@ -38,6 +42,8 @@ export type CoreDeployWords = {
   lastInterrupted: string
   /** 641-3: `{n}` — изменений форка ждут узел */
   updateButton: string
+  /** 746 follow-up: the fork's state is not known yet — the button waits instead of offering a rebuild of the old code */
+  checking: string
   updateTitle: string
   updateStarted: string
   updateRefused: string
@@ -47,8 +53,11 @@ export type CoreDeployWords = {
 export type CoreDeployState = { state: "running" | "done" | "failed" | "interrupted"; startedAt?: string; finishedAt?: string; rc?: number | null } | null
 type Session = { id: string; name: string; since: string | null }
 
-export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkChanges = 0, onStarted, inProgress }: {
+export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkChanges = 0, forkKnown = true, onOpen, onStarted, inProgress }: {
   words: CoreDeployWords; dialogUi: AppDialogUi; last: CoreDeployState; log: string[]; lang: string; disabled?: boolean; forkChanges?: number
+  /** the board has heard the node about its fork (answered or failed); until then the button waits */
+  forkKnown?: boolean
+  onOpen?: () => void
   /** 641-4: запуск принят — доска спрашивает состояние заново; `inProgress` — обновление узла уже идёт (страница открыта заново) */
   onStarted?: () => void
   inProgress?: boolean
@@ -78,6 +87,12 @@ export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkCha
     void loadSessions()
   }
   async function start() {
+    // The last check at the click: a rebuild while the synced fork holds changes would rebuild the old code — ask the board again and let
+    // the window turn into «Update the node from the fork» instead of starting.
+    if (!update) {
+      const f = (await fetch(`${BASE}/api/node/update`, { cache: "no-store" }).then((x) => (x.ok ? x.json() : null)).catch(() => null)) as { behindBy?: number; nodeBehind?: number } | null
+      if (f && f.behindBy === 0 && (f.nodeBehind ?? 0) > 0) { onOpen?.(); return }
+    }
     const r = update
       ? await fetch(`${BASE}/api/node/update`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "update" }) }).catch(() => null)
       : await fetch(`${BASE}/api/node/deploy`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ core: true }) }).catch(() => null)
@@ -102,9 +117,9 @@ export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkCha
     <div className="flex w-full flex-col gap-2" data-core-deploy={last?.state ?? "none"}>
       <div className="flex flex-wrap items-center gap-3">
         {!begun && !inProgress && (
-          <Button onClick={() => { setOpen(true); setSessions(null); void loadSessions() }} disabled={disabled || last?.state === "running"} data-core-deploy-open={update ? "update" : "rebuild"}>
+          <Button onClick={() => { onOpen?.(); setOpen(true); setSessions(null); void loadSessions() }} disabled={disabled || !forkKnown || last?.state === "running"} data-core-deploy-open={!forkKnown ? "checking" : update ? "update" : "rebuild"}>
             <Rocket className="mr-2 size-4" aria-hidden />
-            {update ? words.updateButton.replace("{n}", String(forkChanges)) : words.button}
+            {!forkKnown ? words.checking : update ? words.updateButton.replace("{n}", String(forkChanges)) : words.button}
           </Button>
         )}
         {lastLine && !begun && <span className="text-muted-foreground">{lastLine}</span>}

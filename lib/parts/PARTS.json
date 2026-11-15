@@ -4202,6 +4202,7 @@
         "components/architect/menu-search.client.tsx",
         "components/auth/setup-ladder.client.tsx",
         "components/content-page/term-hint.client.tsx",
+        "components/deploy/deploy-board.client.tsx",
         "components/element-design/design-track.client.tsx",
         "components/element-docs/indicator-hint.client.tsx",
         "components/element-docs/lagrix-rating.tsx",
