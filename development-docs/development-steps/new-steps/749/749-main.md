@@ -1,6 +1,7 @@
 # 749 — names instead of ids when an element is deleted or born, the true internet address on a server, Lagrix behind one accordion
 
-Planned 2026-11-15 13:45 UTC — **PLAN, waits for the owner's yes.** Repository: the core only (Fractera/web4-node-starter-kit, main).
+Planned 2026-11-15 13:17 UTC (`5d646bac`). **Approved 2026-11-15 13:30 UTC** — the owner, to «Утверждаешь 749-1…4 целиком или без
+749-2?»: «да, утверждаю 749-1…4 целиком, go». Repository: the core only (Fractera/web4-node-starter-kit, main).
 No template changes: the custom and native starters were read (2026-11-15) — neither prints its own id as text (`ownId()` only builds
 links to the core) and neither draws a Lagrix part of its own (only the H2H page description and the native footer credit). It ships
 in ONE update of the owner's Mac and ONE of aifa.dev, together with 5fb21d94, 18e4cbf5 and d81b9098 (not yet on the Mac). Every
@@ -25,7 +26,7 @@ interface file is written with `interface-design`, `use-primitives`, `use-shadcn
 
 I read «вся информация не будет скрыта» as «nothing is removed from the code — it stays inside the accordion».
 
-## 2. Measured (2026-11-15 13:06–13:45 UTC, read-only)
+## 2. Measured (2026-11-15 13:06–13:15 UTC, read-only)
 
 **T1 — the id in the delete dialog.** The step he remembers is **721** («human names wherever an element is shown», approved
 2026-11-11, `921947b1`, `d35c5009`): one `elementLabel(id, lang)` in page titles, the element's home, the i2i catalog, cards, lists and the
