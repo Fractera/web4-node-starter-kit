@@ -4,7 +4,7 @@ One source, `element-instruction.src.md`, gives `CLAUDE.md` to the three templat
 Sections 1–10 are common and sealed: each repository carries `scripts/check-instruction.mjs` (copied from this folder) and
 `scripts/instruction.seal`, and its `prebuild` refuses a changed common part. Section 11 «This element» is the element's own; section 12
 «Evolution» holds its entries. Line labels of the source pick the variant: `@C` custom · `@N` native · `@Y` the element has `npm run
-need` · `@R` it does not yet · `@T` every element.
+need` · `@R` it does not yet · `@T` every element · `@C+Y` both labels at once (a custom element with `npm run need`; step 752).
 
 It moved here from the federal development folder in federal step 621-4 (2026-10-30); the federal folder is no longer used.
 
