@@ -27,40 +27,45 @@
   <img src="https://img.shields.io/badge/License-MIT-FACC15?style=for-the-badge" alt="MIT license">
 </p>
 
-## 🏗 By the way: in total the starter holds 1,000,000 lines of code and was built for just $480 — that is the secret of the architecture's efficiency.
+## What's in the box, in numbers
 
-This repository (more than 16,000 files and 1,000,000 lines of code) was designed and written entirely by one developer in one year. The budget? **Two Claude subscriptions at $20 a month each.**
+A fresh install of Fractera is the core (this repository) plus 13 element repositories that
+`serve:start` clones on the first run ([list below](#in-the-fractera-project)). Together that is
+about **18,500 files and 1.19 million lines of code** (TypeScript, JavaScript, Python, CSS, shell),
+not counting documentation, JSON and lockfiles.
 
-With no investment, every token had to be saved. Most of the time the architecture was designed through targeted prompts, without expensive agents. These hard limits are exactly what led to an **extremely frugal and hyper-scalable platform** that today runs flawlessly on Web2 and is already designed as the foundation for a new environment — **Web4 Lagrix**.
+Most of that volume is shared on purpose: every element is a complete Next.js 16 app built from
+the same template, so it can run, build and be replaced on its own. Without byte-identical
+copies, about **280,000 lines** are distinct: roughly **137,000** live only in the core and
+**60,000** belong to individual elements (auth, memory and config are the largest).
 
-### 🧠 Anatomy of the intelligent core
+All of it was designed and built by one developer in under a year, working with Claude Code on
+two Claude subscriptions at $20 a month each, with no team and no funding. Almost every commit
+carries its Claude co-author line, so the history shows exactly how it was made. That budget
+shaped the architecture: memory, sign-in and design live in one place, so a new feature costs
+the agent as few tokens as possible.
 
-The secret of scalability is that the system does not breed duplicates. At the center is a powerful Core, with a shared registry (the orchestrator) deployed on top of it. The Core includes:
+### How it is put together
 
-*   **Multimodal shared memory:** one database for the whole project, object storage, a vector database, a Redis cache and the **LightRAG** graph store. Plus a universal memory for agents.
-*   **A universal role model (RBAC):** the Core contains a ready authorization system with guest and role access. Plug in a new microservice and you get native authorization out of the box — just declare the roles.
-*   **A built-in AI architect:** the main programming agent, relying on **6,000+ self-evolving cognitive skills** for logical reasoning.
-*   **Global modules (Plug & Play):** a configurator you can switch off, native multilingual support (82 languages) and a Design machine (108+ built-in UI skills).
+- **One core, many elements.** The core holds the control panel, the registry of elements and
+  the rules every element follows. Each element is its own Next.js 16 project, in its own
+  repository, on its own port.
+- **Shared memory.** One database behind the `data` element, plus file storage, vectors,
+  a Redis cache and a LightRAG knowledge graph, available to every element and to the agents.
+- **Shared sign-in and roles.** A new element gets guest and role-based access from `auth`;
+  it only declares its roles.
+- **Room to grow.** Elements take ports from the 24680–25679 range, so one node can hold up to
+  about 1,000 of them; 13 ship by default.
+- **Agent tooling.** A catalog of 5,300+ third-party skills from the skills.sh leaderboard,
+  each with a card Fractera wrote (purpose, quality 1–5, licence), loaded only when a task needs
+  it; 108 design skills; up to 82 languages.
+- **Product questionnaires.** A documentation and questionnaire flow that turns an element into
+  a product specification step by step.
 
-### 🚀 980+ instant microservices
+### Status
 
-The architecture has room for **980+ microservices**, each of them an independent **Next.js 16.2** project running on its own port.
-
-Every new microservice starts instantly, already carrying all the memory, authorization, design system and routing of the Core under the hood. Moreover, the applications themselves are designed right inside the system:
-*   **Built-in Product Quiz and reverse engineering:** a dedicated system of documentation and questionnaires lets you systematically turn any microservice into a product on the level of an Airbnb or Uber clone.
-
-Because of the very high reuse of components, AI code generation of new features in this environment costs many times less than working with a "bare" model.
-
-### 🌐 From stable Web2 to Web4 (an invitation to collaborate)
-
-Right now the project performs all of its main functions and tasks, **running fully and stably on Web2 technologies**. At the same time, the architecture is ready for enormous loads:
-*   The total distributed context window can exceed **1,000,000,000 tokens** without losing focus.
-*   The system adapts: all tasks can run one after another on weak home PCs or in parallel on powerful clusters.
-
-**Web4 and the Agent-to-Agent (A2A) protocols are in active development right now.**
-Our goal is an autonomous network where every home computer can talk to the others directly, with no central nodes, using native A2A protocols.
-
-We are open to collaboration! Fork the project, run the stable Web2 version on your computer right now and join the development of Web4.
+Fractera works today on a regular Web2 stack (Next.js, SQLite, Cloudflare). Agent-to-agent (A2A)
+features, what this project calls Web4, are in development. Contributors are welcome.
 
 
 <p align="center">
