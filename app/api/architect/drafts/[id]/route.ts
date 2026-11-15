@@ -5,6 +5,7 @@ import { requireRoles } from "@/lib/auth/require-roles"
 import { deleteDraft, getDraft } from "@/lib/web4-items/drafts"
 import { elementDisplayName } from "@/lib/web4-items/element-name"
 import { sameName } from "@/lib/web4-items/name-match.mjs"
+import nameFile from "@/lib/web4-items/name-file.cjs"
 import { getService } from "@/lib/microservices/registry"
 
 // УДАЛЕНИЕ ЧЕРНОВИКА (314-1). Тело `{ confirm }` обязано назвать черновик — его название для людей (749-1: имя ядра, данное при
@@ -28,6 +29,8 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     return NextResponse.json({ ok: false, reason: "confirm-mismatch" }, { status: 409 })
   }
   if (!deleteDraft(id)) return NextResponse.json({ ok: false, reason: "write-failed" }, { status: 500 })
+  // 749-2: имя черновика уходит вместе с ним (у рождённого элемента его стирает удаление `data/services/<id>`).
+  nameFile.writeName(id, "", process.cwd())
   revalidatePath("/[lang]", "layout")
   return NextResponse.json({ ok: true, id })
 }

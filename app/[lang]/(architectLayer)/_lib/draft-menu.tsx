@@ -9,7 +9,8 @@ import { treeContextOf } from '@/lib/web4-items/tree-context'
 import { BUILT_IN_STATIC, MEMORY_GROUP, builtInDraft, builtInIds } from '@/lib/web4-items/built-in-elements'
 import { hasDoc } from '@/lib/web4-items/element-docs'
 import { web4DraftsUi } from '../_i18n/web4-drafts.i18n'
-import { CreateDraftButton } from '../_components/create-draft-button.client'
+import { CreateDraftButton, type CreateDraftWords } from '../_components/create-draft-button.client'
+import { appDialogUi } from '@/components/dialog/app-dialog.i18n'
 import { MenuModeSwitch } from '../_components/menu-mode-switch.client'
 import type { MenuMode } from '@/lib/node-menu-mode'
 import { ARCHITECT_HOME } from './architect-menu'
@@ -57,15 +58,27 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
   const at = (path: string) => `/${lang}${path}`
   const states = menuStates()
 
+  // 749-2: кнопка открывает окно «Новый элемент» — первым спрашивается название (слова окна — по значению с сервера).
+  const createWords = (native: boolean): CreateDraftWords => ({
+    label: native ? ui.createNative : ui.create,
+    busyLabel: ui.creating,
+    failed: ui.createFailed,
+    title: native ? ui.createNativeTitle : ui.createTitle,
+    text: ui.createText,
+    nameLabel: ui.nameLabel,
+    confirm: ui.createConfirm,
+    cancel: ui.cancel,
+  })
+  const dialogUi = appDialogUi(lang)
   const button: WorkspaceItem = {
     label: ui.create,
-    node: <CreateDraftButton lang={lang} label={ui.create} busyLabel={ui.creating} failed={ui.createFailed} />,
+    node: <CreateDraftButton lang={lang} words={createWords(false)} dialogUi={dialogUi} />,
   }
   // 582 (владелец 2026-10-24): «для нативных элементов … кнопку какую же как и для кастомных элементов – [+ создать нативный элемент]».
   const nativeButton: WorkspaceItem = {
     label: ui.createNative,
     zone: 'native',
-    node: <CreateDraftButton lang={lang} label={ui.createNative} busyLabel={ui.creating} failed={ui.createFailed} native />,
+    node: <CreateDraftButton lang={lang} words={createWords(true)} dialogUi={dialogUi} native />,
   }
 
   // 557: пункт элемента — дерево. У встроенного элемента (`builtIn`) страницы, которые уже есть в папке службы, ведут на прежний адрес.

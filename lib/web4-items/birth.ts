@@ -1,6 +1,8 @@
 import { spawn } from "node:child_process"
 import { closeSync, existsSync, mkdirSync, openSync, readFileSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
+import nameFile from "@/lib/web4-items/name-file.cjs"
+import { birthArgs } from "@/lib/web4-items/birth-args.mjs"
 
 // РОЖДЕНИЕ ЧЕРНОВИКА — ЗАПУСК И ХОД (узел, шаг 319-3). Сам путь рождения — `scripts/item-birth.mjs` (319-1); здесь только то,
 // что нужно кнопке: запустить его отдельным процессом и прочитать, как он идёт.
@@ -95,11 +97,7 @@ export function isRepoUrl(url: string): boolean {
  *  (`birthLook({ native: true })`: «как проект» всегда) из нативного шаблона. */
 export type BirthPlan = { native: true } | { native?: false; look: BirthLook; repo?: string | null }
 
-/** Аргументы `scripts/item-birth.mjs` после имени скрипта — отдельно, чтобы их можно было проверить без запуска рождения. */
-export function birthArgs(id: string, plan: BirthPlan): string[] {
-  if (plan.native) return [id, "--native"]
-  return [id, "--look", plan.look, ...(plan.repo ? ["--repo", plan.repo] : [])]
-}
+// Аргументы `scripts/item-birth.mjs` — `birth-args.mjs` (749-2: отдельный чистый модуль, проверяется тестом `draft-name.test.mjs`).
 
 /** Запустить рождение. Вызывающий уже проверил роли, черновик, что элемента ещё нет, `look` и адрес репозитория (`repo`). */
 export function startBirth(id: string, plan: BirthPlan): { ok: true } | { ok: false; reason: string } {
@@ -107,7 +105,8 @@ export function startBirth(id: string, plan: BirthPlan): { ok: true } | { ok: fa
   mkdirSync(LOGS(), { recursive: true })
   const fd = openSync(logFile(id), "w")
   try {
-    const child = spawn(process.execPath, [join(process.cwd(), "scripts", "item-birth.mjs"), ...birthArgs(id, plan)], {
+    // 749-2: имя, данное черновику при создании, уходит в паспорт рождённого элемента (`--name`).
+    const child = spawn(process.execPath, [join(process.cwd(), "scripts", "item-birth.mjs"), ...birthArgs(id, plan, nameFile.ownName(id, process.cwd()))], {
       cwd: process.cwd(),
       detached: true,
       stdio: ["ignore", fd, fd],

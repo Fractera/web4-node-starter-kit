@@ -10,6 +10,12 @@ export type Web4DraftsUi = {
   memoryGroup: string
   creating: string
   createFailed: string
+  /** 749-2: the window of «+ Создать элемент» — the name comes first, before the draft exists. */
+  createTitle: string
+  createNativeTitle: string
+  createText: string
+  nameLabel: string
+  createConfirm: string
   draftBadge: string
   sectionPages: string
   /** 528-1: подпись свёрнутого описания раздела или страницы элемента. */
@@ -95,6 +101,11 @@ const DICT: Record<string, Web4DraftsUi> = {
     create: "Create an element",
     creating: "Creating…",
     createFailed: "The element was not created: the node could not write the draft.",
+    createTitle: "A new element",
+    createNativeTitle: "A new native element",
+    createText: "This is what the element will be called everywhere: in the menu, on its pages and in its windows.",
+    nameLabel: "Name",
+    createConfirm: "Create",
     zoneNative: "Native elements",
     zoneCustom: "Custom elements",
     zoneMain: "Core",
@@ -177,6 +188,11 @@ const DICT: Record<string, Web4DraftsUi> = {
     create: "Создать элемент",
     creating: "Создаю…",
     createFailed: "Элемент не создан: узел не смог записать черновик.",
+    createTitle: "Новый элемент",
+    createNativeTitle: "Новый нативный элемент",
+    createText: "Так элемент будет называться везде: в меню, на его страницах и в окнах.",
+    nameLabel: "Название",
+    createConfirm: "Создать",
     zoneNative: "Нативные элементы",
     zoneCustom: "Кастомные элементы",
     zoneMain: "Ядро",
