@@ -27,6 +27,16 @@
   <img src="https://img.shields.io/badge/License-MIT-FACC15?style=for-the-badge" alt="MIT license">
 </p>
 
+## What a node and an element are
+
+A **node** is one computer or server that runs Fractera: the core (this repository, with the control panel, the registry of
+elements and the main agent that leads the work) and every element installed on it. Your laptop can be a node, and so can a
+rented server.
+
+An **element** is a microservice of the node and a server in its own right, with its own folder, repository, port, process,
+agent and address. It may have many pages or none. Sign-in, the database, file storage, vectors and memory are elements, and so
+is every app you build.
+
 ## What's in the box, in numbers
 
 A fresh install of Fractera is the core (this repository) plus 13 element repositories that
@@ -407,6 +417,29 @@ address would silently break the link you already gave to someone.
 Two processes are kept alive: the site itself and a health watchdog. The watchdog asks
 `/api/health` every 30 seconds and restarts the site after three failures in a row — it exists because
 a process can stay alive while every page returns 500, and no process manager can see that.
+
+## Launch your own server whenever you want
+
+You can start on your own computer and later run the node on your own Ubuntu server, where it works around the clock while
+your computer is off. In the panel, «Domain and hosting» → «A dedicated server», you give the server's IP address and root
+password, and the node does the rest in seven steps without a model: it checks the server, connects your domain, installs a
+fresh node from your fork, points the DNS records at it, issues the certificates and switches sign-in on.
+
+Domains, subdomains and certificates are the node's job. Every element gets its own subdomain with a certificate; when you
+rename or delete an element, its name follows it or goes away. A launch never stops or changes your computer, and you can
+launch a second server, or a tenth, the same way. Each server starts as a fresh node with its own keys and accounts, and the
+data on your computer stays on your computer.
+
+## Updates and rollbacks
+
+Fractera keeps developing the core and the elements. When a new version comes out, a banner in your panel says so and takes
+you through it in two moves: sync your fork on GitHub (the main agent can do it for you), then «Update the core build», which
+opens the Deployments tab. There the node takes the changes from your fork, moves every element to its new version and
+rebuilds. If the core's build fails, the previous version comes back and keeps serving.
+
+If an element misbehaves after an update, or you do not like the change, open its «Deployments» page and press «Roll back to
+a version». Any earlier version from its history comes back as a new commit with no downtime, and you can return to the current
+one the same way. A rollback changes the element's code; its database stays as it is.
 
 ## What this template gives you
 
