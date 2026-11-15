@@ -1,4 +1,4 @@
-# 750 — wishes found during 749: element deletion and names on a server (NOT planned — waits for the owner's word)
+# 750 — the wishes found during 749 (the input of the plan 750-main.md)
 
 Found while 749 ran (2026-11-15); by the branch rule they were not fixed inside it. Each is a candidate for a plan, not a task yet.
 
