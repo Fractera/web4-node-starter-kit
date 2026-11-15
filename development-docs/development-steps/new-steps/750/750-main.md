@@ -1,6 +1,6 @@
 # 750 — deleting an element leaves nothing alive behind it; names follow an element on a server; no delete for what cannot be deleted
 
-Planned 2026-11-15 14:33 UTC — **PLAN, waits for the owner's yes.** Repository: the core only (Fractera/web4-node-starter-kit, main). The
+Planned 2026-11-15 14:33 UTC — **Approved 14:37 UTC**: «да, утверждаю 750-1…4 целиком, go , but test only in aifa.dev» — every live proof on aifa.dev only (750-D1 narrowed: no throwaway element on the Mac; the Mac proofs of 750-1 and 750-4 move to aifa.dev). Repository: the core only (Fractera/web4-node-starter-kit, main). The
 input: the wishes found during 749 (`wishes.md` beside this file, W1–W5). The owner's word, 2026-11-15 after 749's report: «go to continue,
 after 750».
 

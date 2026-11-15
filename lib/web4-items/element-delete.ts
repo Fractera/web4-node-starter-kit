@@ -7,7 +7,11 @@ import paths from "@/lib/web4-items/paths.cjs"
 import { deleteDraft } from "@/lib/web4-items/drafts"
 import { startStaticCopy } from "@/lib/web4-items/static-copy-start.cjs"
 import { addressOf } from "@/lib/web4-items/address-file.mjs"
-import { accountOfZone, deleteDnsRecords, getIngress, listZones, setIngress } from "@/lib/domain/cloudflare"
+import { accountOfZone, deleteDnsRecords, getIngress, listZones, setIngress, zoneByName } from "@/lib/domain/cloudflare"
+import { roadOf } from "@/lib/domain/reach-road.mjs"
+import { placeKind } from "@/lib/hosting/place.mjs"
+import { closeAgents } from "@/lib/web4-items/agent-close.mjs"
+import supervision from "@/lib/web4-items/supervision.cjs"
 
 // УДАЛЕНИЕ РОЖДЁННОГО WEB4 ЭЛЕМЕНТА НАСОВСЕМ (узел, шаг 325-5). Решение владельца 2026-09-27: «Удалить насовсем».
 //
@@ -85,6 +89,9 @@ export async function deleteElement(id: string): Promise<{ ok: boolean; steps: S
     execFile(IS_WIN ? "pm2.cmd" : "pm2", args, { cwd: ROOT, shell: IS_WIN, windowsHide: true, timeout: 30_000 }, (err) => resolve(!err))
   })
 
+  // 0. 750-1: агент и его рабочий — первыми, пока реестр ещё называет элемент (иначе ядро не найдёт его комплект, `no-agent-kit`).
+  steps.push(await closeAgents(id, (globalThis as { __web4AgentDone?: (s: string, o: { close: boolean }) => unknown }).__web4AgentDone))
+
   // 1. Процесс и сторож.
   for (const name of [`fractera-svc-${id}`, `fractera-svc-${id}-watch`]) await pm2(["delete", name])
   await pm2(["save"])
@@ -100,10 +107,29 @@ export async function deleteElement(id: string): Promise<{ ok: boolean; steps: S
   }
 
   // 2. Адрес в интернете (если узел на своём домене).
-  let domain: { zone?: string; tunnelId?: string } | null = null
+  let domain: { zone?: string; tunnelId?: string; via?: string } | null = null
   try { domain = JSON.parse(readFileSync(join(ROOT, "logs", "domain.json"), "utf8")) } catch { /* узел без домена */ }
   const key = envValue("CLOUDFLARE_API_TOKEN")
-  if (domain?.zone && domain.tunnelId && key) {
+  // 750-2: на выделенном сервере имя держит его nginx, а не туннель (`reach-road.mjs`). ✗ До 750 удаление писало здесь «no-domain», и имя
+  // удалённого элемента оставалось в nginx и в DNS. Запись A снимает ключ Cloudflare узла, если зона там; иначе она названа в шаге
+  // (`record-left`) — запись у регистратора узел не трогает. nginx переписывается после шага реестра (имена берёт из реестра).
+  const onServer = roadOf(domain, placeKind(ROOT)) === "server" && !!domain?.zone
+  if (onServer) {
+    const names = [...new Set([`${id}.${domain!.zone}`, `${addressOf(id)}.${domain!.zone}`])]
+    const zone = key ? await zoneByName(key, domain!.zone as string) : null
+    if (key && zone?.ok && zone.result) {
+      let removed = 0
+      let dnsOk = true
+      for (const n of names) {
+        const dns = await deleteDnsRecords(key, zone.result.id, n)
+        if (dns.ok) removed += Number(dns.result) || 0
+        else dnsOk = false
+      }
+      steps.push({ step: "dns", ok: dnsOk, detail: `removed:${removed}` })
+    } else {
+      steps.push({ step: "dns", ok: true, detail: `record-left:${names[names.length - 1]}` })
+    }
+  } else if (domain?.zone && domain.tunnelId && key) {
     // 325-8: имён у элемента может быть несколько — по id (до переименования) и по адресу; снимаются оба и всякое правило,
     // ведущее на порт элемента (так уходят и промежуточные имена после нескольких переименований).
     const names = new Set([`${id}.${domain.zone}`, `${addressOf(id)}.${domain.zone}`])
@@ -148,8 +174,16 @@ export async function deleteElement(id: string): Promise<{ ok: boolean; steps: S
     steps.push({ step: "registry", ok: false, detail: String(e) })
   }
 
+  // 750-2: сервер — nginx переписывается без имени удалённого (тот же путь, что у нового имени, 737-16; отсоединённо: минуты).
+  if (onServer) {
+    const r = spawnSync(process.execPath, [join(ROOT, "scripts", "spawn-free.mjs"), join(ROOT, "scripts", "dedicated-server", "name-up.mjs")], { cwd: ROOT, stdio: "ignore", timeout: 10_000, windowsHide: true })
+    steps.push({ step: "nginx", ok: r.status === 0, detail: "rewrite-started" })
+  }
+
   // 4. Черновик, 5. данные элемента, 6. журналы рождения.
   steps.push({ step: "draft", ok: deleteDraft(id) })
+  // 750-1: запись надзора удалённого элемента уходит вместе с ним.
+  steps.push({ step: "supervision", ok: true, detail: supervision.forget(id, ROOT) ? "forgotten" : "none" })
   // 385-3: копия в Cloudflare уходит вместе с элементом — иначе его адрес продолжал бы отдавать страницы удалённого. Состояние
   // копии передаётся файлом: папка данных стирается следующей строкой, раньше, чем выкладка успеет её прочитать.
   try {
