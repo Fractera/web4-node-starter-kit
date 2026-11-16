@@ -95,3 +95,13 @@ not red text · the skill `help-in-browser` names the command. Next part: the sa
 confirmation is in the conversation · A3 after «Готово» it is gone everywhere; negative: no request — no window · A4 the launch page
 without access shows the orange card on step 1; with access none · A5 keyboard (Tab to «Готово», Enter) and both themes ·
 unit `test:person-asks` 5/5 (in the prebuild).
+
+**761-16 seen live 14:06–14:08** (0ec9dd0b): A1 ✅ four pages, A2 ✅ (the owner's press and a keyboard press each woke me), A3 ✅, A5 ✅
+keyboard (dark theme not checked), A4 only the negative half. The owner, 14:12: «Я увидел появление информационных окон … это то что надо.
+Вопрос в следующем если в этот момент я нахожусь с тобой в чате Telegram можешь ли ты прислать мне соответствующий запрос в чат требующие
+перейти на компьютер чтобы выполнить действия? … need create speciao design and auto hidden tools ?»; «ih i work in mobail».
+
+- [ ] 761-16b The same request in Telegram when the person reads me there (`npm run person`): one message with «Готово» (a button that
+  closes the same request through the core) and the words «нужно сделать на компьютере» when the act needs the computer; a press in
+  either place closes both. Not built — and this node's main agent has no bot yet, so nothing could come today.
+- [ ] 761-16c The window's own look (the owner's «special design»): to be agreed.
