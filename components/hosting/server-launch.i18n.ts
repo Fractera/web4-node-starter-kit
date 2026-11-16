@@ -21,6 +21,9 @@ export type ServerLaunchWords = {
   remember: { label: string; on: string; off: string; noPassword: string }
   connect: string
   connecting: string
+  /** 769: the access is open, the server is checked by a second call — a new server takes up to two minutes; failed — the access stays */
+  checking: string
+  checkFailed: string
   doing: Record<string, string>
   another: string
   locked: string
@@ -102,7 +105,9 @@ const en: ServerLaunchWords = {
     noPassword: "No password needed until {time}: this browser already has access to the server. Press «Check the server».",
   },
   connect: "Check the server",
-  connecting: "Connecting and checking the server… up to a minute.",
+  connecting: "Connecting to the server…",
+  checking: "The access is open. Checking the server… up to two minutes on a new server.",
+  checkFailed: "The access is open for a day, but the server's check did not finish ({reason}). Press «Check the server» again — no password needed.",
   doing: { "records-plan": "Asking Cloudflare whether the node can write the records itself…", "records-write": "Writing the records into Cloudflare and checking them…", any: "Working on the server…", clear: "Freeing the server… under a minute.", domain: "Checking the domain…", detect: "Looking up where the domain's records live…", way: "Saving the way…", "dns-check": "Asking public DNS for every name…", dns: "Asking public DNS for every name…", certs: "Issuing certificates… about a minute per name.", check: "Checking HTTPS of every name from the internet…", activate: "Switching the domain on… sign-in restarts, up to a minute.", install: "Starting the installation…", state: "Reading the server…" },
   another: "Another server",
   locked: "opens when the step before it is done",
@@ -271,7 +276,9 @@ const ru: ServerLaunchWords = {
     noPassword: "Пароль не нужен до {time}: у этого браузера уже есть доступ к серверу. Нажмите «Проверить сервер».",
   },
   connect: "Проверить сервер",
-  connecting: "Подключаюсь и проверяю сервер… до минуты.",
+  connecting: "Подключаюсь к серверу…",
+  checking: "Доступ открыт. Проверяю сервер… на новом сервере до двух минут.",
+  checkFailed: "Доступ открыт на сутки, но проверка сервера не закончилась ({reason}). Нажмите «Проверить сервер» ещё раз — пароль не нужен.",
   doing: { "records-plan": "Спрашиваю Cloudflare, может ли узел вписать записи сам…", "records-write": "Вписываю записи в Cloudflare и проверяю их…", any: "Выполняю шаг на сервере…", clear: "Освобождаю сервер… меньше минуты.", domain: "Проверяю домен…", detect: "Ищу, где живут записи домена…", way: "Сохраняю способ…", "dns-check": "Спрашиваю публичные DNS о каждом имени…", dns: "Спрашиваю публичные DNS о каждом имени…", certs: "Выпускаю сертификаты… около минуты на имя.", check: "Проверяю HTTPS каждого имени из интернета…", activate: "Включаю домен… вход перезапускается, до минуты.", install: "Запускаю установку…", state: "Читаю состояние сервера…" },
   another: "Другой сервер",
   locked: "откроется, когда будет готов предыдущий шаг",

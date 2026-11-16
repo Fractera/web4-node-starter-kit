@@ -140,14 +140,21 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
       const a = await post({ action: "connect", host, port, password: form.password, ...(trust ? { trust } : {}) })
       say(a)
       if (a?.reason === "host-key-changed" && a.seen) setChanged({ seen: a.seen, pinned: a.pinned ?? null })
-      if (a?.ok && a.state) {
+      // 769: the password's answer carries the access at once; the server is checked by the next call, which can lose nothing
+      let st = a?.ok ? a.state ?? null : null
+      if (a?.ok) keep(host, port, a.visit?.deadline ?? null)
+      if (a?.ok && !st) {
+        setDoing("checking")
+        const p = await post({ action: "probe", host, port })
+        if (!(st = p?.state ?? null)) setError(words.checkFailed.replace("{reason}", p?.reason ?? "timeout"))
+      }
+      if (a?.ok && st) {
         setChanged(null)
         setTarget({ host, port, fingerprint: a.fingerprint ?? null, until: a.visit?.deadline ?? null })
-        keep(host, port, a.visit?.deadline ?? null)
-        setState({ ...a.state, host })
+        setState({ ...st, host })
       }
     } finally {
-      setBusy(false)
+      setBusy(false); setDoing("")
       setForm((f) => ({ ...f, password: "" }))
     }
   }
@@ -190,7 +197,7 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
         {error && !changed ? (error === words.errors["need-password"] ? <Small role="alert" className="rounded-md border border-warning/50 bg-warning/10 px-3 py-2 font-medium text-foreground" data-block="server-launch-need-hands">! {error}</Small> : <Small className="text-destructive" data-block="server-launch-error">{error}</Small>) : null}
         <div className="flex flex-wrap items-center gap-3">
           <Button disabled={busy || !form.host.trim()} onClick={() => void connect()}>{words.connect}</Button>
-          {busy ? <Small className="text-muted-foreground">{words.connecting}</Small> : null}
+          {busy ? <Small className="text-muted-foreground">{doing === "checking" ? words.checking : words.connecting}</Small> : null}
         </div>
       </div>
     )

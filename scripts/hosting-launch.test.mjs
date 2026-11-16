@@ -121,6 +121,12 @@ await t('connect with the password: the answer carries the visit key (for the co
   const short = Date.parse(minute.a.visit.deadline) - Date.now()
   assert.ok(short > 0 && short <= 60e3, String(short))
   assert.equal(readFileSync(join(D.home, '.ssh', 'authorized_keys'), 'utf8').split('\n').filter((l) => l.includes('fractera-visit')).length, 1, 'the second visit replaced the first')
+  // 769: the password's answer carries the visit and no check (the long check could outrun the door and lose the key); the check is the
+  // next call, by the visit key alone
+  assert.equal(minute.a.state, null, 'the password answer does not wait for the server check')
+  const checked = await run(D, 'probe', [], { key: minute.a.visit.key })
+  assert.equal(checked.a?.ok, true, checked.out)
+  assert.ok(checked.a.state && typeof checked.a.state === 'object', 'the check by the visit key returns the state')
   D.server.close()
 })
 await t('negative: an act without the visit key → need-password; with it → the state; close → the next act needs the password again', async () => {
@@ -185,6 +191,8 @@ await t('the domain chosen on the page is kept on the server: a typed address is
   assert.equal(s.records[0].wildcard.name, '*')
 })
 await t('744-4 a server whose node is a 737 move of a computer: «unrelated, moved», the reasons named; negative: install is refused', async () => {
+  // 769: the password's connect no longer checks the server — the check is its own call, as the page makes it
+  assert.equal((await run(B, 'probe')).a?.ok, true)
   const kept = readFileSync(join(B.dir, 'probe.json'), 'utf8')
   const p = JSON.parse(kept)
   writeFileSync(join(B.dir, 'probe.json'), JSON.stringify({ ...p, fractera: { head: 'a'.repeat(40), ahead: 351, behind: 0, phase: 'live', origin: FORK, movedFrom: { from: 'MacBook-Pro-de-Roman.local', at: '2026-11-13T22:45:16Z' }, launching: false } }))

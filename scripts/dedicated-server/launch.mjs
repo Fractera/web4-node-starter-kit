@@ -328,10 +328,14 @@ const verbs = {
     try {
       // 744-3: the password opens a visit (this browser's earlier key, if any, is replaced on the server); without one — the visit key.
       const visit = typed ? await openVisit({ root, host, port, password: typed, expect: opt('trust'), previous: typeof key === 'string' && key ? key : null, minutes: opt('minutes') ?? undefined }) : null
-      const { client, fingerprint: seen } = visit ? await connect({ root, host, port, privateKey: visit.privateKey }) : await byKey()
+      // 769 (✗ 2026-11-16 19:25 and 19:31: a reinstalled server — openVisit pinned it, then probe.sh + state.sh outran the door's 150 s; the
+      // runner was killed with the visit key in its memory: the server had the key, the browser had nothing): the visit goes back AT ONCE,
+      // the door keeps it in the cookie; the long check is the page's next call (`probe`, by that cookie) and can lose nothing.
+      if (visit) return done({ ok: true, fingerprint: visit.fingerprint, visit: { key: visit.privateKey, deadline: visit.deadline }, state: null, check: 'probe' })
+      const { client, fingerprint: seen } = await byKey()
       try {
         await probe(client)
-        done({ ok: true, fingerprint: visit?.fingerprint ?? seen, visit: visit ? { key: visit.privateKey, deadline: visit.deadline } : null, state: await readState(client) })
+        done({ ok: true, fingerprint: seen, visit: null, state: await readState(client) })
       } finally { client.end() }
     } catch (e) {
       fail(e.reason ?? 'unreachable', { seen: e.seen ?? null, pinned: e.pinned ?? null })

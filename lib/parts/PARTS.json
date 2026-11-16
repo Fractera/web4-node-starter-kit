@@ -4041,6 +4041,7 @@
         "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/telegram-channel.client.tsx",
         "components/ai-elements/prompt-input.tsx",
         "components/architect/menu-ai.client.tsx",
+        "components/architect/person-ask-secret.client.tsx",
         "components/dashboard/a2a-feed.client.tsx",
         "components/deploy/deploy-board.client.tsx",
         "components/element-docs/element-orders.client.tsx",
