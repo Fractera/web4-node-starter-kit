@@ -2,7 +2,6 @@
 // @local — the island of «Активация выделенного сервера» (one route): the launch form on the person's computer, the server's own domain ladder on a server node
 
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
-import type { DomainLadderWords } from "@/components/domain/domain-ladder.i18n"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import { ServerLadder } from "@/components/hosting/server-ladder.client"
 import type { ServerLadderWords } from "@/components/hosting/server-ladder.i18n"
@@ -17,10 +16,10 @@ import { useNodePlace } from "@/components/node-state/use-node-place.client"
 // read as «server». On the tunnel the launch view stays read-only — its door refuses writes there.
 // 🔒 D36: a live server this computer launched is named above the launch form, with its address.
 
-export function ServerPlace({ words, ladderWords, domainWords, keyWords, dialogUi }: { words: ServerLaunchWords; ladderWords: ServerLadderWords; domainWords: ServerDomainWords; keyWords: DomainLadderWords; dialogUi: AppDialogUi }) {
+export function ServerPlace({ words, ladderWords, domainWords, dialogUi }: { words: ServerLaunchWords; ladderWords: ServerLadderWords; domainWords: ServerDomainWords; dialogUi: AppDialogUi }) {
   const place = useNodePlace()
   if (place === undefined) return null
-  if (place?.kind === "server") return <div className="my-6" data-block="server-place-own"><ServerLadder dialogUi={dialogUi} domainWords={domainWords} fallback={words.readOnly} keyWords={keyWords} words={ladderWords} /></div>
+  if (place?.kind === "server") return <div className="my-6" data-block="server-place-own"><ServerLadder dialogUi={dialogUi} domainWords={domainWords} fallback={words.readOnly} words={ladderWords} /></div>
   const live = place?.launched?.[0]
   const [before, after = ""] = words.launchedOn.split("{url}")
   return (
@@ -30,7 +29,7 @@ export function ServerPlace({ words, ladderWords, domainWords, keyWords, dialogU
           {before}<a className="underline" href={`https://${live.domain}/`}>{`https://${live.domain}`}</a>{after}
         </p>
       ) : null}
-      <ServerLaunch dialogUi={dialogUi} domainWords={domainWords} keyWords={keyWords} ladderWords={ladderWords} words={words} />
+      <ServerLaunch dialogUi={dialogUi} domainWords={domainWords} ladderWords={ladderWords} words={words} />
     </>
   )
 }

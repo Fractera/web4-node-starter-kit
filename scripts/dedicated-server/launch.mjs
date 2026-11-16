@@ -312,7 +312,7 @@ const verbs = {
   },
 
   async way() {
-    const way = ['dns', 'cloudflare', 'migrate', 'none'].find((w) => w === opt('way'))
+    const way = ['dns', 'none'].find((w) => w === opt('way')) // 759: the registrar only
     if (!way) return fail('bad-way')
     const { client } = await byKey()
     try {

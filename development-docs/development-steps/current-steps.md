@@ -5,7 +5,7 @@ the person's decision (verbatim, at once), a fact that is expensive to measure a
 start of a long or irreversible operation (before it), a changed next action. How the steps are planned, proven and closed — skill
 `use-development-steps`.
 
-**Active steps:** 1 — the first launch: the node is up, the person signs in to Claude Code, gets a Telegram bot and gives the first task
+**Active steps:** 759 — the server's domain through the registrar only (code done, core rebuild next); 758 — the server's Telegram bot as step 5 (plan agreed: «Годится, делай, шаг 5 необязательный»); 1 — the first launch: the node is up, the person signs in to Claude Code, gets a Telegram bot and gives the first task
 (`new-steps/1-first-launch-first-account-domain-telegram-task.md`).
 
 **Last change:** 2026-11-16 — the first task arrived from the node's home page (1-5): a family/team budget service. Fork proposed, waiting for the person's choice; nothing created yet.
@@ -15,6 +15,7 @@ first task. Ask nothing the node can find out itself.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-16, the owner: «Годится, делай, шаг 5 необязательный» (758) and «из процесса установки сервер вычистить все варианты которые идут как альтернатива на Cloud Flyer … только через регистратора … надо убрать сейчас» (759, done first).
 - 2026-11-16, the owner on the server's Telegram: «Я считаю что Telegram может быть в пятым шагом то есть в тот момент когда идёт установка сервера у пользователя есть время подключить Telegram» → plan 758 (new-steps/758-server-telegram-step-5.md), waiting for the plan's yes.
 - 2026-11-16, first task: «Хочу создать агентов для своей семьи или команды. Давай для начало сделаем что-нибудь простое например сервис для учёта домашних доходов и расходов»
 
@@ -26,4 +27,5 @@ first task. Ask nothing the node can find out itself.
 - 2026-11-16: the node's Cloudflare key is configured (state door: keyConfigured, tail 42b1) — the write never ran; my own script reading the key was refused (law: never read .env.local). The write goes only through the launch door with the browser's visit (button «Внести записи в Cloudflare…»). Server 109.199.105.213: 22 open, 80/443 closed — not serving yet; writing now moves fractera.ai off Vercel to a silent server. Waiting for the owner: write now or after the install.
 - Telegram welcome: never an install step since 90281106 (2026-11-04, owner «Убрать оба»); the welcome comes after the person's /start of a bot made on build/telegram (267-3 code present). This node has no main-agent bot yet.
 - 2026-11-16, the owner: «куда пропал Telegram который должен был требовать … во время установки сервера». Found: the server's Telegram rung (737-11a e6961403: a bot of the server's own, token over SSH by stdin, greeting after admission) lived only in the move road; 738-7 (ff570015, 2026-11-14) removed that road with telegram.mjs and its door; the seven launch steps were built without it — step 7 only says «next, in the server's panel: subscription and Telegram bot». The owner chose step 5 — plan 758.
+- 759 proofs: tsc 0; test:hosting 76/76; test:launch-domain 4/4 (negative: an old Cloudflare answer never gives the removed way); test:hosting-launch 21 + 1 ✗ «the claim goes server door» — fails the same with my changes stashed (pre-existing, not 759); parts-map, parts-dup, shadcn-parts, dialogs, typography OK.
 

@@ -1,43 +1,31 @@
 // TESTS OF THE DOMAIN OF A SERVER BEING LAUNCHED (node step 744-5, D46). `npm run test:launch-domain`, in the prebuild.
-// The owner, 2026-11-14: «спрашивать пользователя есть ли у неё доступ к регистратора и если нет у него доступа к регистратору то есть у него
-// доступ к Cloud Flyer». Two pure readings of `lib/hosting/launch-domain.mjs`, each case with the one fact that turns it:
-//   the two questions → the way the records are written (Cloudflare asked only where the records are kept there);
+// 759, the owner 2026-11-16: «единственное возможный вариант подключения только через регистратора». Two pure readings of
+// `lib/hosting/launch-domain.mjs`, each case with the one fact that turns it:
+//   the one question → the way the records are written (the registrar, or the instruction for whoever has it);
 //   the four facts of step 3, the same for the page and for the runner's `install` (the runner itself: `test:hosting-launch`, by hand).
 import assert from 'node:assert/strict'
-import { answersOf, domainMissing, domainSteps, wayOf } from '../lib/hosting/launch-domain.mjs'
+import { answersOf, domainMissing, domainSteps, normalWay, wayOf } from '../lib/hosting/launch-domain.mjs'
 
 let passed = 0
 const t = (name, fn) => {
   try { fn(); passed += 1; console.log(`  ✓ ${name}`) } catch (e) { console.error(`  ✗ ${name}\n    ${e.message}`); process.exitCode = 1 }
 }
 
-console.log('744-5 two questions → a way; step 3 done by four facts')
+console.log('759 one question → a way; step 3 done by four facts')
 
-t('records kept elsewhere: «registrar yes» → dns, «no» → none (Cloudflare is not asked: an account there cannot write them); unanswered → wait', () => {
-  assert.equal(wayOf({ cloudflareDns: false, registrar: 'yes' }), 'dns')
-  assert.equal(wayOf({ cloudflareDns: false, registrar: 'no' }), 'none')
-  assert.equal(wayOf({ cloudflareDns: false, registrar: 'no', cloudflare: 'yes' }), 'none', 'a Cloudflare answer changes nothing here')
-  assert.equal(wayOf({ cloudflareDns: false }), null)
+t('one question, the registrar: «yes» → dns, «no» → none, unanswered → wait (759: the Cloudflare branch is gone)', () => {
+  assert.equal(wayOf({ registrar: 'yes' }), 'dns')
+  assert.equal(wayOf({ registrar: 'no' }), 'none')
+  assert.equal(wayOf({}), null)
+  assert.equal(wayOf({ registrar: 'yes', cloudflare: 'yes' }), 'dns', 'negative: an old Cloudflare answer never gives the removed way')
 })
-t('records kept at Cloudflare: the registrar first, then Cloudflare — yes → cloudflare; no → migrate with the registrar, none without', () => {
-  assert.equal(wayOf({ cloudflareDns: true, registrar: 'no', cloudflare: 'yes' }), 'cloudflare')
-  assert.equal(wayOf({ cloudflareDns: true, registrar: 'yes', cloudflare: 'yes' }), 'cloudflare')
-  assert.equal(wayOf({ cloudflareDns: true, registrar: 'yes', cloudflare: 'no' }), 'migrate')
-  assert.equal(wayOf({ cloudflareDns: true, registrar: 'no', cloudflare: 'no' }), 'none')
-  assert.equal(wayOf({ cloudflareDns: true, registrar: 'no' }), null, 'the second question is still to be asked')
-  assert.equal(wayOf({ cloudflareDns: true, cloudflare: 'yes' }), null, 'never the second before the first')
-})
-t('a recorded way tells its answers back (a reload shows them); every answer pair gives back its own way', () => {
-  for (const cloudflareDns of [false, true]) {
-    for (const registrar of ['yes', 'no']) {
-      for (const cloudflare of cloudflareDns ? ['yes', 'no'] : [null]) {
-        const way = wayOf({ cloudflareDns, registrar, cloudflare })
-        const told = answersOf(way, cloudflareDns)
-        assert.equal(wayOf({ cloudflareDns, registrar: told.registrar ?? registrar, cloudflare: told.cloudflare }), way, `${cloudflareDns} ${registrar} ${cloudflare}`)
-      }
-    }
-  }
-  assert.deepEqual(answersOf(null, true), { registrar: null, cloudflare: null })
+t('an earlier record with the removed ways reads as dns; a recorded way tells its answer back (a reload shows it)', () => {
+  for (const old of ['cloudflare', 'migrate', 'dns']) assert.equal(normalWay(old), 'dns', old)
+  assert.equal(normalWay('none'), 'none')
+  assert.equal(normalWay(null), null)
+  for (const registrar of ['yes', 'no']) assert.equal(wayOf({ registrar: answersOf(wayOf({ registrar })).registrar }), wayOf({ registrar }))
+  assert.deepEqual(answersOf('cloudflare'), { registrar: 'yes' })
+  assert.deepEqual(answersOf(null), { registrar: null })
 })
 const ready = { domain: 'example.org', detect: { dnsHost: 'other' }, way: 'dns', check: { results: [{ host: 'example.org', state: 'missing' }] } }
 t('step 3 done: a domain, where its records live, a way, the first check (its result is the second check\'s business); each one missing is named', () => {

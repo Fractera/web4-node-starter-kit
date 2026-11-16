@@ -3,7 +3,6 @@
 
 import { type ReactNode, useCallback, useEffect, useState } from "react"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
-import type { DomainLadderWords } from "@/components/domain/domain-ladder.i18n"
 import type { DnsZone } from "@/components/hosting/dns-records"
 import { Ladder } from "@/components/hosting/ladder-step"
 import type { CertRow, CertsRun } from "@/components/hosting/server-domain-certs.client"
@@ -54,15 +53,14 @@ export type LaunchState = {
   records: DnsZone[]
   week: number | null
 }
-type Answer = { ok?: boolean; reason?: string; state?: LaunchState; fingerprint?: string; seen?: string | null; pinned?: string | null; key?: boolean; cleared?: LaunchState["cleared"]; week?: number; want?: number; over?: string[]; visit?: { deadline: string } | null }
+type Answer = { ok?: boolean; reason?: string; state?: LaunchState; fingerprint?: string; seen?: string | null; pinned?: string | null; cleared?: LaunchState["cleared"]; week?: number; want?: number; over?: string[]; visit?: { deadline: string } | null }
 /** 744-3: `until` — the end of this browser's access to the server (the server's own deadline); the key itself never reaches the page. */
 type Target = { host: string; port: number; fingerprint: string | null; until: string | null }
 
-export function ServerLaunch({ words, ladderWords, domainWords, keyWords, dialogUi }: { words: ServerLaunchWords; ladderWords: ServerLadderWords; domainWords: ServerDomainWords; keyWords: DomainLadderWords; dialogUi: AppDialogUi }) {
+export function ServerLaunch({ words, ladderWords, domainWords, dialogUi }: { words: ServerLaunchWords; ladderWords: ServerLadderWords; domainWords: ServerDomainWords; dialogUi: AppDialogUi }) {
   const [form, setForm] = useState({ host: "", port: "22", password: "" })
   const [target, setTarget] = useState<Target | null>(null)
   const [state, setState] = useState<LaunchState | null>(null)
-  const [key, setKey] = useState(false)
   const [busy, setBusy] = useState(false)
   // 744 wishes: the act that runs now — its own line beside the greyed buttons, never a silent page
   const [doing, setDoing] = useState("")
@@ -79,7 +77,6 @@ export function ServerLaunch({ words, ladderWords, domainWords, keyWords, dialog
       const over = a?.over?.length ? ` (${a.over.join(", ")})` : ""
       setError((words.errors[reason] ?? reason).replace("{week}", String(a?.week ?? "")).replace("{want}", String(a?.want ?? "")).replace("{over}", over))
     } else setError("")
-    if (a?.key !== undefined) setKey(Boolean(a.key))
   }, [words])
 
   const post = useCallback(async (body: Record<string, unknown>): Promise<Answer | null> => {
@@ -215,7 +212,7 @@ export function ServerLaunch({ words, ladderWords, domainWords, keyWords, dialog
       </div>
     ),
     check: <CheckStep busy={busy} dialogUi={dialogUi} onAct={async (a, x) => { await act(a, x) }} state={state} words={words} />,
-    domain: <LaunchDomain busy={busy} dialogUi={dialogUi} keyPresent={key} keyWords={keyWords} note={words.domainNote} onAct={act} state={state} words={ladderWords} />,
+    domain: <LaunchDomain busy={busy} note={words.domainNote} onAct={act} state={state} words={ladderWords} />,
     install: <InstallStep busy={busy} onAct={act} state={state} strategy={strategy} words={words} />,
     recheck: <RecheckStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,
     certs: <CertsLaunchStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,

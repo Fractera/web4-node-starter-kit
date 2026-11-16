@@ -3,7 +3,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
-import type { DomainLadderWords } from "@/components/domain/domain-ladder.i18n"
 import type { DnsZone } from "@/components/hosting/dns-records"
 import { Ladder } from "@/components/hosting/ladder-step"
 import { type ServerEnd, serverEndRungs } from "@/components/hosting/server-ladder-end.client"
@@ -12,6 +11,7 @@ import { DomainStep, domainLines, WhereStep, WhoStep } from "@/components/hostin
 import type { LadderWay, ServerLadderWords } from "@/components/hosting/server-ladder.i18n"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import { H2, Small } from "@/components/ui/typography"
+import { normalWay } from "@/lib/hosting/launch-domain.mjs"
 
 // ONE DOMAIN LADDER FOR THE COMPUTER AND THE SERVER (node step 737-19, D15). The owner, 2026-11-13, drew it: «ввести имя домена
 // подтвердить, изменить · Запрос к домену проверка … кто его возвращает регистратор или Cloud Flyer · выбор у меня есть доступ к
@@ -32,7 +32,7 @@ type Run = { state: "saved" | "starting" | "running" | "done" | "failed"; detail
 export type Names = { zone: string | null; names?: number; pointing?: string[]; certified?: string[]; waiting?: string[] } | null
 export type LadderView = {
   zone: string | null; ip: string | null; readOnly: boolean; own: boolean; canType: boolean; detect: Detect | null; way: LadderWay | null
-  key: boolean; records: DnsZone[]; dns: Record<string, string>; dnsAt: string | null; run: Run; names: Names; server: ServerEnd | null
+  records: DnsZone[]; dns: Record<string, string>; dnsAt: string | null; run: Run; names: Names; server: ServerEnd | null
 }
 type Raw = Record<string, unknown>
 
@@ -42,14 +42,14 @@ function fromServer(a: Raw): LadderView | null {
   const steps = a.steps as ServerEnd["steps"]
   return {
     zone: (a.zone as string) ?? null, ip: (a.ip as string) ?? null, readOnly: Boolean(a.readOnly), own: false, canType: !a.readOnly && !steps.active,
-    detect: (a.detect as Detect) ?? null, way: (a.way as LadderWay) ?? null, key: Boolean(a.key), records: (a.records as DnsZone[]) ?? [],
+    detect: (a.detect as Detect) ?? null, way: (normalWay(a.way as string | null) as LadderWay | null) ?? null, records: (a.records as DnsZone[]) ?? [],
     dns: Object.fromEntries(rows.map((r) => [r.host, r.dns])), dnsAt: (a.dnsAt as string) ?? null, run: null, names: null,
     server: { rows, steps, certsRun: (a.certsRun as ServerEnd["certsRun"]) ?? null, helper: a.helper !== false, checkAt: (a.checkAt as string) ?? null },
   }
 }
 
-export function ServerLadder({ words, domainWords, keyWords, dialogUi, fallback }: {
-  words: ServerLadderWords; domainWords: ServerDomainWords; keyWords: DomainLadderWords; dialogUi: AppDialogUi; fallback?: string
+export function ServerLadder({ words, domainWords, dialogUi, fallback }: {
+  words: ServerLadderWords; domainWords: ServerDomainWords; dialogUi: AppDialogUi; fallback?: string
 }) {
   const door = `${BASE}/api/node/server/domain`
   const [view, setView] = useState<LadderView | null>(null)
@@ -91,7 +91,6 @@ export function ServerLadder({ words, domainWords, keyWords, dialogUi, fallback 
     detect: async () => { setBusy(true); try { await post({ action: "detect" }) } finally { setBusy(false) } },
     way: (way: LadderWay) => post({ action: "way", way }),
     check: async () => { setBusy(true); try { await post({ action: "dns-check" }) } finally { setBusy(false) } },
-    cloudflare: () => post({ action: "cloudflare-write" }),
     server: async (action: string, extra: Raw = {}) => { await post({ action, ...extra }) },
   }
 
@@ -126,7 +125,7 @@ export function ServerLadder({ words, domainWords, keyWords, dialogUi, fallback 
     domain: <DomainStep busy={busy} onSave={(n) => { setPrefill(null); return acts.domain(n) }} prefill={prefill} view={view} words={words} />,
     where: <WhereStep busy={busy} onAgain={acts.detect} onSub={(name) => setPrefill(name)} view={view} words={words} />,
     who: <WhoStep busy={busy} onChoose={acts.way} view={view} words={words} />,
-    records: <RecordsStep busy={busy} dialogUi={dialogUi} keyWords={keyWords} onCheck={acts.check} onKeySaved={() => load()} onWrite={acts.cloudflare} view={view} words={words} />,
+    records: <RecordsStep busy={busy} onCheck={acts.check} view={view} words={words} />,
   }
 
   return (

@@ -1,13 +1,11 @@
 // @api launch a node on a dedicated server and read its state
 import { spawn } from "node:child_process"
-import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import phase from "@/lib/hosting/phase.cjs"
-import { pointNamesAtServer } from "@/lib/hosting/server-records-cf"
 import { closeWindowProcess, openWindowProcess } from "@/lib/hosting/window-process.mjs"
 
 // «АКТИВАЦИЯ ВЫДЕЛЕННОГО СЕРВЕРА» — THE DOOR (node step 738-4). The owner, 2026-11-14: «Никакого переезда нет есть просто запуск сервера …
@@ -33,9 +31,8 @@ import { closeWindowProcess, openWindowProcess } from "@/lib/hosting/window-proc
 //                                                              returns the architect's one-time code once (739-5), kept nowhere here
 //   POST { action: "upload", host, port, name, fullchain, privkey }                  the person's own certificate for one name (stdin)
 //   POST { action: "signin", host, port }                      where sign-in leads, asked from the internet
-//   POST { action: "cloudflare-write", host, port }            the records written with this node's Cloudflare key, DNS only (737-19b)
 //   POST { action: "clear", host, port, confirm }              a busy server freed — the dialog sends back the address it named
-// Every answer says whether this node holds a Cloudflare key (`key`), never the key: the records step offers to write them itself.
+// 759: the records are written by hand at the registrar — the door holds no Cloudflare key and writes no record.
 export const dynamic = "force-dynamic"
 
 const ROOT = process.cwd()
@@ -49,18 +46,6 @@ const DOOR_ACTIONS = ["dns-check", "certs", "check", "activate", "claim"]
 // How long each act may take: the check of a server measures its version over the network; a certificate run starts detached there.
 const TIMEOUT: Record<string, number> = { connect: 150_000, probe: 150_000, state: 60_000, install: 120_000, domain: 120_000, way: 60_000, detect: 90_000, dns: 90_000, door: 200_000, signin: 90_000, clear: 240_000 }
 
-/** A value of the core's environment (the Cloudflare token stays in this process; only its presence leaves). */
-function envValue(name: string): string | null {
-  const fromProcess = process.env[name]?.trim()
-  if (fromProcess) return fromProcess
-  const file = join(ROOT, ".env.local")
-  if (!existsSync(file)) return null
-  for (const line of readFileSync(file, "utf8").split(/\r?\n/)) {
-    const m = line.match(/^([A-Z_][A-Z0-9_]*)=(.*)$/)
-    if (m && m[1] === name && m[2].trim()) return m[2].trim()
-  }
-  return null
-}
 
 /** The core's `NEXT_*` and `PORT` must not reach a child (ANTI-PATTERNS «All systems»). */
 function cleanEnv(): NodeJS.ProcessEnv {
@@ -123,13 +108,12 @@ export async function POST(req: NextRequest) {
   const port = typeof body?.port === "number" ? body.port : Number(body?.port ?? 22)
   if (!(IPV4.test(host) || HOST.test(host)) || !Number.isInteger(port) || port < 1 || port > 65535) return json({ ok: false, reason: "bad-address" }, 400)
   const at = ["--host", host, "--port", String(port)]
-  const key = Boolean(envValue("CLOUDFLARE_API_TOKEN"))
   const visit = readVisit(req, host, port)
   // 744-3: the runner's fresh visit key goes into the cookie and out of the answer; a refused or closed visit takes the cookie away.
   const answer = async (verb: string, argv: string[], input: Record<string, unknown> = {}) => {
     const r = await run(verb, argv, { key: visit?.key ?? null, ...input })
     const fresh = (r.visit ?? null) as Partial<Visit> | null
-    const res = json({ ...r, visit: fresh?.deadline ? { deadline: fresh.deadline } : visit ? { deadline: visit.deadline } : null, key })
+    const res = json({ ...r, visit: fresh?.deadline ? { deadline: fresh.deadline } : visit ? { deadline: visit.deadline } : null })
     if (fresh?.key && fresh.deadline) keepVisit(res, req, host, port, { key: fresh.key, deadline: fresh.deadline })
     else if (verb === "close" || r.reason === "need-password") dropVisit(res, host, port)
     return res
@@ -150,11 +134,11 @@ export async function POST(req: NextRequest) {
     if (!visit) return answer("state", at)
     const w = await openWindowProcess({ root: ROOT, host, port, key: visit.key, until: Math.floor(Date.parse(visit.deadline) / 1000), env: cleanEnv() })
     if (!w.ok && (w.reason === "auth" || w.reason === "need-password")) {
-      const res = json({ ok: false, reason: "need-password", key })
+      const res = json({ ok: false, reason: "need-password" })
       dropVisit(res, host, port)
       return res
     }
-    return json({ ok: w.ok, ...(w.ok ? { window: { url: w.url } } : { reason: w.reason }), visit: { deadline: visit.deadline }, key })
+    return json({ ok: w.ok, ...(w.ok ? { window: { url: w.url } } : { reason: w.reason }), visit: { deadline: visit.deadline } })
   }
   if (["state", "probe", "detect", "dns", "signin"].includes(action)) return answer(action, at)
   if (action === "install") return answer("install", [...at, "--mode", body?.mode === "update" ? "update" : "install"])
@@ -165,20 +149,6 @@ export async function POST(req: NextRequest) {
     const pair = { action, name: String(body?.name ?? ""), fullchain: String(body?.fullchain ?? ""), privkey: String(body?.privkey ?? "") }
     if (pair.fullchain.length > 65536 || pair.privkey.length > 65536) return json({ ok: false, reason: "bad-pem" }, 400)
     return answer("door", at, { body: pair })
-  }
-  if (action === "cloudflare-write") {
-    // 737-19b on a server of this page: every name of a fresh node and `*`, DNS ONLY, pointed at the server's IP with this node's key.
-    const token = envValue("CLOUDFLARE_API_TOKEN")
-    if (!token) return json({ ok: false, reason: "no-cloudflare-token", key }, 409)
-    const now = (await run("state", at, { key: visit?.key ?? null })) as { ok?: boolean; reason?: string; state?: { domain?: { domain?: string; detect?: { zone?: string } }; records?: Array<{ records: Array<{ host: string }> }>; probe?: { publicIp?: string } } }
-    if (now.reason === "need-password") return answer("state", at)
-    const zone = now.state?.domain?.domain
-    const ip = IPV4.test(host) ? host : now.state?.probe?.publicIp ?? ""
-    if (!zone || !IPV4.test(ip)) return json({ ok: false, reason: "no-domain", key }, 409)
-    const hosts = (now.state?.records?.[0]?.records ?? []).map((r) => r.host)
-    const r = await pointNamesAtServer({ token, dnsZone: now.state?.domain?.detect?.zone ?? zone, base: zone, hosts, ip, tunnelId: null })
-    const after = await run("dns", at, { key: visit?.key ?? null })
-    return json({ ...after, ok: r.ok, results: r.results, ...(r.ok ? {} : { reason: r.reason }), visit: visit ? { deadline: visit.deadline } : null, key }, r.ok ? 200 : 409)
   }
   if (action === "clear") {
     if (body?.confirm !== host) return json({ ok: false, reason: "not-confirmed" }, 409)

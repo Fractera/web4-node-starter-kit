@@ -1,9 +1,9 @@
 // THE WORDS OF THE DOMAIN LADDER OF THE SERVER (node step 737-19) — chosen on the server, handed to the island as props (one language
 // reaches the browser, `check:lang-delivery`). The owner, 2026-11-13: a quick way and an alternative, each «с короткими комментариями и
-// примерами»; no word of Cloudflare in the main text — only in its own branch and behind the orange «Почему не Cloudflare?».
+// примерами». 759: one way — the records by hand at the registrar; Cloudflare is named only as a fact (where the DNS lives, a proxy).
 
 export type LadderStepId = "domain" | "where" | "who" | "records" | "ready"
-export type LadderWay = "dns" | "cloudflare" | "migrate" | "none"
+export type LadderWay = "dns" | "none"
 
 export type ServerLadderWords = {
   title: string
@@ -17,17 +17,14 @@ export type ServerLadderWords = {
     leads: string; aKind: Record<"server" | "cloudflare" | "elsewhere" | "none" | "unknown", string>; mail: string; mailYes: string; mailNo: string
     live: string; sub: string; again: string
   }
-  /** 744-5: two questions — the registrar first; Cloudflare only where the records are kept there (`lib/hosting/launch-domain.mjs`) */
-  who: { registrar: string; cloudflare: string; yes: string; no: string; option: Record<LadderWay, string>; note: Record<LadderWay, string>; copy: string; copied: string; instruction: string; instructionCf: string }
+  /** 759: one question — access to the registrar (`lib/hosting/launch-domain.mjs`) */
+  who: { registrar: string; yes: string; no: string; option: Record<LadderWay, string>; note: Record<LadderWay, string>; copy: string; copied: string; instruction: string }
   records: {
-    hereDns: string; hereCf: string; hereMigrate: string
-    quick: { title: string; badge: string; stepsDns: string[]; stepsCf: string[]; at: string; star: string; conflicts: string }
+    hereDns: string
+    quick: { title: string; badge: string; stepsDns: string[]; at: string; star: string; conflicts: string }
     full: { title: string; text: string; example: string }
     table: { type: string; name: string; value: string; state: string; optional: string; copy: string; copied: string }
     state: Record<"ok" | "missing" | "elsewhere" | "aaaa" | "unknown" | "unchecked", string>
-    auto: { title: string; text: string; button: string; noKey: string; keyLabel: string; keySave: string; confirmTitle: string; confirmItems: string[]; confirm: string; notNow: string; done: string; failed: string; foreignCname: string }
-    migrate: { title: string; items: string[]; mail: string; txt: string; ds: string; nothing: string }
-    why: { button: string; title: string; points: string[] }
     check: string
     checkedAt: string
   }
@@ -76,30 +73,23 @@ const en: ServerLadderWords = {
   },
   who: {
     registrar: "Do you have access to the domain's registrar?",
-    cloudflare: "Do you have access to Cloudflare? This domain's records are kept there now.",
     yes: "Yes",
     no: "No",
-    option: { cloudflare: "I can sign in to Cloudflare", migrate: "Only at the registrar", dns: "At the registrar or the hosting", none: "I have no access" },
+    option: { dns: "At the registrar or the hosting", none: "I have no access" },
     note: {
-      cloudflare: "You write the records in Cloudflare yourself, or let the node do it.",
-      migrate: "The domain's DNS is kept by Cloudflare now, so records at the registrar do nothing until DNS comes back to it. The next step shows how.",
       dns: "You write the records where the domain's DNS is kept.",
       none: "Without access to where DNS is kept the domain cannot be connected. Send the instruction to whoever has it: a couple of minutes for them.",
     },
     copy: "Copy the instruction",
     copied: "Copied",
     instruction: "Domain {zone}. In its DNS settings add two A records: name «{at}» with the value {ip}, and name «{star}» with the value {ip}. If a name of this domain already has an A or AAAA record, change its address to {ip} or delete it.",
-    instructionCf: "The domain is in Cloudflare: both records with the grey cloud, «DNS only».",
   },
   records: {
     hereDns: "This domain's DNS is kept by {ns}. Usually that is the registrar's account{registrar}: a section called «DNS», «DNS records» or «Manage DNS».",
-    hereCf: "The records go into Cloudflare: open the domain {zone} and its «DNS» section.",
-    hereMigrate: "The domain's DNS is kept by Cloudflare now. Once it is back at the registrar{registrar}, the records go there, into its «DNS» section.",
     quick: {
       title: "Quick way: two records",
       badge: "recommended",
-      stepsDns: ["Open the domain's DNS section.", "Add the two records below and save.", "Come back and press «Check DNS». A new record usually shows within minutes."],
-      stepsCf: ["In Cloudflare open the domain {zone} and its «DNS» section.", "Add the two records below. Switch the cloud of each to grey, «DNS only».", "Save, come back and press «Check DNS». Cloudflare's records usually show within a couple of minutes."],
+      stepsDns: ["Open the domain's DNS section.", "Add the two records below and save. If the panel offers a proxy for a record, switch it off.", "Come back and press «Check DNS». A new record usually shows within minutes."],
       at: "is {name} itself",
       star: "is any address inside it: {example}, and every element that appears later",
       conflicts: "Separate records already lead elsewhere: {names}. Change their address to {ip} or delete them: a separate record beats the star.",
@@ -111,45 +101,6 @@ const en: ServerLadderWords = {
     },
     table: { type: "Type", name: "Name", value: "Value", state: "Now", optional: "optional", copy: "Copy", copied: "Copied" },
     state: { ok: "points here", missing: "no record", elsewhere: "points elsewhere", aaaa: "remove the AAAA record", unknown: "DNS did not answer", unchecked: "not checked" },
-    auto: {
-      title: "Let the node write the records",
-      text: "With a Cloudflare key the node writes a record for every name and «*» itself, without the proxy, and leaves other records alone.",
-      button: "Write the records in Cloudflare…",
-      noKey: "The node has no Cloudflare key yet. Create one with the button and paste it here.",
-      keyLabel: "Cloudflare key",
-      keySave: "Save the key",
-      confirmTitle: "Point {zone} at the server {ip}?",
-      confirmItems: ["Every name of {zone} and «*» get an A record to {ip}, grey cloud — a name whose A record leads elsewhere (another hosting) moves to the server at once.", "A name with someone else's CNAME is not touched: the node names it, you delete it in Cloudflare and write again.", "Mail and the zone's other records do not change."],
-      confirm: "Write the records",
-      notNow: "Not now",
-      done: "Done: {n} records.",
-      failed: "Did not work:",
-      foreignCname: "{host} carries someone else's CNAME → {target}: delete it in Cloudflare and write again",
-    },
-    migrate: {
-      title: "Give DNS back to the registrar",
-      items: [
-        "If the domain has mail or other records, carry them to the registrar first: the node lists them below.",
-        "At the registrar{registrar}, in «Name servers» («Nameservers»), choose its own servers, usually the «default» option.",
-        "There, add the site's two records as in the quick way below.",
-        "The change spreads through the internet within {hours} h. The node shows when it is over: «Check again» in step 2.",
-      ],
-      mail: "Mail, MX records:",
-      txt: "TXT records:",
-      ds: "The domain has DNSSEC on. Switch it off at the registrar before changing the name servers, or the domain stops opening at all.",
-      nothing: "The node sees no mail and no other records on this domain: nothing to carry.",
-    },
-    why: {
-      button: "Why not Cloudflare?",
-      title: "Why the domain leads straight to the server",
-      points: [
-        "Cloudflare was needed while the project lived on your computer: a computer has no address of its own on the internet, and Cloudflare's tunnel gave it one, even with the lid closed.",
-        "A server has its own permanent IP. It needs no go-between: the domain leads straight to it.",
-        "A go-between has a price. Some Cloudflare addresses get blocked in whole ranges, in Spain during football matches for example, and your site goes down with other people's.",
-        "The fewer links between a visitor and the server, the fewer places where something breaks unseen. The server issues its certificates itself, free (Let's Encrypt).",
-        "If your domain's DNS is kept by Cloudflare and the registrar is out of reach, put the same two records in Cloudflare with the grey cloud, «DNS only». Cloudflare then only tells the address, the visitor goes straight to the server, and blocked Cloudflare addresses do not touch it. Once you reach the registrar, give the name servers back to it.",
-      ],
-    },
     check: "Check DNS",
     checkedAt: "checked {time}",
   },
@@ -204,30 +155,23 @@ const ru: ServerLadderWords = {
   },
   who: {
     registrar: "Есть ли у вас доступ к регистратору домена?",
-    cloudflare: "Есть ли у вас доступ к Cloudflare? Записи этого домена сейчас ведёт он.",
     yes: "Да",
     no: "Нет",
-    option: { cloudflare: "Есть вход в Cloudflare", migrate: "Только у регистратора", dns: "У регистратора или хостинга", none: "Нет доступа" },
+    option: { dns: "У регистратора или хостинга", none: "Нет доступа" },
     note: {
-      cloudflare: "Записи внесёте в Cloudflare сами или поручите это узлу.",
-      migrate: "DNS домена сейчас ведёт Cloudflare, поэтому записи у регистратора не сработают, пока DNS не вернётся к нему. Следующий шаг покажет, как это сделать.",
       dns: "Записи внесёте там, где ведётся DNS домена.",
       none: "Без доступа туда, где ведётся DNS, домен не подключить. Отправьте инструкцию тому, у кого доступ: ему хватит пары минут.",
     },
     copy: "Скопировать инструкцию",
     copied: "Скопировано",
     instruction: "Домен {zone}. В настройках DNS добавьте две записи типа A: имя «{at}» со значением {ip} и имя «{star}» со значением {ip}. Если у какого-то имени этого домена уже есть запись A или AAAA, поменяйте её адрес на {ip} или удалите.",
-    instructionCf: "Домен в Cloudflare: у обеих записей облако серое, «DNS only».",
   },
   records: {
     hereDns: "DNS этого домена ведут серверы {ns}. Обычно это кабинет регистратора{registrar}: раздел «DNS», «DNS-записи» или «Управление DNS».",
-    hereCf: "Записи вносятся в Cloudflare: откройте домен {zone} и раздел «DNS».",
-    hereMigrate: "Сейчас DNS домена ведёт Cloudflare. Когда DNS вернётся к регистратору{registrar}, записи вносятся там, в разделе «DNS».",
     quick: {
       title: "Быстрый способ: две записи",
       badge: "рекомендуем",
-      stepsDns: ["Откройте раздел DNS домена.", "Добавьте две записи ниже и сохраните.", "Вернитесь сюда и нажмите «Проверить DNS». Новая запись обычно видна через несколько минут."],
-      stepsCf: ["В Cloudflare откройте домен {zone} и раздел «DNS».", "Добавьте две записи ниже. У каждой переключите облако в серое положение, «DNS only».", "Сохраните, вернитесь сюда и нажмите «Проверить DNS». Записи Cloudflare обычно видны через пару минут."],
+      stepsDns: ["Откройте раздел DNS домена.", "Добавьте две записи ниже и сохраните. Если панель предлагает прокси для записи, выключите его.", "Вернитесь сюда и нажмите «Проверить DNS». Новая запись обычно видна через несколько минут."],
       at: "это сам {name}",
       star: "любой адрес внутри: {example} и каждый элемент, который появится потом",
       conflicts: "Отдельные записи уже ведут в другое место: {names}. Поменяйте их адрес на {ip} или удалите: отдельная запись сильнее звёздочки.",
@@ -239,45 +183,6 @@ const ru: ServerLadderWords = {
     },
     table: { type: "Тип", name: "Имя", value: "Значение", state: "Сейчас", optional: "по желанию", copy: "Скопировать", copied: "Скопировано" },
     state: { ok: "ведёт сюда", missing: "нет записи", elsewhere: "ведёт в другое место", aaaa: "уберите запись AAAA", unknown: "DNS не ответил", unchecked: "не проверено" },
-    auto: {
-      title: "Пусть узел внесёт записи сам",
-      text: "С ключом Cloudflare узел сам впишет запись на каждое имя и «*», без прокси, и не тронет чужие записи.",
-      button: "Внести записи в Cloudflare…",
-      noKey: "Ключа Cloudflare у узла пока нет. Создайте его по кнопке и вставьте сюда.",
-      keyLabel: "Ключ Cloudflare",
-      keySave: "Сохранить ключ",
-      confirmTitle: "Направить {zone} на сервер {ip}?",
-      confirmItems: ["Каждое имя {zone} и «*» получат запись A на {ip}, облако серое — имя, чья запись A ведёт в другое место (другой хостинг), сразу переходит на сервер.", "Имя с чужой CNAME узел не трогает: он её назовёт, вы удаляете её в Cloudflare и вносите записи ещё раз.", "Почта и другие записи зоны не меняются."],
-      confirm: "Внести записи",
-      notNow: "Не сейчас",
-      done: "Готово: записей {n}.",
-      failed: "Не получилось:",
-      foreignCname: "на {host} стоит чужая CNAME → {target}: удалите её в Cloudflare и внесите записи ещё раз",
-    },
-    migrate: {
-      title: "Вернуть DNS регистратору",
-      items: [
-        "Если у домена есть почта или другие записи, сначала перенесите их к регистратору: узел перечислит их ниже.",
-        "У регистратора{registrar} в разделе «Серверы имён» («Nameservers») выберите его собственные серверы, обычно это вариант «по умолчанию».",
-        "Там же добавьте две записи сайта, как в быстром способе ниже.",
-        "Смена расходится по интернету за {hours} ч. Узел покажет, когда она закончится: кнопка «Проверить ещё раз» в шаге 2.",
-      ],
-      mail: "Почта, записи MX:",
-      txt: "Записи TXT:",
-      ds: "У домена включён DNSSEC. Выключите его у регистратора до смены серверов имён, иначе домен перестанет открываться совсем.",
-      nothing: "Почты и других записей у домена узел не видит: переносить нечего.",
-    },
-    why: {
-      button: "Почему не Cloudflare?",
-      title: "Почему домен ведёт прямо на сервер",
-      points: [
-        "Cloudflare был нужен, пока проект жил на вашем компьютере: у компьютера нет своего адреса в интернете, и туннель Cloudflare давал ему адрес даже с закрытой крышкой.",
-        "У сервера свой постоянный IP. Посредник ему не нужен: домен ведёт прямо на него.",
-        "У посредника есть цена. Некоторые адреса Cloudflare блокируют целыми диапазонами, например в Испании во время футбольных матчей, и ваш сайт перестаёт открываться вместе с чужими.",
-        "Чем меньше звеньев между посетителем и сервером, тем меньше мест, где что-то ломается незаметно. Сертификаты сервер выпускает сам и бесплатно (Let's Encrypt).",
-        "Если DNS вашего домена ведёт Cloudflare, а доступа к регистратору нет, впишите те же две записи в Cloudflare и переключите у них облако в серое положение, «DNS only». Тогда Cloudflare только подсказывает адрес, посетитель идёт прямо на сервер, и блокировки адресов Cloudflare его не задевают. Когда доступ к регистратору появится, верните серверы имён ему.",
-      ],
-    },
     check: "Проверить DNS",
     checkedAt: "проверено {time}",
   },

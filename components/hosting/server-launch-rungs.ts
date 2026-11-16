@@ -12,7 +12,7 @@ import type { LadderView } from "@/components/hosting/server-ladder.client"
 import type { LaunchStep, ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
 import type { ServerLadderWords } from "@/components/hosting/server-ladder.i18n"
 import { finalCheck, httpsDue, namesReady } from "@/lib/hosting/final-check.mjs"
-import { domainSteps } from "@/lib/hosting/launch-domain.mjs"
+import { domainSteps, normalWay } from "@/lib/hosting/launch-domain.mjs"
 
 export const LAUNCH_ORDER: LaunchStep[] = ["server", "check", "domain", "install", "recheck", "certs", "ready"]
 
@@ -27,11 +27,11 @@ export function installedOf(s: LaunchState, strategy: Strategy) {
 }
 
 /** The launch state as the 737-19 steps read it — one shape for every door (`server-ladder.client.tsx`). */
-export function launchView(s: LaunchState, key: boolean): LadderView {
+export function launchView(s: LaunchState): LadderView {
   const d = s.domain ?? {}
   const ip = /^\d{1,3}(\.\d{1,3}){3}$/.test(s.host ?? "") ? (s.host as string) : s.probe?.publicIp ?? null
   return {
-    zone: d.domain ?? null, ip, readOnly: false, own: false, canType: s.mark?.domainActive !== true, detect: d.detect ?? null, way: d.way ?? null, key,
+    zone: d.domain ?? null, ip, readOnly: false, own: false, canType: s.mark?.domainActive !== true, detect: d.detect ?? null, way: (normalWay(d.way) as LadderView["way"]) ?? null,
     records: s.records ?? [], dns: Object.fromEntries((d.check?.results ?? []).map((r) => [r.host, r.state])), dnsAt: d.check?.at ?? null,
     run: null, names: null, server: null,
   }
@@ -71,7 +71,7 @@ export function launchSummary(s: LaunchState, target: { host: string; until: str
     check: [s.relation?.kind === "related" ? fill(w.related, { head }) : w.clean, s.verdict?.level === "warn" ? w.warn : ""].filter(Boolean).join(" · "),
     // 744-5: domain · its way in the person's words · where it came from (a domain the server already held: when it was written there)
     domain: s.domain?.domain
-      ? [s.domain.domain, way ? ladderWords.who.option[way] : "", s.domain.from === "server" && s.domain.since ? fill(w.since, { date: dayText(s.domain.since) }) : "", pointed(s.domain.check?.results, w)].filter(Boolean).join(" · ")
+      ? [s.domain.domain, way ? ladderWords.who.option[normalWay(way) as "dns" | "none"] : "", s.domain.from === "server" && s.domain.since ? fill(w.since, { date: dayText(s.domain.since) }) : "", pointed(s.domain.check?.results, w)].filter(Boolean).join(" · ")
       : undefined,
     install: fill(w.install, { head }),
     recheck: fill(w.recheck, count((r) => r.dns === "ok")),

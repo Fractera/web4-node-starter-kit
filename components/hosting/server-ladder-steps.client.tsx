@@ -10,12 +10,11 @@ import { ButtonGroup } from "@/components/ui/button-group"
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Small } from "@/components/ui/typography"
-import { answersOf, wayOf } from "@/lib/hosting/launch-domain.mjs"
+import { answersOf, normalWay, wayOf } from "@/lib/hosting/launch-domain.mjs"
 
 // 737-19. Step 1 — the domain, typed once, changed by one button. Step 2 — what the internet answers about it, with no question to the
 // person (`lib/hosting/domain-detect.mjs`): where it was bought, who keeps its DNS, where it leads now, its mail, a live site on it.
-// Step 3 — who writes the records: two questions since 744-5 (below); «no access» is not a dead end: the instruction is copied for
-// whoever has it.
+// Step 3 — who writes the records: one question since 759 (below).
 
 const fill = (t: string, map: Record<string, string>) => Object.entries(map).reduce((s, [k, v]) => s.split(`{${k}}`).join(v), t)
 
@@ -25,7 +24,7 @@ export function domainLines(view: LadderView, words: ServerLadderWords) {
   return {
     domain: view.zone ? fill(words.domain.line, { zone: view.zone, ip: view.ip ?? "" }) : null,
     where: d ? `${words.where.dns} ${d.dnsHost === "cloudflare" ? words.where.cloudflare : d.ns.join(", ")}` : null,
-    who: view.way ? words.who.option[view.way] : null,
+    who: view.way ? words.who.option[normalWay(view.way) as LadderWay] : null,
     records: view.dnsAt ? fill(words.records.checkedAt, { time: new Date(view.dnsAt).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" }) }) : null,
   }
 }
@@ -108,8 +107,7 @@ export function WhereStep({ view, words, busy, onAgain, onSub }: { view: LadderV
 /** The plain text for whoever holds the access (737-19e). */
 export function instructionText(view: LadderView, words: ServerLadderWords) {
   const { at, star } = quickNames(view)
-  const base = fill(words.who.instruction, { zone: view.detect?.zone ?? view.zone ?? "", at, star, ip: view.ip ?? "" })
-  return view.detect?.dnsHost === "cloudflare" ? `${base} ${words.who.instructionCf}` : base
+  return fill(words.who.instruction, { zone: view.detect?.zone ?? view.zone ?? "", at, star, ip: view.ip ?? "" })
 }
 
 type Answer = "yes" | "no"
@@ -130,31 +128,24 @@ function Question({ id, text, value, busy, readOnly, words, onAnswer }: {
   )
 }
 
-// 744-5. The owner, 2026-11-14: «спрашивать пользователя есть ли у неё доступ к регистратора и если нет у него доступа к регистратору то
-// есть у него доступ к Cloud Flyer». The registrar first; Cloudflare only where the domain's records are kept there (step 2 found it) —
-// there «only the registrar» means moving the records back to it (`migrate`), Cloudflare access writes them in place. `wayOf` decides.
+// 759 (the owner, 2026-11-16: «единственное возможный вариант подключения только через регистратора»): one question — access to the
+// registrar; «no» is not a dead end: the instruction is copied for whoever has it. `wayOf` decides.
 export function WhoStep({ view, words, busy, onChoose }: { view: LadderView; words: ServerLadderWords; busy: boolean; onChoose: (way: LadderWay) => unknown }) {
   const [copied, setCopied] = useState(false)
-  const [asked, setAsked] = useState<{ registrar: Answer | null; cloudflare: Answer | null }>({ registrar: null, cloudflare: null })
+  const [asked, setAsked] = useState<Answer | null>(null)
   const w = words.who
-  const cf = view.detect?.dnsHost === "cloudflare"
-  const told = answersOf(view.way, cf) as { registrar: Answer | null; cloudflare: Answer | null }
-  const registrar = asked.registrar ?? told.registrar
-  const cloudflare = asked.cloudflare ?? told.cloudflare
-  function answer(q: "registrar" | "cloudflare", a: Answer) {
-    const next = { registrar, cloudflare, [q]: a }
-    setAsked(next)
-    const way = wayOf({ cloudflareDns: cf, ...next })
-    if (way && way !== view.way) void onChoose(way)
+  const way = normalWay(view.way) as LadderWay | null
+  const registrar = asked ?? (answersOf(view.way).registrar as Answer | null)
+  function answer(a: Answer) {
+    setAsked(a)
+    const next = wayOf({ registrar: a })
+    if (next && next !== way) void onChoose(next)
   }
   return (
-    <div className="flex flex-col gap-3" data-block="server-ladder-who" data-way={view.way ?? ""}>
-      <Question busy={busy} id="registrar" onAnswer={(a) => answer("registrar", a)} readOnly={view.readOnly} text={w.registrar} value={registrar} words={w} />
-      {cf && (registrar || cloudflare) ? (
-        <Question busy={busy} id="cloudflare" onAnswer={(a) => answer("cloudflare", a)} readOnly={view.readOnly} text={w.cloudflare} value={cloudflare} words={w} />
-      ) : null}
-      {view.way ? <Small className="text-muted-foreground">{w.note[view.way]}</Small> : null}
-      {view.way === "none" ? (
+    <div className="flex flex-col gap-3" data-block="server-ladder-who" data-way={way ?? ""}>
+      <Question busy={busy} id="registrar" onAnswer={answer} readOnly={view.readOnly} text={w.registrar} value={registrar} words={w} />
+      {way ? <Small className="text-muted-foreground">{w.note[way]}</Small> : null}
+      {way === "none" ? (
         <div className="flex flex-col gap-2 rounded-md border border-border bg-muted/40 p-3" data-block="server-ladder-instruction">
           <Small className="text-foreground">{instructionText(view, words)}</Small>
           <Button

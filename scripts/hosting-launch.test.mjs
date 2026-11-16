@@ -132,16 +132,16 @@ await t('negative: an act without the visit key → need-password; with it → t
   assert.equal((await run(B, 'connect', [], { password: PASSWORD })).a?.ok, true)
 })
 
-console.log('744-5 the domain first: two questions, then the installation')
-await t('install before step 3 is refused with every missing fact named; «registrar no, Cloudflare yes» → `cloudflare` recorded; «no, no» → `none`, still refused; negative: step 3 done → the next case installs', async () => {
+console.log('744-5/759 the domain first: one question (the registrar), then the installation')
+await t('install before step 3 is refused with every missing fact named; «registrar yes» → `dns` recorded; «no» → `none`, still refused; the removed `cloudflare` way is refused by the runner; negative: step 3 done → the next case installs', async () => {
   const r = await run(A, 'install', ['--mode', 'install'])
   assert.deepEqual([r.a?.reason, r.a?.missing], ['domain-not-ready', ['domain', 'where', 'who', 'records']], r.out)
   assert.equal((await run(A, 'domain', ['--name', 'example.org'])).a?.ok, true)
-  const yes = wayOf({ cloudflareDns: true, registrar: 'no', cloudflare: 'yes' })
-  assert.equal((await run(A, 'way', ['--way', yes])).a?.ok, true)
-  assert.equal(domainOf(A).way, 'cloudflare')
-  const no = wayOf({ cloudflareDns: true, registrar: 'no', cloudflare: 'no' })
-  assert.equal((await run(A, 'way', ['--way', no])).a?.ok, true)
+  assert.equal((await run(A, 'way', ['--way', wayOf({ registrar: 'yes' })])).a?.ok, true)
+  assert.equal(domainOf(A).way, 'dns')
+  assert.equal((await run(A, 'way', ['--way', 'cloudflare'])).a?.reason, 'bad-way', '759: the Cloudflare way is gone')
+  assert.equal(domainOf(A).way, 'dns', 'a refused way changes nothing')
+  assert.equal((await run(A, 'way', ['--way', wayOf({ registrar: 'no' })])).a?.ok, true)
   assert.equal(domainOf(A).way, 'none')
   const still = await run(A, 'install', ['--mode', 'install'])
   assert.deepEqual([still.a?.reason, still.a?.missing], ['domain-not-ready', ['where', 'who', 'records']], still.out)
