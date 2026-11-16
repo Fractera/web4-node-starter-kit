@@ -205,3 +205,5 @@ Open: whether Telegram makes the localhost links clickable — Рома's eyes.
 Fractera» of the footer (text 42–59 px from the bottom when scrolled to the end; footer 91 px). The owner offered +12 px — measured not
 enough (28–108 still covers); «Поднимай на 48 пикселей я согласен» → bottom-16 (64 px). Proof after the build: badge bottom edge above
 the footer text top, page scrolled to the end.
+763-a proven 17:14 on core b6596bd4 (page scrolled to the end, logs/eyes/763a-1171.png, 763a-390.png): the badge stands above
+«© 2026 Fractera» and «Powered by Fractera» on 1171 and 390; first build failed (root woken by my simulated request, see current-steps).
