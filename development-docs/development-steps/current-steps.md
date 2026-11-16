@@ -5,11 +5,11 @@ the person's decision (verbatim, at once), a fact that is expensive to measure a
 start of a long or irreversible operation (before it), a changed next action. How the steps are planned, proven and closed — skill
 `use-development-steps`.
 
-**Active steps:** 769 — in code (new-steps/769-the-launch-access-before-the-check.md), live R2 after the build; next — the Telegram Mini Apps plan (the owner's topic 20:56, «Го» 21:24 = 769 first, then the plan); 761-13 the fresh launch; 1 — the first launch.
+**Active steps:** 771 — the node panel and element apps inside Telegram (new-steps/771-node-panel-and-element-apps-inside-telegram.md): 771-1..3 in code a5942723, building; then 771-4 (template), 771-5 (skill), 771-6 (proof on «Соцсети пользователя»); 769 — in code, R2 waits the owner's password (2c3422c4); 761-13 the fresh launch; 1 — the first launch.
 
-**Last change:** 2026-11-16 23:10 UTC — the owner back: «ты не спишь … доделаю до конца эту задачу … поставь размышления на максимум» → the session was Opus · effort high (ps); switching to `--effort max` (restart, the conversation goes on). R2 of 769: request 2c3422c4 still open — the owner types root in the window next.
+**Last change:** 2026-11-16 23:46 UTC — the owner 23:13: «Хорошо продолжай работать до конца меня больше не ищи пока не закончишь полностью» = yes to 771 whole and to the self-moving menu button; do not message him until the end. 771-1..3 committed a5942723, prebuild RC=0 (after renaming the plan to 6–8 words); the core REBUILD STARTED (detached).
 
-**Next action:** his yes on 771-1..3 (core «Пульт узла» in the main bot) and on 771-3's self-moving menu button; R2 of 769 — request 2c3422c4 still waits his root password in the window.
+**Next action:** after core-back — git status clean; `npm run tg-app -- menu` then `status`; live: GET the page (eyes 390 light), POST forged → 401, POST with launch data signed by a script inside the process (token never printed) → state; then 771-4 the template (skill release-template), 771-5 the skill, 771-6 hrutb's agent; the final report to the owner only at the end.
 
 ## Letter to my next session (written 2026-11-16 ~19:33 UTC, the window at 66 %; a clean start for a debugging task)
 
