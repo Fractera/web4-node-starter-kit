@@ -22,7 +22,7 @@ export function TopMenu({ lang }: { lang: string }) {
   return (
     <>
     {/* 761-16: the main agent's action request — at the bottom of every architect page (the owner: the top is full). */}
-    <PersonAsk url="/api/node/person-asks" ui={personAskUi(lang)} />
+    <PersonAsk url={`/api/node/person-asks?lang=${lang}`} ui={personAskUi(lang)} />
     <ProjectHeader
       data={data}
       // 356-1: только ядро знает, что ждёт архитектора, — открытые терминалы и готовые предпросмотры.

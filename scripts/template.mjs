@@ -45,7 +45,8 @@ const git = (dir, argv, env) => execFileSync('git', ['-C', dir, ...argv], { enco
 const gitOk = (dir, argv) => { try { return git(dir, argv) } catch { return null } }
 // A file's bytes as git keeps them — never trimmed (git() trims command output, which would eat a file's edges).
 const gitFile = (dir, rev, path) => execFileSync('git', ['-C', dir, 'show', `${rev}:${path}`], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true })
-const token = () => (readFileSync(join(ROOT, 'data', 'node', 'github', '.env'), 'utf8').split(/\r?\n/).find((l) => l.startsWith('GITHUB_TOKEN=')) ?? '').slice('GITHUB_TOKEN='.length).trim()
+const token = () => { try { return tokenLine() } catch { return '' } }
+const tokenLine = () => (readFileSync(join(ROOT, 'data', 'node', 'github', '.env'), 'utf8').split(/\r?\n/).find((l) => l.startsWith('GITHUB_TOKEN=')) ?? '').slice('GITHUB_TOKEN='.length).trim()
 const mask = (text, t) => (t ? String(text).split(t).join('***') : String(text))
 const authUrl = (repo, t) => repo.replace(/^https:\/\/(?:[^@/]+@)?github\.com\//, `https://x-access-token:${t}@github.com/`)
 const nextPatch = (v) => { const m = /^v(\d+)\.(\d+)\.(\d+)$/.exec(v); return m ? `v${m[1]}.${m[2]}.${Number(m[3]) + 1}` : null }
