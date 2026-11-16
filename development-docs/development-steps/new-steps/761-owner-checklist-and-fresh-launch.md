@@ -118,3 +118,29 @@ The owner: «у меня на компьютере открыты два оди�
 и цифры», «as new step». The badge (`ViewportBadge`) reads the node's place (home / server) — orange + «PC» on the computer, light green +
 «VPS» on a server, the label the size of the width digits. Tests: the computer shows orange PC; the server's panel (through SSH) shows green
 VPS; negative — the public site of an element shows no place mark.
+
+## 764 — «act with the person»: the window as a skill and a law everywhere (the owner, 2026-11-16 ~15:25 and ~15:35)
+
+The owner: «тот инструмент который мы сделали … уведомлениях которые всплывает справа … обязательно требует обновления инструкции и
+специального навыка … мы можем делать вместе контент публикации, писать комментарии все то что можешь сделать ты и все то что должен
+сделать я … упаковать это в навык при необходимости переработать чуть-чуть кодовую базу и если это нужно обновить инструкцию. Как мы
+говорили у всех элементов и шаблонов стартовых нативных и кастомных. Добавь этот план для следующего шага».
+
+Done in the same pass (2026-11-16 15:25–15:45):
+- [x] Core skill `act-with-the-person` (split the task into my acts and theirs; their act = the window with --hint; «Готово» is not proof;
+  Chrome dialogs invisible, never t.me; patterns: records, a bot, a server launch, a post, a payment) — 93673330; `help-in-browser` points to it.
+- [x] CLAUDE.md §6 law «the person's own act is a window, never a chat line» and §8 skill line — resealed ba34c0424d21 at the owner's word.
+- [x] The element instruction source (`lib/instructions/element/element-instruction.src.md`): the same law for elements; custom's
+  `act-for-the-person` line names `npm run ask-person`.
+- [x] Templates: custom v0.3.210 (law + `act-for-the-person` «Together»), native v0.1.75 (law); pinned 8e71021 / 142c574.
+- [x] All 11 elements: instruction + seal (and root's «Together»); auth also got ask-person (after its own agent cleaned my leftovers):
+  data v2.2.31, storage v1.1.51, vectors v1.2.31, embeddings v0.1.32, config v1.2.49, graph v1.2.30, cache v0.1.44, memory v2.2.51,
+  stripe v1.3.42, auth v2.4.38, root v3.0.64.
+
+Next (the plan of the following steps):
+- [ ] 761-16b the same request in Telegram with a «Готово» button when the person reads the agent there (the main agent first, then elements).
+- [ ] 761-16c the window's own look (wider, the stripe, a pulsing «!», a counter of several requests).
+- [ ] 761-15 browser acts on a Haiku worker; the price of one run before and after.
+- [ ] Proof by use: one real shared task end to end (a post drafted by an element's agent, published by the person's press) — the skill's
+  «NOT PROVEN» until then.
+- [ ] Cleanup: the extra package.json script lines the first rollout added (data, root, …) — through each element's own agent.
