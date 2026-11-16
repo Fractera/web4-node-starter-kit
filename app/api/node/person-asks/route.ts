@@ -84,7 +84,10 @@ export async function POST(req: NextRequest) {
   const wake = (globalThis as { __web4AgentWake?: Wake }).__web4AgentWake
   let woke: string = "no-agent-kit"
   if (typeof wake === "function") {
-    const out = await wake(who, { text: `${nodeLine.head("person-done", who)}${asks.doneText(a)}`, from: "node", confirmed: true })
+    // an element's bridge routes by the first word: «Working process:» — its work session, never a new build session (✗ 15:23 live:
+    // the bare line opened root's build session); the main agent is woken in its own conversation as it is
+    const lead = who === "build" ? "" : "Working process: "
+    const out = await wake(who, { text: `${lead}${nodeLine.head("person-done", who)}${asks.doneText(a)}`, from: "node", confirmed: true })
     woke = out.ok ? "ok" : String(out.reason ?? "refused")
   }
   console.log(`[node/person-asks] ${id} done → ${who}: ${woke}`)
