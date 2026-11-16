@@ -29,6 +29,7 @@ function nodeKeyOk(given: string | null): boolean {
   return a.length === b.length && timingSafeEqual(a, b)
 }
 const known = (id: string) => /^[a-z][a-z0-9-]{0,39}$/.test(id) && (listServices() as unknown as { id: string }[]).some((s) => s.id === id)
+const str = (v: unknown): string | null => (typeof v === "string" ? v : null)
 const lang2 = (req: NextRequest): "en" | "ru" => (req.nextUrl.searchParams.get("lang") === "ru" ? "ru" : "en")
 
 export async function GET(req: NextRequest) {
@@ -55,7 +56,7 @@ async function fromElement(req: NextRequest) {
     return NextResponse.json({ ok: !!out, ...(out ? {} : { reason: "no open request of yours with this id" }) }, { status: out ? 200 : 404, ...noStore })
   }
   try {
-    const a = asks.add(ROOT, { text: body.text, href: body.href ?? null, why: body.why ?? null, hint: body.hint ?? null, by: from }) as Ask
+    const a = asks.add(ROOT, { text: body.text, href: str(body.href), why: str(body.why), hint: str(body.hint), by: from }) as Ask
     console.log(`[node/person-asks] ${from} put ${a.id}`)
     return NextResponse.json({ ok: true, id: a.id }, noStore)
   } catch (e) {
