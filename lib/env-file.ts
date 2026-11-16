@@ -3,6 +3,7 @@ import { existsSync, readFileSync, renameSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 import paths from "@/lib/web4-items/paths.cjs"
 import { getService } from "@/lib/microservices/registry"
+import secrets from "@/lib/node/person-secrets.cjs"
 
 // ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ ЯДРА И ЭЛЕМЕНТА (шаг 336-1). Слово владельца 2026-09-29: «разработать вкладку переменных окружений
 // таким образом чтобы каждое поле также было возможно прокрутить до нужного места»; о ключе OpenAI: «если в ядре уже есть
@@ -104,7 +105,20 @@ export function readVar(target: EnvTarget, name: string): string {
  */
 export function writeVar(target: EnvTarget, name: EditableName | StripeName, value: string): boolean {
   const dir = targetDir(target)
-  if (!dir) return false
+  return dir ? writeLine(dir, name, value) : false
+}
+
+/**
+ * 768: a key the person typed in the action window for an ELEMENT's own account — only into that element's file, only a name
+ * `person-secrets.cjs` allows, only a value it allows (the line it makes). Never the core: its keys have their own screens.
+ */
+export function writeElementSecret(element: string, name: string, value: string): boolean {
+  if (element === "core" || secrets.nameRefusal(name) || secrets.valueRefusal(value)) return false
+  const dir = targetDir(element)
+  return dir ? writeLine(dir, name, secrets.envValue(value)) : false
+}
+
+function writeLine(dir: string, name: string, value: string): boolean {
   const file = localFile(dir)
   let raw = ""
   try { raw = readFileSync(file, "utf8") } catch { /* нового файла нет */ }

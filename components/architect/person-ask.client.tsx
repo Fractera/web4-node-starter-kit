@@ -79,6 +79,15 @@ export function PersonAsk({ url, ui }: { url: string; ui: PersonAskUi }) {
     }
   }, [url, ui, asks])
 
+  // 768: a secret saved by its own field — the door already closed the request; the card only lets it go
+  const saved = useCallback((a: Ask) => {
+    const rest = asks.filter((x) => x.id !== a.id)
+    known.current.delete(a.id)
+    setAsks(rest)
+    setIndex((i) => Math.min(i, Math.max(0, rest.length - 1)))
+    if (rest.length === 0) setOpen(false)
+  }, [asks])
+
   if (asks.length === 0) return null
   const ask = asks[Math.min(index, asks.length - 1)]
   const label = ui.waiting.replace("{n}", String(asks.length))
@@ -98,7 +107,7 @@ export function PersonAsk({ url, ui }: { url: string; ui: PersonAskUi }) {
           className="w-[min(28rem,calc(100vw-2rem))] border-l-4 border-l-warning p-4 shadow-xl"
           onOpenAutoFocus={(e) => e.preventDefault()}
           onPointerEnter={() => setTouched(true)} onFocusCapture={() => setTouched(true)}>
-          <PersonAskCard ask={ask} index={Math.min(index, asks.length - 1)} total={asks.length} ui={ui} busy={busy}
+          <PersonAskCard ask={ask} index={Math.min(index, asks.length - 1)} total={asks.length} ui={ui} busy={busy} url={url} onSaved={saved}
             onStep={(d) => { setTouched(true); setIndex((i) => (i + d + asks.length) % asks.length) }}
             onCollapse={() => setOpen(false)} onDone={(a) => { void done(a) }} />
         </PopoverContent>

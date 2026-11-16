@@ -83,5 +83,38 @@ t('761-16e own domain connected: the link opens anywhere, no «this computer» m
   assert.equal(tg.linkFor(tmp, { by: 'root', href: null }, 'en').local, true, 'a zone not activated yet is not the address')
 })
 
+const sec = req(join(ROOT, 'lib', 'node', 'person-secrets.cjs'))
+t('768 names: an element\'s own key passes; the node\'s keys, the sign-in\'s, NEXT_PUBLIC_, Stripe, OpenAI and Anthropic are refused with a reason', () => {
+  assert.equal(sec.nameRefusal('EXA_API_KEY'), null)
+  assert.equal(sec.nameRefusal('LINKEDIN_CLIENT_ID'), null)
+  for (const [n, why] of [['SETTINGS_SECRET', 'node-key'], ['ELEMENT_KEY', 'node-key'], ['AUTH_SECRET', 'node-key'], ['NEXTAUTH_URL', 'node-key'], ['NODE_DOMAIN_FILE', 'node-key'],
+    ['ANTHROPIC_API_KEY', 'node-key'], ['NEXT_PUBLIC_MAP_KEY', 'baked-into-build'], ['STRIPE_SECRET_KEY', 'own-screen-stripe'], ['OPENAI_API_KEY', 'own-screen-openai'],
+    ['exa_api_key', 'bad-name'], ['A', 'bad-name'], ['', 'bad-name']]) assert.equal(sec.nameRefusal(n), why, n)
+})
+t('768 values: one line of printable ASCII; spaces, quotes, line breaks, non-ASCII and the empty refused; # is quoted; a tail only for a long value', () => {
+  assert.equal(sec.valueRefusal('exa-0123456789abcdef'), null)
+  for (const [v, why] of [['', 'empty'], ['a b', 'space'], ['ab"c', 'quote'], ["ab'c", 'quote'], ['a\\b', 'quote'], ['a\nb', 'line-break'], ['ключ', 'not-ascii'], ['x'.repeat(4097), 'too-long']]) assert.equal(sec.valueRefusal(v), why, JSON.stringify(v))
+  assert.equal(sec.envValue('abc#def'), '"abc#def"')
+  assert.equal(sec.envValue('abcdef'), 'abcdef')
+  assert.equal(sec.tail('exa-0123456789abcdef'), 'cdef')
+  assert.equal(sec.tail('short-pass'), null, 'a short password keeps no tail')
+})
+t('768 a request keeps the name, never a value; the core asks no env key; only the main agent asks a server root password', () => {
+  const a = asks.add(tmp, { text: 'Введите ключ Exa', by: 'root', secret: { kind: 'env', name: 'EXA_API_KEY', where: 'https://dashboard.exa.ai/api-keys' } })
+  assert.deepEqual(a.secret, { kind: 'env', name: 'EXA_API_KEY', where: 'https://dashboard.exa.ai/api-keys' })
+  assert.throws(() => asks.add(tmp, { text: 'x', by: 'root', secret: { name: 'SETTINGS_SECRET' } }), /node-key/)
+  assert.throws(() => asks.add(tmp, { text: 'x', by: 'build', secret: { kind: 'env', name: 'EXA_API_KEY' } }), /own screens/)
+  assert.throws(() => asks.add(tmp, { text: 'x', by: 'root', secret: { kind: 'server-root', host: '109.199.105.213' } }), /only by the main agent/)
+  const r = asks.add(tmp, { text: 'Пароль root', by: 'build', secret: { kind: 'server-root', host: '109.199.105.213' } })
+  assert.deepEqual(r.secret, { kind: 'server-root', host: '109.199.105.213', port: 22 })
+  const words = asks.secretDoneText(a, { tail: 'cdef', restarted: true })
+  assert.ok(words.includes('EXA_API_KEY') && words.includes('…cdef') && !words.includes('0123456789'), words)
+})
+t('768 Telegram: a secret request carries no «Готово» and says it is typed only in the window', () => {
+  const m = tg.message({ id: 'cd34ef56', text: 'Введите ключ Exa', secret: { kind: 'env', name: 'EXA_API_KEY' } }, 'ru')
+  assert.ok(m.text.includes('в окне на компьютере') && m.text.includes('не присылайте'), m.text)
+  assert.deepEqual(m.keyboard, { remove_keyboard: true })
+})
+
 rmSync(tmp, { recursive: true, force: true })
 console.log(process.exitCode ? `===PERSON_ASKS_FAILED=== ${passed} passed` : `===PERSON_ASKS_OK=== ${passed} passed`)

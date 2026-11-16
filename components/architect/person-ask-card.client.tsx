@@ -6,8 +6,10 @@ import { toast } from "sonner"
 import { ChevronLeft, ChevronRight, Copy } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import type { PersonAskUi } from "./person-ask.i18n"
+import { PersonAskSecret } from "./person-ask-secret.client"
 
-export type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; copy?: string | null; byName?: string | null }
+export type AskSecret = { kind: "env" | "server-root"; name?: string; where?: string | null; host?: string; port?: number }
+export type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; copy?: string | null; byName?: string | null; secret?: AskSecret | null }
 
 type Props = {
   ask: Ask
@@ -15,14 +17,16 @@ type Props = {
   total: number
   ui: PersonAskUi
   busy: boolean
+  url: string
   onStep: (delta: number) => void
   onCollapse: () => void
   onDone: (a: Ask) => void
+  onSaved: (a: Ask) => void
 }
 
 // The card is the one thing the person came for: the request's words lead (medium, foreground), the by-line and the reason are muted,
 // the hint carries the warning stripe — the only orange inside the card besides the «!», so the colour keeps its meaning.
-export function PersonAskCard({ ask, index, total, ui, busy, onStep, onCollapse, onDone }: Props) {
+export function PersonAskCard({ ask, index, total, ui, busy, url, onStep, onCollapse, onDone, onSaved }: Props) {
   const copy = () => {
     void navigator.clipboard.writeText(ask.copy ?? "").then(() => toast.success(ui.copied), () => toast.error(ui.failed))
   }
@@ -51,6 +55,8 @@ export function PersonAskCard({ ask, index, total, ui, busy, onStep, onCollapse,
           </span>
         )}
       </div>
+      {/* 768: a secret is typed here and «Сохранить» closes the request — no «Готово» without it */}
+      {ask.secret && <PersonAskSecret ask={ask} ui={ui} url={url} onSaved={onSaved} />}
       <div className="flex flex-wrap items-center justify-end gap-2" data-block="person-ask-actions">
         <Button type="button" variant="ghost" size="sm" onClick={onCollapse}>{ui.collapse}</Button>
         {ask.href && (
@@ -58,7 +64,7 @@ export function PersonAskCard({ ask, index, total, ui, busy, onStep, onCollapse,
             ? <Link href={ask.href} className={buttonVariants({ variant: "outline", size: "sm" })}>{ui.open}</Link>
             : <a href={ask.href} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "outline", size: "sm" })}>{ui.open}</a>
         )}
-        <Button type="button" size="sm" disabled={busy} onClick={() => onDone(ask)} data-person-ask-done>{ui.done}</Button>
+        {!ask.secret && <Button type="button" size="sm" disabled={busy} onClick={() => onDone(ask)} data-person-ask-done>{ui.done}</Button>}
       </div>
     </div>
   )

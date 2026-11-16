@@ -9,6 +9,9 @@ import { elementName } from "@/lib/web4-items/dashboard-rows"
 import asks from "@/lib/node/person-asks.cjs"
 import nodeLine from "@/lib/agent-kit/node-line.cjs"
 import asksTg from "@/lib/node/person-asks-telegram.cjs"
+import secrets from "@/lib/node/person-secrets.cjs"
+import { writeElementSecret } from "@/lib/env-file"
+import { restartService } from "@/lib/domain/resident"
 
 // ДЕЙСТВИЕ ЧЕЛОВЕКА (узел, шаг 761-16). GET — открытые запросы (главного агента — `npm run ask-person` ядра; агента элемента — его
 // `npm run ask-person`, 761-16d), их показывает окно внизу каждой страницы пульта с именем элемента; POST `{ id }` — человек нажал
@@ -19,7 +22,8 @@ export const dynamic = "force-dynamic"
 
 const ROOT = process.cwd()
 const noStore = { headers: { "Cache-Control": "no-store" } }
-type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; copy?: string | null; by?: string; at: string; tg?: { via: string; sent: number } | null }
+type Secret = { kind: "env" | "server-root"; name?: string; where?: string | null; host?: string; port?: number }
+type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; copy?: string | null; by?: string; secret?: Secret; at: string; tg?: { via: string; sent: number } | null }
 type Wake = (service: string, opts: { text?: string; from?: string; confirmed?: boolean }) => Promise<Record<string, unknown> & { ok: boolean }>
 
 function nodeKeyOk(given: string | null): boolean {
@@ -38,23 +42,24 @@ export async function GET(req: NextRequest) {
   const denied = await requireRoles(req, ["architect", "admin"])
   if (denied) return denied
   const lang = lang2(req)
-  const list = (asks.open(ROOT) as Ask[]).map(({ id, text, href, why, hint, copy, by, at }) => ({
+  const list = (asks.open(ROOT) as Ask[]).map(({ id, text, href, why, hint, copy, by, secret, at }) => ({
     // 761-16e: a request without a page opens the asking element's page («Открыть» in the beacon), the main agent's — none
     id, text, href: href ?? (by && by !== "build" ? `/${lang}/${by}` : null), why, hint: hint ?? null, copy: copy ?? null, at, by: by ?? "build", byName: by && by !== "build" ? elementName(by, lang) : null,
+    secret: secret ?? null,
   }))
   return NextResponse.json({ ok: true, asks: list }, noStore)
 }
 
 /** An element agent's own requests: put, drop or list — with the node key and its id (761-16d). */
 async function fromElement(req: NextRequest) {
-  let body: { from?: unknown; text?: unknown; href?: unknown; why?: unknown; hint?: unknown; copy?: unknown; drop?: unknown; done?: unknown; list?: unknown }
+  let body: { from?: unknown; text?: unknown; href?: unknown; why?: unknown; hint?: unknown; copy?: unknown; secret?: unknown; drop?: unknown; done?: unknown; list?: unknown }
   try { body = await req.json() } catch { return NextResponse.json({ ok: false, reason: "invalid JSON" }, { status: 400, ...noStore }) }
   const from = typeof body.from === "string" ? body.from.trim() : ""
   if (from === "build" || !known(from)) return NextResponse.json({ ok: false, reason: "from must be an element of this node" }, { status: 400, ...noStore })
   if (body.list === true) return NextResponse.json({ ok: true, asks: (asks.open(ROOT) as Ask[]).filter((a) => a.by === from) }, noStore)
   // 761-16b: the person answered «Готово · <id>» in Telegram and the element's running agent got it — it closes its own request, no wake
   if (typeof body.done === "string") {
-    const mine = (asks.open(ROOT) as Ask[]).some((a) => a.id === body.done && a.by === from)
+    const mine = (asks.open(ROOT) as Ask[]).some((a) => a.id === body.done && a.by === from && a.secret?.kind !== "env")
     const out = mine ? (asks.done(ROOT, body.done) as Ask | null) : null
     return NextResponse.json({ ok: true, done: !!out, ...(out ? {} : { already: true }) }, noStore)
   }
@@ -64,7 +69,9 @@ async function fromElement(req: NextRequest) {
     return NextResponse.json({ ok: !!out, ...(out ? {} : { reason: "no open request of yours with this id" }) }, { status: out ? 200 : 404, ...noStore })
   }
   try {
-    const a = asks.add(ROOT, { text: body.text, href: str(body.href), why: str(body.why), hint: str(body.hint), copy: str(body.copy), by: from }) as Ask
+    // 768: `secret: { name, where? }` — a key of this element's own account, typed by the person in the window; refused names say why
+    const secret = body.secret && typeof body.secret === "object" ? { ...(body.secret as Record<string, unknown>), kind: "env" } : null
+    const a = asks.add(ROOT, { text: body.text, href: str(body.href), why: str(body.why), hint: str(body.hint), copy: str(body.copy), by: from, secret }) as Ask
     const t = await asksTg.announce(ROOT, a, elementName(from, "ru"))
     if (t.sent) asks.setTg(ROOT, a.id, { via: t.via, sent: t.sent })
     console.log(`[node/person-asks] ${from} put ${a.id}; telegram: ${t.detail}`)
@@ -83,10 +90,27 @@ export async function POST(req: NextRequest) {
   if (isTemporaryPublicAddress(req)) return NextResponse.json({ ok: false, reason: "temporary address" }, { status: 403, ...noStore })
   const denied = await requireRoles(req, ["architect", "admin"])
   if (denied) return denied
-  let body: { id?: unknown }
+  let body: { id?: unknown; secret?: unknown }
   try { body = await req.json() } catch { return NextResponse.json({ ok: false, reason: "invalid JSON" }, { status: 400, ...noStore }) }
   const id = typeof body.id === "string" && /^[a-f0-9]{8}$/.test(body.id) ? body.id : null
   if (!id) return NextResponse.json({ ok: false, reason: "id required" }, { status: 400, ...noStore })
+  // 768: an element's key typed in the window — written into ITS key file, its process restarted, then the request closes as «Готово».
+  // The value is checked, written and dropped here: never logged, never answered back, never in the request's file.
+  let saved: { tail: string | null; restarted: boolean } | null = null
+  const pending = (asks.open(ROOT) as Ask[]).find((x) => x.id === id) ?? null
+  if (pending?.secret?.kind === "env") {
+    if (typeof body.secret !== "string") return NextResponse.json({ ok: false, reason: "secret required" }, { status: 400, ...noStore })
+    const value = body.secret.trim()
+    const bad = secrets.valueRefusal(value) as string | null
+    if (bad) return NextResponse.json({ ok: false, reason: bad }, { status: 400, ...noStore })
+    const owner = pending.by && pending.by !== "build" && known(pending.by) ? pending.by : null
+    if (!owner || !writeElementSecret(owner, pending.secret.name ?? "", value)) {
+      console.log(`[node/person-asks] ${id} secret ${pending.secret.name} → ${owner ?? "?"}: not written`)
+      return NextResponse.json({ ok: false, reason: "not-written" }, { status: 500, ...noStore })
+    }
+    saved = { tail: secrets.tail(value) as string | null, restarted: restartService(`fractera-svc-${owner}`) }
+    console.log(`[node/person-asks] ${id} secret ${pending.secret.name} → ${owner}: written, restarted ${saved.restarted}`)
+  }
   const a = asks.done(ROOT, id) as Ask | null
   if (!a) return NextResponse.json({ ok: true, already: true }, noStore)
   // the one who asked wakes: the main agent (`build`) or the element whose agent put the request
@@ -97,10 +121,11 @@ export async function POST(req: NextRequest) {
     // an element's bridge routes by the first word: «Working process:» — its work session, never a new build session (✗ 15:23 live:
     // the bare line opened root's build session); the main agent is woken in its own conversation as it is
     const lead = who === "build" ? "" : "Working process: "
-    const out = await wake(who, { text: `${lead}${nodeLine.head("person-done", who)}${asks.doneText(a)}`, from: "node", confirmed: true })
+    const words = a.secret ? asks.secretDoneText(a, saved ?? {}) : asks.doneText(a)
+    const out = await wake(who, { text: `${lead}${nodeLine.head("person-done", who)}${words}`, from: "node", confirmed: true })
     woke = out.ok ? "ok" : String(out.reason ?? "refused")
   }
   const tg = await asksTg.closed(ROOT, a).catch((e: unknown) => String(e))
   console.log(`[node/person-asks] ${id} done → ${who}: ${woke} · telegram: ${tg}`)
-  return NextResponse.json({ ok: true, woke, who }, noStore)
+  return NextResponse.json({ ok: true, woke, who, ...(saved ? { saved: true, restarted: saved.restarted } : {}) }, noStore)
 }

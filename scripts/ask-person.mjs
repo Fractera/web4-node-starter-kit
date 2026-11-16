@@ -1,5 +1,6 @@
 // npm run ask-person -- "<what to do, in the person's language>" [--href </ru/…|https://…>] [--why "<why only the person>"]
 //   [--hint "<what may pop up on the way and what to press>"] [--copy "<a command the person pastes — the window gives it a copy button>"]
+//   [--secret server-root --host <ip> [--port 22]]   768: the person types the server's root password in the window's masked field
 // npm run ask-person -- list | drop <id> | done <id>   (done: the person answered «Готово · <id>» in Telegram — you close it, no wake)
 // Node step 761-16: a step needs the person's own hands — the request shows at the bottom of every page of the panel until «Готово»,
 // and that press wakes you with the node line `person-done`. Never a chat line instead (the owner, 2026-11-16).
@@ -20,6 +21,8 @@ if (args[0] === 'list') {
 } else if (args[0] === 'done') {
   // the person pressed «Готово · <id>» in Telegram and it reached you as their message: close it here (you are awake — no wake)
   const id = tg.doneId(args.slice(1).join(' ')) ?? args[1] ?? ''
+  // 768: a key is saved only by the window's field — «Готово» without it would close the request with nothing written
+  if (asks.open(ROOT).find((x) => x.id === id)?.secret?.kind === 'env') { console.log(`===ASK_REFUSED=== ${id} waits for a key typed in the window — it closes itself when the person saves it`); process.exit(1) }
   const a = asks.done(ROOT, id)
   const sent = a ? await tg.closed(ROOT, a, 'taken').catch((e) => String(e)) : null
   console.log(a ? `===ASK_DONE=== ${a.id} «${a.text}» — the window is closed (telegram: ${sent}); check the result yourself, then go on` : `===ASK_ALREADY=== ${id} is not open (closed in the panel already, or unknown) — tell the person it was already done`)
@@ -33,11 +36,18 @@ if (args[0] === 'list') {
   const why = flag('--why')
   const hint = flag('--hint')
   const copy = flag('--copy')
+  // 768: the root password of a server, typed by the person in the window and posted by their browser to the launch door
+  const secretKind = flag('--secret')
+  const host = flag('--host')
+  const port = flag('--port')
   try {
-    const a = asks.add(ROOT, { text: args.join(' '), href, why, hint, copy })
+    if (secretKind && secretKind !== 'server-root') throw new Error(`--secret ${secretKind}: the main agent asks only server-root (--host <ip> [--port 22]); an element's key is asked by that element`)
+    const secret = secretKind ? { kind: 'server-root', host, port: port ? Number(port) : 22 } : null
+    const a = asks.add(ROOT, { text: args.join(' '), href, why, hint, copy, secret })
     const t = await tg.announce(ROOT, a)
     if (t.sent) asks.setTg(ROOT, a.id, { via: t.via, sent: t.sent })
-    console.log(`===ASK_PUT=== ${a.id} — shown at the bottom of every panel page until «Готово»; the press wakes you (person-done).${t.sent ? ` Also sent to Telegram (${t.detail}): their reply «Готово · ${a.id}» comes to you as a message — then npm run ask-person -- done ${a.id}.` : ' No Telegram bot: the window alone.'} Say one line to the person that the window waits for them.`)
+    const how = a.secret ? ' The person types the password in the window\'s masked field (never in a chat); their browser opens the visit, and «Сохранить» wakes you (person-done).' : ''
+    console.log(`===ASK_PUT=== ${a.id} — shown at the bottom of every panel page until «Готово»; the press wakes you (person-done).${how}${t.sent ? ` Also sent to Telegram (${t.detail})${a.secret ? ' without a «Готово» button: a secret is typed only in the window' : `: their reply «Готово · ${a.id}» comes to you as a message — then npm run ask-person -- done ${a.id}`}.` : ' No Telegram bot: the window alone.'} Say one line to the person that the window waits for them.`)
   } catch (e) {
     console.log(`===ASK_REFUSED=== ${e instanceof Error ? e.message : e}`)
     process.exitCode = 1
