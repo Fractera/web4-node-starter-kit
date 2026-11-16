@@ -7,7 +7,7 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Active steps:** 769 — in code (new-steps/769-the-launch-access-before-the-check.md), live R2 after the build; next — the Telegram Mini Apps plan (the owner's topic 20:56, «Го» 21:24 = 769 first, then the plan); 761-13 the fresh launch; 1 — the first launch.
 
-**Last change:** 2026-11-16 21:40 UTC — 769 in code; hosting-launch 22 ✓ + the pre-existing ✗ («the claim goes server door …»); the first prebuild RC=1 (PARTS.json stale) caught by reading RC — map rebuilt, prebuild RC=0; the core REBUILD STARTED (detached).
+**Last change:** 2026-11-16 21:42 UTC — the core back (REBUILD_RC=0 21:40, build e3c519fe); git clean, no restore since 20:30 (770 holds the third return). R2 started: request 2c3422c4 (server-root, 109.199.105.213) in the window; Telegram got the reminder without a button. Waiting for the owner's password and his look (spinner, closes, step 2).
 
 **Next action:** after core-back — git status clean? then R2 live: close the server access (the page's «Закрыть доступ» or the door `close` from the owner's browser), put `npm run ask-person -- … --secret server-root --host 109.199.105.213`, the owner types root in the window → «Проверяю сервер…» → closes, step 2 opens. Then the Mini Apps plan.
 
