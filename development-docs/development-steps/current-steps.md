@@ -9,7 +9,7 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Last change:** 2026-11-16 13:35 UTC — the fresh session ran `npm run prebuild` alone first: two guards refused d55b5f17 (check:node-lines — `greetText` began with «Node:» though the server puts the `moved` head; check:words — «blocks»/«block» in the tests) → fixed 468400d6, prebuild RC=0, test:hosting-launch 22 ✓ + the pre-existing ✗; the core REBUILD STARTED 13:36 UTC (detached).
 
-**Next action:** core back 13:44 (build 9313c5d3, builtAt 13:38, 42/42 static 200 ✅ R1); system part restored AGAIN 13:44 → checkout, seal OK ✅ R2. T4–T6: the Chrome tab (new tab group) has NO launch access — no cookie, no remembered IP (cause not found: another window/profile?) — the IP typed, waiting for the owner to type the root password, then «Проверить сервер».
+**Next action:** 761-16 committed 1c03113c (the bottom action window, `npm run ask-person`, node line `person-done`); the core REBUILD STARTED ~14:15 UTC. On core-back: serve:status, git status (CLAUDE.md, the skills dedicated-server AND help-in-browser come back from the release — checkout), then A1–A5 by myself (put a test request, see it on 3 pages, press «Готово» in Chrome → I wake), then T4–T6 THROUGH the window: this Chrome window has no Telegram Web sign-in and no launch access (the owner typed the password ~13:55; step 5 seen live: orange «!», «Claude Code на сервере не вошёл», «Войти на сервере» ✅ part of T4).
 
 ## Letter to my next session (written 2026-11-16 ~13:25 UTC, the window at 59 %)
 
