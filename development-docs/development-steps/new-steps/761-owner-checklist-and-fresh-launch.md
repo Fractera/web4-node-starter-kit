@@ -105,3 +105,7 @@ keyboard (dark theme not checked), A4 only the negative half. The owner, 14:12: 
   closes the same request through the core) and the words «нужно сделать на компьютере» when the act needs the computer; a press in
   either place closes both. Not built — and this node's main agent has no bot yet, so nothing could come today.
 - [ ] 761-16c The window's own look (the owner's «special design»): to be agreed.
+- [ ] 761-17 Step 5 asks Telegram itself (getMe with the server's token, on the server) whenever the step is read: a bot deleted in
+  BotFather is said in words with the way back (make a new one on this step), never «подключён». Found 2026-11-16 14:15: the owner deleted
+  @fractera_ai_server_bot «для полного тестирования» at 13:14; the page still said «Бот подключён»; t.me answers as for a free name.
+- T4–T6 (761-1) move into the fresh launch 761-13: a new bot on step 5, /start, «Войти на сервере», the greeting.
