@@ -87,7 +87,7 @@ export function ViewportBadge() {
       aria-hidden
       data-node-place={place ?? undefined}
       className={cn(
-        "pointer-events-none fixed bottom-4 left-4 z-50 flex size-20 select-none flex-col items-center justify-center rounded-full border shadow-lg backdrop-blur-sm",
+        "pointer-events-none fixed bottom-16 left-4 z-50 flex size-20 select-none flex-col items-center justify-center rounded-full border shadow-lg backdrop-blur-sm",
         place ? PLACE[place].tone : "border-white/30 bg-white/30 text-black",
       )}
     >

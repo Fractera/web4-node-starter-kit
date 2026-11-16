@@ -200,3 +200,8 @@ L1 bdcf2a6f (by root) accepted by Telegram, both links 200. After the build: the
 761-16e proven after the build (core 1ab0b124, 16:58): the door gives bdcf2a6f (by root, no page) href /ru/root; the beacon shows «Главный
 сайт просит:» and «Открыть»; a click lands on «Главный сайт | Fractera» (200, console clean, logs/eyes/16e-*.png); dropped → «telegram: ok».
 Open: whether Telegram makes the localhost links clickable — Рома's eyes.
+
+763-a (defect found 2026-11-16 17:01 on the owner's screenshot): the PC/VPS badge (bottom-4, 16–96 px from the bottom) covered «© 2026
+Fractera» of the footer (text 42–59 px from the bottom when scrolled to the end; footer 91 px). The owner offered +12 px — measured not
+enough (28–108 still covers); «Поднимай на 48 пикселей я согласен» → bottom-16 (64 px). Proof after the build: badge bottom edge above
+the footer text top, page scrolled to the end.
