@@ -1,7 +1,7 @@
-// «УПРАВЛЕНИЕ БРАУЗЕРОМ ЧЕРЕЗ TELEGRAM» — the closed block on the main agent's page «Telegram-бот» (node step 767-6). The owner,
+// «УПРАВЛЕНИЕ БРАУЗЕРОМ ЧЕРЕЗ TELEGRAM» — the closed section on the main agent's page «Telegram-бот» (node step 767-6). The owner,
 // 2026-11-16: «На вкладке настройках в Telegram бот сделай отдельный раздел управления браузером через Telegram. Показывай его как
-// информационный блок аккордеон закрытым при раскрытии опиши как именно происходит управление браузером через Telegram что для этого
-// нужно и что пользователь может из этого извлечь». Every sentence was measured with him on 2026-11-16 (17:30–17:55): AppleScript brings
+// … аккордеон закрытым при раскрытии опиши как именно происходит управление браузером через Telegram что для этого нужно и что
+// пользователь может из этого извлечь». Every sentence was measured with him on 2026-11-16 (17:30–17:55): AppleScript brings
 // a tab of any Chrome profile forward after one OK in macOS's Automation window; acting inside a page is the Claude extension.
 
 type Part = { title: string; items: string[] }
