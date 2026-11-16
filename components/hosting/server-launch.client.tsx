@@ -186,7 +186,8 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
             <div><Button disabled={busy || !form.password} onClick={() => void connect(changed.seen)} size="sm" variant="destructive">{words.changed.trust}</Button></div>
           </div>
         ) : null}
-        {error && !changed ? <Small className="text-destructive" data-block="server-launch-error">{error}</Small> : null}
+        {/* 761-16: «no access» is the person's action, not a failure — an orange card with «!» (the owner: a window you cannot miss) */}
+        {error && !changed ? (error === words.errors["need-password"] ? <Small role="alert" className="rounded-md border border-warning/50 bg-warning/10 px-3 py-2 font-medium text-foreground" data-block="server-launch-need-hands">! {error}</Small> : <Small className="text-destructive" data-block="server-launch-error">{error}</Small>) : null}
         <div className="flex flex-wrap items-center gap-3">
           <Button disabled={busy || !form.host.trim()} onClick={() => void connect()}>{words.connect}</Button>
           {busy ? <Small className="text-muted-foreground">{words.connecting}</Small> : null}

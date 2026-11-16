@@ -6,6 +6,8 @@ import { AllProjects } from "@/components/architect/all-projects.client";
 import { coreShellData } from "@/lib/shell/core-shell-data";
 import { menuSearchWords } from "@/components/architect/menu-search.i18n";
 import { appDialogUi } from "@/components/dialog/app-dialog.i18n";
+import { PersonAsk } from "@/components/architect/person-ask.client";
+import { personAskUi } from "@/components/architect/person-ask.i18n";
 
 // ШАПКА СТРАНИЦ АРХИТЕКТОРА — СВОЯ (узел, шаг 553). Вид — `components/shell/` (копия сайта байт в байт, `npm run shell-kit:add`,
 // сторож `check:shell-kits`); данные — `lib/shell/core-shell-data.ts`: имя и логотип ядра, «Все проекты» (островок после логотипа),
@@ -18,6 +20,9 @@ export function TopMenu({ lang }: { lang: string }) {
   const leftHas = slotHasGroups("left", lang);
   const rightHas = slotHasGroups("right", lang);
   return (
+    <>
+    {/* 761-16: the main agent's action request — at the bottom of every architect page (the owner: the top is full). */}
+    <PersonAsk url="/api/node/person-asks" ui={personAskUi(lang)} />
     <ProjectHeader
       data={data}
       // 356-1: только ядро знает, что ждёт архитектора, — открытые терминалы и готовые предпросмотры.
@@ -26,5 +31,6 @@ export function TopMenu({ lang }: { lang: string }) {
       leftSlot={leftHas ? <DrawerToggle side="left" labels={{ open: ui.openLeft, close: ui.closeLeft }} /> : undefined}
       rightSlot={rightHas ? <DrawerToggle side="right" labels={{ open: ui.openRight, close: ui.closeRight }} /> : undefined}
     />
+    </>
   );
 }

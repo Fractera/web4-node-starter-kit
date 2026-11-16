@@ -78,3 +78,20 @@ agent is woken with one first task: greet the person in Telegram, naming the sit
 
 761-1…761-5 first — they change what the fresh launch shows; then 761-13 with the owner; 761-6, 761-7 on the way when the domain step
 meets them; 760-2…760-7 and 761-8…761-12 after.
+
+## 761-16 (first part) — the person's action request, at the bottom of the screen (approved 2026-11-16 ~13:55 UTC)
+
+The owner: «уведомление на экране которое невозможно пропустить в котором ты меня призываешь совершить определённое действие и подтвердить
+о его завершении» → «Да, строй так»; mid-build: «вся верхняя часть экрана очень сильно занята многими твоими инструментами поэтому очевидно
+уведомление лучше показывать снизу, add to plan».
+
+**Built.** `lib/node/person-asks.cjs` (data/node/person-asks.json) · `npm run ask-person` (put / list / drop) · door `/api/node/person-asks`
+(GET open, POST «Готово» → wakes the main agent with the node line `person-done`) · `components/architect/person-ask.client.tsx` in the
+architect header: the project's toast at the bottom right, orange, no timeout, «Открыть» + «Готово»; closed by × it comes back in a minute;
+fresh on page open, tab return and every 15 s while the tab is visible · the launch page: «no access» on step 1 is an orange «!» card,
+not red text · the skill `help-in-browser` names the command. Next part: the same window in every element (through the template).
+
+**Tests:** A1 the request seen on three panel pages and after a reload · A2 «Открыть» leads to the page; «Готово» wakes me, the
+confirmation is in the conversation · A3 after «Готово» it is gone everywhere; negative: no request — no window · A4 the launch page
+without access shows the orange card on step 1; with access none · A5 keyboard (Tab to «Готово», Enter) and both themes ·
+unit `test:person-asks` 5/5 (in the prebuild).
