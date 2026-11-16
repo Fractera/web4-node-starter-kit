@@ -30,7 +30,9 @@ never seen — is answered from the forces below, on the node's facts.
    its own — a bot with its own audience; the class of sleep — one must answer always while the other may sleep; the visibility in the
    network. One difference is enough. A rhythm, a schedule, a platform, an account, an API or a format is never one: a single hand
    keeps many of them — as routes, records and entries of its calendar (step 671; the owner, 2026-11-08: «чтобы подобные обновления …
-   не заставили нас тратить лишние расходы на бесполезные задачи»).
+   не заставили нас тратить лишние расходы на бесполезные задачи»). Several people never share one hand: an element per person, each
+   platform of theirs a route in it; a heavy tool they all use (images, video, montage) is the operator's own hand serving theirs in a
+   queue (step 765; the owner, 2026-11-16: «элемент Instagram и этим элементам пользуются Вася Петя Миша … это запрещенный сценарий»).
 6. **What recurs learns.** A one-off needs no memory. A recurring job gathers data, memory and numbers and gets better from them —
    they live in its hand.
 7. **Between people — the network, agent to agent.** Work between people — a service, an order, a purchase — goes through their agents

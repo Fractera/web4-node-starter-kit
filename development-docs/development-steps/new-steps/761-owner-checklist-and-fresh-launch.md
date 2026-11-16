@@ -148,16 +148,21 @@ Next (the plan of the following steps):
   лучше выпал кнопка скопировать команду если её нужно вернуть в терминал, also to plan» → `--copy` in the core: the window shows the
   command in mono with «Скопировать команду». [ ] the same flag in both templates' `ask-person` (next template release).
 
-## 765 — people × platforms: an element per person, shared heavy tools apart (the owner, 2026-11-16 ~16:15; plan, waits for his yes)
+## 765 — people × platforms: an element per person, shared heavy tools apart (the owner, 2026-11-16 ~16:15; «Твой выбор» 16:22 → built)
 
 The rule: an element per PERSON (partner, client) — their subscription sign-in, their accounts, their voices; every platform of theirs is a
 route inside it. A heavy shared tool (images, video editing, avatars, music) is its own element of the operator, serving the people's
 elements over i2i in a queue. Forbidden: an element per platform shared by several people. Where (token economy — loaded only when needed):
-- [ ] `shape-the-need` force 5: one sentence — several people with the same platforms: an element per person, never per platform; their
+- [x] `shape-the-need` force 5: one sentence — several people with the same platforms: an element per person, never per platform; their
   shared heavy tools — the operator's own elements, a queue.
-- [ ] `content-factory`: a section «Serving others» — the operator's tools, a person's element each, voices in the person's element, a queue.
-- [ ] `integrator`: one line pointing to it.
-- [ ] CLAUDE.md §4 «A request comes» — a clause in the existing sentence «never a rhythm, a platform or an account» → «… — and several people
+- [x] `content-factory`: a section «Serving others» — the operator's tools, a person's element each, voices in the person's element, a queue.
+- [x] `integrator`: one line pointing to it.
+- [x] CLAUDE.md §4 «A request comes» — a clause in the existing sentence «never a rhythm, a platform or an account» → «… — and several people
   never share one hand: an element each». No soul change (character, not method).
 - [ ] The queue of a shared tool (live order, per-element limits) — not built; named as a capability `need` when the first factory asks.
 - Proof: `check:shape-examples` (no case in the shaping path), `check:instruction` resealed, a dry run of the method on the owner's words.
+
+765 done 2026-11-16 ~16:30: T1 check:shape-examples OK (first wording «Never one element per platform» refused by the guard — a field
+skill names facts, the method the shape; rephrased as force 5/4 facts); T2 check:instruction FAIL before the seal (negative), sealed
+978249cf4bb3, OK; T3 the method read on the owner's words: force 5 now refuses one hand for many people, a heavy shared tool is force 4 —
+a read, not a model run; T4 +10 lines, all in skills loaded only with their field. The queue of a shared tool — not built (a `need`).

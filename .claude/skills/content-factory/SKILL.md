@@ -54,6 +54,12 @@ The owner, 2026-11-15: «если я всё-таки открою LinkedIn и п
   ways (skill `provider-rules`); never promise users automated likes, comments or browser posting.
 - Likes and comments on other people's posts: a morning digest in Telegram with links and draft comments; the person acts from the phone.
 
+## Serving others — partners, clients (step 765)
+- Each partner is another owner (force 5 of `shape-the-need`): their own subscription sign-in, accounts, voices and numbers; their
+  platforms are routes. Several people on one platform share nothing but the platform — the method never joins them.
+- Images, video, montage, avatars — heavy, reused by all, the operator's own (force 4): called over i2i in a live queue; the queue and
+  its limits are not built — a `need` when the first factory asks.
+
 ## How the work runs once the shape is chosen — one link at a time, each after the person's yes
 1. **The channels and the goal**, in the person's words: which networks, blogs, boards, forums; what the publications are for.
 2. **Whatever is new is born with its horizon** (`create-element`, its area and what it may grow into); a new job of a field a hand

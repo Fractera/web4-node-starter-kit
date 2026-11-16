@@ -28,6 +28,8 @@ One person who can drive the node is enough; everyone else only talks.
   invisible to them (`npm run role` when the role is missing).
 - **A bot is the person's door**: they make it in @BotFather on their phone and give its token to the architect; the element's Telegram
   page gives the invite link `t.me/<bot>?start=…` (`npm run telegram`).
+- **People never share one element**, even for the same platform; a heavy tool they all use is the architect's own element (step 765,
+  `content-factory` «Serving others»).
 - **Selling a service** joins Lagrix only at the person's word (`npm run web4`).
 
 ## How the work runs once the shape is chosen — one person at a time
