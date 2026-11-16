@@ -57,9 +57,9 @@ The owner, 2026-11-15: «если я всё-таки открою LinkedIn и п
 ## Serving others — partners, clients (step 765)
 - Each partner is another owner (force 5 of `shape-the-need`): their own subscription sign-in, accounts, voices and numbers; their
   platforms are routes. Several people on one platform share nothing but the platform — the method never joins them.
-- A partner most often needs a watch of their own (force 6, a clock in their hand): their own networks and the accounts they follow —
-  through official APIs and their own account only; where a platform gives no official read (LinkedIn feeds), say so and work from what
-  the person brings (the owner, 2026-11-16: «дозор который исследует их собственные сети и сети на кого они подписаны»).
+- What is the person's goes with the person: their list of networks and their watch — a research of anything, their own networks and
+  the accounts they follow first. What is heavy and shared stays apart: image and video generation, montage (the owner, 2026-11-16:
+  «сам факт что это в его или нет в отличие от например генерации видео и изображений»).
 - Images, video, montage, avatars — heavy, reused by all, the operator's own (force 4): called over i2i in a live queue; the queue and
   its limits are not built — a `need` when the first factory asks.
 
