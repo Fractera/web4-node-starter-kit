@@ -13,8 +13,12 @@ import type { LaunchStep, ServerLaunchWords } from "@/components/hosting/server-
 import type { ServerLadderWords } from "@/components/hosting/server-ladder.i18n"
 import { finalCheck, httpsDue, namesReady } from "@/lib/hosting/final-check.mjs"
 import { domainSteps, normalWay } from "@/lib/hosting/launch-domain.mjs"
+import { telegramSettled } from "@/lib/hosting/server-telegram.mjs"
 
-export const LAUNCH_ORDER: LaunchStep[] = ["server", "check", "domain", "install", "recheck", "certs", "ready"]
+// 758 (the owner, 2026-11-16: «Telegram может быть в пятым шагом то есть в тот момент когда идёт установка сервера у пользователя есть
+// время подключить Telegram»): step 4 is done once the installation RUNS, so step 5 opens beside it; step 5 is done when the bot is set
+// (or waits, or «later») AND the installation answers — so the records' second check still stands after a living node.
+export const LAUNCH_ORDER: LaunchStep[] = ["server", "check", "domain", "install", "telegram", "recheck", "certs", "ready"]
 
 /** The end of this browser's access to the server, in the person's own clock. */
 export const untilText = (iso: string) => new Date(iso).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" })
@@ -43,7 +47,8 @@ export function launchDone(s: LaunchState, strategy: Strategy): Record<LaunchSte
     // 744-4: nothing goes on while the server holds a state not related to this node — only its clear is open.
     check: Boolean(s.verdict) && s.verdict?.level !== "fail" && s.relation?.kind !== "unrelated",
     domain: Object.values(domainSteps(s.domain)).every(Boolean),
-    install: installedOf(s, strategy) && Boolean(s.core),
+    install: s.launch?.state === "running" || (installedOf(s, strategy) && Boolean(s.core)),
+    telegram: installedOf(s, strategy) && Boolean(s.core) && telegramSettled(s.telegram),
     recheck: Boolean(s.core?.steps.dns),
     // 744-9: one reading with the runner's gate — a certificate for every required name, HTTPS where it is due (`httpsDue`)
     certs: namesReady(s).ok,
@@ -73,7 +78,8 @@ export function launchSummary(s: LaunchState, target: { host: string; until: str
     domain: s.domain?.domain
       ? [s.domain.domain, way ? ladderWords.who.option[normalWay(way) as "dns" | "none"] : "", s.domain.from === "server" && s.domain.since ? fill(w.since, { date: dayText(s.domain.since) }) : "", pointed(s.domain.check?.results, w)].filter(Boolean).join(" · ")
       : undefined,
-    install: fill(w.install, { head }),
+    install: s.launch?.state === "running" ? w.installing : fill(w.install, { head }),
+    telegram: s.telegram?.configured ? fill(w.botOn, { bot: s.telegram.username ? `@${s.telegram.username}` : "" }) : s.telegram?.pending ? fill(w.botWaits, { tail: s.telegram.tail ?? "" }) : s.telegram?.skipped ? w.botLater : undefined,
     recheck: fill(w.recheck, count((r) => r.dns === "ok")),
     certs: fill(w.certs, count((r) => (r.cert === "ok" || r.cert === "expiring") && (r.https === true || !httpsDue(r)))),
   }

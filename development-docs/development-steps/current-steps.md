@@ -5,12 +5,12 @@ the person's decision (verbatim, at once), a fact that is expensive to measure a
 start of a long or irreversible operation (before it), a changed next action. How the steps are planned, proven and closed — skill
 `use-development-steps`.
 
-**Active steps:** 759 — the server's domain through the registrar only (code done, core rebuild next); 758 — the server's Telegram bot as step 5 (plan agreed: «Годится, делай, шаг 5 необязательный»); 1 — the first launch: the node is up, the person signs in to Claude Code, gets a Telegram bot and gives the first task
+**Active steps:** 758 — the server's Telegram bot as step 5 (code done, core rebuild next, then the live proof on 109.199.105.213); 759 — closed in code, live since 88f50496; 1 — the first launch: the node is up, the person signs in to Claude Code, gets a Telegram bot and gives the first task
 (`new-steps/1-first-launch-first-account-domain-telegram-task.md`).
 
 **Last change:** 2026-11-16 — the first task arrived from the node's home page (1-5): a family/team budget service. Fork proposed, waiting for the person's choice; nothing created yet.
 
-**Next action:** 759 is live in the core (build 88f50496). The server 109.199.105.213 answers: port 80, its node df53bcf4 started 00:32 — step 4 done. Waiting for the owner's yes to write fractera.ai's records in his Chrome (Cloudflare panel, where its DNS lives): `@` A → 109.199.105.213 DNS only (replaces the Vercel A 76.76.21.21), `*` A → the same, the www CNAME cname.vercel-dns.com (proxied) deleted; MX, TXT, CAA untouched. Then 758-1.
+**Next action:** after the core rebuild for 758: `npm run serve:status`; the owner opens the launch page (root password is his) — step 5 shows; his real bot proves 758-6 (the server's channel says configured, the greeting seen in Telegram). Still waiting for his yes: fractera.ai records in his Chrome (Cloudflare panel): `@` A → 109.199.105.213 DNS only (replaces Vercel 76.76.21.21), `*` A → same, delete www CNAME cname.vercel-dns.com (proxied). Push of the fixes: a clean branch from origin/main.
 
 ## The person's decisions (verbatim)
 
@@ -27,4 +27,5 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 - Telegram welcome: never an install step since 90281106 (2026-11-04, owner «Убрать оба»); the welcome comes after the person's /start of a bot made on build/telegram (267-3 code present). This node has no main-agent bot yet.
 - 2026-11-16, the owner: «куда пропал Telegram который должен был требовать … во время установки сервера». Found: the server's Telegram rung (737-11a e6961403: a bot of the server's own, token over SSH by stdin, greeting after admission) lived only in the move road; 738-7 (ff570015, 2026-11-14) removed that road with telegram.mjs and its door; the seven launch steps were built without it — step 7 only says «next, in the server's panel: subscription and Telegram bot». The owner chose step 5 — plan 758.
 - 759 proofs: tsc 0; test:hosting 76/76; test:launch-domain 4/4 (negative: an old Cloudflare answer never gives the removed way); test:hosting-launch 21 + 1 ✗ «the claim goes server door» — fails the same with my changes stashed (pre-existing, not 759); parts-map, parts-dup, shadcn-parts, dialogs, typography OK.
+- 758 proofs (code): tsc 0; test:hosting-launch — the step 5 case ✓ (negative: the token absent from the runner's output while its tail is present; 0600 on the server; handed to the node's channel door exactly once; a refused waiting token dropped and named), the claim case ✗ as before; ladder-rule 17/17 with the 758 case (running → step 5 open, step 6 locked); test:hosting 76/76; launch-domain 4/4; guards parts-map, parts-dup, shadcn-parts, shadcn-rules, typography, dialogs, api, lang-delivery, layout, contrast, static, steps, words, ready-words OK. CLAUDE.md §4 line on the dedicated server now says eight steps — resealed fb7f43db2885 (the owner's 758/759 words). The server side needs nothing new: its channel door exists since 267-3.
 

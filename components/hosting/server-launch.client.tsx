@@ -9,6 +9,7 @@ import type { CertRow, CertsRun } from "@/components/hosting/server-domain-certs
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import { CheckStep, strategyOf } from "@/components/hosting/server-launch-check.client"
 import { LaunchDomain } from "@/components/hosting/server-launch-domain.client"
+import { TelegramStep } from "@/components/hosting/server-launch-telegram.client"
 import { CertsLaunchStep, type ClaimShown, InstallStep, ReadyStep, RecheckStep } from "@/components/hosting/server-launch-end.client"
 import { LAUNCH_ORDER, launchDone, launchSummary, untilText } from "@/components/hosting/server-launch-rungs"
 import type { LaunchStep, ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
@@ -52,6 +53,8 @@ export type LaunchState = {
   preflight?: { at: string; verdict: { ok: boolean; conflicts?: string[]; reason?: string } | null } | null
   records: DnsZone[]
   week: number | null
+  /** 758: the server's own bot as the page may know it — never the token (`lib/hosting/server-telegram.mjs`) */
+  telegram?: { configured: boolean; pending: boolean; skipped: boolean; tail: string | null; username: string | null; name: string | null; allowed: number; rejected: string | null; live: boolean } | null
 }
 type Answer = { ok?: boolean; reason?: string; state?: LaunchState; fingerprint?: string; seen?: string | null; pinned?: string | null; cleared?: LaunchState["cleared"]; week?: number; want?: number; over?: string[]; visit?: { deadline: string } | null }
 /** 744-3: `until` — the end of this browser's access to the server (the server's own deadline); the key itself never reaches the page. */
@@ -144,7 +147,8 @@ export function ServerLaunch({ words, ladderWords, domainWords, dialogUi }: { wo
   }
 
   // While the server works (a launch, a certificate run), the page asks it every 5 s; otherwise it waits for a press.
-  const working = state?.launch?.state === "running" || Boolean(state?.core?.certsRun?.running)
+  // 758: a bot token that waits for the server's node keeps the page asking until the node takes it
+  const working = state?.launch?.state === "running" || Boolean(state?.core?.certsRun?.running) || Boolean(state?.telegram?.pending && !state?.core)
   useEffect(() => {
     if (!target || !working) return
     const t = setInterval(() => {
@@ -214,6 +218,7 @@ export function ServerLaunch({ words, ladderWords, domainWords, dialogUi }: { wo
     check: <CheckStep busy={busy} dialogUi={dialogUi} onAct={async (a, x) => { await act(a, x) }} state={state} words={words} />,
     domain: <LaunchDomain busy={busy} note={words.domainNote} onAct={act} state={state} words={ladderWords} />,
     install: <InstallStep busy={busy} onAct={act} state={state} strategy={strategy} words={words} />,
+    telegram: <TelegramStep busy={busy} onAct={act} state={state} words={words} />,
     recheck: <RecheckStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,
     certs: <CertsLaunchStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,
     ready: <ReadyStep busy={busy} claim={claim?.host === target.host ? claim : { code: null, claimed: false }} onAct={act} onClaim={(c) => setClaim({ ...c, host: target.host })} state={state} words={words} />,

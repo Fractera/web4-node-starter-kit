@@ -12,7 +12,7 @@ Everything below is plain code; you call it and read its marked line. No model i
 ## Where it lives
 
 - The page «Активация выделенного сервера» of the core (`/architect/hosting/hosting`): on the person's computer — the launch (empty on
-  every visit: the IP and the root password, then seven steps); on a server node — that server's own domain steps; on its bare IP — the
+  every visit: the IP and the root password, then eight steps); on a server node — that server's own domain steps; on its bare IP — the
   same steps read-only.
 - The door `/api/node/launch` (stateless: every call names the server) → the runner `scripts/dedicated-server/launch.mjs` (one act per
   call, awaited; the last line `===LAUNCH=== <json>`).
@@ -27,17 +27,18 @@ Everything below is plain code; you call it and read its marked line. No model i
   cannot reach a server by yourself — that is the design (the owner: «в случае взлома пользователи получит доступ ко всем серверам»).
   The SSH window (`npm run server -- window --ip`) asks the password in the person's own terminal.
 
-## The seven steps
+## The eight steps
 
 | Step | What runs | Done when |
 |---|---|---|
 | 1 the server | the root password → a visit of a day (`openVisit`: the line with the server's own deadline, proven by a second connection, the server's key pinned); a server without password login is named, never worked around | connected by the visit key; «Доступ до HH:MM» |
 | 2 check | `probe.sh` as root: system, memory (8 GB and 4 cores recommended — the owner's minimum), disk, ports, other sites, a Fractera install with its commit and «behind N» against Fractera's main (`git fetch` + `rev-list` on the server) | the judge says no «fail» and the verdict (744-4, `lib/hosting/relation.mjs`) is not «unrelated»: clean → install · related (this fork, never a 737 move) → update when its fork is ahead (behind = against ITS fork) or latest · unrelated (a move, another fork, another node, foreign sites or root programs) → only «Удалить прежнее состояние» (`clear.sh --node`: set aside whole in /root/fractera-cleared-…, never erased) |
-| 3 domain | the 737-19 ladder: the domain · where its DNS lives · who writes the records · the records (`@`, `*`, or each name) + a first check from public resolvers | chosen and checked once — the install never waits for DNS |
-| 4 installation | `launch.sh` as root, detached: prepare · source (clone of the fork + a fresh `.env.local` + check-origin + fresh-project) · install (`install.sh`) · mark · start (`start.sh live`) · version; an older install: prepare · `npm run node:update` there · mark · start · version | `launch.json` → `done` |
-| 5 records again | the server node's `dns-check` | every required name points to the server — the gate |
-| 6 certificates | the server node's `certs` (one per name, a failing name never stops the others), refused past Let's Encrypt's week (50 per domain, 5 per name); then `check` — HTTPS from the internet; the checklist name · DNS · certificate · HTTPS | every required name certified and answering by HTTPS |
-| 7 ready | the server node's `activate` (sign-in moves to `auth.<zone>`, nginx regenerated) and the sign-in check from the internet: `https://auth.<zone>/api/auth/providers` 200 and the architect pages redirect there | sign-in leads to `https://auth.<zone>` |
+| 3 domain | the 737-19 ladder: the domain · where its DNS lives · access to the registrar (759: the only way — the records by hand, no Cloudflare branch, no write by a key) · the records (`@`, `*`, or each name) + a first check from public resolvers | chosen and checked once — the install never waits for DNS |
+| 4 installation | `launch.sh` as root, detached: prepare · source (clone of the fork + a fresh `.env.local` + check-origin + fresh-project) · install (`install.sh`) · mark · start (`start.sh live`) · version; an older install: prepare · `npm run node:update` there · mark · start · version | it RUNS (758: step 5 opens beside it); its failure opens it again |
+| 5 the server's bot | 758, optional: a BotFather token → the runner's stdin → the server; before the node lives it waits in `/root/.fractera/telegram.json` (0600) and `readState` hands it to the node's channel door at its first answer; the page sees the tail, the bot's name, the invite link; «Позже» kept on the server | the bot set, its token waiting, or «later» — AND Fractera installed with its node answering |
+| 6 records again | the server node's `dns-check` | every required name points to the server — the gate |
+| 7 certificates | the server node's `certs` (one per name, a failing name never stops the others), refused past Let's Encrypt's week (50 per domain, 5 per name); then `check` — HTTPS from the internet; the checklist name · DNS · certificate · HTTPS | every required name certified and answering by HTTPS |
+| 8 ready | the server node's `activate` (sign-in moves to `auth.<zone>`, nginx regenerated) and the sign-in check from the internet: `https://auth.<zone>/api/auth/providers` 200 and the architect pages redirect there | sign-in leads to `https://auth.<zone>` |
 
 A reinstalled server shows a new key: the page names both fingerprints; the person types the password and trusts the key they saw
 (`--trust <fingerprint>`) — never whatever answers. A busy server (other nginx sites, another install's pm2): «Очистить» behind a dialog

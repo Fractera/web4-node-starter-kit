@@ -105,15 +105,15 @@ if (!esbuild) {
     host: '203.0.113.7', probe: { publicIp: '203.0.113.7', fractera: null }, relation: { kind: 'clean', nodeUnrelated: false, reasons: [] },
     verdict: { level: 'ok', items: [] }, launch: null, progress: [], sub: [], update: null, domain: null, mark: null, core: null, records: [], week: null, ...over,
   })
-  /** which of the seven steps are open on this state — the launch's own facts through the one rule */
+  /** which of the eight steps are open on this state — the launch's own facts through the one rule */
   const open = (s, strategy = 'install') => {
     const done = R.launchDone(s, strategy, false)
     const o = openOf(R.LAUNCH_ORDER.map((id) => ({ id, done: done[id] })))
     return Object.fromEntries(R.LAUNCH_ORDER.map((id, i) => [id, o[i]]))
   }
 
-  await t('the order: the domain stands before the installation, the installation before the second check (D46)', () => {
-    assert.deepEqual(R.LAUNCH_ORDER, ['server', 'check', 'domain', 'install', 'recheck', 'certs', 'ready'])
+  await t('the order: the domain before the installation, the server\'s bot fifth (758), the second check after them (D46)', () => {
+    assert.deepEqual(R.LAUNCH_ORDER, ['server', 'check', 'domain', 'install', 'telegram', 'recheck', 'certs', 'ready'])
   })
   await t('a checked clean server without a domain: step 3 open, the installation locked (✗ 738 opened it here)', () => {
     const o = open(server())
@@ -129,13 +129,23 @@ if (!esbuild) {
   await t('a domain without the answer where its records live (no name servers): the installation locked', () => {
     assert.equal(open(server({ domain: { domain: 'example.com', detect: { ...detect, dnsHost: 'none' }, way: 'dns', check: checked } })).install, false)
   })
-  await t('Fractera installed, the server\'s node silent: the second check locked; negative: the node answers → it opens', () => {
-    const ready = { domain: { domain: 'example.com', detect, way: 'dns', check: checked }, launch: { state: 'done' } }
-    assert.deepEqual([open(server(ready)).install, open(server(ready)).recheck], [true, false])
+  await t('Fractera installed, the server\'s node silent: the bot step and the second check locked; negative: the node answers and the bot is settled → the second check opens', () => {
+    const ready = { domain: { domain: 'example.com', detect, way: 'dns', check: checked }, launch: { state: 'done' }, telegram: { skipped: true } }
+    assert.deepEqual([open(server(ready)).install, open(server(ready)).telegram, open(server(ready)).recheck], [true, false, false])
     assert.equal(R.launchDone(server(ready), 'install', false).install, false)
     assert.equal(open(server({ ...ready, core: core() })).recheck, true)
     assert.equal(open(server({ ...ready, core: core() })).certs, false)
     assert.equal(open(server({ ...ready, core: core(true) })).certs, true)
+  })
+  await t('758 the bot step opens while the installation RUNS and closes only with a living node: running → step 5 open, step 6 locked even with a bot; a living node without an answer about the bot keeps step 5 open; a failed installation closes it again', () => {
+    const d = { domain: { domain: 'example.com', detect, way: 'dns', check: checked } }
+    const running = server({ ...d, launch: { state: 'running' }, telegram: { pending: true, tail: 'efgh' } })
+    assert.deepEqual([open(running).install, open(running).telegram, open(running).recheck], [true, true, false])
+    assert.equal(R.launchDone(running, 'install', false).telegram, false, 'a waiting token does not close step 5 before the node lives')
+    const live = (telegram) => server({ ...d, launch: { state: 'done' }, core: core(), telegram })
+    assert.equal(open(live({ configured: false })).recheck, false, 'no bot and no «later» → step 5 stays')
+    for (const bot of [{ configured: true }, { pending: true }, { skipped: true }]) assert.equal(open(live(bot)).recheck, true, JSON.stringify(bot))
+    assert.deepEqual([open(server({ ...d, launch: { state: 'failed' }, telegram: { skipped: true } })).telegram, open(server({ ...d, launch: { state: 'failed' } })).install], [false, true])
   })
   await t('744-5 a domain the server already holds (its mark): step 3 done at once, the installation opens; negative: the same record typed on the page stays open', () => {
     const held = { domain: 'aifa.dev', way: 'migrate', from: 'server', since: '2026-11-13T22:45:16Z' }

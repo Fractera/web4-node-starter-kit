@@ -4,7 +4,7 @@
 // running them, and each «server's» folder is a temporary folder of this machine.
 import assert from 'node:assert/strict'
 import { spawn, spawnSync } from 'node:child_process'
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { createServer } from 'node:http'
 import { tmpdir } from 'node:os'
 import { basename, join } from 'node:path'
@@ -223,6 +223,76 @@ await t('negative: a wrong way, a bad domain, and the server node\'s door before
 })
 await t('negative: nothing per server is written on the computer — no key (744-3), only the pins and (later) the certificate ledger', async () => {
   assert.deepEqual(readdirSync(join(node, 'data', 'node', 'server')).sort(), ['known-hosts.json', 'known_hosts'])
+})
+
+console.log('758 step 5: the server\'s own bot while the server installs')
+await t('a token before the node lives waits on the server (0600) and never comes back (negative: the token is not in the runner\'s output, only its tail); «later» is kept; a bad token is refused; when the node answers, the token goes to its channel door once and the file goes; the invite link comes from the server; a token Telegram refuses is dropped and named by its tail', async () => {
+  const E = await server()
+  assert.equal((await run(E, 'connect', [], { password: PASSWORD })).a?.ok, true)
+  const TOKEN = '7654321098:AAH-dry-run-token-for-step-758-abcdefgh'
+  const bad = await run(E, 'telegram', [], { key: E.key, body: { action: 'token', token: 'not-a-token' } })
+  assert.equal(bad.a?.reason, 'bad-token', bad.out)
+  const later = await run(E, 'telegram', [], { key: E.key, body: { action: 'skip' } })
+  assert.deepEqual([later.a?.ok, later.a?.state?.telegram?.skipped, later.a?.state?.telegram?.pending], [true, true, false], later.out)
+  const put = await run(E, 'telegram', [], { key: E.key, body: { action: 'token', token: TOKEN } })
+  assert.deepEqual([put.a?.ok, put.a?.tail, put.a?.state?.telegram?.pending, put.a?.state?.telegram?.skipped, put.a?.state?.telegram?.live], [true, 'efgh', true, false, false], put.out)
+  assert.equal(put.out.includes(TOKEN), false, 'the token never comes back to the computer')
+  assert.equal(put.out.includes('efgh'), true, 'control: the same output does carry the tail')
+  const file = join(E.dir, 'telegram.json')
+  assert.equal(JSON.parse(readFileSync(file, 'utf8')).token, TOKEN)
+  assert.equal(statSync(file).mode & 0o777, 0o600)
+  assert.equal((await run(E, 'telegram', [], { key: E.key, body: { action: 'skip' } })).a?.state?.telegram?.pending, true, '«later» never drops a waiting token')
+  assert.equal((await run(E, 'telegram', [], { key: E.key, body: { action: 'link' } })).a?.reason, 'no-bot')
+  // E's own node comes alive: its domain door and its main agent's channel door on loopback
+  const got = []
+  let bot = { configured: false }
+  let answer = null // what the channel door answers to a token; null — it accepts it
+  const core = { zone: 'bot.invalid', rows: [], steps: { domain: true, dns: false, certs: false, check: false, active: false }, certsRun: null, helper: true }
+  const door = createServer((req, res) => {
+    let body = ''
+    req.on('data', (d) => { body += d })
+    req.on('end', () => {
+      res.setHeader('content-type', 'application/json')
+      if (!req.url.endsWith('/architect/build/agent-api/channel')) return res.end(JSON.stringify(core))
+      if (req.method === 'GET') return res.end(JSON.stringify({ ok: true, service: 'build', ...bot, allowed: bot.configured ? 1 : 0 }))
+      const b = JSON.parse(body || '{}')
+      got.push(b)
+      if (b.action === 'activation-link') return res.end(JSON.stringify({ ok: true, url: 'https://t.me/dry_server_bot?start=abc' }))
+      if (answer) return res.end(answer)
+      bot = { configured: true, tail: b.token.slice(-4), botUsername: 'dry_server_bot', botName: 'Dry' }
+      res.end(JSON.stringify({ ok: true, tail: b.token.slice(-4), username: 'dry_server_bot' }))
+    })
+  })
+  await new Promise((r) => door.listen(0, '127.0.0.1', r))
+  const own = tmp('launch-bot-node-')
+  mkdirSync(join(own, 'data', 'node'), { recursive: true })
+  mkdirSync(join(own, 'logs'), { recursive: true })
+  writeFileSync(join(own, 'data', 'node', 'server.json'), JSON.stringify({ phase: 'live', ip: '127.0.0.1', at: '2026-11-16T01:00:00Z' }))
+  writeFileSync(join(own, 'logs', 'runtime.json'), JSON.stringify({ port: door.address().port }))
+  process.env.STATE_NODE_DIR = own
+  try {
+    const s = await run(E, 'state')
+    assert.deepEqual([s.a?.state?.telegram?.configured, s.a?.state?.telegram?.username, s.a?.state?.telegram?.pending], [true, 'dry_server_bot', false], s.out)
+    assert.deepEqual(got.filter((b) => b.action === 'token').map((b) => b.token), [TOKEN], 'the waiting token reached the node\'s channel door once')
+    assert.equal(existsSync(file), false, 'the waiting file is gone once the node holds the token')
+    assert.equal(s.out.includes(TOKEN), false)
+    assert.equal((await run(E, 'state')).a?.state?.telegram?.configured, true)
+    assert.equal(got.filter((b) => b.action === 'token').length, 1, 'never handed twice')
+    const l = await run(E, 'telegram', [], { key: E.key, body: { action: 'link' } })
+    assert.deepEqual([l.a?.ok, l.a?.link], [true, 'https://t.me/dry_server_bot?start=abc'], l.out)
+    // a token that waited and Telegram refuses: dropped, named by its tail, the step asks again
+    bot = { configured: false }
+    answer = JSON.stringify({ ok: false, error: 'token-rejected' })
+    writeFileSync(file, JSON.stringify({ token: '1111111111:AAH-refused-token-for-step-758-zzzzwxyz' }), { mode: 0o600 })
+    const r = await run(E, 'state')
+    assert.deepEqual([r.a?.state?.telegram?.rejected, r.a?.state?.telegram?.pending, r.a?.state?.telegram?.configured], ['wxyz', false, false], r.out)
+    assert.equal(JSON.parse(readFileSync(file, 'utf8')).token, undefined, 'a refused token is not kept to be tried on every read')
+  } finally {
+    delete process.env.STATE_NODE_DIR
+    door.close()
+    rmSync(own, { recursive: true, force: true })
+    E.server.close()
+  }
 })
 
 console.log('744-6 never «available» before every certificate and the final check')

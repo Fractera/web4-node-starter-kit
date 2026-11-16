@@ -4,7 +4,7 @@
 // проверка установка и обновления сертификатов безопасности который должен заканчиваться чек листом … Только после этого … сообщаешь
 // пользователю о том что его сервер готов».
 
-export type LaunchStep = "server" | "check" | "domain" | "install" | "recheck" | "certs" | "ready"
+export type LaunchStep = "server" | "check" | "domain" | "install" | "telegram" | "recheck" | "certs" | "ready"
 type Verdict = "ok" | "warn" | "fail"
 
 export type ServerLaunchWords = {
@@ -24,7 +24,7 @@ export type ServerLaunchWords = {
   locked: string
   step: Record<LaunchStep, string>
   /** 744-7: one line of what a done step did, shown while it is closed — `{host}` `{time}` `{head}`, `{ok}` of `{all}` required names */
-  summary: { server: string; clean: string; related: string; warn: string; install: string; recheck: string; certs: string; since: string; pointed: string }
+  summary: { server: string; clean: string; related: string; warn: string; install: string; installing: string; recheck: string; certs: string; since: string; pointed: string; botOn: string; botWaits: string; botLater: string }
   connected: string
   /** 744-3: access for one day — `{time}` the deadline in the person's own clock */
   access: { until: string; close: string; closing: string }
@@ -47,6 +47,11 @@ export type ServerLaunchWords = {
   install: { text: string; install: string; update: string; again: string; running: string; done: string; failed: string; leave: string; silent: string; ask: string }
   stage: Record<string, string>
   recheck: { text: string; button: string; gate: string; noDomain: string }
+  /** 758: step 5 — the server's own bot while the server installs; `{stage}` the installation's stage, `{tail}` the token's last four, `{bot}` @name */
+  telegram: {
+    text: string; how: string[]; label: string; tokenNote: string; save: string; later: string; laterNote: string; connectNow: string
+    pending: string; rejected: string; on: string; admitted: string; link: string; linkNote: string; installing: string; waitNode: string
+  }
   certs: { budget: string; limit: string; checklist: string; name: string; dns: string; cert: string; https: string; httpsButton: string; off: string; afterOn: string; notDue: string }
   /** 744-6: `done` · `links` · `site` · `panel` · `signin` · `next` and the claim words are drawn only under a passed final check
    *  (`ReadyWords`, `check:ready-words`); `missing` names what the check still lacks — `{host}` */
@@ -83,10 +88,11 @@ const en: ServerLaunchWords = {
   doing: { any: "Working on the server…", clear: "Freeing the server… under a minute.", domain: "Checking the domain…", detect: "Looking up where the domain's records live…", way: "Saving the way…", "dns-check": "Asking public DNS for every name…", dns: "Asking public DNS for every name…", certs: "Issuing certificates… about a minute per name.", check: "Checking HTTPS of every name from the internet…", activate: "Switching the domain on… sign-in restarts, up to a minute.", install: "Starting the installation…", state: "Reading the server…" },
   another: "Another server",
   locked: "opens when the step before it is done",
-  step: { server: "The server", check: "Check the server", domain: "Domain activation", install: "Server installation", recheck: "Second check of the records", certs: "Security certificates", ready: "The server is ready" },
+  step: { server: "The server", check: "Check the server", domain: "Domain activation", install: "Server installation", telegram: "The server's Telegram bot", recheck: "Second check of the records", certs: "Security certificates", ready: "The server is ready" },
   summary: {
     server: "{host} · access until {time}", clean: "A clean server", related: "Fractera from your fork ({head})", warn: "read the notes",
-    install: "Fractera {head} installed, the server's node answers", recheck: "{ok} of {all} names point to the server", certs: "{ok} of {all} names: a certificate and HTTPS",
+    install: "Fractera {head} installed, the server's node answers", installing: "the installation runs on the server", recheck: "{ok} of {all} names point to the server", certs: "{ok} of {all} names: a certificate and HTTPS",
+    botOn: "bot {bot} connected", botWaits: "the token …{tail} waits for the server's node", botLater: "no bot — later",
     since: "recorded {date}",
     pointed: "{ok} of {all} names point to the server now — step 5 checks again",
   },
@@ -94,6 +100,7 @@ const en: ServerLaunchWords = {
   access: { until: "Access until {time} (24 h at most)", close: "Close access", closing: "Closing the access…" },
   window: { open: "Open the server's panel", opening: "Opening an SSH window…", link: "The server's panel: {url}", note: "Through SSH, on this computer only, while the access lasts; «Close access» closes it too." },
   errors: {
+    "bad-token": "That is not a BotFather token: digits, a colon and a long code.", "token-rejected": "Telegram did not accept this token: copy it from @BotFather again.", "telegram-unreachable": "The server could not reach Telegram: try again in a minute.", "no-bot": "The bot is not connected yet.", "server-silent": "The server's node did not answer: try again in a minute.",
     "not-ready": "Not every name is ready yet: each needs a certificate, and HTTPS where it is due (step 6).", "check-first": "The server's own node has not counted the names as ready: run «Check HTTPS from the internet» in step 6. If it stays, update the server in step 4 — its version may be older than this computer's.", "auth-not-answering": "Sign-in on the server did not answer after the switch: check again in a minute.", "nginx-refused": "The server's web server did not accept the new settings.", "door-silent": "The server's node gave no answer.", "door-refused": "The server's node refused the step.",
     auth: "The server refused the password.", "need-password": "This browser has no open access to this server: type the root password — access lasts a day.", "no-password-login": "This server takes no password login (the provider switched it off). Switch password login for root on in the provider's panel, or reinstall the server with a password — the node never uses a provider's keys.", "key-refused": "The server's SSH does not know an access deadline (OpenSSH older than 8.2): the node gives no access without one. Update the server's system.", "visit-install": "The access could not be written on the server.", unrelated: "This server holds a state not related to this node: delete the previous state first.", "domain-not-ready": "The domain (step 3) is not ready yet: finish it, then install.", unreachable: "The server does not answer on this address and port.",
     timeout: "The server did not answer in time.", "bad-address": "That is not a server address.", "bad-password": "The password cannot contain line breaks.",
@@ -118,6 +125,24 @@ const en: ServerLaunchWords = {
     silent: "Fractera is installed, but the server's node does not answer yet: the next step waits for it.", ask: "Ask the server again",
   },
   stage: STAGE_EN,
+  telegram: {
+    text: "While the server installs, give it a Telegram bot of its own: from then on you talk to the server's main agent from the phone. You can skip it and connect it later.",
+    how: ["In Telegram open @BotFather and send /newbot.", "Give the bot a name, then an address ending in «bot».", "BotFather answers with a token like 1234567890:AA… — paste it here."],
+    label: "The bot's token from @BotFather",
+    tokenNote: "The token goes to the server and is kept only there; this page sees its last four characters.",
+    save: "Connect the bot",
+    later: "Later",
+    laterNote: "No bot for now: the next steps go on without it. It can be connected here or in the server's panel at any time.",
+    connectNow: "Connect a bot",
+    pending: "The token …{tail} is kept on the server; the bot switches on by itself when the server's node starts.",
+    on: "Bot {bot} is connected to the server's main agent.",
+    admitted: "People admitted: {n}. Open the link and press Start — the server's agent greets you.",
+    link: "Get the invite link",
+    linkNote: "The link admits whoever opens it first: open it yourself, do not forward it.",
+    installing: "The installation goes on meanwhile: {stage}.",
+    waitNode: "The installation is done; waiting for the server's node to answer.",
+    rejected: "Telegram did not accept the token …{tail} when the server's node started: copy it from @BotFather again.",
+  },
   recheck: { text: "Every name of the node is asked of two public DNS resolvers. Until every required name points to the server, the certificates cannot start.", button: "Check the records", gate: "Not every required name points to the server yet.", noDomain: "No domain is chosen: the server answers only by its IP." },
   certs: { budget: "This week {week} of 50 Let's Encrypt certificates were issued for {domain}.", limit: "Limits: 50 per domain per week, 5 per name per week (letsencrypt.org).", checklist: "Checklist", name: "Name", dns: "DNS", cert: "Certificate", https: "HTTPS", httpsButton: "Check HTTPS from the internet", off: "switched off", afterOn: "after the domain is on", notDue: "Grey lines are not errors: a switched-off element answers once you switch it on, and sign-in answers once the domain is on. Their certificates are already in place." },
   ready: {
@@ -165,10 +190,11 @@ const ru: ServerLaunchWords = {
   doing: { any: "Выполняю шаг на сервере…", clear: "Освобождаю сервер… меньше минуты.", domain: "Проверяю домен…", detect: "Ищу, где живут записи домена…", way: "Сохраняю способ…", "dns-check": "Спрашиваю публичные DNS о каждом имени…", dns: "Спрашиваю публичные DNS о каждом имени…", certs: "Выпускаю сертификаты… около минуты на имя.", check: "Проверяю HTTPS каждого имени из интернета…", activate: "Включаю домен… вход перезапускается, до минуты.", install: "Запускаю установку…", state: "Читаю состояние сервера…" },
   another: "Другой сервер",
   locked: "откроется, когда будет готов предыдущий шаг",
-  step: { server: "Сервер", check: "Проверка сервера", domain: "Активация домена", install: "Установка сервера", recheck: "Повторная проверка записей", certs: "Сертификаты безопасности", ready: "Сервер готов" },
+  step: { server: "Сервер", check: "Проверка сервера", domain: "Активация домена", install: "Установка сервера", telegram: "Telegram-бот сервера", recheck: "Повторная проверка записей", certs: "Сертификаты безопасности", ready: "Сервер готов" },
   summary: {
     server: "{host} · доступ до {time}", clean: "Чистый сервер", related: "Fractera из вашего форка ({head})", warn: "есть замечания",
-    install: "Fractera {head} установлена, узел сервера отвечает", recheck: "{ok} из {all} имён ведут на сервер", certs: "{ok} из {all} имён: сертификат и HTTPS",
+    install: "Fractera {head} установлена, узел сервера отвечает", installing: "на сервере идёт установка", recheck: "{ok} из {all} имён ведут на сервер", certs: "{ok} из {all} имён: сертификат и HTTPS",
+    botOn: "бот {bot} подключён", botWaits: "токен …{tail} ждёт узел сервера", botLater: "без бота — позже",
     since: "записано {date}",
     pointed: "сейчас на сервер ведут {ok} из {all} имён — шаг 5 проверит ещё раз",
   },
@@ -176,6 +202,7 @@ const ru: ServerLaunchWords = {
   access: { until: "Доступ до {time} (не больше 24 ч)", close: "Закрыть доступ", closing: "Закрываю доступ…" },
   window: { open: "Открыть пульт сервера", opening: "Открываю окно SSH…", link: "Пульт сервера: {url}", note: "Через SSH, только на этом компьютере, пока открыт доступ; «Закрыть доступ» закрывает и его." },
   errors: {
+    "bad-token": "Это не токен BotFather: цифры, двоеточие и длинный код.", "token-rejected": "Telegram не принял этот токен: скопируйте его из @BotFather ещё раз.", "telegram-unreachable": "Сервер не достучался до Telegram: попробуйте через минуту.", "no-bot": "Бот ещё не подключён.", "server-silent": "Узел сервера не ответил: попробуйте через минуту.",
     "not-ready": "Ещё не все имена готовы: каждому нужен сертификат, а где положено — HTTPS (шаг 6).", "check-first": "Узел сервера ещё не считает имена готовыми: нажмите «Проверить HTTPS из интернета» в шаге 6. Если не помогло, обновите сервер в шаге 4 — его версия может быть старше, чем у этого компьютера.", "auth-not-answering": "Вход на сервере не ответил после включения: проверьте ещё раз через минуту.", "nginx-refused": "Веб-сервер на сервере не принял новые настройки.", "door-silent": "Узел сервера ничего не ответил.", "door-refused": "Узел сервера отказал в этом шаге.",
     auth: "Сервер не принял пароль.", "need-password": "У этого браузера нет открытого доступа к этому серверу: введите пароль root — доступ откроется на сутки.", "no-password-login": "Этот сервер не принимает вход по паролю (провайдер его выключил). Включите вход по паролю для root в панели провайдера или переустановите сервер с паролем — ключи провайдера узел не использует.", "key-refused": "SSH сервера не знает срока доступа (OpenSSH старше 8.2): без срока узел доступа не даёт. Обновите систему сервера.", "visit-install": "Не удалось записать доступ на сервер.", unrelated: "На сервере состояние, не связанное с этим узлом: сначала удалите прежнее состояние.", "domain-not-ready": "Домен (шаг 3) ещё не готов: закончите его, затем установка.", unreachable: "Сервер не отвечает на этом адресе и порту.",
     timeout: "Сервер не ответил вовремя.", "bad-address": "Это не адрес сервера.", "bad-password": "В пароле не может быть переносов строки.",
@@ -200,6 +227,24 @@ const ru: ServerLaunchWords = {
     silent: "Fractera установлена, но узел сервера пока не отвечает: следующий шаг его ждёт.", ask: "Спросить сервер ещё раз",
   },
   stage: STAGE_RU,
+  telegram: {
+    text: "Пока сервер ставится, подключите ему собственного Telegram-бота: дальше с главным агентом сервера можно говорить с телефона. Шаг можно пропустить и вернуться к нему позже.",
+    how: ["В Telegram откройте @BotFather и отправьте /newbot.", "Дайте боту имя, затем адрес, который кончается на «bot».", "BotFather пришлёт токен вида 1234567890:AA… — вставьте его сюда."],
+    label: "Токен бота от @BotFather",
+    tokenNote: "Токен уходит на сервер и хранится только там; эта страница видит лишь четыре последних знака.",
+    save: "Подключить бота",
+    later: "Позже",
+    laterNote: "Пока без бота: следующие шаги идут и так. Подключить его можно здесь или в панели сервера в любой момент.",
+    connectNow: "Подключить бота",
+    pending: "Токен …{tail} хранится на сервере; бот включится сам, когда запустится узел сервера.",
+    on: "Бот {bot} подключён к главному агенту сервера.",
+    admitted: "Допущено людей: {n}. Откройте ссылку и нажмите «Старт» — агент сервера поздоровается.",
+    link: "Получить ссылку-приглашение",
+    linkNote: "Ссылка допускает того, кто откроет её первым: откройте сами, не пересылайте.",
+    installing: "Установка тем временем идёт: {stage}.",
+    waitNode: "Установка закончилась; ждём, когда ответит узел сервера.",
+    rejected: "Telegram не принял токен …{tail}, когда запустился узел сервера: скопируйте его из @BotFather ещё раз.",
+  },
   recheck: { text: "Каждое имя узла спрашивается у двух публичных DNS. Пока хоть одно обязательное имя не ведёт на сервер, к сертификатам перейти нельзя.", button: "Проверить записи", gate: "Ещё не все обязательные имена ведут на сервер.", noDomain: "Домен не выбран: сервер отвечает только по своему IP." },
   certs: { budget: "На этой неделе для {domain} выпущено {week} из 50 сертификатов Let's Encrypt.", limit: "Лимиты: 50 на домен в неделю, 5 на одно имя в неделю (letsencrypt.org).", checklist: "Чек-лист", name: "Имя", dns: "DNS", cert: "Сертификат", https: "HTTPS", httpsButton: "Проверить HTTPS из интернета", off: "выключен", afterOn: "после включения домена", notDue: "Серые строки — не ошибка: выключенный элемент ответит, когда вы его включите, а вход — после включения домена. Сертификаты у них уже есть." },
   ready: {

@@ -11,13 +11,16 @@
 //   probe                           the server checked again (`probe.sh`: system, memory, cores, disk, ports, an install and its version)
 //   install --mode install|update   `launch.sh` started on the server as root, detached; the page follows it by `state`; refused
 //                                   (`domain-not-ready`, 744-5) until step 3 is done — `domainSteps`, the page's own reading
-//   domain --name <domain> · way --way dns|cloudflare|migrate|none · detect · dns
+//   domain --name <domain> · way --way dns|none · detect · dns
 //                                   the domain chosen for the server, kept ON the server (`/root/.fractera/domain.json`); once the
 //                                   server's node lives, the same acts go to its own domain door too
 //   door                            one act of the server node's own domain door (stdin: its JSON body) — dns-check · certs · check ·
 //                                   activate · upload · claim (739-5: the architect's one-time code, passed back once, kept nowhere here);
 //                                   a certificate run is refused here past the Let's Encrypt weekly limits (738-5)
 //   signin                          where sign-in leads, asked from the internet (738-6)
+//   telegram                        758, step 5: the server's own bot (stdin `body`: { action: token|skip|link, token? }) — a token before the
+//                                   server's node lives waits in `/root/.fractera/telegram.json` (0600) and is handed to that node's channel
+//                                   door at its first answer (`readState`); the page sees only the tail, the bot's name and the invite link
 //                                   744-6: `door activate` is refused (`not-ready`, the names missing) until every required name has a
 //                                   certificate and HTTPS; this computer's «launched» mark is written only when the final check passed
 //                                   (`lib/hosting/final-check.mjs`) — the answer carries `ready: { ok, missing }`
@@ -43,6 +46,7 @@ import { domainMissing } from '../../lib/hosting/launch-domain.mjs'
 import { relationOf } from '../../lib/hosting/relation.mjs'
 import { q, startDetached } from '../../lib/hosting/remote.mjs'
 import { cleanDomain } from '../../lib/hosting/server-domain.mjs'
+import { readWaiting, tailOf, telegramView, TOKEN_SHAPE } from '../../lib/hosting/server-telegram.mjs'
 import { markLaunched } from '../../lib/hosting/launched.mjs'
 import { closeVisit, connect, exec, openVisit, serverDir, upload } from '../../lib/hosting/ssh.mjs'
 
@@ -115,6 +119,7 @@ async function readState(client) {
   s.relation = s.probe ? relationOf(s.probe, forkUrl()) : null
   if (s.relation?.nodeUnrelated) s.relation.nodes = [...(s.probe?.fractera ? [FOLDER] : []), ...(s.probe?.otherNodes ?? [])]
   s.records = launchRecords(s.domain?.domain ?? null, ipOf(s), s.domain?.detect?.zone ?? null)
+  s.telegram = await readTelegram(client, Boolean(s.core))
   if (s.core) {
     recordIssued(s)
     const zone = s.domain?.detect?.zone ?? s.core.zone
@@ -194,6 +199,46 @@ async function serverDoor(client, body) {
   const cmd = `node_dir="\${STATE_NODE_DIR:-${node}}"; port=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["port"])' "$node_dir/logs/runtime.json" 2>/dev/null) && curl -s --max-time 170 -X POST -H 'content-type: application/json' --data-binary @- "http://localhost:$port/api/node/server/domain"`
   const r = await exec(client, cmd, { timeoutMs: 180_000, stdin: JSON.stringify(body) })
   try { return JSON.parse(r.stdout) } catch { return null }
+}
+
+// ── 758: the server's own bot ──
+const TELEGRAM_FILE = () => `${DIR}/telegram.json`
+
+/** The server node's own channel door of its main agent on its loopback (the owner at that machine — `isOwnerAtMachine`); its JSON or null.
+ * 🔒 THE TOKEN NEVER ENTERS AN ARGV: the body goes by the SSH channel's stdin to `curl --data-binary @-` (737-11a, `e6961403`). */
+async function channel(client, body = null) {
+  const node = `/home/${REMOTE_USER}/${FOLDER}`
+  const send = body ? `-X POST -H 'content-type: application/json' --data-binary @-` : ''
+  const cmd = `node_dir="\${STATE_NODE_DIR:-${node}}"; port=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["port"])' "$node_dir/logs/runtime.json" 2>/dev/null) && curl -s --max-time 25 ${send} "http://localhost:$port/en/architect/build/agent-api/channel"`
+  const r = await exec(client, cmd, { timeoutMs: 40_000, ...(body ? { stdin: JSON.stringify(body) } : {}) })
+  try { const v = JSON.parse(r.stdout); return v && typeof v === 'object' ? v : null } catch { return null }
+}
+
+/** The bot as the page may see it. A token that waited for the node is handed over the first time the node answers, then removed. */
+async function readTelegram(client, live) {
+  const waiting = readWaiting((await exec(client, `cat ${q(TELEGRAM_FILE())} 2>/dev/null || true`)).stdout)
+  let state = live ? await channel(client) : null
+  if (live && waiting.token && state?.configured !== true) {
+    const saved = await channel(client, { action: 'token', token: waiting.token })
+    if (saved?.ok) {
+      await exec(client, `rm -f ${q(TELEGRAM_FILE())}`)
+      state = await channel(client)
+      return telegramView({ pending: false, tail: null, skipped: false }, state)
+    }
+    // Telegram refused the waiting token: it is dropped (never tried again on every read), the step asks for a new one by its tail
+    if (saved?.error === 'token-rejected' || saved?.error === 'bad-format') {
+      await writeTelegram(client, { rejected: waiting.tail })
+      return telegramView({ pending: false, tail: null, skipped: false, rejected: waiting.tail }, state && state.ok !== false ? state : null)
+    }
+  }
+  if (live && waiting.token && state?.configured === true) await exec(client, `rm -f ${q(TELEGRAM_FILE())}`)
+  return telegramView(waiting, state && state.ok !== false ? state : null)
+}
+
+async function writeTelegram(client, value) {
+  await exec(client, `mkdir -p ${q(DIR)} && chmod 700 ${q(DIR)}`)
+  await upload(client, `${TELEGRAM_FILE()}.tmp`, `${JSON.stringify({ ...value, at: new Date().toISOString() })}\n`, 0o600)
+  await exec(client, `mv ${q(`${TELEGRAM_FILE()}.tmp`)} ${q(TELEGRAM_FILE())}`)
 }
 
 /** The server's IPv4: the address typed, else what the server says its public address is. */
@@ -393,6 +438,38 @@ const verbs = {
     } finally { client.end() }
   },
 
+  // 758: step 5 — the server's own bot, while the server installs or after it.
+  async telegram() {
+    const body = (await input()).body ?? {}
+    const action = ['token', 'skip', 'link'].find((a) => a === body?.action)
+    if (!action) return fail('bad-action')
+    const token = action === 'token' && typeof body.token === 'string' ? body.token.trim() : ''
+    if (action === 'token' && !TOKEN_SHAPE.test(token)) return fail('bad-token')
+    const { client } = await byKey()
+    try {
+      const s0 = await readState(client)
+      const live = s0.telegram?.live === true
+      if (action === 'skip') {
+        if (!s0.telegram?.configured && !s0.telegram?.pending) await writeTelegram(client, { skipped: true })
+        return done({ ok: true, state: await readState(client) })
+      }
+      if (action === 'link') {
+        if (!live || !s0.telegram?.configured) return fail('no-bot', { state: s0 })
+        const r = await channel(client, { action: 'activation-link' })
+        return r?.ok && typeof r.url === 'string' ? done({ ok: true, link: r.url, state: s0 }) : fail(String(r?.error ?? 'server-silent'), { state: s0 })
+      }
+      if (live) {
+        // the node lives: the token goes straight to its channel door, which checks it with Telegram before it keeps it
+        const r = await channel(client, { action: 'token', token })
+        if (!r?.ok) return fail(String(r?.error ?? 'server-silent'), { state: s0 })
+        await exec(client, `rm -f ${q(TELEGRAM_FILE())}`)
+      } else {
+        await writeTelegram(client, { token })
+      }
+      done({ ok: true, tail: tailOf(token), state: await readState(client) })
+    } finally { client.end() }
+  },
+
   async signin() {
     const { client } = await byKey()
     try {
@@ -443,7 +520,7 @@ export function launchRecords(zone, ip, dnsZone = null) {
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   if (!verbs[verb]) {
-    console.log('Запуск сервера: connect · close · state · probe · install --mode install|update · domain --name · way --way · detect · dns · door · signin · clear --confirm')
+    console.log('Запуск сервера: connect · close · state · probe · install --mode install|update · domain --name · way --way · detect · dns · door · telegram · signin · clear --confirm')
     process.exit(verb ? 2 : 0)
   }
   if (!(IPV4.test(host) || isHostName(host)) || !Number.isInteger(port) || port < 1 || port > 65535) {

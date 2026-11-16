@@ -31,6 +31,8 @@ import { closeWindowProcess, openWindowProcess } from "@/lib/hosting/window-proc
 //                                                              returns the architect's one-time code once (739-5), kept nowhere here
 //   POST { action: "upload", host, port, name, fullchain, privkey }                  the person's own certificate for one name (stdin)
 //   POST { action: "signin", host, port }                      where sign-in leads, asked from the internet
+//   POST { action: "telegram", host, port, op, token? }        758, step 5: the server's own bot — op token|skip|link; the token goes on to
+//                                                               the runner's stdin and the server, never back and never into a log
 //   POST { action: "clear", host, port, confirm }              a busy server freed — the dialog sends back the address it named
 // 759: the records are written by hand at the registrar — the door holds no Cloudflare key and writes no record.
 export const dynamic = "force-dynamic"
@@ -44,7 +46,7 @@ const HOST = /^(?=.{4,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/
 const FINGERPRINT = /^SHA256:[A-Za-z0-9+/]{43}$/
 const DOOR_ACTIONS = ["dns-check", "certs", "check", "activate", "claim"]
 // How long each act may take: the check of a server measures its version over the network; a certificate run starts detached there.
-const TIMEOUT: Record<string, number> = { connect: 150_000, probe: 150_000, state: 60_000, install: 120_000, domain: 120_000, way: 60_000, detect: 90_000, dns: 90_000, door: 200_000, signin: 90_000, clear: 240_000 }
+const TIMEOUT: Record<string, number> = { connect: 150_000, probe: 150_000, state: 60_000, install: 120_000, domain: 120_000, way: 60_000, detect: 90_000, dns: 90_000, door: 200_000, signin: 90_000, clear: 240_000, telegram: 90_000 }
 
 
 /** The core's `NEXT_*` and `PORT` must not reach a child (ANTI-PATTERNS «All systems»). */
@@ -145,6 +147,12 @@ export async function POST(req: NextRequest) {
   if (action === "domain") return answer("domain", [...at, "--name", String(body?.name ?? "").slice(0, 260)])
   if (action === "way") return answer("way", [...at, "--way", String(body?.way ?? "")])
   if (DOOR_ACTIONS.includes(action)) return answer("door", at, { body: { action } })
+  if (action === "telegram") {
+    const op = ["token", "skip", "link"].find((o) => o === body?.op)
+    if (!op) return json({ ok: false, reason: "bad-action" }, 400)
+    const token = op === "token" ? String(body?.token ?? "").trim().slice(0, 200) : undefined
+    return answer("telegram", at, { body: { action: op, ...(token ? { token } : {}) } })
+  }
   if (action === "upload") {
     const pair = { action, name: String(body?.name ?? ""), fullchain: String(body?.fullchain ?? ""), privkey: String(body?.privkey ?? "") }
     if (pair.fullchain.length > 65536 || pair.privkey.length > 65536) return json({ ok: false, reason: "bad-pem" }, 400)
