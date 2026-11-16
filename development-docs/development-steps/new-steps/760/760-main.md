@@ -108,7 +108,7 @@ end of the queue.
 | 760-5 | a server node's own domain list by the registrar road; «Главное зеркало» works on a server |
 | 760-6 | a domain added to the server from the computer, through the access |
 | 760-7 | the node says where the project lives: this computer, the server and its IP |
-| 760-8 | step 3 names where the records are written, by the NS: Cloudflare for fractera.ai, not GoDaddy |
+| 760-8 | step 3 picks the road by measurement: the node's Cloudflare key writes when it sees the zone, the person's cabinet otherwise |
 | 760-9 | «Сделать в моём Chrome»: the card and a button that hands the main agent the exact records task |
 | 760-10 | step 5: the agent makes the server's bot in the person's Telegram Web; the token pasted by the person |
 
@@ -117,4 +117,5 @@ Every substep has its file, its one-line «done», two proofs from different pla
 of `parts_find` and the parts born.
 
 ## 9. The owner's approval
-Waiting (2026-11-16).
+The owner, 2026-11-16 ~11:25 UTC: «Да, подтверждаю, утверждаю 760 и начинай» — after the step 3 scheme (760-8): the Cloudflare key
+writes again, chosen by measurement only. Order: 760-1, 760-8, 760-9, 760-10, then 760-2, 760-3 → 760-4, 760-5 → 760-6, 760-7.
