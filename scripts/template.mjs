@@ -45,7 +45,9 @@ const git = (dir, argv, env) => execFileSync('git', ['-C', dir, ...argv], { enco
 const gitOk = (dir, argv) => { try { return git(dir, argv) } catch { return null } }
 // A file's bytes as git keeps them — never trimmed (git() trims command output, which would eat a file's edges).
 const gitFile = (dir, rev, path) => execFileSync('git', ['-C', dir, 'show', `${rev}:${path}`], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true })
-const token = () => { try { return tokenLine() } catch { return '' } }
+// TEMPLATE_GITHUB_TOKEN — a key for ONE run, only at the owner's word (2026-11-16 «fractera git is here»: his gh key of the Fractera
+// account, when the node's saved token is another account's); never kept, never the default.
+const token = () => { const once = process.env.TEMPLATE_GITHUB_TOKEN?.trim(); if (once) return once; try { return tokenLine() } catch { return '' } }
 const tokenLine = () => (readFileSync(join(ROOT, 'data', 'node', 'github', '.env'), 'utf8').split(/\r?\n/).find((l) => l.startsWith('GITHUB_TOKEN=')) ?? '').slice('GITHUB_TOKEN='.length).trim()
 const mask = (text, t) => (t ? String(text).split(t).join('***') : String(text))
 const authUrl = (repo, t) => repo.replace(/^https:\/\/(?:[^@/]+@)?github\.com\//, `https://x-access-token:${t}@github.com/`)
@@ -172,6 +174,9 @@ if (cmd === 'rollout') {
   if (!/^v\d+\.\d+\.\d+$/.test(version ?? '') || (!paths.length && !also.length)) fail('USAGE', 'rollout <custom|native> <vX.Y.Z> [<path…>] [--elements a,b] [--keep-own-rows <old tag>] [--also a,b] [--message "…"] [--dry]')
   if (!gitOk(shop, ['rev-parse', `${version}^{commit}`])) fail('FAIL', `the workshop has no tag ${version} — npm run template -- clone ${kind}`)
   const keepFrom = flag('--keep-own-rows')
+  // 761-16d: `--append-section "## Heading"` brings one new section of a Markdown file into an element that lacks it, keeping the
+  // element's own text; package.json only ever gains the template's scripts the element lacks — an element's package.json is its own.
+  const appendHead = flag('--append-section')
   const only = flag('--elements') ? new Set(flag('--elements').split(',').map((s) => s.trim())) : null
   const skip = new Set((flag('--skip') ?? '').split(',').map((s) => s.trim()).filter(Boolean))
   const message = flag('--message') ?? `files of the ${kind} template ${version}`
@@ -189,6 +194,7 @@ if (cmd === 'rollout') {
     const at = git(dir, ['describe', '--tags', '--always'])
     if (at !== s.version) { console.log(`· ${s.id}: HEAD ${at} is not its pin ${s.version} — left alone`); continue }
     const changed = []
+    const created = []
     for (const p of paths) {
       let next = gitFile(shop, version, p)
       const file = join(dir, p)
@@ -205,14 +211,35 @@ if (cmd === 'rollout') {
           next = lines.join('\n')
         }
       }
+      if (now !== null && p === 'package.json') {
+        const mine = JSON.parse(now); const theirs = JSON.parse(next)
+        // only a script whose file this rollout brings (✗ 2026-11-16 first run: every missing template script came along, some to files
+        // the element lacks)
+        const add = Object.entries(theirs.scripts ?? {}).filter(([k, v]) => !(k in (mine.scripts ?? {})) && paths.some((q) => q !== 'package.json' && String(v).includes(q)))
+        if (!add.length) continue
+        mine.scripts = { ...(mine.scripts ?? {}), ...Object.fromEntries(add) }
+        next = JSON.stringify(mine, null, 2) + '\n'
+      } else if (now !== null && appendHead && p.endsWith('.md')) {
+        if (now.includes(appendHead)) continue
+        const i = next.indexOf(appendHead)
+        if (i < 0) fail('FAIL', `${p} of the template has no section «${appendHead}»`)
+        const rest = next.slice(i + appendHead.length); const end = rest.search(/\n## /)
+        next = `${now.replace(/\s*$/, '')}\n\n${appendHead}${end < 0 ? rest : rest.slice(0, end + 1)}`.replace(/\s*$/, '\n')
+      }
       if (now !== null && now.replace(/\r\n/g, '\n') === next.replace(/\r\n/g, '\n')) continue
+      if (now === null) created.push(p)
       writeFileSync(file, now !== null && now.includes('\r\n') ? next.replace(/\r?\n/g, '\r\n') : next)
       changed.push(p)
     }
     const alsoChanged = also.filter((p) => git(dir, ['status', '--porcelain', '--', p]))
     const all = [...changed, ...alsoChanged]
     if (!all.length) { console.log(`· ${s.id} ${at}: already current`); continue }
-    const restore = () => { if (changed.length) git(dir, ['checkout', 'HEAD', '--', ...changed]) }
+    // a file the rollout created has no HEAD to come back to: it is removed; the others come back from HEAD
+    const restore = () => {
+      const back = changed.filter((p) => !created.includes(p))
+      if (back.length) git(dir, ['checkout', 'HEAD', '--', ...back])
+      for (const p of created) rmSync(join(dir, p), { force: true })
+    }
     if (DRY) { restore(); console.log(`· ${s.id} ${at}: would change ${all.join(', ')}`); continue }
     git(dir, ['add', '--', ...all])
     const broke = runGuards(dir, ELEMENT_GUARDS.filter((g) => existsSync(join(dir, 'scripts', `${g}.mjs`))).map((g) => `node scripts/${g}.mjs`))

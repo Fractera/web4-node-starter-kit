@@ -109,3 +109,12 @@ keyboard (dark theme not checked), A4 only the negative half. The owner, 14:12: 
   BotFather is said in words with the way back (make a new one on this step), never «подключён». Found 2026-11-16 14:15: the owner deleted
   @fractera_ai_server_bot «для полного тестирования» at 13:14; the page still said «Бот подключён»; t.me answers as for a free name.
 - T4–T6 (761-1) move into the fresh launch 761-13: a new bot on step 5, /start, «Войти на сервере», the greeting.
+
+## 763 — PC or VPS at a glance (new step, the owner 2026-11-16 ~14:55, after 761-16d)
+
+The owner: «у меня на компьютере открыты два одинаковых по интерфейсу панели: для персонального компьютера и для удалённого сервера. Я
+постоянно путаюсь … найдём на странице архитектора в левом нижнем углу круглый шарик который показывает ширину экрана. И сделай его разным
+цветом оранжевый для компьютера и салатовый для удалённого сервера. И внизу сделаем один из вариантов: PC || VPS размер шрифта такой же как
+и цифры», «as new step». The badge (`ViewportBadge`) reads the node's place (home / server) — orange + «PC» on the computer, light green +
+«VPS» on a server, the label the size of the width digits. Tests: the computer shows orange PC; the server's panel (through SSH) shows green
+VPS; negative — the public site of an element shows no place mark.
