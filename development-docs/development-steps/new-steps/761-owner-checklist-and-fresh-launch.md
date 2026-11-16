@@ -197,3 +197,6 @@ Measured before: a panel href (/ru/…) was never printed in Telegram (only «on
 - [x] Also (16:45 defect): `drop` and a Telegram «Готово» take the button away (9d6842ea).
 Tests: unit 10/10 (L1–L4 + own-domain + negative «a zone not activated is not the address»); live before the build: L3 a0308b83 and
 L1 bdcf2a6f (by root) accepted by Telegram, both links 200. After the build: the beacon's «Открыть» of bdcf2a6f → /ru/root.
+761-16e proven after the build (core 1ab0b124, 16:58): the door gives bdcf2a6f (by root, no page) href /ru/root; the beacon shows «Главный
+сайт просит:» and «Открыть»; a click lands on «Главный сайт | Fractera» (200, console clean, logs/eyes/16e-*.png); dropped → «telegram: ok».
+Open: whether Telegram makes the localhost links clickable — Рома's eyes.
