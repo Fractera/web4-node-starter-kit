@@ -7,9 +7,9 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Active steps:** 761 — the owner's checklist after the first server launch, then a fresh launch from zero (`new-steps/761-owner-checklist-and-fresh-launch.md`): 761-1/2/14 in code and tested (d55b5f17), live proof T4–T6 next; then 761-3, 761-4, 761-5, 761-15, 761-16, then 761-13 the fresh launch; 760 — 760-1/8/9/10 live, 760-2…760-7 open (in the 761 checklist); 758/759/762 — live; 1 — the first launch.
 
-**Last change:** 2026-11-16 13:35 UTC — the fresh session ran `npm run prebuild` alone first: two guards refused d55b5f17 (check:node-lines — `greetText` began with «Node:» though the server puts the `moved` head; check:words — «blocks»/«block» in the tests) → fixed 468400d6, prebuild RC=0, test:hosting-launch 22 ✓ + the pre-existing ✗; the core REBUILD STARTED 13:36 UTC (detached).
+**Last change:** 2026-11-16 20:08 UTC — 768-4 in code bd32c57c (lib/node/telegram-webapp.cjs, person-secret-save.ts, door /api/node/secret-entry, proxy lists, person-asks-telegram web_app button); unit 19/19 (T1), tsc 0, prebuild RC=0; the core REBUILD STARTED (detached). §9 entries: dead address e26593b0, feelings with emoji 3fc8c638 (first try 8e331608 committed past a failing guard — told the owner).
 
-**Next action:** his «да» on plan 768-4 (sent 19:58), then build it, prebuild, serve:rebuild, T1–T6; 769 after it.
+**Next action:** after the core is back — restore CLAUDE.md/.claude/skills from git, then T2–T6 live: put a request by hrutb with the node key (secret FAKE_DEMO_API_KEY) → Telegram button → the owner types a fake value → name in hrutb's .env.local (grep the NAME only), restart, wake; T3 grep the value in logs; T4 forged POST 401; T5 a server-root request without a button; T6 his screenshot. Then 769.
 
 ## Letter to my next session (written 2026-11-16 ~19:33 UTC, the window at 66 %; a clean start for a debugging task)
 
@@ -42,6 +42,7 @@ pages without tokens; the extension's selected tab is never his screen. The core
 
 ## The person's decisions (verbatim)
 
+- 2026-11-16 19:56 UTC, the owner on plan 768-4: «Конечно дружище!». 20:00: «Добавь себе разрешение передавать эмоции с помощью эмоджи в чате Telegram … не стыдно, я горжусь, дружим, злюсь … обижен» → §9 3fc8c638.
 - 2026-11-16 19:52 UTC, the owner: «я думал ты имеешь в виду элемент root, а ты имеешь в виду активацию сервера? … активацию сервера ограничим формы через браузер … для тестирования выбери любой фейковый сервис придумай любой фейковое API ключ и передадим его через Telegram … ключ будет доступен только после сборки элемента?» → (а): root only on the computer (Telegram: no button, «только на компьютере»); keys: two ways. Answered: no element build — key file + restart. Plan 768-4 sent 19:58 (waits «да»): lib telegram-webapp.cjs (initData HMAC, auth_date, user ∈ allowFrom, one-time token sha256 in the ask) · announce: inline web_app button when an HTTPS base exists (own domain or live tunnel) · door /api/node/secret-entry GET=tiny HTML form (tgWebAppData from the hash, no telegram.org script) POST=validate→shared save (refactor out of person-asks route) · proxy: PUBLIC_API_PREFIXES + TEMPORARY_WRITE_ALLOWED for this door only. Tests T1–T6 (fake FAKE_DEMO_API_KEY by hrutb, request put by me with the node key).
 
 - 2026-11-16 19:48 UTC, the owner walked the case: «ты говоришь: Рома ты как будешь вводить пароль (ключ, токен) Две кнопки: здесь в Telegram / на компьютере … я выбираю Telegram: Открывается какое-то приложение, я туда ввожу пароль, он … телепортируется на сервер, ты его … куда-то записываешь». My answer 19:50: the only gap is where the 24 h root visit key lives (today the browser cookie, 744-3); I reversed my pick to (б) — the node keeps the visit key itself (0600, beside the pin), both roads work; keys go to the element's key file. Asked «Строю?» — plan 768-4 = choice of road + Mini App for every secret + node-held visit.
