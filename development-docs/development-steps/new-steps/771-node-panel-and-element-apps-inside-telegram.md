@@ -1,4 +1,4 @@
-# 771 — Telegram Mini Apps: the node's and every element's face inside Telegram (plan, waits for the owner's yes)
+# 771 — Telegram Mini Apps: the node's and every element's face inside Telegram (the owner's yes 2026-11-16 23:13: «Хорошо продолжай работать до конца меня больше не ищи пока не закончишь полностью»)
 
 The owner, 2026-11-16 20:56: «раз уже я больше большую часть времени собираюсь проводить в Telegram то возможно для наших элементов …
 имела бы смысл создать отдельный инструмент Telegram приложения? … в зависимости от того какую функциональную задачу решает элемент …
@@ -38,3 +38,15 @@ The owner, 2026-11-16 20:56: «раз уже я больше большую ча
 - M4 live: the temporary address changes → the menu button follows (after 771-3's yes).
 - M5 live (771-6): an element's Mini App opens from its own bot and acts through its own door.
 Price: two core builds, one custom-template release rolled to the custom elements, one element agent's session for 771-6.
+
+## Done in code — 771-1..3 (2026-11-16 23:15–23:45)
+- 771-1 — no session is minted: every call of the panel carries Telegram's signed launch data, checked against the MAIN bot's token and
+  its allowed chats, at most a day old (`webapp.check`, 768-4's lib). Simpler and safer than turning it into an architect cookie.
+- 771-2 — the door `/api/node/tg-app` (GET the page, POST state | done | secret | power); `lib/node/tg-app/{state.ts,page.cjs,words.cjs}`;
+  the power runner shared with the panel's door (`lib/web4-items/run-element-power.ts`); a required element has no switch.
+  Decision: the Telegram surface is plain HTML + a little JS in Telegram's theme (the 768-4 form's way): no React bundle to load on a
+  phone, no session, the node's words only through textContent. The panel on the computer keeps the core's primitives.
+- 771-3 — `lib/node/tg-menu.cjs`: `setChatMenuButton` web_app «Пульт» at the HTTPS address (own domain first, the live tunnel next),
+  commands without one; moved by the tunnel's one writer (`scripts/tunnel.mjs` saveAddress) and by `npm run tg-app -- menu`.
+- Proxy: `/api/node/tg-app` public and allowed to write on the temporary address (it stands on the bot's signature).
+- Tests: `scripts/tg-app.test.mjs` 6/6 (in prebuild); tsc 0; prebuild RC=0.

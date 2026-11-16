@@ -79,6 +79,8 @@ const PUBLIC_API_PREFIXES = [
   // 768-4: the Telegram form for an element's key — opened by the person's phone over the node's HTTPS address, so no session; the door
   // stands on Telegram's signature (the asker's bot token) and a one-time token of one request, never on a role.
   "/api/node/secret-entry",
+  // 771: «Пульт узла» in Telegram — the same nature: the phone opens it with no session, the door stands on the main bot's signature.
+  "/api/node/tg-app",
 ];
 
 // Non-content root pages that live at the ROOT and never take a language prefix

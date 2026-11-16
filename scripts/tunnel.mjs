@@ -340,6 +340,13 @@ function scan(chunk) {
     found = true
     currentUrl = match[0]
     saveAddress(match[0])
+    // 771-3 (the owner, 2026-11-16 23:13 — «Хорошо» to the menu button that moves by itself): the main bot's menu button «Пульт» follows
+    // the new address at once; Telegram not answering never stops the tunnel.
+    try {
+      createRequire(import.meta.url)('../lib/node/tg-menu.cjs').refresh(root)
+        .then((r) => log(`кнопка меню бота: ${r.ok ? r.state : `не переставлена (${r.why ?? r.state})`}`))
+        .catch((e) => log(`кнопка меню бота не переставлена: ${e.message}`))
+    } catch (e) { log(`кнопка меню бота не переставлена: ${e.message}`) }
     failures = 0
     dead = false
     everOk = false
