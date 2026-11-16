@@ -57,6 +57,8 @@ export type ServerLaunchWords = {
   telegram: {
     text: string; how: string[]; label: string; tokenNote: string; save: string; later: string; laterNote: string; connectNow: string
     pending: string; rejected: string; on: string; admitted: string; link: string; linkNote: string; installing: string; waitNode: string
+    /** 760-10: the bot made by the main agent in the person's Telegram Web — `{server}` `{name}` `{username}`; the token stays the person's */
+    agent: { title: string; steps: string[]; note: string; button: string; telegramTask: string; botName: string }
   }
   certs: { budget: string; limit: string; checklist: string; name: string; dns: string; cert: string; https: string; httpsButton: string; off: string; afterOn: string; notDue: string }
   /** 744-6: `done` · `links` · `site` · `panel` · `signin` · `next` and the claim words are drawn only under a passed final check
@@ -188,6 +190,18 @@ const en: ServerLaunchWords = {
     linkNote: "The link admits whoever opens it first: open it yourself, do not forward it.",
     installing: "The installation goes on meanwhile: {stage}.",
     waitNode: "The installation is done; waiting for the server's node to answer.",
+    agent: {
+      title: "Claude can make the bot in your Telegram Web",
+      steps: [
+        "In the Chrome with the Claude extension, sign in to https://web.telegram.org.",
+        "Press the button: the main agent's terminal opens with the task ready. Send it and watch BotFather's chat.",
+        "When BotFather answers «Done!», copy the token from its message into the field below and press «Connect the bot». Then tell the agent «done»: it opens the invite link and presses Start.",
+      ],
+      note: "The agent never reads BotFather's answer with the token and never types it: the token goes from you to the server only.",
+      button: "Hand it to the agent",
+      telegramTask: "Make a Telegram bot for the server {server} in my Telegram Web (skill help-in-browser). I am signed in to https://web.telegram.org in this Chrome. Open @BotFather, send /newbot, the bot's name «{name}», its address @{username}. After you send the address, do not read the page and take no screenshot: ask me what BotFather answered. «Done!» — I paste the token into step 5 of «Activate a dedicated server» myself; «already taken» — offer me another address and wait for my yes. Never type or read the token. When I say «done», press «Get the invite link» in step 5, open the link in Telegram Web, press Start and wait for the server agent's greeting.",
+      botName: "{server} server",
+    },
     rejected: "Telegram did not accept the token …{tail} when the server's node started: copy it from @BotFather again.",
   },
   recheck: { text: "Every name of the node is asked of two public DNS resolvers. Until every required name points to the server, the certificates cannot start.", button: "Check the records", gate: "Not every required name points to the server yet.", noDomain: "No domain is chosen: the server answers only by its IP." },
@@ -331,6 +345,18 @@ const ru: ServerLaunchWords = {
     linkNote: "Ссылка допускает того, кто откроет её первым: откройте сами, не пересылайте.",
     installing: "Установка тем временем идёт: {stage}.",
     waitNode: "Установка закончилась; ждём, когда ответит узел сервера.",
+    agent: {
+      title: "Claude создаст бота в вашем Telegram Web",
+      steps: [
+        "В Chrome с расширением Claude войдите в https://web.telegram.org.",
+        "Нажмите кнопку: откроется терминал главного агента с готовой задачей. Отправьте её и смотрите на чат с BotFather.",
+        "Когда BotFather ответит «Done!», скопируйте токен из его сообщения в поле ниже и нажмите «Подключить бота». Потом скажите агенту «готово»: он откроет ссылку-приглашение и нажмёт «Старт».",
+      ],
+      note: "Агент не читает ответ BotFather с токеном и не вводит токен: токен идёт от вас только на сервер.",
+      button: "Отдать агенту",
+      telegramTask: "Создай Telegram-бота для сервера {server} в моём Telegram Web (навык help-in-browser). Я уже вошёл в https://web.telegram.org в этом Chrome. Открой @BotFather, отправь /newbot, имя бота «{name}», адрес @{username}. После отправки адреса не читай страницу и не делай снимков экрана: спроси меня, что ответил BotFather. «Done!» — токен в шаг 5 страницы «Активация выделенного сервера» вставлю я сам; «already taken» — предложи мне другой адрес и жди моего «да». Токен никогда не читай и не вводи. Когда я скажу «готово», нажми в шаге 5 «Получить ссылку-приглашение», открой ссылку в Telegram Web, нажми «Старт» и дождись приветствия агента сервера.",
+      botName: "Сервер {server}",
+    },
     rejected: "Telegram не принял токен …{tail}, когда запустился узел сервера: скопируйте его из @BotFather ещё раз.",
   },
   recheck: { text: "Каждое имя узла спрашивается у двух публичных DNS. Пока хоть одно обязательное имя не ведёт на сервер, к сертификатам перейти нельзя.", button: "Проверить записи", gate: "Ещё не все обязательные имена ведут на сервер.", noDomain: "Домен не выбран: сервер отвечает только по своему IP." },

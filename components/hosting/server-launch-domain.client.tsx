@@ -71,7 +71,7 @@ export function LaunchDomain({ lang, state, words, launchWords, dialogUi, note, 
       return (
         <div className="flex flex-col gap-3" data-block="server-launch-records">
           <RecordsStep busy={busy} onCheck={() => onAct("dns")} view={view} words={words} />
-          {view.readOnly || !c ? null : <ChromeHelp cabinet={c.cabinet} lang={lang} task={c.task} words={launchWords.chrome} />}
+          {view.readOnly || !c ? null : <ChromeHelp lang={lang} map={{ cabinet: c.cabinet }} task={c.task} words={launchWords.chrome} />}
         </div>
       )
     })(),

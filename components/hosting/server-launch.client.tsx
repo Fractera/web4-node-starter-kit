@@ -224,7 +224,7 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
     check: <CheckStep busy={busy} dialogUi={dialogUi} onAct={async (a, x) => { await act(a, x) }} state={state} words={words} />,
     domain: <LaunchDomain busy={busy} dialogUi={dialogUi} lang={lang} launchWords={words} note={words.domainNote} onAct={act} state={state} words={ladderWords} />,
     install: <InstallStep busy={busy} onAct={act} state={state} strategy={strategy} words={words} />,
-    telegram: <TelegramStep busy={busy} onAct={act} state={state} words={words} />,
+    telegram: <TelegramStep busy={busy} lang={lang} onAct={act} state={state} words={words} />,
     recheck: <RecheckStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,
     certs: <CertsLaunchStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,
     ready: <ReadyStep busy={busy} claim={claim?.host === target.host ? claim : { code: null, claimed: false }} onAct={act} onClaim={(c) => setClaim({ ...c, host: target.host })} state={state} words={words} />,

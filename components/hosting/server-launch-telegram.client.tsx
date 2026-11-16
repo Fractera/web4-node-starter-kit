@@ -2,6 +2,7 @@
 // @local — step 5 of the launch ladder (one route: «Активация выделенного сервера»): the server's own Telegram bot, made while the server installs
 
 import { useState } from "react"
+import { ChromeHelp, telegramTask } from "@/components/hosting/chrome-help.client"
 import type { LaunchState } from "@/components/hosting/server-launch.client"
 import type { ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -18,7 +19,7 @@ import { Small } from "@/components/ui/typography"
 type Act = (action: string, extra?: Record<string, unknown>) => Promise<unknown>
 const fill = (t: string, map: Record<string, string>) => Object.entries(map).reduce((s, [k, v]) => s.split(`{${k}}`).join(v), t)
 
-export function TelegramStep({ state, words, busy, onAct }: { state: LaunchState; words: ServerLaunchWords; busy: boolean; onAct: Act }) {
+export function TelegramStep({ lang, state, words, busy, onAct }: { lang: string; state: LaunchState; words: ServerLaunchWords; busy: boolean; onAct: Act }) {
   const w = words.telegram
   const t = state.telegram ?? null
   const [token, setToken] = useState("")
@@ -28,6 +29,8 @@ export function TelegramStep({ state, words, busy, onAct }: { state: LaunchState
   const stage = state.progress.find((s) => s.state === "running")
   const bot = t?.username ? `@${t.username}` : t?.name ?? ""
   const showForm = !t?.configured && !t?.pending && (!t?.skipped || asking)
+  // 760-10: the bot made by the main agent in the person's Telegram Web — the token still pasted here by the person
+  const agent = telegramTask(w.agent, { zone: state.domain?.domain ?? null, ip: state.host ?? null })
 
   async function save() {
     const value = token.trim()
@@ -74,6 +77,7 @@ export function TelegramStep({ state, words, busy, onAct }: { state: LaunchState
         <form className="flex flex-col gap-3" data-block="server-launch-telegram-form" onSubmit={(e) => { e.preventDefault(); void save() }}>
           <Small className="max-w-prose text-foreground">{w.text}</Small>
           <ol className="flex list-decimal flex-col gap-1 pl-5 text-foreground text-sm" data-block="server-launch-telegram-how">{w.how.map((line) => <li key={line}>{line}</li>)}</ol>
+          {agent ? <ChromeHelp lang={lang} map={{}} task={agent.task} words={w.agent} /> : null}
           <Field>
             <FieldLabel htmlFor="server-launch-telegram-token">{w.label}</FieldLabel>
             <Input autoComplete="off" id="server-launch-telegram-token" onChange={(e) => setToken(e.target.value)} spellCheck={false} type="password" value={token} />
