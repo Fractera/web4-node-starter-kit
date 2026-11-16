@@ -31,7 +31,7 @@ log-in credentials).
 - [x] 768-3 The beacon card: a masked shadcn field with «show», «Сохранить» → `/api/node/person-asks` `{ id, secret }` → the core writes it
   into the asker's key file (core or element), restarts the element when its declaration says so, closes the request and wakes the asker
   with «<NAME> saved, ends …a1b2». The value is never logged, never returned, never in Telegram.
-- [ ] 768-4 (asked) Telegram: the request's message gets «Ввести в Telegram» (`web_app`) when the node has an HTTPS address; the page
+- [x] 768-4 (yes 2026-11-16 19:56, «Конечно дружище!»; bd32c57c) Telegram: the request's message gets «Ввести в Telegram» (`web_app`) when the node has an HTTPS address; the page
   `/key-entry?t=<one-time token>` posts to `/api/node/secret-entry` with `initData` (validated against the asker's bot token, the user in
   its allowed chats) and the token (single use, 10 minutes); the same writing path as 768-3.
 - [x] 768-5 The root password of «Активация выделенного сервера» through the window: the value goes to the launch door the page already
@@ -70,3 +70,19 @@ owner which element; grep the value), S2/S3 by unit; 768-4 waits for his yes.
   visit (the window checks only `ok`, the page checks `ok && state`); is a fresh visit key refused on its second use (then the page's own
   form would fail the same way). Asked the owner (19:29) to type the password in the page's own form and press «Проверить сервер» —
   that splits the window from the launch door. 7201483d (a wrong guess about a profile) dropped.
+
+## 768-4 — the Telegram form (built 19:58–20:08, core bd32c57c)
+- Decided 19:52: the server root password only on the computer (Telegram: no button, «только на компьютере»); keys of elements — both ways.
+- `lib/node/telegram-webapp.cjs`: initData HMAC (key HMAC("WebAppData", bot token)), `signature` field tolerated, auth_date ≤ 1 h, the
+  user in the bot's allowFrom; one-time token — only its sha256 in the request (`tgEntry`), a day at most, dies with the request.
+- `lib/node/person-secret-save.ts`: one road for the window and the form (save, close once, wake the asker, Telegram «✓ saved …tail»).
+- Door `/api/node/secret-entry`: GET = a plain HTML form (no telegram.org script — tgWebAppData and the theme from the hash), POST =
+  token + signature → save. Public: `PUBLIC_API_PREFIXES` and `TEMPORARY_WRITE_ALLOWED` name this door only.
+- Live 20:09–20:14: T2 ✓ (66c9e85a from the owner's phone: «written, restarted true», «done (telegram) → hrutb: ok»; the element's file
+  itself is not readable by law), T3 ✓ (core logs, person-asks.json — 0 hits), T6 ✓ (his screenshot, light). T4/T5 — his look.
+
+## 768-6 — the node's OpenAI key through the same form (the owner 20:13: «Где же наши возможности … передачи ключа OpenNI?»; yes 20:14)
+- Secret kind `openai` (main agent only) → the live probe moved to `lib/openai-probe.ts` (shared with «Окружение») → `writeVar(core)`.
+- `transcribe` without a key and `/openai_key` without a key put the request with the form; the old «send the key in the chat» hint is
+  gone from the CLI and `commands.json` (a key sent anyway is still checked, kept and its message deleted).
+- Tests: unit 20/20; live — a real key in the form → a voice note transcribed; a fake key refused, nothing written.

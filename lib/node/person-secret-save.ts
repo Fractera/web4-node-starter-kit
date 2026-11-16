@@ -6,12 +6,13 @@ import asks from "@/lib/node/person-asks.cjs"
 import nodeLine from "@/lib/agent-kit/node-line.cjs"
 import asksTg from "@/lib/node/person-asks-telegram.cjs"
 import secrets from "@/lib/node/person-secrets.cjs"
-import { writeElementSecret } from "@/lib/env-file"
+import { writeElementSecret, writeVar } from "@/lib/env-file"
 import { restartService } from "@/lib/domain/resident"
+import { OPENAI_KEY, probeOpenAiKey } from "@/lib/openai-probe"
 
 const ROOT = process.cwd()
 
-export type Secret = { kind: "env" | "server-root"; name?: string; where?: string | null; host?: string; port?: number }
+export type Secret = { kind: "env" | "openai" | "server-root"; name?: string; where?: string | null; host?: string; port?: number }
 export type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; copy?: string | null; by?: string; secret?: Secret; at: string; tg?: { via: string; sent: number } | null; tgEntry?: { hash: string; until: string } }
 export type Saved = { tail: string | null; restarted: boolean }
 type Wake = (service: string, opts: { text?: string; from?: string; confirmed?: boolean }) => Promise<Record<string, unknown> & { ok: boolean }>
@@ -34,6 +35,24 @@ export function saveEnvSecret(ask: Ask, raw: unknown): { ok: true; saved: Saved 
   return { ok: true, saved }
 }
 
+/** 768-6: the node's OpenAI key typed by the person — tried live with OpenAI first (the «Окружение» screen's check), then written into the
+ * core's key file; refused — nothing written, the reason goes back to the form. */
+export async function saveOpenAiSecret(raw: unknown): Promise<{ ok: true; saved: Saved } | { ok: false; reason: string; status: number }> {
+  if (typeof raw !== "string") return { ok: false, reason: "secret required", status: 400 }
+  const value = raw.trim()
+  if (!OPENAI_KEY.test(value)) return { ok: false, reason: "bad-format", status: 400 }
+  const checked = await probeOpenAiKey(value)
+  if (checked !== "ok") return { ok: false, reason: checked, status: 400 }
+  if (!writeVar("core", "OPENAI_API_KEY", value)) return { ok: false, reason: "not-written", status: 500 }
+  console.log("[node/person-asks] the node's OpenAI key: checked live, written into the core")
+  return { ok: true, saved: { tail: secrets.tail(value) as string | null, restarted: true } }
+}
+
+/** The person's secret by its kind: an element's key or the node's OpenAI key. */
+export async function saveSecret(ask: Ask, raw: unknown) {
+  return ask.secret?.kind === "openai" ? saveOpenAiSecret(raw) : saveEnvSecret(ask, raw)
+}
+
 /** Close the request once and wake the one who asked; Telegram learns it. `null` — it was already closed. */
 export async function closeAsk(id: string, { saved = null, via = "window" }: { saved?: Saved | null; via?: "window" | "telegram" } = {}) {
   const a = asks.done(ROOT, id) as Ask | null
@@ -50,7 +69,7 @@ export async function closeAsk(id: string, { saved = null, via = "window" }: { s
     const out = await wake(who, { text: `${lead}${nodeLine.head("person-done", who)}${words}`, from: "node", confirmed: true })
     woke = out.ok ? "ok" : String(out.reason ?? "refused")
   }
-  const kind = a.secret?.kind === "env" && saved ? "saved" : "closed"
+  const kind = (a.secret?.kind === "env" || a.secret?.kind === "openai") && saved ? "saved" : "closed"
   const tg = await asksTg.closed(ROOT, a, kind, { tail: saved?.tail ?? null }).catch((e: unknown) => String(e))
   console.log(`[node/person-asks] ${id} done (${via}) → ${who}: ${woke} · telegram: ${tg}`)
   return { woke, who, tg }

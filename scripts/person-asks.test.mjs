@@ -162,5 +162,19 @@ t('768-4 the one-time token opens only its open request; closed or expired — n
   assert.ok(words.includes('Telegram form'), words)
 })
 
+t('768-6 the node\'s OpenAI key: asked only by the main agent, gets the Telegram button, opens by its token', () => {
+  assert.throws(() => asks.add(tmp, { text: 'x', by: 'root', secret: { kind: 'openai' } }), /only by the main agent/, 'negative control: an element may not ask the core key')
+  const a = asks.add(tmp, { text: 'Введите ключ OpenAI узла', by: 'build', secret: { kind: 'openai' } })
+  assert.deepEqual(a.secret, { kind: 'openai', name: 'OPENAI_API_KEY' })
+  const m = tg.message(a, 'ru', null, null, 'https://x.trycloudflare.com/api/node/secret-entry?t=abc')
+  assert.ok(m.keyboard.inline_keyboard[0][0].web_app.url.includes('secret-entry'))
+  const { token, entry } = webapp.issue()
+  asks.setEntry(tmp, a.id, entry)
+  assert.equal(asks.byToken(tmp, token)?.id, a.id)
+  const words = asks.secretDoneText(a, { tail: 'wxyz', via: 'telegram' })
+  assert.ok(words.includes('OpenAI key') && words.includes('…wxyz') && words.includes('Telegram form'), words)
+  asks.done(tmp, a.id)
+})
+
 rmSync(tmp, { recursive: true, force: true })
 console.log(process.exitCode ? `===PERSON_ASKS_FAILED=== ${passed} passed` : `===PERSON_ASKS_OK=== ${passed} passed`)

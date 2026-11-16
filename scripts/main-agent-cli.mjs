@@ -30,7 +30,7 @@
 //   telegram <id> [<ячейка> "<текст>"] — боты элемента (h2a · h2h · orders · work) или сообщение допущенным одного из них (552-6)
 //   session context|clear [<id>] · session model opus|sonnet|haiku [<id>] — заполнение контекста, очистка, смена модели сессии (620)
 //   openai-key <sk-…> [--chat <id> --message <id>] — ключ OpenAI узла: проверка дверью ядра, запись, удаление сообщения с ключом (620)
-//   transcribe <файл> [--lang xx] — голосовое человека → текст дверью распознавания ядра; нет рабочего ключа — попросить /openai_key (617)
+//   transcribe <файл> [--lang xx] — голосовое человека → текст дверью распознавания ядра; нет рабочего ключа — просьба с формой (617, 768-6)
 //   review <id> "<слова человека>" — разбор элемента по слову человека: его недовольство первой причиной, расход сессии второй (571-6)
 //   clocks                  — часы всех элементов: записи сегодня, пропуски и почему (697)
 //   lang [<код>]            — язык разговора с человеком: тебе и каждому элементу, которого будишь (694-2)
@@ -631,9 +631,30 @@ if (cmd === 'session') {
 // ядра `/api/architect/environment` (настоящий вызов OpenAI до записи; отказ — файл не тронут). Сообщение с ключом бот удаляет из чата
 // (Bot API deleteMessage: «Bots can delete incoming messages in private chats», не позже 48 часов) — в истории Telegram ключ не остаётся.
 // Ключ никогда не печатается.
+// 768-6 (the owner, 2026-11-16: «Где же наши возможности в реальной жизни поработать с реальными инструментами передачи ключа»): the
+// key is asked by a request with a form — the window in the panel and «Ввести здесь, в Telegram»; the key never travels in a chat.
+async function askOpenAiKey(why) {
+  const asks = require('../lib/node/person-asks.cjs')
+  const tg = require('../lib/node/person-asks-telegram.cjs')
+  const waiting = asks.open(ROOT).find((a) => a.secret?.kind === 'openai')
+  if (waiting) return `the request ${waiting.id} with the form already waits for the person (the window in the panel, «Ввести здесь, в Telegram»)`
+  const ru = String(readJson(join(ROOT, 'data', 'services', 'build', 'channel', 'telegram', 'person.json'), null)?.lang ?? 'ru').startsWith('ru')
+  const a = asks.add(ROOT, {
+    text: ru ? 'Введите ключ OpenAI узла — без него не работают голосовые, переводы и глубокая память' : 'Type the node\'s OpenAI key — voice notes, translations and the deep memory need it',
+    why: why ?? (ru ? 'ключ вашего аккаунта OpenAI вводите только вы; узел проверит его у OpenAI и сохранит только рабочий' : 'only you type the key of your OpenAI account; the node checks it with OpenAI and keeps only a working one'),
+    by: 'build', secret: { kind: 'openai' },
+  })
+  const t = await tg.announce(ROOT, a)
+  if (t.sent) asks.setTg(ROOT, a.id, { via: t.via, sent: t.sent })
+  return `the request ${a.id} with the form is put: the window in the panel${t.sent ? ', and in Telegram with the button «Ввести здесь, в Telegram»' : ''}; saving it wakes you (person-done)`
+}
+
 if (cmd === 'openai-key') {
   const key = (rest.find((a) => a.startsWith('sk-')) ?? '').trim()
-  if (!key) fail('openai-key <sk-…> [--chat <chat_id> --message <message_id>]')
+  if (!key) {
+    console.log(`===OPENAI_KEY_ASKED=== ${await askOpenAiKey()}. Tell the person in one line: the form waits for them; never ask for the key in the chat.`)
+    process.exit(0)
+  }
   const chat = flag('--chat')
   const message = flag('--message')
   if (chat && message) {
@@ -656,7 +677,7 @@ if (cmd === 'openai-key') {
 // текст. Модель звук не принимает (Anthropic: «Audio input is not supported»), поэтому файл уходит двери распознавания ядра
 // `/api/transcribe` (OpenAI, ключ ядра — закон 336), язык — язык человека из `person.json`. Новый элемент не нужен: способность уже
 // живёт в ядре. Владелец 18:15 того же дня: «если у нас не введён ключ OpenAI … команду через Telegram который позволяет ввести ключ» —
-// нет рабочего ключа (нет совсем или OpenAI ответил 401) → строка агенту: попросить у человека `/openai_key`.
+// нет рабочего ключа (нет совсем или OpenAI ответил 401) → просьба с формой ключа (768-6): окно пульта и кнопка в Telegram, не чат.
 if (cmd === 'transcribe') {
   const file = rest.find((a) => !a.startsWith('--'))
   if (!file || !existsSync(file)) fail('transcribe <path of the voice note> — download it first (download_attachment)')
@@ -670,7 +691,7 @@ if (cmd === 'transcribe') {
   const b = await r.json().catch(() => ({}))
   if (b.ok) { console.log(`===TRANSCRIBE_OK=== ${b.text || '(no words in the recording)'}`); process.exit(0) }
   if (b.reason === 'no-key' || /\(401\)/.test(String(b.error ?? ''))) {
-    console.log('===TRANSCRIBE_NO_KEY=== the node has no working OpenAI key, so it cannot hear voice notes. Tell the person, in their language: send /openai_key and the key in one message — the node checks it, keeps it and deletes the message; then send the voice note again.')
+    console.log(`===TRANSCRIBE_NO_KEY=== the node has no working OpenAI key, so it cannot hear voice notes; ${await askOpenAiKey()}. Tell the person in one line, in their language: the form for the OpenAI key waits for them (in Telegram — the button «Ввести здесь, в Telegram»); when it is saved you transcribe this voice note yourself — keep its path. Never ask for the key in the chat.`)
     process.exit(1)
   }
   console.log(`===TRANSCRIBE_FAIL=== ${b.error ?? r.status}`)

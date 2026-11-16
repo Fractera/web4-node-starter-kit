@@ -4,8 +4,7 @@ import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { isBornElement } from "@/lib/web4-items/element-delete"
 import { EDITABLE, type EditableName, setNames, writeVar } from "@/lib/env-file"
-import { readOpenAiResponse, readOpenAiException, logOpenAiError } from "@/lib/openai-error.cjs"
-import { recordOk, recordRefusal } from "@/lib/usage-ledger.cjs"
+import { OPENAI_KEY, probeOpenAiKey as probe } from "@/lib/openai-probe"
 
 // ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ (336-1). `?target=core` или id рождённого элемента.
 //   GET  — имена заданных переменных и есть ли ключ OpenAI у ядра. Значений в ответе нет никогда.
@@ -15,7 +14,6 @@ import { recordOk, recordRefusal } from "@/lib/usage-ledger.cjs"
 export const dynamic = "force-dynamic"
 
 const NO_STORE = { "Cache-Control": "no-store" }
-const OPENAI_KEY = /^sk-[A-Za-z0-9_-]{20,300}$/
 
 function targetOk(target: string): boolean {
   return target === "core" || isBornElement(target)
@@ -34,26 +32,6 @@ export async function GET(req: NextRequest) {
   const set = setNames(target)
   const coreHasKey = Boolean(process.env.OPENAI_API_KEY) || setNames("core").includes("OPENAI_API_KEY")
   return NextResponse.json({ ok: true, set, editable: EDITABLE, coreHasKey }, { headers: NO_STORE })
-}
-
-/** Живой ли ключ: список моделей OpenAI отвечает 200 только настоящему ключу. */
-async function probe(key: string): Promise<"ok" | "key-rejected" | "probe-failed"> {
-  // 726-1: every call writes one line of the node's ledger (`lib/usage-ledger.cjs`, `npm run money`) — no prompt, no key.
-  const call = { who: "environment/probe", endpoint: "models", started: Date.now() }
-  try {
-    const r = await fetch("https://api.openai.com/v1/models", { headers: { Authorization: `Bearer ${key}` }, signal: AbortSignal.timeout(10000) })
-    if (r.ok) { recordOk({ ...call, status: r.status }); return "ok" }
-    // 726-0: read by the node's one reader; the screen keeps its two words, the node's log gets OpenAI's own reason.
-    const info = await readOpenAiResponse(r)
-    logOpenAiError("environment/probe", info)
-    recordRefusal({ ...call, info })
-    return ["bad-key", "ip-blocked", "forbidden", "region"].includes(info.reason) ? "key-rejected" : "probe-failed"
-  } catch (e) {
-    const info = readOpenAiException(e)
-    logOpenAiError("environment/probe", info)
-    recordRefusal({ ...call, info })
-    return "probe-failed"
-  }
 }
 
 export async function POST(req: NextRequest) {

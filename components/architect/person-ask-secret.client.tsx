@@ -68,7 +68,7 @@ export function PersonAskSecret({ ask, ui, url, onSaved }: Props) {
         </InputGroupAddon>
       </InputGroup>
       {error && <span className="text-xs text-destructive" role="alert" data-person-ask-secret-error>{error}</span>}
-      <span className="text-xs text-muted-foreground text-pretty">{root ? ui.secretRootNote : ui.secretEnvNote.replace("{element}", ask.byName ?? "")} {ui.secretChrome}</span>
+      <span className="text-xs text-muted-foreground text-pretty">{root ? ui.secretRootNote : s.kind === "openai" ? ui.secretOpenaiNote : ui.secretEnvNote.replace("{element}", ask.byName ?? "")} {ui.secretChrome}</span>
       {!root && s.where && <a href={s.where} target="_blank" rel="noreferrer" className="self-start text-xs font-medium underline underline-offset-4">{ui.secretWhere}</a>}
       <Button type="button" size="sm" className="self-end" disabled={busy || !value.trim()} onClick={() => { void save() }} data-person-ask-save>{ui.save}</Button>
     </div>

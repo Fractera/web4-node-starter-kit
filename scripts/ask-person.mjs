@@ -41,13 +41,13 @@ if (args[0] === 'list') {
   const host = flag('--host')
   const port = flag('--port')
   try {
-    if (secretKind && secretKind !== 'server-root') throw new Error(`--secret ${secretKind}: the main agent asks only server-root (--host <ip> [--port 22]); an element's key is asked by that element`)
-    const secret = secretKind ? { kind: 'server-root', host, port: port ? Number(port) : 22 } : null
+    if (secretKind && secretKind !== 'server-root' && secretKind !== 'openai') throw new Error(`--secret ${secretKind}: the main agent asks server-root (--host <ip> [--port 22]) or openai (the node's OpenAI key); an element's key is asked by that element`)
+    const secret = secretKind === 'openai' ? { kind: 'openai' } : secretKind ? { kind: 'server-root', host, port: port ? Number(port) : 22 } : null
     const a = asks.add(ROOT, { text: args.join(' '), href, why, hint, copy, secret })
     const t = await tg.announce(ROOT, a)
     if (t.sent) asks.setTg(ROOT, a.id, { via: t.via, sent: t.sent })
-    const how = a.secret ? ' The person types the password in the window\'s masked field (never in a chat); their browser opens the visit, and «Сохранить» wakes you (person-done).' : ''
-    console.log(`===ASK_PUT=== ${a.id} — shown at the bottom of every panel page until «Готово»; the press wakes you (person-done).${how}${t.sent ? ` Also sent to Telegram (${t.detail})${a.secret ? ' without a «Готово» button: a secret is typed only in the window' : `: their reply «Готово · ${a.id}» comes to you as a message — then npm run ask-person -- done ${a.id}`}.` : ' No Telegram bot: the window alone.'} Say one line to the person that the window waits for them.`)
+    const how = a.secret?.kind === 'openai' ? ' The person types the key in the window or in the Telegram form (never in a chat); OpenAI checks it live, saving wakes you (person-done).' : a.secret ? ' The person types the password in the window\'s masked field (never in a chat); their browser opens the visit, and «Сохранить» wakes you (person-done).' : ''
+    console.log(`===ASK_PUT=== ${a.id} — shown at the bottom of every panel page until «Готово»; the press wakes you (person-done).${how}${t.sent ? ` Also sent to Telegram (${t.detail})${a.secret?.kind === 'openai' ? ' with the button «Ввести здесь, в Telegram» when the node has an HTTPS address' : a.secret ? ' without a «Готово» button: a secret is typed only in the window' : `: their reply «Готово · ${a.id}» comes to you as a message — then npm run ask-person -- done ${a.id}`}.` : ' No Telegram bot: the window alone.'} Say one line to the person that the window waits for them.`)
   } catch (e) {
     console.log(`===ASK_REFUSED=== ${e instanceof Error ? e.message : e}`)
     process.exitCode = 1

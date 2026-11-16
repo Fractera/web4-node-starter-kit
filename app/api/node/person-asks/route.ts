@@ -7,7 +7,7 @@ import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { elementName } from "@/lib/web4-items/dashboard-rows"
 import asks from "@/lib/node/person-asks.cjs"
 import asksTg from "@/lib/node/person-asks-telegram.cjs"
-import { closeAsk, knownElement as known, saveEnvSecret, type Ask, type Saved } from "@/lib/node/person-secret-save"
+import { closeAsk, knownElement as known, saveSecret, type Ask, type Saved } from "@/lib/node/person-secret-save"
 
 // ДЕЙСТВИЕ ЧЕЛОВЕКА (узел, шаг 761-16). GET — открытые запросы (главного агента — `npm run ask-person` ядра; агента элемента — его
 // `npm run ask-person`, 761-16d), их показывает окно внизу каждой страницы пульта с именем элемента; POST `{ id }` — человек нажал
@@ -51,7 +51,7 @@ async function fromElement(req: NextRequest) {
   if (body.list === true) return NextResponse.json({ ok: true, asks: (asks.open(ROOT) as Ask[]).filter((a) => a.by === from) }, noStore)
   // 761-16b: the person answered «Готово · <id>» in Telegram and the element's running agent got it — it closes its own request, no wake
   if (typeof body.done === "string") {
-    const mine = (asks.open(ROOT) as Ask[]).some((a) => a.id === body.done && a.by === from && a.secret?.kind !== "env")
+    const mine = (asks.open(ROOT) as Ask[]).some((a) => a.id === body.done && a.by === from && a.secret?.kind !== "env" && a.secret?.kind !== "openai")
     const out = mine ? (asks.done(ROOT, body.done) as Ask | null) : null
     return NextResponse.json({ ok: true, done: !!out, ...(out ? {} : { already: true }) }, noStore)
   }
@@ -90,8 +90,8 @@ export async function POST(req: NextRequest) {
   // (the same road as the Telegram form, `lib/node/person-secret-save.ts`).
   let saved: Saved | null = null
   const pending = (asks.open(ROOT) as Ask[]).find((x) => x.id === id) ?? null
-  if (pending?.secret?.kind === "env") {
-    const r = saveEnvSecret(pending, body.secret)
+  if (pending?.secret?.kind === "env" || pending?.secret?.kind === "openai") {
+    const r = await saveSecret(pending, body.secret)
     if (!r.ok) return NextResponse.json({ ok: false, reason: r.reason }, { status: r.status, ...noStore })
     saved = r.saved
   }

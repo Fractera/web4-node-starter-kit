@@ -139,11 +139,11 @@
       "slash": "openai_key",
       "words": { "ru": ["ключ openai", "вот ключ openai", "добавь ключ openai"], "en": ["openai key", "here is the openai key", "add the openai key"] },
       "what": {
-        "ru": "Ключ OpenAI — пришлите /openai_key и ключ одним сообщением: узел проверит его, сохранит и удалит сообщение; ключ нужен голосу, векторам и глубокой памяти",
-        "en": "OpenAI key — send /openai_key and the key in one message: the node checks it, keeps it and deletes the message; voice, vectors and the deep memory need it"
+        "ru": "Ключ OpenAI — узел пришлёт форму: окно в пульте и кнопку «Ввести здесь, в Telegram»; OpenAI проверит ключ, сохранится только рабочий; в чат ключ не присылайте; он нужен голосу, переводам и глубокой памяти",
+        "en": "OpenAI key — the node sends a form: the window in the panel and the button «Enter here, in Telegram»; OpenAI checks the key, only a working one is kept; never send the key in the chat; voice, translations and the deep memory need it"
       },
       "by": "main",
-      "run": "npm run openai-key -- <the key> --chat <chat_id> --message <message_id of the person's message>"
+      "run": "npm run openai-key — the request with the form; a key sent in the chat anyway: npm run openai-key -- <the key> --chat <chat_id> --message <message_id> (checked, kept, the message deleted)"
     },
     {
       "id": "commands",

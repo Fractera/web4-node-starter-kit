@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server"
 import asks from "@/lib/node/person-asks.cjs"
 import asksTg from "@/lib/node/person-asks-telegram.cjs"
 import webapp from "@/lib/node/telegram-webapp.cjs"
-import { closeAsk, saveEnvSecret, type Ask } from "@/lib/node/person-secret-save"
+import { closeAsk, saveSecret, type Ask } from "@/lib/node/person-secret-save"
 import { elementName } from "@/lib/web4-items/dashboard-rows"
 
 // КЛЮЧ, ВВЕДЁННЫЙ В TELEGRAM (узел, шаг 768-4). Владелец, 2026-11-16: «если я говорю в Telegram ты мне показываешь возможность ввести
@@ -23,17 +23,17 @@ const HEADERS = { "Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollo
 
 const WORDS = {
   en: {
-    title: "A key for the node", label: "Key {name}", lead: "{who} asks for it. The key goes straight to your node, not through the chat.",
+    title: "A key for the node", label: "Key {name}", lead: "{who} asks for it. The key goes straight to your node, not through the chat.", leadOpenai: "The node's own OpenAI key: voice notes, translations and the deep memory. OpenAI checks it first; a key that does not work is not saved.",
     save: "Save", saving: "Saving…", show: "Show", hide: "Hide", saved: "Saved{tail}. The form closes now.",
     gone: "This form is no longer valid: the request is closed or a day has passed. Ask the agent to send it again.",
-    errors: { forged: "Telegram's signature did not match. Open the form from the bot's message again.", stale: "The form was opened too long ago. Open it again from the bot's message.", "not-allowed": "This Telegram account is not allowed for this bot.", "no-data": "Open this form from the button in Telegram.", space: "A key has no spaces.", quote: "A key has no quotes.", "line-break": "A key is one line.", "not-ascii": "A key has only Latin letters, digits and signs.", empty: "Type the key.", "not-written": "The node could not write the key. Try again in the panel's window on the computer." } as Record<string, string>,
+    errors: { forged: "Telegram's signature did not match. Open the form from the bot's message again.", stale: "The form was opened too long ago. Open it again from the bot's message.", "not-allowed": "This Telegram account is not allowed for this bot.", "no-data": "Open this form from the button in Telegram.", space: "A key has no spaces.", quote: "A key has no quotes.", "line-break": "A key is one line.", "not-ascii": "A key has only Latin letters, digits and signs.", empty: "Type the key.", "bad-format": "This is not an OpenAI key: it starts with sk-.", "key-rejected": "OpenAI did not accept this key. Check it in your OpenAI account.", "probe-failed": "OpenAI could not be reached or refused the check (no money on the account?). Try again later.", "not-written": "The node could not write the key. Try again in the panel's window on the computer." } as Record<string, string>,
     failed: "Not saved: {reason}",
   },
   ru: {
-    title: "Ключ для узла", label: "Ключ {name}", lead: "Его просит {who}. Ключ уйдёт прямо в ваш узел, мимо чата.",
+    title: "Ключ для узла", label: "Ключ {name}", lead: "Его просит {who}. Ключ уйдёт прямо в ваш узел, мимо чата.", leadOpenai: "Собственный ключ OpenAI узла: голосовые, переводы и глубокая память. Сначала его проверит OpenAI, нерабочий ключ не сохранится.",
     save: "Сохранить", saving: "Сохраняю…", show: "Показать", hide: "Скрыть", saved: "Сохранено{tail}. Форма сейчас закроется.",
     gone: "Эта форма больше не действует: просьба закрыта или прошли сутки. Попросите агента прислать её заново.",
-    errors: { forged: "Подпись Telegram не совпала. Откройте форму заново из сообщения бота.", stale: "Форма открыта слишком давно. Откройте её заново из сообщения бота.", "not-allowed": "Этот аккаунт Telegram не допущен к этому боту.", "no-data": "Откройте эту форму кнопкой в Telegram.", space: "В ключе не бывает пробелов.", quote: "В ключе не бывает кавычек.", "line-break": "Ключ — одна строка.", "not-ascii": "В ключе только латинские буквы, цифры и знаки.", empty: "Введите ключ.", "not-written": "Узел не смог записать ключ. Попробуйте в окне пульта на компьютере." } as Record<string, string>,
+    errors: { forged: "Подпись Telegram не совпала. Откройте форму заново из сообщения бота.", stale: "Форма открыта слишком давно. Откройте её заново из сообщения бота.", "not-allowed": "Этот аккаунт Telegram не допущен к этому боту.", "no-data": "Откройте эту форму кнопкой в Telegram.", space: "В ключе не бывает пробелов.", quote: "В ключе не бывает кавычек.", "line-break": "Ключ — одна строка.", "not-ascii": "В ключе только латинские буквы, цифры и знаки.", empty: "Введите ключ.", "bad-format": "Это не ключ OpenAI: он начинается с sk-.", "key-rejected": "OpenAI не принял этот ключ. Проверьте его в своём аккаунте OpenAI.", "probe-failed": "OpenAI не ответил или отклонил проверку (нет денег на счёте?). Попробуйте позже.", "not-written": "Узел не смог записать ключ. Попробуйте в окне пульта на компьютере." } as Record<string, string>,
     failed: "Не сохранено: {reason}",
   },
 }
@@ -46,7 +46,7 @@ const langOf = (req: NextRequest): "en" | "ru" => (req.nextUrl.searchParams.get(
 function page(w: Words, ask: Ask | null, token: string, lang: string): string {
   const body = ask
     ? `<h1>${esc(w.title)}</h1>
-<p class="lead">${esc(w.lead.replace("{who}", ask.by ? elementName(ask.by, lang === "ru" ? "ru" : "en") : ""))}</p>
+<p class="lead">${esc(ask.secret?.kind === "openai" ? w.leadOpenai : w.lead.replace("{who}", ask.by ? elementName(ask.by, lang === "ru" ? "ru" : "en") : ""))}</p>
 <label for="k">${esc(w.label.replace("{name}", ask.secret?.name ?? ""))}</label>
 <div class="row"><input id="k" type="password" autocomplete="off" spellcheck="false" autocapitalize="off" autofocus><button type="button" id="eye" class="ghost">${esc(w.show)}</button></div>
 <p id="err" class="err" role="alert"></p>
@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
     console.log(`[node/secret-entry] ${ask.id}: refused — ${signed.reason}`)
     return no(signed.reason ?? "refused", 401)
   }
-  const r = saveEnvSecret(ask, body?.secret)
+  const r = await saveSecret(ask, body?.secret)
   if (!r.ok) return no(r.reason, r.status)
   await closeAsk(ask.id, { saved: r.saved, via: "telegram" })
   return NextResponse.json({ ok: true, tail: r.saved.tail }, { headers: HEADERS })

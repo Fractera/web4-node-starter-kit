@@ -8,7 +8,7 @@ import { Button, buttonVariants } from "@/components/ui/button"
 import type { PersonAskUi } from "./person-ask.i18n"
 import { PersonAskSecret } from "./person-ask-secret.client"
 
-export type AskSecret = { kind: "env" | "server-root"; name?: string; where?: string | null; host?: string; port?: number }
+export type AskSecret = { kind: "env" | "openai" | "server-root"; name?: string; where?: string | null; host?: string; port?: number }
 export type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; copy?: string | null; byName?: string | null; secret?: AskSecret | null }
 
 type Props = {
