@@ -11,32 +11,34 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Next action:** read the letter below — B2 of 761-16b with the Telegram channel, then 765 on his yes.
 
-## Letter to my next session (written 2026-11-16 ~19:15 UTC, the window at ~62 %)
+## Letter to my next session (written 2026-11-16 ~19:33 UTC, the window at 66 %; a clean start for a debugging task)
 
-**Where we stand.** Рома (owner; answer in Russian, Telegram chat 90413601 is where he reads me; the session runs Opus · effort max —
-he asked «строить на максимальном усилие»). Today closed: 765, 761-16b/c/e, 763-a, 767 (browser from Telegram — completed-steps/767-main.md).
-NOW: **768** — the person's secret in the action window (new-steps/768-a-secret-typed-in-the-window-or-telegram.md): 768-1..3, 5 in code
-and rolled out (core ad04d73f…; templates custom v0.3.213 / native v0.1.78; 11 elements). A core rebuild was started ~19:16.
+**Where we stand.** Рома (owner; answer in Russian; he reads me in Telegram, chat 90413601; the session runs Opus · effort max — keep it:
+`npm run session -- model opus --effort max` if a restart drops it). Closed today: 765, 761-16b/c/e, 763-a, 767. **768** (a secret typed in
+the action window) is in code, built (core dcd483eb) and rolled out (templates custom v0.3.213 / native v0.1.78; 10 natives + root;
+hrutb paused, regenerated, uncommitted) — new-steps/768-a-secret-typed-in-the-window-or-telegram.md, «Live after the build».
 
-**UPDATE 19:30:** the core is built (dcd483eb); S6 light ✓; S5 open — the window's root password got «ok» from the launch door but the page then says «no open access» (see new-steps/768 «Live after the build»); the owner was asked to type it in the page's own form. Also to fix: «Сохранить» busy with no words → «Проверяю сервер…» + spinner. **Next actions after the core-back (done: 1–2 light):** (1) restore CLAUDE.md/.claude/skills from git (`git checkout HEAD -- CLAUDE.md .claude/skills`,
-`npm run check:instruction`); (2) S6: `npm run eyes` / playwright on a page with a secret request — the masked field, show/hide, both
-themes, 390 px; (3) S5 with Рома: `npm run ask-person -- "Введите пароль root сервера 109.199.105.213" --secret server-root --host
-109.199.105.213 --href "/ru/hosting/hosting?from=agent" --why "пароль root вводите только вы"` → he types it in the window → the launch
-door's visit opens → on the page (my extension tab, tabs_context — it was 2116208463) «Проверить сервер» with an empty password →
-step 2 opens; (4) S1/S4: a test key needs an element's request — ask Рома which element and whether a test key may stay (the element is
-woken by «Сохранить»); grep the core's logs and the session journal for the value → 0; (5) 768-4 (a Telegram Mini App form) waits for
-his yes — he asked how it differs on a server: on his own server TLS ends on the server (no Cloudflare), on the computer Cloudflare's
-edge decrypts (said to him). Then back to the morning goal **761-13** (a fresh server launch, step 5 Telegram, T4–T6) on «Активация
-выделенного сервера» (http://localhost:24680/ru/hosting/hosting).
+**The task NOW — S5 is broken, and NOT by the window.** The server 109.199.105.213: the root password typed in the window (19:25) → the
+launch door answered ok (the request closed, journal «4deaab20 done»), yet the page's «Проверить сервер» with an empty password on the same
+tab says «У этого браузера нет открытого доступа», and `fetch('/api/node/launch', {action:'state', host, port:22})` from that tab →
+`need-password`. Then (19:31) Рома typed the password in the PAGE's own form — «тоже не сработало». So the launch road itself fails now.
+Measured 19:32: port 22 open; the server's host keys now ED25519 SHA256:VdhnAheK45z4JL5L+eIeFcCbPtIhwfWPySW5QtybhQs, RSA
+SHA256:0g+SW5Ls2KGOo/n7UPHnT9umBKHZot5fV4mgDV9gVIE — compare with the pin the launch keeps (a reinstalled server → host-key-changed →
+the page should offer «trust»; the morning plan said «удалить сервер и перезапустить»). Asked Рома what the page said under the button.
+First: his answer (the message under the button / a screenshot via Telegram), then read `scripts/dedicated-server/launch.mjs` connect
+(line ~329: `openVisit` + `byKey`) and the door `app/api/node/launch/route.ts` (`readVisit`, `keepVisit`, cookie path /api/node/launch,
+sameSite strict) — why a fresh visit is not usable on the next call. Use my extension tab (tabs_context; it was 2116208463,
+?from=agent) and JS `fetch` to the door for `state`/`probe` (never a password from me).
+**Promised fixes for the window (768):** «Проверяю сервер…» + spinner while «Сохранить» waits (he waited ~2 min, saw only light blue);
+close the request only when the answer is `ok && state` (as the page's connect does), and handle `host-key-changed` (show the seen key,
+leave the request open). Then S6 dark/390 (the beacon was shut in those shots), S1/S4 (an element's test key — ask Рома which element),
+768-4 (Telegram Mini App) waits for his yes; then 761-13 (the fresh server launch).
 
-**Clues.** Every core-started session restores the system part — restore from git after every core-back. Run `npm run prebuild` by hand
-before `serve:rebuild` (two builds of 767 failed on check:steps and migrate-sections words). Never `git commit -am`. Template releases
-need `TEMPLATE_GITHUB_TOKEN=$(gh auth token)`; rollout of a skill section — `--append-section "<heading>"`; a script's package.json line
-comes only with `package.json` in the paths. hrutb (Соцсети пользователя) is paused (supervise off, agent closed) — the rollout skips it
-(HEAD past its pin); its CLAUDE.md is regenerated uncommitted; Рома may delete it. The core main is not pushed (761-9). `npm run browser`
-(tabs/focus/open/profiles) shows pages without tokens; the extension's selected tab is never his screen. A test request «by an element»
-must be dropped by me, never left for his press (it woke root once and broke a build). The session record (session-mode.json) lags the
-real effort — ps shows `--effort max`.
+**Clues.** Restore CLAUDE.md/.claude/skills from git after every core-back (`git checkout HEAD -- CLAUDE.md .claude/skills`,
+`npm run check:instruction`). `npm run prebuild` by hand before `serve:rebuild`. Never `git commit -am`. Templates need
+`TEMPLATE_GITHUB_TOKEN=$(gh auth token)`; a skill section rolls with `--append-section "<heading>"`; package.json only with its script's
+file. A test request «by an element» is dropped by me, never left for his press. `npm run browser -- tabs|focus|open|profiles` shows
+pages without tokens; the extension's selected tab is never his screen. The core main is not pushed (761-9).
 
 ## The person's decisions (verbatim)
 
