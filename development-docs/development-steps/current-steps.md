@@ -9,47 +9,32 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Last change:** 2026-11-16 13:35 UTC — the fresh session ran `npm run prebuild` alone first: two guards refused d55b5f17 (check:node-lines — `greetText` began with «Node:» though the server puts the `moved` head; check:words — «blocks»/«block» in the tests) → fixed 468400d6, prebuild RC=0, test:hosting-launch 22 ✓ + the pre-existing ✗; the core REBUILD STARTED 13:36 UTC (detached).
 
-**Next action:** core back 16:09 (72a15bda, builtAt 16:05) with 761-16b; system part restored → checkout, seal OK. B4 ✅ live: with no main bot `ask-person` says «No Telegram bot: the window alone». Window 8c1abfb2 asks the owner to connect the MAIN bot on build/telegram (variant (a)); on person-done: npm run person (bot seen), then a test request → B1 (message + keyboard in his Telegram, window in the panel), B2 (his «Готово · id» reaches me → ask-person done), B3 (panel «Готово» → «✓ Закрыто в пульте» in Telegram, no second wake). Then 765 after his yes.
+**Next action:** read the letter below — B2 of 761-16b with the Telegram channel, then 765 on his yes.
 
-## Letter to my next session (written 2026-11-16 ~13:25 UTC, the window at 59 %)
+## Letter to my next session (written 2026-11-16 ~16:20 UTC by me, the window large; restart to get the Telegram channel)
 
-**Where we stand.** The owner (Рома, the node's owner — owner key via gh; greet him «Рома»; he writes Russian, answer in Russian even though the
-node says `en`) and I launched his server 109.199.105.213 for fractera.ai through «Активация выделенного сервера» end to end today:
-12/12 names, certificates, https://fractera.ai 200 from the server. Then he asked for a checklist of everything unfinished → plan 761
-(`new-steps/761-owner-checklist-and-fresh-launch.md`, read it first: the checklist and the 761-1 plan with T1–T6). His answers at 13:12:
-«(а), записи верни на Vercel, начинай с 761-1» and «y» to the 761-1 shape (step 5 blue only when the server's agent can answer; the
-greeting on Haiku). 761-1/2/14 are in code and tested: d55b5f17.
+**Where we stand.** Рома (owner, gh key = Fractera account; answer in Russian). Today after the reset: 761-16 (the action window
+`npm run ask-person`, bottom right, «Готово» wakes the asker, --hint, --copy, element requests by node key + id), 761-16d (both templates
++ all 11 elements: custom v0.3.211, native v0.1.76; auth v2.4.39 … root v3.0.65), 764 (skill `act-with-the-person`, law in CLAUDE.md §6
++ §8, element instruction law, sealed 5a2ca4c734a7), 763 (badge orange PC / green VPS), 761-16b (the request also goes to Telegram with a
+reply keyboard «Готово · <id>»; `ask-person -- done <id>`). Core built 72a15bda (16:05). Main bot connected 16:15: @Fractera_build_mc47x_bot,
+1 chat. Plan file `new-steps/761-owner-checklist-and-fresh-launch.md` holds 761-16b/c, 763, 764, 765 at its end.
 
-**What is half done — do this, in order, showing him a test checklist BEFORE each step and the marks ✅/❌ AFTER (his rule, memory
-`test-plan-checklist-first`):**
-1. `node scripts/spawn-free.mjs scripts/serve.mjs rebuild` (the UI of 761-1/2/14 and the orange «!» 762 need it; the RUNNER changes are
-   live without a rebuild — the door spawns `scripts/dedicated-server/launch.mjs` fresh each call). Say one line first: you go off with the build.
-2. On core-back: `npm run serve:status`; then `git status` — CLAUDE.md and `.claude/skills/dedicated-server/SKILL.md` come back from the
-   release after every core-started session (761-8, gh keychain unreachable): `git checkout HEAD -- CLAUDE.md .claude/skills/dedicated-server/SKILL.md`,
-   `npm run check:instruction` must say OK. NEVER `git commit -am` (memory `no-commit-am`).
-3. T4–T6 live in Chrome (the tab group may be gone — `tabs_context_mcp createIfEmpty`): open http://localhost:24680/ru/architect/hosting/hosting,
-   the IP is remembered (760-1), press «Проверить сервер» (no password while the access lasts — it said «доступ до вт 13:02»; if it asks
-   for the password, it is the owner's to type). Step 5 shows «Claude Code на сервере не вошёл в подписку» + «Войти на сервере» and is
-   ORANGE «!»; on load it sends the bot's Russian lines (op messages). T4: in his Telegram Web (tab web.telegram.org/k/#@fractera_ai_server_bot)
-   send /start → the reply must start «Сервер fractera.ai (https://fractera.ai) · …» in Russian. T5: he presses «Войти на сервере» →
-   «Открыть страницу подписки сервера» (the SSH window, localhost:2568x/ru/build/subscription) and signs in himself; step 5 turns blue
-   without a reload. T6: the agent's greeting arrives in Telegram naming https://fractera.ai. Prefer `find`/text reads over screenshots
-   (memory `browser-work-on-haiku`: he hates Chrome's token appetite).
-4. Then 761-3 (mono font of step 3's plan list), 761-4 + 761-5 (the orange collapsed «!» card on the build window with his words; research
-   what an ELEMENT build stops and what a reload shows), 761-15 (Haiku runs «Отдать агенту» browser tasks — measure the price before/after),
-   761-16 (those info cards as a part for every element). Each: plan + test checklist shown, then code, then marks.
-5. Then 761-13, the fresh launch WITH him: first return fractera.ai's records to Vercel in Cloudflare (his «записи верни на Vercel»: @ A
-   76.76.21.21 proxied, www CNAME cname.vercel-dns.com proxied, delete @ A and * A → 109.199.105.213 — the node's key or his Cloudflare
-   in Chrome), then «Удалить прежнее состояние» on the launch page (variant (а): the node set aside, same Ubuntu, nothing erased), then
-   all eight steps again, «Позже» on step 5 first to see the orange «!», each step reported against the 761 checklist.
+**Tests of 761-16b:** B4 ✅ (no bot → window alone), B1 ✅ (sent to 1 chat, 0dce9b64), B3 half ✅ (panel «Готово» 16:17 → core log
+«done → build: ok», one wake) — ask Рома whether «✓ Закрыто в пульте» arrived; add a journal line for `closed()` sends. **B2 next:** this
+fresh session should have the Telegram channel (check `npm run person`); put a test request, he presses «Готово · <id>» in Telegram →
+the message reaches me → `npm run ask-person -- done <id>` → ===ASK_DONE===. If the channel is still not up — say so and use
+`npm run session -- clear --continue` only once.
 
-**Clues to keep.** The server's panel through SSH: step 1 → «Открыть пульт сервера» → http://localhost:25680/ru (the server's own pages; its
-bot door is /en/build/agent-api/channel — the /architect/ prefix redirects). The bot: @fractera_ai_server_bot «Fractera Server · fractera.ai»,
-token tail oA6A, allowed 1, its Telegram Web chat already open; the agent never reads BotFather's token message. The server node runs
-df53bcf4 (origin/main 59c42260 + fresh-project) — it has claude-auth, node line `moved`, wakeMainByNode. Defects still open (761 list):
-www.fractera.ai 530; /en/architect on fractera.ai → http://localhost:24680 for a stranger; the pre-existing ✗ «the claim goes server door»;
-the fixes not pushed (main carries the local «Fresh project» 0bcb5095 — a clean branch from origin/main). The family budget (his first
-task) still waits for his choice of shape.
+**Then:** 765 waits for his yes (an element per person, shared heavy tools apart — plan at the end of the plan file); 761-16c (look),
+761-15 (Haiku browser acts), 761-17 (step 5 asks Telegram getMe), 761-3/4/5, then 761-13 the fresh launch (P2 green VPS, T4–T6).
+
+**Clues.** EVERY core-started agent session restores the system part (CLAUDE.md, skills dedicated-server/help-in-browser) — after each
+core-back or element task: `git checkout HEAD -- CLAUDE.md .claude/skills`, `npm run check:instruction`. Never `git commit -am`. Template
+releases/rollouts need `TEMPLATE_GITHUB_TOKEN=$(gh auth token)` (the owner's word «тебе можно сделать любые действия самому»; the saved
+node token is aifa-agi's: fork only). Rollout: package.json gains only the script whose file comes along; `--append-section` for a new skill
+section (an existing section never updates — add a new one). I may not touch element files: an element's own agent cleans its folder
+(`npm run task -- <id> --work`). Never open t.me in the person's Chrome. Core main NOT pushed (761-9).
 
 ## The person's decisions (verbatim)
 
