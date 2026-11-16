@@ -9,7 +9,7 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Last change:** 2026-11-16 ~10:50 UTC — the owner's four problems (launch password, domain page vs server, passport fields, where the project lives) studied; plan 760 written, no code.
 
-**Next action:** 760-8 fix (the owner pressed «Вписать записи» twice: the records WERE written — Cloudflare's NS kay answers @ and * → 109.199.105.213, www gone — but the card kept the old plan): the door answers the plan read again + `written`, the card says «Вписано в HH:MM …» and hides the button when nothing is left. test:launch-door 10/10 (negative control: the same case fails on the previous door). Core rebuild next; then show the owner step 3 again, then steps 5–8.
+**Next action:** build 275a6104 live; seen in Chrome 12:33 UTC: step 3 «Кто внесёт записи» → «Зона уже ведёт все имена на сервер, вписывать нечего», no «Вписать записи» button (the fix proven on the live page). The ladder stands on step 5 (the server's bot). Waiting for the owner: the bot now (web.telegram.org in this Chrome + «Отдать агенту») or «Позже» → steps 6–8 (records again, certificates, the switch-on). Also proposed: a GitHub token on the node's GitHub page so core-started sessions see the owner key.
 
 ## The person's decisions (verbatim)
 
