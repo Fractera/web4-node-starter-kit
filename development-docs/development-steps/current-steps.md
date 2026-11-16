@@ -9,7 +9,7 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Last change:** 2026-11-16 13:35 UTC — the fresh session ran `npm run prebuild` alone first: two guards refused d55b5f17 (check:node-lines — `greetText` began with «Node:» though the server puts the `moved` head; check:words — «blocks»/«block» in the tests) → fixed 468400d6, prebuild RC=0, test:hosting-launch 22 ✓ + the pre-existing ✗; the core REBUILD STARTED 13:36 UTC (detached).
 
-**Next action:** core back 15:47 (19f57ee1); system part restored again 15:47 → checkout; CLAUDE.md §8 fix resealed 5a2ca4c734a7 (55071122). Seen live: 763 P1 ✅ orange «PC» same size as the digits (dashboard); 764-a ✅ the command with «Скопировать команду» in the window (test request d04dc7ab left for the owner to see). The owner's own `!` restore of auth failed because his paste wrapped into 3 lines — the copy button is the cure; auth was already clean (its agent) and is v2.4.38. Next: 761-16b (Telegram), 761-16c (look), 761-15 (Haiku), 761-17 (step 5 asks Telegram), 761-3/4/5, then 761-13 the fresh launch (P2 green VPS, T4–T6 there).
+**Next action:** 761-16b built (reply keyboard «Готово · <id>», not an inline button — while a session runs its bot is read by the Claude Code channel, never by the node); templates custom v0.3.211 / native v0.1.76 (done <id>, --copy), all 11 elements rolled out (auth v2.4.39 … root v3.0.65). Core REBUILD STARTED ~16:10. On core-back: checkout the system part, then a window asking the owner to connect the MAIN agent's bot on build/telegram (variant (a)), then B1–B4 live on me.
 
 ## Letter to my next session (written 2026-11-16 ~13:25 UTC, the window at 59 %)
 
