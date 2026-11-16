@@ -147,3 +147,17 @@ Next (the plan of the following steps):
 - [x] 764-a The owner, ~15:38: «ты иногда передаешь команды в этом самом новом диалоге … я не смог выделить своем браузере тот текст …
   лучше выпал кнопка скопировать команду если её нужно вернуть в терминал, also to plan» → `--copy` in the core: the window shows the
   command in mono with «Скопировать команду». [ ] the same flag in both templates' `ask-person` (next template release).
+
+## 765 — people × platforms: an element per person, shared heavy tools apart (the owner, 2026-11-16 ~16:15; plan, waits for his yes)
+
+The rule: an element per PERSON (partner, client) — their subscription sign-in, their accounts, their voices; every platform of theirs is a
+route inside it. A heavy shared tool (images, video editing, avatars, music) is its own element of the operator, serving the people's
+elements over i2i in a queue. Forbidden: an element per platform shared by several people. Where (token economy — loaded only when needed):
+- [ ] `shape-the-need` force 5: one sentence — several people with the same platforms: an element per person, never per platform; their
+  shared heavy tools — the operator's own elements, a queue.
+- [ ] `content-factory`: a section «Serving others» — the operator's tools, a person's element each, voices in the person's element, a queue.
+- [ ] `integrator`: one line pointing to it.
+- [ ] CLAUDE.md §4 «A request comes» — a clause in the existing sentence «never a rhythm, a platform or an account» → «… — and several people
+  never share one hand: an element each». No soul change (character, not method).
+- [ ] The queue of a shared tool (live order, per-element limits) — not built; named as a capability `need` when the first factory asks.
+- Proof: `check:shape-examples` (no case in the shaping path), `check:instruction` resealed, a dry run of the method on the owner's words.
