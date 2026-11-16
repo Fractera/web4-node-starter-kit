@@ -21,10 +21,12 @@ if (args[0] === 'list') {
   // the person pressed «Готово · <id>» in Telegram and it reached you as their message: close it here (you are awake — no wake)
   const id = tg.doneId(args.slice(1).join(' ')) ?? args[1] ?? ''
   const a = asks.done(ROOT, id)
-  console.log(a ? `===ASK_DONE=== ${a.id} «${a.text}» — the window is closed; check the result yourself, then go on` : `===ASK_ALREADY=== ${id} is not open (closed in the panel already, or unknown) — tell the person it was already done`)
+  const sent = a ? await tg.closed(ROOT, a, 'taken').catch((e) => String(e)) : null
+  console.log(a ? `===ASK_DONE=== ${a.id} «${a.text}» — the window is closed (telegram: ${sent}); check the result yourself, then go on` : `===ASK_ALREADY=== ${id} is not open (closed in the panel already, or unknown) — tell the person it was already done`)
 } else if (args[0] === 'drop') {
   const a = asks.drop(ROOT, args[1] ?? '')
-  console.log(a ? `===ASK_DROPPED=== ${a.id}` : '===ASK_NOT_FOUND===')
+  const sent = a ? await tg.closed(ROOT, a, 'dropped').catch((e) => String(e)) : null
+  console.log(a ? `===ASK_DROPPED=== ${a.id} (telegram: ${sent})` : '===ASK_NOT_FOUND===')
   if (!a) process.exitCode = 1
 } else {
   const href = flag('--href')
