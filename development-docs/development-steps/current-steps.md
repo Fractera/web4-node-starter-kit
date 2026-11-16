@@ -9,7 +9,7 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Last change:** 2026-11-16 13:35 UTC — the fresh session ran `npm run prebuild` alone first: two guards refused d55b5f17 (check:node-lines — `greetText` began with «Node:» though the server puts the `moved` head; check:words — «blocks»/«block» in the tests) → fixed 468400d6, prebuild RC=0, test:hosting-launch 22 ✓ + the pre-existing ✗; the core REBUILD STARTED 13:36 UTC (detached).
 
-**Next action:** 761-16 committed 1c03113c (the bottom action window, `npm run ask-person`, node line `person-done`); the core REBUILD STARTED ~14:15 UTC. On core-back: serve:status, git status (CLAUDE.md, the skills dedicated-server AND help-in-browser come back from the release — checkout), then A1–A5 by myself (put a test request, see it on 3 pages, press «Готово» in Chrome → I wake), then T4–T6 THROUGH the window: this Chrome window has no Telegram Web sign-in and no launch access (the owner typed the password ~13:55; step 5 seen live: orange «!», «Claude Code на сервере не вошёл», «Войти на сервере» ✅ part of T4).
+**Next action:** core back 14:05 (0ec9dd0b) ✅; 761-16 tested live: A1 ✅ (hosting, dashboard, build/terminal, build/telegram), A2+A3 ✅ (the owner pressed «Готово» 14:06 → ⟦person-done⟧ reached me, list empty), A5 keyboard ✅ (Alt+T, Tab, Enter; dark theme not checked), A4 only negative half (with access no card). Now: a real request put — the owner signs in to Telegram Web in my Chrome window; on person-done I send /start to @fractera_ai_server_bot myself and read the reply (T4), then a request for «Войти на сервере» (T5), then T6.
 
 ## Letter to my next session (written 2026-11-16 ~13:25 UTC, the window at 59 %)
 
