@@ -11,7 +11,7 @@ const cmd = process.argv[2] ?? 'status'
 
 if (cmd === 'menu') {
   const r = await menu.refresh(ROOT)
-  console.log(r.ok ? `===TG_MENU_OK=== ${r.state}${r.url ? ` → ${new URL(r.url).host}` : ' (no HTTPS address: the plain command menu)'}` : `===TG_MENU_FAIL=== ${r.why ?? r.state}`)
+  console.log(r.ok ? `===TG_MENU_OK=== ${r.state}${r.url ? ` → ${new URL(r.url).host}` : ' (no HTTPS address: the bot\'s default menu)'}` : `===TG_MENU_FAIL=== ${r.why ?? r.state}`)
   process.exit(r.ok ? 0 : 1)
 } else if (cmd === 'status') {
   const r = await menu.status(ROOT)

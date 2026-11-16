@@ -50,3 +50,20 @@ Price: two core builds, one custom-template release rolled to the custom element
   commands without one; moved by the tunnel's one writer (`scripts/tunnel.mjs` saveAddress) and by `npm run tg-app -- menu`.
 - Proxy: `/api/node/tg-app` public and allowed to write on the temporary address (it stands on the bot's signature).
 - Tests: `scripts/tg-app.test.mjs` 6/6 (in prebuild); tsc 0; prebuild RC=0.
+
+## Live after the build (core 88110b91, 23:28–23:35)
+- M2 (half): the bot-wide default menu button answered ok and still read back «commands» — the button is set PER ALLOWED CHAT now; read
+  back: `web_app «Пульт» → trucks-regulatory-requesting-sends.trycloudflare.com`. The owner's own tap on the phone — not yet seen.
+- From the internet: GET the page 200; POST with forged launch data 401 «forged»; POST with launch data signed in-process by the main
+  bot's token (never printed) — 200, asks 1, elements 12, limits 1; the same signature for another person — 401 «not-allowed».
+- M3 eyes 390 px, light and dark, console clean: logs/eyes/2026-11-16T23-30-35-074Z.png, logs/eyes/2026-11-16T23-30-39-447Z.png (a
+  10-minute test signature in the hash, removed after). Seen: an element's step «none.» — hidden now.
+
+## 771-4..6 — stopped by a measured fact, not by time
+- On this computer only the core is in the internet: the tunnel carries port 24680; an element's own site has no public address
+  (`/ru/hrutb` through the tunnel is the core's page of the element; its own server answers only on localhost:24684). An element's Mini App
+  therefore needs the own domain (an element = a subdomain), or a new core proxy to elements' ports — against «the node's composition and
+  ports are never given out» (§6). «Соцсети пользователя» has no Telegram bot either.
+- So the element half waits for the owner's choice: connect the own domain first (761 — the fresh launch is on the way), or allow a core
+  route that serves an element's Mini App through the core's address. Ready meanwhile: the signature check (telegram-webapp.cjs) the
+  verify door would reuse; the skill and the template part are written when the road is chosen.

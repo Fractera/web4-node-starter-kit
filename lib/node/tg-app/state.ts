@@ -35,10 +35,11 @@ const sentence = (s: unknown, n = 90): string | null => {
 function stepOf(dir: string | null): string | null {
   if (!dir) return null
   const dev = readJson<{ development?: { current?: string; state?: string; next?: string } } | null>(join(dir, "OWN-SERVICE-PROPS", "OWN-SERVICE-PROPS.json"), null)?.development
-  if (dev?.current) return sentence(`${dev.current}${dev.state ? ` (${dev.state})` : ""}${dev.next ? ` → ${dev.next}` : ""}`, 120)
+  if (dev?.current && !/^none\.?$/i.test(dev.current.trim())) return sentence(`${dev.current}${dev.state ? ` (${dev.state})` : ""}${dev.next ? ` → ${dev.next}` : ""}`, 120)
   try {
     const head = readFileSync(join(dir, "development-docs", "current-step.md"), "utf8")
-    return sentence(/\*\*Active step:\*\*\s*([^\n]+)/.exec(head)?.[1] ?? null, 120)
+    const line = /\*\*Active step:\*\*\s*([^\n]+)/.exec(head)?.[1] ?? null
+    return line && !/^none\.?$/i.test(line.trim()) ? sentence(line, 120) : null
   } catch { return null }
 }
 

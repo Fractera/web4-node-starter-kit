@@ -28,22 +28,23 @@ put('data/services/build/channel/telegram/.env', 'TELEGRAM_BOT_TOKEN=123:TEST\n'
 put('data/services/build/channel/telegram/access.json', JSON.stringify({ allowFrom: ['90413601'] }))
 put('data/services/build/channel/telegram/person.json', JSON.stringify({ lang: 'ru' }))
 const seen = []
-const stub = async (token, m) => { seen.push({ token, m }); return { ok: true } }
+const stub = async (token, m, chat) => { seen.push({ token, m, chat }); return { ok: true } }
 
-await t('no HTTPS address — the button goes back to the command menu (negative control: never a dead web_app)', async () => {
+await t('no HTTPS address — the button goes back to the bot\'s default menu (negative control: never a dead web_app)', async () => {
   const r = await menu.refresh(tmp, { fetchImpl: stub })
-  assert.equal(r.state, 'commands')
-  assert.deepEqual(seen.pop().m, { type: 'commands' })
+  assert.equal(r.state, 'default')
+  assert.deepEqual(seen.pop().m, { type: 'default' })
 })
 await t('a live temporary address — «Пульт» opens the panel there, in the person\'s language', async () => {
   put('logs/tunnel.json', JSON.stringify({ url: 'https://abc-def.trycloudflare.com', dead: false }))
   const r = await menu.refresh(tmp, { fetchImpl: stub })
   assert.equal(r.state, 'panel')
+  assert.equal(seen[seen.length - 1].chat, 90413601, 'set per allowed chat')
   assert.deepEqual(seen.pop().m, { type: 'web_app', text: 'Пульт', web_app: { url: 'https://abc-def.trycloudflare.com/api/node/tg-app?lang=ru' } })
 })
 await t('a dead temporary address — back to commands (negative control)', async () => {
   put('logs/tunnel.json', JSON.stringify({ url: 'https://abc-def.trycloudflare.com', dead: true }))
-  assert.equal((await menu.refresh(tmp, { fetchImpl: stub })).state, 'commands')
+  assert.equal((await menu.refresh(tmp, { fetchImpl: stub })).state, 'default')
 })
 await t('the own domain wins over a temporary address', async () => {
   put('logs/tunnel.json', JSON.stringify({ url: 'https://abc-def.trycloudflare.com', dead: false }))
