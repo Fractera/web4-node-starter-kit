@@ -42,7 +42,7 @@ Google … или есть у тебя глубокая память храни�
   in each profile the person wants acted in, details in `help-in-browser`); resealed at the owner's word.
 - [x] 767-4 skill `help-in-browser` — section «Driving the browser from Telegram»: the map A (AppleScript, any profile) / B (extension,
   connected browser) / C (the node's window), the routing, the deep memory link, what stays the person's, Windows/Linux unmeasured.
-- [ ] 767-5 element instruction (sealed source) — one line in `act-for-the-person`: a browser wish outside your field goes to the core
+- [x] 767-5 element instruction (sealed source) — one line in `act-for-the-person`: a browser wish outside your field goes to the core
   with `tell-core`, inside it — act and bring the tab forward with the core's browser door; templates released, rolled to every element.
 - [x] 767-6 the main agent's «Telegram-бот» settings page — a separate closed accordion (shadcn Accordion) «Управление браузером через
   Telegram»: how it works, what it needs (the extension in each profile, the macOS Automation OK once), what the person gets (the owner,
@@ -69,3 +69,11 @@ Price: CLAUDE.md +1 line, the element instruction +1 line (paid in every element
   ask `botPageNotes('<service>', lang)` — only `build` (the core's main agent) carries the closed accordion; copies equal the template.
 Guards: tsc 0, api, agent kits 12, page-composition, content, sections, static, shadcn-parts, typography, parts-map, lang-delivery,
 architect-routes, skill headers, instruction skills, shape-examples OK; check:i18n red 40 before and after (pre-existing).
+- 767-5 (18:25–18:45): the source line (the quote on one line — the template's check:dev-docs refused a quote across lines first, as in
+  761-16), `npm run instruction:element -- coverage` OK; templates custom v0.3.212 (0039592) and native v0.1.77 (2a7baee) with
+  `scripts/browser.mjs` + its package.json script, released (dry and real, every guard green) and pinned (2479de38, 873072b7); every
+  element's CLAUDE.md regenerated, `verify-elements` → ELEMENTS_OK (12); rollout native → 10 elements (8a2d330d: auth v2.4.40 … stripe
+  v1.3.44), custom → root v3.0.66 (a3a33f55). hrutb left alone by the rollout (its HEAD b794069 is past its pin; paused at the owner's
+  word): its CLAUDE.md and seal are regenerated in its folder, uncommitted — its own agent commits them on its next build session, or it
+  is deleted. `node:readiness`: 13 ✓, ✗ core (not pushed, 761-9) and ✗ hrutb (as said).
+Next: one core rebuild (the door and the bot page), then the live tests B1–B6.
