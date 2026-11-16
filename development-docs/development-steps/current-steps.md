@@ -53,6 +53,7 @@ task) still waits for his choice of shape.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-16 ~14:25 UTC, the owner: «Хочу быть уверенным что все элементы существующие и два новых кастомных шаблоны получают обновления связанные с работой новых подсказок» → my plan 761-16d (the core door takes an element's request by its key, «Готово» wakes that element; both templates get `npm run ask-person`; rollout to all 11; tests E1–E5) → «Да, строй 761-16d».
 - 2026-11-16 ~14:17 UTC, the owner: «И да Telegram бота я удалил для полного тестирования» → T4–T6 move into the fresh launch 761-13 (a new bot on step 5); defect 761-17: step 5 still said «подключён» for a deleted bot.
 - 2026-11-16 ~14:15 UTC, the owner, with a screenshot I could NOT open (macOS temp folder, EPERM): «Я тебе отправляю это сообщение не просто для того чтобы ты мне сказал что делать а что ты в своих инструкции понимал что такие сообщения могут всплывать и что пользователя не должен сделать и прямо в инструкции в выпадающем списке справа который ты мне только что показывал показывать подсказку» — asked him for the image again.
 - 2026-11-16 ~13:55 UTC, the owner: «Я ожидал что как раз в таком кейсе должно было появиться уведомление на экране которое невозможно пропустить в котором ты меня призываешь совершить определённое действие и подтвердить о его завершении где это» → my plan 761-16 (an action request: an unmissable orange window on every panel page, «Открыть» + «Готово» that wakes me; the launch page's own window on step 1 without access; tests A1–A5) → «Да, строй так, parol was added».
