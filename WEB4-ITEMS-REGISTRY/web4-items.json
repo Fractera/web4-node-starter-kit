@@ -139,7 +139,15 @@
       "required": true,
       "note": "Быстрое хранилище узла (560): счётчики и очереди горячих действий в Redis, итоги — в data. Пока только тело, сам Redis не подключён (macOS и Linux); включено по умолчанию (619).",
       "kind": "core",
-      "address": "cache"
+      "address": "cache",
+      "off": {
+        "reason": {
+          "en": "Turn it on when an application needs the fast store; Redis itself is not connected yet",
+          "ru": "Включите, когда приложению понадобится быстрое хранилище; сам Redis ещё не подключён"
+        },
+        "at": "2026-11-15T23:37:31.175Z",
+        "byDefault": true
+      }
     },
     {
       "id": "memory",
@@ -167,7 +175,15 @@
       "required": true,
       "note": "Платёжный элемент узла (573): приём оплаты картой через аккаунт Stripe владельца для элементов узла. Пока только тело: выключен паспортом (приём оплаты ещё не построен).",
       "kind": "core",
-      "address": "stripe"
+      "address": "stripe",
+      "off": {
+        "reason": {
+          "en": "Turn it on after you enter your Stripe keys",
+          "ru": "Включите, когда введёте ключи Stripe"
+        },
+        "at": "2026-11-15T23:37:31.185Z",
+        "byDefault": true
+      }
     },
     {
       "id": "root",

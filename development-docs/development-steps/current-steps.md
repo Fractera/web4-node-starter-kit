@@ -10,8 +10,7 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Last change:** 2026-11-16 — the first task arrived from the node's home page (1-5): a family/team budget service. Fork proposed, waiting for the person's choice; nothing created yet.
 
-**Next action:** the person picks the shape of the family budget (one shared element with its bot, or later a hand per member); then its product quiz. Meanwhile 1-2 — the first account (the architect, it cannot be recovered), then 1-3 the own domain, 1-4 the Telegram bot, 1-5 the
-first task. Ask nothing the node can find out itself.
+**Next action:** after the core rebuild (started 2026-11-16 for 759): `npm run serve:status`, tell the owner 759 is live, then 758-1 (runner `telegram --put/--state`) by `new-steps/758-server-telegram-step-5.md`. Still open: the owner's answer whether the server's step 4 finished (fractera.ai records), the push of the fixes (a clean branch from origin/main).
 
 ## The person's decisions (verbatim)
 
