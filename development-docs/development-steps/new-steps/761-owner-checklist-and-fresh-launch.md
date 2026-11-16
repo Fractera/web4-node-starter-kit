@@ -30,6 +30,9 @@ Open — the launch (before the fresh launch, so it tests them):
 - [ ] 761-4 The build window: an orange collapsed card «!» — «the blue window may stay still; a reload shows an empty page; nothing is broken; after the build, sometimes after 10 minutes and more, the project comes back» (the owner's words) — on the core terminal and on every element's build window where the same can happen.
 - [ ] 761-5 Research for 761-4: what an element's build stops (only its process and its subdomain, or more), what a reload shows during it, how long the silent phases of the core build last (measured on this computer), and the facts the card states.
 
+- [ ] 761-15 Haiku drives every connection done in the person's Chrome (the owner, 2026-11-16: «меня расстраивает избыточное прожорливость Claude для хром при управлении подключением … haiku должна стать моделью которая управляет подключением — одной из самых важных в этом обновлении»): «Отдать агенту» (records 760-9, the bot 760-10) starts a Haiku worker with the task, never the main Opus session; the price of one run measured before and after.
+- [ ] 761-16 Information windows for interactive work in EVERY element (the same message: «наряду с информационными окнами для интерактивного взаимодействия во всех элементах»): the orange collapsed «!» cards of 761-4 are a part every element's build and agent windows use, not a core-only text.
+
 Open — the domain and the server:
 - [ ] 761-6 www.fractera.ai answers 530: a record of another type on `www` keeps `*` away — find it in Cloudflare, the launch's plan names it.
 - [ ] 761-7 On the server's domain `/en/architect` sends a stranger to http://localhost:24680 — must lead to https://auth.<zone>.
@@ -49,6 +52,27 @@ Open — the node itself:
 
 The fresh launch:
 - [ ] 761-13 Delete the server and run the whole launch again, step by step with the owner, each step reported against this checklist.
+
+## 761-1 / 761-2 / 761-14 — the plan in detail (the owner: «(а), записи верни на Vercel, начинай с 761-1»)
+
+**Facts measured 13:10 UTC.** The bot's lines are the channel's three texts (`active`, `inactive`, `noSubscription`) that the Telegram page
+sends in the person's language with its links (`saveMessages`, action `messages`); the launch relay never sent them → the English
+FALLBACK «Claude Code on this computer is not signed in». The server's sign-in state is its own door `/<lang>/build/agent-api/claude-auth`
+(`claude auth status`); the sign-in itself is the server's page `/<lang>/build/subscription` — the person's act, reached through the SSH window.
+
+**Shape.** Step 5 is done (blue) only when the bot is set AND the server's Claude Code is signed in — then the agent answers; otherwise
+the orange «!» (762). Inside step 5, after the token: (1) the runner sends the three texts in the page's language, each starting with the
+site — «Сервер fractera.ai (https://fractera.ai) · …» — and the links of the server's own domain; (2) «Claude Code сервера: не вошёл» with
+«Войти на сервере» → the SSH window opens the server's subscription page; the step polls `claude-auth`; (3) signed in → the server's main
+agent is woken with one first task: greet the person in Telegram, naming the site with its link.
+
+**Test checklist (run by the agent, marked ✅/❌ with the proof):**
+- [ ] T1 unit: the three texts carry the site name and its https link, in ru and en; no «this computer».
+- [ ] T2 runner test (dry): after `telegram token` the server's channel gets `messages` with those texts; negative — without a domain the texts name the IP.
+- [ ] T3 runner test: `claude-auth` answer → `state.telegram.signedIn`; step 5 done only with configured AND signedIn (ladder rule test), orange otherwise.
+- [ ] T4 live: /start in @fractera_ai_server_bot before the sign-in → the Russian line with «Сервер fractera.ai (https://fractera.ai)».
+- [ ] T5 live: the owner signs in through «Войти на сервере» → step 5 turns blue without a reload.
+- [ ] T6 live: the agent's greeting arrives in Telegram and names https://fractera.ai.
 
 ## Order (my pick)
 
