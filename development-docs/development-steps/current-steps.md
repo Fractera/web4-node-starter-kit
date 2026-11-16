@@ -5,11 +5,11 @@ the person's decision (verbatim, at once), a fact that is expensive to measure a
 start of a long or irreversible operation (before it), a changed next action. How the steps are planned, proven and closed — skill
 `use-development-steps`.
 
-**Active steps:** 771 — the node panel and element apps inside Telegram (new-steps/771-node-panel-and-element-apps-inside-telegram.md): 771-1..3 in code a5942723, building; then 771-4 (template), 771-5 (skill), 771-6 (proof on «Соцсети пользователя»); 769 — in code, R2 waits the owner's password (2c3422c4); 761-13 the fresh launch; 1 — the first launch.
+**Active steps:** 771 — the node panel inside Telegram live (771-1..3, 85fa6a77); 771-4..6 wait for the owner's road (own domain or a core route to elements — measured: only the core is public on the temporary address); 769 — in code, R2 waits his root password (2c3422c4); 761-13 the fresh launch; 1 — the first launch.
 
-**Last change:** 2026-11-16 23:46 UTC — the owner 23:13: «Хорошо продолжай работать до конца меня больше не ищи пока не закончишь полностью» = yes to 771 whole and to the self-moving menu button; do not message him until the end. 771-1..3 committed a5942723, prebuild RC=0 (after renaming the plan to 6–8 words); the core REBUILD STARTED (detached).
+**Last change:** 2026-11-16 23:37 UTC — 771 live proofs (door from the internet: signed 200 / forged 401 / stranger 401; menu button read back per chat; eyes 390 light+dark); fix «none.» + per-chat button committed 85fa6a77, prebuild RC=0; the core REBUILD STARTED (detached) for the state.ts fix. Limit 5 h at 60 % (resets 00:50).
 
-**Next action:** after core-back — git status clean; `npm run tg-app -- menu` then `status`; live: GET the page (eyes 390 light), POST forged → 401, POST with launch data signed by a script inside the process (token never printed) → state; then 771-4 the template (skill release-template), 771-5 the skill, 771-6 hrutb's agent; the final report to the owner only at the end.
+**Next action:** after core-back — git clean; one signed state call (step «none» gone); then the FINAL report to the owner in Telegram (he asked not to be disturbed until the end): what works (the «Пульт» button in his bot), what waits for him (2c3422c4 root password; the road for element apps), the defect of `skills -- market --live`.
 
 ## Letter to my next session (written 2026-11-16 ~19:33 UTC, the window at 66 %; a clean start for a debugging task)
 
