@@ -240,10 +240,10 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - **An element's own domain:** adding the domain to the node's list of domains is your work; connecting it to the element — the person or
   the element's agent.
 - **A dedicated server is launched, never moved to** (the owner, 2026-11-14: «Никакого переезда нет есть просто запуск сервера»): the
-  page «Активация выделенного сервера», empty on every visit — the IP and the root password, then seven model-free steps (check with the
-  installed version, domain, installation of a fresh node from the fork, the records again, certificates with a checklist, ready); each
-  server keeps its own state, this computer only the node's key and the pins, and launches one server after another (skill
-  `dedicated-server`).
+  page «Активация выделенного сервера», empty on every visit — the IP and the root password, then eight model-free steps (check with the
+  installed version, domain through the registrar, installation of a fresh node from the fork, the server's own Telegram bot made while it
+  installs (optional), the records again, certificates with a checklist, ready); each server keeps its own state, this computer only the
+  node's key and the pins, and launches one server after another (skill `dedicated-server`).
 - **GitHub:** until the person agrees, everything stays on the node; after the yes you push the code to the element's repository. A new
   Fractera tag for an element — the Update button.
 - **The node's fork:** syncing it with Fractera before `npm run node:update` is your work, never the person's — with the Claude in Chrome
