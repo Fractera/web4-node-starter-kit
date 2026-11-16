@@ -1,5 +1,6 @@
 // @api launch a node on a dedicated server and read its state
 import { spawn } from "node:child_process"
+import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -8,7 +9,6 @@ import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import phase from "@/lib/hosting/phase.cjs"
 import { readPlan, writePlan } from "@/lib/hosting/server-records-cf"
 import { planIsEmpty, removalsConfirmed } from "@/lib/hosting/server-records-plan.mjs"
-import { envValue } from "@/lib/web4-items/element-delete"
 import { closeWindowProcess, openWindowProcess } from "@/lib/hosting/window-process.mjs"
 
 // «АКТИВАЦИЯ ВЫДЕЛЕННОГО СЕРВЕРА» — THE DOOR (node step 738-4). The owner, 2026-11-14: «Никакого переезда нет есть просто запуск сервера …
@@ -56,6 +56,19 @@ const DOOR_ACTIONS = ["dns-check", "certs", "check", "activate", "claim"]
 // How long each act may take: the check of a server measures its version over the network; a certificate run starts detached there.
 const TIMEOUT: Record<string, number> = { connect: 150_000, probe: 150_000, state: 60_000, install: 120_000, domain: 120_000, way: 60_000, detect: 90_000, dns: 90_000, door: 200_000, signin: 90_000, clear: 240_000, telegram: 90_000 }
 
+
+/** 760-8: a value of the core's environment — the Cloudflare token stays in this process; only what the plan needs leaves. */
+function envValue(name: string): string | null {
+  const fromProcess = process.env[name]?.trim()
+  if (fromProcess) return fromProcess
+  const file = join(ROOT, ".env.local")
+  if (!existsSync(file)) return null
+  for (const line of readFileSync(file, "utf8").split(/\r?\n/)) {
+    const m = line.match(/^([A-Z_][A-Z0-9_]*)=(.*)$/)
+    if (m && m[1] === name && m[2].trim()) return m[2].trim()
+  }
+  return null
+}
 
 /** The core's `NEXT_*` and `PORT` must not reach a child (ANTI-PATTERNS «All systems»). */
 function cleanEnv(): NodeJS.ProcessEnv {

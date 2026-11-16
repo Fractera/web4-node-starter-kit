@@ -6,8 +6,7 @@
 // 🔒 READ, SHOW, THEN WRITE: `readPlan` reads the zone and returns the plan (`lib/hosting/server-records-plan.mjs`); `writePlan` removes only
 // the records the person's confirm named (the door checks it against a fresh plan), then writes A `<base>`, A `*.<base>` and every switched
 // name to the server's IP, DNS only. The old refusal on a foreign CNAME became «remove it — in the confirm» (the Vercel `www` of fractera.ai).
-import "server-only"
-
+// No `server-only` marker: like `lib/domain/cloudflare.ts`, it is imported only by doors, and the door tests load them in plain node.
 import { deleteRecord, recordsOnNames, upsertServerRecord, zoneByName } from "@/lib/domain/cloudflare"
 import { planServerRecords } from "@/lib/hosting/server-records-plan.mjs"
 
