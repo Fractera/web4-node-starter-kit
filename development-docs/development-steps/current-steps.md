@@ -7,9 +7,9 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Active steps:** 761 — the owner's checklist after the first server launch, then a fresh launch from zero (`new-steps/761-owner-checklist-and-fresh-launch.md`): 761-1/2/14 in code and tested (d55b5f17), live proof T4–T6 next; then 761-3, 761-4, 761-5, 761-15, 761-16, then 761-13 the fresh launch; 760 — 760-1/8/9/10 live, 760-2…760-7 open (in the 761 checklist); 758/759/762 — live; 1 — the first launch.
 
-**Last change:** 2026-11-16 20:14 UTC — 768-4 live: T2 ✓ (66c9e85a saved from the owner's phone 20:10:02; log «written, restarted true», «done (telegram) → hrutb: ok · telegram: ok»; hrutb--work woke and closed 20:10:17; the element's file itself is not readable by law — the denial held), T3 ✓ core logs + person-asks.json 0 hits (the session journal has the fake value: the owner's screenshot showed it unmasked), T6 ✓ light, phone (his screenshot). T5 request 1f6b9e00 sent (no entry kept ✓) — waiting his look; T4 his second press of the old button → «больше не действует». Then drop 1f6b9e00, close 768, then 769.
+**Last change:** 2026-11-16 20:24 UTC — 768-6 in code (see the 768 doc), unit 20/20, tsc 0, prebuild RC=0; soul 07fc861c (emoji feelings + a rare joke before going dark, for every agent; the §9 emoji entry removed). The core REBUILD STARTED (detached). T4/T5 of 768-4 still wait his look (1f6b9e00 open).
 
-**Next action:** after the core is back — restore CLAUDE.md/.claude/skills from git, then T2–T6 live: put a request by hrutb with the node key (secret FAKE_DEMO_API_KEY) → Telegram button → the owner types a fake value → name in hrutb's .env.local (grep the NAME only), restart, wake; T3 grep the value in logs; T4 forged POST 401; T5 a server-root request without a button; T6 his screenshot. Then 769.
+**Next action:** after core-back — restore CLAUDE.md/.claude/skills from git (the session-start restore brings an older release text!), then `npm run openai-key` → the request with the form → the owner types a real key in Telegram → transcribe his voice note data/services/build/channel/telegram/inbox/1794859951249-AgADnCQAAlNX2VM.oga; negative: a fake key refused. Then drop 1f6b9e00, close 768, then 769.
 
 ## Letter to my next session (written 2026-11-16 ~19:33 UTC, the window at 66 %; a clean start for a debugging task)
 
