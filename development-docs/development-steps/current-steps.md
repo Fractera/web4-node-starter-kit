@@ -9,7 +9,7 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Last change:** 2026-11-16 13:35 UTC — the fresh session ran `npm run prebuild` alone first: two guards refused d55b5f17 (check:node-lines — `greetText` began with «Node:» though the server puts the `moved` head; check:words — «blocks»/«block» in the tests) → fixed 468400d6, prebuild RC=0, test:hosting-launch 22 ✓ + the pre-existing ✗; the core REBUILD STARTED 13:36 UTC (detached).
 
-**Next action:** 761-16b built (reply keyboard «Готово · <id>», not an inline button — while a session runs its bot is read by the Claude Code channel, never by the node); templates custom v0.3.211 / native v0.1.76 (done <id>, --copy), all 11 elements rolled out (auth v2.4.39 … root v3.0.65). Core REBUILD STARTED ~16:10. On core-back: checkout the system part, then a window asking the owner to connect the MAIN agent's bot on build/telegram (variant (a)), then B1–B4 live on me.
+**Next action:** core back 16:09 (72a15bda, builtAt 16:05) with 761-16b; system part restored → checkout, seal OK. B4 ✅ live: with no main bot `ask-person` says «No Telegram bot: the window alone». Window 8c1abfb2 asks the owner to connect the MAIN bot on build/telegram (variant (a)); on person-done: npm run person (bot seen), then a test request → B1 (message + keyboard in his Telegram, window in the panel), B2 (his «Готово · id» reaches me → ask-person done), B3 (panel «Готово» → «✓ Закрыто в пульте» in Telegram, no second wake). Then 765 after his yes.
 
 ## Letter to my next session (written 2026-11-16 ~13:25 UTC, the window at 59 %)
 
