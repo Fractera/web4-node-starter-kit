@@ -1,4 +1,4 @@
-# 768 — the person's secret typed in the node's window or a Telegram form (768-1..3, 5 in code; 768-4 asked)
+# 768 — the person's secret typed in the node's window or a Telegram form — CLOSED 2026-11-16 20:40 UTC
 
 The owner, 2026-11-16 18:44–18:50 UTC (Telegram): «Было бы законным или нет чтобы ты показал мне прямо в этом всплывающем окне область
 для ввода данных в данном случае пароля?»; «для самого узла и для элемента. То есть если элемент требует от меня везти например API для
@@ -86,3 +86,18 @@ owner which element; grep the value), S2/S3 by unit; 768-4 waits for his yes.
 - `transcribe` without a key and `/openai_key` without a key put the request with the form; the old «send the key in the chat» hint is
   gone from the CLI and `commands.json` (a key sent anyway is still checked, kept and its message deleted).
 - Tests: unit 20/20; live — a real key in the form → a voice note transcribed; a fake key refused, nothing written.
+
+## Live 768-6 (core 3455b5b9, 20:31–20:33)
+- cefa5a19 saved from the owner's Telegram form: log «the node's OpenAI key: checked live, written into the core» (…gN4A); second plane —
+  his voice notes of 20:12 and 20:33 transcribed (TRANSCRIBE_OK). A fake key refused — unit only, not run live.
+
+## Close (the owner 20:35: «Ладно давай тогда запили хвосты»)
+- Proven: S5 (root in the window, 19:31 after the third try — the cause is 769), S6 light, T1 unit 20/20, T2, T3, T6, 768-6 live.
+- Not proven live: T4 (the old button says «no longer valid» — unit + an unknown token answers 410 from the internet), T5 (the root request in
+  Telegram has no button — unit; the live message was sent 20:13 and dropped 20:35 without the owner's look), S6 dark/390, S1/S2 by the
+  window on an element (the Telegram road proved the same save path).
+- Left: 769 (the launch connect outlives the door's 150 s — split connect from probe); 770 (the bridge restored the system part on the
+  owner's node — fixed in code, proven after the build).
+
+Surfaces seen: logs/eyes/768-S6-light.png (the window's masked field, light); the Telegram form — the owner's phone screenshot 20:10 (not in
+logs/eyes). Not seen: logs/eyes/768-S6-dark.png and 768-S6-phone.png were taken with the beacon shut; the window's OpenAI note (768-6).

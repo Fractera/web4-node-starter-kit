@@ -58,6 +58,21 @@ ok(b('git checkout -- development-docs/development-steps/current-steps.md'), 'a 
 ok(w('components/left-menu.tsx', 'x', true) && b('git apply patch.diff', true), 'the owner: the core may be changed')
 ok(part.restore.length === 0 && typeof part.ownerState === 'function', 'the owner is decided by the key (ownerState)')
 
+// 770: the bridge's sync restore takes the last verdict for the same keys, however old (✗ 2026-11-16: the hour's cache ran out and the
+// owner's CLAUDE.md, skills and soul came back from the release on every session the bridge started)
+const own = (v) => put('logs/core-owner.json', JSON.stringify(v))
+const h = part.currentKeyHash(root)
+if (h) {
+  own({ owner: true, hash: h, at: '2020-01-01T00:00:00.000Z' })
+  ok(part.knownOwner(root) === true, 'the owner\'s verdict of long ago for the same keys still holds (no hour limit for the bridge)')
+  own({ owner: true, hash: 'ffffffffffffffff', at: new Date().toISOString() })
+  ok(part.knownOwner(root) === false, 'negative control: a verdict for other keys is not the owner')
+}
+own({ owner: false, hash: h ?? 'x', at: new Date().toISOString() })
+ok(part.knownOwner(root) === false, 'negative control: «not the owner» stays not the owner')
+rmSync(join(root, 'logs', 'core-owner.json'))
+ok(part.knownOwner(root) === false, 'negative control: no verdict — not the owner')
+
 rmSync(join(root, 'logs', 'launch.json'))
 ok(w('components/left-menu.tsx', 'x') && b('sed -i "" "s/1/2/" components/left-menu.tsx'), 'negative control: a development clone is never refused')
 
