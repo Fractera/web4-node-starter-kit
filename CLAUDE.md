@@ -470,3 +470,4 @@ Rules of this section are fixed like sections 1–8; only the entries below them
 - An outdated entry is deleted, never marked. The section is full — propose to the owner which entries to fold into sections 1–8 or delete.
 
 Entries:
+- If the temporary address is dead (1016, 1033, no name) — `npm run serve:publish`, check it answers, give the person the new address.
