@@ -20,6 +20,9 @@
 > – проверь чтобы главный файл ядра который содержит всю информацию о проекте также нёс себе информацию работает ли проект локально, если
 > работает на удалённом сервере, его IP
 
+The owner, 2026-11-16 ~11:00 UTC (answers to the plan, verbatim in 760-1, 760-8, 760-9): the switch ON by default; why the computer can take
+names (NS at Cloudflare) and an intermediate step; the Chrome card and a button on every records step.
+
 ## 2. Retelling, findings and decisions
 
 **A. The password on every reload.** The browser's access to a server already lives up to 24 h (744-3, the owner's «no more then 24»): the
@@ -45,6 +48,10 @@ visit key sits in an HttpOnly cookie of `/api/node/launch`, and `connect` with a
   node has no plate (its domains are always its own). Until chosen, the page below works as today.
 - D760-d: one road per name is held by the DOORS, not only the screen: in «server» the computer's DNS-writing doors refuse; in any mode the
   computer never deletes an A record that points to a server this computer pinned.
+
+- D760-g (the owner): the switch is ON by default. D760-h: step 3 names the cabinet that keeps the records by the NS — for fractera.ai
+  Cloudflare, not GoDaddy (defect: it says «обычно это кабинет регистратора»). D760-i: «Сделать в моём Chrome» reuses the terminal drawer;
+  settings by the agent after the person's press, a deletion prepared and pressed by the person (help-in-browser).
 
 **C. The passport tab — checked 2026-11-16 through the door `/api/node/own-service-props?item=root`:** id ✓ `root` · name ✓ `root` ·
 port ✓ `machine.port 24683` · own domain ✓ the field `addresses.ownDomain` (empty — none attached) · where it lives ✓ `host.place home`,
@@ -89,7 +96,8 @@ port ✓ `machine.port 24683` · own domain ✓ the field `addresses.ownDomain` 
 
 ## 6. Substeps, order, address
 All in the core, main; the push through a clean branch from origin/main, as 758/759 (local main carries «Fresh project» 0bcb5095).
-760-1 · 760-2 · 760-3 → 760-4 · 760-5 → 760-6 · 760-7. One core rebuild at the end of the queue.
+Proposed order (the launch running now first): 760-1, 760-8, 760-9, then 760-2, 760-3 → 760-4, 760-5 → 760-6, 760-7. One core rebuild at the
+end of the queue.
 
 | # | One result |
 |---|---|
@@ -100,6 +108,8 @@ All in the core, main; the push through a clean branch from origin/main, as 758/
 | 760-5 | a server node's own domain list by the registrar road; «Главное зеркало» works on a server |
 | 760-6 | a domain added to the server from the computer, through the access |
 | 760-7 | the node says where the project lives: this computer, the server and its IP |
+| 760-8 | step 3 names where the records are written, by the NS: Cloudflare for fractera.ai, not GoDaddy |
+| 760-9 | «Сделать в моём Chrome»: the card and a button that hands the main agent the exact records task |
 
 ## 8. Acceptance
 Every substep has its file, its one-line «done», two proofs from different planes with a negative control, «not in it», the tasks asked
