@@ -9,7 +9,7 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Last change:** 2026-11-16 13:35 UTC — the fresh session ran `npm run prebuild` alone first: two guards refused d55b5f17 (check:node-lines — `greetText` began with «Node:» though the server puts the `moved` head; check:words — «blocks»/«block» in the tests) → fixed 468400d6, prebuild RC=0, test:hosting-launch 22 ✓ + the pre-existing ✗; the core REBUILD STARTED 13:36 UTC (detached).
 
-**Next action:** 768-4 (the Telegram form) — his pick on the root password road and a new HTTPS address; 769 after it.
+**Next action:** his «да» on plan 768-4 (sent 19:58), then build it, prebuild, serve:rebuild, T1–T6; 769 after it.
 
 ## Letter to my next session (written 2026-11-16 ~19:33 UTC, the window at 66 %; a clean start for a debugging task)
 
@@ -41,6 +41,8 @@ file. A test request «by an element» is dropped by me, never left for his pres
 pages without tokens; the extension's selected tab is never his screen. The core main is not pushed (761-9).
 
 ## The person's decisions (verbatim)
+
+- 2026-11-16 19:52 UTC, the owner: «я думал ты имеешь в виду элемент root, а ты имеешь в виду активацию сервера? … активацию сервера ограничим формы через браузер … для тестирования выбери любой фейковый сервис придумай любой фейковое API ключ и передадим его через Telegram … ключ будет доступен только после сборки элемента?» → (а): root only on the computer (Telegram: no button, «только на компьютере»); keys: two ways. Answered: no element build — key file + restart. Plan 768-4 sent 19:58 (waits «да»): lib telegram-webapp.cjs (initData HMAC, auth_date, user ∈ allowFrom, one-time token sha256 in the ask) · announce: inline web_app button when an HTTPS base exists (own domain or live tunnel) · door /api/node/secret-entry GET=tiny HTML form (tgWebAppData from the hash, no telegram.org script) POST=validate→shared save (refactor out of person-asks route) · proxy: PUBLIC_API_PREFIXES + TEMPORARY_WRITE_ALLOWED for this door only. Tests T1–T6 (fake FAKE_DEMO_API_KEY by hrutb, request put by me with the node key).
 
 - 2026-11-16 19:48 UTC, the owner walked the case: «ты говоришь: Рома ты как будешь вводить пароль (ключ, токен) Две кнопки: здесь в Telegram / на компьютере … я выбираю Telegram: Открывается какое-то приложение, я туда ввожу пароль, он … телепортируется на сервер, ты его … куда-то записываешь». My answer 19:50: the only gap is where the 24 h root visit key lives (today the browser cookie, 744-3); I reversed my pick to (б) — the node keeps the visit key itself (0600, beside the pin), both roads work; keys go to the element's key file. Asked «Строю?» — plan 768-4 = choice of road + Mini App for every secret + node-held visit.
 
