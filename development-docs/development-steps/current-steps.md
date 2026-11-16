@@ -18,7 +18,7 @@ he asked «строить на максимальном усилие»). Today c
 NOW: **768** — the person's secret in the action window (new-steps/768-a-secret-typed-in-the-window-or-telegram.md): 768-1..3, 5 in code
 and rolled out (core ad04d73f…; templates custom v0.3.213 / native v0.1.78; 11 elements). A core rebuild was started ~19:16.
 
-**Next actions after the core-back:** (1) restore CLAUDE.md/.claude/skills from git (`git checkout HEAD -- CLAUDE.md .claude/skills`,
+**UPDATE 19:30:** the core is built (dcd483eb); S6 light ✓; S5 open — the window's root password got «ok» from the launch door but the page then says «no open access» (see new-steps/768 «Live after the build»); the owner was asked to type it in the page's own form. Also to fix: «Сохранить» busy with no words → «Проверяю сервер…» + spinner. **Next actions after the core-back (done: 1–2 light):** (1) restore CLAUDE.md/.claude/skills from git (`git checkout HEAD -- CLAUDE.md .claude/skills`,
 `npm run check:instruction`); (2) S6: `npm run eyes` / playwright on a page with a secret request — the masked field, show/hide, both
 themes, 390 px; (3) S5 with Рома: `npm run ask-person -- "Введите пароль root сервера 109.199.105.213" --secret server-root --host
 109.199.105.213 --href "/ru/hosting/hosting?from=agent" --why "пароль root вводите только вы"` → he types it in the window → the launch

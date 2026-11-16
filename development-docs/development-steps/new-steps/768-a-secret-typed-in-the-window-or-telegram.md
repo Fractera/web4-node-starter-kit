@@ -57,3 +57,16 @@ Price: one core build; both templates released and rolled to every element (ask-
 - Core skill act-with-the-person: «The window first, then the chat» and «A secret is typed in the window».
 Next: the core build, then S6 (eyes on the field), S5 (the owner types root in the window → step 2 opens), S1/S4 (a test key — ask the
 owner which element; grep the value), S2/S3 by unit; 768-4 waits for his yes.
+
+## Live after the build (core dcd483eb, 19:20–19:30)
+- S6 ✓ light: the beacon's card on «Активация выделенного сервера» shows «Пароль root сервера 109.199.105.213», the masked field with
+  show/hide, «Сохранить» disabled while empty, console clean (logs/eyes/768-S6-light.png). Dark and 390 px — the beacon was shut in
+  those shots: not seen yet.
+- S5 ✗/open: the owner typed the password in the window (in my extension tab ?from=agent, his screenshot 19:25:17): «Сохранить» stood
+  light blue ~10–20 s with no word (busy, no spinner — a defect: «Проверяю сервер…» with a spinner); the launch door answered ok, the
+  request closed (journal 19:25:26 «4deaab20 done»), the wake said «a visit of a day». But right after, the page's «Проверить сервер»
+  with an empty password on the same tab → «У этого браузера нет открытого доступа», and a `state` call from the tab → need-password.
+  The visit did not reach the page. Not the profile (the same tab, his screenshot). Open questions: did the connect answer carry the
+  visit (the window checks only `ok`, the page checks `ok && state`); is a fresh visit key refused on its second use (then the page's own
+  form would fail the same way). Asked the owner (19:29) to type the password in the page's own form and press «Проверить сервер» —
+  that splits the window from the launch door. 7201483d (a wrong guess about a profile) dropped.
