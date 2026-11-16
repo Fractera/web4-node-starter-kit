@@ -10,7 +10,7 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Last change:** 2026-11-16 — the first task arrived from the node's home page (1-5): a family/team budget service. Fork proposed, waiting for the person's choice; nothing created yet.
 
-**Next action:** after the core rebuild (started 2026-11-16 for 759): `npm run serve:status`, tell the owner 759 is live, then 758-1 (runner `telegram --put/--state`) by `new-steps/758-server-telegram-step-5.md`. Still open: the owner's answer whether the server's step 4 finished (fractera.ai records), the push of the fixes (a clean branch from origin/main).
+**Next action:** 759 is live in the core (build 88f50496). The server 109.199.105.213 answers: port 80, its node df53bcf4 started 00:32 — step 4 done. Waiting for the owner's yes to write fractera.ai's records in his Chrome (Cloudflare panel, where its DNS lives): `@` A → 109.199.105.213 DNS only (replaces the Vercel A 76.76.21.21), `*` A → the same, the www CNAME cname.vercel-dns.com (proxied) deleted; MX, TXT, CAA untouched. Then 758-1.
 
 ## The person's decisions (verbatim)
 
