@@ -10,7 +10,7 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Last change:** 2026-11-16 — the first task arrived from the node's home page (1-5): a family/team budget service. Fork proposed, waiting for the person's choice; nothing created yet.
 
-**Next action:** after the core rebuild for 758: `npm run serve:status`; the owner opens the launch page (root password is his) — step 5 shows; his real bot proves 758-6 (the server's channel says configured, the greeting seen in Telegram). Still waiting for his yes: fractera.ai records in his Chrome (Cloudflare panel): `@` A → 109.199.105.213 DNS only (replaces Vercel 76.76.21.21), `*` A → same, delete www CNAME cname.vercel-dns.com (proxied). Push of the fixes: a clean branch from origin/main.
+**Next action:** 758 live in the core (build 7176d1ad): the launch page lists eight steps, step 5 «Telegram-бот сервера» seen in Chrome, no console errors. Waiting for the owner: the root password on the launch page and a real bot (758-6 proof: the server's channel configured + the greeting in Telegram); his yes to fractera.ai records in Cloudflare (`@`, `*` → 109.199.105.213 DNS only, delete www CNAME to Vercel). Push of the fixes: a clean branch from origin/main.
 
 ## The person's decisions (verbatim)
 
