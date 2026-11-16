@@ -44,9 +44,14 @@ Google … или есть у тебя глубокая память храни�
   connected browser) / C (the node's window), the routing, the deep memory link, what stays the person's, Windows/Linux unmeasured.
 - [ ] 767-5 element instruction (sealed source) — one line in `act-for-the-person`: a browser wish outside your field goes to the core
   with `tell-core`, inside it — act and bring the tab forward with the core's browser door; templates released, rolled to every element.
+- [ ] 767-6 the main agent's «Telegram-бот» settings page — a separate closed accordion (shadcn Accordion) «Управление браузером через
+  Telegram»: how it works, what it needs (the extension in each profile, the macOS Automation OK once), what the person gets (the owner,
+  2026-11-16 ~17:52: «отдельный раздел управления браузером через Telegram. Показывай его как информационный блок аккордеон закрытым при
+  раскрытии опиши как именно происходит управление браузером через Telegram что для этого нужно и что пользователь может из этого
+  извлечь»). Texts through translations, ru + en; seen with eyes closed and open, both themes.
 Tests: B1 Telegram «покажи мой профиль LinkedIn» → the element holding LinkedIn is named and gets the task (or none → said) · B2 «найди
 новости о Starship и покажи» → a tab opened AND in front (the owner confirms) · B3 a test link remembered, then «какую ссылку … я просил
 запомнить» → remind finds it, the tab opens in front · B4 root gets a browser wish outside its field → `tell-core` reaches the main agent ·
 B5 negatives: `focus` with no matching tab says so and opens nothing; `tabs` never prints a full address; the door refuses without the node
-key · unit tests for the command and the door; check:instruction, the element instruction seal, templates' prebuild.
+key · unit tests for the command and the door; B6 the accordion closed by default, opens with the keyboard, no console errors; check:instruction, the element instruction seal, templates' prebuild.
 Price: CLAUDE.md +1 line, the element instruction +1 line (paid in every element session), the rest in a skill loaded by need.
