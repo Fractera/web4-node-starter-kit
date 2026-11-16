@@ -5,11 +5,11 @@ the person's decision (verbatim, at once), a fact that is expensive to measure a
 start of a long or irreversible operation (before it), a changed next action. How the steps are planned, proven and closed — skill
 `use-development-steps`.
 
-**Active steps:** 761 — the owner's checklist after the first server launch, then a fresh launch from zero (`new-steps/761-owner-checklist-and-fresh-launch.md`): 761-1/2/14 in code and tested (d55b5f17), live proof T4–T6 next; then 761-3, 761-4, 761-5, 761-15, 761-16, then 761-13 the fresh launch; 760 — 760-1/8/9/10 live, 760-2…760-7 open (in the 761 checklist); 758/759/762 — live; 1 — the first launch.
+**Active steps:** 769 — the launch connect outlives the door's 150 s (proposed, deferred); 761 — the owner's checklist and the fresh launch (761-13); 768 and 770 CLOSED; 1 — the first launch.
 
-**Last change:** 2026-11-16 20:45 UTC — the 20:37 build FAILED (I chained it after a red prebuild: check-steps wanted «Surfaces seen:» in 768-main.md) — the old build came back; that return did NOT revert the system part (system-part.cjs is read at run time — first live sign of 770). Fixed, 770 + 768 close committed ee44eef5; prebuild RC=0 read; the core REBUILD STARTED (detached) as its own command.
+**Last change:** 2026-11-16 20:49 UTC — the core back (REBUILD_RC=0 20:48, build f72e809f). 770 PROVEN on two planes: git status clean after two core-backs (20:39 old build, 20:48 new) and logs/system-part.jsonl has no entry after 20:30 (before the fix: 20:10 — even an element's wake reverted the core — and 20:30). Commit ee44eef5.
 
-**Next action:** after core-back — restore CLAUDE.md/.claude/skills from git (the session-start restore brings an older release text!), then `npm run openai-key` → the request with the form → the owner types a real key in Telegram → transcribe his voice note data/services/build/channel/telegram/inbox/1794859951249-AgADnCQAAlNX2VM.oga; negative: a fake key refused. Then drop 1f6b9e00, close 768, then 769.
+**Next action:** the owner picks: 769 (split the launch connect from probe, the window closes on `ok && state`, host-key-changed in the window) or 761-13 (the fresh server launch from zero).
 
 ## Letter to my next session (written 2026-11-16 ~19:33 UTC, the window at 66 %; a clean start for a debugging task)
 
