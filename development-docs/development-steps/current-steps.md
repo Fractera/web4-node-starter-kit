@@ -27,7 +27,7 @@ the message reaches me → `npm run ask-person -- done <id>` → ===ASK_DONE===.
 before the bot at 16:15) — no `--channels`; clear never brings the channel. Fix used: `npm run session -- model opus` (relaunch
 through bridge.cjs → channelLaunch: token + 1 admitted chat present). If after that `npm run person` still says silent — tell Рома.
 
-**Then:** 765 waits for his yes (an element per person, shared heavy tools apart — plan at the end of the plan file); 761-16c (look),
+**765 DONE d74c47ad** (16:30, «Твой выбор»; sealed 978249cf4bb3). B3 open: closed() swallows errors with no log line — add `[node/person-asks] <id> closed → telegram: ok|<err>` with the next core build. **Then (old):** 765 waits for his yes (an element per person, shared heavy tools apart — plan at the end of the plan file); 761-16c (look),
 761-15 (Haiku browser acts), 761-17 (step 5 asks Telegram getMe), 761-3/4/5, then 761-13 the fresh launch (P2 green VPS, T4–T6).
 
 **Clues.** EVERY core-started agent session restores the system part (CLAUDE.md, skills dedicated-server/help-in-browser) — after each
