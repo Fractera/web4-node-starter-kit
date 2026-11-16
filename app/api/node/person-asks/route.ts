@@ -13,14 +13,14 @@ export const dynamic = "force-dynamic"
 
 const ROOT = process.cwd()
 const noStore = { headers: { "Cache-Control": "no-store" } }
-type Ask = { id: string; text: string; href: string | null; why: string | null; at: string }
+type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; at: string }
 type Wake = (service: string, opts: { text?: string; from?: string; confirmed?: boolean }) => Promise<Record<string, unknown> & { ok: boolean }>
 
 export async function GET(req: NextRequest) {
   if (isTemporaryPublicAddress(req)) return NextResponse.json({ ok: true, asks: [] }, noStore)
   const denied = await requireRoles(req, ["architect", "admin"])
   if (denied) return denied
-  const list = (asks.open(ROOT) as Ask[]).map(({ id, text, href, why, at }) => ({ id, text, href, why, at }))
+  const list = (asks.open(ROOT) as Ask[]).map(({ id, text, href, why, hint, at }) => ({ id, text, href, why, hint: hint ?? null, at }))
   return NextResponse.json({ ok: true, asks: list }, noStore)
 }
 

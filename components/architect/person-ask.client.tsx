@@ -14,7 +14,7 @@ import type { PersonAskUi } from "./person-ask.i18n"
 // Свежесть: открытие страницы, возврат на вкладку и раз в 15 секунд, пока вкладка видна, — слово владельца «невозможно пропустить»:
 // запрос появляется, пока человек смотрит на экран, а не после перехода.
 
-type Ask = { id: string; text: string; href: string | null; why: string | null }
+type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null }
 
 const POLL_MS = 15_000
 const BACK_MS = 60_000
@@ -45,6 +45,7 @@ export function PersonAsk({ url, ui }: { url: string; ui: PersonAskUi }) {
         <span className="flex flex-col gap-1" data-block="person-ask-body" data-person-ask={a.id}>
           <span className="font-medium text-foreground">{a.text}</span>
           {a.why && <span>{a.why}</span>}
+          {a.hint && <span className="border-l-2 border-warning pl-2" data-person-ask-hint>{ui.hint} {a.hint}</span>}
           {a.href && (
             a.href.startsWith("/")
               ? <Link href={a.href} className="font-medium underline underline-offset-4">{ui.open}</Link>

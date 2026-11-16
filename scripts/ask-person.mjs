@@ -1,4 +1,5 @@
 // npm run ask-person -- "<what to do, in the person's language>" [--href </ru/…|https://…>] [--why "<why only the person>"]
+//   [--hint "<what may pop up on the way and what to press>"]
 // npm run ask-person -- list | drop <id>
 // Node step 761-16: a step needs the person's own hands — the request shows at the bottom of every page of the panel until «Готово»,
 // and that press wakes you with the node line `person-done`. Never a chat line instead (the owner, 2026-11-16).
@@ -21,8 +22,9 @@ if (args[0] === 'list') {
 } else {
   const href = flag('--href')
   const why = flag('--why')
+  const hint = flag('--hint')
   try {
-    const a = asks.add(ROOT, { text: args.join(' '), href, why })
+    const a = asks.add(ROOT, { text: args.join(' '), href, why, hint })
     console.log(`===ASK_PUT=== ${a.id} — shown at the bottom of every panel page until «Готово»; the press wakes you (person-done). Say one line to the person that the window waits for them.`)
   } catch (e) {
     console.log(`===ASK_REFUSED=== ${e instanceof Error ? e.message : e}`)

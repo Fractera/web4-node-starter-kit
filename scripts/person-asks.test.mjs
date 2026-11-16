@@ -19,6 +19,11 @@ t('a request is put and shown open, with its page', () => {
   assert.match(a.id, /^[a-f0-9]{8}$/)
   assert.deepEqual(asks.open(tmp).map((x) => x.id), [a.id])
 })
+t('a hint of what may pop up travels with the request', () => {
+  const h = asks.add(tmp, { text: 'Войдите в Telegram Web', href: 'https://web.telegram.org/k/', hint: 'Если Chrome спросит «Открыть приложение Telegram?» — нажмите «Отмена»' })
+  assert.match(asks.open(tmp).find((x) => x.id === h.id).hint, /Отмена/)
+  asks.drop(tmp, h.id)
+})
 t('«Готово» closes it once; a second press (another tab) gets null — negative control', () => {
   const [a] = asks.open(tmp)
   assert.equal(asks.done(tmp, a.id)?.id, a.id)
