@@ -33,18 +33,18 @@ Google … или есть у тебя глубокая память храни�
 3. Every act the person's hands must do stays a window (`ask-person`, its link) — sign-ins, passwords, the final press.
 
 ## Substeps
-- [ ] 767-1 core command `npm run browser -- tabs | focus <words or address> | open <url> [--profile <name or email>]` — model-free;
+- [x] 767-1 core command `npm run browser -- tabs | focus <words or address> | open <url> [--profile <name or email>]` — model-free;
   `tabs` prints titles and hosts only (never full addresses: tokens); `focus` finds by address or title in every window; Mac only,
   elsewhere it says so; the first run names the macOS Automation window (an `ask-person` hint).
-- [ ] 767-2 core door `/api/node/browser` (loopback, `X-Node-Key` + element id, `// @api`) with the same `focus` / `open` / `tabs` for
+- [x] 767-2 core door `/api/node/browser` (loopback, `X-Node-Key` + element id, `// @api`) with the same `focus` / `open` / `tabs` for
   elements; a journal line per call.
-- [ ] 767-3 CLAUDE.md §4 — one scenario line «The person's browser from Telegram» (the routing 1a–1c and 2 in one sentence, the extension
+- [x] 767-3 CLAUDE.md §4 — one scenario line «The person's browser from Telegram» (the routing 1a–1c and 2 in one sentence, the extension
   in each profile the person wants acted in, details in `help-in-browser`); resealed at the owner's word.
-- [ ] 767-4 skill `help-in-browser` — section «Driving the browser from Telegram»: the map A (AppleScript, any profile) / B (extension,
+- [x] 767-4 skill `help-in-browser` — section «Driving the browser from Telegram»: the map A (AppleScript, any profile) / B (extension,
   connected browser) / C (the node's window), the routing, the deep memory link, what stays the person's, Windows/Linux unmeasured.
 - [ ] 767-5 element instruction (sealed source) — one line in `act-for-the-person`: a browser wish outside your field goes to the core
   with `tell-core`, inside it — act and bring the tab forward with the core's browser door; templates released, rolled to every element.
-- [ ] 767-6 the main agent's «Telegram-бот» settings page — a separate closed accordion (shadcn Accordion) «Управление браузером через
+- [x] 767-6 the main agent's «Telegram-бот» settings page — a separate closed accordion (shadcn Accordion) «Управление браузером через
   Telegram»: how it works, what it needs (the extension in each profile, the macOS Automation OK once), what the person gets (the owner,
   2026-11-16 ~17:52: «отдельный раздел управления браузером через Telegram. Показывай его как информационный блок аккордеон закрытым при
   раскрытии опиши как именно происходит управление браузером через Telegram что для этого нужно и что пользователь может из этого
@@ -55,3 +55,17 @@ Tests: B1 Telegram «покажи мой профиль LinkedIn» → the eleme
 B5 negatives: `focus` with no matching tab says so and opens nothing; `tabs` never prints a full address; the door refuses without the node
 key · unit tests for the command and the door; B6 the accordion closed by default, opens with the keyboard, no console errors; check:instruction, the element instruction seal, templates' prebuild.
 Price: CLAUDE.md +1 line, the element instruction +1 line (paid in every element session), the rest in a skill loaded by need.
+
+## Done in code (2026-11-16 ~18:00–18:20)
+- 767-1 `lib/node/browser.cjs` + `scripts/browser.mjs` (`npm run browser`); unit `scripts/browser.test.mjs` 6/6 in the prebuild. Live, no
+  tab switched: `tabs` 2 windows / 18 tabs, hosts only; `focus "starship flight 15 zzz"` → NOT_FOUND, nothing opened; `profiles` 10, accounts
+  masked; `open javascript:` refused; an unknown profile refused with the names. «fractera.ai» and «Fractera.ai» are twins on this Mac —
+  the letter case decides.
+- 767-2 `app/api/node/browser/route.ts`: node key, a known element, `elementMay` (own subscription, app factory → 403), focus by address or
+  host only, nothing of the person's tabs returned; journal `[node/browser]`.
+- 767-3 CLAUDE.md §4 «The person's browser from Telegram» — resealed d64e6436722f (FAIL before the seal — the negative).
+- 767-4 `help-in-browser` «Driving the browser from Telegram».
+- 767-6 `lib/content/bot-page-notes(.i18n).ts`; the template `kits/_agent-kit/pages/telegram/_components/index.ts.tpl` and its 11 copies
+  ask `botPageNotes('<service>', lang)` — only `build` (the core's main agent) carries the closed accordion; copies equal the template.
+Guards: tsc 0, api, agent kits 12, page-composition, content, sections, static, shadcn-parts, typography, parts-map, lang-delivery,
+architect-routes, skill headers, instruction skills, shape-examples OK; check:i18n red 40 before and after (pre-existing).

@@ -92,6 +92,28 @@ your hands in a browser exist only there.
    `persist-env-var-with-rebuild` — never into Telegram or a reply. Say only where it is stored.
 7. Report in one or two lines: what changed and where they can see it.
 
+## Driving the browser from Telegram (node step 767, measured with the owner 2026-11-16)
+The person writes from the phone; the browser is Chrome on this computer. Three hands, each for its own part:
+- **A — `npm run browser`** (macOS AppleScript: every window and profile, no extension, no model, no tokens): `tabs` (titles and hosts,
+  never full addresses — they carry tokens), `focus <address, host or words>` (that tab comes onto the person's screen; nothing found —
+  nothing opened, say so), `open <https://…> [--profile <name or account>]`, `profiles`. The very first call waits for the person's OK in
+  macOS's «… wants access to control Google Chrome» — put it as their window first (`ask-person --hint`), never let it hang in silence.
+- **B — the Claude extension** (only the connected browser, `list_connected_browsers`): reading, clicking, typing inside a page. Its
+  «selected tab» is yours, not the person's screen (the owner: «я до сих пор остался на от Google лагрикс») — after acting,
+  `npm run browser -- focus <address>` brings the tab before them.
+- **C — the node's window** (`ask-person`): their sign-in, password, code, the final press.
+
+Routing a wish (the owner: «соотносится ли это с возможностями его элемента»):
+1. Of an element's field («мой профиль LinkedIn, хочу пост») — `npm run find`; its agent gets it (`npm run task`) and works there itself.
+2. A remembered thing («ссылку про электровелосипеды, что я просил запомнить») — `npm run remind`, then `open`.
+3. General («найди новости о полёте Starship и покажи») — their preference in the deep memory (a source they named), else a search page;
+   then `open`.
+Show with `open` or `focus` (no tokens); read or act with the extension only when the task needs the page's content. An element inside its
+field acts and brings the tab forward with its own `npm run browser -- focus` (the core's door `/api/node/browser`: an address or a host,
+no list, no titles); outside its field it passes the words to you by `tell-core`. An element on its own person's subscription and an app
+factory are refused: the browser of this computer is the architect's. Not measured: Windows and Linux (a window can be raised, a tab
+cannot), Safari, Firefox; a dedicated server has no browser.
+
 ## The person's own hands — skill `act-with-the-person`
 
 A step only the person may do is a window at the bottom of the panel (`npm run ask-person`, «Готово» wakes you), never a chat line;

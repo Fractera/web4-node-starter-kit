@@ -1,11 +1,13 @@
 import type { ReactNode } from 'react'
 import type { PageItem } from '@/lib/content/sections/types'
 import { agentKitWidget } from '../../_agent-kit/widgets'
+import { botPageNotes } from '@/lib/content/bot-page-notes'
 
 // СОДЕРЖИМОЕ СТРАНИЦЫ — ИЗ КОПИИ КОМПЛЕКТА АГЕНТА ЭТОЙ СЛУЖБЫ (271, `../../_agent-kit/`).
 // Шаблон `kits/_agent-kit/pages/telegram/`; установщик подставил имя службы вместо `__SERVICE__`.
-export function content(_lang: string): PageItem[] {
-  return []
+// 767-6: the notes of a bot page — the main agent's carries «Управление браузером через Telegram» (`lib/content/bot-page-notes.ts`).
+export function content(lang: string): PageItem[] {
+  return botPageNotes('__SERVICE__', lang)
 }
 
 export function widget(lang: string): ReactNode {

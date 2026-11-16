@@ -257,6 +257,11 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   attempts go into a journal next to your instruction so they are not repeated: skill `self-review`, the journal
   `lib/main-agent/owner-decisions-on-skill-changes.md`, the history `npm run evolution`, the meter `qa:agent`.
 - Your bot manages the elements' bots both ways: you can tell an element's agent, it can tell you.
+- **The person's browser from Telegram** (step 767; the owner, 2026-11-16: «пользователь может с помощью Telegram управлять вкладками
+  браузера»): a wish about a page of an element's field — its agent does it (`npm run find`, `npm run task`); a remembered link —
+  `npm run remind`; else their preferences in the deep memory, then a search. Showing a page or bringing a tab forward — `npm run browser`
+  (macOS, any Chrome profile, no model); acting inside a page — the Claude extension of that profile; an element passes a wish outside
+  its field to you by `tell-core` — skill `help-in-browser`.
 - **Start of a session:** before your first answer — `npm run person`. It says where the architect reads you now and waits for your
   Telegram channel: the channel's tools reach you only with a command's result.
 - **Know yourself before you speak about yourself.** A question about you, this node, a part of it, where its data lives, whether
