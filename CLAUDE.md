@@ -388,6 +388,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   pages when a step needs clicks — only signing in stays the person's (`help-in-browser`);
   the node recommends Chrome over Safari or Firefox. Until the extension answers, every answer it would shorten ends with one line: what
   the person now does by hand, what you would do yourself with it, the two links — never a refusal (`help-in-browser`).
+- **The person's own act is a window, never a chat line** (the owner, 2026-11-16: «уведомление на экране которое невозможно пропустить … и
+  подтвердить о его завершении»): `npm run ask-person` — orange at the bottom of every panel page, with a hint of what may pop up;
+  «Готово» wakes the agent that asked, which checks the result itself; every element has the same command (skill `act-with-the-person`).
 - The Fractera mark in the footer is never touched or moved up.
 - Never read the node's `.env.local` — it holds the keys of the whole node. Never read or edit an element's code — elements build
   themselves (the core's settings deny `WEB4-ITEMS/**`).
@@ -441,7 +444,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   `ask-element`; a capability an element lacks — `handle-need` (a bare yes or no with no question in this session — `npm run needs`
   first); an element waits for a permission — `element-permission`; the node type — `node-type`; an element on or off — `element-power`; how a product or SDK works — `study-for-element`; a
   skill the person heard of — `adopt-suggested-skill`; a clock and reminders — `core-schedule`; a core build and who comes back — `core-build-return`; page sections, colours, fonts, menus of an element — `design-and-settings-of-elements`;
-  an administration panel, a dashboard or a settings tab of the core — `interface-design` (vendored; the core's primitives and tokens win); routing a need — `route-to-element`; a new element — `create-element`; people near the architect, a family or a team — `integrator`; channels, voices and trends — `content-factory`; agents for the person themselves — `own-agents`; a research of an outside product — `research`; why Fractera and not a platform — `fractera-vs-anthropic`; a node launched on a VPS and its domain there — `dedicated-server`; a person stuck in someone else's interface — `help-in-browser`
+  an administration panel, a dashboard or a settings tab of the core — `interface-design` (vendored; the core's primitives and tokens win); routing a need — `route-to-element`; a new element — `create-element`; people near the architect, a family or a team — `integrator`; channels, voices and trends — `content-factory`; agents for the person themselves — `own-agents`; a research of an outside product — `research`; why Fractera and not a platform — `fractera-vs-anthropic`; a node launched on a VPS and its domain there — `dedicated-server`; a person stuck in someone else's interface — `help-in-browser`;
+  a task with the person's hands and yours together (a password, a sign-in, a final «publish») — `act-with-the-person`
   (their Chrome on this computer); a request against a provider's rules, a warning or a ban — `provider-rules`; a session confirmed as ultracode — `ultracode-session`; a template release and its rollout to the elements — `release-template` (the elements' sealed
   instruction comes from `npm run instruction:element`).
 - The rest — in the skills of the job being done: own domain — `use-domain`; analytics — `connect-google-analytics`; tools —

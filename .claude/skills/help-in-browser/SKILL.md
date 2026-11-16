@@ -92,23 +92,11 @@ your hands in a browser exist only there.
    `persist-env-var-with-rebuild` — never into Telegram or a reply. Say only where it is stored.
 7. Report in one or two lines: what changed and where they can see it.
 
-## The person's own hands — a window at the bottom of the screen, never a chat line (node step 761-16)
+## The person's own hands — skill `act-with-the-person`
 
-A step only the person may do — a password, a sign-in, a code, a /start, a click on an irreversible button — is asked with
-`npm run ask-person -- "<what to do, in their language>" --href <the page or https address> --why "<why only they can>"`: an orange
-window at the bottom of every page of the panel until they press «Готово» (the owner, 2026-11-16: «уведомление на экране которое
-невозможно пропустить … и подтвердить о его завершении»; «лучше показывать снизу»). The press wakes you with `⟦node · person-done⟧`:
-check the result yourself, then go on. The chat gets one line that the window waits; a request that no longer fits — `npm run ask-person -- drop <id>`.
-Name what may pop up on the way with `--hint` — it stands in the window itself (the owner, 2026-11-16, with a screenshot: «чтобы ты в своих
-инструкции понимал что такие сообщения могут всплывать … и прямо в … списке справа показывать подсказку»).
-
-**Chrome's own windows are invisible to you.** «Открыть приложение \"Telegram\"?» (any app address: `t.me`, `tg:`, `mailto:`, `zoommtg:`),
-a file save, a permission prompt — the extension neither sees nor presses them, and every click after one is lost. ✗ 2026-11-16 14:12:
-I opened https://t.me/<bot> in the person's tab; the dialog stood over Telegram Web and none of my clicks reached a chat. So: never
-open `t.me` — open `https://web.telegram.org/k/#@<name>`, an invite `t.me/<bot>?start=<code>` as
-`https://web.telegram.org/k/#?tgaddr=tg%3A%2F%2Fresolve%3Fdomain%3D<bot>%26start%3D<code>`; a step that may raise such a window
-carries the `--hint` «если Chrome спросит … — нажмите „Отмена“»; clicks that stop working — ask the person (with that hint) whether a
-Chrome window stands open before trying again.
+A step only the person may do is a window at the bottom of the panel (`npm run ask-person`, «Готово» wakes you), never a chat line;
+Chrome's own dialogs are invisible to you — never open `t.me` in their tab. How the task is split, the hints and the patterns — skill
+`act-with-the-person` (node step 761-16).
 
 ## Never
 - type a password, a card number or a code from an SMS — those are the person's;
