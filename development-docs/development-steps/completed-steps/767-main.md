@@ -1,7 +1,7 @@
 # 767 — the person's browser from Telegram (closed 2026-11-16 18:39 UTC at the owner's word)
 
 The owner, 18:38: «закрывай все что было сделано в этом этапе как успех я хочу вернуться на вкладку активации … продолжить с этим
-работу». Plan and proofs: `new-steps/767-the-persons-browser-driven-from-telegram-by-agents.md`.
+работу». The plan and its proofs lived in new-steps until this close — git 1e0bebb2 (`git show 1e0bebb2:development-docs/development-steps/new-steps/767-the-persons-browser-driven-from-telegram-by-agents.md`).
 
 ## What exists now
 - `npm run browser` (core, `lib/node/browser.cjs`): tabs of every Chrome window and profile (titles and hosts only), focus, open in a
