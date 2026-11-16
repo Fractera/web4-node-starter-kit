@@ -34,6 +34,8 @@ npm run ask-person -- "<what to do, one sentence, their language>" --href <where
   Chrome's «Открыть приложение "Telegram"?» → «Отмена»; a cookie banner → «Только необходимые»; a two-factor prompt → «код с
   телефона, вводите сами»; a command for the terminal → «с „!“ в начале». The owner, with a screenshot of such a dialog: «чтобы ты в
   своих инструкции понимал что такие сообщения могут всплывать … и прямо в … списке справа показывать подсказку».
+- **A command for them travels apart** — `--copy "<the command>"`: the window shows it with «Скопировать команду» (the owner,
+  2026-11-16: «я не смог выделить … тот текст … лучше выпал кнопка скопировать команду»); never a command inside the text.
 - One request per act. A request that no longer fits — `npm run ask-person -- drop <id>`; open ones — `npm run ask-person -- list`.
 - An element's agent has the same command from its template (761-16d): its window names the element, its «Готово» wakes that agent.
 

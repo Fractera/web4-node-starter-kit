@@ -144,3 +144,6 @@ Next (the plan of the following steps):
 - [ ] Proof by use: one real shared task end to end (a post drafted by an element's agent, published by the person's press) — the skill's
   «NOT PROVEN» until then.
 - [ ] Cleanup: the extra package.json script lines the first rollout added (data, root, …) — through each element's own agent.
+- [x] 764-a The owner, ~15:38: «ты иногда передаешь команды в этом самом новом диалоге … я не смог выделить своем браузере тот текст …
+  лучше выпал кнопка скопировать команду если её нужно вернуть в терминал, also to plan» → `--copy` in the core: the window shows the
+  command in mono with «Скопировать команду». [ ] the same flag in both templates' `ask-person` (next template release).

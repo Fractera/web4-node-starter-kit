@@ -4,6 +4,8 @@
 import Link from "next/link"
 import { useCallback, useEffect, useRef } from "react"
 import { toast } from "sonner"
+import { Copy } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import type { PersonAskUi } from "./person-ask.i18n"
 
 // ДЕЙСТВИЕ ЧЕЛОВЕКА — ОКНО ВНИЗУ КАЖДОЙ СТРАНИЦЫ ПУЛЬТА (узел, шаг 761-16). Владелец 2026-11-16: «уведомление на экране которое
@@ -14,7 +16,7 @@ import type { PersonAskUi } from "./person-ask.i18n"
 // Свежесть: открытие страницы, возврат на вкладку и раз в 15 секунд, пока вкладка видна, — слово владельца «невозможно пропустить»:
 // запрос появляется, пока человек смотрит на экран, а не после перехода.
 
-type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; byName?: string | null }
+type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; copy?: string | null; byName?: string | null }
 
 const POLL_MS = 15_000
 const BACK_MS = 60_000
@@ -47,6 +49,15 @@ export function PersonAsk({ url, ui }: { url: string; ui: PersonAskUi }) {
           <span className="font-medium text-foreground">{a.text}</span>
           {a.why && <span>{a.why}</span>}
           {a.hint && <span className="border-l-2 border-warning pl-2" data-person-ask-hint>{ui.hint} {a.hint}</span>}
+          {a.copy && (
+            <span className="flex flex-col gap-1" data-person-ask-copy>
+              <code className="select-all break-all rounded-sm bg-muted px-2 py-1 font-mono text-xs text-foreground">{a.copy}</code>
+              <Button type="button" variant="outline" size="xs" className="self-start"
+                onClick={() => { void navigator.clipboard.writeText(a.copy ?? "").then(() => toast.success(ui.copied), () => toast.error(ui.failed)) }}>
+                <Copy data-icon aria-hidden />{ui.copy}
+              </Button>
+            </span>
+          )}
           {a.href && (
             a.href.startsWith("/")
               ? <Link href={a.href} className="font-medium underline underline-offset-4">{ui.open}</Link>

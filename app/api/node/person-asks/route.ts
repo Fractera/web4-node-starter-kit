@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic"
 
 const ROOT = process.cwd()
 const noStore = { headers: { "Cache-Control": "no-store" } }
-type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; by?: string; at: string }
+type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; copy?: string | null; by?: string; at: string }
 type Wake = (service: string, opts: { text?: string; from?: string; confirmed?: boolean }) => Promise<Record<string, unknown> & { ok: boolean }>
 
 function nodeKeyOk(given: string | null): boolean {
@@ -37,15 +37,15 @@ export async function GET(req: NextRequest) {
   const denied = await requireRoles(req, ["architect", "admin"])
   if (denied) return denied
   const lang = lang2(req)
-  const list = (asks.open(ROOT) as Ask[]).map(({ id, text, href, why, hint, by, at }) => ({
-    id, text, href, why, hint: hint ?? null, at, by: by ?? "build", byName: by && by !== "build" ? elementName(by, lang) : null,
+  const list = (asks.open(ROOT) as Ask[]).map(({ id, text, href, why, hint, copy, by, at }) => ({
+    id, text, href, why, hint: hint ?? null, copy: copy ?? null, at, by: by ?? "build", byName: by && by !== "build" ? elementName(by, lang) : null,
   }))
   return NextResponse.json({ ok: true, asks: list }, noStore)
 }
 
 /** An element agent's own requests: put, drop or list — with the node key and its id (761-16d). */
 async function fromElement(req: NextRequest) {
-  let body: { from?: unknown; text?: unknown; href?: unknown; why?: unknown; hint?: unknown; drop?: unknown; list?: unknown }
+  let body: { from?: unknown; text?: unknown; href?: unknown; why?: unknown; hint?: unknown; copy?: unknown; drop?: unknown; list?: unknown }
   try { body = await req.json() } catch { return NextResponse.json({ ok: false, reason: "invalid JSON" }, { status: 400, ...noStore }) }
   const from = typeof body.from === "string" ? body.from.trim() : ""
   if (from === "build" || !known(from)) return NextResponse.json({ ok: false, reason: "from must be an element of this node" }, { status: 400, ...noStore })
@@ -56,7 +56,7 @@ async function fromElement(req: NextRequest) {
     return NextResponse.json({ ok: !!out, ...(out ? {} : { reason: "no open request of yours with this id" }) }, { status: out ? 200 : 404, ...noStore })
   }
   try {
-    const a = asks.add(ROOT, { text: body.text, href: str(body.href), why: str(body.why), hint: str(body.hint), by: from }) as Ask
+    const a = asks.add(ROOT, { text: body.text, href: str(body.href), why: str(body.why), hint: str(body.hint), copy: str(body.copy), by: from }) as Ask
     console.log(`[node/person-asks] ${from} put ${a.id}`)
     return NextResponse.json({ ok: true, id: a.id }, noStore)
   } catch (e) {
