@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 // Индикатор ширины экрана — только в режиме разработки.
 //
@@ -43,6 +44,15 @@ const STEPS: [number, string][] = [
   [640, "sm"],
 ];
 
+// 763 (the owner, 2026-11-16: «открыты два одинаковых по интерфейсу панели: для персонального компьютера и для удалённого сервера. Я
+// постоянно путаюсь … сделай его разным цветом оранжевый для компьютера и салатовый для удалённого сервера. И внизу … PC || VPS размер
+// шрифта такой же как и цифры»): the node's place, detected (`/api/node/place`), asked ONCE; a guest gets a refusal and the neutral badge.
+type Place = "home" | "server"
+const PLACE: Record<Place, { label: string; tone: string }> = {
+  home: { label: "PC", tone: "border-warning bg-warning text-background" },
+  server: { label: "VPS", tone: "border-success bg-success text-success-foreground" },
+}
+
 function stepName(width: number): string {
   for (const [min, name] of STEPS) if (width >= min) return name;
   return "xs";
@@ -50,6 +60,14 @@ function stepName(width: number): string {
 
 export function ViewportBadge() {
   const [width, setWidth] = useState<number | null>(null);
+  const [place, setPlace] = useState<Place | null>(null);
+
+  useEffect(() => {
+    fetch("/api/node/place", { cache: "no-store", credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { place?: { kind?: string } } | null) => { const k = d?.place?.kind; if (k === "home" || k === "server") setPlace(k) })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const read = () => setWidth(window.innerWidth);
@@ -67,12 +85,17 @@ export function ViewportBadge() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed bottom-4 left-4 z-50 flex size-20 select-none flex-col items-center justify-center rounded-full border border-white/30 bg-white/30 text-black shadow-lg backdrop-blur-sm"
+      data-node-place={place ?? undefined}
+      className={cn(
+        "pointer-events-none fixed bottom-4 left-4 z-50 flex size-20 select-none flex-col items-center justify-center rounded-full border shadow-lg backdrop-blur-sm",
+        place ? PLACE[place].tone : "border-white/30 bg-white/30 text-black",
+      )}
     >
       <span className="font-mono text-sm font-bold leading-none tabular-nums">{width}</span>
       <span className="mt-1 font-mono text-[10px] uppercase leading-none tracking-widest opacity-70">
         {stepName(width)}
       </span>
+      {place && <span className="mt-1 font-mono text-sm font-bold leading-none" data-node-place-label>{PLACE[place].label}</span>}
     </div>
   );
 }
