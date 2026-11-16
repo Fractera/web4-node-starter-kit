@@ -171,12 +171,18 @@ a read, not a model run; T4 +10 lines, all in skills loaded only with their fiel
 
 Mockups (scratchpad, sent to Telegram 16:29): now · A card · B bar · C beacon. Chosen C: the card A opens by itself, collapses after 30 s
 without touch into a pulsing orange beacon with the count; gone only by «Готово».
-- [ ] 16c-1 `person-ask.client.tsx` → Popover (shadcn) anchored to a beacon Button fixed bottom-right; Sonner toast dropped for asks.
+- [x] 16c-1 `person-ask.client.tsx` → Popover (shadcn) anchored to a beacon Button fixed bottom-right; Sonner toast dropped for asks.
   Card: «!» + title + «1 из N» ‹ ›, by-line, text, why, hint stripe, copy, «Свернуть · Открыть · Готово». `--warning` has no
   foreground pair → the beacon is outlined (background + warning ring and «!»), the pulse a warning halo, motion-reduce honoured.
-- [ ] 16c-2 i18n: collapse, counter, beacon label («{n} ждут вас»).
-- [ ] 16c-3 B3 journal: `closed()` logs `[node/person-asks] <id> closed → telegram: ok|<err>`.
-- [ ] 16c-4 one core rebuild; eyes on desktop 1280 and phone 390.
+- [x] 16c-2 i18n: collapse, counter, beacon label («{n} ждут вас»).
+- [x] 16c-3 B3 journal: `closed()` logs `[node/person-asks] <id> closed → telegram: ok|<err>`.
+- [x] 16c-4 one core rebuild; eyes on desktop 1280 and phone 390.
 Tests: C1 one ask → card open; 30 s → beacon «1»; beacon click → card · C2 three asks → «1 из 3», arrows, «Готово» on one → «1 из 2» ·
 C3 negative: no asks → no beacon in the DOM · C4 phone 390: card within the screen · C5 «Готово» wakes the asker (person-done) + the
 journal line of closed() · C6 tsc, check:shadcn-parts, check:i18n, check:contrast, check:dialogs, parts-map, test:person-asks · C7 dark theme.
+
+761-16c proven live 2026-11-16 16:41–16:47 on core 8f8e2c7b (logs/eyes/16c-*.png): C3 ✅ no asks → no beacon · C1 ✅ card open by itself,
+after 33 s only the beacon «1» is visible and the card is gone · C2 ✅ «1 из 3» → › → «Готово» → «2 из 2» · C4 ✅ phone 390: card x 36 w 321,
+within the screen · C5 ✅ journal «done → build: ok · telegram: ok» ×5, person-done woke me each time; Рома pressed «Готово» on two in his own
+panel («Выглядит превосходно») — B3 of 761-16b proven by the journal · C6 ✅ tsc, shadcn-parts, parts-map, contrast, dialogs, layout,
+static, person-asks 8/8 (check:i18n red before and after: 40, pre-existing) · C7 ✅ dark theme. Console clean in every shot.
