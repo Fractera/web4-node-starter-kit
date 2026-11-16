@@ -53,6 +53,7 @@ task) still waits for his choice of shape.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-16 ~15:52 UTC, the owner on my plan 761-16b (the request in Telegram with «Готово», tests B1–B4): «Да, строй, вариант (а)» — (а) = he connects a bot for the main agent on the «Telegram-бот» page and we prove it on me.
 - 2026-11-16 ~14:25 UTC, the owner: «Хочу быть уверенным что все элементы существующие и два новых кастомных шаблоны получают обновления связанные с работой новых подсказок» → my plan 761-16d (the core door takes an element's request by its key, «Готово» wakes that element; both templates get `npm run ask-person`; rollout to all 11; tests E1–E5) → «Да, строй 761-16d».
 - 2026-11-16 ~14:17 UTC, the owner: «И да Telegram бота я удалил для полного тестирования» → T4–T6 move into the fresh launch 761-13 (a new bot on step 5); defect 761-17: step 5 still said «подключён» for a deleted bot.
 - 2026-11-16 ~14:15 UTC, the owner, with a screenshot I could NOT open (macOS temp folder, EPERM): «Я тебе отправляю это сообщение не просто для того чтобы ты мне сказал что делать а что ты в своих инструкции понимал что такие сообщения могут всплывать и что пользователя не должен сделать и прямо в инструкции в выпадающем списке справа который ты мне только что показывал показывать подсказку» — asked him for the image again.
