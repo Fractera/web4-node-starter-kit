@@ -235,7 +235,7 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
       <LaunchRememberSwitch on={remembering} onChange={(v) => toggle(v, target)} words={words.remember} />
       {error ? <Small className="text-destructive" data-block="server-launch-error">{error}</Small> : null}
       {busy && doing ? <Small className="flex items-center gap-2 text-muted-foreground" data-block="server-launch-doing" role="status"><Spinner className="size-4" />{words.doing[doing] ?? words.doing.any}</Small> : null}
-      <Ladder id="launch" locked={words.locked} rungs={LAUNCH_ORDER.map((id) => ({ id, title: words.step[id], done: done[id], summary: summary[id], body: body[id] }))} />
+      <Ladder id="launch" locked={words.locked} rungs={LAUNCH_ORDER.map((id) => ({ id, title: words.step[id], done: done[id], warn: id === "telegram" && !state.telegram?.configured, summary: summary[id], body: body[id] }))} />
     </section>
   )
 }
