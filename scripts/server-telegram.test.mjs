@@ -9,17 +9,17 @@ import { botLines, cleanLines, greetText, telegramWarn } from '../lib/hosting/se
 let passed = 0
 const t = (name, fn) => { try { fn(); passed += 1; console.log(`  ✓ ${name}`) } catch (e) { console.error(`  ✗ ${name}\n    ${e.message}`); process.exitCode = 1 } }
 
-// the page's words, read from the TypeScript dictionary as text (no build): the `lines` block of each language
+// the page's words, read from the TypeScript dictionary as text (no build): the `lines` object of each language
 const req = createRequire(import.meta.url)
 const src = req('node:fs').readFileSync(new URL('../components/hosting/server-launch.i18n.ts', import.meta.url), 'utf8')
-const blocks = [...src.matchAll(/lines: \{\n\s+active: "([^"]+)",\n\s+inactive: "([^"]+)",\n\s+noSubscription: "([^"]+)",\n\s+noPanel: "([^"]+)",/g)]
+const lineSets = [...src.matchAll(/lines: \{\n\s+active: "([^"]+)",\n\s+inactive: "([^"]+)",\n\s+noSubscription: "([^"]+)",\n\s+noPanel: "([^"]+)",/g)]
   .map((m) => ({ active: m[1], inactive: m[2], noSubscription: m[3], noPanel: m[4] }))
 
 console.log('761 the server bot names its site')
 t('T1 both languages carry the bot\'s three lines; each line names the site with its https link and never «this computer»', () => {
-  assert.equal(blocks.length, 2, 'en and ru')
+  assert.equal(lineSets.length, 2, 'en and ru')
   for (const [i, lang] of [[0, 'en'], [1, 'ru']]) {
-    const l = botLines(blocks[i], { zone: 'fractera.ai', ip: '109.199.105.213', lang })
+    const l = botLines(lineSets[i], { zone: 'fractera.ai', ip: '109.199.105.213', lang })
     for (const k of ['active', 'inactive', 'noSubscription']) {
       assert.ok(l[k].includes('fractera.ai (https://fractera.ai)'), `${lang} ${k}: ${l[k]}`)
       assert.ok(!/this computer|этом компьютере/i.test(l[k]), `${lang} ${k} says «this computer»`)
@@ -29,13 +29,13 @@ t('T1 both languages carry the bot\'s three lines; each line names the site with
   }
 })
 t('T1 negative: a server without a domain names its IP and the panel place, never an empty link', () => {
-  const l = botLines(blocks[1], { ip: '109.199.105.213', lang: 'ru' })
+  const l = botLines(lineSets[1], { ip: '109.199.105.213', lang: 'ru' })
   assert.ok(l.noSubscription.includes('109.199.105.213 (http://109.199.105.213)'), l.noSubscription)
-  assert.ok(l.noSubscription.endsWith(blocks[1].noPanel), l.noSubscription)
+  assert.ok(l.noSubscription.endsWith(lineSets[1].noPanel), l.noSubscription)
   assert.ok(!l.noSubscription.includes('{'), 'a placeholder left')
 })
 t('the lines the runner accepts: three strings ≤ 1000 and a language; anything else is refused', () => {
-  const ok = botLines(blocks[0], { zone: 'x.org', lang: 'en' })
+  const ok = botLines(lineSets[0], { zone: 'x.org', lang: 'en' })
   assert.deepEqual(cleanLines(ok)?.lang, 'en')
   assert.equal(cleanLines({ ...ok, active: '' }), null)
   assert.equal(cleanLines({ ...ok, inactive: 'x'.repeat(1001) }), null)

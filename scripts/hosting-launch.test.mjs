@@ -295,7 +295,7 @@ await t('a token before the node lives waits on the server (0600) and never come
     // T2 (761-2/761-14): the lines the token waited with reached the node's channel together with it, in the page's language
     assert.deepEqual(got.filter((b) => b.action === 'messages').map((b) => b.messages.lang), ['ru'])
     assert.ok(got.find((b) => b.action === 'messages').messages.noSubscription.includes('bot.invalid (https://bot.invalid)'))
-    // T3 (761-1): not signed in → no greeting; negative control of the next block
+    // T3 (761-1): not signed in → no greeting; negative control of the next case
     assert.deepEqual([s.a?.state?.telegram?.signedIn, s.a?.state?.telegram?.greeted, woke().length], [false, false, 0], s.out)
     auth = { ok: true, loggedIn: true }
     const g = await run(E, 'state')
