@@ -59,9 +59,12 @@ export function PersonAsk({ url, ui }: { url: string; ui: PersonAskUi }) {
     shown.current.add(a.id)
   }, [ui, confirm])
 
+  // a guest or a signed-in non-architect gets 401/403 once — then this page asks no more (no refusal every 15 s in the console)
+  const refused = useRef(false)
   const refresh = useCallback(() => {
+    if (refused.current) return
     fetch(url, { cache: "no-store", credentials: "include" })
-      .then((r) => (r.ok ? r.json() : null))
+      .then((r) => { if (r.status === 401 || r.status === 403) refused.current = true; return r.ok ? r.json() : null })
       .then((d: { ok?: boolean; asks?: Ask[] } | null) => {
         if (!d?.ok) return
         const open = new Set((d.asks ?? []).map((a) => a.id))
