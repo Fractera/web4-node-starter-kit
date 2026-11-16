@@ -9,7 +9,7 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Last change:** 2026-11-16 ~10:50 UTC — the owner's four problems (launch password, domain page vs server, passport fields, where the project lives) studied; plan 760 written, no code.
 
-**Next action:** CORE REBUILD started 2026-11-16 ~11:59 UTC (`node scripts/spawn-free.mjs scripts/serve.mjs rebuild`) for 760-1/8/9/10; prebuild RC=0. On return (`⟦node · core-back⟧`): `npm run serve:status`, then Chrome proofs on the launch page with 109.199.105.213 — the switch on by default and step 1 filled after a reload (760-1 b); step 3 of fractera.ai shows «Узел впишет записи сам» with add @, *, remove the Vercel records (760-8 b, the write only after the owner's confirm); the records card and step 5 show «Отдать агенту» (760-9/10 b). Then the summaries of 760-1/8/9/10, then 760-2. CLAUDE.md and the skill were restored by the owner himself (`git checkout ddb054d1^ -- CLAUDE.md .claude/skills/dedicated-server/SKILL.md`), the seal matches; 760-8/760-1/760-10 lines re-applied to the skill.
+**Next action:** the rebuild for 760-1/8/9/10 is LIVE (build 18bd2405, serve:status online). Seen in Chrome 2026-11-16 ~12:05 UTC: eight steps, the switch «Запомнить сервер на 24 часа» ON by default (`#launch-remember` aria-checked true), step 1 empty — nothing remembered yet in this browser (no connect since the build). The rest of the proofs (step 1 filled after a reload, step 3 of fractera.ai «Узел впишет записи сам», «Отдать агенту» on the records card and step 5) need one connect with the root password — the owner's. Then the summaries of 760-1/8/9/10, then 760-2.
 
 ## The person's decisions (verbatim)
 
