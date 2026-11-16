@@ -5,11 +5,51 @@ the person's decision (verbatim, at once), a fact that is expensive to measure a
 start of a long or irreversible operation (before it), a changed next action. How the steps are planned, proven and closed — skill
 `use-development-steps`.
 
-**Active steps:** 761 — the owner's checklist after the first server launch, then a fresh launch from zero (`new-steps/761-owner-checklist-and-fresh-launch.md`), waiting for his order and one answer; 760 — APPROVED 2026-11-16 ~11:25 UTC, in work (`new-steps/760/`): 760-1 the switch (in progress), then 760-8 step 3 by measurement (the Cloudflare key writes again when it sees the zone), 760-9 the Chrome button, 760-10 the bot in Telegram Web, 760-2…760-7; 758 — live since 7176d1ad, its live bot proof waits (760-10 can make it); 759 — closed in code, its Cloudflare removal partly reversed by 760-8 at the owner's word; 1 — the first launch.
+**Active steps:** 761 — the owner's checklist after the first server launch, then a fresh launch from zero (`new-steps/761-owner-checklist-and-fresh-launch.md`): 761-1/2/14 in code and tested (d55b5f17), live proof T4–T6 next; then 761-3, 761-4, 761-5, 761-15, 761-16, then 761-13 the fresh launch; 760 — 760-1/8/9/10 live, 760-2…760-7 open (in the 761 checklist); 758/759/762 — live; 1 — the first launch.
 
-**Last change:** 2026-11-16 ~10:50 UTC — the owner's four problems (launch password, domain page vs server, passport fields, where the project lives) studied; plan 760 written, no code.
+**Last change:** 2026-11-16 ~13:25 UTC — 761-1/2/14 committed d55b5f17 (the server bot's lines name the site in the person's language; step 5 blue only when the server's agent can answer; the greeting wakes the agent once, on Haiku); T1–T3 ✅; the core NOT rebuilt yet for it.
 
-**Next action:** 761-1/2/14 planned in detail with its test checklist T1–T6 (`new-steps/761-…md`, 4a4d35cf); waiting for the owner's yes to the shape (step 5 blue only with the bot AND the server's Claude Code signed in; the greeting agent on Haiku). The records go back to Vercel at the start of 761-13 (the owner's «(а), записи верни на Vercel»), so the fresh step 3 writes them again. After every core-back: `git checkout HEAD -- CLAUDE.md .claude/skills/dedicated-server/SKILL.md` until 761-8.
+**Next action:** see the letter below — the core rebuild first, then T4–T6 live with the owner.
+
+## Letter to my next session (written 2026-11-16 ~13:25 UTC, the window at 59 %)
+
+**Where we stand.** The owner (Рома, the node's owner — owner key via gh; greet him «Рома»; he writes Russian, answer in Russian even though the
+node says `en`) and I launched his server 109.199.105.213 for fractera.ai through «Активация выделенного сервера» end to end today:
+12/12 names, certificates, https://fractera.ai 200 from the server. Then he asked for a checklist of everything unfinished → plan 761
+(`new-steps/761-owner-checklist-and-fresh-launch.md`, read it first: the checklist and the 761-1 plan with T1–T6). His answers at 13:12:
+«(а), записи верни на Vercel, начинай с 761-1» and «y» to the 761-1 shape (step 5 blue only when the server's agent can answer; the
+greeting on Haiku). 761-1/2/14 are in code and tested: d55b5f17.
+
+**What is half done — do this, in order, showing him a test checklist BEFORE each step and the marks ✅/❌ AFTER (his rule, memory
+`test-plan-checklist-first`):**
+1. `node scripts/spawn-free.mjs scripts/serve.mjs rebuild` (the UI of 761-1/2/14 and the orange «!» 762 need it; the RUNNER changes are
+   live without a rebuild — the door spawns `scripts/dedicated-server/launch.mjs` fresh each call). Say one line first: you go off with the build.
+2. On core-back: `npm run serve:status`; then `git status` — CLAUDE.md and `.claude/skills/dedicated-server/SKILL.md` come back from the
+   release after every core-started session (761-8, gh keychain unreachable): `git checkout HEAD -- CLAUDE.md .claude/skills/dedicated-server/SKILL.md`,
+   `npm run check:instruction` must say OK. NEVER `git commit -am` (memory `no-commit-am`).
+3. T4–T6 live in Chrome (the tab group may be gone — `tabs_context_mcp createIfEmpty`): open http://localhost:24680/ru/architect/hosting/hosting,
+   the IP is remembered (760-1), press «Проверить сервер» (no password while the access lasts — it said «доступ до вт 13:02»; if it asks
+   for the password, it is the owner's to type). Step 5 shows «Claude Code на сервере не вошёл в подписку» + «Войти на сервере» and is
+   ORANGE «!»; on load it sends the bot's Russian lines (op messages). T4: in his Telegram Web (tab web.telegram.org/k/#@fractera_ai_server_bot)
+   send /start → the reply must start «Сервер fractera.ai (https://fractera.ai) · …» in Russian. T5: he presses «Войти на сервере» →
+   «Открыть страницу подписки сервера» (the SSH window, localhost:2568x/ru/build/subscription) and signs in himself; step 5 turns blue
+   without a reload. T6: the agent's greeting arrives in Telegram naming https://fractera.ai. Prefer `find`/text reads over screenshots
+   (memory `browser-work-on-haiku`: he hates Chrome's token appetite).
+4. Then 761-3 (mono font of step 3's plan list), 761-4 + 761-5 (the orange collapsed «!» card on the build window with his words; research
+   what an ELEMENT build stops and what a reload shows), 761-15 (Haiku runs «Отдать агенту» browser tasks — measure the price before/after),
+   761-16 (those info cards as a part for every element). Each: plan + test checklist shown, then code, then marks.
+5. Then 761-13, the fresh launch WITH him: first return fractera.ai's records to Vercel in Cloudflare (his «записи верни на Vercel»: @ A
+   76.76.21.21 proxied, www CNAME cname.vercel-dns.com proxied, delete @ A and * A → 109.199.105.213 — the node's key or his Cloudflare
+   in Chrome), then «Удалить прежнее состояние» on the launch page (variant (а): the node set aside, same Ubuntu, nothing erased), then
+   all eight steps again, «Позже» on step 5 first to see the orange «!», each step reported against the 761 checklist.
+
+**Clues to keep.** The server's panel through SSH: step 1 → «Открыть пульт сервера» → http://localhost:25680/ru (the server's own pages; its
+bot door is /en/build/agent-api/channel — the /architect/ prefix redirects). The bot: @fractera_ai_server_bot «Fractera Server · fractera.ai»,
+token tail oA6A, allowed 1, its Telegram Web chat already open; the agent never reads BotFather's token message. The server node runs
+df53bcf4 (origin/main 59c42260 + fresh-project) — it has claude-auth, node line `moved`, wakeMainByNode. Defects still open (761 list):
+www.fractera.ai 530; /en/architect on fractera.ai → http://localhost:24680 for a stranger; the pre-existing ✗ «the claim goes server door»;
+the fixes not pushed (main carries the local «Fresh project» 0bcb5095 — a clean branch from origin/main). The family budget (his first
+task) still waits for his choice of shape.
 
 ## The person's decisions (verbatim)
 
