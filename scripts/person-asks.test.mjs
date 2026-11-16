@@ -10,6 +10,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const req = createRequire(import.meta.url)
 const asks = req(join(ROOT, 'lib', 'node', 'person-asks.cjs'))
 const nodeLine = req(join(ROOT, 'lib', 'agent-kit', 'node-line.cjs'))
+const tg = req(join(ROOT, 'lib', 'node', 'person-asks-telegram.cjs'))
 let passed = 0
 const t = (name, fn) => { try { fn(); passed++; console.log(`  ✓ ${name}`) } catch (e) { process.exitCode = 1; console.log(`  ✗ ${name}\n    ${e.message}`) } }
 const tmp = mkdtempSync(join(tmpdir(), 'person-asks-'))
@@ -47,6 +48,21 @@ t('the press wakes the main agent with a known node line that names the request'
   const line = nodeLine.head('person-done', 'build') + asks.doneText({ text: 'пароль', at: '2026-11-16T13:55:00.000Z' })
   assert.equal(nodeLine.parse(line)?.kind, 'person-done')
   assert.ok(line.includes('«пароль»') && line.includes('Check the result yourself'))
+})
+
+t('761-16b the Telegram message: the act, the hint, the command apart, «on the computer», and the reply button «Готово · <id>»', () => {
+  const m = tg.message({ id: 'ab12cd34', text: 'Введите пароль', href: '/ru/architect/hosting/hosting', hint: 'нажмите «Отмена»', copy: 'npm run x' }, 'ru')
+  assert.ok(m.text.includes('Введите пароль') && m.text.includes('<pre>npm run x</pre>') && m.text.includes('на компьютере'), m.text)
+  assert.equal(m.keyboard.keyboard[0][0].text, 'Готово · ab12cd34')
+  assert.equal(tg.doneId('Готово · ab12cd34'), 'ab12cd34')
+  assert.equal(tg.doneId('Done · ab12cd34'), 'ab12cd34')
+  assert.equal(tg.doneId('готово'), null)
+  const phone = tg.message({ id: 'ab12cd34', text: 'Отправьте /start', href: 'https://web.telegram.org/k/' }, 'ru')
+  assert.ok(!phone.text.includes('на компьютере'), 'an https place may open on the phone')
+})
+t('761-16b negative: no bot connected — nothing goes to Telegram, the window alone', () => {
+  assert.equal(tg.botFor(tmp, 'build'), null)
+  assert.equal(tg.botFor(tmp, 'some-element'), null)
 })
 
 rmSync(tmp, { recursive: true, force: true })

@@ -59,10 +59,13 @@ npm run ask-person -- "<what to do, one sentence, their language>" --href <where
 | A post or a comment | draft it in their voice, open the editor, fill it in | read it and press «Опубликовать» themselves, or say «да» to that one post |
 | A payment or a key | open the right page, explain the fields | type the card or create and paste the key |
 
-## 5. Telegram
+## 5. Telegram (761-16b)
 
-When the person reads you in Telegram, the window does not reach them there yet (761-16b, planned: the same request in the chat with a
-«Готово» button). Until it is built: say in the chat in one line that a window waits on the computer, and what for.
+When the asker has a bot (the main agent's, or the element's own — an element without one speaks through the main bot), `ask-person`
+also sends ONE message there: the act, why, the hint, the command in a block, «это делается на компьютере» when it is, and a reply
+button «Готово · <id>». The window in the panel stays. Their press in Telegram arrives to you as a plain message «Готово · <id>» →
+`npm run ask-person -- done <id>` (closes the window; `===ASK_ALREADY===` — it was closed in the panel: say so), then check the
+result. «Готово» in the panel closes it in Telegram too («✓ Закрыто в пульте»). No bot — the window alone, and the command says so.
 
 ## 6. Never
 
