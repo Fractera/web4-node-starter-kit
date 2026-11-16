@@ -197,6 +197,24 @@
       "note": "Сайт узла: что видит посетитель в корне домена. Заменяется другим репозиторием с тем же договором (OWN-SERVICE-PROPS.json), убрать нельзя.",
       "kind": "user",
       "address": "root"
+    },
+    {
+      "id": "hrutb",
+      "repo": "https://github.com/Fractera/fractera-custom-item-starter.git",
+      "version": "v0.3.211",
+      "born": {
+        "from": "fractera-custom-item-starter",
+        "version": "v0.3.211",
+        "at": "2026-11-16T17:20:36.564Z"
+      },
+      "provides": [
+        "element-site"
+      ],
+      "designSkill": "frontend-design",
+      "required": false,
+      "note": "Рождён из fractera-custom-item-starter v0.3.211 (319). Самостоятельный проект: установщик его код не трогает.",
+      "kind": "user",
+      "port": 24684
     }
   ]
 }
