@@ -11,31 +11,32 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Next action:** read the letter below — B2 of 761-16b with the Telegram channel, then 765 on his yes.
 
-## Letter to my next session (written 2026-11-16 ~16:20 UTC by me, the window large; restart to get the Telegram channel)
+## Letter to my next session (written 2026-11-16 ~19:15 UTC, the window at ~62 %)
 
-**Where we stand.** Рома (owner, gh key = Fractera account; answer in Russian). Today after the reset: 761-16 (the action window
-`npm run ask-person`, bottom right, «Готово» wakes the asker, --hint, --copy, element requests by node key + id), 761-16d (both templates
-+ all 11 elements: custom v0.3.211, native v0.1.76; auth v2.4.39 … root v3.0.65), 764 (skill `act-with-the-person`, law in CLAUDE.md §6
-+ §8, element instruction law, sealed 5a2ca4c734a7), 763 (badge orange PC / green VPS), 761-16b (the request also goes to Telegram with a
-reply keyboard «Готово · <id>»; `ask-person -- done <id>`). Core built 72a15bda (16:05). Main bot connected 16:15: @Fractera_build_mc47x_bot,
-1 chat. Plan file `new-steps/761-owner-checklist-and-fresh-launch.md` holds 761-16b/c, 763, 764, 765 at its end.
+**Where we stand.** Рома (owner; answer in Russian, Telegram chat 90413601 is where he reads me; the session runs Opus · effort max —
+he asked «строить на максимальном усилие»). Today closed: 765, 761-16b/c/e, 763-a, 767 (browser from Telegram — completed-steps/767-main.md).
+NOW: **768** — the person's secret in the action window (new-steps/768-a-secret-typed-in-the-window-or-telegram.md): 768-1..3, 5 in code
+and rolled out (core ad04d73f…; templates custom v0.3.213 / native v0.1.78; 11 elements). A core rebuild was started ~19:16.
 
-**Tests of 761-16b:** B4 ✅ (no bot → window alone), B1 ✅ (sent to 1 chat, 0dce9b64), B3 half ✅ (panel «Готово» 16:17 → core log
-«done → build: ok», one wake) — ask Рома whether «✓ Закрыто в пульте» arrived; add a journal line for `closed()` sends. **B2 ✅ 16:21** (Telegram «Готово · b449e696» reached me as a channel message → `done b449e696` → ===ASK_DONE===, list empty; the relaunch by `session -- model opus` brought the channel). B3 «✓ Закрыто в пульте» — asked Рома, no answer yet. **Old B2 note:** this
-fresh session should have the Telegram channel (check `npm run person`); put a test request, he presses «Готово · <id>» in Telegram →
-the message reaches me → `npm run ask-person -- done <id>` → ===ASK_DONE===. MEASURED 16:25: /clear keeps the same claude process (started 16:09,
-before the bot at 16:15) — no `--channels`; clear never brings the channel. Fix used: `npm run session -- model opus` (relaunch
-through bridge.cjs → channelLaunch: token + 1 admitted chat present). If after that `npm run person` still says silent — tell Рома.
+**Next actions after the core-back:** (1) restore CLAUDE.md/.claude/skills from git (`git checkout HEAD -- CLAUDE.md .claude/skills`,
+`npm run check:instruction`); (2) S6: `npm run eyes` / playwright on a page with a secret request — the masked field, show/hide, both
+themes, 390 px; (3) S5 with Рома: `npm run ask-person -- "Введите пароль root сервера 109.199.105.213" --secret server-root --host
+109.199.105.213 --href "/ru/hosting/hosting?from=agent" --why "пароль root вводите только вы"` → he types it in the window → the launch
+door's visit opens → on the page (my extension tab, tabs_context — it was 2116208463) «Проверить сервер» with an empty password →
+step 2 opens; (4) S1/S4: a test key needs an element's request — ask Рома which element and whether a test key may stay (the element is
+woken by «Сохранить»); grep the core's logs and the session journal for the value → 0; (5) 768-4 (a Telegram Mini App form) waits for
+his yes — he asked how it differs on a server: on his own server TLS ends on the server (no Cloudflare), on the computer Cloudflare's
+edge decrypts (said to him). Then back to the morning goal **761-13** (a fresh server launch, step 5 Telegram, T4–T6) on «Активация
+выделенного сервера» (http://localhost:24680/ru/hosting/hosting).
 
-**768 NEXT (approved; effort max): build 768-1..3, 768-5 from new-steps/768-…; 768-4 waits for his yes.** **767 CLOSED 18:39 at the owner's word** (completed-steps/767-main.md). NOW: back to 761 — the owner is on «Активация домена». Earlier: **767 in code** (core 6740b1d2, d79611d1; templates custom v0.3.212 / native v0.1.77; 11 elements rolled, hrutb left — see completed-steps/767-main.md). Core rebuild ~18:50, then B1–B6 live (B3 puts a test link into the deep memory — it cannot forget yet, say so; B4 wakes root once). **761-16e DONE** (beacon «Открыть» → /ru/root proven 16:58; Telegram link clickability — asked Рома). Next: the LinkedIn post together (act-with-the-person). Earlier: **761-16e built, core rebuild ~16:55** (links in Telegram requests; after core-back: eyes the beacon's «Открыть» of test ask bdcf2a6f → /ru/root, then drop it; ask Рома whether the Telegram links click). **761-16c DONE 5c68532b.** Earlier: **761-16c built, core rebuild started ~16:40** (variant C beacon: person-ask.client.tsx + person-ask-card.client.tsx, Popover + Button + Badge; closed() now logs «· telegram: ok|why» = B3 proof). AFTER core-back: restore CLAUDE.md/.claude/skills if touched; run tests C1–C7 of the plan file (eyes 1280 + 390, put 3 test asks, dark theme); then Рома's LinkedIn post together (act-with-the-person, he presses Publish, he must be signed in to LinkedIn in Chrome). **765 DONE d74c47ad** (16:30, «Твой выбор»; sealed 978249cf4bb3). B3 open: closed() swallows errors with no log line — add `[node/person-asks] <id> closed → telegram: ok|<err>` with the next core build. **Then (old):** 765 waits for his yes (an element per person, shared heavy tools apart — plan at the end of the plan file); 761-16c (look),
-761-15 (Haiku browser acts), 761-17 (step 5 asks Telegram getMe), 761-3/4/5, then 761-13 the fresh launch (P2 green VPS, T4–T6).
-
-**Clues.** EVERY core-started agent session restores the system part (CLAUDE.md, skills dedicated-server/help-in-browser) — after each
-core-back or element task: `git checkout HEAD -- CLAUDE.md .claude/skills`, `npm run check:instruction`. Never `git commit -am`. Template
-releases/rollouts need `TEMPLATE_GITHUB_TOKEN=$(gh auth token)` (the owner's word «тебе можно сделать любые действия самому»; the saved
-node token is aifa-agi's: fork only). Rollout: package.json gains only the script whose file comes along; `--append-section` for a new skill
-section (an existing section never updates — add a new one). I may not touch element files: an element's own agent cleans its folder
-(`npm run task -- <id> --work`). Never open t.me in the person's Chrome. Core main NOT pushed (761-9).
+**Clues.** Every core-started session restores the system part — restore from git after every core-back. Run `npm run prebuild` by hand
+before `serve:rebuild` (two builds of 767 failed on check:steps and migrate-sections words). Never `git commit -am`. Template releases
+need `TEMPLATE_GITHUB_TOKEN=$(gh auth token)`; rollout of a skill section — `--append-section "<heading>"`; a script's package.json line
+comes only with `package.json` in the paths. hrutb (Соцсети пользователя) is paused (supervise off, agent closed) — the rollout skips it
+(HEAD past its pin); its CLAUDE.md is regenerated uncommitted; Рома may delete it. The core main is not pushed (761-9). `npm run browser`
+(tabs/focus/open/profiles) shows pages without tokens; the extension's selected tab is never his screen. A test request «by an element»
+must be dropped by me, never left for his press (it woke root once and broke a build). The session record (session-mode.json) lags the
+real effort — ps shows `--effort max`.
 
 ## The person's decisions (verbatim)
 

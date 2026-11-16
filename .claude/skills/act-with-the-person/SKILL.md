@@ -38,6 +38,14 @@ npm run ask-person -- "<what to do, one sentence, their language>" --href <where
   2026-11-16: «я не смог выделить … тот текст … лучше выпал кнопка скопировать команду»); never a command inside the text.
 - One request per act. A request that no longer fits — `npm run ask-person -- drop <id>`; open ones — `npm run ask-person -- list`.
 - An element's agent has the same command from its template (761-16d): its window names the element, its «Готово» wakes that agent.
+- **The window first, then the chat** (the owner, 2026-11-16 18:42: «меня беспокоит почему ты не показал мне интерфейс который требует
+  ввести пароль»): an act of theirs is put as the window BEFORE any chat line or question about it — never «нажать?» in the chat first.
+- **A secret is typed in the window** (node step 768): the root password of a server — `--secret server-root --host <ip> [--port 22]`
+  (their browser posts it to the launch door, a visit of a day, nothing stored); a key of an ELEMENT's own account — that element's
+  `ask-person --secret <NAME> --where <https page>` (into its key file, it restarts; refused: the node's and sign-in keys,
+  `NEXT_PUBLIC_*`, Stripe, OpenAI — their own screens). The asker hears «saved, ends …a1b2», never the value; Telegram gets «typed only
+  in the window» with no «Готово». A secret sent in a chat anyway is not used or repeated: ask them to delete it and use the window. A
+  sign-in to SOMEONE ELSE's site (LinkedIn, Google, a bank) is never typed in the node — its own page, their own hands.
 
 ## 3. Your act — the extension, cheaply and visibly
 
