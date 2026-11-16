@@ -5,11 +5,11 @@ the person's decision (verbatim, at once), a fact that is expensive to measure a
 start of a long or irreversible operation (before it), a changed next action. How the steps are planned, proven and closed — skill
 `use-development-steps`.
 
-**Active steps:** 769 — the launch connect outlives the door's 150 s (proposed, deferred); 761 — the owner's checklist and the fresh launch (761-13); 768 and 770 CLOSED; 1 — the first launch.
+**Active steps:** 769 — in code (new-steps/769-the-launch-access-before-the-check.md), live R2 after the build; next — the Telegram Mini Apps plan (the owner's topic 20:56, «Го» 21:24 = 769 first, then the plan); 761-13 the fresh launch; 1 — the first launch.
 
-**Last change:** 2026-11-16 20:49 UTC — the core back (REBUILD_RC=0 20:48, build f72e809f). 770 PROVEN on two planes: git status clean after two core-backs (20:39 old build, 20:48 new) and logs/system-part.jsonl has no entry after 20:30 (before the fix: 20:10 — even an element's wake reverted the core — and 20:30). Commit ee44eef5.
+**Last change:** 2026-11-16 21:40 UTC — 769 in code; hosting-launch 22 ✓ + the pre-existing ✗ («the claim goes server door …»); the first prebuild RC=1 (PARTS.json stale) caught by reading RC — map rebuilt, prebuild RC=0; the core REBUILD STARTED (detached).
 
-**Next action:** the owner picks: 769 (split the launch connect from probe, the window closes on `ok && state`, host-key-changed in the window) or 761-13 (the fresh server launch from zero).
+**Next action:** after core-back — git status clean? then R2 live: close the server access (the page's «Закрыть доступ» or the door `close` from the owner's browser), put `npm run ask-person -- … --secret server-root --host 109.199.105.213`, the owner types root in the window → «Проверяю сервер…» → closes, step 2 opens. Then the Mini Apps plan.
 
 ## Letter to my next session (written 2026-11-16 ~19:33 UTC, the window at 66 %; a clean start for a debugging task)
 
