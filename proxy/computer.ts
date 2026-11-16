@@ -11,7 +11,7 @@ import { AUTH_FORM_PATHS, LOCALE_COOKIE, apiAuthGate, architectPagesGate, authFo
 
 // 372-1: двери, которым на временном адресе разрешена запись, — их зовут службы со своим ключом или подписью, а не человек
 // по ссылке. Всё остальное `/api` на временном адресе — только чтение.
-const TEMPORARY_WRITE_ALLOWED = ["/api/settings/changed", "/api/telegram/hook", "/api/telegram/tick", "/api/intake"];
+const TEMPORARY_WRITE_ALLOWED = ["/api/settings/changed", "/api/telegram/hook", "/api/telegram/tick", "/api/intake", "/api/node/secret-entry"];
 
 export async function computerProxy(request: NextRequest): Promise<NextResponse> {
   const early = beforeDoors(request);

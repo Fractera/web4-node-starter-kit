@@ -76,6 +76,9 @@ const PUBLIC_API_PREFIXES = [
   // Заявка на разработку от агента автоматизации (133): та же машина, тот же
   // секрет. Соседняя api/architect/pre-step закрыта РОЛЬЮ — у машины сессии нет.
   "/api/intake/request",
+  // 768-4: the Telegram form for an element's key — opened by the person's phone over the node's HTTPS address, so no session; the door
+  // stands on Telegram's signature (the asker's bot token) and a one-time token of one request, never on a role.
+  "/api/node/secret-entry",
 ];
 
 // Non-content root pages that live at the ROOT and never take a language prefix

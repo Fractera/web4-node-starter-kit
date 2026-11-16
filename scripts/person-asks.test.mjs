@@ -116,5 +116,51 @@ t('768 Telegram: a secret request carries no «Готово» and says it is typ
   assert.deepEqual(m.keyboard, { remove_keyboard: true })
 })
 
+// 768-4: the Telegram form — its button, its two locks (Telegram's signature, the one-time token)
+const webapp = req(join(ROOT, 'lib', 'node', 'telegram-webapp.cjs'))
+const BOT = '123456:TEST-not-a-real-bot-token'
+const launch = (fields) => { const p = new URLSearchParams(fields); p.set('hash', webapp.sign(fields, BOT)); return p.toString() }
+const now = Date.now()
+const user = JSON.stringify({ id: 90413601, first_name: 'R' })
+t('768-4 Telegram: with an HTTPS address an env request gets the web_app button; a server password never does', () => {
+  const m = tg.message({ id: 'cd34ef56', text: 'Введите ключ', secret: { kind: 'env', name: 'FAKE_DEMO_API_KEY' } }, 'ru', null, null, 'https://x.trycloudflare.com/api/node/secret-entry?t=abc')
+  assert.equal(m.keyboard.inline_keyboard[0][0].web_app.url, 'https://x.trycloudflare.com/api/node/secret-entry?t=abc')
+  assert.ok(m.text.includes('Ввести здесь, в Telegram') && m.text.includes('мимо чата'), m.text)
+  const r = tg.message({ id: 'ab12cd34', text: 'Пароль root', secret: { kind: 'server-root', host: '1.2.3.4', port: 22 } }, 'ru', null, null, 'https://x.trycloudflare.com/api/node/secret-entry?t=abc')
+  assert.deepEqual(r.keyboard, { remove_keyboard: true }, 'negative control: no button for a server password')
+  assert.ok(r.text.includes('только на компьютере'), r.text)
+})
+t('768-4 a signed launch from an allowed person passes', () => {
+  const r = webapp.check(launch({ auth_date: String(Math.floor(now / 1000)), user, query_id: 'q' }), BOT, { allow: ['90413601'], now })
+  assert.deepEqual(r, { ok: true, user: '90413601' })
+})
+t('768-4 forged, foreign bot, stale, not allowed, no data — each refused (negative controls)', () => {
+  const good = { auth_date: String(Math.floor(now / 1000)), user }
+  const forged = launch(good).replace(/user=[^&]+/, `user=${encodeURIComponent(JSON.stringify({ id: 1 }))}`)
+  assert.equal(webapp.check(forged, BOT, { allow: ['90413601', '1'], now }).reason, 'forged')
+  assert.equal(webapp.check(launch(good), '999:OTHER', { allow: ['90413601'], now }).reason, 'forged')
+  assert.equal(webapp.check(launch({ ...good, auth_date: String(Math.floor(now / 1000) - 7200) }), BOT, { allow: ['90413601'], now }).reason, 'stale')
+  assert.equal(webapp.check(launch(good), BOT, { allow: ['555'], now }).reason, 'not-allowed')
+  assert.equal(webapp.check('', BOT, { allow: ['90413601'], now }).reason, 'no-data')
+})
+t('768-4 launch data with Telegram\'s third-party signature field still checks by the bot token', () => {
+  const f = { auth_date: String(Math.floor(now / 1000)), user, signature: 'abc' }
+  const p = new URLSearchParams(f); const { signature, ...rest } = f; void signature; p.set('hash', webapp.sign(rest, BOT))
+  assert.equal(webapp.check(p.toString(), BOT, { allow: ['90413601'], now }).ok, true)
+})
+t('768-4 the one-time token opens only its open request; closed or expired — none (negative controls)', () => {
+  const a = asks.add(tmp, { text: 'Введите ключ', by: 'hrutb', secret: { kind: 'env', name: 'FAKE_DEMO_API_KEY' } })
+  const { token, entry } = webapp.issue()
+  asks.setEntry(tmp, a.id, entry)
+  assert.ok(!JSON.stringify(asks.read(tmp)).includes(token), 'the token itself is never kept')
+  assert.equal(asks.byToken(tmp, token)?.id, a.id)
+  assert.equal(asks.byToken(tmp, webapp.issue().token), null, 'another token')
+  assert.equal(webapp.tokenOk(entry, token, Date.parse(entry.until) + 1), false, 'expired')
+  asks.done(tmp, a.id)
+  assert.equal(asks.byToken(tmp, token), null, 'a closed request')
+  const words = asks.secretDoneText(a, { tail: 'cdef', restarted: true, via: 'telegram' })
+  assert.ok(words.includes('Telegram form'), words)
+})
+
 rmSync(tmp, { recursive: true, force: true })
 console.log(process.exitCode ? `===PERSON_ASKS_FAILED=== ${passed} passed` : `===PERSON_ASKS_OK=== ${passed} passed`)
