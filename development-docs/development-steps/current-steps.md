@@ -9,7 +9,7 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Last change:** 2026-11-16 ~10:50 UTC — the owner's four problems (launch password, domain page vs server, passport fields, where the project lives) studied; plan 760 written, no code.
 
-**Next action:** 760-1 — the switch «Запомнить сервер на 24 часа» (ON by default) on the launch page; then 760-8. One core rebuild at the end of the queue. fractera.ai records: still waiting (by hand / Chrome now, or by the node after 760-8).
+**Next action:** 760-8 — step 3 by measurement (dns-host, the key sees the zone, the records plan, the door's `records` write with a confirm). 760-1 code committed (see git log «760-1»): proof (a) test:launch-remember 8/8, tsc 0, guards green except two pre-existing (i18n 40 dictionaries — the same with my change stashed; parts-map fixed by build:parts-map); proof (b) Chrome waits for the core rebuild after 760-10. One core rebuild after 760-1, 8, 9, 10.
 
 ## The person's decisions (verbatim)
 

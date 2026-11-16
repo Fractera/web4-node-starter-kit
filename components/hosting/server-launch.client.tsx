@@ -5,6 +5,7 @@ import { type ReactNode, useCallback, useEffect, useState } from "react"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import type { DnsZone } from "@/components/hosting/dns-records"
 import { Ladder } from "@/components/hosting/ladder-step"
+import { LaunchRememberSwitch, useLaunchRemember } from "@/components/hosting/launch-remember-switch.client"
 import type { CertRow, CertsRun } from "@/components/hosting/server-domain-certs.client"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import { CheckStep, strategyOf } from "@/components/hosting/server-launch-check.client"
@@ -26,7 +27,8 @@ import { H2, Small } from "@/components/ui/typography"
 // не в ведёт информацию о IP-адресе и пароле странице будет оставаться пустой … в любой момент перезагрузить эту страницу и пока идёт
 // какой-то из процессов начать работать со вторым … с 10-м и с 100-м сервером поочерёдно возвращаясь на эту страницу когда заново вводит
 // credentials».
-// 🔒 THE PAGE KEEPS NOTHING: the address lives in this island's memory only; a reload empties it. Everything shown is the server's own answer
+// 🔒 THE PAGE KEEPS NO SECRET: the address lives in this island's memory; 760-1 «Запомнить сервер на 24 часа» (on by default) keeps the
+// address, port and access deadline in this browser — never the password — and a reload with it off empties the page. Everything shown is the server's own answer
 // (`/api/node/launch` → the server over SSH), so the same address on any visit shows the same truth, and other servers run on meanwhile.
 // 🔒 THE LADDER LAW (259-1, 744-7): which step is open is the part's one rule (`Ladder`, `lib/hosting/ladder-rule.mjs`) — one step open, a
 // done one a line of what it did, a closed one a line of what opens it; this island only says what each step has done
@@ -73,6 +75,7 @@ export function ServerLaunch({ words, ladderWords, domainWords, dialogUi }: { wo
   const [changed, setChanged] = useState<{ seen: string; pinned: string | null } | null>(null)
   // 739-5: the architect's one-time code, kept here and not in its step, so a look back at another step does not lose it (744-7).
   const [claim, setClaim] = useState<(ClaimShown & { host: string }) | null>(null)
+  const { on: remembering, kept, keep, forget, toggle } = useLaunchRemember((k) => setForm({ host: k.host, port: String(k.port), password: "" }))
 
   const say = useCallback((a: Answer | null) => {
     if (!a || a.ok === false) {
@@ -97,11 +100,11 @@ export function ServerLaunch({ words, ladderWords, domainWords, dialogUi }: { wo
       const a = await post({ action, host: target.host, port: target.port, ...extra })
       say(a)
       // 744-3: the access ended (its deadline, or closed elsewhere) — back to step 1, the password again.
-      if (a?.reason === "need-password") { setTarget(null); setState(null); setPanel({ url: null, opening: false }); return a }
+      if (a?.reason === "need-password") { setTarget(null); setState(null); setPanel({ url: null, opening: false }); forget(); return a }
       if (a?.state) setState({ ...a.state, host: target.host, cleared: action === "clear" ? (a.cleared ? { state: "done", ...a.cleared } : { state: "failed", detail: a.reason }) : state?.cleared ?? null })
       return a
     } finally { setBusy(false); setDoing("") }
-  }, [target, post, say, state?.cleared])
+  }, [target, post, say, state?.cleared, forget])
 
   async function closeAccess() {
     if (!target) return
@@ -109,6 +112,7 @@ export function ServerLaunch({ words, ladderWords, domainWords, dialogUi }: { wo
     setClosing(true)
     try {
       await post({ action: "close", host: target.host, port: target.port })
+      forget()
       setTarget(null)
       setState(null)
       setError("")
@@ -122,7 +126,7 @@ export function ServerLaunch({ words, ladderWords, domainWords, dialogUi }: { wo
     setPanel({ url: null, opening: true })
     const a = await post({ action: "window", host: target.host, port: target.port })
     say(a)
-    if (a?.reason === "need-password") { setTarget(null); setState(null) }
+    if (a?.reason === "need-password") { setTarget(null); setState(null); forget() }
     setPanel({ url: a?.ok ? (a as { window?: { url?: string } }).window?.url ?? null : null, opening: false })
   }
 
@@ -138,6 +142,7 @@ export function ServerLaunch({ words, ladderWords, domainWords, dialogUi }: { wo
       if (a?.ok && a.state) {
         setChanged(null)
         setTarget({ host, port, fingerprint: a.fingerprint ?? null, until: a.visit?.deadline ?? null })
+        keep(host, port, a.visit?.deadline ?? null)
         setState({ ...a.state, host })
       }
     } finally {
@@ -169,7 +174,7 @@ export function ServerLaunch({ words, ladderWords, domainWords, dialogUi }: { wo
         <Field>
           <FieldLabel htmlFor="launch-password">{words.password}</FieldLabel>
           <Input autoComplete="off" id="launch-password" onChange={(e) => setForm({ ...form, password: e.target.value })} type="password" value={form.password} />
-          <FieldDescription>{words.passwordNote}</FieldDescription>
+          <FieldDescription>{kept && kept.host === form.host.trim().toLowerCase() ? words.remember.noPassword.replace("{time}", untilText(kept.until)) : words.passwordNote}</FieldDescription>
         </Field>
         {changed ? (
           <div className="flex flex-col gap-2 rounded-md border border-destructive/40 bg-destructive/5 p-3" data-block="server-launch-changed">
@@ -190,6 +195,7 @@ export function ServerLaunch({ words, ladderWords, domainWords, dialogUi }: { wo
     return (
       <section className="my-6 flex flex-col gap-3" data-block="server-launch">
         <H2 variant="ui">{words.title}</H2>
+        <LaunchRememberSwitch on={remembering} onChange={(v) => toggle(v, target)} words={words.remember} />
         <Ladder id="launch" locked={words.locked} rungs={LAUNCH_ORDER.map((id) => ({ id, title: words.step[id], done: false, body: id === "server" ? access : null }))} />
       </section>
     )
@@ -205,7 +211,7 @@ export function ServerLaunch({ words, ladderWords, domainWords, dialogUi }: { wo
         <div className="flex flex-wrap items-center gap-3" data-block="server-launch-access-actions">
           {target.until ? <Small className="font-medium text-foreground tabular-nums">{words.access.until.replace("{time}", untilText(target.until))}</Small> : null}
           <Button disabled={busy} onClick={() => void closeAccess()} size="sm" variant="outline">{closing ? words.access.closing : words.access.close}</Button>
-          <Button disabled={busy} onClick={() => { setTarget(null); setState(null); setError(""); setPanel({ url: null, opening: false }) }} size="sm" variant="ghost">{words.another}</Button>
+          <Button disabled={busy} onClick={() => { setTarget(null); setState(null); setError(""); setPanel({ url: null, opening: false }); setForm({ host: "", port: "22", password: "" }) }} size="sm" variant="ghost">{words.another}</Button>
         </div>
         <div className="flex flex-wrap items-center gap-3" data-block="server-launch-panel">
           {panel.url
@@ -226,6 +232,7 @@ export function ServerLaunch({ words, ladderWords, domainWords, dialogUi }: { wo
   return (
     <section className="my-6 flex flex-col gap-3" data-block="server-launch" data-host={target.host}>
       <H2 variant="ui">{words.title}</H2>
+      <LaunchRememberSwitch on={remembering} onChange={(v) => toggle(v, target)} words={words.remember} />
       {error ? <Small className="text-destructive" data-block="server-launch-error">{error}</Small> : null}
       {busy && doing ? <Small className="flex items-center gap-2 text-muted-foreground" data-block="server-launch-doing" role="status"><Spinner className="size-4" />{words.doing[doing] ?? words.doing.any}</Small> : null}
       <Ladder id="launch" locked={words.locked} rungs={LAUNCH_ORDER.map((id) => ({ id, title: words.step[id], done: done[id], summary: summary[id], body: body[id] }))} />

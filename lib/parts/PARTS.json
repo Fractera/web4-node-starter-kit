@@ -3464,6 +3464,7 @@
         "components/element-settings/brief-editor.client.tsx",
         "components/form/voice-field.client.tsx",
         "components/form/voice-textarea.client.tsx",
+        "components/hosting/launch-remember-switch.client.tsx",
         "components/hosting/server-domain-certs.client.tsx",
         "components/hosting/server-ladder-steps.client.tsx",
         "components/hosting/server-launch-telegram.client.tsx",
@@ -4080,6 +4081,7 @@
         "components/element-settings/site/config/field-row.client.tsx",
         "components/element-settings/site/editors/feature-switches.client.tsx",
         "components/element-settings/site/editors/features-editor.client.tsx",
+        "components/hosting/launch-remember-switch.client.tsx",
         "components/node-users/user-dialog.client.tsx"
       ]
     },

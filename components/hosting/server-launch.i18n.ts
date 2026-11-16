@@ -17,6 +17,8 @@ export type ServerLaunchWords = {
   port: string
   password: string
   passwordNote: string
+  /** 760-1: «Запомнить сервер на 24 часа» — the address, port and access deadline in this browser; the password never. `{time}` the deadline */
+  remember: { label: string; on: string; off: string; noPassword: string }
   connect: string
   connecting: string
   doing: Record<string, string>
@@ -78,11 +80,17 @@ const en: ServerLaunchWords = {
   title: "Launch a server",
   readOnly: "This address is read-only: servers are launched from the node's own computer, at its keyboard or by its domain after sign-in.",
   launchedOn: "Your node runs on a server: {url}",
-  lead: "Type the server's address and the root password from your provider's letter. The page keeps nothing: after a reload it is empty again, and the same address brings the same server back with everything it is doing now. Several servers can be launched one after another.",
+  lead: "Type the server's address and the root password from your provider's letter. The same address brings the same server back with everything it is doing now, so several servers can be launched one after another.",
   host: "Server IP address",
   port: "SSH port",
   password: "Root password",
   passwordNote: "Opens access to this server for one day: the server itself closes it at the deadline. The password is used once and kept nowhere; while the access lasts, this browser needs no password for this server.",
+  remember: {
+    label: "Remember the server for 24 hours",
+    on: "The page keeps this server's IP and port while the access lasts, a day at most. The password is kept nowhere: while the access lasts, it is not needed.",
+    off: "The page keeps nothing: after a reload it is empty again. Handy when you launch several servers one after another.",
+    noPassword: "No password needed until {time}: this browser already has access to the server. Press «Check the server».",
+  },
   connect: "Check the server",
   connecting: "Connecting and checking the server… up to a minute.",
   doing: { any: "Working on the server…", clear: "Freeing the server… under a minute.", domain: "Checking the domain…", detect: "Looking up where the domain's records live…", way: "Saving the way…", "dns-check": "Asking public DNS for every name…", dns: "Asking public DNS for every name…", certs: "Issuing certificates… about a minute per name.", check: "Checking HTTPS of every name from the internet…", activate: "Switching the domain on… sign-in restarts, up to a minute.", install: "Starting the installation…", state: "Reading the server…" },
@@ -180,11 +188,17 @@ const ru: ServerLaunchWords = {
   title: "Запустить сервер",
   readOnly: "Этот адрес только для чтения: серверы запускаются с компьютера самого узла, за его клавиатурой или по его домену после входа.",
   launchedOn: "Ваш узел работает на сервере: {url}",
-  lead: "Введите адрес сервера и пароль root из письма провайдера. Страница ничего не хранит: после перезагрузки она снова пустая, а тот же адрес возвращает тот же сервер со всем, что он сейчас делает. Можно запускать несколько серверов по очереди.",
+  lead: "Введите адрес сервера и пароль root из письма провайдера. Тот же адрес возвращает тот же сервер со всем, что он сейчас делает, поэтому несколько серверов можно запускать по очереди.",
   host: "IP-адрес сервера",
   port: "Порт SSH",
   password: "Пароль root",
   passwordNote: "Открывает доступ к этому серверу на сутки: в срок его закрывает сам сервер. Пароль нужен один раз и нигде не хранится; пока доступ открыт, этому браузеру пароль для этого сервера не нужен.",
+  remember: {
+    label: "Запомнить сервер на 24 часа",
+    on: "Страница помнит IP и порт этого сервера, пока открыт доступ, но не больше суток. Пароль не хранится нигде: пока доступ открыт, он не нужен.",
+    off: "Страница ничего не хранит: после перезагрузки она снова пустая. Так удобно запускать несколько серверов по очереди.",
+    noPassword: "Пароль не нужен до {time}: у этого браузера уже есть доступ к серверу. Нажмите «Проверить сервер».",
+  },
   connect: "Проверить сервер",
   connecting: "Подключаюсь и проверяю сервер… до минуты.",
   doing: { any: "Выполняю шаг на сервере…", clear: "Освобождаю сервер… меньше минуты.", domain: "Проверяю домен…", detect: "Ищу, где живут записи домена…", way: "Сохраняю способ…", "dns-check": "Спрашиваю публичные DNS о каждом имени…", dns: "Спрашиваю публичные DNS о каждом имени…", certs: "Выпускаю сертификаты… около минуты на имя.", check: "Проверяю HTTPS каждого имени из интернета…", activate: "Включаю домен… вход перезапускается, до минуты.", install: "Запускаю установку…", state: "Читаю состояние сервера…" },
