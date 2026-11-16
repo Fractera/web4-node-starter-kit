@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
     const out = await wake(who, { text: `${lead}${nodeLine.head("person-done", who)}${asks.doneText(a)}`, from: "node", confirmed: true })
     woke = out.ok ? "ok" : String(out.reason ?? "refused")
   }
-  await asksTg.closed(ROOT, a).catch(() => {})
-  console.log(`[node/person-asks] ${id} done → ${who}: ${woke}`)
+  const tg = await asksTg.closed(ROOT, a).catch((e: unknown) => String(e))
+  console.log(`[node/person-asks] ${id} done → ${who}: ${woke} · telegram: ${tg}`)
   return NextResponse.json({ ok: true, woke, who }, noStore)
 }

@@ -166,3 +166,17 @@ elements over i2i in a queue. Forbidden: an element per platform shared by sever
 skill names facts, the method the shape; rephrased as force 5/4 facts); T2 check:instruction FAIL before the seal (negative), sealed
 978249cf4bb3, OK; T3 the method read on the owner's words: force 5 now refuses one hand for many people, a heavy shared tool is force 4 —
 a read, not a model run; T4 +10 lines, all in skills loaded only with their field. The queue of a shared tool — not built (a `need`).
+
+## 761-16c — the window's look: variant C «the beacon» (the owner, 2026-11-16 16:30: «Хорошо мне нравится твой выбор»)
+
+Mockups (scratchpad, sent to Telegram 16:29): now · A card · B bar · C beacon. Chosen C: the card A opens by itself, collapses after 30 s
+without touch into a pulsing orange beacon with the count; gone only by «Готово».
+- [ ] 16c-1 `person-ask.client.tsx` → Popover (shadcn) anchored to a beacon Button fixed bottom-right; Sonner toast dropped for asks.
+  Card: «!» + title + «1 из N» ‹ ›, by-line, text, why, hint stripe, copy, «Свернуть · Открыть · Готово». `--warning` has no
+  foreground pair → the beacon is outlined (background + warning ring and «!»), the pulse a warning halo, motion-reduce honoured.
+- [ ] 16c-2 i18n: collapse, counter, beacon label («{n} ждут вас»).
+- [ ] 16c-3 B3 journal: `closed()` logs `[node/person-asks] <id> closed → telegram: ok|<err>`.
+- [ ] 16c-4 one core rebuild; eyes on desktop 1280 and phone 390.
+Tests: C1 one ask → card open; 30 s → beacon «1»; beacon click → card · C2 three asks → «1 из 3», arrows, «Готово» on one → «1 из 2» ·
+C3 negative: no asks → no beacon in the DOM · C4 phone 390: card within the screen · C5 «Готово» wakes the asker (person-done) + the
+journal line of closed() · C6 tsc, check:shadcn-parts, check:i18n, check:contrast, check:dialogs, parts-map, test:person-asks · C7 dark theme.

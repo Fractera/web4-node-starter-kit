@@ -2880,6 +2880,7 @@
         "app/[lang]/(architectLayer)/_components/payment-elements.client.tsx",
         "app/[lang]/(architectLayer)/_components/subscriptions-view.client.tsx",
         "components/ai-provider/ai-provider-card.tsx",
+        "components/architect/person-ask.client.tsx",
         "components/dashboard/node-passport.client.tsx",
         "components/dashboard/subscriptions-board.client.tsx",
         "components/deploy/deploy-board.client.tsx",
@@ -3065,6 +3066,7 @@
         "components/ai-elements/web-preview.tsx",
         "components/architect/menu-ai.client.tsx",
         "components/architect/menu-search.client.tsx",
+        "components/architect/person-ask-card.client.tsx",
         "components/architect/person-ask.client.tsx",
         "components/auth/access-gate.client.tsx",
         "components/auth/google-setup.client.tsx",
@@ -3796,6 +3798,7 @@
       },
       "usedBy": [
         "components/architect/menu-search.client.tsx",
+        "components/architect/person-ask.client.tsx",
         "components/dashboard/subscriptions-today.client.tsx",
         "components/element-docs/product-quiz.client.tsx",
         "components/element-docs/reverse-engineering.client.tsx",
