@@ -9,7 +9,7 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Last change:** 2026-11-16 13:35 UTC — the fresh session ran `npm run prebuild` alone first: two guards refused d55b5f17 (check:node-lines — `greetText` began with «Node:» though the server puts the `moved` head; check:words — «blocks»/«block» in the tests) → fixed 468400d6, prebuild RC=0, test:hosting-launch 22 ✓ + the pre-existing ✗; the core REBUILD STARTED 13:36 UTC (detached).
 
-**Next action:** read the letter below — B2 of 761-16b with the Telegram channel, then 765 on his yes.
+**Next action:** his yes on fix 769 (connect splits from probe; the window's spinner and `ok && state`), then build it; then S6 dark/390, S1/S4, 761-13.
 
 ## Letter to my next session (written 2026-11-16 ~19:33 UTC, the window at 66 %; a clean start for a debugging task)
 
@@ -42,7 +42,7 @@ pages without tokens; the extension's selected tab is never his screen. The core
 
 ## The person's decisions (verbatim)
 
-- 2026-11-16 19:32 UTC, the owner on S5: «С третьей попытки сработало». Measured: the pin of 109.199.105.213 was rewritten at 19:31:40 (new ED25519 VdhnAh…) — the visit DID open on the server on the page-form attempt, yet the page reported failure; the browser kept no access until the third try. Suspects: the door's connect timeout on a reinstalled server (openVisit + connect + probe + readState with script upload), or a parallel state/need-password answer dropping the fresh cookie (dropVisit). Asked him what he did on the third try.
+- 2026-11-16 19:32 UTC, the owner on S5: «С третьей попытки сработало». Measured: the pin of 109.199.105.213 was rewritten at 19:31:40 (new ED25519 VdhnAh…) — the visit DID open on the server on the page-form attempt, yet the page reported failure; the browser kept no access until the third try. Suspects: the door's connect timeout on a reinstalled server (openVisit + connect + probe + readState with script upload), or a parallel state/need-password answer dropping the fresh cookie (dropVisit). Asked him what he did on the third try. Read in code 19:40: the door kills `connect` at 150 s (route.ts:57) while connect = openVisit (pin written at its end) + a new ssh + probe.sh (up to 90 s, first run on a fresh server) + state.sh (up to 40 s) → over 150 s the key dies in the killed runner: the pin is there, no cookie, «timeout». Fits the 2-minute blue wait. Proposed fix 769 (waits for his yes): connect returns the visit right after openVisit (cookie kept), probe runs as its own call by the cookie; window + page show «Проверяю сервер…»; the window closes on `ok && state`; host-key-changed shown in the window.
 
 - 2026-11-16 19:28 UTC, the owner on S5: «первый раз у меня открылась модельное окно у которого не было поле ввода … Затем через какое-то время окно обновилось … появилось поле ввода. Я ввёл там пароль и надолго загорелся голубой экраня ждал 2 минуты и ничего не дождался ушел … как будто бы какой-то процесс поломанный». Answered 19:30: the old request b2b0c81a had no field (put before the build); the new 4deaab20 has it; the door answered ok at 19:25:26 (journal) but the page does not see the visit — my defect; asked him to type the password in the page's own form and say whether step 2 opens. Fix in any case: «Проверяю сервер…» + spinner, and the window closes only after the page's own `state` sees the visit (`ok && state`, as the page's connect does).
 
