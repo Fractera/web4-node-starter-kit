@@ -77,3 +77,9 @@ architect-routes, skill headers, instruction skills, shape-examples OK; check:i1
   word): its CLAUDE.md and seal are regenerated in its folder, uncommitted — its own agent commits them on its next build session, or it
   is deleted. `node:readiness`: 13 ✓, ✗ core (not pushed, 761-9) and ✗ hrutb (as said).
 Next: one core rebuild (the door and the bot page), then the live tests B1–B6.
+Builds: 18:19 ✗ check:steps (this file had a 3-word name) · 18:22 ✗ migrate-sections words («block» in my comments, one inside the
+owner's quote — cut with «…») · 18:32 ✓ core b27a5cbc (the whole prebuild was run by hand first, green).
+Live after the build: door without a key / with a wrong key → 401 ✓ · B6 ✓ /ru/build/telegram: the section «Управление браузером через
+Telegram» closed (aria-expanded false, its text hidden), Enter on the keyboard opens it (true, visible), the auth bot page has none,
+console clean, dark theme read (logs/eyes/767-6-*.png) · B1 ✓ `npm run find -- "show my LinkedIn profile I want to write a post"` names
+hrutb first (its area). B2–B4 — with the owner from Telegram.
