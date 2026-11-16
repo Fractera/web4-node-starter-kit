@@ -1,6 +1,6 @@
 // Node step 761-16: the main agent's action requests to the person — put, shown open, closed once by «Готово», dropped, refused when bad.
 import assert from 'node:assert/strict'
-import { mkdtempSync, rmSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
@@ -63,6 +63,24 @@ t('761-16b the Telegram message: the act, the hint, the command apart, «on the 
 t('761-16b negative: no bot connected — nothing goes to Telegram, the window alone', () => {
   assert.equal(tg.botFor(tmp, 'build'), null)
   assert.equal(tg.botFor(tmp, 'some-element'), null)
+})
+
+t('761-16e the link: the given page, else the asking element\'s page, else the panel — on this computer\'s address', () => {
+  const l1 = tg.linkFor(tmp, { by: 'root', href: null }, 'ru')
+  assert.equal(l1.url, 'http://localhost:24680/ru/root'); assert.equal(l1.local, true)
+  assert.equal(tg.linkFor(tmp, { by: 'auth', href: '/ru/auth/build/telegram' }, 'ru').url, 'http://localhost:24680/ru/auth/build/telegram')
+  assert.equal(tg.linkFor(tmp, { by: 'build', href: null }, 'ru').url, 'http://localhost:24680/ru')
+  assert.equal(tg.linkFor(tmp, { by: 'root', href: 'https://web.telegram.org/k/' }, 'ru').url, 'https://web.telegram.org/k/')
+  const m = tg.message({ id: 'ab12cd34', text: 'Войдите', href: null }, 'ru', 'Главный сайт', l1)
+  assert.ok(m.text.includes('<a href="http://localhost:24680/ru/root">') && m.text.includes('только на этом компьютере'), m.text)
+})
+t('761-16e own domain connected: the link opens anywhere, no «this computer» mark', () => {
+  mkdirSync(join(tmp, 'logs'), { recursive: true })
+  writeFileSync(join(tmp, 'logs', 'domain.json'), JSON.stringify({ zone: 'example.org', activatedAt: '2026-11-16T00:00:00Z' }))
+  const l = tg.linkFor(tmp, { by: 'root', href: null }, 'en')
+  assert.equal(l.url, 'https://example.org/en/root'); assert.equal(l.local, false)
+  writeFileSync(join(tmp, 'logs', 'domain.json'), JSON.stringify({ zone: 'example.org' }))
+  assert.equal(tg.linkFor(tmp, { by: 'root', href: null }, 'en').local, true, 'a zone not activated yet is not the address')
 })
 
 rmSync(tmp, { recursive: true, force: true })

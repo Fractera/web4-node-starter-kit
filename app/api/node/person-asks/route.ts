@@ -39,7 +39,8 @@ export async function GET(req: NextRequest) {
   if (denied) return denied
   const lang = lang2(req)
   const list = (asks.open(ROOT) as Ask[]).map(({ id, text, href, why, hint, copy, by, at }) => ({
-    id, text, href, why, hint: hint ?? null, copy: copy ?? null, at, by: by ?? "build", byName: by && by !== "build" ? elementName(by, lang) : null,
+    // 761-16e: a request without a page opens the asking element's page («Открыть» in the beacon), the main agent's — none
+    id, text, href: href ?? (by && by !== "build" ? `/${lang}/${by}` : null), why, hint: hint ?? null, copy: copy ?? null, at, by: by ?? "build", byName: by && by !== "build" ? elementName(by, lang) : null,
   }))
   return NextResponse.json({ ok: true, asks: list }, noStore)
 }

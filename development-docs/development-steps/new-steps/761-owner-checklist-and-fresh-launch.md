@@ -186,3 +186,14 @@ after 33 s only the beacon «1» is visible and the card is gone · C2 ✅ «1 �
 within the screen · C5 ✅ journal «done → build: ok · telegram: ok» ×5, person-done woke me each time; Рома pressed «Готово» on two in his own
 panel («Выглядит превосходно») — B3 of 761-16b proven by the journal · C6 ✅ tsc, shadcn-parts, parts-map, contrast, dialogs, layout,
 static, person-asks 8/8 (check:i18n red before and after: 40, pre-existing) · C7 ✅ dark theme. Console clean in every shot.
+
+## 761-16e — a full link in every request (the owner, 2026-11-16 ~16:47: «если я веду несколько элементов одновременно … там должна
+существовать ссылка которая отправит меня либо в авто авторизацию либо в руут»; ~16:48 «Да конечно сделай это»)
+
+Measured before: a panel href (/ru/…) was never printed in Telegram (only «on the computer»), and a request without href had no way at all.
+- [x] `linkFor` / `origin` (lib/node/person-asks-telegram.cjs): the given page, else `/<lang>/<asker>`, else `/<lang>`; base — own domain once
+  `logs/domain.json` has zone + activatedAt, else `http://localhost:<runtime port>` marked «откроется только на этом компьютере».
+- [x] The beacon's «Открыть»: the GET door gives an element's request without a page its element page.
+- [x] Also (16:45 defect): `drop` and a Telegram «Готово» take the button away (9d6842ea).
+Tests: unit 10/10 (L1–L4 + own-domain + negative «a zone not activated is not the address»); live before the build: L3 a0308b83 and
+L1 bdcf2a6f (by root) accepted by Telegram, both links 200. After the build: the beacon's «Открыть» of bdcf2a6f → /ru/root.
