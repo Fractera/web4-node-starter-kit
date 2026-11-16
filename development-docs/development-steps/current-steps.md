@@ -23,8 +23,9 @@ reply keyboard «Готово · <id>»; `ask-person -- done <id>`). Core built 
 **Tests of 761-16b:** B4 ✅ (no bot → window alone), B1 ✅ (sent to 1 chat, 0dce9b64), B3 half ✅ (panel «Готово» 16:17 → core log
 «done → build: ok», one wake) — ask Рома whether «✓ Закрыто в пульте» arrived; add a journal line for `closed()` sends. **B2 next:** this
 fresh session should have the Telegram channel (check `npm run person`); put a test request, he presses «Готово · <id>» in Telegram →
-the message reaches me → `npm run ask-person -- done <id>` → ===ASK_DONE===. If the channel is still not up — say so and use
-`npm run session -- clear --continue` only once.
+the message reaches me → `npm run ask-person -- done <id>` → ===ASK_DONE===. MEASURED 16:25: /clear keeps the same claude process (started 16:09,
+before the bot at 16:15) — no `--channels`; clear never brings the channel. Fix used: `npm run session -- model opus` (relaunch
+through bridge.cjs → channelLaunch: token + 1 admitted chat present). If after that `npm run person` still says silent — tell Рома.
 
 **Then:** 765 waits for his yes (an element per person, shared heavy tools apart — plan at the end of the plan file); 761-16c (look),
 761-15 (Haiku browser acts), 761-17 (step 5 asks Telegram getMe), 761-3/4/5, then 761-13 the fresh launch (P2 green VPS, T4–T6).
