@@ -7,9 +7,9 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Active steps:** 771 — the node panel inside Telegram live (771-1..3, 85fa6a77); 771-4..6 wait for the owner's road (own domain or a core route to elements — measured: only the core is public on the temporary address); 769 — in code, R2 waits his root password (2c3422c4); 761-13 the fresh launch; 1 — the first launch.
 
-**Last change:** 2026-11-16 23:37 UTC — 771 live proofs (door from the internet: signed 200 / forged 401 / stranger 401; menu button read back per chat; eyes 390 light+dark); fix «none.» + per-chat button committed 85fa6a77, prebuild RC=0; the core REBUILD STARTED (detached) for the state.ts fix. Limit 5 h at 60 % (resets 00:50).
+**Last change:** 2026-11-16 23:42 UTC — the core back (75ac93ca), git clean; the «none» step gone (signed call: root step null); menu «Пульт» read back. The FINAL report sent to the owner 23:42 (the panel works; his tap on the phone and 2c3422c4 wait for him; element apps — the road (1) own domain, my pick, or (2) a core route; the skills.sh search defect).
 
-**Next action:** after core-back — git clean; one signed state call (step «none» gone); then the FINAL report to the owner in Telegram (he asked not to be disturbed until the end): what works (the «Пульт» button in his bot), what waits for him (2c3422c4 root password; the road for element apps), the defect of `skills -- market --live`.
+**Next action:** wait for the owner. His tap on «Пульт» (M2 final); his root password in 2c3422c4 (769 R2); his road for element apps (771-4..6). Open defect: `npm run skills -- market --live` refuses every query («the query needs English words»).
 
 ## Letter to my next session (written 2026-11-16 ~19:33 UTC, the window at 66 %; a clean start for a debugging task)
 
