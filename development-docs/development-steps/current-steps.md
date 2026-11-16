@@ -21,7 +21,7 @@ reply keyboard «Готово · <id>»; `ask-person -- done <id>`). Core built 
 1 chat. Plan file `new-steps/761-owner-checklist-and-fresh-launch.md` holds 761-16b/c, 763, 764, 765 at its end.
 
 **Tests of 761-16b:** B4 ✅ (no bot → window alone), B1 ✅ (sent to 1 chat, 0dce9b64), B3 half ✅ (panel «Готово» 16:17 → core log
-«done → build: ok», one wake) — ask Рома whether «✓ Закрыто в пульте» arrived; add a journal line for `closed()` sends. **B2 next:** this
+«done → build: ok», one wake) — ask Рома whether «✓ Закрыто в пульте» arrived; add a journal line for `closed()` sends. **B2 ✅ 16:21** (Telegram «Готово · b449e696» reached me as a channel message → `done b449e696` → ===ASK_DONE===, list empty; the relaunch by `session -- model opus` brought the channel). B3 «✓ Закрыто в пульте» — asked Рома, no answer yet. **Old B2 note:** this
 fresh session should have the Telegram channel (check `npm run person`); put a test request, he presses «Готово · <id>» in Telegram →
 the message reaches me → `npm run ask-person -- done <id>` → ===ASK_DONE===. MEASURED 16:25: /clear keeps the same claude process (started 16:09,
 before the bot at 16:15) — no `--channels`; clear never brings the channel. Fix used: `npm run session -- model opus` (relaunch
