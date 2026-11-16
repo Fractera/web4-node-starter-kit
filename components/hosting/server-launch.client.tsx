@@ -11,6 +11,7 @@ import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import { CheckStep, strategyOf } from "@/components/hosting/server-launch-check.client"
 import { LaunchDomain } from "@/components/hosting/server-launch-domain.client"
 import { TelegramStep } from "@/components/hosting/server-launch-telegram.client"
+import { telegramWarn } from "@/lib/hosting/server-telegram.mjs"
 import { CertsLaunchStep, type ClaimShown, InstallStep, ReadyStep, RecheckStep } from "@/components/hosting/server-launch-end.client"
 import { LAUNCH_ORDER, launchDone, launchSummary, untilText } from "@/components/hosting/server-launch-rungs"
 import type { LaunchStep, ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
@@ -56,7 +57,7 @@ export type LaunchState = {
   records: DnsZone[]
   week: number | null
   /** 758: the server's own bot as the page may know it — never the token (`lib/hosting/server-telegram.mjs`) */
-  telegram?: { configured: boolean; pending: boolean; skipped: boolean; tail: string | null; username: string | null; name: string | null; allowed: number; rejected: string | null; live: boolean } | null
+  telegram?: { configured: boolean; pending: boolean; skipped: boolean; tail: string | null; username: string | null; name: string | null; allowed: number; rejected: string | null; live: boolean; signedIn?: boolean | null; greeted?: boolean } | null
 }
 type Answer = { ok?: boolean; reason?: string; state?: LaunchState; fingerprint?: string; seen?: string | null; pinned?: string | null; cleared?: LaunchState["cleared"]; week?: number; want?: number; over?: string[]; visit?: { deadline: string } | null }
 /** 744-3: `until` — the end of this browser's access to the server (the server's own deadline); the key itself never reaches the page. */
@@ -235,7 +236,7 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
       <LaunchRememberSwitch on={remembering} onChange={(v) => toggle(v, target)} words={words.remember} />
       {error ? <Small className="text-destructive" data-block="server-launch-error">{error}</Small> : null}
       {busy && doing ? <Small className="flex items-center gap-2 text-muted-foreground" data-block="server-launch-doing" role="status"><Spinner className="size-4" />{words.doing[doing] ?? words.doing.any}</Small> : null}
-      <Ladder id="launch" locked={words.locked} rungs={LAUNCH_ORDER.map((id) => ({ id, title: words.step[id], done: done[id], warn: id === "telegram" && !state.telegram?.configured, summary: summary[id], body: body[id] }))} />
+      <Ladder id="launch" locked={words.locked} rungs={LAUNCH_ORDER.map((id) => ({ id, title: words.step[id], done: done[id], warn: id === "telegram" && telegramWarn(state.telegram), summary: summary[id], body: body[id] }))} />
     </section>
   )
 }

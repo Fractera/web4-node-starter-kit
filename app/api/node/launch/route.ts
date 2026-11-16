@@ -34,7 +34,7 @@ import { closeWindowProcess, openWindowProcess } from "@/lib/hosting/window-proc
 //                                                              returns the architect's one-time code once (739-5), kept nowhere here
 //   POST { action: "upload", host, port, name, fullchain, privkey }                  the person's own certificate for one name (stdin)
 //   POST { action: "signin", host, port }                      where sign-in leads, asked from the internet
-//   POST { action: "telegram", host, port, op, token? }        758, step 5: the server's own bot — op token|skip|link; the token goes on to
+//   POST { action: "telegram", host, port, op, token?, lines? } 758/761, step 5: the server's own bot — op token|skip|link|messages; the token goes on to
 //                                                               the runner's stdin and the server, never back and never into a log
 //   POST { action: "clear", host, port, confirm }              a busy server freed — the dialog sends back the address it named
 //   POST { action: "records-plan", host, port }               760-8: does this node's Cloudflare key see the server's zone, and what it
@@ -169,10 +169,12 @@ export async function POST(req: NextRequest) {
   if (action === "way") return answer("way", [...at, "--way", String(body?.way ?? "")])
   if (DOOR_ACTIONS.includes(action)) return answer("door", at, { body: { action } })
   if (action === "telegram") {
-    const op = ["token", "skip", "link"].find((o) => o === body?.op)
+    const op = ["token", "skip", "link", "messages"].find((o) => o === body?.op)
     if (!op) return json({ ok: false, reason: "bad-action" }, 400)
     const token = op === "token" ? String(body?.token ?? "").trim().slice(0, 200) : undefined
-    return answer("telegram", at, { body: { action: op, ...(token ? { token } : {}) } })
+    // 761-2/761-14: the bot's three lines in the page's language, each naming the site — checked again by the runner (`cleanLines`)
+    const lines = (op === "token" || op === "messages") && body?.lines && typeof body.lines === "object" ? body.lines : undefined
+    return answer("telegram", at, { body: { action: op, ...(token ? { token } : {}), ...(lines ? { lines } : {}) } })
   }
   if (action === "upload") {
     const pair = { action, name: String(body?.name ?? ""), fullchain: String(body?.fullchain ?? ""), privkey: String(body?.privkey ?? "") }

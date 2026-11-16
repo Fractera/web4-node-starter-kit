@@ -1,7 +1,7 @@
 "use client"
 // @local — step 5 of the launch ladder (one route: «Активация выделенного сервера»): the server's own Telegram bot, made while the server installs
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { ChromeHelp, telegramTask } from "@/components/hosting/chrome-help.client"
 import type { LaunchState } from "@/components/hosting/server-launch.client"
 import type { ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
@@ -9,6 +9,7 @@ import { Button, buttonVariants } from "@/components/ui/button"
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Small } from "@/components/ui/typography"
+import { botLines } from "@/lib/hosting/server-telegram.mjs"
 
 // 758. The owner, 2026-11-16: «Telegram может быть в пятым шагом то есть в тот момент когда идёт установка сервера у пользователя есть
 // время подключить Telegram» and «шаг 5 необязательный». The step opens as soon as the installation runs (step 4 is done then), keeps one
@@ -31,11 +32,21 @@ export function TelegramStep({ lang, state, words, busy, onAct }: { lang: string
   const showForm = !t?.configured && !t?.pending && (!t?.skipped || asking)
   // 760-10: the bot made by the main agent in the person's Telegram Web — the token still pasted here by the person
   const agent = telegramTask(w.agent, { zone: state.domain?.domain ?? null, ip: state.host ?? null })
+  // 761-2/761-14: the bot's own three lines in this page's language, each naming the site with its link
+  const lines = botLines(w.lines, { zone: state.core?.zone ?? state.domain?.domain ?? null, ip: state.host ?? null, lang })
+  const sent = useRef<string | null>(null)
+  useEffect(() => {
+    // a bot set before 761 (or from another page) still speaks the fallback: its lines are sent once per bot on this page
+    if (!t?.configured || !t.tail || sent.current === t.tail) return
+    sent.current = t.tail
+    void onAct("telegram", { op: "messages", lines })
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- once per bot
+  }, [t?.configured, t?.tail])
 
   async function save() {
     const value = token.trim()
     setToken("")
-    const a = (await onAct("telegram", { op: "token", token: value })) as { ok?: boolean } | null
+    const a = (await onAct("telegram", { op: "token", token: value, lines })) as { ok?: boolean } | null
     if (a?.ok) setAsking(false)
   }
   async function getLink() {
@@ -52,6 +63,7 @@ export function TelegramStep({ lang, state, words, busy, onAct }: { lang: string
         <div className="flex flex-col gap-2" data-block="server-launch-telegram-on">
           <Small className="text-foreground">{fill(w.on, { bot })}</Small>
           <Small className="text-muted-foreground">{fill(w.admitted, { n: String(t.allowed) })}</Small>
+          <AgentLine busy={busy} lang={lang} onAct={onAct} state={state} words={w} />
           {link ? (
             <div className="flex flex-col gap-1" data-block="server-launch-telegram-link">
               <a className={buttonVariants({ variant: "link", size: "sm", className: "w-fit px-0" })} href={link} rel="noopener noreferrer" target="_blank">{link}</a>
@@ -92,3 +104,38 @@ export function TelegramStep({ lang, state, words, busy, onAct }: { lang: string
     </div>
   )
 }
+
+/** 761-1: can the server's agent answer — its Claude Code signed in — and was the person greeted. The sign-in is the person's act on the
+ *  server's own page, reached through the SSH window; the step asks the server again every 8 s until it is there (15 minutes at most). */
+function AgentLine({ lang, state, words, busy, onAct }: { lang: string; state: LaunchState; words: ServerLaunchWords["telegram"]; busy: boolean; onAct: Act }) {
+  const t = state.telegram
+  const [page, setPage] = useState<string | null>(null)
+  const [watching, setWatching] = useState(false)
+  useEffect(() => {
+    if (!watching || t?.signedIn === true) return
+    const started = Date.now()
+    const timer = setInterval(() => { if (Date.now() - started > 15 * 60_000) setWatching(false); else void onAct("state") }, 8000)
+    return () => clearInterval(timer)
+  }, [watching, t?.signedIn, onAct])
+  async function signIn() {
+    const a = (await onAct("window")) as { window?: { url?: string } } | null
+    const url = a?.window?.url
+    if (url) { setPage(`${new URL(url).origin}/${lang}/build/subscription`); setWatching(true) }
+  }
+  if (t?.signedIn === true) {
+    return <Small className="text-foreground" data-block="server-launch-telegram-agent" data-agent="on">{t.greeted ? words.greeted : words.agentOn}</Small>
+  }
+  if (t?.signedIn !== false) return null
+  return (
+    <div className="flex flex-col gap-2" data-agent="off" data-block="server-launch-telegram-agent">
+      <Small className="text-foreground">{words.agentOff}</Small>
+      {page ? (
+        <a className={buttonVariants({ size: "sm", className: "w-fit" })} href={page} rel="noopener noreferrer" target="_blank">{words.signInOpen}</a>
+      ) : (
+        <Button className="w-fit" disabled={busy} onClick={() => void signIn()} size="sm">{words.signIn}</Button>
+      )}
+      {watching ? <Small className="text-muted-foreground">{words.signInWatch}</Small> : null}
+    </div>
+  )
+}
+

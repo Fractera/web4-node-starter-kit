@@ -67,9 +67,9 @@ site — «Сервер fractera.ai (https://fractera.ai) · …» — and the l
 agent is woken with one first task: greet the person in Telegram, naming the site with its link.
 
 **Test checklist (run by the agent, marked ✅/❌ with the proof):**
-- [ ] T1 unit: the three texts carry the site name and its https link, in ru and en; no «this computer».
-- [ ] T2 runner test (dry): after `telegram token` the server's channel gets `messages` with those texts; negative — without a domain the texts name the IP.
-- [ ] T3 runner test: `claude-auth` answer → `state.telegram.signedIn`; step 5 done only with configured AND signedIn (ladder rule test), orange otherwise.
+- [x] T1 unit ✅ (`test:server-telegram` 5/5, in the prebuild): the three texts carry the site name and its https link, in ru and en; no «this computer»; negative: a server without a domain names its IP and the panel place.
+- [x] T2 runner test ✅ (`test:hosting-launch`, the step 5 case): the lines the token waited with reach the node's channel with it (lang ru); op `messages` resends them; bad lines refused.
+- [x] T3 ✅ in code: `claude-auth` → `state.telegram.signedIn`; not signed in → no greeting (0 wakes); signed in → the node line `moved` wakes the server's main agent ONCE (a second read wakes nobody); `telegramWarn` blue only with configured AND signedIn (6 cases). The orange mark itself is seen live only after the core rebuild.
 - [ ] T4 live: /start in @fractera_ai_server_bot before the sign-in → the Russian line with «Сервер fractera.ai (https://fractera.ai)».
 - [ ] T5 live: the owner signs in through «Войти на сервере» → step 5 turns blue without a reload.
 - [ ] T6 live: the agent's greeting arrives in Telegram and names https://fractera.ai.

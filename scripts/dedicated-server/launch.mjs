@@ -18,7 +18,7 @@
 //                                   activate · upload · claim (739-5: the architect's one-time code, passed back once, kept nowhere here);
 //                                   a certificate run is refused here past the Let's Encrypt weekly limits (738-5)
 //   signin                          where sign-in leads, asked from the internet (738-6)
-//   telegram                        758, step 5: the server's own bot (stdin `body`: { action: token|skip|link, token? }) — a token before the
+//   telegram                        758, step 5: the server's own bot (stdin `body`: { action: token|skip|link|messages, token?, lines? }) — a token before the
 //                                   server's node lives waits in `/root/.fractera/telegram.json` (0600) and is handed to that node's channel
 //                                   door at its first answer (`readState`); the page sees only the tail, the bot's name and the invite link
 //                                   744-6: `door activate` is refused (`not-ready`, the names missing) until every required name has a
@@ -46,7 +46,7 @@ import { domainMissing } from '../../lib/hosting/launch-domain.mjs'
 import { relationOf } from '../../lib/hosting/relation.mjs'
 import { q, startDetached } from '../../lib/hosting/remote.mjs'
 import { cleanDomain } from '../../lib/hosting/server-domain.mjs'
-import { readWaiting, tailOf, telegramView, TOKEN_SHAPE } from '../../lib/hosting/server-telegram.mjs'
+import { cleanLines, greetText, readWaiting, tailOf, telegramView, TOKEN_SHAPE } from '../../lib/hosting/server-telegram.mjs'
 import { markLaunched } from '../../lib/hosting/launched.mjs'
 import { closeVisit, connect, exec, openVisit, serverDir, upload } from '../../lib/hosting/ssh.mjs'
 
@@ -119,7 +119,7 @@ async function readState(client) {
   s.relation = s.probe ? relationOf(s.probe, forkUrl()) : null
   if (s.relation?.nodeUnrelated) s.relation.nodes = [...(s.probe?.fractera ? [FOLDER] : []), ...(s.probe?.otherNodes ?? [])]
   s.records = launchRecords(s.domain?.domain ?? null, ipOf(s), s.domain?.detect?.zone ?? null)
-  s.telegram = await readTelegram(client, Boolean(s.core))
+  s.telegram = await readTelegram(client, Boolean(s.core), { zone: s.core?.zone ?? s.domain?.domain ?? null, ip: ipOf(s) })
   if (s.core) {
     recordIssued(s)
     const zone = s.domain?.detect?.zone ?? s.core.zone
@@ -206,27 +206,32 @@ const TELEGRAM_FILE = () => `${DIR}/telegram.json`
 
 /** The server node's own channel door of its main agent on its loopback (the owner at that machine — `isOwnerAtMachine`); its JSON or null.
  * 🔒 THE TOKEN NEVER ENTERS AN ARGV: the body goes by the SSH channel's stdin to `curl --data-binary @-` (737-11a, `e6961403`). */
-async function channel(client, body = null) {
+async function channel(client, body = null, door = 'channel') {
   const node = `/home/${REMOTE_USER}/${FOLDER}`
   // ✗ 2026-11-16 on 109.199.105.213: the node answers `/en/architect/build/…` with a redirect to `/en/build/…` (the panel's addresses drop
   // «architect»); curl without -L read the redirect as silence and the token waited forever. The page's own address now, and the redirect
   // followed with its method and body.
   const send = body ? `-X POST -H 'content-type: application/json' --data-binary @- --post301 --post302 --post303` : ''
-  const cmd = `node_dir="\${STATE_NODE_DIR:-${node}}"; port=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["port"])' "$node_dir/logs/runtime.json" 2>/dev/null) && curl -s -L --max-redirs 3 --max-time 25 ${send} "http://localhost:$port/en/build/agent-api/channel"`
+  const cmd = `node_dir="\${STATE_NODE_DIR:-${node}}"; port=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["port"])' "$node_dir/logs/runtime.json" 2>/dev/null) && curl -s -L --max-redirs 3 --max-time 25 ${send} "http://localhost:$port/en/build/agent-api/${door}"`
   const r = await exec(client, cmd, { timeoutMs: 40_000, ...(body ? { stdin: JSON.stringify(body) } : {}) })
   try { const v = JSON.parse(r.stdout); return v && typeof v === 'object' ? v : null } catch { return null }
 }
 
-/** The bot as the page may see it. A token that waited for the node is handed over the first time the node answers, then removed. */
-async function readTelegram(client, live) {
-  const waiting = readWaiting((await exec(client, `cat ${q(TELEGRAM_FILE())} 2>/dev/null || true`)).stdout)
+/** The bot as the page may see it. A token that waited for the node is handed over the first time the node answers, then removed.
+ *  761: with the bot's lines it waited with, the server's Claude Code sign-in (`claude-auth`) and, once both are there, the greeting. */
+async function readTelegram(client, live, site = {}) {
+  const raw = (await exec(client, `cat ${q(TELEGRAM_FILE())} 2>/dev/null || true`)).stdout
+  const waiting = readWaiting(raw)
+  let lines = null
+  try { lines = cleanLines(JSON.parse(raw || 'null')?.lines) } catch { lines = null }
   let state = live ? await channel(client) : null
   if (live && waiting.token && state?.configured !== true) {
     const saved = await channel(client, { action: 'token', token: waiting.token })
     if (saved?.ok) {
+      if (lines) await channel(client, { action: 'messages', messages: lines })
       await exec(client, `rm -f ${q(TELEGRAM_FILE())}`)
       state = await channel(client)
-      return telegramView({ pending: false, tail: null, skipped: false }, state)
+      return withAgent(client, telegramView({ pending: false, tail: null, skipped: false }, state), site)
     }
     // Telegram refused the waiting token: it is dropped (never tried again on every read), the step asks for a new one by its tail
     if (saved?.error === 'token-rejected' || saved?.error === 'bad-format') {
@@ -235,7 +240,40 @@ async function readTelegram(client, live) {
     }
   }
   if (live && waiting.token && state?.configured === true) await exec(client, `rm -f ${q(TELEGRAM_FILE())}`)
-  return telegramView(waiting, state && state.ok !== false ? state : null)
+  return withAgent(client, telegramView(waiting, state && state.ok !== false ? state : null), site)
+}
+
+const GREETED_FILE = () => `${DIR}/telegram-greeted.json`
+
+/** 761-1: can the server's agent answer — is its Claude Code signed in (`claude auth status` behind its own door)? Once the bot is set
+ *  and the sign-in is there, the server's main agent is woken ONCE by the node line `moved` to greet the person, naming the site. */
+async function withAgent(client, view, site) {
+  if (!view.live || !view.configured) return { ...view, signedIn: null, greeted: false }
+  const auth = await channel(client, null, 'claude-auth')
+  const signedIn = typeof auth?.loggedIn === 'boolean' ? auth.loggedIn : null
+  // 🔒 ONE GREETING: the mark is written BEFORE the wake (a wake whose answer is lost never wakes twice); a failed one is tried again
+  // only after ten minutes, never on every read of the page.
+  let mark = null
+  try { mark = JSON.parse((await exec(client, `cat ${q(GREETED_FILE())} 2>/dev/null || true`)).stdout || 'null') } catch { mark = null }
+  let greeted = mark?.ok === true
+  const fresh = mark && Date.now() - Date.parse(mark.at) < 10 * 60_000
+  if (signedIn === true && !greeted && !fresh && view.allowed > 0) greeted = await greet(client, site)
+  return { ...view, signedIn, greeted }
+}
+
+async function greet(client, site) {
+  const node = `/home/${REMOTE_USER}/${FOLDER}`
+  const as = dry ? '' : `runuser -u ${REMOTE_USER} -- env HOME=/home/${REMOTE_USER} `
+  // the greeting runs on Haiku (the owner, 2026-11-16: a simple act — the economy model); a failure of the switch never stops the greeting
+  const js = "const t=require('fs').readFileSync(0,'utf8');const r=process.cwd();const nl=require(r+'/lib/agent-kit/node-line.cjs');require(r+'/lib/deploy/agent-return.cjs').wakeMainByNode(r,nl.head('moved','build')+t).then((w)=>console.log(JSON.stringify({ok:!w,why:w||null})))"
+  const cmd = `node_dir="\${STATE_NODE_DIR:-${node}}"; cd "$node_dir" && { ${as}node scripts/main-agent-cli.mjs session model haiku build >/dev/null 2>&1 || true; ${as}node -e ${q(js)}; }`
+  const markIt = (ok) => upload(client, GREETED_FILE(), `${JSON.stringify({ at: new Date().toISOString(), ok, site: site.zone ?? site.ip ?? null })}\n`, 0o600)
+  await markIt(false)
+  const r = await exec(client, cmd, { timeoutMs: 90_000, stdin: greetText(site) })
+  let ok = false
+  try { ok = JSON.parse(r.stdout.trim().split('\n').pop() ?? '')?.ok === true } catch { ok = false }
+  if (ok) await markIt(true)
+  return ok
 }
 
 async function writeTelegram(client, value) {
@@ -444,7 +482,8 @@ const verbs = {
   // 758: step 5 — the server's own bot, while the server installs or after it.
   async telegram() {
     const body = (await input()).body ?? {}
-    const action = ['token', 'skip', 'link'].find((a) => a === body?.action)
+    const action = ['token', 'skip', 'link', 'messages'].find((a) => a === body?.action)
+    const lines = cleanLines(body?.lines)
     if (!action) return fail('bad-action')
     const token = action === 'token' && typeof body.token === 'string' ? body.token.trim() : ''
     if (action === 'token' && !TOKEN_SHAPE.test(token)) return fail('bad-token')
@@ -456,6 +495,13 @@ const verbs = {
         if (!s0.telegram?.configured && !s0.telegram?.pending) await writeTelegram(client, { skipped: true })
         return done({ ok: true, state: await readState(client) })
       }
+      if (action === 'messages') {
+        // 761-2/761-14: the bot's lines in the page's language, each naming the site — sent again to a bot set before 761
+        if (!lines) return fail('bad-lines', { state: s0 })
+        if (!live || !s0.telegram?.configured) return fail('no-bot', { state: s0 })
+        const r = await channel(client, { action: 'messages', messages: lines })
+        return r?.ok ? done({ ok: true, state: s0 }) : fail(String(r?.error ?? 'server-silent'), { state: s0 })
+      }
       if (action === 'link') {
         if (!live || !s0.telegram?.configured) return fail('no-bot', { state: s0 })
         const r = await channel(client, { action: 'activation-link' })
@@ -465,9 +511,10 @@ const verbs = {
         // the node lives: the token goes straight to its channel door, which checks it with Telegram before it keeps it
         const r = await channel(client, { action: 'token', token })
         if (!r?.ok) return fail(String(r?.error ?? 'server-silent'), { state: s0 })
+        if (lines) await channel(client, { action: 'messages', messages: lines })
         await exec(client, `rm -f ${q(TELEGRAM_FILE())}`)
       } else {
-        await writeTelegram(client, { token })
+        await writeTelegram(client, { token, ...(lines ? { lines } : {}) })
       }
       done({ ok: true, tail: tailOf(token), state: await readState(client) })
     } finally { client.end() }

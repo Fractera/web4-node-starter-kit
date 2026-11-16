@@ -234,7 +234,8 @@ await t('a token before the node lives waits on the server (0600) and never come
   assert.equal(bad.a?.reason, 'bad-token', bad.out)
   const later = await run(E, 'telegram', [], { key: E.key, body: { action: 'skip' } })
   assert.deepEqual([later.a?.ok, later.a?.state?.telegram?.skipped, later.a?.state?.telegram?.pending], [true, true, false], later.out)
-  const put = await run(E, 'telegram', [], { key: E.key, body: { action: 'token', token: TOKEN } })
+  const LINES = { active: 'Сервер bot.invalid (https://bot.invalid) · on', inactive: 'Сервер bot.invalid (https://bot.invalid) · off', noSubscription: 'Сервер bot.invalid (https://bot.invalid) · sign in', lang: 'ru' }
+  const put = await run(E, 'telegram', [], { key: E.key, body: { action: 'token', token: TOKEN, lines: LINES } })
   assert.deepEqual([put.a?.ok, put.a?.tail, put.a?.state?.telegram?.pending, put.a?.state?.telegram?.skipped, put.a?.state?.telegram?.live], [true, 'efgh', true, false, false], put.out)
   assert.equal(put.out.includes(TOKEN), false, 'the token never comes back to the computer')
   assert.equal(put.out.includes('efgh'), true, 'control: the same output does carry the tail')
@@ -247,6 +248,7 @@ await t('a token before the node lives waits on the server (0600) and never come
   const got = []
   let bot = { configured: false }
   let answer = null // what the channel door answers to a token; null — it accepts it
+  let auth = { ok: true, loggedIn: false } // 761-1: the server's `claude auth status` behind its door
   const core = { zone: 'bot.invalid', rows: [], steps: { domain: true, dns: false, certs: false, check: false, active: false }, certsRun: null, helper: true }
   const door = createServer((req, res) => {
     let body = ''
@@ -255,11 +257,13 @@ await t('a token before the node lives waits on the server (0600) and never come
       res.setHeader('content-type', 'application/json')
       // as a live server node: the old address of the panel redirects (the panel's addresses drop «architect»), the page's own answers
       if (req.url.endsWith('/architect/build/agent-api/channel')) { res.statusCode = 307; res.setHeader('location', req.url.replace('/architect/', '/')); return res.end() }
+      if (req.url.endsWith('/build/agent-api/claude-auth')) return res.end(JSON.stringify(auth))
       if (!req.url.endsWith('/build/agent-api/channel')) return res.end(JSON.stringify(core))
       if (req.method === 'GET') return res.end(JSON.stringify({ ok: true, service: 'build', ...bot, allowed: bot.configured ? 1 : 0 }))
       const b = JSON.parse(body || '{}')
       got.push(b)
       if (b.action === 'activation-link') return res.end(JSON.stringify({ ok: true, url: 'https://t.me/dry_server_bot?start=abc' }))
+      if (b.action === 'messages') return res.end(JSON.stringify({ ok: true }))
       if (answer) return res.end(answer)
       bot = { configured: true, tail: b.token.slice(-4), botUsername: 'dry_server_bot', botName: 'Dry' }
       res.end(JSON.stringify({ ok: true, tail: b.token.slice(-4), username: 'dry_server_bot' }))
@@ -271,6 +275,12 @@ await t('a token before the node lives waits on the server (0600) and never come
   mkdirSync(join(own, 'logs'), { recursive: true })
   writeFileSync(join(own, 'data', 'node', 'server.json'), JSON.stringify({ phase: 'live', ip: '127.0.0.1', at: '2026-11-16T01:00:00Z' }))
   writeFileSync(join(own, 'logs', 'runtime.json'), JSON.stringify({ port: door.address().port }))
+  // 761-1: the server node's own wake of its main agent, as a stand-in that writes down what it was asked
+  mkdirSync(join(own, 'lib', 'agent-kit'), { recursive: true })
+  mkdirSync(join(own, 'lib', 'deploy'), { recursive: true })
+  writeFileSync(join(own, 'lib', 'agent-kit', 'node-line.cjs'), "module.exports = { head: (k, e) => '⟦node · ' + k + ' · ' + e + '⟧ ' }\n")
+  writeFileSync(join(own, 'lib', 'deploy', 'agent-return.cjs'), "module.exports = { wakeMainByNode: async (r, t) => { require('fs').appendFileSync(r + '/woke.txt', t + '\\n'); return null } }\n")
+  const woke = () => (existsSync(join(own, 'woke.txt')) ? readFileSync(join(own, 'woke.txt'), 'utf8').trim().split('\n').filter(Boolean) : [])
   process.env.STATE_NODE_DIR = own
   try {
     const s = await run(E, 'state')
@@ -282,6 +292,22 @@ await t('a token before the node lives waits on the server (0600) and never come
     assert.equal(got.filter((b) => b.action === 'token').length, 1, 'never handed twice')
     const l = await run(E, 'telegram', [], { key: E.key, body: { action: 'link' } })
     assert.deepEqual([l.a?.ok, l.a?.link], [true, 'https://t.me/dry_server_bot?start=abc'], l.out)
+    // T2 (761-2/761-14): the lines the token waited with reached the node's channel together with it, in the page's language
+    assert.deepEqual(got.filter((b) => b.action === 'messages').map((b) => b.messages.lang), ['ru'])
+    assert.ok(got.find((b) => b.action === 'messages').messages.noSubscription.includes('bot.invalid (https://bot.invalid)'))
+    // T3 (761-1): not signed in → no greeting; negative control of the next block
+    assert.deepEqual([s.a?.state?.telegram?.signedIn, s.a?.state?.telegram?.greeted, woke().length], [false, false, 0], s.out)
+    auth = { ok: true, loggedIn: true }
+    const g = await run(E, 'state')
+    assert.deepEqual([g.a?.state?.telegram?.signedIn, g.a?.state?.telegram?.greeted], [true, true], g.out)
+    assert.equal(woke().length, 1, 'the greeting woke the server\'s main agent once')
+    assert.ok(woke()[0].startsWith('⟦node · moved · build⟧ ') && woke()[0].includes('bot.invalid (https://bot.invalid)'), woke()[0])
+    assert.equal((await run(E, 'state')).a?.state?.telegram?.greeted, true)
+    assert.equal(woke().length, 1, 'never a second greeting')
+    // op messages: the lines again for a bot set before 761
+    assert.equal((await run(E, 'telegram', [], { key: E.key, body: { action: 'messages', lines: { ...LINES, lang: 'en' } } })).a?.ok, true)
+    assert.equal(got.filter((b) => b.action === 'messages').at(-1).messages.lang, 'en')
+    assert.equal((await run(E, 'telegram', [], { key: E.key, body: { action: 'messages', lines: { active: '' } } })).a?.reason, 'bad-lines')
     // a token that waited and Telegram refuses: dropped, named by its tail, the step asks again
     bot = { configured: false }
     answer = JSON.stringify({ ok: false, error: 'token-rejected' })

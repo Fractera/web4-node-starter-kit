@@ -57,6 +57,10 @@ export type ServerLaunchWords = {
   telegram: {
     text: string; how: string[]; label: string; tokenNote: string; save: string; later: string; laterNote: string; connectNow: string
     pending: string; rejected: string; on: string; admitted: string; link: string; linkNote: string; installing: string; waitNode: string
+    /** 761-2/761-14: the bot's own lines — `{site}` `{link}` the site, `{terminal}` `{subscription}` the server panel's pages (or `noPanel`) */
+    lines: { active: string; inactive: string; noSubscription: string; noPanel: string }
+    /** 761-1: can the server's agent answer */
+    agentOn: string; agentOff: string; signIn: string; signInOpen: string; signInWatch: string; greeted: string
     /** 760-10: the bot made by the main agent in the person's Telegram Web — `{server}` `{name}` `{username}`; the token stays the person's */
     agent: { title: string; steps: string[]; note: string; button: string; telegramTask: string; botName: string }
   }
@@ -191,6 +195,18 @@ const en: ServerLaunchWords = {
     linkNote: "The link admits whoever opens it first: open it yourself, do not forward it.",
     installing: "The installation goes on meanwhile: {stage}.",
     waitNode: "The installation is done; waiting for the server's node to answer.",
+    lines: {
+      active: "Server {site} ({link}) · this message was sent by the server's node. The agent's terminal is on — write, Claude Code answers.",
+      inactive: "Server {site} ({link}) · this message was sent by the server's node. The agent is off, Claude Code will not answer. Start it: {terminal}",
+      noSubscription: "Server {site} ({link}) · this message was sent by the server's node. Claude Code on this server is not signed in to a subscription. Sign in: {subscription}",
+      noPanel: "the server's panel, opened from the launch page",
+    },
+    agentOn: "The server's agent is signed in to Claude Code and can answer; the greeting comes to Telegram by itself.",
+    agentOff: "Claude Code on the server is not signed in: the bot answers only with the node's line, the agent cannot reply. The sign-in is yours — on the server's own page.",
+    signIn: "Sign in on the server",
+    signInOpen: "Open the server's subscription page",
+    signInWatch: "Waiting for the sign-in: this step checks the server every few seconds.",
+    greeted: "The server's agent is signed in, and its greeting has gone to Telegram.",
     agent: {
       title: "Claude can make the bot in your Telegram Web",
       steps: [
@@ -347,6 +363,18 @@ const ru: ServerLaunchWords = {
     linkNote: "Ссылка допускает того, кто откроет её первым: откройте сами, не пересылайте.",
     installing: "Установка тем временем идёт: {stage}.",
     waitNode: "Установка закончилась; ждём, когда ответит узел сервера.",
+    lines: {
+      active: "Сервер {site} ({link}) · это сообщение прислал узел сервера. Терминал агента включён — пишите, Claude Code ответит.",
+      inactive: "Сервер {site} ({link}) · это сообщение прислал узел сервера. Агент выключен, Claude Code не ответит. Включить: {terminal}",
+      noSubscription: "Сервер {site} ({link}) · это сообщение прислал узел сервера. Claude Code на этом сервере не вошёл в подписку. Войти: {subscription}",
+      noPanel: "пульт сервера на странице запуска",
+    },
+    agentOn: "Агент сервера вошёл в Claude Code и может отвечать; приветствие придёт в Telegram само.",
+    agentOff: "Claude Code на сервере не вошёл в подписку: бот отвечает только строкой узла, агент ответить не может. Войти — ваше действие, на странице самого сервера.",
+    signIn: "Войти на сервере",
+    signInOpen: "Открыть страницу подписки сервера",
+    signInWatch: "Ждём входа: шаг сам спрашивает сервер каждые несколько секунд.",
+    greeted: "Агент сервера вошёл в подписку, его приветствие ушло в Telegram.",
     agent: {
       title: "Claude создаст бота в вашем Telegram Web",
       steps: [
