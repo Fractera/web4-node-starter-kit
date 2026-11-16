@@ -9,7 +9,7 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Last change:** 2026-11-16 ~10:50 UTC — the owner's four problems (launch password, domain page vs server, passport fields, where the project lives) studied; plan 760 written, no code.
 
-**Next action:** 760-9 — the Chrome card and button on the records card (terminal drawer with the ready task). Done in code, waiting for the rebuild to prove in Chrome/live: 760-1 (7ce420eb; test:launch-remember 8/8) and 760-8 (test:server-records 6/6; tsc 0; test:hosting 76, launch-domain 4, ladder-rule 17, hosting-launch 22 + the pre-existing claim ✗; guards green). 760-8 live proof = fractera.ai written by the node after the owner's confirm on the launch page. One core rebuild after 760-1, 8, 9, 10.
+**Next action:** 760-10 — step 5: the card «Claude создаст бота в вашем Telegram Web» + the terminal task (the agent never reads or types the token). Done in code, waiting for the rebuild: 760-1 (7ce420eb), 760-8 (65af93d3), 760-9 (git log «760-9»; test:chrome-task 4/4). Then ONE core rebuild (serve:rebuild) and the Chrome proofs of 760-1/8/9/10 on the launch page with 109.199.105.213.
 
 ## The person's decisions (verbatim)
 

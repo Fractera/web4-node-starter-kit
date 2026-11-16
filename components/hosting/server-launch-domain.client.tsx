@@ -7,9 +7,10 @@ import { Ladder } from "@/components/hosting/ladder-step"
 import type { LaunchState } from "@/components/hosting/server-launch.client"
 import { RecordsStep } from "@/components/hosting/server-ladder-records.client"
 import { type CfAnswer, CloudflareWrite } from "@/components/hosting/server-launch-cf.client"
+import { ChromeHelp, chromeTask } from "@/components/hosting/chrome-help.client"
 import type { ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
 import { launchView } from "@/components/hosting/server-launch-rungs"
-import { DomainStep, domainLines, WhereStep, WhoStep } from "@/components/hosting/server-ladder-steps.client"
+import { DomainStep, domainLines, quickNames, WhereStep, WhoStep } from "@/components/hosting/server-ladder-steps.client"
 import type { ServerLadderWords } from "@/components/hosting/server-ladder.i18n"
 import { Small } from "@/components/ui/typography"
 import { domainSteps } from "@/lib/hosting/launch-domain.mjs"
@@ -27,8 +28,8 @@ import { domainSteps } from "@/lib/hosting/launch-domain.mjs"
 
 type Act = (action: string, extra?: Record<string, unknown>) => Promise<unknown>
 
-export function LaunchDomain({ state, words, cfWords, dialogUi, note, busy, onAct }: {
-  state: LaunchState; words: ServerLadderWords; cfWords: ServerLaunchWords["cf"]; dialogUi: AppDialogUi; note: string; busy: boolean; onAct: Act
+export function LaunchDomain({ lang, state, words, launchWords, dialogUi, note, busy, onAct }: {
+  lang: string; state: LaunchState; words: ServerLadderWords; launchWords: Pick<ServerLaunchWords, "cf" | "chrome">; dialogUi: AppDialogUi; note: string; busy: boolean; onAct: Act
 }) {
   const view = launchView(state)
   const [prefill, setPrefill] = useState<string | null>(null)
@@ -59,9 +60,21 @@ export function LaunchDomain({ state, words, cfWords, dialogUi, note, busy, onAc
       const ask = <WhoStep busy={busy} onChoose={(way) => onAct("way", { way })} view={view} words={words} />
       if (!onCloudflare || !cf) return ask
       const write = (remove: string[]) => onAct("records-write", { remove }).then((a) => { const next = (a as { cf?: CfAnswer } | null)?.cf; if (next) setCf(next) })
-      return <CloudflareWrite busy={busy} cf={cf} dialogUi={dialogUi} manual={ask} onAgain={plan} onWrite={write} words={cfWords} />
+      return <CloudflareWrite busy={busy} cf={cf} dialogUi={dialogUi} manual={ask} onAgain={plan} onWrite={write} words={launchWords.cf} />
     })(),
-    records: <RecordsStep busy={busy} onCheck={() => onAct("dns")} view={view} words={words} />,
+    // 760-9: under the records by hand — «Claude впишет эти записи в вашем Chrome» with the task for the main agent
+    records: (() => {
+      const { at, star } = quickNames(view)
+      const conflicts = (view.records[0]?.records ?? []).filter((r) => view.dns[r.host] === "elsewhere" || view.dns[r.host] === "aaaa").map((r) => r.name)
+      const d = view.detect
+      const c = chromeTask(launchWords.chrome, { zone: d?.zone ?? view.zone ?? "", dnsHost: d?.dnsHost, ns: d?.ns ?? [], registrar: d?.registrar ?? null, at, star, ip: view.ip ?? "", conflicts })
+      return (
+        <div className="flex flex-col gap-3" data-block="server-launch-records">
+          <RecordsStep busy={busy} onCheck={() => onAct("dns")} view={view} words={words} />
+          {view.readOnly || !c ? null : <ChromeHelp cabinet={c.cabinet} lang={lang} task={c.task} words={launchWords.chrome} />}
+        </div>
+      )
+    })(),
   }
   const rungs = (["domain", "where", "who", "records"] as const).map((id) => ({ id, title: words.step[id], done: done[id], summary: summary[id], body: body[id] }))
   return (

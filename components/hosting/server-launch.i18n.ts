@@ -46,6 +46,8 @@ export type ServerLaunchWords = {
   recheckServer: string
   domainNote: string
   /** 760-8: step 3 when the DNS is kept by Cloudflare — the node writes with its key when the key sees the zone; `{zone}` `{name}` `{ip}` `{type}` `{content}` */
+  /** 760-9: «Claude сделает это в вашем Chrome» — the card and the ready task for the main agent; `{zone}` `{cabinet}` `{at}` `{star}` `{ip}` `{conflicts}` */
+  chrome: { title: string; steps: string[]; note: string; button: string; task: string; cabinetCf: string; cabinetOther: string; none: string }
   cf: { title: string; lead: string; add: string; change: string; remove: string; blocked: string; nothing: string; write: string; byHand: string; confirmTitle: string; confirmLead: string; confirmRemove: string; confirm: string; cancel: string; noKey: string; notVisible: string; keyLink: string; again: string }
   /** 744-7: `silent` — Fractera stands there, its node does not answer yet (the next step waits for it); `ask` reads the server again */
   install: { text: string; install: string; update: string; again: string; running: string; done: string; failed: string; leave: string; silent: string; ask: string }
@@ -130,6 +132,20 @@ const en: ServerLaunchWords = {
   preflight: { ok: "A trial merge on the server passed: the update will go through.", stop: "A trial merge on the server stops on files changed both there and in Fractera: {files}. The update would be refused; the server is untouched.", unknown: "Could not check in advance whether the update will pass." },
   recheckServer: "Check again",
   domainNote: "The installation opens once the domain has a way to write its records and they were checked once. They need not answer yet: DNS wakes up while the server installs, and the second check waits for it.",
+  chrome: {
+    title: "Claude can write these records in your Chrome",
+    steps: [
+      "Use Google Chrome with the Claude extension signed in to your account (https://claude.ai/chrome).",
+      "In that Chrome, sign in to the place that keeps the records: {cabinet}.",
+      "Press the button: the main agent's terminal opens with the task ready. Send it and watch the tab fill in.",
+    ],
+    note: "Passwords, codes and payments stay yours. A record to delete the agent prepares, and you press «Delete».",
+    button: "Hand it to the agent",
+    task: "Write the DNS records of {zone} in my Chrome (skill help-in-browser). The records are kept by {cabinet}; I am signed in there in this Chrome. Add: A «{at}» → {ip} and A «{star}» → {ip}, grey cloud (DNS only). Records in the way: {conflicts} — prepare their deletion, I press it. Do not touch mail or any other record. Then come back to «Activate a dedicated server» and press «Check DNS» in step 3.",
+    cabinetCf: "Cloudflare (dash.cloudflare.com → {zone} → DNS → Records)",
+    cabinetOther: "the cabinet that keeps its DNS (servers {ns}){registrar}",
+    none: "none",
+  },
   cf: {
     title: "The node writes the records itself",
     lead: "This domain's DNS is in Cloudflare, and the node's Cloudflare key sees the zone {zone}. The node writes the records with a grey cloud (DNS only) and checks them.",
@@ -259,6 +275,20 @@ const ru: ServerLaunchWords = {
   preflight: { ok: "Пробное слияние на сервере прошло: обновление пройдёт.", stop: "Пробное слияние на сервере останавливается на файлах, изменённых и там, и в Fractera: {files}. Обновление было бы отклонено; сервер не тронут.", unknown: "Заранее проверить, пройдёт ли обновление, не удалось." },
   recheckServer: "Проверить ещё раз",
   domainNote: "Установка откроется, когда у домена будет выбран способ внести записи и они проверены один раз. Отвечать им пока не обязательно: DNS просыпается, пока сервер ставится, а повторная проверка их дождётся.",
+  chrome: {
+    title: "Claude впишет эти записи в вашем Chrome",
+    steps: [
+      "Откройте Google Chrome с расширением Claude, вошедшим в ваш аккаунт (https://claude.ai/chrome).",
+      "В этом же Chrome войдите туда, где хранятся записи: {cabinet}.",
+      "Нажмите кнопку: откроется терминал главного агента с готовой задачей. Отправьте её и смотрите, как заполняется вкладка.",
+    ],
+    note: "Пароли, коды и оплата остаются за вами. Запись, которую нужно удалить, агент подготовит, а «Delete» нажмёте вы.",
+    button: "Отдать агенту",
+    task: "Впиши записи DNS домена {zone} в моём Chrome (навык help-in-browser). Записи хранит {cabinet}, я уже вошёл туда в этом Chrome. Добавь: A «{at}» → {ip} и A «{star}» → {ip}, облако серое (DNS only). Мешающие записи: {conflicts}. Подготовь их удаление, нажму я. Почту и прочие записи не трогай. Потом вернись на страницу «Активация выделенного сервера» и нажми «Проверить DNS» в шаге 3.",
+    cabinetCf: "Cloudflare (dash.cloudflare.com → {zone} → DNS → Records)",
+    cabinetOther: "кабинет, где ведётся DNS домена (серверы {ns}){registrar}",
+    none: "нет",
+  },
   cf: {
     title: "Узел впишет записи сам",
     lead: "DNS этого домена в Cloudflare, и ключ Cloudflare узла видит зону {zone}. Узел впишет записи с серым облаком (DNS only) и сам их проверит.",

@@ -62,7 +62,7 @@ type Answer = { ok?: boolean; reason?: string; state?: LaunchState; fingerprint?
 /** 744-3: `until` — the end of this browser's access to the server (the server's own deadline); the key itself never reaches the page. */
 type Target = { host: string; port: number; fingerprint: string | null; until: string | null }
 
-export function ServerLaunch({ words, ladderWords, domainWords, dialogUi }: { words: ServerLaunchWords; ladderWords: ServerLadderWords; domainWords: ServerDomainWords; dialogUi: AppDialogUi }) {
+export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }: { lang: string; words: ServerLaunchWords; ladderWords: ServerLadderWords; domainWords: ServerDomainWords; dialogUi: AppDialogUi }) {
   const [form, setForm] = useState({ host: "", port: "22", password: "" })
   const [target, setTarget] = useState<Target | null>(null)
   const [state, setState] = useState<LaunchState | null>(null)
@@ -222,7 +222,7 @@ export function ServerLaunch({ words, ladderWords, domainWords, dialogUi }: { wo
       </div>
     ),
     check: <CheckStep busy={busy} dialogUi={dialogUi} onAct={async (a, x) => { await act(a, x) }} state={state} words={words} />,
-    domain: <LaunchDomain busy={busy} cfWords={words.cf} dialogUi={dialogUi} note={words.domainNote} onAct={act} state={state} words={ladderWords} />,
+    domain: <LaunchDomain busy={busy} dialogUi={dialogUi} lang={lang} launchWords={words} note={words.domainNote} onAct={act} state={state} words={ladderWords} />,
     install: <InstallStep busy={busy} onAct={act} state={state} strategy={strategy} words={words} />,
     telegram: <TelegramStep busy={busy} onAct={act} state={state} words={words} />,
     recheck: <RecheckStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,

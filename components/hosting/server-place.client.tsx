@@ -16,7 +16,7 @@ import { useNodePlace } from "@/components/node-state/use-node-place.client"
 // read as «server». On the tunnel the launch view stays read-only — its door refuses writes there.
 // 🔒 D36: a live server this computer launched is named above the launch form, with its address.
 
-export function ServerPlace({ words, ladderWords, domainWords, dialogUi }: { words: ServerLaunchWords; ladderWords: ServerLadderWords; domainWords: ServerDomainWords; dialogUi: AppDialogUi }) {
+export function ServerPlace({ lang, words, ladderWords, domainWords, dialogUi }: { lang: string; words: ServerLaunchWords; ladderWords: ServerLadderWords; domainWords: ServerDomainWords; dialogUi: AppDialogUi }) {
   const place = useNodePlace()
   if (place === undefined) return null
   if (place?.kind === "server") return <div className="my-6" data-block="server-place-own"><ServerLadder dialogUi={dialogUi} domainWords={domainWords} fallback={words.readOnly} words={ladderWords} /></div>
@@ -29,7 +29,7 @@ export function ServerPlace({ words, ladderWords, domainWords, dialogUi }: { wor
           {before}<a className="underline" href={`https://${live.domain}/`}>{`https://${live.domain}`}</a>{after}
         </p>
       ) : null}
-      <ServerLaunch dialogUi={dialogUi} domainWords={domainWords} ladderWords={ladderWords} words={words} />
+      <ServerLaunch dialogUi={dialogUi} domainWords={domainWords} ladderWords={ladderWords} lang={lang} words={words} />
     </>
   )
 }
