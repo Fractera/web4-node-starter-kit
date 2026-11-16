@@ -75,7 +75,7 @@ The owner, 2026-11-14: «Никакого переезда нет есть пр�
 
 | Where the page is opened | What it shows | Its door |
 |---|---|---|
-| the person's computer | the preconditions (8 GB, 4 cores, the partner link, Ubuntu), then «Запустить сервер» — empty on every visit: the IP, the SSH port and the root password → eight steps: the server · its check (with the installed Fractera version and «behind N») · the domain (detect, access to the registrar — the only way since 759, the records by hand, a first check) · installation · the server's own Telegram bot, optional, opened while the installation runs (758) · the records again · certificates with the checklist · ready (switch-on, sign-in checked) | `/api/node/launch` (the architect, never a public address): stateless — every call names the server, the answer is the server's own state over SSH (`scripts/dedicated-server/launch.mjs` → `state.sh` there) |
+| the person's computer | the preconditions (8 GB, 4 cores, the partner link, Ubuntu), then «Запустить сервер» — empty on every visit: the IP, the SSH port and the root password → eight steps: the server · its check (with the installed Fractera version and «behind N») · the domain (detect; 760-8: who writes is measured — the DNS in Cloudflare and the node's key sees the zone → the node writes after one confirm naming every record, otherwise the key first or the records by hand where the DNS is kept; a first check) · installation · the server's own Telegram bot, optional, opened while the installation runs (758) · the records again · certificates with the checklist · ready (switch-on, sign-in checked) | `/api/node/launch` (the architect, never a public address): stateless — every call names the server, the answer is the server's own state over SSH (`scripts/dedicated-server/launch.mjs` → `state.sh` there) |
 | a server node, as the owner | that server's own domain steps: domain · records · certificates · HTTPS · switch on | `/api/node/server/domain` |
 | a server's bare IP, a temporary address | the same steps read-only — the records to write at the registrar | `/api/node/server/domain` (GET only) |
 
@@ -85,7 +85,7 @@ in their `.i18n.ts` files, chosen on the server (`widgets.tsx`). On the server: 
 `certs.mjs`. How the main agent leads it: skill `dedicated-server`.
 
 **Build cost and caching.** The page is prerendered like every page of the layer; nothing about the machine is printed into the build.
-The launch asks nothing until the person presses «Проверить сервер»; then once per act, and every 5 s only while the server installs or
+760-1: «Запомнить сервер на 24 часа» (on by default) keeps the IP, the port and the access deadline in this browser, never the password; the access itself is the HttpOnly cookie of 744-3. The launch asks nothing until the person presses «Проверить сервер»; then once per act, and every 5 s only while the server installs or
 issues certificates. The server's own ladder asks once on opening, after each act, and every 4 s while certificates are issued. A closed
 page costs nothing.
 

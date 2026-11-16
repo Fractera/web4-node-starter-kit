@@ -45,6 +45,8 @@ export type ServerLaunchWords = {
   preflight: { ok: string; stop: string; unknown: string }
   recheckServer: string
   domainNote: string
+  /** 760-8: step 3 when the DNS is kept by Cloudflare — the node writes with its key when the key sees the zone; `{zone}` `{name}` `{ip}` `{type}` `{content}` */
+  cf: { title: string; lead: string; add: string; change: string; remove: string; blocked: string; nothing: string; write: string; byHand: string; confirmTitle: string; confirmLead: string; confirmRemove: string; confirm: string; cancel: string; noKey: string; notVisible: string; keyLink: string; again: string }
   /** 744-7: `silent` — Fractera stands there, its node does not answer yet (the next step waits for it); `ask` reads the server again */
   install: { text: string; install: string; update: string; again: string; running: string; done: string; failed: string; leave: string; silent: string; ask: string }
   stage: Record<string, string>
@@ -93,7 +95,7 @@ const en: ServerLaunchWords = {
   },
   connect: "Check the server",
   connecting: "Connecting and checking the server… up to a minute.",
-  doing: { any: "Working on the server…", clear: "Freeing the server… under a minute.", domain: "Checking the domain…", detect: "Looking up where the domain's records live…", way: "Saving the way…", "dns-check": "Asking public DNS for every name…", dns: "Asking public DNS for every name…", certs: "Issuing certificates… about a minute per name.", check: "Checking HTTPS of every name from the internet…", activate: "Switching the domain on… sign-in restarts, up to a minute.", install: "Starting the installation…", state: "Reading the server…" },
+  doing: { "records-plan": "Asking Cloudflare whether the node can write the records itself…", "records-write": "Writing the records into Cloudflare and checking them…", any: "Working on the server…", clear: "Freeing the server… under a minute.", domain: "Checking the domain…", detect: "Looking up where the domain's records live…", way: "Saving the way…", "dns-check": "Asking public DNS for every name…", dns: "Asking public DNS for every name…", certs: "Issuing certificates… about a minute per name.", check: "Checking HTTPS of every name from the internet…", activate: "Switching the domain on… sign-in restarts, up to a minute.", install: "Starting the installation…", state: "Reading the server…" },
   another: "Another server",
   locked: "opens when the step before it is done",
   step: { server: "The server", check: "Check the server", domain: "Domain activation", install: "Server installation", telegram: "The server's Telegram bot", recheck: "Second check of the records", certs: "Security certificates", ready: "The server is ready" },
@@ -115,6 +117,7 @@ const en: ServerLaunchWords = {
     running: "A launch is already running on this server.", "server-unfit": "The node cannot live on this server: see the check.", "no-ip": "The server's IPv4 address is unknown.", "no-fork": "This node has no GitHub fork to install from.",
     "le-limit": "Let's Encrypt's weekly limit would be passed: {week} certificates this week, {want} more needed{over}. Wait until the week frees up.", "not-live": "The server's node does not run yet.",
     "not-confirmed": "The address in the dialog does not match.", "public-address": "This address is read-only.", "on-server": "A server node launches nothing.", network: "The node did not answer.", unreadable: "The answer could not be read.",
+    "tunnel-record": "A name leads to this computer's own tunnel: move it off the computer first.", "plan-changed": "The zone changed since you looked: read the new list and confirm again.", "cloudflare-read": "Cloudflare did not answer the reading of the zone.", "cloudflare-write": "Cloudflare refused a record: try again in a minute.",
     "bad-domain": "That is not a domain name.", "no-domain": "Choose a domain first.", "no-cloudflare-token": "This node has no Cloudflare key.",
   },
   changed: { title: "The server shows a different key", text: "The key this server shows is not the one this computer remembers. If you reinstalled the system, trust the new key: type the root password and press the button. If you did not, stop here — someone may be in the middle.", seen: "Now:", pinned: "Remembered:", trust: "The server was reinstalled — trust the new key" },
@@ -127,6 +130,26 @@ const en: ServerLaunchWords = {
   preflight: { ok: "A trial merge on the server passed: the update will go through.", stop: "A trial merge on the server stops on files changed both there and in Fractera: {files}. The update would be refused; the server is untouched.", unknown: "Could not check in advance whether the update will pass." },
   recheckServer: "Check again",
   domainNote: "The installation opens once the domain has a way to write its records and they were checked once. They need not answer yet: DNS wakes up while the server installs, and the second check waits for it.",
+  cf: {
+    title: "The node writes the records itself",
+    lead: "This domain's DNS is in Cloudflare, and the node's Cloudflare key sees the zone {zone}. The node writes the records with a grey cloud (DNS only) and checks them.",
+    add: "Add: A {name} → {ip}",
+    change: "Switch the proxy off: A {name} → {ip}",
+    remove: "Remove: {type} {name} → {content}",
+    blocked: "{name} leads to this computer's own tunnel ({content}). Move that name off the computer first: one name has one road.",
+    nothing: "The zone already leads every name to the server: nothing to write.",
+    write: "Write the records",
+    byHand: "Write them by hand instead",
+    confirmTitle: "Write the records of {zone}?",
+    confirmLead: "The node changes exactly these records in Cloudflare. Mail and every other record stay as they are.",
+    confirmRemove: "The removed records stop leading where they lead now: whatever answers on those names today stops answering.",
+    confirm: "Write",
+    cancel: "Not now",
+    noKey: "This domain's DNS is in Cloudflare, but the node has no Cloudflare key. Give it one on «Domain activation» → the Cloudflare key card, and the node writes the records itself. Or write them by hand below.",
+    notVisible: "This domain's DNS is in Cloudflare, but the node's key does not see the zone {zone}: it lives in another Cloudflare account. Give the node a key with access to that account on «Domain activation» → the Cloudflare key card, then «Check again». Or write the records by hand below.",
+    keyLink: "Open «Domain activation»",
+    again: "Check again",
+  },
   install: {
     text: "Server preparation, a fresh Fractera from your fork, the build of the core and of every element, the start. About 40–50 minutes on a server with 8 GB. You may close the page and come back: the installation runs on the server.",
     install: "Install", update: "Update", again: "Continue the installation", running: "Installing on the server…", done: "Installed: version {head}.", failed: "The installation stopped at «{stage}».", leave: "You may close this page: the server goes on by itself.",
@@ -201,7 +224,7 @@ const ru: ServerLaunchWords = {
   },
   connect: "Проверить сервер",
   connecting: "Подключаюсь и проверяю сервер… до минуты.",
-  doing: { any: "Выполняю шаг на сервере…", clear: "Освобождаю сервер… меньше минуты.", domain: "Проверяю домен…", detect: "Ищу, где живут записи домена…", way: "Сохраняю способ…", "dns-check": "Спрашиваю публичные DNS о каждом имени…", dns: "Спрашиваю публичные DNS о каждом имени…", certs: "Выпускаю сертификаты… около минуты на имя.", check: "Проверяю HTTPS каждого имени из интернета…", activate: "Включаю домен… вход перезапускается, до минуты.", install: "Запускаю установку…", state: "Читаю состояние сервера…" },
+  doing: { "records-plan": "Спрашиваю Cloudflare, может ли узел вписать записи сам…", "records-write": "Вписываю записи в Cloudflare и проверяю их…", any: "Выполняю шаг на сервере…", clear: "Освобождаю сервер… меньше минуты.", domain: "Проверяю домен…", detect: "Ищу, где живут записи домена…", way: "Сохраняю способ…", "dns-check": "Спрашиваю публичные DNS о каждом имени…", dns: "Спрашиваю публичные DNS о каждом имени…", certs: "Выпускаю сертификаты… около минуты на имя.", check: "Проверяю HTTPS каждого имени из интернета…", activate: "Включаю домен… вход перезапускается, до минуты.", install: "Запускаю установку…", state: "Читаю состояние сервера…" },
   another: "Другой сервер",
   locked: "откроется, когда будет готов предыдущий шаг",
   step: { server: "Сервер", check: "Проверка сервера", domain: "Активация домена", install: "Установка сервера", telegram: "Telegram-бот сервера", recheck: "Повторная проверка записей", certs: "Сертификаты безопасности", ready: "Сервер готов" },
@@ -223,6 +246,7 @@ const ru: ServerLaunchWords = {
     running: "На этом сервере уже идёт запуск.", "server-unfit": "Узел не сможет жить на этом сервере: смотрите проверку.", "no-ip": "IPv4-адрес сервера неизвестен.", "no-fork": "У этого узла нет форка на GitHub, из которого ставить.",
     "le-limit": "Будет превышен недельный лимит Let's Encrypt: за неделю {week} сертификатов, нужно ещё {want}{over}. Дождитесь, пока неделя освободится.", "not-live": "Узел на сервере ещё не работает.",
     "not-confirmed": "Адрес в диалоге не совпадает.", "public-address": "Этот адрес только для чтения.", "on-server": "Узел на сервере ничего не запускает.", network: "Узел не ответил.", unreadable: "Ответ не удалось прочитать.",
+    "tunnel-record": "Имя ведёт на туннель этого компьютера: сначала уберите его с компьютера.", "plan-changed": "Зона изменилась, пока вы смотрели: прочитайте новый список и подтвердите снова.", "cloudflare-read": "Cloudflare не ответил на чтение зоны.", "cloudflare-write": "Cloudflare не принял запись: попробуйте через минуту.",
     "bad-domain": "Это не имя домена.", "no-domain": "Сначала выберите домен.", "no-cloudflare-token": "У этого узла нет ключа Cloudflare.",
   },
   changed: { title: "Сервер показывает другой ключ", text: "Ключ, который показывает сервер, не тот, что помнит этот компьютер. Если вы переустановили систему, доверьтесь новому ключу: введите пароль root и нажмите кнопку. Если не переустанавливали, остановитесь: посередине может быть кто-то чужой.", seen: "Сейчас:", pinned: "Помню:", trust: "Сервер переустановлен — доверять новому ключу" },
@@ -235,6 +259,26 @@ const ru: ServerLaunchWords = {
   preflight: { ok: "Пробное слияние на сервере прошло: обновление пройдёт.", stop: "Пробное слияние на сервере останавливается на файлах, изменённых и там, и в Fractera: {files}. Обновление было бы отклонено; сервер не тронут.", unknown: "Заранее проверить, пройдёт ли обновление, не удалось." },
   recheckServer: "Проверить ещё раз",
   domainNote: "Установка откроется, когда у домена будет выбран способ внести записи и они проверены один раз. Отвечать им пока не обязательно: DNS просыпается, пока сервер ставится, а повторная проверка их дождётся.",
+  cf: {
+    title: "Узел впишет записи сам",
+    lead: "DNS этого домена в Cloudflare, и ключ Cloudflare узла видит зону {zone}. Узел впишет записи с серым облаком (DNS only) и сам их проверит.",
+    add: "Добавлю: A {name} → {ip}",
+    change: "Выключу прокси: A {name} → {ip}",
+    remove: "Удалю: {type} {name} → {content}",
+    blocked: "{name} ведёт на туннель этого компьютера ({content}). Сначала уберите это имя с компьютера: у имени одна дорога.",
+    nothing: "Зона уже ведёт все имена на сервер, вписывать нечего.",
+    write: "Вписать записи",
+    byHand: "Вписать вручную",
+    confirmTitle: "Вписать записи {zone}?",
+    confirmLead: "Узел изменит в Cloudflare ровно эти записи. Почта и все прочие записи останутся как есть.",
+    confirmRemove: "Удалённые записи перестанут вести туда, куда ведут сейчас: то, что сегодня открывается по этим именам, перестанет открываться.",
+    confirm: "Вписать",
+    cancel: "Не сейчас",
+    noKey: "DNS этого домена в Cloudflare, но у узла нет ключа Cloudflare. Дайте его на странице «Активация домена» в карточке ключа Cloudflare, и узел впишет записи сам. Или впишите их вручную ниже.",
+    notVisible: "DNS этого домена в Cloudflare, но ключ узла не видит зону {zone}: она в другом аккаунте Cloudflare. Дайте узлу ключ с доступом к этому аккаунту на странице «Активация домена» в карточке ключа Cloudflare и нажмите «Проверить снова». Или впишите записи вручную ниже.",
+    keyLink: "Открыть «Активацию домена»",
+    again: "Проверить снова",
+  },
   install: {
     text: "Подготовка сервера, свежая Fractera из вашего форка, сборка ядра и всех элементов, запуск. Около 40–50 минут на сервере с 8 ГБ. Страницу можно закрыть и вернуться: установка идёт на самом сервере.",
     install: "Установить", update: "Обновить", again: "Продолжить установку", running: "Идёт установка на сервере…", done: "Установлено: версия {head}.", failed: "Установка остановилась на этапе «{stage}».", leave: "Эту страницу можно закрыть: сервер продолжит сам.",

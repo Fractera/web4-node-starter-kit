@@ -143,7 +143,7 @@ export function WhoStep({ view, words, busy, onChoose }: { view: LadderView; wor
   }
   return (
     <div className="flex flex-col gap-3" data-block="server-ladder-who" data-way={way ?? ""}>
-      <Question busy={busy} id="registrar" onAnswer={answer} readOnly={view.readOnly} text={w.registrar} value={registrar} words={w} />
+      <Question busy={busy} id="registrar" onAnswer={answer} readOnly={view.readOnly} text={view.detect?.dnsHost === "cloudflare" ? w.cloudflare : w.registrar} value={registrar} words={w} />
       {way ? <Small className="text-muted-foreground">{w.note[way]}</Small> : null}
       {way === "none" ? (
         <div className="flex flex-col gap-2 rounded-md border border-border bg-muted/40 p-3" data-block="server-ladder-instruction">

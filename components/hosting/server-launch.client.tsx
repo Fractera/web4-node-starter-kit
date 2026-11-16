@@ -222,7 +222,7 @@ export function ServerLaunch({ words, ladderWords, domainWords, dialogUi }: { wo
       </div>
     ),
     check: <CheckStep busy={busy} dialogUi={dialogUi} onAct={async (a, x) => { await act(a, x) }} state={state} words={words} />,
-    domain: <LaunchDomain busy={busy} note={words.domainNote} onAct={act} state={state} words={ladderWords} />,
+    domain: <LaunchDomain busy={busy} cfWords={words.cf} dialogUi={dialogUi} note={words.domainNote} onAct={act} state={state} words={ladderWords} />,
     install: <InstallStep busy={busy} onAct={act} state={state} strategy={strategy} words={words} />,
     telegram: <TelegramStep busy={busy} onAct={act} state={state} words={words} />,
     recheck: <RecheckStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,

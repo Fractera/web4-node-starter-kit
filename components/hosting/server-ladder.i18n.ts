@@ -18,9 +18,12 @@ export type ServerLadderWords = {
     live: string; sub: string; again: string
   }
   /** 759: one question — access to the registrar (`lib/hosting/launch-domain.mjs`) */
-  who: { registrar: string; yes: string; no: string; option: Record<LadderWay, string>; note: Record<LadderWay, string>; copy: string; copied: string; instruction: string }
+  /** 760-8: `cloudflare` — the question when the domain's DNS is kept by Cloudflare (its name servers say so) */
+  who: { registrar: string; cloudflare: string; yes: string; no: string; option: Record<LadderWay, string>; note: Record<LadderWay, string>; copy: string; copied: string; instruction: string }
   records: {
     hereDns: string
+    /** 760-8: the DNS is kept by Cloudflare — the cabinet named, not the registrar */
+    hereCloudflare: string
     quick: { title: string; badge: string; stepsDns: string[]; at: string; star: string; conflicts: string }
     full: { title: string; text: string; example: string }
     table: { type: string; name: string; value: string; state: string; optional: string; copy: string; copied: string }
@@ -73,6 +76,7 @@ const en: ServerLadderWords = {
   },
   who: {
     registrar: "Do you have access to the domain's registrar?",
+    cloudflare: "Do you have access to the Cloudflare account that keeps this domain's DNS?",
     yes: "Yes",
     no: "No",
     option: { dns: "At the registrar or the hosting", none: "I have no access" },
@@ -86,6 +90,7 @@ const en: ServerLadderWords = {
   },
   records: {
     hereDns: "This domain's DNS is kept by {ns}. Usually that is the registrar's account{registrar}: a section called «DNS», «DNS records» or «Manage DNS».",
+    hereCloudflare: "This domain's records are kept by Cloudflare (its servers {ns}), not by the registrar{registrar}: Cloudflare → the domain → DNS → Records. Every record with a grey cloud (DNS only).",
     quick: {
       title: "Quick way: two records",
       badge: "recommended",
@@ -155,6 +160,7 @@ const ru: ServerLadderWords = {
   },
   who: {
     registrar: "Есть ли у вас доступ к регистратору домена?",
+    cloudflare: "Есть ли у вас доступ к аккаунту Cloudflare, где ведутся DNS этого домена?",
     yes: "Да",
     no: "Нет",
     option: { dns: "У регистратора или хостинга", none: "Нет доступа" },
@@ -168,6 +174,7 @@ const ru: ServerLadderWords = {
   },
   records: {
     hereDns: "DNS этого домена ведут серверы {ns}. Обычно это кабинет регистратора{registrar}: раздел «DNS», «DNS-записи» или «Управление DNS».",
+    hereCloudflare: "Записи этого домена хранит Cloudflare (его серверы {ns}), а не регистратор{registrar}: Cloudflare → домен → DNS → Records. У каждой записи серое облако (DNS only).",
     quick: {
       title: "Быстрый способ: две записи",
       badge: "рекомендуем",

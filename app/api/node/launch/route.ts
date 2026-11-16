@@ -6,6 +6,9 @@ import { NextRequest, NextResponse } from "next/server"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import phase from "@/lib/hosting/phase.cjs"
+import { readPlan, writePlan } from "@/lib/hosting/server-records-cf"
+import { planIsEmpty, removalsConfirmed } from "@/lib/hosting/server-records-plan.mjs"
+import { envValue } from "@/lib/web4-items/element-delete"
 import { closeWindowProcess, openWindowProcess } from "@/lib/hosting/window-process.mjs"
 
 // «АКТИВАЦИЯ ВЫДЕЛЕННОГО СЕРВЕРА» — THE DOOR (node step 738-4). The owner, 2026-11-14: «Никакого переезда нет есть просто запуск сервера …
@@ -34,7 +37,12 @@ import { closeWindowProcess, openWindowProcess } from "@/lib/hosting/window-proc
 //   POST { action: "telegram", host, port, op, token? }        758, step 5: the server's own bot — op token|skip|link; the token goes on to
 //                                                               the runner's stdin and the server, never back and never into a log
 //   POST { action: "clear", host, port, confirm }              a busy server freed — the dialog sends back the address it named
-// 759: the records are written by hand at the registrar — the door holds no Cloudflare key and writes no record.
+//   POST { action: "records-plan", host, port }               760-8: does this node's Cloudflare key see the server's zone, and what it
+//                                                              would add, switch and remove there — the key never leaves the core
+//   POST { action: "records-write", host, port, remove }      760-8: the plan carried out, DNS only; `remove` — the record ids the
+//                                                              person's confirm named; a fresh plan with another removal stops it
+// 759 → 760-8 (the owner, 2026-11-16, «тебе нужен Token и значит ты автоматически показываешь другой сценарий … её недостаток был в
+// ручном выборе»): no question — the node writes when the key sees the zone; otherwise the records are written by hand where they live.
 export const dynamic = "force-dynamic"
 
 const ROOT = process.cwd()
@@ -157,6 +165,29 @@ export async function POST(req: NextRequest) {
     const pair = { action, name: String(body?.name ?? ""), fullchain: String(body?.fullchain ?? ""), privkey: String(body?.privkey ?? "") }
     if (pair.fullchain.length > 65536 || pair.privkey.length > 65536) return json({ ok: false, reason: "bad-pem" }, 400)
     return answer("door", at, { body: pair })
+  }
+  if (action === "records-plan" || action === "records-write") {
+    const token = envValue("CLOUDFLARE_API_TOKEN")
+    if (!token) return json({ ok: true, cf: { key: false } })
+    const now = (await run("state", at, { key: visit?.key ?? null })) as { reason?: string; state?: { domain?: { domain?: string; way?: string | null; detect?: { zone?: string } | null } | null; records?: Array<{ records: Array<{ host: string }> }>; probe?: { publicIp?: string | null } | null } }
+    if (now.reason === "need-password") return answer("state", at)
+    const zone = now.state?.domain?.domain
+    const dnsZone = now.state?.domain?.detect?.zone ?? zone
+    const ip = IPV4.test(host) ? host : now.state?.probe?.publicIp ?? ""
+    if (!zone || !dnsZone || !IPV4.test(ip)) return json({ ok: false, reason: "no-domain" }, 409)
+    const hosts = (now.state?.records?.[0]?.records ?? []).map((r) => r.host)
+    const read = await readPlan({ token, dnsZone, base: zone, hosts, ip })
+    if (!read.ok) return json({ ok: false, reason: "cloudflare-read", detail: read.reason, cf: { key: true, zone: dnsZone } }, 502)
+    const cf = { key: true, zone: dnsZone, ip, visible: read.visible, plan: read.visible ? read.plan : null }
+    if (action === "records-plan" || !read.visible) return json({ ok: true, cf })
+    if (read.plan.blocked.length) return json({ ok: false, reason: "tunnel-record", cf }, 409)
+    if (!removalsConfirmed(read.plan, body?.remove)) return json({ ok: false, reason: "plan-changed", cf }, 409)
+    if (!planIsEmpty(read.plan)) {
+      const w = await writePlan({ token, zoneId: read.zoneId, base: zone, ip, plan: read.plan })
+      if (!w.ok) return json({ ok: false, reason: "cloudflare-write", results: w.results, cf }, 502)
+    }
+    if (!now.state?.domain?.way) await run("way", [...at, "--way", "dns"], { key: visit?.key ?? null })
+    return answer("dns", at)
   }
   if (action === "clear") {
     if (body?.confirm !== host) return json({ ok: false, reason: "not-confirmed" }, 409)

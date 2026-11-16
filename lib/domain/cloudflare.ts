@@ -378,6 +378,22 @@ export async function listAccounts(token: string) {
 // Only THIS node's tunnel CNAME on the name is removed; any other record stays and is reported.
 
 /** Point one name of the node at the server: this node's tunnel CNAME removed, an A record to the server's IPv4, DNS only. */
+/** 760-8: every A, AAAA and CNAME record on these names — what the server's records plan reads before it writes (ids are not secrets). */
+export async function recordsOnNames(token: string, zoneId: string, names: string[]) {
+  const out: Array<{ id: string; type: string; name: string; content: string; proxied: boolean }> = []
+  for (const name of names) {
+    const list = await send<Array<{ id: string; type: string; name: string; content: string; proxied?: boolean }>>("GET", `/zones/${zoneId}/dns_records?name=${encodeURIComponent(name)}&per_page=100`, token)
+    if (!list.ok) return list
+    for (const r of list.result) if (["A", "AAAA", "CNAME"].includes(r.type)) out.push({ id: r.id, type: r.type, name: r.name, content: r.content, proxied: Boolean(r.proxied) })
+  }
+  return { ok: true as const, result: out }
+}
+
+/** 760-8: one record removed by its id — only one the person's confirm named (the plan checks it before). */
+export async function deleteRecord(token: string, zoneId: string, id: string) {
+  return send<{ id: string }>("DELETE", `/zones/${zoneId}/dns_records/${encodeURIComponent(id)}`, token)
+}
+
 export async function upsertServerRecord(token: string, zoneId: string, name: string, ip: string, tunnelId: string | null) {
   if (tunnelId) {
     const off = await deleteTunnelRecord(token, zoneId, name, tunnelId)

@@ -82,7 +82,7 @@ export function RecordsStep({ view, words, busy, onCheck }: { view: LadderView; 
 
   return (
     <div className="flex flex-col gap-3" data-block="server-ladder-records">
-      <Small className="max-w-prose text-foreground">{fill(w.hereDns, map)}</Small>
+      <Small className="max-w-prose text-foreground">{fill(d?.dnsHost === "cloudflare" ? w.hereCloudflare : w.hereDns, map)}</Small>
       <Accordion collapsible defaultValue="quick" type="single">
         <AccordionItem value="quick">
           <AccordionTrigger>
