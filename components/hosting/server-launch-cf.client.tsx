@@ -14,7 +14,7 @@ import { Small } from "@/components/ui/typography"
 // sends back exactly the removals it showed (the door refuses if the zone changed). It does not → the key first, «by hand» below.
 
 export type CfPlan = { add: Array<{ host: string }>; change: Array<{ host: string; id: string }>; remove: Array<{ id: string; host: string; type: string; content: string }>; blocked: Array<{ host: string; content: string }> }
-export type CfAnswer = { key: boolean; zone?: string; ip?: string; visible?: boolean; plan?: CfPlan | null }
+export type CfAnswer = { key: boolean; zone?: string; ip?: string; visible?: boolean; plan?: CfPlan | null; written?: { add: number; change: number; remove: number; at: string } }
 
 const fill = (t: string, map: Record<string, string>) => Object.entries(map).reduce((s, [k, v]) => s.split(`{${k}}`).join(v), t)
 
@@ -53,9 +53,10 @@ export function CloudflareWrite({ cf, words, busy, dialogUi, manual, onWrite, on
       <Small className="font-medium text-foreground">{words.title}</Small>
       <Small className="max-w-prose text-muted-foreground">{fill(words.lead, { zone })}</Small>
       {plan.blocked.map((b) => <Small className="text-destructive" key={b.host}>{fill(words.blocked, { name: b.host, content: b.content })}</Small>)}
+      {cf.written ? <Small className="font-medium text-foreground" data-block="server-launch-cf-written">{fill(words.written, { add: String(cf.written.add + cf.written.change), remove: String(cf.written.remove), time: new Date(cf.written.at).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" }) })}</Small> : null}
       {lines.length ? list : <Small className="text-muted-foreground">{words.nothing}</Small>}
       <div className="flex flex-wrap items-center gap-3" data-block="server-launch-cf-actions">
-        <Button disabled={busy || plan.blocked.length > 0} onClick={() => setOpen(true)} size="sm">{words.write}</Button>
+        {lines.length ? <Button disabled={busy || plan.blocked.length > 0} onClick={() => setOpen(true)} size="sm">{words.write}</Button> : null}
         <Button onClick={() => setHand((h) => !h)} size="sm" variant="ghost">{words.byHand}</Button>
       </div>
       {hand ? manual : null}

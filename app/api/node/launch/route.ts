@@ -200,7 +200,13 @@ export async function POST(req: NextRequest) {
       if (!w.ok) return json({ ok: false, reason: "cloudflare-write", results: w.results, cf }, 502)
     }
     if (!now.state?.domain?.way) await run("way", [...at, "--way", "dns"], { key: visit?.key ?? null })
-    return answer("dns", at)
+    // ✗ 2026-11-16 (the owner pressed «Вписать записи» twice: the records were written, the card still showed the old plan): the answer
+    // carries the plan read AGAIN after the write and what was written, so the card shows the zone as it is now.
+    const after = await readPlan({ token, dnsZone, base: zone, hosts, ip })
+    const written = { add: read.plan.add.length, change: read.plan.change.length, remove: read.plan.remove.length, at: new Date().toISOString() }
+    const fresh = after.ok ? { ...cf, visible: after.visible, plan: after.visible ? after.plan : null } : cf
+    const r = await run("dns", at, { key: visit?.key ?? null })
+    return json({ ...r, cf: { ...fresh, written }, visit: visit ? { deadline: visit.deadline } : null })
   }
   if (action === "clear") {
     if (body?.confirm !== host) return json({ ok: false, reason: "not-confirmed" }, 409)

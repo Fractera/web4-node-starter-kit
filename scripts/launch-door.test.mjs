@@ -38,7 +38,7 @@ const say = (o) => console.log('===LAUNCH=== ' + JSON.stringify(o))
 const deadline = new Date(Date.now() + 24 * 3600e3).toISOString()
 if (verb === 'connect' && input.password) say({ ok: true, fingerprint: 'SHA256:x', visit: { key: ${JSON.stringify(KEY)}, deadline }, state: {} })
 else if (verb === 'close') say(input.key === ${JSON.stringify(KEY)} ? { ok: true, closed: true } : { ok: false, reason: 'need-password' })
-else say(input.key === ${JSON.stringify(KEY)} ? { ok: true, state: { seen: true } } : { ok: false, reason: 'need-password' })
+else say(input.key === ${JSON.stringify(KEY)} ? { ok: true, state: { seen: true, domain: { domain: 'example.test', way: 'dns', detect: { zone: 'example.test' } }, records: [{ records: [{ host: 'example.test' }, { host: 'www.example.test' }] }], probe: { publicIp: '203.0.113.7' } } } : { ok: false, reason: 'need-password' })
 `)
 const calls = () => readFileSync(LOG, 'utf8').trim().split('\n').map((l) => JSON.parse(l))
 // The stand-in window (`scripts/server.mjs window --key-stdin`): its marker line, then alive until its close file appears.
@@ -145,6 +145,51 @@ await t('a new password while a visit lives: the runner gets the old key too, to
   await post({ action: 'connect', password: PASSWORD }, { cookie })
   const last = calls().at(-1)
   assert.deepEqual([last.input.password, last.input.key], [PASSWORD, KEY])
+})
+
+console.log('760-8 the node writes the server\'s records with its Cloudflare key')
+await t('after «Вписать записи» the answer carries the plan read AGAIN and what was written (✗ 2026-11-16: the card kept the old plan and the owner pressed twice); negative: the plan before the write is not empty', async () => {
+  writeFileSync(join(node, '.env.local'), 'CLOUDFLARE_API_TOKEN=cf-test-token-760\n')
+  // a fake Cloudflare: one zone, the apex on another hosting and a CNAME on www — as fractera.ai on Vercel
+  let records = [
+    { id: 'r-apex', type: 'A', name: 'example.test', content: '76.76.21.21', proxied: true },
+    { id: 'r-www', type: 'CNAME', name: 'www.example.test', content: 'cname.vercel-dns.com', proxied: true },
+  ]
+  let n = 0
+  const realFetch = globalThis.fetch
+  globalThis.fetch = async (input, init = {}) => {
+    const url = new URL(String(input))
+    if (url.hostname !== 'api.cloudflare.com') return realFetch(input, init)
+    const ok = (result) => new Response(JSON.stringify({ success: true, errors: [], result }), { status: 200, headers: { 'content-type': 'application/json' } })
+    const method = (init.method ?? 'GET').toUpperCase()
+    const path = url.pathname.replace('/client/v4', '')
+    if (path === '/zones') return ok(url.searchParams.get('name') === 'example.test' ? [{ id: 'z1', name: 'example.test', status: 'active', name_servers: [] }] : [])
+    const one = /^\/zones\/z1\/dns_records\/(.+)$/.exec(path)
+    if (one && method === 'DELETE') { records = records.filter((r) => r.id !== one[1]); return ok({ id: one[1] }) }
+    if (one && method === 'PUT') { const b = JSON.parse(init.body); records = records.map((r) => (r.id === one[1] ? { ...r, ...b, id: r.id } : r)); return ok({ id: one[1] }) }
+    if (path === '/zones/z1/dns_records' && method === 'POST') { const b = JSON.parse(init.body); records.push({ ...b, id: `new-${++n}` }); return ok({ id: `new-${n}` }) }
+    if (path === '/zones/z1/dns_records') {
+      const name = url.searchParams.get('name'); const type = url.searchParams.get('type')
+      return ok(records.filter((r) => (!name || r.name === name) && (!type || r.type === type)))
+    }
+    return new Response(JSON.stringify({ success: false, errors: [{ message: `unknown ${method} ${path}` }] }), { status: 404 })
+  }
+  try {
+    const visit = pair(await post({ action: 'connect', password: PASSWORD }))
+    const before = await (await post({ action: 'records-plan' }, { cookie: visit })).json()
+    assert.deepEqual([before.cf.visible, before.cf.plan.remove.map((r) => r.id).sort()], [true, ['r-apex', 'r-www']], JSON.stringify(before))
+    const res = await post({ action: 'records-write', remove: before.cf.plan.remove.map((r) => r.id) }, { cookie: visit })
+    const body = await res.json()
+    assert.equal(res.status, 200, JSON.stringify(body))
+    assert.deepEqual([body.cf.plan.add.length, body.cf.plan.change.length, body.cf.plan.remove.length], [0, 0, 0], 'the answer carries the plan as it is NOW: nothing left to write')
+    assert.deepEqual([body.cf.written.remove, body.cf.written.add + body.cf.written.change > 0], [2, true], JSON.stringify(body.cf.written))
+    assert.equal(body.state.seen, true, 'the DNS check still answers in the same reply')
+    assert.deepEqual(records.filter((r) => r.type === 'A').map((r) => `${r.name} ${r.content} ${r.proxied}`).sort(), ['*.example.test 203.0.113.7 false', 'example.test 203.0.113.7 false'])
+    assert.ok(!JSON.stringify(body).includes('cf-test-token-760'), 'the key never comes back')
+  } finally {
+    globalThis.fetch = realFetch
+    rmSync(join(node, '.env.local'), { force: true })
+  }
 })
 
 process.chdir(ROOT)
