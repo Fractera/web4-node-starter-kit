@@ -39,6 +39,8 @@ section (an existing section never updates — add a new one). I may not touch e
 
 ## The person's decisions (verbatim)
 
+- 2026-11-16 ~17:53 UTC, the owner on plan 767 (1–6, tests B1–B6): «Давай».
+
 - 2026-11-16 ~17:50 UTC, the owner: the browser from Telegram as a capability of the main agent and the elements (routing by element field, deep memory, root passes outside wishes to the core) — «исследуй это в первую очередь», the LinkedIn element paused («возможно даже я удалю этот элемент»). Plan 767 written (new-steps/767-browser-from-telegram.md), waits for his yes. hrutb: supervision off, agent closed 17:51.
 
 - 2026-11-16 ~17:19 UTC, the owner (766): «Давай сделаем это только элемент назовём соцсети пользователя потому что мы его потом выложим на GitHub чтобы кому надо могли получить не SMM романа а SMM пользователя … экстремально примитивный прототип буквально ноль дизайна и ноль навыков … задача протестировать возможность управления браузером из телефона». Substep 766-1: birth of «Соцсети пользователя» (look own, supervise main, no skills), files in data/main-agent/births/. BORN 17:24: id hrutb, its agent started with step 1 (task: LinkedIn page + loopback door add/publish/list); led by me — its «done» wakes me. 17:21 the owner from Telegram: «открой мне Google.com» → opened in his Chrome (extension, tab 2116208426) ✅ — the phone drives the browser. Next: hrutb's done → check page + door → the post flow (766-2).
