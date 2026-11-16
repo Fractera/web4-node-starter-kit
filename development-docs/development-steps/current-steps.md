@@ -9,7 +9,7 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Last change:** 2026-11-16 23:10 UTC — the owner back: «ты не спишь … доделаю до конца эту задачу … поставь размышления на максимум» → the session was Opus · effort high (ps); switching to `--effort max` (restart, the conversation goes on). R2 of 769: request 2c3422c4 still open — the owner types root in the window next.
 
-**Next action:** after core-back — git status clean? then R2 live: close the server access (the page's «Закрыть доступ» or the door `close` from the owner's browser), put `npm run ask-person -- … --secret server-root --host 109.199.105.213`, the owner types root in the window → «Проверяю сервер…» → closes, step 2 opens. Then the Mini Apps plan.
+**Next action:** his yes on 771-1..3 (core «Пульт узла» in the main bot) and on 771-3's self-moving menu button; R2 of 769 — request 2c3422c4 still waits his root password in the window.
 
 ## Letter to my next session (written 2026-11-16 ~19:33 UTC, the window at 66 %; a clean start for a debugging task)
 
@@ -41,6 +41,8 @@ file. A test request «by an element» is dropped by me, never left for his pres
 pages without tokens; the extension's selected tab is never his screen. The core main is not pushed (761-9).
 
 ## The person's decisions (verbatim)
+
+- 2026-11-16 23:09–23:10 UTC, the owner: «посмотри остаток лимита … нужно ли тебя переключить на другой аккаунт?» → 5 h 45 %, 7 d 60 % — no switch. «Всё давай вперёд что ты сделаешь в итоге расскажи правильно ли я тебя понимаю что у нас будет приложение для программы?» → plan 771 (new-steps/771-telegram-mini-apps.md) sent 23:14, waits his yes on 771-1..3 and on the self-moving menu button. «Я сейчас смотрю фильм … можешь включить сам седьмую» → declined: the extension acts only in its own tabs (his tab 1.10 is outside the group), and I do not open the unlicensed ad-laden site in my tab; his one click.
 
 - 2026-11-16 20:56 UTC, the owner: «если ты уверен что починил давай собирай обновляйся» (770 was already built and proven) + a new topic: «для наших элементов в левом меню имела бы смысл создать отдельный инструмент Telegram приложения? … в зависимости от того какую функциональную задачу решает элемент … удобный мобильный интерфейс … элемент для продвижения в соцсетях … дозорный … дашборд … у нас есть навык которые с этим может справиться?» → answered 21:00: Mini App ≠ mobile version ≠ bot commands; shape — not a new element: a route of each element built by its own agent; the capability in the template once (initData sign-in door, Telegram theme/buttons, the bot's menu button set by the core when an HTTPS address exists) + our own skill `telegram-mini-app` from Telegram's docs; price — the own domain (a temporary address kills the menu button); skills_find: no Mini App skill in the checked catalog (telegram-bot-builder idea of Stars later; webapp-testing for eyes); DEFECT: `npm run skills -- market --live` refuses any query («the query needs English words») even «telegram». Asked: 769 first, then the Mini App plan?
 
