@@ -3065,6 +3065,7 @@
         "components/ai-elements/web-preview.tsx",
         "components/architect/menu-ai.client.tsx",
         "components/architect/menu-search.client.tsx",
+        "components/architect/person-ask.client.tsx",
         "components/auth/access-gate.client.tsx",
         "components/auth/google-setup.client.tsx",
         "components/auth/resend-dns.client.tsx",
