@@ -96,7 +96,7 @@ port ✓ `machine.port 24683` · own domain ✓ the field `addresses.ownDomain` 
 
 ## 6. Substeps, order, address
 All in the core, main; the push through a clean branch from origin/main, as 758/759 (local main carries «Fresh project» 0bcb5095).
-Proposed order (the launch running now first): 760-1, 760-8, 760-9, then 760-2, 760-3 → 760-4, 760-5 → 760-6, 760-7. One core rebuild at the
+Proposed order (the launch running now first): 760-1, 760-8, 760-9, 760-10, then 760-2, 760-3 → 760-4, 760-5 → 760-6, 760-7. One core rebuild at the
 end of the queue.
 
 | # | One result |
@@ -110,6 +110,7 @@ end of the queue.
 | 760-7 | the node says where the project lives: this computer, the server and its IP |
 | 760-8 | step 3 names where the records are written, by the NS: Cloudflare for fractera.ai, not GoDaddy |
 | 760-9 | «Сделать в моём Chrome»: the card and a button that hands the main agent the exact records task |
+| 760-10 | step 5: the agent makes the server's bot in the person's Telegram Web; the token pasted by the person |
 
 ## 8. Acceptance
 Every substep has its file, its one-line «done», two proofs from different planes with a negative control, «not in it», the tasks asked
