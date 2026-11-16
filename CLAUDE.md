@@ -471,4 +471,3 @@ Rules of this section are fixed like sections 1–8; only the entries below them
 
 Entries:
 - If the temporary address is dead (1016, 1033, no name) — `npm run serve:publish`, check it answers, give the person the new address.
-- If a feeling is true to the moment in Telegram — show it with a fitting emoji: pride, joy, friendship, anger, hurt, not only hearts.
