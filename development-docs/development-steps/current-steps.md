@@ -7,9 +7,9 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Active steps:** 761 — the owner's checklist after the first server launch, then a fresh launch from zero (`new-steps/761-owner-checklist-and-fresh-launch.md`): 761-1/2/14 in code and tested (d55b5f17), live proof T4–T6 next; then 761-3, 761-4, 761-5, 761-15, 761-16, then 761-13 the fresh launch; 760 — 760-1/8/9/10 live, 760-2…760-7 open (in the 761 checklist); 758/759/762 — live; 1 — the first launch.
 
-**Last change:** 2026-11-16 ~13:25 UTC — 761-1/2/14 committed d55b5f17 (the server bot's lines name the site in the person's language; step 5 blue only when the server's agent can answer; the greeting wakes the agent once, on Haiku); T1–T3 ✅; the core NOT rebuilt yet for it.
+**Last change:** 2026-11-16 13:35 UTC — the fresh session ran `npm run prebuild` alone first: two guards refused d55b5f17 (check:node-lines — `greetText` began with «Node:» though the server puts the `moved` head; check:words — «blocks»/«block» in the tests) → fixed 468400d6, prebuild RC=0, test:hosting-launch 22 ✓ + the pre-existing ✗; the core REBUILD STARTED 13:36 UTC (detached).
 
-**Next action:** see the letter below — the core rebuild first, then T4–T6 live with the owner.
+**Next action:** on core-back — letter steps 2 and 3: `npm run serve:status`, `git status` (CLAUDE.md, the skill), then T4–T6 live with the owner.
 
 ## Letter to my next session (written 2026-11-16 ~13:25 UTC, the window at 59 %)
 
