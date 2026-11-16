@@ -208,8 +208,11 @@ const TELEGRAM_FILE = () => `${DIR}/telegram.json`
  * 🔒 THE TOKEN NEVER ENTERS AN ARGV: the body goes by the SSH channel's stdin to `curl --data-binary @-` (737-11a, `e6961403`). */
 async function channel(client, body = null) {
   const node = `/home/${REMOTE_USER}/${FOLDER}`
-  const send = body ? `-X POST -H 'content-type: application/json' --data-binary @-` : ''
-  const cmd = `node_dir="\${STATE_NODE_DIR:-${node}}"; port=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["port"])' "$node_dir/logs/runtime.json" 2>/dev/null) && curl -s --max-time 25 ${send} "http://localhost:$port/en/architect/build/agent-api/channel"`
+  // ✗ 2026-11-16 on 109.199.105.213: the node answers `/en/architect/build/…` with a redirect to `/en/build/…` (the panel's addresses drop
+  // «architect»); curl without -L read the redirect as silence and the token waited forever. The page's own address now, and the redirect
+  // followed with its method and body.
+  const send = body ? `-X POST -H 'content-type: application/json' --data-binary @- --post301 --post302 --post303` : ''
+  const cmd = `node_dir="\${STATE_NODE_DIR:-${node}}"; port=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["port"])' "$node_dir/logs/runtime.json" 2>/dev/null) && curl -s -L --max-redirs 3 --max-time 25 ${send} "http://localhost:$port/en/build/agent-api/channel"`
   const r = await exec(client, cmd, { timeoutMs: 40_000, ...(body ? { stdin: JSON.stringify(body) } : {}) })
   try { const v = JSON.parse(r.stdout); return v && typeof v === 'object' ? v : null } catch { return null }
 }

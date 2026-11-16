@@ -253,7 +253,9 @@ await t('a token before the node lives waits on the server (0600) and never come
     req.on('data', (d) => { body += d })
     req.on('end', () => {
       res.setHeader('content-type', 'application/json')
-      if (!req.url.endsWith('/architect/build/agent-api/channel')) return res.end(JSON.stringify(core))
+      // as a live server node: the old address of the panel redirects (the panel's addresses drop «architect»), the page's own answers
+      if (req.url.endsWith('/architect/build/agent-api/channel')) { res.statusCode = 307; res.setHeader('location', req.url.replace('/architect/', '/')); return res.end() }
+      if (!req.url.endsWith('/build/agent-api/channel')) return res.end(JSON.stringify(core))
       if (req.method === 'GET') return res.end(JSON.stringify({ ok: true, service: 'build', ...bot, allowed: bot.configured ? 1 : 0 }))
       const b = JSON.parse(body || '{}')
       got.push(b)
