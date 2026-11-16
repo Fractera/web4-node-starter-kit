@@ -8,15 +8,18 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 **Active steps:** 1 — the first launch: the node is up, the person signs in to Claude Code, gets a Telegram bot and gives the first task
 (`new-steps/1-first-launch-first-account-domain-telegram-task.md`).
 
-**Last change:** 2026-11-15 — the project was born from a fork of Fractera/web4-node-starter-kit; `npm run launch` installed and started the node.
+**Last change:** 2026-11-16 — the first task arrived from the node's home page (1-5): a family/team budget service. Fork proposed, waiting for the person's choice; nothing created yet.
 
-**Next action:** 1-2 — the first account (the architect, it cannot be recovered), then 1-3 the own domain, 1-4 the Telegram bot, 1-5 the
+**Next action:** the person picks the shape of the family budget (one shared element with its bot, or later a hand per member); then its product quiz. Meanwhile 1-2 — the first account (the architect, it cannot be recovered), then 1-3 the own domain, 1-4 the Telegram bot, 1-5 the
 first task. Ask nothing the node can find out itself.
 
 ## The person's decisions (verbatim)
 
-- none yet
+- 2026-11-16, first task: «Хочу создать агентов для своей семьи или команды. Давай для начало сделаем что-нибудь простое например сервис для учёта домашних доходов и расходов»
 
 ## Measured — do not measure again
 
-- none yet
+- 2026-11-16: no element of the node holds the field of a household budget (`find`: only stripe, 0.27). `npm run find` drops its first word (scripts/main-agent-cli.mjs:308, `si = -1` → `i !== 0`) — fixed 2026-11-16 (a phrase that failed before now finds).
+- 2026-11-16 00:08 UTC, fractera.ai: NS at Cloudflare (kay/ignacio); apex 301 → www; www served by Vercel through the orange cloud (`x-vercel-cache: HIT`, age ≈27 days); no `*` and no `auth` record — the Cloudflare write of the server launch wrote nothing.
+- Defect (server launch, step 3): `domainSteps.records` (lib/hosting/launch-domain.mjs:23) is true once ANY check ran, whatever its states — the rung shows done while every name is `elsewhere`; `upsertServerRecord` refuses a name with a foreign CNAME (Vercel) and never removes it. Fixed 2026-11-16 at the owner's word («ты можешь внести необходимые исправления»): step 3's line names «K of N names lead to the server», a foreign CNAME is said in words, the confirm dialog says a foreign A moves at once. Proofs: tsc 0 errors, test:hosting 76/76, the summary check 0/2 · 2/2 · none. Core not rebuilt yet.
+

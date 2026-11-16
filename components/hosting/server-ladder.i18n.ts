@@ -25,7 +25,7 @@ export type ServerLadderWords = {
     full: { title: string; text: string; example: string }
     table: { type: string; name: string; value: string; state: string; optional: string; copy: string; copied: string }
     state: Record<"ok" | "missing" | "elsewhere" | "aaaa" | "unknown" | "unchecked", string>
-    auto: { title: string; text: string; button: string; noKey: string; keyLabel: string; keySave: string; confirmTitle: string; confirmItems: string[]; confirm: string; notNow: string; done: string; failed: string }
+    auto: { title: string; text: string; button: string; noKey: string; keyLabel: string; keySave: string; confirmTitle: string; confirmItems: string[]; confirm: string; notNow: string; done: string; failed: string; foreignCname: string }
     migrate: { title: string; items: string[]; mail: string; txt: string; ds: string; nothing: string }
     why: { button: string; title: string; points: string[] }
     check: string
@@ -119,11 +119,12 @@ const en: ServerLadderWords = {
       keyLabel: "Cloudflare key",
       keySave: "Save the key",
       confirmTitle: "Point {zone} at the server {ip}?",
-      confirmItems: ["Every name of {zone} and «*» get an A record to {ip}, grey cloud.", "This node's tunnel record goes; other records stay, the node names them.", "Mail and the zone's other records do not change."],
+      confirmItems: ["Every name of {zone} and «*» get an A record to {ip}, grey cloud — a name whose A record leads elsewhere (another hosting) moves to the server at once.", "A name with someone else's CNAME is not touched: the node names it, you delete it in Cloudflare and write again.", "Mail and the zone's other records do not change."],
       confirm: "Write the records",
       notNow: "Not now",
       done: "Done: {n} records.",
       failed: "Did not work:",
+      foreignCname: "{host} carries someone else's CNAME → {target}: delete it in Cloudflare and write again",
     },
     migrate: {
       title: "Give DNS back to the registrar",
@@ -246,11 +247,12 @@ const ru: ServerLadderWords = {
       keyLabel: "Ключ Cloudflare",
       keySave: "Сохранить ключ",
       confirmTitle: "Направить {zone} на сервер {ip}?",
-      confirmItems: ["Каждое имя {zone} и «*» получат запись A на {ip}, облако серое.", "Запись туннеля этого узла снимется; чужие записи останутся, узел их назовёт.", "Почта и другие записи зоны не меняются."],
+      confirmItems: ["Каждое имя {zone} и «*» получат запись A на {ip}, облако серое — имя, чья запись A ведёт в другое место (другой хостинг), сразу переходит на сервер.", "Имя с чужой CNAME узел не трогает: он её назовёт, вы удаляете её в Cloudflare и вносите записи ещё раз.", "Почта и другие записи зоны не меняются."],
       confirm: "Внести записи",
       notNow: "Не сейчас",
       done: "Готово: записей {n}.",
       failed: "Не получилось:",
+      foreignCname: "на {host} стоит чужая CNAME → {target}: удалите её в Cloudflare и внесите записи ещё раз",
     },
     migrate: {
       title: "Вернуть DNS регистратору",

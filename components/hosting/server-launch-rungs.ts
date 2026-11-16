@@ -52,6 +52,13 @@ export function launchDone(s: LaunchState, strategy: Strategy): Record<LaunchSte
   }
 }
 
+/** ✗ 2026-11-16 (fractera.ai): step 3 closes after ANY first check (D46 — the install never waits for DNS) and its line named only the
+ * domain and the way, so «checked» read as «ready» while every name still led to Vercel. The line now says how many names lead to the
+ * server at that check; the gate stays step 5. */
+function pointed(results: Array<{ state?: string }> | undefined, words: { pointed: string }) {
+  return results?.length ? fill(words.pointed, { ok: String(results.filter((r) => r.state === "ok").length), all: String(results.length) }) : ""
+}
+
 /** One line of what each done step did — the server's own facts, never «готово». The last step has none: it is open when done. */
 export function launchSummary(s: LaunchState, target: { host: string; until: string | null }, words: ServerLaunchWords, ladderWords: ServerLadderWords) {
   const w = words.summary
@@ -64,7 +71,7 @@ export function launchSummary(s: LaunchState, target: { host: string; until: str
     check: [s.relation?.kind === "related" ? fill(w.related, { head }) : w.clean, s.verdict?.level === "warn" ? w.warn : ""].filter(Boolean).join(" · "),
     // 744-5: domain · its way in the person's words · where it came from (a domain the server already held: when it was written there)
     domain: s.domain?.domain
-      ? [s.domain.domain, way ? ladderWords.who.option[way] : "", s.domain.from === "server" && s.domain.since ? fill(w.since, { date: dayText(s.domain.since) }) : ""].filter(Boolean).join(" · ")
+      ? [s.domain.domain, way ? ladderWords.who.option[way] : "", s.domain.from === "server" && s.domain.since ? fill(w.since, { date: dayText(s.domain.since) }) : "", pointed(s.domain.check?.results, w)].filter(Boolean).join(" · ")
       : undefined,
     install: fill(w.install, { head }),
     recheck: fill(w.recheck, count((r) => r.dns === "ok")),

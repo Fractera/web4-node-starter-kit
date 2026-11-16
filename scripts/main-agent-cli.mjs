@@ -306,7 +306,8 @@ if (cmd === 'find') {
   const json = rest.includes('--json')
   const si = rest.indexOf('--shortlist')
   const shortN = si >= 0 ? Math.min(60, Math.max(0, Number(rest[si + 1]) || 0)) : 0
-  const words = rest.filter((w, i) => w !== '--json' && i !== si && i !== si + 1).join(' ').trim()
+  // ✗ 2026-11-16: with no `--shortlist` (si = -1) `i !== si + 1` dropped the FIRST word — one quoted phrase became nothing.
+  const words = rest.filter((w, i) => w !== '--json' && (si < 0 || (i !== si && i !== si + 1))).join(' ').trim()
   if (!words) fail('find <plain words of the job>')
   if (json) {
     const all = selfAll()

@@ -24,7 +24,7 @@ export type ServerLaunchWords = {
   locked: string
   step: Record<LaunchStep, string>
   /** 744-7: one line of what a done step did, shown while it is closed — `{host}` `{time}` `{head}`, `{ok}` of `{all}` required names */
-  summary: { server: string; clean: string; related: string; warn: string; install: string; recheck: string; certs: string; since: string }
+  summary: { server: string; clean: string; related: string; warn: string; install: string; recheck: string; certs: string; since: string; pointed: string }
   connected: string
   /** 744-3: access for one day — `{time}` the deadline in the person's own clock */
   access: { until: string; close: string; closing: string }
@@ -88,6 +88,7 @@ const en: ServerLaunchWords = {
     server: "{host} · access until {time}", clean: "A clean server", related: "Fractera from your fork ({head})", warn: "read the notes",
     install: "Fractera {head} installed, the server's node answers", recheck: "{ok} of {all} names point to the server", certs: "{ok} of {all} names: a certificate and HTTPS",
     since: "recorded {date}",
+    pointed: "{ok} of {all} names point to the server now — step 5 checks again",
   },
   connected: "Server {host} is connected. The server's key fingerprint: {fp}.",
   access: { until: "Access until {time} (24 h at most)", close: "Close access", closing: "Closing the access…" },
@@ -169,6 +170,7 @@ const ru: ServerLaunchWords = {
     server: "{host} · доступ до {time}", clean: "Чистый сервер", related: "Fractera из вашего форка ({head})", warn: "есть замечания",
     install: "Fractera {head} установлена, узел сервера отвечает", recheck: "{ok} из {all} имён ведут на сервер", certs: "{ok} из {all} имён: сертификат и HTTPS",
     since: "записано {date}",
+    pointed: "сейчас на сервер ведут {ok} из {all} имён — шаг 5 проверит ещё раз",
   },
   connected: "Сервер {host} подключён. Отпечаток ключа сервера: {fp}.",
   access: { until: "Доступ до {time} (не больше 24 ч)", close: "Закрыть доступ", closing: "Закрываю доступ…" },

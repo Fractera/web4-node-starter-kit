@@ -94,7 +94,9 @@ function Auto({ view, words, keyWords, busy, dialogUi, onWrite, onKeySaved }: { 
     setOpen(false)
     const a = (await onWrite()) as { ok?: boolean; results?: Array<{ host: string; ok: boolean; reason?: string }>; reason?: string } | null
     const bad = a?.results?.filter((x) => !x.ok) ?? []
-    setResult(a?.ok ? fill(words.done, { n: String(a.results?.length ?? 0) }) : `${words.failed} ${bad.map((x) => `${x.host} (${x.reason})`).join(", ") || a?.reason || ""}`)
+    // ✗ 2026-11-16: «www.fractera.ai (foreign-cname cname.vercel-dns.com)» read as a code; a foreign CNAME now says what to do with it.
+    const why = (x: { host: string; reason?: string }) => x.reason?.startsWith("foreign-cname ") ? fill(words.foreignCname, { host: x.host, target: x.reason.slice(14) }) : `${x.host} (${x.reason})`
+    setResult(a?.ok ? fill(words.done, { n: String(a.results?.length ?? 0) }) : `${words.failed} ${bad.map(why).join("; ") || a?.reason || ""}`)
   }
   return (
     <div className="flex flex-col gap-2 rounded-md border border-border p-3" data-block="server-ladder-auto">
