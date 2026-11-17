@@ -42,6 +42,15 @@ export type NodeDomain = {
 export type DomainFor = "main" | "element"
 export type Shape = "ok" | "bad-shape" | "with-www" | "primary" | "exists"
 
+/**
+ * 775: the element that answers on the main domain's root (`<zone>` itself, no prefix) — one rule for the activation's tunnel and for the
+ * fourth rung's list (✗ 2026-11-17: the list showed «root.throughsongs.com» while the site answers on throughsongs.com). The activation
+ * has always given the root to the element `root` when it has a server (`activate` route, 190); kept here once, not twice.
+ */
+export function zoneRootElement(serviceUrl: (id: string) => string | null): string | null {
+  return serviceUrl("root") ? "root" : null
+}
+
 /** Основной домен узла (зона лестницы 259) или `null`. */
 export function primaryDomain(): { name: string; status: string | null } | null {
   try {

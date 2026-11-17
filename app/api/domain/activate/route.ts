@@ -13,7 +13,7 @@ import {
 import { listServices, serviceUrl } from "@/lib/microservices/registry"
 import { addressOf } from "@/lib/web4-items/address-file.mjs"
 import { startDomainResident, stopDomainResident } from "@/lib/domain/resident"
-import { checkDomain } from "@/lib/domain/node-domains"
+import { checkDomain, zoneRootElement } from "@/lib/domain/node-domains"
 import { applyDomainToAuth } from "@/lib/domain/auth-env"
 import { startStaticCopyAll } from "@/lib/web4-items/static-copy-start.cjs"
 import { spawnSync } from "node:child_process"
@@ -187,7 +187,8 @@ export async function POST(req: NextRequest) {
   // вариант «а»). Сайт — элемент `root`, сменный и независимый: упадёт ядро — корень домена
   // продолжит отвечать. Элемента `root` нет — корень, как раньше, ведёт на ядро, и поддомена
   // ядра не заводится: делить нечего.
-  const siteService = serviceUrl("root")
+  const siteElement = zoneRootElement(serviceUrl)
+  const siteService = siteElement ? serviceUrl(siteElement) : null
   const architectHostname = siteService ? `architect.${zone.name}` : null
   const rules: IngressRule[] = [{ hostname, service: siteService ?? service }]
   if (architectHostname) rules.push({ hostname: architectHostname, service })

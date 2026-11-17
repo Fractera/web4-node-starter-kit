@@ -77,6 +77,9 @@ export function OwnerBand({
   reasonWindow,
   goWeb,
   setupDomain,
+  titleWeb,
+  reasonWeb,
+  goLocal,
   lang,
 }: {
   title: string
@@ -94,6 +97,10 @@ export function OwnerBand({
   goWeb: string
   /** 776: no main domain yet — «Настройте домен», to the domain page */
   setupDomain: string
+  /** 775: the blue band of the web — the node lives on the person's computer, this page came through its domain */
+  titleWeb: string
+  reasonWeb: string
+  goLocal: string
   lang: string
 }) {
   const [mode, setMode] = useState<Mode>(null)
@@ -105,6 +112,21 @@ export function OwnerBand({
   // выдуманное умолчание показало бы предупреждение тому, кому оно не адресовано.
   useEffect(() => setMode(detectMode()), [])
 
+  // 775 (the owner, 2026-11-17: «такую же полоску но не оранжевую а голубую … чтобы можно было перейти в режим компьютера, если мы
+  // находимся на локальном компьютере а не на сервере»): a page of the node's own domain while the node lives on a computer — the blue band
+  // with «Перейти на компьютер», the same page on this computer's panel (it opens only at that computer).
+  const path0 = typeof window === 'undefined' ? '' : `${window.location.pathname}${window.location.search}`
+  if (!mode && place?.kind === 'home' && place.via === 'web' && place.local) {
+    return (
+      <div className="mb-4 flex flex-wrap items-center gap-x-3 rounded-md border border-primary/40 bg-primary/10 px-3 py-2" data-owner-band="web">
+        <div className="min-w-0 flex-1 text-[length:var(--fs-small)] text-foreground">
+          <p className="font-medium">{titleWeb}</p>
+          <p className="text-muted-foreground">{reasonWeb}</p>
+        </div>
+        <a href={`${place.local}${path0}`} className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'shrink-0')} data-owner-band-local>{goLocal}</a>
+      </div>
+    )
+  }
   if (!mode) return null
   // 387-3: на этом компьютере — свой заголовок и вывод с настоящим адресом страницы, без «состояние временное».
   const host = typeof window === 'undefined' ? '' : window.location.host
@@ -117,7 +139,8 @@ export function OwnerBand({
   // (the node names it in its one place answer), or, without a main domain, the way to the domain page. Not on a server's SSH window.
   const path = typeof window === 'undefined' ? '' : `${window.location.pathname}${window.location.search}`
   const action = machine && !onServer && place !== undefined
-    ? place?.web
+    // 775 (the owner: «кнопка перейти в web … появляется только тогда, когда четвёртый пункт поддомены полностью завершён»)
+    ? place?.web && place.webReady
       ? <a href={`${place.web}${path}`} className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'my-1.5 shrink-0')} data-owner-band-web>{goWeb}</a>
       : <a href={`/${lang}/architect/hosting/domain`} className={cn(buttonVariants({ variant: 'link', size: 'sm' }), 'my-1.5 shrink-0 px-0')} data-owner-band-setup>{setupDomain}</a>
     : null

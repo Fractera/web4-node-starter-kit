@@ -13,7 +13,8 @@ type Row = { id: string; name: string; host: string; answers: boolean }
 
 // The owner, 2026-11-17: «не хватает четвёртого шага который показывает активацию субдоменов для каждого элемента». Asked of the node's
 // door `/api/domain/subdomains` only when the person presses — a check of every element's address takes seconds and is never automatic.
-export function DomainSubdomains({ lang, words: w }: { lang: string; words: DomainListWords }) {
+/** `onResult` — after a check: does every element answer (the rung turns done) or does one not (its mark turns red). */
+export function DomainSubdomains({ lang, words: w, onResult }: { lang: string; words: DomainListWords; onResult?: (allAnswer: boolean) => void }) {
   const p = w.pipe
   const [rows, setRows] = useState<Row[] | null>(null)
   const [busy, setBusy] = useState(false)
@@ -25,7 +26,7 @@ export function DomainSubdomains({ lang, words: w }: { lang: string; words: Doma
     try {
       const r = await fetch(`${BASE}/api/domain/subdomains?lang=${lang}`, { cache: "no-store" })
       const j = (await r.json().catch(() => null)) as { ok?: boolean; error?: string; elements?: Row[] } | null
-      if (j?.ok && j.elements) setRows(j.elements)
+      if (j?.ok && j.elements) { setRows(j.elements); onResult?.(j.elements.every((x) => x.answers)) }
       else setError(`${p.subsFailed} ${j?.error ?? r.status}`)
     } catch { setError(p.subsFailed) }
     setBusy(false)

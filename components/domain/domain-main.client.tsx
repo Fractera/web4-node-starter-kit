@@ -12,13 +12,16 @@ import signIn from "@/lib/auth/sign-in-link.cjs"
 import type { DomainListWords } from "./domain-list.i18n"
 import type { DomainLadderWords } from "./domain-ladder.i18n"
 import { StaticCopyItem } from "./static-copy.client"
-import { DangerConfirm } from "./danger-confirm"
+import { AppDialog } from "@/components/dialog/app-dialog.client"
+import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import { Ladder } from "@/components/hosting/ladder-step"
 import { DomainSubdomains } from "./domain-subdomains.client"
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
 type Props = {
+  /** 775: the one modal's chrome words, chosen on the server */
+  dialogUi: AppDialogUi
   lang: string
   name: string
   status: string | null
@@ -28,11 +31,13 @@ type Props = {
   ladderWords: DomainLadderWords
 }
 
-export function DomainMain({ lang, name, status, links, architect, words: w, ladderWords }: Props) {
+export function DomainMain({ lang, dialogUi, name, status, links, architect, words: w, ladderWords }: Props) {
   const place = useNodePlace()
   const [confirm, setConfirm] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // 775: the fourth rung after a check — every element answers (done) or one does not (red); unknown until the person presses.
+  const [subs, setSubs] = useState<boolean | null>(null)
   // 777: the architect's sign-in — the node's one link builder, the way back to this same panel page on the domain.
   const signInHref = place?.signIn && typeof window !== "undefined"
     ? signIn.architectSignIn(place.signIn, `${window.location.pathname}${window.location.search}`, window.location.origin)
@@ -79,7 +84,7 @@ export function DomainMain({ lang, name, status, links, architect, words: w, lad
         { id: "zone", title: w.pipe.t1, done: true, summary: w.pipe.s1, body: null },
         { id: "ns", title: w.pipe.t2, done: true, summary: w.pipe.s2, body: null },
         { id: "active", title: w.pipe.t3main, done: true, summary: w.pipe.s3main, body: null },
-        { id: "fourth", title: w.pipe.t4main, done: false, body: <DomainSubdomains lang={lang} words={w} /> },
+        { id: "fourth", title: w.pipe.t4main, done: subs === true, error: subs === false, body: <DomainSubdomains lang={lang} words={w} onResult={setSubs} /> },
       ]} />
 
       <Accordion type="single" collapsible className="rounded-lg border border-border bg-card px-4" data-block="domain-main-copy">
@@ -87,13 +92,23 @@ export function DomainMain({ lang, name, status, links, architect, words: w, lad
       </Accordion>
 
 
-      {confirm ? (
-        <DangerConfirm id="domain-disconnect" text={w.main.disconnectConfirm.replace("{domain}", name)}
-          yes={busy ? w.main.disconnecting : w.main.disconnectYes} cancel={w.cancel} busy={busy}
-          onYes={disconnect} onCancel={() => setConfirm(false)} />
-      ) : (
-        <Button type="button" variant="ghost" size="sm" className="w-fit text-muted-foreground" onClick={() => setConfirm(true)} data-domain-disconnect>{w.main.disconnect}</Button>
-      )}
+      {/* 775 (the owner, 2026-11-17: «кнопку отключить основной домен не красного … голубого цвета»): an irreversible act is red and asks
+          in the one modal, like «Убрать из списка». */}
+      <Button type="button" variant="destructive" size="sm" className="w-fit" onClick={() => setConfirm(true)} data-domain-disconnect>{w.main.disconnect}</Button>
+      <AppDialog
+        open={confirm}
+        onOpenChange={(o) => { if (!o && !busy) setConfirm(false) }}
+        title={w.main.disconnect}
+        ui={dialogUi}
+        footer={
+          <>
+            <Button variant="outline" disabled={busy} onClick={() => setConfirm(false)}>{w.cancel}</Button>
+            <Button variant="destructive" disabled={busy} onClick={() => void disconnect()} data-domain-disconnect-yes>{busy ? w.main.disconnecting : w.main.disconnectYes}</Button>
+          </>
+        }
+      >
+        <p className="text-sm text-foreground text-pretty">{w.main.disconnectConfirm.replace("{domain}", name)}</p>
+      </AppDialog>
       {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
     </div>
   )

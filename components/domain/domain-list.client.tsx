@@ -69,7 +69,7 @@ export function DomainList({ lang, dialogUi, words: w, ladderWords }: { lang: st
         <DomainKey state={list?.key ?? null} words={w} ladderWords={ladderWords} onChanged={load} />
         {status}
         {list && primary ? (
-          <DomainMain lang={lang} name={primary.name} status={primary.status} links={list.links} architect={list.architect} words={w} ladderWords={ladderWords} />
+          <DomainMain lang={lang} dialogUi={dialogUi} name={primary.name} status={primary.status} links={list.links} architect={list.architect} words={w} ladderWords={ladderWords} />
         ) : list ? (
           <DomainCards lang={lang} dialogUi={dialogUi} role="main" domains={mainDomains} primaryName={null} architect={list.architect} words={w} ladderWords={ladderWords} onChanged={load} />
         ) : null}

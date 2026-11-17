@@ -117,6 +117,13 @@ uncommitted: domain-cards (add row only while the main section is empty; «Ос�
 «Убрать» → AppDialog), domain-list (dialogUi), sections/kinds/domain-ladder.server.tsx (appDialogUi), node-domains (main-exists),
 domain-list.i18n). 5ea8226e = the ladder. **On core-back:** eyes (row, the dialog via --click «Убрать из списка» on throughsongs.com) →
 commit → Telegram with screenshots.
+**17:27 — throughsongs.com IS the main domain (he activated it ~17:15); round of fixes (Telegram 442–447) CODED, core build runs**
+(prebuild RC=0, uncommitted; baf60169 = one main domain): zoneRootElement (node-domains; activate + subdomains door — root shows the zone),
+Rung `error` → red «!» (ladder-step), DomainSubdomains onResult, «Отключить основной домен» red behind AppDialog (danger-confirm.tsx
+deleted), subdomains door writes logs/domain-subdomains.json → place door webReady + local, OwnerBand: «Перейти в web» only when
+webReady; NEW blue band (via web + place home) «Перейти на компьютер». The copy already maps root → throughsongs.com (measured).
+**On core-back:** eyes of /ru/architect/hosting/domain (rung 4 check by --click «Проверить поддомены», the red/blue mark), the blue
+band at https://architect.throughsongs.com (eyes; needs sign-in? 200 measured earlier) → commit → Telegram.
 **How to work:** load interface-design, use-primitives, use-shadcn first; parts_find before new files; plan in 6 lines to him BEFORE code
 (he is angry at being given something else than asked); screenshot the page (Chrome tab via the extension, `browser_batch`, save_to_disk)
 before the build and after; prebuild RC=0 → `npm run serve:rebuild:detached` → on core-back serve:status, proofs, commit, Telegram with

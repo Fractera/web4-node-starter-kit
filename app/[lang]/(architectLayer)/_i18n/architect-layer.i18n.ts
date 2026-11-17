@@ -89,6 +89,9 @@ export type ArchitectLayerUi = {
     goWeb: string
     /** 776: no main domain yet — the link to the domain page */
     setupDomain: string
+    titleWeb: string
+    reasonWeb: string
+    goLocal: string
     bodyMachine: string
     /** 741-6: the same band on a SERVER reached through the SSH window (`npm run server -- window`) — «окно на сервер», not «этот компьютер». */
     titleWindow: string
@@ -140,6 +143,9 @@ const DICT: Record<string, ArchitectLayerUi> = {
     titleMachine: "You are on this computer — no sign-in needed",
     goWeb: "Go to the web",
     setupDomain: "Set up a domain",
+    titleWeb: "You are in the web panel — the node runs on your computer",
+    reasonWeb: "Sitting at that computer? Open the same page right on it: no internet and no sign-in needed.",
+    goLocal: "Go to the computer",
     titleWindow: "You are looking at the server's control panel through the SSH window ({host}) — it opens without signing in, by the node's key",
     reasonWindow: "This window is a tunnel from your computer to the server's own loopback (npm run server -- window): only the holder of the node's key gets here. From the internet the server's panel opens only on its domain, after signing in.",
     titleTemporary: "You opened the control panel at a temporary Cloudflare address — here it is view-only",
@@ -172,6 +178,9 @@ const DICT: Record<string, ArchitectLayerUi> = {
     titleMachine: "Вы на этом компьютере — авторизация не нужна",
     goWeb: "Перейти в web",
     setupDomain: "Настройте домен",
+    titleWeb: "Вы в web-версии пульта — узел работает на вашем компьютере",
+    reasonWeb: "Сидите за этим компьютером? Откройте ту же страницу прямо на нём: без интернета и без входа.",
+    goLocal: "Перейти на компьютер",
     titleWindow: "Вы смотрите пульт сервера через SSH-окно ({host}) — он открывается без входа, по ключу узла",
     reasonWindow: "Это окно — туннель с вашего компьютера к собственному адресу сервера (npm run server -- window): сюда попадает только тот, у кого ключ узла. Из интернета пульт сервера открывается только по его домену, после входа.",
     titleTemporary: "Вы открыли пульт по временному адресу Cloudflare — здесь он только для просмотра",

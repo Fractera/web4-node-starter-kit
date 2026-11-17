@@ -16,8 +16,9 @@ import { cn } from "@/lib/utils"
 // The older `LadderStep` / `LadderLocked` stay for the computer's own domain ladder until it moves here (745, D47).
 
 /** `warn` — a rung passed without its result (skipped, «later»): the ladder goes on past it, its mark is an orange «!», never a check. */
-export type Rung = { id: string; title: string; done: boolean; warn?: boolean; summary?: string | null; body: ReactNode }
-type RungState = "done" | "warn" | "current" | "locked"
+/** `error` (775, the owner 2026-11-17: «внутри есть ошибка — голубой кружок не покраснел»): a problem measured inside the rung — its mark turns red with «!». */
+export type Rung = { id: string; title: string; done: boolean; warn?: boolean; error?: boolean; summary?: string | null; body: ReactNode }
+type RungState = "done" | "warn" | "error" | "current" | "locked"
 
 /** `focus` — a rung a body sends the person back to on purpose («take a subdomain instead»); without it the ladder follows its current rung. */
 export function Ladder({ id, rungs, locked, focus = null }: { id: string; rungs: Rung[]; locked: string; focus?: string | null }) {
@@ -33,7 +34,7 @@ export function Ladder({ id, rungs, locked, focus = null }: { id: string; rungs:
     <Accordion className="rounded-lg border border-border bg-card" collapsible data-block={`ladder-${id}`} onValueChange={setValue} type="single" value={value}>
       {rungs.map((r, i) => {
         // 762 (the owner, 2026-11-16: «должен гореть оранжевым восклицательным знаком даже если мы его пропускаем а голубую галочку … когда Telegram будет действительно установлен»)
-        const state: RungState = !open[i] ? "locked" : r.done ? (r.warn ? "warn" : "done") : "current"
+        const state: RungState = !open[i] ? "locked" : r.error ? "error" : r.done ? (r.warn ? "warn" : "done") : "current"
         return (
           <AccordionItem data-block={`ladder-${id}-${r.id}`} data-rung={state} data-step={i + 1} disabled={!open[i]} key={r.id} value={r.id}>
             <AccordionTrigger className="px-4 py-3 disabled:opacity-100 [&:disabled>svg]:hidden [&>svg]:translate-y-1">
@@ -61,10 +62,10 @@ export function Ladder({ id, rungs, locked, focus = null }: { id: string; rungs:
 
 /** The rung's mark: a check when done, an orange «!» when passed without its result, its number in the accent where the ladder stands, a muted number while locked. */
 function RungMark({ n, state }: { n: number; state: RungState }) {
-  const look = state === "done" ? "bg-primary text-primary-foreground" : state === "warn" ? "bg-warning text-background" : state === "current" ? "border border-primary text-primary" : "bg-muted text-muted-foreground"
+  const look = state === "done" ? "bg-primary text-primary-foreground" : state === "warn" ? "bg-warning text-background" : state === "error" ? "bg-destructive text-background" : state === "current" ? "border border-primary text-primary" : "bg-muted text-muted-foreground"
   return (
     <span aria-hidden className={cn("inline-flex size-6 shrink-0 items-center justify-center rounded-full text-xs tabular-nums", look)}>
-      {state === "done" ? <Check className="size-3.5" /> : state === "warn" ? <span className="font-bold">!</span> : n}
+      {state === "done" ? <Check className="size-3.5" /> : state === "warn" || state === "error" ? <span className="font-bold">!</span> : n}
     </span>
   )
 }

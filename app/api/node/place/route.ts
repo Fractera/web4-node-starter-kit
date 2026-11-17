@@ -1,5 +1,7 @@
 // @api read where this node stands as the node detects it
 import { NextRequest, NextResponse } from "next/server"
+import { readFileSync } from "node:fs"
+import { join } from "node:path"
 
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
@@ -43,7 +45,14 @@ export async function GET(req: NextRequest) {
   // PC-web). The node sees it in the request; the browser's widgets do not decide it from the address bar (741-7, check:place-readers).
   const host = (req.headers.get("host") ?? "").replace(/:\d+$/, "").replace(/^\[|\]$/g, "")
   const via = host === "localhost" || host === "127.0.0.1" || host === "::1" ? "local" : "web"
-  return NextResponse.json({ ok: true, place: readPlace(), launched, via, web: b.web, signIn: { web: b.web, webAuth: b.webAuth, localAuth: b.localAuth } }, noStore)
+  // 775: «Перейти в web» only once every element answers on the domain (the fourth rung's last check, `logs/domain-subdomains.json`);
+  // `local` — this computer's panel, for the blue band of the web («Перейти на компьютер»).
+  let webReady = false
+  try {
+    const s = JSON.parse(readFileSync(join(process.cwd(), "logs", "domain-subdomains.json"), "utf8")) as { zone?: string; all?: boolean }
+    webReady = !!b.web && s.all === true && typeof s.zone === "string" && !!b.site && b.site === `https://${s.zone}`
+  } catch { /* never checked — not ready */ }
+  return NextResponse.json({ ok: true, place: readPlace(), launched, via, web: b.web, webReady, local: b.here, signIn: { web: b.web, webAuth: b.webAuth, localAuth: b.localAuth } }, noStore)
 }
 
 // 737-18: the place is detected (`lib/hosting/place.mjs`), never declared — a declaration is refused with the reason.

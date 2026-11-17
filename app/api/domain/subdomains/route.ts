@@ -1,8 +1,10 @@
 // @api list each element's subdomain on the main domain and whether it answers
 import { NextRequest, NextResponse } from "next/server"
+import { mkdirSync, writeFileSync } from "node:fs"
+import { join } from "node:path"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
-import { primaryDomain } from "@/lib/domain/node-domains"
+import { primaryDomain, zoneRootElement } from "@/lib/domain/node-domains"
 import { listServices, serviceUrl } from "@/lib/microservices/registry"
 import { addressOf } from "@/lib/web4-items/address-file.mjs"
 import { elementName } from "@/lib/web4-items/dashboard-rows"
@@ -31,7 +33,15 @@ export async function GET(req: NextRequest) {
   const primary = primaryDomain()
   if (!primary) return NextResponse.json({ ok: false, error: "no-primary" }, { status: 409, ...noStore })
   const lang = req.nextUrl.searchParams.get("lang") === "ru" ? "ru" : "en"
-  const rows = listServices().filter((s) => serviceUrl(s.id)).map((s) => ({ id: s.id, name: elementName(s.id, lang), host: `${addressOf(s.id) ?? s.id}.${primary.name}` }))
+  // 775: the element on the domain's root answers on the zone itself, without a prefix.
+  const rootId = zoneRootElement(serviceUrl)
+  const rows = listServices().filter((s) => serviceUrl(s.id)).map((s) => ({ id: s.id, name: elementName(s.id, lang), host: s.id === rootId ? primary.name : `${addressOf(s.id) ?? s.id}.${primary.name}` }))
   const checked = await Promise.all(rows.map(async (r) => ({ ...r, answers: await answers(r.host) })))
+  // 775 (the owner, 2026-11-17: «кнопка перейти в web … появляется только тогда, когда четвёртый пункт поддомены полностью завершён»):
+  // the verdict of the last check is kept for the place door (`webReady`) — only by this press, never measured behind the person's back.
+  try {
+    mkdirSync(join(process.cwd(), "logs"), { recursive: true })
+    writeFileSync(join(process.cwd(), "logs", "domain-subdomains.json"), `${JSON.stringify({ zone: primary.name, all: checked.every((c) => c.answers), at: new Date().toISOString() })}\n`)
+  } catch { /* the record is a courtesy: without it the band keeps «Настройте домен» */ }
   return NextResponse.json({ ok: true, zone: primary.name, elements: checked, at: new Date().toISOString() }, noStore)
 }

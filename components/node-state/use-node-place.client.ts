@@ -27,6 +27,10 @@ export type NodePlaceAnswer = {
   via: "local" | "web"
   /** 776: the panel on the node's own domain (`https://architect.<zone>`), `null` — no main domain yet */
   web: string | null
+  /** 775: every element answered on the domain at the fourth rung's last check — «Перейти в web» shows only then */
+  webReady: boolean
+  /** 775: this computer's panel (`http://localhost:<port>`) — the blue band of the web leads there */
+  local: string | null
   /** 777: the bases of the one «sign in as the architect» link (`lib/auth/sign-in-link.cjs` architectSignIn) */
   signIn: { web: string | null; webAuth: string | null; localAuth: string | null } | null
 }
@@ -37,7 +41,7 @@ const str = (v: unknown): string | null => (typeof v === "string" && /^https?:\/
 /** Один вопрос на страницу; ответ `null` — узел не ответил (или не на чтение для этого посетителя). */
 export function askNodePlace(): Promise<NodePlaceAnswer | null> {
   if (asked) return asked
-  type Raw = { place?: { kind?: string; source?: string; detail?: string; mismatch?: string; foreign?: boolean }; launched?: NodePlaceAnswer["launched"]; via?: unknown; web?: unknown; signIn?: { web?: unknown; webAuth?: unknown; localAuth?: unknown } }
+  type Raw = { place?: { kind?: string; source?: string; detail?: string; mismatch?: string; foreign?: boolean }; launched?: NodePlaceAnswer["launched"]; via?: unknown; web?: unknown; webReady?: unknown; local?: unknown; signIn?: { web?: unknown; webAuth?: unknown; localAuth?: unknown } }
   const p: Promise<NodePlaceAnswer | null> = fetch(`${BASE}/api/node/place`, { cache: "no-store" })
     .then((r) => (r.ok ? (r.json() as Promise<Raw>) : null))
     .then((a): NodePlaceAnswer | null => {
@@ -47,6 +51,8 @@ export function askNodePlace(): Promise<NodePlaceAnswer | null> {
         launched: Array.isArray(a?.launched) ? a.launched : [],
         via: a?.via === "local" ? "local" : "web",
         web: typeof a?.web === "string" && a.web.startsWith("https://") ? a.web : null,
+        webReady: a?.webReady === true,
+        local: typeof a?.local === "string" && /^http:\/\/localhost:\d+$/.test(a.local) ? a.local : null,
         signIn: a?.signIn ? { web: str(a.signIn.web), webAuth: str(a.signIn.webAuth), localAuth: str(a.signIn.localAuth) } : null }
     })
     .catch(() => null)
