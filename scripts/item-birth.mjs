@@ -251,7 +251,7 @@ registry.services.push({
   kind: 'user',
 })
 // 778 (владелец 2026-11-17): свой элемент рождается со своей ролью админа — первый свободный номер elementAdmin001…980; установщик
-// кладёт её элементу в окружение (ELEMENT_ADMIN_ROLE). Встроенный — без роли: его админ только архитектор.
+// кладёт её элементу в окружение (NEXT_PUBLIC_ELEMENT_ADMIN_ROLE). Встроенный — без роли: его админ только архитектор.
 if (!process.argv.includes('--native')) {
   const elementAdmin = require('../lib/web4-items/element-admin-role.cjs')
   const role = elementAdmin.firstFree(registry)

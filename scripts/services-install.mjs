@@ -426,7 +426,8 @@ function derivedValue(name, ctx) {
     // 367-5: собственный репозиторий элемента, рождённого из репозитория человека (`born.url` реестра); у остальных — пусто.
     case 'ELEMENT_REPO_URL': return registry.services.find((s) => s.id === id)?.born?.url ?? ''
     // 778: роль админа ЭТОГО элемента (`elementAdmin007`) — замок его разделов управления и маршрута Mini App; у встроенного — пусто.
-    case 'ELEMENT_ADMIN_ROLE': return elementAdmin.adminRoleOf(registry, id)
+    // NEXT_PUBLIC_: вшивается в сборку элемента — замок страницы в браузере, прокси и двери читают одно имя (не секрет).
+    case 'NEXT_PUBLIC_ELEMENT_ADMIN_ROLE': return elementAdmin.adminRoleOf(registry, id)
     case 'ARCHITECT_URL': return nodeUrl
     // 🔒 НИ ОДНОМУ ЭЛЕМЕНТУ — АДРЕС ДРУГОГО (шаг 734-3a-2). ✗ 283-2 и 285-3 выдавали каждому элементу двери элемента `root` (меню,
     // оболочку, адрес «сайта»): CONFIG — источник настроек — читал их у одного кастомного элемента. Владелец 2026-11-12: «У нас есть
