@@ -250,6 +250,14 @@ registry.services.push({
   note: `Рождён из ${origin.from} ${origin.version} (319${repoUrl ? ', 367-4' : ''}). Самостоятельный проект: установщик его код не трогает.`,
   kind: 'user',
 })
+// 778 (владелец 2026-11-17): свой элемент рождается со своей ролью админа — первый свободный номер elementAdmin001…980; установщик
+// кладёт её элементу в окружение (ELEMENT_ADMIN_ROLE). Встроенный — без роли: его админ только архитектор.
+if (!process.argv.includes('--native')) {
+  const elementAdmin = require('../lib/web4-items/element-admin-role.cjs')
+  const role = elementAdmin.firstFree(registry)
+  if (role) registry.services[registry.services.length - 1].adminRole = role
+  else stage('роли админов элементов кончились (980) — элемент родится без своей роли, управлять им сможет только архитектор')
+}
 writeFileSync(REGISTRY_FILE, JSON.stringify(registry, null, 2) + '\n', 'utf8')
 stage('записан в реестр узла')
 

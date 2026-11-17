@@ -9,6 +9,8 @@
 //     (owner / top tier).
 //   • The remaining entries are the business RBAC vocabulary the app can assign
 //     and gate on (customer-facing, staff/operations, admin).
+import elementAdmin from "@/lib/web4-items/element-admin-role.cjs"
+
 export const ALL_ROLES = [
   // Access tiers (enforced)
   'guest',
@@ -85,3 +87,15 @@ export type ProtectedGroup = keyof typeof PROTECTED_GROUP_ROLES
 // администрирует его содержимое, — это разные работы, и различать их и есть
 // смысл ролей.
 export const ARCHITECT_LAYER_ROLES = ['architect'] as const satisfies readonly AppRole[]
+
+// ── Админ элемента (шаг 778, владелец 2026-11-17) ───────────────────────────
+//
+// Семейство `elementAdmin001…elementAdmin980` — одно и то же во всех проектах Fractera («жёстко пришить использовать только эти
+// названия»); источник — `lib/web4-items/element-admin-role.cjs` (его читают и скрипты). 🔒 НЕ В `ALL_ROLES`: каждый выбор роли читает
+// этот список, и 980 имён похоронили бы пятнадцать настоящих. Номер элемента — в реестре узла (`adminRole`), берётся при рождении.
+// Роль открывает разделы управления своего элемента и только их; архитектор проходит всюду, как и прежде.
+
+export type ElementAdminRole = `elementAdmin${string}`
+export const ELEMENT_ADMIN_COUNT: number = elementAdmin.COUNT
+export const isElementAdminRole = (role: string): role is ElementAdminRole => elementAdmin.isRole(role)
+export const elementAdminNumber = (role: string): number | null => elementAdmin.numberOf(role)

@@ -49,6 +49,7 @@ import { dropStaleTypes } from '../lib/deploy/stale-types.mjs'
 import { progressElement } from './progress.mjs'
 // 654-6: the element's own key — the core's copy of the stores' function (its test vector: scripts/check-element-key.mjs).
 const { elementKeyOf } = createRequire(import.meta.url)('../lib/element-key.cjs')
+const elementAdmin = createRequire(import.meta.url)('../lib/web4-items/element-admin-role.cjs')
 
 const require = createRequire(import.meta.url)
 const { isFree, PORT_BLOCK_START, PORT_BLOCK_END, blockPorts, isBlockPort } = require('../lib/server-port.cjs')
@@ -200,6 +201,13 @@ function githubToken(id) {
     } catch { /* нет файла */ }
   }
   return process.env.FRACTERA_GITHUB_TOKEN?.trim() || null
+}
+
+// 778 (владелец 2026-11-17: «elementAdmin001…elementAdmin980 … жёстко пришить»): у каждого своего элемента — номер его роли админа в
+// реестре. Новорождённый берёт его при рождении (item-birth); старший без номера получает здесь, по порядку реестра. Встроенным — нет.
+{
+  const got = elementAdmin.ensureAdminRoles(registry)
+  if (got.length) say(`  роли админов элементов: ${got.map((id) => `${id} → ${elementAdmin.adminRoleOf(registry, id) || 'нет'}`).join(', ')}`)
 }
 
 if (!Array.isArray(registry.services) || registry.services.length === 0) {
@@ -417,6 +425,8 @@ function derivedValue(name, ctx) {
     case 'SERVICE_DATA_DIR': return serviceDataDir(id)
     // 367-5: собственный репозиторий элемента, рождённого из репозитория человека (`born.url` реестра); у остальных — пусто.
     case 'ELEMENT_REPO_URL': return registry.services.find((s) => s.id === id)?.born?.url ?? ''
+    // 778: роль админа ЭТОГО элемента (`elementAdmin007`) — замок его разделов управления и маршрута Mini App; у встроенного — пусто.
+    case 'ELEMENT_ADMIN_ROLE': return elementAdmin.adminRoleOf(registry, id)
     case 'ARCHITECT_URL': return nodeUrl
     // 🔒 НИ ОДНОМУ ЭЛЕМЕНТУ — АДРЕС ДРУГОГО (шаг 734-3a-2). ✗ 283-2 и 285-3 выдавали каждому элементу двери элемента `root` (меню,
     // оболочку, адрес «сайта»): CONFIG — источник настроек — читал их у одного кастомного элемента. Владелец 2026-11-12: «У нас есть

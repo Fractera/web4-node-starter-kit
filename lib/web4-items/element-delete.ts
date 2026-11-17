@@ -12,6 +12,8 @@ import { roadOf } from "@/lib/domain/reach-road.mjs"
 import { placeKind } from "@/lib/hosting/place.mjs"
 import { closeAgents } from "@/lib/web4-items/agent-close.mjs"
 import supervision from "@/lib/web4-items/supervision.cjs"
+import elementAdmin from "@/lib/web4-items/element-admin-role.cjs"
+import { stripElementAdminRole } from "@/lib/auth/element-admin"
 
 // УДАЛЕНИЕ РОЖДЁННОГО WEB4 ЭЛЕМЕНТА НАСОВСЕМ (узел, шаг 325-5). Решение владельца 2026-09-27: «Удалить насовсем».
 //
@@ -88,6 +90,19 @@ export async function deleteElement(id: string): Promise<{ ok: boolean; steps: S
   const pm2 = (args: string[]) => new Promise<boolean>((resolve) => {
     execFile(IS_WIN ? "pm2.cmd" : "pm2", args, { cwd: ROOT, shell: IS_WIN, windowsHide: true, timeout: 30_000 }, (err) => resolve(!err))
   })
+
+  // 00. 778 (владелец 2026-11-17): роль админа элемента снимается со ВСЕХ аккаунтов раньше всего остального — номер освобождается вместе
+  // с записью реестра, и новый элемент с этим номером иначе унаследовал бы чужих админов. Вход не ответил — элемент НЕ удаляется: живой
+  // элемент с прежними админами честнее мёртвого номера с чужими.
+  {
+    let held = ""
+    try { held = elementAdmin.adminRoleOf(readRegistry(), id) } catch { /* реестр не читается — этап 3 скажет */ }
+    if (held) {
+      const strip = await stripElementAdminRole(held)
+      steps.push({ step: "admin-role", ok: strip.ok, detail: strip.ok ? `${held}:${strip.count}` : `${held}:${strip.reason}` })
+      if (!strip.ok) return { ok: false, steps }
+    }
+  }
 
   // 0. 750-1: агент и его рабочий — первыми, пока реестр ещё называет элемент (иначе ядро не найдёт его комплект, `no-agent-kit`).
   steps.push(await closeAgents(id, (globalThis as { __web4AgentDone?: (s: string, o: { close: boolean }) => unknown }).__web4AgentDone))
