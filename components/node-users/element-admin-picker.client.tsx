@@ -1,5 +1,5 @@
 "use client"
-// @local — the block «Админ элементов» of the Users tab (778-3): chips by element name with ×, «+» adds one; the create and the edit windows use it
+// @local — the part «Админ элементов» of the Users tab (778-3): chips by element name with ×, «+» adds one; the create and the edit windows use it
 
 import { Plus, X } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
@@ -8,8 +8,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Label } from "@/components/ui/label"
 import { isElementAdminRole, type ElementAdmin } from "./use-element-admins.client"
 
-// АДМИН ЭЛЕМЕНТОВ (узел, шаг 778-3). Карточка решения, «1 да» владельца 2026-11-17: «Окно пользователя (карандаш): блок «Админ
-// элементов» — фишки с «+» и «×»»; «Создать пользователя» — «выбор элементов по названию». Значение — роли человека целиком: блок меняет
+// АДМИН ЭЛЕМЕНТОВ (узел, шаг 778-3). Карточка решения, «1 да» владельца 2026-11-17: в окне пользователя (карандаш) — «Админ
+// элементов»: фишки с «+» и «×»; «Создать пользователя» — «выбор элементов по названию». Значение — роли человека целиком: часть меняет
 // только роли семейства elementAdmin001…980, остальные проходят как есть. Выдать или снять такую роль может только архитектор — это
 // правило элемента входа, отказ приходит с причиной.
 
