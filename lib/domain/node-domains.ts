@@ -184,6 +184,8 @@ export async function addDomain(input: string, forWhat: DomainFor = "element"): 
   const name = normalizeDomain(input)
   const shape = domainShape(name)
   if (shape !== "ok") return { ok: false, error: shape }
+  // 775: one main domain — a second candidate is refused while one waits or the node already has its main domain.
+  if (forWhat === "main" && (primaryDomain() || readList().some((d) => domainSection(d, false) === "main"))) return { ok: false, error: "main-exists" }
   if (!writeList([...readList(), { name, state: "unknown", addedAt: new Date().toISOString(), for: forWhat }])) return { ok: false, error: "write-failed" }
   return checkDomain(name)
 }

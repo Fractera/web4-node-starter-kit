@@ -10,7 +10,8 @@ import { Label } from "@/components/ui/label"
 import type { DomainListWords } from "./domain-list.i18n"
 import type { DomainLadderWords } from "./domain-ladder.i18n"
 import { DomainPipeline, type PipelineDomain } from "./domain-pipeline.client"
-import { DangerConfirm } from "./danger-confirm"
+import { AppDialog } from "@/components/dialog/app-dialog.client"
+import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
@@ -24,6 +25,8 @@ const BADGE: Record<string, string> = {
 
 type Props = {
   lang: string
+  /** 775: the one modal's chrome words, chosen on the server (`appDialogUi(lang)`) */
+  dialogUi: AppDialogUi
   /** 775: the section this list belongs to — the main domain's candidates («main») or the elements' domains («element») */
   role: "main" | "element"
   domains: Extra[]
@@ -34,7 +37,7 @@ type Props = {
   onChanged: () => Promise<void>
 }
 
-export function DomainCards({ lang, role, domains, primaryName, architect, words: w, ladderWords, onChanged }: Props) {
+export function DomainCards({ lang, dialogUi, role, domains, primaryName, architect, words: w, ladderWords, onChanged }: Props) {
   // 775: two add fields on one page — the elements' keeps the id an element's settings link to (#domain-add).
   const addId = role === "main" ? "domain-add-main" : "domain-add"
   // 775: every row closed until the person opens it (the owner: «первый аккордеон открывается зачем — задания не было»).
@@ -86,15 +89,21 @@ export function DomainCards({ lang, role, domains, primaryName, architect, words
     setBusy(null)
   }
 
+  const confirmed = confirm ? domains.find((x) => x.name === confirm) ?? null : null
+
   return (
+    <>
     <Accordion type="single" collapsible value={open} onValueChange={setOpen} className="rounded-lg border border-border bg-card" data-block={`domain-cards-${role}`} data-domain-cards={role}>
       {domains.map((d) => {
         const connected = !!d.holder || primaryName === d.name
         return (
           <AccordionItem key={d.name} value={d.name} data-domain-card={d.name} data-domain-state={d.state}>
-            <AccordionTrigger className="px-4 py-3">
-              <span className="flex flex-wrap items-center gap-2">
-                <span className="font-mono">{d.name}</span>
+            <AccordionTrigger className="px-4 py-3 hover:no-underline">
+              {/* 775 (the owner: «должно быть написано основной домен: далее крупным шрифтом throughsongs.com далее два бейджа … слишком
+                  длинный … сокращаем и заканчиваем …»): the section's word, the name large and cut with an ellipsis, then the badges. */}
+              <span className="flex min-w-0 flex-wrap items-center gap-2">
+                <span className="text-muted-foreground">{role === "main" ? w.rowMain : w.rowExtra}</span>
+                <span className="min-w-0 max-w-full truncate font-mono text-base font-semibold text-foreground" data-domain-name>{d.name}</span>
                 <span className={`rounded-md border px-1.5 text-[length:var(--fs-small)] ${BADGE[d.state] ?? "border-destructive/40 text-destructive"}`}>
                   {d.state === "pending" && d.status ? d.status : d.state}
                 </span>
@@ -109,34 +118,53 @@ export function DomainCards({ lang, role, domains, primaryName, architect, words
             </AccordionTrigger>
             <AccordionContent className="flex flex-col gap-2 px-4">
               <DomainPipeline lang={lang} role={role} holder={d.holder ? d.holderAddress ?? d.holder : null} domain={d} words={w} ladderWords={ladderWords} onChanged={onChanged} hasPrimary={!!primaryName} forItem={forItem} architect={architect} />
-              {d.holder && confirm === d.name ? (
-                <DangerConfirm id="domain-detach" text={w.detachConfirm.replace("{domain}", d.name).replace("{element}", d.holderAddress ?? d.holder)}
-                  yes={busy === d.name ? w.detaching : w.detachRemoveYes} cancel={w.cancel} busy={busy !== null}
-                  onYes={() => act("DELETE", d.name, d.name, true)} onCancel={() => setConfirm(null)} />
-              ) : (
-                <Button type="button" variant="ghost" size="sm" className="w-fit" onClick={() => (d.holder ? setConfirm(d.name) : act("DELETE", d.name, d.name))} disabled={busy !== null} data-domain-remove>
-                  {d.holder ? w.detachRemove : w.remove}
-                </Button>
-              )}
+              {/* 775 (the owner, 2026-11-17: «кнопку убрать из списка должно быть красный тревожный и должна вызывать обязательно
+                  подтверждающий модальное окно»): red, and the one modal of the product asks first. */}
+              <Button type="button" variant="destructive" size="sm" className="w-fit" onClick={() => setConfirm(d.name)} disabled={busy !== null} data-domain-remove>
+                {d.holder ? w.detachRemove : w.remove}
+              </Button>
               {error[d.name] && <p className="text-sm text-destructive" role="alert">{error[d.name]}</p>}
             </AccordionContent>
           </AccordionItem>
         )
       })}
 
-      <AccordionItem value="add" data-domain-card="add">
-        <AccordionTrigger className="px-4 py-3"><span className="font-medium">+ {role === "main" ? w.addMainTitle : w.addExtraTitle}</span></AccordionTrigger>
-        <AccordionContent className="flex flex-col gap-2 px-4">
-          <Label htmlFor={addId}>{role === "main" ? w.addMainLabel : w.addLabel}</Label>
-          <div className="flex flex-wrap gap-2" data-block="domain-add-row">
-            <Input id={addId} className="max-w-72 font-mono" value={name} onChange={(e) => setName(e.target.value)} placeholder="mybrand.com" autoComplete="off" spellCheck={false} />
-            <Button type="button" size="sm" onClick={() => act("POST", name, "add")} disabled={!name.trim() || busy !== null} data-domain-add>
-              {busy === "add" ? w.adding : w.add}
-            </Button>
-          </div>
-          {error.add && <p className="text-sm text-destructive" role="alert">{error.add}</p>}
-        </AccordionContent>
-      </AccordionItem>
+      {/* 775 (the owner, 2026-11-17: «у нас сейчас домен уже добавлен? мы можем добавить ещё один основной домен?»): the node has ONE main
+          domain — the main section offers its add row only while it holds no domain at all; the elements' section always. */}
+      {(role === "element" || domains.length === 0) && (
+        <AccordionItem value="add" data-domain-card="add">
+          <AccordionTrigger className="px-4 py-3"><span className="font-medium">+ {role === "main" ? w.addMainTitle : w.addExtraTitle}</span></AccordionTrigger>
+          <AccordionContent className="flex flex-col gap-2 px-4">
+            <Label htmlFor={addId}>{role === "main" ? w.addMainLabel : w.addLabel}</Label>
+            <div className="flex flex-wrap gap-2" data-block="domain-add-row">
+              <Input id={addId} className="max-w-72 font-mono" value={name} onChange={(e) => setName(e.target.value)} placeholder="mybrand.com" autoComplete="off" spellCheck={false} />
+              <Button type="button" size="sm" onClick={() => act("POST", name, "add")} disabled={!name.trim() || busy !== null} data-domain-add>
+                {busy === "add" ? w.adding : w.add}
+              </Button>
+            </div>
+            {error.add && <p className="text-sm text-destructive" role="alert">{error.add}</p>}
+          </AccordionContent>
+        </AccordionItem>
+      )}
     </Accordion>
+    <AppDialog
+      open={confirm !== null}
+      onOpenChange={(o) => { if (!o) setConfirm(null) }}
+      title={confirmed ? (confirmed.holder ? w.detachRemove : w.remove) : ""}
+      ui={dialogUi}
+      footer={
+        <>
+          <Button variant="outline" onClick={() => setConfirm(null)}>{w.cancel}</Button>
+          <Button variant="destructive" disabled={busy !== null} onClick={() => confirmed && act("DELETE", confirmed.name, confirmed.name, !!confirmed.holder)} data-domain-remove-yes>
+            {busy && confirmed && busy === confirmed.name ? w.detaching : confirmed?.holder ? w.detachRemoveYes : w.removeYes}
+          </Button>
+        </>
+      }
+    >
+      <p className="text-sm text-foreground text-pretty">
+        {confirmed ? (confirmed.holder ? w.detachConfirm.replace("{domain}", confirmed.name).replace("{element}", confirmed.holderAddress ?? confirmed.holder) : w.removeConfirm.replace("{domain}", confirmed.name)) : ""}
+      </p>
+    </AppDialog>
+    </>
   )
 }

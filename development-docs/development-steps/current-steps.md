@@ -112,6 +112,11 @@ components/domain/{domain-pipeline (Ladder, 4 rungs), domain-ns (new), domain-su
 (live ladder, rung 4)}.client.tsx, domain-list.i18n.ts (pipe t1..subs*), app/api/domain/subdomains/route.ts (new door), node-alerts
 (re-ask on every page move — the red «Активация домена» after activation). Soul d952253c live. **On core-back:** eyes of the domain page
 with a test domain? (the list is empty — throughsongs.com removed by someone, not me) → commit → Telegram with screenshots.
+**17:07 — one main domain + the row + a red remove behind AppDialog (Telegram 434–436) CODED, core build runs** (prebuild RC=0,
+uncommitted: domain-cards (add row only while the main section is empty; «Основной домен:» + large truncated name + badges; red
+«Убрать» → AppDialog), domain-list (dialogUi), sections/kinds/domain-ladder.server.tsx (appDialogUi), node-domains (main-exists),
+domain-list.i18n). 5ea8226e = the ladder. **On core-back:** eyes (row, the dialog via --click «Убрать из списка» on throughsongs.com) →
+commit → Telegram with screenshots.
 **How to work:** load interface-design, use-primitives, use-shadcn first; parts_find before new files; plan in 6 lines to him BEFORE code
 (he is angry at being given something else than asked); screenshot the page (Chrome tab via the extension, `browser_batch`, save_to_disk)
 before the build and after; prebuild RC=0 → `npm run serve:rebuild:detached` → on core-back serve:status, proofs, commit, Telegram with

@@ -7,6 +7,7 @@ import type { DomainLadderWords } from "./domain-ladder.i18n"
 import { DomainKey, type NodeKey } from "./domain-key.client"
 import { DomainCards, type Extra } from "./domain-cards.client"
 import { DomainMain } from "./domain-main.client"
+import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 
 // ДОМЕНЫ УЗЛА — ДВА РАЗДЕЛА (775). Decided by the skill interface-design with the owner, 2026-11-17 (Telegram 406–411, the card 409;
 // the system: .interface-design/system.md): the page is three parts in ONE rhythm (48 px between them, 12 px from a subheading to its
@@ -40,7 +41,7 @@ function Section({ id, title, lead, children }: { id: "main" | "extra"; title: s
   )
 }
 
-export function DomainList({ lang, words: w, ladderWords }: { lang: string; words: DomainListWords; ladderWords: DomainLadderWords }) {
+export function DomainList({ lang, dialogUi, words: w, ladderWords }: { lang: string; dialogUi: AppDialogUi; words: DomainListWords; ladderWords: DomainLadderWords }) {
   const [list, setList] = useState<List | null>(null)
   const [failed, setFailed] = useState(false)
 
@@ -70,14 +71,14 @@ export function DomainList({ lang, words: w, ladderWords }: { lang: string; word
         {list && primary ? (
           <DomainMain lang={lang} name={primary.name} status={primary.status} links={list.links} architect={list.architect} words={w} ladderWords={ladderWords} />
         ) : list ? (
-          <DomainCards lang={lang} role="main" domains={mainDomains} primaryName={null} architect={list.architect} words={w} ladderWords={ladderWords} onChanged={load} />
+          <DomainCards lang={lang} dialogUi={dialogUi} role="main" domains={mainDomains} primaryName={null} architect={list.architect} words={w} ladderWords={ladderWords} onChanged={load} />
         ) : null}
       </Section>
 
       <Section id="extra" title={w.extra.title} lead={w.extra.lead}>
         {status}
         {list ? (
-          <DomainCards lang={lang} role="element" domains={elementDomains} primaryName={primary?.name ?? null} architect={list.architect} words={w} ladderWords={ladderWords} onChanged={load} />
+          <DomainCards lang={lang} dialogUi={dialogUi} role="element" domains={elementDomains} primaryName={primary?.name ?? null} architect={list.architect} words={w} ladderWords={ladderWords} onChanged={load} />
         ) : null}
       </Section>
     </>

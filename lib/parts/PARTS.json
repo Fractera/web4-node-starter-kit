@@ -71,6 +71,7 @@
         "components/architect/menu-ai.client.tsx",
         "components/auth/access-gate.client.tsx",
         "components/deploy/core-deploy.client.tsx",
+        "components/domain/domain-cards.client.tsx",
         "components/element-design/design-flow.client.tsx",
         "components/element-settings/site/editors/feature-switches.client.tsx",
         "components/environment/environment-panel.client.tsx",

@@ -14,6 +14,10 @@ export type DomainListWords = {
   addTitle: string
   /** 775: the add rows of the two sections (the owner: «добавить основной домен» / «добавить дополнительный домен») */
   addMainTitle: string
+  rowMain: string
+  rowExtra: string
+  removeYes: string
+  removeConfirm: string
   addExtraTitle: string
   addLabel: string
   /** 775: the add field of the main domain's section */
@@ -80,6 +84,10 @@ const DICT: Record<string, DomainListWords> = {
     loading: "Reading the node's domains…",
     addTitle: "Add a domain",
     addMainTitle: "Add the main domain",
+    rowMain: "Main domain:",
+    rowExtra: "Additional domain:",
+    removeYes: "Remove",
+    removeConfirm: "Remove {domain} from the node's list? Its zone in Cloudflare is not touched; you can add the domain again.",
     addExtraTitle: "Add an additional domain",
     addLabel: "Another domain of yours (the root, without www)",
     addMainLabel: "Your domain (the root, without www)",
@@ -179,6 +187,7 @@ const DICT: Record<string, DomainListWords> = {
     errors: {
       "bad-shape": "Not a domain name: labels of Latin letters, digits and hyphens joined by dots, for example mybrand.com.",
       "with-www": "Type the root of the domain without www.",
+      "main-exists": "The node already has its main domain — add this one as an additional domain.",
       primary: "This is the node's main domain or its subdomain — it is already here.",
       exists: "This domain is already in the list.",
       "no-key": "The node has no Cloudflare key yet — paste it below and the node creates the zone at once.",
@@ -233,6 +242,10 @@ const DICT: Record<string, DomainListWords> = {
     loading: "Читаю домены узла…",
     addTitle: "Добавить домен",
     addMainTitle: "Добавить основной домен",
+    rowMain: "Основной домен:",
+    rowExtra: "Дополнительный домен:",
+    removeYes: "Убрать",
+    removeConfirm: "Убрать {domain} из списка узла? Зону в Cloudflare узел не трогает, домен можно добавить снова.",
     addExtraTitle: "Добавить дополнительный домен",
     addLabel: "Ещё один ваш домен (корень, без www)",
     addMainLabel: "Ваш домен (корень, без www)",
@@ -331,6 +344,7 @@ const DICT: Record<string, DomainListWords> = {
     errors: {
       "bad-shape": "Это не имя домена: метки из латинских букв, цифр и дефисов через точку, например mybrand.com.",
       "with-www": "Введите корень домена без www.",
+      "main-exists": "Основной домен у узла уже есть — добавьте этот как дополнительный.",
       primary: "Это основной домен узла или его поддомен — он уже здесь.",
       exists: "Этот домен уже в списке.",
       "no-key": "У узла ещё нет ключа Cloudflare — вставьте его ниже, и узел сразу создаст зону.",

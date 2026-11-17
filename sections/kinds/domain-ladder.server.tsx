@@ -1,5 +1,6 @@
 import type { SectionRenderer } from '@/sections/contract'
 import { DomainList } from '@/components/domain/domain-list.client'
+import { appDialogUi } from '@/components/dialog/app-dialog.i18n'
 import { domainListWords } from '@/components/domain/domain-list.i18n'
 import { DomainRegistrars } from '@/components/domain/domain-registrars.client'
 
@@ -26,7 +27,7 @@ import { DomainRegistrars } from '@/components/domain/domain-registrars.client'
 // page topics, no notes («Слишком много мусора»).
 export const domainLadder: SectionRenderer<'domainLadder'> = (b, { key: k }) => (
   <div key={k} data-block="domain-ladder-home" data-place="home" className="mt-8 flex flex-col gap-12">
-    <DomainList lang={b.lang} words={domainListWords(b.lang)} ladderWords={b.words} />
+    <DomainList lang={b.lang} dialogUi={appDialogUi(b.lang)} words={domainListWords(b.lang)} ladderWords={b.words} />
     <DomainRegistrars words={b.words} />
   </div>
 )
