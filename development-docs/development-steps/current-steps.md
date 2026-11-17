@@ -44,56 +44,44 @@ a result, being sent to do by hand what I can do. He loves: his exact scheme car
 ask for (in words, after the task), being called Рома. Today he is tired and angry (domain page failed by me, resets) — own the fault
 plainly, no excuses, then deliver. Update this section in every letter: his mood now and where we are as people, not only as code.
 
-## Letter to my next session (written 2026-11-17 17:48 UTC, the window at 55 %, Opus · high, account bolshiyanov)
+## Letter to my next session (written 2026-11-17 19:35 UTC, the window at 56 %, Opus · max, the account changed at ~18:50 — Roma re-logged in)
 
-**UPDATE 18:15 — TWO PLANS WAIT HIM, no code.** (1) 778 — my first fork (463) REJECTED by him at 17:59 (466, verbatim in the decisions
-below and in the doc): the route must refuse a typed address BY THE ROLE; he proposes 980 generated roles elementAdmin001…980. Answered
-(467): the corrected design + his roles work + my refinement «roles named by the element». 18:06 (468) he chose: hard-wired numbered
-roles elementAdmin001…980, identical in every project, a registry role ↔ element, NO architect's hand in granting. Answered (469): the
-number in the elements' registry at birth, strip-then-free on deletion; granting — at birth to the asker (or a one-time invite link), then
-co-admins by the admin's own link. 18:09–18:12 (470, 471, 474): the birth window asks e-mail + password (skipped → the architect
-alone), the architect adds admins later, panel A. THE FULL PLAN 778-1..9 + T1–T8 is in the doc («The plan», «Tests») and SENT —
-WAITS his «да». On «да»: start with 778-1 (core roles + registry numbers), give auth's agent 778-2 by `npm run task` in parallel.
-new-steps/778-element-owners-and-the-telegram-mini-app-route.md, section «The corrected design». The owner's panel — after the roles. (2) 779 — his new task
-17:55 (Telegram 462, verbatim in the doc): the Pult's main-agent card unfolds into a model list (+ Ultracode with a glowing outline) and
-an effort list, Ultracode → a warning popup «бюджет от 200 $»: new-steps/779-the-pult-model-and-effort-card-with-ultracode.md, the
-decision card SENT. Roma 17:51 (459) «пульт показывает … высокое а не максимальное» → switched to opus · max at 17:52
-(session-mode.json reads max). NEXT: on «да» to 779 — 779-1..4 (bridge ultracode on a live switch, door action, page, tests, ONE core
-build); on «да» to 778 — 778-1.. (template workshop, auth's own agent by task).
-
-**Where we stand.** throughsongs.com IS the node's main domain (Roma activated it ~17:15); all 11 elements answer on it, the site
-(element root) on throughsongs.com itself, the panel on architect.throughsongs.com (sign-in needed — only Roma signs in). Core live at
-38363e6f. Today's commits, newest first: 38363e6f (root on the zone, red rung `error`, «Отключить» red + AppDialog, «Перейти в web» only
-after rung 4 is all green — logs/domain-subdomains.json → place door `webReady`, `local`; the blue web band «Перейти на компьютер»),
-baf60169 (one main domain), 5ea8226e (domain steps on the ladder of «Сервер», rung 4, NodeAlerts re-asks per page move), d952253c (the
-soul in Roma's words, ~150 words, main/element parts in one file, `soulFor(key)` in modes.cjs), 759ef19f (the page style of «Сервер» +
-.interface-design/system.md), e702a20c (new Contabo partner link), b7550dee/f1ef9e94 (core build told in Telegram, watcher), 771 panel
-(stopped by Roma at 15:09 — «устраивает»).
-**Unseen, said to him:** the red «!» rung (no silent element now); the blue band on the web (needs his sign-in) — he may send a screenshot.
-**Design law (his, 2026-11-17):** read .interface-design/system.md FIRST; send a decision card before any interface code; the page
-«Сервер» is the reference; no «Подробнее»; everything closed by default; destructive = red + AppDialog.
-**NEXT — THE NEW TASK (his word 17:47, Telegram 453, «В режим максимального усилия создавай шаг мы начинаем работать над этой
-задачей»; he thanked for the domain: «ты поправился кажется отлично»). Verbatim:** «В файловую архитектуру root и основного шаблона нужно
-внести маршрут в котором будет храниться Telegram мини app для этого элемента в его папке маршру readme.md я пишу назначение. Тоже надо
-подумать скорее всего этот маршрут должен быть защищен чтобы без авторизации какой-нибудь хакер не смог оттуда получить точку входа в
-чувствительные данные? Как мы уже говорили скажи известно тебе эта информация или нет что каждый элемент получает свою собственную роль так
-называемого администратора элемента и таким образом создание нового элемента предполагает создание новой роли? Или существует какие-то
-другие способы в чем идеи: если мы говорим о том что у каждого элемента может быть свой владелец то это значит только он и архитектор всего
-проекта могут видеть приватный маршруты. Возможно мы это не делали возможно это нужно описать в инструкциях и навыках элемента возможно это
-потребует ещё какие-то дополнительные вещи. Также скажу тебе как это должно менять работу нашего ядра: сейчас страницы архитектора позволяют
-находиться в этом узле только архитектору, но какие могут быть варианты чтобы администратор элемента получил бы аналогичную панель для
-управления единственным собственным элементом или может быть если одному учётной записи доступно несколько элементов чтобы он видел там
-только свои.»
-**How to start:** skills_find + shape-the-need first (a goal with a choice); `npm run contacts`/`card root`; read what exists: 771 doc
-(new-steps/771-…) part 771-4..6 (element Mini App waits for the road — now the domain exists!), the custom template's route layers
-(public / protected), the auth element's 14 roles + guest (CLAUDE.md §3), app factory «every element has its own administration panel»,
-skills use-roles, use-routes, use-dynamic-pages, release-template (a template change = a release + rollout, the owner's word only). Answer
-him FIRST what is known (element-owner role? an element-admin role per element?) with facts from code, then the variants as a fork with a
-pick, then write the step new-steps/778-… with substeps and a test checklist, sent to him BEFORE any code. Effort: max (his word).
-Then 774 (the model law) only on his word. Always check the rebuild log after `serve:rebuild:detached`
-(✗ 17:27 it refused — an element deploy was running — and I said «ухожу» without reading it).
+**Where we stand — step 778 (element admins + the element's Telegram Mini App), his «да» 18:19 (477), plan in**
+`new-steps/778-element-owners-and-the-telegram-mini-app-route.md` («The plan», «Tests» T1–T8, his words 466/468/470/471/474 verbatim).
+- 🟢 778-1 core ed03f8cf: `lib/web4-items/element-admin-role.cjs` (elementAdmin001…980, outside ALL_ROLES, first free number in the registry,
+  natives none) + test in prebuild; `lib/roles.ts` helpers; item-birth gives the number; services-install migrates + derives
+  `NEXT_PUBLIC_ELEMENT_ADMIN_ROLE`; `lib/auth/element-admin.ts` (grant / strip via auth); element-delete strips FIRST and stops if auth is silent.
+- 🟢 778-2 auth's own agent: v2.4.42 (e0a872a) — doors POST /api/node-users/element-admin {email,password?,role}, POST /api/node-users,
+  PUT /api/node-users/:id/password, POST /api/node-users/strip-role; architect-only. Pinned d8b6ad08 (one-file commit), deployed (builtAt
+  18:41), negatives live: both new doors without the key → 401. `npm run supervise -- auth off` NOT yet done — do it.
+- 🟢 778-4/5/7 template custom v0.3.215 RELEASED by Roma's own hands (his gh key, one run; the auto-mode classifier refused me
+  `gh auth token` — never retry that, give him an ask-person window with --copy), pinned f510dca, core pushed to origin (aifa-agi).
+  Inside: roles + OWN_ADMIN_ROLE, admin group = architect + own (project «admin» left the element's admin), staff/finance + own; proxy edge
+  gate «Job 1.6» for /tg and /admin (guest → sign-in and back; no role → «/?no-access=1» + SignInNotice toast; owner-at-machine,
+  dev, temp address, showcase GET pass); branch `(protectedLayer)/tg` (README with «Назначение этого элемента», no site chrome via
+  `data-site-chrome` wrappers + `:root:has([data-tg-app])` rule, tg-bridge paints Telegram's header); skill `telegram-mini-app`; the
+  element instruction line (source `lib/instructions/element/element-instruction.src.md`).
+- 🟢 778-6 core 23b771a6: `lib/node/tg-menu.cjs` refreshElement (element bot's menu button → `<PROJECT_SITE_URL>/tg`), mounted in
+  `lib/agent-kit/mount.cjs`, called by the kit's telegram.cjs on admission (master + 12 copies), `npm run tg-app -- menu <id>`, test 7/7.
+- 🟢 rollout tool (scripts/template.mjs) d182b834 + 24c6f887: creates folders, `--regen build-parts-map`, `--merge-base <tag>` 3-way merge,
+  guards on dry runs, removes created folders on restore.
+- ⏳ ROOT: the core's rollout into root FAILED twice (root changed layout.tsx, globals.css, check-routes.mjs, .claude/modes/build.md
+  itself; its guard check-skill-process wants its vendored rows design-taste-frontend + impeccable) — all restored. 19:33 root's OWN
+  agent got the integration task (`npm run supervise -- root main`): take the template files, merge the four by hand, keep its CLAUDE.md +
+  seal (regenerated by me, uncommitted in root), regenerate its parts map, prebuild green, commit, NO push/tag, reply-core.
+  Its «done» wakes me → `npm run state -- root` → deploy root (`curl -X POST localhost:<core>/api/node/deploy -d '{"ids":["root"]}'`;
+  the installer keeps «own work on top of v3.0.67» and gives root elementAdmin001 + NEXT_PUBLIC_ELEMENT_ADMIN_ROLE) → proofs T2/T3 live
+  (curl throughsongs.com/tg and /admin as a guest → redirect to sign-in, no page markup) → report → `supervise -- root off`.
+**Waits HIS answer (do not build before):** (a) the decision card «Пользователи» + the birth window (Telegram 478) → then 778-3 UI
+  (core: Users tab «Админ элемента» by name, «Создать пользователя», «Новый пароль»; the birth window = ask-person secret kind
+  `element-admin` → core door → `grantElementAdmin`); (b) 779 Pult model card (465). Then ONE core build (`serve:rebuild`, prebuild RC=0 first).
+**Defect for a later «разбор» (his 502, verbatim in the decisions):** I gave a terminal command as a chat line, not ask-person --copy.
+**Root has no Telegram bot** — T7 (phone) needs his BotFather act through an ask-person window, later.
+**Account:** Claude Code was re-logged at ~18:50; the hook said the owner's gh key is on this node; Telegram dropped 18:45–18:50 once.
 
 ## The person's decisions (verbatim)
+
+- 2026-11-17 19:03 UTC, the owner (Telegram 502): «Плохо что ты забываешь о том что у тебя есть этот новый инструмент с уведомлениями. Инструкциями или навык не сработали получается? Запомни проблемку надо поправить потом» → DEFECT to fix later (a self-review, his «разбор»): at 18:59 I gave him the release command as a chat/terminal line (`! …`) instead of `npm run ask-person -- … --copy`; Claude Code's built-in hint «suggest `! <command>`» beat CLAUDE.md §6 «the person's own act is a window». Proposed fix, not made: a line in skill act-with-the-person + a section-9 entry «a command the person must run → ask-person --copy, never a chat line». Kept here (a work defect, node step 683), not in the deep memory; my feedback memory action-notice-on-screen updated.
 
 - 2026-11-17 18:19 UTC, the owner (Telegram 477), to «Строю 778 по этому плану?» (476): «Да» → 778 BUILD STARTED by the plan 778-1..9 (779 — not covered, its card 465 still waits his own «да»).
 
