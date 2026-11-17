@@ -751,6 +751,15 @@ function resetLine(service) {
   return `${nodeLine.head('context-reset', modes.baseOf(service))}The node cleared your context window at your own request. Read your letter to your next session — the section «Letter to my next session» of ${where} — and go on from it. Ask nobody; tell the person in one line that you continue after a reset.`
 }
 
+/** 772-0: the line that wakes a session restarted on another model at its own request, mid-task. */
+function modelLine(service, model, effort) {
+  const nodeLine = require(path.join(process.cwd(), 'lib', 'agent-kit', 'node-line.cjs'))
+  const where = modes.baseOf(service) === 'build'
+    ? 'development-docs/development-steps/current-steps.md'
+    : 'development-docs/current-step.md'
+  return `${nodeLine.head('model-switch', modes.baseOf(service))}You are the restarted session: the node switched you to ${model}${effort ? ` (effort ${effort})` : ''} at your own request, and this is the same conversation — the switch is DONE, nothing is still to come. Read «Next action» of ${where} and go on with it now. Ask nobody; tell the person in one line only if they wait for you.`
+}
+
 /**
  * 708-7: the conversation after `/clear` is born with the first message into it (the letter of `--continue`, or the person's words):
  * watch the folder until a transcript that was not there before appears, for as long as this same session lives, at most 30 minutes.
@@ -834,15 +843,28 @@ function sessionCommand(service, { action, model, effort, continue: cont = false
   if (action === 'model') {
     if (!SESSION_MODELS.includes(model)) return { ok: false, reason: `model must be one of ${SESSION_MODELS.join(', ')}` }
     if (effort !== undefined && !EFFORTS.includes(effort)) return { ok: false, reason: `effort must be one of ${EFFORTS.join(', ')}` }
+    // 772-0: ONE pending switch per live session, like the clear (731): a second ask in the same turn joins it — the last model and
+    // effort win, `continue` upgrades it — and the session restarts once.
+    if (live.pendingModel) {
+      Object.assign(live.pendingModel, { model, effort, cont: live.pendingModel.cont || cont })
+      return { ok: true, scheduled: 'model', model, joined: true }
+    }
+    const want = { model, effort, cont }
+    live.pendingModel = want
     void whenIdle(live).then(async (idle) => {
+      if (live.pendingModel === want) live.pendingModel = null
+      ;({ model, effort, cont } = want)
       if (!idle) return console.log(`[agents/session] ${service}: смена модели не выполнена — экран не затих или сессии уже нет`)
       const pass = live.pass
       const continueLast = hasConversation(live.cwd, ownClaudeDir(modes.baseOf(service)))
       session.stop(service, 'model-switch')
       // Процесс завершается не мгновенно, а новая сессия той же службы при живой старой не рождается (`session.current`).
       await new Promise((r) => setTimeout(r, 1500))
-      const r = await spawnAgent(service, undefined, undefined, '', { model, effort, pass, continueLast })
-      console.log(`[agents/session] ${service}: модель → ${model}${effort ? ` · ${effort}` : ''}, ${r.ok ? (continueLast ? 'тот же разговор продолжен' : 'разговора не было — новая сессия') : `не запустилась — ${r.reason}`}`)
+      // 772-0 (✗ 2026-11-17 00:30–00:37: the main agent switched itself to Haiku mid-task; the restarted session got no prompt and sat
+      // idle until the owner wrote «умер»): with `continue` the restarted session is woken with one line — through spawnAgent's first
+      // prompt, which waits for the Telegram channel like every first task (614-1).
+      const r = await spawnAgent(service, undefined, undefined, cont && continueLast ? modelLine(service, model, effort) : '', { model, effort, pass, continueLast })
+      console.log(`[agents/session] ${service}: модель → ${model}${effort ? ` · ${effort}` : ''}, ${r.ok ? (continueLast ? `тот же разговор продолжен${cont ? ' и разбужен строкой узла' : ''}` : 'разговора не было — новая сессия') : `не запустилась — ${r.reason}`}`)
     })
     return { ok: true, scheduled: 'model', model }
   }

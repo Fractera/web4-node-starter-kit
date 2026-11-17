@@ -612,7 +612,8 @@ if (cmd === 'session') {
   }
   if (what === 'clear' || (what === 'model' && models.includes(args[0]))) {
     // 700-3: `session clear --continue` — the agent's own reset: the node wakes its fresh session with the letter.
-    const cont = what === 'clear' && process.argv.includes('--continue')
+    // 772-0: `session model <m> --continue` — the agent's own switch mid-task: the node wakes the restarted session with one line.
+    const cont = process.argv.includes('--continue')
     const r = await core('/api/agents/session', { method: 'POST', body: JSON.stringify({ service, action: what, ...(what === 'model' ? { model: args[0], ...(flag('--effort') ? { effort: flag('--effort') } : {}) } : {}), ...(cont ? { continue: true } : {}) }) }).catch((err) => fail(`the core did not answer: ${err.message}`))
     const b = r.body ?? {}
     if (!b.ok) fail(`${service}: ${b.reason === 'no-session' ? 'its agent is not on — nothing to clear or switch' : b.reason ?? r.status}`)
@@ -621,10 +622,10 @@ if (cmd === 'session') {
         ? `===SESSION_OK=== ${service}: when this turn ends the window is cleared and the node wakes your next session with your letter — make sure it is written and committed. Say one line to the person now.`
         // 731 (2026-11-12, the 4th dark terminal: my own reset ran bare clear and promised a wake): bare clear wakes nobody — said aloud.
         : `===SESSION_OK=== ${service}: when this turn ends the conversation starts over — memory and records stay — and NOBODY wakes the fresh session: it waits for the person's words. Your own reset? Run it again with --continue now (it joins this one). Answer the person first.`)
-      : `===SESSION_OK=== ${service}: when this turn ends the session restarts on ${args[0]}${flag('--effort') ? ` (effort ${flag('--effort')})` : ''} and the same conversation goes on (a few seconds; messages wait). Answer the person first.`)
+      : `===SESSION_OK=== ${service}: when this turn ends the session restarts on ${args[0]}${flag('--effort') ? ` (effort ${flag('--effort')})` : ''} and the same conversation goes on (a few seconds; messages wait). ${cont ? 'The node wakes the restarted session with one line — write your Next action in the state record now.' : 'NOBODY wakes it: it waits for the person\'s words. Your own switch mid-task? Run it again with --continue now (it joins this one).'} Answer the person first.`)
     process.exit(0)
   }
-  fail('session context [<id>] | session tail [<id>] [--turns N] | session clear [<id>] [--continue] | session model opus|sonnet|haiku [<id>] [--effort low|medium|high|xhigh|max]')
+  fail('session context [<id>] | session tail [<id>] [--turns N] | session clear [<id>] [--continue] | session model opus|sonnet|haiku [<id>] [--effort low|medium|high|xhigh|max] [--continue]')
 }
 
 // 620 (владелец 2026-10-30: «нужна команда которая позволит загрузить и использовать ключ OpenAI»): ключ проверяет и пишет дверь

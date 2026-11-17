@@ -51,7 +51,8 @@ export async function POST(req: NextRequest) {
   }
   // 700-3: `clear` with `continue: true` — the agent asked for its own reset: after /clear the bridge wakes the fresh session with
   // `⟦node · context-reset …⟧` and its letter; nobody is asked.
-  const cont = action === "clear" && body.continue === true
+  // 772-0: `model` with `continue: true` — the agent switched its own model mid-task: the restarted session is woken with one line.
+  const cont = (action === "clear" || action === "model") && body.continue === true
   const out = command(service, { action, model, ...(effort ? { effort } : {}), ...(cont ? { continue: true } : {}) })
   console.log(`[agents/session] ${service} ${action}${model ? ` ${model}` : ""}${cont ? " --continue" : ""} → ${out.ok ? `scheduled ${out.scheduled}` : out.reason}`)
   const status = out.ok ? 200 : out.reason === "no-agent-kit" ? 404 : out.reason === "no-session" ? 409 : 400

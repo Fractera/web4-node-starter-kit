@@ -110,7 +110,7 @@
         "en": "Opus — switch the agent to the maximum model; the conversation goes on. To an agent that is off — turn it on with Opus and a choice of effort, up to ultracode"
       },
       "by": "main",
-      "run": "npm run session -- model opus [<element id>] — answer the person first: the session restarts when your turn ends"
+      "run": "npm run session -- model opus [<element id>] — answer the person first: the session restarts when your turn ends; YOUR OWN switch mid-task: add --continue — only it wakes the restarted session"
     },
     {
       "id": "sonnet",
@@ -121,7 +121,7 @@
         "en": "Sonnet — switch the agent to the medium model; the conversation goes on"
       },
       "by": "main",
-      "run": "npm run session -- model sonnet [<element id>] — answer the person first: the session restarts when your turn ends"
+      "run": "npm run session -- model sonnet [<element id>] — answer the person first: the session restarts when your turn ends; YOUR OWN switch mid-task: add --continue — only it wakes the restarted session"
     },
     {
       "id": "haiku",
@@ -132,7 +132,7 @@
         "en": "Haiku — switch the agent to the economy model; the conversation goes on"
       },
       "by": "main",
-      "run": "npm run session -- model haiku [<element id>] — answer the person first: the session restarts when your turn ends"
+      "run": "npm run session -- model haiku [<element id>] — answer the person first: the session restarts when your turn ends; YOUR OWN switch mid-task: add --continue — only it wakes the restarted session"
     },
     {
       "id": "openaikey",
