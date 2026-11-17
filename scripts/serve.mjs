@@ -24,6 +24,8 @@ import { runMigrations } from '../lib/deploy/migrations.mjs'
 const { closeLid, openLid, backupNext, restoreNext, dropBackup, itemsAside, itemsBack, redrawCore } = createRequire(import.meta.url)('../lib/deploy/quiet-build.cjs')
 // 642-2: чтец сборки — журнал сборки ядра этому компьютеру, пока крышка закрыта (`lib/deploy/build-reader.cjs`).
 const { startReader, stopReader } = createRequire(import.meta.url)('../lib/deploy/build-reader.cjs')
+// 771 (the owner 2026-11-17: «как ты собираешься показывать мне что сейчас идёт сборка если в этот момент сервер недоступен»)
+const buildNotice = createRequire(import.meta.url)('../lib/node/tg-build-notice.cjs')
 // 642-4: причина отказа; проходящая (память, сеть) — один повтор `next build`, названный до него. Причина читается из журнала, куда
 // пишет запустивший (кнопка, обновление узла); из терминала журнала нет — повтора нет.
 const { causeOf } = createRequire(import.meta.url)('../lib/deploy/build-failure.cjs')
@@ -691,6 +693,8 @@ async function rebuild() {
   // запустить агента»). Чтец не мешает живому ядру: страница спрашивает его, только когда ядро молчит.
   startReader(root, { log: process.env.FRACTERA_BUILD_LOG, what: process.env.FRACTERA_BUILD_WHAT || "core" })
   process.on("exit", () => stopReader(root))
+  // 771: Telegram stays up while the node is stopped — the bot's menu button and one message say the core is building (no model).
+  try { await buildNotice.start(root) } catch { /* the build never waits on Telegram */ }
   closeLid(root)
   // 553: сторожа `prebuild` — с элементами на месте (часть из них сверяет элементы), затем `next build` — с элементами ВНЕ папки
   // ядра (`itemsAside`): сборка ядра не должна зависеть от числа элементов. Возврат — всегда, и после отказа.
@@ -776,6 +780,8 @@ async function rebuild() {
 // 675-1, 707: конец сборки — любой. Обновление узла ещё не кончилось (каталог, навыки или его запись об отказе) — его итог дождётся ждун
 // вне дерева ядра; своя сборка — будим сразу. Никто не работал — только отложенное главному агенту (696).
 async function agentsBackAfter(root, { agentBack, buildWhat, buildSince, summary }) {
+  // 771: the same Telegram message gets the result, the menu button is «Пульт» again.
+  try { await buildNotice.end(root, !/FAILED|NOT deployed/.test(summary)) } catch { /* never holds the return of the agents */ }
   if (agentBack && buildWhat === "update") {
     spawnSync(process.execPath, [path.join(root, "scripts", "spawn-free.mjs"), path.join(root, "scripts", "agent-return.mjs"), "--after-update", String(buildSince)], { cwd: root, stdio: "ignore", windowsHide: true })
     console.log("Агенты, которых остановила сборка, вернутся, когда обновление узла запишет свой итог, удачный или нет (журнал: logs/agent-return.log).")

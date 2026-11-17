@@ -90,6 +90,12 @@ lib/node/tg-app/{page.cjs,words.cjs}; eyes with a stubbed state: logs/eyes/2026-
 (week)). On core-back: commit, send both screenshots. **Waits his «да»:** (a) the core build shown (menu label + lid responder);
 (b) an element with an open ask — pulsing «!» instead of its dot in «Пульт», the ask opened inside its row, «!» beside its name in the
 computer panel's left menu (Telegram 383). The 768 secret ask (`kind: env`) already carries a key into an element from Telegram.
+**14:52 — panel round 4 CODED, core build runs — it is ITS OWN live test** (prebuild RC=0, uncommitted: lib/node/tg-build-notice.cjs (new),
+scripts/serve.mjs (start before closeLid, end in agentsBackAfter), lib/node/tg-menu.cjs (exports target), lib/node/tg-app/{state.ts,page.cjs}
+(email of the node's account on the main card and in elements)). The owner (Telegram 391): the e-mail on the main agent's card; how the
+build is shown while the server is down → the node speaks in Telegram (menu label «⏳ Ядро собирается» + one message edited into the
+result). **On core-back:** check data/node/tg-build.json is gone and logs/tg-menu.json state panel; ask him whether «🔧» came and turned ✅;
+commit; screenshot of the main card with the e-mail (eyes, signed link from scratchpad tgproof.cjs).
 **How to work:** load interface-design, use-primitives, use-shadcn first; parts_find before new files; plan in 6 lines to him BEFORE code
 (he is angry at being given something else than asked); screenshot the page (Chrome tab via the extension, `browser_batch`, save_to_disk)
 before the build and after; prebuild RC=0 → `npm run serve:rebuild:detached` → on core-back serve:status, proofs, commit, Telegram with
