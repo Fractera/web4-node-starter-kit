@@ -81,6 +81,8 @@ plainly, no excuses, then deliver. Update this section in every letter: his mood
 
 ## The person's decisions (verbatim)
 
+- 2026-11-17 22:25 UTC, the owner (Telegram 540): «Да» to 539 (the Pult's «+ Новый элемент», variant A; the same message also asked his yes for a test account — a bare «Да» read as A only; the account is asked again with the result) → 780 built (commit «780: the Pult's …»), prebuild RC=0, 22:3x core rebuild via serve:rebuild:detached. NEXT on return: health builtAt moved, GET /api/node/tg-app page has «Новый элемент», POST newElement unsigned → 401; tell Roma; ask the test account once more (T3–T5).
+
 - 2026-11-17 22:04 UTC, the owner (Telegram 532): «Руут относится всегда к архитектору этой единственной маршрут по умолчанию который приходит на старте и изначально логически связан только с архитектором так и останется» → root's admin window skipped (70667599, live proof of «Пропустить»); no id-privilege built (§3 equality) — said to him (535). LIVE 22:00 build 0094b2ec (builtAt 21:57): element-admins door → root «Главный сайт»; eyes: Users tab + create window + beacon admin card; skip via the door → woke not-needed, Telegram ✓; name fix e802f2b1. WAITS his «да» for ONE throwaway test account (T3–T5), asked in 537.
 
 - 2026-11-17 21:22 UTC, the owner (terminal), to the two retold questions (Telegram 523): «1 да, 2 да» → BUILD 778-3 (the Users tab: «+ Создать пользователя», «Админ: <название>» chips, «Новый пароль», the role filter and batch «Добавить роль» by element name, the orange birth window with «Пропустить») and 779 (the Pult card: tap → model and effort lists, Ultracode glowing, his $200 warning, the switch after the turn); then ONE core build.
