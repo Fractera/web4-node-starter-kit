@@ -4,6 +4,7 @@
 // `npm run where` reads), the subscription's limits. Never a value of a secret, never a full address of a tab, never the node's keys.
 import { existsSync, readFileSync, readdirSync } from "node:fs"
 import { join } from "node:path"
+import { homedir } from "node:os"
 
 import asks from "@/lib/node/person-asks.cjs"
 import power from "@/lib/web4-items/element-power.cjs"
@@ -24,9 +25,16 @@ export type TgAsk = { id: string; text: string; why: string | null; hint: string
  * channel. `null` — not known yet (the default model, an agent that never ran).
  */
 export type TgAgent = { mode: "coding" | "waiting" | "sleeping"; model: string | null; effort: string | null; account: "node" | "own" | null; bot: string | null }
-export type TgElement = { id: string; name: string; native: boolean; required: boolean; on: boolean; offReason: string | null; live: boolean; step: string | null; turn: { event: string; at: string; last: string | null } | null; agent: TgAgent }
-export type TgLimit = { who: string; fiveHour: { used: number; resetsAt: string | null } | null; sevenDay: { used: number; resetsAt: string | null } | null; at: string | null }
-export type TgState = { asks: TgAsk[]; main: TgAgent; elements: TgElement[]; limits: TgLimit[]; at: string }
+export type TgElement = { build: "building" | "queued" | null; id: string; name: string; native: boolean; required: boolean; on: boolean; offReason: string | null; live: boolean; step: string | null; turn: { event: string; at: string; last: string | null } | null; agent: TgAgent }
+/**
+ * 2026-11-17 (the owner: «пульт как будто бы заморожен на определённом аккаунте»): a limit is measured only by an agent's turn (Claude Code
+ * hands it to the status line); the account is read now, by code. `account` — the e-mail it was measured on; `stale` — measured on another
+ * account than the one logged in now, or its reset time has passed: the gauge says so instead of showing an old number.
+ */
+export type TgLimit = { who: string; account: string | null; current: string | null; stale: boolean; fiveHour: { used: number; resetsAt: string | null } | null; sevenDay: { used: number; resetsAt: string | null } | null; at: string | null }
+/** 2026-11-17 (the owner: «показать что … находится на сборке, и элементы в том числе»): the node's queue of element builds. */
+export type TgBuilds = { running: boolean; current: string | null; queue: string[]; done: string[] }
+export type TgState = { builds: TgBuilds; asks: TgAsk[]; main: TgAgent; elements: TgElement[]; limits: TgLimit[]; at: string }
 
 const readJson = <T>(file: string, fallback: T): T => {
   try { return JSON.parse(readFileSync(file, "utf8")) as T } catch { return fallback }
@@ -73,7 +81,13 @@ function agentOf(id: string, live: boolean): TgAgent {
   }
 }
 
-function elementsOf(lang: Lang): TgElement[] {
+function buildsOf(): TgBuilds {
+  const d = readJson<{ running?: boolean; current?: string | null; queue?: string[]; results?: { id: string }[] }>(join(ROOT, "logs", "deploy-state.json"), {})
+  const running = d.running === true
+  return { running, current: running ? d.current ?? null : null, queue: running ? d.queue ?? [] : [], done: running ? (d.results ?? []).map((r) => r.id) : [] }
+}
+
+function elementsOf(lang: Lang, builds: TgBuilds): TgElement[] {
   const entries = readJson<{ services?: Entry[] }>(paths.REGISTRY_FILE, {}).services ?? []
   const live = new Set(((sessions() as { service: string; running?: boolean }[]) ?? []).filter((s) => s.running).map((s) => s.service))
   return entries.map((e) => {
@@ -81,6 +95,7 @@ function elementsOf(lang: Lang): TgElement[] {
     let dir: string | null = null
     try { dir = (paths.entryDir(e) as string | null) ?? null; if (dir && !existsSync(dir)) dir = null } catch { dir = null }
     return {
+      build: builds.current === e.id ? "building" : builds.queue.includes(e.id) && !builds.done.includes(e.id) ? "queued" : null,
       id: e.id,
       name: elementName(e.id, lang),
       native: e.kind !== "user",
@@ -95,13 +110,32 @@ function elementsOf(lang: Lang): TgElement[] {
   })
 }
 
+/** The e-mail of the Claude Code account logged in now (the node's own; an element's own subscription lives in its folder). */
+function accountNow(): string | null {
+  try {
+    const e = readJson<{ oauthAccount?: { emailAddress?: string } }>(join(process.env.CLAUDE_CONFIG_DIR || homedir(), ".claude.json"), {}).oauthAccount?.emailAddress
+    return typeof e === "string" && e.includes("@") ? e : null
+  } catch { return null }
+}
+
 function limitsOf(): TgLimit[] {
   const dir = join(ROOT, "data", "node", "limits")
   if (!existsSync(dir)) return []
   const pick = (x: { used?: number; resetsAt?: string } | undefined) => (x && typeof x.used === "number" ? { used: x.used, resetsAt: x.resetsAt ?? null } : null)
-  return readdirSync(dir).filter((f) => f.endsWith(".json")).map((f) => readJson<{ login?: string; element?: string; fiveHour?: { used: number; resetsAt?: string }; sevenDay?: { used: number; resetsAt?: string }; at?: string } | null>(join(dir, f), null))
+  const now = accountNow()
+  const past = (x: { resetsAt?: string } | undefined) => Boolean(x?.resetsAt && Date.parse(x.resetsAt) < Date.now())
+  return readdirSync(dir).filter((f) => f.endsWith(".json")).map((f) => readJson<{ login?: string; element?: string; account?: string; fiveHour?: { used: number; resetsAt?: string }; sevenDay?: { used: number; resetsAt?: string }; at?: string } | null>(join(dir, f), null))
     .filter((l): l is NonNullable<typeof l> => Boolean(l))
-    .map((l) => ({ who: l.login === "node" ? "node" : l.element ?? "?", fiveHour: pick(l.fiveHour), sevenDay: pick(l.sevenDay), at: l.at ?? null }))
+    .map((l) => {
+      const node = l.login === "node"
+      const account = l.account ?? null
+      const current = node ? now : account
+      return {
+        who: node ? "node" : l.element ?? "?", account, current,
+        stale: (node && Boolean(account && now && account !== now)) || past(l.fiveHour),
+        fiveHour: pick(l.fiveHour), sevenDay: pick(l.sevenDay), at: l.at ?? null,
+      }
+    })
 }
 
 /** The whole picture for the Mini App, in the person's language. */
@@ -112,5 +146,6 @@ export function tgState(lang: Lang): TgState {
       byName: a.by && a.by !== "build" ? elementName(a.by, lang) : null,
       secret: a.secret ? { kind: a.secret.kind, ...(a.secret.name ? { name: a.secret.name } : {}), ...(a.secret.host ? { host: a.secret.host } : {}) } : null,
     }))
-  return { asks: waiting, main: agentOf("build", false), elements: elementsOf(lang), limits: limitsOf(), at: new Date().toISOString() }
+  const builds = buildsOf()
+  return { builds, asks: waiting, main: agentOf("build", false), elements: elementsOf(lang, builds), limits: limitsOf(), at: new Date().toISOString() }
 }

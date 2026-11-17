@@ -78,6 +78,13 @@ waits / sleeps), account, model, effort, and «Telegram-бот агента» (a
 (agentOf: session-mode.json, pulse.last.login/event, channel/telegram/bot.json), words.cjs, page.cjs}. **On core-back:** serve:status → a
 proof (eyes of the page with a stubbed state, or a signed call) → commit those 3 files explicitly → Telegram: «закрой Пульт и открой заново».
 The 5-hour limit was 96 % at 11:52 (resets 14:20 UTC) — be brief.
+**13:50 — panel round 2 CODED, core build runs** (prebuild RC=0, uncommitted; log logs/rebuild-2026-11-17T13-50-33-987Z.log): the owner
+(Telegram 367–376): languages stay ru for ru, en for all else (his word); the fuel showed 100 % after his /login (bolshiyanov account) — a
+limit is measured only by an agent's turn; now limits.cjs records `account` (e-mail from .claude.json), state.ts gives account/current/
+stale (another account or reset passed), the page dims a stale gauge with a note and shows the e-mail + measure time; element builds from
+logs/deploy-state.json (row tag building/queued + a banner N of M). **Waits his «да»:** the CORE build shown — (a) the menu button label
+«⏳ Ядро собирается» during the lid, (b) a tiny lid responder on the core's port answering «Ядро собирается с HH:MM». **On core-back:**
+signed state call (scratchpad tgproof.cjs: node <it> <root> <out>) → eyes → commit lib/agent-kit/limits.cjs + lib/node/tg-app/* → Telegram.
 **How to work:** load interface-design, use-primitives, use-shadcn first; parts_find before new files; plan in 6 lines to him BEFORE code
 (he is angry at being given something else than asked); screenshot the page (Chrome tab via the extension, `browser_batch`, save_to_disk)
 before the build and after; prebuild RC=0 → `npm run serve:rebuild:detached` → on core-back serve:status, proofs, commit, Telegram with
