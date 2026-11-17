@@ -6,7 +6,7 @@ import asks from "@/lib/node/person-asks.cjs"
 import asksTg from "@/lib/node/person-asks-telegram.cjs"
 import webapp from "@/lib/node/telegram-webapp.cjs"
 import page from "@/lib/node/tg-app/page.cjs"
-import { modelChoice } from "@/lib/node/tg-app/model-choice.cjs"
+import choice from "@/lib/node/tg-app/model-choice.cjs"
 import { tgState } from "@/lib/node/tg-app/state"
 import { closeAsk, saveSecret, type Ask } from "@/lib/node/person-secret-save"
 import { powerState, runElementPower } from "@/lib/web4-items/run-element-power"
@@ -65,9 +65,9 @@ export async function POST(req: NextRequest) {
   // (`confirmed: true`) — the Telegram confirmation CLAUDE.md §6 asks before subagents; always Opus · max. The bridge switches when the
   // current turn ends and the same conversation goes on; nobody is woken by a line — the person writes next.
   if (action === "model") {
-    const choice = modelChoice(body)
-    if (!choice.ok) return no(choice.reason, 400)
-    const { model, effort, ultracode } = choice
+    const picked = choice.modelChoice(body)
+    if (!picked.ok) return no(picked.reason, 400)
+    const { model, effort, ultracode } = picked
     const command = (globalThis as { __web4AgentSession?: (service: string, opts: Record<string, unknown>) => Record<string, unknown> & { ok: boolean } }).__web4AgentSession
     if (typeof command !== "function") return no("no-agent-kit", 503)
     const out = command("build", { action: "model", model, effort, ...(ultracode ? { ultracode: true } : {}) })
