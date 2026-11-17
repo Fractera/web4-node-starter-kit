@@ -3,7 +3,7 @@
   "groups": {
     "bg-destructive/5 border border-destructive/40 flex flex-col gap-2 p-3 rounded-lg": [
       "app/[lang]/(architectLayer)/_components/element-github.client.tsx",
-      "components/domain/domain-list.client.tsx",
+      "components/domain/danger-confirm.tsx",
       "components/wallet/node-wallet.client.tsx"
     ],
     "bg-destructive/5 border border-destructive/40 flex flex-wrap gap-3 items-center p-4 rounded-lg": [

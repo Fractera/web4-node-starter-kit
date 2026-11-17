@@ -13,7 +13,7 @@ import { OPENAI_KEY, probeOpenAiKey } from "@/lib/openai-probe"
 const ROOT = process.cwd()
 
 export type Secret = { kind: "env" | "openai" | "server-root"; name?: string; where?: string | null; host?: string; port?: number }
-export type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; copy?: string | null; by?: string; secret?: Secret; at: string; tg?: { via: string; sent: number } | null; tgEntry?: { hash: string; until: string } }
+export type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; copy?: string | null; by?: string; secret?: Secret; signin?: "architect" | null; at: string; tg?: { via: string; sent: number } | null; tgEntry?: { hash: string; until: string } }
 export type Saved = { tail: string | null; restarted: boolean }
 type Wake = (service: string, opts: { text?: string; from?: string; confirmed?: boolean }) => Promise<Record<string, unknown> & { ok: boolean }>
 

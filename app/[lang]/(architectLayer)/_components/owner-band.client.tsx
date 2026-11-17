@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import { isTemporaryHostname } from '@/components/shell/temporary-host'
 import { isLoopbackHostname } from '@/lib/auth/owner-at-machine'
 import { isShowcaseHostname } from '@/lib/showcase'
@@ -73,6 +75,9 @@ export function OwnerBand({
   bodyTemporary,
   titleWindow,
   reasonWindow,
+  goWeb,
+  setupDomain,
+  lang,
 }: {
   title: string
   reasonMachine: string
@@ -85,10 +90,16 @@ export function OwnerBand({
   body: string
   titleWindow: string
   reasonWindow: string
+  /** 776: «Перейти в web» — the same page on the node's own domain */
+  goWeb: string
+  /** 776: no main domain yet — «Настройте домен», to the domain page */
+  setupDomain: string
+  lang: string
 }) {
   const [mode, setMode] = useState<Mode>(null)
   // 741-6: «localhost» on a SERVER is the SSH window (`npm run server -- window`), not this computer — the node says where it lives.
-  const onServer = useNodePlace()?.kind === 'server'
+  const place = useNodePlace()
+  const onServer = place?.kind === 'server'
 
   // Определяется после гидратации: при серверном рендере адреса браузера нет, и
   // выдуманное умолчание показало бы предупреждение тому, кому оно не адресовано.
@@ -101,19 +112,28 @@ export function OwnerBand({
   const titleHere = onServer ? titleWindow : titleMachine
   const reasonHere = onServer ? reasonWindow : reasonMachine
 
+  // 776 (the owner, 2026-11-17: «сюда же кнопку перейти в web … либо это невозможно и тогда там текст настройте домен который
+  // пробрасывать на активацию домена»): at this computer the band carries the way to the web — the same page on the panel's own domain
+  // (the node names it in its one place answer), or, without a main domain, the way to the domain page. Not on a server's SSH window.
+  const path = typeof window === 'undefined' ? '' : `${window.location.pathname}${window.location.search}`
+  const action = machine && !onServer && place !== undefined
+    ? place?.web
+      ? <a href={`${place.web}${path}`} className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'my-1.5 shrink-0')} data-owner-band-web>{goWeb}</a>
+      : <a href={`/${lang}/architect/hosting/domain`} className={cn(buttonVariants({ variant: 'link', size: 'sm' }), 'my-1.5 shrink-0 px-0')} data-owner-band-setup>{setupDomain}</a>
+    : null
+
+  // 776: the colour is the theme's `warning` token, not a literal amber (a literal leaves the owner's palette silently).
   return (
-    <Accordion type="single" collapsible className="mb-4">
-      <AccordionItem
-        value="auth-warning"
-        className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3"
-      >
-        <AccordionTrigger className="py-2 text-[length:var(--fs-small)] text-amber-900 hover:no-underline dark:text-amber-200">
+    <div className="mb-4 flex flex-wrap items-start gap-x-3 rounded-md border border-warning/40 bg-warning/10 px-3" data-owner-band={mode}>
+    <Accordion type="single" collapsible className="min-w-0 flex-1">
+      <AccordionItem value="auth-warning" className="border-0">
+        <AccordionTrigger className="py-2 text-[length:var(--fs-small)] text-foreground hover:no-underline">
           <span>
             <span aria-hidden="true">⚠ </span>
             {machine ? titleHere.replace('{host}', host) : mode === 'temporary' ? titleTemporary : title}
           </span>
         </AccordionTrigger>
-        <AccordionContent className="pb-3 text-[length:var(--fs-small)] text-amber-900 dark:text-amber-200">
+        <AccordionContent className="pb-3 text-[length:var(--fs-small)] text-foreground">
           <p className="mb-2">
             {machine ? reasonHere.replace('{host}', host) : mode === 'showcase' ? reasonShowcase : reasonTemporary}
           </p>
@@ -124,5 +144,7 @@ export function OwnerBand({
         </AccordionContent>
       </AccordionItem>
     </Accordion>
+    {action}
+    </div>
   )
 }

@@ -1,7 +1,8 @@
-// @api create the named tunnel and the DNS record, then remember what happened
+// @api connect or disconnect the node's main domain through its tunnel
 import { NextResponse, type NextRequest } from "next/server"
+import { architectExists } from "@/lib/auth/architect-exists"
 import { revalidatePath } from "next/cache"
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs"
+import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync } from "node:fs"
 import { join } from "node:path"
 import { getSession } from "@/lib/auth/get-session"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
@@ -11,12 +12,13 @@ import {
 } from "@/lib/domain/cloudflare"
 import { listServices, serviceUrl } from "@/lib/microservices/registry"
 import { addressOf } from "@/lib/web4-items/address-file.mjs"
-import { startDomainResident } from "@/lib/domain/resident"
+import { startDomainResident, stopDomainResident } from "@/lib/domain/resident"
 import { applyDomainToAuth } from "@/lib/domain/auth-env"
 import { startStaticCopyAll } from "@/lib/web4-items/static-copy-start.cjs"
 import { spawnSync } from "node:child_process"
 import { staleElements } from "@/lib/domain/stale-addresses.cjs"
 import deployLock from "@/lib/deploy/deploy-lock.cjs"
+import paths from "@/lib/web4-items/paths.cjs"
 
 // ДВЕРЬ АКТИВАЦИИ ДОМЕНА (259-3).
 //
@@ -72,6 +74,32 @@ function nodeService(): string {
 
 const fail = (reason: string, status = 400) => NextResponse.json({ ok: false, reason }, { status })
 
+/** 775: a name leaves the node's env file (the inverse of `putEnv`); the value is never read out. */
+function dropEnv(name: string) {
+  if (!existsSync(ENV_FILE)) return
+  const text = readFileSync(ENV_FILE, "utf8")
+  const next = text.replace(new RegExp(`^${name}=.*(?:\r?\n|$)`, "m"), "")
+  if (next !== text) writeFileSync(ENV_FILE, next, "utf8")
+}
+
+/** 775: the elements whose baked panel or sign-in address still names the zone — they rebuild with this computer's addresses. */
+function elementsOnZone(zone: string): string[] {
+  if (!zone) return []
+  let services: Array<{ id: string; kind?: string }> = []
+  try { services = (JSON.parse(readFileSync(paths.REGISTRY_FILE, "utf8")) as { services?: typeof services }).services ?? [] } catch { return [] }
+  const out: string[] = []
+  for (const s of services) {
+    const file = join(paths.entryDir(s), ".env.local")
+    if (!existsSync(file)) continue
+    const hit = readFileSync(file, "utf8").split(/\r?\n/).some((line) => {
+      const m = line.match(/^(ARCHITECT_URL|NEXT_PUBLIC_AUTH_URL)=(.*)$/)
+      return !!m && (m[2].includes(`.${zone}`) || m[2].includes(`//${zone}`))
+    })
+    if (hit) out.push(s.id)
+  }
+  return out
+}
+
 export async function POST(req: NextRequest) {
   // 🛑 ДВЕ РАЗНЫЕ БЕДЫ — ДВА РАЗНЫХ ОТВЕТА (найдено владельцем 2026-09-21).
   // Прежде обе отвечали `not-owner`, и человек, сидящий ЗА ЭТИМ САМЫМ
@@ -84,6 +112,11 @@ export async function POST(req: NextRequest) {
   // 🔒 ВОШЕДШИЙ АРХИТЕКТОР, А НЕ «ЗАПРОС С ЭТОЙ МАШИНЫ» (324-1, решение владельца 2026-09-27). На собственном домене слой
   // закрыт входом; хозяин за клавиатурой проходит по-прежнему — `getSession` даёт ему роль.
   if (!(await getSession(req))?.roles.includes("architect")) return fail("not-owner", 403)
+  // 775 (✗ measured 2026-11-17: throughsongs.com became the main domain with no account on the node — sign-up open to the whole internet,
+  // the first stranger would have become the architect for good): a domain becomes the main one only when the node has its architect.
+  // The sign-in element did not answer — refused too, closed rather than open.
+  const architect = await architectExists()
+  if (architect !== true) return fail(architect === null ? "no-sign-in" : "no-architect", 409)
 
   const key = envValue(KEY_NAME)
   if (!key) return fail("no-key")
@@ -277,4 +310,38 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     ok: true, hostname, zone: zone.name, tunnel: name, siteUrlWritten, authHostname, architectHostname, auth, resident, rebuilding, rebuildPostponed, stale, subdomains,
   })
+}
+
+// DELETE — disconnect the node's main domain (775). The owner, 2026-11-17: «аннулировать домен которому привязали как главный
+// зеркало сайта потому что я хочу заново увидеть весь интерфейс подключение домена». The inverse of POST, step by step: the domain's
+// resident stops, its run token leaves the env, the activation record moves aside (kept, renamed), the site's address is no longer the
+// domain, and the elements that still carry the domain's addresses rebuild with this computer's ones. The zone in Cloudflare is not
+// touched — it is the person's. The account (the architect) stays.
+export async function DELETE(req: NextRequest) {
+  if (isTemporaryPublicAddress(req)) return fail("temporary-address", 403)
+  if (!(await getSession(req))?.roles.includes("architect")) return fail("not-owner", 403)
+  let zone = ""
+  try { zone = String((JSON.parse(readFileSync(STATE_FILE, "utf8")) as { zone?: unknown }).zone ?? "") } catch { return fail("not-connected", 409) }
+  if (deployLock.isRunning()) return fail("deploy-running", 409)
+  const rebuild = elementsOnZone(zone)
+
+  const resident = stopDomainResident()
+  dropEnv(RUN_TOKEN)
+  delete process.env[RUN_TOKEN]
+  const aside = join(ROOT, "logs", `domain.removed-${new Date().toISOString().replace(/[:.]/g, "-")}.json`)
+  renameSync(STATE_FILE, aside)
+
+  const appConfigFile = join(ROOT, "APP-CONFIG", "app-config.json")
+  try {
+    const cfg = JSON.parse(readFileSync(appConfigFile, "utf8")) as Record<string, unknown>
+    cfg.url = ""
+    writeFileSync(appConfigFile, `${JSON.stringify(cfg, null, 2)}\n`, "utf8")
+  } catch { /* no config — nothing to undo */ }
+
+  if (rebuild.length) {
+    spawnSync(process.execPath, [join(ROOT, "scripts", "spawn-free.mjs"), join(ROOT, "scripts", "deploy-elements.mjs"), ...rebuild], { cwd: ROOT, windowsHide: true, stdio: "ignore", timeout: 10_000 })
+  }
+  revalidatePath("/[lang]", "layout")
+  console.log(`[domain] disconnected ${zone}: resident stopped, record aside, rebuilding ${rebuild.join(", ") || "none"}`)
+  return NextResponse.json({ ok: true, zone, resident, rebuilding: rebuild, aside: aside.slice(ROOT.length + 1) })
 }

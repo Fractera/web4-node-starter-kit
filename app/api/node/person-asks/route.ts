@@ -34,10 +34,12 @@ export async function GET(req: NextRequest) {
   const denied = await requireRoles(req, ["architect", "admin"])
   if (denied) return denied
   const lang = lang2(req)
-  const list = (asks.open(ROOT) as Ask[]).map(({ id, text, href, why, hint, copy, by, secret, at }) => ({
+  const list = (asks.open(ROOT) as Ask[]).map(({ id, text, href, why, hint, copy, by, secret, signin, at }) => ({
     // 761-16e: a request without a page opens the asking element's page («Открыть» in the beacon), the main agent's — none
     id, text, href: href ?? (by && by !== "build" ? `/${lang}/${by}` : null), why, hint: hint ?? null, copy: copy ?? null, at, by: by ?? "build", byName: by && by !== "build" ? elementName(by, lang) : null,
     secret: secret ?? null,
+    // 777: a sign-in request — the window builds its link with the node's one builder
+    signin: signin === "architect" ? "architect" : null,
   }))
   return NextResponse.json({ ok: true, asks: list }, noStore)
 }

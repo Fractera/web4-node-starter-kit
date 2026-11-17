@@ -46,6 +46,13 @@ export function startDomainResident(): ResidentResult {
   return { started: true, saved: save.ok, detail: save.ok ? undefined : save.detail }
 }
 
+/** 775: the main domain is disconnected — its resident leaves pm2 and the snapshot, so a reboot does not raise it again. */
+export function stopDomainResident(): ResidentResult {
+  const del = pm2(["delete", DOMAIN_RESIDENT]) // already gone — not a refusal
+  const save = pm2(["save"])
+  return { started: false, saved: save.ok, detail: del.ok ? undefined : del.detail }
+}
+
 /** Перезапустить службу, чьё окружение лежит в её файле (а не в pm2). */
 export function restartService(name: string): boolean {
   return pm2(["restart", name]).ok

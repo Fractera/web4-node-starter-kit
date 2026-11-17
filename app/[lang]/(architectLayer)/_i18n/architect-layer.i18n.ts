@@ -85,6 +85,10 @@ export type ArchitectLayerUi = {
     reasonMachine: string
     /** 387-3: заголовок и вывод для этого компьютера (`{host}` — адрес страницы). Владелец 2026-10-04: «слово состояние временное здесь вообще места». */
     titleMachine: string
+    /** 776: the button to the same page on the node's own domain */
+    goWeb: string
+    /** 776: no main domain yet — the link to the domain page */
+    setupDomain: string
     bodyMachine: string
     /** 741-6: the same band on a SERVER reached through the SSH window (`npm run server -- window`) — «окно на сервер», not «этот компьютер». */
     titleWindow: string
@@ -133,7 +137,9 @@ const DICT: Record<string, ArchitectLayerUi> = {
   authWarning: {
     title: "This layer is open without any sign-in — a temporary state",
     reasonMachine: "You opened the control panel at {host} — on the very computer where your project runs. No sign-in is needed here: only someone sitting at this computer can get here.",
-    titleMachine: "You are on this computer ({host}) — the control panel opens here without signing in",
+    titleMachine: "You are on this computer — no sign-in needed",
+    goWeb: "Go to the web",
+    setupDomain: "Set up a domain",
     titleWindow: "You are looking at the server's control panel through the SSH window ({host}) — it opens without signing in, by the node's key",
     reasonWindow: "This window is a tunnel from your computer to the server's own loopback (npm run server -- window): only the holder of the node's key gets here. From the internet the server's panel opens only on its domain, after signing in.",
     titleTemporary: "You opened the control panel at a temporary Cloudflare address — here it is view-only",
@@ -163,7 +169,9 @@ const DICT: Record<string, ArchitectLayerUi> = {
   authWarning: {
     title: "Этот слой открыт без авторизации — состояние временное",
     reasonMachine: "Вы открыли пульт по адресу {host} — на том самом компьютере, где работает ваш проект. Здесь вход не нужен: сюда попадает только тот, кто сидит за этим компьютером.",
-    titleMachine: "Вы на этом компьютере ({host}) — здесь пульт открывается без входа",
+    titleMachine: "Вы на этом компьютере — авторизация не нужна",
+    goWeb: "Перейти в web",
+    setupDomain: "Настройте домен",
     titleWindow: "Вы смотрите пульт сервера через SSH-окно ({host}) — он открывается без входа, по ключу узла",
     reasonWindow: "Это окно — туннель с вашего компьютера к собственному адресу сервера (npm run server -- window): сюда попадает только тот, у кого ключ узла. Из интернета пульт сервера открывается только по его домену, после входа.",
     titleTemporary: "Вы открыли пульт по временному адресу Cloudflare — здесь он только для просмотра",

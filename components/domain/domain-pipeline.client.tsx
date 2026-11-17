@@ -1,8 +1,11 @@
 "use client"
 
 import { useState } from "react"
+import { useNodePlace } from "@/components/node-state/use-node-place.client"
+import signIn from "@/lib/auth/sign-in-link.cjs"
 import { Check, Plus, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import type { DomainListWords } from "./domain-list.i18n"
@@ -42,8 +45,10 @@ function Step({ title, done, children }: { title: string; done: boolean; childre
   )
 }
 
-export function DomainPipeline({ lang, domain: d, words: w, ladderWords, onChanged, hasPrimary, forItem }: {
+export function DomainPipeline({ lang, domain: d, words: w, ladderWords, onChanged, hasPrimary, forItem, architect = null }: {
   lang: string
+  /** 775: the node has its architect — only then may a domain become the main one; `null` — the sign-in did not answer */
+  architect?: boolean | null
   /** 443-4: элемент, из настроек которого пришли (`?for=`) — ссылка «Главное зеркало» ведёт к нему. */
   forItem?: string | null
   domain: PipelineDomain
@@ -54,6 +59,11 @@ export function DomainPipeline({ lang, domain: d, words: w, ladderWords, onChang
   onChanged: () => Promise<void>
 }) {
   const p = w.pipe
+  // 777: the architect's sign-in — the node's one link builder (here, before the main domain, it leads to this computer's sign-in).
+  const place = useNodePlace()
+  const signInHref = place?.signIn && typeof window !== "undefined"
+    ? signIn.architectSignIn(place.signIn, `${window.location.pathname}${window.location.search}`, window.location.origin)
+    : null
   const [busy, setBusy] = useState<string | null>(null)
   const [conflicts, setConflicts] = useState<AddressRecord[] | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -232,7 +242,15 @@ export function DomainPipeline({ lang, domain: d, words: w, ladderWords, onChang
             {p.openMirror.replace("{item}", forItem)}
           </a>
         )}
-        {primaryReady && (
+        {/* 775 (✗ 2026-11-17: throughsongs.com went main with no account on the node — sign-up open to the internet): until the node has
+            its architect the step shows why it is closed and the one way to fix it — the architect's sign-in (the node's one builder) */}
+        {primaryReady && architect !== true && (
+          <div className="mt-2 flex flex-col gap-2 rounded-md border border-warning bg-warning/10 p-3" role="alert" data-block="pipe-locked" data-pipe-locked={architect === null ? "no-sign-in" : "no-architect"}>
+            <p className="text-sm text-foreground text-pretty">{architect === null ? p.lockedNoSignIn : p.lockedNoArchitect}</p>
+            {architect === false && signInHref && <a href={signInHref} className={cn(buttonVariants({ size: "sm" }), "w-fit")} data-pipe-locked-signin>{p.lockedButton}</a>}
+          </div>
+        )}
+        {primaryReady && architect === true && (
           <div className="mt-2 flex flex-col gap-1.5" data-pipe-make-primary>
             <p className="text-sm text-foreground">{p.makePrimaryNote}</p>
             {/* 372 (владелец 2026-10-02): после подтверждённой проверки главное действие — «Сделать основным», на всю ширину;

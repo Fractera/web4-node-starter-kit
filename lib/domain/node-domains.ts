@@ -52,6 +52,7 @@ export function primaryConnected(): boolean {
   try { return typeof (JSON.parse(readFileSync(PRIMARY_FILE, "utf8")) as { activatedAt?: unknown }).activatedAt === "string" } catch { return false }
 }
 
+
 function readList(): NodeDomain[] {
   try {
     const raw = JSON.parse(readFileSync(FILE, "utf8")) as { domains?: unknown }

@@ -21,10 +21,11 @@ export function content(lang: string): PageItem[] {
     kind: 'accordionItem', summary: x.summary, children: x.text.map((text): PageItem => ({ kind: 'p', text })),
   })
   return [
-    // 344-5: когда подходит сайт с домашнего компьютера и что делать при посетителях из России — свёрнуто по умолчанию
+    // 344-5: когда подходит сайт с домашнего компьютера — свёрнуто по умолчанию. 775 (the owner, 2026-11-17: «проверь пожалуйста чтобы
+    // не было никакого упоминания о России. Сейчас санкции не позволяют это делать»): the country card is gone.
     // (слово владельца: «По умолчанию эти карточки должны быть закрыты … пусть нажимает раскрыть если ему интересно»).
     // 742-2: the notes are the computer's — they ride inside its ladder and hide with it on a server.
-    { kind: 'domainLadder', lang, words: domainLadderWords(lang), notes: [{ kind: 'accordion', title: n.title, cards: true, children: [item(n.home), item(n.russia)] }] },
+    { kind: 'domainLadder', lang, words: domainLadderWords(lang), notes: [{ kind: 'accordion', title: n.title, cards: true, children: [item(n.home)] }] },
   ]
 }
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronDown, CircleAlert, ExternalLink } from "lucide-react"
+import { CircleAlert, ExternalLink } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -32,27 +32,7 @@ import { keyReasonText } from "./key-reason"
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
-// 🔒 ПОДСКАЗКА ПЕРВОЙ СТУПЕНИ — ИМЕНА И АДРЕСА, И БОЛЬШЕ НИЧЕГО (слово владельца
-// 2026-09-21: «дадим подсказку пользователю по регистрации домена, покажем
-// несколько популярных ссылок»).
-//
-// 🛑 ЦЕН И СРАВНЕНИЙ ЗДЕСЬ НЕТ НАМЕРЕННО. Цена домена зависит от зоны и меняется
-// у каждого регистратора; вписанная в код, она устаревает молча и врёт человеку
-// ровно в тот момент, когда он собрался платить. Имя и адрес не устаревают.
-//
-// 🔒 CLOUDFLARE СТОИТ ОТДЕЛЬНО, И ЭТО НЕ РЕКЛАМА, А КОРОТКИЙ ПУТЬ. Домен, купленный
-// у них, сразу на их серверах имён (проверено по их документации 2026-09-21) —
-// значит ступени 2 и 3 отпадают целиком. Человеку это стоит сказать ДО того, как
-// он купит домен в другом месте и пойдёт менять серверы имён руками.
-const REGISTRARS = [
-  { name: "Porkbun", href: "https://porkbun.com" },
-  { name: "Namecheap", href: "https://www.namecheap.com" },
-  { name: "GoDaddy", href: "https://www.godaddy.com" },
-  { name: "one.com", href: "https://www.one.com" },
-  { name: "Gandi", href: "https://www.gandi.net" },
-] as const
-
-const CLOUDFLARE_REGISTRAR = "https://www.cloudflare.com/products/registrar/"
+// 775: where to register a domain is its own card below both sections now (`domain-registrars.client.tsx`).
 
 // 🔒 Панель Cloudflare — один адрес на две ступени: вторая заводит там зону,
 // четвёртая создаёт там же токен. Второй копии адреса не заводим.
@@ -84,14 +64,6 @@ export function DomainLadder({ lang, words }: { lang: string; words: DomainLadde
   const [answer, setAnswer] = useState<{ ok: boolean; text: string; zones?: string[] } | null>(null)
   const [busy5, setBusy5] = useState(false)
   const [answer5, setAnswer5] = useState<{ ok: boolean; text: string } | null>(null)
-  // 🔒 ОГРАНИЧЕНИЯ СВЁРНУТЫ, НО НЕ СПРЯТАНЫ. Развёрнутые, они забивают первую
-  // ступень пятью абзацами и человек перестаёт видеть, что вообще надо сделать.
-  // Спрятанные совсем — мы бы посоветовали короткий путь, умолчав о его цене.
-  const [cfLimits, setCfLimits] = useState(false)
-  // 🔒 КАРТОЧКА РЕГИСТРАТОРОВ СВЁРНУТА (слово владельца 2026-09-21). У человека,
-  // у которого домен УЖЕ есть, она занимает половину первой ступени и отвечает
-  // на вопрос, которого он не задавал.
-  const [registrars, setRegistrars] = useState(false)
   // 🔒 СВЁРНУТО ПО ТОЙ ЖЕ ПРИЧИНЕ, ЧТО И РЕГИСТРАТОРЫ: человек, у которого токен
   // уже есть, не должен продираться через инструкцию его создания.
   // 🔒 ПРЕДУПРЕЖДАЕМ ДО ВВОДА, А НЕ ПОСЛЕ ОТКАЗА. ✗ оплачено 2026-09-21: владелец
@@ -302,14 +274,7 @@ export function DomainLadder({ lang, words }: { lang: string; words: DomainLadde
             </ol>
           ) : null}
           {s.tail ? <Small className="mt-2 block text-muted-foreground">{s.tail}</Small> : null}
-          {/* 443: у работающего узла поле смены домена не показывается — ✗ оплачено: lagrix.dev, вписанный сюда ради
-              элемента gyr1i, стал доменом узла и погасил пульт. Здесь — рабочий домен и путь к дополнительному. */}
-          {s.n === 1 && state.active ? (
-            <div className="mt-3 flex flex-col gap-2 rounded-md border border-primary/40 bg-primary/5 px-3 py-2" data-domain-active={state.zone ?? ""}>
-              <p className="text-foreground text-sm">{words.nodeActive.replace("{zone}", state.zone ?? "")}</p>
-              <a className="w-fit text-sm underline" href="#domain-add">{words.addDomainLink}</a>
-            </div>
-          ) : null}
+          {/* 775: the node's working domain is shown by its own section (`domain-main.client.tsx`); no word here about another section. */}
           {s.n === 1 && !state.active ? (
             <div className="mt-3 flex flex-col gap-2" data-domain-form>
               <Small className="text-muted-foreground">{words.domainLabel}</Small>
@@ -334,67 +299,6 @@ export function DomainLadder({ lang, words }: { lang: string; words: DomainLadde
                   {saved.text}
                 </p>
               ) : null}
-            </div>
-          ) : null}
-          {s.n === 1 ? (
-            <div className="mt-3 rounded-md border border-border bg-muted/40 p-3" data-registrars>
-              <Button
-                aria-expanded={registrars}
-                className="h-auto w-full justify-between gap-2 px-0 py-0 text-left hover:bg-transparent"
-                onClick={() => setRegistrars((v) => !v)}
-                type="button"
-                variant="ghost"
-              >
-                <Small className="font-semibold text-foreground">{words.registrarsTitle}</Small>
-                <ChevronDown className={`size-4 shrink-0 text-muted-foreground transition-transform ${registrars ? "rotate-180" : ""}`} aria-hidden />
-              </Button>
-              {registrars ? (<>
-              <p className="mt-1 text-muted-foreground text-sm">
-                <a className="underline" href={CLOUDFLARE_REGISTRAR} rel="noreferrer noopener" target="_blank">Cloudflare Registrar</a>
-                {" — "}{words.registrarCloudflare}
-              </p>
-              <div className="mt-2 flex gap-2 rounded-md border border-warning/50 bg-warning/10 px-3 py-2" data-fast-path>
-                <CircleAlert className="mt-0.5 size-4 shrink-0 text-warning" aria-hidden />
-                <p className="text-foreground text-sm">
-                  <span className="font-semibold">{words.fastPath}</span>{" "}{words.fastPathSaving}
-                </p>
-              </div>
-              <Button
-                aria-expanded={cfLimits}
-                className="mt-2 h-auto w-fit gap-1.5 px-0 py-0 text-left text-foreground text-sm underline"
-                onClick={() => setCfLimits((v) => !v)}
-                type="button"
-                variant="link"
-              >
-                <CircleAlert className="size-4 shrink-0 text-primary" aria-hidden />
-                {words.cfLimitsToggle}
-              </Button>
-              {cfLimits ? (
-                <div className="mt-2 rounded-md border border-border bg-muted/40 p-3" data-cf-limits>
-                  <p className="text-foreground text-sm">{words.cfLimitsLead}</p>
-                  <ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-muted-foreground text-sm">
-                    <li>{words.cfLimit1}</li>
-                    <li>{words.cfLimit2}</li>
-                    <li>{words.cfLimit3}</li>
-                    <li>{words.cfLimit4}</li>
-                    <li>{words.cfLimit5}</li>
-                  </ul>
-                  <Small className="mt-2 block text-muted-foreground">{words.cfLimitsSource}</Small>
-                </div>
-              ) : null}
-              <p className="mt-2 text-muted-foreground text-sm">{words.registrarOthers}</p>
-              <ul className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
-                {REGISTRARS.map((r) => (
-                  <li key={r.name}>
-                    <a className="inline-flex items-center gap-1 text-sm underline" href={r.href} rel="noreferrer noopener" target="_blank">
-                      {r.name}
-                      <ExternalLink className="size-3" aria-hidden />
-                    </a>
-                  </li>
-                ))}
-              </ul>
-              <Small className="mt-2 block text-muted-foreground">{words.registrarPriceNote}</Small>
-              </>) : null}
             </div>
           ) : null}
           {s.n === 2 ? (

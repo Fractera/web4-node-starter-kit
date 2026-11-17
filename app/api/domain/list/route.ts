@@ -5,6 +5,8 @@ import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { addDomain, checkDomain, createDomainZone, domainHolder, extraDomains, nodeKeyState, primaryDomain, removeDomain } from "@/lib/domain/node-domains"
 import { detachDomain } from "@/lib/web4-items/element-domain"
 import { addressOf } from "@/lib/web4-items/address-file.mjs"
+import { architectExists } from "@/lib/auth/architect-exists"
+import bases from "@/lib/auth/sign-in-bases.cjs"
 
 // ДОМЕНЫ УЗЛА (324-1): «Хостинг → Домен» списком. GET — основной (из лестницы 259) и дополнительные с тем, к какому элементу
 // каждый подключён; POST `{ name }` — добавить, POST `{ name, action: "create-zone" }` — узел создаёт зону сам (конвейер);
@@ -42,7 +44,10 @@ export async function GET(req: NextRequest) {
     return { ...d, holder, holderAddress: holder ? addressOf(holder) : null }
   })
   // 324-1: строка «Ключ узла» — свойство узла, приходит вместе со списком.
-  return NextResponse.json({ ok: true, key: await nodeKeyState(), primary: primaryDomain(), extra }, noStore)
+  // 775: whether the node has its architect (a domain may become the main one only then) and where the main domain answers.
+  const b = bases.signInBases(process.cwd())
+  const [key, architect] = await Promise.all([nodeKeyState(), architectExists()])
+  return NextResponse.json({ ok: true, key, primary: primaryDomain(), extra, architect, links: b.web ? { site: b.site, panel: b.web } : null }, noStore)
 }
 
 export async function POST(req: NextRequest) {

@@ -15,6 +15,7 @@
 // они нужны и серверу тоже. Держать здесь вторую копию значит однажды починить
 // одну и забыть другую.
 import { isIpHost, apexFrom } from "./site-urls";
+import signIn from "./auth/sign-in-link.cjs";
 
 // Public base URL of the Auth service as the BROWSER must reach it.
 export function authBase(): string {
@@ -74,15 +75,10 @@ export function projectsBase(): string {
 // человек, попав на регистрацию, заводил вторую запись. Форма входа сама отправит на
 // регистрацию, когда пользователей ещё нет (первый станет архитектором), и сама
 // подскажет «впервые здесь?» устройству, с которого ещё не входили.
+// 777: the link itself is built by the node's ONE sign-in builder (`lib/auth/sign-in-link.cjs`) — the same function the action window and
+// the Telegram copy of a request call; here only the base the browser reaches is chosen. The `signed-in` mark (260-3) lives there too.
 export function signInRedirectUrl(callbackUrl: string, requireRole: "user" | "architect"): string {
-  const url = new URL(`${authBase()}/login`);
-  // Метка `signed-in` — та же, что ставит прокси (260-3): вернувшись, человек увидит
-  // плашку «вы вошли» и на этом пути тоже.
-  let back = callbackUrl;
-  try { const u = new URL(callbackUrl); u.searchParams.set("signed-in", "1"); back = u.toString(); } catch { /* не адрес — отдаём как есть */ }
-  url.searchParams.set("callbackUrl", back);
-  url.searchParams.set("requireRole", requireRole);
-  return url.toString();
+  return signIn.signInLink(authBase(), callbackUrl, requireRole);
 }
 
 // `adminUrlFromSite()` переехала в `lib/site-urls.ts`: её вызывает СЕРВЕРНЫЙ

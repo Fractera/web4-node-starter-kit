@@ -93,12 +93,15 @@ export function PersonAsk({ url, ui }: { url: string; ui: PersonAskUi }) {
   const label = ui.waiting.replace("{n}", String(asks.length))
 
   return (
-    <div className="fixed right-4 bottom-4 z-50" data-block="person-ask" data-person-ask-count={asks.length}>
+    // 773 (the owner, 2026-11-17: «подними его на такую же высоту на какой находится левый индикатор»): bottom-16 like the width
+    // badge, so the footer's language switch (35–65 px from the bottom) is free; the ping ring is a picture — it grew to 112 px and
+    // took the clicks meant for «RU» (measured with elementFromPoint), so it never catches the pointer.
+    <div className="fixed right-4 bottom-16 z-50" data-block="person-ask" data-person-ask-count={asks.length}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button type="button" variant="bare" size="bare" aria-label={label} data-person-ask-beacon
             className="relative grid size-14 place-items-center rounded-full border-4 border-warning bg-background text-2xl font-black text-warning shadow-lg transition-transform active:scale-95">
-            <span aria-hidden className="absolute -inset-1 rounded-full border-4 border-warning/40 animate-ping motion-reduce:animate-none" />
+            <span aria-hidden className="pointer-events-none absolute -inset-1 rounded-full border-4 border-warning/40 animate-ping motion-reduce:animate-none" />
             <span aria-hidden>!</span>
             <Badge className="absolute -top-1 -right-1 min-w-5 border-2 border-background px-1 tabular-nums">{asks.length}</Badge>
           </Button>

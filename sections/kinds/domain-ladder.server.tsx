@@ -2,6 +2,7 @@ import type { SectionRenderer } from '@/sections/contract'
 import { DomainLadder } from '@/components/domain/domain-ladder.client'
 import { DomainList } from '@/components/domain/domain-list.client'
 import { domainListWords } from '@/components/domain/domain-list.i18n'
+import { DomainRegistrars } from '@/components/domain/domain-registrars.client'
 
 // Лестница подключения своего домена (259-1).
 //
@@ -18,9 +19,15 @@ import { domainListWords } from '@/components/domain/domain-list.i18n'
 // `data-place="home"` hides them on a server node, whose own ladder the page's island shows instead (`styles/globals.css`, `NodeAlerts`).
 // ✗ Measured 2026-11-14 on aifa.dev: a server with its domain on showed «Ключ Cloudflare узла требует внимания» and «Адрес узла:
 // http://localhost:24680».
+// 775 (the owner, 2026-11-17: «информация как зарегистрировать … должна быть вынесено вниз после воздуха после второго элемента про
+// дополнительные домены … отдельной карточкой аккордеона где зарегистрировать»): the two sections, real air, then the cards that
+// explain rather than act — where to register a domain, and the computer's notes.
 export const domainLadder: SectionRenderer<'domainLadder'> = (b, { key: k, lang, ui, renderPage }) => (
-  <div key={k} data-block="domain-ladder-home" data-place="home">
+  <div key={k} data-block="domain-ladder-home" data-place="home" className="flex flex-col gap-16">
     <DomainList lang={b.lang} words={domainListWords(b.lang)} ladderWords={b.words} ladder={<DomainLadder lang={b.lang} words={b.words} />} />
-    {b.notes ? renderPage(b.notes, lang, ui, `${k}-notes`) : null}
+    <div className="flex flex-col gap-3" data-block="domain-ladder-info">
+      <DomainRegistrars words={b.words} />
+      {b.notes ? renderPage(b.notes, lang, ui, `${k}-notes`) : null}
+    </div>
   </div>
 )

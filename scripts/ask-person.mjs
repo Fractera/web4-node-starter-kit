@@ -1,6 +1,8 @@
 // npm run ask-person -- "<what to do, in the person's language>" [--href </ru/…|https://…>] [--why "<why only the person>"]
 //   [--hint "<what may pop up on the way and what to press>"] [--copy "<a command the person pastes — the window gives it a copy button>"]
 //   [--secret server-root --host <ip> [--port 22]]   768: the person types the server's root password in the window's masked field
+//   [--signin]   777: «sign in as the architect» — the button's link is built by the node's one builder (lib/auth/sign-in-link.cjs):
+//                the sign-in form with the way back to the same panel page on the node's own domain; never an --href of yours
 // npm run ask-person -- list | drop <id> | done <id>   (done: the person answered «Готово · <id>» in Telegram — you close it, no wake)
 // Node step 761-16: a step needs the person's own hands — the request shows at the bottom of every page of the panel until «Готово»,
 // and that press wakes you with the node line `person-done`. Never a chat line instead (the owner, 2026-11-16).
@@ -14,6 +16,7 @@ const asks = req(join(ROOT, 'lib', 'node', 'person-asks.cjs'))
 const tg = req(join(ROOT, 'lib', 'node', 'person-asks-telegram.cjs'))
 const args = process.argv.slice(2)
 const flag = (name) => { const i = args.indexOf(name); if (i < 0) return null; const v = args[i + 1]; args.splice(i, 2); return v ?? null }
+const has = (name) => { const i = args.indexOf(name); if (i < 0) return false; args.splice(i, 1); return true }
 
 if (args[0] === 'list') {
   const open = asks.open(ROOT)
@@ -32,6 +35,7 @@ if (args[0] === 'list') {
   console.log(a ? `===ASK_DROPPED=== ${a.id} (telegram: ${sent})` : '===ASK_NOT_FOUND===')
   if (!a) process.exitCode = 1
 } else {
+  const signin = has('--signin') ? 'architect' : null
   const href = flag('--href')
   const why = flag('--why')
   const hint = flag('--hint')
@@ -43,7 +47,8 @@ if (args[0] === 'list') {
   try {
     if (secretKind && secretKind !== 'server-root' && secretKind !== 'openai') throw new Error(`--secret ${secretKind}: the main agent asks server-root (--host <ip> [--port 22]) or openai (the node's OpenAI key); an element's key is asked by that element`)
     const secret = secretKind === 'openai' ? { kind: 'openai' } : secretKind ? { kind: 'server-root', host, port: port ? Number(port) : 22 } : null
-    const a = asks.add(ROOT, { text: args.join(' '), href, why, hint, copy, secret })
+    if (signin && href) throw new Error('--signin builds its own link (the way back to the panel on the domain): drop --href')
+    const a = asks.add(ROOT, { text: args.join(' '), href, why, hint, copy, secret, signin })
     const t = await tg.announce(ROOT, a)
     if (t.sent) asks.setTg(ROOT, a.id, { via: t.via, sent: t.sent })
     const how = a.secret?.kind === 'openai' ? ' The person types the key in the window or in the Telegram form (never in a chat); OpenAI checks it live, saving wakes you (person-done).' : a.secret ? ' The person types the password in the window\'s masked field (never in a chat); their browser opens the visit, and «Сохранить» wakes you (person-done).' : ''

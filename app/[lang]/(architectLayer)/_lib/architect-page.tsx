@@ -141,6 +141,9 @@ export function ArchitectPage({
         reasonShowcase={ui.authWarning.reasonShowcase}
         body={ui.authWarning.body}
         titleMachine={ui.authWarning.titleMachine}
+        goWeb={ui.authWarning.goWeb}
+        setupDomain={ui.authWarning.setupDomain}
+        lang={lang}
         titleWindow={ui.authWarning.titleWindow}
         reasonWindow={ui.authWarning.reasonWindow}
         bodyMachine={ui.authWarning.bodyMachine}

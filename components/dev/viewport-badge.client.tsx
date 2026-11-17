@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { useNodePlace } from "@/components/node-state/use-node-place.client";
 
 // Индикатор ширины экрана — только в режиме разработки.
 //
@@ -47,9 +48,14 @@ const STEPS: [number, string][] = [
 // 763 (the owner, 2026-11-16: «открыты два одинаковых по интерфейсу панели: для персонального компьютера и для удалённого сервера. Я
 // постоянно путаюсь … сделай его разным цветом оранжевый для компьютера и салатовый для удалённого сервера. И внизу … PC || VPS размер
 // шрифта такой же как и цифры»): the node's place, detected (`/api/node/place`), asked ONCE; a guest gets a refusal and the neutral badge.
-type Place = "home" | "server"
+// 776 (the owner, 2026-11-17: «Два состояния недостаточно. Нужно PC-local | PC-web | VPS сделай для каждого разный цвет»): the
+// computer seen at its own keyboard (loopback) is PC-local — orange; the same computer reached from the internet (its own domain or the
+// temporary address) is PC-web — the theme's primary; a server is VPS — green. Where the node lives — the node's answer (the shared
+// one request of the page), how you came — the node sees it in the request (`via`); never the address bar (check:place-readers).
+type Place = "local" | "web" | "server"
 const PLACE: Record<Place, { label: string; tone: string }> = {
-  home: { label: "PC", tone: "border-warning bg-warning text-background" },
+  local: { label: "PC-local", tone: "border-warning bg-warning text-background" },
+  web: { label: "PC-web", tone: "border-primary bg-primary text-primary-foreground" },
   server: { label: "VPS", tone: "border-success bg-success text-success-foreground" },
 }
 
@@ -60,14 +66,8 @@ function stepName(width: number): string {
 
 export function ViewportBadge() {
   const [width, setWidth] = useState<number | null>(null);
-  const [place, setPlace] = useState<Place | null>(null);
-
-  useEffect(() => {
-    fetch("/api/node/place", { cache: "no-store", credentials: "include" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d: { place?: { kind?: string } } | null) => { const k = d?.place?.kind; if (k === "home" || k === "server") setPlace(k) })
-      .catch(() => {});
-  }, []);
+  const node = useNodePlace();
+  const place: Place | null = !node ? null : node.kind === "server" ? "server" : node.via === "local" ? "local" : "web";
 
   useEffect(() => {
     const read = () => setWidth(window.innerWidth);

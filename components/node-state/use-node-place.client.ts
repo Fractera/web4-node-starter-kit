@@ -23,21 +23,31 @@ export type NodePlaceAnswer = {
   foreign?: boolean
   /** живые серверы, которые запустил этот компьютер (D36) — домен и время */
   launched: Array<{ domain: string; readyAt: string | null }>
+  /** 776: how this page was reached — this computer's loopback (`local`) or the web (`web`); the node sees it in the request */
+  via: "local" | "web"
+  /** 776: the panel on the node's own domain (`https://architect.<zone>`), `null` — no main domain yet */
+  web: string | null
+  /** 777: the bases of the one «sign in as the architect» link (`lib/auth/sign-in-link.cjs` architectSignIn) */
+  signIn: { web: string | null; webAuth: string | null; localAuth: string | null } | null
 }
 
 let asked: Promise<NodePlaceAnswer | null> | null = null
+const str = (v: unknown): string | null => (typeof v === "string" && /^https?:\/\//.test(v) ? v : null)
 
 /** Один вопрос на страницу; ответ `null` — узел не ответил (или не на чтение для этого посетителя). */
 export function askNodePlace(): Promise<NodePlaceAnswer | null> {
   if (asked) return asked
-  type Raw = { place?: { kind?: string; source?: string; detail?: string; mismatch?: string; foreign?: boolean }; launched?: NodePlaceAnswer["launched"] }
+  type Raw = { place?: { kind?: string; source?: string; detail?: string; mismatch?: string; foreign?: boolean }; launched?: NodePlaceAnswer["launched"]; via?: unknown; web?: unknown; signIn?: { web?: unknown; webAuth?: unknown; localAuth?: unknown } }
   const p: Promise<NodePlaceAnswer | null> = fetch(`${BASE}/api/node/place`, { cache: "no-store" })
     .then((r) => (r.ok ? (r.json() as Promise<Raw>) : null))
     .then((a): NodePlaceAnswer | null => {
       const kind = a?.place?.kind === "server" ? "server" : a?.place?.kind === "home" ? "home" : null
       if (!kind) return null
       return { kind, source: a?.place?.source ?? "unknown", detail: a?.place?.detail, mismatch: a?.place?.mismatch, foreign: a?.place?.foreign,
-        launched: Array.isArray(a?.launched) ? a.launched : [] }
+        launched: Array.isArray(a?.launched) ? a.launched : [],
+        via: a?.via === "local" ? "local" : "web",
+        web: typeof a?.web === "string" && a.web.startsWith("https://") ? a.web : null,
+        signIn: a?.signIn ? { web: str(a.signIn.web), webAuth: str(a.signIn.webAuth), localAuth: str(a.signIn.localAuth) } : null }
     })
     .catch(() => null)
   asked = p

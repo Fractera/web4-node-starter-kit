@@ -1,10 +1,16 @@
 // СЛОВА СПИСКА ДОМЕНОВ УЗЛА (324-1). `en` основа, `ru` перевод; строки выбирает сервер (рисовальщик секции `domainLadder`).
 
 export type DomainListWords = {
-  intro: string
-  primaryTitle: string
-  primaryNone: string
-  primaryEmpty: string
+  /** 775: the section «Основной домен» — its path while the node has none, its own controls once it has one */
+  main: {
+    title: string; lead: string; empty: string; how: string[]; live: string; unknown: string; openSite: string; openPanel: string
+    notice: string; noticeButton: string; disconnect: string; disconnectConfirm: string; disconnectYes: string; disconnecting: string; disconnectFailed: string
+  }
+  /** 775: the section «Дополнительные домены» — only once the node has its main domain */
+  extra: { title: string; lead: string; how: string[] }
+  /** 775: the fold of a section's instructions */
+  more: string
+  loading: string
   addTitle: string
   addLabel: string
   add: string
@@ -33,10 +39,40 @@ export type DomainListWords = {
 
 const DICT: Record<string, DomainListWords> = {
   en: {
-    intro: "Every WEB4 element of this project opens on a subdomain of the main domain. Any of them can also become a standalone resource on a domain of its own: add the domain here, then connect it on the element's page — Settings → Main mirror.",
-    primaryTitle: "Main domain",
-    primaryNone: "not connected yet",
-    primaryEmpty: "The node has no main domain yet. Add any domain below: the node takes it through its steps, and when the zone is active you make it the node's main domain right there.",
+    main: {
+      title: "Main domain",
+      lead: "The node's permanent address: the site on the domain itself, the panel on architect., sign-in on auth.",
+      empty: "The node has no main domain yet. Enter your domain — the node takes it through its steps, and when the zone is active you make it the main one right here.",
+      how: [
+        "1. Enter the domain under «+ Add a domain» — the root, without www.",
+        "2. The node creates the zone in Cloudflare itself with its key. If a key is needed, the key card appears above.",
+        "3. At your domain's registrar, set the two name servers the domain's card names. This is the only step outside the node; it usually takes minutes, sometimes up to a day.",
+        "4. When the zone is active, press «Make it the node's main domain»: the node creates the tunnel, the DNS records, sign-in on auth.<domain> and the site's address itself.",
+        "5. The node must have its architect first — your account: without it the button stays closed, otherwise sign-up on the domain would be open to everyone.",
+      ],
+      live: "live",
+      unknown: "state unknown",
+      openSite: "Site",
+      openPanel: "Panel",
+      notice: "You have just connected your own domain, which means the secure web protocol (SSL) is now in force. It requires you to sign in as the architect. You will be given the fullest access to this application. Attention: if you do not, you may lose access to the application from the internet.",
+      noticeButton: "Sign in as the architect",
+      disconnect: "Disconnect the main domain",
+      disconnectConfirm: "Disconnect {domain} from the node? The node stops the domain's tunnel, brings sign-in and the elements back to this computer and rebuilds them. The zone in Cloudflare is not touched.",
+      disconnectYes: "Yes, disconnect",
+      disconnecting: "Disconnecting…",
+      disconnectFailed: "Could not disconnect:",
+    },
+    extra: {
+      title: "Additional domains",
+      lead: "Domains of their own for separate elements of the node.",
+      how: [
+        "Every element of the node already opens on a subdomain of the main domain. Any of them can also get a domain of its own.",
+        "Enter the domain under «+ Add a domain» and take it to «active» through the steps of its card.",
+        "Then connect it to an element: open the element → «Settings» → «Domain».",
+      ],
+    },
+    more: "More",
+    loading: "Reading the node's domains…",
     addTitle: "Add a domain",
     addLabel: "Another domain of yours (the root, without www)",
     add: "Add",
@@ -57,7 +93,7 @@ const DICT: Record<string, DomainListWords> = {
     docsToken: "How to give the node's key access to one more zone",
     loadFailed: "The list of domains did not load.",
     state: {
-      active: "Ready: the zone is active in Cloudflare and the node's key sees it. It can be connected to an element (Settings → Main mirror).",
+      active: "Ready: the zone is active in Cloudflare and the node's key sees it. It can be connected to an element (open the element → Settings → Domain).",
       pending: "The zone is in Cloudflare but not active yet (status: {status}). At your registrar, set these name servers, wait (minutes to a day) and check again:",
       "not-visible": "There is no zone for this domain in the node's Cloudflare account yet — the node creates it at step 1.",
       unknown: "Not checked yet.",
@@ -76,6 +112,9 @@ const DICT: Record<string, DomainListWords> = {
       registrar: "Domain registrar:",
       makePrimary: "Make it the node's main domain",
       makingPrimary: "Connecting…",
+      lockedNoArchitect: "First create your account — the node's architect. Until the node has one, the domain cannot become the main one: sign-up on it would be open to everyone, and the first to register would become the node's owner for good.",
+      lockedNoSignIn: "The node's sign-in does not answer, so the node cannot check that it has its architect. Start the sign-in element and press «Check again».",
+      lockedButton: "Create the architect's account",
       makePrimaryNote: "The node has no main domain yet. This one can become it: the node creates its tunnel, the DNS records, sign-in on auth.<domain> and the site address — in one press.",
       makePrimaryFailed: "The domain did not become main:",
       checkAgain: "Check again",
@@ -101,8 +140,8 @@ const DICT: Record<string, DomainListWords> = {
       step3: "3. Active",
       step3Wait: "Opens when the name servers match.",
       step3Asked: "The node asked Cloudflare to re-check the zone. Press «Check» again in a few minutes.",
-      step3Done: "The zone is active — the domain is ready to be connected to an element (Settings → Main mirror).",
-      openMirror: "Connect it to {item}: Settings → Main mirror",
+      step3Done: "The zone is active — the domain is ready to be connected to an element (open the element → Settings → Domain).",
+      openMirror: "Connect it to {item}: Settings → Domain",
       lastCheck: "Checked at {time}: {what}",
     },
     keyPerms: ["Zone Edit (Zone Write)", "DNS Write", "Cloudflare Tunnel Edit", "Workers Scripts Edit", "Workers Routes Edit"],
@@ -142,10 +181,40 @@ const DICT: Record<string, DomainListWords> = {
     },
   },
   ru: {
-    intro: "Каждый WEB4 элемент этого проекта открывается на поддомене основного домена. Любой из них можно сделать и самостоятельным ресурсом на собственном домене: добавьте домен здесь, а затем подключите его на странице элемента — «Настройки» → «Главное зеркало».",
-    primaryTitle: "Основной домен",
-    primaryNone: "ещё не подключён",
-    primaryEmpty: "У узла пока нет основного домена. Добавьте любой домен ниже: узел проведёт его по ступеням, и когда зона станет активной, там же сделайте его основным доменом узла.",
+    main: {
+      title: "Основной домен",
+      lead: "Постоянный адрес узла: сайт на самом домене, пульт на architect., вход на auth.",
+      empty: "У узла ещё нет основного домена. Впишите свой домен — узел проведёт его по ступеням, а когда зона станет активной, сделайте его основным здесь же.",
+      how: [
+        "1. Впишите домен в «+ Добавить домен» — корень, без www.",
+        "2. Узел сам создаёт зону в Cloudflare своим ключом. Если нужен ключ, его карточка появится выше.",
+        "3. У регистратора домена поставьте два сервера имён, которые назовёт карточка домена. Это единственный шаг вне узла; обычно он занимает минуты, иногда до суток.",
+        "4. Когда зона станет активной, нажмите «Сделать основным доменом узла»: узел сам создаст туннель, записи DNS, вход на auth.<домен> и адрес сайта.",
+        "5. Сначала у узла должен быть архитектор — ваша учётная запись: без неё кнопка закрыта, иначе регистрация на домене открылась бы всем.",
+      ],
+      live: "работает",
+      unknown: "состояние неизвестно",
+      openSite: "Сайт",
+      openPanel: "Пульт",
+      notice: "Вы только что подключили собственный домен, а это значит, что началась работа по защищённому web-протоколу SSL. Это требует, чтобы вы прошли авторизацию как архитектор. Вам будет предоставлен максимальный доступ к этому приложению. Внимание: если вы этого не сделаете, вы можете потерять доступ к приложению из интернета.",
+      noticeButton: "Пройти авторизацию",
+      disconnect: "Отключить основной домен",
+      disconnectConfirm: "Отключить {domain} от узла? Узел остановит туннель домена, вернёт вход и элементы на этот компьютер и пересоберёт их. Зону в Cloudflare узел не трогает.",
+      disconnectYes: "Да, отключить",
+      disconnecting: "Отключаю…",
+      disconnectFailed: "Не удалось отключить:",
+    },
+    extra: {
+      title: "Дополнительные домены",
+      lead: "Собственные адреса для отдельных элементов узла.",
+      how: [
+        "Каждый элемент узла уже открывается на поддомене основного домена. Любому из них можно дать и собственный домен.",
+        "Впишите домен в «+ Добавить домен» и доведите его до «active» по ступеням его карточки.",
+        "Затем подключите его к элементу: откройте элемент → «Настройки» → «Домен».",
+      ],
+    },
+    more: "Подробнее",
+    loading: "Читаю домены узла…",
     addTitle: "Добавить домен",
     addLabel: "Ещё один ваш домен (корень, без www)",
     add: "Добавить",
@@ -166,7 +235,7 @@ const DICT: Record<string, DomainListWords> = {
     docsToken: "Как дать ключу узла доступ ещё к одной зоне",
     loadFailed: "Список доменов не загрузился.",
     state: {
-      active: "Готов: зона активна в Cloudflare, и ключ узла её видит. Можно подключать к элементу (Настройки → Главное зеркало).",
+      active: "Готов: зона активна в Cloudflare, и ключ узла её видит. Можно подключать к элементу (откройте элемент → «Настройки» → «Домен»).",
       pending: "Зона есть в Cloudflare, но ещё не активна (статус: {status}). У регистратора поставьте эти серверы имён, подождите (от минут до суток) и проверьте снова:",
       "not-visible": "Зоны этого домена в аккаунте Cloudflare узла пока нет — её создаёт узел на ступени 1.",
       unknown: "Ещё не проверялся.",
@@ -185,6 +254,9 @@ const DICT: Record<string, DomainListWords> = {
       registrar: "Регистратор домена:",
       makePrimary: "Сделать основным доменом узла",
       makingPrimary: "Подключаю…",
+      lockedNoArchitect: "Сначала создайте свою учётную запись — архитектора узла. Пока её нет, домен нельзя сделать основным: регистрация на нём открылась бы всем, и первый зарегистрировавшийся навсегда стал бы хозяином узла.",
+      lockedNoSignIn: "Вход узла не отвечает, поэтому узел не может проверить, что у него есть архитектор. Включите элемент входа и нажмите «Проверить снова».",
+      lockedButton: "Создать учётную запись архитектора",
       makePrimaryNote: "У узла пока нет основного домена. Этот может им стать: узел одним нажатием создаст туннель, записи DNS, вход на auth.<домен> и адрес сайта.",
       makePrimaryFailed: "Домен не стал основным:",
       checkAgain: "Проверить снова",
@@ -210,8 +282,8 @@ const DICT: Record<string, DomainListWords> = {
       step3: "3. Активна",
       step3Wait: "Откроется, когда серверы имён совпадут.",
       step3Asked: "Узел попросил Cloudflare перепроверить зону. Нажмите «Проверить» ещё раз через несколько минут.",
-      step3Done: "Зона активна — домен готов к подключению к элементу (Настройки → Главное зеркало).",
-      openMirror: "Подключить к {item}: Настройки → Главное зеркало",
+      step3Done: "Зона активна — домен готов к подключению к элементу (откройте элемент → «Настройки» → «Домен»).",
+      openMirror: "Подключить к {item}: «Настройки» → «Домен»",
       lastCheck: "Проверено в {time}: {what}",
     },
     keyPerms: ["Zone Edit (Zone Write)", "DNS Write", "Cloudflare Tunnel Edit", "Workers Scripts Edit", "Workers Routes Edit"],

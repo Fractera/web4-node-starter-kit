@@ -7,9 +7,11 @@ import { ChevronLeft, ChevronRight, Copy } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import type { PersonAskUi } from "./person-ask.i18n"
 import { PersonAskSecret } from "./person-ask-secret.client"
+import { useNodePlace } from "@/components/node-state/use-node-place.client"
+import signIn from "@/lib/auth/sign-in-link.cjs"
 
 export type AskSecret = { kind: "env" | "openai" | "server-root"; name?: string; where?: string | null; host?: string; port?: number }
-export type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; copy?: string | null; byName?: string | null; secret?: AskSecret | null }
+export type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; copy?: string | null; byName?: string | null; secret?: AskSecret | null; signin?: "architect" | null }
 
 type Props = {
   ask: Ask
@@ -30,6 +32,15 @@ export function PersonAskCard({ ask, index, total, ui, busy, url, onStep, onColl
   const copy = () => {
     void navigator.clipboard.writeText(ask.copy ?? "").then(() => toast.success(ui.copied), () => toast.error(ui.failed))
   }
+  // 777 (the owner, 2026-11-17: «кнопка открыть она должна иметь специальных хвост … решено на уровне статической функцией»): a sign-in
+  // request's «Открыть» is built here by the node's one builder — the sign-in form with the way back to this same panel page on the
+  // node's own domain (without a domain — here); the agent gave no address at all.
+  const place = useNodePlace()
+  const href = ask.signin === "architect"
+    ? (place?.signIn && typeof window !== "undefined"
+      ? signIn.architectSignIn(place.signIn, `${window.location.pathname}${window.location.search}`, window.location.origin)
+      : null)
+    : ask.href
   return (
     <div className="flex flex-col gap-3" data-block="person-ask-card" data-person-ask={ask.id}>
       <div className="flex items-center gap-2" data-block="person-ask-head">
@@ -59,10 +70,10 @@ export function PersonAskCard({ ask, index, total, ui, busy, url, onStep, onColl
       {ask.secret && <PersonAskSecret ask={ask} ui={ui} url={url} onSaved={onSaved} />}
       <div className="flex flex-wrap items-center justify-end gap-2" data-block="person-ask-actions">
         <Button type="button" variant="ghost" size="sm" onClick={onCollapse}>{ui.collapse}</Button>
-        {ask.href && (
-          ask.href.startsWith("/")
-            ? <Link href={ask.href} className={buttonVariants({ variant: "outline", size: "sm" })}>{ui.open}</Link>
-            : <a href={ask.href} target="_blank" rel="noreferrer" className={buttonVariants({ variant: "outline", size: "sm" })}>{ui.open}</a>
+        {href && (
+          href.startsWith("/")
+            ? <Link href={href} className={buttonVariants({ variant: "outline", size: "sm" })}>{ui.open}</Link>
+            : <a href={href} target={ask.signin ? undefined : "_blank"} rel="noreferrer" className={buttonVariants({ variant: "outline", size: "sm" })} data-person-ask-open={ask.signin ? "signin" : undefined}>{ui.open}</a>
         )}
         {!ask.secret && <Button type="button" size="sm" disabled={busy} onClick={() => onDone(ask)} data-person-ask-done>{ui.done}</Button>}
       </div>

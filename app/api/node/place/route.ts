@@ -5,6 +5,7 @@ import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { readPlace } from "@/lib/node-state/place"
 import { readLaunched } from "@/lib/hosting/launched.mjs"
+import bases from "@/lib/auth/sign-in-bases.cjs"
 
 // ГДЕ СТОИТ УЗЕЛ — ОБЪЯВЛЕНИЕ ЧЕЛОВЕКА (276-3).
 //
@@ -34,7 +35,15 @@ export async function GET(req: NextRequest) {
   if (denied) return denied
   // 741-6, D36: the live servers this computer launched — domain and time only (the browser needs no IP).
   const launched = readLaunched(process.cwd()).map(({ domain, readyAt }) => ({ domain, readyAt }))
-  return NextResponse.json({ ok: true, place: readPlace(), launched }, noStore)
+  // 776 (the owner, 2026-11-17: «PC-local | PC-web | VPS … кнопку перейти в web»): where the panel lives on the node's own domain,
+  // read from the activation record; no main domain — `null`, and the band offers «Настройте домен» instead.
+  // 777: the same bases give the browser its one «sign in as the architect» link (`lib/auth/sign-in-link.cjs`).
+  const b = bases.signInBases(process.cwd())
+  // 776: how this visitor came — over this computer's loopback (PC-local) or from the web (the own domain or the temporary address,
+  // PC-web). The node sees it in the request; the browser's widgets do not decide it from the address bar (741-7, check:place-readers).
+  const host = (req.headers.get("host") ?? "").replace(/:\d+$/, "").replace(/^\[|\]$/g, "")
+  const via = host === "localhost" || host === "127.0.0.1" || host === "::1" ? "local" : "web"
+  return NextResponse.json({ ok: true, place: readPlace(), launched, via, web: b.web, signIn: { web: b.web, webAuth: b.webAuth, localAuth: b.localAuth } }, noStore)
 }
 
 // 737-18: the place is detected (`lib/hosting/place.mjs`), never declared — a declaration is refused with the reason.
