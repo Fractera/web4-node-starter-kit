@@ -17,9 +17,16 @@ type Lang = "en" | "ru"
 type Entry = { id: string; kind?: string; required?: boolean; born?: boolean }
 type Pulse = { event?: string; at?: string; last?: string; error?: string }
 export type TgAsk = { id: string; text: string; why: string | null; hint: string | null; copy: string | null; by: string; byName: string | null; at: string; secret: { kind: string; name?: string; host?: string } | null }
-export type TgElement = { id: string; name: string; native: boolean; required: boolean; on: boolean; offReason: string | null; live: boolean; step: string | null; turn: { event: string; at: string; last: string | null } | null }
+/**
+ * The agent of an element or of the core (the owner, 2026-11-17: «на какой модели и с каким усилием работает главный агент … внутри каждого
+ * элемента … аккаунт, модель, усилия … агент программирует, агент ожидает, агент спит … кнопка серая или активная собственный Telegram бот»).
+ * Read from the node's records: the model and effort from the session's settings, the account from the agent's pulse, the bot from its
+ * channel. `null` — not known yet (the default model, an agent that never ran).
+ */
+export type TgAgent = { mode: "coding" | "waiting" | "sleeping"; model: string | null; effort: string | null; account: "node" | "own" | null; bot: string | null }
+export type TgElement = { id: string; name: string; native: boolean; required: boolean; on: boolean; offReason: string | null; live: boolean; step: string | null; turn: { event: string; at: string; last: string | null } | null; agent: TgAgent }
 export type TgLimit = { who: string; fiveHour: { used: number; resetsAt: string | null } | null; sevenDay: { used: number; resetsAt: string | null } | null; at: string | null }
-export type TgState = { asks: TgAsk[]; elements: TgElement[]; limits: TgLimit[]; at: string }
+export type TgState = { asks: TgAsk[]; main: TgAgent; elements: TgElement[]; limits: TgLimit[]; at: string }
 
 const readJson = <T>(file: string, fallback: T): T => {
   try { return JSON.parse(readFileSync(file, "utf8")) as T } catch { return fallback }
@@ -50,6 +57,22 @@ function turnOf(id: string): TgElement["turn"] {
   return p?.event && p.at ? { event: p.event, at: p.at, last: sentence(p.last ?? p.error ?? null, 100) } : null
 }
 
+function agentOf(id: string, live: boolean): TgAgent {
+  const dir = join(ROOT, "data", "services", id)
+  const mode = readJson<{ running?: boolean; model?: string; effort?: string }>(join(dir, "session-mode.json"), {})
+  const pulse = readJson<{ last?: Pulse & { login?: string } }>(join(dir, "pulse.json"), {}).last
+  const running = live || mode.running === true
+  const login = pulse?.login
+  const bot = readJson<{ username?: string } | null>(join(dir, "channel", "telegram", "bot.json"), null)?.username
+  return {
+    mode: !running ? "sleeping" : pulse?.event === "turn-start" ? "coding" : "waiting",
+    model: typeof mode.model === "string" && mode.model ? mode.model : null,
+    effort: typeof mode.effort === "string" && mode.effort ? mode.effort : null,
+    account: login === "node" ? "node" : typeof login === "string" && login.startsWith("own-") ? "own" : null,
+    bot: typeof bot === "string" && /^[A-Za-z0-9_]{3,64}$/.test(bot) ? bot : null,
+  }
+}
+
 function elementsOf(lang: Lang): TgElement[] {
   const entries = readJson<{ services?: Entry[] }>(paths.REGISTRY_FILE, {}).services ?? []
   const live = new Set(((sessions() as { service: string; running?: boolean }[]) ?? []).filter((s) => s.running).map((s) => s.service))
@@ -67,6 +90,7 @@ function elementsOf(lang: Lang): TgElement[] {
       live: live.has(e.id),
       step: e.kind === "user" ? stepOf(dir) : null,
       turn: turnOf(e.id),
+      agent: agentOf(e.id, live.has(e.id)),
     }
   })
 }
@@ -88,5 +112,5 @@ export function tgState(lang: Lang): TgState {
       byName: a.by && a.by !== "build" ? elementName(a.by, lang) : null,
       secret: a.secret ? { kind: a.secret.kind, ...(a.secret.name ? { name: a.secret.name } : {}), ...(a.secret.host ? { host: a.secret.host } : {}) } : null,
     }))
-  return { asks: waiting, elements: elementsOf(lang), limits: limitsOf(), at: new Date().toISOString() }
+  return { asks: waiting, main: agentOf("build", false), elements: elementsOf(lang), limits: limitsOf(), at: new Date().toISOString() }
 }

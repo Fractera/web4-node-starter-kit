@@ -72,6 +72,12 @@ the door gives `section`; PUT throughsongs.com → not-visible with status/zoneI
 (edit → «not modified»); told him 353. Open nit (his word decides): the catalogue text inside «Подробнее» is larger than the steps.
 **Next:** the domain test from zero with him — the node's key must see the zone throughsongs.com (his hands: a token from Bolshiyanov's
 login or editing the token's zones); then 774.
+**11:54 — the panel task (Telegram 360) CODED, the core build runs** (prebuild RC=0, uncommitted; log logs/rebuild-2026-11-17T11-54-22-847Z.log):
+the owner wants in «Пульт»: under the title the main agent's model · effort · account · state; inside every element its agent (programs /
+waits / sleeps), account, model, effort, and «Telegram-бот агента» (active with a bot, grey without). Done in lib/node/tg-app/{state.ts
+(agentOf: session-mode.json, pulse.last.login/event, channel/telegram/bot.json), words.cjs, page.cjs}. **On core-back:** serve:status → a
+proof (eyes of the page with a stubbed state, or a signed call) → commit those 3 files explicitly → Telegram: «закрой Пульт и открой заново».
+The 5-hour limit was 96 % at 11:52 (resets 14:20 UTC) — be brief.
 **How to work:** load interface-design, use-primitives, use-shadcn first; parts_find before new files; plan in 6 lines to him BEFORE code
 (he is angry at being given something else than asked); screenshot the page (Chrome tab via the extension, `browser_batch`, save_to_disk)
 before the build and after; prebuild RC=0 → `npm run serve:rebuild:detached` → on core-back serve:status, proofs, commit, Telegram with
