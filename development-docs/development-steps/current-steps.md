@@ -41,7 +41,7 @@ closed); at 10:52 he DELETED the zone from Cloudflare and asked: «Очищай 
 **Built, uncommitted (the paragraph «10:52 UTC (Telegram 319, 320)» above lists it): 773, 775, 776, 777** + DELETE /api/domain/activate.
 The first prebuild failed only on the @api name length (fixed: «connect or disconnect the node's main domain through its tunnel»); the
 second prebuild was running at the time of writing (log: scratchpad prebuild-775b.log, read `RC=` first).
-**Next, in order:** prebuild RC=0 → one line to Рома «ухожу на сборку» → `node scripts/spawn-free.mjs` + the core rebuild detached
+**Build started 11:03 UTC** after the prebuild went green (scratchpad prebuild-775e.log RC=0; on the way: @api name ≤12 words, the parts map rebuilt, the destructive confirm extracted as the part `danger-confirm` (components/domain/parts.json, dup-debt re-frozen), the badge reads `via` from the place door instead of the address bar). **Next, in order:** prebuild RC=0 → one line to Рома «ухожу на сборку» → `node scripts/spawn-free.mjs` + the core rebuild detached
 (`npm run serve:rebuild:detached` — memory: never chained after tail) → on core-back: `npm run serve:status` → disconnect:
 `curl -s -X DELETE http://localhost:24680/api/domain/activate` → check: logs/domain.json moved aside (logs/domain.removed-*.json), pm2 has
 no fractera-web4-domain, elements on the zone redeploying (logs/deploy-*.log), `npm run tg-app -- menu` → proofs (two planes each):
