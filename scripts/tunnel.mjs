@@ -264,6 +264,14 @@ async function tick() {
       return
     }
 
+    // ✗ 2026-11-17 (the core build told in Telegram, 771): during a core build the lid is closed and the core's port is silent on purpose —
+    // the tunnel answers 502 for the stopped origin, not for its own death. Measured twice that day: the verdict «мёртв» fell at minute 3 of
+    // the build, the panel's menu button went to the default menu. While `data/node/quiet-build.json` exists nothing is judged.
+    if (existsSync(path.join(root, 'data', 'node', 'quiet-build.json'))) {
+      log(`идёт сборка ядра (крышка закрыта) — ${status} от остановленного ядра, туннель не сужу, счётчик стоит на ${failures}`)
+      return
+    }
+
     failures += 1
     // Приговор уже вынесен — считать вслух дальше незачем: «неудача 7/3» в
     // журнале выглядит сломанным прибором, а не мёртвым туннелем.
