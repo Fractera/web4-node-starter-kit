@@ -7,6 +7,7 @@ import asksTg from "@/lib/node/person-asks-telegram.cjs"
 import webapp from "@/lib/node/telegram-webapp.cjs"
 import page from "@/lib/node/tg-app/page.cjs"
 import choice from "@/lib/node/tg-app/model-choice.cjs"
+import nodeLine from "@/lib/agent-kit/node-line.cjs"
 import { tgState } from "@/lib/node/tg-app/state"
 import { closeAsk, saveSecret, type Ask } from "@/lib/node/person-secret-save"
 import { powerState, runElementPower } from "@/lib/web4-items/run-element-power"
@@ -30,7 +31,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   if (!(req.headers.get("content-type") ?? "").toLowerCase().startsWith("application/json")) return no("json-only", 415)
-  const body = (await req.json().catch(() => null)) as { initData?: unknown; action?: unknown; id?: unknown; secret?: unknown; admin?: unknown; skip?: unknown; power?: unknown; reason?: unknown; model?: unknown; effort?: unknown; ultracode?: unknown; confirmed?: unknown } | null
+  const body = (await req.json().catch(() => null)) as { initData?: unknown; action?: unknown; id?: unknown; secret?: unknown; admin?: unknown; skip?: unknown; power?: unknown; reason?: unknown; model?: unknown; effort?: unknown; ultracode?: unknown; confirmed?: unknown; text?: unknown } | null
   const bot = asksTg.bot(ROOT, "build")
   if (!bot) return no("no-bot", 409)
   const signed = webapp.check(typeof body?.initData === "string" ? body.initData : "", bot.token, { allow: bot.chats, maxAgeS: DAY_S })
@@ -74,6 +75,20 @@ export async function POST(req: NextRequest) {
     console.log(`[node/tg-app] model ${model} · ${effort}${ultracode ? " · ultracode (confirmed)" : ""} from Telegram → ${out.ok ? `scheduled${out.joined ? ", joined" : ""}` : out.reason}`)
     if (!out.ok) return no(String(out.reason ?? "refused"), out.reason === "no-session" ? 409 : 400)
     return NextResponse.json({ ok: true, model, effort, ultracode }, { headers: HEADERS })
+  }
+
+  // 780 (the owner, 2026-11-17, Telegram 538 → «Да» 540 to variant A): «+ Новый элемент» — the person's words about a new element go to
+  // the main agent as their request (the node's head `pult-request`); the agent shapes it and answers in Telegram, the Pult creates nothing.
+  if (action === "newElement") {
+    const words = typeof body?.text === "string" ? body.text.replace(/\s+/g, " ").trim() : ""
+    if (words.length < 3 || words.length > 1000) return no("text-3-1000", 400)
+    const wake = (globalThis as { __web4AgentWake?: (service: string, opts: Record<string, unknown>) => Promise<Record<string, unknown> & { ok: boolean }> }).__web4AgentWake
+    if (typeof wake !== "function") return no("no-agent-kit", 503)
+    const line = `${nodeLine.head("pult-request", "build")}The person wrote in the Pult's «+ Новый элемент»: «${words}». It is their request for a new element: follow the order of a request (skills_find, shape-the-need, npm run find), answer them in Telegram with the variants and your pick; create nothing before their yes.`
+    const out = await wake("build", { text: line, confirmed: true })
+    console.log(`[node/tg-app] new element asked from Telegram (${words.length} chars) → ${out.ok ? (out.already ? "into the running session" : "the main agent started") : out.reason}`)
+    if (!out.ok) return no(String(out.reason ?? "refused"), out.reason === "memory" ? 503 : 400)
+    return NextResponse.json({ ok: true }, { headers: HEADERS })
   }
 
   if (action === "power") {

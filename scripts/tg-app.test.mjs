@@ -116,5 +116,13 @@ await t('779: the Pult\'s card — two lists, Ultracode glows, the popup with «
   assert.ok(ru.includes('receiveEvent') && ru.includes('popup_closed'), 'the popup\'s answer is heard')
 })
 
+await t('780: «+ Новый элемент» — the last row of «Ваши», one field, the words go as the person\'s request (head pult-request), the Pult closes after', () => {
+  const ru = page.html('ru')
+  assert.ok(ru.includes('tg-app-new-element') && ru.includes('Что должен делать новый элемент?') && ru.includes("action:'newElement'"))
+  assert.ok(/newElement',text:v\}\)\.then[\s\S]{0,200}web_app_close/.test(ru), 'the Pult closes so the answer in the chat is seen')
+  const nl = req(join(ROOT, 'lib', 'agent-kit', 'node-line.cjs'))
+  assert.ok(nl.parse(nl.head('pult-request', 'build') + 'x'), 'the kind is known to the node')
+})
+
 rmSync(tmp, { recursive: true, force: true })
 console.log(process.exitCode ? `===TG_APP_FAILED=== ${passed} passed` : `===TG_APP_OK=== ${passed} passed`)
