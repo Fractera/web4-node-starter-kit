@@ -11,34 +11,30 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Next action (for the Haiku session — LOOK, change nothing without his yes):** in his Chrome via the Claude extension (tabs_context_mcp createIfEmpty, own tab; text reads `find`/`get_page_text`, screenshots only if needed): open https://dash.cloudflare.com/ — a sign-in page → `npm run ask-person` «Войдите в Cloudflare в открытой вкладке» and wait; signed in → find WHICH account holds throughsongs.com (account list / «Websites»), then My Profile → API Tokens: which token is the node's (its name; the node's key ends …42b1 — the dashboard does not show tails, match by name/date/permissions) and its Zone Resources. Report to him in Telegram in plain words: where the zone lives, what the token covers, the ONE change (edit the token's Zone Resources to include throughsongs.com) and ask «меняю?». Never type or copy a token value (prohibited); a new token, if needed, is his paste on «Активация домена». After: `npm run session -- model opus --effort max`, then the rebuild (prebuild already green, commit 492e8348/b7088c6c), then recheck the domain (PUT /api/domain/list) and plan 772.
 
-## Letter to my next session (written 2026-11-16 ~19:33 UTC, the window at 66 %; a clean start for a debugging task)
+## Letter to my next session (written 2026-11-17 01:10 UTC, the window at 61 %; a clean start for the morning)
 
-**Where we stand.** Рома (owner; answer in Russian; he reads me in Telegram, chat 90413601; the session runs Opus · effort max — keep it:
-`npm run session -- model opus --effort max` if a restart drops it). Closed today: 765, 761-16b/c/e, 763-a, 767. **768** (a secret typed in
-the action window) is in code, built (core dcd483eb) and rolled out (templates custom v0.3.213 / native v0.1.78; 10 natives + root;
-hrutb paused, regenerated, uncommitted) — new-steps/768-a-secret-typed-in-the-window-or-telegram.md, «Live after the build».
-
-**The task NOW — S5 is broken, and NOT by the window.** The server 109.199.105.213: the root password typed in the window (19:25) → the
-launch door answered ok (the request closed, journal «4deaab20 done»), yet the page's «Проверить сервер» with an empty password on the same
-tab says «У этого браузера нет открытого доступа», and `fetch('/api/node/launch', {action:'state', host, port:22})` from that tab →
-`need-password`. Then (19:31) Рома typed the password in the PAGE's own form — «тоже не сработало». So the launch road itself fails now.
-Measured 19:32: port 22 open; the server's host keys now ED25519 SHA256:VdhnAheK45z4JL5L+eIeFcCbPtIhwfWPySW5QtybhQs, RSA
-SHA256:0g+SW5Ls2KGOo/n7UPHnT9umBKHZot5fV4mgDV9gVIE — compare with the pin the launch keeps (a reinstalled server → host-key-changed →
-the page should offer «trust»; the morning plan said «удалить сервер и перезапустить»). Asked Рома what the page said under the button.
-First: his answer (the message under the button / a screenshot via Telegram), then read `scripts/dedicated-server/launch.mjs` connect
-(line ~329: `openVisit` + `byKey`) and the door `app/api/node/launch/route.ts` (`readVisit`, `keepVisit`, cookie path /api/node/launch,
-sameSite strict) — why a fresh visit is not usable on the next call. Use my extension tab (tabs_context; it was 2116208463,
-?from=agent) and JS `fetch` to the door for `state`/`probe` (never a password from me).
-**Promised fixes for the window (768):** «Проверяю сервер…» + spinner while «Сохранить» waits (he waited ~2 min, saw only light blue);
-close the request only when the answer is `ok && state` (as the page's connect does), and handle `host-key-changed` (show the seen key,
-leave the request open). Then S6 dark/390 (the beacon was shut in those shots), S1/S4 (an element's test key — ask Рома which element),
-768-4 (Telegram Mini App) waits for his yes; then 761-13 (the fresh server launch).
-
-**Clues.** Restore CLAUDE.md/.claude/skills from git after every core-back (`git checkout HEAD -- CLAUDE.md .claude/skills`,
-`npm run check:instruction`). `npm run prebuild` by hand before `serve:rebuild`. Never `git commit -am`. Templates need
-`TEMPLATE_GITHUB_TOKEN=$(gh auth token)`; a skill section rolls with `--append-section "<heading>"`; package.json only with its script's
-file. A test request «by an element» is dropped by me, never left for his press. `npm run browser -- tabs|focus|open|profiles` shows
-pages without tokens; the extension's selected tab is never his screen. The core main is not pushed (761-9).
+**Where we stand.** Рома (owner; answer in Russian; he reads me in Telegram, chat 90413601; keep Opus · effort max). He went to sleep at
+00:43 after «Почини значит переключения между моделями, сам поставь домен … найди вообще все сделай все что надо … я спать». My night
+report is Telegram message 272 — his first words in the morning answer it.
+**Closed tonight:** 768 (keys typed in the window and the Telegram form; the OpenAI key; completed-steps/768-main.md), 770 (the bridge no
+longer restores the system part on the owner's node), 769 in code (the launch access before the long check — R2 waits his root password,
+request 2c3422c4), 771-1..3 (the node panel «Пульт» inside Telegram — the main bot's menu button, every call signed by Telegram; the
+redesign with «Отмена»; build 6e89a6b8), 772-0 (`session model <m> --continue` wakes the restarted session — proven 00:55), the skills.sh
+search defect (674e2fb5), §9 entry: a dead temporary address is raised again at once; the soul: feelings with emoji, a rare joke before
+going dark (07fc861c).
+**Waiting for him:** (1) the domain road for throughsongs.com — it sits in Cloudflare «Bolshiyanov@gmail.com's Account» (d8509eb6…, with
+lagrix.dev); the node's key (token id faf852c9…) belongs to ANOTHER Cloudflare login and sees only fractera.ai; roads: 1 — my pick: invite
+the other login as a Member of Bolshiyanov's account, he accepts the e-mail, then I widen the node token's zones in the browser where the
+other login is open; 2 — a new token from Bolshiyanov's login pasted on «Активация домена» (the node loses fractera.ai); 3 — move the zone
+(downtime, no). (2) his root password in 2c3422c4 (769 R2). (3) his own tap on «Пульт» in the bot.
+**Next after the domain:** 772 — element Mini Apps: the core's verify door («is this the owner?», bot tokens stay in the core) + the
+element menu item «Telegram-приложение» between «Живой сайт» and «Рабочий процесс» (a phone-frame preview at 390 px, works without a
+domain) + the custom template's THIRD page layer (telegram) + our skill telegram-mini-app; first app — «Соцсети пользователя» (no bot of
+its own yet). The open store's sickn33@telegram-mini-app was read: thin, TON/crypto — nothing to take.
+**Clues.** Read `RC=` of the prebuild log BEFORE `serve:rebuild:detached`, as its own command (memory). `git status` after every
+core-back — 770 should keep CLAUDE.md/skills/soul untouched now. Browser work: text reads, the extension's own tab; never type a token. A
+model switch mid-task — always `--continue`. Templates need `TEMPLATE_GITHUB_TOKEN=$(gh auth token)`. Never `git commit -am`. The core
+main is not pushed to his fork (761-9). The 5 h limit was 72 % at 00:28 (resets every 5 h).
 
 ## The person's decisions (verbatim)
 
