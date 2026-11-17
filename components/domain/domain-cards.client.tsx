@@ -24,6 +24,8 @@ const BADGE: Record<string, string> = {
 
 type Props = {
   lang: string
+  /** 775: the section this list belongs to — the main domain's candidates («main») or the elements' domains («element») */
+  role: "main" | "element"
   domains: Extra[]
   primaryName: string | null
   architect: boolean | null
@@ -32,7 +34,9 @@ type Props = {
   onChanged: () => Promise<void>
 }
 
-export function DomainCards({ lang, domains, primaryName, architect, words: w, ladderWords, onChanged }: Props) {
+export function DomainCards({ lang, role, domains, primaryName, architect, words: w, ladderWords, onChanged }: Props) {
+  // 775: two add fields on one page — the elements' keeps the id an element's settings link to (#domain-add).
+  const addId = role === "main" ? "domain-add-main" : "domain-add"
   const [open, setOpen] = useState<string>(domains[0]?.name ?? "")
   // 443-4: came from an element's settings (`?for=<id>`) — a ready domain's link leads back to that element's «Домен».
   const [forItem, setForItem] = useState<string | null>(null)
@@ -43,14 +47,14 @@ export function DomainCards({ lang, domains, primaryName, architect, words: w, l
   // 443: an address with #domain-add opens the add card.
   useEffect(() => {
     const follow = () => {
-      if (window.location.hash !== "#domain-add") return
+      if (role !== "element" || window.location.hash !== "#domain-add") return
       setOpen("add")
       requestAnimationFrame(() => document.getElementById("domain-add")?.closest("[data-domain-card]")?.scrollIntoView({ block: "center" }))
     }
     follow()
     window.addEventListener("hashchange", follow)
     return () => window.removeEventListener("hashchange", follow)
-  }, [])
+  }, [role])
   const [name, setName] = useState("")
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<Record<string, string>>({})
@@ -64,7 +68,7 @@ export function DomainCards({ lang, domains, primaryName, architect, words: w, l
       const r = await fetch(`${BASE}/api/domain/list`, {
         method,
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(detach ? { name: domain, detach: true } : { name: domain }),
+        body: JSON.stringify(detach ? { name: domain, detach: true } : method === "POST" ? { name: domain, for: role } : { name: domain }),
       })
       const d = (await r.json().catch(() => null)) as { ok?: boolean; error?: string; domain?: { name: string } } | null
       if (d?.ok) {
@@ -82,7 +86,7 @@ export function DomainCards({ lang, domains, primaryName, architect, words: w, l
   }
 
   return (
-    <Accordion type="single" collapsible value={open} onValueChange={setOpen} className="rounded-lg border border-border px-3" data-block="domain-cards">
+    <Accordion type="single" collapsible value={open} onValueChange={setOpen} className="rounded-lg border border-border px-3" data-block={`domain-cards-${role}`} data-domain-cards={role}>
       {domains.map((d) => {
         const connected = !!d.holder || primaryName === d.name
         return (
@@ -103,7 +107,7 @@ export function DomainCards({ lang, domains, primaryName, architect, words: w, l
               </span>
             </AccordionTrigger>
             <AccordionContent className="flex flex-col gap-2">
-              <DomainPipeline lang={lang} domain={d} words={w} ladderWords={ladderWords} onChanged={onChanged} hasPrimary={!!primaryName} forItem={forItem} architect={architect} />
+              <DomainPipeline lang={lang} role={role} domain={d} words={w} ladderWords={ladderWords} onChanged={onChanged} hasPrimary={!!primaryName} forItem={forItem} architect={architect} />
               {d.holder && <p className="text-sm text-foreground">{w.attachedTo} <span className="font-mono">{d.holderAddress ?? d.holder}</span></p>}
               {d.holder && confirm === d.name ? (
                 <DangerConfirm id="domain-detach" text={w.detachConfirm.replace("{domain}", d.name).replace("{element}", d.holderAddress ?? d.holder)}
@@ -123,9 +127,9 @@ export function DomainCards({ lang, domains, primaryName, architect, words: w, l
       <AccordionItem value="add" data-domain-card="add">
         <AccordionTrigger><span className="font-medium">+ {w.addTitle}</span></AccordionTrigger>
         <AccordionContent className="flex flex-col gap-2">
-          <Label htmlFor="domain-add">{w.addLabel}</Label>
+          <Label htmlFor={addId}>{role === "main" ? w.addMainLabel : w.addLabel}</Label>
           <div className="flex flex-wrap gap-2" data-block="domain-add-row">
-            <Input id="domain-add" className="max-w-72 font-mono" value={name} onChange={(e) => setName(e.target.value)} placeholder="mybrand.com" autoComplete="off" spellCheck={false} />
+            <Input id={addId} className="max-w-72 font-mono" value={name} onChange={(e) => setName(e.target.value)} placeholder="mybrand.com" autoComplete="off" spellCheck={false} />
             <Button type="button" size="sm" onClick={() => act("POST", name, "add")} disabled={!name.trim() || busy !== null} data-domain-add>
               {busy === "add" ? w.adding : w.add}
             </Button>

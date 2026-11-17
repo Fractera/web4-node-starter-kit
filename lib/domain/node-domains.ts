@@ -36,7 +36,10 @@ export type NodeDomain = {
   registrarNs?: string[]; nsMatch?: boolean; activationAsked?: boolean; addedAt: string; checkedAt?: string
   /** Регистратор домена по RDAP (324-2): только имя — экран чужого сервиса не описывается. `null` — RDAP не ответил. */
   registrar?: string | null
+  /** 775: what the person added it for — the main domain's section («main») or the elements' («element»); none — an older entry */
+  for?: DomainFor
 }
+export type DomainFor = "main" | "element"
 export type Shape = "ok" | "bad-shape" | "with-www" | "primary" | "exists"
 
 /** Основной домен узла (зона лестницы 259) или `null`. */
@@ -74,6 +77,15 @@ function writeList(domains: NodeDomain[]): boolean {
 export function extraDomains(): NodeDomain[] {
   const primary = primaryDomain()?.name
   return readList().filter((d) => d.name !== primary)
+}
+
+/**
+ * 775 (the owner, 2026-11-17: two sections, «внутри одного аккордеона не должно быть информации о других»): which section lists a domain.
+ * While the node has no main domain, a domain added in the main section (or an older entry with no `for`) is a candidate for it; once the
+ * node has one, every other domain is for the elements.
+ */
+export function domainSection(d: NodeDomain, hasPrimary: boolean): DomainFor {
+  return hasPrimary || d.for === "element" ? "element" : "main"
 }
 
 export function normalizeDomain(input: string): string {
@@ -149,7 +161,8 @@ async function observe(name: string): Promise<Observed | { error: string }> {
   if (!key) return { error: "no-key" }
   const [z, reg, registrar] = await Promise.all([zoneByName(key, name), registrarNs(name), registrarOf(name)])
   if (!z.ok) return { error: `cloudflare:${z.reason}` }
-  if (!z.result) return { state: "not-visible", registrarNs: reg, registrar }
+  // 775: a zone the key no longer sees leaves nothing of its old measure behind (✗ 2026-11-17: throughsongs.com «not-visible» kept «active»).
+  if (!z.result) return { state: "not-visible", status: undefined, zoneId: undefined, nameServers: undefined, nsMatch: undefined, activationAsked: undefined, registrarNs: reg, registrar }
   const assigned = (z.result.name_servers ?? []).map((n) => n.toLowerCase()).sort()
   const nsMatch = assigned.length > 0 && assigned.every((n) => reg.includes(n))
   const active = z.result.status === "active"
@@ -167,11 +180,11 @@ function save(name: string, patch: Partial<NodeDomain>): NodeDomain | null {
 }
 
 /** «Добавить домен»: форма → запись (`unknown`) → сразу первый замер. */
-export async function addDomain(input: string): Promise<{ ok: true; domain: NodeDomain } | { ok: false; error: string }> {
+export async function addDomain(input: string, forWhat: DomainFor = "element"): Promise<{ ok: true; domain: NodeDomain } | { ok: false; error: string }> {
   const name = normalizeDomain(input)
   const shape = domainShape(name)
   if (shape !== "ok") return { ok: false, error: shape }
-  if (!writeList([...readList(), { name, state: "unknown", addedAt: new Date().toISOString() }])) return { ok: false, error: "write-failed" }
+  if (!writeList([...readList(), { name, state: "unknown", addedAt: new Date().toISOString(), for: forWhat }])) return { ok: false, error: "write-failed" }
   return checkDomain(name)
 }
 

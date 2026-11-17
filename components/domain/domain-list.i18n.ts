@@ -13,6 +13,8 @@ export type DomainListWords = {
   loading: string
   addTitle: string
   addLabel: string
+  /** 775: the add field of the main domain's section */
+  addMainLabel: string
   add: string
   adding: string
   recheck: string
@@ -40,7 +42,7 @@ export type DomainListWords = {
 const DICT: Record<string, DomainListWords> = {
   en: {
     main: {
-      title: "Main domain",
+      title: "Main domain activation",
       lead: "The node's permanent address: the site on the domain itself, the panel on architect., sign-in on auth.",
       empty: "The node has no main domain yet. Enter your domain — the node takes it through its steps, and when the zone is active you make it the main one right here.",
       how: [
@@ -75,6 +77,7 @@ const DICT: Record<string, DomainListWords> = {
     loading: "Reading the node's domains…",
     addTitle: "Add a domain",
     addLabel: "Another domain of yours (the root, without www)",
+    addMainLabel: "Your domain (the root, without www)",
     add: "Add",
     adding: "Adding…",
     recheck: "Check again",
@@ -101,7 +104,8 @@ const DICT: Record<string, DomainListWords> = {
     pipe: {
       step1: "1. Zone in Cloudflare",
       step1Done: "The zone exists in the node's Cloudflare account.",
-      step1Todo: "The node creates the zone in the Cloudflare account of the main domain itself.",
+      step1Todo: "The node creates the domain's zone in its Cloudflare account itself.",
+      step3DoneMain: "The zone is active — the domain can become the node's main domain.",
       createZone: "Create the zone",
       creating: "Creating…",
       noPermission: "The node's Cloudflare key has no right to add domains. Create a key with this right by the button below and paste it — the node will create the zone right after.",
@@ -165,7 +169,7 @@ const DICT: Record<string, DomainListWords> = {
       "with-www": "Type the root of the domain without www.",
       primary: "This is the node's main domain or its subdomain — it is already here.",
       exists: "This domain is already in the list.",
-      "no-key": "The node has no Cloudflare key yet: connect the main domain first (the first card).",
+      "no-key": "The node has no Cloudflare key yet — paste it below and the node creates the zone at once.",
       attached: "The domain is connected to an element — disconnect it there first.",
       "no-tunnel": "The node has no tunnel of its main domain, so it cannot take the domain off the element.",
       "tunnel-failed": "Cloudflare did not accept the change of the node's tunnel — nothing was removed. Try again.",
@@ -173,7 +177,7 @@ const DICT: Record<string, DomainListWords> = {
       "write-failed": "The list could not be saved.",
       "not-found": "The domain is not in the list.",
       "no-zone-permission": "The key has no right to create zones — see step 1.",
-      "no-primary": "Connect the main domain first (the first card).",
+      "no-primary": "A domain can be connected to an element once the node's main domain works.",
       "primary-not-visible": "The node's key does not see the main domain — the key is wrong for this node.",
       "no-account": "The key did not name one Cloudflare account — paste the Account ID below and try again.",
       "bad-account-id": "An Account ID is 32 characters: digits and letters a–f.",
@@ -182,7 +186,7 @@ const DICT: Record<string, DomainListWords> = {
   },
   ru: {
     main: {
-      title: "Основной домен",
+      title: "Активация основного домена",
       lead: "Постоянный адрес узла: сайт на самом домене, пульт на architect., вход на auth.",
       empty: "У узла ещё нет основного домена. Впишите свой домен — узел проведёт его по ступеням, а когда зона станет активной, сделайте его основным здесь же.",
       how: [
@@ -217,6 +221,7 @@ const DICT: Record<string, DomainListWords> = {
     loading: "Читаю домены узла…",
     addTitle: "Добавить домен",
     addLabel: "Ещё один ваш домен (корень, без www)",
+    addMainLabel: "Ваш домен (корень, без www)",
     add: "Добавить",
     adding: "Добавляю…",
     recheck: "Проверить снова",
@@ -243,7 +248,8 @@ const DICT: Record<string, DomainListWords> = {
     pipe: {
       step1: "1. Зона в Cloudflare",
       step1Done: "Зона есть в аккаунте Cloudflare узла.",
-      step1Todo: "Узел сам создаёт зону в аккаунте Cloudflare основного домена.",
+      step1Todo: "Узел сам создаёт зону домена в своём аккаунте Cloudflare.",
+      step3DoneMain: "Зона активна — домен может стать основным доменом узла.",
       createZone: "Создать зону",
       creating: "Создаю…",
       noPermission: "У ключа Cloudflare узла нет права добавлять домены. Создайте ключ с этим правом кнопкой ниже и вставьте его — узел сразу создаст зону.",
@@ -307,7 +313,7 @@ const DICT: Record<string, DomainListWords> = {
       "with-www": "Введите корень домена без www.",
       primary: "Это основной домен узла или его поддомен — он уже здесь.",
       exists: "Этот домен уже в списке.",
-      "no-key": "У узла ещё нет ключа Cloudflare: сначала подключите основной домен (первая карточка).",
+      "no-key": "У узла ещё нет ключа Cloudflare — вставьте его ниже, и узел сразу создаст зону.",
       attached: "Домен подключён к элементу — сначала отключите его там.",
       "no-tunnel": "У узла нет туннеля основного домена — снять домен с элемента нечем.",
       "tunnel-failed": "Cloudflare не принял правку туннеля узла — ничего не удалено. Попробуйте ещё раз.",
@@ -315,7 +321,7 @@ const DICT: Record<string, DomainListWords> = {
       "write-failed": "Не удалось сохранить список.",
       "not-found": "Этого домена нет в списке.",
       "no-zone-permission": "У ключа нет права создавать зоны — см. ступень 1.",
-      "no-primary": "Сначала подключите основной домен (первая карточка).",
+      "no-primary": "Подключить домен к элементу можно, когда у узла работает основной домен.",
       "primary-not-visible": "Ключ узла не видит основной домен — ключ не подходит этому узлу.",
       "no-account": "Ключ не назвал один аккаунт Cloudflare — вставьте Account ID ниже и попробуйте снова.",
       "bad-account-id": "Account ID — это 32 знака: цифры и буквы a–f.",

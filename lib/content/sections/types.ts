@@ -113,7 +113,7 @@ export type LeafItem =
   | { kind: 'cta'; text?: string; href: string; label: string; secondary?: { href: string; label: string } }
   // Лестница подключения своего домена: ступени, замки, состояние с узла.
   // Слова приходят В БЛОКЕ — рисовальщик серверный, словарь в браузер не едет.
-  | { kind: 'domainLadder'; lang: string; words: import('@/components/domain/domain-ladder.i18n').DomainLadderWords; /** 742-2: sections that belong to the computer's ladder and hide with it on a server */ notes?: PageItem[] }
+  | { kind: 'domainLadder'; lang: string; words: import('@/components/domain/domain-ladder.i18n').DomainLadderWords; /** 742-2: sections that belong to the computer's ladder and hide with it on a server; 775: folded in the main domain's «Подробнее» */ notes?: PageItem[]; /** 775: the page's topics, in the main domain's «Подробнее» while the node has none */ topics?: PageItem[] }
   // Порт сменного элемента, спрошенный у узла в браузере, а не запечённый в сборку.
   // `serviceId` — вечное имя элемента в `WEB4-ITEMS-REGISTRY/web4-items.json` (`auth`, `data`, …).
   // Экран включения входа через Google: адрес возврата, пара ключей, состояние.

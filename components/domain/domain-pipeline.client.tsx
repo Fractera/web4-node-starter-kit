@@ -45,8 +45,10 @@ function Step({ title, done, children }: { title: string; done: boolean; childre
   )
 }
 
-export function DomainPipeline({ lang, domain: d, words: w, ladderWords, onChanged, hasPrimary, forItem, architect = null }: {
+export function DomainPipeline({ lang, role = "element", domain: d, words: w, ladderWords, onChanged, hasPrimary, forItem, architect = null }: {
   lang: string
+  /** 775: the section the domain lives in — the main domain's candidate ends in «Сделать основным», an element's domain in «готов к элементу» */
+  role?: "main" | "element"
   /** 775: the node has its architect — only then may a domain become the main one; `null` — the sign-in did not answer */
   architect?: boolean | null
   /** 443-4: элемент, из настроек которого пришли (`?for=`) — ссылка «Главное зеркало» ведёт к нему. */
@@ -68,6 +70,7 @@ export function DomainPipeline({ lang, domain: d, words: w, ladderWords, onChang
   const [conflicts, setConflicts] = useState<AddressRecord[] | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [noPermission, setNoPermission] = useState(false)
+  const [noKey, setNoKey] = useState(false)
   const [note, setNote] = useState<string | null>(null)
   const [key, setKey] = useState("")
   // 324-2: первый домен — аккаунт Cloudflare узнаётся у ключа; не узнан — запасное поле (слово владельца: «если нажатие
@@ -86,6 +89,8 @@ export function DomainPipeline({ lang, domain: d, words: w, ladderWords, onChang
       if (j?.ok && j.domain) { await onChanged(); setBusy(null); return j.domain }
       const code = j?.error ?? String(r.status)
       if (code === "no-zone-permission") { setNoPermission(true); await onChanged() }
+      // 775: no key at all — the same key field opens right here, in this domain's own step (no pointer to another section).
+      if (code === "no-key") { setNoPermission(true); setNoKey(true) }
       if (code === "no-account" || code === "bad-account-id") setNeedAccount(true)
       setError(w.errors[code] ?? `${w.errors.unknown} ${code}`)
     } catch { setError(w.errors.unknown) }
@@ -94,7 +99,7 @@ export function DomainPipeline({ lang, domain: d, words: w, ladderWords, onChang
   }
 
   function describe(x: PipelineDomain): string {
-    if (x.state === "active") return p.step3Done
+    if (x.state === "active") return role === "main" ? p.step3DoneMain : p.step3Done
     if (x.state === "not-visible") return w.state["not-visible"]
     if (x.nsMatch) return x.activationAsked ? p.step3Asked : p.match
     return p.noMatch
@@ -107,7 +112,7 @@ export function DomainPipeline({ lang, domain: d, words: w, ladderWords, onChang
 
   async function createZone() {
     const x = await call("POST", { name: d.name, action: "create-zone", accountId: needAccount ? account.trim() : undefined }, "zone")
-    if (x) { setNoPermission(false); setNeedAccount(false); setNote(p.lastCheck.replace("{time}", time(x.checkedAt)).replace("{what}", p.step1Done)) }
+    if (x) { setNoPermission(false); setNoKey(false); setNeedAccount(false); setNote(p.lastCheck.replace("{time}", time(x.checkedAt)).replace("{what}", p.step1Done)) }
   }
 
   // 324-2: «Сделать основным доменом узла» — прежний шаг 5 лестницы (дверь activate): туннель, записи DNS, вход, адрес сайта.
@@ -147,7 +152,7 @@ export function DomainPipeline({ lang, domain: d, words: w, ladderWords, onChang
   const zoneReady = d.state === "pending" || d.state === "active"
   const nsReady = zoneReady && (d.state === "active" || !!d.nsMatch)
   // 372: домен активен, основного у узла ещё нет — главное действие шага — «Сделать основным доменом узла».
-  const primaryReady = d.state === "active" && !hasPrimary
+  const primaryReady = role === "main" && d.state === "active" && !hasPrimary
 
   return (
     <div className="flex flex-col gap-2" data-domain-pipeline={d.name}>
@@ -172,7 +177,7 @@ export function DomainPipeline({ lang, domain: d, words: w, ladderWords, onChang
             )}
             {noPermission && (
               <div className="flex flex-col gap-2 rounded-md border border-destructive bg-destructive/5 p-3" data-pipe-no-permission>
-                <p className="text-sm text-foreground">{p.noPermission}</p>
+                <p className="text-sm text-foreground">{noKey ? w.key.none : p.noPermission}</p>
                 <TokenHowTo words={ladderWords} />
                     <Label htmlFor={`pipe-key-${d.name}`}>{w.key.label}</Label>
                     <div className="flex flex-wrap gap-2">
@@ -236,8 +241,8 @@ export function DomainPipeline({ lang, domain: d, words: w, ladderWords, onChang
 
       <Step title={p.step3} done={d.state === "active"}>
         {!nsReady ? <p className="text-sm text-muted-foreground">{p.step3Wait}</p>
-          : <p className="text-sm text-foreground">{d.state === "active" ? p.step3Done : p.step3Asked}</p>}
-        {d.state === "active" && forItem && (
+          : <p className="text-sm text-foreground">{d.state === "active" ? (role === "main" ? p.step3DoneMain : p.step3Done) : p.step3Asked}</p>}
+        {d.state === "active" && role === "element" && forItem && (
           <a className="w-fit text-sm font-medium text-primary underline-offset-4 hover:underline" href={`/${lang}/architect/${forItem}/settings/domain#main-mirror`} data-pipe-open-mirror={forItem}>
             {p.openMirror.replace("{item}", forItem)}
           </a>

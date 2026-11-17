@@ -2871,6 +2871,7 @@
         "components/auth/resend-dns.client.tsx",
         "components/dashboard/node-passport.client.tsx",
         "components/domain/domain-cards.client.tsx",
+        "components/domain/domain-list.client.tsx",
         "components/domain/domain-main.client.tsx",
         "components/domain/domain-more.tsx",
         "components/domain/domain-registrars.client.tsx",
@@ -5007,7 +5008,7 @@
         "en": "Workspace section «domainLadder» (steps): A working screen rather than a page to read: a menu on the left, content on the right. This is what dashboards and project tools are built from.",
         "ru": "Рабочий экран"
       },
-      "how": "A page names the kind «domainLadder» in its language cell with the fields lang: string; words: import('@/components/domain/domain-ladder.i18n').DomainLadderWords; /** 742-2: sections that belong to the computer's ladder and hide with it on a server */ notes?: PageItem[].",
+      "how": "A page names the kind «domainLadder» in its language cell with the fields lang: string; words: import('@/components/domain/domain-ladder.i18n').DomainLadderWords; /** 742-2: sections that belong to the computer's ladder and hide with it on a server; 775: folded in the main domain's «Подробнее» */ notes?: PageItem[]; /** 775: the page's topics, in the main domain's «Подробнее» while the node has none */ topics?: PageItem[].",
       "words": {
         "en": [
           "domainLadder",

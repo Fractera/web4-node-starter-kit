@@ -22,12 +22,18 @@ import { DomainRegistrars } from '@/components/domain/domain-registrars.client'
 // 775 (the owner, 2026-11-17: «информация как зарегистрировать … должна быть вынесено вниз после воздуха после второго элемента про
 // дополнительные домены … отдельной карточкой аккордеона где зарегистрировать»): the two sections, real air, then the cards that
 // explain rather than act — where to register a domain, and the computer's notes.
+// 775 (the owner, after the first try: «не было выполнено ни на 1%»): the page holds the two sections and the registrars' card — nothing
+// else. The page's topics and the computer's notes are folded inside the main domain section's «Подробнее» (rendered here, on the server).
 export const domainLadder: SectionRenderer<'domainLadder'> = (b, { key: k, lang, ui, renderPage }) => (
   <div key={k} data-block="domain-ladder-home" data-place="home" className="flex flex-col gap-16">
-    <DomainList lang={b.lang} words={domainListWords(b.lang)} ladderWords={b.words} ladder={<DomainLadder lang={b.lang} words={b.words} />} />
-    <div className="flex flex-col gap-3" data-block="domain-ladder-info">
-      <DomainRegistrars words={b.words} />
-      {b.notes ? renderPage(b.notes, lang, ui, `${k}-notes`) : null}
-    </div>
+    <DomainList
+      lang={b.lang}
+      words={domainListWords(b.lang)}
+      ladderWords={b.words}
+      ladder={<DomainLadder lang={b.lang} words={b.words} />}
+      topics={b.topics?.length ? renderPage(b.topics, lang, ui, `${k}-topics`) : null}
+      notes={b.notes?.length ? renderPage(b.notes, lang, ui, `${k}-notes`) : null}
+    />
+    <DomainRegistrars words={b.words} />
   </div>
 )

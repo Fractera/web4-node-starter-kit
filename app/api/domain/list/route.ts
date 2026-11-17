@@ -2,14 +2,14 @@
 import { NextRequest, NextResponse } from "next/server"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
-import { addDomain, checkDomain, createDomainZone, domainHolder, extraDomains, nodeKeyState, primaryDomain, removeDomain } from "@/lib/domain/node-domains"
+import { addDomain, checkDomain, createDomainZone, domainHolder, domainSection, extraDomains, nodeKeyState, primaryDomain, removeDomain } from "@/lib/domain/node-domains"
 import { detachDomain } from "@/lib/web4-items/element-domain"
 import { addressOf } from "@/lib/web4-items/address-file.mjs"
 import { architectExists } from "@/lib/auth/architect-exists"
 import bases from "@/lib/auth/sign-in-bases.cjs"
 
 // ДОМЕНЫ УЗЛА (324-1): «Хостинг → Домен» списком. GET — основной (из лестницы 259) и дополнительные с тем, к какому элементу
-// каждый подключён; POST `{ name }` — добавить, POST `{ name, action: "create-zone" }` — узел создаёт зону сам (конвейер);
+// каждый подключён; POST `{ name, for }` — добавить (775: `for` — раздел основного домена `main` или элементов `element`), POST `{ name, action: "create-zone" }` — узел создаёт зону сам (конвейер);
 // PUT `{ name }` — замерить заново (зона, серверы имён у регистратора; совпали — запрос активации); DELETE `{ name }` — убрать
 // из списка (подключённый к элементу — 409); DELETE `{ name, detach: true }` (373-1) — сначала отключить от элемента (поддомен
 // снова ведёт на элемент), потом убрать из списка. Всё по кнопке человека. Ворота architect/admin; на временном адресе — отказ.
@@ -24,9 +24,11 @@ async function gate(req: NextRequest) {
   return requireRoles(req, ROLES)
 }
 
-async function bodyOf(req: NextRequest): Promise<{ name: string; action: string; accountId?: string; detach: boolean }> {
-  const body = (await req.json().catch(() => null)) as { name?: unknown; action?: unknown; accountId?: unknown; detach?: unknown } | null
+async function bodyOf(req: NextRequest): Promise<{ name: string; action: string; accountId?: string; detach: boolean; for: "main" | "element" }> {
+  const body = (await req.json().catch(() => null)) as { name?: unknown; action?: unknown; accountId?: unknown; detach?: unknown; for?: unknown } | null
   return {
+    // 775: the section it was added in — the main domain's or the elements'.
+    for: body?.for === "main" ? "main" : "element",
     name: typeof body?.name === "string" ? body.name : "",
     action: typeof body?.action === "string" ? body.action : "",
     // 324-2: первый домен — Account ID, если ключ не назвал аккаунт сам.
@@ -39,22 +41,24 @@ export async function GET(req: NextRequest) {
   const g = await gate(req)
   if (g) return g
   // 373-1: человеку — адрес элемента (как в левом меню), а не его вечный id.
+  // 775: each section lists its own — `section` says which (`domainSection`).
+  const primary = primaryDomain()
   const extra = extraDomains().map((d) => {
     const holder = domainHolder(d.name)
-    return { ...d, holder, holderAddress: holder ? addressOf(holder) : null }
+    return { ...d, holder, holderAddress: holder ? addressOf(holder) : null, section: domainSection(d, !!primary) }
   })
   // 324-1: строка «Ключ узла» — свойство узла, приходит вместе со списком.
   // 775: whether the node has its architect (a domain may become the main one only then) and where the main domain answers.
   const b = bases.signInBases(process.cwd())
   const [key, architect] = await Promise.all([nodeKeyState(), architectExists()])
-  return NextResponse.json({ ok: true, key, primary: primaryDomain(), extra, architect, links: b.web ? { site: b.site, panel: b.web } : null }, noStore)
+  return NextResponse.json({ ok: true, key, primary, extra, architect, links: b.web ? { site: b.site, panel: b.web } : null }, noStore)
 }
 
 export async function POST(req: NextRequest) {
   const g = await gate(req)
   if (g) return g
-  const { name, action, accountId } = await bodyOf(req)
-  const r = action === "create-zone" ? await createDomainZone(name, accountId) : await addDomain(name)
+  const { name, action, accountId, for: forWhat } = await bodyOf(req)
+  const r = action === "create-zone" ? await createDomainZone(name, accountId) : await addDomain(name, forWhat)
   return NextResponse.json(r, { status: r.ok ? 200 : 409, ...noStore })
 }
 

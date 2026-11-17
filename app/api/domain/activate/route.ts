@@ -13,6 +13,7 @@ import {
 import { listServices, serviceUrl } from "@/lib/microservices/registry"
 import { addressOf } from "@/lib/web4-items/address-file.mjs"
 import { startDomainResident, stopDomainResident } from "@/lib/domain/resident"
+import { checkDomain } from "@/lib/domain/node-domains"
 import { applyDomainToAuth } from "@/lib/domain/auth-env"
 import { startStaticCopyAll } from "@/lib/web4-items/static-copy-start.cjs"
 import { spawnSync } from "node:child_process"
@@ -342,6 +343,8 @@ export async function DELETE(req: NextRequest) {
     spawnSync(process.execPath, [join(ROOT, "scripts", "spawn-free.mjs"), join(ROOT, "scripts", "deploy-elements.mjs"), ...rebuild], { cwd: ROOT, windowsHide: true, stdio: "ignore", timeout: 10_000 })
   }
   revalidatePath("/[lang]", "layout")
+  // 775: the zone is measured again at once, so the domain's card shows what is true now, not what it was before it became the main one.
+  await checkDomain(zone).catch(() => null)
   console.log(`[domain] disconnected ${zone}: resident stopped, record aside, rebuilding ${rebuild.join(", ") || "none"}`)
   return NextResponse.json({ ok: true, zone, resident, rebuilding: rebuild, aside: aside.slice(ROOT.length + 1) })
 }

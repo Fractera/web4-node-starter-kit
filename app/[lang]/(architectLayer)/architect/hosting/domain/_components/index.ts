@@ -3,6 +3,9 @@ import type { PageItem } from '@/lib/content/sections/types'
 import { domainPlaceWidget } from '@/components/hosting/widgets'
 import { domainLadderWords } from '@/components/domain/domain-ladder.i18n'
 import { homeHostingNotes } from './home-hosting-notes.i18n'
+import { wordsOf } from '@/lib/collection/types'
+import { topicItems } from '../../../../_lib/collection-page'
+import { data } from '../_data'
 
 // СОДЕРЖИМОЕ СТРАНИЦЫ «Domain activation» (259-1).
 //
@@ -17,15 +20,15 @@ import { homeHostingNotes } from './home-hosting-notes.i18n'
 // сторож `check:lang-delivery`.
 export function content(lang: string): PageItem[] {
   const n = homeHostingNotes(lang)
-  const item = (x: { summary: string; text: string[] }): PageItem => ({
-    kind: 'accordionItem', summary: x.summary, children: x.text.map((text): PageItem => ({ kind: 'p', text })),
-  })
+  // 775 (the owner, 2026-11-17: «на этой вкладке огромная простыня информации должна быть скрыта в аккордеоне подробнее … Внутри одного
+  // аккордеона не должно быть информации о других аккордеонов»): the page shows only its two sections and the registrars' card. The
+  // page's topics (why a permanent address, how it works, the price, without a domain) and the notes on a site from a home computer are
+  // instructions of the main domain — they live folded in that section's «Подробнее»: `topics` while the node has no main domain, `notes`
+  // always. The page itself never renders its topics (`hideTopics`).
+  const notes: PageItem[] = [{ kind: 'h3', text: n.home.summary }, ...n.home.text.map((text): PageItem => ({ kind: 'p', text }))]
   return [
-    // 344-5: когда подходит сайт с домашнего компьютера — свёрнуто по умолчанию. 775 (the owner, 2026-11-17: «проверь пожалуйста чтобы
-    // не было никакого упоминания о России. Сейчас санкции не позволяют это делать»): the country card is gone.
-    // (слово владельца: «По умолчанию эти карточки должны быть закрыты … пусть нажимает раскрыть если ему интересно»).
     // 742-2: the notes are the computer's — they ride inside its ladder and hide with it on a server.
-    { kind: 'domainLadder', lang, words: domainLadderWords(lang), notes: [{ kind: 'accordion', title: n.title, cards: true, children: [item(n.home)] }] },
+    { kind: 'domainLadder', lang, words: domainLadderWords(lang), topics: topicItems(wordsOf(data, lang).topics ?? []), notes },
   ]
 }
 

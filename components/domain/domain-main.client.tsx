@@ -26,9 +26,11 @@ type Props = {
   words: DomainListWords
   ladderWords: DomainLadderWords
   ladder: ReactNode
+  /** 775: the notes on a site from a home computer — folded with the way it was connected */
+  notes: ReactNode
 }
 
-export function DomainMain({ lang, name, status, links, architect, words: w, ladderWords, ladder }: Props) {
+export function DomainMain({ lang, name, status, links, architect, words: w, ladderWords, ladder, notes }: Props) {
   const place = useNodePlace()
   const [confirm, setConfirm] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -77,7 +79,7 @@ export function DomainMain({ lang, name, status, links, architect, words: w, lad
         <StaticCopyItem lang={lang} words={ladderWords.copy} />
       </Accordion>
 
-      <DomainMore id="main-how" label={w.more}>{ladder}</DomainMore>
+      <DomainMore id="main-how" label={w.more}>{ladder}{notes}</DomainMore>
 
       {confirm ? (
         <DangerConfirm id="domain-disconnect" text={w.main.disconnectConfirm.replace("{domain}", name)}
