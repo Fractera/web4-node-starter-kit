@@ -57,7 +57,25 @@ soul in Roma's words, ~150 words, main/element parts in one file, `soulFor(key)`
 **Unseen, said to him:** the red «!» rung (no silent element now); the blue band on the web (needs his sign-in) — he may send a screenshot.
 **Design law (his, 2026-11-17):** read .interface-design/system.md FIRST; send a decision card before any interface code; the page
 «Сервер» is the reference; no «Подробнее»; everything closed by default; destructive = red + AppDialog.
-**Next:** his reaction to 38363e6f; then 774 (the model law) only on his word. Always check the rebuild log after `serve:rebuild:detached`
+**NEXT — THE NEW TASK (his word 17:47, Telegram 453, «В режим максимального усилия создавай шаг мы начинаем работать над этой
+задачей»; he thanked for the domain: «ты поправился кажется отлично»). Verbatim:** «В файловую архитектуру root и основного шаблона нужно
+внести маршрут в котором будет храниться Telegram мини app для этого элемента в его папке маршру readme.md я пишу назначение. Тоже надо
+подумать скорее всего этот маршрут должен быть защищен чтобы без авторизации какой-нибудь хакер не смог оттуда получить точку входа в
+чувствительные данные? Как мы уже говорили скажи известно тебе эта информация или нет что каждый элемент получает свою собственную роль так
+называемого администратора элемента и таким образом создание нового элемента предполагает создание новой роли? Или существует какие-то
+другие способы в чем идеи: если мы говорим о том что у каждого элемента может быть свой владелец то это значит только он и архитектор всего
+проекта могут видеть приватный маршруты. Возможно мы это не делали возможно это нужно описать в инструкциях и навыках элемента возможно это
+потребует ещё какие-то дополнительные вещи. Также скажу тебе как это должно менять работу нашего ядра: сейчас страницы архитектора позволяют
+находиться в этом узле только архитектору, но какие могут быть варианты чтобы администратор элемента получил бы аналогичную панель для
+управления единственным собственным элементом или может быть если одному учётной записи доступно несколько элементов чтобы он видел там
+только свои.»
+**How to start:** skills_find + shape-the-need first (a goal with a choice); `npm run contacts`/`card root`; read what exists: 771 doc
+(new-steps/771-…) part 771-4..6 (element Mini App waits for the road — now the domain exists!), the custom template's route layers
+(public / protected), the auth element's 14 roles + guest (CLAUDE.md §3), app factory «every element has its own administration panel»,
+skills use-roles, use-routes, use-dynamic-pages, release-template (a template change = a release + rollout, the owner's word only). Answer
+him FIRST what is known (element-owner role? an element-admin role per element?) with facts from code, then the variants as a fork with a
+pick, then write the step new-steps/778-… with substeps and a test checklist, sent to him BEFORE any code. Effort: max (his word).
+Then 774 (the model law) only on his word. Always check the rebuild log after `serve:rebuild:detached`
 (✗ 17:27 it refused — an element deploy was running — and I said «ухожу» without reading it).
 
 ## The person's decisions (verbatim)
