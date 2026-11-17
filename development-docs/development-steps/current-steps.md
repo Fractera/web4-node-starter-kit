@@ -85,6 +85,11 @@ stale (another account or reset passed), the page dims a stale gauge with a note
 logs/deploy-state.json (row tag building/queued + a banner N of M). **Waits his «да»:** the CORE build shown — (a) the menu button label
 «⏳ Ядро собирается» during the lid, (b) a tiny lid responder on the core's port answering «Ядро собирается с HH:MM». **On core-back:**
 signed state call (scratchpad tgproof.cjs: node <it> <root> <out>) → eyes → commit lib/agent-kit/limits.cjs + lib/node/tg-app/* → Telegram.
+**14:16 — panel round 3 (crimson «Исчерпан лимит» + countdown, Telegram 380) CODED, core build runs** (prebuild RC=0, uncommitted
+lib/node/tg-app/{page.cjs,words.cjs}; eyes with a stubbed state: logs/eyes/2026-11-17T14-15-05-613Z.png (5 h) and 14-15-09-667Z.png
+(week)). On core-back: commit, send both screenshots. **Waits his «да»:** (a) the core build shown (menu label + lid responder);
+(b) an element with an open ask — pulsing «!» instead of its dot in «Пульт», the ask opened inside its row, «!» beside its name in the
+computer panel's left menu (Telegram 383). The 768 secret ask (`kind: env`) already carries a key into an element from Telegram.
 **How to work:** load interface-design, use-primitives, use-shadcn first; parts_find before new files; plan in 6 lines to him BEFORE code
 (he is angry at being given something else than asked); screenshot the page (Chrome tab via the extension, `browser_batch`, save_to_disk)
 before the build and after; prebuild RC=0 → `npm run serve:rebuild:detached` → on core-back serve:status, proofs, commit, Telegram with
