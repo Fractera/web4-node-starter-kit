@@ -12,6 +12,9 @@ export type DomainListWords = {
   more: string
   loading: string
   addTitle: string
+  /** 775: the add rows of the two sections (the owner: «добавить основной домен» / «добавить дополнительный домен») */
+  addMainTitle: string
+  addExtraTitle: string
   addLabel: string
   /** 775: the add field of the main domain's section */
   addMainLabel: string
@@ -76,6 +79,8 @@ const DICT: Record<string, DomainListWords> = {
     more: "More",
     loading: "Reading the node's domains…",
     addTitle: "Add a domain",
+    addMainTitle: "Add the main domain",
+    addExtraTitle: "Add an additional domain",
     addLabel: "Another domain of yours (the root, without www)",
     addMainLabel: "Your domain (the root, without www)",
     add: "Add",
@@ -220,6 +225,8 @@ const DICT: Record<string, DomainListWords> = {
     more: "Подробнее",
     loading: "Читаю домены узла…",
     addTitle: "Добавить домен",
+    addMainTitle: "Добавить основной домен",
+    addExtraTitle: "Добавить дополнительный домен",
     addLabel: "Ещё один ваш домен (корень, без www)",
     addMainLabel: "Ваш домен (корень, без www)",
     add: "Добавить",

@@ -2192,9 +2192,7 @@
           "аккордеон"
         ]
       },
-      "usedBy": [
-        "components/domain/domain-ladder.client.tsx"
-      ]
+      "usedBy": []
     },
     {
       "id": "lagrix-doc-items",
@@ -2871,9 +2869,7 @@
         "components/auth/resend-dns.client.tsx",
         "components/dashboard/node-passport.client.tsx",
         "components/domain/domain-cards.client.tsx",
-        "components/domain/domain-list.client.tsx",
         "components/domain/domain-main.client.tsx",
-        "components/domain/domain-more.tsx",
         "components/domain/domain-registrars.client.tsx",
         "components/domain/static-copy.client.tsx",
         "components/element-design/design-stage.client.tsx",
@@ -3130,7 +3126,6 @@
         "components/domain/danger-confirm.tsx",
         "components/domain/domain-cards.client.tsx",
         "components/domain/domain-key.client.tsx",
-        "components/domain/domain-ladder.client.tsx",
         "components/domain/domain-main.client.tsx",
         "components/domain/domain-pipeline.client.tsx",
         "components/domain/static-copy.client.tsx",
@@ -3620,7 +3615,6 @@
         "components/design/design-type.client.tsx",
         "components/domain/domain-cards.client.tsx",
         "components/domain/domain-key.client.tsx",
-        "components/domain/domain-ladder.client.tsx",
         "components/domain/domain-pipeline.client.tsx",
         "components/element-design/design-reference.client.tsx",
         "components/element-design/design-search.client.tsx",
@@ -4333,7 +4327,6 @@
         "components/content-page/page-header.server.tsx",
         "components/dashboard/subscriptions-board.client.tsx",
         "components/deploy/deploy-board.client.tsx",
-        "components/domain/domain-ladder.client.tsx",
         "components/domain/domain-list.client.tsx",
         "components/domain/domain-registrars.client.tsx",
         "components/domain/token-how-to.client.tsx",

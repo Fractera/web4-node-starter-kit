@@ -37,7 +37,8 @@ type Props = {
 export function DomainCards({ lang, role, domains, primaryName, architect, words: w, ladderWords, onChanged }: Props) {
   // 775: two add fields on one page — the elements' keeps the id an element's settings link to (#domain-add).
   const addId = role === "main" ? "domain-add-main" : "domain-add"
-  const [open, setOpen] = useState<string>(domains[0]?.name ?? "")
+  // 775: every row closed until the person opens it (the owner: «первый аккордеон открывается зачем — задания не было»).
+  const [open, setOpen] = useState<string>("")
   // 443-4: came from an element's settings (`?for=<id>`) — a ready domain's link leads back to that element's «Домен».
   const [forItem, setForItem] = useState<string | null>(null)
   useEffect(() => {
@@ -86,12 +87,12 @@ export function DomainCards({ lang, role, domains, primaryName, architect, words
   }
 
   return (
-    <Accordion type="single" collapsible value={open} onValueChange={setOpen} className="rounded-lg border border-border px-3" data-block={`domain-cards-${role}`} data-domain-cards={role}>
+    <Accordion type="single" collapsible value={open} onValueChange={setOpen} className="rounded-lg border border-border bg-card" data-block={`domain-cards-${role}`} data-domain-cards={role}>
       {domains.map((d) => {
         const connected = !!d.holder || primaryName === d.name
         return (
           <AccordionItem key={d.name} value={d.name} data-domain-card={d.name} data-domain-state={d.state}>
-            <AccordionTrigger>
+            <AccordionTrigger className="px-4 py-3">
               <span className="flex flex-wrap items-center gap-2">
                 <span className="font-mono">{d.name}</span>
                 <span className={`rounded-md border px-1.5 text-[length:var(--fs-small)] ${BADGE[d.state] ?? "border-destructive/40 text-destructive"}`}>
@@ -106,7 +107,7 @@ export function DomainCards({ lang, role, domains, primaryName, architect, words
                 {d.holder && <span className="text-[length:var(--fs-small)] text-muted-foreground">→ {d.holderAddress ?? d.holder}</span>}
               </span>
             </AccordionTrigger>
-            <AccordionContent className="flex flex-col gap-2">
+            <AccordionContent className="flex flex-col gap-2 px-4">
               <DomainPipeline lang={lang} role={role} domain={d} words={w} ladderWords={ladderWords} onChanged={onChanged} hasPrimary={!!primaryName} forItem={forItem} architect={architect} />
               {d.holder && <p className="text-sm text-foreground">{w.attachedTo} <span className="font-mono">{d.holderAddress ?? d.holder}</span></p>}
               {d.holder && confirm === d.name ? (
@@ -125,8 +126,8 @@ export function DomainCards({ lang, role, domains, primaryName, architect, words
       })}
 
       <AccordionItem value="add" data-domain-card="add">
-        <AccordionTrigger><span className="font-medium">+ {w.addTitle}</span></AccordionTrigger>
-        <AccordionContent className="flex flex-col gap-2">
+        <AccordionTrigger className="px-4 py-3"><span className="font-medium">+ {role === "main" ? w.addMainTitle : w.addExtraTitle}</span></AccordionTrigger>
+        <AccordionContent className="flex flex-col gap-2 px-4">
           <Label htmlFor={addId}>{role === "main" ? w.addMainLabel : w.addLabel}</Label>
           <div className="flex flex-wrap gap-2" data-block="domain-add-row">
             <Input id={addId} className="max-w-72 font-mono" value={name} onChange={(e) => setName(e.target.value)} placeholder="mybrand.com" autoComplete="off" spellCheck={false} />

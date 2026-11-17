@@ -1,5 +1,4 @@
 import type { SectionRenderer } from '@/sections/contract'
-import { DomainLadder } from '@/components/domain/domain-ladder.client'
 import { DomainList } from '@/components/domain/domain-list.client'
 import { domainListWords } from '@/components/domain/domain-list.i18n'
 import { DomainRegistrars } from '@/components/domain/domain-registrars.client'
@@ -22,18 +21,12 @@ import { DomainRegistrars } from '@/components/domain/domain-registrars.client'
 // 775 (the owner, 2026-11-17: «информация как зарегистрировать … должна быть вынесено вниз после воздуха после второго элемента про
 // дополнительные домены … отдельной карточкой аккордеона где зарегистрировать»): the two sections, real air, then the cards that
 // explain rather than act — where to register a domain, and the computer's notes.
-// 775 (the owner, after the first try: «не было выполнено ни на 1%»): the page holds the two sections and the registrars' card — nothing
-// else. The page's topics and the computer's notes are folded inside the main domain section's «Подробнее» (rendered here, on the server).
-export const domainLadder: SectionRenderer<'domainLadder'> = (b, { key: k, lang, ui, renderPage }) => (
-  <div key={k} data-block="domain-ladder-home" data-place="home" className="flex flex-col gap-16">
-    <DomainList
-      lang={b.lang}
-      words={domainListWords(b.lang)}
-      ladderWords={b.words}
-      ladder={<DomainLadder lang={b.lang} words={b.words} />}
-      topics={b.topics?.length ? renderPage(b.topics, lang, ui, `${k}-topics`) : null}
-      notes={b.notes?.length ? renderPage(b.notes, lang, ui, `${k}-notes`) : null}
-    />
+// 775 (the owner, 2026-11-17, Telegram 406–411; the skill interface-design, card 409): three parts in ONE rhythm — 48 px from the page's
+// lead to the first and between all of them: the main domain, the additional domains, «Где зарегистрировать домен». No «Подробнее», no
+// page topics, no notes («Слишком много мусора»).
+export const domainLadder: SectionRenderer<'domainLadder'> = (b, { key: k }) => (
+  <div key={k} data-block="domain-ladder-home" data-place="home" className="mt-8 flex flex-col gap-12">
+    <DomainList lang={b.lang} words={domainListWords(b.lang)} ladderWords={b.words} />
     <DomainRegistrars words={b.words} />
   </div>
 )

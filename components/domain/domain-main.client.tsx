@@ -2,7 +2,7 @@
 // @local — the main domain's own section once the node has one (step 775): where it answers, the architect's sign-in while the node has
 // none, the copy in Cloudflare, the way it was connected folded in «Подробнее», and the one way back — «Отключить основной домен»
 
-import { useState, type ReactNode } from "react"
+import { useState } from "react"
 import { ExternalLink } from "lucide-react"
 import { Accordion } from "@/components/ui/accordion"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -12,7 +12,6 @@ import signIn from "@/lib/auth/sign-in-link.cjs"
 import type { DomainListWords } from "./domain-list.i18n"
 import type { DomainLadderWords } from "./domain-ladder.i18n"
 import { StaticCopyItem } from "./static-copy.client"
-import { DomainMore } from "./domain-more"
 import { DangerConfirm } from "./danger-confirm"
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
@@ -25,12 +24,9 @@ type Props = {
   architect: boolean | null
   words: DomainListWords
   ladderWords: DomainLadderWords
-  ladder: ReactNode
-  /** 775: the notes on a site from a home computer — folded with the way it was connected */
-  notes: ReactNode
 }
 
-export function DomainMain({ lang, name, status, links, architect, words: w, ladderWords, ladder, notes }: Props) {
+export function DomainMain({ lang, name, status, links, architect, words: w, ladderWords }: Props) {
   const place = useNodePlace()
   const [confirm, setConfirm] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -79,7 +75,6 @@ export function DomainMain({ lang, name, status, links, architect, words: w, lad
         <StaticCopyItem lang={lang} words={ladderWords.copy} />
       </Accordion>
 
-      <DomainMore id="main-how" label={w.more}>{ladder}{notes}</DomainMore>
 
       {confirm ? (
         <DangerConfirm id="domain-disconnect" text={w.main.disconnectConfirm.replace("{domain}", name)}

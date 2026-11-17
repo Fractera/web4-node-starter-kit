@@ -33,7 +33,7 @@ const en: HostingNotes = {
     summary: "A dedicated server: when the internet must reach you around the clock",
     text: [
       "If visitors, sign-in and orders must work while your computer sleeps, take a domain and a rented server (VPS) too. For a small load, 8 GB of memory and 4 cores is the base minimum; as the business grows, you move to a bigger plan of the same server.",
-      "The launch is the page «Активация выделенного сервера»: the node installs a fresh Fractera from your fork there step by step, and this computer stays as it was, ready to launch the next server.",
+      "The launch is the page «Сервер»: the node installs a fresh Fractera from your fork there step by step, and this computer stays as it was, ready to launch the next server.",
     ],
     link: "Choose a server",
   },
@@ -57,7 +57,7 @@ const ru: HostingNotes = {
     summary: "Выделенный сервер: когда интернет должен достучаться до вас круглосуточно",
     text: [
       "Если посетители, вход и заказы должны работать, пока ваш компьютер спит, возьмите не только домен, но и арендованный сервер (VPS). Для небольшой нагрузки базовый минимум 8 ГБ памяти и 4 ядра; когда бизнес растёт, вы переходите на тариф побольше у того же сервера.",
-      "Запуск на странице «Активация выделенного сервера»: узел шаг за шагом ставит туда свежую Fractera из вашего форка, а этот компьютер остаётся как был и готов запускать следующие серверы.",
+      "Запуск на странице «Сервер»: узел шаг за шагом ставит туда свежую Fractera из вашего форка, а этот компьютер остаётся как был и готов запускать следующие серверы.",
     ],
     link: "Подобрать сервер",
   },

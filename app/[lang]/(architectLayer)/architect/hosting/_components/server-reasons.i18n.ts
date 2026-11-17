@@ -14,7 +14,7 @@ const en: ServerReasons = {
     summary: "Your service needs to work around the clock",
     text: [
       "You tuned the node and its elements, tested how they work together and now expect many users and customers, at any hour.",
-      "Launch a server on the page «Активация выделенного сервера»: it gets a fresh Fractera from your fork, its own domain and certificates, and works while your computer sleeps. This computer changes nothing and stays the launch pad for the next servers. The server starts from a clean node; its own agent carries the project on there.",
+      "Launch a server on the page «Сервер»: it gets a fresh Fractera from your fork, its own domain and certificates, and works while your computer sleeps. This computer changes nothing and stays the launch pad for the next servers. The server starts from a clean node; its own agent carries the project on there.",
     ],
   },
   shared: {
@@ -46,7 +46,7 @@ const ru: ServerReasons = {
     summary: "Сервис должен работать круглосуточно",
     text: [
       "Вы настроили узел и элементы, проверили, как они работают вместе, и теперь ждёте притока пользователей и заказчиков в любое время суток.",
-      "Запустите сервер на странице «Активация выделенного сервера»: он получит свежую Fractera из вашего форка, свой домен и сертификаты и будет работать, пока ваш компьютер спит. Этот компьютер ничего не меняет и остаётся стартовой площадкой для следующих серверов. Сервер начинает с чистого узла, и проект там продолжает его собственный агент.",
+      "Запустите сервер на странице «Сервер»: он получит свежую Fractera из вашего форка, свой домен и сертификаты и будет работать, пока ваш компьютер спит. Этот компьютер ничего не меняет и остаётся стартовой площадкой для следующих серверов. Сервер начинает с чистого узла, и проект там продолжает его собственный агент.",
     ],
   },
   shared: {

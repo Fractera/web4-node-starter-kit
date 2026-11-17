@@ -6,7 +6,6 @@ import { CircleAlert, ExternalLink } from "lucide-react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Small } from "@/components/ui/typography"
 import type { DomainLadderWords } from "./domain-ladder.i18n"
-import { DomainMore } from "./domain-more"
 
 // The owner, 2026-11-17: «информация как зарегистрировать в виде карточки … должна быть вынесено вниз после воздуха после второго элемента
 // про дополнительные домены информация отдельной карточкой аккордеона где зарегистрировать».
@@ -24,10 +23,10 @@ const CLOUDFLARE_REGISTRAR = "https://www.cloudflare.com/products/registrar/"
 
 export function DomainRegistrars({ words }: { words: DomainLadderWords }) {
   return (
-    <Accordion type="single" collapsible className="rounded-lg border border-border px-3" data-block="domain-registrars">
+    <Accordion type="single" collapsible className="rounded-lg border border-border bg-card" data-block="domain-registrars">
       <AccordionItem value="registrars" className="border-0" data-registrars>
-        <AccordionTrigger className="font-medium">{words.registrarsTitle}</AccordionTrigger>
-        <AccordionContent className="flex flex-col gap-2">
+        <AccordionTrigger className="px-4 py-3 font-medium">{words.registrarsTitle}</AccordionTrigger>
+        <AccordionContent className="flex flex-col gap-2 px-4">
           <p className="text-muted-foreground text-sm">
             <a className="underline" href={CLOUDFLARE_REGISTRAR} rel="noreferrer noopener" target="_blank">Cloudflare Registrar</a>
             {" — "}{words.registrarCloudflare}
@@ -36,17 +35,6 @@ export function DomainRegistrars({ words }: { words: DomainLadderWords }) {
             <CircleAlert className="mt-0.5 size-4 shrink-0 text-warning" aria-hidden />
             <p className="text-foreground text-sm"><span className="font-semibold">{words.fastPath}</span>{" "}{words.fastPathSaving}</p>
           </div>
-          <DomainMore id="cf-limits" label={words.cfLimitsToggle}>
-            <p className="text-foreground">{words.cfLimitsLead}</p>
-            <ul className="flex list-disc flex-col gap-1 pl-5">
-              <li>{words.cfLimit1}</li>
-              <li>{words.cfLimit2}</li>
-              <li>{words.cfLimit3}</li>
-              <li>{words.cfLimit4}</li>
-              <li>{words.cfLimit5}</li>
-            </ul>
-            <Small className="text-muted-foreground">{words.cfLimitsSource}</Small>
-          </DomainMore>
           <p className="text-muted-foreground text-sm">{words.registrarOthers}</p>
           <ul className="flex flex-wrap gap-x-3 gap-y-1">
             {REGISTRARS.map((r) => (

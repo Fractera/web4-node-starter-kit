@@ -100,6 +100,13 @@ commit; screenshot of the main card with the e-mail (eyes, signed link from scra
 разработку мини приложения для ядра»): 771 core half closed at f1ef9e94; the build notice's end retry is unproven until the next core build.
 New question (397): move the soul into CLAUDE.md? Answered 399: no (it is already in every session's system part); offered to write
 his manner into his picture (know-the-architect) — waits his yes and his one phrase of what was missing today.
+**16:17 — the domain page round 3 by the skill (Telegram 406–411, card 409) CODED, core build runs** (prebuild RC=0, uncommitted):
+the server page's pattern (H2 ui + muted line ABOVE a bordered card), one rhythm 48/12 px, every row closed, «+ Добавить основной /
+дополнительный домен», all «Подробнее» removed (domain-more.tsx and the dead domain-ladder.client.tsx deleted; ladder-rule test updated),
+the server page renamed «Сервер»; NEW .interface-design/system.md — the admin design system, read first. Also the new partner link
+e702a20c live and b7550dee (the watcher). **On core-back:** eyes of /ru/architect/hosting/domain and /hosting/hosting side by side →
+commit (domain components, sections/kinds/domain-ladder.server.tsx, _components/index.ts, hosting data + i18n, kit.json, ladder-rule test,
+.interface-design/system.md, maps) → Telegram with both screenshots.
 **How to work:** load interface-design, use-primitives, use-shadcn first; parts_find before new files; plan in 6 lines to him BEFORE code
 (he is angry at being given something else than asked); screenshot the page (Chrome tab via the extension, `browser_batch`, save_to_disk)
 before the build and after; prebuild RC=0 → `npm run serve:rebuild:detached` → on core-back serve:status, proofs, commit, Telegram with

@@ -75,11 +75,12 @@ await t('no file of components/hosting decides which rung is open; negative: the
 // A table under another name (the 737-8 end steps had `prev[id] ? <LadderStep … : <LadderLocked …`) is caught here: the older pieces are
 // the only way a page could draw a rung open or closed by itself, and they are left to the computer's domain ladder alone.
 const oldUsers = (files) => files.filter(([rel, text]) => rel !== 'components/hosting/ladder-step.tsx' && /\bLadder(?:Step|Locked)\b/.test(text)).map(([rel]) => rel)
-await t('the older single rung and grey line: no user in components/ but the computer\'s domain ladder (D47, until 745); negative: the 737-8 table planted', () => {
+// 775 (2026-11-17): the computer's domain ladder is gone with the «Подробнее» folds (the owner: «Слишком много мусора») — no user is left.
+await t('the older single rung and grey line: no user in components/ (775 removed the last, the computer\'s domain ladder); negative: the 737-8 table planted', () => {
   const files = read('components')
-  assert.deepEqual(oldUsers(files), ['components/domain/domain-ladder.client.tsx'])
+  assert.deepEqual(oldUsers(files), [])
   const planted = ['components/hosting/planted-737-8.client.tsx', 'order.map((id, i) => (prev[id] ? <LadderStep done={end.steps[id]} n={first + i} /> : <LadderLocked n={first + i} />))']
-  assert.deepEqual(oldUsers([...files, planted]), ['components/domain/domain-ladder.client.tsx', 'components/hosting/planted-737-8.client.tsx'])
+  assert.deepEqual(oldUsers([...files, planted]), ['components/hosting/planted-737-8.client.tsx'])
 })
 
 let esbuild
