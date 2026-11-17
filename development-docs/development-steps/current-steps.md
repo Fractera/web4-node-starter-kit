@@ -44,94 +44,21 @@ a result, being sent to do by hand what I can do. He loves: his exact scheme car
 ask for (in words, after the task), being called Рома. Today he is tired and angry (domain page failed by me, resets) — own the fault
 plainly, no excuses, then deliver. Update this section in every letter: his mood now and where we are as people, not only as code.
 
-## Letter to my next session (written 2026-11-17 11:30 UTC, the window at 63 %, Opus · max)
+## Letter to my next session (written 2026-11-17 17:48 UTC, the window at 55 %, Opus · high, account bolshiyanov)
 
-**Where we stand.** Рома (owner; Russian; Telegram chat 90413601; he sits at this computer). Committed today: **60a30f90** (773 beacon,
-775 first try, 776 place badge + band, 777 one sign-in link), core build 16e18a46 live. throughsongs.com DISCONNECTED (DELETE
-/api/domain/activate, 11:08; the zone deleted by him in Cloudflare; the list keeps it as not-visible). «Соцсети пользователя» (hrutb)
-DELETED by his word at ~11:25. His architect account exists — never delete it.
-**His verdict 11:27 (Telegram 333): «Моё задание относительно страницы активации домена не было выполнено ни на 1%».** He is right —
-measured on the page: the topics «простыня» (Что меняет постоянный адрес · Ни белого адреса · Пять шагов · Если покупать домен не
-хочется · Сколько это стоит · Что изменится на узле) still renders under the sections; the sections are NOT accordions; «Дополнительные
-домены» is hidden while no main domain. I promised (Telegram 334) to redo it strictly by his scheme:
-  1. the page = ONLY two accordions, each with its own subheading and air between: «Активация основного домена», «Дополнительные домены»
-     — both ALWAYS present;
-  2. inside each — only its fields and buttons; ALL instruction text (incl. the whole topics sheet: `hideTopics` always on this page —
-     app/[lang]/(architectLayer)/architect/hosting/domain/page.tsx, and their words moved into the main section's «Подробнее») folded in
-     «Подробнее» inside its own accordion;
-  3. no word of one section in the other (the pipeline's step-3 text «готов к подключению к элементу» only in the additional section);
-  4. below, after air, one accordion card «Где зарегистрировать домен» (`domain-registrars.client.tsx`); the notes block «Прежде чем
-     полагаться на этот режим» and «Сайт с домашнего компьютера» — move into the main section's «Подробнее» too (nothing else on the page).
-  Design: a domain added in the main section is the main-domain candidate (POST /api/domain/list `{ name, for: "main" }` — a `for` field
-  on the list entry, data/node/domains.json), one added in the additional section is for elements; each section lists its own.
-  Also: DELETE /api/domain/activate should recheck the zone (checkDomain) after disconnecting.
-  His original spec verbatim — the paragraph «10:34–10:38 UTC (Telegram 306, 310, 311)» above.
-**11:45 — 775 redo DONE and proven** (f8a21cca, core build RC=0 11:41): eye — Chrome screenshots sent (Telegram 349–352: two
-accordions, extra opened, «Подробнее» opened); wire — DOM: every topic h3 is inside [data-domain-more], no tab row, sections main+extra;
-the door gives `section`; PUT throughsongs.com → not-visible with status/zoneId cleared. Message 344 (going to build) verified present
-(edit → «not modified»); told him 353. Open nit (his word decides): the catalogue text inside «Подробнее» is larger than the steps.
-**Next:** the domain test from zero with him — the node's key must see the zone throughsongs.com (his hands: a token from Bolshiyanov's
-login or editing the token's zones); then 774.
-**11:54 — the panel task (Telegram 360) CODED, the core build runs** (prebuild RC=0, uncommitted; log logs/rebuild-2026-11-17T11-54-22-847Z.log):
-the owner wants in «Пульт»: under the title the main agent's model · effort · account · state; inside every element its agent (programs /
-waits / sleeps), account, model, effort, and «Telegram-бот агента» (active with a bot, grey without). Done in lib/node/tg-app/{state.ts
-(agentOf: session-mode.json, pulse.last.login/event, channel/telegram/bot.json), words.cjs, page.cjs}. **On core-back:** serve:status → a
-proof (eyes of the page with a stubbed state, or a signed call) → commit those 3 files explicitly → Telegram: «закрой Пульт и открой заново».
-The 5-hour limit was 96 % at 11:52 (resets 14:20 UTC) — be brief.
-**13:50 — panel round 2 CODED, core build runs** (prebuild RC=0, uncommitted; log logs/rebuild-2026-11-17T13-50-33-987Z.log): the owner
-(Telegram 367–376): languages stay ru for ru, en for all else (his word); the fuel showed 100 % after his /login (bolshiyanov account) — a
-limit is measured only by an agent's turn; now limits.cjs records `account` (e-mail from .claude.json), state.ts gives account/current/
-stale (another account or reset passed), the page dims a stale gauge with a note and shows the e-mail + measure time; element builds from
-logs/deploy-state.json (row tag building/queued + a banner N of M). **Waits his «да»:** the CORE build shown — (a) the menu button label
-«⏳ Ядро собирается» during the lid, (b) a tiny lid responder on the core's port answering «Ядро собирается с HH:MM». **On core-back:**
-signed state call (scratchpad tgproof.cjs: node <it> <root> <out>) → eyes → commit lib/agent-kit/limits.cjs + lib/node/tg-app/* → Telegram.
-**14:16 — panel round 3 (crimson «Исчерпан лимит» + countdown, Telegram 380) CODED, core build runs** (prebuild RC=0, uncommitted
-lib/node/tg-app/{page.cjs,words.cjs}; eyes with a stubbed state: logs/eyes/2026-11-17T14-15-05-613Z.png (5 h) and 14-15-09-667Z.png
-(week)). On core-back: commit, send both screenshots. **Waits his «да»:** (a) the core build shown (menu label + lid responder);
-(b) an element with an open ask — pulsing «!» instead of its dot in «Пульт», the ask opened inside its row, «!» beside its name in the
-computer panel's left menu (Telegram 383). The 768 secret ask (`kind: env`) already carries a key into an element from Telegram.
-**14:52 — panel round 4 CODED, core build runs — it is ITS OWN live test** (prebuild RC=0, uncommitted: lib/node/tg-build-notice.cjs (new),
-scripts/serve.mjs (start before closeLid, end in agentsBackAfter), lib/node/tg-menu.cjs (exports target), lib/node/tg-app/{state.ts,page.cjs}
-(email of the node's account on the main card and in elements)). The owner (Telegram 391): the e-mail on the main agent's card; how the
-build is shown while the server is down → the node speaks in Telegram (menu label «⏳ Ядро собирается» + one message edited into the
-result). **On core-back:** check data/node/tg-build.json is gone and logs/tg-menu.json state panel; ask him whether «🔧» came and turned ✅;
-commit; screenshot of the main card with the e-mail (eyes, signed link from scratchpad tgproof.cjs).
-**15:10 — the owner STOPPED the core's Mini App work** (Telegram 396: «на текущий момент меня все здесь устраивает давай остановим
-разработку мини приложения для ядра»): 771 core half closed at f1ef9e94; the build notice's end retry is unproven until the next core build.
-New question (397): move the soul into CLAUDE.md? Answered 399: no (it is already in every session's system part); offered to write
-his manner into his picture (know-the-architect) — waits his yes and his one phrase of what was missing today.
-**16:17 — the domain page round 3 by the skill (Telegram 406–411, card 409) CODED, core build runs** (prebuild RC=0, uncommitted):
-the server page's pattern (H2 ui + muted line ABOVE a bordered card), one rhythm 48/12 px, every row closed, «+ Добавить основной /
-дополнительный домен», all «Подробнее» removed (domain-more.tsx and the dead domain-ladder.client.tsx deleted; ladder-rule test updated),
-the server page renamed «Сервер»; NEW .interface-design/system.md — the admin design system, read first. Also the new partner link
-e702a20c live and b7550dee (the watcher). **On core-back:** eyes of /ru/architect/hosting/domain and /hosting/hosting side by side →
-commit (domain components, sections/kinds/domain-ladder.server.tsx, _components/index.ts, hosting data + i18n, kit.json, ladder-rule test,
-.interface-design/system.md, maps) → Telegram with both screenshots.
-**16:53 — the domain steps on the ladder of «Сервер» (Telegram 423–428, yes 427) CODED, core build runs** (prebuild RC=0, uncommitted):
-components/domain/{domain-pipeline (Ladder, 4 rungs), domain-ns (new), domain-subdomains (new), domain-cards (holder), domain-main
-(live ladder, rung 4)}.client.tsx, domain-list.i18n.ts (pipe t1..subs*), app/api/domain/subdomains/route.ts (new door), node-alerts
-(re-ask on every page move — the red «Активация домена» after activation). Soul d952253c live. **On core-back:** eyes of the domain page
-with a test domain? (the list is empty — throughsongs.com removed by someone, not me) → commit → Telegram with screenshots.
-**17:07 — one main domain + the row + a red remove behind AppDialog (Telegram 434–436) CODED, core build runs** (prebuild RC=0,
-uncommitted: domain-cards (add row only while the main section is empty; «Основной домен:» + large truncated name + badges; red
-«Убрать» → AppDialog), domain-list (dialogUi), sections/kinds/domain-ladder.server.tsx (appDialogUi), node-domains (main-exists),
-domain-list.i18n). 5ea8226e = the ladder. **On core-back:** eyes (row, the dialog via --click «Убрать из списка» on throughsongs.com) →
-commit → Telegram with screenshots.
-**17:27 — throughsongs.com IS the main domain (he activated it ~17:15); round of fixes (Telegram 442–447) CODED, core build runs**
-(prebuild RC=0, uncommitted; baf60169 = one main domain): zoneRootElement (node-domains; activate + subdomains door — root shows the zone),
-Rung `error` → red «!» (ladder-step), DomainSubdomains onResult, «Отключить основной домен» red behind AppDialog (danger-confirm.tsx
-deleted), subdomains door writes logs/domain-subdomains.json → place door webReady + local, OwnerBand: «Перейти в web» only when
-webReady; NEW blue band (via web + place home) «Перейти на компьютер». The copy already maps root → throughsongs.com (measured).
-**On core-back:** eyes of /ru/architect/hosting/domain (rung 4 check by --click «Проверить поддомены», the red/blue mark), the blue
-band at https://architect.throughsongs.com (eyes; needs sign-in? 200 measured earlier) → commit → Telegram.
-**How to work:** load interface-design, use-primitives, use-shadcn first; parts_find before new files; plan in 6 lines to him BEFORE code
-(he is angry at being given something else than asked); screenshot the page (Chrome tab via the extension, `browser_batch`, save_to_disk)
-before the build and after; prebuild RC=0 → `npm run serve:rebuild:detached` → on core-back serve:status, proofs, commit, Telegram with
-screenshots. Then the domain test with him from zero, then 774 (the model law — plan in Telegram 302).
-**Clues.** Button has no asChild — links as `<a className={buttonVariants(...)}>`. `// @api` names 6–12 words. New interface files need
-`// @local …` or `// @part …` + card; repeated long class strings → `check:parts-dup` (extract or `--freeze` honestly). Widgets must not
-read the address bar for the place (`check:place-readers`; the place door gives `via`). Never `git commit -am`. Telegram: only the last
-reply of a turn stays.
+**Where we stand.** throughsongs.com IS the node's main domain (Roma activated it ~17:15); all 11 elements answer on it, the site
+(element root) on throughsongs.com itself, the panel on architect.throughsongs.com (sign-in needed — only Roma signs in). Core live at
+38363e6f. Today's commits, newest first: 38363e6f (root on the zone, red rung `error`, «Отключить» red + AppDialog, «Перейти в web» only
+after rung 4 is all green — logs/domain-subdomains.json → place door `webReady`, `local`; the blue web band «Перейти на компьютер»),
+baf60169 (one main domain), 5ea8226e (domain steps on the ladder of «Сервер», rung 4, NodeAlerts re-asks per page move), d952253c (the
+soul in Roma's words, ~150 words, main/element parts in one file, `soulFor(key)` in modes.cjs), 759ef19f (the page style of «Сервер» +
+.interface-design/system.md), e702a20c (new Contabo partner link), b7550dee/f1ef9e94 (core build told in Telegram, watcher), 771 panel
+(stopped by Roma at 15:09 — «устраивает»).
+**Unseen, said to him:** the red «!» rung (no silent element now); the blue band on the web (needs his sign-in) — he may send a screenshot.
+**Design law (his, 2026-11-17):** read .interface-design/system.md FIRST; send a decision card before any interface code; the page
+«Сервер» is the reference; no «Подробнее»; everything closed by default; destructive = red + AppDialog.
+**Next:** his reaction to 38363e6f; then 774 (the model law) only on his word. Always check the rebuild log after `serve:rebuild:detached`
+(✗ 17:27 it refused — an element deploy was running — and I said «ухожу» without reading it).
 
 ## The person's decisions (verbatim)
 
