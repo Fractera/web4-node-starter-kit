@@ -43,7 +43,11 @@ const flag = (name) => {
   const i = rest.indexOf(`--${name}`)
   return i >= 0 ? rest[i + 1] : undefined
 }
-const positional = rest.filter((a, i) => !a.startsWith('--') && !(i > 0 && rest[i - 1].startsWith('--')))
+// ✗ 2026-11-16 21:00 (the owner asked why): `market --live "telegram"` — the words after a BOOLEAN flag were taken as its value and the
+// query came out empty («the query needs English words»), while every hint tells the agent to write exactly that order. A switch that
+// takes no value never swallows the next word.
+const SWITCHES = new Set(['--live', '--all', '--scripts-yes', '--send', '--wait'])
+const positional = rest.filter((a, i) => !a.startsWith('--') && !(i > 0 && rest[i - 1].startsWith('--') && !SWITCHES.has(rest[i - 1])))
 
 if (cmd === 'add') {
   const dir = resolve(positional[0] ?? '')
