@@ -7,9 +7,9 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Active steps:** 771 — the node panel inside Telegram live (771-1..3, 85fa6a77); 771-4..6 wait for the owner's road (own domain or a core route to elements — measured: only the core is public on the temporary address); 769 — in code, R2 waits his root password (2c3422c4); 761-13 the fresh launch; 1 — the first launch.
 
-**Last change:** 2026-11-17 00:20 UTC — the owner asked about the skills.sh search defect → cause: `scripts/skills.mjs` took the word after any `--flag` as its value, so `market --live "<words>"` (the order every hint teaches) had an empty query; fixed 674e2fb5 (boolean switches take no value), both orders proven; the open store found Mini App skills (sickn33/agentic-awesome-skills@telegram-mini-app 1.8K installs, gramio, ssheleg/telegram-dev, rithprohos) — unread, for 771-5.
+**Last change:** 2026-11-17 00:31 UTC — the panel redesign committed, prebuild RC=0, the core REBUILD STARTED (detached). Limit 5 h at 72 % (resets 00:50).
 
-**Next action:** wait for the owner: his tap on «Пульт» (M2), his root password in 2c3422c4 (769 R2), his road for element apps (771-4..6; then read sickn33@telegram-mini-app before writing our skill).
+**Next action:** after core-back — git clean, signed state call, tell the owner (redesign + Cancel live, ce097d11 waits him in Cloudflare); his «Готово» on ce097d11 → recheck throughsongs.com (PUT /api/domain/list) → activation of the domain on this computer (skill use-domain) → then plan 772.
 
 ## Letter to my next session (written 2026-11-16 ~19:33 UTC, the window at 66 %; a clean start for a debugging task)
 
@@ -41,6 +41,8 @@ file. A test request «by an element» is dropped by me, never left for his pres
 pages without tokens; the extension's selected tab is never his screen. The core main is not pushed (761-9).
 
 ## The person's decisions (verbatim)
+
+- 2026-11-17 00:25 UTC, the owner: «throughsongs.com именно его я хотел предложить на тест на локальном компьютере … пульт … возможно всё-таки нужно было использовать навык? … дизайн не хватает … выключить … красные подтверждение но отменить его никак нельзя» → the domain: recheck says the node's key (…42b1, active) does not see the zone (NS elliot/nena at Cloudflare) — request ce097d11 for his hands (edit the token's zones, or a new token if another account); the panel redesigned + Cancel (see 771 doc).
 
 - 2026-11-17 00:23 UTC, the owner: «Прежде чем расписывать имеет смысл поставить домен так?» → answered 00:26: the domain gates only the phone step (the preview works locally); WHERE matters — (1) this computer: throughsongs.com is in data/node/domains.json, Porkbun, Cloudflare NS, state «not-visible» (the node's Cloudflare key does not see the zone); (2) the server 109.199.105.213 / fractera.ai (761-13) — 24/7 but its own node, and the core main is not pushed to his fork (761-9). My pick (1) for building and testing Mini Apps. Asked: throughsongs.com on this computer?
 
