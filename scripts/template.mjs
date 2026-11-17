@@ -25,7 +25,7 @@
 // elements' repositories — the owner's node has it; elsewhere the push stops at the dry push with ===TEMPLATE_NO_RIGHT=== (the right of
 // a key is proven only by a push). The token is never printed.
 import { execFileSync, execSync } from 'node:child_process'
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 
@@ -70,6 +70,17 @@ function push(dir, repo, tag) {
   const tagCommit = (remote.split('\n').find((l) => l.endsWith(`${tag}^{}`)) ?? '').split(/\s+/)[0]
   if (tagCommit !== git(dir, ['rev-parse', 'HEAD'])) fail('PUSH_FAIL', `tag ${tag} on GitHub is not HEAD`)
 }
+
+// 778: a folder the rollout created for a new file goes away with it — an empty skill folder left behind fails the element's guard
+// (✗ 2026-11-17: «build-skills/telegram-mini-app: нет SKILL.md» after a failed run).
+function dropEmptyParents(dir, rel) {
+  let p = dirname(join(dir, rel))
+  while (p.startsWith(dir) && p !== dir) {
+    try { fs_rmdirIfEmpty(p) } catch { return }
+    p = dirname(p)
+  }
+}
+function fs_rmdirIfEmpty(p) { if (readdirSync(p).length) throw new Error('not empty'); rmdirSync(p) }
 
 // Commit ONE file of the core through a separate index: HEAD's tree plus this blob — nothing else staged rides along.
 function commitOne(rel, content, message) {
@@ -171,7 +182,7 @@ if (cmd === 'rollout') {
   const [version, ...paths] = positional
   const also = (flag('--also') ?? '').split(',').map((s) => s.trim()).filter(Boolean)
   // No template path but --also: publish what the elements changed themselves (an instruction from `npm run instruction:element`).
-  if (!/^v\d+\.\d+\.\d+$/.test(version ?? '') || (!paths.length && !also.length)) fail('USAGE', 'rollout <custom|native> <vX.Y.Z> [<path…>] [--elements a,b] [--keep-own-rows <old tag>] [--also a,b] [--regen <script,…>] [--message "…"] [--dry]')
+  if (!/^v\d+\.\d+\.\d+$/.test(version ?? '') || (!paths.length && !also.length)) fail('USAGE', 'rollout <custom|native> <vX.Y.Z> [<path…>] [--elements a,b] [--keep-own-rows <old tag>] [--also a,b] [--regen <script,…>] [--merge-base <tag>] [--message "…"] [--dry]')
   if (!gitOk(shop, ['rev-parse', `${version}^{commit}`])) fail('FAIL', `the workshop has no tag ${version} — npm run template -- clone ${kind}`)
   const keepFrom = flag('--keep-own-rows')
   // 761-16d: `--append-section "## Heading"` brings one new section of a Markdown file into an element that lacks it, keeping the
@@ -184,6 +195,11 @@ if (cmd === 'rollout') {
   // element's own generator runs after the template's files land, and its output rides along when it is named in `--also`. ✗ 2026-11-17:
   // root's PARTS.json held 6.7 KB of root's own parts the template's copy would have erased (its build would fail check:parts-map).
   const regen = (flag('--regen') ?? '').split(',').map((x) => x.trim()).filter(Boolean)
+  // 778: `--merge-base <the tag the elements were rolled from>` — a file the element changed itself is MERGED with the template's change
+  // (`git merge-file`: base = that tag, ours = the element, theirs = this version), never overwritten; a conflict stops the rollout
+  // naming the file (its own agent merges it). ✗ 2026-11-17: root's own rows of .claude/modes/build.md were erased, its guard failed.
+  const mergeBase = flag('--merge-base')
+  if (mergeBase && !gitOk(shop, ['rev-parse', `${mergeBase}^{commit}`])) fail('FAIL', `the workshop has no tag ${mergeBase}`)
   const registryRel = 'WEB4-ITEMS-REGISTRY/web4-items.json'
   const registry = readJson(join(ROOT, registryRel), { services: [] }).services ?? []
   const want = kind === 'native' ? 'native' : 'custom'
@@ -203,7 +219,7 @@ if (cmd === 'rollout') {
     const restore0 = () => {
       const back = changed.filter((p) => !created.includes(p))
       if (back.length) git(dir, ['checkout', 'HEAD', '--', ...back])
-      for (const p of created) rmSync(join(dir, p), { force: true })
+      for (const p of created) { rmSync(join(dir, p), { force: true }); dropEmptyParents(dir, p) }
     }
     for (const p of paths) {
       let next = gitFile(shop, version, p)
@@ -236,6 +252,21 @@ if (cmd === 'rollout') {
         const rest = next.slice(i + appendHead.length); const end = rest.search(/\n## /)
         next = `${now.replace(/\s*$/, '')}\n\n${appendHead}${end < 0 ? rest : rest.slice(0, end + 1)}`.replace(/\s*$/, '\n')
       }
+      if (mergeBase && now !== null) {
+        let base = null
+        try { base = gitFile(shop, mergeBase, p) } catch { base = null }
+        if (base !== null && base.replace(/\r\n/g, '\n') !== now.replace(/\r\n/g, '\n')) {
+          const tmp = mkdtempSync(join(tmpdir(), 'merge-'))
+          const [o, b0, t] = ['ours', 'base', 'theirs'].map((n) => join(tmp, n))
+          writeFileSync(o, now); writeFileSync(b0, base); writeFileSync(t, next)
+          let clean = true
+          try { execFileSync('git', ['merge-file', '-q', o, b0, t], { stdio: 'ignore', windowsHide: true }) } catch { clean = false }
+          const merged = readFileSync(o, 'utf8')
+          rmSync(tmp, { recursive: true, force: true })
+          if (!clean) { restore0(); fail('FAIL', `${s.id}: ${p} — the element changed it and the merge with ${version} conflicts; leave it out and let its own agent merge it — its files are back as they were`) }
+          next = merged
+        }
+      }
       if (now !== null && now.replace(/\r\n/g, '\n') === next.replace(/\r\n/g, '\n')) continue
       if (now === null) created.push(p)
       // 778: a file the template brings into a folder the element does not have yet (a new branch, a new skill) — the folder first.
@@ -260,17 +291,18 @@ if (cmd === 'rollout') {
     const restore = () => {
       const back = changed.filter((p) => !created.includes(p))
       if (back.length) git(dir, ['checkout', 'HEAD', '--', ...back])
-      for (const p of created) rmSync(join(dir, p), { force: true })
+      for (const p of created) { rmSync(join(dir, p), { force: true }); dropEmptyParents(dir, p) }
     }
-    if (DRY) {
-      restore()
-      const gen = cleanBefore.filter((p) => git(dir, ['status', '--porcelain', '--', p]))
-      if (gen.length) git(dir, ['checkout', 'HEAD', '--', ...gen])
-      console.log(`· ${s.id} ${at}: would change ${all.join(', ')}`); continue
-    }
+    // 778: a generated file that was clean before the rollout comes back from HEAD too (a dry run, a broken guard).
+    const restoreGen = () => { const gen = cleanBefore.filter((p) => git(dir, ['status', '--porcelain', '--', p])); if (gen.length) git(dir, ['checkout', 'HEAD', '--', ...gen]) }
     git(dir, ['add', '--', ...all])
+    // 778: the element's guards run on a dry run as well — a dry «OK» that the real run then refuses costs the person a second paste.
     const broke = runGuards(dir, ELEMENT_GUARDS.filter((g) => existsSync(join(dir, 'scripts', `${g}.mjs`))).map((g) => `node scripts/${g}.mjs`))
-    if (broke) { git(dir, ['reset', '-q', '--', ...all]); restore(); fail('FAIL', `${s.id}: ${broke} — its files are back as they were`) }
+    if (broke) { git(dir, ['reset', '-q', '--', ...all]); restore(); restoreGen(); fail('FAIL', `${s.id}: ${broke} — its files are back as they were`) }
+    if (DRY) {
+      git(dir, ['reset', '-q', '--', ...all]); restore(); restoreGen()
+      console.log(`· ${s.id} ${at}: would change ${all.join(', ')} (its guards are green)`); continue
+    }
     const tag = nextPatch(s.version)
     if (!tag || gitOk(dir, ['ls-remote', '--tags', 'origin', `refs/tags/${tag}`])) fail('FAIL', `${s.id}: no free next tag after ${s.version}`)
     git(dir, ['commit', '-q', '-m', `${message} (template ${kind} ${version})`, '--', ...all])
