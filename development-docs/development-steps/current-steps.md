@@ -7,9 +7,9 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Active steps:** 771 — the node panel inside Telegram live (771-1..3, 85fa6a77); 771-4..6 wait for the owner's road (own domain or a core route to elements — measured: only the core is public on the temporary address); 769 — in code, R2 waits his root password (2c3422c4); 761-13 the fresh launch; 1 — the first launch.
 
-**Last change:** 2026-11-16 23:42 UTC — the core back (75ac93ca), git clean; the «none» step gone (signed call: root step null); menu «Пульт» read back. The FINAL report sent to the owner 23:42 (the panel works; his tap on the phone and 2c3422c4 wait for him; element apps — the road (1) own domain, my pick, or (2) a core route; the skills.sh search defect).
+**Last change:** 2026-11-17 00:20 UTC — the owner asked about the skills.sh search defect → cause: `scripts/skills.mjs` took the word after any `--flag` as its value, so `market --live "<words>"` (the order every hint teaches) had an empty query; fixed 674e2fb5 (boolean switches take no value), both orders proven; the open store found Mini App skills (sickn33/agentic-awesome-skills@telegram-mini-app 1.8K installs, gramio, ssheleg/telegram-dev, rithprohos) — unread, for 771-5.
 
-**Next action:** wait for the owner. His tap on «Пульт» (M2 final); his root password in 2c3422c4 (769 R2); his road for element apps (771-4..6). Open defect: `npm run skills -- market --live` refuses every query («the query needs English words»).
+**Next action:** wait for the owner: his tap on «Пульт» (M2), his root password in 2c3422c4 (769 R2), his road for element apps (771-4..6; then read sickn33@telegram-mini-app before writing our skill).
 
 ## Letter to my next session (written 2026-11-16 ~19:33 UTC, the window at 66 %; a clean start for a debugging task)
 
