@@ -96,6 +96,10 @@ scripts/serve.mjs (start before closeLid, end in agentsBackAfter), lib/node/tg-m
 build is shown while the server is down → the node speaks in Telegram (menu label «⏳ Ядро собирается» + one message edited into the
 result). **On core-back:** check data/node/tg-build.json is gone and logs/tg-menu.json state panel; ask him whether «🔧» came and turned ✅;
 commit; screenshot of the main card with the e-mail (eyes, signed link from scratchpad tgproof.cjs).
+**15:10 — the owner STOPPED the core's Mini App work** (Telegram 396: «на текущий момент меня все здесь устраивает давай остановим
+разработку мини приложения для ядра»): 771 core half closed at f1ef9e94; the build notice's end retry is unproven until the next core build.
+New question (397): move the soul into CLAUDE.md? Answered 399: no (it is already in every session's system part); offered to write
+his manner into his picture (know-the-architect) — waits his yes and his one phrase of what was missing today.
 **How to work:** load interface-design, use-primitives, use-shadcn first; parts_find before new files; plan in 6 lines to him BEFORE code
 (he is angry at being given something else than asked); screenshot the page (Chrome tab via the extension, `browser_batch`, save_to_disk)
 before the build and after; prebuild RC=0 → `npm run serve:rebuild:detached` → on core-back serve:status, proofs, commit, Telegram with
