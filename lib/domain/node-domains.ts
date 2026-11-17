@@ -2,7 +2,7 @@ import "server-only"
 import { mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { isDnsLabel } from "@/lib/web4-items/dns-label.mjs"
-import { accountOfZone, activationCheck, createZone, getIngress, listAccounts, verifyToken, workersAccess, zoneByName } from "@/lib/domain/cloudflare"
+import { accountOfZone, activationCheck, createZone, getIngress, listAccounts, listZones, verifyToken, workersAccess, zoneByName } from "@/lib/domain/cloudflare"
 import { envValue } from "@/lib/web4-items/element-delete"
 
 // ДОМЕНЫ УЗЛА — СПИСОК, А НЕ ОДИН (шаг 324-1). Слово владельца 2026-09-27: «нужно все то что сделано там превратить в карточке
@@ -219,7 +219,7 @@ export async function createDomainZone(name: string, accountId?: string): Promis
 // бывает). Замеряется каждый раз: есть ли ключ и его статус у Cloudflare (`/user/tokens/verify`: active · disabled · expired).
 // Нехватка права создавать зоны — не тревога страницы: она выясняется в момент «Создать зону» и показывается там же.
 export async function nodeKeyState(): Promise<
-  { present: false } | { present: true; tail: string; status: string | null; workers: { scripts: boolean; routes: boolean } | null; tunnel: boolean | null }
+  { present: false } | { present: true; tail: string; status: string | null; workers: { scripts: boolean; routes: boolean } | null; tunnel: boolean | null; id: string | null; zones: string[] | null }
 > {
   const key = envValue("CLOUDFLARE_API_TOKEN")
   if (!key) return { present: false }
@@ -238,7 +238,11 @@ export async function nodeKeyState(): Promise<
     const tunnelId = nodeTunnelId()
     if (acct.ok && tunnelId) tunnel = (await getIngress(key, acct.result, tunnelId)).ok
   }
-  return { present: true, tail: key.slice(-4), status: v.ok ? v.result.status : null, workers, tunnel }
+  // 2026-11-17 (the owner asleep: «сам поставь домен … возможно он в другом аккаунте»): which token this is and which zones it sees —
+  // neither is a secret (the token's id is in its own dashboard address), both answer «why does the key not see my domain».
+  const seen = await listZones(key)
+  const zones = seen.ok ? seen.result.map((z) => z.name).slice(0, 50) : null
+  return { present: true, tail: key.slice(-4), status: v.ok ? v.result.status : null, workers, tunnel, id: v.ok ? v.result.id : null, zones }
 }
 
 /** Убрать дополнительный домен из списка — только если он не подключён к элементу. Зона в Cloudflare не трогается. */

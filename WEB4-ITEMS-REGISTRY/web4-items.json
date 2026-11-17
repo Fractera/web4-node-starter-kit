@@ -214,7 +214,8 @@
       "required": false,
       "note": "Рождён из fractera-custom-item-starter v0.3.211 (319). Самостоятельный проект: установщик его код не трогает.",
       "kind": "user",
-      "port": 24684
+      "port": 24684,
+      "powerChosenAt": "2026-11-17T00:14:50.210Z"
     }
   ]
 }
