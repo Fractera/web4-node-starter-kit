@@ -27,7 +27,7 @@
 import { execFileSync, execSync } from 'node:child_process'
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join, resolve } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 
 const ROOT = resolve(import.meta.dirname, '..')
 const [cmd, kind, ...rest] = process.argv.slice(2)
@@ -171,7 +171,7 @@ if (cmd === 'rollout') {
   const [version, ...paths] = positional
   const also = (flag('--also') ?? '').split(',').map((s) => s.trim()).filter(Boolean)
   // No template path but --also: publish what the elements changed themselves (an instruction from `npm run instruction:element`).
-  if (!/^v\d+\.\d+\.\d+$/.test(version ?? '') || (!paths.length && !also.length)) fail('USAGE', 'rollout <custom|native> <vX.Y.Z> [<path…>] [--elements a,b] [--keep-own-rows <old tag>] [--also a,b] [--message "…"] [--dry]')
+  if (!/^v\d+\.\d+\.\d+$/.test(version ?? '') || (!paths.length && !also.length)) fail('USAGE', 'rollout <custom|native> <vX.Y.Z> [<path…>] [--elements a,b] [--keep-own-rows <old tag>] [--also a,b] [--regen <script,…>] [--message "…"] [--dry]')
   if (!gitOk(shop, ['rev-parse', `${version}^{commit}`])) fail('FAIL', `the workshop has no tag ${version} — npm run template -- clone ${kind}`)
   const keepFrom = flag('--keep-own-rows')
   // 761-16d: `--append-section "## Heading"` brings one new section of a Markdown file into an element that lacks it, keeping the
@@ -180,6 +180,10 @@ if (cmd === 'rollout') {
   const only = flag('--elements') ? new Set(flag('--elements').split(',').map((s) => s.trim())) : null
   const skip = new Set((flag('--skip') ?? '').split(',').map((s) => s.trim()).filter(Boolean))
   const message = flag('--message') ?? `files of the ${kind} template ${version}`
+  // 778: `--regen build-parts-map` — a file an element GENERATES from its own tree (its parts map) is never copied from the template: the
+  // element's own generator runs after the template's files land, and its output rides along when it is named in `--also`. ✗ 2026-11-17:
+  // root's PARTS.json held 6.7 KB of root's own parts the template's copy would have erased (its build would fail check:parts-map).
+  const regen = (flag('--regen') ?? '').split(',').map((x) => x.trim()).filter(Boolean)
   const registryRel = 'WEB4-ITEMS-REGISTRY/web4-items.json'
   const registry = readJson(join(ROOT, registryRel), { services: [] }).services ?? []
   const want = kind === 'native' ? 'native' : 'custom'
@@ -195,6 +199,12 @@ if (cmd === 'rollout') {
     if (at !== s.version) { console.log(`· ${s.id}: HEAD ${at} is not its pin ${s.version} — left alone`); continue }
     const changed = []
     const created = []
+    // 778: the same restore as below, usable before the commit step (a generator that fails leaves nothing behind).
+    const restore0 = () => {
+      const back = changed.filter((p) => !created.includes(p))
+      if (back.length) git(dir, ['checkout', 'HEAD', '--', ...back])
+      for (const p of created) rmSync(join(dir, p), { force: true })
+    }
     for (const p of paths) {
       let next = gitFile(shop, version, p)
       const file = join(dir, p)
@@ -228,8 +238,20 @@ if (cmd === 'rollout') {
       }
       if (now !== null && now.replace(/\r\n/g, '\n') === next.replace(/\r\n/g, '\n')) continue
       if (now === null) created.push(p)
+      // 778: a file the template brings into a folder the element does not have yet (a new branch, a new skill) — the folder first.
+      // ✗ 2026-11-17: the rollout of v0.3.215 stopped with ENOENT on `.claude/skills/build-skills/skills/telegram-mini-app/SKILL.md`.
+      if (now === null) mkdirSync(dirname(file), { recursive: true })
       writeFileSync(file, now !== null && now.includes('\r\n') ? next.replace(/\r?\n/g, '\r\n') : next)
       changed.push(p)
+    }
+    // 778: the element's own generators over the new tree; a generated file that was clean before comes back from HEAD on a dry run.
+    const cleanBefore = also.filter((p) => !git(dir, ['status', '--porcelain', '--', p]))
+    for (const g of regen) {
+      const script = join(dir, 'scripts', `${g}.mjs`)
+      if (!existsSync(script)) { restore0(); fail('FAIL', `${s.id}: no scripts/${g}.mjs to regenerate with — its files are back as they were`) }
+      try { execFileSync(process.execPath, [script], { cwd: dir, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true }) } catch (e) {
+        restore0(); fail('FAIL', `${s.id}: ${g} — ${String(e.stderr || e.message).trim().split('\n').slice(-2).join(' | ').slice(0, 300)} — its files are back as they were`)
+      }
     }
     const alsoChanged = also.filter((p) => git(dir, ['status', '--porcelain', '--', p]))
     const all = [...changed, ...alsoChanged]
@@ -240,7 +262,12 @@ if (cmd === 'rollout') {
       if (back.length) git(dir, ['checkout', 'HEAD', '--', ...back])
       for (const p of created) rmSync(join(dir, p), { force: true })
     }
-    if (DRY) { restore(); console.log(`· ${s.id} ${at}: would change ${all.join(', ')}`); continue }
+    if (DRY) {
+      restore()
+      const gen = cleanBefore.filter((p) => git(dir, ['status', '--porcelain', '--', p]))
+      if (gen.length) git(dir, ['checkout', 'HEAD', '--', ...gen])
+      console.log(`· ${s.id} ${at}: would change ${all.join(', ')}`); continue
+    }
     git(dir, ['add', '--', ...all])
     const broke = runGuards(dir, ELEMENT_GUARDS.filter((g) => existsSync(join(dir, 'scripts', `${g}.mjs`))).map((g) => `node scripts/${g}.mjs`))
     if (broke) { git(dir, ['reset', '-q', '--', ...all]); restore(); fail('FAIL', `${s.id}: ${broke} — its files are back as they were`) }
