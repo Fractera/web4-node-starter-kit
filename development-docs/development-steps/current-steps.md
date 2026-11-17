@@ -33,32 +33,36 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Road 1 (if he still prefers it) — on «Готово · 4c98adeb»; browser turns few, text reads:** `list_connected_browsers`; several and none chosen → `switch_browser` so he presses Connect in the right window (never pick one myself). (1) Admin@fractera.ai's window: My Profile → API Tokens — confirm the node's token (id faf852c9… in its edit address) and read that login's e-mail; (2) Bolshiyanov's window: Manage account → Members → Invite: that e-mail, role Administrator → Invite; (3) Admin@fractera.ai's window: accept the invitation; the token → Edit: Account Resources + Bolshiyanov's account, Zone Resources + throughsongs.com (or all zones of that account) → Continue to summary → Update token (the value stays; never type or copy a token value); (4) the node: PUT /api/domain/list — throughsongs.com must turn visible; activate with his yes; plan 772. `npm run ask-person -- done 4c98adeb` when his press comes from Telegram.
 
-## Letter to my next session (written 2026-11-17 ~11:00 UTC, the window at 58 %, Opus · max)
+## Letter to my next session (written 2026-11-17 11:30 UTC, the window at 63 %, Opus · max)
 
-**Where we stand.** Рома (owner; Russian; he reads me in Telegram, chat 90413601, and sits at this computer). Today: the morning address
-was raised (https://mlb-vip-particles-cached.trycloudflare.com); throughsongs.com was moved by him into the node key's Cloudflare account,
-became the node's MAIN domain at ~10:19 with **0 accounts** (sign-up open to the internet) — he created the architect at 10:39 (the hole
-closed); at 10:52 he DELETED the zone from Cloudflare and asked: «Очищай данные, строй новый конвейер – лестницу для активации домена
-делай новые ядро повторим на тестах». He distrusts Haiku (10:02 «тебе не доверяю»); work on Opus.
-**Built, uncommitted (the paragraph «10:52 UTC (Telegram 319, 320)» above lists it): 773, 775, 776, 777** + DELETE /api/domain/activate.
-The first prebuild failed only on the @api name length (fixed: «connect or disconnect the node's main domain through its tunnel»); the
-second prebuild was running at the time of writing (log: scratchpad prebuild-775b.log, read `RC=` first).
-**Build started 11:03 UTC** after the prebuild went green (scratchpad prebuild-775e.log RC=0; on the way: @api name ≤12 words, the parts map rebuilt, the destructive confirm extracted as the part `danger-confirm` (components/domain/parts.json, dup-debt re-frozen), the badge reads `via` from the place door instead of the address bar). **Next, in order:** prebuild RC=0 → one line to Рома «ухожу на сборку» → `node scripts/spawn-free.mjs` + the core rebuild detached
-(`npm run serve:rebuild:detached` — memory: never chained after tail) → on core-back: `npm run serve:status` → disconnect:
-`curl -s -X DELETE http://localhost:24680/api/domain/activate` → check: logs/domain.json moved aside (logs/domain.removed-*.json), pm2 has
-no fractera-web4-domain, elements on the zone redeploying (logs/deploy-*.log), `npm run tg-app -- menu` → proofs (two planes each):
-773 elementFromPoint at «RU» (20 samples) only the switch, beacon bottom 64 px; 775 the page text: «Основной домен» and (no domain now)
-the path with «+ Добавить домен», the folds closed, no «Росси», «Где зарегистрировать домен» below; 776 the badge «PC-local» orange on
-localhost, the band «Вы на этом компьютере — авторизация не нужна» + «Настройте домен»; 777 `npm run ask-person -- "…" --signin` puts a
-window whose «Открыть» is http://localhost:24681/login?callbackUrl=…&requireRole=architect (no domain now) → eyes screenshots (desktop,
-390) → Telegram to Рома with the screenshots → commit (explicit paths, English) → the domain test with him from zero (he re-adds the
-zone in Cloudflare; the lock shows only without an account — he has one now).
-**Then:** 774 the model law (plan sent in Telegram 302: Opus only for build/quiz/REA; build & REA ≥ high, quiz ≥ xhigh; launch default
-xhigh, texts pass → Opus, the core's .claude/launch-effort.txt → xhigh, resume.cjs markLost not medium; a core hook in the core and every
-element via scripts/element-isolate.mjs; state records free) — his «да» came as «Зафиксируй все эти требования и выполни их».
-**Clues.** Button has no asChild here — links styled as buttons are `<a className={buttonVariants(...)}>`. TS imports .cjs as default
-(`import x from "@/lib/….cjs"`). A door's `// @api` name is 6–12 words. Never `git commit -am`. The architect account must never be
-deleted (the register form: re-registration does not return the role). Telegram: only the last reply of a turn stays.
+**Where we stand.** Рома (owner; Russian; Telegram chat 90413601; he sits at this computer). Committed today: **60a30f90** (773 beacon,
+775 first try, 776 place badge + band, 777 one sign-in link), core build 16e18a46 live. throughsongs.com DISCONNECTED (DELETE
+/api/domain/activate, 11:08; the zone deleted by him in Cloudflare; the list keeps it as not-visible). «Соцсети пользователя» (hrutb)
+DELETED by his word at ~11:25. His architect account exists — never delete it.
+**His verdict 11:27 (Telegram 333): «Моё задание относительно страницы активации домена не было выполнено ни на 1%».** He is right —
+measured on the page: the topics «простыня» (Что меняет постоянный адрес · Ни белого адреса · Пять шагов · Если покупать домен не
+хочется · Сколько это стоит · Что изменится на узле) still renders under the sections; the sections are NOT accordions; «Дополнительные
+домены» is hidden while no main domain. I promised (Telegram 334) to redo it strictly by his scheme:
+  1. the page = ONLY two accordions, each with its own subheading and air between: «Активация основного домена», «Дополнительные домены»
+     — both ALWAYS present;
+  2. inside each — only its fields and buttons; ALL instruction text (incl. the whole topics sheet: `hideTopics` always on this page —
+     app/[lang]/(architectLayer)/architect/hosting/domain/page.tsx, and their words moved into the main section's «Подробнее») folded in
+     «Подробнее» inside its own accordion;
+  3. no word of one section in the other (the pipeline's step-3 text «готов к подключению к элементу» only in the additional section);
+  4. below, after air, one accordion card «Где зарегистрировать домен» (`domain-registrars.client.tsx`); the notes block «Прежде чем
+     полагаться на этот режим» and «Сайт с домашнего компьютера» — move into the main section's «Подробнее» too (nothing else on the page).
+  Design: a domain added in the main section is the main-domain candidate (POST /api/domain/list `{ name, for: "main" }` — a `for` field
+  on the list entry, data/node/domains.json), one added in the additional section is for elements; each section lists its own.
+  Also: DELETE /api/domain/activate should recheck the zone (checkDomain) after disconnecting.
+  His original spec verbatim — the paragraph «10:34–10:38 UTC (Telegram 306, 310, 311)» above.
+**How to work:** load interface-design, use-primitives, use-shadcn first; parts_find before new files; plan in 6 lines to him BEFORE code
+(he is angry at being given something else than asked); screenshot the page (Chrome tab via the extension, `browser_batch`, save_to_disk)
+before the build and after; prebuild RC=0 → `npm run serve:rebuild:detached` → on core-back serve:status, proofs, commit, Telegram with
+screenshots. Then the domain test with him from zero, then 774 (the model law — plan in Telegram 302).
+**Clues.** Button has no asChild — links as `<a className={buttonVariants(...)}>`. `// @api` names 6–12 words. New interface files need
+`// @local …` or `// @part …` + card; repeated long class strings → `check:parts-dup` (extract or `--freeze` honestly). Widgets must not
+read the address bar for the place (`check:place-readers`; the place door gives `via`). Never `git commit -am`. Telegram: only the last
+reply of a turn stays.
 
 ## The person's decisions (verbatim)
 
