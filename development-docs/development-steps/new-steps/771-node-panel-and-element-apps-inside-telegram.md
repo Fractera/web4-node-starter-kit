@@ -67,3 +67,15 @@ Price: two core builds, one custom-template release rolled to the custom element
 - So the element half waits for the owner's choice: connect the own domain first (761 — the fresh launch is on the way), or allow a core
   route that serves an element's Mini App through the core's address. Ready meanwhile: the signature check (telegram-webapp.cjs) the
   verify door would reuse; the skill and the template part are written when the road is chosen.
+
+## Redesign by the skill (the owner 2026-11-17 00:25: «возможно всё-таки нужно было использовать навык? Вот и идея правильная дизайн не
+## хватает … красные подтверждение но отменить его никак нельзя»)
+- Defect: «Выключить» armed a red confirm with no way back. Now a row opens on a tap; turning off asks «Выключить «X»?» with «Отмена» and
+  «Выключить» side by side.
+- interface-design pass: inset grouped lists in Telegram's way and its theme keys (section_bg_color, secondary_bg_color,
+  destructive_text_color); the focal «Ждёт вас» ringed by the accent; the signature — the subscription's fuel gauge under the title;
+  built-in elements fold under «Показать все · N» (shown: those off or running); haptics on taps; reduced motion respected.
+- The open store's telegram-mini-app (sickn33, 1.8K installs) read 00:27: thin, aimed at TON and crypto payments, «risk: critical» —
+  nothing taken.
+- Eyes before the build (a local preview server on 127.0.0.1:41111 forwarding to the door, stopped after): 390 px light
+  logs/eyes/2026-11-17T00-28-07-055Z.png, dark with a row opened logs/eyes/2026-11-17T00-28-11-694Z.png, console clean.
