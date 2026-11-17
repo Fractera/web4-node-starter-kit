@@ -83,5 +83,38 @@ await t('778: an element bot opens the element\'s Mini App (<its HTTPS address>/
   assert.equal(r4.state, 'not-an-element')
 })
 
+const choice = req(join(ROOT, 'lib', 'node', 'tg-app', 'model-choice.cjs'))
+const warn = req(join(ROOT, 'lib', 'agent-kit', 'ultracode-warning.cjs'))
+
+await t('779 P1: the Pult\'s model choice — Opus keeps its effort, Sonnet/Haiku run on medium, Ultracode is Opus · max', () => {
+  assert.deepEqual(choice.modelChoice({ model: 'opus', effort: 'xhigh' }), { ok: true, model: 'opus', effort: 'xhigh', ultracode: false })
+  assert.deepEqual(choice.modelChoice({ model: 'sonnet', effort: 'max' }), { ok: true, model: 'sonnet', effort: 'medium', ultracode: false })
+  assert.deepEqual(choice.modelChoice({ model: 'opus', ultracode: true, confirmed: true }), { ok: true, model: 'opus', effort: 'max', ultracode: true })
+})
+await t('779 P1: refusals — a bad model or effort, Ultracode without the person\'s confirmation or off Opus (negative controls)', () => {
+  assert.equal(choice.modelChoice({ model: 'gpt' }).reason, 'bad-model')
+  assert.equal(choice.modelChoice({ model: 'opus', effort: 'ultra' }).reason, 'bad-effort')
+  assert.equal(choice.modelChoice({ model: 'opus' }).reason, 'bad-effort', 'Opus needs its effort named')
+  assert.equal(choice.modelChoice({ model: 'opus', ultracode: true }).reason, 'ultracode-needs-confirmation')
+  assert.equal(choice.modelChoice({ model: 'opus', ultracode: true, confirmed: 'yes' }).reason, 'ultracode-needs-confirmation', 'only a real true confirms')
+  assert.equal(choice.modelChoice({ model: 'haiku', ultracode: true, confirmed: true }).reason, 'bad-model')
+  assert.equal(choice.modelChoice(null).reason, 'bad-model')
+})
+await t('779: one Ultracode warning for the bot and the Pult, in the owner\'s words, within Telegram\'s popup limit (1–256)', () => {
+  for (const l of ['ru', 'en']) {
+    const w = warn.warning(l)
+    assert.ok(w.length >= 1 && w.length <= 256, `${l}: ${w.length}`)
+    assert.ok(page.html(l).includes(JSON.stringify(w).slice(1, -1)), `${l}: the Pult carries the same text`)
+  }
+  assert.ok(warn.warning('ru').includes('200 $') && warn.warning('ru').includes('любое количество агентов'))
+})
+await t('779: the Pult\'s card — two lists, Ultracode glows, the popup with «Отмена» and «Включить Ultracode», reduced motion stops the pulse', () => {
+  const ru = page.html('ru')
+  assert.ok(ru.includes('tg-app-model-pick') && ru.includes("'ultracode','Ultracode'") && ru.includes('.opt.ultra::after'))
+  assert.ok(ru.includes("web_app_open_popup") && ru.includes("type:'cancel'") && ru.includes("type:'destructive'") && ru.includes('Включить Ultracode'))
+  assert.ok(/prefers-reduced-motion:reduce\)\{[^}]*\.opt\.ultra::after\{animation:none/.test(ru), 'the pulse stops for reduced motion')
+  assert.ok(ru.includes('receiveEvent') && ru.includes('popup_closed'), 'the popup\'s answer is heard')
+})
+
 rmSync(tmp, { recursive: true, force: true })
 console.log(process.exitCode ? `===TG_APP_FAILED=== ${passed} passed` : `===TG_APP_OK=== ${passed} passed`)

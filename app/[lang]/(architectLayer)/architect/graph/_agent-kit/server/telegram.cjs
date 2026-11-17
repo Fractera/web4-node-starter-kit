@@ -586,6 +586,14 @@ function coreOrigin() {
 // сейчас выключен. Включить его, чтобы он ответил? / [Включить и ответить] [Не сейчас — gyr1i получит отказ]»). Кто говорит и
 // кому — словами; «терминал» — внутреннее устройство, человеку говорится «агент включён / выключен». `a` — имя агента элемента
 // (адрес без зоны), `c` — кто спрашивает (одно имя или список через запятую).
+
+// 779: the ultracode warning lives in the core (one text for the bot and the Pult), handed over by lib/agent-kit/mount.cjs — a computed
+// require here would break the core's build (check-agent-kits); read at the moment of asking, a kit without it keeps a plain fallback
+function ultracodeWarning(lang) {
+  const w = globalThis.__web4UltracodeWarning
+  if (w && typeof w.warning === 'function') return w.warning(lang)
+  return lang === 'ru' ? 'Ultracode может быть экстремально дорогим: он создаёт любое количество агентов. Нажимайте, если готовы к бюджету от 200 $.' : 'Ultracode can be extremely expensive: it creates any number of agents. Press only if you are ready for a budget of $200 or more.'
+}
 const ASK = {
   en: {
     oneCall: (a, c) => `Agent ${a} got a question from agent ${c}`,
@@ -602,7 +610,8 @@ const ASK = {
     fxLow: 'Low', fxMedium: 'Medium (default)', fxHigh: 'High', fxXhigh: 'Very high (xhigh)', fxMax: 'Maximum (max)',
     fxUltra: 'Ultracode — workflows with subagents',
     back: 'Choose another model',
-    ultraWarn: 'Warning! Ultracode runs workflows with many subagents that Claude Code Agent manages automatically, with maximum thinking effort. This can lead to extremely high token use.',
+    // 779 (the owner, 2026-11-17, Telegram 462): the same words as the Pult's window — one text, lib/agent-kit/ultracode-warning.cjs
+    get ultraWarn() { return ultracodeWarning('en') },
     ultraGo: 'Continue',
     modeIs: (m) => `Mode: ${m}.`,
     offEmpty: (a) => `Agent ${a} is off. Turn it on?`,
@@ -657,7 +666,7 @@ const ASK = {
     fxLow: 'Низкие — low', fxMedium: 'Средние — medium (по умолчанию)', fxHigh: 'Высокие — high', fxXhigh: 'Очень высокие — xhigh', fxMax: 'Максимальные — max',
     fxUltra: 'Ultracode — рабочие процессы с субагентами',
     back: 'Выбрать другую модель',
-    ultraWarn: 'Внимание! Ultracode запускает рабочие процессы с множеством субагентов, которыми Claude Code Agent управляет автоматически, с максимальной эффективностью размышлений. Это может привести к экстремально высоким расходам токенов.',
+    get ultraWarn() { return ultracodeWarning('ru') },
     ultraGo: 'Продолжить',
     modeIs: (m) => `Режим: ${m}.`,
     offEmpty: (a) => `Агент ${a} выключен. Включить его?`,

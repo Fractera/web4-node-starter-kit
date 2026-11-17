@@ -80,6 +80,7 @@
         "components/hosting/server-launch-cf.client.tsx",
         "components/node-remove/node-remove.client.tsx",
         "components/node-users/batch-bar.client.tsx",
+        "components/node-users/create-user.client.tsx",
         "components/node-users/user-dialog.client.tsx",
         "components/project-types/project-type-marquee.client.tsx",
         "components/request/pre-step-request.client.tsx",
@@ -2904,6 +2905,7 @@
         "components/hosting/server-launch-check.client.tsx",
         "components/hosting/server-launch-end.client.tsx",
         "components/node-users/clamped-chips.client.tsx",
+        "components/node-users/element-admin-picker.client.tsx",
         "components/node-users/node-users.client.tsx",
         "components/node-users/user-dialog.client.tsx",
         "components/payments/stripe-keys.client.tsx",
@@ -3076,6 +3078,7 @@
         "components/ai-elements/web-preview.tsx",
         "components/architect/menu-ai.client.tsx",
         "components/architect/menu-search.client.tsx",
+        "components/architect/person-ask-admin.client.tsx",
         "components/architect/person-ask-card.client.tsx",
         "components/architect/person-ask-secret.client.tsx",
         "components/architect/person-ask.client.tsx",
@@ -3151,6 +3154,9 @@
         "components/node-state/origin-notice.client.tsx",
         "components/node-state/temporary-address-alarm.client.tsx",
         "components/node-users/batch-bar.client.tsx",
+        "components/node-users/create-user.client.tsx",
+        "components/node-users/element-admin-picker.client.tsx",
+        "components/node-users/new-password.client.tsx",
         "components/node-users/node-users.client.tsx",
         "components/node-users/user-dialog.client.tsx",
         "components/official/official-account.client.tsx",
@@ -3314,6 +3320,7 @@
         "components/element-settings/site/editors/feature-switches.client.tsx",
         "components/hosting/server-busy.client.tsx",
         "components/node-remove/node-remove.client.tsx",
+        "components/node-users/create-user.client.tsx",
         "components/node-users/node-users.client.tsx",
         "components/node-users/user-dialog.client.tsx",
         "components/shell/starter-banner.client.tsx"
@@ -3426,7 +3433,8 @@
       "usedBy": [
         "components/ai-elements/prompt-input.tsx",
         "components/dashboard/subscriptions-board.client.tsx",
-        "components/element-settings/site/config/socials-field.client.tsx"
+        "components/element-settings/site/config/socials-field.client.tsx",
+        "components/node-users/element-admin-picker.client.tsx"
       ]
     },
     {
@@ -3582,6 +3590,7 @@
         "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/claude-subscription.client.tsx",
         "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/telegram-channel.client.tsx",
         "components/ai-elements/web-preview.tsx",
+        "components/architect/person-ask-admin.client.tsx",
         "components/auth/google-setup.client.tsx",
         "components/auth/resend-dns.client.tsx",
         "components/auth/resend-setup.client.tsx",
@@ -3608,6 +3617,7 @@
         "components/hosting/server-launch-telegram.client.tsx",
         "components/hosting/server-launch.client.tsx",
         "components/node-remove/node-remove.client.tsx",
+        "components/node-users/create-user.client.tsx",
         "components/node-users/user-dialog.client.tsx",
         "components/official/official-account.client.tsx",
         "components/payments/stripe-keys.client.tsx",
@@ -3644,8 +3654,11 @@
         "components/ai-elements/prompt-input.tsx",
         "components/architect/menu-ai.client.tsx",
         "components/architect/menu-search.client.tsx",
+        "components/architect/person-ask-admin.client.tsx",
         "components/architect/person-ask-secret.client.tsx",
-        "components/dashboard/subscriptions-today.client.tsx"
+        "components/dashboard/subscriptions-today.client.tsx",
+        "components/node-users/create-user.client.tsx",
+        "components/node-users/new-password.client.tsx"
       ]
     },
     {
@@ -3695,6 +3708,7 @@
         "app/[lang]/(architectLayer)/architect/storage/_agent-kit/client/telegram-channel.client.tsx",
         "app/[lang]/(architectLayer)/architect/stripe/_agent-kit/client/telegram-channel.client.tsx",
         "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/telegram-channel.client.tsx",
+        "components/architect/person-ask-admin.client.tsx",
         "components/architect/person-ask-secret.client.tsx",
         "components/auth/google-setup.client.tsx",
         "components/auth/resend-setup.client.tsx",
@@ -3707,6 +3721,9 @@
         "components/element-settings/site/editors/feature-switches.client.tsx",
         "components/hosting/server-busy.client.tsx",
         "components/node-remove/node-remove.client.tsx",
+        "components/node-users/create-user.client.tsx",
+        "components/node-users/element-admin-picker.client.tsx",
+        "components/node-users/new-password.client.tsx",
         "components/node-users/user-dialog.client.tsx",
         "components/shell/starter-banner.client.tsx"
       ]
@@ -4051,6 +4068,7 @@
         "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/telegram-channel.client.tsx",
         "components/ai-elements/prompt-input.tsx",
         "components/architect/menu-ai.client.tsx",
+        "components/architect/person-ask-admin.client.tsx",
         "components/architect/person-ask-secret.client.tsx",
         "components/dashboard/a2a-feed.client.tsx",
         "components/deploy/deploy-board.client.tsx",
@@ -4061,6 +4079,8 @@
         "components/hosting/stage-log.tsx",
         "components/node-remove/node-remove.client.tsx",
         "components/node-state/node-state.client.tsx",
+        "components/node-users/create-user.client.tsx",
+        "components/node-users/new-password.client.tsx",
         "components/node-users/node-users.client.tsx",
         "components/official/official-account.client.tsx",
         "components/payments/stripe-keys.client.tsx",
@@ -4134,7 +4154,8 @@
         "components/hosting/dns-records.tsx",
         "components/hosting/server-certificates.client.tsx",
         "components/hosting/server-ladder-records.client.tsx",
-        "components/hosting/server-launch-end.client.tsx"
+        "components/hosting/server-launch-end.client.tsx",
+        "components/node-users/user-dialog.client.tsx"
       ]
     },
     {

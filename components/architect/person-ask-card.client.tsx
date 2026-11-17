@@ -7,10 +7,11 @@ import { ChevronLeft, ChevronRight, Copy } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import type { PersonAskUi } from "./person-ask.i18n"
 import { PersonAskSecret } from "./person-ask-secret.client"
+import { PersonAskAdmin } from "./person-ask-admin.client"
 import { useNodePlace } from "@/components/node-state/use-node-place.client"
 import signIn from "@/lib/auth/sign-in-link.cjs"
 
-export type AskSecret = { kind: "env" | "openai" | "server-root"; name?: string; where?: string | null; host?: string; port?: number }
+export type AskSecret = { kind: "env" | "openai" | "server-root" | "element-admin"; name?: string; where?: string | null; host?: string; port?: number; element?: string; role?: string; label?: string }
 export type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; copy?: string | null; byName?: string | null; secret?: AskSecret | null; signin?: "architect" | null }
 
 type Props = {
@@ -67,7 +68,10 @@ export function PersonAskCard({ ask, index, total, ui, busy, url, onStep, onColl
         )}
       </div>
       {/* 768: a secret is typed here and «Сохранить» closes the request — no «Готово» without it */}
-      {ask.secret && <PersonAskSecret ask={ask} ui={ui} url={url} onSaved={onSaved} />}
+      {/* 778-3: a newborn element's admin — e-mail, password and «Пропустить» */}
+      {ask.secret && (ask.secret.kind === "element-admin"
+        ? <PersonAskAdmin ask={ask} ui={ui} url={url} onSaved={onSaved} />
+        : <PersonAskSecret ask={ask} ui={ui} url={url} onSaved={onSaved} />)}
       <div className="flex flex-wrap items-center justify-end gap-2" data-block="person-ask-actions">
         <Button type="button" variant="ghost" size="sm" onClick={onCollapse}>{ui.collapse}</Button>
         {href && (

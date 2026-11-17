@@ -57,6 +57,11 @@ export type NodeUsersUi = {
   anonymizeDo: string
   logActions: Record<string, string>
   walletBad: string
+  // 778-3: the element's admins by name, «+ Создать пользователя», «Новый пароль»
+  adminGroup: string
+  admins: { label: string; none: string; add: string; remove: string; chip: string }
+  create: { button: string; title: string; submit: string; password: string; show: string; hide: string; rule: string; done: string; partly: string; reasons: Record<string, string> }
+  newPassword: { label: string; save: string; ask: string; confirm: string; cancel: string; done: string; show: string; hide: string; rule: string; failed: string; reasons: Record<string, string> }
 }
 
 const EN: NodeUsersUi = {
@@ -111,6 +116,19 @@ const EN: NodeUsersUi = {
   anonymizeDo: "Delete",
   logActions: { created: "created", signed_in: "signed in", roles_changed: "roles changed", blocked: "blocked", unblocked: "unblocked", anonymized: "anonymized", profile_changed: "profile changed", method_linked: "sign-in method linked", org_added: "added to an organization", org_removed: "removed from an organization", consent_changed: "consent changed", messenger_contact: "Messenger contact" },
   walletBad: "An address 0x followed by 40 hex characters.",
+  adminGroup: "Element admin",
+  admins: { label: "Element admin", none: "None — only the architect", add: "Add an element", remove: "Remove", chip: "Admin: {name}" },
+  create: {
+    button: "Create a user", title: "Create a user", submit: "Create", password: "Password", show: "Show", hide: "Hide",
+    rule: "8–200 characters. The person signs in with this e-mail and password.", done: "The user {email} is created",
+    partly: "The user is created, but some element-admin roles were not given: {missed}. Add them in the user's window.",
+    reasons: { "email-taken": "this e-mail already has an account", Forbidden: "only the architect may do it", "password-length": "the password is 8–200 characters" },
+  },
+  newPassword: {
+    label: "New password", save: "Save", ask: "Set a new password for {who}? The old one stops working.", confirm: "Set the password", cancel: "Cancel",
+    done: "The new password is set", show: "Show", hide: "Hide", rule: "8–200 characters, one line.", failed: "The password was not set: {reason}",
+    reasons: { self: "your own password is changed on the sign-in page", Forbidden: "only the architect sets a password", "password-length": "the password is 8–200 characters" },
+  },
 }
 
 const RU: NodeUsersUi = {
@@ -165,6 +183,19 @@ const RU: NodeUsersUi = {
   anonymizeDo: "Удалить",
   logActions: { created: "создан", signed_in: "вход", roles_changed: "роли изменены", blocked: "заблокирован", unblocked: "разблокирован", anonymized: "обезличен", profile_changed: "профиль изменён", method_linked: "привязан способ входа", org_added: "добавлен в организацию", org_removed: "убран из организации", consent_changed: "согласие изменено", messenger_contact: "контакт Messenger" },
   walletBad: "Адрес 0x и 40 шестнадцатеричных знаков.",
+  adminGroup: "Админ элемента",
+  admins: { label: "Админ элементов", none: "Нет — только архитектор", add: "Добавить элемент", remove: "Убрать", chip: "Админ: {name}" },
+  create: {
+    button: "Создать пользователя", title: "Создать пользователя", submit: "Создать", password: "Пароль", show: "Показать", hide: "Скрыть",
+    rule: "От 8 до 200 знаков. С этим e-mail и паролем человек войдёт.", done: "Пользователь {email} создан",
+    partly: "Пользователь создан, но часть ролей админа не выдана: {missed}. Добавьте их в окне пользователя.",
+    reasons: { "email-taken": "на этот e-mail уже есть аккаунт", Forbidden: "это может только архитектор", "password-length": "пароль — от 8 до 200 знаков" },
+  },
+  newPassword: {
+    label: "Новый пароль", save: "Сохранить", ask: "Поставить новый пароль пользователю {who}? Старый перестанет работать.", confirm: "Поставить пароль", cancel: "Отмена",
+    done: "Новый пароль поставлен", show: "Показать", hide: "Скрыть", rule: "От 8 до 200 знаков, одной строкой.", failed: "Пароль не поставлен: {reason}",
+    reasons: { self: "свой пароль меняется на странице входа", Forbidden: "пароль ставит только архитектор", "password-length": "пароль — от 8 до 200 знаков" },
+  },
 }
 
 export function nodeUsersUi(lang: string): NodeUsersUi {

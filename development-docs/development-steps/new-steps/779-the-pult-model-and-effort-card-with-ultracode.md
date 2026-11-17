@@ -6,7 +6,7 @@ The owner, 2026-11-17 17:55, Telegram 462, verbatim: «Одновременно 
 информационное окно сообщающее что этот режим может быть экстремально дорогой ему разрешается создавать любое количество агентов для
 решения задачи от начала и до конца. Нажимайте если вы готовы работать с бюджетом от 200 $.»
 
-Status: the decision card sent (18:0x), waits his «да»; no code.
+Status: 2026-11-17 21:22 UTC the owner (terminal, to the retold card 523): «1 да, 2 да» → BUILT 22:1x–22:4x (uncommitted until the core build and proofs).
 
 ## Facts (measured 18:00)
 - The card: `lib/node/tg-app/page.cjs` `mainAgent(a)` — «Главный агент», `modelLine` («Opus · усилие max»), account line, the state tag;
@@ -47,3 +47,21 @@ Status: the decision card sent (18:0x), waits his «да»; no code.
 - P4 live (his tap): Ultracode → the popup; «Отмена» changes nothing; «Включить» → «Opus · max · ultracode», Claude Code shows it.
 - P5 the switch waits for the end of the turn and never cuts it.
 Price: one core build.
+
+## Built (22:1x–22:4x UTC) and decided on the way
+- Measured from the primary source (telegram-web-app.js, fetched 2026-11-17 22:2x): the popup — title ≤ 64, message 1–256, buttons 1–3,
+  types ok/close/cancel (no text) or default/destructive (text 1–64), id ≤ 64; `showPopup` needs version 6.2+; events reach a page through
+  `window.Telegram.WebView.receiveEvent`, `TelegramGameProxy.receiveEvent` / `TelegramGameProxy_receiveEvent`, or a `message` event with
+  `{eventType, eventData}` (web clients) — `popup_closed` carries `button_id`.
+- 779-1 the master kit's bridge `sessionCommand` takes `ultracode` (Opus only, effort forced max), joins a pending switch, passes it to
+  `spawnAgent`; the node-key door `/api/agents/session` never passes it — the agent cannot turn ultracode on itself. `agent-kit:update`
+  run for all 12 groups.
+- 779-2 `lib/node/tg-app/model-choice.cjs` (pure check) + the door's action `model` → `__web4AgentSession('build', …)`; no wake line
+  (the person writes next); no session → 409 `no-session` («включите его в боте командой /on»).
+- 779-3 the card: closed by default, a tap opens two own lists (Model: Opus/Sonnet/Haiku/Ultracode · Effort: low…max), effort only for
+  Opus (Sonnet/Haiku medium, Ultracode max, a note says it); «Переключить» only when the choice differs; then «Переключусь на …, когда
+  закончу текущий ход» until the state shows the new model. DECIDED: the popup's «Включить Ultracode» switches at once (it IS the
+  confirmation; no second «Переключить» for it). Outside Telegram or before 6.2 — the same words inline with «Отмена» / red «Включить
+  Ultracode». The glow animates opacity only (a ::after ring), reduced motion — a still ring.
+- One warning text: `lib/agent-kit/ultracode-warning.cjs` (ru 191, en 177 characters), read by the Pult and the bot's `ultraWarn`.
+- Tests: scripts/tg-app.test.mjs 11/11 (P1 as a pure check; forged/foreign signatures are the 768-4 tests of telegram-webapp.cjs).

@@ -6,13 +6,15 @@ import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Spinner } from "@/components/ui/spinner"
 import { ServerTableTools, SERVER_PER_PAGE, type ServerTableQuery } from "@/components/table/server-table-tools.client"
 import { ALL_ROLES } from "@/lib/roles"
 import type { TableUi } from "@/sections/table.i18n"
 import type { NodeUsersUi } from "./node-users.i18n"
 import { BatchBar } from "./batch-bar.client"
+import { CreateUser } from "./create-user.client"
+import { roleLabel, useElementAdmins } from "./use-element-admins.client"
 import { ClampedChips } from "./clamped-chips.client"
 import { UserDialog } from "./user-dialog.client"
 
@@ -42,6 +44,8 @@ export function NodeUsers({ lang, ui, table, dialogUi }: { lang: string; ui: Nod
   const [state, setState] = useState<State>({ kind: "loading" })
   const [orgs, setOrgs] = useState<Org[]>([])
   const [busy, setBusy] = useState(false)
+  // 778-3: the element-admin roles by element name — chips «Админ: <название>», the filter's group, the windows' «Админ элементов»
+  const admins = useElementAdmins(lang)
 
   const load = useCallback(async () => {
     setBusy(true)
@@ -124,7 +128,7 @@ export function NodeUsers({ lang, ui, table, dialogUi }: { lang: string; ui: Nod
         {/* 554-5, ширины по слову владельца: роли — до 200 px, две строки; организации — колонка 400 px, плашка до 180 px, две строки
             (приложение завода — первой); способы входа — до 200 px, одна строка. */}
         {/* 559-7: своя ширина = пределу плашек. ✗ Без неё широкая таблица сжимала колонку до 97 px, и роли вставали в 4 ряда. */}
-        <td className={`${cell} w-[200px] min-w-[200px]`} data-col="roles"><ClampedChips items={r.roles} maxWidth={200} chipMaxWidth={200} /></td>
+        <td className={`${cell} w-[200px] min-w-[200px]`} data-col="roles"><ClampedChips items={r.roles.map((x) => roleLabel(x, admins, ui.admins.chip))} maxWidth={200} chipMaxWidth={200} /></td>
         <td className={`${cell} w-[400px] min-w-[400px] max-w-[400px]`} data-col="orgs">
           {r.orgs.length
             ? <ClampedChips items={[...r.orgs].sort((a, b) => Number(!!b.element) - Number(!!a.element)).map((o) => o.name)} maxWidth={400} chipMaxWidth={180} />
@@ -168,6 +172,13 @@ export function NodeUsers({ lang, ui, table, dialogUi }: { lang: string; ui: Nod
         <SelectContent>
           <SelectItem value={ANY}>{ui.filterRole}: {ui.any}</SelectItem>
           {ALL_ROLES.map((role) => <SelectItem key={role} value={role}>{role}</SelectItem>)}
+          {admins.length > 0 && <SelectSeparator />}
+          {admins.length > 0 && (
+            <SelectGroup data-filter-group="element-admin">
+              <SelectLabel>{ui.adminGroup}</SelectLabel>
+              {admins.map((a) => <SelectItem key={a.role} value={a.role}>{a.name}</SelectItem>)}
+            </SelectGroup>
+          )}
         </SelectContent>
       </Select>
       <Select value={filters.sort} onValueChange={(v) => setFilter({ sort: v as Filters["sort"] })}>
@@ -179,6 +190,7 @@ export function NodeUsers({ lang, ui, table, dialogUi }: { lang: string; ui: Nod
           <SelectItem value="created_asc">{ui.sortOldest}</SelectItem>
         </SelectContent>
       </Select>
+      <CreateUser ui={ui} dialogUi={dialogUi} admins={admins} onCreated={() => { void load(); void loadOrgs() }} />
     </>
   )
 
@@ -186,7 +198,7 @@ export function NodeUsers({ lang, ui, table, dialogUi }: { lang: string; ui: Nod
     <div className="flex max-w-6xl flex-col" data-node-users={state.total}>
       <ServerTableTools
         above={selected.length > 0
-          ? <BatchBar ids={selected} orgs={orgs} ui={ui} dialogUi={dialogUi} onClear={() => setSelected([])} onDone={() => { setSelected([]); void load(); void loadOrgs() }} />
+          ? <BatchBar ids={selected} orgs={orgs} admins={admins} ui={ui} dialogUi={dialogUi} onClear={() => setSelected([])} onDone={() => { setSelected([]); void load(); void loadOrgs() }} />
           : null}
         columns={9}
         filters={filterBar}
@@ -206,6 +218,7 @@ export function NodeUsers({ lang, ui, table, dialogUi }: { lang: string; ui: Nod
         <UserDialog
           user={editing}
           orgs={orgs}
+          admins={admins}
           ui={ui}
           dialogUi={dialogUi}
           lang={lang}

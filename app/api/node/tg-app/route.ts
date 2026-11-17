@@ -6,6 +6,7 @@ import asks from "@/lib/node/person-asks.cjs"
 import asksTg from "@/lib/node/person-asks-telegram.cjs"
 import webapp from "@/lib/node/telegram-webapp.cjs"
 import page from "@/lib/node/tg-app/page.cjs"
+import { modelChoice } from "@/lib/node/tg-app/model-choice.cjs"
 import { tgState } from "@/lib/node/tg-app/state"
 import { closeAsk, saveSecret, type Ask } from "@/lib/node/person-secret-save"
 import { powerState, runElementPower } from "@/lib/web4-items/run-element-power"
@@ -29,7 +30,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   if (!(req.headers.get("content-type") ?? "").toLowerCase().startsWith("application/json")) return no("json-only", 415)
-  const body = (await req.json().catch(() => null)) as { initData?: unknown; action?: unknown; id?: unknown; secret?: unknown; power?: unknown; reason?: unknown } | null
+  const body = (await req.json().catch(() => null)) as { initData?: unknown; action?: unknown; id?: unknown; secret?: unknown; admin?: unknown; skip?: unknown; power?: unknown; reason?: unknown; model?: unknown; effort?: unknown; ultracode?: unknown; confirmed?: unknown } | null
   const bot = asksTg.bot(ROOT, "build")
   if (!bot) return no("no-bot", 409)
   const signed = webapp.check(typeof body?.initData === "string" ? body.initData : "", bot.token, { allow: bot.chats, maxAgeS: DAY_S })
@@ -50,11 +51,29 @@ export async function POST(req: NextRequest) {
       await closeAsk(id, { via: "telegram" })
       return NextResponse.json({ ok: true }, { headers: HEADERS })
     }
-    if (ask.secret?.kind !== "env" && ask.secret?.kind !== "openai") return no("computer-only", 400)
-    const r = await saveSecret(ask, body?.secret)
+    if (!ask.secret?.kind || !asks.TELEGRAM_FORM.has(ask.secret.kind)) return no("computer-only", 400)
+    // 778-3: a newborn element's admin — `admin: { email, password? }` or `skip: true` (the Pult is the architect's own: his bot's signature)
+    const admin = ask.secret?.kind === "element-admin"
+    const r = await saveSecret(ask, admin ? body?.admin : body?.secret, { skip: admin && body?.skip === true })
     if (!r.ok) return no(r.reason, r.status)
     await closeAsk(id, { saved: r.saved, via: "telegram" })
-    return NextResponse.json({ ok: true, tail: r.saved.tail }, { headers: HEADERS })
+    return NextResponse.json({ ok: true, tail: r.saved.tail, ...(r.saved.admin ? { admin: r.saved.admin } : {}) }, { headers: HEADERS })
+  }
+
+  // 779-2 (the owner, 2026-11-17, Telegram 462): the main agent's model and effort from the Pult's card. Opus takes the chosen effort,
+  // Sonnet and Haiku run on medium (as the bot gives them, 666); Ultracode only with the person's «Включить» in its warning
+  // (`confirmed: true`) — the Telegram confirmation CLAUDE.md §6 asks before subagents; always Opus · max. The bridge switches when the
+  // current turn ends and the same conversation goes on; nobody is woken by a line — the person writes next.
+  if (action === "model") {
+    const choice = modelChoice(body)
+    if (!choice.ok) return no(choice.reason, 400)
+    const { model, effort, ultracode } = choice
+    const command = (globalThis as { __web4AgentSession?: (service: string, opts: Record<string, unknown>) => Record<string, unknown> & { ok: boolean } }).__web4AgentSession
+    if (typeof command !== "function") return no("no-agent-kit", 503)
+    const out = command("build", { action: "model", model, effort, ...(ultracode ? { ultracode: true } : {}) })
+    console.log(`[node/tg-app] model ${model} · ${effort}${ultracode ? " · ultracode (confirmed)" : ""} from Telegram → ${out.ok ? `scheduled${out.joined ? ", joined" : ""}` : out.reason}`)
+    if (!out.ok) return no(String(out.reason ?? "refused"), out.reason === "no-session" ? 409 : 400)
+    return NextResponse.json({ ok: true, model, effort, ultracode }, { headers: HEADERS })
   }
 
   if (action === "power") {

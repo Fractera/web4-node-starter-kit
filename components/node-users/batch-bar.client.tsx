@@ -4,10 +4,11 @@ import { useState } from "react"
 import { AppDialog } from "@/components/dialog/app-dialog.client"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ALL_ROLES } from "@/lib/roles"
 import type { NodeUsersUi } from "./node-users.i18n"
 import type { Org } from "./node-users.client"
+import type { ElementAdmin } from "./use-element-admins.client"
 
 // ПАКЕТНЫЕ ДЕЙСТВИЯ НАД ВЫБРАННЫМИ СТРОКАМИ (узел, шаг 559-5). Слово владельца: «Любое действие пакетное для экономии ресурсов после
 // дополнительного подтверждения». Выбор → действие (и роль или организация, если нужно) → окно подтверждения с числом людей → один
@@ -22,8 +23,8 @@ const DOOR: Record<Act, { action: string; value?: unknown }> = {
   noTracking: { action: "tracking", value: false }, anonymize: { action: "anonymize" },
 }
 
-export function BatchBar({ ids, orgs, ui, dialogUi, onClear, onDone }: {
-  ids: string[]; orgs: Org[]; ui: NodeUsersUi; dialogUi: AppDialogUi; onClear: () => void; onDone: () => void
+export function BatchBar({ ids, orgs, admins, ui, dialogUi, onClear, onDone }: {
+  ids: string[]; orgs: Org[]; admins: ElementAdmin[]; ui: NodeUsersUi; dialogUi: AppDialogUi; onClear: () => void; onDone: () => void
 }) {
   const [act, setAct] = useState<Act | "">("")
   const [arg, setArg] = useState("")
@@ -70,7 +71,17 @@ export function BatchBar({ ids, orgs, ui, dialogUi, onClear, onDone }: {
       {need === "role" && (
         <Select value={arg} onValueChange={setArg}>
           <SelectTrigger className="h-9 w-44" aria-label={ui.pickRole}><SelectValue placeholder={ui.pickRole} /></SelectTrigger>
-          <SelectContent>{ALL_ROLES.filter((r) => r !== "guest").map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
+          <SelectContent>
+            {ALL_ROLES.filter((r) => r !== "guest").map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+            {/* 778-3: the element-admin roles by element name — the 980 never; only the architect may give or take them (the sign-in says so) */}
+            {admins.length > 0 && <SelectSeparator />}
+            {admins.length > 0 && (
+              <SelectGroup>
+                <SelectLabel>{ui.adminGroup}</SelectLabel>
+                {admins.map((a) => <SelectItem key={a.role} value={a.role}>{a.name}</SelectItem>)}
+              </SelectGroup>
+            )}
+          </SelectContent>
         </Select>
       )}
       {need === "org" && (

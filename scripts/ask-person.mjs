@@ -1,6 +1,7 @@
 // npm run ask-person -- "<what to do, in the person's language>" [--href </ru/…|https://…>] [--why "<why only the person>"]
 //   [--hint "<what may pop up on the way and what to press>"] [--copy "<a command the person pastes — the window gives it a copy button>"]
 //   [--secret server-root --host <ip> [--port 22]]   768: the person types the server's root password in the window's masked field
+//   [--secret element-admin --element <id>]   778-3: the admin of a custom element — e-mail and password, or «Пропустить» (the birth puts it itself)
 //   [--signin]   777: «sign in as the architect» — the button's link is built by the node's one builder (lib/auth/sign-in-link.cjs):
 //                the sign-in form with the way back to the same panel page on the node's own domain; never an --href of yours
 // npm run ask-person -- list | drop <id> | done <id>   (done: the person answered «Готово · <id>» in Telegram — you close it, no wake)
@@ -25,7 +26,8 @@ if (args[0] === 'list') {
   // the person pressed «Готово · <id>» in Telegram and it reached you as their message: close it here (you are awake — no wake)
   const id = tg.doneId(args.slice(1).join(' ')) ?? args[1] ?? ''
   // 768: a key is saved only by the window's field — «Готово» without it would close the request with nothing written
-  if (asks.open(ROOT).find((x) => x.id === id)?.secret?.kind === 'env') { console.log(`===ASK_REFUSED=== ${id} waits for a key typed in the window — it closes itself when the person saves it`); process.exit(1) }
+  const waits = asks.open(ROOT).find((x) => x.id === id)?.secret?.kind
+  if (waits === 'env' || waits === 'element-admin') { console.log(`===ASK_REFUSED=== ${id} waits for ${waits === 'env' ? 'a key' : 'the admin\'s e-mail and password (or «Пропустить»)'} typed in the window — it closes itself when the person saves it`); process.exit(1) }
   const a = asks.done(ROOT, id)
   const sent = a ? await tg.closed(ROOT, a, 'taken').catch((e) => String(e)) : null
   console.log(a ? `===ASK_DONE=== ${a.id} «${a.text}» — the window is closed (telegram: ${sent}); check the result yourself, then go on` : `===ASK_ALREADY=== ${id} is not open (closed in the panel already, or unknown) — tell the person it was already done`)
@@ -44,8 +46,16 @@ if (args[0] === 'list') {
   const secretKind = flag('--secret')
   const host = flag('--host')
   const port = flag('--port')
+  const element = flag('--element')
   try {
-    if (secretKind && secretKind !== 'server-root' && secretKind !== 'openai') throw new Error(`--secret ${secretKind}: the main agent asks server-root (--host <ip> [--port 22]) or openai (the node's OpenAI key); an element's key is asked by that element`)
+    // 778-3: the admin of a custom element — its own module puts the request (the role from the registry, the name for people)
+    if (secretKind === 'element-admin') {
+      const out = await req(join(ROOT, 'lib', 'node', 'element-admin-ask.cjs')).askElementAdmin(ROOT, element ?? '')
+      if (!out.ok) throw new Error(`--secret element-admin --element <id>: ${out.reason}`)
+      console.log(`===ASK_PUT=== ${out.id}${out.already ? ' (already waiting)' : ''} — the admin of ${element}: the window in the panel${out.telegram ? ', and in Telegram with the form' : ''}; the e-mail and the password go straight to the sign-in, or «Пропустить» leaves the role to the architect. Nobody is woken when it closes.`)
+      process.exit(0)
+    }
+    if (secretKind && secretKind !== 'server-root' && secretKind !== 'openai') throw new Error(`--secret ${secretKind}: the main agent asks server-root (--host <ip> [--port 22]), openai (the node's OpenAI key) or element-admin (--element <id>); an element's key is asked by that element`)
     const secret = secretKind === 'openai' ? { kind: 'openai' } : secretKind ? { kind: 'server-root', host, port: port ? Number(port) : 22 } : null
     if (signin && href) throw new Error('--signin builds its own link (the way back to the panel on the domain): drop --href')
     const a = asks.add(ROOT, { text: args.join(' '), href, why, hint, copy, secret, signin })

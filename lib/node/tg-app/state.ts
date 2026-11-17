@@ -17,14 +17,14 @@ const ROOT = process.cwd()
 type Lang = "en" | "ru"
 type Entry = { id: string; kind?: string; required?: boolean; born?: boolean }
 type Pulse = { event?: string; at?: string; last?: string; error?: string }
-export type TgAsk = { id: string; text: string; why: string | null; hint: string | null; copy: string | null; by: string; byName: string | null; at: string; secret: { kind: string; name?: string; host?: string } | null }
+export type TgAsk = { id: string; text: string; why: string | null; hint: string | null; copy: string | null; by: string; byName: string | null; at: string; secret: { kind: string; name?: string; host?: string; label?: string } | null }
 /**
  * The agent of an element or of the core (the owner, 2026-11-17: «на какой модели и с каким усилием работает главный агент … внутри каждого
  * элемента … аккаунт, модель, усилия … агент программирует, агент ожидает, агент спит … кнопка серая или активная собственный Telegram бот»).
  * Read from the node's records: the model and effort from the session's settings, the account from the agent's pulse, the bot from its
  * channel. `null` — not known yet (the default model, an agent that never ran).
  */
-export type TgAgent = { mode: "coding" | "waiting" | "sleeping"; model: string | null; effort: string | null; account: "node" | "own" | null; email: string | null; bot: string | null }
+export type TgAgent = { mode: "coding" | "waiting" | "sleeping"; model: string | null; effort: string | null; ultracode: boolean; account: "node" | "own" | null; email: string | null; bot: string | null }
 export type TgElement = { build: "building" | "queued" | null; id: string; name: string; native: boolean; required: boolean; on: boolean; offReason: string | null; live: boolean; step: string | null; turn: { event: string; at: string; last: string | null } | null; agent: TgAgent }
 /**
  * 2026-11-17 (the owner: «пульт как будто бы заморожен на определённом аккаунте»): a limit is measured only by an agent's turn (Claude Code
@@ -67,7 +67,7 @@ function turnOf(id: string): TgElement["turn"] {
 
 function agentOf(id: string, live: boolean): TgAgent {
   const dir = join(ROOT, "data", "services", id)
-  const mode = readJson<{ running?: boolean; model?: string; effort?: string }>(join(dir, "session-mode.json"), {})
+  const mode = readJson<{ running?: boolean; model?: string; effort?: string; ultracode?: boolean }>(join(dir, "session-mode.json"), {})
   const pulse = readJson<{ last?: Pulse & { login?: string } }>(join(dir, "pulse.json"), {}).last
   const running = live || mode.running === true
   const login = pulse?.login
@@ -76,6 +76,8 @@ function agentOf(id: string, live: boolean): TgAgent {
     mode: !running ? "sleeping" : pulse?.event === "turn-start" ? "coding" : "waiting",
     model: typeof mode.model === "string" && mode.model ? mode.model : null,
     effort: typeof mode.effort === "string" && mode.effort ? mode.effort : null,
+    // 779: the Pult's card shows Ultracode as the model when the running session was born with it
+    ultracode: running && mode.ultracode === true,
     account: login === "node" ? "node" : typeof login === "string" && login.startsWith("own-") ? "own" : null,
     // 2026-11-17 (the owner: «указать … главный агент на каком аккаунте он работает то есть имейл»): the node's subscription — the e-mail of
     // the account logged in now; an element's own subscription is its person's, not shown here.
@@ -147,7 +149,7 @@ export function tgState(lang: Lang): TgState {
     .map((a) => ({
       id: a.id, text: a.text, why: a.why ?? null, hint: a.hint ?? null, copy: a.copy ?? null, by: a.by ?? "build", at: a.at,
       byName: a.by && a.by !== "build" ? elementName(a.by, lang) : null,
-      secret: a.secret ? { kind: a.secret.kind, ...(a.secret.name ? { name: a.secret.name } : {}), ...(a.secret.host ? { host: a.secret.host } : {}) } : null,
+      secret: a.secret ? { kind: a.secret.kind, ...(a.secret.name ? { name: a.secret.name } : {}), ...(a.secret.host ? { host: a.secret.host } : {}), ...(a.secret.label ? { label: a.secret.label } : {}) } : null,
     }))
   const builds = buildsOf()
   return { builds, asks: waiting, main: agentOf("build", false), elements: elementsOf(lang, builds), limits: limitsOf(), at: new Date().toISOString() }

@@ -298,6 +298,7 @@ const pm2 = (args) => spawnSync(IS_WIN ? 'pm2.cmd' : 'pm2', args, { cwd: ROOT, e
     // процесса нет, адрес ответит после включения.
     const address = await connectAddress({ wait: false })
     stage(address.note)
+    await askAdmin()
     say(`===BIRTH_OK=== ${id} port ${port} off url ${address.url}`)
     process.exit(0)
   }
@@ -379,8 +380,19 @@ async function connectAddress({ wait = true } = {}) {
     return { url: 'none', note: `адрес не подключён: ${e.message} — ${manual}` }
   }
 }
+// 778-3 (the owner, 2026-11-17, Telegram 470: «При рождении элемента просим ввести e-mail и пароль»): a custom element born with its admin
+// role puts the core's request for its admin — the window at the bottom of every panel page and the Telegram form; «Пропустить» leaves
+// the role to the architect alone (471). A built-in element has no role and no window. The birth never fails on it.
+async function askAdmin() {
+  if (process.argv.includes('--native')) return
+  const out = await require('../lib/node/element-admin-ask.cjs').askElementAdmin(ROOT, id, { name: bornName || null }).catch((e) => ({ ok: false, reason: e.message }))
+  stage(out.ok
+    ? `окно «администратор элемента» ждёт архитектора: ${out.id}${out.telegram ? ' (и в Telegram)' : ''}`
+    : `окно «администратор элемента» не поставлено (${out.reason}) — повтор: npm run ask-person -- --secret element-admin --element ${id}`)
+}
 const address = await connectAddress()
 stage(address.note)
+await askAdmin()
 // 553: новый элемент — в каталоге «Все проекты» у всех элементов, подключённых к CONFIG (по действию человека, не по таймеру).
 await require('../lib/web4-items/catalog-notify.cjs').notifyCatalog('birth', ROOT)
 say(`===BIRTH_OK=== ${id} port ${port} url ${address.url}${address.answers ? ` answers ${address.answers}` : ''}`)

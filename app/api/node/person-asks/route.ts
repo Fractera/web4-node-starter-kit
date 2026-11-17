@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
   if (isTemporaryPublicAddress(req)) return NextResponse.json({ ok: false, reason: "temporary address" }, { status: 403, ...noStore })
   const denied = await requireRoles(req, ["architect", "admin"])
   if (denied) return denied
-  let body: { id?: unknown; secret?: unknown }
+  let body: { id?: unknown; secret?: unknown; admin?: unknown; skip?: unknown }
   try { body = await req.json() } catch { return NextResponse.json({ ok: false, reason: "invalid JSON" }, { status: 400, ...noStore }) }
   const id = typeof body.id === "string" && /^[a-f0-9]{8}$/.test(body.id) ? body.id : null
   if (!id) return NextResponse.json({ ok: false, reason: "id required" }, { status: 400, ...noStore })
@@ -97,8 +97,17 @@ export async function POST(req: NextRequest) {
     if (!r.ok) return NextResponse.json({ ok: false, reason: r.reason }, { status: r.status, ...noStore })
     saved = r.saved
   }
+  // 778-3: a newborn element's admin — only the architect names one (the sign-in's own counterweight, 778-2: a project admin may not
+  // give an element-admin role); `admin: { email, password? }` goes straight to the sign-in, `skip: true` sends nothing.
+  if (pending?.secret?.kind === "element-admin") {
+    const onlyArchitect = await requireRoles(req, ["architect"])
+    if (onlyArchitect) return onlyArchitect
+    const r = await saveSecret(pending, body.admin, { skip: body.skip === true })
+    if (!r.ok) return NextResponse.json({ ok: false, reason: r.reason }, { status: r.status, ...noStore })
+    saved = r.saved
+  }
   const out = await closeAsk(id, { saved, via: "window" })
   if (!out) return NextResponse.json({ ok: true, already: true }, noStore)
   const { woke, who } = out
-  return NextResponse.json({ ok: true, woke, who, ...(saved ? { saved: true, restarted: saved.restarted } : {}) }, noStore)
+  return NextResponse.json({ ok: true, woke, who, ...(saved ? { saved: true, restarted: saved.restarted, ...(saved.admin ? { admin: saved.admin } : {}) } : {}) }, noStore)
 }

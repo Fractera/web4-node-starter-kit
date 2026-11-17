@@ -1,4 +1,4 @@
-// @api list, edit and anonymize node users through the auth element
+// @api list, create, edit and anonymize node users through the sign-in
 import { NextRequest, NextResponse } from "next/server"
 
 import { getSession } from "@/lib/auth/get-session"
@@ -34,7 +34,7 @@ async function forward(req: NextRequest, ctx: Ctx): Promise<NextResponse> {
         "x-node-actor-roles": session.roles.join(","),
         "content-type": "application/json",
       },
-      body: req.method === "POST" ? await req.text() : undefined,
+      body: req.method === "POST" || req.method === "PUT" ? await req.text() : undefined,
       cache: "no-store",
       signal: AbortSignal.timeout(15_000),
     })
@@ -48,3 +48,5 @@ async function forward(req: NextRequest, ctx: Ctx): Promise<NextResponse> {
 
 export const GET = forward
 export const POST = forward
+// 778-3: «Новый пароль» — PUT `/api/node-users/:id/password` of the sign-in (the architect only; its own rules and refusals)
+export const PUT = forward

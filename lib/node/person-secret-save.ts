@@ -9,12 +9,13 @@ import secrets from "@/lib/node/person-secrets.cjs"
 import { writeElementSecret, writeVar } from "@/lib/env-file"
 import { restartService } from "@/lib/domain/resident"
 import { OPENAI_KEY, probeOpenAiKey } from "@/lib/openai-probe"
+import { grantElementAdmin } from "@/lib/auth/element-admin"
 
 const ROOT = process.cwd()
 
-export type Secret = { kind: "env" | "openai" | "server-root"; name?: string; where?: string | null; host?: string; port?: number }
+export type Secret = { kind: "env" | "openai" | "server-root" | "element-admin"; name?: string; where?: string | null; host?: string; port?: number; element?: string; role?: string; label?: string }
 export type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; copy?: string | null; by?: string; secret?: Secret; signin?: "architect" | null; at: string; tg?: { via: string; sent: number } | null; tgEntry?: { hash: string; until: string } }
-export type Saved = { tail: string | null; restarted: boolean }
+export type Saved = { tail: string | null; restarted: boolean; admin?: "created" | "added" | "skipped" }
 type Wake = (service: string, opts: { text?: string; from?: string; confirmed?: boolean }) => Promise<Record<string, unknown> & { ok: boolean }>
 
 export const knownElement = (id: string) => /^[a-z][a-z0-9-]{0,39}$/.test(id) && (listServices() as unknown as { id: string }[]).some((s) => s.id === id)
@@ -48,8 +49,32 @@ export async function saveOpenAiSecret(raw: unknown): Promise<{ ok: true; saved:
   return { ok: true, saved: { tail: secrets.tail(value) as string | null, restarted: true } }
 }
 
-/** The person's secret by its kind: an element's key or the node's OpenAI key. */
-export async function saveSecret(ask: Ask, raw: unknown) {
+/** 778-3 (the owner, 2026-11-17, Telegram 470, 471): the admin of a newborn element — the e-mail and the password go straight to the sign-in
+ * (`grantElementAdmin`: a new e-mail → an account with that password and the element's role; a known one → the role only, its password
+ * unchanged); «Пропустить» sends nothing — the role stays the architect's alone. Neither value is logged, kept or answered back. */
+export async function saveElementAdmin(ask: Ask, raw: unknown, skip: boolean): Promise<{ ok: true; saved: Saved } | { ok: false; reason: string; status: number }> {
+  const s = ask.secret
+  if (s?.kind !== "element-admin" || !s.role) return { ok: false, reason: "not-an-admin-request", status: 400 }
+  if (skip) {
+    console.log(`[node/person-asks] ${ask.id} the admin of ${s.element}: skipped — the architect alone`)
+    return { ok: true, saved: { tail: null, restarted: false, admin: "skipped" } }
+  }
+  const bad = secrets.adminRefusal(raw) as string | null
+  if (bad) return { ok: false, reason: bad, status: 400 }
+  const o = raw as { email: string; password?: unknown }
+  const password = typeof o.password === "string" && o.password ? o.password : undefined
+  const r = await grantElementAdmin({ email: o.email.trim(), password, role: s.role })
+  if (!r.ok) {
+    console.log(`[node/person-asks] ${ask.id} the admin of ${s.element}: the sign-in refused — ${r.reason}`)
+    return { ok: false, reason: r.reason, status: ["auth-unreachable", "no-auth-element", "no-architect-token"].includes(r.reason) ? 502 : 400 }
+  }
+  console.log(`[node/person-asks] ${ask.id} the admin of ${s.element} (${s.role}): ${r.created ? "a new account" : "an existing account"} got the role`)
+  return { ok: true, saved: { tail: null, restarted: false, admin: r.created ? "created" : "added" } }
+}
+
+/** The person's secret by its kind: an element's key, the node's OpenAI key or a newborn element's admin (`skip` — «Пропустить»). */
+export async function saveSecret(ask: Ask, raw: unknown, { skip = false }: { skip?: boolean } = {}) {
+  if (ask.secret?.kind === "element-admin") return saveElementAdmin(ask, raw, skip)
   return ask.secret?.kind === "openai" ? saveOpenAiSecret(raw) : saveEnvSecret(ask, raw)
 }
 
@@ -61,7 +86,9 @@ export async function closeAsk(id: string, { saved = null, via = "window" }: { s
   const who = a.by && a.by !== "build" && knownElement(a.by) ? a.by : "build"
   const wake = (globalThis as { __web4AgentWake?: Wake }).__web4AgentWake
   let woke: string = "no-agent-kit"
-  if (typeof wake === "function") {
+  // 778-3: nobody waits for a birth window — the window and Telegram say the outcome; the main agent is not woken for it (no fuel spent)
+  if (a.secret?.kind === "element-admin") woke = "not-needed"
+  else if (typeof wake === "function") {
     // an element's bridge routes by the first word: «Working process:» — its work session, never a new build session (✗ 15:23 live:
     // the bare line opened root's build session); the main agent is woken in its own conversation as it is
     const lead = who === "build" ? "" : "Working process: "
@@ -69,7 +96,8 @@ export async function closeAsk(id: string, { saved = null, via = "window" }: { s
     const out = await wake(who, { text: `${lead}${nodeLine.head("person-done", who)}${words}`, from: "node", confirmed: true })
     woke = out.ok ? "ok" : String(out.reason ?? "refused")
   }
-  const kind = (a.secret?.kind === "env" || a.secret?.kind === "openai") && saved ? "saved" : "closed"
+  const kind = a.secret?.kind === "element-admin" && saved?.admin ? (saved.admin === "skipped" ? "adminSkipped" : "adminSet")
+    : (a.secret?.kind === "env" || a.secret?.kind === "openai") && saved ? "saved" : "closed"
   const tg = await asksTg.closed(ROOT, a, kind, { tail: saved?.tail ?? null }).catch((e: unknown) => String(e))
   console.log(`[node/person-asks] ${id} done (${via}) → ${who}: ${woke} · telegram: ${tg}`)
   return { woke, who, tg }

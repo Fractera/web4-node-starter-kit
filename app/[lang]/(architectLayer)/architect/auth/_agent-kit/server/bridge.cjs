@@ -801,7 +801,7 @@ function clearedSince(live, element, home, before, typedAt, { maxMs = 10 * 60_00
   })
 }
 
-function sessionCommand(service, { action, model, effort, continue: cont = false } = {}) {
+function sessionCommand(service, { action, model, effort, ultracode = false, continue: cont = false } = {}) {
   const live = session.current(service)
   if (!live) return { ok: false, reason: 'no-session' }
   if (action === 'clear') {
@@ -843,13 +843,19 @@ function sessionCommand(service, { action, model, effort, continue: cont = false
   if (action === 'model') {
     if (!SESSION_MODELS.includes(model)) return { ok: false, reason: `model must be one of ${SESSION_MODELS.join(', ')}` }
     if (effort !== undefined && !EFFORTS.includes(effort)) return { ok: false, reason: `effort must be one of ${EFFORTS.join(', ')}` }
+    // 779-1 (the owner, 2026-11-17, Telegram 462: the Pult's card «Помнишь что у тебя также есть модель ультраКод … При выборе нужно
+    // показать информационное окно»): ultracode on a live switch — only after the person's «Включить» in that window (the Pult's door
+    // refuses it without), never from the node-key door the agent itself calls; always Opus · max. Any other switch turns it off.
+    const ultra = ultracode === true
+    if (ultra && model !== 'opus') return { ok: false, reason: 'ultracode runs on opus only' }
+    if (ultra) effort = 'max'
     // 772-0: ONE pending switch per live session, like the clear (731): a second ask in the same turn joins it — the last model and
     // effort win, `continue` upgrades it — and the session restarts once.
     if (live.pendingModel) {
-      Object.assign(live.pendingModel, { model, effort, cont: live.pendingModel.cont || cont })
-      return { ok: true, scheduled: 'model', model, joined: true }
+      Object.assign(live.pendingModel, { model, effort, ultra, cont: live.pendingModel.cont || cont })
+      return { ok: true, scheduled: 'model', model, ultracode: ultra, joined: true }
     }
-    const want = { model, effort, cont }
+    const want = { model, effort, ultra, cont }
     live.pendingModel = want
     void whenIdle(live).then(async (idle) => {
       if (live.pendingModel === want) live.pendingModel = null
@@ -863,10 +869,10 @@ function sessionCommand(service, { action, model, effort, continue: cont = false
       // 772-0 (✗ 2026-11-17 00:30–00:37: the main agent switched itself to Haiku mid-task; the restarted session got no prompt and sat
       // idle until the owner wrote «умер»): with `continue` the restarted session is woken with one line — through spawnAgent's first
       // prompt, which waits for the Telegram channel like every first task (614-1).
-      const r = await spawnAgent(service, undefined, undefined, cont && continueLast ? modelLine(service, model, effort) : '', { model, effort, pass, continueLast })
-      console.log(`[agents/session] ${service}: модель → ${model}${effort ? ` · ${effort}` : ''}, ${r.ok ? (continueLast ? `тот же разговор продолжен${cont ? ' и разбужен строкой узла' : ''}` : 'разговора не было — новая сессия') : `не запустилась — ${r.reason}`}`)
+      const r = await spawnAgent(service, undefined, undefined, cont && continueLast ? modelLine(service, model, effort) : '', { model, effort, pass, continueLast, ultracode: want.ultra })
+      console.log(`[agents/session] ${service}: модель → ${model}${effort ? ` · ${effort}` : ''}${want.ultra ? ' · ultracode' : ''}, ${r.ok ? (continueLast ? `тот же разговор продолжен${cont ? ' и разбужен строкой узла' : ''}` : 'разговора не было — новая сессия') : `не запустилась — ${r.reason}`}`)
     })
-    return { ok: true, scheduled: 'model', model }
+    return { ok: true, scheduled: 'model', model, ultracode: ultra }
   }
   return { ok: false, reason: 'action must be clear or model' }
 }

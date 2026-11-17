@@ -10,9 +10,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ALL_ROLES } from "@/lib/roles"
 import type { NodeUsersUi } from "./node-users.i18n"
 import type { NodeUserRow, Org } from "./node-users.client"
+import { ElementAdminPicker } from "./element-admin-picker.client"
+import { NewPassword } from "./new-password.client"
+import type { ElementAdmin } from "./use-element-admins.client"
 
 // ОКНО ПОЛЬЗОВАТЕЛЯ (узел, шаг 559-5). Карандаш в строке открывает его. Слово владельца: «Можно нажать карандашик когда выпадет
 // модельное окно и можно по каждому пользователю внести изменения. Можно выбрать участие в вне нескольких организациях или
@@ -37,8 +41,8 @@ const draftOf = (u: NodeUserRow): Draft => ({
   roles: u.roles, orgs: u.orgs.map((o) => o.id), blocked: u.status === "blocked", marketing: triOf(u.marketing), tracking: triOf(u.tracking, true),
 })
 
-export function UserDialog({ user, orgs, ui, dialogUi, lang, onClose, onChanged, onOrgsChanged }: {
-  user: NodeUserRow; orgs: Org[]; ui: NodeUsersUi; dialogUi: AppDialogUi; lang: string
+export function UserDialog({ user, orgs, admins, ui, dialogUi, lang, onClose, onChanged, onOrgsChanged }: {
+  user: NodeUserRow; orgs: Org[]; admins: ElementAdmin[]; ui: NodeUsersUi; dialogUi: AppDialogUi; lang: string
   onClose: () => void; onChanged: () => void; onOrgsChanged: () => void
 }) {
   const [view, setView] = useState<View>({ kind: "edit" })
@@ -122,9 +126,9 @@ export function UserDialog({ user, orgs, ui, dialogUi, lang, onClose, onChanged,
   }
 
   const history = (of: HistoryKind) => (
-    <button className="text-xs text-primary underline-offset-4 hover:underline" onClick={() => setView({ kind: "history", of })} type="button" data-history={of}>
+    <Button variant="link" size="xs" className="h-auto p-0 text-xs" onClick={() => setView({ kind: "history", of })} type="button" data-history={of}>
       {ui.historyLink}
-    </button>
+    </Button>
   )
   const field = (id: keyof Draft, label: string, extra?: ReactNode) => (
     <div className="flex flex-col gap-1.5">
@@ -195,7 +199,7 @@ export function UserDialog({ user, orgs, ui, dialogUi, lang, onClose, onChanged,
                   : <span aria-hidden className="flex size-12 items-center justify-center rounded-full bg-muted text-sm font-medium">{(draft.nickname || "?").slice(0, 1).toUpperCase()}</span>}
                 <Label className="cursor-pointer rounded-md border border-border px-3 py-1.5 text-sm hover:bg-muted">
                   {uploading ? ui.avatarUploading : ui.avatarUpload}
-                  <input accept="image/*" className="sr-only" type="file" onChange={(e) => { const f = e.target.files?.[0]; if (f) void upload(f) }} />
+                  <Input accept="image/*" className="sr-only" type="file" onChange={(e) => { const f = e.target.files?.[0]; if (f) void upload(f) }} />
                 </Label>
                 {draft.avatar && <Button size="sm" variant="ghost" onClick={() => set({ avatar: "" })}>{ui.avatarRemove}</Button>}
               </div>
@@ -211,6 +215,8 @@ export function UserDialog({ user, orgs, ui, dialogUi, lang, onClose, onChanged,
                 ))}
               </div>
             </div>
+            {/* 778-3: «Админ элементов» — chips by element name with × and «+»; part of the same roles patch */}
+            <ElementAdminPicker admins={admins} roles={draft.roles} onChange={(roles) => set({ roles })} words={ui.admins} />
             <div className="flex flex-col gap-1.5">
               <Label>{ui.fields.orgs}</Label>
               <div className="flex flex-wrap gap-x-4 gap-y-2" data-field="orgs">
@@ -232,6 +238,8 @@ export function UserDialog({ user, orgs, ui, dialogUi, lang, onClose, onChanged,
             </div>
             <p className="text-xs text-muted-foreground">{ui.trackingHint}</p>
             {field("wallet", ui.fields.wallet, walletBad ? <p className="text-xs text-destructive">{ui.walletBad}</p> : null)}
+            {/* 778-3: «Новый пароль» — its own PUT with the confirmation in the same row, apart from «Сохранить» below */}
+            <NewPassword userId={user.id} who={user.nickname ?? user.email} words={ui.newPassword} />
             <div className="flex items-center justify-between gap-3">
               <label className="inline-flex items-center gap-3 text-sm">
                 <Switch checked={draft.blocked} onCheckedChange={(v) => set({ blocked: v })} />
@@ -310,25 +318,25 @@ function HistoryTable({ userId, kind, ui, lang }: { userId: string; kind: Histor
   const pages = Math.max(1, Math.ceil(data.total / data.perPage))
   return (
     <div className="flex flex-col gap-3">
-      <div className="overflow-x-auto rounded-xl border border-border">
-        <table className="w-full border-collapse text-left text-sm">
-          <thead>
-            <tr className="border-b border-border">
-              <th className={cell} scope="col">{ui.historyCols.at}</th>
-              <th className={cell} scope="col">{ui.historyCols.what}</th>
-              {kind !== "methods" && kind !== "messenger" && <th className={cell} scope="col">{ui.historyCols.who}</th>}
-            </tr>
-          </thead>
-          <tbody>
+      <div className="rounded-xl border border-border">
+        <Table className="text-left">
+          <TableHeader>
+            <TableRow>
+              <TableHead className={cell} scope="col">{ui.historyCols.at}</TableHead>
+              <TableHead className={cell} scope="col">{ui.historyCols.what}</TableHead>
+              {kind !== "methods" && kind !== "messenger" && <TableHead className={cell} scope="col">{ui.historyCols.who}</TableHead>}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {data.rows.map((r, i) => (
-              <tr key={String(r.id ?? i)} className="border-b border-border last:border-0 text-muted-foreground">
-                <td className={`${cell} whitespace-nowrap`}>{when(r.at ?? r.sharedAt ?? r.firstAt)}{kind === "methods" && r.lastAt ? ` … ${when(r.lastAt)}` : ""}</td>
-                <td className={`${cell} text-foreground`}>{what(r)}</td>
-                {kind !== "methods" && kind !== "messenger" && <td className={cell}>{String(r.actor ?? ui.noName)}</td>}
-              </tr>
+              <TableRow key={String(r.id ?? i)} className="text-muted-foreground">
+                <TableCell className={`${cell} whitespace-nowrap`}>{when(r.at ?? r.sharedAt ?? r.firstAt)}{kind === "methods" && r.lastAt ? ` … ${when(r.lastAt)}` : ""}</TableCell>
+                <TableCell className={`${cell} whitespace-normal text-foreground`}>{what(r)}</TableCell>
+                {kind !== "methods" && kind !== "messenger" && <TableCell className={cell}>{String(r.actor ?? ui.noName)}</TableCell>}
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
       {pages > 1 && (
         <div className="flex items-center justify-end gap-2 text-sm">
