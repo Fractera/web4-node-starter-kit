@@ -152,6 +152,13 @@ const DICT: Record<string, DomainListWords> = {
       step3Done: "The zone is active — the domain is ready to be connected to an element (open the element → Settings → Domain).",
       openMirror: "Connect it to {item}: Settings → Domain",
       lastCheck: "Checked at {time}: {what}",
+      // 775: the ladder of the page «Сервер» (titles without numbers — the ladder numbers them; summaries of a passed rung; the locked line)
+      t1: "Zone in Cloudflare", t2: "Name servers at the registrar", t3main: "Make it the node's main domain", t3extra: "Zone active",
+      t4main: "Elements' subdomains", t4extra: "Connect to an element", locked: "opens when the previous step is done",
+      s1: "the zone is in the node's Cloudflare account", s2: "the name servers match", s3main: "the node's main domain", s3extra: "the zone is active",
+      s4extra: "connected to {element}", connectHow: "Open the element → «Settings» → «Domain» and choose this domain.",
+      subsCheck: "Check the subdomains", subsChecking: "Checking…", subsAnswers: "answers", subsSilent: "does not answer",
+      subsHint: "An element that does not answer: open it → «Settings» → «Domain» and connect its address.", subsFailed: "Could not check:",
     },
     keyPerms: ["Zone Edit (Zone Write)", "DNS Write", "Cloudflare Tunnel Edit", "Workers Scripts Edit", "Workers Routes Edit"],
     key: {
@@ -298,6 +305,12 @@ const DICT: Record<string, DomainListWords> = {
       step3Done: "Зона активна — домен готов к подключению к элементу (откройте элемент → «Настройки» → «Домен»).",
       openMirror: "Подключить к {item}: «Настройки» → «Домен»",
       lastCheck: "Проверено в {time}: {what}",
+      t1: "Зона в Cloudflare", t2: "Серверы имён у регистратора", t3main: "Сделать основным доменом узла", t3extra: "Зона активна",
+      t4main: "Поддомены элементов", t4extra: "Подключение к элементу", locked: "откроется, когда будет готов предыдущий шаг",
+      s1: "зона есть в аккаунте Cloudflare узла", s2: "серверы имён совпадают", s3main: "основной домен узла", s3extra: "зона активна",
+      s4extra: "подключён к элементу {element}", connectHow: "Откройте элемент → «Настройки» → «Домен» и выберите этот домен.",
+      subsCheck: "Проверить поддомены", subsChecking: "Проверяю…", subsAnswers: "отвечает", subsSilent: "не отвечает",
+      subsHint: "Элемент не отвечает: откройте его → «Настройки» → «Домен» и подключите его адрес.", subsFailed: "Не удалось проверить:",
     },
     keyPerms: ["Zone Edit (Zone Write)", "DNS Write", "Cloudflare Tunnel Edit", "Workers Scripts Edit", "Workers Routes Edit"],
     key: {

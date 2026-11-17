@@ -108,8 +108,7 @@ export function DomainCards({ lang, role, domains, primaryName, architect, words
               </span>
             </AccordionTrigger>
             <AccordionContent className="flex flex-col gap-2 px-4">
-              <DomainPipeline lang={lang} role={role} domain={d} words={w} ladderWords={ladderWords} onChanged={onChanged} hasPrimary={!!primaryName} forItem={forItem} architect={architect} />
-              {d.holder && <p className="text-sm text-foreground">{w.attachedTo} <span className="font-mono">{d.holderAddress ?? d.holder}</span></p>}
+              <DomainPipeline lang={lang} role={role} holder={d.holder ? d.holderAddress ?? d.holder : null} domain={d} words={w} ladderWords={ladderWords} onChanged={onChanged} hasPrimary={!!primaryName} forItem={forItem} architect={architect} />
               {d.holder && confirm === d.name ? (
                 <DangerConfirm id="domain-detach" text={w.detachConfirm.replace("{domain}", d.name).replace("{element}", d.holderAddress ?? d.holder)}
                   yes={busy === d.name ? w.detaching : w.detachRemoveYes} cancel={w.cancel} busy={busy !== null}

@@ -13,6 +13,8 @@ import type { DomainListWords } from "./domain-list.i18n"
 import type { DomainLadderWords } from "./domain-ladder.i18n"
 import { StaticCopyItem } from "./static-copy.client"
 import { DangerConfirm } from "./danger-confirm"
+import { Ladder } from "@/components/hosting/ladder-step"
+import { DomainSubdomains } from "./domain-subdomains.client"
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
@@ -71,7 +73,16 @@ export function DomainMain({ lang, name, status, links, architect, words: w, lad
         </div>
       )}
 
-      <Accordion type="single" collapsible className="rounded-lg border border-border px-3" data-block="domain-main-copy">
+      {/* 775 (the owner: «в одном стиле с вкладкой сервер … не хватает четвёртого шага»): the main domain's ladder — three passed rungs as
+          one line each, the fourth (every element's subdomain) open. */}
+      <Ladder id="domain-main-live" locked={w.pipe.locked} rungs={[
+        { id: "zone", title: w.pipe.t1, done: true, summary: w.pipe.s1, body: null },
+        { id: "ns", title: w.pipe.t2, done: true, summary: w.pipe.s2, body: null },
+        { id: "active", title: w.pipe.t3main, done: true, summary: w.pipe.s3main, body: null },
+        { id: "fourth", title: w.pipe.t4main, done: false, body: <DomainSubdomains lang={lang} words={w} /> },
+      ]} />
+
+      <Accordion type="single" collapsible className="rounded-lg border border-border bg-card px-4" data-block="domain-main-copy">
         <StaticCopyItem lang={lang} words={ladderWords.copy} />
       </Accordion>
 

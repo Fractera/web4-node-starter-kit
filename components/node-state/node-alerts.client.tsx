@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
+import { usePathname } from "next/navigation"
 import { askNodePlace } from "@/components/node-state/use-node-place.client"
 
 // ТРЕВОГИ ПУНКТОВ ЛЕВОГО МЕНЮ (632-2). Владелец 2026-11-03: «до тех пор пока не подключён собственный домен на вкладке основное в левом
@@ -11,6 +12,10 @@ import { askNodePlace } from "@/components/node-state/use-node-place.client"
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
 export function NodeAlerts() {
+  // 775 (the owner, 2026-11-17: «сразу после активации домена в левом меню все ещё остается гореть красным … активация домена»): the
+  // island lives in the layer's layout, and a move inside the panel keeps the layout — asked once per full load, the red stayed from the
+  // moment before the domain went on until the next reload. Now it asks again on every move to another page (a navigation, not a timer).
+  const pathname = usePathname()
   useEffect(() => {
     let alive = true
     fetch(`${BASE}/api/domain/state`, { cache: "no-store" })
@@ -42,6 +47,6 @@ export function NodeAlerts() {
       })
       .catch(() => { /* узел не ответил или временный адрес — тревоги нет */ })
     return () => { alive = false }
-  }, [])
+  }, [pathname])
   return null
 }
