@@ -384,6 +384,12 @@ async function idleTick(service) {
     if (activated && service === 'build') {
       try { await nodeCommands().applyMenu(token, [sender], personLang(service)) } catch { /* the menu is a convenience — `npm run commands -- menu` sets it again */ }
     }
+    // 778 (the owner, 2026-11-17, the plan's «да»): an element's bot opens the element's Mini App (`<its address>/tg`, closed by its admin
+    // role) from the menu button of the person it just admitted. The module is mounted by `lib/agent-kit/mount.cjs` (a path from the
+    // core's root does not resolve in the build — 552-6).
+    if (activated && service !== 'build') {
+      try { await globalThis.__web4TgMenu?.refreshElement(ROOT, String(service).split('--')[0]) } catch { /* a convenience — `npm run tg-app -- menu <id>` sets it again */ }
+    }
     // 737-11a (владелец 2026-11-13: «После подтверждения сервер сразу стартует установленный на него Telegram»): бот выделенного сервера
     // во время репетиции впускает по ссылке и отвечает одной строкой — узел ещё живёт на компьютере человека, и ни один агент здесь не
     // стартует до переезда (замок `lib/agent-kit/mount.cjs` закрывает двери пробуждения, а этот — кнопки и «/on» самого бота).

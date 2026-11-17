@@ -58,5 +58,30 @@ await t('no bot — nothing is called (negative control)', async () => {
   assert.equal(seen.length, before)
 })
 
+await t('778: an element bot opens the element\'s Mini App (<its HTTPS address>/tg) per allowed chat; a loopback address — the default menu; no bot — no-bot', async () => {
+  const el = 'el778'
+  put(`data/services/${el}/channel/telegram/.env`, 'TELEGRAM_BOT_TOKEN=123456:ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef_-12\n')
+  put(`data/services/${el}/channel/telegram/access.json`, JSON.stringify({ allowFrom: ['111', '222'] }))
+  put(`items/${el}/.env.local`, 'PROJECT_SITE_URL=https://el778.example.com/\n')
+  const dirOf = (id) => join(tmp, 'items', id)
+  const seen = []
+  const r = await menu.refreshElement(tmp, el, { dirOf, fetchImpl: async (_token, m, chat) => { seen.push([chat, m]); return { ok: true } } })
+  assert.equal(r.ok, true)
+  assert.equal(r.state, 'mini-app')
+  assert.equal(r.url, 'https://el778.example.com/tg')
+  assert.deepEqual(seen.map(([c]) => c), [111, 222])
+  assert.equal(seen[0][1].type, 'web_app')
+  assert.equal(seen[0][1].web_app.url, 'https://el778.example.com/tg')
+  put(`items/${el}/.env.local`, 'PROJECT_SITE_URL=http://localhost:24683\n')
+  const seen2 = []
+  const r2 = await menu.refreshElement(tmp, el, { dirOf, fetchImpl: async (_t, m, c) => { seen2.push([c, m]); return { ok: true } } })
+  assert.equal(r2.state, 'default')
+  assert.equal(seen2[0][1].type, 'default')
+  const r3 = await menu.refreshElement(tmp, 'nobot778', { dirOf, fetchImpl: async () => ({ ok: true }) })
+  assert.equal(r3.state, 'no-bot')
+  const r4 = await menu.refreshElement(tmp, 'build', { dirOf, fetchImpl: async () => ({ ok: true }) })
+  assert.equal(r4.state, 'not-an-element')
+})
+
 rmSync(tmp, { recursive: true, force: true })
 console.log(process.exitCode ? `===TG_APP_FAILED=== ${passed} passed` : `===TG_APP_OK=== ${passed} passed`)

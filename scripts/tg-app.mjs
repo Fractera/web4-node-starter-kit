@@ -9,7 +9,13 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const menu = createRequire(import.meta.url)('../lib/node/tg-menu.cjs')
 const cmd = process.argv[2] ?? 'status'
 
-if (cmd === 'menu') {
+if (cmd === 'menu' && process.argv[3]) {
+  // 778: an element's bot — its menu button opens the element's Mini App (`<its address>/tg`).
+  const id = process.argv[3]
+  const r = await menu.refreshElement(ROOT, id)
+  console.log(r.ok ? `===TG_MENU_OK=== ${id}: ${r.state}${r.url ? ` → ${new URL(r.url).host}/tg` : ' (no HTTPS address of its own: the bot\'s default menu)'}` : `===TG_MENU_FAIL=== ${id}: ${r.why ?? r.state}`)
+  process.exit(r.ok ? 0 : 1)
+} else if (cmd === 'menu') {
   const r = await menu.refresh(ROOT)
   console.log(r.ok ? `===TG_MENU_OK=== ${r.state}${r.url ? ` → ${new URL(r.url).host}` : ' (no HTTPS address: the bot\'s default menu)'}` : `===TG_MENU_FAIL=== ${r.why ?? r.state}`)
   process.exit(r.ok ? 0 : 1)
@@ -19,6 +25,6 @@ if (cmd === 'menu') {
   console.log(r.ok ? `===TG_MENU=== ${b?.type ?? '?'}${b?.web_app?.url ? ` «${b.text}» → ${new URL(b.web_app.url).host}` : ''}` : `===TG_MENU_FAIL=== ${r.why ?? r.state}`)
   process.exit(r.ok ? 0 : 1)
 } else {
-  console.log('usage: npm run tg-app -- menu | status')
+  console.log('usage: npm run tg-app -- menu [<element id>] | status')
   process.exit(2)
 }
