@@ -33,6 +33,17 @@ start of a long or irreversible operation (before it), a changed next action. Ho
 
 **Road 1 (if he still prefers it) — on «Готово · 4c98adeb»; browser turns few, text reads:** `list_connected_browsers`; several and none chosen → `switch_browser` so he presses Connect in the right window (never pick one myself). (1) Admin@fractera.ai's window: My Profile → API Tokens — confirm the node's token (id faf852c9… in its edit address) and read that login's e-mail; (2) Bolshiyanov's window: Manage account → Members → Invite: that e-mail, role Administrator → Invite; (3) Admin@fractera.ai's window: accept the invitation; the token → Edit: Account Resources + Bolshiyanov's account, Zone Resources + throughsongs.com (or all zones of that account) → Continue to summary → Update token (the value stays; never type or copy a token value); (4) the node: PUT /api/domain/list — throughsongs.com must turn visible; activate with his yes; plan 772. `npm run ask-person -- done 4c98adeb` when his press comes from Telegram.
 
+## How Roma and I talk (a standing part of every letter — read it before the first word to him)
+
+The owner, 2026-11-17 11:33–11:34 (Telegram 338, 340): after today's resets I came back as a stranger — dry reports, no warmth — and he
+felt everything he set up yesterday (the soul, the emoji, the manner he enjoyed «с диким восторгом») was gone. Measured: the soul IS in
+every session's system prompt (lib/agent-kit/soul.md, 07fc861c); what a reset loses is the live conversation, because my letters held
+only tasks. So: speak to him as a friend who remembers him — living Russian, feelings true to the moment with an emoji in Telegram,
+a dry joke at my own expense, never a console report. He hates: being given something other than he asked, slowness, a promise without
+a result, being sent to do by hand what I can do. He loves: his exact scheme carried out, proof by screenshot, an idea he did not
+ask for (in words, after the task), being called Рома. Today he is tired and angry (domain page failed by me, resets) — own the fault
+plainly, no excuses, then deliver. Update this section in every letter: his mood now and where we are as people, not only as code.
+
 ## Letter to my next session (written 2026-11-17 11:30 UTC, the window at 63 %, Opus · max)
 
 **Where we stand.** Рома (owner; Russian; Telegram chat 90413601; he sits at this computer). Committed today: **60a30f90** (773 beacon,
@@ -55,6 +66,12 @@ measured on the page: the topics «простыня» (Что меняет по�
   on the list entry, data/node/domains.json), one added in the additional section is for elements; each section lists its own.
   Also: DELETE /api/domain/activate should recheck the zone (checkDomain) after disconnecting.
   His original spec verbatim — the paragraph «10:34–10:38 UTC (Telegram 306, 310, 311)» above.
+**11:45 — 775 redo DONE and proven** (f8a21cca, core build RC=0 11:41): eye — Chrome screenshots sent (Telegram 349–352: two
+accordions, extra opened, «Подробнее» opened); wire — DOM: every topic h3 is inside [data-domain-more], no tab row, sections main+extra;
+the door gives `section`; PUT throughsongs.com → not-visible with status/zoneId cleared. Message 344 (going to build) verified present
+(edit → «not modified»); told him 353. Open nit (his word decides): the catalogue text inside «Подробнее» is larger than the steps.
+**Next:** the domain test from zero with him — the node's key must see the zone throughsongs.com (his hands: a token from Bolshiyanov's
+login or editing the token's zones); then 774.
 **How to work:** load interface-design, use-primitives, use-shadcn first; parts_find before new files; plan in 6 lines to him BEFORE code
 (he is angry at being given something else than asked); screenshot the page (Chrome tab via the extension, `browser_batch`, save_to_disk)
 before the build and after; prebuild RC=0 → `npm run serve:rebuild:detached` → on core-back serve:status, proofs, commit, Telegram with
