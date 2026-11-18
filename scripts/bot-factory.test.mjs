@@ -56,6 +56,11 @@ const later = await f.state(root, { live: true }, stub({ me: { ok: true, result:
 assert.equal(later.ready, false); assert.equal(later.live, 'management-off')
 ok('a live recheck notices the mode switched off')
 
+// negative control: the bot deleted (Telegram answers Unauthorized) — not «kept» any more, named dead
+const dead = await f.state(root, { live: true }, stub({ me: { ok: false, error_code: 401, description: 'Unauthorized' } }).fetchImpl)
+assert.equal(dead.kept, false); assert.equal(dead.ready, false); assert.equal(dead.dead, true); assert.equal(dead.username, 'factory_bot')
+ok('a deleted bot: its token reads dead, step 2 opens again')
+
 // the link of Telegram's window
 assert.equal(f.createLink(root, { username: 'root_site_bot', name: 'Главный сайт' }).url, `https://t.me/newbot/factory_bot/root_site_bot?name=${encodeURIComponent('Главный сайт').replace(/%20/g, '+')}`)
 assert.equal(f.createLink(root, { username: 'no', name: 'x' }).error, 'bad-username')

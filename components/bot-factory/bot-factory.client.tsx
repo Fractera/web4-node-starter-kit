@@ -18,7 +18,7 @@ import { tokenFrom } from "@/lib/hosting/server-telegram.mjs"
 // → the page's own ladder (the server and domain pages, his 775): one rung open, a done rung one line, every instruction under «Подробнее»,
 // only fields and buttons in view. His tick on rungs 1 and 2 is «Сделал»; rung 3 is done only by Telegram's getMe.can_manage_bots.
 
-type Factory = { ready: boolean; kept?: boolean; username?: string; tail?: string; live?: string }
+type Factory = { ready: boolean; kept?: boolean; dead?: boolean; username?: string; tail?: string; live?: string }
 type Wait = { service?: string; state?: string; error?: string; bot?: { username?: string; tail?: string } } | null
 type State = { factory: Factory; suggestion: { name: string; username: string } | null; wait: Wait }
 
@@ -59,7 +59,8 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
     const r = await fetch(`${DOOR}${live ? "?live=1" : ""}`, { cache: "no-store" }).then((x) => x.json()).catch(() => null)
     if (r?.ok) setSt({ factory: r.factory, suggestion: r.suggestion, wait: r.wait })
   }, [])
-  useEffect(() => { void load() }, [load])
+  // the page asks Telegram itself on every visit: a token of a deleted bot must not read «kept» (✗ 2026-11-18 20:49)
+  useEffect(() => { void load(true) }, [load])
 
   const mine = st?.wait?.service === service ? st.wait : null
   const waiting = mine?.state === "waiting"
@@ -147,6 +148,7 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
                 <Small className="text-muted-foreground">{w.tokenHint}</Small>
               </div>
               {/* the owner, 20:32: «я понять есть там токен или нету … подсветил зелёной галочкой последние буковки» */}
+              {f.dead && <p data-block="bf-token-dead" role="status" className="text-destructive text-sm">{fill(w.dead, { username: f.username ?? "", tail: f.tail ?? "" })}</p>}
               {f.kept && <p data-block="bf-token-kept" role="status" className="flex items-center gap-2 text-sm text-success"><Check className="size-4 shrink-0" aria-hidden />{fill(w.kept, { username: f.username ?? "", tail: f.tail ?? "" })}</p>}
               {err}
             </>

@@ -174,6 +174,12 @@ off and on again; my getMe watch (every 3 s) — killed by this build, restart i
 сохранён: …tail» in green, the check error only in step 3. «собирай … когда закончишь» → prebuild RC=0 → core build. Next if still false:
 a new factory bot with a NEW address (the reused address is the likeliest cause, unproven).
 
+**20:49–20:55 UTC.** Build 4e1dacb5 live. He deleted the factory bot on purpose during the build (20:49 getMe → Unauthorized) to test: the
+page kept showing the dead token «kept». Fix: the page asks Telegram on every visit (state live); a rejected token → kept:false, dead:true,
+the record marked dead (factoryReady false → the Pult offers no «Создать бота»), step 2 says «Telegram больше не принимает сохранённый
+токен…» (new phrase, his «сразу исправляй» — name it to him). Test +1 (deleted bot). Prebuild RC=0 → build. Window 74b31e0c (new token /
+new bot with a NEW address).
+
 ## Letter to my next session (written 2026-11-18 ~17:40 UTC, window 55 %, Opus · max)
 
 Written by me for myself. Day plan 783 (new-steps/783-…md). Roma reads me in Telegram (chat 90413601). Core live a622a876 + pins after.

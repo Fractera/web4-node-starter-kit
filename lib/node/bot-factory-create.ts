@@ -30,8 +30,11 @@ export function factoryWait(): FactoryWait | null {
   return { ...rest, state: rest.state === "waiting" && !alive(pid) ? "stopped" : rest.state }
 }
 
-/** The node has a factory (its file; the live check is the panel's «Проверить снова»). */
-export const factoryReady = (): boolean => existsSync(join(ROOT, "data", "node", "bot-factory.json"))
+/** The node has a working factory: kept, its mode confirmed, not found dead. */
+export const factoryReady = (): boolean => {
+  // a factory Telegram confirmed and no page found dead since (`bot-factory.cjs` state/check write `managed` and `dead`)
+  try { const f = JSON.parse(readFileSync(join(ROOT, "data", "node", "bot-factory.json"), "utf8")) as { managed?: boolean; dead?: boolean }; return f.managed !== false && f.dead !== true } catch { return false }
+}
 
 /** Start a creation for a service: `{ ok, url, username, name }` or `{ ok:false, error }`. */
 export function startCreate(service: string, lang: "en" | "ru"): { ok: true; url: string; username: string; name: string } | { ok: false; error: string; status: number } {

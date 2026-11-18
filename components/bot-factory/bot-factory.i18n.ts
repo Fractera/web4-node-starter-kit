@@ -20,6 +20,8 @@ export type BotFactoryWords = {
   sum2: string
   /** in view inside step 2 once a token is kept: `{username}` `{tail}` (the owner's «зелёная галочка», 20:32) */
   kept: string
+  /** the kept token of a bot Telegram no longer knows (deleted or revoked): `{username}` `{tail}` */
+  dead: string
   /** the token field — the server's own phrases (`server-launch.i18n.ts` telegram): `{tail}` */
   found: string
   notFound: string
@@ -66,6 +68,7 @@ const DICT: Record<string, BotFactoryWords> = {
     sum1: "The bot is made in @BotFather",
     sum2: "The token of @{username} is kept (…{tail})",
     kept: "The token of @{username} is kept: …{tail}",
+    dead: "Telegram no longer accepts the kept token of @{username} (…{tail}): the bot was deleted or its token revoked. Paste a new one.",
     found: "Token found: …{tail}. Telegram checks it before it is kept.",
     notFound: "No token here: paste it or BotFather's whole message.",
     check: "Check",
@@ -114,6 +117,7 @@ const DICT: Record<string, BotFactoryWords> = {
     sum1: "Бот создан в @BotFather",
     sum2: "Токен бота @{username} сохранён (…{tail})",
     kept: "Токен бота @{username} сохранён: …{tail}",
+    dead: "Telegram больше не принимает сохранённый токен бота @{username} (…{tail}): бот удалён или токен перевыпущен. Вставьте новый.",
     found: "Токен найден: …{tail}. Перед сохранением его проверит Telegram.",
     notFound: "Токена здесь не видно: вставьте его или всё сообщение BotFather целиком.",
     check: "Проверить",
