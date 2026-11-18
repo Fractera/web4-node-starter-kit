@@ -13,6 +13,7 @@ import power from "@/lib/web4-items/element-power.cjs"
 import paths from "@/lib/web4-items/paths.cjs"
 import { elementName } from "@/lib/web4-items/dashboard-rows"
 import { list as sessions } from "@/app/[lang]/(architectLayer)/architect/[item]/_agent-kit/server/session.cjs"
+import contextWindow from "@/lib/agent-kit/context-window.cjs"
 
 const ROOT = process.cwd()
 
@@ -37,7 +38,9 @@ export type TgLimit = { who: string; account: string | null; current: string | n
 /** 2026-11-17 (the owner: «показать что … находится на сборке, и элементы в том числе»): the node's queue of element builds. */
 export type TgBuilds = { running: boolean; current: string | null; queue: string[]; done: string[] }
 export type TgChannel = { bot: boolean; state: string; why: string | null; since: string | null }
-export type TgState = { builds: TgBuilds; asks: TgAsk[]; main: TgAgent & { channel: TgChannel; autostart: boolean | null }; elements: TgElement[]; limits: TgLimit[]; at: string }
+/** 788-1: how full the main agent's context window is — the same reading as `npm run session -- context`; `null` — no journal yet. */
+export type TgContext = { used: number; window: number | null; percent: number | null; model: string; at: string | null }
+export type TgState = { context: TgContext | null; builds: TgBuilds; asks: TgAsk[]; main: TgAgent & { channel: TgChannel; autostart: boolean | null }; elements: TgElement[]; limits: TgLimit[]; at: string }
 
 const readJson = <T>(file: string, fallback: T): T => {
   try { return JSON.parse(readFileSync(file, "utf8")) as T } catch { return fallback }
@@ -158,5 +161,7 @@ export function tgState(lang: Lang): TgState {
     }))
   const builds = buildsOf()
   // 781-4: the main agent's card carries its channel — «спит — Разбудить», «не слышит — Переподключить» (`lib/node/main-channel.cjs`).
-  return { builds, asks: waiting, main: { ...agentOf("build", false), channel: mainChannel.health(ROOT, "build") as TgChannel, autostart: autostart.state().on as boolean | null }, elements: elementsOf(lang, builds), limits: limitsOf(), at: new Date().toISOString() }
+  const c = contextWindow.read(ROOT) as (TgContext & { session: string }) | null
+  const context: TgContext | null = c ? { used: c.used, window: c.window, percent: c.percent, model: c.model, at: c.at } : null
+  return { context, builds, asks: waiting, main: { ...agentOf("build", false), channel: mainChannel.health(ROOT, "build") as TgChannel, autostart: autostart.state().on as boolean | null }, elements: elementsOf(lang, builds), limits: limitsOf(), at: new Date().toISOString() }
 }

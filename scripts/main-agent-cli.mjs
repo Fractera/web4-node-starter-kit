@@ -563,7 +563,7 @@ if (cmd === 'telegram') {
 // (последний ответ модели: вход + кэш + выход) без модели и без двери; очистка и смена модели — дверь `/api/agents/session`, мост делает
 // их после конца хода, в котором ты ответил человеку. Окно — по модели: у Opus/Sonnet/Haiku 5.x и Fable 1 000 000 (навык claude-api,
 // таблица моделей; `/context` Claude Code на этой подписке — «32.4k/1m», замер 2026-10-30).
-const windowOf = (model) => (/(fable|mythos|opus-5|sonnet-5|haiku-5|opus-4-[678]|sonnet-4-6)/.test(model ?? '') ? 1_000_000 : /haiku-4-5/.test(model ?? '') ? 200_000 : null)
+// The window by model now lives with the one reading: lib/agent-kit/context-window.cjs `windowOf` (788-1).
 // 689: у элемента на подписке своего человека журналы Claude Code — в его папке (`data/services/<id>/claude/projects/`), не в `~/.claude`.
 const journalDir = (folder, id = null) => {
   const own = id ? join(ROOT, 'data', 'services', id, 'claude') : null
@@ -578,25 +578,18 @@ if (cmd === 'session') {
   if (target && !e) fail(`no element ${target} in the registry`)
   const service = e ? e.id : 'build'
   if (what === 'context') {
+    // 788-1: one reading for the CLI and the Telegram Pult's gauge — lib/agent-kit/context-window.cjs.
     const folder = e ? itemDir(e.id) : ROOT
+    const own = e ? join(ROOT, 'data', 'services', e.id, 'claude') : null
     const dir = folder ? journalDir(folder, e?.id ?? null) : null
-    const files = dir && existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith('.jsonl')).map((f) => ({ f, t: statSync(join(dir, f)).mtimeMs })).sort((a, b) => b.t - a.t) : []
-    if (!files.length) fail(`${service}: no session journal yet — the agent has not talked to a model in its folder`)
-    const lines = readFileSync(join(dir, files[0].f), 'utf8').split('\n')
-    let last = null
-    for (let i = lines.length - 1; i >= 0 && !last; i--) {
-      try { const row = JSON.parse(lines[i]); if (row?.type === 'assistant' && row.message?.usage) last = row } catch { /* строка не JSON */ }
-    }
-    if (!last) fail(`${service}: the session has no model answer yet — context is empty`)
-    const u = last.message.usage
-    const used = (u.input_tokens ?? 0) + (u.cache_creation_input_tokens ?? 0) + (u.cache_read_input_tokens ?? 0) + (u.output_tokens ?? 0)
-    const model = String(last.message.model ?? 'unknown')
-    const win = windowOf(model)
+    if (!dir || !existsSync(dir) || !readdirSync(dir).some((f) => f.endsWith('.jsonl'))) fail(`${service}: no session journal yet — the agent has not talked to a model in its folder`)
+    const c = require('../lib/agent-kit/context-window.cjs').read(folder, { ownConfigDir: own })
+    if (!c) fail(`${service}: the session has no model answer yet — context is empty`)
     const n = (x) => x.toLocaleString('en-US').replace(/,/g, ' ')
-    const sid = files[0].f.replace('.jsonl', '').slice(0, 8)
-    console.log(win
-      ? `${service}: context ${n(used)} of ${n(win)} tokens (${Math.round((used / win) * 100)} %), ${n(Math.max(0, win - used))} left · model ${model} · session ${sid}, last answer ${String(last.timestamp ?? '').slice(0, 19)}Z`
-      : `${service}: context ${n(used)} tokens · the window of model ${model} is not known to the node · session ${sid}`)
+    const sid = c.session.slice(0, 8)
+    console.log(c.window
+      ? `${service}: context ${n(c.used)} of ${n(c.window)} tokens (${c.percent} %), ${n(Math.max(0, c.window - c.used))} left · model ${c.model} · session ${sid}, last answer ${String(c.at ?? '').slice(0, 19)}Z`
+      : `${service}: context ${n(c.used)} tokens · the window of model ${c.model} is not known to the node · session ${sid}`)
     process.exit(0)
   }
   // 708-4 (владелец 2026-11-09: «продолжай с того же места ты пытаешься прочитать какие-то файлы … и сверяемся»): хвост прерванного
