@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# 784 (the owner, 2026-11-18, Telegram 737–739): Fractera's original must never carry a node's own elements. ✗ ce3e76d9 pushed this
+# node's registry with its born element hrutb into Fractera/web4-node-starter-kit, and every fresh fork's install stopped on it
+# («папки рождённого элемента нет») until fb233968. This hook refuses a push to Fractera's original when the pushed commit's registry
+# holds any born element. Only the owner's node turns it on (`git config core.hooksPath .githooks`); other nodes push to their own forks.
+remote_url="$2"
+case "$remote_url" in
+  *[Ff]ractera/web4-node-starter-kit*) ;;
+  *) exit 0 ;;
+esac
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "0000000000000000000000000000000000000000" ] && continue
+  born="$(git show "$local_sha:WEB4-ITEMS-REGISTRY/web4-items.json" 2>/dev/null | node -e 'let t="";process.stdin.on("data",(c)=>t+=c).on("end",()=>{try{const r=JSON.parse(t);console.log((r.services||[]).filter((s)=>s&&s.born).map((s)=>s.id).join(" "))}catch{console.log("")}})')"
+  if [ -n "$born" ]; then
+    echo "===FRACTERA_PUSH_REFUSED=== the registry of ${local_sha:0:8} holds elements born on this node: $born — they never go to Fractera's original (784). Remove them from the committed registry first." >&2
+    exit 1
+  fi
+done
+exit 0
