@@ -25,16 +25,11 @@ import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
 import { H2, Small } from "@/components/ui/typography"
 
-// «ЗАПУСТИТЬ СЕРВЕР» (node step 738-4). The owner, 2026-11-14: «входит у неё заново обнаруживает пустой страницу и до того момента пока он
-// не в ведёт информацию о IP-адресе и пароле странице будет оставаться пустой … в любой момент перезагрузить эту страницу и пока идёт
-// какой-то из процессов начать работать со вторым … с 10-м и с 100-м сервером поочерёдно возвращаясь на эту страницу когда заново вводит
-// credentials».
-// 🔒 THE PAGE KEEPS NO SECRET: the address lives in this island's memory; 760-1 «Запомнить сервер на 24 часа» (on by default) keeps the
-// address, port and access deadline in this browser — never the password — and a reload with it off empties the page. Everything shown is the server's own answer
-// (`/api/node/launch` → the server over SSH), so the same address on any visit shows the same truth, and other servers run on meanwhile.
-// 🔒 THE LADDER LAW (259-1, 744-7): which step is open is the part's one rule (`Ladder`, `lib/hosting/ladder-rule.mjs`) — one step open, a
-// done one a line of what it did, a closed one a line of what opens it; this island only says what each step has done
-// (`server-launch-rungs.ts`). D46: the installation opens after the domain, never past an empty step 3.
+// «ЗАПУСТИТЬ СЕРВЕР» (node step 738-4): the page is empty until the address is typed; any number of servers, one after another.
+// 🔒 THE PAGE KEEPS NO SECRET: 760-1 «Запомнить сервер на 24 часа» keeps the address, port and access deadline in this browser — never the
+// password. Everything shown is the server's own answer (`/api/node/launch` → the server over SSH): the same address shows the same truth.
+// 🔒 THE LADDER LAW (259-1, 744-7): which step is open is the part's one rule (`Ladder`, `lib/hosting/ladder-rule.mjs`); this island only
+// says what each step has done (`server-launch-rungs.ts`). D46: the installation opens after the domain, never past an empty step 3.
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 type CoreRow = CertRow & { zone: string; label: string; kind: string; https: boolean | null; status: number | null; off?: boolean }
@@ -69,14 +64,13 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
   const [target, setTarget] = useState<Target | null>(null)
   const [state, setState] = useState<LaunchState | null>(null)
   const [busy, setBusy] = useState(false)
-  // 744 wishes: the act that runs now — its own line beside the greyed buttons, never a silent page
-  const [doing, setDoing] = useState("")
+  const [doing, setDoing] = useState("") // 744: the act that runs now — its own line beside the greyed buttons
   const [closing, setClosing] = useState(false)
   const [panel, setPanel] = useState<{ url: string | null; opening: boolean }>({ url: null, opening: false })
   const [error, setError] = useState("")
   const [changed, setChanged] = useState<{ seen: string; pinned: string | null } | null>(null)
-  // 739-5: the architect's one-time code, kept here and not in its step, so a look back at another step does not lose it (744-7).
-  const [claim, setClaim] = useState<(ClaimShown & { host: string }) | null>(null)
+  const [askPass, setAskPass] = useState(false) // 795 (Telegram 683): the password field only on the server's «need-password»
+  const [claim, setClaim] = useState<(ClaimShown & { host: string }) | null>(null) // 739-5: kept here, a look back loses nothing
   const { on: remembering, kept, keep, forget, toggle } = useLaunchRemember((k) => setForm({ host: k.host, port: String(k.port), password: "" }))
 
   const say = useCallback((a: Answer | null) => {
@@ -100,7 +94,7 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
       const a = await post({ action, host: target.host, port: target.port, ...extra })
       say(a)
       // 744-3: the access ended (its deadline, or closed elsewhere) — back to step 1, the password again.
-      if (a?.reason === "need-password") { setTarget(null); setState(null); setPanel({ url: null, opening: false }); forget(); return a }
+      if (a?.reason === "need-password") { setTarget(null); setState(null); setPanel({ url: null, opening: false }); setAskPass(true); forget(); return a }
       if (a?.state) setState({ ...a.state, host: target.host, cleared: action === "clear" ? (a.cleared ? { state: "done", ...a.cleared } : { state: "failed", detail: a.reason }) : state?.cleared ?? null })
       return a
     } finally { setBusy(false); setDoing("") }
@@ -126,7 +120,7 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
     setPanel({ url: null, opening: true })
     const a = await post({ action: "window", host: target.host, port: target.port })
     say(a)
-    if (a?.reason === "need-password") { setTarget(null); setState(null); forget() }
+    if (a?.reason === "need-password") { setTarget(null); setState(null); setAskPass(true); forget() }
     setPanel({ url: a?.ok ? (a as { window?: { url?: string } }).window?.url ?? null : null, opening: false })
   }
 
@@ -137,8 +131,10 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
     setError("")
     try {
       const a = await post({ action: "connect", host, port, password: form.password, ...(trust ? { trust } : {}) })
+      // 795: no access yet and no password typed — not an error, the field appears with its own lead
+      if (a?.reason === "need-password" && !form.password) { setAskPass(true); setError(""); return }
       say(a)
-      if (a?.reason === "host-key-changed" && a.seen) setChanged({ seen: a.seen, pinned: a.pinned ?? null })
+      if (a?.reason === "host-key-changed" && a.seen) { setChanged({ seen: a.seen, pinned: a.pinned ?? null }); setAskPass(true) }
       // 769: the password's answer carries the access at once; the server is checked by the next call, which can lose nothing
       let st = a?.ok ? a.state ?? null : null
       if (a?.ok) keep(host, port, a.visit?.deadline ?? null)
@@ -149,6 +145,7 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
       }
       if (a?.ok && st) {
         setChanged(null)
+        setAskPass(false)
         setTarget({ host, port, fingerprint: a.fingerprint ?? null, until: a.visit?.deadline ?? null })
         setState({ ...st, host })
       }
@@ -169,20 +166,23 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
     return () => clearInterval(t)
   }, [target, working, post])
 
-  // 744-7: before a server is connected, step 1 is this form and the six steps after it stand closed — the whole way is seen from the start.
-  if (!target || !state) {
+  if (!target || !state) { // 744-7: step 1 is this form, the steps after it stand closed — the whole way seen from the start
     const access = (
       <div className="flex flex-col gap-4" data-block="server-launch-form">
         <Small className="text-foreground">{words.lead}</Small>
         <div className="grid gap-3 sm:grid-cols-[1fr_8rem]">
-          <Field><FieldLabel htmlFor="launch-host">{words.host}</FieldLabel><Input autoComplete="off" id="launch-host" inputMode="decimal" onChange={(e) => setForm({ ...form, host: e.target.value })} placeholder="203.0.113.7" value={form.host} /></Field>
+          <Field><FieldLabel htmlFor="launch-host">{words.host}</FieldLabel><Input autoComplete="off" id="launch-host" inputMode="decimal" onChange={(e) => { setForm({ ...form, host: e.target.value, password: "" }); setAskPass(false); setChanged(null); setError("") }} placeholder="203.0.113.7" value={form.host} /></Field>
           <Field><FieldLabel htmlFor="launch-port">{words.port}</FieldLabel><Input id="launch-port" inputMode="numeric" onChange={(e) => setForm({ ...form, port: e.target.value })} value={form.port} /></Field>
         </div>
-        <Field>
-          <FieldLabel htmlFor="launch-password">{words.password}</FieldLabel>
-          <Input autoComplete="off" id="launch-password" onChange={(e) => setForm({ ...form, password: e.target.value })} type="password" value={form.password} />
-          <FieldDescription>{kept && kept.host === form.host.trim().toLowerCase() ? words.remember.noPassword.replace("{time}", untilText(kept.until)) : words.passwordNote}</FieldDescription>
-        </Field>
+        {kept && kept.host === form.host.trim().toLowerCase() && !askPass ? <Small className="text-muted-foreground" data-block="server-launch-kept">{words.remember.noPassword.replace("{time}", untilText(kept.until))}</Small> : null}
+        {askPass ? (
+          <Field data-block="server-launch-password">
+            <Small className="rounded-md border border-warning/50 bg-warning/10 px-3 py-2 font-medium text-foreground" role="status">! {words.passwordAsk}</Small>
+            <FieldLabel htmlFor="launch-password">{words.password}</FieldLabel>
+            <Input autoComplete="off" autoFocus id="launch-password" onChange={(e) => setForm({ ...form, password: e.target.value })} onKeyDown={(e) => { if (e.key === "Enter" && form.password && !busy) void connect() }} type="password" value={form.password} />
+            <FieldDescription>{words.passwordNote}</FieldDescription>
+          </Field>
+        ) : null}
         {changed ? (
           <div className="flex flex-col gap-2 rounded-md border border-destructive/40 bg-destructive/5 p-3" data-block="server-launch-changed">
             <p className="font-medium text-foreground text-sm">{words.changed.title}</p>
@@ -195,7 +195,7 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
         {/* 761-16: «no access» is the person's action, not a failure — an orange card with «!» (the owner: a window you cannot miss) */}
         {error && !changed ? (error === words.errors["need-password"] ? <Small role="alert" className="rounded-md border border-warning/50 bg-warning/10 px-3 py-2 font-medium text-foreground" data-block="server-launch-need-hands">! {error}</Small> : <Small className="text-destructive" data-block="server-launch-error">{error}</Small>) : null}
         <div className="flex flex-wrap items-center gap-3">
-          <Button disabled={busy || !form.host.trim()} onClick={() => void connect()}>{words.connect}</Button>
+          <Button disabled={busy || !form.host.trim() || (askPass && !form.password)} onClick={() => void connect()}>{askPass ? words.openAccess : words.connect}</Button>
           {busy ? <Small className="text-muted-foreground">{doing === "checking" ? words.checking : words.connecting}</Small> : null}
         </div>
       </div>
@@ -244,7 +244,7 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
       {error ? <Small className="text-destructive" data-block="server-launch-error">{error}</Small> : null}
       {busy && doing ? <Small className="flex items-center gap-2 text-muted-foreground" data-block="server-launch-doing" role="status"><Spinner className="size-4" />{words.doing[doing] ?? words.doing.any}</Small> : null}
       <Ladder id="launch" locked={words.locked} rungs={LAUNCH_ORDER.map((id) => ({ id, title: words.step[id], done: done[id], warn: id === "telegram" && telegramWarn(state.telegram), summary: summary[id], body: body[id] }))} />
-      {state.relation?.kind !== "unrelated" && state.probe?.fractera?.head && strategy !== "running" ? <LaunchDanger busy={busy} cleared={state.cleared} dialogUi={dialogUi} host={target.host} onAct={async (a, x) => { await act(a, x) }} words={words} /> : null}
+      {strategy !== "running" && (state.relation?.kind === "unrelated" || state.probe?.fractera?.head) ? <LaunchDanger busy={busy} dialogUi={dialogUi} onAct={async (a, x) => { await act(a, x) }} state={state} words={words} /> : null}
     </section>
   )
 }

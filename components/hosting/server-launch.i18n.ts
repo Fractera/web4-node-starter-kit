@@ -20,6 +20,11 @@ export type ServerLaunchWords = {
   /** 760-1: «Запомнить сервер на 24 часа» — the address, port and access deadline in this browser; the password never. `{time}` the deadline */
   remember: { label: string; on: string; off: string; noPassword: string }
   connect: string
+  /** 795: the password field appears only when the server asks for it — its lead and the button that opens the access */
+  passwordAsk: string
+  openAccess: string
+  /** 795: a server busy with another install — its «free» lives in the danger zone at the bottom */
+  busyBelow: string
   connecting: string
   /** 769: the access is open, the server is checked by a second call — a new server takes up to two minutes; failed — the access stays */
   checking: string
@@ -94,7 +99,7 @@ const en: ServerLaunchWords = {
   title: "Launch a server",
   readOnly: "This address is read-only: servers are launched from the node's own computer, at its keyboard or by its domain after sign-in.",
   launchedOn: "Your node runs on a server: {url}",
-  lead: "Type the server's address and the root password from your provider's letter. The same address brings the same server back with everything it is doing now, so several servers can be launched one after another.",
+  lead: "Type the server's IP address and press «Check the server»: the node finds out itself whether a password is needed. The same address brings the same server back with everything it is doing now, so several servers can be launched one after another.",
   host: "Server IP address",
   port: "SSH port",
   password: "Root password",
@@ -106,6 +111,9 @@ const en: ServerLaunchWords = {
     noPassword: "No password needed until {time}: this browser already has access to the server. Press «Check the server».",
   },
   connect: "Check the server",
+  passwordAsk: "This browser has no access to the server yet. Type the root password from your provider's letter — it opens the access for one day.",
+  openAccess: "Open the access",
+  busyBelow: "The server is busy with another installation — it is freed in the «Danger zone» at the bottom of the page.",
   connecting: "Connecting to the server…",
   checking: "The access is open. Checking the server… up to two minutes on a new server.",
   checkFailed: "The access is open for a day, but the server's check did not finish ({reason}). Press «Check the server» again — no password needed.",
@@ -271,7 +279,7 @@ const ru: ServerLaunchWords = {
   title: "Запустить сервер",
   readOnly: "Этот адрес только для чтения: серверы запускаются с компьютера самого узла, за его клавиатурой или по его домену после входа.",
   launchedOn: "Ваш узел работает на сервере: {url}",
-  lead: "Введите адрес сервера и пароль root из письма провайдера. Тот же адрес возвращает тот же сервер со всем, что он сейчас делает, поэтому несколько серверов можно запускать по очереди.",
+  lead: "Введите IP-адрес сервера и нажмите «Проверить сервер»: узел сам узнает, нужен ли пароль. Тот же адрес возвращает тот же сервер со всем, что он сейчас делает, поэтому несколько серверов можно запускать по очереди.",
   host: "IP-адрес сервера",
   port: "Порт SSH",
   password: "Пароль root",
@@ -283,6 +291,9 @@ const ru: ServerLaunchWords = {
     noPassword: "Пароль не нужен до {time}: у этого браузера уже есть доступ к серверу. Нажмите «Проверить сервер».",
   },
   connect: "Проверить сервер",
+  passwordAsk: "У этого браузера ещё нет доступа к серверу. Введите пароль root из письма провайдера — он откроет доступ на сутки.",
+  openAccess: "Открыть доступ",
+  busyBelow: "Сервер занят другой установкой — освободить его можно в «Опасной зоне» внизу страницы.",
   connecting: "Подключаюсь к серверу…",
   checking: "Доступ открыт. Проверяю сервер… на новом сервере до двух минут.",
   checkFailed: "Доступ открыт на сутки, но проверка сервера не закончилась ({reason}). Нажмите «Проверить сервер» ещё раз — пароль не нужен.",
