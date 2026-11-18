@@ -32,8 +32,15 @@ export async function GET(req: NextRequest) {
   const f = await factory.state(ROOT, { live })
   // the factory's own name and address for @BotFather — stable per node (a hash of its folder), editable there
   const z = zone()
-  const salt = createHash("sha256").update(ROOT).digest("hex").slice(0, 4)
-  const suggestion = f.ready ? null : { name: z ? `Fractera · ${z} · factory` : "Fractera · factory", username: factory.suggestUsername(z ? `${z.split(".")[0]}_factory` : "fractera_factory", salt) }
+  // ✗ 2026-11-18 21:00 (the owner deleted the bot on purpose): the address was stable per node, so after a deleted factory the page offered
+  // the dead bot's address again. Now it is stable per node AND per the bot it replaces — never the kept bot's own address.
+  const base = z ? `${z.split(".")[0]}_factory` : "fractera_factory"
+  const keptName = String((f as { username?: string }).username ?? "")
+  let suggested = ""
+  for (let i = 0; i < 8 && (!suggested || suggested.toLowerCase() === keptName.toLowerCase()); i++) {
+    suggested = factory.suggestUsername(base, createHash("sha256").update(`${ROOT}|${keptName}|${i}`).digest("hex").slice(0, 4))
+  }
+  const suggestion = f.ready ? null : { name: z ? `Fractera · ${z} · factory` : "Fractera · factory", username: suggested }
   return NextResponse.json({ ok: true, factory: f, suggestion, wait }, noStore)
 }
 

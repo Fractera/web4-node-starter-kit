@@ -63,7 +63,8 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
   useEffect(() => { void load(true) }, [load])
 
   const mine = st?.wait?.service === service ? st.wait : null
-  const waiting = mine?.state === "waiting"
+  // ✗ 2026-11-18 21:0x: «waiting» came from the waiter's own file, written a moment after the door's answer — the link stayed hidden
+  const waiting = mine?.state === "waiting" || (link !== null && !mine?.state)
   const doneTail = mine?.state === "done" ? mine.bot?.tail ?? "" : null
   useEffect(() => { if (doneTail !== null && link) onDone() }, [doneTail, link, onDone])
   useEffect(() => {
@@ -184,7 +185,7 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
           {(busy === "create" || waiting) && <Spinner className="size-4" />}{w.create}
         </Button>
         {/* ✗ 2026-11-18 19:33/19:37: a window opened after the door's answer may be blocked by the browser — the link is pressed by the person */}
-        {waiting && link && <a href={link} target="_blank" rel="noreferrer noopener" className={buttonVariants({})} data-bf-open-telegram>{w.openAgain}<ExternalLink data-icon aria-hidden /></a>}
+        {link && mine?.state !== "done" && <a href={link} target="_blank" rel="noreferrer noopener" className={buttonVariants({})} data-bf-open-telegram>{w.openAgain}<ExternalLink data-icon aria-hidden /></a>}
         {waiting && <Small className="text-muted-foreground">{w.waiting}</Small>}
       </div>
       {mine?.state === "done" && <p data-block="bf-done" role="status" className="text-sm">{fill(w.done, { username: mine.bot?.username ?? "", tail: mine.bot?.tail ?? "" })}</p>}

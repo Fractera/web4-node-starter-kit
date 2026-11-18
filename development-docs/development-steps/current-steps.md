@@ -180,6 +180,13 @@ the record marked dead (factoryReady false → the Pult offers no «Создат
 токен…» (new phrase, his «сразу исправляй» — name it to him). Test +1 (deleted bot). Prebuild RC=0 → build. Window 74b31e0c (new token /
 new bot with a NEW address).
 
+**21:00–21:10 UTC.** Build 2cfab2f3 live (the dead token reads dead — seen). Walking the whole path found: the suggested factory address
+repeated the deleted bot's (now salted by the kept bot's address), the Telegram link hidden by a race with the waiter's file (now shown as
+soon as the door answers), the update offset shared across factory bots (now keyed by bot id). person.json (ru) restored to the main channel
+dir. His question «ты разобрался точно по какой причине … не запускалась фабрика?» — answered NO: can_manage_bots=false for 9250885895 is
+unexplained (hypotheses: the reused address of a deleted manager; the Mini App switch not saved); the next bot with a NEW address decides it.
+Prebuild RC=0 → build.
+
 ## Letter to my next session (written 2026-11-18 ~17:40 UTC, window 55 %, Opus · max)
 
 Written by me for myself. Day plan 783 (new-steps/783-…md). Roma reads me in Telegram (chat 90413601). Core live a622a876 + pins after.
