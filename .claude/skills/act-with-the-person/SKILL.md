@@ -38,6 +38,11 @@ npm run ask-person -- "<what to do, one sentence, their language>" --href <where
   2026-11-16: «я не смог выделить … тот текст … лучше выпал кнопка скопировать команду»); never a command inside the text.
 - One request per act. A request that no longer fits — `npm run ask-person -- drop <id>`; open ones — `npm run ask-person -- list`.
 - An element's agent has the same command from its template (761-16d): its window names the element, its «Готово» wakes that agent.
+- **A guard holds this, not your memory** (step 781-7; the owner, 2026-11-18: «есть ли у тебя сторож … Который ловит! В чате»): the
+  hook `window-guard` refuses an answer — and a Telegram `reply` — that asks for a `!` command, `sudo`, a slash command, a key, a token,
+  a password, a code or a login when this turn put no `npm run ask-person`. Claude Code's own advice «suggest `! <command>`» does not
+  apply on this node. A conscious exception is one line in the answer, «⟦без окна: <why, 8+ characters>⟧» — logged in
+  `data/node/window-guard.jsonl` for the review.
 - **The window first, then the chat** (the owner, 2026-11-16 18:42: «меня беспокоит почему ты не показал мне интерфейс который требует
   ввести пароль»): an act of theirs is put as the window BEFORE any chat line or question about it — never «нажать?» in the chat first.
 - **A secret is typed in the window** (node step 768): the root password of a server — `--secret server-root --host <ip> [--port 22]`

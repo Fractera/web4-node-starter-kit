@@ -44,6 +44,10 @@
           {
             "type": "command",
             "command": "node .claude/hooks/interface-design-start.mjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/window-guard.mjs start"
           }
         ]
       }
@@ -73,6 +77,25 @@
           {
             "type": "command",
             "command": "node .claude/hooks/parts-gate.mjs"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__plugin_telegram_telegram__reply",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/window-guard.mjs reply"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/window-guard.mjs stop"
           }
         ]
       }
