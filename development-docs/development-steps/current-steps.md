@@ -85,6 +85,14 @@ final-check 11 passed, prebuild RC=0; core build 14:46–14:50 RC=0, LIVE afe404
 tell Roma: press «Установить с нуля» NOW (the fresh install takes auth v2.4.43 + root v3.0.68 from his fork), the live proof of 796 = his
 registration with his e-mail. 685 (the Pult «Режим») still unanswered. Pin registry trick: scratchpad pin.py (HEAD blob + update-index).
 
+**16:00–16:08 UTC — 789 started** (Telegram 723 → his «Да» 724 = 789 only; the three questions 786 A/C, 791 what moves, 685 «Режим» still
+open). The picture before code: mock HTML on the template's tokens (scratchpad 789/drawer-{light,dark}.html) → eyes
+logs/eyes/2026-11-18T16-06-37-014Z.png (light), 16-06-41-083Z.png (dark): left sheet 316 px, element head (letter tile, name, «Администратор
+элемента», ×), groups with small caps headings, 56 px two-line items with 36 px icon tiles, current = bg-muted + 3 px primary bar,
+footer «Открыть сайт элемента». Sent (725–727), waits his yes. Then: workshop data/workshop/fractera-custom-item-starter — `tg/_data/menu.json`,
+`tg/_components/tg-drawer.client.tsx` (shadcn Sheet left; parts_find first), BackButton closes, skill telegram-mini-app; release v0.3.216;
+NO core build while the server installs (promise, Telegram 719).
+
 ## Letter to my next session (written 2026-11-18 ~14:24 UTC, window 55 %, Opus · max)
 
 Written by me for myself. We are inside the DAY PLAN 783 (new-steps/783-the-day-plan-of-november-eighteen-nine-steps.md — read it;
