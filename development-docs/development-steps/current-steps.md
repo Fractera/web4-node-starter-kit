@@ -60,12 +60,11 @@ modes checked, Masha's three elements in one cabinet · 794 (proposed) /plan fro
 build), 789→790 (+791's template part in the same release), 792 last. Opus, max effort.
 Small defects: never fixed today — one line into new-steps/793-finishing-the-small-defects-found-during-the-day.md; only a defect that
 stops a step's result is fixed inside the step. 793 runs in its own session after 792 closes.
-NOW: APPROVED 13:19 (Telegram 625). 784: no system reinstall (he has no Contabo access, Telegram 642) → «Очистить» + fresh install.
-13:41 need-password after the password = his Chrome kept no cookies for localhost (proven: clean Chrome passes on a test SSH server, his
-did not; trace logs/launch-trace.jsonl). He allowed cookies 13:49 (checked: a JS cookie is kept); 13:52 probe «given/connected» — FIXED.
-Skill dedicated-server got «Known traps» (his word, Telegram 654). He goes through steps 2.. now (the old install → «Очистить»).
-Done meanwhile (not built yet): 788 code 8e6003ee (gauge, tests 7/7, bench `npm run tg-app:preview`); 787-2 data (description, site by
-the ladder's rule, botLink) in state.ts — uncommitted; the 787 card design next (pictures to him before code). NO core build during the launch.
+NOW: APPROVED 13:19 (Telegram 625). 784: cookies fixed 13:52 (probe connected). 13:53–13:55 (Telegram 662, 665): no «Очистить» for
+this node's OWN older install (strategy «update») → built «Установить с нуля» in a «Опасная зона» after the last step (runner --fresh sets
+the related node aside whole); prebuild RC=0; ~14:0x ONE core build (serve:rebuild:detached) — 788 gauge rides it; the 787 card is HELD
+BACK (its page.cjs version in logs/787-card-page.cjs; pictures logs/eyes/787-proposal-{light,dark}.png wait his «да»). On return: tell
+Roma, he presses «Установить с нуля», then install. Also owed to him: the answer about «Получить код архитектора» (739, his 665).
 
 ## Letter to my next session (written 2026-11-18 ~12:30 UTC, Opus · max)
 
