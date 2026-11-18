@@ -18,3 +18,4 @@ Taken only after the day plan 783 (steps 784–792) is closed. One line per defe
 - `npm run eyes` could not open a `file://` page (its theme cookie needs an origin) — fixed inside 788 (a bench page is a file).
 - Lesson, not a defect (fixed in 788): the bench page runs unminified source — a check of the BUILT page (`curl` the live Pult page and parse its
   script) belongs in the 788/787 proofs; the test now parses the whole page script.
+- 15:00 (the owner, Telegram 699): «нельзя строить так приложение чтобы при ошибке на одной вкладке из него нельзя было выйти» — the panel must stay leavable when one page's island loops or hangs (a guard against effects that call the server without a once-guard; navigation never blocked by busy).
