@@ -21,7 +21,10 @@ const log = (line) => {
 let online = false
 try {
   const out = run(['jlist'])
-  online = JSON.parse(out.slice(out.indexOf('['))).some((p) => p.name === 'fractera-web4' && p.pm2_env?.status === 'online')
+  // ✗ 2026-11-18 11:39 (the first real boot): a fresh pm2 daemon prints «[PM2] Spawning…» before the JSON — the list is the line that
+  // starts with «[» and ends with «]», never the first «[».
+  const json = out.split('\n').map((l) => l.trim()).find((l) => l.startsWith('[') && l.endsWith(']') && !l.startsWith('[PM2')) ?? '[]'
+  online = JSON.parse(json).some((p) => p.name === 'fractera-web4' && p.pm2_env?.status === 'online')
 } catch (e) {
   log(`pm2 jlist failed: ${e instanceof Error ? e.message.split('\n')[0] : e}`)
 }
