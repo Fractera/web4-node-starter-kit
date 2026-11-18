@@ -1,0 +1,26 @@
+{
+ "_": "Cards of the reusable parts of this folder (node step 782-1). One card per part; the map is lib/parts/PARTS.json.",
+ "parts": [
+  {
+   "id": "app-mode",
+   "kind": "composite",
+   "title": {
+    "en": "App mode card",
+    "ru": "Карточка «Режим работы приложения»"
+   },
+   "version": "1.0.0",
+   "scope": "panel",
+   "path": "components/app-mode/app-mode.client.tsx",
+   "export": "AppMode",
+   "what": {
+    "en": "The core Passport's card of the node type: one user or many users, two round buttons stacked, a fixed height, the confirming window on every press with what changes and which earlier elements keep their state.",
+    "ru": "Карточка типа узла в «Паспорте» ядра: один пользователь или много, две круглые кнопки одна над другой, неизменная высота, окно подтверждения при каждом нажатии — что изменится и какие прежние элементы сохранят своё состояние."
+   },
+   "how": "The section kind appMode: <AppMode lang words={appModeUi(lang)} dialogUi={appDialogUi(lang)} />; the type is asked from /api/node/type and switched through POST.",
+   "words": {
+    "en": ["app mode", "node type", "one user many users"],
+    "ru": ["режим работы приложения", "тип узла", "один пользователь много пользователей"]
+   }
+  }
+ ]
+}

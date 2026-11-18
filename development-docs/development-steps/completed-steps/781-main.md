@@ -56,6 +56,8 @@ of an action request) · the boot parse fix and this summary — the closing com
   doors: `person-asks` carries `channel: null` while hearing; the Pult POST without Telegram's signature → `no-data`; the owner's own
   screenshot of the Pult showed the card in the healing state (the padding defect, fixed in 3e400cef, `.abox .chan{padding:2px 14px 14px}`
   served after the build).
+Surfaces seen: logs/eyes/2026-11-18T11-26-58-983Z.png (the panel's red band, 781-4); the Pult card — the owner's phone screenshot 11:27
+(the padding defect, fixed in 3e400cef).
 - 781-5: the owner pressed «Включить автозапуск» in the Pult 11:26:45 → plist written, `launchctl print` loaded, boot.log «already up —
   nothing to do»; the real reboot 11:36:56 → boot.log 11:39:11 «pm2 resurrect» at uptime 135 s, the core up, `serve:status` «автозапуск
   включён».

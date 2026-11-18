@@ -558,6 +558,11 @@
       "type": "workspace",
       "shape": "table"
     },
+    "appMode": {
+      "id": "0070",
+      "type": "workspace",
+      "shape": "text"
+    },
     "elementPreview": {
       "id": "0064",
       "type": "workspace",

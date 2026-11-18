@@ -1254,6 +1254,12 @@ export const SPECIMEN: SpecimenSection[] = [
     body: [{ kind: 'toolsTab', lang: 'en' }],
   },
   {
+    kind: 'appMode',
+    when: 'The first card of the core\'s Passport: the app mode — one user (every element under the configurator) or many users (one super user creates domains for others). Two round buttons stacked, the active one dark, the text of the chosen mode on the left at a fixed height; every press opens the one modal with what changes now and which earlier elements keep their state. The type is asked in the browser; the page stays prerendered.',
+    whenRu: 'Первая карточка «Паспорта» ядра: режим работы приложения — один пользователь (все элементы под конфигуратором) или много пользователей (один суперпользователь создаёт домены для других). Две круглые кнопки одна над другой, активная тёмная, слева текст выбранного режима при неизменной высоте; каждое нажатие открывает единственное окно: что изменится сейчас и какие прежние элементы сохранят своё состояние. Тип спрашивается в браузере, страница остаётся предрендеренной.',
+    body: [{ kind: 'appMode', lang: 'en' }],
+  },
+  {
     kind: 'projectsBoard',
     when: 'The projects table of the node: every element, native and custom, with its service address, meta title and description, own domain, last commit, measured state, number of commits, a link to the site and a link to its page in the core. Filters native/custom and a search by address and description; asked in the browser, the page stays prerendered.',
     whenRu: 'Таблица проектов узла: каждый элемент, нативный и кастомный, со служебным адресом, заголовком и описанием из мета, своим доменом, последним коммитом, измеренным состоянием, числом коммитов, ссылкой на сайт и на его страницу в ядре. Отбор нативные/кастомные и поиск по адресу и описанию; спрашивается в браузере, страница остаётся предрендеренной.',

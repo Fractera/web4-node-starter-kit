@@ -8,6 +8,7 @@ import { join } from "node:path"
 
 import nodeType from "@/lib/web4-items/node-type.cjs"
 import { serviceUrl } from "@/lib/microservices/registry"
+import { elementLabel } from "@/lib/web4-items/element-name"
 
 // 553: ТИП УЗЛА (`lib/web4-items/node-type.cjs`). Меняет его только человек — этой дверью, командой `npm run node-type` или словом
 // главному агенту. Тип задаёт облик НОВЫХ кастомных элементов; существующие перечисляются (`mismatches`) и переключаются по одному.
@@ -25,15 +26,21 @@ function settingsUrl(): string | null {
   return base ? `${base}/{lang}/architect` : null
 }
 
-function state() {
-  const type = nodeType.readNodeType(process.cwd()) as "project" | "factory"
-  return { ok: true, type, mismatches: nodeType.mismatches(type, process.cwd()), settingsUrl: settingsUrl() }
+// 782-1: `elements` — рождённые кастомные элементы с именем для людей и их связью с CONFIG: окно переключения в «Паспорте» называет их
+// («прежние элементы сохранят своё состояние»). Имя — на языке страницы (`?lang=`), идентификатор человеку не показывается.
+function state(lang: string) {
+  const root = process.cwd()
+  const type = nodeType.readNodeType(root) as "project" | "factory"
+  const elements = (nodeType.bornCustom(root) as { id: string; config: boolean }[]).map((e) => ({ id: e.id, name: elementLabel(e.id, lang), config: e.config }))
+  return { ok: true, type, mismatches: nodeType.mismatches(type, root), elements, settingsUrl: settingsUrl() }
 }
+
+const langOf = (req: NextRequest) => (req.nextUrl.searchParams.get("lang") === "ru" ? "ru" : "en")
 
 export async function GET(req: NextRequest) {
   const denied = await requireRoles(req, ROLES)
   if (denied) return denied
-  return NextResponse.json(state(), { headers: { "Cache-Control": "no-store" } })
+  return NextResponse.json(state(langOf(req)), { headers: { "Cache-Control": "no-store" } })
 }
 
 export async function POST(req: NextRequest) {
@@ -45,5 +52,5 @@ export async function POST(req: NextRequest) {
   nodeType.writeNodeType(type, process.cwd())
   // Окно рождения подставляет облик по типу — страницы элементов перерисовываются (команда из терминала этого не делает).
   revalidatePath("/[lang]", "layout")
-  return NextResponse.json(state(), { headers: { "Cache-Control": "no-store" } })
+  return NextResponse.json(state(langOf(req)), { headers: { "Cache-Control": "no-store" } })
 }

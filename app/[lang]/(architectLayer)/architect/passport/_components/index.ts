@@ -18,7 +18,8 @@ import type { PageItem } from '@/lib/content/sections/types'
 // оставь но все что выше нужно также закомментировать до появления lagrix»): сводка «Узел в Lagrix: репутация его элементов» — это
 // секция `nodePassport` — закомментирована до запуска сети; три карточки — дети группы, их рисует рубрикатор сам.
 // 715 (владелец 2026-11-10): «Официальный аккаунт» и «Главный кошелёк» тоже спрятаны до Lagrix (`hidden` в их `_data/meta.ts`) — осталась «Как это работает».
-export function content(_lang: string): PageItem[] {
-  // return [{ kind: 'nodePassport', lang: _lang }]
-  return []
+// 782-1 (владелец 2026-11-18, Telegram 565): первая голубая карточка — «Режим работы приложения», переключатель перенесён сюда из конфигуратора.
+export function content(lang: string): PageItem[] {
+  // return [{ kind: 'appMode', lang }, { kind: 'nodePassport', lang }]
+  return [{ kind: 'appMode', lang }]
 }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Badge } from "@/components/ui/badge"
-import { buttonVariants } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Card as UiCard, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { LagrixRating, type LagrixRatingWords } from "@/components/element-docs/lagrix-rating"
@@ -77,39 +77,7 @@ export type NodePassportWords = {
 // 553-9 (владелец 2026-10-21: «на вкладке паспорт имела бы смысл рассказать о том в каком режиме работает узел и под знаком вопрос более
 // подробно узнать какие бы существуют режимы чем они отличаются»). Режим — о машине, поэтому спрашивается в браузере (закон 264):
 // смена `npm run node-type -- set` видна при следующем открытии без пересборки.
-function NodeMode({ words, lang }: { words: NodePassportWords["mode"]; lang: string }) {
-  const [state, setState] = useState<{ type: "project" | "factory"; settingsUrl: string | null } | null>(null)
-  useEffect(() => {
-    fetch(`${BASE}/api/node/type`, { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d: { type?: string; settingsUrl?: string | null } | null) =>
-        setState(d?.type === "factory" || d?.type === "project" ? { type: d.type, settingsUrl: d.settingsUrl ?? null } : null))
-      .catch(() => setState(null))
-  }, [])
-  if (!state) return null
-  const { type } = state
-  // 564 (владелец 2026-10-21: «в паспорте должны дарить карточку в каком состоянии проекта по умолчанию … в паспорте … переключатели иметь
-  // не будет будет просто показывать в каком режиме это работает»): карточка без переключателя; сменить — на странице настроек config.
-  return (
-    <UiCard className="mb-6" data-node-mode={type}>
-      <CardHeader>
-        <CardTitle className="text-xl font-semibold">
-          {words.label}: {type === "factory" ? words.factory : words.project}{type === "project" ? ` ${words.byDefault}` : ""}
-        </CardTitle>
-        <CardDescription>{type === "factory" ? words.factoryText : words.projectText}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-3 text-sm">
-        <p className="text-muted-foreground">{words.both}</p>
-        <p className="text-muted-foreground">{words.chosen}</p>
-        {state.settingsUrl && (
-          <a href={state.settingsUrl.replace("{lang}", lang)} className="self-start font-medium text-primary hover:underline" data-node-mode-settings>
-            {words.change}
-          </a>
-        )}
-      </CardContent>
-    </UiCard>
-  )
-}
+// 782-1: карточка режима узла (564, только показ) ушла — режим переключается первой карточкой «Паспорта» (`components/app-mode/`).
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
@@ -153,7 +121,6 @@ export function NodePassport({ words, lang }: { words: NodePassportWords; lang: 
   if (cards === "loading" || cards === "failed" || cards.length === 0) {
     return (
       <>
-        <NodeMode words={words.mode} lang={lang} />
         <Accordion type="single" collapsible defaultValue="node">{node}</Accordion>
         {cards === "loading" ? (
           // 567-7 (владелец 2026-10-22): «скелетон … в виде карточки четыре штуки» — форма будущих карточек, пока узел отвечает.
@@ -183,17 +150,16 @@ export function NodePassport({ words, lang }: { words: NodePassportWords; lang: 
 
   return (
     <>
-      <NodeMode words={words.mode} lang={lang} />
       <Accordion type="single" collapsible defaultValue="node">
         {node}
         {walletCard}
         <div className="my-4 flex flex-wrap items-center gap-2" role="group" aria-label={words.show.label} data-passport-filter={show}>
           <span className="text-sm text-muted-foreground">{words.show.label}:</span>
           {(["all", "on", "off"] as const).map((k) => (
-            <button key={k} type="button" aria-pressed={show === k} onClick={() => setShow(k)}
-              className={buttonVariants({ variant: show === k ? "default" : "outline", size: "sm" })} data-passport-show={k}>
+            <Button key={k} type="button" aria-pressed={show === k} onClick={() => setShow(k)}
+              variant={show === k ? "default" : "outline"} size="sm" data-passport-show={k}>
               {words.show[k]}
-            </button>
+            </Button>
           ))}
         </div>
         {cards.filter((c) => show === "all" || (show === "on" ? !!c.web4 : !c.web4)).map((c) => {
