@@ -66,6 +66,17 @@ prints every name with its DNS, certificate and HTTPS state. Never tell the pers
 - A server to rent: skill `helpful-links` (partner links disclosed). A claim about Let's Encrypt, Ubuntu or a provider — from its primary
   source (letsencrypt.org/docs/rate-limits for the limits).
 
+## Known traps — act at once, no research
+
+- **«need-password» right after the password** («Доступ открыт на сутки, но проверка сервера не закончилась (need-password)»): the
+  person's browser does not keep cookies for the panel's site (measured 2026-11-18: his Chrome profile kept no cookie on `localhost` —
+  the visit's HttpOnly cookie was dropped, the next call came without it; `logs/launch-trace.jsonl` shows `"key":"none"`). The FIRST
+  answer is the window, not an investigation: `npm run ask-person` «Разрешите Chrome файлы cookie для <адрес панели>» with the hint
+  (the icon left of the address → site settings → cookies and site data → Allow; reload; the password again). The owner, 2026-11-18
+  (Telegram 654): «это должно стать частью навыка а на шаги номер один при появлении подобной ошибки сразу уведомить о том что нужно
+  сделать без продолжительных дополнительных исследований». Only if the trace shows `"key":"given"` with `"result":"auth"` is it the
+  server that refuses the key — then look further.
+
 ## Proven and not yet
 
 Proven without a server: the map of pins (two servers, system ssh to the first after the second; a reinstalled key refused until the
