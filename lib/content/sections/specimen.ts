@@ -1255,8 +1255,8 @@ export const SPECIMEN: SpecimenSection[] = [
   },
   {
     kind: 'appMode',
-    when: 'The first card of the core\'s Passport: the app mode — one user (every element under the configurator) or many users (one super user creates domains for others). Two round buttons stacked, the active one dark, the text of the chosen mode on the left at a fixed height; every press opens the one modal with what changes now and which earlier elements keep their state. The type is asked in the browser; the page stays prerendered.',
-    whenRu: 'Первая карточка «Паспорта» ядра: режим работы приложения — один пользователь (все элементы под конфигуратором) или много пользователей (один суперпользователь создаёт домены для других). Две круглые кнопки одна над другой, активная тёмная, слева текст выбранного режима при неизменной высоте; каждое нажатие открывает единственное окно: что изменится сейчас и какие прежние элементы сохранят своё состояние. Тип спрашивается в браузере, страница остаётся предрендеренной.',
+    when: 'The first card of the architect\'s root page: the app mode — one user (every element under the configurator) or many users (one super user creates domains for others). Two round buttons stacked, the active one dark, the text of the chosen mode on the left at a fixed height; every press opens the one modal with what changes now and which earlier elements keep their state. The type is asked in the browser; the page stays prerendered.',
+    whenRu: 'Первая карточка корня страниц архитектора: режим работы приложения — один пользователь (все элементы под конфигуратором) или много пользователей (один суперпользователь создаёт домены для других). Две круглые кнопки одна над другой, активная тёмная, слева текст выбранного режима при неизменной высоте; каждое нажатие открывает единственное окно: что изменится сейчас и какие прежние элементы сохранят своё состояние. Тип спрашивается в браузере, страница остаётся предрендеренной.',
     body: [{ kind: 'appMode', lang: 'en' }],
   },
   {

@@ -91,6 +91,9 @@ export default async function Page({ params }: { params: Promise<{ lang: string 
   const words = (text: string) => resolveTermLabels(text, terms)
 
   const children: PageItem[] = [
+    // 782 (владелец 2026-11-18, Telegram 597): «это не для страницы паспорта это для корня страницы архитектора … там сейчас существуют
+    // три карточки это должна быть четвёртая» — «Режим работы приложения» первой, над тремя действиями (565: «первую верхнюю голубую»).
+    { kind: 'appMode', lang },
     { kind: 'h3', text: home.start.title, id: home.start.anchor },
     ...home.start.actions.map((a): PageItem => ({
       kind: 'docref',
