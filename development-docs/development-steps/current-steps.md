@@ -187,6 +187,13 @@ dir. His question «ты разобрался точно по какой при�
 unexplained (hypotheses: the reused address of a deleted manager; the Mini App switch not saved); the next bot with a NEW address decides it.
 Prebuild RC=0 → build.
 
+**21:27 UTC — THE FACTORY WORKS.** @throughsongs_factory_0f24_bot (id 9287357331) — getMe can_manage_bots=false 21:23–21:25:35 (9 asks) though
+the switch was on; I built the creation link by hand + the waiter (build); he tapped; managed_bot came, getManagedBotToken gave the token;
+the main bot @throughsongs_fractera_22cc_bot (id 9295249203, …bkSw) connected to the main channel (verified getMe). At ~21:28 getMe of the
+factory says can_manage_bots=TRUE. So the flag LAGS (minutes; flipped around the first creation — cause unproven): the page must not block on
+it. Next: his admission (window: «Активировать соединение» + «Старт»), then my restart with the channel; then fix the page: «Проверить»
+must not gate creation (propose the phrases to him first).
+
 ## Letter to my next session (written 2026-11-18 ~17:40 UTC, window 55 %, Opus · max)
 
 Written by me for myself. Day plan 783 (new-steps/783-…md). Roma reads me in Telegram (chat 90413601). Core live a622a876 + pins after.
