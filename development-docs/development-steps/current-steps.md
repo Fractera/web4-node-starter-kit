@@ -113,6 +113,11 @@ frame widget (element-mini-app.client.tsx, address via /api/node/preview-url); p
 (new-steps/797-the-element-menu-follows-the-core-menu.md) for 759/760/764 — sent to him for «да»; Мессенджер after Telegram-бот unless
 766 says otherwise. **18:16 UTC — 797 CLOSED:** commit ef16cf03, build ae7a59ed live; summary completed-steps/797-main.md (open: stale ?paste= bookmarks, two «Терминал», not pushed — the classifier refuses git push; waits his push or a permission rule).
 
+**18:37 UTC — 798 planned** (new-steps/798-every-node-has-its-own-bot-factory.md; his 786 «системное решение … Партнёры?», 788 the two places
+— the core's «Telegram-бот» page and «Активация выделенного сервера» — with the task, his checklist and the node's own check, «Да» 790 to
+the plan). Replaces 786 A/C. Waits his «да» to the plan; then 798-1 (module + test), 798-2 (core page + first live proof that a
+factory-made main bot works through the Claude plugin). Also open: his answer on renaming the work-session «Терминал».
+
 ## Letter to my next session (written 2026-11-18 ~17:40 UTC, window 55 %, Opus · max)
 
 Written by me for myself. Day plan 783 (new-steps/783-…md). Roma reads me in Telegram (chat 90413601). Core live a622a876 + pins after.
