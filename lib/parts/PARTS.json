@@ -4434,6 +4434,7 @@
         "components/hosting/server-ladder.client.tsx",
         "components/hosting/server-launch-cf.client.tsx",
         "components/hosting/server-launch-check.client.tsx",
+        "components/hosting/server-launch-danger.client.tsx",
         "components/hosting/server-launch-domain.client.tsx",
         "components/hosting/server-launch-end.client.tsx",
         "components/hosting/server-launch-telegram.client.tsx",

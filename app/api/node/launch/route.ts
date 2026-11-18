@@ -36,7 +36,8 @@ import { closeWindowProcess, openWindowProcess } from "@/lib/hosting/window-proc
 //   POST { action: "signin", host, port }                      where sign-in leads, asked from the internet
 //   POST { action: "telegram", host, port, op, token?, lines? } 758/761, step 5: the server's own bot — op token|skip|link|messages; the token goes on to
 //                                                               the runner's stdin and the server, never back and never into a log
-//   POST { action: "clear", host, port, confirm }              a busy server freed — the dialog sends back the address it named
+//   POST { action: "clear", host, port, confirm, fresh? }      a busy server freed — the dialog sends back the address it named; `fresh`
+//                                                              — this node's own older install set aside too («с нуля», 784)
 //   POST { action: "records-plan", host, port }               760-8: does this node's Cloudflare key see the server's zone, and what it
 //                                                              would add, switch and remove there — the key never leaves the core
 //   POST { action: "records-write", host, port, remove }      760-8: the plan carried out, DNS only; `remove` — the record ids the
@@ -212,7 +213,8 @@ export async function POST(req: NextRequest) {
   }
   if (action === "clear") {
     if (body?.confirm !== host) return json({ ok: false, reason: "not-confirmed" }, 409)
-    return answer("clear", [...at, "--confirm", host])
+    // 784: «с нуля» — this node's own older install on the server is set aside too (the runner's `--fresh`), only after the same confirm.
+    return answer("clear", [...at, "--confirm", host, ...(body?.fresh === true ? ["--fresh"] : [])])
   }
   return json({ ok: false, reason: "unknown-action" }, 400)
 }

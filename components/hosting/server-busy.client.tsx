@@ -21,7 +21,9 @@ import { Small } from "@/components/ui/typography"
 export type BusyState = { host?: string; sites: string[]; programs: number; nodes?: string[]; clear?: { state?: string; detail?: string; stopped?: number; backup?: string } }
 type Start = (action: string, extra?: Record<string, unknown>) => Promise<void>
 
-export function ServerBusy({ busy, words, dialogUi, disabled, onStart }: { busy: BusyState; words: ServerLaunchWords["busy"]; dialogUi: AppDialogUi; disabled: boolean; onStart: Start }) {
+// 784 (the owner, 2026-11-18: «мне нужна кнопка очистить данный сервер»): `fresh` — the same choice for a server holding THIS node's own
+// older install: «Установить с нуля» sets it aside whole (the door's `fresh`), the risk said first, «I understand» before the button.
+export function ServerBusy({ busy, words, dialogUi, disabled, onStart, fresh = false }: { busy: BusyState; words: ServerLaunchWords["busy"]; dialogUi: AppDialogUi; disabled: boolean; onStart: Start; fresh?: boolean }) {
   const [open, setOpen] = useState<"clear" | null>(null)
   const [agree, setAgree] = useState(false)
   const host = busy.host ?? ""
@@ -30,13 +32,13 @@ export function ServerBusy({ busy, words, dialogUi, disabled, onStart }: { busy:
   const node = (busy.nodes ?? []).length > 0
   // 744 wishes: a line about sites or programs the server does not have is not shown («сайты: —.», «0 программ» read as nonsense)
   const has = (r: string) => (!r.includes("{sites}") || busy.sites.length > 0) && (!r.includes("{n}") || busy.programs > 0)
-  const risks = (node ? [words.nodeRisk, ...words.risks] : words.risks).filter(has)
+  const risks = fresh ? [words.freshRisk] : (node ? [words.nodeRisk, ...words.risks] : words.risks).filter(has)
   const clearing = busy.clear?.state === "running"
 
   async function go() {
     setOpen(null)
     setAgree(false)
-    await onStart("clear", { confirm: host })
+    await onStart("clear", { confirm: host, ...(fresh ? { fresh: true } : {}) })
   }
 
   // The owner's run, 2026-11-13 16:26: the server was freed and probed again, but the same red panel with the same buttons stayed — «похоже
@@ -49,9 +51,9 @@ export function ServerBusy({ busy, words, dialogUi, disabled, onStart }: { busy:
     )
   }
   return (
-    <div className="mt-3 flex flex-col gap-2 rounded-lg border border-destructive/40 bg-destructive/5 p-3" data-block="server-busy">
-      <p className="font-medium text-foreground text-sm">{node ? words.nodeTitle : words.title}</p>
-      <Small className="text-muted-foreground">{node ? words.nodeText : words.text}</Small>
+    <div className="mt-3 flex flex-col gap-2 rounded-lg border border-destructive/40 bg-destructive/5 p-3" data-block="server-busy" data-busy-mode={fresh ? "fresh" : node ? "node" : "busy"}>
+      <p className="font-medium text-foreground text-sm">{fresh ? words.freshTitle : node ? words.nodeTitle : words.title}</p>
+      <Small className="text-muted-foreground">{fresh ? words.freshText : node ? words.nodeText : words.text}</Small>
       {clearing ? (
         <p className="flex items-center gap-2 text-foreground text-sm" data-block="server-busy-clearing" role="status">
           <Spinner className="size-4" />
@@ -60,7 +62,7 @@ export function ServerBusy({ busy, words, dialogUi, disabled, onStart }: { busy:
       ) : null}
       {busy.clear?.state === "failed" ? <Small className="break-all text-destructive">{words.failed} {busy.clear.detail}</Small> : null}
       <div className="flex flex-wrap gap-2">
-        <Button disabled={disabled || clearing} onClick={() => setOpen("clear")} size="sm" variant="destructive">{node ? words.nodeClear : words.clear}</Button>
+        <Button disabled={disabled || clearing} onClick={() => setOpen("clear")} size="sm" variant="destructive">{fresh ? words.freshClear : node ? words.nodeClear : words.clear}</Button>
       </div>
 
       <AppDialog
@@ -80,7 +82,7 @@ export function ServerBusy({ busy, words, dialogUi, disabled, onStart }: { busy:
         </ul>
         <div className="mt-4 flex items-center gap-2" data-block="server-busy-agree">
           <Checkbox checked={agree} id="server-busy-agree" onCheckedChange={(v) => setAgree(v === true)} />
-          <Label htmlFor="server-busy-agree">{fill(words.agree)}</Label>
+          <Label htmlFor="server-busy-agree">{fill(fresh ? words.freshAgree : words.agree)}</Label>
         </div>
       </AppDialog>
 

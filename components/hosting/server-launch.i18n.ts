@@ -71,7 +71,8 @@ export type ServerLaunchWords = {
   /** 744-6: `done` · `links` · `site` · `panel` · `signin` · `next` and the claim words are drawn only under a passed final check
    *  (`ReadyWords`, `check:ready-words`); `missing` names what the check still lacks — `{host}` */
   ready: { text: string; activate: string; activating: string; signinOk: string; signinFail: string; signinButton: string; links: string; site: string; panel: string; signin: string; next: string; first: string; done: string; claimButton: string; claimNew: string; claimText: string; claimed: string; missing: { title: string; cert: string; https: string; signin: string } }
-  busy: { title: string; text: string; clear: string; clearTitle: string; risks: string[]; agree: string; clearConfirm: string; notNow: string; clearing: string; cleared: string; failed: string; nodeTitle: string; nodeText: string; nodeClear: string; nodeRisk: string }
+  dangerZone: string
+  busy: { title: string; text: string; clear: string; clearTitle: string; risks: string[]; agree: string; clearConfirm: string; notNow: string; clearing: string; cleared: string; failed: string; nodeTitle: string; nodeText: string; nodeClear: string; nodeRisk: string; freshTitle: string; freshText: string; freshClear: string; freshRisk: string; freshAgree: string }
 }
 
 const STAGE_EN = {
@@ -236,7 +237,13 @@ const en: ServerLaunchWords = {
     missing: { title: "Not ready yet — the final check still misses:", cert: "{host}: no valid certificate", https: "{host}: HTTPS does not answer from the internet", signin: "sign-in does not lead to https://{host} yet" },
     claimButton: "Get the architect code", claimNew: "Get a new code", claimText: "Register at {url} with this code — you become the server's architect. The code is shown once: after a reload get a new one (the old one stops working).", claimed: "The architect is already registered on this server.",
   },
+  dangerZone: "Danger zone",
   busy: {
+    freshTitle: "Install again, from zero",
+    freshText: "The server already runs this node's earlier install. To start from zero without reinstalling the system: the old node stops and moves whole into a copy on the server — nothing is erased — and a fresh node from your fork is installed in its place.",
+    freshClear: "Install from zero…",
+    freshRisk: "The node on {host} stops at once and its folder moves whole into /root/fractera-cleared-… — its data, keys and history stay there; its sites stop answering until the new node is up. The certificates stay on the server and are used again.",
+    freshAgree: "I understand: the node on {host} stops and a new one is installed",
     nodeTitle: "This server holds a Fractera node that is not this node's",
     nodeText: "Delete the previous state: the node stops and is set aside whole — nothing is erased — and a fresh node from your fork goes in its place.",
     nodeClear: "Delete the previous state…",
@@ -407,7 +414,13 @@ const ru: ServerLaunchWords = {
     missing: { title: "Пока не готов — финальной проверке не хватает:", cert: "{host}: нет действующего сертификата", https: "{host}: HTTPS не отвечает из интернета", signin: "вход пока не ведёт на https://{host}" },
     claimButton: "Получить код архитектора", claimNew: "Выдать новый код", claimText: "Зарегистрируйтесь на {url} с этим кодом — вы станете архитектором сервера. Код показывается один раз: после перезагрузки страницы выдайте новый (старый перестанет действовать).", claimed: "Архитектор на этом сервере уже зарегистрирован.",
   },
+  dangerZone: "Опасная зона",
   busy: {
+    freshTitle: "Установить заново, с нуля",
+    freshText: "На сервере уже стоит прежняя установка этого узла. Чтобы начать с нуля без переустановки системы: старый узел остановится и целиком уйдёт в копию на сервере — ничего не стирается, — а на его место встанет свежий узел из вашего форка.",
+    freshClear: "Установить с нуля…",
+    freshRisk: "Узел на {host} сразу остановится, его папка целиком уйдёт в /root/fractera-cleared-… — данные, ключи и история останутся там; его сайты не будут отвечать, пока не встанет новый узел. Сертификаты остаются на сервере и пойдут в дело снова.",
+    freshAgree: "Я понимаю: узел на {host} остановится и будет установлен новый",
     nodeTitle: "На сервере узел Fractera, не связанный с этим узлом",
     nodeText: "Удалить прежнее состояние: узел остановится и целиком уйдёт в копию на сервере — ничего не стирается, — а на его место встанет свежий узел из вашего форка.",
     nodeClear: "Удалить прежнее состояние…",

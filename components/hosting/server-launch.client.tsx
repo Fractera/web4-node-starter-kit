@@ -9,6 +9,7 @@ import { LaunchRememberSwitch, useLaunchRemember } from "@/components/hosting/la
 import type { CertRow, CertsRun } from "@/components/hosting/server-domain-certs.client"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import { CheckStep, strategyOf } from "@/components/hosting/server-launch-check.client"
+import { LaunchDanger } from "@/components/hosting/server-launch-danger.client"
 import { LaunchDomain } from "@/components/hosting/server-launch-domain.client"
 import { TelegramStep } from "@/components/hosting/server-launch-telegram.client"
 import { telegramWarn } from "@/lib/hosting/server-telegram.mjs"
@@ -85,14 +86,12 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
       setError((words.errors[reason] ?? reason).replace("{week}", String(a?.week ?? "")).replace("{want}", String(a?.want ?? "")).replace("{over}", over))
     } else setError("")
   }, [words])
-
   const post = useCallback(async (body: Record<string, unknown>): Promise<Answer | null> => {
     try {
       const r = await fetch(`${BASE}/api/node/launch`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body), cache: "no-store" })
       return (await r.json().catch(() => null)) as Answer | null
     } catch { return null }
   }, [])
-
   const act = useCallback(async (action: string, extra: Record<string, unknown> = {}) => {
     if (!target) return
     setBusy(true)
@@ -245,6 +244,7 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
       {error ? <Small className="text-destructive" data-block="server-launch-error">{error}</Small> : null}
       {busy && doing ? <Small className="flex items-center gap-2 text-muted-foreground" data-block="server-launch-doing" role="status"><Spinner className="size-4" />{words.doing[doing] ?? words.doing.any}</Small> : null}
       <Ladder id="launch" locked={words.locked} rungs={LAUNCH_ORDER.map((id) => ({ id, title: words.step[id], done: done[id], warn: id === "telegram" && telegramWarn(state.telegram), summary: summary[id], body: body[id] }))} />
+      {state.relation?.kind !== "unrelated" && state.probe?.fractera?.head && strategy !== "running" ? <LaunchDanger busy={busy} cleared={state.cleared} dialogUi={dialogUi} host={target.host} onAct={async (a, x) => { await act(a, x) }} words={words} /> : null}
     </section>
   )
 }

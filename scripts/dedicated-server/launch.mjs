@@ -556,7 +556,11 @@ const verbs = {
     try {
       // 744-4: an unrelated node is set aside whole; beside a related node only the strangers go.
       const s0 = await readState(client)
-      const nodes = s0.relation?.nodes ?? []
+      // 784 (the owner, 2026-11-18, Telegram 642/662: «будем делать перестановку на уровне ниже переустановки операционной системы … мне
+      // нужна кнопка очистить данный сервер»): `--fresh` — the person chose «с нуля» for a server holding THIS node's own older install:
+      // the related node is set aside whole too (stopped, moved into the backup, nothing erased), so a fresh install follows.
+      const fresh = args.includes('--fresh') && Boolean(s0.probe?.fractera)
+      const nodes = fresh ? [...new Set([FOLDER, ...(s0.relation?.nodes ?? []), ...(s0.probe?.otherNodes ?? [])])] : s0.relation?.nodes ?? []
       await scripts(client, ['clear.sh'])
       const r = await exec(client, `${DRY}bash ${q(`${DIR}/clear.sh`)} --dir ${q(DIR)}${nodes.map((n) => ` --node ${q(n)}`).join('')}`, { timeoutMs: 180_000 })
       let cleared = null
