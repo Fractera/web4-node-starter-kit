@@ -40,8 +40,8 @@ const off = await f.save(root, TOKEN, stub({ me: { ok: true, result: { id: 1, is
 assert.deepEqual(off, { ok: true, username: 'factory_bot', tail: '0001', managed: false })
 assert.equal(fs.statSync(kept).mode & 0o777, process.platform === 'win32' ? fs.statSync(kept).mode & 0o777 : 0o600)
 assert.deepEqual(await f.state(root), { kept: true, ready: false, username: 'factory_bot', tail: '0001' })
-assert.equal(f.createLink(root, { username: 'root_site_bot', name: 'x' }).error, 'management-off')
-ok('step 2: the token kept with the mode off (0600, only the last 4 back); no creation link until the mode is on')
+assert.ok(f.createLink(root, { username: 'root_site_bot', name: 'x' }).url.startsWith('https://t.me/newbot/factory_bot/'))
+ok('step 2: the token kept with the mode off (0600, only the last 4 back); the link is given anyway — the mode flag lags')
 
 // step 3 «Проверить»: still off → named; on → ready
 assert.deepEqual(await f.check(root, stub({ me: { ok: true, result: { id: 1, is_bot: true, username: 'factory_bot', can_manage_bots: false } } }).fetchImpl), { ok: false, error: 'management-off', username: 'factory_bot' })
@@ -60,6 +60,9 @@ ok('a live recheck notices the mode switched off')
 const dead = await f.state(root, { live: true }, stub({ me: { ok: false, error_code: 401, description: 'Unauthorized' } }).fetchImpl)
 assert.equal(dead.kept, false); assert.equal(dead.ready, false); assert.equal(dead.dead, true); assert.equal(dead.username, 'factory_bot')
 ok('a deleted bot: its token reads dead, step 2 opens again')
+assert.equal(f.createLink(root, { username: 'root_site_bot', name: 'x' }).error, 'no-factory')
+ok('a dead factory gives no creation link')
+await f.save(root, TOKEN, stub({ me: { ok: true, result: { id: 1, is_bot: true, username: 'factory_bot', can_manage_bots: true } } }).fetchImpl)
 
 // the link of Telegram's window
 assert.equal(f.createLink(root, { username: 'root_site_bot', name: 'Главный сайт' }).url, `https://t.me/newbot/factory_bot/root_site_bot?name=${encodeURIComponent('Главный сайт').replace(/%20/g, '+')}`)

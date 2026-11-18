@@ -199,6 +199,15 @@ must not gate creation (propose the phrases to him first).
 then the page fix (getMe's can_manage_bots lags — «Проверить» must not gate creation; phrases to him first), 798-3 the server page (same
 steps and design), 798-4 the Pult live; push the day's commits (his act). Leftovers: removed records in data/node/removed-bot-2026-11-18/.
 
+**21:33–21:40 UTC — his word: «Нет надо удалять и пройти весь путь заново надо»; «bots was deleted both»; «update flow and go to fix it».**
+Both bots confirmed deleted (getMe Unauthorized 21:3x); their records moved to data/node/removed-bot-2026-11-18/round-2135/ (person.json ru and
+bot.pid stay). Fix built in: the mode flag never stops creation (createLink ignores managed, refuses only a dead factory; factoryReady = not
+dead); step 3 shows «Создать бота» as soon as the token is kept; element pages offer it once kept; the management-off text = my proposed one
+(«Telegram пока отвечает, что режим выключен — так бывает несколько минут…»; he did not object, name it). Test +1 (dead → no link).
+NEXT ACTION after the build returns: eyes of the clean page (step 1 open), window for the whole path from zero: factory (new address from
+the page) → token → «Проверить» or straight «Создать бота» → «Создать» in Telegram → admission «Старт» → my restart with the channel
+(npm run session -- model opus --continue). Then 798-3 (the server page), the Pult live, push (his act).
+
 ## Letter to my next session (written 2026-11-18 ~17:40 UTC, window 55 %, Opus · max)
 
 Written by me for myself. Day plan 783 (new-steps/783-…md). Roma reads me in Telegram (chat 90413601). Core live a622a876 + pins after.

@@ -101,9 +101,26 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
   const f = st.factory
   const found = token.trim() ? tokenFrom(token) : null
   const err = error && <p data-block="bf-error" role="status" className="text-destructive text-sm">{error}</p>
+  // «make this bot»: the ready view, and step 3 itself once a token is kept — the mode flag lags behind the switch (✗ 2026-11-18 21:23–21:27:
+  // «Проверить» stayed red while the factory already worked), so creation is never gated on it; Telegram's own window is the test.
+  const createBlock = (
+    <>
+        <div data-block="bf-create" className="flex flex-wrap items-center gap-2">
+          <Button type="button" onClick={create} disabled={busy !== null || waiting}>
+            {(busy === "create" || waiting) && <Spinner className="size-4" />}{w.create}
+          </Button>
+          {/* ✗ 2026-11-18 19:33/19:37: a window opened after the door's answer may be blocked by the browser — the link is pressed by the person */}
+          {link && mine?.state !== "done" && <a href={link} target="_blank" rel="noreferrer noopener" className={buttonVariants({})} data-bf-open-telegram>{w.openAgain}<ExternalLink data-icon aria-hidden /></a>}
+          {waiting && <Small className="text-muted-foreground">{w.waiting}</Small>}
+        </div>
+        {mine?.state === "done" && <p data-block="bf-done" role="status" className="text-sm">{fill(w.done, { username: mine.bot?.username ?? "", tail: mine.bot?.tail ?? "" })}</p>}
+        {(mine?.state === "timeout" || mine?.state === "stopped") && <p data-block="bf-timeout" role="status" className="text-muted-foreground text-sm">{w.timeout}</p>}
+        {mine?.state === "error" && <p data-block="bf-failed" role="status" className="text-destructive text-sm">{fill(w.failed, { error: mine.error ?? "—" })}</p>}
+    </>
+  )
 
   // Another bot page, no factory yet: one line to the core's page; the hand road below stays open.
-  if (!f.ready && !core) {
+  if (!f.kept && !core) {
     return (
       <>
         <p data-block="bf-missing" className="text-muted-foreground text-sm">
@@ -163,6 +180,7 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
                 </Button>
               </div>
               {checkError && <p data-block="bf-check-error" role="status" className="text-destructive text-sm">{checkError}</p>}
+              {f.kept && createBlock}
             </>
           ) },
         ]} />
@@ -180,17 +198,7 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
           <Button type="button" variant="ghost" size="sm" onClick={() => setReplacing(true)}>{w.replace}</Button>
         </div>
       )}
-      <div data-block="bf-create" className="flex flex-wrap items-center gap-2">
-        <Button type="button" onClick={create} disabled={busy !== null || waiting}>
-          {(busy === "create" || waiting) && <Spinner className="size-4" />}{w.create}
-        </Button>
-        {/* ✗ 2026-11-18 19:33/19:37: a window opened after the door's answer may be blocked by the browser — the link is pressed by the person */}
-        {link && mine?.state !== "done" && <a href={link} target="_blank" rel="noreferrer noopener" className={buttonVariants({})} data-bf-open-telegram>{w.openAgain}<ExternalLink data-icon aria-hidden /></a>}
-        {waiting && <Small className="text-muted-foreground">{w.waiting}</Small>}
-      </div>
-      {mine?.state === "done" && <p data-block="bf-done" role="status" className="text-sm">{fill(w.done, { username: mine.bot?.username ?? "", tail: mine.bot?.tail ?? "" })}</p>}
-      {(mine?.state === "timeout" || mine?.state === "stopped") && <p data-block="bf-timeout" role="status" className="text-muted-foreground text-sm">{w.timeout}</p>}
-      {mine?.state === "error" && <p data-block="bf-failed" role="status" className="text-destructive text-sm">{fill(w.failed, { error: mine.error ?? "—" })}</p>}
+      {createBlock}
       {err}
       <More id="create" label={w.more}>{w.createText}</More>
     </section>
