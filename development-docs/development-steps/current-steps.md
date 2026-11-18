@@ -66,17 +66,33 @@ the related node aside whole); prebuild RC=0; ~14:0x ONE core build (serve:rebui
 BACK (its page.cjs version in logs/787-card-page.cjs; pictures logs/eyes/787-proposal-{light,dark}.png wait his «да»). On return: tell
 Roma, he presses «Установить с нуля», then install. Also owed to him: the answer about «Получить код архитектора» (739, his 665).
 
-## Letter to my next session (written 2026-11-18 ~12:30 UTC, Opus · max)
+## Letter to my next session (written 2026-11-18 ~14:24 UTC, window 55 %, Opus · max)
 
-Written by me for myself. Step 782 is CLOSED (summary completed-steps/782-main.md; core build 763f300a live; config 4718bde live).
-NO active step. Roma reads me in Telegram (chat 90413601). Wait for his next word. The 782 commits are NOT pushed (the push was
-refused by the session's permission check) — push on his word.
+Written by me for myself. We are inside the DAY PLAN 783 (new-steps/783-the-day-plan-of-november-eighteen-nine-steps.md — read it;
+steps 784–792 + 794; small defects → 793, never fixed today). Roma reads me in Telegram (chat 90413601). Core live build 1810247f.
 
-- Open small debts from 781 (in its summary): the guard for element sessions (template release, the owner's word), one place for
-  who woke/slept an agent, a «reboot» request kind that closes itself.
-- Still unanswered: did Roma delete the element «Соцсети пользователя» (hrutb) yesterday ~19:36 UTC — the registry change
-  (WEB4-ITEMS-REGISTRY/web4-items.json, APP-CONFIG/app-config.json) stays uncommitted until he says.
-- 782 unverified on screen: the window's list of earlier elements (no born custom elements now) — see it the day one is born.
+- 784 server launch (109.199.105.213 / fractera.ai, Contabo, NO reinstall — he has no provider access, Telegram 642): the visit
+  cookie trap solved (his Chrome blocked cookies for localhost; he allowed them 13:49; skill dedicated-server «Known traps» per his word
+  654). Built and live: «Опасная зона» → «Установить с нуля…» after «Сервер готов» (runner `--fresh`, door `fresh`, components
+  server-launch-danger + ServerBusy fresh). NEXT: he presses it, then «Установить»; watch `logs/launch-trace.jsonl` (secret-free trace
+  in the runner's byKey) and the page; then the 8 steps to «Сервер готов»; proofs per the plan (fractera.ai 200 with today's commit,
+  the server bot greets with the link). His act for the architect: «Получить код архитектора» — explained to him (739: one-time code
+  against strangers racing to /register after CT logs).
+- 788 DONE live (gauge «Контекстное окно · 1 000 000», green→red at 75 %, bordeaux past; lib/agent-kit/context-window.cjs one reading
+  for CLI + Pult; colour as SOURCE string — ✗ 14:08 .toString() got minified and the whole Pult hung, fixed cbe28f15). Owed: his phone
+  look; the summary of 788.
+- 787 DONE live 1810247f (open card: description, «Сайт»/«Бот» 44 px, settings rows, «Выключить» apart; site by the domain ladder rule;
+  he approved by «Не вижу … тот самый красивый интерфейс», Telegram 677). Proofs: eyes logs/eyes/787-proposal-{light,dark}.png,
+  787-live-light.png (built page + stub). Owed: his phone; summary.
+- 786 bots: research done (Bot API 9.6 Managed Bots; Claude's Telegram plugin drops `managed_bot` updates) — fork A (a node «factory»
+  bot, Bot Management Mode on, polled only while a creation waits) / C (BotFather by hand) sent (Telegram 633) — WAITS his choice.
+- 785 (server adds domains): after 784. 794 (/plan from Telegram): in the approved plan; first test whether `reply` works in plan mode.
+- 789–792: not started. 791 asks him WHAT moves from Claude's desktop app (still unanswered).
+- Tools made today: `npm run tg-app:preview` (bench page, stub state, eyes on file://), the test `scripts/context-window.test.mjs`.
+  Lesson: prove the BUILT page (curl the live Pult, parse its script, render with the stub) — not only the bench.
+- Uncommitted on purpose: WEB4-ITEMS-REGISTRY/web4-items.json, APP-CONFIG/app-config.json (hrutb deletion — waits his word).
+- Fractera's own repo: my pushes there are refused by the session's permission check; he pushed ce3e76d9 himself; asked him: a window
+  per step or a permission rule (unanswered). The fork aifa-agi gets my pushes.
 
 ## The person's decisions (verbatim)
 
