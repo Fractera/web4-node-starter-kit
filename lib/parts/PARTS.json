@@ -2039,19 +2039,19 @@
         ]
       },
       "usedBy": [
-        "app/[lang]/(architectLayer)/architect/[item]/_agent-kit/widgets.tsx",
-        "app/[lang]/(architectLayer)/architect/auth/_agent-kit/widgets.tsx",
-        "app/[lang]/(architectLayer)/architect/build/_agent-kit/widgets.tsx",
-        "app/[lang]/(architectLayer)/architect/cache/_agent-kit/widgets.tsx",
-        "app/[lang]/(architectLayer)/architect/config/_agent-kit/widgets.tsx",
-        "app/[lang]/(architectLayer)/architect/data/_agent-kit/widgets.tsx",
-        "app/[lang]/(architectLayer)/architect/embeddings/_agent-kit/widgets.tsx",
-        "app/[lang]/(architectLayer)/architect/graph/_agent-kit/widgets.tsx",
-        "app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/widgets.tsx",
-        "app/[lang]/(architectLayer)/architect/memory/_agent-kit/widgets.tsx",
-        "app/[lang]/(architectLayer)/architect/storage/_agent-kit/widgets.tsx",
-        "app/[lang]/(architectLayer)/architect/stripe/_agent-kit/widgets.tsx",
-        "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/widgets.tsx"
+        "app/[lang]/(architectLayer)/architect/[item]/_agent-kit/client/telegram-channel.client.tsx",
+        "app/[lang]/(architectLayer)/architect/auth/_agent-kit/client/telegram-channel.client.tsx",
+        "app/[lang]/(architectLayer)/architect/build/_agent-kit/client/telegram-channel.client.tsx",
+        "app/[lang]/(architectLayer)/architect/cache/_agent-kit/client/telegram-channel.client.tsx",
+        "app/[lang]/(architectLayer)/architect/config/_agent-kit/client/telegram-channel.client.tsx",
+        "app/[lang]/(architectLayer)/architect/data/_agent-kit/client/telegram-channel.client.tsx",
+        "app/[lang]/(architectLayer)/architect/embeddings/_agent-kit/client/telegram-channel.client.tsx",
+        "app/[lang]/(architectLayer)/architect/graph/_agent-kit/client/telegram-channel.client.tsx",
+        "app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/client/telegram-channel.client.tsx",
+        "app/[lang]/(architectLayer)/architect/memory/_agent-kit/client/telegram-channel.client.tsx",
+        "app/[lang]/(architectLayer)/architect/storage/_agent-kit/client/telegram-channel.client.tsx",
+        "app/[lang]/(architectLayer)/architect/stripe/_agent-kit/client/telegram-channel.client.tsx",
+        "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/telegram-channel.client.tsx"
       ]
     },
     {
@@ -2241,6 +2241,7 @@
         ]
       },
       "usedBy": [
+        "components/bot-factory/bot-factory.client.tsx",
         "components/domain/domain-main.client.tsx",
         "components/domain/domain-pipeline.client.tsx"
       ]
@@ -2920,6 +2921,7 @@
         "app/[lang]/(architectLayer)/_components/payment-elements.client.tsx",
         "components/accordion/accordion-section.client.tsx",
         "components/auth/resend-dns.client.tsx",
+        "components/bot-factory/bot-factory.client.tsx",
         "components/dashboard/node-passport.client.tsx",
         "components/domain/domain-cards.client.tsx",
         "components/domain/domain-main.client.tsx",
@@ -3425,7 +3427,6 @@
       },
       "usedBy": [
         "app/[lang]/(architectLayer)/_components/capability-cards.client.tsx",
-        "components/bot-factory/bot-factory.client.tsx",
         "components/dashboard/a2a-feed.client.tsx",
         "components/element-settings/site/editors/feature-switches.client.tsx",
         "components/hosting/server-busy.client.tsx",

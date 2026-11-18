@@ -12,7 +12,14 @@ export type BotFactoryWords = {
   step2Title: string
   step2Points: string[]
   step3Title: string
-  checks: string[]
+  /** the person's own tick on rungs 1 and 2 («подтвердит чеклист», Telegram 788) */
+  did1: string
+  did2: string
+  sum1: string
+  sum2: string
+  more: string
+  manualLabel: string
+  locked: string
   tokenLabel: string
   tokenHint: string
   save: string
@@ -47,8 +54,14 @@ const DICT: Record<string, BotFactoryWords> = {
     openBotFather: "Open @BotFather",
     step2Title: "Turn on «Bot Management Mode»",
     step2Points: ["In @BotFather press «Open» (its Mini App) and choose the new bot.", "In the bot's settings turn on «Bot Management Mode».", "Copy the bot's token (in @BotFather: the bot → «API Token»)."],
-    step3Title: "Tick what you did and paste the token",
-    checks: ["The bot is made in @BotFather", "«Bot Management Mode» is on", "The token is copied"],
+    step3Title: "Paste the factory's token",
+    did1: "Done, the bot is made",
+    did2: "Done, the mode is on",
+    sum1: "The bot is made in @BotFather",
+    sum2: "You turned the mode on; the node checks it with the token",
+    more: "More",
+    manualLabel: "By hand at @BotFather",
+    locked: "Opens after the step before",
     tokenLabel: "The factory's token",
     tokenHint: "The node asks Telegram itself whether the mode is on; the token is kept on this computer only.",
     save: "Check and keep",
@@ -62,7 +75,7 @@ const DICT: Record<string, BotFactoryWords> = {
       "telegram-unreachable": "Telegram does not answer right now. Try again in a minute.",
       "management-off": "@{username} is a bot, but «Bot Management Mode» is off. Turn it on in @BotFather's Mini App → the bot's settings, then press «Check and keep» again.",
     },
-    missing: "The node has no bot factory yet: without it this bot is made by hand below.",
+    missing: "The node has no bot factory yet, so this bot is made by hand.",
     missingLink: "Set up the factory",
     createTitle: "Make this bot with one tap",
     createText: "Telegram opens its own window with the name and the address filled in; press «Create» there. If a bot is already connected, the new one replaces it (the old bot stays in your Telegram; delete it in @BotFather if you wish).",
@@ -86,8 +99,14 @@ const DICT: Record<string, BotFactoryWords> = {
     openBotFather: "Открыть @BotFather",
     step2Title: "Включите «Bot Management Mode»",
     step2Points: ["В @BotFather нажмите «Open» (его мини-приложение) и выберите нового бота.", "В настройках бота включите «Bot Management Mode».", "Скопируйте токен бота (в @BotFather: бот → «API Token»)."],
-    step3Title: "Отметьте, что сделали, и вставьте токен",
-    checks: ["Бот создан в @BotFather", "«Bot Management Mode» включён", "Токен скопирован"],
+    step3Title: "Вставьте токен фабрики",
+    did1: "Сделал, бот создан",
+    did2: "Сделал, режим включён",
+    sum1: "Бот создан в @BotFather",
+    sum2: "Режим включён, узел проверит его по токену",
+    more: "Подробнее",
+    manualLabel: "Вручную через @BotFather",
+    locked: "Откроется после предыдущего шага",
     tokenLabel: "Токен фабрики",
     tokenHint: "Узел сам спросит Telegram, включён ли режим; токен хранится только на этом компьютере.",
     save: "Проверить и сохранить",
@@ -101,7 +120,7 @@ const DICT: Record<string, BotFactoryWords> = {
       "telegram-unreachable": "Telegram сейчас не отвечает. Попробуйте через минуту.",
       "management-off": "@{username} — бот, но «Bot Management Mode» выключен. Включите его в мини-приложении @BotFather → настройки бота и нажмите «Проверить и сохранить» ещё раз.",
     },
-    missing: "У узла пока нет бота-фабрики: без неё этот бот создаётся руками ниже.",
+    missing: "У узла пока нет бота-фабрики, поэтому этот бот создаётся вручную.",
     missingLink: "Настроить фабрику",
     createTitle: "Создать этого бота одним касанием",
     createText: "Telegram откроет своё окно с готовыми именем и адресом — нажмите там «Создать». Если бот уже подключён, новый заменит его (старый останется в вашем Telegram, удалить его можно в @BotFather).",

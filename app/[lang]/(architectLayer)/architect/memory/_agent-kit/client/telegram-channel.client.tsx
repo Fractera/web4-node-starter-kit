@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label"
 import { Small } from "@/components/ui/typography"
 import { Spinner } from "@/components/ui/spinner"
 import type { TelegramChannelWords } from "../words/telegram-channel.i18n"
+import { BotFactory } from "@/components/bot-factory/bot-factory.client"
+import type { BotFactoryWords } from "@/components/bot-factory/bot-factory.i18n"
 import { CopyRow, Step, StepPoints } from "@/components/auth/setup-ladder.client"
 
 // КАНАЛ TELEGRAM → CLAUDE CODE: ЧЕТЫРЕ СТУПЕНИ, КАК В ПАМЯТИ (267-3).
@@ -57,7 +59,7 @@ function Locked({ text }: { text: string }) {
 // ступени 1–3 через дверь `remote.door` (она пересылает каждое действие двери канала сервера), ссылки системных строк — от адреса сервера
 // `remote.origin`, ступень 4 — строка `remote.doneText` без терминала этого компьютера.
 export type TelegramRemote = { door: string; origin: string; doneText: string }
-export function TelegramChannel({ service, lang, words, slot, remote }: { service: string; lang: string; words: TelegramChannelWords; slot?: string; remote?: TelegramRemote }) {
+export function TelegramChannel({ service, lang, words, slot, remote, factory }: { service: string; lang: string; words: TelegramChannelWords; slot?: string; remote?: TelegramRemote; factory?: BotFactoryWords }) {
   const door = remote ? remote.door : `${BASE}/${lang}/architect/${service}/agent-api/channel${slot ? `?slot=${slot}` : ""}`
   const [state, setState] = useState<State | null | "forbidden" | "silent">(null)
   const [token, setToken] = useState("")
@@ -66,6 +68,8 @@ export function TelegramChannel({ service, lang, words, slot, remote }: { servic
   const [activationUrl, setActivationUrl] = useState("")
   const [clicked, setClicked] = useState(false)
   const [justActivated, setJustActivated] = useState(false)
+  // 798-2: «Заменить бота» opens step 1 again over a connected bot
+  const [replacing, setReplacing] = useState(false)
 
   const load = useCallback(async () => {
     try {
@@ -164,7 +168,7 @@ export function TelegramChannel({ service, lang, words, slot, remote }: { servic
   }, [clicked, wasActivated])
 
   // Открывшаяся ступень прокручивается в поле зрения — иначе «ничего не происходит» (урок памяти).
-  const stage = activated ? 4 : configured ? 3 : 0
+  const stage = activated ? 3 : configured ? 2 : 0
   useEffect(() => {
     if (!stage) return
     document.querySelector(`[data-telegram-channel] [data-step="${stage}"]`)?.scrollIntoView({ behavior: "smooth", block: "center" })
@@ -191,13 +195,9 @@ export function TelegramChannel({ service, lang, words, slot, remote }: { servic
       </div>
     )
 
-  const terminalHref = `/${lang}${state.links?.terminal ?? `/architect/${service}/terminal`}`
-
-  return (
-    <div className="my-6 flex flex-col gap-3" data-telegram-channel data-running={state.running ? "1" : "0"}>
-      <p className="text-muted-foreground text-sm">{words.intro}</p>
-
-      <Step n={1} title={words.step1Title}>
+  const manual = (
+    <>
+      <div className="flex flex-col gap-2" data-block="tg-manual-make">
         <p className="text-muted-foreground text-sm">
           {/* Команду человек набирает в Telegram дословно — поэтому она выделена фоном (слово владельца: «/newbot need select with bg»). */}
           {words.step1Text.split("{cmd}")[0]}
@@ -213,9 +213,10 @@ export function TelegramChannel({ service, lang, words, slot, remote }: { servic
             <ExternalLink className="ml-2 size-4" aria-hidden />
           </a>
         </div>
-      </Step>
+      </div>
 
-      <Step n={2} title={words.step2Title}>
+      <div className="flex flex-col gap-2" data-block="tg-manual-token">
+        <p className="font-medium text-foreground text-sm">{words.step2Title}</p>
         <p className="text-muted-foreground text-sm">{words.step2Text}</p>
         {configured && (
           <p className="mt-2 text-foreground text-sm" data-tg-bot>
@@ -241,9 +242,30 @@ export function TelegramChannel({ service, lang, words, slot, remote }: { servic
             {busy === "token" ? words.saving : words.saveToken}
           </Button>
         </div>
+      </div>
+    </>
+  )
+  const terminalHref = `/${lang}${state.links?.terminal ?? `/architect/${service}/terminal`}`
+
+  return (
+    <div className="my-6 flex flex-col gap-3" data-telegram-channel data-running={state.running ? "1" : "0"}>
+      <p className="text-muted-foreground text-sm">{words.intro}</p>
+
+      {/* 798-2 (the owner, Telegram 799, 809: «зачем два раздела … почему не просто фабрика?»): ONE bot section. Step 1 makes the bot —
+          by the node's factory in one tap (its one-time setup on the core's page), the hand road folded in «Вручную»; a connected bot is
+          one line with «Заменить бота». Steps 2–3 — the admission and the conversation, needed whichever way the bot was made. */}
+      <Step n={1} title={words.createTitle}>
+        {configured && !replacing ? (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1" data-block="tg-bot-line">
+            <p className="flex items-center gap-2 text-foreground text-sm" data-tg-bot><Check className="size-4 shrink-0 text-primary" aria-hidden />{words.tokenSaved.replace("{username}", state.botUsername ?? "").replace("{tail}", state.tail ?? "")}</p>
+            <Button type="button" size="sm" variant="ghost" onClick={() => setReplacing(true)}>{words.replaceBot}</Button>
+          </div>
+        ) : factory && !slot && !remote ? (
+          <BotFactory service={service} lang={lang} words={factory} manual={manual} onDone={() => { setReplacing(false); void load() }} />
+        ) : manual}
       </Step>
 
-      <Step n={3} title={words.step3Title}>
+      <Step n={2} title={words.step3Title}>
         <p className="text-muted-foreground text-sm">{words.step3Text}</p>
         {!configured ? (
           <Locked text={words.locked} />
@@ -281,7 +303,7 @@ export function TelegramChannel({ service, lang, words, slot, remote }: { servic
         )}
       </Step>
 
-      <Step n={4} title={words.step4Title}>
+      <Step n={3} title={words.step4Title}>
         {!activated ? (
           <Locked text={words.locked} />
         ) : slot || remote ? (

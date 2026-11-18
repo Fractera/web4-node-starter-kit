@@ -17,6 +17,7 @@ import contextWindow from "@/lib/agent-kit/context-window.cjs"
 import { primaryConnected, primaryDomain, zoneRootElement } from "@/lib/domain/node-domains"
 import { serviceUrl } from "@/lib/microservices/registry"
 import { addressOf } from "@/lib/web4-items/address-file.mjs"
+import { factoryReady, factoryWait } from "@/lib/node/bot-factory-create"
 import { diskPassport } from "@/lib/web4-items/dashboard-rows"
 import { registryDescription } from "@/lib/web4-items/element-describe"
 
@@ -45,7 +46,9 @@ export type TgBuilds = { running: boolean; current: string | null; queue: string
 export type TgChannel = { bot: boolean; state: string; why: string | null; since: string | null }
 /** 788-1: how full the main agent's context window is — the same reading as `npm run session -- context`; `null` — no journal yet. */
 export type TgContext = { used: number; window: number | null; percent: number | null; model: string; at: string | null }
-export type TgState = { context: TgContext | null; builds: TgBuilds; asks: TgAsk[]; main: TgAgent & { channel: TgChannel; autostart: boolean | null }; elements: TgElement[]; limits: TgLimit[]; at: string }
+/** 798-4: the node's bot factory — an element without a bot gets «Создать бота»; `botWait` — the creation now waiting (its service and state). */
+export type TgFactory = { ready: boolean; wait: { service: string; state: string; bot: string | null } | null }
+export type TgState = { context: TgContext | null; builds: TgBuilds; asks: TgAsk[]; main: TgAgent & { channel: TgChannel; autostart: boolean | null }; elements: TgElement[]; limits: TgLimit[]; factory: TgFactory; at: string }
 
 const readJson = <T>(file: string, fallback: T): T => {
   try { return JSON.parse(readFileSync(file, "utf8")) as T } catch { return fallback }
@@ -176,6 +179,11 @@ function limitsOf(): TgLimit[] {
 }
 
 /** The whole picture for the Mini App, in the person's language. */
+function factoryOf(): TgFactory {
+  const w = factoryWait()
+  return { ready: factoryReady(), wait: w?.service ? { service: w.service, state: w.state ?? "waiting", bot: w.bot?.username ?? null } : null }
+}
+
 export function tgState(lang: Lang): TgState {
   const waiting = (asks.open(ROOT) as { id: string; text: string; why?: string | null; hint?: string | null; copy?: string | null; by?: string; at: string; secret?: TgAsk["secret"]; action?: string | null }[])
     .map((a) => ({
@@ -189,5 +197,5 @@ export function tgState(lang: Lang): TgState {
   // 781-4: the main agent's card carries its channel — «спит — Разбудить», «не слышит — Переподключить» (`lib/node/main-channel.cjs`).
   const c = contextWindow.read(ROOT) as (TgContext & { session: string }) | null
   const context: TgContext | null = c ? { used: c.used, window: c.window, percent: c.percent, model: c.model, at: c.at } : null
-  return { context, builds, asks: waiting, main: { ...agentOf("build", false), channel: mainChannel.health(ROOT, "build") as TgChannel, autostart: autostart.state().on as boolean | null }, elements: elementsOf(lang, builds), limits: limitsOf(), at: new Date().toISOString() }
+  return { context, builds, asks: waiting, main: { ...agentOf("build", false), channel: mainChannel.health(ROOT, "build") as TgChannel, autostart: autostart.state().on as boolean | null }, elements: elementsOf(lang, builds), limits: limitsOf(), factory: factoryOf(), at: new Date().toISOString() }
 }

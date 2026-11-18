@@ -1,6 +1,7 @@
-// node step 798-2: waits (≤ 10 min) for the bot the person confirms in Telegram's window, takes its token from the node's factory and
-// connects it to the service's channel exactly as the bot page's own form does (`saveToken` of the agent kit). Started detached by the
-// door `/api/node/bot-factory` (action `create`); its only trace is `data/node/bot-factory-wait.json` — never the token.
+// node step 798-2/798-4: waits (≤ 10 min) for the bot the person confirms in Telegram's window, takes its token from the node's factory and
+// connects it to the service it was offered to (the link's record, `bot-factory.cjs` remember/serviceOf; unknown → this waiter's
+// service) exactly as the bot page's own form does (`saveToken` of the agent kit). Started detached by the doors and by an element's birth;
+// its only trace is `data/node/bot-factory-wait.json` — never the token.
 //   node scripts/bot-factory-wait.mjs <service> <suggested username>
 import { createRequire } from 'node:module'
 import fs from 'node:fs'
@@ -23,11 +24,16 @@ function kitOf(id) {
 
 if (!/^[a-z0-9][a-z0-9-]{0,40}$/.test(service ?? '')) { console.error('bot-factory-wait: <service> <username>'); process.exit(2) }
 const startedAt = new Date().toISOString()
-write({ state: 'waiting', startedAt, until: new Date(Date.now() + MS).toISOString() })
-const got = await factory.awaitCreated(ROOT, { ms: MS })
-if (!got.ok) { write({ state: got.error === 'timeout' ? 'timeout' : 'error', error: got.error, startedAt }); process.exit(0) }
-const { saveToken } = require(kitOf(service))
-const saved = await saveToken(service, got.token)
-write(saved.ok
-  ? { state: 'done', startedAt, bot: { id: got.bot.id, username: saved.username, tail: saved.tail } }
-  : { state: 'error', error: saved.error, startedAt, bot: { id: got.bot.id, username: got.bot.username } })
+const until = Date.now() + MS
+write({ state: 'waiting', startedAt, until: new Date(until).toISOString() })
+for (;;) {
+  const got = await factory.awaitCreated(ROOT, { ms: Math.max(1000, until - Date.now()) })
+  if (!got.ok) { write({ state: got.error === 'timeout' ? 'timeout' : 'error', error: got.error, startedAt }); process.exit(0) }
+  const target = factory.serviceOf(ROOT, got.bot.username) ?? service
+  const saved = await require(kitOf(target)).saveToken(target, got.token)
+  if (target !== service) continue // a late bot of another offer — connected where it belongs; this waiter waits on
+  write(saved.ok
+    ? { state: 'done', startedAt, bot: { id: got.bot.id, username: saved.username, tail: saved.tail } }
+    : { state: 'error', error: saved.error, startedAt, bot: { id: got.bot.id, username: got.bot.username } })
+  process.exit(0)
+}

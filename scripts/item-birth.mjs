@@ -393,6 +393,12 @@ async function askAdmin() {
 const address = await connectAddress()
 stage(address.note)
 await askAdmin()
+// 798-4 (the owner, Telegram 812–814): a custom element's bot is offered at birth — one message of the main bot with Telegram's own
+// «create» link of the node's factory; no factory or no main bot — nothing is sent, the Pult's «Создать бота» stays.
+if (!process.argv.includes('--native')) {
+  const offer = await require('../lib/node/bot-factory-birth.cjs').offerAtBirth(ROOT, id, bornName || null).catch((e) => ({ ok: false, reason: e.message }))
+  stage(offer.ok ? `бот элемента предложен в Telegram: @${offer.username} (ждёт «Создать»)` : `бот элемента не предложен (${offer.reason}) — кнопка «Создать бота» в Пульте`)
+}
 // 553: новый элемент — в каталоге «Все проекты» у всех элементов, подключённых к CONFIG (по действию человека, не по таймеру).
 await require('../lib/web4-items/catalog-notify.cjs').notifyCatalog('birth', ROOT)
 say(`===BIRTH_OK=== ${id} port ${port} url ${address.url}${address.answers ? ` answers ${address.answers}` : ''}`)

@@ -87,5 +87,10 @@ ok('nobody confirmed: timeout')
 assert.equal((await f.reissue(root, 71, stub({ me: { ok: true } }).fetchImpl)).ok, true)
 ok('reissue: replaceManagedBotToken gives a new token')
 
+// the link's record: a late bot lands on the element it was offered to
+f.remember(root, 'Root_Site_Bot', 'root'); f.remember(root, 'shop_ab12_bot', 'shop')
+assert.equal(f.serviceOf(root, 'root_site_bot'), 'root'); assert.equal(f.serviceOf(root, 'shop_ab12_bot'), 'shop'); assert.equal(f.serviceOf(root, 'edited_name_bot'), null)
+ok('the link\'s record: a bot finds its element by its address; an edited address falls back to the waiter\'s')
+
 fs.rmSync(root, { recursive: true, force: true })
 console.log('===BOT_FACTORY_TEST_OK===')

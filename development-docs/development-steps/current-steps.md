@@ -132,6 +132,15 @@ GET → 403, architect domain unsigned → 401; page seen (scratchpad playwright
 Window **cd2d6d4c** put (make the factory). On «Готово»: GET /api/node/bot-factory?live=1 → ready + live ok; then his «Создать бота»
 → data/node/bot-factory-wait.json done → the main bot replaced → my restart with the channel; then 798-3 (server), 798-4 (Pult).
 
+**19:00–19:25 UTC.** His 799/803/806 (the page a «простыня»; guards → later, his 808 → pre-steps/2026-11-18-interface-guards-later.md),
+809 «зачем два раздела» → ONE bot section: TelegramChannel step 1 «Создайте бота» holds BotFactory (setup ladder on the core page / one tap
+when ready; the hand road folded «Вручную через @BotFather»; a connected bot = one line + «Заменить бота»), steps 2–3 admission and talk.
+811 → the Pult's grey «Бот» = «Создать бота» (action botCreate, lib/node/bot-factory-create.ts shared with the panel door, TgState.factory).
+812–814 «Делай в этом же шаге» → the birth offer (lib/node/bot-factory-birth.cjs, item-birth after askAdmin; not on the --off path):
+the main bot sends «Создать бота» with the factory's link; link records (remember/serviceOf) send a late tap to its element.
+Prebuild RC=0 ~19:25 → core build. On return: page screenshot WHOLE (scratchpad playwright, waitUntil load) → send it to him BEFORE «готово»;
+then put the factory window again; then write him how it works (his 814).
+
 ## Letter to my next session (written 2026-11-18 ~17:40 UTC, window 55 %, Opus · max)
 
 Written by me for myself. Day plan 783 (new-steps/783-…md). Roma reads me in Telegram (chat 90413601). Core live a622a876 + pins after.
