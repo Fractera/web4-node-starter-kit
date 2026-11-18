@@ -170,7 +170,18 @@ export async function POST(req: NextRequest) {
   if (action === "way") return answer("way", [...at, "--way", String(body?.way ?? "")])
   // 796: the architect's e-mail of a fresh server — checked here, passed through to the server's sign-in element, kept nowhere in the core
   if (action === "claim") {
-    if (body?.status === true) return answer("door", at, { body: { action, status: true } })
+    // ✗ 2026-11-18 22:4x: the runner answered every status read «not known» (the 15:00 stopgap against the SSH loop), so step 8 kept
+    // offering the e-mail form on a server whose architect already existed. The sign-in's own door is public for reading
+    // (`GET https://auth.<zone>/api/claim` → { pending, kind, claimed }, never the e-mail): one HTTPS read, no SSH. Unreadable → the old answer.
+    if (body?.status === true) {
+      const zone = String(body?.zone ?? "").toLowerCase()
+      if (HOST.test(zone)) {
+        const a = (await fetch(`https://auth.${zone}/api/claim`, { cache: "no-store", redirect: "error", signal: AbortSignal.timeout(10_000) })
+          .then((r) => (r.ok ? r.json() : null)).catch(() => null)) as { claimed?: unknown; pending?: unknown } | null
+        if (typeof a?.claimed === "boolean") return json({ ok: true, answer: { ok: true, claimed: a.claimed, pending: a.pending === true, known: true } })
+      }
+      return answer("door", at, { body: { action, status: true } })
+    }
     const email = String(body?.email ?? "").trim().toLowerCase()
     if (email && (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) return json({ ok: false, reason: "bad-email" }, 400)
     return answer("door", at, { body: { action, ...(email ? { email } : {}) } })

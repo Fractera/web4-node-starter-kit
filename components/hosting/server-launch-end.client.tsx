@@ -182,7 +182,7 @@ function ReadyWords({ state, words, busy, onAct, claim, onClaim }: ReadyProps) {
   useEffect(() => {
     if (claim.claimed !== null || asked.current === zone) return
     asked.current = zone
-    void (onAct("claim", { status: true }) as Promise<{ reason?: string; answer?: { ok?: boolean; claimed?: boolean; reason?: string } } | undefined>).then((a) => {
+    void (onAct("claim", { status: true, zone }) as Promise<{ reason?: string; answer?: { ok?: boolean; claimed?: boolean; reason?: string } } | undefined>).then((a) => {
       const claimed = a?.answer?.claimed === true || a?.reason === "claimed" || a?.answer?.reason === "claimed"
       onClaim({ sent: claim.sent, claimed })
     })
