@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const req = createRequire(import.meta.url)
-const { contextColor } = req(join(ROOT, 'lib', 'node', 'tg-app', 'context-color.cjs'))
+const { contextColor, SOURCE } = req(join(ROOT, 'lib', 'node', 'tg-app', 'context-color.cjs'))
 const cw = req(join(ROOT, 'lib', 'agent-kit', 'context-window.cjs'))
 const page = req(join(ROOT, 'lib', 'node', 'tg-app', 'page.cjs'))
 let passed = 0
@@ -31,7 +31,10 @@ t('nonsense in — the calm start, never a thrown error', () => {
 })
 t('the page inlines the very same function (one source)', () => {
   const html = page.html('ru')
-  assert.ok(html.includes(contextColor.toString()), 'the page carries context-color.cjs as it is')
+  assert.ok(html.includes(SOURCE), 'the page carries context-color.cjs SOURCE as it is')
+  assert.ok(SOURCE.startsWith('function contextColor('), 'a named function — the page calls it by name')
+  const script = html.slice(html.lastIndexOf('<script>') + 8, html.lastIndexOf('</script>'))
+  new Function(script) // the whole page script parses (✗ 14:08: a minified nameless function broke it)
   assert.ok(html.includes("data-block','tg-app-context"), 'the gauge has its data-block')
 })
 
