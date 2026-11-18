@@ -105,6 +105,8 @@ export function AppMode({ words, dialogUi, lang }: { words: AppModeWords; dialog
               )}
             </div>
           ))}
+          {/* Без входа режим не прочитан: на месте подсказки — почему, а не пустота (782, замер 12:32 на своём домене). */}
+          <Small className={cn("leading-normal text-muted-foreground", !(denied && !active) && "invisible")} aria-hidden={!(denied && !active)} data-app-mode-text="denied">{words.readOnly}</Small>
         </div>
       </div>
       <div className="flex shrink-0 flex-col gap-2" role="group" aria-label={words.title} data-block="app-mode-buttons">
@@ -126,7 +128,7 @@ export function AppMode({ words, dialogUi, lang }: { words: AppModeWords; dialog
             {m === "project" ? words.project : words.factory}
           </Button>
         ))}
-        {(denied || failed) && <Small className="max-w-56 text-muted-foreground" role="status">{denied ? words.readOnly : words.failed}</Small>}
+        {((denied && active) || failed) && <Small className="max-w-56 text-muted-foreground" role="status">{failed ? words.failed : words.readOnly}</Small>}
       </div>
 
       {ask && state && (
