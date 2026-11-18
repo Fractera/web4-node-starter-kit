@@ -143,7 +143,7 @@ export function AppMode({ words, dialogUi, lang }: { words: AppModeWords; dialog
             </>
           }
         >
-          <div className="flex flex-col gap-4 px-5 py-4" data-block="app-mode-confirm">
+          <div className="flex flex-col gap-4" data-block="app-mode-confirm">
             <div className="flex flex-col gap-1.5">
               <P className="text-sm font-semibold text-foreground">{words.nowTitle}</P>
               <ul className="flex list-disc flex-col gap-1 pl-5 text-sm text-muted-foreground">
