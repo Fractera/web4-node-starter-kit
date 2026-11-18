@@ -246,6 +246,8 @@ TERMINAL now — the node has NO main bot (no Telegram channel, the Pult does no
 
 ## The person's decisions (verbatim)
 
+- 2026-11-18 22:2x UTC, the owner (terminal): «если у создания этих ботов есть лимит, то значит абсолютно точно что мы должны оставлять запасной вариант для создания Telegram будет без автоматизации чтобы владелец элемента могут это сделать» → reverses his 20:35 «no manual road on the core page» as a FOLD: today an element page shows the hand road only while the node has no factory (bot-factory.client.tsx `!f.kept && !core`), the core page never. Proposed (waits his yes on the phrases): a folded hand road under «Создать бота» on every bot page, the core's included, a token of a bot from ANY Telegram account accepted. No code before his word.
+
 - 2026-11-18 12:43 UTC, the owner (Telegram 597): «Я понял это не для страницы паспорта это для корня страницы архитектора посмотри там сейчас существуют три карточки это должна быть четвёртая понимаешь о чем я?» → my misreading of 565 («вкладка страницы архитектора» read as the Passport). The appMode card moved to the architect root page (`architect/page.tsx`), first above «Три действия, чтобы начать»; the Passport back to []. Also c17c0d05 (signed out: the reason instead of an empty text). Prebuild RC=0 → core build ~12:47; on return: eyes of /ru (the card first), tell Roma.
 
 - 2026-11-18 12:3x UTC — the owner ran the push himself («!» in the terminal): Fractera main 59c42260..ce3e76d9; ls-remote of the original confirms ce3e76d9. Open: my pushes to Fractera are refused by the auto-mode classifier — every step end needs his push or a permission rule in his settings (asked, waits).
