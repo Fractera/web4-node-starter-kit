@@ -14,6 +14,11 @@ import paths from "@/lib/web4-items/paths.cjs"
 import { elementName } from "@/lib/web4-items/dashboard-rows"
 import { list as sessions } from "@/app/[lang]/(architectLayer)/architect/[item]/_agent-kit/server/session.cjs"
 import contextWindow from "@/lib/agent-kit/context-window.cjs"
+import { primaryConnected, primaryDomain, zoneRootElement } from "@/lib/domain/node-domains"
+import { serviceUrl } from "@/lib/microservices/registry"
+import { addressOf } from "@/lib/web4-items/address-file.mjs"
+import { diskPassport } from "@/lib/web4-items/dashboard-rows"
+import { registryDescription } from "@/lib/web4-items/element-describe"
 
 const ROOT = process.cwd()
 
@@ -28,7 +33,7 @@ export type TgAsk = { id: string; text: string; why: string | null; hint: string
  * channel. `null` — not known yet (the default model, an agent that never ran).
  */
 export type TgAgent = { mode: "coding" | "waiting" | "sleeping"; model: string | null; effort: string | null; ultracode: boolean; account: "node" | "own" | null; email: string | null; bot: string | null }
-export type TgElement = { build: "building" | "queued" | null; id: string; name: string; native: boolean; required: boolean; on: boolean; offReason: string | null; live: boolean; step: string | null; turn: { event: string; at: string; last: string | null } | null; agent: TgAgent }
+export type TgElement = { build: "building" | "queued" | null; id: string; name: string; native: boolean; required: boolean; on: boolean; offReason: string | null; live: boolean; step: string | null; turn: { event: string; at: string; last: string | null } | null; agent: TgAgent ; description: string | null; site: string | null; botLink: string | null }
 /**
  * 2026-11-17 (the owner: «пульт как будто бы заморожен на определённом аккаунте»): a limit is measured only by an agent's turn (Claude Code
  * hands it to the status line); the account is read now, by code. `account` — the e-mail it was measured on; `stale` — measured on another
@@ -98,10 +103,28 @@ function buildsOf(): TgBuilds {
   return { running, current: running ? d.current ?? null : null, queue: running ? d.queue ?? [] : [], done: running ? (d.results ?? []).map((r) => r.id) : [] }
 }
 
+/**
+ * 787-2: the element's public site — the rule of the domain ladder (`app/api/domain/subdomains`): with the node's main domain connected,
+ * the element on its root answers on the zone itself, every other element with a server on `<address>.<zone>`; none — `null` (the
+ * button says why). Never a loopback or a port: the Pult is read from the phone.
+ */
+function siteOf(id: string): string | null {
+  const zone = primaryDomain()
+  if (!zone || !primaryConnected() || !serviceUrl(id)) return null
+  return id === zoneRootElement(serviceUrl) ? `https://${zone.name}` : `https://${addressOf(id) ?? id}.${zone.name}`
+}
+
+/** 787-2: one sentence of what the element is — its description taken into the core, else its passport's short line. */
+function descriptionOf(e: Entry): string | null {
+  try {
+    return sentence(registryDescription(e.id)?.summary ?? diskPassport(e as Parameters<typeof diskPassport>[0]).short, 160)
+  } catch { return null }
+}
+
 function elementsOf(lang: Lang, builds: TgBuilds): TgElement[] {
   const entries = readJson<{ services?: Entry[] }>(paths.REGISTRY_FILE, {}).services ?? []
   const live = new Set(((sessions() as { service: string; running?: boolean }[]) ?? []).filter((s) => s.running).map((s) => s.service))
-  return entries.map((e) => {
+  return entries.map((e): TgElement => {
     const off = power.offOf(e)
     let dir: string | null = null
     try { dir = (paths.entryDir(e) as string | null) ?? null; if (dir && !existsSync(dir)) dir = null } catch { dir = null }
@@ -117,8 +140,11 @@ function elementsOf(lang: Lang, builds: TgBuilds): TgElement[] {
       step: e.kind === "user" ? stepOf(dir) : null,
       turn: turnOf(e.id),
       agent: agentOf(e.id, live.has(e.id)),
+      description: descriptionOf(e),
+      site: e.kind === "user" ? siteOf(e.id) : null,
+      botLink: null,
     }
-  })
+  }).map((x) => ({ ...x, botLink: x.agent.bot ? `https://t.me/${x.agent.bot}` : null }))
 }
 
 /** The e-mail of the Claude Code account logged in now (the node's own; an element's own subscription lives in its folder). */
