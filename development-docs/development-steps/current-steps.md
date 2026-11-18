@@ -58,6 +58,8 @@ refused by the session's permission check) — push on his word.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-18 12:3x UTC — the owner ran the push himself («!» in the terminal): Fractera main 59c42260..ce3e76d9; ls-remote of the original confirms ce3e76d9. Open: my pushes to Fractera are refused by the auto-mode classifier — every step end needs his push or a permission rule in his settings (asked, waits).
+
 - 2026-11-18 12:30 UTC, the owner (Telegram 588): «Что от меня требуется скажи мне надо чтобы все изменения естественным образом попали в репозиторий чего непонятного» → DEFECT found: `origin` is his fork aifa-agi/web4-node-starter-kit; since 2026-11-15 every «pushed» went only there — Fractera/web4-node-starter-kit main stays at 59c42260 (258 commits behind, a pure fast-forward to ce3e76d9). My push to Fractera refused by the session's auto-mode classifier → window 1e83b81b (ask-person --copy «git push https://github.com/Fractera/web4-node-starter-kit.git ce3e76d9:refs/heads/main»), told him (592). On «Готово»: `git ls-remote https://github.com/Fractera/web4-node-starter-kit.git refs/heads/main` must say ce3e76d9, then `ask-person -- done`. Lesson: «pushed» is proven by ls-remote of the ORIGINAL, never by the push line of origin.
 
 - 2026-11-18 12:24 UTC — 782-2 DONE: config 4718bde, deployed by me (POST /api/node/deploy), eyes logs/eyes/2026-11-18T12-22-44-577Z.png — the red card gone, the line «Режим работы приложения переключается в Паспорте ядра» → https://architect.throughsongs.com/ru/passport; config's agent closed. Prebuild RC=0; ~12:25 the core build for be192df9 (padding). On return: eyes of the window (padding), then the summary completed-steps/782-main.md, delete the plan, tell Roma.
