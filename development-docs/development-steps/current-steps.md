@@ -126,6 +126,12 @@ build. On return: eyes of /ru/architect/build/telegram (the setup step), GET doo
 window: make the factory in @BotFather (ask-person), its save → can_manage_bots; then «Создать бота» for build = the new main bot
 (his «обновим твой бот») — after it my session needs a restart with the new channel. Fractera server's bot = 798-3 (server page), next.
 
+**18:58 UTC — 798-1/2 LIVE (build 95d125e1).** Proofs: fake token → token-rejected, no data/node/bot-factory.json; temporary address
+GET → 403, architect domain unsigned → 401; page seen (scratchpad playwright, waitUntil load): the setup block 873 px, 0 console errors.
+`npm run eyes` stalls on bot pages — networkidle never comes: the channel long-poll /ru/build/agent-api/channel stays open (→ 793 note).
+Window **cd2d6d4c** put (make the factory). On «Готово»: GET /api/node/bot-factory?live=1 → ready + live ok; then his «Создать бота»
+→ data/node/bot-factory-wait.json done → the main bot replaced → my restart with the channel; then 798-3 (server), 798-4 (Pult).
+
 ## Letter to my next session (written 2026-11-18 ~17:40 UTC, window 55 %, Opus · max)
 
 Written by me for myself. Day plan 783 (new-steps/783-…md). Roma reads me in Telegram (chat 90413601). Core live a622a876 + pins after.
