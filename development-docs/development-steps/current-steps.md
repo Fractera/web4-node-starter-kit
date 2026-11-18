@@ -194,6 +194,11 @@ factory says can_manage_bots=TRUE. So the flag LAGS (minutes; flipped around the
 it. Next: his admission (window: «Активировать соединение» + «Старт»), then my restart with the channel; then fix the page: «Проверить»
 must not gate creation (propose the phrases to him first).
 
+**21:32 UTC — the owner admitted to the new main bot** @throughsongs_fractera_22cc_bot (allowFrom 1 at 21:31:48, made by the factory
+@throughsongs_factory_0f24_bot). I restart with the channel (session model opus --continue). On return: write to him through Telegram;
+then the page fix (getMe's can_manage_bots lags — «Проверить» must not gate creation; phrases to him first), 798-3 the server page (same
+steps and design), 798-4 the Pult live; push the day's commits (his act). Leftovers: removed records in data/node/removed-bot-2026-11-18/.
+
 ## Letter to my next session (written 2026-11-18 ~17:40 UTC, window 55 %, Opus · max)
 
 Written by me for myself. Day plan 783 (new-steps/783-…md). Roma reads me in Telegram (chat 90413601). Core live a622a876 + pins after.
