@@ -93,6 +93,15 @@ Address of the work: the core (`main`) for any fix; the server itself through th
   панели провайдера (Ubuntu 24.04)» with the hint (the provider's own word for it, the root password he sets there). Done when: ssh
   answers with a NEW host key. Proofs: the launch page refuses the old pin with «ключ сервера изменился» (negative — the node never
   trusts a changed key silently), then accepts the new one after his confirm.
+- **784-2 CHANGED 13:43 (Telegram 642, verbatim): «Переустановку на Кантабо я не сделаю у меня нет к нему доступ, будем делать
+  перестановку на уровне ниже переустановки операционной системы»** → no system reinstall: step 2 of the page finds the old Fractera
+  install and «Очистить» (`clear.sh`: stops it and keeps everything in `/root/fractera-cleared-…`, erases nothing), then a fresh install.
+  The reinstall window bdb6fc81 was pressed at 13:21 but the server was never reinstalled (same host key, fractera.ai the old node).
+- **784-2a DEFECT that stops the launch (fixed inside the step):** the page's password opens the visit, the next call `probe` answers
+  `need-password` (his screenshot 13:41: «Доступ открыт на сутки, но проверка сервера не закончилась (need-password)»). The page road
+  connect → probe (769) was never proven live — only the window road was (11-17 10:00). A secret-free trace in the runner
+  (`logs/launch-trace.jsonl`: whether a key reached `byKey`, and the result) tells which side loses the visit; window 27c517fb asks him
+  to type the password once more.
 - **784-3 The eight steps, with him, from Telegram where possible.** Built: nothing new unless a step breaks (a break that stops the launch is
   fixed in the core, its own commit). The IP and the root password in the window on the computer (the decided exception). Each step reported
   in Telegram against the checklist. Done when: «Ваш сервер готов».

@@ -34,7 +34,7 @@
 // process list shows it), not the environment, not a file.
 // `--dry`: the server scripts run with DRY_RUN=1 (every command printed, none run) — the test's «server» is this very machine.
 import { execSync } from 'node:child_process'
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { detectDomain } from '../../lib/hosting/domain-detect.mjs'
@@ -88,11 +88,21 @@ function input() {
 /** A connection by this browser's visit key; none, expired or closed — `need-password` (the person types the root password again). */
 async function byKey() {
   const { key } = await input()
+  const given = typeof key === 'string' && key ? key : null
   try {
-    return await connect({ root, host, port, privateKey: typeof key === 'string' && key ? key : null })
+    const c = await connect({ root, host, port, privateKey: given })
+    trace({ verb, key: given ? 'given' : 'none', result: 'connected' })
+    return c
   } catch (e) {
+    trace({ verb, key: given ? 'given' : 'none', result: e?.reason ?? 'error' })
     throw e?.reason === 'auth' ? Object.assign(new Error('need-password'), { reason: 'need-password' }) : e
   }
+}
+
+// 784 (2026-11-18, the owner: «я ввожу пароль … доступ открыт … тут же … need-password»): which side loses the visit — the browser's cookie
+// never reaching the door (key «none») or the server refusing the key («auth»). No secret is written: only whether a key came.
+function trace(row) {
+  try { appendFileSync(path.join(root, 'logs', 'launch-trace.jsonl'), JSON.stringify({ at: new Date().toISOString(), host, ...row }) + '\n') } catch { /* a trace never stops a launch */ }
 }
 
 async function scripts(client, names) {
