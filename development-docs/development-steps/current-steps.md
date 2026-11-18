@@ -230,8 +230,8 @@ TERMINAL now — the node has NO main bot (no Telegram channel, the Pult does no
   Then by his word («надо удалять и пройти весь путь заново») both bots deleted (Unauthorized), records in data/node/removed-bot-2026-11-18/.
 - **BLOCKED:** @BotFather 21:46 «Sorry, too many attempts. Please try again in 64587 seconds» → no /newbot for his account until ~2026-11-19
   15:40 UTC; /mybots empty. 22:05 he made @my_fractera_bot in ANOTHER account and pasted its token in the chat: kept as the factory
-  (data/node/bot-factory.json, managed true — Telegram confirmed). A creation link for the main bot was put (a15a3ba6) and dropped by his
-  word; its waiter times out 22:15 (data/node/bot-factory-wait.json «timeout» is fine). Advise him to Revoke that token later (it is in the chat).
+  (managed true — Telegram confirmed); 22:10 his «@my_fractera_bot - remove it» → the waiter stopped, the record moved to
+  data/node/removed-bot-2026-11-18/round-2210-my_fractera_bot/; the node has NO factory now. Deleting the bot itself — his act in @BotFather.
 - **Tomorrow (his word «завтра продолжим»):** the main bot through the factory — page step 3 «Создать бота» (or the door: POST
   /api/node/bot-factory {action:create, service:build}) → his «Создать» in Telegram (unknown whether his account's limit also stops
   managed creation — the first tap tells) → «Старт» → my restart with the channel (npm run session -- model opus --continue). Then his test:
