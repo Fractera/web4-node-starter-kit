@@ -41,8 +41,8 @@ function More({ id, label, children, plain = false }: { id: string; label: strin
 }
 const Points = ({ items }: { items: string[] }) => <ol data-block="bf-points" className="list-decimal pl-5">{items.map((t) => <li key={t}>{t}</li>)}</ol>
 
-/** Inside step 1 of the bot page (`TelegramChannel`): `manual` — the hand road (@BotFather → token), shown only on a page whose node has no
- *  factory (an element's page); the owner, terminal ~20:35: «Вручную через отца ботов … ребус … убери» — the core's page has one road;
+/** Inside step 1 of the bot page (`TelegramChannel`): `manual` — the hand road (@BotFather → token): open on an element page while the node has no
+ *  factory, folded under «Создать бота» once it has one (the owner 22:2x); the owner, terminal ~20:35: «Вручную через отца ботов … ребус … убери» — the core's page has one road;
  *  `onDone` — the new bot is connected, the page asks its channel again. */
 export function BotFactory({ service, lang, words: w, manual, onDone }: { service: string; lang: string; words: BotFactoryWords; manual: ReactNode; onDone: () => void }) {
   const core = service === "build"
@@ -201,6 +201,13 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
       {createBlock}
       {err}
       <More id="create" label={w.more}>{w.createText}</More>
+      {/* the owner, 2026-11-18 22:2x: Telegram limits bot creation, so an element keeps the hand road beside the factory, folded; the core's page — the factory only */}
+      {!core && (
+        <More id="manual" label={w.manualTitle} plain>
+          <p data-block="bf-manual-lead" className="text-muted-foreground text-sm">{w.manualLead}</p>
+          {manual}
+        </More>
+      )}
     </section>
   )
 }

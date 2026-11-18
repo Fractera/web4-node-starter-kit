@@ -39,6 +39,8 @@ export type BotFactoryWords = {
   errors: Record<string, string>
   missing: string
   missingLink: string
+  manualTitle: string
+  manualLead: string
   createTitle: string
   createText: string
   create: string
@@ -90,6 +92,8 @@ const DICT: Record<string, BotFactoryWords> = {
     },
     missing: "The node has no bot factory yet, so this bot is made by hand.",
     missingLink: "Set up the factory",
+    manualTitle: "Create the bot by hand, without the factory",
+    manualLead: "If the factory does not work or Telegram has paused bot creation for a while, create the bot in @BotFather yourself — another Telegram account works too — and paste its token here.",
     createTitle: "Make this bot with one tap",
     createText: "Telegram opens its own window with the name and the address filled in; press «Create» there. If a bot is already connected, the new one replaces it (the old bot stays in your Telegram; delete it in @BotFather if you wish).",
     create: "Make the bot",
@@ -139,6 +143,8 @@ const DICT: Record<string, BotFactoryWords> = {
     },
     missing: "У узла пока нет бота-фабрики, поэтому этот бот создаётся вручную.",
     missingLink: "Настроить фабрику",
+    manualTitle: "Создать бота вручную, без фабрики",
+    manualLead: "Если фабрика не работает или Telegram временно запретил создавать ботов, создайте бота в @BotFather сами, можно с другого аккаунта Telegram, и вставьте его токен сюда.",
     createTitle: "Создать этого бота одним касанием",
     createText: "Telegram откроет своё окно с готовыми именем и адресом — нажмите там «Создать». Если бот уже подключён, новый заменит его (старый останется в вашем Telegram, удалить его можно в @BotFather).",
     create: "Создать бота",
