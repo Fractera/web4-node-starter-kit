@@ -67,6 +67,24 @@ SUB = {
 running = next((s["id"] for s in progress if s.get("state") == "running"), None) or next((s["id"] for s in progress if s.get("state") == "failed" and s["id"] != "launch"), None)
 sub = stages(SUB[running]) if running in SUB else []
 update = read(os.path.join(node, "data", "node", "node-update.json")) if running == "update" else None
+# 784 ✗ 2026-11-18 16:07 (the install stopped and nobody — the page, the computer — could see why): a failed launch carries the last
+# lines of the failed stage's own log, secrets masked (bot tokens, long keys), so the page and the computer's main agent read the reason.
+import re
+def tail(path, n=60):
+    try:
+        with open(path, errors="replace") as f:
+            lines = f.read().splitlines()[-n:]
+    except Exception:
+        return None
+    text = "\n".join(lines)
+    text = re.sub(r"\d{6,}:[A-Za-z0-9_-]{30,}", "[token]", text)
+    text = re.sub(r"[A-Za-z0-9_\-+/]{40,}", "[secret]", text)
+    return text[-6000:]
+LOGS = {"prepare": os.path.join(d, "prepare.log"), "install": os.path.join(node, "logs", "dedicated-server", "install.log"), "start": os.path.join(node, "logs", "dedicated-server", "start-live.log")}
+fail_tail = None
+if launch and launch.get("state") == "failed":
+    failed = launch.get("failed") or running
+    fail_tail = {"stage": failed, "log": tail(LOGS.get(failed, "")) if failed in LOGS else None, "out": tail(os.path.join(d, "launch.out"), 30)}
 mark = read(os.path.join(node, "data", "node", "server.json"))
 core = None
 runtime = read(os.path.join(node, "logs", "runtime.json")) or {}
@@ -92,6 +110,7 @@ print(json.dumps({
     "launch": launch,
     "progress": progress,
     "sub": sub,
+    "failTail": fail_tail,
     "update": {k: update.get(k) for k in ("state", "stage", "summary", "reason")} if isinstance(update, dict) else None,
     "domain": read(os.path.join(d, "domain.json")),
     "mark": {k: mark.get(k) for k in ("phase", "domain", "domainWay", "domainActive", "ip", "at")} if isinstance(mark, dict) else None,

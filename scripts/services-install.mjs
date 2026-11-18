@@ -191,6 +191,22 @@ if (!existsSync(join(ROOT, 'data', 'services')) && existsSync(SNAPSHOT_FILE)) {
   }
 }
 
+// ── 784: элементы, рождённые на ДРУГОМ узле ─────────────────────────────────
+// ✗ 2026-11-18: первый запуск сервера владельца из его форка встал на «hrutb — рождённый · ОШИБКА: папки рождённого элемента нет»
+// после 43 минут сборки. Свежий проект (`logs/fresh-project.json` — поставлен из форка) несёт в реестре элементы, РОЖДЁННЫЕ на узле,
+// откуда форк: их код жил только там. Запись «рождён, папки нет, своего репозитория нет» — не этого узла: она уходит из его реестра
+// одной строкой, а не падением установки. На узле, который её родил, то же отсутствие остаётся ошибкой (ниже).
+{
+  const { foreignBorn } = await import('../lib/web4-items/foreign-born.mjs')
+  const freshMarkAt = () => { try { return JSON.parse(readFileSync(join(ROOT, 'logs', 'fresh-project.json'), 'utf8')).at ?? null } catch { return null } }
+  const foreign = foreignBorn(registry.services, { freshAt: freshMarkAt(), hasFolder: (e) => existsSync(join(entryDir(e), '.git')) })
+  if (foreign.length) {
+    registry.services = registry.services.filter((s) => !foreign.includes(s.id))
+    writeFileSync(REGISTRY, JSON.stringify(registry, null, 2) + '\n', 'utf8')
+    say(`  элементы, рождённые на узле, откуда форк, — не этого узла (их код жил только там): ${foreign.join(', ')} — убраны из реестра`)
+  }
+}
+
 /** Ключ GitHub для восстановления: свой элемента → общий узла (`data/node/github/.env`) → `FRACTERA_GITHUB_TOKEN`. */
 function githubToken(id) {
   for (const f of [join(ROOT, 'data', 'services', id, 'github', '.env'), join(ROOT, 'data', 'node', 'github', '.env')]) {
