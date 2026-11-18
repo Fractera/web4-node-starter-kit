@@ -81,7 +81,7 @@ plan before code.
 data/workshop/fractera-root-starter) → v3.0.68 pushed, pinned 1ac30245 (this computer's root NOT redeployed — his word 692). 796-1 by auth's
 own agent → v2.4.43 (44c13d0, 17 tests, negative control), pinned 2f8939d7, auth closed. 796-2 core 5727e47a (step 8: his text, e-mail
 field, «Перейти на сервер», links only once claimed; status via GET; auth-too-old guard; trace verb only); hosting-launch 24 passed,
-final-check 11 passed, prebuild RC=0; core build next. **Then:** eyes impossible for step 8 without a live server (DOM test is the proof);
+final-check 11 passed, prebuild RC=0; core build 14:46–14:50 RC=0, LIVE afe40439; live door: bad e-mail → 400 bad-email, a valid e-mail reaches the runner (need-password without a visit). Told Roma (Telegram 696): press «Установить с нуля» now; asked 685 again. **Then:** eyes impossible for step 8 without a live server (DOM test is the proof);
 tell Roma: press «Установить с нуля» NOW (the fresh install takes auth v2.4.43 + root v3.0.68 from his fork), the live proof of 796 = his
 registration with his e-mail. 685 (the Pult «Режим») still unanswered. Pin registry trick: scratchpad pin.py (HEAD blob + update-index).
 
