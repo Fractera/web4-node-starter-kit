@@ -56,7 +56,11 @@ export function CloudflareWrite({ cf, words, busy, dialogUi, manual, onWrite, on
       {cf.written ? <Small className="font-medium text-foreground" data-block="server-launch-cf-written">{fill(words.written, { add: String(cf.written.add + cf.written.change), remove: String(cf.written.remove), time: new Date(cf.written.at).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" }) })}</Small> : null}
       {lines.length ? list : <Small className="text-muted-foreground">{words.nothing}</Small>}
       <div className="flex flex-wrap items-center gap-3" data-block="server-launch-cf-actions">
-        {lines.length ? <Button disabled={busy || plan.blocked.length > 0} onClick={() => setOpen(true)} size="sm">{words.write}</Button> : null}
+        {/* ✗ 2026-11-18 15:17 (Telegram 707): a zone that already leads every name to the server left no way on — step 3.4 never
+            opened. The same door with nothing to write sets the way and checks the records; the zone is not touched. */}
+        {lines.length
+          ? <Button disabled={busy || plan.blocked.length > 0} onClick={() => setOpen(true)} size="sm">{words.write}</Button>
+          : <Button disabled={busy || plan.blocked.length > 0} onClick={() => void onWrite([])} size="sm">{words.proceed}</Button>}
         <Button onClick={() => setHand((h) => !h)} size="sm" variant="ghost">{words.byHand}</Button>
       </div>
       {hand ? manual : null}

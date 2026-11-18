@@ -56,7 +56,7 @@ export type ServerLaunchWords = {
   /** 760-8: step 3 when the DNS is kept by Cloudflare — the node writes with its key when the key sees the zone; `{zone}` `{name}` `{ip}` `{type}` `{content}` */
   /** 760-9: «Claude сделает это в вашем Chrome» — the card and the ready task for the main agent; `{zone}` `{cabinet}` `{at}` `{star}` `{ip}` `{conflicts}` */
   chrome: { title: string; steps: string[]; note: string; button: string; task: string; cabinetCf: string; cabinetOther: string; none: string }
-  cf: { title: string; lead: string; add: string; change: string; remove: string; blocked: string; nothing: string; written: string; write: string; byHand: string; confirmTitle: string; confirmLead: string; confirmRemove: string; confirm: string; cancel: string; noKey: string; notVisible: string; keyLink: string; again: string }
+  cf: { title: string; lead: string; add: string; change: string; remove: string; blocked: string; nothing: string; proceed: string; written: string; write: string; byHand: string; confirmTitle: string; confirmLead: string; confirmRemove: string; confirm: string; cancel: string; noKey: string; notVisible: string; keyLink: string; again: string }
   /** 744-7: `silent` — Fractera stands there, its node does not answer yet (the next step waits for it); `ask` reads the server again */
   install: { text: string; install: string; update: string; again: string; running: string; done: string; failed: string; leave: string; silent: string; ask: string }
   stage: Record<string, string>
@@ -173,7 +173,7 @@ const en: ServerLaunchWords = {
     change: "Switch the proxy off: A {name} → {ip}",
     remove: "Remove: {type} {name} → {content}",
     blocked: "{name} leads to this computer's own tunnel ({content}). Move that name off the computer first: one name has one road.",
-    nothing: "The zone already leads every name to the server: nothing to write.",
+    nothing: "The zone already leads every name to the server: nothing to write.", proceed: "The records are already right — go on",
     written: "Written at {time}: {add} records to the server, {remove} removed. Public DNS catches up within minutes — step 6 checks again.",
     write: "Write the records",
     byHand: "Write them by hand instead",
@@ -356,7 +356,7 @@ const ru: ServerLaunchWords = {
     change: "Выключу прокси: A {name} → {ip}",
     remove: "Удалю: {type} {name} → {content}",
     blocked: "{name} ведёт на туннель этого компьютера ({content}). Сначала уберите это имя с компьютера: у имени одна дорога.",
-    nothing: "Зона уже ведёт все имена на сервер, вписывать нечего.",
+    nothing: "Зона уже ведёт все имена на сервер, вписывать нечего.", proceed: "Записи уже верны — дальше",
     written: "Вписано в {time}: записей на сервер — {add}, удалено — {remove}. Публичные DNS догонят за несколько минут — шаг 6 проверит ещё раз.",
     write: "Вписать записи",
     byHand: "Вписать вручную",
