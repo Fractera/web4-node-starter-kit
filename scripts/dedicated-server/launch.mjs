@@ -46,7 +46,7 @@ import { domainMissing } from '../../lib/hosting/launch-domain.mjs'
 import { relationOf } from '../../lib/hosting/relation.mjs'
 import { q, startDetached } from '../../lib/hosting/remote.mjs'
 import { cleanDomain } from '../../lib/hosting/server-domain.mjs'
-import { cleanLines, greetText, readWaiting, tailOf, telegramView, TOKEN_SHAPE } from '../../lib/hosting/server-telegram.mjs'
+import { checkToken, cleanLines, greetText, readWaiting, tailOf, telegramView, TOKEN_SHAPE, tokenFrom } from '../../lib/hosting/server-telegram.mjs'
 import { markLaunched } from '../../lib/hosting/launched.mjs'
 import { closeVisit, connect, exec, openVisit, serverDir, upload } from '../../lib/hosting/ssh.mjs'
 
@@ -506,8 +506,13 @@ const verbs = {
     const action = ['token', 'skip', 'link', 'messages'].find((a) => a === body?.action)
     const lines = cleanLines(body?.lines)
     if (!action) return fail('bad-action')
-    const token = action === 'token' && typeof body.token === 'string' ? body.token.trim() : ''
+    // 784 (Telegram 714): the token alone or BotFather's whole message; Telegram confirms it before anything is kept
+    const token = action === 'token' ? tokenFrom(body.token) ?? '' : ''
     if (action === 'token' && !TOKEN_SHAPE.test(token)) return fail('bad-token')
+    // the tests' dry runs never call Telegram: LAUNCH_DRY_TELEGRAM=refused|silent plays its refusal
+    const dryBot = () => (process.env.LAUNCH_DRY_TELEGRAM ? { ok: false, reason: `token-${process.env.LAUNCH_DRY_TELEGRAM}`.replace('token-silent', 'telegram-silent') } : { ok: true, username: 'dry_test_bot', name: 'Dry' })
+    const bot = action === 'token' ? (dry ? dryBot() : await checkToken(token)) : null
+    if (bot && !bot.ok) return fail(bot.reason)
     const { client } = await byKey()
     try {
       const s0 = await readState(client)
@@ -535,7 +540,7 @@ const verbs = {
         if (lines) await channel(client, { action: 'messages', messages: lines })
         await exec(client, `rm -f ${q(TELEGRAM_FILE())}`)
       } else {
-        await writeTelegram(client, { token, ...(lines ? { lines } : {}) })
+        await writeTelegram(client, { token, username: bot?.ok ? bot.username : null, name: bot?.ok ? bot.name : null, ...(lines ? { lines } : {}) })
       }
       done({ ok: true, tail: tailOf(token), state: await readState(client) })
     } finally { client.end() }

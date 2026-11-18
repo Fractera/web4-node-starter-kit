@@ -243,6 +243,18 @@ await t('a token before the node lives waits on the server (0600) and never come
   const later = await run(E, 'telegram', [], { key: E.key, body: { action: 'skip' } })
   assert.deepEqual([later.a?.ok, later.a?.state?.telegram?.skipped, later.a?.state?.telegram?.pending], [true, true, false], later.out)
   const LINES = { active: 'Сервер bot.invalid (https://bot.invalid) · on', inactive: 'Сервер bot.invalid (https://bot.invalid) · off', noSubscription: 'Сервер bot.invalid (https://bot.invalid) · sign in', lang: 'ru' }
+  // 784 (Telegram 714): Telegram refuses the token → nothing is kept; BotFather's whole message (its line breaks dropped by a one-line
+  // field, the next word glued on) → the token found and kept, with the bot's address Telegram gave back
+  process.env.LAUNCH_DRY_TELEGRAM = 'refused'
+  const refused = await run(E, 'telegram', [], { key: E.key, body: { action: 'token', token: TOKEN } })
+  delete process.env.LAUNCH_DRY_TELEGRAM
+  assert.equal(refused.a?.reason, 'token-refused', refused.out)
+  assert.equal(existsSync(join(E.dir, 'telegram.json')) && JSON.parse(readFileSync(join(E.dir, 'telegram.json'), 'utf8')).token === TOKEN, false, 'a refused token is never kept')
+  const SECRET = 'AAFq0-dry_run_secret_of_35_chars_xyz'.slice(0, 35)
+  const MESSAGE = `Done! Congratulations on your new bot. You will find it at t.me/dry_test_bot. Use this token to access the HTTP API: 8123456789:${SECRET}Keep your token secure and store it safely`
+  const whole = await run(E, 'telegram', [], { key: E.key, body: { action: 'token', token: MESSAGE } })
+  assert.deepEqual([whole.a?.ok, whole.a?.tail, whole.a?.state?.telegram?.username], [true, SECRET.slice(-4), 'dry_test_bot'], whole.out)
+  assert.equal(JSON.parse(readFileSync(join(E.dir, 'telegram.json'), 'utf8')).token, `8123456789:${SECRET}`)
   const put = await run(E, 'telegram', [], { key: E.key, body: { action: 'token', token: TOKEN, lines: LINES } })
   assert.deepEqual([put.a?.ok, put.a?.tail, put.a?.state?.telegram?.pending, put.a?.state?.telegram?.skipped, put.a?.state?.telegram?.live], [true, 'efgh', true, false, false], put.out)
   assert.equal(put.out.includes(TOKEN), false, 'the token never comes back to the computer')

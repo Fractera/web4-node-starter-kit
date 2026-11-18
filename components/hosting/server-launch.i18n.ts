@@ -63,7 +63,7 @@ export type ServerLaunchWords = {
   recheck: { text: string; button: string; gate: string; noDomain: string }
   /** 758: step 5 — the server's own bot while the server installs; `{stage}` the installation's stage, `{tail}` the token's last four, `{bot}` @name */
   telegram: {
-    text: string; how: string[]; nameLabel: string; usernameLabel: string; copy: string; copied: string; openBotFather: string; label: string; tokenNote: string; save: string; later: string; laterNote: string; connectNow: string
+    text: string; how: string[]; nameLabel: string; usernameLabel: string; copy: string; copied: string; openBotFather: string; replace: string; cancel: string; found: string; notFound: string; label: string; tokenNote: string; save: string; later: string; laterNote: string; connectNow: string
     pending: string; rejected: string; on: string; admitted: string; link: string; linkNote: string; installing: string; waitNode: string
     /** 761-2/761-14: the bot's own lines — `{site}` `{link}` the site, `{terminal}` `{subscription}` the server panel's pages (or `noPanel`) */
     lines: { active: string; inactive: string; noSubscription: string; noPanel: string }
@@ -132,7 +132,7 @@ const en: ServerLaunchWords = {
   access: { until: "Access until {time} (24 h at most)", close: "Close access", closing: "Closing the access…" },
   window: { open: "Open the server's panel", opening: "Opening an SSH window…", link: "The server's panel: {url}", note: "Through SSH, on this computer only, while the access lasts; «Close access» closes it too." },
   errors: {
-    "bad-token": "That is not a BotFather token: digits, a colon and a long code.", "token-rejected": "Telegram did not accept this token: copy it from @BotFather again.", "telegram-unreachable": "The server could not reach Telegram: try again in a minute.", "no-bot": "The bot is not connected yet.", "server-silent": "The server's node did not answer: try again in a minute.",
+    "bad-token": "That is not a BotFather token: digits, a colon and a long code.", "token-refused": "Telegram does not know this token: copy it from @BotFather again (or the whole message).", "telegram-silent": "Telegram did not answer now, the token is not kept — try again in a minute.", "token-rejected": "Telegram did not accept this token: copy it from @BotFather again.", "telegram-unreachable": "The server could not reach Telegram: try again in a minute.", "no-bot": "The bot is not connected yet.", "server-silent": "The server's node did not answer: try again in a minute.",
     "not-ready": "Not every name is ready yet: each needs a certificate, and HTTPS where it is due (step 6).", "check-first": "The server's own node has not counted the names as ready: run «Check HTTPS from the internet» in step 6. If it stays, update the server in step 4 — its version may be older than this computer's.", "auth-not-answering": "Sign-in on the server did not answer after the switch: check again in a minute.", "nginx-refused": "The server's web server did not accept the new settings.", "door-silent": "The server's node gave no answer.", "door-refused": "The server's node refused the step.",
     auth: "The server refused the password.", "bad-email": "This does not look like an e-mail address.", "auth-too-old": "The server's sign-in is older than the e-mail claim — install the server again from zero (the danger zone below).", claimed: "The architect is already registered on this server.", "need-password": "This browser has no open access to this server: type the root password — access lasts a day.", "no-password-login": "This server takes no password login (the provider switched it off). Switch password login for root on in the provider's panel, or reinstall the server with a password — the node never uses a provider's keys.", "key-refused": "The server's SSH does not know an access deadline (OpenSSH older than 8.2): the node gives no access without one. Update the server's system.", "visit-install": "The access could not be written on the server.", unrelated: "This server holds a state not related to this node: delete the previous state first.", "domain-not-ready": "The domain (step 3) is not ready yet: finish it, then install.", unreachable: "The server does not answer on this address and port.",
     timeout: "The server did not answer in time.", "bad-address": "That is not a server address.", "bad-password": "The password cannot contain line breaks.",
@@ -196,14 +196,14 @@ const en: ServerLaunchWords = {
   telegram: {
     text: "While the server installs, give it a Telegram bot of its own: from then on you talk to the server's main agent from the phone. You can skip it and connect it later.",
     how: ["In Telegram open @BotFather and send /newbot.", "BotFather asks for a name, then the bot's address. Copy them from here one by one and paste them into the chat:", "BotFather answers with a token like 1234567890:AA… — paste it here, in the field below."],
-    nameLabel: "The bot's name", usernameLabel: "The bot's address (ends in «bot»)", copy: "Copy", copied: "Copied", openBotFather: "Open @BotFather",
-    label: "The bot's token from @BotFather",
+    nameLabel: "The bot's name", usernameLabel: "The bot's address (ends in «bot»)", copy: "Copy", copied: "Copied", openBotFather: "Open @BotFather", replace: "Replace the bot", cancel: "Cancel", found: "Token found: …{tail}. Telegram checks it before it is kept.", notFound: "No token here: paste it, or BotFather's whole message.",
+    label: "The bot's token, or BotFather's whole message",
     tokenNote: "The token goes to the server and is kept only there; this page sees its last four characters.",
     save: "Connect the bot",
     later: "Later",
     laterNote: "No bot for now: the next steps go on without it. It can be connected here or in the server's panel at any time.",
     connectNow: "Connect a bot",
-    pending: "The token …{tail} is kept on the server; the bot switches on by itself when the server's node starts.",
+    pending: "The bot {bot}is checked by Telegram, its token …{tail} is kept on the server; the bot switches on by itself when the server's node starts.",
     on: "Bot {bot} is connected to the server's main agent.",
     admitted: "People admitted: {n}. Open the link and press Start — the server's agent greets you.",
     link: "Get the invite link",
@@ -316,7 +316,7 @@ const ru: ServerLaunchWords = {
   access: { until: "Доступ до {time} (не больше 24 ч)", close: "Закрыть доступ", closing: "Закрываю доступ…" },
   window: { open: "Открыть пульт сервера", opening: "Открываю окно SSH…", link: "Пульт сервера: {url}", note: "Через SSH, только на этом компьютере, пока открыт доступ; «Закрыть доступ» закрывает и его." },
   errors: {
-    "bad-token": "Это не токен BotFather: цифры, двоеточие и длинный код.", "token-rejected": "Telegram не принял этот токен: скопируйте его из @BotFather ещё раз.", "telegram-unreachable": "Сервер не достучался до Telegram: попробуйте через минуту.", "no-bot": "Бот ещё не подключён.", "server-silent": "Узел сервера не ответил: попробуйте через минуту.",
+    "bad-token": "Это не токен BotFather: цифры, двоеточие и длинный код.", "token-refused": "Telegram не знает такого токена: скопируйте его из @BotFather ещё раз (или всё сообщение целиком).", "telegram-silent": "Telegram сейчас не ответил, токен не сохранён — попробуйте ещё раз через минуту.", "token-rejected": "Telegram не принял этот токен: скопируйте его из @BotFather ещё раз.", "telegram-unreachable": "Сервер не достучался до Telegram: попробуйте через минуту.", "no-bot": "Бот ещё не подключён.", "server-silent": "Узел сервера не ответил: попробуйте через минуту.",
     "not-ready": "Ещё не все имена готовы: каждому нужен сертификат, а где положено — HTTPS (шаг 6).", "check-first": "Узел сервера ещё не считает имена готовыми: нажмите «Проверить HTTPS из интернета» в шаге 6. Если не помогло, обновите сервер в шаге 4 — его версия может быть старше, чем у этого компьютера.", "auth-not-answering": "Вход на сервере не ответил после включения: проверьте ещё раз через минуту.", "nginx-refused": "Веб-сервер на сервере не принял новые настройки.", "door-silent": "Узел сервера ничего не ответил.", "door-refused": "Узел сервера отказал в этом шаге.",
     auth: "Сервер не принял пароль.", "bad-email": "Это не похоже на адрес электронной почты.", "auth-too-old": "Вход на сервере старше, чем вход по e-mail архитектора — установите сервер заново, с нуля (опасная зона внизу).", claimed: "Архитектор на этом сервере уже зарегистрирован.", "need-password": "У этого браузера нет открытого доступа к этому серверу: введите пароль root — доступ откроется на сутки.", "no-password-login": "Этот сервер не принимает вход по паролю (провайдер его выключил). Включите вход по паролю для root в панели провайдера или переустановите сервер с паролем — ключи провайдера узел не использует.", "key-refused": "SSH сервера не знает срока доступа (OpenSSH старше 8.2): без срока узел доступа не даёт. Обновите систему сервера.", "visit-install": "Не удалось записать доступ на сервер.", unrelated: "На сервере состояние, не связанное с этим узлом: сначала удалите прежнее состояние.", "domain-not-ready": "Домен (шаг 3) ещё не готов: закончите его, затем установка.", unreachable: "Сервер не отвечает на этом адресе и порту.",
     timeout: "Сервер не ответил вовремя.", "bad-address": "Это не адрес сервера.", "bad-password": "В пароле не может быть переносов строки.",
@@ -380,14 +380,14 @@ const ru: ServerLaunchWords = {
   telegram: {
     text: "Пока сервер ставится, подключите ему собственного Telegram-бота: дальше с главным агентом сервера можно говорить с телефона. Шаг можно пропустить и вернуться к нему позже.",
     how: ["В Telegram откройте @BotFather и отправьте /newbot.", "BotFather попросит имя, затем адрес бота. Скопируйте их отсюда по очереди и вставьте в чат:", "BotFather пришлёт токен вида 1234567890:AA… — вставьте его сюда, в поле ниже."],
-    nameLabel: "Имя бота", usernameLabel: "Адрес бота (кончается на «bot»)", copy: "Скопировать", copied: "Скопировано", openBotFather: "Открыть @BotFather",
-    label: "Токен бота от @BotFather",
+    nameLabel: "Имя бота", usernameLabel: "Адрес бота (кончается на «bot»)", copy: "Скопировать", copied: "Скопировано", openBotFather: "Открыть @BotFather", replace: "Заменить бота", cancel: "Отмена", found: "Токен найден: …{tail}. Перед сохранением его проверит Telegram.", notFound: "Токена здесь не видно: вставьте его или всё сообщение BotFather целиком.",
+    label: "Токен бота или всё сообщение от @BotFather",
     tokenNote: "Токен уходит на сервер и хранится только там; эта страница видит лишь четыре последних знака.",
     save: "Подключить бота",
     later: "Позже",
     laterNote: "Пока без бота: следующие шаги идут и так. Подключить его можно здесь или в панели сервера в любой момент.",
     connectNow: "Подключить бота",
-    pending: "Токен …{tail} хранится на сервере; бот включится сам, когда запустится узел сервера.",
+    pending: "Бот {bot}проверен Telegram, его токен …{tail} хранится на сервере; бот включится сам, когда запустится узел сервера.",
     on: "Бот {bot} подключён к главному агенту сервера.",
     admitted: "Допущено людей: {n}. Откройте ссылку и нажмите «Старт» — агент сервера поздоровается.",
     link: "Получить ссылку-приглашение",

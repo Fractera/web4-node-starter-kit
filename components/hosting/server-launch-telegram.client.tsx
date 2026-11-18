@@ -12,7 +12,7 @@ import { Button, buttonVariants } from "@/components/ui/button"
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Small } from "@/components/ui/typography"
-import { botLines, serverBotSuggestion } from "@/lib/hosting/server-telegram.mjs"
+import { botLines, serverBotSuggestion, tailOf, tokenFrom } from "@/lib/hosting/server-telegram.mjs"
 
 // 758. The owner, 2026-11-16: «Telegram может быть в пятым шагом то есть в тот момент когда идёт установка сервера у пользователя есть
 // время подключить Telegram» and «шаг 5 необязательный». The step opens as soon as the installation runs (step 4 is done then), keeps one
@@ -32,7 +32,9 @@ export function TelegramStep({ lang, state, words, busy, onAct }: { lang: string
   const running = state.launch?.state === "running"
   const stage = state.progress.find((s) => s.state === "running")
   const bot = t?.username ? `@${t.username}` : t?.name ?? ""
-  const showForm = !t?.configured && !t?.pending && (!t?.skipped || asking)
+  // 784 (Telegram 714): «нужно решение которое … повторно подключит другого Telegram бота» — «Заменить бота» brings the form back
+  const showForm = asking || (!t?.configured && !t?.pending && !t?.skipped)
+  const found = token.trim() ? tokenFrom(token) : null
   // 760-10: the bot made by the main agent in the person's Telegram Web — the token still pasted here by the person
   const agent = telegramTask(w.agent, { zone: state.domain?.domain ?? null, ip: state.host ?? null })
   // 761-2/761-14: the bot's own three lines in this page's language, each naming the site with its link
@@ -49,7 +51,7 @@ export function TelegramStep({ lang, state, words, busy, onAct }: { lang: string
   }, [t?.configured, t?.tail])
 
   async function save() {
-    const value = token.trim()
+    const value = tokenFrom(token) ?? token.trim()
     setToken("")
     const a = (await onAct("telegram", { op: "token", token: value, lines })) as { ok?: boolean } | null
     if (a?.ok) setAsking(false)
@@ -80,7 +82,8 @@ export function TelegramStep({ lang, state, words, busy, onAct }: { lang: string
         </div>
       ) : null}
 
-      {t?.pending ? <Small className="text-foreground" data-block="server-launch-telegram-waits">{fill(w.pending, { tail: t.tail ?? "" })}</Small> : null}
+      {t?.pending ? <Small className="text-foreground" data-block="server-launch-telegram-waits">{fill(w.pending, { tail: t.tail ?? "", bot: bot ? `${bot} ` : "" })}</Small> : null}
+      {(t?.pending || t?.configured) && !asking ? <Button className="w-fit" disabled={busy} onClick={() => setAsking(true)} size="sm" variant="outline">{w.replace}</Button> : null}
       {t?.rejected && showForm ? <Small className="text-destructive">{fill(w.rejected, { tail: t.rejected })}</Small> : null}
 
       {t?.skipped && !asking ? (
@@ -106,11 +109,12 @@ export function TelegramStep({ lang, state, words, busy, onAct }: { lang: string
           <Field>
             <FieldLabel htmlFor="server-launch-telegram-token">{w.label}</FieldLabel>
             <Input autoComplete="off" id="server-launch-telegram-token" onChange={(e) => setToken(e.target.value)} spellCheck={false} type="password" value={token} />
-            <FieldDescription>{w.tokenNote}</FieldDescription>
+            <FieldDescription>{token.trim() ? (found ? fill(w.found, { tail: tailOf(found) ?? "" }) : w.notFound) : w.tokenNote}</FieldDescription>
           </Field>
           <div className="flex flex-wrap gap-2" data-block="server-launch-telegram-actions">
-            <Button disabled={busy || !token.trim()} size="sm" type="submit">{w.save}</Button>
-            {!t?.skipped ? <Button disabled={busy} onClick={() => void onAct("telegram", { op: "skip" })} size="sm" type="button" variant="ghost">{w.later}</Button> : null}
+            <Button disabled={busy || !found} size="sm" type="submit">{w.save}</Button>
+            {asking && (t?.pending || t?.configured) ? <Button disabled={busy} onClick={() => { setAsking(false); setToken("") }} size="sm" type="button" variant="ghost">{w.cancel}</Button> : null}
+            {!t?.skipped && !t?.pending && !t?.configured ? <Button disabled={busy} onClick={() => void onAct("telegram", { op: "skip" })} size="sm" type="button" variant="ghost">{w.later}</Button> : null}
           </div>
           {/* Telegram 710: «вкладка создать при помощи Telegram должна выглядеть как аккордеон и быть по умолчанию закрытой» */}
           {agent ? (

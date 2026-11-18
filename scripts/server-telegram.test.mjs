@@ -4,7 +4,7 @@
 // `lib/hosting/server-telegram.mjs` with the launch page's own words (ru, en), each case with its negative control.
 import assert from 'node:assert/strict'
 import { createRequire } from 'node:module'
-import { botLines, cleanLines, greetText, serverBotSuggestion, telegramWarn } from '../lib/hosting/server-telegram.mjs'
+import { botLines, checkToken, cleanLines, greetText, serverBotSuggestion, telegramWarn, tokenFrom } from '../lib/hosting/server-telegram.mjs'
 
 let passed = 0
 const t = (name, fn) => { try { fn(); passed += 1; console.log(`  ✓ ${name}`) } catch (e) { console.error(`  ✗ ${name}\n    ${e.message}`); process.exitCode = 1 } }
@@ -62,6 +62,20 @@ await t('784 (Telegram 710): the bot name and address ready to copy — a valid 
   const long = serverBotSuggestion({ zone: 'a-very-long-domain-name-for-a-test.example.org', ip: '1.2.3.4' })
   assert.ok(valid(long.username) && long.name.length <= 64, long.username)
   assert.ok(valid(serverBotSuggestion({ zone: '123-shop.com' }).username), 'a domain starting with a digit still gives a letter first')
+})
+
+await t('784 (Telegram 714): the token from the token alone or BotFather\'s whole message; Telegram\'s getMe decides', async () => {
+  const T = '8123456789:AAFq0-dry_run_secret_of_35_chars_xy'
+  assert.equal(T.split(':')[1].length, 35)
+  assert.equal(tokenFrom(`  ${T}\n`), T)
+  assert.equal(tokenFrom(`Use this token to access the HTTP API:\n${T}\nKeep your token secure`), T)
+  assert.equal(tokenFrom(`Use this token to access the HTTP API: ${T}Keep your token secure`), T, 'a one-line field glues the next word on')
+  assert.equal(tokenFrom('Done! Congratulations on your new bot.'), null)
+  assert.equal(tokenFrom(null), null)
+  const answer = (status, body) => async () => ({ status, json: async () => body })
+  assert.deepEqual(await checkToken(T, answer(200, { ok: true, result: { is_bot: true, username: 'x_bot', first_name: 'X' } })), { ok: true, username: 'x_bot', name: 'X' })
+  assert.deepEqual(await checkToken(T, answer(401, { ok: false, error_code: 401 })), { ok: false, reason: 'token-refused' })
+  assert.deepEqual(await checkToken(T, async () => { throw new Error('offline') }), { ok: false, reason: 'telegram-silent' })
 })
 
 console.log(process.exitCode ? `===SERVER_TELEGRAM_FAILED=== ${passed} passed` : `===SERVER_TELEGRAM_OK=== ${passed} passed`)

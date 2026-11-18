@@ -179,7 +179,7 @@ export async function POST(req: NextRequest) {
   if (action === "telegram") {
     const op = ["token", "skip", "link", "messages"].find((o) => o === body?.op)
     if (!op) return json({ ok: false, reason: "bad-action" }, 400)
-    const token = op === "token" ? String(body?.token ?? "").trim().slice(0, 200) : undefined
+    const token = op === "token" ? String(body?.token ?? "").trim().slice(0, 4096) : undefined
     // 761-2/761-14: the bot's three lines in the page's language, each naming the site — checked again by the runner (`cleanLines`)
     const lines = (op === "token" || op === "messages") && body?.lines && typeof body.lines === "object" ? body.lines : undefined
     return answer("telegram", at, { body: { action: op, ...(token ? { token } : {}), ...(lines ? { lines } : {}) } })
