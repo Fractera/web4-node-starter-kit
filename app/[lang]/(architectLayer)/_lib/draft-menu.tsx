@@ -17,6 +17,7 @@ import { ARCHITECT_HOME } from './architect-menu'
 import { MAIN_AGENT } from './main-agent-scheme'
 import { menuStates, stateWord } from '@/lib/web4-items/menu-page'
 import { MenuMore } from '../_components/menu-more.client'
+import { tgMenuOf, tgMenuItems } from './draft-menu-tg' // 790: the Mini App menu under «Working process»
 
 // ЧЕРНОВИКИ И КНОПКА «СОЗДАТЬ МИКРОСЕРВИС» В ЛЕВОМ МЕНЮ (314-1). Слово владельца: «в левом меню после кнопки дизайн
 // добавляем кнопку создать микро service». Меню слоя собирается из папок при сборке; черновики — данные узла, поэтому их
@@ -112,6 +113,7 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
       const inside = currentPath.startsWith(`${path}/`)
       const kids: WorkspaceItem[] = path === `${dir}/workflow/process/subscriptions`
         ? services.map((x) => ({ label: x.name, href: at(`${path}/${x.id}`), active: `${path}/${x.id}` === currentPath }))
+        : path === `${dir}/workflow` && !native && tgMenuOf(d.id, l) ? [...shownOf(p.pages).filter((c) => c.slug !== 'process').map((c) => node(c, path)), ...tgMenuItems(tgMenuOf(d.id, l) ?? [], { dir, at, currentPath, services })]
         : shownOf(p.pages).map((c) => node(c, path))
       const href = hrefPath(path)
       return kids.length > 0

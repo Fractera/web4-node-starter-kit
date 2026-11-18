@@ -325,6 +325,10 @@ export const ITEM_TREE: TreePage[] = [
       // 552-4б: сессия агента рабочего процесса — задачи агентов других узлов; отдельная от «Строительства», закрывается сама.
       // 745: только у кастомного — у нативного своей сессии рабочих задач нет (551-1).
       { slug: "terminal", custom: true, words: w("Terminal", "The agent session of the working process: tasks from agents of other nodes run here, and it closes itself when the work is done.", "Терминал", "Сессия агента рабочего процесса: здесь идут задачи агентов других узлов, и она закрывается сама, когда работа сделана.") },
+      // 790 (владелец 2026-11-18, Telegram 748: «все что делаем и строим в Telegram отображается в рабочих процессах на левом меню»):
+      // мини-приложение элемента — тот же рабочий процесс с телефона. Его меню (`tg/_data/menu.json` элемента) — дети этого пункта в
+      // левом меню (`draft-menu.tsx`), экран — тот же `/<lang>/tg/<slug>` элемента в рамке телефона (`lib/web4-items/element-tg-menu.ts`).
+      { slug: "mini-app", custom: true, listed: false, words: w("Mini App", "The same menu and screens as in Telegram: what the element's Mini App shows on the phone.", "Мини-приложение", "То же меню и те же экраны, что в Telegram: что мини-приложение элемента показывает на телефоне.") },
       // 745 (владелец 2026-11-15): «вкладка провайдера. Вкладки Google и волшебное письмо по умолчанию существуют и при нажатии на них
       // появляется страница где можно ввести Credentials. А также на вкладке провайдеры есть кнопка добавить нового провайдера»; «Волшебное
       // письмо it is Resend». Экраны — те же ступени 265/266 (`authGoogleSetup`, `authResendSetup`) со своими текстами.

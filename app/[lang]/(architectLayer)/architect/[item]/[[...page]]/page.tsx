@@ -13,6 +13,9 @@ import { draftAddress, getDraft, nodeZone } from '@/lib/web4-items/drafts'
 import { findTreePath, movedPage, MOVED_WITH, treeLang, treeListed, treeVisible, type TreePage } from '@/lib/web4-items/item-tree'
 import { AccordionSection } from '@/components/accordion/accordion-section.client'
 import { getService, listServices, serviceUrl } from '@/lib/microservices/registry'
+import { elementTgSegments } from '@/lib/web4-items/element-tg-menu'
+import { ElementMiniApp } from '@/app/[lang]/(architectLayer)/_components/element-mini-app.client'
+import { elementMiniAppWords } from '@/app/[lang]/(architectLayer)/_components/element-mini-app.i18n'
 import { builtInDraft, builtInIds } from '@/lib/web4-items/built-in-elements'
 import { BirthButton } from '../../../_components/birth-button.client'
 import nodeType from '@/lib/web4-items/node-type.cjs'
@@ -169,6 +172,8 @@ function resolve(p: Params) {
     const trail = findTreePath(path.slice(0, -1))
     return known && trail ? { draft, trail, service: path[path.length - 1] } : null
   }
+  // 790: a screen of the element's Mini App — `workflow/mini-app/<segment…>`, only its menu's own (another one is a 404); `service` carries it.
+  if (path.length > 2 && path[0] === 'workflow' && path[1] === 'mini-app') { const seg = path.slice(2).join('/'); const t = findTreePath(path.slice(0, 2)); return t && elementTgSegments(draft.id).includes(seg) ? { draft, trail: t, service: seg } : null }
   const trail = findTreePath(path)
   if (!trail) return null
   // 412-2: страница документа есть, только пока есть его файл в папке элемента.
@@ -610,6 +615,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       )
       : null
   // 559: «Пользователи» элемента входа — все люди узла; таблицу спрашивает островок у двери ядра `/api/node/users`.
+  const miniApp = key === 'workflow/mini-app' ? <ElementMiniApp hasMenu={elementTgSegments(item).length > 0} id={item} lang={lang} slug={r.service && r.service !== 'home' ? r.service : ''} words={elementMiniAppWords(lang)} /> : null
   const users = key === 'users' ? <NodeUsers lang={lang} ui={nodeUsersUi(lang)} table={tableUi(lang)} dialogUi={appDialogUi(lang)} /> : null
 
   // 567: выключенный элемент — плашка на каждой его странице: страницы, Preview и двери молчат намеренно, а не сломаны.
@@ -627,7 +633,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       lead={words.lead}
       // 721-2: шапка страницы элемента (видна в компактном режиме) — его имя для людей, не адрес; найдено глазами после обновления.
       pageTitle={elementLabel(item, lang)}
-      widget={<>{offNote}{bar}{lagrix}{about}{list}{preview}{github}{deployPanel}{copyNote}{deploymentsNote}{environment}{domainSettings}{settings}{siteSettings}{designPage}{agent}{passport}{capabilities}{doc}{orders}{messengerSettings}{payments}{productQuiz}{reverseEngineering}{tools}{backupSettings}{providers}{users}</>}
+      widget={<>{offNote}{bar}{lagrix}{about}{list}{preview}{github}{deployPanel}{copyNote}{deploymentsNote}{environment}{domainSettings}{settings}{siteSettings}{designPage}{agent}{passport}{capabilities}{doc}{orders}{messengerSettings}{payments}{productQuiz}{reverseEngineering}{tools}{backupSettings}{providers}{users}{miniApp}</>}
       children={[...dashboardBlocks, ...tables, ...providerItems]}
       tabs={providerTabs}
     />
