@@ -108,6 +108,16 @@ passport), the modes straight under «Рабочий процесс» (draft-men
 frame widget (element-mini-app.client.tsx, address via /api/node/preview-url); prebuild RC=0. LIVE 17:27 build a622a876: /ru/root/workflow 200, …/mini-app/home 200, …/mini-app/nope 404 (negative); eyes logs/eyes/2026-11-18T17-29-05-281Z.png — the sidebar tree (Мои проекты → Обзор…Помощь, A2A · Web4; «Процесс» folded) + root's /ru/tg/help in the phone frame, no console errors. Sent (754–756) with both pictures; asked: fix the in-screen site chrome (breadcrumb, H1, «← Мини-приложение») now or in 793. Was: core build → eyes of
 /ru/architect/root/workflow/mini-app/home (sidebar + frame) → tell Roma with pictures.
 
+**2026-11-18 ~17:55 UTC (after the reset).** 757 core part CODED, not committed, not built: `element-tg-menu.ts` → `{ modes, common }`,
+`draft-menu-tg.ts` puts common after the modes, segments include common, draft-menu.tsx caller; tsc clean. Plan **797**
+(new-steps/797-the-element-menu-follows-the-core-menu.md) for 759/760/764 — sent to him for «да»; Мессенджер after Telegram-бот unless
+766 says otherwise. **18:02 his «Да» (Telegram 773) to plan 797.** 797-2..4 CODED (uncommitted): item-tree top-level subscription/terminal/telegram,
+H2A bot page gone, MOVED_PAGES build/* + messenger/h2a/telegram → top, MOVED_WITH removed; links: page.tsx, payment-elements,
+attention, progress.cjs botPage, element-update terminalServiceOf (no /build), main-agent-cli, built-in BUILT_IN_STATIC, lives-at
+(tool-demo 1.0.5, PARTS.json rebuilt), kit telegram.cjs + agent-kit:update of 12 groups. element-deploy comment left (its old <details>).
+Prebuild RC=0 ~18:20 → core build (serve:rebuild:detached). On return: curl build/terminal?paste=x → 307 to terminal (query kept?),
+new 200, wrong 404; eyes root menu (390 & desktop); commit explicit paths; tell Roma.
+
 ## Letter to my next session (written 2026-11-18 ~17:40 UTC, window 55 %, Opus · max)
 
 Written by me for myself. Day plan 783 (new-steps/783-…md). Roma reads me in Telegram (chat 90413601). Core live a622a876 + pins after.
