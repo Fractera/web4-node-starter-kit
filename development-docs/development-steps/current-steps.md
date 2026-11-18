@@ -103,7 +103,7 @@ deployed by me; eyes logs/eyes/2026-11-18T17-20-41-004Z.png (closed) and 17-20-4
 to other elements (his 751). 790 core aa8ee9ca: lib/web4-items/element-tg-menu.ts (reads the element's menu file — data, like the
 passport), the modes straight under «Рабочий процесс» (draft-menu-tg.ts; the sidebar depth forbade a «Мини-приложение» wrapper level),
 «Подписки»/«Крон» → the core's real pages, «Процесс» folds away for an element with a menu; workflow/mini-app/<segment> → the phone
-frame widget (element-mini-app.client.tsx, address via /api/node/preview-url); prebuild RC=0. Next: core build → eyes of
+frame widget (element-mini-app.client.tsx, address via /api/node/preview-url); prebuild RC=0. LIVE 17:27 build a622a876: /ru/root/workflow 200, …/mini-app/home 200, …/mini-app/nope 404 (negative); eyes logs/eyes/2026-11-18T17-29-05-281Z.png — the sidebar tree (Мои проекты → Обзор…Помощь, A2A · Web4; «Процесс» folded) + root's /ru/tg/help in the phone frame, no console errors. Sent (754–756) with both pictures; asked: fix the in-screen site chrome (breadcrumb, H1, «← Мини-приложение») now or in 793. Was: core build → eyes of
 /ru/architect/root/workflow/mini-app/home (sidebar + frame) → tell Roma with pictures.
 
 ## Letter to my next session (written 2026-11-18 ~14:24 UTC, window 55 %, Opus · max)
