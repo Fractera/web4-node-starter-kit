@@ -1,6 +1,6 @@
 # 782 — the app mode switch moves from the configurator to the core's Passport
 
-Status: plan, waits the owner's «да». Repository: the core (`main`); the configurator's own card — its agent, in its repository.
+Status: APPROVED 2026-11-18 11:56 UTC (Telegram 567, verbatim below) — in work. Repository: the core (`main`); the configurator's own card — its agent, in its repository.
 
 ## The owner's words (2026-11-18 11:53 UTC, Telegram 565, verbatim)
 
@@ -13,6 +13,16 @@ Status: plan, waits the owner's «да». Repository: the core (`main`); the con
 пользователей: – – один супер пользователь создает до 980 доменов для для других пользователей. Один пользователь может иметь один или
 несколько доменов. – – В режиме один пользователь в тексте добавь ссылку на страницу конфигуратор. Старайся чтобы карточки не прыгали по
 высоте при переключении различных режимов оставались одной высоты сделает обновление.»
+
+11:56 UTC, Telegram 567: «Да кстати говоря ты же понимаешь что мы не просто интерфей сделаем а глубокое переключение? И насколько мы говорили если после того как будет создан хотя бы один элемент кроме руут пользователь попробует сделать переключение нужно вывести уведомления о том что домены которые были созданы ранее в противоположном режиме сохранят свое состояние (нужно исследовать так это или не так и без особых комментариев и общение со мной написать правильный тексты и действуют соответствующим образом)»
+
+## Research (measured 11:57 — do not measure again)
+
+- The type lives in the registry (`nodeType`), `lib/web4-items/node-type.cjs`. It decides: the birth look of NEW custom elements (`birthLook`: factory → own settings, project → under CONFIG); the node's one wallet on project (`lib/web4-items/node-wallet.ts`), elements' own wallets on factory (`ownWallets` names them, keys never erased); the Messenger section (h2a/h2h) hidden on project (`lib/web4-items/tree-context.ts`, all elements at once); tools «take» only on project (`app/api/node/tools/take`); `scripts/item-birth.mjs` :338 factory specifics.
+- TRUE: existing elements never switch by themselves — the module's 🔒 «ТИП ЗАДАЁТ ТОЛЬКО ОБЛИК НОВЫХ КАСТОМНЫХ ЭЛЕМЕНТОВ»; `mismatches(type)` lists born custom (not native, not payment) elements whose `data/services/<id>/links.json` config differs from the type's default; one element is switched by `npm run node-type -- look <id> own|project` (the same door as the cards on its page). Root is not `born` in the registry — not counted.
+- So the switch window (AppDialog, only when ≥ 1 born custom element besides root exists): what changes now (new elements' birth, wallet, Messenger), the list «уже созданные сохранят свои настройки» with each name, how to switch each (its page), how back (here). Without such elements — the press switches at once.
+- The door `POST /api/node/type` exists (architect, admin; writes + revalidates); `GET` gives `mismatches` and `settingsUrl` — add the list of born custom elements with names.
+- The Passport page `app/[lang]/(architectLayer)/architect/passport`: `content()` returns `[]` (the `nodePassport` section commented by 706-8 until Lagrix); visible now — only the child card «Как это работает». The old read-only `NodeMode` is in `components/dashboard/node-passport.client.tsx` (hidden with it). The new card = a new core section kind (e.g. `appMode`) returned first by `content()` — the six places of skill `use-sections`, modelled on `toolsTab` (`sections/kinds/tools-tab.server.tsx`, `components/tools-tab/*`, `sections/SECTIONS.json`, `sections/KINDS.md`, `sections/index.ts`, `lib/content/sections/types.ts`, `lib/content/sections/specimen.ts`, parts card).
 
 I assume: «вкладка страницы архитектора» = the core's Passport page (it already shows the mode, read-only — 564); «один пользователь» =
 `project`, «много пользователей» = `factory`; «Domino» = «домены» (voice typing).
