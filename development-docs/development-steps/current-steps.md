@@ -111,12 +111,7 @@ frame widget (element-mini-app.client.tsx, address via /api/node/preview-url); p
 **2026-11-18 ~17:55 UTC (after the reset).** 757 core part CODED, not committed, not built: `element-tg-menu.ts` → `{ modes, common }`,
 `draft-menu-tg.ts` puts common after the modes, segments include common, draft-menu.tsx caller; tsc clean. Plan **797**
 (new-steps/797-the-element-menu-follows-the-core-menu.md) for 759/760/764 — sent to him for «да»; Мессенджер after Telegram-бот unless
-766 says otherwise. **18:02 his «Да» (Telegram 773) to plan 797.** 797-2..4 CODED (uncommitted): item-tree top-level subscription/terminal/telegram,
-H2A bot page gone, MOVED_PAGES build/* + messenger/h2a/telegram → top, MOVED_WITH removed; links: page.tsx, payment-elements,
-attention, progress.cjs botPage, element-update terminalServiceOf (no /build), main-agent-cli, built-in BUILT_IN_STATIC, lives-at
-(tool-demo 1.0.5, PARTS.json rebuilt), kit telegram.cjs + agent-kit:update of 12 groups. element-deploy comment left (its old <details>).
-Prebuild RC=0 ~18:20 → core build (serve:rebuild:detached). On return: curl build/terminal?paste=x → 307 to terminal (query kept?),
-new 200, wrong 404; eyes root menu (390 & desktop); commit explicit paths; tell Roma.
+766 says otherwise. **18:16 UTC — 797 CLOSED:** commit ef16cf03, build ae7a59ed live; summary completed-steps/797-main.md (open: stale ?paste= bookmarks, two «Терминал», not pushed — the classifier refuses git push; waits his push or a permission rule).
 
 ## Letter to my next session (written 2026-11-18 ~17:40 UTC, window 55 %, Opus · max)
 
