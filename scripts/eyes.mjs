@@ -63,7 +63,8 @@ const context = await browser.newContext({ viewport: { width, height }, colorSch
 // `--dark` ставил лишь `prefers-color-scheme`, а тема по умолчанию — «light» (`NEXT_PUBLIC_DEFAULT_THEME`, `shell-init.tsx`) и
 // схему системы не читает — каждый «тёмный» скриншот был светлым, и проверка «обе темы» молча проверяла одну. Теперь «глаза» ставят
 // cookie выбора `fractera-theme` (тот же, что пишет переключатель, `shared-prefs.ts`) в ту тему, что названа в строке ===EYES===.
-await context.addCookies([{ name: 'fractera-theme', value: dark ? 'dark' : 'light', url: new URL(url).origin }])
+// 788 (2026-11-18): a bench page from a file (`file://`, e.g. `npm run tg-app:preview`) has no origin for a cookie — its theme is the scheme.
+if (/^https?:/i.test(url)) await context.addCookies([{ name: 'fractera-theme', value: dark ? 'dark' : 'light', url: new URL(url).origin }])
 const page = await context.newPage()
 const problems = []
 page.on('console', (m) => { if (m.type() === 'error') problems.push(`console: ${m.text().slice(0, 200)}`) })

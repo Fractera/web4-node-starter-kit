@@ -11,3 +11,9 @@ Taken only after the day plan 783 (steps 784–792) is closed. One line per defe
   any first word is the request's text · found by me, the window dropped at once.
 - The bot's «Агент build выключен. Включить его и передать ему ваше сообщение?» (12:52) held messages of yesterday as well as today's ·
   the main bot's held-messages list · held words are not cleared when they reach the agent · the owner forwarded the list (Telegram 604).
+- The server launch page says «need-password» when the browser does not keep cookies for localhost (13:41) ·
+  `components/hosting/server-launch.client.tsx` connect → probe · the visit lives in an HttpOnly cookie; a profile that blocks site data
+  for localhost drops it silently · measured in his Chrome (a JS cookie on localhost is not kept; a clean Chrome passes the whole round on a
+  test SSH server) — the page should test a cookie first and name the cause and the setting.
+- `npm run eyes` could not open a `file://` page (its theme cookie needs an origin) — fixed inside 788 (a bench page is a file).
+

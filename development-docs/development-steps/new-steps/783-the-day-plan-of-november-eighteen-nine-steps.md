@@ -102,6 +102,11 @@ Address of the work: the core (`main`) for any fix; the server itself through th
   connect → probe (769) was never proven live — only the window road was (11-17 10:00). A secret-free trace in the runner
   (`logs/launch-trace.jsonl`: whether a key reached `byKey`, and the result) tells which side loses the visit; window 27c517fb asks him
   to type the password once more.
+  CAUSE FOUND 13:50: his Chrome profile does not keep cookies for localhost (a JS cookie set on localhost:24680 is not kept; even NEXT_LOCALE
+  is absent). Proven both ways: in a clean headless Chrome the whole round (connect → cookie → close by the key) passes against a test
+  SSH server on 127.0.0.1:25677 (`scripts/hosting-test-ssh.mjs`); in his Chrome (the extension's tab) the same round gives
+  `need-password`. The trace: `probe` key «none» at 13:44:24; a crafted cookie reaches the runner («given»). Not a code defect; the page's
+  silent «need-password» goes to 793. His act: allow cookies for localhost — window 2143a16b. The test pin of 127.0.0.1:25677 removed.
 - **784-3 The eight steps, with him, from Telegram where possible.** Built: nothing new unless a step breaks (a break that stops the launch is
   fixed in the core, its own commit). The IP and the root password in the window on the computer (the decided exception). Each step reported
   in Telegram against the checklist. Done when: «Ваш сервер готов».
