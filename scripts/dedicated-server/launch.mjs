@@ -471,7 +471,10 @@ const verbs = {
         const names = namesReady(s)
         if (!names.ok) return fail('not-ready', { missing: names.missing, state: s })
       }
-      const answer = await serverDoor(client, body.action === 'upload' ? { action: 'upload', host: body.name, fullchain: body.fullchain, privkey: body.privkey } : { action: body.action })
+      // 796: the claim carries the architect's e-mail (or `status`) to the server's own door — by the SSH channel's stdin, never an argv
+      const claim = body.action === 'claim' ? { ...(typeof body.email === 'string' && body.email ? { email: body.email.slice(0, 254) } : {}), ...(body.status === true ? { status: true } : {}) } : {}
+      if (body.action === 'claim') trace({ verb: 'claim', key: 'given', result: claim.status ? 'status' : claim.email ? 'email' : 'code' })
+      const answer = await serverDoor(client, body.action === 'upload' ? { action: 'upload', host: body.name, fullchain: body.fullchain, privkey: body.privkey } : { action: body.action, ...claim })
       // 744-9: the server door's own refusal reaches the page with its reason; silence is a failure, never «ok».
       // ✗ Measured 2026-11-14: activate refused by the server node («check-first», its code older than this computer's rule) and the
       // page said «Узел не ответил» — the reason was lost here, and a door that answered nothing passed as ok.

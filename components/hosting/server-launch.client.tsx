@@ -235,7 +235,7 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
     telegram: <TelegramStep busy={busy} lang={lang} onAct={act} state={state} words={words} />,
     recheck: <RecheckStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,
     certs: <CertsLaunchStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,
-    ready: <ReadyStep busy={busy} claim={claim?.host === target.host ? claim : { code: null, claimed: false }} onAct={act} onClaim={(c) => setClaim({ ...c, host: target.host })} state={state} words={words} />,
+    ready: <ReadyStep busy={busy} claim={claim?.host === target.host ? claim : { sent: null, claimed: null }} onAct={act} onClaim={(c) => setClaim({ ...c, host: target.host })} state={state} words={words} />,
   }
   return (
     <section className="my-6 flex flex-col gap-3" data-block="server-launch" data-host={target.host}>

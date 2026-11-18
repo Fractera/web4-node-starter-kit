@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
   return json({ ok: true, phase: p, readOnly, ...domainState(ROOT), ...ladder(readOnly) })
 }
 
-type Body = { action?: unknown; name?: unknown; host?: unknown; fullchain?: unknown; privkey?: unknown; way?: unknown }
+type Body = { action?: unknown; name?: unknown; host?: unknown; fullchain?: unknown; privkey?: unknown; way?: unknown; email?: unknown; status?: unknown }
 
 export async function POST(req: NextRequest) {
   if (isTemporaryPublicAddress(req)) return json({ ok: false, reason: "public-address" }, 403)
@@ -138,11 +138,25 @@ export async function POST(req: NextRequest) {
     const base = serviceUrl("auth")
     const token = process.env.ARCHITECT_TOKEN?.trim()
     if (!base || !token) return json({ ok: false, reason: base ? "no-architect-token" : "no-auth-element" }, 503)
+    const claimAt = `${base.replace(/\/+$/, "")}/api/claim`
+    const register = `https://auth.${domainState(ROOT, { certs: null }).zone}/register`
     try {
-      const r = await fetch(`${base.replace(/\/+$/, "")}/api/claim`, { method: "POST", headers: { "x-architect-token": token }, cache: "no-store", signal: AbortSignal.timeout(15_000) })
+      // 796: `status` — whether the architect is still awaited (no e-mail, no hash in the answer); `email` — the claim by the architect's
+      // e-mail (the owner, Telegram 686), its hash kept by the sign-in element; neither — the one-time code of 739 for older servers.
+      if (body?.status === true) {
+        const r = await fetch(claimAt, { headers: { "x-architect-token": token }, cache: "no-store", signal: AbortSignal.timeout(15_000) })
+        const a = (await r.json().catch(() => null)) as { pending?: boolean; kind?: string | null; claimed?: boolean } | null
+        if (!r.ok || !a) return json({ ok: false, reason: `auth-${r.status}` }, 502)
+        return json({ ok: true, pending: Boolean(a.pending), kind: a.kind ?? null, claimed: Boolean(a.claimed), register })
+      }
+      const email = typeof body?.email === "string" ? body.email.trim().toLowerCase().slice(0, 254) : ""
+      const r = await fetch(claimAt, { method: "POST", headers: { "x-architect-token": token, ...(email ? { "content-type": "application/json" } : {}) }, ...(email ? { body: JSON.stringify({ email }) } : {}), cache: "no-store", signal: AbortSignal.timeout(15_000) })
       const a = (await r.json().catch(() => null)) as { ok?: boolean; code?: string; error?: string } | null
-      if (!r.ok || !a?.code) return json({ ok: false, reason: a?.error ?? `auth-${r.status}` }, r.status === 409 ? 409 : 502)
-      return json({ ok: true, code: a.code, register: `https://auth.${domainState(ROOT, { certs: null }).zone}/register` })
+      if (r.status === 409) return json({ ok: false, reason: "claimed" }, 409)
+      if (!r.ok || (!email && !a?.code)) return json({ ok: false, reason: a?.error ?? `auth-${r.status}` }, 502)
+      // a sign-in element older than 796 ignores the e-mail and makes a code — the page must not say «waits for your e-mail» then
+      if (email && a?.code) return json({ ok: false, reason: "auth-too-old" }, 409)
+      return json({ ok: true, ...(email ? { email: true } : { code: a?.code }), register })
     } catch {
       return json({ ok: false, reason: "auth-not-answering" }, 502)
     }

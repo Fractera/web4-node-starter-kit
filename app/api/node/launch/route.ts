@@ -168,6 +168,13 @@ export async function POST(req: NextRequest) {
   if (action === "install") return answer("install", [...at, "--mode", body?.mode === "update" ? "update" : "install"])
   if (action === "domain") return answer("domain", [...at, "--name", String(body?.name ?? "").slice(0, 260)])
   if (action === "way") return answer("way", [...at, "--way", String(body?.way ?? "")])
+  // 796: the architect's e-mail of a fresh server — checked here, passed through to the server's sign-in element, kept nowhere in the core
+  if (action === "claim") {
+    if (body?.status === true) return answer("door", at, { body: { action, status: true } })
+    const email = String(body?.email ?? "").trim().toLowerCase()
+    if (email && (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) return json({ ok: false, reason: "bad-email" }, 400)
+    return answer("door", at, { body: { action, ...(email ? { email } : {}) } })
+  }
   if (DOOR_ACTIONS.includes(action)) return answer("door", at, { body: { action } })
   if (action === "telegram") {
     const op = ["token", "skip", "link", "messages"].find((o) => o === body?.op)

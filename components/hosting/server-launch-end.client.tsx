@@ -2,6 +2,7 @@
 // @local — steps 4–7 of the launch ladder (one route: «Активация выделенного сервера»): installation, the records again, certificates, ready
 
 import { Check, Info, X } from "lucide-react"
+import { useEffect, useState } from "react"
 import { CertsStep } from "@/components/hosting/server-domain-certs.client"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import type { Strategy } from "@/components/hosting/server-launch-check.client"
@@ -12,6 +13,8 @@ import type { ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
 import { StageLog } from "@/components/hosting/stage-log"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Small } from "@/components/ui/typography"
 
@@ -152,46 +155,62 @@ export function ReadyStep({ state, words, busy, onAct, claim, onClaim }: ReadyPr
   )
 }
 
-/** The words that call the server usable — drawn only under a passed final check (744-6, `check:ready-words`). */
+/** The words that call the server usable — drawn only under a passed final check (744-6, `check:ready-words`). 796: the links «Сайт ·
+ *  Панель · Вход» only once the architect exists — before that one road, the architect's e-mail and «Перейти на сервер». */
 function ReadyWords({ state, words, busy, onAct, claim, onClaim }: ReadyProps) {
   const w = words.ready
   const zone = state.core?.zone ?? ""
   const architect = state.core?.rows.find((r) => r.kind === "architect")?.host ?? zone
+  useEffect(() => {
+    if (claim.claimed !== null) return
+    void (onAct("claim", { status: true }) as Promise<{ answer?: { ok?: boolean; claimed?: boolean } } | undefined>).then((a) => {
+      if (a?.answer?.ok) onClaim({ ...claim, claimed: Boolean(a.answer.claimed) })
+    })
+  }, [claim, onAct, onClaim])
   return (
     <>
       <p className="font-medium text-foreground text-sm" data-block="server-launch-done">{w.done}</p>
-      <Small className="text-foreground">
-        {w.links} <a className="underline" href={`https://${zone}/`}>{w.site}</a> · <a className="underline" href={`https://${architect}/`}>{w.panel}</a> · <a className="underline" href={`https://auth.${zone}/`}>{w.signin}</a>
-      </Small>
-      <Claim busy={busy} onAct={onAct} onShown={onClaim} shown={claim} words={words} zone={zone} />
-      <Small className="text-muted-foreground">{w.next}</Small>
+      {claim.claimed ? (
+        <>
+          <Small className="text-foreground" data-block="server-launch-claimed">{w.claimed}</Small>
+          <Small className="text-foreground">
+            {w.links} <a className="underline" href={`https://${zone}/`}>{w.site}</a> · <a className="underline" href={`https://${architect}/`}>{w.panel}</a> · <a className="underline" href={`https://auth.${zone}/`}>{w.signin}</a>
+          </Small>
+          <Small className="text-muted-foreground">{w.next}</Small>
+        </>
+      ) : <Claim busy={busy} onAct={onAct} onShown={onClaim} shown={claim} words={words} zone={zone} />}
     </>
   )
 }
 
-/** 739-5: the architect's one-time code, asked of the server's sign-in element and shown here once — the launch island's memory only
- *  (744-7: kept above the ladder, so a look back at another step does not lose it). */
-export type ClaimShown = { code: string | null; claimed: boolean }
+/** 796 (the owner, Telegram 686 — his text): the architect of a fresh server is the e-mail given here; the server's sign-in element keeps
+ *  its hash and lets only that e-mail register first. The e-mail lives in this island's memory only (744-7: kept above the ladder). */
+export type ClaimShown = { sent: string | null; claimed: boolean | null }
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function Claim({ zone, words, busy, onAct, shown, onShown }: { zone: string; words: ServerLaunchWords; busy: boolean; onAct: Act; shown: ClaimShown; onShown: (c: ClaimShown) => void }) {
   const w = words.ready
-  const { code, claimed } = shown
-  async function get() {
-    const a = (await onAct("claim")) as { answer?: { code?: string; reason?: string } } | undefined
-    if (a?.answer?.code) onShown({ code: a.answer.code, claimed: false })
-    else if (a?.answer?.reason === "claimed") onShown({ code: null, claimed: true })
+  const [email, setEmail] = useState(shown.sent ?? "")
+  const register = `https://auth.${zone}/register`
+  const ok = EMAIL.test(email.trim())
+  async function go() {
+    const tab = window.open("", "_blank") // opened in the press itself, so no blocker stops it; its address comes after the server's yes
+    const a = (await onAct("claim", { email: email.trim().toLowerCase() })) as { answer?: { ok?: boolean; reason?: string } } | undefined
+    if (a?.answer?.ok) { onShown({ sent: email.trim().toLowerCase(), claimed: false }); if (tab) tab.location.href = register; return }
+    tab?.close()
+    if (a?.answer?.reason === "claimed") onShown({ sent: null, claimed: true })
   }
-  if (claimed) return <Small className="text-foreground" data-block="server-launch-claimed">{w.claimed}</Small>
   return (
-    <div className="flex flex-col gap-2 rounded-md bg-muted/40 p-3" data-block="server-launch-claim">
-      <Small className="text-foreground">{w.first}</Small>
-      {code ? (
-        <>
-          <p className="font-mono font-semibold text-foreground text-lg tracking-widest" data-block="server-launch-claim-code">{code}</p>
-          <Small className="text-foreground">{w.claimText.split("{url}")[0]}<a className="underline" href={`https://auth.${zone}/register`}>{`https://auth.${zone}/register`}</a>{w.claimText.split("{url}")[1] ?? ""}</Small>
-        </>
-      ) : null}
-      <div><Button disabled={busy} onClick={() => void get()} size="sm" variant={code ? "outline" : "default"}>{code ? w.claimNew : w.claimButton}</Button></div>
+    <div className="flex flex-col gap-3 rounded-md bg-muted/40 p-3" data-block="server-launch-claim">
+      <Small className="text-foreground">{w.claimLead}</Small>
+      <ol className="flex list-decimal flex-col gap-1 pl-5 text-foreground text-sm">{w.claimSteps.map((t) => <li key={t}>{t}</li>)}</ol>
+      <Field>
+        <FieldLabel htmlFor="launch-claim-email">{w.claimEmail}</FieldLabel>
+        <Input autoComplete="email" id="launch-claim-email" inputMode="email" onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && ok && !busy) void go() }} type="email" value={email} />
+      </Field>
+      <div><Button disabled={busy || !ok} onClick={() => void go()}>{w.claimGo}</Button></div>
+      {shown.sent ? <Small className="text-foreground" data-block="server-launch-claim-sent">{w.claimSent.replace("{email}", shown.sent).split("{url}")[0]}<a className="underline" href={register} rel="noopener noreferrer" target="_blank">{register}</a></Small> : null}
+      <Small className="rounded-md border border-warning/50 bg-warning/10 px-3 py-2 font-medium text-foreground" role="note">! {w.claimLoss}</Small>
     </div>
   )
 }

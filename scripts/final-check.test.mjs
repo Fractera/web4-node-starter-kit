@@ -96,7 +96,7 @@ if (!esbuild) {
 } else {
   const src = 'import { renderToStaticMarkup } from "react-dom/server"\nimport { ReadyStep } from "@/components/hosting/server-launch-end.client"\n' +
     'import { serverLaunchWords } from "@/components/hosting/server-launch.i18n"\nexport const words = serverLaunchWords("en")\n' +
-    'export const render = (state) => renderToStaticMarkup(<ReadyStep busy={false} claim={{ code: null, claimed: false }} onAct={async () => null} onClaim={() => {}} state={state} words={words} />)'
+    'export const render = (state, claimed = false) => renderToStaticMarkup(<ReadyStep busy={false} claim={{ sent: null, claimed }} onAct={async () => null} onClaim={() => {}} state={state} words={words} />)'
   const built = await esbuild.build({ stdin: { contents: src, loader: 'tsx', resolveDir: ROOT, sourcefile: 'ready-probe.tsx' }, bundle: true, platform: 'node', format: 'cjs', target: 'node20', packages: 'external', write: false, absWorkingDir: ROOT, logLevel: 'silent', jsx: 'automatic' })
   const dir = mkdtempSync(join(tmpdir(), 'final-check-'))
   const file = join(dir, 'probe.cjs')
@@ -105,14 +105,18 @@ if (!esbuild) {
   rmSync(dir, { recursive: true, force: true })
   const has = (html, text) => html.includes(text)
 
-  await t('the DOM: the check passed → «Your server is ready», the links and the code; no list of what is missing', () => {
+  await t('the DOM: the check passed, the architect awaited (796) → «Your server is ready» and the e-mail road, no links yet', () => {
     const html = render(state())
-    assert.ok(has(html, words.ready.done) && has(html, 'href="https://architect.example.org/"') && has(html, words.ready.claimButton))
+    assert.ok(has(html, words.ready.done) && has(html, words.ready.claimGo) && has(html, 'id="launch-claim-email"') && !has(html, 'href="https://architect.example.org/"'))
     assert.ok(!has(html, words.ready.missing.title) && has(html, 'data-ready="1"'))
+  })
+  await t('the DOM: the architect registered (796) → the links «Site · Panel · Sign-in», no e-mail field', () => {
+    const html = render(state(), true)
+    assert.ok(has(html, words.ready.claimed) && has(html, 'href="https://architect.example.org/"') && !has(html, 'id="launch-claim-email"'))
   })
   await t('the DOM, negative: sign-in elsewhere → none of the ready words, the links or the code; what is missing is named', () => {
     const html = render(state({ signin: { ok: false, providers: 200, location: 'http://127.0.0.1:24681/login' } }))
-    assert.ok(!has(html, words.ready.done) && !has(html, 'href="https://architect.example.org/"') && !has(html, words.ready.claimButton))
+    assert.ok(!has(html, words.ready.done) && !has(html, 'href="https://architect.example.org/"') && !has(html, words.ready.claimGo))
     assert.ok(has(html, words.ready.missing.title) && has(html, words.ready.missing.signin.replace('{host}', 'auth.example.org')) && has(html, 'data-ready="0"'))
   })
   await t('the DOM: the domain not switched on yet → only «switch the domain on», no ready word', () => {
