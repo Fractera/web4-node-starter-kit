@@ -146,6 +146,14 @@ steps 2–3), after «Заменить бота» step 1 = the factory ladder (c
 him with how it works (818–820). Window **6c0740c5** (make the factory). On «Готово»: GET /api/node/bot-factory?live=1 → ready, live ok;
 then his «Создать бота» on build → wait done → my restart with the new channel; then the Pult and a birth live; 798-3 server next.
 
+**19:41 UTC — his 834: «Очищай … все записи … как будто у него никогда не было никакого бота … с чистого листа».** Done 19:42: the waiter
+stopped; the main bot's channel (data/services/build/channel/telegram/* incl. .env, access, bot.json, messages, person.json, inbox) and the
+factory (bot-factory.json, -links, -offset, -wait) MOVED to data/node/removed-bot-2026-11-18/{main-bot,factory} (0700, recoverable). Told him
+(835, the last message through the old bot). The page: setup ladder, steps 2–3 locked, 0 errors. The factory's suggested address is the same
+(stable hash) — taken by the old factory bot unless he deletes it in @BotFather. Open defects for 798: «Создать бота» press never reached the
+door (two tries, no wait file; cause unknown; also window.open after await may be blocked → make it a link), confusing labels («Заменить бота»
+opens the factory) — rename. Without the main bot: no Telegram channel for me, the Pult does not open.
+
 ## Letter to my next session (written 2026-11-18 ~17:40 UTC, window 55 %, Opus · max)
 
 Written by me for myself. Day plan 783 (new-steps/783-…md). Roma reads me in Telegram (chat 90413601). Core live a622a876 + pins after.
