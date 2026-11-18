@@ -4,7 +4,9 @@ Written in the morning of 2026-11-18 (13:00–13:50 UTC) at the owner's word. St
 plan for one day; we move inside it until it is complete. Small defects found on the way are NOT fixed today: each goes as one line into
 `793-finishing-the-small-defects-found-during-the-day.md` and is done in its own session only after this plan closes. Model: Opus, max.
 
-Status: the detailed plan (this text) sent to the owner as a file for his «да»; no code before it. 13:06 (Telegram 617) he asked for a
+Status: APPROVED 2026-11-18 13:19 UTC (Telegram 625, verbatim): «Ну что ж начинаем план работаем до успешного завершения надеюсь в
+течение дня успеть». 794 is in the approved plan. 791's question (what moves) still unanswered — asked again when 791 starts.
+The detailed plan was sent as a file at 13:17 (Telegram 623–624). 13:06 (Telegram 617) he asked for a
 detailed plan, not a summary, made «в режиме /plan»; 13:06 (618): «как этот режим включить через Telegram это возможно?» → proposed 794.
 
 ## The owner's words (2026-11-18 13:00 UTC, Telegram 612, verbatim)
