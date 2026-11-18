@@ -131,7 +131,15 @@ Written by me for myself. Day plan 783 (new-steps/783-…md). Roma reads me in T
   `_components/element-mini-app.client.tsx` (390×780 frame, address via /api/node/preview-url). **NOT YET CODED (his 757):** read
   `common` in element-tg-menu.ts and put the common items BESIDE the modes under «Рабочий процесс» (siblings of «Мои проекты» and
   «A2A · Web4»); segments include common; then ONE core build together with 759/760.
-- **759/760 waits his answer (762):** the element's core menu like the core's, plain links: «Живой сайт · Подписка Claude Code · Терминал
+- **17:39–17:43:** root merged v0.3.217 (2eb3688; common items outside the modes), closed, deployed by me; eyes
+  logs/eyes/2026-11-18T17-41-15-802Z.png (drawer: Обзор in the mode, a line, then Подписки › / Крон / Настройки / Помощь). His 763:
+  «когда будут появляться или исчезать новые папки это никогда не будет привозить к необходимости обновлений ядра? В противном случае
+  все это работа лишена любого смысла» → answered (765–767) with the measured fact: the element page is `Cache-Control: no-store`
+  (rendered per request) and element-tg-menu.ts reads the element's menu file at each render → no core rebuild; only the element's own
+  deploy for a new screen. NOT yet proven live with a real new item (said so, 767). His 764: «Проектирование продукта это не
+  строительный процесс это проектирование оно останется снаружи там где сейчас» → the element menu: Живой сайт · Подписка Claude Code ·
+  Терминал · Telegram-бот · Рабочий процесс · Проектирование продукта · Строительство · Настройки; «Мессенджер» — asked (766).
+- **759/760 (asked 762, partly answered 764):** the element's core menu like the core's, plain links: «Живой сайт · Подписка Claude Code · Терминал
   · Telegram-бот · Рабочий процесс · Строительство · Настройки» (759: «вкладку Telegram вытащить наружу из вкладки строительства пусть
   оно находится сразу под вкладкой живой сайт»; 760: «давай повторим интерфейс ядра … надписи можно сделать просто ссылками»). I asked
   where «Мессенджер» and «Проектирование продукта» go (my pick: product design inside Build, messenger H2H inside Working process).
