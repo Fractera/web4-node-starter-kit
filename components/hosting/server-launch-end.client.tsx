@@ -2,7 +2,7 @@
 // @local — steps 4–7 of the launch ladder (one route: «Активация выделенного сервера»): installation, the records again, certificates, ready
 
 import { Check, Info, X } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { CertsStep } from "@/components/hosting/server-domain-certs.client"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import type { Strategy } from "@/components/hosting/server-launch-check.client"
@@ -161,12 +161,17 @@ function ReadyWords({ state, words, busy, onAct, claim, onClaim }: ReadyProps) {
   const w = words.ready
   const zone = state.core?.zone ?? ""
   const architect = state.core?.rows.find((r) => r.kind === "architect")?.host ?? zone
+  // ✗ 2026-11-18 14:56 (Telegram 697): with `claim`/`onClaim` as dependencies and no answer settling `claimed`, this asked the server
+  // over SSH in a loop until it stopped answering. Now: ONE quiet read per zone, and every answer settles it — a refusal shows the form.
+  const asked = useRef("")
   useEffect(() => {
-    if (claim.claimed !== null) return
-    void (onAct("claim", { status: true }) as Promise<{ answer?: { ok?: boolean; claimed?: boolean } } | undefined>).then((a) => {
-      if (a?.answer?.ok) onClaim({ ...claim, claimed: Boolean(a.answer.claimed) })
+    if (claim.claimed !== null || asked.current === zone) return
+    asked.current = zone
+    void (onAct("claim", { status: true }) as Promise<{ reason?: string; answer?: { ok?: boolean; claimed?: boolean; reason?: string } } | undefined>).then((a) => {
+      const claimed = a?.answer?.claimed === true || a?.reason === "claimed" || a?.answer?.reason === "claimed"
+      onClaim({ sent: claim.sent, claimed })
     })
-  }, [claim, onAct, onClaim])
+  }, [claim.claimed, claim.sent, zone, onAct, onClaim])
   return (
     <>
       <p className="font-medium text-foreground text-sm" data-block="server-launch-done">{w.done}</p>

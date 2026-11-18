@@ -435,6 +435,16 @@ await t('796: the e-mail goes page → launch door → runner stdin → server d
   const door = readFileSync(join(here, '..', 'app', 'api', 'node', 'server', 'domain', 'route.ts'), 'utf8')
   assert.ok(door.includes('body: JSON.stringify({ email })') && door.includes('"auth-too-old"') && door.includes('reason: "claimed"'))
 })
+await t('796 ✗ 14:56: the architect status is a quiet read — answered by the runner before any SSH, settled; the page asks once per zone', async () => {
+  const runner = readFileSync(join(here, 'dedicated-server', 'launch.mjs'), 'utf8')
+  const door = runner.slice(runner.indexOf('async door()'))
+  const quiet = door.indexOf("if (body.action === 'claim' && body.status === true) return done(")
+  assert.ok(quiet > 0 && quiet < door.indexOf('await byKey()'), 'the status must be answered before the SSH connection')
+  const page = readFileSync(join(here, '..', 'components', 'hosting', 'server-launch-end.client.tsx'), 'utf8')
+  assert.ok(page.includes('asked.current === zone') && page.includes('asked.current = zone') && !/\[claim, onAct, onClaim\]/.test(page))
+  const island = readFileSync(join(here, '..', 'components', 'hosting', 'server-launch.client.tsx'), 'utf8')
+  assert.ok(island.includes('if (action === "claim" && extra.status === true) return post('), 'the status read must not make the page busy')
+})
 
 console.log('738-7 the move road is gone')
 await t('serve:start sets a 737 move mark aside and never refuses; no code reads the move\'s state any more', async () => {

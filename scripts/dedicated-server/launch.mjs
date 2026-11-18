@@ -453,6 +453,10 @@ const verbs = {
   async door() {
     const body = (await input()).body ?? {}
     if (!['dns-check', 'certs', 'check', 'activate', 'upload', 'claim'].includes(body?.action)) return fail('bad-action')
+    // 796 ✗ 14:56–15:00 (Telegram 697, 699): a status read through SSH (a whole state read per call) piled up on the server while the page
+    // asked in a loop. The read is answered here, without the server: «not known» — the page shows the e-mail road, and the claim
+    // itself says «claimed» when an architect already exists.
+    if (body.action === 'claim' && body.status === true) return done({ ok: true, answer: { ok: true, claimed: false, known: false } })
     const { client } = await byKey()
     try {
       const s = await readState(client)

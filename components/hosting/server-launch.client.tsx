@@ -88,8 +88,8 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
   }, [])
   const act = useCallback(async (action: string, extra: Record<string, unknown> = {}) => {
     if (!target) return
-    setBusy(true)
-    setDoing(action)
+    if (action === "claim" && extra.status === true) return post({ action, host: target.host, port: target.port, ...extra }) // 796 ✗ 14:56: a quiet read
+    setBusy(true); setDoing(action)
     try {
       const a = await post({ action, host: target.host, port: target.port, ...extra })
       say(a)
