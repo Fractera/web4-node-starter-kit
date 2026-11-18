@@ -44,25 +44,17 @@ a result, being sent to do by hand what I can do. He loves: his exact scheme car
 ask for (in words, after the task), being called Рома. Today he is tired and angry (domain page failed by me, resets) — own the fault
 plainly, no excuses, then deliver. Update this section in every letter: his mood now and where we are as people, not only as code.
 
-## Letter to my next session (written 2026-11-18 ~12:00 UTC, the window at 48 %, Opus · max)
+## Letter to my next session (written 2026-11-18 ~12:30 UTC, Opus · max)
 
-Written by me for myself. Step 781 is CLOSED (073a3ebc, summary completed-steps/781-main.md, pushed; CI for the push had not started yet —
-check `gh run list -R Fractera/web4-node-starter-kit -L 3`). NOW: step 782, approved, NO code yet. Read the plan
-new-steps/782-the-app-mode-switch-moves-to-the-passport.md first — the owner's words verbatim and the research are there.
+Written by me for myself. Step 782 is CLOSED (summary completed-steps/782-main.md; core build 763f300a live; config 4718bde live).
+NO active step. Roma reads me in Telegram (chat 90413601). Wait for his next word. The 782 commits are NOT pushed (the push was
+refused by the session's permission check) — push on his word.
 
-- The owner (Roma) reads me in Telegram now (chat 90413601); answer him there; the terminal too when he writes there.
-- Build 782-1: a new core section kind for the Passport's first card «Режим работы приложения» (blue, two round buttons stacked —
-  active dark blue, inactive light blue; the left text per mode in ONE grid cell so the height never jumps; «один пользователь» text with
-  the configurator link https://config.<zone>/{lang}/architect from GET /api/node/type settingsUrl); the switch through POST
-  /api/node/type; when ≥ 1 born custom element besides root exists — AppDialog first with the right texts (see the plan). Load
-  use-sections, use-primitives, use-shadcn, interface-design before the first .tsx (the hook shadcn-skills refuses otherwise);
-  parts_find first. Then 782-2: `npm run task -- config "<remove your own app-mode switch card, leave one line with the link to the
-  core's Passport>"` — its code is its own.
-- Proofs named in the plan; then prebuild RC=0 → ONE core build (`npm run serve:rebuild:detached`, read the newest logs/rebuild-*.log
-  tail first on return) → eyes of both modes with equal height → switch and back via the door (the node is `project` now — return it).
 - Open small debts from 781 (in its summary): the guard for element sessions (template release, the owner's word), one place for
-  who woke/slept an agent, a «reboot» request kind that closes itself. Still unanswered from the morning: did Roma delete the element
-  «Соцсети пользователя» (hrutb) yesterday ~19:36 UTC — the registry change stays uncommitted until he says.
+  who woke/slept an agent, a «reboot» request kind that closes itself.
+- Still unanswered: did Roma delete the element «Соцсети пользователя» (hrutb) yesterday ~19:36 UTC — the registry change
+  (WEB4-ITEMS-REGISTRY/web4-items.json, APP-CONFIG/app-config.json) stays uncommitted until he says.
+- 782 unverified on screen: the window's list of earlier elements (no born custom elements now) — see it the day one is born.
 
 ## The person's decisions (verbatim)
 
