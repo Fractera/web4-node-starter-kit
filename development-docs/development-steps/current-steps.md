@@ -154,6 +154,16 @@ factory (bot-factory.json, -links, -offset, -wait) MOVED to data/node/removed-bo
 door (two tries, no wait file; cause unknown; also window.open after await may be blocked → make it a link), confusing labels («Заменить бота»
 opens the factory) — rename. Without the main bot: no Telegram channel for me, the Pult does not open.
 
+**~20:05 UTC — the owner's order of the factory steps (terminal, agreed phrase by phrase; his rule: «каждую фразу хочу с тобой
+согласовать», no code/build without his word — then «Исправляй ошибки сделай сборку ядра и возвращайся»).** Agreed: title «Telegram-бот
+фабрика», his lead, «Подробнее» = his sentence; 1 «Сначала создайте Telegram-бота классическим способом», 2 «Добавьте токен или сообщение
+@BotFather целиком» (the server's field phrases), 3 «Переключите Telegram-бота в режим «Telegram-бот фабрика»» with his three points.
+NOT yet agreed (new, named to him): sum2 «Токен бота @{username} сохранён (…{tail})», the management-off text («…подождите минуту и нажмите
+«Проверить» ещё раз»), the button «Проверить» (asked). Fix: save keeps the token at once (managed flag), check() at step 3, createLink refuses
+while managed:false; the door logs every press; after «Создать бота» the link is a primary button. Measured: Telegram getMe said
+can_manage_bots false for @throughsongs_factory_3caa_bot while his screenshot shows the switch ON (20:02) — likely a delay. Prebuild RC=0 →
+core build. Server page (798-3) not in this build — he reminded: the same steps, design and order there.
+
 ## Letter to my next session (written 2026-11-18 ~17:40 UTC, window 55 %, Opus · max)
 
 Written by me for myself. Day plan 783 (new-steps/783-…md). Roma reads me in Telegram (chat 90413601). Core live a622a876 + pins after.

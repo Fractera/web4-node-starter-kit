@@ -35,20 +35,21 @@ assert.equal((await f.save(root, TOKEN, stub({ me: { ok: false } }).fetchImpl)).
 assert.equal(fs.existsSync(kept), false)
 ok('a bad shape and a token Telegram refuses keep nothing')
 
-// negative control: a real bot with the mode OFF — refused, its username named, nothing kept
+// the owner's order: step 2 keeps a real bot's token even with the mode OFF; nothing can be created until step 3 says it is on
 const off = await f.save(root, TOKEN, stub({ me: { ok: true, result: { id: 1, is_bot: true, username: 'factory_bot', can_manage_bots: false } } }).fetchImpl)
-assert.deepEqual(off, { ok: false, error: 'management-off', username: 'factory_bot' })
-assert.equal(fs.existsSync(kept), false)
-ok('Bot Management Mode off: refused with the bot named, nothing kept')
-
-// the mode on: kept 0600, only the tail goes back
-const good = await f.save(root, TOKEN, stub({ me: { ok: true, result: { id: 1, is_bot: true, username: 'factory_bot', first_name: 'F', can_manage_bots: true } } }).fetchImpl)
-assert.deepEqual(good, { ok: true, username: 'factory_bot', tail: '0001' })
+assert.deepEqual(off, { ok: true, username: 'factory_bot', tail: '0001', managed: false })
 assert.equal(fs.statSync(kept).mode & 0o777, process.platform === 'win32' ? fs.statSync(kept).mode & 0o777 : 0o600)
+assert.deepEqual(await f.state(root), { kept: true, ready: false, username: 'factory_bot', tail: '0001' })
+assert.equal(f.createLink(root, { username: 'root_site_bot', name: 'x' }).error, 'management-off')
+ok('step 2: the token kept with the mode off (0600, only the last 4 back); no creation link until the mode is on')
+
+// step 3 «Проверить»: still off → named; on → ready
+assert.deepEqual(await f.check(root, stub({ me: { ok: true, result: { id: 1, is_bot: true, username: 'factory_bot', can_manage_bots: false } } }).fetchImpl), { ok: false, error: 'management-off', username: 'factory_bot' })
+assert.deepEqual(await f.check(root, stub({ me: { ok: true, result: { id: 1, is_bot: true, username: 'factory_bot', first_name: 'F', can_manage_bots: true } } }).fetchImpl), { ok: true, username: 'factory_bot' })
 const st = await f.state(root)
-assert.deepEqual(st, { ready: true, username: 'factory_bot', tail: '0001' })
+assert.deepEqual(st, { kept: true, ready: true, username: 'factory_bot', tail: '0001' })
 assert.equal(JSON.stringify(st).includes(TOKEN), false)
-ok('the mode on: kept, the state carries only the last 4')
+ok('step 3: «Проверить» names the bot while the mode is off, the factory is ready once Telegram says it is on')
 
 // live recheck: the mode switched off later → not ready
 const later = await f.state(root, { live: true }, stub({ me: { ok: true, result: { id: 1, is_bot: true, username: 'factory_bot', can_manage_bots: false } } }).fetchImpl)

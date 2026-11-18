@@ -12,12 +12,13 @@ import { Label } from "@/components/ui/label"
 import { Spinner } from "@/components/ui/spinner"
 import { H3, Small } from "@/components/ui/typography"
 import type { BotFactoryWords } from "./bot-factory.i18n"
+import { tokenFrom } from "@/lib/hosting/server-telegram.mjs"
 
 // 798-2 (the owner, 2026-11-18, Telegram 786–790): the task, his checklist, the node's own check. Telegram 799: «километр какая-то простыня»
 // → the page's own ladder (the server and domain pages, his 775): one rung open, a done rung one line, every instruction under «Подробнее»,
 // only fields and buttons in view. His tick on rungs 1 and 2 is «Сделал»; rung 3 is done only by Telegram's getMe.can_manage_bots.
 
-type Factory = { ready: boolean; username?: string; tail?: string; live?: string }
+type Factory = { ready: boolean; kept?: boolean; username?: string; tail?: string; live?: string }
 type Wait = { service?: string; state?: string; error?: string; bot?: { username?: string; tail?: string } } | null
 type State = { factory: Factory; suggestion: { name: string; username: string } | null; wait: Wait }
 
@@ -45,7 +46,7 @@ const Points = ({ items }: { items: string[] }) => <ol data-block="bf-points" cl
 export function BotFactory({ service, lang, words: w, manual, onDone }: { service: string; lang: string; words: BotFactoryWords; manual: ReactNode; onDone: () => void }) {
   const core = service === "build"
   const [st, setSt] = useState<State | null>(null)
-  const [did, setDid] = useState<[boolean, boolean]>([false, false])
+  const [did1, setDid1] = useState(false)
   const [token, setToken] = useState("")
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -68,10 +69,18 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
     return () => clearInterval(t)
   }, [waiting, load])
 
+  // step 2: the token, or BotFather's whole message (the server's own `tokenFrom`), kept at once whatever the mode is
   async function save() {
     setBusy("save"); setError(null)
-    const r = await post({ action: "save", token: token.trim() })
+    const r = await post({ action: "save", token: tokenFrom(token) ?? token.trim() })
     setToken(""); setBusy(null)
+    if (r?.ok) await load(); else setError(fill(w.errors[r?.error] ?? w.errors["telegram-unreachable"], { username: r?.username ?? "" }))
+  }
+  // step 3: «Проверить» — Telegram's answer about the kept bot, named
+  async function check() {
+    setBusy("check"); setError(null)
+    const r = await post({ action: "check" })
+    setBusy(null)
     if (r?.ok) { setReplacing(false); await load() } else setError(fill(w.errors[r?.error] ?? w.errors["telegram-unreachable"], { username: r?.username ?? "" }))
   }
   async function create() {
@@ -86,6 +95,7 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
 
   if (!st) return <>{manual}</>
   const f = st.factory
+  const found = token.trim() ? tokenFrom(token) : null
   const err = error && <p data-block="bf-error" role="status" className="text-destructive text-sm">{error}</p>
 
   // Another bot page, no factory yet: one line to the core's page; the hand road below stays open.
@@ -110,24 +120,18 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
           <More id="why" label={w.more}>{w.why}</More>
         </div>
         <Ladder id="bot-factory" locked={w.locked} rungs={[
-          { id: "make", title: w.step1Title, done: did[0], summary: w.sum1, body: (
+          { id: "make", title: w.step1Title, done: did1 || Boolean(f.kept && !replacing), summary: w.sum1, body: (
             <>
               {st.suggestion && <CopyRow id="bf-name" label={w.nameLabel} value={st.suggestion.name} copy={w.copy} copied={w.copied} />}
               {st.suggestion && <CopyRow id="bf-username" label={w.usernameLabel} value={st.suggestion.username} copy={w.copy} copied={w.copied} />}
               <div data-block="bf-make-acts" className="flex flex-wrap gap-2">
                 <a href={BOTFATHER} target="_blank" rel="noreferrer noopener" className={buttonVariants({ variant: "outline" })}>{w.openBotFather}<ExternalLink data-icon aria-hidden /></a>
-                <Button type="button" onClick={() => setDid([true, did[1]])}>{w.did1}</Button>
+                <Button type="button" onClick={() => setDid1(true)}>{w.did1}</Button>
               </div>
               <More id="make" label={w.more}><Points items={w.step1Points} /></More>
             </>
           ) },
-          { id: "mode", title: w.step2Title, done: did[1], summary: w.sum2, body: (
-            <>
-              <div data-block="bf-mode-acts"><Button type="button" onClick={() => setDid([did[0], true])}>{w.did2}</Button></div>
-              <More id="mode" label={w.more}><Points items={w.step2Points} /></More>
-            </>
-          ) },
-          { id: "token", title: w.step3Title, done: false, body: (
+          { id: "token", title: w.step2Title, done: Boolean(f.kept), summary: fill(w.sum2, { username: f.username ?? "", tail: f.tail ?? "" }), body: (
             <>
               <div data-block="bf-token" className="flex flex-col gap-1">
                 <Label htmlFor="bf-token">{w.tokenLabel}</Label>
@@ -137,9 +141,21 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
                     {busy === "save" && <Spinner className="size-4" />}{busy === "save" ? w.saving : w.save}
                   </Button>
                 </div>
+                {token.trim() ? <Small className="text-muted-foreground" data-block="bf-token-found">{found ? fill(w.found, { tail: found.slice(-4) }) : w.notFound}</Small> : null}
+                <Small className="text-muted-foreground">{w.tokenHint}</Small>
+              </div>
+              {busy !== "check" && err}
+            </>
+          ) },
+          { id: "mode", title: w.step3Title, done: f.ready && !replacing, body: (
+            <>
+              <Points items={w.step3Points} />
+              <div data-block="bf-mode-acts">
+                <Button type="button" onClick={check} disabled={busy !== null}>
+                  {busy === "check" && <Spinner className="size-4" />}{busy === "check" ? w.checking : w.check}
+                </Button>
               </div>
               {err}
-              <More id="token" label={w.more}>{w.tokenHint}</More>
             </>
           ) },
         ]} />
@@ -162,7 +178,8 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
         <Button type="button" onClick={create} disabled={busy !== null || waiting}>
           {(busy === "create" || waiting) && <Spinner className="size-4" />}{w.create}
         </Button>
-        {waiting && link && <a href={link} target="_blank" rel="noreferrer noopener" className={buttonVariants({ variant: "outline" })}>{w.openAgain}<ExternalLink data-icon aria-hidden /></a>}
+        {/* ✗ 2026-11-18 19:33/19:37: a window opened after the door's answer may be blocked by the browser — the link is pressed by the person */}
+        {waiting && link && <a href={link} target="_blank" rel="noreferrer noopener" className={buttonVariants({})} data-bf-open-telegram>{w.openAgain}<ExternalLink data-icon aria-hidden /></a>}
         {waiting && <Small className="text-muted-foreground">{w.waiting}</Small>}
       </div>
       {mine?.state === "done" && <p data-block="bf-done" role="status" className="text-sm">{fill(w.done, { username: mine.bot?.username ?? "", tail: mine.bot?.tail ?? "" })}</p>}

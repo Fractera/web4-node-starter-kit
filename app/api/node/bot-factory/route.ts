@@ -41,10 +41,14 @@ export async function POST(req: NextRequest) {
   const denied = await guard(req)
   if (denied) return denied
   const body = (await req.json().catch(() => ({}))) as { action?: string; token?: string; service?: string; lang?: string }
-  if (body.action === "save") return NextResponse.json(await factory.save(ROOT, body.token), noStore)
+  // every press leaves one line (never the token) — ✗ 2026-11-18 19:33/19:37: two presses of «Создать бота» left no trace at all
+  const log = (what: string, out: { ok?: boolean; error?: string; username?: string }) => console.log(`[node/bot-factory] ${what} → ${out.ok ? "ok" : out.error ?? "refused"}${out.username ? ` @${out.username}` : ""}`)
+  if (body.action === "save") { const r = await factory.save(ROOT, body.token); log("save", r); return NextResponse.json(r, noStore) }
+  if (body.action === "check") { const r = await factory.check(ROOT); log("check", r); return NextResponse.json(r, noStore) }
   if (body.action === "forget") return NextResponse.json({ ok: factory.forget(ROOT) }, noStore)
   if (body.action === "create") {
     const r = startCreate(String(body.service ?? ""), body.lang === "ru" ? "ru" : "en")
+    log(`create ${String(body.service ?? "")}`, r.ok ? { ok: true, username: r.username } : { ok: false, error: r.error })
     return r.ok ? NextResponse.json(r, noStore) : NextResponse.json({ ok: false, error: r.error }, { status: r.status, ...noStore })
   }
   return NextResponse.json({ ok: false, error: "unknown-action" }, { status: 400, ...noStore })

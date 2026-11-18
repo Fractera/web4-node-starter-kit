@@ -10,13 +10,19 @@ export type BotFactoryWords = {
   usernameLabel: string
   openBotFather: string
   step2Title: string
-  step2Points: string[]
   step3Title: string
-  /** the person's own tick on rungs 1 and 2 («подтвердит чеклист», Telegram 788) */
+  /** the owner's own three points of step 3 (2026-11-18 ~20:00) */
+  step3Points: string[]
+  /** the person's own tick on rung 1 («подтвердит чеклист», Telegram 788) */
   did1: string
-  did2: string
   sum1: string
+  /** rung 2 done: `{username}` `{tail}` */
   sum2: string
+  /** the token field — the server's own phrases (`server-launch.i18n.ts` telegram): `{tail}` */
+  found: string
+  notFound: string
+  check: string
+  checking: string
   more: string
   manualLabel: string
   locked: string
@@ -44,27 +50,30 @@ export type BotFactoryWords = {
 
 const DICT: Record<string, BotFactoryWords> = {
   en: {
-    title: "The node's bot factory",
-    lead: "One bot you make by hand once. After that the node's main bot and every element's bot are made with one tap in Telegram's own window: no @BotFather, no tokens to copy.",
-    why: "The factory talks to nobody: it only receives the keys of the bots it makes, and they stay on this computer.",
-    step1Title: "Make the factory bot in @BotFather",
+    title: "The Telegram bot factory",
+    lead: "A node may have many elements, and each is best given its own Telegram bot. The factory makes any number of them with one tap. You make the factory itself by hand once; first it makes the node's main bot, then the elements' bots.",
+    why: "The way Telegram hands out the tokens of new bots does not let the main agent take them automatically.",
+    step1Title: "First make a Telegram bot the classic way",
     step1Points: ["Open @BotFather and send /newbot.", "Give it the name and the address below (copy them)."],
     nameLabel: "Name",
     usernameLabel: "Address",
     openBotFather: "Open @BotFather",
-    step2Title: "Turn on «Bot Management Mode»",
-    step2Points: ["In @BotFather press «Open» (its Mini App) and choose the new bot.", "In the bot's settings turn on «Bot Management Mode».", "Copy the bot's token (in @BotFather: the bot → «API Token»)."],
-    step3Title: "Paste the factory's token",
+    step2Title: "Add the token or @BotFather's whole message",
+    step3Title: "Switch the Telegram bot to the «Telegram bot factory» mode",
+    step3Points: ["In the @BotFather chat press «Open» in the bottom left corner.", "Go to the «Bot Settings» tab.", "Set the «Bot Management Mode» switch to on."],
     did1: "Done, the bot is made",
-    did2: "Done, the mode is on",
     sum1: "The bot is made in @BotFather",
-    sum2: "You turned the mode on; the node checks it with the token",
+    sum2: "The token of @{username} is kept (…{tail})",
+    found: "Token found: …{tail}. Telegram checks it before it is kept.",
+    notFound: "No token here: paste it or BotFather's whole message.",
+    check: "Check",
+    checking: "Asking Telegram…",
     more: "More",
     manualLabel: "By hand at @BotFather",
     locked: "Opens after the step before",
-    tokenLabel: "The factory's token",
-    tokenHint: "The node asks Telegram itself whether the mode is on; the token is kept on this computer only.",
-    save: "Check and keep",
+    tokenLabel: "The bot's token or @BotFather's whole message",
+    tokenHint: "The token is kept on this computer only; this page sees just its last four characters.",
+    save: "Keep the token",
     saving: "Asking Telegram…",
     ready: "The factory is ready: @{username} (…{tail}), «Bot Management Mode» confirmed by Telegram.",
     recheck: "Check again",
@@ -73,7 +82,7 @@ const DICT: Record<string, BotFactoryWords> = {
       "bad-format": "This is not a bot token. Copy it again from @BotFather.",
       "token-rejected": "Telegram did not accept this token.",
       "telegram-unreachable": "Telegram does not answer right now. Try again in a minute.",
-      "management-off": "@{username} is a bot, but «Bot Management Mode» is off. Turn it on in @BotFather's Mini App → the bot's settings, then press «Check and keep» again.",
+      "management-off": "@{username}: Telegram answers that «Bot Management Mode» is off. If the switch is already on, wait a minute and press «Check» again.",
     },
     missing: "The node has no bot factory yet, so this bot is made by hand.",
     missingLink: "Set up the factory",
@@ -89,27 +98,30 @@ const DICT: Record<string, BotFactoryWords> = {
     copied: "Copied",
   },
   ru: {
-    title: "Бот-фабрика узла",
-    lead: "Одного бота вы создаёте руками один раз. Дальше главный бот узла и боты всех элементов создаются одним касанием в окне самого Telegram: без @BotFather и без копирования токенов.",
-    why: "Фабрика ни с кем не разговаривает: она только получает ключи созданных ею ботов, и они остаются на этом компьютере.",
-    step1Title: "Создайте бота-фабрику в @BotFather",
+    title: "Telegram-бот фабрика",
+    lead: "У узла может быть много элементов, и каждому рекомендуется свой Telegram-бот. Фабрика создаёт любое их количество одним касанием. Саму фабрику вы создаёте руками один раз; первым она создаст главного бота узла, потом ботов элементов.",
+    why: "Автоматизация выдачи токенов для Telegram-ботов не позволяет главному агенту получать их содержимое автоматически.",
+    step1Title: "Сначала создайте Telegram-бота классическим способом",
     step1Points: ["Откройте @BotFather и отправьте /newbot.", "Дайте ему имя и адрес ниже (скопируйте их)."],
     nameLabel: "Имя",
     usernameLabel: "Адрес",
     openBotFather: "Открыть @BotFather",
-    step2Title: "Включите «Bot Management Mode»",
-    step2Points: ["В @BotFather нажмите «Open» (его мини-приложение) и выберите нового бота.", "В настройках бота включите «Bot Management Mode».", "Скопируйте токен бота (в @BotFather: бот → «API Token»)."],
-    step3Title: "Вставьте токен фабрики",
+    step2Title: "Добавьте токен или сообщение @BotFather целиком",
+    step3Title: "Переключите Telegram-бота в режим «Telegram-бот фабрика»",
+    step3Points: ["В чате @BotFather нажмите кнопку «Open» в левом нижнем углу.", "Перейдите на вкладку «Bot Settings».", "Поставьте переключатель «Bot Management Mode» в положение «включено»."],
     did1: "Сделал, бот создан",
-    did2: "Сделал, режим включён",
     sum1: "Бот создан в @BotFather",
-    sum2: "Режим включён, узел проверит его по токену",
+    sum2: "Токен бота @{username} сохранён (…{tail})",
+    found: "Токен найден: …{tail}. Перед сохранением его проверит Telegram.",
+    notFound: "Токена здесь не видно: вставьте его или всё сообщение BotFather целиком.",
+    check: "Проверить",
+    checking: "Спрашиваю Telegram…",
     more: "Подробнее",
     manualLabel: "Вручную через @BotFather",
     locked: "Откроется после предыдущего шага",
-    tokenLabel: "Токен фабрики",
-    tokenHint: "Узел сам спросит Telegram, включён ли режим; токен хранится только на этом компьютере.",
-    save: "Проверить и сохранить",
+    tokenLabel: "Токен бота или всё сообщение от @BotFather",
+    tokenHint: "Токен хранится только на этом компьютере; эта страница видит лишь четыре последних знака.",
+    save: "Сохранить токен",
     saving: "Спрашиваю Telegram…",
     ready: "Фабрика готова: @{username} (…{tail}), «Bot Management Mode» подтверждён Telegram.",
     recheck: "Проверить снова",
@@ -118,7 +130,7 @@ const DICT: Record<string, BotFactoryWords> = {
       "bad-format": "Это не токен бота. Скопируйте его заново из @BotFather.",
       "token-rejected": "Telegram не принял этот токен.",
       "telegram-unreachable": "Telegram сейчас не отвечает. Попробуйте через минуту.",
-      "management-off": "@{username} — бот, но «Bot Management Mode» выключен. Включите его в мини-приложении @BotFather → настройки бота и нажмите «Проверить и сохранить» ещё раз.",
+      "management-off": "@{username}: Telegram отвечает, что «Bot Management Mode» выключен. Если переключатель уже включён, подождите минуту и нажмите «Проверить» ещё раз.",
     },
     missing: "У узла пока нет бота-фабрики, поэтому этот бот создаётся вручную.",
     missingLink: "Настроить фабрику",
