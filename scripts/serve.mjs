@@ -396,6 +396,13 @@ async function status() {
     return
   }
 
+  // 781-5: whether the node comes back by itself after a reboot — said first, it is what the person loses silently.
+  try {
+    const a = createRequire(import.meta.url)('../lib/node/autostart.cjs').state()
+    if (a.on === true) console.log(`автозапуск при включении компьютера: включён (${a.how === 'launch-agent' ? 'агент launchd узла' : 'pm2 startup'})`)
+    else if (a.on === false) console.log('⚠ автозапуск при включении компьютера: ВЫКЛЮЧЕН — после перезагрузки узел не поднимется сам (Пульт → «Автозапуск», или окно в панели)')
+  } catch { /* the line is a convenience */ }
+
   const server = apps.find((a) => a.name === 'fractera-web4')
   const watch = apps.find((a) => a.name === 'fractera-web4-watch')
 
@@ -597,6 +604,13 @@ async function ask(target) {
 // он НЕ поддерживает — `pm2 startup` там отвечает отказом. Притворяться, что
 // поддерживает, нельзя: человек узнал бы правду только следующей перезагрузкой.
 function autostart() {
+  // 781-5: macOS — the node's own user LaunchAgent, no sudo (lib/node/autostart.cjs); the list is saved only when complete.
+  if (process.platform === 'darwin') {
+    const out = createRequire(import.meta.url)('../lib/node/autostart.cjs').enable(root)
+    if (out.ok) console.log(`Готово: узел будет подниматься при входе в систему (${out.file}). Проверить после перезагрузки: npm run serve:status`)
+    else console.log(`Автозапуск не включён: ${out.reason}${out.missing ? ` — не в сети: ${out.missing.join(', ')}` : ''}`)
+    return
+  }
   pm2run(['save'], { quiet: true })
 
   if (!isWindows) {

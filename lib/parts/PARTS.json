@@ -3,7 +3,7 @@
   "counts": {
     "tool": 34,
     "composite": 31,
-    "primitive": 34,
+    "primitive": 35,
     "section": 74
   },
   "parts": [
@@ -2862,6 +2862,34 @@
       ]
     },
     {
+      "id": "ui-alert",
+      "kind": "primitive",
+      "path": "components/ui/alert.tsx",
+      "export": "Alert",
+      "what": {
+        "en": "A notice that interrupts: a warning or a trouble the person must see, with a title and a description.",
+        "ru": "Уведомление, которое нельзя не заметить: предупреждение или беда, с заголовком и описанием."
+      },
+      "how": "import { Alert, AlertTitle, AlertDescription } from \"@/components/ui/alert\" — shadcn new-york; the destructive variant for a trouble (781-4: the main agent's deaf Telegram band).",
+      "words": {
+        "en": [
+          "alert",
+          "warning",
+          "notice",
+          "banner"
+        ],
+        "ru": [
+          "тревога",
+          "предупреждение",
+          "уведомление",
+          "баннер"
+        ]
+      },
+      "usedBy": [
+        "components/architect/main-channel-band.client.tsx"
+      ]
+    },
+    {
       "id": "ui-badge",
       "kind": "primitive",
       "path": "components/ui/badge.tsx",
@@ -3076,6 +3104,7 @@
         "components/ai-elements/conversation.tsx",
         "components/ai-elements/message.tsx",
         "components/ai-elements/web-preview.tsx",
+        "components/architect/main-channel-band.client.tsx",
         "components/architect/menu-ai.client.tsx",
         "components/architect/menu-search.client.tsx",
         "components/architect/person-ask-admin.client.tsx",

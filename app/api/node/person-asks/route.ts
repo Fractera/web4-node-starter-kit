@@ -8,6 +8,7 @@ import { elementName } from "@/lib/web4-items/dashboard-rows"
 import asks from "@/lib/node/person-asks.cjs"
 import asksTg from "@/lib/node/person-asks-telegram.cjs"
 import { closeAsk, knownElement as known, saveSecret, type Ask, type Saved } from "@/lib/node/person-secret-save"
+import mainChannel from "@/lib/node/main-channel.cjs"
 
 // ДЕЙСТВИЕ ЧЕЛОВЕКА (узел, шаг 761-16). GET — открытые запросы (главного агента — `npm run ask-person` ядра; агента элемента — его
 // `npm run ask-person`, 761-16d), их показывает окно внизу каждой страницы пульта с именем элемента; POST `{ id }` — человек нажал
@@ -34,14 +35,18 @@ export async function GET(req: NextRequest) {
   const denied = await requireRoles(req, ["architect", "admin"])
   if (denied) return denied
   const lang = lang2(req)
-  const list = (asks.open(ROOT) as Ask[]).map(({ id, text, href, why, hint, copy, by, secret, signin, at }) => ({
+  const list = (asks.open(ROOT) as (Ask & { action?: string })[]).map(({ id, text, href, why, hint, copy, by, secret, signin, action, at }) => ({
     // 761-16e: a request without a page opens the asking element's page («Открыть» in the beacon), the main agent's — none
     id, text, href: href ?? (by && by !== "build" ? `/${lang}/${by}` : null), why, hint: hint ?? null, copy: copy ?? null, at, by: by ?? "build", byName: by && by !== "build" ? elementName(by, lang) : null,
     secret: secret ?? null,
     // 777: a sign-in request — the window builds its link with the node's one builder
     signin: signin === "architect" ? "architect" : null,
+    // 781-5: a request whose button does the act (the autostart)
+    action: action === "autostart" ? "autostart" : null,
   }))
-  return NextResponse.json({ ok: true, asks: list }, noStore)
+  // 781-4: the main agent's channel rides the same poll — the panel's red band shows it only in trouble (deaf, healing, failed).
+  const h = mainChannel.health(ROOT, "build")
+  return NextResponse.json({ ok: true, asks: list, channel: mainChannel.trouble(h) ? h : null }, noStore)
 }
 
 /** An element agent's own requests: put, drop or list — with the node key and its id (761-16d). */

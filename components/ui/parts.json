@@ -761,6 +761,31 @@
      "бегунок"
     ]
    }
+  },
+  {
+   "id": "ui-alert",
+   "kind": "primitive",
+   "path": "components/ui/alert.tsx",
+   "export": "Alert",
+   "what": {
+    "en": "A notice that interrupts: a warning or a trouble the person must see, with a title and a description.",
+    "ru": "Уведомление, которое нельзя не заметить: предупреждение или беда, с заголовком и описанием."
+   },
+   "how": "import { Alert, AlertTitle, AlertDescription } from \"@/components/ui/alert\" — shadcn new-york; the destructive variant for a trouble (781-4: the main agent's deaf Telegram band).",
+   "words": {
+    "en": [
+     "alert",
+     "warning",
+     "notice",
+     "banner"
+    ],
+    "ru": [
+     "тревога",
+     "предупреждение",
+     "уведомление",
+     "баннер"
+    ]
+   }
   }
  ]
 }

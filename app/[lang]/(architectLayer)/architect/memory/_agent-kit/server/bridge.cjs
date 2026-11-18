@@ -19,6 +19,8 @@ const { serviceDir, ownClaudeDir, onLoan } = require('./workspace.cjs')
 const { claudeBin, claudeEfforts, resolveBin } = require('./claude-cli.cjs')
 const telegram = require('./telegram.cjs')
 const { channelLaunch } = telegram
+// 781-1/3: does the bot hear — the plugin's pid, the poison out, the state file for the panel and the Pult.
+const health = require('./channel-health.cjs')
 const os = require('node:os')
 // 552-4: режимы сессии (первое слово запроса, группы навыков, ключ сессии) — один модуль ядра, общий с прибором `check:modes`.
 // Из корня узла, как `supervision.cjs`: у копий комплекта свой путь, а модуль один.
@@ -410,11 +412,18 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
     // 666: сессии нет — следующая родится на medium без рабочих процессов, если человек снова не выберет другое.
     // 708-1: причина остановки (`session.stop`) или «вышла сама»; закрытие человеком/агентом — чистый конец, остальное предложит продолжить.
     if (mode !== 'work') resetMode(element, born.endReason ?? 'exited')
+    // 781-1: no session — «спит»; a session the node closed for its channel keeps «failed» (the panel and the Pult show it until a wake).
+    if (born.channel && mode !== 'work' && born.endReason !== 'channel-failed' && born.endReason !== 'channel-heal') health.writeState(process.cwd(), element, { state: 'asleep', service, why: born.endReason ?? 'exited' })
     // 639: «выключить?» и «ждёт ответа в терминале» этой сессии потеряли смысл — исчезают через 30 с
     telegram.sessionEnded(service)
     startQueuedPass(element)
   })
+  // 781-1 (✗ 2026-11-18 10:21: a start from the terminal page with the plugin skipped was counted as hearing — nobody read the bot):
+  // every session launched with the channel is watched — a held first task by `watchChannel`, any other start by `watchHearing` itself.
   if (holdFirst) watchChannel(born, element, firstPrompt, { t0, callerTells })
+  else if (viaChannel) watchHearing(born, element, { t0, heard: false })
+  // The log names who started it: the node's wakes say so themselves; the terminal page, a session command and a heal did not (10:21).
+  if (!holdFirst) console.log(`[agents/start] ${service}: сессия запущена${viaChannel ? ' с каналом Telegram' : ''}${continueLast ? ', тот же разговор' : ''}`)
   return { ok: true, session: born }
 }
 
@@ -904,6 +913,8 @@ function watchChannel(s, element, held, { t0, callerTells }) {
           if (session.current(s.service) !== s) return resolve({ up: false, reason: 'gone' })
           const seconds = Math.round((Date.now() - t0) / 100) / 10
           console.log(`[agents/wake] ${s.service}: канал Telegram встал за ${seconds} с${held ? ' — поручение уходит в сессию' : ''}`)
+          // 781-3: the channel can drop later (the plugin crashed, the network went away) — the session stays watched.
+          watchHearing(s, element, { t0, heard: true })
           if (!held) return resolve({ up: true, seconds })
           // «получил ваше сообщение» человеку — только после вставки (✗ прибор 614: без этого оно опережало вставку на 2 с).
           void pasteWhenReady(s, held, { quietMs: 1500, ready: () => !trustOnScreen(s.buffer) && !promptOnScreen(s.buffer) })
@@ -917,12 +928,115 @@ function watchChannel(s, element, held, { t0, callerTells }) {
       clearInterval(timer)
       const waited = Math.round(channelWaitMs() / 1000)
       console.log(`[agents/wake] ${s.service}: канал Telegram не встал за ${waited} с — сессия закрыта, бота снова читает узел`)
+      health.writeState(process.cwd(), element, { state: 'failed', service: s.service, why: 'not-started' })
       session.stop(s.service, 'channel-failed')
       if (!callerTells) void telegram.tellChannelFailed(element, waited).catch(() => {})
       resolve({ up: false, reason: 'channel', waited })
     }, 250)
     timer.unref?.()
   })
+}
+
+/**
+ * 781-1/3 — THE HEARING WATCH of a session launched with the channel (the owner, 2026-11-18: «через несколько минут должен начать работать
+ * в Telegram … пользователь вообще должен забыть и существование ноутбука»). One file read every 2 s, no network, no model.
+ *  · not heard yet: `channelWaitMs` from the start (the folder-trust question on the screen stops the clock), then deaf «not-started»;
+ *  · heard: the plugin's pid gone for `deafAfterMs` → deaf «dropped».
+ * Deaf → `onDeaf`: the node keeps its hands off the bot (messages wait at Telegram — the plugin keeps pending updates), waits for the
+ * end of the turn, takes the poison out and restarts the same conversation once; deaf again within `healGapMs` → `giveUp`.
+ */
+const HEAR_TICK_MS = 2000
+const deafAfterMs = () => Number(process.env.AGENT_DEAF_MS) || 20_000
+const healGapMs = () => Number(process.env.AGENT_HEAL_GAP_MS) || 10 * 60_000
+const lastHeal = new Map()
+const claudeBackup = () => path.join(process.cwd(), 'data', 'node', 'claude-settings.backup.json')
+
+function watchHearing(s, element, { t0, heard = false }) {
+  const stateDir = telegram.stateDir(element)
+  let deadline = Date.now() + channelWaitMs()
+  let missing = null
+  s.deaf = false
+  health.writeState(process.cwd(), element, { state: heard ? 'hears' : 'starting', service: s.service })
+  const timer = setInterval(() => {
+    if (session.current(s.service) !== s) return clearInterval(timer)
+    if (health.pluginPid(stateDir, t0)) {
+      missing = null
+      if (!heard) {
+        heard = true
+        console.log(`[channel] ${s.service}: канал Telegram встал за ${Math.round((Date.now() - t0) / 100) / 10} с`)
+        health.writeState(process.cwd(), element, { state: 'hears', service: s.service })
+      }
+      return
+    }
+    if (!heard) {
+      if (trustOnScreen(s.buffer)) deadline = Date.now() + channelWaitMs()
+      if (Date.now() < deadline) return
+    } else {
+      missing ??= Date.now()
+      if (Date.now() - missing < deafAfterMs()) return
+    }
+    clearInterval(timer)
+    void onDeaf(s, element, heard ? 'dropped' : 'not-started').catch((err) => console.log(`[channel] ${s.service}: лечение канала упало — ${err instanceof Error ? err.message : err}`))
+  }, HEAR_TICK_MS)
+  timer.unref?.()
+}
+
+async function onDeaf(s, element, why) {
+  const service = s.service
+  s.deaf = true
+  const again = Date.now() - (lastHeal.get(service) ?? 0) < healGapMs()
+  console.log(`[channel] ${service}: Telegram не слышит (${why === 'dropped' ? 'плагин пропал' : 'плагин не встал'}) — ${again ? 'второй раз за 10 мин: сессия закроется после хода, бота прочтёт узел' : 'тот же разговор перезапустится, когда закончится ход'}`)
+  if (again) return giveUp(s, element, why)
+  lastHeal.set(service, Date.now())
+  health.writeState(process.cwd(), element, { state: 'healing', service, why })
+  // A turn in flight is never cut: the restart waits for a quiet screen with no question on it (`whenIdle`, as the session commands).
+  const idle = await whenIdle(s, { maxMs: 6 * 60 * 60_000 })
+  if (!idle || session.current(service) !== s) return
+  return restartSame(s, element, 'channel-heal')
+}
+
+/** 781-3: the same conversation, the same model, effort, pass and ultracode — a new process, so a new plugin. */
+async function restartSame(s, element, reason) {
+  const service = s.service
+  const keep = { model: s.mode?.model ?? undefined, effort: s.mode?.effort && s.mode.effort !== 'default' ? s.mode.effort : undefined, ultracode: Boolean(s.mode?.ultracode), pass: s.pass ?? 'main', byPerson: s.byPerson }
+  const continueLast = hasConversation(s.cwd, ownClaudeDir(modes.baseOf(service)))
+  health.clearPoison(process.env, claudeBackup())
+  session.stop(service, reason)
+  await new Promise((r) => setTimeout(r, 1500))
+  const r = await spawnAgent(service, undefined, undefined, '', { model: keep.model, effort: keep.effort, pass: keep.pass, continueLast, ultracode: keep.ultracode })
+  if (r.ok) r.session.byPerson = keep.byPerson
+  console.log(`[channel] ${service}: перезапуск ради канала — ${r.ok ? (continueLast ? 'тот же разговор продолжен' : 'новая сессия') : `не запустился (${r.reason})`}`)
+  return r
+}
+
+/** 781-3: deaf twice in a row — close after the turn, give the bot back to the node, tell the person (the Pult has «Разбудить»). */
+async function giveUp(s, element, why) {
+  const service = s.service
+  health.writeState(process.cwd(), element, { state: 'failed', service, why })
+  await whenIdle(s, { maxMs: 6 * 60 * 60_000 })
+  if (session.current(service) !== s) return
+  session.stop(service, 'channel-failed')
+  void telegram.tellChannelFailed(element, Math.round(channelWaitMs() / 1000)).catch(() => {})
+}
+
+/**
+ * 781-4 — the person's buttons, the Pult's and the panel's (the owner, 2026-11-18: «в пульте телеграмма … сейчас бот спит. Разбудить бота
+ * нужно это сделать?»). wake — no session: start, continuing the last conversation where it can; reconnect — a live session restarts
+ * NOW (the person pressed, even mid-turn — the button says so), no session — the same as wake. → { ok, did, reason? }
+ */
+async function channelAction(service, action) {
+  const element = modes.baseOf(service)
+  const live = session.current(service)
+  health.clearPoison(process.env, claudeBackup())
+  if (live && action === 'reconnect') {
+    lastHeal.delete(service)
+    const r = await restartSame(live, element, 'channel-heal')
+    return r.ok ? { ok: true, did: 'restarted' } : { ok: false, reason: r.reason }
+  }
+  if (live) return { ok: true, did: 'already-running' }
+  lastHeal.delete(service)
+  const r = await wake(element, { confirmed: true })
+  return r.ok ? { ok: true, did: r.continued ? 'woken-same-conversation' : 'woken' } : { ok: false, reason: r.reason }
 }
 
 /** Живой pid плагина из `bot.pid`, записанного не раньше `since`, — или null. */
@@ -1308,4 +1422,4 @@ function onConnection(ws, service) {
   }
 }
 
-module.exports = { onConnection, spawnAgent, wake, done, answerTrust, sessionCommand, finishRule, shellPath, shellEnv, ptyLoadError: () => ptyLoadError, hasPty: () => pty !== null }
+module.exports = { onConnection, spawnAgent, wake, done, answerTrust, sessionCommand, channelAction, finishRule, shellPath, shellEnv, ptyLoadError: () => ptyLoadError, hasPty: () => pty !== null }

@@ -2,6 +2,7 @@
 // @local — the card of the core panel's action request (761-16c, variant C): what one request shows inside the beacon's Popover
 
 import Link from "next/link"
+import { useState } from "react"
 import { toast } from "sonner"
 import { ChevronLeft, ChevronRight, Copy } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -12,7 +13,7 @@ import { useNodePlace } from "@/components/node-state/use-node-place.client"
 import signIn from "@/lib/auth/sign-in-link.cjs"
 
 export type AskSecret = { kind: "env" | "openai" | "server-root" | "element-admin"; name?: string; where?: string | null; host?: string; port?: number; element?: string; role?: string; label?: string }
-export type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; copy?: string | null; byName?: string | null; secret?: AskSecret | null; signin?: "architect" | null }
+export type Ask = { id: string; text: string; href: string | null; why: string | null; hint?: string | null; copy?: string | null; byName?: string | null; secret?: AskSecret | null; signin?: "architect" | null; action?: "autostart" | null }
 
 type Props = {
   ask: Ask
@@ -30,6 +31,22 @@ type Props = {
 // The card is the one thing the person came for: the request's words lead (medium, foreground), the by-line and the reason are muted,
 // the hint carries the warning stripe — the only orange inside the card besides the «!», so the colour keeps its meaning.
 export function PersonAskCard({ ask, index, total, ui, busy, url, onStep, onCollapse, onDone, onSaved }: Props) {
+  // 781-5: a request whose button does the act — the core turns the autostart on, and only then the request closes (it wakes the agent)
+  const [acting, setActing] = useState(false)
+  const act = async () => {
+    setActing(true)
+    try {
+      const r = await fetch("/api/node/autostart", { method: "POST", credentials: "include" })
+      const d = (await r.json().catch(() => null)) as { ok?: boolean; reason?: string; missing?: string[] } | null
+      if (!r.ok || !d?.ok) throw new Error(`${d?.reason ?? r.status}${d?.missing?.length ? ` — ${d.missing.join(", ")}` : ""}`)
+      toast.success(ui.autostartOn)
+      onDone(ask)
+    } catch (e) {
+      toast.error(ui.secretFailed.replace("{reason}", e instanceof Error ? e.message : String(e)))
+    } finally {
+      setActing(false)
+    }
+  }
   const copy = () => {
     void navigator.clipboard.writeText(ask.copy ?? "").then(() => toast.success(ui.copied), () => toast.error(ui.failed))
   }
@@ -79,7 +96,8 @@ export function PersonAskCard({ ask, index, total, ui, busy, url, onStep, onColl
             ? <Link href={href} className={buttonVariants({ variant: "outline", size: "sm" })}>{ui.open}</Link>
             : <a href={href} target={ask.signin ? undefined : "_blank"} rel="noreferrer" className={buttonVariants({ variant: "outline", size: "sm" })} data-person-ask-open={ask.signin ? "signin" : undefined}>{ui.open}</a>
         )}
-        {!ask.secret && <Button type="button" size="sm" disabled={busy} onClick={() => onDone(ask)} data-person-ask-done>{ui.done}</Button>}
+        {ask.action === "autostart" && <Button type="button" size="sm" disabled={busy || acting} onClick={() => { void act() }} data-person-ask-action="autostart">{acting ? ui.secretChecking : ui.autostart}</Button>}
+        {!ask.secret && !ask.action && <Button type="button" size="sm" disabled={busy} onClick={() => onDone(ask)} data-person-ask-done>{ui.done}</Button>}
       </div>
     </div>
   )

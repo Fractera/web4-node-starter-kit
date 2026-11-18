@@ -8,6 +8,7 @@ import { menuSearchWords } from "@/components/architect/menu-search.i18n";
 import { appDialogUi } from "@/components/dialog/app-dialog.i18n";
 import { PersonAsk } from "@/components/architect/person-ask.client";
 import { personAskUi } from "@/components/architect/person-ask.i18n";
+import { mainChannelBandUi } from "@/components/architect/main-channel-band.i18n";
 
 // ШАПКА СТРАНИЦ АРХИТЕКТОРА — СВОЯ (узел, шаг 553). Вид — `components/shell/` (копия сайта байт в байт, `npm run shell-kit:add`,
 // сторож `check:shell-kits`); данные — `lib/shell/core-shell-data.ts`: имя и логотип ядра, «Все проекты» (островок после логотипа),
@@ -22,7 +23,8 @@ export function TopMenu({ lang }: { lang: string }) {
   return (
     <>
     {/* 761-16: the main agent's action request — at the bottom of every architect page (the owner: the top is full). */}
-    <PersonAsk url={`/api/node/person-asks?lang=${lang}`} ui={personAskUi(lang)} />
+    {/* 781-4: and the red band on top while the main agent's Telegram does not hear — the same poll, the band's own door. */}
+    <PersonAsk url={`/api/node/person-asks?lang=${lang}`} ui={personAskUi(lang)} band={{ ui: mainChannelBandUi(lang), url: "/api/node/main-channel" }} />
     <ProjectHeader
       data={data}
       // 356-1: только ядро знает, что ждёт архитектора, — открытые терминалы и готовые предпросмотры.

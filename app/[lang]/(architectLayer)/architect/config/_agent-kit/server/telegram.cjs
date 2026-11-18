@@ -275,6 +275,11 @@ async function preparePlugin(env) {
  */
 async function channelLaunch(service, env) {
   if (!storedToken(service) || access(service).allowed.length === 0) return null
+  // 781-2 (✗ 2026-11-18 10:14: a Claude Code session in the home folder started the plugin enabled for the whole machine, it died without a
+  // token, and the machine-wide failure cache made every launch skip it for 15 minutes): before every launch with the channel the poison
+  // is taken out of this session's Claude home — the cache entry removed, the plugin off globally (614-2), one key each.
+  const poison = require('./channel-health.cjs').clearPoison(env, path.join(ROOT, 'data', 'node', 'claude-settings.backup.json'))
+  if (poison.cache === 'removed' || poison.global === 'turned-off') console.log(`[telegram] ${service}: перед запуском канала — ${poison.cache === 'removed' ? 'запись об отказе плагина стёрта' : ''}${poison.cache === 'removed' && poison.global === 'turned-off' ? ', ' : ''}${poison.global === 'turned-off' ? 'плагин выключен для сессий вне узла' : ''}`)
   const pathKey = Object.keys(env).find((k) => k.toUpperCase() === 'PATH') || 'PATH'
   const dirs = [...extraBins(), ...String(env[pathKey] || '').split(path.delimiter).filter(Boolean)]
   const withBins = { ...env, [pathKey]: dirs.join(path.delimiter), TELEGRAM_STATE_DIR: stateDir(service) }

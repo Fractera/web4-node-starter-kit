@@ -11,6 +11,7 @@ import nodeLine from "@/lib/agent-kit/node-line.cjs"
 import { tgState } from "@/lib/node/tg-app/state"
 import { closeAsk, saveSecret, type Ask } from "@/lib/node/person-secret-save"
 import { powerState, runElementPower } from "@/lib/web4-items/run-element-power"
+import autostartLib from "@/lib/node/autostart.cjs"
 
 // ПУЛЬТ УЗЛА В TELEGRAM (узел, шаг 771). Владелец, 2026-11-16: «раз уже я больше большую часть времени собираюсь проводить в Telegram»;
 // 23:13 — «Хорошо продолжай работать до конца». Кнопка меню бота главного агента (771-3) открывает GET — страницу; страница зовёт POST
@@ -91,6 +92,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true }, { headers: HEADERS })
   }
 
+  // 781-4 (the owner, 2026-11-18: «в пульте телеграмма … сейчас бот спит. Разбудить бота нужно это сделать?»): the main agent's card —
+  // «Разбудить» (asleep, or closed after the channel failed twice) and «Переподключить сейчас» (a live session whose Telegram does not hear).
+  // The bridge's `channelAction` through the same global as the panel's red band; the Pult's lock — the bot token's signature above.
+  // 781-5: «Включить автозапуск» from the Pult — the core writes the node's LaunchAgent (no sudo); the request it answers is closed after.
+  if (action === "autostart") {
+    const out = autostartLib.enable(ROOT)
+    console.log(`[node/tg-app] autostart from Telegram → ${out.ok ? `on (${out.file})` : out.reason}`)
+    return NextResponse.json(out, { status: out.ok ? 200 : 409, headers: HEADERS })
+  }
+  if (action === "channel") {
+    const want = (body as { do?: unknown } | null)?.do
+    const what = want === "wake" || want === "reconnect" ? want : null
+    if (!what) return no("do-wake-or-reconnect", 400)
+    const run = (globalThis as { __web4AgentChannel?: (service: string, action: string) => Promise<{ ok: boolean; did?: string; reason?: string }> }).__web4AgentChannel
+    if (typeof run !== "function") return no("no-agent-kit", 503)
+    const out = await run("build", what)
+    console.log(`[node/tg-app] channel ${what} from Telegram → ${out.ok ? out.did : out.reason}`)
+    return NextResponse.json(out, { status: out.ok ? 200 : 500, headers: HEADERS })
+  }
   if (action === "power") {
     const s = powerState(id, lang)
     if (!s) return no("unknown-element", 404)

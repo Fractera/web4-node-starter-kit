@@ -7,6 +7,8 @@ import { join } from "node:path"
 import { homedir } from "node:os"
 
 import asks from "@/lib/node/person-asks.cjs"
+import mainChannel from "@/lib/node/main-channel.cjs"
+import autostart from "@/lib/node/autostart.cjs"
 import power from "@/lib/web4-items/element-power.cjs"
 import paths from "@/lib/web4-items/paths.cjs"
 import { elementName } from "@/lib/web4-items/dashboard-rows"
@@ -17,7 +19,7 @@ const ROOT = process.cwd()
 type Lang = "en" | "ru"
 type Entry = { id: string; kind?: string; required?: boolean; born?: boolean }
 type Pulse = { event?: string; at?: string; last?: string; error?: string }
-export type TgAsk = { id: string; text: string; why: string | null; hint: string | null; copy: string | null; by: string; byName: string | null; at: string; secret: { kind: string; name?: string; host?: string; label?: string } | null }
+export type TgAsk = { id: string; text: string; why: string | null; hint: string | null; copy: string | null; by: string; byName: string | null; at: string; secret: { kind: string; name?: string; host?: string; label?: string } | null; action: string | null }
 /**
  * The agent of an element or of the core (the owner, 2026-11-17: «на какой модели и с каким усилием работает главный агент … внутри каждого
  * элемента … аккаунт, модель, усилия … агент программирует, агент ожидает, агент спит … кнопка серая или активная собственный Telegram бот»).
@@ -34,7 +36,8 @@ export type TgElement = { build: "building" | "queued" | null; id: string; name:
 export type TgLimit = { who: string; account: string | null; current: string | null; stale: boolean; fiveHour: { used: number; resetsAt: string | null } | null; sevenDay: { used: number; resetsAt: string | null } | null; at: string | null }
 /** 2026-11-17 (the owner: «показать что … находится на сборке, и элементы в том числе»): the node's queue of element builds. */
 export type TgBuilds = { running: boolean; current: string | null; queue: string[]; done: string[] }
-export type TgState = { builds: TgBuilds; asks: TgAsk[]; main: TgAgent; elements: TgElement[]; limits: TgLimit[]; at: string }
+export type TgChannel = { bot: boolean; state: string; why: string | null; since: string | null }
+export type TgState = { builds: TgBuilds; asks: TgAsk[]; main: TgAgent & { channel: TgChannel; autostart: boolean | null }; elements: TgElement[]; limits: TgLimit[]; at: string }
 
 const readJson = <T>(file: string, fallback: T): T => {
   try { return JSON.parse(readFileSync(file, "utf8")) as T } catch { return fallback }
@@ -145,12 +148,15 @@ function limitsOf(): TgLimit[] {
 
 /** The whole picture for the Mini App, in the person's language. */
 export function tgState(lang: Lang): TgState {
-  const waiting = (asks.open(ROOT) as { id: string; text: string; why?: string | null; hint?: string | null; copy?: string | null; by?: string; at: string; secret?: TgAsk["secret"] }[])
+  const waiting = (asks.open(ROOT) as { id: string; text: string; why?: string | null; hint?: string | null; copy?: string | null; by?: string; at: string; secret?: TgAsk["secret"]; action?: string | null }[])
     .map((a) => ({
       id: a.id, text: a.text, why: a.why ?? null, hint: a.hint ?? null, copy: a.copy ?? null, by: a.by ?? "build", at: a.at,
       byName: a.by && a.by !== "build" ? elementName(a.by, lang) : null,
       secret: a.secret ? { kind: a.secret.kind, ...(a.secret.name ? { name: a.secret.name } : {}), ...(a.secret.host ? { host: a.secret.host } : {}), ...(a.secret.label ? { label: a.secret.label } : {}) } : null,
+      // 781-5: the request's button does the act (the autostart)
+      action: a.action === "autostart" ? "autostart" : null,
     }))
   const builds = buildsOf()
-  return { builds, asks: waiting, main: agentOf("build", false), elements: elementsOf(lang, builds), limits: limitsOf(), at: new Date().toISOString() }
+  // 781-4: the main agent's card carries its channel — «спит — Разбудить», «не слышит — Переподключить» (`lib/node/main-channel.cjs`).
+  return { builds, asks: waiting, main: { ...agentOf("build", false), channel: mainChannel.health(ROOT, "build") as TgChannel, autostart: autostart.state().on as boolean | null }, elements: elementsOf(lang, builds), limits: limitsOf(), at: new Date().toISOString() }
 }

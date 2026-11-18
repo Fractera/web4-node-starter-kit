@@ -65,7 +65,7 @@ t('ordinary answers pass: a command named as the node\'s own, sudo mentioned in 
     'Пароль вводит член семьи при включении Mac — это FileVault.',
   ]) assert.deepEqual(g.actsIn(s), [], s)
 })
-t('the turn reads only the assistant\'s text, never a tool\'s input or a thinking block', () => {
+t('the turn reads only the assistant\'s text, never a tool\'s input or a thinking part', () => {
   const turn = g.turnOf([user('x'), { type: 'assistant', message: { content: [{ type: 'thinking', thinking: '! npm run x' }, { type: 'tool_use', name: 'Write', input: { content: '! sudo rm' } }] } }, said('Готово.')])
   assert.deepEqual(turn.texts, ['Готово.'])
   assert.equal(g.verdict(turn.texts.join('\n'), turn).pass, true)

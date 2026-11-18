@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { PersonAskCard, type Ask } from "./person-ask-card.client"
 import type { PersonAskUi } from "./person-ask.i18n"
+import { MainChannelBand, type MainChannel } from "./main-channel-band.client"
+import type { MainChannelBandUi } from "./main-channel-band.i18n"
 
 // ДЕЙСТВИЕ ЧЕЛОВЕКА — МАЯЧОК ВНИЗУ СПРАВА НА КАЖДОЙ СТРАНИЦЕ ПУЛЬТА (узел, шаг 761-16, вид 761-16c). Владелец 2026-11-16:
 // «уведомление на экране которое невозможно пропустить … и подтвердить о его завершении»; «need create speciao design and auto hidden
@@ -18,8 +20,10 @@ import type { PersonAskUi } from "./person-ask.i18n"
 const POLL_MS = 15_000
 const COLLAPSE_MS = 30_000
 
-export function PersonAsk({ url, ui }: { url: string; ui: PersonAskUi }) {
+// 781-4: the same poll carries the main agent's channel — the red band on top shows while its Telegram does not hear (no new timer).
+export function PersonAsk({ url, ui, band }: { url: string; ui: PersonAskUi; band?: { ui: MainChannelBandUi; url: string } }) {
   const [asks, setAsks] = useState<Ask[]>([])
+  const [channel, setChannel] = useState<MainChannel | null>(null)
   const [index, setIndex] = useState(0)
   const [open, setOpen] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -32,8 +36,9 @@ export function PersonAsk({ url, ui }: { url: string; ui: PersonAskUi }) {
     if (refused.current) return
     fetch(url, { cache: "no-store", credentials: "include" })
       .then((r) => { if (r.status === 401 || r.status === 403) refused.current = true; return r.ok ? r.json() : null })
-      .then((d: { ok?: boolean; asks?: Ask[] } | null) => {
+      .then((d: { ok?: boolean; asks?: Ask[]; channel?: MainChannel | null } | null) => {
         if (!d?.ok) return
+        setChannel(d.channel ?? null)
         const list = d.asks ?? []
         const fresh = list.findIndex((a) => !known.current.has(a.id))
         known.current = new Set(list.map((a) => a.id))
@@ -88,7 +93,8 @@ export function PersonAsk({ url, ui }: { url: string; ui: PersonAskUi }) {
     if (rest.length === 0) setOpen(false)
   }, [asks])
 
-  if (asks.length === 0) return null
+  const shownBand = band && channel ? <MainChannelBand channel={channel} ui={band.ui} url={band.url} onChanged={refresh} /> : null
+  if (asks.length === 0) return shownBand
   const ask = asks[Math.min(index, asks.length - 1)]
   const label = ui.waiting.replace("{n}", String(asks.length))
 
@@ -96,6 +102,8 @@ export function PersonAsk({ url, ui }: { url: string; ui: PersonAskUi }) {
     // 773 (the owner, 2026-11-17: «подними его на такую же высоту на какой находится левый индикатор»): bottom-16 like the width
     // badge, so the footer's language switch (35–65 px from the bottom) is free; the ping ring is a picture — it grew to 112 px and
     // took the clicks meant for «RU» (measured with elementFromPoint), so it never catches the pointer.
+    <>
+    {shownBand}
     <div className="fixed right-4 bottom-16 z-50" data-block="person-ask" data-person-ask-count={asks.length}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
@@ -116,5 +124,6 @@ export function PersonAsk({ url, ui }: { url: string; ui: PersonAskUi }) {
         </PopoverContent>
       </Popover>
     </div>
+    </>
   )
 }
