@@ -60,8 +60,12 @@ modes checked, Masha's three elements in one cabinet · 794 (proposed) /plan fro
 build), 789→790 (+791's template part in the same release), 792 last. Opus, max effort.
 Small defects: never fixed today — one line into new-steps/793-finishing-the-small-defects-found-during-the-day.md; only a defect that
 stops a step's result is fixed inside the step. 793 runs in its own session after 792 closes.
-NOW: APPROVED 13:19 (Telegram 625: «Ну что ж начинаем план работаем до успешного завершения надеюсь в течение дня успеть»). Working
-784 (the server launch): 784-1 readiness by code, then the reinstall window (784-2).
+NOW: APPROVED 13:19 (Telegram 625: «Ну что ж начинаем план работаем до успешного завершения надеюсь в течение дня успеть»).
+784-1 done 13:2x: Let's Encrypt (primary source letsencrypt.org/docs/rate-limits): 50 per registered domain / 7 days, 5 per exact set
+/ 7 days; ledger 12 names issued 11-16 12:37 → a fresh launch makes 24/50, 2/5 per name — fine. Provider Contabo (whois). In code: 761-1,
+761-2, 761-14, 762; NOT 761-17. The server's bot @fractera_ai_server_bot was deleted by him 11-16 → step 5 needs a new BotFather bot.
+784-2: window bdb6fc81 (reinstall Ubuntu 24.04 at Contabo, new root password) — WAITS «Готово». Meanwhile: 786-1 research (no build).
+NO core build until the launch ends.
 
 ## Letter to my next session (written 2026-11-18 ~12:30 UTC, Opus · max)
 
