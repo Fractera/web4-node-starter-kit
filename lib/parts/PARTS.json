@@ -1018,7 +1018,7 @@
         "en": "Tool look",
         "ru": "Показ инструмента"
       },
-      "version": "1.0.4",
+      "version": "1.0.5",
       "parts": [
         {
           "id": "app-dialog",
@@ -1061,7 +1061,7 @@
         "components/ui/typography",
         "lib/parts/tools-catalog"
       ],
-      "bodyHash": "8ce51bcf6c6ddab0"
+      "bodyHash": "a937aef0d51c6972"
     },
     {
       "id": "tool-fact-draft",
@@ -1695,11 +1695,11 @@
         "en": "Tools tab",
         "ru": "Вкладка «Инструменты»"
       },
-      "version": "1.0.4",
+      "version": "1.0.5",
       "parts": [
         {
           "id": "tool-demo",
-          "version": "1.0.4"
+          "version": "1.0.5"
         },
         {
           "id": "tool-terminal-drawer",

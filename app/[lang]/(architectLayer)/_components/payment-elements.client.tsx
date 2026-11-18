@@ -56,13 +56,13 @@ function Links({ title, links }: { title: string; links: Link_[] }) {
 
 export function PaymentElements({ item, address, lang, ui, table }: {
   item: string
-  /** Адрес этого элемента в ядре — для ссылки на его терминал (`<адрес>/build/terminal`). */
+  /** Адрес этого элемента в ядре — для ссылки на его терминал (`<адрес>/terminal`). */
   address: string
   lang: string
   ui: PaymentElementsUi
   table: TableUi
 }) {
-  const terminalHref = `/${lang}/architect/${address}/build/terminal`
+  const terminalHref = `/${lang}/architect/${address}/terminal`
   const [state, setState] = useState<"loading" | "ready" | "failed">("loading")
   const [list, setList] = useState<PaymentElement[]>([])
   const [busy, setBusy] = useState<string | null>(null)

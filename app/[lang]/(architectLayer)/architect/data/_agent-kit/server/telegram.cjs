@@ -571,12 +571,12 @@ function folderTrusted(service) {
   } catch { return null }
 }
 
-/** 547: пути разделов агента без языка — у рождённого элемента они под его адресом и `build/`, у служб ядра — под `architect/`. */
+/** 547: пути разделов агента без языка — у рождённого элемента они под его адресом (797: наверху дерева, без `build/`), у служб ядра — под `architect/`. */
 function sectionPaths(service) {
   if (isBornItem(service)) {
     const address = readJson(path.join(ROOT, 'data', 'services', service, 'address.json'), null)?.address
     const a = typeof address === 'string' && /^[a-z0-9-]{1,40}$/.test(address) ? address : service
-    return { terminal: `/${a}/build/terminal`, subscription: `/${a}/build/subscription` }
+    return { terminal: `/${a}/terminal`, subscription: `/${a}/subscription` }
   }
   return { terminal: `/architect/${service}/terminal`, subscription: `/architect/${service}/claude-code` }
 }

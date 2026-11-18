@@ -115,7 +115,7 @@ const born = (id) => Boolean(registry().find((s) => s.id === id && s.kind === 'u
 const botOf = (id) => readJson(join(ROOT, 'data', 'services', id, 'channel', 'telegram', 'bot.json'), null)?.username ?? null
 // 589-6: у элемента без своей группы в ядре (рождённый, stripe) терминал — в дереве элемента, под `build/`.
 const ownGroup = (id) => existsSync(join(ROOT, 'app', '[lang]', '(architectLayer)', 'architect', id, 'agent-kit.json'))
-const terminalOf = (id) => born(id) || !ownGroup(id) ? `${ORIGIN}/${LANG}/${addressOf(id)}/build/terminal` : `${ORIGIN}/${LANG}/architect/${id}/terminal`
+const terminalOf = (id) => born(id) || !ownGroup(id) ? `${ORIGIN}/${LANG}/${addressOf(id)}/terminal` : `${ORIGIN}/${LANG}/architect/${id}/terminal`
 const reachOf = (id) => {
   const bot = botOf(id)
   return bot ? `Telegram t.me/${bot} · terminal ${terminalOf(id)}` : `terminal ${terminalOf(id)} (no Telegram bot)`
@@ -1318,7 +1318,7 @@ if (cmd === 'create') {
   if (firstStep.written.length) console.log(`first step: ${firstStep.written.join(', ')} · ${firstStep.checks.join(' · ')}`)
   console.log(`agent: ${woke}`)
   console.log(`led by: ${by === 'main' ? 'you (the main agent): its «done» wakes you — skill supervise-element' : 'the architect'}`)
-  console.log(`the architect continues here: terminal ${terminalOf(id)} · development documents ${ORIGIN}/${LANG}/${addressOf(id)}/build/documents/instruction · a Telegram bot is connected on ${ORIGIN}/${LANG}/${addressOf(id)}/messenger/h2a/telegram`)
+  console.log(`the architect continues here: terminal ${terminalOf(id)} · development documents ${ORIGIN}/${LANG}/${addressOf(id)}/build/documents/instruction · a Telegram bot is connected on ${ORIGIN}/${LANG}/${addressOf(id)}/telegram`)
   process.exit(0)
 }
 

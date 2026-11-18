@@ -4,8 +4,8 @@
 // it names the page where it works and, in an element's own Tools tab, links there. The paths are the element menu's own
 // (`lib/web4-items/item-tree.ts`); a moved page moves here too.
 export const LIVES_AT: Record<string, string> = {
-  "core-terminal": "build/terminal",
-  "terminal-paste": "build/terminal",
+  "core-terminal": "terminal",
+  "terminal-paste": "terminal",
   "design-colors": "build/design",
   "design-fonts": "build/design",
   "design-shape": "build/design",

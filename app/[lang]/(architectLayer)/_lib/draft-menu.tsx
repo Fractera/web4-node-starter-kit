@@ -113,7 +113,7 @@ export function withDrafts(menu: WorkspaceItem[], lang: string, currentPath: str
       const inside = currentPath.startsWith(`${path}/`)
       const kids: WorkspaceItem[] = path === `${dir}/workflow/process/subscriptions`
         ? services.map((x) => ({ label: x.name, href: at(`${path}/${x.id}`), active: `${path}/${x.id}` === currentPath }))
-        : path === `${dir}/workflow` && !native && tgMenuOf(d.id, l) ? [...shownOf(p.pages).filter((c) => c.slug !== 'process').map((c) => node(c, path)), ...tgMenuItems(tgMenuOf(d.id, l) ?? [], { dir, at, currentPath, services })]
+        : path === `${dir}/workflow` && !native && tgMenuOf(d.id, l) ? [...shownOf(p.pages).filter((c) => c.slug !== 'process').map((c) => node(c, path)), ...tgMenuItems(tgMenuOf(d.id, l) ?? { modes: [], common: [] }, { dir, at, currentPath, services })]
         : shownOf(p.pages).map((c) => node(c, path))
       const href = hrefPath(path)
       return kids.length > 0

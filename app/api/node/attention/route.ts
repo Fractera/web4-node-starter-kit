@@ -33,6 +33,8 @@ export async function GET(req: NextRequest) {
   const langParam = req.nextUrl.searchParams.get("lang") ?? "en"
   const lang = /^[a-z]{2}(-[A-Za-z]{2,4})?$/.test(langParam) ? langParam : "en"
   const page = (id: string, slug: string) => `/${lang}/architect/${addressOf(id)}/build/${slug}`
+  // 797: терминал элемента — наверху его дерева (`<адрес>/terminal`), развёртывание осталось в «Строительстве».
+  const top = (id: string, slug: string) => `/${lang}/architect/${addressOf(id)}/${slug}`
   // 680 (владелец 2026-11-08: «активные терминалы … должны показывать точную такую же название какое присутствует в левом меню или
   // например верхнее меню … по идентификатору понять какой именно терминал нужно открыть невозможно»): подпись — то же имя, что у меню и
   // шапки (`elementName`: заголовок раздела ядра у встроенных, имя для людей у кастомных — 678); рабочая сессия `<id>--work` — по элементу.
@@ -40,12 +42,12 @@ export async function GET(req: NextRequest) {
 
   // 🪦 «Только рождённые элементы» (345) отменено владельцем 2026-10-02: «да, показывай все терминалы в ящике» — любой открытый
   // терминал нагружает компьютер и тратит подписку. Встроенные (root, auth, data, config, design, sections, узел `build`) ведут
-  // на свою страницу терминала `/<язык>/architect/<служба>/terminal`, рождённые — на `…/<адрес>/build/terminal`.
+  // на свою страницу терминала `/<язык>/architect/<служба>/terminal`, рождённые — на `…/<адрес>/terminal` (797).
   const terminals = (list() as Session[])
     .filter((s) => s.running)
     .map((s) =>
       isBornItem(s.service)
-        ? { id: s.service, name: named(s.service), href: page(s.service, "terminal") }
+        ? { id: s.service, name: named(s.service), href: top(s.service, "terminal") }
         : { id: s.service, name: named(s.service), href: `/${lang}/architect/${s.service}/terminal` },
     )
 

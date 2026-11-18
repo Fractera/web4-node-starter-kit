@@ -18,9 +18,9 @@ import type { Web4Draft } from "@/lib/web4-items/drafts"
 
 /** Страница дерева → прежняя страница папки службы (путь под `architect/<id>`). */
 export const BUILT_IN_STATIC: Record<string, string> = {
-  "build/terminal": "terminal",
-  "build/subscription": "claude-code",
-  "build/telegram": "telegram",
+  "terminal": "terminal",
+  "subscription": "claude-code",
+  "telegram": "telegram",
 }
 
 /** 558: элементы памяти — у них раздел «Резервное копирование» (`memory` в дереве). Ид встроенных неизменны (557). */

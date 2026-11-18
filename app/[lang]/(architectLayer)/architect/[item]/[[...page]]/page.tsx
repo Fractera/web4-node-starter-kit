@@ -10,7 +10,7 @@ import { DraftCards } from '../../../_components/draft-cards'
 import { DeleteDraftButton } from '../../../_components/delete-draft-button.client'
 import { appDialogUi } from '@/components/dialog/app-dialog.i18n'
 import { draftAddress, getDraft, nodeZone } from '@/lib/web4-items/drafts'
-import { findTreePath, movedPage, MOVED_WITH, treeLang, treeListed, treeVisible, type TreePage } from '@/lib/web4-items/item-tree'
+import { findTreePath, movedPage, treeLang, treeListed, treeVisible, type TreePage } from '@/lib/web4-items/item-tree'
 import { AccordionSection } from '@/components/accordion/accordion-section.client'
 import { getService, listServices, serviceUrl } from '@/lib/microservices/registry'
 import { elementTgSegments } from '@/lib/web4-items/element-tg-menu'
@@ -136,7 +136,8 @@ const PASSPORT_TASK: Record<'en' | 'ru', string> = {
 // 326-3: страница дерева → вид острова комплекта агента (имя шаблона комплекта). 472: Telegram-бот — и в H2A (у элементов с флагом
 // H2A), и в «Строительстве» (у остальных). 528-1: ключ — полный путь страницы под элементом.
 const AGENT_PAGES: Record<string, AgentKitPage | undefined> = {
-  'build/subscription': 'claude-code', 'build/terminal': 'terminal', 'build/telegram': 'telegram', 'messenger/h2a/telegram': 'telegram',
+  // 797: подписка, терминал и бот — наверху дерева, одна страница бота.
+  'subscription': 'claude-code', 'terminal': 'terminal', 'telegram': 'telegram',
   // 552-4б: сессия рабочего процесса — свой терминал в «Рабочем процессе».
   'workflow/terminal': 'terminal-work',
 }
@@ -203,10 +204,6 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   // 451-2, 528-1: прежние адреса (i2i, f2f, H2H, H2A, A2A, Процесс, Документы, Проектирование) ведут на новые.
   const moved = movedPage(p.page ?? [])
   if (moved) redirect(`/${p.lang}${ARCHITECT_HOME}/${p.item}/${moved}`)
-  // 472: у элемента с H2A Telegram-бот живёт в H2A — старый адрес «Строительства» ведёт туда.
-  const movedWith = MOVED_WITH[(p.page ?? []).join('/')]
-  const movedId = movedWith ? idOfAddress(p.item) : null
-  if (movedWith && movedId && effectiveMessengers(movedId)[movedWith.when]) redirect(`/${p.lang}${ARCHITECT_HOME}/${p.item}/${movedWith.to}`)
   const r = resolve(p)
   if (!r) notFound()
 
@@ -347,7 +344,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   // 472: Telegram-бот — и в H2A (у элементов с флагом H2A), и в «Строительстве» (у остальных).
   const kitPage = AGENT_PAGES[key]
   const agent = slot ? agentKitWidget('telegram', item, lang, slot) : kitPage
-    ? (entry ? agentKitWidget(kitPage, item, lang, undefined, { terminal: `/${lang}${dir}/build/terminal`, telegram: `/${lang}${dir}/build/telegram` }) : <p className="my-4 text-sm text-muted-foreground">{elementSettingsUi(lang).agentNotBorn}</p>)
+    ? (entry ? agentKitWidget(kitPage, item, lang, undefined, { terminal: `/${lang}${dir}/terminal`, telegram: `/${lang}${dir}/telegram` }) : <p className="my-4 text-sm text-muted-foreground">{elementSettingsUi(lang).agentNotBorn}</p>)
     : null
 
   // 319-5: страница GitHub — связь элемента с репозиторием владельца и выгрузка кнопкой; у нерождённого — объяснение.
@@ -382,7 +379,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
         return [
           { kind: 'metrics', items: [{ value: String(by.size), label: dw.counterparts }, { value: String(orders.length), label: dw.deals }] },
           rows.length ? { kind: 'table', headers: [...dw.headers], rows } : { kind: 'note', text: dw.empty },
-          { kind: 'cta', text: dw.note, href: `/${lang}${ARCHITECT_HOME}/${slug}/build/terminal`, label: dw.terminal },
+          { kind: 'cta', text: dw.note, href: `/${lang}${ARCHITECT_HOME}/${slug}/terminal`, label: dw.terminal },
         ] as PageItem[]
       })()
     : []
@@ -418,7 +415,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   const settings = key === 'settings/danger-zone'
     ? (entry
       ? <ElementDangerZone ui={sui} actions={{
-          // 325-2: задание агенту — в окно вставки терминала элемента (`<id>/build/terminal`), отправляет человек.
+          // 325-2: задание агенту — в окно вставки терминала элемента (`<id>/terminal`, 797), отправляет человек.
           describe: <ElementDescribe id={item} lang={lang} ui={sui} current={registryDescription(item)} terminalHref={terminalLink({ lang, service: `${slug}/build`, text: DESCRIBE_TASK })} />,
           // 324-10: «адрес в интернете» — главный адрес элемента (свой домен, если он главный), а не всегда поддомен.
           address: <ElementAddress id={item} lang={lang} ui={sui} current={slug} internet={domainRecord(item)?.url.replace("https://", "") ?? address} />,
@@ -455,7 +452,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       ? <section className="flex flex-col" data-element-design-page data-block="element-design-page">
           {/* 715: «Утвердить этот дизайн для элемента (название элемента)» — имя из реестра узла; агент элемента — его терминал. */}
           <ElementDesignSettings item={item} lang={lang} port={port} publicUrl={ownPublicUrl}
-            name={nodeEntries().find((e) => e.id === item)?.name ?? address} agentHref={`/${lang}${dir}/build/terminal`}
+            name={nodeEntries().find((e) => e.id === item)?.name ?? address} agentHref={`/${lang}${dir}/terminal`}
             ui={designUi(lang)} words={elementRemoteWords(lang)} design={elementDesignWords(lang)} dialogUi={appDialogUi(lang)} />
         </section>
       : <p className="my-4 text-sm text-muted-foreground">{sui.notBorn}</p>)
@@ -468,8 +465,8 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       lang={lang}
       ui={elementDeployUi(lang)}
       // 356-3: «Отклонить» спрашивает причину (текст или голос) — окно задачи 336 в режиме «заметка».
-      // Терминал рождённого элемента — `<адрес>/build/terminal`, а не путь служб ядра (`terminalLink`): замерено 356-3, тот вёл на ошибку.
-      reject={{ ui: rejectTaskUi(lang), dialogUi: appDialogUi(lang), keyHref: openAiKeyHref(item, lang), terminalPath: `/${lang}/architect/${slug}/build/terminal` }}
+      // Терминал рождённого элемента — `<адрес>/terminal` (797), а не путь служб ядра (`terminalLink`): замерено 356-3, тот вёл на ошибку.
+      reject={{ ui: rejectTaskUi(lang), dialogUi: appDialogUi(lang), keyHref: openAiKeyHref(item, lang), terminalPath: `/${lang}/architect/${slug}/terminal` }}
     />
   ) : null
   // 344-3: итог последней выкладки копии публичных страниц в Cloudflare (`data/services/<id>/static-copy.json`); нет своего

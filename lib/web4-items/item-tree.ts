@@ -102,9 +102,12 @@ export const MOVED_PAGES: Record<string, string> = {
   "product-design/from-framework": "product-design/reverse-engineering",
   // 606: страницы старой группы `architect/root` (снята) ведут в дерево; у других элементов таких адресов нет. Текст из `?paste=` при
   // переадресации теряется — источник ссылок на терминал root исправлен в 606-1 (`terminalServiceOf`).
-  "terminal": "build/terminal",
-  "claude-code": "build/subscription",
-  "telegram": "build/telegram",
+  "claude-code": "subscription",
+  // 797: подписка, терминал и бот — наверху, под «Живым сайтом»; бот H2A — та же одна страница.
+  "build/subscription": "subscription",
+  "build/terminal": "terminal",
+  "build/telegram": "telegram",
+  "messenger/h2a/telegram": "telegram",
   "reverse-engineering": "product-design/reverse-engineering",
   "external-github": "build/github",
   // 706-1: «Блоки» сняты вместе с элементом Blocks (владелец 2026-11-09); прежние адреса ведут в «Дизайн».
@@ -152,10 +155,6 @@ export function treeVisible(p: TreePage, c: TreeContext): boolean {
 /** 745: видна ли страница пунктом меню и карточкой списка раздела (страница по кнопке — `listed: false` — только по адресу). */
 export function treeListed(p: TreePage, c: TreeContext): boolean {
   return p.listed !== false && treeVisible(p, c)
-}
-// 472: у элемента с H2A бот живёт в H2A — старый адрес ведёт туда (у элемента без H2A бот остаётся в «Строительстве»).
-export const MOVED_WITH: Record<string, { to: string; when: Messenger }> = {
-  "build/telegram": { to: "messenger/h2a/telegram", when: "h2a" },
 }
 
 // 472-2: дашборд — счётчики, таблица и под ней надпись про терминал (страница элемента, `element-dashboard.i18n.ts`).
@@ -206,6 +205,13 @@ export const ITEM_TREE: TreePage[] = [
     auth: true,
     words: w("Users", "Everyone who has an account on this node: search, filters, histories and actions in batches.", "Пользователи", "Все, у кого есть учётная запись на этом узле: поиск, фильтры, истории и действия пакетом."),
   },
+  // 797 (владелец 2026-11-18, Telegram 759, 760, 764: «вкладку Telegram вытащить наружу из вкладки строительства пусть оно находится
+  // сразу под вкладкой живой сайт», «давай повторим интерфейс ядра … надписи можно сделать просто ссылками»): подписка, терминал и бот —
+  // ссылки верхнего уровня под «Живым сайтом», как в меню ядра; бот — одна страница (прежде вторая жила в H2A). Прежние адреса
+  // `build/*` и `messenger/h2a/telegram` переадресуются (`MOVED_PAGES`).
+  { slug: "subscription", words: w("Claude Code subscription", "Signing the element's agent in to the Claude Code subscription.", "Подписка Claude Code", "Вход агента элемента в подписку Claude Code.") },
+  { slug: "terminal", words: w("Terminal", "A live Claude Code in the element's folder: started and stopped here.", "Терминал", "Живой Claude Code в папке элемента: запускается и останавливается здесь.") },
+  { slug: "telegram", words: w("Telegram bot", "A bot that talks to the same agent session.", "Telegram-бот", "Бот, который говорит с той же сессией агента.") },
   // 528-1: Messenger — сразу под «Живым сайтом»: H2H, H2A и их настройки.
   {
     slug: "messenger",
@@ -281,7 +287,6 @@ export const ITEM_TREE: TreePage[] = [
               ru: ["Этот чат заменит Telegram тем, кто не хочет им пользоваться: вы пишете агенту элемента прямо на этой странице. Он программируется следующими шагами."],
             },
           },
-          { slug: "telegram", words: w("Telegram bot", "A bot that talks to the same agent session.", "Telegram-бот", "Бот, который говорит с той же сессией агента.") },
           dashboard("Who you talk to through this element's agent, in short.", "С кем вы общаетесь через агента этого элемента — коротко."),
         ],
       },
@@ -427,8 +432,6 @@ export const ITEM_TREE: TreePage[] = [
     pages: [
       // 384-1, слово владельца 2026-10-03: «перевести её вверх самый вверх выше чем подписка Claude Code Agent».
       { slug: "github", words: w("GitHub", "The element's own repository.", "GitHub", "Собственный репозиторий элемента.") },
-      { slug: "subscription", words: w("Claude Code subscription", "Signing the element's agent in to the Claude Code subscription.", "Подписка Claude Code", "Вход агента элемента в подписку Claude Code.") },
-      { slug: "terminal", words: w("Terminal", "A live Claude Code in the element's folder: started and stopped here.", "Терминал", "Живой Claude Code в папке элемента: запускается и останавливается здесь.") },
       // Владелец 2026-10-01: «кнопку развёртывания мы находим внизу а это очень важная кнопка … подними её вверх и установи сразу
       // под кнопкой терминал».
       { slug: "deployments", words: w("Preview & Deploy", "See a new version before visitors do, deploy it, or go back to a working one.", "Предпросмотр и развёртывание", "Посмотреть новую версию до посетителей, развернуть её или вернуться к работающей.") },
@@ -444,8 +447,6 @@ export const ITEM_TREE: TreePage[] = [
       { slug: "design", words: w("Design", "Choose from many design skills the ones that suit your project and test them: each builds a test home page; look through them one by one, weigh the pluses and minuses and approve the best.", "Дизайн", "Выберите из множества навыков дизайна те, что подходят вашему проекту, и испытайте их: каждый строит тестовую главную страницу; просмотрите их по очереди, взвесьте плюсы и минусы и утвердите лучшую.") },
       // 706-1: связь с CONFIG узла — здесь, первой строкой (прежде в «Опасной зоне»), и ссылка на свои настройки элемента.
       { slug: "site-settings", words: w("Site settings", "The element's name, search, languages, menus and switches — section by section.", "Настройки сайта", "Имя, поиск, языки, меню и выключатели элемента — по разделам.") },
-      // 472: у элемента с H2A бот переехал в H2A (`MOVED_WITH`); здесь он остаётся для элементов без H2A.
-      { slug: "telegram", unless: "h2a", words: w("Telegram bot", "A bot that talks to the same agent session.", "Telegram-бот", "Бот, который говорит с той же сессией агента.") },
       { slug: "environment", words: w("Environment variables", "Keys and settings the element reads at start.", "Переменные окружения", "Ключи и настройки, которые элемент читает при старте.") },
       // 451-2 (владелец 2026-10-11): i2i — элементы узла договариваются о connector через API; f2f — обмен элементами через Lagrix.
       // 452 (владелец 2026-10-11: «коротко понятно ты ввёл человека в курс дела»): главная подраздела вводит в курс дела.
