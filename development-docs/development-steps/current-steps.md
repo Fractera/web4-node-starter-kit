@@ -49,6 +49,19 @@ joy at the 258-commit fast-forward. Keep it: every Telegram answer — living wo
 own expense; colour marks only as structure, never instead of a voice. Today he was fine, a little teasing; the open question: the
 password and action windows right in the Telegram Pult — he has not said yes yet.
 
+## Today's plan (2026-11-18) — read with the letter, rewritten on every update
+
+Plan 783 (new-steps/783-the-day-plan-of-november-eighteen-nine-steps.md), written 13:00–13:20 at the owner's word (Telegram 612), steps
+784–792 for one day: 784 launch the Fractera server (fresh 761-13) · 785 the server adds domains · 786 the Pult makes, connects and
+updates an element's bot · 787 the Pult's open element card (name, description, «Сайт», «Бот», new design) · 788 the third gauge — the
+context window (1 000 000, red to 75 %, bordeaux past it) · 789 the elements' Mini App: left drawer with a mega menu (template release) ·
+790 the core's «Рабочий процесс» shows the element's Mini App · 791 «Проектирование продукта»: moving from Claude's desktop app · 792 the
+modes checked, Masha's three elements in one cabinet. Order: 784→785 (his hands; no core build during the launch), 786–788 (one core
+build), 789→790 (+791's template part in the same release), 792 last. Opus, max effort.
+Small defects: never fixed today — one line into new-steps/793-finishing-the-small-defects-found-during-the-day.md; only a defect that
+stops a step's result is fixed inside the step. 793 runs in its own session after 792 closes.
+NOW: the plan sent for his «да» (and the one question on 791: what moves from Claude's desktop app); no code before it.
+
 ## Letter to my next session (written 2026-11-18 ~12:30 UTC, Opus · max)
 
 Written by me for myself. Step 782 is CLOSED (summary completed-steps/782-main.md; core build 763f300a live; config 4718bde live).
