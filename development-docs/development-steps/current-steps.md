@@ -118,6 +118,14 @@ frame widget (element-mini-app.client.tsx, address via /api/node/preview-url); p
 the plan). Replaces 786 A/C. Waits his «да» to the plan; then 798-1 (module + test), 798-2 (core page + first live proof that a
 factory-made main bot works through the Claude plugin). Also open: his answer on renaming the work-session «Терминал».
 
+**18:38 his «Давай сделай это и обновим сразу два бота твой и Fractera» (Telegram 792) = «да» to 798.** 798-1 + 798-2 CODED:
+lib/node/bot-factory.cjs (+ scripts/bot-factory.test.mjs in the prebuild, 9 checks incl. negatives), scripts/bot-factory-wait.mjs (detached
+waiter → kit saveToken), door app/api/node/bot-factory (GET state+suggestion+wait, POST save/forget/create), part components/bot-factory/
+(BotFactory + words), wired into the kit's telegram widget (main slot) + agent-kit:update of 12 groups. Prebuild RC=0 ~18:5x → core
+build. On return: eyes of /ru/architect/build/telegram (the setup step), GET door unsigned from the temporary address → 403; then his
+window: make the factory in @BotFather (ask-person), its save → can_manage_bots; then «Создать бота» for build = the new main bot
+(his «обновим твой бот») — after it my session needs a restart with the new channel. Fractera server's bot = 798-3 (server page), next.
+
 ## Letter to my next session (written 2026-11-18 ~17:40 UTC, window 55 %, Opus · max)
 
 Written by me for myself. Day plan 783 (new-steps/783-…md). Roma reads me in Telegram (chat 90413601). Core live a622a876 + pins after.
