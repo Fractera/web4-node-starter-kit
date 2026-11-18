@@ -208,6 +208,12 @@ NEXT ACTION after the build returns: eyes of the clean page (step 1 open), windo
 the page) → token → «Проверить» or straight «Создать бота» → «Создать» in Telegram → admission «Старт» → my restart with the channel
 (npm run session -- model opus --continue). Then 798-3 (the server page), the Pult live, push (his act).
 
+**21:48 UTC — BLOCKED BY TELEGRAM until ~2026-11-19 15:40 UTC.** @BotFather: «Sorry, too many attempts. Please try again in 64587 seconds»
+(21:46) — no new bots for his account; /mybots is EMPTY (no existing bot to make the factory). No main bot now: no Telegram channel — he
+reads me in the terminal. Build dec1677e live, the page clean (seen: step 1 open, address throughsongs_factory_34ea_bot). Tomorrow after
+15:40 UTC: the whole path from zero (window like 698cb5ae), then admission + my restart with the channel. Meanwhile possible: 798-3 the
+server page (same three steps, design, order — every visible phrase agreed with him first), push the day's commits (his act).
+
 ## Letter to my next session (written 2026-11-18 ~17:40 UTC, window 55 %, Opus · max)
 
 Written by me for myself. Day plan 783 (new-steps/783-…md). Roma reads me in Telegram (chat 90413601). Core live a622a876 + pins after.
