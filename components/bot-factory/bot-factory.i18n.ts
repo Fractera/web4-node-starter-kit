@@ -18,13 +18,14 @@ export type BotFactoryWords = {
   sum1: string
   /** rung 2 done: `{username}` `{tail}` */
   sum2: string
+  /** in view inside step 2 once a token is kept: `{username}` `{tail}` (the owner's «зелёная галочка», 20:32) */
+  kept: string
   /** the token field — the server's own phrases (`server-launch.i18n.ts` telegram): `{tail}` */
   found: string
   notFound: string
   check: string
   checking: string
   more: string
-  manualLabel: string
   locked: string
   tokenLabel: string
   tokenHint: string
@@ -64,12 +65,12 @@ const DICT: Record<string, BotFactoryWords> = {
     did1: "Done, the bot is made",
     sum1: "The bot is made in @BotFather",
     sum2: "The token of @{username} is kept (…{tail})",
+    kept: "The token of @{username} is kept: …{tail}",
     found: "Token found: …{tail}. Telegram checks it before it is kept.",
     notFound: "No token here: paste it or BotFather's whole message.",
     check: "Check",
     checking: "Asking Telegram…",
     more: "More",
-    manualLabel: "By hand at @BotFather",
     locked: "Opens after the step before",
     tokenLabel: "The bot's token or @BotFather's whole message",
     tokenHint: "The token is kept on this computer only; this page sees just its last four characters.",
@@ -112,12 +113,12 @@ const DICT: Record<string, BotFactoryWords> = {
     did1: "Сделал, бот создан",
     sum1: "Бот создан в @BotFather",
     sum2: "Токен бота @{username} сохранён (…{tail})",
+    kept: "Токен бота @{username} сохранён: …{tail}",
     found: "Токен найден: …{tail}. Перед сохранением его проверит Telegram.",
     notFound: "Токена здесь не видно: вставьте его или всё сообщение BotFather целиком.",
     check: "Проверить",
     checking: "Спрашиваю Telegram…",
     more: "Подробнее",
-    manualLabel: "Вручную через @BotFather",
     locked: "Откроется после предыдущего шага",
     tokenLabel: "Токен бота или всё сообщение от @BotFather",
     tokenHint: "Токен хранится только на этом компьютере; эта страница видит лишь четыре последних знака.",

@@ -164,6 +164,16 @@ while managed:false; the door logs every press; after «Создать бота�
 can_manage_bots false for @throughsongs_factory_3caa_bot while his screenshot shows the switch ON (20:02) — likely a delay. Prebuild RC=0 →
 core build. Server page (798-3) not in this build — he reminded: the same steps, design and order there.
 
+**20:20–20:45 UTC.** The new factory bot @throughsongs_factory_3caa_bot (id 9250885895, created 19:51 with the deleted factory's address;
+the old id 9121645787 passed at 19:31 and is gone): Telegram getMe answers can_manage_bots=false although his Mini App shows the switch ON
+(screens 20:02, 20:22); his token saves logged 20:17, 20:22, 20:23 (the page hid it). Tried: close() of the bot instance → still false (the
+cache idea disproved). 20:29 I had connected it as the MAIN bot («делай сам») — undone ~20:38 at his «только фабрика»: the main channel files
+moved to data/node/removed-bot-2026-11-18/main-bot-2029/, the factory record back (data/node/bot-factory.json). Window 19c07988: switch the mode
+off and on again; my getMe watch (every 3 s) — killed by this build, restart it on return. His orders: no manual road on the core page
+(«Вручную через @BotFather» removed, no flash of it while loading), the place badge's bottom line 14→12 px, step 2 shows «✓ Токен бота @…
+сохранён: …tail» in green, the check error only in step 3. «собирай … когда закончишь» → prebuild RC=0 → core build. Next if still false:
+a new factory bot with a NEW address (the reused address is the likeliest cause, unproven).
+
 ## Letter to my next session (written 2026-11-18 ~17:40 UTC, window 55 %, Opus · max)
 
 Written by me for myself. Day plan 783 (new-steps/783-…md). Roma reads me in Telegram (chat 90413601). Core live a622a876 + pins after.

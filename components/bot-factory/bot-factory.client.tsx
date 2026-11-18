@@ -41,7 +41,8 @@ function More({ id, label, children, plain = false }: { id: string; label: strin
 }
 const Points = ({ items }: { items: string[] }) => <ol data-block="bf-points" className="list-decimal pl-5">{items.map((t) => <li key={t}>{t}</li>)}</ol>
 
-/** Inside step 1 of the bot page (`TelegramChannel`): `manual` — the hand road (@BotFather → token), folded once the factory can do it;
+/** Inside step 1 of the bot page (`TelegramChannel`): `manual` — the hand road (@BotFather → token), shown only on a page whose node has no
+ *  factory (an element's page); the owner, terminal ~20:35: «Вручную через отца ботов … ребус … убери» — the core's page has one road;
  *  `onDone` — the new bot is connected, the page asks its channel again. */
 export function BotFactory({ service, lang, words: w, manual, onDone }: { service: string; lang: string; words: BotFactoryWords; manual: ReactNode; onDone: () => void }) {
   const core = service === "build"
@@ -50,6 +51,7 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
   const [token, setToken] = useState("")
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [checkError, setCheckError] = useState<string | null>(null)
   const [replacing, setReplacing] = useState(false)
   const [link, setLink] = useState<string | null>(null)
 
@@ -71,17 +73,17 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
 
   // step 2: the token, or BotFather's whole message (the server's own `tokenFrom`), kept at once whatever the mode is
   async function save() {
-    setBusy("save"); setError(null)
+    setBusy("save"); setError(null); setCheckError(null)
     const r = await post({ action: "save", token: tokenFrom(token) ?? token.trim() })
     setToken(""); setBusy(null)
     if (r?.ok) await load(); else setError(fill(w.errors[r?.error] ?? w.errors["telegram-unreachable"], { username: r?.username ?? "" }))
   }
   // step 3: «Проверить» — Telegram's answer about the kept bot, named
   async function check() {
-    setBusy("check"); setError(null)
+    setBusy("check"); setCheckError(null)
     const r = await post({ action: "check" })
     setBusy(null)
-    if (r?.ok) { setReplacing(false); await load() } else setError(fill(w.errors[r?.error] ?? w.errors["telegram-unreachable"], { username: r?.username ?? "" }))
+    if (r?.ok) { setReplacing(false); await load() } else setCheckError(fill(w.errors[r?.error] ?? w.errors["telegram-unreachable"], { username: r?.username ?? "" }))
   }
   async function create() {
     setBusy("create"); setError(null)
@@ -93,7 +95,7 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
     await load()
   }
 
-  if (!st) return <>{manual}</>
+  if (!st) return null
   const f = st.factory
   const found = token.trim() ? tokenFrom(token) : null
   const err = error && <p data-block="bf-error" role="status" className="text-destructive text-sm">{error}</p>
@@ -144,7 +146,9 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
                 {token.trim() ? <Small className="text-muted-foreground" data-block="bf-token-found">{found ? fill(w.found, { tail: found.slice(-4) }) : w.notFound}</Small> : null}
                 <Small className="text-muted-foreground">{w.tokenHint}</Small>
               </div>
-              {busy !== "check" && err}
+              {/* the owner, 20:32: «я понять есть там токен или нету … подсветил зелёной галочкой последние буковки» */}
+              {f.kept && <p data-block="bf-token-kept" role="status" className="flex items-center gap-2 text-sm text-success"><Check className="size-4 shrink-0" aria-hidden />{fill(w.kept, { username: f.username ?? "", tail: f.tail ?? "" })}</p>}
+              {err}
             </>
           ) },
           { id: "mode", title: w.step3Title, done: f.ready && !replacing, body: (
@@ -155,11 +159,10 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
                   {busy === "check" && <Spinner className="size-4" />}{busy === "check" ? w.checking : w.check}
                 </Button>
               </div>
-              {err}
+              {checkError && <p data-block="bf-check-error" role="status" className="text-destructive text-sm">{checkError}</p>}
             </>
           ) },
         ]} />
-        <More id="manual" label={w.manualLabel} plain>{manual}</More>
       </section>
     )
   }
@@ -187,7 +190,6 @@ export function BotFactory({ service, lang, words: w, manual, onDone }: { servic
       {mine?.state === "error" && <p data-block="bf-failed" role="status" className="text-destructive text-sm">{fill(w.failed, { error: mine.error ?? "—" })}</p>}
       {err}
       <More id="create" label={w.more}>{w.createText}</More>
-      <More id="manual" label={w.manualLabel} plain>{manual}</More>
     </section>
   )
 }
