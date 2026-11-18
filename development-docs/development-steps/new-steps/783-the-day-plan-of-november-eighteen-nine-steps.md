@@ -123,6 +123,17 @@ Address: the core (`main`): `lib/node/tg-app/{page.cjs,words.cjs,state.ts}`, `ap
 - **786-1 Primary source.** Read core.telegram.org/bots/features#botfather and the Bot API changelog: can a bot be created by an API or a
   link other than a person's chat with @BotFather. Done when: the answer with its link is written here. If a managed-bot road exists — a
   substep for it; else the road is «@BotFather → token → the Pult».
+- **786-1 RESULT (13:3x, primary sources).** Bot API 9.6 (2026-04-03, core.telegram.org/bots/api-changelog) — Managed Bots
+  (core.telegram.org/bots/features «Managed Bots»): a bot with «Bot Management Mode» on (BotFather's Mini App → the bot's settings;
+  getMe `can_manage_bots`) creates bots for a person by the link `https://t.me/newbot/{manager}/{username}?name={name}` (or a prepared
+  `request_managed_bot` button + `WebApp.requestChat` from a Mini App); the person confirms in Telegram's own window; the manager gets
+  the update `managed_bot` (ManagedBotUpdated) and fetches the token by `getManagedBotToken(user_id)`; `replaceManagedBotToken` revokes and
+  reissues it; `setManagedBotAccessSettings` limits who may use it. MEASURED in Claude's Telegram plugin
+  (`~/.claude/plugins/cache/claude-plugins-official/telegram/0.0.7/server.ts`): grammY `bot.start()` without `allowed_updates`, handlers
+  only for messages and callbacks — it CONSUMES and DROPS a `managed_bot` update. So the main bot cannot be the manager while its session
+  polls. Fork sent to the owner: A — a separate «factory» bot of the node (made once by him, Bot Management Mode on, its token once in the
+  Pult); the node polls it only while a creation waits (≤ 10 min, no resident process); then every element bot is one tap and «Обновить»
+  is `replaceManagedBotToken` — my pick, with C as the fallback; C — by hand: @BotFather /newbot → the token into the Pult (works today).
 - **786-2 One bot module for the core.** Built: `lib/node/element-bot.cjs` — `connect(root, id, token)` (shape, getMe, writes the
   element's channel files exactly as `saveToken` does — the kit's function moved here and the kit calls it, so the two never drift),
   `admissionLink(root, id)`, `refreshProfile(root, id)` (setMyName, setMyDescription, setMyShortDescription from the element's name and
