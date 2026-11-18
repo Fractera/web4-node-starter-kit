@@ -33,3 +33,10 @@ Closed 2026-11-18 12:29 UTC. Repository: the core (`main`); the configurator's p
 
 Surfaces seen: logs/eyes/2026-11-18T12-12-13-815Z.png, logs/eyes/2026-11-18T12-13-52-018Z.png, logs/eyes/2026-11-18T12-28-08-923Z.png,
 logs/eyes/2026-11-18T12-22-44-577Z.png.
+
+## After the close (12:43–12:49)
+
+- The owner (Telegram 597): the card belongs to the architect's root page, not the Passport — my misreading of «вкладка страницы
+  архитектора». Moved (7fb9d831): first on the overview, above «Три действия, чтобы начать»; the Passport empty again. Signed out, the
+  card names why the mode is not shown (c17c0d05). Live build 7fb9d831: eyes logs/eyes/2026-11-18T12-49-23-601Z.png — the card first,
+  910×152, no console errors; the Passport HTML has no app-mode block.
