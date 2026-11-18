@@ -56,11 +56,13 @@ Plan 783 (new-steps/783-the-day-plan-of-november-eighteen-nine-steps.md), writte
 updates an element's bot · 787 the Pult's open element card (name, description, «Сайт», «Бот», new design) · 788 the third gauge — the
 context window (1 000 000, red to 75 %, bordeaux past it) · 789 the elements' Mini App: left drawer with a mega menu (template release) ·
 790 the core's «Рабочий процесс» shows the element's Mini App · 791 «Проектирование продукта»: moving from Claude's desktop app · 792 the
-modes checked, Masha's three elements in one cabinet. Order: 784→785 (his hands; no core build during the launch), 786–788 (one core
+modes checked, Masha's three elements in one cabinet · 794 (proposed) /plan from Telegram. Order: 784→785 (his hands; no core build during the launch), 786–788 (one core
 build), 789→790 (+791's template part in the same release), 792 last. Opus, max effort.
 Small defects: never fixed today — one line into new-steps/793-finishing-the-small-defects-found-during-the-day.md; only a defect that
 stops a step's result is fixed inside the step. 793 runs in its own session after 792 closes.
-NOW: the plan sent for his «да» (and the one question on 791: what moves from Claude's desktop app); no code before it.
+NOW: 13:06 he asked for the DETAILED plan (Telegram 617) and «/plan» from Telegram (618) → the plan rewritten in detail (every substep:
+built · done · proofs with a negative · not in it) + 794 «/plan from Telegram» proposed; sent as a file for his «да», with two questions
+(791: what moves; 794: build it?). No code before his yes.
 
 ## Letter to my next session (written 2026-11-18 ~12:30 UTC, Opus · max)
 
