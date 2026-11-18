@@ -44,7 +44,7 @@ export type LaunchState = {
   sub: Stage[]
   update: { state?: string; stage?: string; summary?: string; reason?: string } | null
   /** 744-5: `from: "server"` — written from the server node's own mark (`since` — the mark's date): a domain the server already held */
-  domain: { domain?: string; way?: LadderWay | null; detect?: Detect | null; check?: { at: string; results: Array<{ host: string; state: string }> } | null; signin?: { ok: boolean; providers: unknown; location: string | null } | null; from?: string; since?: string | null } | null
+  domain: { domain?: string; way?: LadderWay | null; detect?: Detect | null; check?: { at: string; results: Array<{ host: string; state: string }> } | null; signin?: { ok: boolean; providers: unknown; location: string | null; at?: string } | null; from?: string; since?: string | null } | null
   mark: { phase?: string; domain?: string; domainActive?: boolean } | null
   core: { zone: string | null; rows: CoreRow[]; steps: { domain: boolean; dns: boolean; certs: boolean; check: boolean; active: boolean }; certsRun: CertsRun; helper: boolean; checkAt: string | null; dnsAt: string | null } | null
   verdict: { level: "ok" | "warn" | "fail"; items: Array<{ id: string; level: string; value?: unknown; need?: unknown }> } | null

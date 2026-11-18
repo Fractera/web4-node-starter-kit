@@ -1,7 +1,7 @@
 "use client"
 // @local — steps 4–7 of the launch ladder (one route: «Активация выделенного сервера»): installation, the records again, certificates, ready
 
-import { Check, Info, X } from "lucide-react"
+import { Check, ExternalLink, Info, X } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { CertsStep } from "@/components/hosting/server-domain-certs.client"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
@@ -12,10 +12,12 @@ import { finalCheck, httpsWaits } from "@/lib/hosting/final-check.mjs"
 import type { ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
 import { StageLog } from "@/components/hosting/stage-log"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { Spinner } from "@/components/ui/spinner"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Small } from "@/components/ui/typography"
 
 // THE LAST FOUR STEPS (node step 738). The owner, 2026-11-14: «процесс установки сервера → повторной проверки учётных записей … если не
@@ -129,6 +131,7 @@ export function ReadyStep({ state, words, busy, onAct, claim, onClaim }: ReadyPr
   const w = words.ready
   const zone = state.core?.zone ?? ""
   const s = state.domain?.signin
+  const [checking, setChecking] = useState(false)
   if (!state.core?.steps.active) {
     return (
       <div className="flex flex-col gap-2" data-block="server-launch-ready">
@@ -139,9 +142,12 @@ export function ReadyStep({ state, words, busy, onAct, claim, onClaim }: ReadyPr
     )
   }
   const final = finalCheck(state)
+  // ✗ 2026-11-18 22:4x (the owner): the answer stood at the top of the step, the same words before and after the press, no time — the
+  // press read as nothing. Now it stands under the button with the time of the check, and a spinner while the server is asked.
+  const time = s?.at ? new Date(s.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "—"
+  const recheck = async () => { setChecking(true); try { await onAct("signin") } finally { setChecking(false) } }
   return (
     <div className="flex flex-col gap-2" data-block="server-launch-ready" data-ready={final.ok ? "1" : "0"}>
-      {s ? <Small className={s.ok ? "text-foreground" : "break-all text-destructive"}>{s.ok ? fill(w.signinOk, { zone }) : fill(w.signinFail, { zone, detail: `${String(s.providers)} · ${s.location ?? "—"}` })}</Small> : null}
       {final.ok ? <ReadyWords busy={busy} claim={claim} onAct={onAct} onClaim={onClaim} state={state} words={words} /> : (
         <div className="flex flex-col gap-1" data-block="server-launch-missing">
           <Small className="text-foreground">{w.missing.title}</Small>
@@ -150,7 +156,16 @@ export function ReadyStep({ state, words, busy, onAct, claim, onClaim }: ReadyPr
           </ul>
         </div>
       )}
-      <div><Button disabled={busy} onClick={() => void onAct("signin")} size="sm" variant="outline">{w.signinButton}</Button></div>
+      <div className="flex flex-col gap-1" data-block="server-launch-signin">
+        <div className="flex items-center gap-1">
+          <Button disabled={busy || checking} onClick={() => void recheck()} size="sm" variant="outline">{checking ? <Spinner className="size-4" /> : null}{checking ? w.signinChecking : w.signinButton}</Button>
+          <TooltipProvider><Tooltip>
+            <TooltipTrigger asChild><Button aria-label={w.signinHintLabel} className="size-8" size="icon" variant="ghost"><Info aria-hidden /></Button></TooltipTrigger>
+            <TooltipContent className="max-w-xs">{fill(w.signinHint, { zone })}</TooltipContent>
+          </Tooltip></TooltipProvider>
+        </div>
+        {s && !checking ? <Small className={s.ok ? "text-success" : "break-all text-destructive"} data-block="server-launch-signin-answer" role="status">{s.ok ? fill(w.signinOk, { zone, time }) : fill(w.signinFail, { zone, time, detail: `${String(s.providers)} · ${s.location ?? "—"}` })}</Small> : null}
+      </div>
     </div>
   )
 }
@@ -196,14 +211,19 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 function Claim({ zone, words, busy, onAct, shown, onShown }: { zone: string; words: ServerLaunchWords; busy: boolean; onAct: Act; shown: ClaimShown; onShown: (c: ClaimShown) => void }) {
   const w = words.ready
   const [email, setEmail] = useState(shown.sent ?? "")
+  const [sending, setSending] = useState(false)
+  const [failed, setFailed] = useState<string | null>(null)
   const register = `https://auth.${zone}/register`
   const ok = EMAIL.test(email.trim())
+  // ✗ 2026-11-18 22:5x (the owner): a tab opened at the press stood on about:blank ~10 s while the e-mail travelled to the server over
+  // SSH — «никто не будет ждать 10 секунд». Now the page itself waits with words, and the server's yes gives a real link: no blank tab.
   async function go() {
-    const tab = window.open("", "_blank") // opened in the press itself, so no blocker stops it; its address comes after the server's yes
-    const a = (await onAct("claim", { email: email.trim().toLowerCase() })) as { answer?: { ok?: boolean; reason?: string } } | undefined
-    if (a?.answer?.ok) { onShown({ sent: email.trim().toLowerCase(), claimed: false }); if (tab) tab.location.href = register; return }
-    tab?.close()
-    if (a?.answer?.reason === "claimed") onShown({ sent: null, claimed: true })
+    setSending(true); setFailed(null)
+    const a = (await onAct("claim", { email: email.trim().toLowerCase() })) as { reason?: string; answer?: { ok?: boolean; reason?: string } } | undefined
+    setSending(false)
+    if (a?.answer?.ok) { onShown({ sent: email.trim().toLowerCase(), claimed: false }); return }
+    if (a?.answer?.reason === "claimed") { onShown({ sent: null, claimed: true }); return }
+    setFailed(a?.answer?.reason ?? a?.reason ?? "network")
   }
   return (
     <div className="flex flex-col gap-3 rounded-md bg-muted/40 p-3" data-block="server-launch-claim">
@@ -213,8 +233,17 @@ function Claim({ zone, words, busy, onAct, shown, onShown }: { zone: string; wor
         <FieldLabel htmlFor="launch-claim-email">{w.claimEmail}</FieldLabel>
         <Input autoComplete="email" id="launch-claim-email" inputMode="email" onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && ok && !busy) void go() }} type="email" value={email} />
       </Field>
-      <div><Button disabled={busy || !ok} onClick={() => void go()}>{w.claimGo}</Button></div>
-      {shown.sent ? <Small className="text-foreground" data-block="server-launch-claim-sent">{w.claimSent.replace("{email}", shown.sent).split("{url}")[0]}<a className="underline" href={register} rel="noopener noreferrer" target="_blank">{register}</a></Small> : null}
+      <div className="flex flex-wrap items-center gap-2" data-block="server-launch-claim-go">
+        <Button disabled={busy || sending || !ok} onClick={() => void go()}>{sending ? <Spinner className="size-4" /> : null}{w.claimGo}</Button>
+        {sending ? <Small className="text-muted-foreground" role="status">{w.claimSending}</Small> : null}
+      </div>
+      {failed ? <Small className="text-destructive" data-block="server-launch-claim-failed" role="status">{fill(w.claimFailed, { reason: failed })}</Small> : null}
+      {shown.sent && !sending ? (
+        <div className="flex flex-col gap-2" data-block="server-launch-claim-sent">
+          <Small className="text-foreground">{fill(w.claimSent, { email: shown.sent })}</Small>
+          <div><a className={buttonVariants({})} href={register} rel="noopener noreferrer" target="_blank">{w.claimOpen}<ExternalLink aria-hidden data-icon /></a></div>
+        </div>
+      ) : null}
       <Small className="rounded-md border border-warning/50 bg-warning/10 px-3 py-2 font-medium text-foreground" role="note">! {w.claimLoss}</Small>
     </div>
   )
