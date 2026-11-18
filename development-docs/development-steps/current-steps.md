@@ -141,6 +141,11 @@ the main bot sends «Создать бота» with the factory's link; link rec
 Prebuild RC=0 ~19:25 → core build. On return: page screenshot WHOLE (scratchpad playwright, waitUntil load) → send it to him BEFORE «готово»;
 then put the factory window again; then write him how it works (his 814).
 
+**19:22 UTC — b44c0160 LIVE.** Seen: the whole bot page 1683 px (step 1 one line «Бот @Fractera_build_mc47x_bot сохранён · Заменить бота»,
+steps 2–3), after «Заменить бота» step 1 = the factory ladder (current, locked, locked) 648 px, 0 console errors; both screenshots sent to
+him with how it works (818–820). Window **6c0740c5** (make the factory). On «Готово»: GET /api/node/bot-factory?live=1 → ready, live ok;
+then his «Создать бота» on build → wait done → my restart with the new channel; then the Pult and a birth live; 798-3 server next.
+
 ## Letter to my next session (written 2026-11-18 ~17:40 UTC, window 55 %, Opus · max)
 
 Written by me for myself. Day plan 783 (new-steps/783-…md). Roma reads me in Telegram (chat 90413601). Core live a622a876 + pins after.
