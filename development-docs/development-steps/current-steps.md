@@ -66,6 +66,16 @@ the related node aside whole); prebuild RC=0; ~14:0x ONE core build (serve:rebui
 BACK (its page.cjs version in logs/787-card-page.cjs; pictures logs/eyes/787-proposal-{light,dark}.png wait his «да»). On return: tell
 Roma, he presses «Установить с нуля», then install. Also owed to him: the answer about «Получить код архитектора» (739, his 665).
 
+**14:26–14:40 UTC (Telegram 683): 795** — the launch page's step 1 = IP + port only; «Проверить сервер» → connect with no password
+(door answers need-password in 0.18 s without a visit) → the password field + «Открыть доступ» appear only then; host edit hides it. A
+busy server (unrelated) is freed in the «Опасная зона» at the bottom (LaunchDanger: unrelated → ServerBusy node/busy texts; related with
+head → fresh); step 2 only says «освободить — в Опасной зоне». Clean server: no danger zone (install = step 4). Commit 68059f9f, prebuild
+RC=0, core build 14:29–14:33 RC=0, LIVE 68059f9f: eyes logs/eyes/2026-11-18T14-34-45-894Z.png (/ru/hosting/hosting — step 1 IP+port only, #launch-password absent, no console errors); his press not yet seen. Told Roma (Telegram 688–689) + proposed 796 (architect by e-mail instead of the code, his text verbatim, one «Перейти на сервер» button instead of Сайт/Панель/Вход until the architect exists; template release + core build) and asked 685 = appMode project/factory, display only? — WAITS his answers. Also owed: why his code attempt failed (find the cause first). **WAITING after it (his 685,
+686):** (a) the Pult's top card «Режим: один пользователь | много пользователей» (= appMode project/factory? — ask if unclear); (b) the
+architect claim by e-mail — his text verbatim in Telegram 686 (e-mail typed first, only that e-mail may register as the first
+architect; «Перейти на сервер»; loss warning), the confusing «Сайт/Панель/Вход» links, and why the local computer asks nothing — answer +
+plan before code.
+
 ## Letter to my next session (written 2026-11-18 ~14:24 UTC, window 55 %, Opus · max)
 
 Written by me for myself. We are inside the DAY PLAN 783 (new-steps/783-the-day-plan-of-november-eighteen-nine-steps.md — read it;
