@@ -1,94 +1,106 @@
 # 781 — the laptop boots and the main agent's Telegram answers by itself
 
-Status: plan, waits the owner's «да». Repository: the core (`main`).
+Status: plan, rewritten after the deep research (10:40–11:05 UTC on Opus · max), waits the owner's «да». Repository: the core (`main`).
+The failure itself, minute by minute, with evidence: `development-docs/reports/errors-the-main-agent-bot-went-deaf-after-the-reboot.md`.
 
 ## 1. Retelling and decisions (verbatim)
 
-- 2026-11-18 ~10:50 UTC, the owner: «Разрабатывай решение, которое ведёт вверху тревожный красный баннер если у нас существует Telegram
+- 2026-11-18 ~10:50, the owner: «Разрабатывай решение, которое ведёт вверху тревожный красный баннер если у нас существует Telegram
   основного агента который не подключился к сессии. Расскажи в нём что нужно делать и реши эту задачу механическим способом»
-- 2026-11-18 ~10:55 UTC, the owner: «это не маленькая проблемка это гигантская проблема … ноутбук стоит дома а пользователь с телефоном
-  находится на работе. Если мы необходимо включиться он позвонит членов семьи чтобы они открыли ноутбук и включили его. После этого
-  через несколько минут должен начать работать в Telegram … аварийные решения мы должны рассмотреть как частный случай но основная
-  задача именно такая пользователь вообще должен забыть и существование ноутбука»
+- ~10:55: «это не маленькая проблемка это гигантская проблема … ноутбук стоит дома а пользователь с телефоном находится на работе. Если
+  мы необходимо включиться он позвонит членов семьи чтобы они открыли ноутбук и включили его. После этого через несколько минут должен
+  начать работать в Telegram … аварийные решения мы должны рассмотреть как частный случай но основная задача именно такая пользователь
+  вообще должен забыть и существование ноутбука»
+- ~10:39: «я периодически вижу как Telegram начинает писать сообщения какие-то размышления наша сессия даже началась с его извинения о
+  том что сессия прервалась и тем не менее до сих пор Telegram не включён … меня беспокоит эти случайные появляющиеся про пробуждение и
+  засыпания»
+- ~10:45: «Аналогичным образом можно подумать о том, если можно чтобы в пульте телеграмма была реализована функция– сейчас бот спит.
+  Разбудить бота нужно это сделать?»
 
-So the main result is: power on → a few minutes → the bot answers, with no command typed. The red banner is the emergency case.
+The main result: power on → a few minutes → the bot answers, no command typed. Deafness heals by itself; the Pult and the red banner
+are the faces of the rare case it cannot.
 
-## 2. What happened on 2026-11-18 (measured — do not measure again)
+## 2. Causes (from the report)
 
-1. After the reboot nothing came up: no pm2 autostart on this Mac (no plist in `~/Library/LaunchAgents`); `npm run serve:autostart`
-   only prints a `sudo` line (scripts/serve.mjs `autostart()`), nobody ran it. An outside agent did `pm2 resurrect` at 10:15.
-2. The bot went deaf. A Claude session opened in the home folder at 10:14:10 started the GLOBALLY enabled Telegram plugin
-   (`~/.claude/settings.json` `enabledPlugins["telegram@claude-plugins-official"]: true`, written 2026-11-16 16:19 with the plugin's
-   reinstall), it died «TELEGRAM_BOT_TOKEN required», and Claude Code put `plugin:telegram:telegram` into the machine-wide failure
-   cache `~/.claude/mcp-needs-auth-cache.json` (10:14:12). The main agent's session then logged «Skipping connection (recent failure
-   cached…)». This is the 614-2 failure again: 614-2 relied on the plugin being off globally, and a reinstall turned it back on.
-3. `telegram.running(service)` = «session live AND started with the channel flag» — it does not look at the plugin's `bot.pid`. A
-   session whose plugin was skipped counts as «bot running», so the node does not read the bot either: the person's messages go nowhere.
-4. The domain tunnel's exits (code 1, 00:43–00:48) were DNS lookups failing as the laptop went offline — not a defect.
+1. The Telegram plugin is on for the whole machine again (614-2 broke on the plugin's reinstall 2026-11-16 16:19); any outside session
+   starts it without a token and poisons the machine-wide failure cache for 15 minutes.
+2. `telegram.running()` trusts the launch flag, not the plugin's live `bot.pid` → a deaf session silences the node's own poller.
+3. `watchChannel` covers only `wake(hold)`; the terminal page and the session command (model, clear) never check the channel.
+4. The progress hook drafts into the chat even when the agent cannot hear — «thoughts» without ears.
+5. No macOS autostart without sudo.
 
 ## 3. Known limits
 
-- Laws: no polling or timers nobody ordered — the watch below is ordered by the owner here; the architect's pages ask nothing without a
-  click — the banner rides the existing poll of the action window (`components/architect/person-ask.client.tsx`), no new timer;
-  never read `.env.local`; one modal; texts through translations; a component ≤ 250 lines.
-- `~/.claude/settings.json` is the person's file: we change ONE key (the Telegram plugin → false), as 614-2 decided, nothing else.
-- Autostart is system persistence: written once, after the person's yes in an on-screen window (`npm run ask-person`), never silently.
-- macOS with FileVault asks the account password at power-on: the family member types it (or the person turns on automatic login —
-  their choice, said aloud, never done by us).
+- No timers nobody ordered: the channel watch is ordered here by the owner; it reads one file every few seconds, no network.
+- The architect's pages ask nothing without a click — the banner rides the action window's existing poll (`person-ask.client.tsx`).
+- `~/.claude/settings.json` and `~/.claude/mcp-needs-auth-cache.json` are the person's Claude Code files: ONE key each (the Telegram plugin
+  → false; the `plugin:telegram:telegram` entry removed), a format we do not recognise is left untouched and logged.
+- Autostart is system persistence: written once after the person's yes (`npm run ask-person`), never silently.
+- macOS with FileVault asks the account password at power-on: the family member types it; automatic login is the person's choice.
+- The Pult door is public (phone over HTTPS) — its lock stays the bot token's signature (`app/api/node/tg-app/route.ts`).
 
-## 4. Substeps (each sliced through all layers, each with something to show)
+## 4. Substeps
 
-### 781-1 · One model-free answer to «does the main agent's bot hear?»
-- Built: `lib/node/main-channel.cjs` — `health()` → `{ bot, session, flagged, pluginPid, cachedFailureAt, globalPluginOn, state:
-  'ok'|'deaf'|'no-session'|'no-bot', cause }`; `telegram.running()` also requires a live `bot.pid` written after the session start;
-  `npm run person` uses `health()`; door `GET /api/node/main-channel` (architect, loopback).
-- Done when: today's case reads `deaf` with cause `cached-failure` + `global-plugin-on`.
-- Proofs: (a) the door on this node now → `deaf`; negative control: after a healthy session start → `ok`. (b) a fixture test of
-  `health()` over a temp home with and without the cache key.
+### 781-1 · «Hearing» is a fact, checked on every start path
+- Built: `running()` = live session AND a live plugin `bot.pid` written after the session's start (the check `freshPid` already in
+  `bridge.cjs`); `watchChannel` for EVERY session launched with the channel — the terminal page, the session command (model, clear),
+  the wake — not only `hold`; a start without a held task watches too and on failure closes, gives the bot back to the node and tells
+  the person. The terminal page and session starts get a log line `[agents/start] build by=<terminal|session|wake>`.
+- Done when: a session whose plugin was skipped is never counted as hearing on any path.
+- Proofs: (a) poison the cache by hand → start from the terminal page → in ≤ 30 s the log says «канал не встал», `idleTick` reads the
+  bot (a phone message gets the node's «Запустить» buttons); negative control: a clean start → «канал встал», the node silent.
+  (b) the same through `npm run session -- model opus`.
 
 ### 781-2 · The poison cannot come back
-- Built: at `serve:start` and before every session the node spawns with the channel: the Telegram plugin key → false in
-  `~/.claude/settings.json` (only that key; a backup of the file first, once); the `plugin:telegram:telegram` key removed from
-  `~/.claude/mcp-needs-auth-cache.json`.
-- Done when: a Claude session in the home folder no longer starts the plugin, and a poisoned cache never blocks a node session.
-- Proofs: (a) poison the cache by hand → spawn the main agent → `bot.pid` alive in ≤ 15 s. (b) `claude` in `/tmp` → no new
-  `mcp-logs-plugin-telegram-telegram` file under that folder; negative control: before the fix the same run writes one.
+- Built: at the core's start and right before every channel launch — the plugin key → false in `~/.claude/settings.json` (614-2 holds
+  again, a backup once in `data/node/claude-settings.backup.json`) and the `plugin:telegram:telegram` entry removed from
+  `~/.claude/mcp-needs-auth-cache.json`; the progress hook drafts only while the plugin pid is alive.
+- Done when: an outside Claude session cannot poison, and a poisoned cache never blocks a node start.
+- Proofs: (a) poison by hand → a node start → plugin up ≤ 15 s; negative control: the same with the removal switched off → «Skipping».
+  (b) `claude -p hi` in `/tmp` → no new plugin log under that folder's cache; before the fix it writes one.
 
-### 781-3 · The node heals a deaf session by itself
-- Built: the bridge watches a live session started with the channel: no live `bot.pid` for 20 s → clear the cache key, restart the
-  same conversation (`--continue`) once; still deaf → the session is closed, the node reads the bot again (a message wakes a fresh
-  session, as today) and the person gets one Telegram line through the node's own Bot API (no plugin needed): what happened, that it
-  was fixed or what the node does next.
-- Done when: a deaf main session comes back hearing with no hand on the computer.
-- Proofs: (a) kill the plugin process of a live main session → within 60 s a new `bot.pid`, a message from the phone answered.
-  (b) the node's log lines `[channel] deaf → healed`; negative control: a healthy session is never restarted (log silent for 30 min).
+### 781-3 · A deaf session heals itself
+- Built: in a live channel session the plugin pid disappears (plugin crashed, the network dropped it) → 20 s → the cache entry removed,
+  the same conversation restarted with `--continue` once; still deaf → closed, the node reads the bot, one Telegram line through the
+  node's own Bot API: what happened, what the node did, how to wake it (/on or the Pult).
+- Done when: killing the plugin of a live session brings the bot back with no hand.
+- Proofs: (a) `kill <bot.pid>` → in ≤ 60 s a new `bot.pid` and a phone message answered; (b) log `[channel] deaf → restarted → up`;
+  negative control: a healthy session over 30 minutes — no restart line.
 
-### 781-4 · Power on → the node is up → the bot answers, no sudo
-- Built: `serve:autostart` on macOS writes the node's own user LaunchAgent (`~/Library/LaunchAgents/ai.fractera.node.plist`,
-  RunAtLoad → `pm2 resurrect` with full paths, logs in `logs/`) — a user agent needs no sudo; `pm2 save` only when the list is
-  complete (all registered on-elements online); the first install asks once with a window («Запускать узел при включении
-  компьютера?»); after a boot the node sends one Telegram line «Узел включился, пишите» through its own Bot API.
-  Linux keeps `pm2 startup` (systemd), Windows keeps its Startup folder.
-- Done when: a real reboot of this Mac, no command typed → Telegram line arrives, a message from the phone is answered.
-- Proofs: (a) `launchctl print gui/$UID/ai.fractera.node` loaded + the real reboot test with the owner. (b) `logs/boot.log` line
-  with the boot time; negative control: plist removed → after a reboot nothing starts and `serve:status` says autostart is off.
+### 781-4 · The Pult: «Главный агент спит — разбудить?» (the owner's idea)
+- Built: the Pult's main-agent card gets its state from one model-free answer — «слушает» · «спит» (no session) · «не слышит» (session
+  without a live plugin) — and the button «Разбудить» (asleep) or «Переподключить» (deaf): a new action `wake` of the Pult door → the
+  781-3 path (or a plain start with `continueLast`). Works while the plugin is down: the Pult talks to the node over HTTPS.
+- Done when: from the phone, with the agent off or deaf, one tap brings a hearing agent.
+- Proofs: (a) agent off → the Pult says «спит» → «Разбудить» → `bot.pid` alive, a message answered; (b) `npm run eyes` of the Pult page
+  with each of the three states; negative control: a hearing agent shows no button.
 
-### 781-5 · The red banner — the emergency face
-- Built: when `health().state === 'deaf'` and 781-3 did not heal it, a red band on top of every panel page: «Telegram главного
-  агента не слышит вас» · the cause in plain words · what the node already tried · the button «Переподключить» (the 781-3 action by
-  hand) · the line «или введите в терминале /mcp → telegram → Reconnect». Data comes in the action window's existing poll
-  (`/api/node/person-asks` returns `channel`), no new timer; the band is a shadcn `Alert` (destructive), `data-block` on it.
-- Done when: the poisoned state shows the band within one poll, the button heals it and the band leaves.
-- Proofs: (a) `npm run eyes` screenshot of the band on /ru/architect/build/terminal with the cache poisoned and the plugin killed;
-  (b) after «Переподключить» the door says `ok` and the screenshot has no band; negative control: a healthy node — no band.
+### 781-5 · Power on → the node is up → «Узел включился», no sudo
+- Built: on macOS `serve:autostart` writes the node's own user LaunchAgent (`~/Library/LaunchAgents/ai.fractera.node.plist`, RunAtLoad
+  → `pm2 resurrect` with full paths, output in `logs/boot-*.log`) — no sudo; `pm2 save` only when every on-element is online; asked
+  once by a window at install and on the panel while it is missing; after a boot the node sends one line «Узел включился — пишите» to
+  the main agent's bot. Linux keeps `pm2 startup` (systemd), Windows its Startup folder.
+- Done when: a real reboot, no command typed → the Telegram line arrives and a message is answered.
+- Proofs: (a) `launchctl print gui/$UID/ai.fractera.node` + the reboot test with the owner; (b) `logs/boot-*.log` with the boot time;
+  negative control: the plist removed → nothing starts, `serve:status` says «автозапуск выключен».
+
+### 781-6 · The red banner — the panel's face of the rare case
+- Built: when the main agent has a bot and its state is «не слышит» after 781-3 gave up — a red band on top of every panel page: the
+  cause in plain words, what the node already did, «Переподключить» (the same action as the Pult), and «или /mcp → telegram →
+  Reconnect в терминале». Data in the action window's existing poll (`/api/node/person-asks` carries `channel`); shadcn `Alert`
+  destructive, `data-block`, texts through translations.
+- Done when: the deaf state shows the band within one poll; the button heals it; the band leaves.
+- Proofs: (a) `npm run eyes` screenshot with the band (cache poisoned, plugin killed); (b) after the button the door says «слушает» and
+  the screenshot has no band; negative control: a healthy node — no band.
 
 ## 5. Order
 
-781-1 → 781-2 → 781-3 → 781-4 → 781-5. One core rebuild at the end of the queue (code of the panel and the bridge), then the reboot test
-with the owner (781-4 proof a).
+781-1 → 781-2 → 781-3 (the deafness, the biggest pain) → 781-4 (the phone's face) → 781-5 (the boot) → 781-6 (the panel's face). One core
+rebuild at the end of the queue, then the reboot test with the owner.
 
 ## 6. Not included
 
-- Automatic login of macOS, waking the laptop remotely (Wake-on-LAN), keeping the node alive while the lid is closed — named to the
-  owner as the next question; a dedicated server stays the full answer for «the laptop is off» (skill `dedicated-server`).
-- Other channel plugins than Telegram.
+- Who woke or put the agent to sleep, told to the person in one place (core-back, session-lost, timeout, done): a separate step after
+  this one, if the owner wants it.
+- macOS automatic login, Wake-on-LAN, staying alive with the lid closed — the next question; a dedicated server is the full answer for
+  «the laptop is off» (skill `dedicated-server`).
