@@ -16,4 +16,5 @@ Taken only after the day plan 783 (steps 784–792) is closed. One line per defe
   for localhost drops it silently · measured in his Chrome (a JS cookie on localhost is not kept; a clean Chrome passes the whole round on a
   test SSH server) — the page should test a cookie first and name the cause and the setting.
 - `npm run eyes` could not open a `file://` page (its theme cookie needs an origin) — fixed inside 788 (a bench page is a file).
-
+- Lesson, not a defect (fixed in 788): the bench page runs unminified source — a check of the BUILT page (`curl` the live Pult page and parse its
+  script) belongs in the 788/787 proofs; the test now parses the whole page script.
