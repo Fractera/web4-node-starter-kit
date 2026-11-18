@@ -70,11 +70,20 @@ Roma, he presses «Установить с нуля», then install. Also owed t
 (door answers need-password in 0.18 s without a visit) → the password field + «Открыть доступ» appear only then; host edit hides it. A
 busy server (unrelated) is freed in the «Опасная зона» at the bottom (LaunchDanger: unrelated → ServerBusy node/busy texts; related with
 head → fresh); step 2 only says «освободить — в Опасной зоне». Clean server: no danger zone (install = step 4). Commit 68059f9f, prebuild
-RC=0, core build 14:29–14:33 RC=0, LIVE 68059f9f: eyes logs/eyes/2026-11-18T14-34-45-894Z.png (/ru/hosting/hosting — step 1 IP+port only, #launch-password absent, no console errors); his press not yet seen. Told Roma (Telegram 688–689) + proposed 796 (architect by e-mail instead of the code, his text verbatim, one «Перейти на сервер» button instead of Сайт/Панель/Вход until the architect exists; template release + core build) and asked 685 = appMode project/factory, display only? — WAITS his answers. Also owed: why his code attempt failed (find the cause first). **WAITING after it (his 685,
+RC=0, core build 14:29–14:33 RC=0, LIVE 68059f9f: eyes logs/eyes/2026-11-18T14-34-45-894Z.png (/ru/hosting/hosting — step 1 IP+port only, #launch-password absent, no console errors); his press not yet seen. Told Roma (Telegram 688–689) + proposed 796 (architect by e-mail instead of the code, his text verbatim, one «Перейти на сервер» button instead of Сайт/Панель/Вход until the architect exists; template release + core build) and asked 685 = appMode project/factory, display only? — WAITS his answers. Also owed: why his code attempt failed — measured 14:4x: the core keeps no trace of `claim` (launch-trace.jsonl logs only probe/state/signin; add claim to the trace in 796), and I have no visit to the server (his browser holds it) → read the server's auth logs once his access is open; suspect: the old install on fractera.ai, its sign-in version vs v2.4.36 (the claim). Ask him what the page said, in the reply to his next message (a second reply now would erase 688–689). **WAITING after it (his 685,
 686):** (a) the Pult's top card «Режим: один пользователь | много пользователей» (= appMode project/factory? — ask if unclear); (b) the
 architect claim by e-mail — his text verbatim in Telegram 686 (e-mail typed first, only that e-mail may register as the first
 architect; «Перейти на сервер»; loss warning), the confusing «Сайт/Панель/Вход» links, and why the local computer asks nothing — answer +
 plan before code.
+
+**14:36–15:0x UTC (Telegram 690, 692, 693): 796 + README + root's tagline.** README (980 domains, Telegram sentence) → 84cfe2e4,
+0c9debea, pushed to origin AND Fractera (ls-remote = HEAD; my push to Fractera WORKED today). Root's first screen (en/ru `_data`, workshop
+data/workshop/fractera-root-starter) → v3.0.68 pushed, pinned 1ac30245 (this computer's root NOT redeployed — his word 692). 796-1 by auth's
+own agent → v2.4.43 (44c13d0, 17 tests, negative control), pinned 2f8939d7, auth closed. 796-2 core 5727e47a (step 8: his text, e-mail
+field, «Перейти на сервер», links only once claimed; status via GET; auth-too-old guard; trace verb only); hosting-launch 24 passed,
+final-check 11 passed, prebuild RC=0; core build next. **Then:** eyes impossible for step 8 without a live server (DOM test is the proof);
+tell Roma: press «Установить с нуля» NOW (the fresh install takes auth v2.4.43 + root v3.0.68 from his fork), the live proof of 796 = his
+registration with his e-mail. 685 (the Pult «Режим») still unanswered. Pin registry trick: scratchpad pin.py (HEAD blob + update-index).
 
 ## Letter to my next session (written 2026-11-18 ~14:24 UTC, window 55 %, Opus · max)
 
