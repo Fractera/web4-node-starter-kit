@@ -214,48 +214,35 @@ reads me in the terminal. Build dec1677e live, the page clean (seen: step 1 open
 15:40 UTC: the whole path from zero (window like 698cb5ae), then admission + my restart with the channel. Meanwhile possible: 798-3 the
 server page (same three steps, design, order — every visible phrase agreed with him first), push the day's commits (his act).
 
-## Letter to my next session (written 2026-11-18 ~17:40 UTC, window 55 %, Opus · max)
+## Letter to my next session (written 2026-11-18 ~22:10 UTC, window 57 %, Opus)
 
-Written by me for myself. Day plan 783 (new-steps/783-…md). Roma reads me in Telegram (chat 90413601). Core live a622a876 + pins after.
+Written by me for myself. Roma is tired: «Всё если ты можешь что-то сделать сегодня с этим фиксировать текущий этап разработки … я хочу
+закончить с ботом … я хочу переключиться на другую задачу завтра продолжим когда он позволит создать нового бота». He reads me in the
+TERMINAL now — the node has NO main bot (no Telegram channel, the Pult does not open). Start with what he asks next (another task).
 
-- **784 the server: UP since 16:44.** fractera.ai 200, launch done (the hrutb stop fixed fb233968; Fractera registry now 0 born,
-  pre-push guard .githooks/pre-push, 4e199add). Bot @Fractera_fractera_5ion_bot configured+live; Claude Code on the server NOT signed in.
-  His word 748: «На сервер переключимся немного позже». Left for him: step 5 invite+«Старт»+sign-in, 6 records, 7 certs, 8 activate +
-  his e-mail → «Перейти на сервер» (the live proof of 796). Browser 1 (Chrome profile r6…) HAS the server visit until Thu 14:17: my tab
-  at http://localhost:24680/ru/hosting/hosting + javascript fetch POST /api/node/launch {action:"state"} reads the whole state (clean the
-  output of = ? & or the tool blocks it); state.sh now returns `failTail` (masked log tail of a failed stage).
-- **789/790 the Mini App — DESIGN LOOP, ONLY ROOT** (his 751 «до завершения проектирования работаем только с root нигде больше не
-  обновляю», 761 «Я тебе говорил пока проектируем только существующие root»). ✗ I had released template v0.3.216/v0.3.217 and PINNED them
-  in the core → Fractera; rolled back: the core pin is v0.3.215 again (3775e6c7, pushed fork + Fractera). The two tags stay on GitHub
-  (harmless, unpinned). From now: design changes go to ROOT'S OWN AGENT as tasks (`npm run task -- root …`), NEVER the template or a pin;
-  the template gets the final design once, at his word. Root: v0.3.216 merged (38057d2) and deployed by me; at 17:37 root's agent got
-  the v0.3.217 merge (the common items, his 757) — on its report: `npm run close -- root`, POST /api/node/deploy {"ids":["root"]},
-  eyes http://localhost:24683/ru/tg --width 390 --height 844 --click '[aria-label="Открыть меню"]'.
-- **790 in the core, live a622a876:** `lib/web4-items/element-tg-menu.ts` (reads the element's tg/_data/menu.json — data like the
-  passport), `_lib/draft-menu-tg.ts` (modes straight under «Рабочий процесс»; «Подписки»/«Крон» → the core's real pages; «Процесс»
-  folds), item-tree `mini-app` (listed:false), page.tsx resolve `workflow/mini-app/<segment>` (unknown → 404), widget
-  `_components/element-mini-app.client.tsx` (390×780 frame, address via /api/node/preview-url). **NOT YET CODED (his 757):** read
-  `common` in element-tg-menu.ts and put the common items BESIDE the modes under «Рабочий процесс» (siblings of «Мои проекты» and
-  «A2A · Web4»); segments include common; then ONE core build together with 759/760.
-- **17:39–17:43:** root merged v0.3.217 (2eb3688; common items outside the modes), closed, deployed by me; eyes
-  logs/eyes/2026-11-18T17-41-15-802Z.png (drawer: Обзор in the mode, a line, then Подписки › / Крон / Настройки / Помощь). His 763:
-  «когда будут появляться или исчезать новые папки это никогда не будет привозить к необходимости обновлений ядра? В противном случае
-  все это работа лишена любого смысла» → answered (765–767) with the measured fact: the element page is `Cache-Control: no-store`
-  (rendered per request) and element-tg-menu.ts reads the element's menu file at each render → no core rebuild; only the element's own
-  deploy for a new screen. NOT yet proven live with a real new item (said so, 767). His 764: «Проектирование продукта это не
-  строительный процесс это проектирование оно останется снаружи там где сейчас» → the element menu: Живой сайт · Подписка Claude Code ·
-  Терминал · Telegram-бот · Рабочий процесс · Проектирование продукта · Строительство · Настройки; «Мессенджер» — asked (766).
-- **759/760 (asked 762, partly answered 764):** the element's core menu like the core's, plain links: «Живой сайт · Подписка Claude Code · Терминал
-  · Telegram-бот · Рабочий процесс · Строительство · Настройки» (759: «вкладку Telegram вытащить наружу из вкладки строительства пусть
-  оно находится сразу под вкладкой живой сайт»; 760: «давай повторим интерфейс ядра … надписи можно сделать просто ссылками»). I asked
-  where «Мессенджер» and «Проектирование продукта» go (my pick: product design inside Build, messenger H2H inside Working process).
-  Moving pages changes addresses: keep the old ones as LEGACY redirects (item-tree's map), kit pages in page.tsx (`build/telegram`,
-  `build/terminal`, `build/subscription`, `messenger/h2a/telegram`).
-- **Other open:** 789 in-screen site chrome (breadcrumb, H1, «← Мини-приложение») — asked fix now or 793 (756); 786 A/C; 791 what
-  moves; 685 «Режим»; 793 notes added today (frame-ancestors, step-5 wording, foreign born, app-config url leak, failure tail).
-- **Lessons today:** agree a structure (nesting, menus) with him BEFORE code (his 757 «архитектуру вложенности тебе надо было всё-таки
-  со мной согласовать»); never pin an in-design template; the template release tool gets 403 (node token) — push with the machine's
-  login (`git push` in the workshop works); `template pin` pins even when the push failed — pin only after ls-remote shows the tag.
+- **798 the bot factory — state.** Live build dec1677e. The core's «Telegram-бот» page: ONE section; step 1 «Создайте бота» holds the
+  factory ladder in his order (1 «Сначала создайте Telegram-бота классическим способом» · 2 «Добавьте токен или сообщение @BotFather
+  целиком» · 3 «Переключите Telegram-бота в режим «Telegram-бот фабрика»» with his three points + «Проверить» + «Создать бота» as soon as a
+  token is kept); no manual road on the core page; a dead token reads dead; the Pult's grey «Бот» = «Создать бота»; the birth offer; the
+  waiter + link records. Commits 347020c1 … dec1677e, all LOCAL (not pushed — his act).
+- **PROVEN 21:27:** the factory works — @throughsongs_factory_0f24_bot created the main bot @throughsongs_fractera_22cc_bot by one tap; he was
+  admitted at 21:31:48. getMe's can_manage_bots LAGS behind the switch by minutes (false 21:23–21:25 while it already worked) — never gate on it.
+  Then by his word («надо удалять и пройти весь путь заново») both bots deleted (Unauthorized), records in data/node/removed-bot-2026-11-18/.
+- **BLOCKED:** @BotFather 21:46 «Sorry, too many attempts. Please try again in 64587 seconds» → no /newbot for his account until ~2026-11-19
+  15:40 UTC; /mybots empty. 22:05 he made @my_fractera_bot in ANOTHER account and pasted its token in the chat: kept as the factory
+  (data/node/bot-factory.json, managed true — Telegram confirmed). A creation link for the main bot was put (a15a3ba6) and dropped by his
+  word; its waiter times out 22:15 (data/node/bot-factory-wait.json «timeout» is fine). Advise him to Revoke that token later (it is in the chat).
+- **Tomorrow (his word «завтра продолжим»):** the main bot through the factory — page step 3 «Создать бота» (or the door: POST
+  /api/node/bot-factory {action:create, service:build}) → his «Создать» in Telegram (unknown whether his account's limit also stops
+  managed creation — the first tap tells) → «Старт» → my restart with the channel (npm run session -- model opus --continue). Then his test:
+  Pult → root → «Создать бота». Then 798-3 the server page (same steps, design, order — EVERY visible phrase agreed first), push.
+- **His rules today (memory compact-ui-folds-instructions):** «каждую фразу хочу с тобой согласовать» — no code/build without his word; a
+  phrase he did not understand → his own words; instructions folded, one road open; look at the WHOLE page before «готово».
+- **Unapproved phrases now on the page (name them to him):** sum2/kept «Токен бота @… сохранён: …», dead «Telegram больше не принимает …»,
+  management-off «Telegram пока отвечает, что режим выключен — так бывает несколько минут…», the button «Проверить».
+- **Other open:** the interface guards (pre-steps/2026-11-18-interface-guards-later.md, later, his word); 797 two «Терминал» rename
+  (asked); `npm run eyes` stalls on bot pages (networkidle vs the channel long-poll) → 793; the Pult/element pages' factory paths not
+  seen live; 786 plan text superseded by 798.
 
 ## The person's decisions (verbatim)
 
