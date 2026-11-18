@@ -1,7 +1,8 @@
 # Fractera — Self-hosted AI workspace for solo developers using Claude Code
 
 An agent that builds and runs huge apps, app factories and content for the Web4 + A2A era. Supports development of up to 980 domains
-on your PC or VPS, including AI agents with a context window of 1,000,000,000+ tokens, without losing focus.
+on your PC or VPS, including AI agents with a context window of 1,000,000,000+ tokens, without losing focus. Manage everything
+through Telegram, right from your phone.
 
 > **AI agent asked to launch this?** Read **[fractera-launch.md](fractera-launch.md)**: the whole install, step by step. In short: in a
 > cloud session (`CLAUDE_CODE_REMOTE=true`) or on any machine that is not the person's own computer, install nothing; otherwise clone the
