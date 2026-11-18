@@ -25,9 +25,11 @@ import { DomainRegistrars } from '@/components/domain/domain-registrars.client'
 // 775 (the owner, 2026-11-17, Telegram 406–411; the skill interface-design, card 409): three parts in ONE rhythm — 48 px from the page's
 // lead to the first and between all of them: the main domain, the additional domains, «Где зарегистрировать домен». No «Подробнее», no
 // page topics, no notes («Слишком много мусора»).
+// 799 (the owner, 2026-11-18): the additional domains show on a server too — only the main domain's section and the registrars card stay
+// this computer's (`data-place="home"` moved onto them).
 export const domainLadder: SectionRenderer<'domainLadder'> = (b, { key: k }) => (
-  <div key={k} data-block="domain-ladder-home" data-place="home" className="mt-8 flex flex-col gap-12">
+  <div key={k} data-block="domain-ladder-home" className="mt-8 flex flex-col gap-12">
     <DomainList lang={b.lang} dialogUi={appDialogUi(b.lang)} words={domainListWords(b.lang)} ladderWords={b.words} />
-    <DomainRegistrars words={b.words} />
+    <div data-block="domain-registrars-home" data-place="home"><DomainRegistrars words={b.words} /></div>
   </div>
 )

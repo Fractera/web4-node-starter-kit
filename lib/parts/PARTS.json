@@ -2156,7 +2156,9 @@
           "таблица"
         ]
       },
-      "usedBy": []
+      "usedBy": [
+        "components/domain/domain-server-pipeline.client.tsx"
+      ]
     },
     {
       "id": "github-token-alarm",
@@ -2336,6 +2338,7 @@
         "components/architect/person-ask-card.client.tsx",
         "components/dashboard/machine-board.client.tsx",
         "components/dev/viewport-badge.client.tsx",
+        "components/domain/domain-cards.client.tsx",
         "components/domain/domain-main.client.tsx",
         "components/domain/domain-pipeline.client.tsx",
         "components/hosting/domain-place.client.tsx",
@@ -3217,6 +3220,7 @@
         "components/domain/domain-key.client.tsx",
         "components/domain/domain-main.client.tsx",
         "components/domain/domain-pipeline.client.tsx",
+        "components/domain/domain-server-pipeline.client.tsx",
         "components/domain/domain-subdomains.client.tsx",
         "components/domain/static-copy.client.tsx",
         "components/domain/token-how-to.client.tsx",
@@ -4189,6 +4193,7 @@
         "components/bot-factory/bot-factory.client.tsx",
         "components/dashboard/a2a-feed.client.tsx",
         "components/deploy/deploy-board.client.tsx",
+        "components/domain/domain-server-pipeline.client.tsx",
         "components/element-docs/element-orders.client.tsx",
         "components/element-docs/reverse-engineering.client.tsx",
         "components/hosting/server-busy.client.tsx",
@@ -4448,6 +4453,7 @@
         "components/deploy/deploy-board.client.tsx",
         "components/domain/domain-list.client.tsx",
         "components/domain/domain-registrars.client.tsx",
+        "components/domain/domain-server-pipeline.client.tsx",
         "components/domain/domain-subdomains.client.tsx",
         "components/domain/token-how-to.client.tsx",
         "components/element-design/design-compare-step.client.tsx",

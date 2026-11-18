@@ -186,8 +186,7 @@ export async function attachDomain(id: string, input: string): Promise<{ ok: tru
   // решение которое работает на сервере предварительно мы должны добавить запись на регистратор»): a node whose domain is held by its own
   // server's nginx — the element's domain gets A records to the server (written by the node when the zone is on its Cloudflare account),
   // nginx learns the names, certificates follow when DNS points here (`name-up.mjs`). No tunnel.
-  const viaServer = (() => { try { return JSON.parse(readFileSync(join(ROOT, "logs", "domain.json"), "utf8")).via === "server" } catch { return false } })()
-  if (viaServer) return attachOnServer(id, name)
+  if (viaServer()) return attachOnServer(id, name)
   const s = await checkDomain(name, id)
   if (s.state !== "ready") return { ok: false, error: s.state }
   if (!serviceUrl(id)) return { ok: false, error: "no-port" }
@@ -235,6 +234,14 @@ export async function setPrimary(id: string, primary: Primary): Promise<{ ok: tr
 export async function detachDomain(id: string): Promise<{ ok: true } | Fail> {
   const name = domainOf(id)
   if (!name) return { ok: true }
+  // 799: a server node has no tunnel — the record goes and nginx is written again without the names (`name-up.mjs`); the A records at
+  // the registrar are the person's, never touched from here.
+  if (viaServer()) {
+    try { rmSync(join(DATA, id, "domain.json"), { force: true }) } catch { return { ok: false, error: "write-failed" } }
+    spawnSync(process.execPath, [join(ROOT, "scripts", "spawn-free.mjs"), join(ROOT, "scripts", "dedicated-server", "name-up.mjs")], { cwd: ROOT, stdio: "ignore", timeout: 10_000, windowsHide: true })
+    await redrawElement(id)
+    return { ok: true }
+  }
   const element = serviceUrl(id)
   const t = await nodeTunnel()
   if ("error" in t) return t
@@ -253,6 +260,11 @@ export async function detachDomain(id: string): Promise<{ ok: true } | Fail> {
   // копия и её маршрут снимаются.
   startStaticCopy(process.cwd(), id, hadSub ? [] : ["--remove"])
   return { ok: true }
+}
+
+/** The node's domain is held by its own server's nginx (`logs/domain.json` via "server", 737-17), not by a tunnel. */
+function viaServer(): boolean {
+  try { return JSON.parse(readFileSync(join(ROOT, "logs", "domain.json"), "utf8")).via === "server" } catch { return false }
 }
 
 /** 737-17: the element's own domain on a server node — A records (by the node's token when possible), the domain file, nginx and its

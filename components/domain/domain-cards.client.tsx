@@ -10,12 +10,14 @@ import { Label } from "@/components/ui/label"
 import type { DomainListWords } from "./domain-list.i18n"
 import type { DomainLadderWords } from "./domain-ladder.i18n"
 import { DomainPipeline, type PipelineDomain } from "./domain-pipeline.client"
+import { DomainServerPipeline, type ServerDomain } from "./domain-server-pipeline.client"
+import { useNodePlace } from "@/components/node-state/use-node-place.client"
 import { AppDialog } from "@/components/dialog/app-dialog.client"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
-export type Extra = PipelineDomain & { holder: string | null; holderAddress?: string | null }
+export type Extra = ServerDomain & { holder: string | null; holderAddress?: string | null }
 
 // 372: «active» is the zone's status in Cloudflare; beside it — whether the domain is connected (the node's main one or an element's).
 const BADGE: Record<string, string> = {
@@ -40,6 +42,8 @@ type Props = {
 export function DomainCards({ lang, dialogUi, role, domains, primaryName, architect, words: w, ladderWords, onChanged }: Props) {
   // 775: two add fields on one page — the elements' keeps the id an element's settings link to (#domain-add).
   const addId = role === "main" ? "domain-add-main" : "domain-add"
+  // 799: on a server node a card measures public DNS (no Cloudflare, no tunnel) — the node says where it lives, never the address bar.
+  const onServer = useNodePlace()?.kind === "server"
   // 775: every row closed until the person opens it (the owner: «первый аккордеон открывается зачем — задания не было»).
   const [open, setOpen] = useState<string>("")
   // 443-4: came from an element's settings (`?for=<id>`) — a ready domain's link leads back to that element's «Домен».
@@ -117,7 +121,11 @@ export function DomainCards({ lang, dialogUi, role, domains, primaryName, archit
               </span>
             </AccordionTrigger>
             <AccordionContent className="flex flex-col gap-2 px-4">
-              <DomainPipeline lang={lang} role={role} holder={d.holder ? d.holderAddress ?? d.holder : null} domain={d} words={w} ladderWords={ladderWords} onChanged={onChanged} hasPrimary={!!primaryName} forItem={forItem} architect={architect} />
+              {onServer ? (
+                <DomainServerPipeline lang={lang} domain={d} holder={d.holder} forItem={forItem} words={w} onChanged={onChanged} />
+              ) : (
+                <DomainPipeline lang={lang} role={role} holder={d.holder ? d.holderAddress ?? d.holder : null} domain={d} words={w} ladderWords={ladderWords} onChanged={onChanged} hasPrimary={!!primaryName} forItem={forItem} architect={architect} />
+              )}
               {/* 775 (the owner, 2026-11-17: «кнопку убрать из списка должно быть красный тревожный и должна вызывать обязательно
                   подтверждающий модальное окно»): red, and the one modal of the product asks first. */}
               <Button type="button" variant="destructive" size="sm" className="w-fit" onClick={() => setConfirm(d.name)} disabled={busy !== null} data-domain-remove>

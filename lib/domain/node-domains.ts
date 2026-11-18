@@ -4,6 +4,8 @@ import { dirname, join } from "node:path"
 import { isDnsLabel } from "@/lib/web4-items/dns-label.mjs"
 import { accountOfZone, activationCheck, createZone, getIngress, listAccounts, listZones, verifyToken, workersAccess, zoneByName } from "@/lib/domain/cloudflare"
 import { envValue } from "@/lib/web4-items/element-delete"
+import { lookup } from "@/lib/hosting/dns-check.mjs"
+import { placeKind } from "@/lib/hosting/place.mjs"
 
 // ДОМЕНЫ УЗЛА — СПИСОК, А НЕ ОДИН (шаг 324-1). Слово владельца 2026-09-27: «нужно все то что сделано там превратить в карточке
 // аккордеона … первую карточку может быть открыты карточка первого домена а кроме этого здесь надо позволить подключать больше
@@ -38,6 +40,10 @@ export type NodeDomain = {
   registrar?: string | null
   /** 775: what the person added it for — the main domain's section («main») or the elements' («element»); none — an older entry */
   for?: DomainFor
+  /** 799: on a server node — where public DNS leads the name now (A), the server's own IPv4, an IPv6 record that leads elsewhere */
+  pointsTo?: string[]
+  serverIp?: string
+  aaaa?: string[]
 }
 export type DomainFor = "main" | "element"
 export type Shape = "ok" | "bad-shape" | "with-www" | "primary" | "exists"
@@ -162,10 +168,36 @@ async function registrarOf(name: string): Promise<string | null> {
   } catch { return null }
 }
 
-type Observed = Pick<NodeDomain, "state" | "status" | "zoneId" | "nameServers" | "registrarNs" | "nsMatch" | "activationAsked" | "registrar">
+type Observed = Pick<NodeDomain, "state" | "status" | "zoneId" | "nameServers" | "registrarNs" | "nsMatch" | "activationAsked" | "registrar" | "pointsTo" | "serverIp" | "aaaa">
+
+/** 799: the IPv4 the server node was launched on (`data/node/server.json`, written by the launch) — the value of the A records. */
+export function serverIp(): string | null {
+  try {
+    const ip = String((JSON.parse(readFileSync(join(ROOT, "data", "node", "server.json"), "utf8")) as { ip?: unknown }).ip ?? "")
+    return /^\d{1,3}(\.\d{1,3}){3}$/.test(ip) ? ip : null
+  } catch { return null }
+}
+
+/**
+ * 799 (the owner, 2026-11-18: «на сервере должна существовать возможность использования нескольких доменов так же как и версия на
+ * компьютере»): a server node has no Cloudflare key and no tunnel — its domain is ready when public DNS leads the name to this server
+ * (`active`), the same readiness the element's «Домен» card asks for; nginx and the certificate follow the attachment (`name-up.mjs`).
+ * An AAAA record elsewhere is a trap: Let's Encrypt tries IPv6 first (`lib/hosting/dns-check.mjs`).
+ */
+async function observeOnServer(name: string): Promise<Observed | { error: string }> {
+  const ip = serverIp()
+  if (!ip) return { error: "no-server-ip" }
+  const [a, aaaa, registrar] = await Promise.all([lookup(name, "A"), lookup(name, "AAAA"), registrarOf(name)])
+  if (a === null) return { error: "dns-unreachable" }
+  const v6 = aaaa ?? []
+  const here = a.length > 0 && a.every((x: string) => x === ip) && v6.length === 0
+  const status = here ? undefined : v6.length && a.includes(ip) ? "aaaa" : a.length ? "elsewhere" : "no-records"
+  return { state: here ? "active" : "pending", status, pointsTo: a, serverIp: ip, aaaa: v6, registrar, zoneId: undefined, nameServers: undefined, registrarNs: undefined, nsMatch: undefined, activationAsked: undefined }
+}
 
 /** Всё, что узел может узнать о домене сейчас: зона, её серверы имён, серверы у регистратора; совпали — просит активацию. */
 async function observe(name: string): Promise<Observed | { error: string }> {
+  if (placeKind(ROOT) === "server") return observeOnServer(name)
   const key = envValue("CLOUDFLARE_API_TOKEN")
   if (!key) return { error: "no-key" }
   const [z, reg, registrar] = await Promise.all([zoneByName(key, name), registrarNs(name), registrarOf(name)])

@@ -41,6 +41,8 @@ export type DomainListWords = {
   loadFailed: string
   state: Record<string, string>
   pipe: Record<string, string>
+  /** 799: a domain's card on a server node — public DNS instead of Cloudflare */
+  server: Record<string, string>
   keyPerms: string[]
   key: Record<string, string>
   errors: Record<string, string>
@@ -113,6 +115,17 @@ const DICT: Record<string, DomainListWords> = {
       pending: "The zone is in Cloudflare but not active yet (status: {status}). At your registrar, set these name servers, wait (minutes to a day) and check again:",
       "not-visible": "There is no zone for this domain in the node's Cloudflare account yet — the node creates it at step 1.",
       unknown: "Not checked yet.",
+    },
+    server: {
+      lead: "The server answers a domain once public DNS leads its name to the server. Write two A records where the domain's DNS is kept (at the registrar or at Cloudflare):",
+      type: "Type", name: "Name", value: "Value", zone: "Domain {zone}", optional: "optional",
+      now: "Now {name} leads to: {where}.",
+      nowhere: "nowhere, no A records yet",
+      here: "{name} leads to this server ({ip}). Connect it to an element: open the element → «Settings» → «Domain».",
+      aaaa: "The name also has an AAAA (IPv6) record: {where}. Delete it, or the certificate will not be issued.",
+      note: "If the name leads to another site now, that site stops opening on it after the change. DNS takes from a few minutes to an hour.",
+      check: "Check again", checking: "Checking…", checked: "Checked at {time}",
+      back: "Connect it to the element {item}",
     },
     pipe: {
       step1: "1. Zone in Cloudflare",
@@ -187,6 +200,7 @@ const DICT: Record<string, DomainListWords> = {
     errors: {
       "bad-shape": "Not a domain name: labels of Latin letters, digits and hyphens joined by dots, for example mybrand.com.",
       "with-www": "Type the root of the domain without www.",
+      "no-server-ip": "The node does not know its server's IP address.", "dns-unreachable": "Public DNS did not answer — try again.",
       "main-exists": "The node already has its main domain — add this one as an additional domain.",
       primary: "This is the node's main domain or its subdomain — it is already here.",
       exists: "This domain is already in the list.",
@@ -272,6 +286,17 @@ const DICT: Record<string, DomainListWords> = {
       "not-visible": "Зоны этого домена в аккаунте Cloudflare узла пока нет — её создаёт узел на ступени 1.",
       unknown: "Ещё не проверялся.",
     },
+    server: {
+      lead: "Сервер отвечает по домену, когда публичный DNS ведёт его имя на сервер. Впишите две записи A там, где ведутся DNS домена (у регистратора или в Cloudflare):",
+      type: "Тип", name: "Имя", value: "Значение", zone: "Домен {zone}", optional: "по желанию",
+      now: "Сейчас {name} ведёт на: {where}.",
+      nowhere: "никуда, записей A пока нет",
+      here: "{name} ведёт на этот сервер ({ip}). Подключите его к элементу: откройте элемент → «Настройки» → «Домен».",
+      aaaa: "У имени есть ещё запись AAAA (IPv6): {where}. Удалите её, иначе сертификат не выпустится.",
+      note: "Если имя сейчас ведёт на другой сайт, после замены он перестанет на нём открываться. DNS обновляется от нескольких минут до часа.",
+      check: "Проверить снова", checking: "Проверяю…", checked: "Проверено в {time}",
+      back: "Подключить к элементу {item}",
+    },
     pipe: {
       step1: "1. Зона в Cloudflare",
       step1Done: "Зона есть в аккаунте Cloudflare узла.",
@@ -344,6 +369,7 @@ const DICT: Record<string, DomainListWords> = {
     errors: {
       "bad-shape": "Это не имя домена: метки из латинских букв, цифр и дефисов через точку, например mybrand.com.",
       "with-www": "Введите корень домена без www.",
+      "no-server-ip": "Узел не знает IP-адрес своего сервера.", "dns-unreachable": "Публичный DNS не ответил — попробуйте ещё раз.",
       "main-exists": "Основной домен у узла уже есть — добавьте этот как дополнительный.",
       primary: "Это основной домен узла или его поддомен — он уже здесь.",
       exists: "Этот домен уже в списке.",
