@@ -91,7 +91,7 @@ logs/eyes/2026-11-18T16-06-37-014Z.png (light), 16-06-41-083Z.png (dark): left s
 элемента», ×), groups with small caps headings, 56 px two-line items with 36 px icon tiles, current = bg-muted + 3 px primary bar,
 footer «Открыть сайт элемента». Sent (725–727), waits his yes. Then: workshop data/workshop/fractera-custom-item-starter — `tg/_data/menu.json`,
 `tg/_components/tg-drawer.client.tsx` (shadcn Sheet left; parts_find first), BackButton closes, skill telegram-mini-app; release v0.3.216;
-NO core build while the server installs (promise, Telegram 719).
+NO core build while the server installs (promise, Telegram 719). ✗ 16:18 the install FAILED at «Пакеты, сборка и элементы» (prepare 15:23→16:07, source 16:07:35 FRESH_OK, install.sh 16:07:36 → stop); the reason not visible (cut tail), my Chrome profile has no visit → asked his screenshot of step 4 (728). Note for 793 written.
 
 ## Letter to my next session (written 2026-11-18 ~14:24 UTC, window 55 %, Opus · max)
 
