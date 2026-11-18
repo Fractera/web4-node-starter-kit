@@ -63,7 +63,7 @@ export type ServerLaunchWords = {
   recheck: { text: string; button: string; gate: string; noDomain: string }
   /** 758: step 5 — the server's own bot while the server installs; `{stage}` the installation's stage, `{tail}` the token's last four, `{bot}` @name */
   telegram: {
-    text: string; how: string[]; label: string; tokenNote: string; save: string; later: string; laterNote: string; connectNow: string
+    text: string; how: string[]; nameLabel: string; usernameLabel: string; copy: string; copied: string; openBotFather: string; label: string; tokenNote: string; save: string; later: string; laterNote: string; connectNow: string
     pending: string; rejected: string; on: string; admitted: string; link: string; linkNote: string; installing: string; waitNode: string
     /** 761-2/761-14: the bot's own lines — `{site}` `{link}` the site, `{terminal}` `{subscription}` the server panel's pages (or `noPanel`) */
     lines: { active: string; inactive: string; noSubscription: string; noPanel: string }
@@ -195,7 +195,8 @@ const en: ServerLaunchWords = {
   stage: STAGE_EN,
   telegram: {
     text: "While the server installs, give it a Telegram bot of its own: from then on you talk to the server's main agent from the phone. You can skip it and connect it later.",
-    how: ["In Telegram open @BotFather and send /newbot.", "Give the bot a name, then an address ending in «bot».", "BotFather answers with a token like 1234567890:AA… — paste it here."],
+    how: ["In Telegram open @BotFather and send /newbot.", "BotFather asks for a name, then the bot's address. Copy them from here one by one and paste them into the chat:", "BotFather answers with a token like 1234567890:AA… — paste it here, in the field below."],
+    nameLabel: "The bot's name", usernameLabel: "The bot's address (ends in «bot»)", copy: "Copy", copied: "Copied", openBotFather: "Open @BotFather",
     label: "The bot's token from @BotFather",
     tokenNote: "The token goes to the server and is kept only there; this page sees its last four characters.",
     save: "Connect the bot",
@@ -378,7 +379,8 @@ const ru: ServerLaunchWords = {
   stage: STAGE_RU,
   telegram: {
     text: "Пока сервер ставится, подключите ему собственного Telegram-бота: дальше с главным агентом сервера можно говорить с телефона. Шаг можно пропустить и вернуться к нему позже.",
-    how: ["В Telegram откройте @BotFather и отправьте /newbot.", "Дайте боту имя, затем адрес, который кончается на «bot».", "BotFather пришлёт токен вида 1234567890:AA… — вставьте его сюда."],
+    how: ["В Telegram откройте @BotFather и отправьте /newbot.", "BotFather попросит имя, затем адрес бота. Скопируйте их отсюда по очереди и вставьте в чат:", "BotFather пришлёт токен вида 1234567890:AA… — вставьте его сюда, в поле ниже."],
+    nameLabel: "Имя бота", usernameLabel: "Адрес бота (кончается на «bot»)", copy: "Скопировать", copied: "Скопировано", openBotFather: "Открыть @BotFather",
     label: "Токен бота от @BotFather",
     tokenNote: "Токен уходит на сервер и хранится только там; эта страница видит лишь четыре последних знака.",
     save: "Подключить бота",

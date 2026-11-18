@@ -2557,7 +2557,8 @@
         "app/[lang]/(architectLayer)/architect/memory/_agent-kit/client/telegram-channel.client.tsx",
         "app/[lang]/(architectLayer)/architect/storage/_agent-kit/client/telegram-channel.client.tsx",
         "app/[lang]/(architectLayer)/architect/stripe/_agent-kit/client/telegram-channel.client.tsx",
-        "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/telegram-channel.client.tsx"
+        "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/telegram-channel.client.tsx",
+        "components/hosting/server-launch-telegram.client.tsx"
       ]
     },
     {
@@ -2887,6 +2888,7 @@
         "components/element-docs/reverse-engineering.client.tsx",
         "components/hosting/ladder-step.tsx",
         "components/hosting/server-ladder-records.client.tsx",
+        "components/hosting/server-launch-telegram.client.tsx",
         "components/official/official-account.client.tsx",
         "components/panel-design/node-settings.tsx",
         "components/payments/stripe-keys.client.tsx",

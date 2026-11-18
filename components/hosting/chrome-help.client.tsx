@@ -19,10 +19,10 @@ const fill = (t: string, map: Record<string, string>) => Object.entries(map).red
 type HelpWords = Pick<ServerLaunchWords["chrome"], "title" | "steps" | "note" | "button">
 
 /** The card and its button; `map` fills the steps (`{cabinet}`), `task` waits in the main agent's paste window. */
-export function ChromeHelp({ lang, words, map, task }: { lang: string; words: HelpWords; map: Record<string, string>; task: string }) {
+export function ChromeHelp({ lang, words, map, task, titled = true }: { lang: string; words: HelpWords; map: Record<string, string>; task: string; titled?: boolean }) {
   return (
     <div className="flex flex-col gap-2 rounded-md border border-border bg-muted/40 p-3" data-block="server-launch-chrome">
-      <Small className="font-medium text-foreground">{words.title}</Small>
+      {titled ? <Small className="font-medium text-foreground">{words.title}</Small> : null}
       <ol className="flex list-decimal flex-col gap-1 pl-5 text-foreground text-sm" data-block="server-launch-chrome-steps">
         {words.steps.map((s) => <li key={s}>{fill(s, map)}</li>)}
       </ol>

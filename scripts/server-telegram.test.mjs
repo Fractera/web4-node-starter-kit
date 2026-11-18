@@ -4,7 +4,7 @@
 // `lib/hosting/server-telegram.mjs` with the launch page's own words (ru, en), each case with its negative control.
 import assert from 'node:assert/strict'
 import { createRequire } from 'node:module'
-import { botLines, cleanLines, greetText, telegramWarn } from '../lib/hosting/server-telegram.mjs'
+import { botLines, cleanLines, greetText, serverBotSuggestion, telegramWarn } from '../lib/hosting/server-telegram.mjs'
 
 let passed = 0
 const t = (name, fn) => { try { fn(); passed += 1; console.log(`  ✓ ${name}`) } catch (e) { console.error(`  ✗ ${name}\n    ${e.message}`); process.exitCode = 1 } }
@@ -50,6 +50,18 @@ t('the greeting names the site with its link and asks for two or three lines onl
   const g = greetText({ zone: 'fractera.ai' })
   assert.ok(g.includes('fractera.ai (https://fractera.ai)') && g.includes('two or three short lines'), g)
   assert.ok(greetText({ ip: '1.2.3.4' }).includes('1.2.3.4 (http://1.2.3.4)'))
+})
+
+await t('784 (Telegram 710): the bot name and address ready to copy — a valid @BotFather address, stable per server, different per server', () => {
+  const valid = (u) => /^[A-Za-z][A-Za-z0-9_]{1,29}bot$/i.test(u) && u.length >= 5 && u.length <= 32
+  const a = serverBotSuggestion({ zone: 'fractera.ai', ip: '109.199.105.213' })
+  assert.ok(valid(a.username) && a.username.endsWith('_bot') && a.name.includes('fractera.ai'), JSON.stringify(a))
+  assert.deepEqual(serverBotSuggestion({ zone: 'fractera.ai', ip: '109.199.105.213' }), a)
+  const b = serverBotSuggestion({ ip: '203.0.113.7' })
+  assert.ok(valid(b.username) && b.name.includes('203.0.113.7') && b.username !== serverBotSuggestion({ ip: '203.0.113.8' }).username)
+  const long = serverBotSuggestion({ zone: 'a-very-long-domain-name-for-a-test.example.org', ip: '1.2.3.4' })
+  assert.ok(valid(long.username) && long.name.length <= 64, long.username)
+  assert.ok(valid(serverBotSuggestion({ zone: '123-shop.com' }).username), 'a domain starting with a digit still gives a letter first')
 })
 
 console.log(process.exitCode ? `===SERVER_TELEGRAM_FAILED=== ${passed} passed` : `===SERVER_TELEGRAM_OK=== ${passed} passed`)

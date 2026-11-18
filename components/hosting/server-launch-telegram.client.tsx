@@ -2,14 +2,17 @@
 // @local — step 5 of the launch ladder (one route: «Активация выделенного сервера»): the server's own Telegram bot, made while the server installs
 
 import { useEffect, useRef, useState } from "react"
+import { ExternalLink } from "lucide-react"
+import { CopyRow } from "@/components/auth/setup-ladder.client"
 import { ChromeHelp, telegramTask } from "@/components/hosting/chrome-help.client"
 import type { LaunchState } from "@/components/hosting/server-launch.client"
 import type { ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Small } from "@/components/ui/typography"
-import { botLines } from "@/lib/hosting/server-telegram.mjs"
+import { botLines, serverBotSuggestion } from "@/lib/hosting/server-telegram.mjs"
 
 // 758. The owner, 2026-11-16: «Telegram может быть в пятым шагом то есть в тот момент когда идёт установка сервера у пользователя есть
 // время подключить Telegram» and «шаг 5 необязательный». The step opens as soon as the installation runs (step 4 is done then), keeps one
@@ -34,6 +37,8 @@ export function TelegramStep({ lang, state, words, busy, onAct }: { lang: string
   const agent = telegramTask(w.agent, { zone: state.domain?.domain ?? null, ip: state.host ?? null })
   // 761-2/761-14: the bot's own three lines in this page's language, each naming the site with its link
   const lines = botLines(w.lines, { zone: state.core?.zone ?? state.domain?.domain ?? null, ip: state.host ?? null, lang })
+  // 784 (Telegram 710): the name and the address ready to copy into @BotFather, as on the node's own bot page
+  const named = serverBotSuggestion({ zone: state.core?.zone ?? state.domain?.domain ?? null, ip: state.host ?? null })
   const sent = useRef<string | null>(null)
   useEffect(() => {
     // a bot set before 761 (or from another page) still speaks the fallback: its lines are sent once per bot on this page
@@ -88,8 +93,16 @@ export function TelegramStep({ lang, state, words, busy, onAct }: { lang: string
       {showForm ? (
         <form className="flex flex-col gap-3" data-block="server-launch-telegram-form" onSubmit={(e) => { e.preventDefault(); void save() }}>
           <Small className="max-w-prose text-foreground">{w.text}</Small>
-          <ol className="flex list-decimal flex-col gap-1 pl-5 text-foreground text-sm" data-block="server-launch-telegram-how">{w.how.map((line) => <li key={line}>{line}</li>)}</ol>
-          {agent ? <ChromeHelp lang={lang} map={{}} task={agent.task} words={w.agent} /> : null}
+          <ol className="flex list-decimal flex-col gap-2 pl-5 text-foreground text-sm" data-block="server-launch-telegram-how">
+            <li>{w.how[0]}</li>
+            <li>
+              {w.how[1]}
+              <CopyRow copied={w.copied} copy={w.copy} id="server-launch-telegram-name" label={w.nameLabel} value={named.name} />
+              <CopyRow copied={w.copied} copy={w.copy} id="server-launch-telegram-username" label={w.usernameLabel} value={named.username} />
+            </li>
+            <li>{w.how[2]}</li>
+          </ol>
+          <a className={buttonVariants({ size: "sm", variant: "outline", className: "w-fit" })} href="https://t.me/BotFather" rel="noopener noreferrer" target="_blank">{w.openBotFather}<ExternalLink data-icon="inline-end" /></a>
           <Field>
             <FieldLabel htmlFor="server-launch-telegram-token">{w.label}</FieldLabel>
             <Input autoComplete="off" id="server-launch-telegram-token" onChange={(e) => setToken(e.target.value)} spellCheck={false} type="password" value={token} />
@@ -99,6 +112,15 @@ export function TelegramStep({ lang, state, words, busy, onAct }: { lang: string
             <Button disabled={busy || !token.trim()} size="sm" type="submit">{w.save}</Button>
             {!t?.skipped ? <Button disabled={busy} onClick={() => void onAct("telegram", { op: "skip" })} size="sm" type="button" variant="ghost">{w.later}</Button> : null}
           </div>
+          {/* Telegram 710: «вкладка создать при помощи Telegram должна выглядеть как аккордеон и быть по умолчанию закрытой» */}
+          {agent ? (
+            <Accordion collapsible data-block="server-launch-telegram-agent-fold" type="single">
+              <AccordionItem value="agent">
+                <AccordionTrigger>{w.agent.title}</AccordionTrigger>
+                <AccordionContent><ChromeHelp lang={lang} map={{}} task={agent.task} titled={false} words={w.agent} /></AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ) : null}
         </form>
       ) : null}
     </div>
