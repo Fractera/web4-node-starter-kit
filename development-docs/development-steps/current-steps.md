@@ -283,6 +283,9 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-19 ~20:20 UTC, before the core build of 806, Opus)
 
+**UPDATE 23:50 UTC:** build fbdbab1e live; eyes: root's bot page = the old BotFather ladder with editable name fields; the main
+bot page shows @Fractera_build_mc47x_bot connected, admitted 1 — BUT Telegram answers 401 to its token (revoked yesterday). Window
+06a62d58: his new token from @BotFather (Revoke) on /ru/build/telegram step 2 (or a new bot). On «Готово»: a reply through the bot.
 **UPDATE ~21:30 UTC — Telegram rollback (his «да, делай откат»):** 51fb0dd1 + 0e25361c: the 8 bot-factory commits (798, 11-18 18:45–22:15)
 undone file by file (restored to 38d93914, its 9 new files deleted, the kit updated in 12 groups); item-birth kept 804 (my first restore
 lost it — fixed). The bot name/username fields are editable (CopyRow `editable`). The main bot @Fractera_build_mc47x_bot copied back
