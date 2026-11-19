@@ -572,6 +572,27 @@ const verbs = {
     } finally { client.end() }
   },
 
+  // 806-8 (the owner, 2026-11-19: «yes of course 100%»): what earlier installers left — the Easy Starter's trees, root's caches, Docker's
+  // unused — erased beside this node, which is never named there (`leftovers.sh`); detached like the clear, its one line read here
+  async leftovers() {
+    if (opt('confirm') !== host) return fail('not-confirmed')
+    const { client } = await byKey()
+    try {
+      await scripts(client, ['leftovers.sh'])
+      const out = `${DIR}/leftovers.out`
+      await exec(client, `rm -f ${q(out)}`)
+      await startDetached(client, `${dry ? 'LEFT_TEST=1 ' : ''}bash ${q(`${DIR}/leftovers.sh`)}`, out)
+      let answer = null
+      for (const t0 = Date.now(); !answer && Date.now() - t0 < 1_500_000;) {
+        await new Promise((res) => setTimeout(res, dry ? 200 : 3000))
+        const r = await exec(client, `tail -n 1 ${q(out)} 2>/dev/null || true`, { timeoutMs: 20_000 })
+        try { const v = JSON.parse(r.stdout.trim()); if (v && typeof v === 'object' && 'erased' in v) answer = v } catch { /* not yet */ }
+      }
+      await probe(client)
+      done({ ok: Boolean(answer), leftovers: answer, state: await readState(client) })
+    } finally { client.end() }
+  },
+
   async clear() {
     if (opt('confirm') !== host) return fail('not-confirmed')
     const { client } = await byKey()
@@ -584,7 +605,7 @@ const verbs = {
       // Starter's way; `--keep-site` keeps this node's own nginx site so its «updating» page answers while the fresh node installs (806-6).
       const fresh = args.includes('--fresh') && Boolean(s0.probe?.fractera)
       const nodes = fresh ? [...new Set([FOLDER, ...(s0.relation?.nodes ?? []), ...(s0.probe?.otherNodes ?? [])])] : s0.relation?.nodes ?? []
-      await scripts(client, ['clear.sh'])
+      await scripts(client, ['clear.sh', 'leftovers.sh'])
       // 806-1: an erase of whole nodes (millions of files) may outlast one SSH call — the script runs detached on the server and this
       // runner reads its one answer line; a dropped connection cuts nothing there.
       const out = `${DIR}/clear.out`
@@ -620,7 +641,7 @@ export function launchRecords(zone, ip, dnsZone = null) {
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   if (!verbs[verb]) {
-    console.log('Запуск сервера: connect · close · state · log · probe · install --mode install|update · domain --name · way --way · detect · dns · door · telegram · signin · clear --confirm')
+    console.log('Запуск сервера: connect · close · state · log · probe · install --mode install|update · domain --name · way --way · detect · dns · door · telegram · signin · clear --confirm · leftovers --confirm')
     process.exit(verb ? 2 : 0)
   }
   if (!(IPV4.test(host) || isHostName(host)) || !Number.isInteger(port) || port < 1 || port > 65535) {

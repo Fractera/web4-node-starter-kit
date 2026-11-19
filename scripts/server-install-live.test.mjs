@@ -38,6 +38,7 @@ function tree(name) {
   put(path.join(root, 'fractera-cleared-20261119-081456', 'nginx', 'shop'), 'server { }') // a stranger's site kept by an earlier clear
   put(path.join(root, '.ssh', 'authorized_keys'))
   put(path.join(root, '.npm', '_cacache', 'index-v5', 'x'))
+  put(path.join(base, 'opt', 'fractera', 'app', 'x')); put(path.join(base, 'etc', 'fractera', 'node.env'))
   put(path.join(base, 'etc', 'letsencrypt', 'live', 'fractera.ai', 'fullchain.pem'))
   put(path.join(nginx, 'sites-enabled', 'fractera'), `${MARK}server { }`)
   put(path.join(nginx, 'sites-enabled', 'blog'), 'server { }')
@@ -50,7 +51,7 @@ function tree(name) {
 }
 const clear = (tr, ...args) => {
   const r = spawnSync('bash', [CLEAR, '--dir', tr.dir, ...args], {
-    encoding: 'utf8', env: { ...process.env, CLEAR_TEST: '1', CLEAR_HOME: tr.home, CLEAR_ROOT: tr.root, CLEAR_NGINX: tr.nginx },
+    encoding: 'utf8', env: { ...process.env, CLEAR_TEST: '1', CLEAR_HOME: tr.home, CLEAR_ROOT: tr.root, CLEAR_NGINX: tr.nginx, CLEAR_BASE: tr.base },
   })
   const line = r.stdout.trim().split('\n').pop()
   try { return { ...JSON.parse(line), rc: r.status } } catch { throw new Error(`clear.sh said: ${r.stdout}\n${r.stderr}`) }
@@ -68,6 +69,8 @@ t('the copies of earlier clears and launches are erased', () => {
 t('the node user\'s caches and root\'s npm cache are erased', () => {
   for (const c of ['.npm', '.cache', '.pm2']) assert.equal(existsSync(path.join(a.home, c)), false, c)
   assert.equal(existsSync(path.join(a.root, '.npm', '_cacache')), false)
+  assert.equal(existsSync(path.join(a.base, 'opt', 'fractera')), false, 'the Easy Starter\'s tree goes with every clear of a node')
+  assert.ok(existsSync(path.join(a.base, 'etc', 'fractera', 'node.env')), 'the node\'s own /etc/fractera stays')
 })
 t('negative: the keys, the Claude sign-in, the certificates, a stranger\'s kept site, the bot token and the stopwatch stay', () => {
   for (const k of ['.ssh/authorized_keys', '.claude/settings.json', '.local/bin/claude']) assert.ok(existsSync(path.join(a.home, k)), k)
@@ -101,6 +104,21 @@ t('negative: a folder name «..» or «.» erases nothing', () => {
   assert.deepEqual(rc.nodes, [])
   assert.ok(existsSync(path.join(c.home, 'web4-node-starter-kit', 'package.json')) && existsSync(path.join(c.home, '.npm')))
 })
+
+console.log('806-8 · what earlier installers left')
+{
+  const L = path.join(scratch, 'left')
+  for (const f of ['opt/fractera/app/x', 'opt/fractera-main/x', 'root/.cache/camoufox/x', 'root/.npm/_cacache/x', 'root/.ssh/authorized_keys', 'etc/fractera/node.env', 'home/fractera/web4-node-starter-kit/x', 'etc/letsencrypt/live/a/x']) put(path.join(L, f))
+  const r = spawnSync('bash', [path.join(here, 'dedicated-server', 'leftovers.sh')], { encoding: 'utf8', env: { ...process.env, LEFT_ROOT: L, LEFT_TEST: '1' } })
+  const out = JSON.parse(r.stdout.trim().split('\n').pop())
+  t('the Easy Starter\'s trees and root\'s caches are erased', () => {
+    for (const f of ['opt/fractera', 'opt/fractera-main', 'root/.cache', 'root/.npm/_cacache']) assert.equal(existsSync(path.join(L, f)), false, f)
+    assert.equal(out.erased.length, 4)
+  })
+  t('negative: the node, its /etc/fractera, the keys and the certificates stay', () => {
+    for (const f of ['home/fractera/web4-node-starter-kit/x', 'etc/fractera/node.env', 'root/.ssh/authorized_keys', 'etc/letsencrypt/live/a/x']) assert.ok(existsSync(path.join(L, f)), f)
+  })
+}
 
 console.log('806-3 · the live reader')
 const iso = (ms) => new Date(ms).toISOString().replace(/\.\d{3}Z$/, 'Z')

@@ -17,7 +17,7 @@
 # `--dir` (telegram.json), the stopwatch of earlier launches (timings.json).
 # `--keep-site` (a fresh install of THIS node, 806-6): the node's own nginx site stays in place — with nothing behind it nginx answers its
 # «the node is updating» page (lib/hosting/nginx.mjs, error_page 502 → 503) until the new node starts; otherwise it is deleted too.
-# Prints ONE JSON line: { backup, stopped, sites, nodes, erased, freedGb, freeGb }.
+# Prints ONE JSON line: { backup, stopped, sites, nodes, erased, docker, freedGb, freeGb }.
 # Test roots (scripts/server-clear.test.mjs): CLEAR_HOME, CLEAR_ROOT, CLEAR_NGINX; CLEAR_TEST=1 runs no service command (pm2, systemctl,
 # runuser, nginx) — the test machine's own processes are never touched.
 set -u
@@ -104,6 +104,10 @@ if [ ${#NODES[@]} -gt 0 ]; then
       [ "$real" != "$f" ] && erase "$real"
     done
   fi
+  # 806-8 (the owner, 2026-11-19: «Не просто стереть а всегда стирать … очищаем сервер значит очищаем на 100%»): a clear of a node
+  # always erases what earlier installers left too — the Easy Starter's trees, root's caches, Docker's unused (`leftovers.sh`, beside
+  # this script; ✗ that day 20 GB of them stayed after a clear)
+  LEFT="$(LEFT_ROOT="${CLEAR_BASE:-}" LEFT_TEST="$TEST" bash "$(dirname "$0")/leftovers.sh" 2>/dev/null | tail -n 1)"
   # the records of the launch of the node; the scripts stay (uploaded anew by every act), and so do the bot token and the stopwatch
   for x in launch.json launch.progress.jsonl launch.log launch.out version.json domain.json domain.json.tmp probe.json preflight.json prepare.progress.jsonl prepare.log; do
     erase "$DIR/$x"
@@ -122,11 +126,16 @@ A Fractera node cleared here was erased (step 806-1), not kept.
 EOF
 fi
 FREE_AFTER="$(free_kb)"
-python3 - "$BACKUP" "${STOPPED:-0}" "$SITES" "$GONE" "${FREE_BEFORE:-0}" "${FREE_AFTER:-0}" "${ERASED[@]+"${ERASED[@]}"}" <<'PY'
+python3 - "$BACKUP" "${STOPPED:-0}" "$SITES" "$GONE" "${FREE_BEFORE:-0}" "${FREE_AFTER:-0}" "${LEFT:-}" "${ERASED[@]+"${ERASED[@]}"}" <<'PY'
 import json, sys
-backup, stopped, sites, nodes, before, after, *erased = sys.argv[1:]
+backup, stopped, sites, nodes, before, after, left, *erased = sys.argv[1:]
+try:
+    left = json.loads(left) if left else {}
+except Exception:
+    left = {}
+erased += left.get("erased") or []
 gb = lambda kb: round(int(kb or 0) / 1048576, 1)
 print(json.dumps({"backup": backup or None, "stopped": int(stopped or 0), "sites": [s for s in sites.split(",") if s],
-                  "nodes": [s for s in nodes.split(",") if s], "erased": erased,
+                  "nodes": [s for s in nodes.split(",") if s], "erased": erased, "docker": left.get("docker"),
                   "freedGb": max(0.0, round(gb(after) - gb(before), 1)), "freeGb": gb(after)}))
 PY

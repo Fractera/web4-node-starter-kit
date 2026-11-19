@@ -28,6 +28,7 @@ import { closeWindowProcess, openWindowProcess } from "@/lib/hosting/window-proc
 //                                                              window closes)
 //   POST { action: "window", host, port }                       the server's own panel through SSH while the visit lasts (744-3, D45)
 //   POST { action: "state" | "probe", host, port }              the server's state; the server checked again
+//   POST { action: "leftovers", host, port, confirm }          806-8: what earlier installers left erased (`leftovers.sh`), never this node
 //   POST { action: "log", host, port }                         806-3: the live install — its log tail, its checklist with times, how long
 //                                                              the log has been quiet and how busy the processor is (`log.sh` there)
 //   POST { action: "install", host, port, mode }                the launch started on the server (install · update)
@@ -57,7 +58,7 @@ const HOST = /^(?=.{4,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/
 const FINGERPRINT = /^SHA256:[A-Za-z0-9+/]{43}$/
 const DOOR_ACTIONS = ["dns-check", "certs", "check", "activate", "claim"]
 // How long each act may take: the check of a server measures its version over the network; a certificate run starts detached there.
-const TIMEOUT: Record<string, number> = { connect: 150_000, probe: 150_000, state: 60_000, install: 120_000, domain: 120_000, way: 60_000, detect: 90_000, dns: 90_000, door: 200_000, signin: 90_000, clear: 1_560_000, telegram: 90_000, log: 30_000 }
+const TIMEOUT: Record<string, number> = { connect: 150_000, probe: 150_000, state: 60_000, install: 120_000, domain: 120_000, way: 60_000, detect: 90_000, dns: 90_000, door: 200_000, signin: 90_000, clear: 1_560_000, telegram: 90_000, log: 30_000, leftovers: 1_560_000 }
 
 
 /** 760-8: a value of the core's environment — the Cloudflare token stays in this process; only what the plan needs leaves. */
@@ -231,6 +232,11 @@ export async function POST(req: NextRequest) {
     const fresh = after.ok ? { ...cf, visible: after.visible, plan: after.visible ? after.plan : null } : cf
     const r = await run("dns", at, { key: visit?.key ?? null })
     return json({ ...r, cf: { ...fresh, written }, visit: visit ? { deadline: visit.deadline } : null })
+  }
+  // 806-8: what earlier installers left (Easy Starter, root's caches, Docker's unused) — erased only after the same confirm as the clear
+  if (action === "leftovers") {
+    if (body?.confirm !== host) return json({ ok: false, reason: "not-confirmed" }, 409)
+    return answer("leftovers", [...at, "--confirm", host])
   }
   if (action === "clear") {
     if (body?.confirm !== host) return json({ ok: false, reason: "not-confirmed" }, 409)
