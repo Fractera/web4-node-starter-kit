@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { Spinner } from "@/components/ui/spinner"
 import { useRouter } from "next/navigation"
 import { CircleAlert } from "lucide-react"
 import { toast } from "sonner"
@@ -34,6 +35,17 @@ export function ElementDomain({ id, lang, ui, current: record }: { id: string; l
   const [error, setError] = useState<string | null>(null)
   // 737-17: on a server node the answer may name the A records the person writes at the registrar.
   const [toAdd, setToAdd] = useState<string | null>(null)
+  // 805 (the owner, 2026-11-19: «Свой реальный домен появляется не сразу значит нужно какая-то кнопка скелетон или loader которая
+  // покажешь что подождите несколько секунд я получаю адрес домена»): after «Подключить» the page asks its record again every 3 s,
+  // at most 40 s, while the domain is not yet shown — only after the person's press, only while this screen is open.
+  const [pending, setPending] = useState<string | null>(null)
+  useEffect(() => {
+    if (!pending) return
+    if (current === pending) { setPending(null); return }
+    let tries = 0
+    const t = window.setInterval(() => { tries += 1; router.refresh(); if (tries >= 13) { window.clearInterval(t); setPending(null) } }, 3000)
+    return () => window.clearInterval(t)
+  }, [pending, current, router])
 
   useEffect(() => {
     fetch(`${BASE}/api/domain/list`, { cache: "no-store" })
@@ -65,7 +77,7 @@ export function ElementDomain({ id, lang, ui, current: record }: { id: string; l
         // 801-3 (владелец 2026-11-19: «нужно, чтобы всплыло какое-то уведомление … идёт установка сертификата»): на сервере сертификат
         // выпускается минуты после подключения — человек слышит это сразу, а карточка «Сертификат безопасности» следит за выпуском.
         if (place?.kind === "server") toast.info(ui.certificateCard.toast, { description: ui.certificateCard.toastText, duration: 15000 })
-        setPicked(""); router.refresh(); setBusy(false); return
+        setPending(picked); setPicked(""); router.refresh(); setBusy(false); return
       }
       setError(w.errors[j?.error ?? ""] ?? `${w.errors.failed} ${j?.error ?? r.status}`)
     } catch { setError(w.errors.failed) }
@@ -99,6 +111,12 @@ export function ElementDomain({ id, lang, ui, current: record }: { id: string; l
 
   return (
     <div id="main-mirror" className="flex scroll-mt-24 flex-col gap-2" data-element-domain={current ?? ""}>
+      {pending && current !== pending && (
+        <p className="flex items-center gap-2 text-sm text-muted-foreground" role="status" data-domain-pending={pending}>
+          <Spinner className="size-4" aria-hidden />
+          {w.pending.replace("{domain}", pending)}
+        </p>
+      )}
       {current && (
         <div className="flex flex-wrap items-center gap-2">
           <p className="text-sm text-foreground">{w.current} <a className="font-mono underline" href={`https://${current}`} target="_blank" rel="noopener noreferrer">{current}</a></p>

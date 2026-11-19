@@ -13,7 +13,7 @@ export type ElementSettingsUi = {
   signIn: Card
   signInCard: { howTitle: string; how: string; whyTitle: string; why: string; ownTitle: string; own: string; files: { path: string; what: string }[]; notSupported: string }
   mirrorCard: {
-    current: string; label: string; placeholder: string; attach: string; attaching: string; detach: string; detaching: string; primaryTitle: string; primaryNote: string; empty: string; add: string; loadFailed: string; note: string
+    current: string; label: string; placeholder: string; attach: string; attaching: string; pending: string; detach: string; detaching: string; primaryTitle: string; primaryNote: string; empty: string; add: string; loadFailed: string; note: string
     /** 443-5 */ noFree: string; addHint: string; addSteps: string[]
     kinds: Record<"ready" | "waiting" | "taken" | "current", string>; errors: Record<string, string>
   }
@@ -57,6 +57,7 @@ const DICT: Record<string, ElementSettingsUi> = {
       placeholder: "Choose a domain",
       attach: "Connect",
       attaching: "Connecting…",
+      pending: "Getting the address of {domain} — a few seconds…",
       detach: "Disconnect",
       detaching: "Disconnecting…",
       primaryTitle: "Main address",
@@ -265,6 +266,7 @@ const DICT: Record<string, ElementSettingsUi> = {
       placeholder: "Выберите домен",
       attach: "Подключить",
       attaching: "Подключаю…",
+      pending: "Получаю адрес домена {domain} — несколько секунд…",
       detach: "Отключить",
       detaching: "Отключаю…",
       primaryTitle: "Главный адрес",
