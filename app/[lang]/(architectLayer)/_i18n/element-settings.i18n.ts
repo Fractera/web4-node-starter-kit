@@ -21,8 +21,6 @@ export type ElementSettingsUi = {
   describeCard: { empty: string; take: string; taking: string; taken: string; takenAt: string; how: string; errors: Record<string, string> }
   address: Card
   mirror: Card
-  /** 801-4: the element that holds the node's apex — its domain is the node's, no other domain is chosen for it. */
-  apex: Card
   /** 801-2: «Сертификат безопасности» on «Настройки → Домен»; 801-3: its words while the certificate is issued. */
   certificate: Card
   certificateCard: { noDomain: string; cloudflare: string; loading: string; issuing: string; ready: string; all: string; toast: string; toastText: string }
@@ -172,12 +170,6 @@ const DICT: Record<string, ElementSettingsUi> = {
       text: "Connect your own second domain to the root of this element; the current subdomain then redirects to it.",
       action: "Connect the main mirror",
       pending: "Planned (step 324).",
-    },
-    apex: {
-      title: "Main mirror",
-      text: "This element is the site at the root of the node's domain: it always lives on the node's domain, and no other domain is chosen for it.",
-      action: "The node's domain",
-      pending: "The node's domain is changed on the core's «Domain activation» page.",
     },
     certificate: {
       title: "Security certificate",
@@ -387,12 +379,6 @@ const DICT: Record<string, ElementSettingsUi> = {
       text: "Подключить второй собственный домен к корню этого элемента; текущий поддомен будет переадресовывать на него.",
       action: "Подключить главное зеркало",
       pending: "Запланировано (шаг 324).",
-    },
-    apex: {
-      title: "Главное зеркало",
-      text: "Этот элемент — сайт на корне домена узла: он всегда живёт на домене узла, другой домен для него не выбирается.",
-      action: "Домен узла",
-      pending: "Домен узла меняется на странице ядра «Активация домена».",
     },
     certificate: {
       title: "Сертификат безопасности",

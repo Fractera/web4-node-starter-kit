@@ -5,6 +5,7 @@ import nodeType from "@/lib/web4-items/node-type.cjs"
 import { AUTH_ELEMENT, MEMORY_ELEMENTS } from "@/lib/web4-items/built-in-elements"
 import web4 from "@/lib/web4-items/element-web4.cjs"
 import { paymentOf } from "@/lib/web4-items/payment-elements"
+import { holdsApex } from "@/lib/hosting/hostnames.mjs"
 
 // КОНТЕКСТ ДЕРЕВА ЭЛЕМЕНТА — ОДНА СБОРКА ДЛЯ МЕНЮ, МАРШРУТА И СПИСКОВ (узел, шаг 553-6; прежде — четыре копии одной строки).
 //
@@ -30,5 +31,7 @@ export function treeContextOf(id: string): TreeContext {
     web4: web4.visibilityOf(id, process.cwd()) !== "node",
     // 573-4: платёжный элемент (паспорт `payment`) — у него «Платежи → Web2» с его ключами, даже у нативного Stripe.
     payment: !!paymentOf(id),
+    // 802: the element on the node's apex has no «Домен» page — its domain is the node's, set on «Активация домена».
+    apex: holdsApex(id),
   }
 }

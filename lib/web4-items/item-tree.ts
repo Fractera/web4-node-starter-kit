@@ -56,6 +56,10 @@ export type TreePage = {
   /** 559 (владелец 2026-10-21: «добавления к стандартной вкладки авторизации на одном из верхних уровней вкладки пользователей»):
    *  раздел только элемента входа (`auth`). */
   auth?: true
+  /** 802 (the owner, 2026-11-19: «из корня убрать вообще любую работу с доменом»): a page about the element's own domain and address —
+   *  the element that holds the node's apex (`holdsApex`, lib/hosting/hostnames.mjs) lives on the node's domain, set only on the core's
+   *  «Активация домена», and has none. */
+  ownDomain?: true
   /** 578-5 (владелец 2026-10-23: «разместить вкладку блоки внутри всех нативных и кастомных элементов, обеспечивая её как кнопку
    *  которая просто напросто открывает новую вкладку»): пункт меню открывается в новой вкладке. */
   newTab?: true
@@ -146,7 +150,7 @@ export function movedPage(path: string[]): string | null {
 }
 
 // 472: что у элемента есть — для условий `needs`/`unless`. Один ответ для меню, маршрута и списка страниц раздела.
-export type TreeContext = { catalog: boolean; messengers: Record<Messenger, boolean>; native?: boolean; nodeType?: "project" | "factory"; memory?: boolean; auth?: boolean; web4?: boolean; payment?: boolean }
+export type TreeContext = { catalog: boolean; messengers: Record<Messenger, boolean>; native?: boolean; nodeType?: "project" | "factory"; memory?: boolean; auth?: boolean; web4?: boolean; payment?: boolean; apex?: boolean }
 export function treeVisible(p: TreePage, c: TreeContext): boolean {
   if (p.project === false && c.nodeType === "project") return false
   if (p.needs === "catalog" && !c.catalog) return false
@@ -158,6 +162,7 @@ export function treeVisible(p: TreePage, c: TreeContext): boolean {
   if (p.memory && !c.memory) return false
   if (p.nativeClock && (!c.native || c.memory)) return false
   if (p.auth && !c.auth) return false
+  if (p.ownDomain && c.apex) return false
   return true
 }
 /** 745: видна ли страница пунктом меню и карточкой списка раздела (страница по кнопке — `listed: false` — только по адресу). */
@@ -572,7 +577,7 @@ export const ITEM_TREE: TreePage[] = [
     pages: [
       // 443-5 (слово владельца 2026-10-11): «настройка домена находится на вкладке опасная зона … её нужно вытащить в настройки,
       // домен. Поместить туда два внутренних раздела главное зеркало и адрес элемента».
-      { slug: "domain", words: w("Domain", "The element's main mirror (its own domain) and its address in the core.", "Домен", "Главное зеркало элемента (его собственный домен) и его адрес в ядре.") },
+      { slug: "domain", ownDomain: true, words: w("Domain", "The element's main mirror (its own domain) and its address in the core.", "Домен", "Главное зеркало элемента (его собственный домен) и его адрес в ядре.") },
       { slug: "danger-zone", words: w("Danger zone", "The element's description in the core, its links to the node and deleting it.", "Опасная зона", "Описание элемента в ядре, связи с узлом и удаление.") },
       // 530-1 (владелец 2026-10-18): «На вкладке настройки создать вкладку платежи которые будет раскрываться и предлагать два выбора веб
       // два и web3 в одной у нас будет настраиваться страйп , в другой у нас будет настраиваться кошелёк».

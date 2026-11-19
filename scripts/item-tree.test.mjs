@@ -85,4 +85,20 @@ await t('negative control: the same tree without `orAuth` on «Рабочий п
   assert.ok(!opens(old, 'workflow/providers/google', CTX.auth))
 })
 
+await t('802: the element on the node\'s apex has no «Настройки → Домен»; «Опасная зона» stays; a custom element keeps its «Домен»', () => {
+  const apex = { ...CTX.custom, apex: true }
+  assert.ok(!opens(tree, 'settings/domain', apex), 'the apex holder opens settings/domain')
+  assert.ok(!listed(tree, 'settings', apex).includes('domain'), 'the apex holder lists «Домен»')
+  assert.ok(opens(tree, 'settings/danger-zone', apex), 'the apex holder lost «Опасная зона»')
+  assert.ok(opens(tree, 'settings/domain', CTX.custom), 'a custom element lost its «Домен»')
+  assert.ok(listed(tree, 'settings', CTX.custom).includes('domain'))
+})
+
+await t('802 negative control: the same tree without `ownDomain` on «Домен» shows it to the apex holder', async () => {
+  const cut = SOURCE.replace('{ slug: "domain", ownDomain: true,', '{ slug: "domain",')
+  assert.notEqual(cut, SOURCE, '`ownDomain: true` was not found on «Домен» to cut it out')
+  const old = await load(cut)
+  assert.ok(opens(old, 'settings/domain', { ...CTX.custom, apex: true }))
+})
+
 console.log(process.exitCode ? `===ITEM_TREE_TEST_FAILED=== ${passed} passed` : `===ITEM_TREE_TEST_OK=== ${passed} passed`)
