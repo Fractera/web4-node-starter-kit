@@ -283,6 +283,12 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-19 ~20:20 UTC, before the core build of 806, Opus)
 
+**UPDATE ~20:40 UTC:** his «yes 100%» to erase the Easy Starter (/opt/fractera*) and Docker's unused, then «всегда стирать … на 100%» →
+c6bcaa44: leftovers.sh (Easy Starter trees, root ~/.cache + npm _cacache, docker prune; NEVER /etc/fractera = the node's own) runs inside
+every clear of a node + a door action `leftovers` {confirm: host} for a server already cleaned. Disk measured 20:23: root npm cache 24,
+swap ~16, /opt/fractera* 11, containerd 9, journal 5, node 3 (installing). The server install (started 20:19) runs; core build now
+(807 proof: a watcher again — reader lines must be > 0). After it: door `leftovers` on the server (from the localhost tab), then the
+install's end (bg watcher of architect.fractera.ai/api/health died with me — re-run), then summary 806-main.md.
 **UPDATE 20:20 UTC (usage limit hit):** core build f22c10be LIVE; 807 measured (bare rebuild → reader 0 lines) and fixed e56b73ad
 (serve.mjs writes logs/core-build.log) — proof at the NEXT core build; 806-7 cause fixed fec0535c (state.sh took «launch» as the running
 stage); fork pushed to fec0535c (Fractera push still his paste). Server: clear «с нуля» done 20:07–20:16 — free 3 → 72 GB of 145, copies
