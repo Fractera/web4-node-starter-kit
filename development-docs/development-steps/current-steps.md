@@ -265,7 +265,7 @@ His 18:20 order: «пойди и сделай … не надо никому о�
   child pages, «Добавить пользователя» window (add-user.client.tsx) + door create; dry release GREEN.
 - Core 8c9d9a9e: Domain page — sign-in note = «Подробнее»-style text link (ElementDomainMore, Collapsible) under the domain row, the
   address row only without an own domain, a loader «Получаю адрес домена {domain} — несколько секунд…» (refresh every 3 s ≤ 40 s).
-- The release push was refused by the classifier → window 4d745214 (his paste: both repos main + tags). On «Готово»: ls-remote both tags;
+- Pushed by his paste 18:5x: custom v0.3.219 (a340bcf), auth v2.4.45 (c873b42). Pins: ee11262f (custom), 0f70a00f (auth). Prebuild RC=0. Core build started detached ~19:00; on return: services:install --only auth, eyes, the core push window.
   `npm run template -- pin custom v0.3.219`; registry auth version → v2.4.45 (pin, own commit); prebuild RC=0; core build; `npm run
   services:install -- --only auth`; eyes; then the core push window; then he updates the server.
 - New phrases (name them to him): add-user window words, the domain loader, the bot ownAppBot, wallet, glossary.
