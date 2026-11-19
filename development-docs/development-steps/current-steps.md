@@ -252,6 +252,16 @@ refuses; 804-7a own-app.md + modes ownAppText, brief own picture/first meeting, 
 **Committed: core 5a06d498** (97 files, seal 35c09af1836a). Custom template workshop **5fca218** (know-the-owner, passport `app`, the people line of the element instruction — src changed in the core, rendered only into custom: root's folder is not mine, native at its next release). ~18:40 the dry release v0.3.219 starts. NEW PHRASES to agree with Roma: wallet oneWallet; glossary one-owner/site-factory texts; ownAppBot (ru/en). Next: seal, commit, 804-7b
 template (know-the-owner skill, passport reads `app`, use-site-settings/build.md lines, element instruction src line), prebuild, build.
 
+## 804 — LIVE on this computer (2026-11-19 17:50 UTC, build after 2 tries)
+
+Build 17:45–17:50 RC=0 (the 17:38 one failed: modes.cjs required element-app by a cwd path → relative, fixed). Proofs: doors —
+/api/node/projects rows carry `app` (11 × project, the draft k86z7 null), no `nodeType`; POST /api/node/type 404; PATCH
+/api/architect/items/root/links 404. Eyes (0 console errors): logs/eyes/2026-11-19T17-51-53-565Z.png (the birth window: «Чем будет этот
+элемент?», two radio cards, «Родить» locked), 17-52-40-710Z.png (own app chosen → the source choice), 17-52-47-975Z.png (/ru/architect
+without «Режим работы приложения», curl count 0), 17-53-23-217Z.png (root «Настройки сайта»: the state line, no button). Seen on the
+way: the site-settings words still say «Пока связь включена…» (implies a switch) → 793. WAITS Roma: the 3 new phrases, the template
+release push (v0.3.219 dry green) + pin, the core push, ONE server update, then the Marina test (804-8) and the summary.
+
 ## Letter to my next session (written 2026-11-19 ~19:00 UTC, before the core build of 804)
 
 Roma works in the TERMINAL (no main bot). He re-logged Claude Code (/login, account admin@…) and said «continue». I am mid-804.
