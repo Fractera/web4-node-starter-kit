@@ -681,6 +681,35 @@ function waitDeploy() {
 }
 
 async function rebuild() {
+  // 807 (the owner, 2026-11-19: «живая лента которую я видел раньше … уже несколько дней не существует а вместо этого я вижу голубую
+  // экран с одной единственной палочкой»): measured by a watcher through a whole build 19:56–20:02 — the reader answered every 15 s with
+  // ZERO lines: a bare `serve:rebuild` (the way an agent builds) gave it no log file, only the button and the update did. Now a build
+  // without a log writes its own: this process runs the same rebuild as its child, the child's output going STRAIGHT into
+  // `logs/core-build.log` (no pipe through this process: if it dies with an agent's session, the build is not cut by a broken pipe),
+  // and this process echoes the file's new lines here while it lives.
+  if (!process.env.FRACTERA_BUILD_LOG) {
+    const { spawn } = await import('node:child_process')
+    const { openSync, closeSync, readSync, fstatSync } = await import('node:fs')
+    const file = path.join(root, 'logs', 'core-build.log')
+    mkdirSync(path.dirname(file), { recursive: true })
+    const fd = openSync(file, 'w')
+    const child = spawn(process.execPath, [fileURLToPath(import.meta.url), 'rebuild'], { cwd: root, env: { ...process.env, FRACTERA_BUILD_LOG: file }, stdio: ['ignore', fd, fd] })
+    const rd = openSync(file, 'r')
+    let at = 0
+    const echo = () => {
+      try {
+        const size = fstatSync(rd).size
+        if (size <= at) return
+        const buf = Buffer.alloc(size - at)
+        at += readSync(rd, buf, 0, buf.length, at)
+        process.stdout.write(buf)
+      } catch { /* the echo is a courtesy; the build never depends on it */ }
+    }
+    const timer = setInterval(echo, 500)
+    const code = await new Promise((resolve) => child.on('close', (c) => resolve(c ?? 1)))
+    clearInterval(timer); echo(); closeSync(rd); closeSync(fd)
+    process.exit(code)
+  }
   if (deployLock.isRunning()) {
     console.error("Сейчас идёт развёртывание элемента (страница «Развёртывания»). Сборка сайта не начата: дождитесь его окончания и повторите.")
     process.exit(1)

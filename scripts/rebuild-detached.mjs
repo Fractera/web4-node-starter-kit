@@ -31,7 +31,8 @@ if (args[0] !== '--child') {
 const log = args[1]
 const fd = fs.openSync(log, 'a')
 fs.writeSync(fd, `===REBUILD_START=== ${new Date().toISOString()}\n`)
-const build = spawn(process.execPath, ['scripts/serve.mjs', 'rebuild'], { cwd: CORE, stdio: ['ignore', fd, fd], windowsHide: true })
+// 807: this log IS the build's log — the build reader shows its lines while the core is down
+const build = spawn(process.execPath, ['scripts/serve.mjs', 'rebuild'], { cwd: CORE, env: { ...process.env, FRACTERA_BUILD_LOG: log }, stdio: ['ignore', fd, fd], windowsHide: true })
 build.on('exit', (code, signal) => {
   fs.writeSync(fd, `\n===REBUILD_RC=${code}=== signal=${signal} ${new Date().toISOString()}\n`)
   fs.closeSync(fd)
