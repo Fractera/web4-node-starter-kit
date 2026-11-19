@@ -298,9 +298,7 @@ myself in the workshops (data/workshop/<repo>, cloned from GitHub — never WEB4
   Design, Site settings); (3) Accounts → «Добавить пользователя» → a new e-mail works, an existing one → «Такой e-mail уже есть в узле…»;
   (4) «Настройки → Домен»: the address row gone with an own domain, «Вход на собственном домене» as a text link, the loader after
   «Подключить». Marina was born BEFORE 804 → her entry has no `app` until the update's migration (legacy factory → own) — fine.
-- Not done / owed: the summaries completed-steps/804-main.md and 805-main.md (with mistakes: the cwd require that failed the first
-  build; the parts map rebuilt before the last UI edit three times; the shadcn CLI installed an npm package «cn» — reverted; handing his
-  bug to auth's agent), then delete the two plan files in the same commit; the new phrases to agree (add-user window, domain loader,
+- Summaries 804-main.md and 805-main.md written after the reset (plan files deleted, same commit). Owed: the new phrases to agree (add-user window, domain loader,
   bot ownAppBot, wallet, glossary); «Пока связь включена…» in site settings (→ 793); «запомни» of an own app goes to the node's deep
   memory (cross-owner, a later step); native and root templates still carry the old people line of the instruction (their next release).
 - Clues: pushes = his paste via `npm run ask-person -- "<what>" --copy "<cmd>"` (the classifier refuses my git push to Fractera);
