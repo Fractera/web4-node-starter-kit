@@ -261,7 +261,7 @@ Roma works in the TERMINAL (no main bot). He re-logged Claude Code (/login, acco
   people line, use-site-settings, build.md, glossary, browser own-app); `npm run template -- release custom v0.3.219 --dry` GREEN.
   The real release = a push of main+tag to GitHub → WAITS Roma's word (his rule: no push without his word); then `npm run template --
   pin custom v0.3.219`. Births here take v0.3.218 until then (its passport prints the old node.type line — harmless default).
-- **The core build** started detached ~19:00 (`npm run serve:rebuild:detached`). On return: `npm run serve:status`; proofs of two
+- **The core build** failed 17:43 (modes.cjs required element-app by a path from cwd — fixed relative, commit after 5f11a1eb); started again detached ~17:50 (`npm run serve:rebuild:detached`). On return: `npm run serve:status`; proofs of two
   planes — (1) eyes: an element draft's birth window shows «Чем будет этот элемент?» with two radio cards (create a draft? none exists
   here — use `npm run eyes` on /ru/architect/<draft> only if a draft exists; else a DOM render probe of BirthButton), Passport root
   /ru/architect without the «Режим работы приложения» card, root «Строительство → Настройки сайта» shows the state line without a
