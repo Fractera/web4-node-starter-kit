@@ -12,7 +12,6 @@ import { tgState } from "@/lib/node/tg-app/state"
 import { closeAsk, saveSecret, type Ask } from "@/lib/node/person-secret-save"
 import { powerState, runElementPower } from "@/lib/web4-items/run-element-power"
 import autostartLib from "@/lib/node/autostart.cjs"
-import { startCreate } from "@/lib/node/bot-factory-create"
 
 // ПУЛЬТ УЗЛА В TELEGRAM (узел, шаг 771). Владелец, 2026-11-16: «раз уже я больше большую часть времени собираюсь проводить в Telegram»;
 // 23:13 — «Хорошо продолжай работать до конца». Кнопка меню бота главного агента (771-3) открывает GET — страницу; страница зовёт POST
@@ -124,14 +123,6 @@ export async function POST(req: NextRequest) {
     console.log(`[node/tg-app] power ${id} ${want} from Telegram: ${line ?? "no line"}`)
     revalidatePath("/[lang]", "layout")
     return NextResponse.json({ ok: done, ...(done ? {} : { reason: line ?? "power-failed" }) }, { status: done ? 200 : 500, headers: HEADERS })
-  }
-  // 798-4 (the owner, Telegram 811: «кнопка Telegram бот она серая мы сделаем её кликабельный … будет создаваться автоматически»): the
-  // element's bot by the node's factory — Telegram's own window opens on the phone, the waiter connects the bot to the element's agent.
-  if (action === "botCreate") {
-    if (!powerState(id, lang)) return no("unknown-element", 404)
-    const r = startCreate(id, lang)
-    console.log(`[node/tg-app] botCreate ${id} from Telegram → ${r.ok ? `@${r.username}` : r.error}`)
-    return r.ok ? NextResponse.json({ ok: true, path: new URL(r.url).pathname + new URL(r.url).search }, { headers: HEADERS }) : no(r.error, r.status)
   }
   return no("unknown-action", 400)
 }

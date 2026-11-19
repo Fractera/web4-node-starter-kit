@@ -48,27 +48,23 @@ function git(args, cwd) {
 
 const id = process.argv[2]
 if (!id || !ID.test(id)) fail(`имя «${id ?? ''}» — не имя черновика (буква, затем 4–23 строчных латинских или цифр)`)
-// 804-2 (the owner, 2026-11-19: «при создании элементы не повторно спрашивают какой я хочу элемент для одного хозяина или для нескольких
-// … дублируется вопрос»): one answer at the birth — what the element will be (`--app project|own`, `lib/web4-items/element-app.cjs`):
-// part of the project (its people and sign-in are the project's, the look and settings follow CONFIG) or an app of its own (its own
-// people in its own organization, its own look and settings). Kept in the registry entry `app`, fixed for good. The node's type is gone.
-// `--look` is the older name of the same flag (367). A native element is part of the project always; a repository birth (`--repo`) and
-// a birth «like element X» (`--look-like`) are apps of their own.
-const appAt = process.argv.indexOf('--app') > 0 ? process.argv.indexOf('--app') : process.argv.indexOf('--look')
-const native = process.argv.includes('--native')
-const app = native ? 'project' : appAt > 0 ? process.argv[appAt + 1] : process.argv.includes('--repo') || process.argv.includes('--look-like') ? 'own' : 'project'
-if (app !== 'project' && app !== 'own') fail(`ответ «${app ?? ''}» — не из списка: project | own`)
-// The look follows the answer: part of the project — CONFIG's look and settings; an app of its own — its own.
-const look = app
+// 367: облик — ответ человека в окне рождения (`--look project|own`).
+// 553-1: без `--look` облик выбирает тип узла (`lib/web4-items/node-type.cjs`): завод — самостоятельный, единый проект — как проект;
+// нативный — как проект всегда; элемент из своего репозитория (`--repo`) бывает только самостоятельным.
+const lookAt = process.argv.indexOf('--look')
+const look = lookAt > 0
+  ? process.argv[lookAt + 1]
+  : process.argv.includes('--repo') ? 'own' : require('../lib/web4-items/node-type.cjs').birthLook({ native: process.argv.includes('--native') }, ROOT)
+if (look !== 'project' && look !== 'own') fail(`облик «${look ?? ''}» — не из списка: project | own`)
 // 706-2: рождение «как элемент X» (`--look-like X`): облик X, забранный в ядро (запись реестра `look`), ложится в паспорт и
 // DESIGN-CONFIG нового элемента; облик — только самостоятельный.
 const likeAt = process.argv.indexOf('--look-like')
 const likeId = likeAt > 0 ? process.argv[likeAt + 1] : null
 if (likeAt > 0 && (!likeId || likeId.startsWith('--'))) fail('--look-like <id элемента, чей облик взять>')
-if (likeId && app !== 'own') fail('рождение «как элемент» — только самостоятельным приложением: --app own (или без --app)')
-// Проба ответа — до чтения черновиков и любой записи.
-if (process.argv.includes('--print-look') || process.argv.includes('--print-app')) {
-  say(`app: ${app}`)
+if (likeId && look !== 'own') fail('рождение «как элемент» — только самостоятельным: --look own (или без --look)')
+// 553-1: проба выбора облика — до чтения черновиков и любой записи.
+if (process.argv.includes('--print-look')) {
+  say(`look: ${look} (node type ${require('../lib/web4-items/node-type.cjs').readNodeType(ROOT)})`)
   process.exit(0)
 }
 
@@ -91,7 +87,7 @@ const template = JSON.parse(readFileSync(TEMPLATE_FILE, 'utf8'))
 // по кнопке»): самостоятельный элемент из репозитория человека. Источник ниже — `origin` — и есть правда о происхождении.
 const repoAt = process.argv.indexOf('--repo')
 const repoUrl = repoAt > 0 ? process.argv[repoAt + 1] : null
-if (repoUrl && app !== 'own') fail('элемент из своего репозитория рождается только самостоятельным приложением')
+if (repoUrl && look !== 'own') fail('элемент из своего репозитория рождается только самостоятельным')
 if (repoUrl && !/^https:\/\/[a-z0-9.-]+\.[a-z]{2,}\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+?(\.git)?\/?$/.test(repoUrl)) fail(`адрес репозитория «${repoUrl}» — не https://хост/владелец/имя`)
 // 367-5: только ваш репозиторий — владелец совпадает с аккаунтом узла (`lib/web4-items/repo-owner.mjs`; та же проверка в двери).
 let repoOwned = null
@@ -185,8 +181,8 @@ if (vectorFile) {
   mkdirSync(dirname(links), { recursive: true })
   writeFileSync(links, JSON.stringify({ config: look !== 'own' }, null, 2) + '\n', 'utf8')
   stage(look === 'own'
-    ? 'самостоятельное приложение: свои люди, дизайн и настройки шаблона, связь с CONFIG выключена навсегда'
-    : 'часть проекта: люди и вход проекта, стартовое оформление сайта, связь с CONFIG включена навсегда')
+    ? 'облик: самостоятельный — дизайн и настройки шаблона, связь с CONFIG выключена'
+    : 'облик: как весь проект — стартовое оформление сайта, связь с CONFIG включена')
 }
 if (likeId) {
   const done = require('../lib/web4-items/element-look.cjs').seedLook(dir, propsFile, likeLook, likeId)
@@ -253,8 +249,6 @@ registry.services.push({
   required: false,
   note: `Рождён из ${origin.from} ${origin.version} (319${repoUrl ? ', 367-4' : ''}). Самостоятельный проект: установщик его код не трогает.`,
   kind: 'user',
-  // 804-2: what the element is, answered once at its birth (`lib/web4-items/element-app.cjs`).
-  app,
 })
 // 778 (владелец 2026-11-17): свой элемент рождается со своей ролью админа — первый свободный номер elementAdmin001…980; установщик
 // кладёт её элементу в окружение (NEXT_PUBLIC_ELEMENT_ADMIN_ROLE). Встроенный — без роли: его админ только архитектор.
@@ -339,14 +333,14 @@ if (!answered) {
   process.exit(1)
 }
 stage(`родился: порт ${port}, ${health} → ${answered}`)
-// 554-1 → 804-2: an app of its own has its own people — its organization in the node's sign-in is born with it. Part of the project
-// and the native elements are the app «node»: no organization.
-if (!native && app === 'own') {
-  const appOrg = await require('../lib/web4-items/app-org.cjs').ensureAppOrg(id, ROOT)
-  stage(appOrg.ok
-    ? `приложение во входе: организация ${appOrg.org.id}${appOrg.org.created ? ' создана' : ' уже была'}`
-    : `приложение во входе не создано (${appOrg.reason}) — повторить: curl -X POST localhost:<порт ядра>/api/node/users/apps -d '{"element":"${id}"}'`)
-  if (appOrg.ok) say(`===APP_ORG=== ${id} ${appOrg.org.id}`)
+// 554-1: на заводе кастомный элемент — отдельное приложение со своими людьми; во входе узла рождается его организация. Единый
+// проект и нативные элементы — приложение «узел», организацию не создают.
+if (!process.argv.includes('--native') && require('../lib/web4-items/node-type.cjs').readNodeType(ROOT) === 'factory') {
+  const app = await require('../lib/web4-items/app-org.cjs').ensureAppOrg(id, ROOT)
+  stage(app.ok
+    ? `приложение во входе: организация ${app.org.id}${app.org.created ? ' создана' : ' уже была'}`
+    : `приложение во входе не создано (${app.reason}) — повторить: curl -X POST localhost:<порт ядра>/api/node/users/apps -d '{"element":"${id}"}'`)
+  if (app.ok) say(`===APP_ORG=== ${id} ${app.org.id}`)
 }
 // 🪦 382: здесь рождение само создавало репозиторий GitHub (379). Отменено владельцем 2026-10-02: «автоматически по умолчанию
 // создается вместо имени идентификатор cuid … пользователь возможно будет менять имя … а пока пусть горит плашка в любом случае
@@ -399,12 +393,6 @@ async function askAdmin() {
 const address = await connectAddress()
 stage(address.note)
 await askAdmin()
-// 798-4 (the owner, Telegram 812–814): a custom element's bot is offered at birth — one message of the main bot with Telegram's own
-// «create» link of the node's factory; no factory or no main bot — nothing is sent, the Pult's «Создать бота» stays.
-if (!process.argv.includes('--native')) {
-  const offer = await require('../lib/node/bot-factory-birth.cjs').offerAtBirth(ROOT, id, bornName || null).catch((e) => ({ ok: false, reason: e.message }))
-  stage(offer.ok ? `бот элемента предложен в Telegram: @${offer.username} (ждёт «Создать»)` : `бот элемента не предложен (${offer.reason}) — кнопка «Создать бота» в Пульте`)
-}
 // 553: новый элемент — в каталоге «Все проекты» у всех элементов, подключённых к CONFIG (по действию человека, не по таймеру).
 await require('../lib/web4-items/catalog-notify.cjs').notifyCatalog('birth', ROOT)
 say(`===BIRTH_OK=== ${id} port ${port} url ${address.url}${address.answers ? ` answers ${address.answers}` : ''}`)

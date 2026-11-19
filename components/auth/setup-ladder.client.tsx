@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, type ReactNode } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import { Check, Copy, TriangleAlert } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -59,19 +59,17 @@ export function RouteLine({ items, hint }: { items: { title: string; text: strin
             <li key={it.title} className="flex shrink-0 items-center">
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <button
+                  <Button
                     type="button"
+                    size="icon"
+                    variant={picked === i ? "default" : "outline"}
                     onClick={() => setPicked(picked === i ? null : i)}
                     aria-pressed={picked === i}
                     aria-label={`${i + 1}. ${it.title}`}
-                    className={`inline-flex size-7 items-center justify-center rounded-full border text-xs transition-colors ${
-                      picked === i
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border bg-muted text-foreground hover:border-primary"
-                    }`}
+                    className="size-7 rounded-full text-xs"
                   >
                     {i + 1}
-                  </button>
+                  </Button>
                 </TooltipTrigger>
                 <TooltipContent side="top" className="max-w-64">
                   <span className="block font-medium">{it.title}</span>
@@ -141,6 +139,7 @@ export function CopyRow({
   note,
   copy,
   copied,
+  editable = false,
 }: {
   id: string
   label: string
@@ -148,19 +147,27 @@ export function CopyRow({
   note?: string
   copy: string
   copied: string
+  /** The owner, 2026-11-19: the bot's suggested name and username «могли быть отредактированы при необходимости» — the field takes the
+   *  person's own text and «Копировать» copies what stands in it now. */
+  editable?: boolean
 }) {
   const [done, setDone] = useState(false)
+  const [text, setText] = useState(value)
+  useEffect(() => { setText(value) }, [value])
+  const shown = editable ? text : value
   return (
     <div className="mt-3 flex flex-col gap-1">
       <Label htmlFor={id}>{label}</Label>
       <div className="flex gap-2">
-        <Input id={id} readOnly value={value} className="font-mono text-xs" />
+        {editable
+          ? <Input id={id} value={text} onChange={(e) => setText(e.target.value)} className="font-mono" spellCheck={false} autoCapitalize="none" autoCorrect="off" />
+          : <Input id={id} readOnly value={value} className="font-mono text-xs" />}
         <Button
           type="button"
           variant="outline"
           onClick={async () => {
             try {
-              await navigator.clipboard.writeText(value)
+              await navigator.clipboard.writeText(shown)
               setDone(true)
               window.setTimeout(() => setDone(false), 2000)
             } catch {

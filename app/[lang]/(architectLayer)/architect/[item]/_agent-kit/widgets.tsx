@@ -11,7 +11,6 @@ import { telegramChannelWords } from './words/telegram-channel.i18n'
 import { appDialogUi } from '@/components/dialog/app-dialog.i18n'
 import { coreTerminalWords } from '@/components/deploy/core-terminal.i18n'
 import { getService } from '@/lib/microservices/registry'
-import { botFactoryWords } from '@/components/bot-factory/bot-factory.i18n'
 
 // ВХОД СТРАНИЦ СЛУЖБЫ В КОПИЮ КОМПЛЕКТА АГЕНТА (271).
 //
@@ -68,7 +67,7 @@ export function agentKitWidget(page: AgentKitPage, service: string, lang: string
       return (
         <>
           <TelegramAppNeeded words={agentLinksWords(lang)} />
-          <TelegramChannel service={service} lang={lang} words={telegramChannelWords(lang)} slot={slot} factory={slot ? undefined : botFactoryWords(lang)} />
+          <TelegramChannel service={service} lang={lang} words={telegramChannelWords(lang)} slot={slot} />
         </>
       )
   }

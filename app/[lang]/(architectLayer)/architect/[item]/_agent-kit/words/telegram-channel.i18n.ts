@@ -29,8 +29,6 @@ export type TelegramChannelWords = {
   saving: string
   /** «Бот @{username} сохранён · токен …{tail}» */
   tokenSaved: string
-  createTitle: string
-  replaceBot: string
 
   // Ступень 3 — активация одним нажатием, слова памяти (`build.i18n.ts`: stepActivateLead, activateBtn…).
   step3Title: string
@@ -97,8 +95,6 @@ const DICT: Record<string, TelegramChannelWords> = {
     saveToken: "Save token",
     saving: "Checking with Telegram…",
     tokenSaved: "Bot @{username} saved · token …{tail}",
-    createTitle: "Create the bot",
-    replaceBot: "Replace the bot",
 
     step3Title: "Activate the connection",
     step3Text:
@@ -177,8 +173,6 @@ const DICT: Record<string, TelegramChannelWords> = {
     saveToken: "Сохранить токен",
     saving: "Проверяю у Telegram…",
     tokenSaved: "Бот @{username} сохранён · токен …{tail}",
-    createTitle: "Создайте бота",
-    replaceBot: "Заменить бота",
 
     step3Title: "Активируйте соединение",
     step3Text:
