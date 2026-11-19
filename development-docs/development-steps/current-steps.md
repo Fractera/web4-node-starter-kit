@@ -214,33 +214,31 @@ reads me in the terminal. Build dec1677e live, the page clean (seen: step 1 open
 15:40 UTC: the whole path from zero (window like 698cb5ae), then admission + my restart with the channel. Meanwhile possible: 798-3 the
 server page (same three steps, design, order — every visible phrase agreed with him first), push the day's commits (his act).
 
-## Letter to my next session (written 2026-11-19 ~15:05 UTC, window 56 %, Opus)
+## Letter to my next session (written 2026-11-19 ~16:58 UTC, window 69 %, Opus)
 
-Roma works in the TERMINAL (no main bot). Step 803 is in work by his go; plan development-docs/development-steps/new-steps/803-*.md.
-- DONE in the core (committed, prebuild RC=0, NOT built yet): eb11e7c4 803-2/3 (birth window passes the element to the sign-in; Users
-  tab hides «Удалить и обезличить» on one's own record and the last architect), 69c477ca 803-4 (custom «Домен» = one bordered card of
-  closed rows, PageAnchors wraps content, arrow in a sticky bottom strip). Also today: 802-1 live (root has no «Домен»), custom template
-  v0.3.218 released (showcase gone, Messenger branches 404) and pinned locally bd15c703.
-- WAITING: (1) auth's agent on 803-1 (element admin in the element's app, last-architect guard, SSO choice «Вы вошли как {email}» ·
-  «Продолжить как {email}» · «Войти другим аккаунтом»; commit, no push) → its reply-core; (2) root's worker (--work) lists what root's
-  working process has beyond custom v0.3.217 (his 15:01 «перенеси из руут стартового шаблона в Custom стартовый шаблон рабочий процесс.,
-  После этого делай необходимый сборку а я пока удаляю Марину») — v0.3.218 already holds the Mini App (tg/**, api/tg-menu); port only
-  what root lists, release v0.3.219 (the push: his paste with gh credential — the node token 403s, the ssh key is aifa-agi's).
-- 15:04 auth 803-1 DONE: commit 88dd6e7 (no push, no tag), test:element-admins 24/24 (10 new; all three rules spoilt → 7 failed), prebuild RC=0; agent closed; deployed here by me 15:06 (ok, 104 s). root's worker: «Ничего сверх v0.3.217» → nothing to port (custom v0.3.218 holds root's working process). root's 6feec48 (showcase leftover in the admin gate) undeployed — my deploy refused by the classifier. His old window 7f47ee9d (core push permission) dropped at his word. 15:07 core prebuild RC=0 → core build.
-- 15:13 core build 7bbda625 LIVE (RC=0). Eyes logs/eyes/2026-11-19T15-14-34-636Z.png (Users tab, no console errors); Chrome: the only architect qq's dialog footer = «Отмена» · «Сохранить» — no «Удалить и обезличить» (803-3 proven at owner@machine). Custom «Домен» page NOT seen (no born custom element here). NEXT: delivery = his word: auth push+tag v2.4.44 (his gh-credential paste in WEB4-ITEMS auth? — ask auth's agent to tag, he pushes), core pin of auth v2.4.44, core push (fork + Fractera), ONE server update; then his test of Marina.
-- 15:17 his «y» to delivery: auth tag v2.4.44 = 88dd6e7 (local, WEB4-ITEMS/core/auth), auth closed; core pin 9e4ac4a4; local main 19 ahead of origin (fork aifa-agi, https) and a fast-forward of Fractera main 221e5a3e; gh Fractera may push both repos. Window 8b45c66b (his paste: auth main+tag → Fractera, core → Fractera, core → origin). On «Готово»: ls-remote of all three, then the server update from «Активация выделенного сервера» (mode update), then his Marina test.
-- 15:21 pushes VERIFIED by ls-remote: auth main = v2.4.44 = 88dd6e7; core Fractera main = fork main = 41806ed3. Window closed. 15:22 I pressed «Обновить» on the server page (server 66ae42c9, 20 behind, trial merge passed) — «на сервере идёт установка». A background watcher waits for https://architect.fractera.ai/api/health commit 41806ed3. On success: eyes of the server's pages, tell him to recreate Marina.
-- 15:36 the server updated (core f8497858 = the server's merge of fork 41806ed3, started 15:36). His 15:38: «я тебе сказал что я не могу удалить потому что ты сломал я тебя попросил удалить Марину и починить удаление … почему ты его проигнорировал» — that message never reached this session (the last one was «я пока удаляю Марину»). 15:39 I deleted Marina in his Chrome (danger zone, name typed): DELETE /api/architect/items/ay3tz → 200, /ru/ay3tz → 404; users: both mm@… anonymized by him, elementAdmin002 gone, the architect active. The 503s before it = the update window (15:22–15:36); what he saw before 15:22 — unknown, asked.
-- 15:40 his: the delete window asked for «название» but showed the address — «Ты должен явно написать введите слово Марина … поэтому я не смог удалить» → b4aba48a (label «Для подтверждения введите слово «{name}»», the address and bare-name lines removed), prebuild RC=0, window 30328750 (his push) → then a 2nd server update. Proven on the server: auth v2.4.44 live (/continue-as 200, built 15:23). His 15:42: a full report first — auth changes, the domain page (menu, arrow, one per row, the design skill), Messenger, working process — before he tries again.
-- 15:45 his push verified (Fractera = fork = 7aa9e5e1); 15:47 I pressed «Обновить» again (server f8497858 → the fork) — «идёт установка»; a background watcher waits for the server core's new startedAt. On restart: tell him to create Marina; then eyes of her «Домен» page and her delete window on the server.
-- 16:19 the 2nd server update DONE: the launch ran 16:05:52 → done (all stages), core 41a52c7e built 16:09 started 16:15; probe: behind 0 (holds fork 7aa9e5e1 with b4aba48a), ahead 4 (the server's own merges); auth /continue-as 200. Told him: create Marina now. Next: eyes of her «Домен» page and delete window on the server (his Chrome), then his incognito sign-in test.
-- NEXT (was): both reports → port + release if needed → ONE core build (serve:rebuild:detached after prebuild RC=0) → eyes → tell him; then
-  delivery to the server (auth push+tag v2.4.44, core push to fork + Fractera, ONE server update) only on his word; his test: Marina
-  deleted, recreated, admin window, incognito sign-in on her domain.
-- Clues: pushes from me are refused by the classifier — every push is his window (ask-person --copy) with the gh-credential form:
-  git -c credential.helper= -c credential.helper='!gh auth git-credential' push https://github.com/Fractera/<repo>.git main <tag>.
-  Never read WEB4-ITEMS/** (deny); ask the element's agent. The server's accounts are seen from his Chrome on architect.fractera.ai
-  (/api/node/users). Server = factory node; Marina id ay3tz.
+Roma works in the TERMINAL (no main bot). Start by telling him in one line that you continue after a reset, then build 804.
+- **804 = GO** (his 16:56 «ты сейчас будешь строить локальной версии там же будешь что-то проверять а я могу себе спокойно протестировать
+  сервер …» taken as the go; the birth words as in the plan, without «отвязать можно позже»). Plan:
+  development-docs/development-steps/new-steps/804-one-question-at-birth-instead-of-the-node-type.md — read it whole, his words verbatim
+  are at its top (16:26, 16:37, 16:40 the natives+root rule, 16:42 the owner/acquaintance and «no later kind change»). Build LOCALLY
+  only; no push and no server update without his word. First measure: how lib/agent-kit/modes.cjs builds an element's system prompt
+  (804-7a), the custom template's skills (804-7b), the CONFIG link switch UI in «Строительство → Настройки сайта» and `npm run look
+  --own|--linked` (804-6). Interface files: load interface-design, use-primitives, use-shadcn; a decision card before UI code; every new
+  phrase agreed (his rule).
+- **803 is DONE and on the server** (core f8497858→41a52c7e, auth v2.4.44, custom template v0.3.218): the element admin lives in the
+  element's app on a factory node, the last architect is kept, the sign-in choice page (/continue-as), the Users tab hides deletion on
+  one's own/the last architect, the custom «Домен» page = one card of closed rows (my deviation from the card — one card instead of three
+  sections — told him; redo if he asks), the delete window names the word («Для подтверждения введите слово «{name}»»).
+  Roma tests the SERVER himself now: creates Marina (factory → an own app), her admin in the birth window, incognito sign-in on her
+  domain, the «Домен» page, the delete window; then he may delete the whole server. When he reports — check in his Chrome
+  (architect.fractera.ai, /api/node/users) and fix what he names.
+- Clues: every push is his paste (ask-person --copy) with the gh credential form
+  `git -c credential.helper= -c credential.helper='!gh auth git-credential' push https://github.com/Fractera/<repo>.git <refs>` (+ `git
+  push origin main` for the fork); an element folder's branch may not be main → push `<tag>^{commit}:refs/heads/main <tag>`. A template
+  release: `npm run template -- release <kind> vX --dry`, then the release (403 for the node token → his gh-credential push of main+tag),
+  then `npm run template -- pin`. Never read WEB4-ITEMS/** — ask the element's agent (`npm run task -- <id> --work` for a check).
+  Deploying an element from the core may be refused by the classifier — then tell him. root's 6feec48 (showcase leftover in its admin
+  gate) is still undeployed. Local core: 7bbda625+ live; the build after prebuild RC=0 only.
 
 ## The person's decisions (verbatim)
 
