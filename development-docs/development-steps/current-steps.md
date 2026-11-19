@@ -252,7 +252,24 @@ refuses; 804-7a own-app.md + modes ownAppText, brief own picture/first meeting, 
 **Committed: core 5a06d498** (97 files, seal 35c09af1836a). Custom template workshop **5fca218** (know-the-owner, passport `app`, the people line of the element instruction — src changed in the core, rendered only into custom: root's folder is not mine, native at its next release). ~18:40 the dry release v0.3.219 starts. NEW PHRASES to agree with Roma: wallet oneWallet; glossary one-owner/site-factory texts; ownAppBot (ru/en). Next: seal, commit, 804-7b
 template (know-the-owner skill, passport reads `app`, use-site-settings/build.md lines, element instruction src line), prebuild, build.
 
-## 805 — NEW (2026-11-19 ~18:00 UTC): the owner's server-test report — plan new-steps/805-own-app-sign-in-domain-page-and-users.md (his words verbatim there): admin pages link in the menu, the «Домен» page rows 3–4, own-domain sign-in refused, a Users section for an app of its own. Being measured; 804's delivery questions still unanswered.
+## 805 — CODED, waits the push window 4d745214 (2026-11-19 ~18:50 UTC)
+
+His 18:20 order: «пойди и сделай … не надо никому отдавать … это твоя работа» — done by me in workshops, not by element agents.
+- Cause found: on the own domain the centre held his architect session → the 803-1 choice page; «войти другой записью» went to /login
+  WITHOUT requireRole → the form's legacy default «architect» → «Доступ запрещён» after a right password. Also my 804 broke the subdomain
+  route of own apps (isFactory read nodeType). Auth workshop data/workshop/fractera-auth-starter (cloned from GitHub at v2.4.44):
+  c873b42 tagged v2.4.45 LOCAL — required-role.mjs, continue-as and sso always name the role, ownAppHost by registry `app`, mayAdminister
+  + the element's own admin role (registry adminRole), POST /api/app-users/create (email taken anywhere → 409). Proofs: element-admins
+  29/29 on a real build (5 new 805 with negatives), required-role 3, own-app-host 3; its prebuild RC=0.
+- Custom template a340bcf tagged v0.3.219 LOCAL (with 804): admin links back in the drawer, branch-page lets the own admin into admin
+  child pages, «Добавить пользователя» window (add-user.client.tsx) + door create; dry release GREEN.
+- Core 8c9d9a9e: Domain page — sign-in note = «Подробнее»-style text link (ElementDomainMore, Collapsible) under the domain row, the
+  address row only without an own domain, a loader «Получаю адрес домена {domain} — несколько секунд…» (refresh every 3 s ≤ 40 s).
+- The release push was refused by the classifier → window 4d745214 (his paste: both repos main + tags). On «Готово»: ls-remote both tags;
+  `npm run template -- pin custom v0.3.219`; registry auth version → v2.4.45 (pin, own commit); prebuild RC=0; core build; `npm run
+  services:install -- --only auth`; eyes; then the core push window; then he updates the server.
+- New phrases (name them to him): add-user window words, the domain loader, the bot ownAppBot, wallet, glossary.
+
 
 ## 804 — LIVE on this computer (2026-11-19 17:50 UTC, build after 2 tries)
 
