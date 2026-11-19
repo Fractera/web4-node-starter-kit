@@ -214,35 +214,25 @@ reads me in the terminal. Build dec1677e live, the page clean (seen: step 1 open
 15:40 UTC: the whole path from zero (window like 698cb5ae), then admission + my restart with the channel. Meanwhile possible: 798-3 the
 server page (same three steps, design, order — every visible phrase agreed with him first), push the day's commits (his act).
 
-## Letter to my next session (written 2026-11-18 ~22:10 UTC, window 57 %, Opus)
+## Letter to my next session (written 2026-11-19 ~15:05 UTC, window 56 %, Opus)
 
-Written by me for myself. Roma is tired: «Всё если ты можешь что-то сделать сегодня с этим фиксировать текущий этап разработки … я хочу
-закончить с ботом … я хочу переключиться на другую задачу завтра продолжим когда он позволит создать нового бота». He reads me in the
-TERMINAL now — the node has NO main bot (no Telegram channel, the Pult does not open). Start with what he asks next (another task).
-
-- **798 the bot factory — state.** Live build dec1677e. The core's «Telegram-бот» page: ONE section; step 1 «Создайте бота» holds the
-  factory ladder in his order (1 «Сначала создайте Telegram-бота классическим способом» · 2 «Добавьте токен или сообщение @BotFather
-  целиком» · 3 «Переключите Telegram-бота в режим «Telegram-бот фабрика»» with his three points + «Проверить» + «Создать бота» as soon as a
-  token is kept); no manual road on the core page; a dead token reads dead; the Pult's grey «Бот» = «Создать бота»; the birth offer; the
-  waiter + link records. Commits 347020c1 … dec1677e, all LOCAL (not pushed — his act).
-- **PROVEN 21:27:** the factory works — @throughsongs_factory_0f24_bot created the main bot @throughsongs_fractera_22cc_bot by one tap; he was
-  admitted at 21:31:48. getMe's can_manage_bots LAGS behind the switch by minutes (false 21:23–21:25 while it already worked) — never gate on it.
-  Then by his word («надо удалять и пройти весь путь заново») both bots deleted (Unauthorized), records in data/node/removed-bot-2026-11-18/.
-- **BLOCKED:** @BotFather 21:46 «Sorry, too many attempts. Please try again in 64587 seconds» → no /newbot for his account until ~2026-11-19
-  15:40 UTC; /mybots empty. 22:05 he made @my_fractera_bot in ANOTHER account and pasted its token in the chat: kept as the factory
-  (managed true — Telegram confirmed); 22:10 his «@my_fractera_bot - remove it» → the waiter stopped, the record moved to
-  data/node/removed-bot-2026-11-18/round-2210-my_fractera_bot/; the node has NO factory now. Deleting the bot itself — his act in @BotFather.
-- **Tomorrow (his word «завтра продолжим»):** the main bot through the factory — page step 3 «Создать бота» (or the door: POST
-  /api/node/bot-factory {action:create, service:build}) → his «Создать» in Telegram (unknown whether his account's limit also stops
-  managed creation — the first tap tells) → «Старт» → my restart with the channel (npm run session -- model opus --continue). Then his test:
-  Pult → root → «Создать бота». Then 798-3 the server page (same steps, design, order — EVERY visible phrase agreed first), push.
-- **His rules today (memory compact-ui-folds-instructions):** «каждую фразу хочу с тобой согласовать» — no code/build without his word; a
-  phrase he did not understand → his own words; instructions folded, one road open; look at the WHOLE page before «готово».
-- **Unapproved phrases now on the page (name them to him):** sum2/kept «Токен бота @… сохранён: …», dead «Telegram больше не принимает …»,
-  management-off «Telegram пока отвечает, что режим выключен — так бывает несколько минут…», the button «Проверить».
-- **Other open:** the interface guards (pre-steps/2026-11-18-interface-guards-later.md, later, his word); 797 two «Терминал» rename
-  (asked); `npm run eyes` stalls on bot pages (networkidle vs the channel long-poll) → 793; the Pult/element pages' factory paths not
-  seen live; 786 plan text superseded by 798.
+Roma works in the TERMINAL (no main bot). Step 803 is in work by his go; plan development-docs/development-steps/new-steps/803-*.md.
+- DONE in the core (committed, prebuild RC=0, NOT built yet): eb11e7c4 803-2/3 (birth window passes the element to the sign-in; Users
+  tab hides «Удалить и обезличить» on one's own record and the last architect), 69c477ca 803-4 (custom «Домен» = one bordered card of
+  closed rows, PageAnchors wraps content, arrow in a sticky bottom strip). Also today: 802-1 live (root has no «Домен»), custom template
+  v0.3.218 released (showcase gone, Messenger branches 404) and pinned locally bd15c703.
+- WAITING: (1) auth's agent on 803-1 (element admin in the element's app, last-architect guard, SSO choice «Вы вошли как {email}» ·
+  «Продолжить как {email}» · «Войти другим аккаунтом»; commit, no push) → its reply-core; (2) root's worker (--work) lists what root's
+  working process has beyond custom v0.3.217 (his 15:01 «перенеси из руут стартового шаблона в Custom стартовый шаблон рабочий процесс.,
+  После этого делай необходимый сборку а я пока удаляю Марину») — v0.3.218 already holds the Mini App (tg/**, api/tg-menu); port only
+  what root lists, release v0.3.219 (the push: his paste with gh credential — the node token 403s, the ssh key is aifa-agi's).
+- NEXT: both reports → port + release if needed → ONE core build (serve:rebuild:detached after prebuild RC=0) → eyes → tell him; then
+  delivery to the server (auth push+tag v2.4.44, core push to fork + Fractera, ONE server update) only on his word; his test: Marina
+  deleted, recreated, admin window, incognito sign-in on her domain.
+- Clues: pushes from me are refused by the classifier — every push is his window (ask-person --copy) with the gh-credential form:
+  git -c credential.helper= -c credential.helper='!gh auth git-credential' push https://github.com/Fractera/<repo>.git main <tag>.
+  Never read WEB4-ITEMS/** (deny); ask the element's agent. The server's accounts are seen from his Chrome on architect.fractera.ai
+  (/api/node/users). Server = factory node; Marina id ay3tz.
 
 ## The person's decisions (verbatim)
 
