@@ -292,6 +292,9 @@ myself in the workshops (data/workshop/<repo>, cloned from GitHub — never WEB4
   paste. The core (22 commits ahead of origin) waits window **c8b2aa2b** — his paste pushes Fractera + his fork. On «Готово»: check
   `git ls-remote https://github.com/Fractera/web4-node-starter-kit.git main` = HEAD and origin = HEAD; then tell Roma to update the
   server (his act; the update runs migration 804-4 there: nodeType factory → Marina's entry app own); then his test of both solutions.
+- ~19:1x his push VERIFIED: Fractera main = fork main = HEAD 29cedcd9 (summaries 804/805 rode along); window c8b2aa2b closed. Window
+  7572745d asks him to press «Обновить» on /ru/hosting/hosting (the visit key lives in his browser). On «Готово»: watch
+  https://architect.fractera.ai/api/health for commit 29cedcd9, then his test below.
 - **What to check with him on the server** (fractera.ai, his Chrome — the extension is NOT connected now: he re-logged Claude Code to
   admin@…; ask him to sign the extension in only if needed): (1) on the app's own domain, signed in as architect at the centre →
   «Войти другим аккаунтом» → the element admin's password → in (no «Доступ запрещён»); (2) the drawer shows the admin pages (Accounts,
