@@ -249,7 +249,7 @@ CJS definitions); 804-5 CLAUDE.md §1/3/5/7/8 + know-the-architect (app mode par
 terms one-owner/site-factory rewritten (new phrases); 804-6 ElementLink = a state line, links door deleted, `look --own|--linked`
 refuses; 804-7a own-app.md + modes ownAppText, brief own picture/first meeting, recall leaves own apps out for MAIN, test own-app 7 ✓;
 804-7c mount `__web4ElementApp`, the kit bot's ownAppBot words on admission (new phrase), agent-kit:update of 12 groups.
-NEW PHRASES to agree with Roma: wallet oneWallet; glossary one-owner/site-factory texts; ownAppBot (ru/en). Next: seal, commit, 804-7b
+**Committed: core 5a06d498** (97 files, seal 35c09af1836a). Custom template workshop **5fca218** (know-the-owner, passport `app`, the people line of the element instruction — src changed in the core, rendered only into custom: root's folder is not mine, native at its next release). ~18:40 the dry release v0.3.219 starts. NEW PHRASES to agree with Roma: wallet oneWallet; glossary one-owner/site-factory texts; ownAppBot (ru/en). Next: seal, commit, 804-7b
 template (know-the-owner skill, passport reads `app`, use-site-settings/build.md lines, element instruction src line), prebuild, build.
 
 ## Letter to my next session (written 2026-11-19 ~16:58 UTC, window 69 %, Opus)
