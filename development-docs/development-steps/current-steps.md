@@ -376,3 +376,16 @@ TERMINAL now — the node has NO main bot (no Telegram channel, the Pult does no
 - 759 proofs: tsc 0; test:hosting 76/76; test:launch-domain 4/4 (negative: an old Cloudflare answer never gives the removed way); test:hosting-launch 21 + 1 ✗ «the claim goes server door» — fails the same with my changes stashed (pre-existing, not 759); parts-map, parts-dup, shadcn-parts, dialogs, typography OK.
 - 758 proofs (code): tsc 0; test:hosting-launch — the step 5 case ✓ (negative: the token absent from the runner's output while its tail is present; 0600 on the server; handed to the node's channel door exactly once; a refused waiting token dropped and named), the claim case ✗ as before; ladder-rule 17/17 with the 758 case (running → step 5 open, step 6 locked); test:hosting 76/76; launch-domain 4/4; guards parts-map, parts-dup, shadcn-parts, shadcn-rules, typography, dialogs, api, lang-delivery, layout, contrast, static, steps, words, ready-words OK. CLAUDE.md §4 line on the dedicated server now says eight steps — resealed fb7f43db2885 (the owner's 758/759 words). The server side needs nothing new: its channel door exists since 267-3.
 
+
+2026-11-19: 791 answered — the source is a claude.ai project (Roma: «А, проект на claude.ai, начинай»). Primary source read
+(support.claude.com/en/articles/9450526): Settings › Privacy › Export data, web or Desktop only, a link by e-mail, 24 h, maybe once,
+the whole account, no original uploaded files. Window 6b7debe3 asks him for a real export into Downloads. The plan 791 (rewritten
+for the archive) waits his «да»; no core build until the server launch ends.
+2026-11-19 (later): Roma's concept — a claude.ai account's work is restored in ONE element (one element = one Claude account); its
+Working process takes claude.ai's logic (chats, projects, artifacts, schedule, plugins; artifacts on the right, editable), its Settings
+the counterparts. Measured: `claude mcp list` from any folder here already shows his claude.ai connectors (Claude Docs, Google Drive,
+fractera — 502 now), so every element agent on the shared subscription sees them. Proposed split core/element waits his «да».
+2026-11-19 09:3x: 791 PAUSED at the owner's word — the whole discussion, decisions, facts and the proposed core/element split +
+the Web4-switch removal: new-steps/791-moving-from-claude-ai-into-one-element.md (nothing approved, no code). Back to the server's
+domain: the fresh Fractera server deployment finished; NOTE the 31 local commits (799 several domains on a server, the «Сервер
+готов» fixes, auth v2.4.44 + its pin) are still NOT on the fork aifa-agi (origin/main = 6e81c6ea, 797) — the server came up without them.
