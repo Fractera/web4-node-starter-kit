@@ -244,6 +244,8 @@ Roma works in the TERMINAL (no main bot). Step 803 is in work by his go; plan de
 
 ## The person's decisions (verbatim)
 
+- 2026-11-19 16:42 UTC, the owner (terminal), for 804: the agent and its Telegram bot must know whose element it is; an own app loads a slightly different instruction at start and passes an acquaintance step with its owner like the node's; «если где-то в CONFIG у элемента есть возможность потом изменить тип это надо убрать в рамках этого шага» → plan 804 got 804-6 (no later kind change: the CONFIG link switch goes) and 804-7 (the own app's instruction part, the acquaintance skill, its owner's bot); the birth words lost «отвязать можно позже». Waits «да».
+
 - 2026-11-19 16:40 UTC, the owner (terminal), for 804: «Запомни правило что по дефолту все нативные шаблоны идущие по умолчанию и руут являются связанными с одним хозяином» → written into plan 804 (the shape and 804-1), not the deep memory (a step's decision, use-deep-memory). 804 still waits his «да» on the birth window's words.
 
 - 2026-11-19 16:26–16:37 UTC, the owner (terminal): the node switch (one owner / many) and the birth question duplicate each other — «Может быть тогда на уровне ядра имеет смысл вообще все это убрать и просто хранить в общем реестре ядра перечисления элементов какие являются связанными с ядром а какие нет?»; to my «Marina first, then a step»: «no first separate logic, go to plan» → plan 804 written (new-steps/804-one-question-at-birth-instead-of-the-node-type.md), sent for «да» with its words. Marina waits until 804 is live.

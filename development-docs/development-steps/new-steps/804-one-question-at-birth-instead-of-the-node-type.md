@@ -9,6 +9,12 @@ State: PLAN — waits the owner's «да» (phrases included). Asked 2026-11-19 
 конфликт логики? Может быть тогда на уровне ядра имеет смысл вообще все это убрать и просто хранить в общем реестре ядра перечисления
 элементов какие являются связанными с ядром а какие нет?» — then «no first separate logic, go to plan».
 - 16:40, the rule: «по дефолту все нативные шаблоны идущие по умолчанию и руут являются связанными с одним хозяином».
+- 16:42: «ты как агент в равной степени и телеграммы чётко должны понимать свое разделение кто твой хозяин. То есть если элемент по своей
+  природе предназначен для работы с одним хозяином и ему не надо читать свою какую-то собственную инструкцию о том кто его хозяин но если
+  элемент является по природе принадлежащим другому хозяину возможно нужно на старте даже немного другую инструкцию поднимать … Также если
+  где-то в CONFIG у элемента есть возможность потом изменить тип это надо убрать в рамках этого шага то есть кастомные шаблоны родился под
+  определённым сценарием получил определённый инструкцию например инструкцию того что хозяин элементы не связан хозяином проекта а значит
+  прошел шаг знакомства такой же как мы проходим с узлом».
 
 ## Measured (2026-11-19)
 
@@ -29,8 +35,7 @@ State: PLAN — waits the owner's «да» (phrases included). Asked 2026-11-19 
 ## The shape
 
 Every element answers ONE question at its birth, kept in its registry entry `app: "project" | "own"`:
-- **part of the project** — the project's people and sign-in, the look and settings follow CONFIG (the link can still be cut later on
-  its settings page, as today);
+- **part of the project** — the project's people and sign-in, the look and settings follow CONFIG;
 - **an app of its own** — its own people and accounts (its organization in the sign-in), its own look and settings; fixed at birth
   (people do not move between apps).
 By default every preinstalled native element and root is «part of the project» — linked to the one owner (the owner's rule, 16:40). «A
@@ -39,9 +44,8 @@ factory» stops being a mode: it is simply a node holding apps of their own.
 ## The words (to agree before code)
 
 - Question: «Чем будет этот элемент?» / «What will this element be?»
-- «Частью вашего проекта» — «Те же люди и вход, что у всего проекта. Облик и настройки берёт из CONFIG и меняется вместе с ними; отвязать
-  можно позже.» / «Part of your project» — «The same people and sign-in as the whole project. Its look and settings follow CONFIG and
-  change with it; you can unlink it later.»
+- «Частью вашего проекта» — «Те же люди и вход, что у всего проекта. Облик и настройки берёт из CONFIG и меняется вместе с ними.» /
+  «Part of your project» — «The same people and sign-in as the whole project. Its look and settings follow CONFIG and change with it.»
 - «Самостоятельным приложением» — «Свои люди и учётные записи, свой облик и настройки: например, сайт клиента или отдельный продукт.
   Выбирается один раз: люди приложения живут отдельно.» / «An app of its own» — «Its own people and accounts, its own look and settings:
   a client's site or a separate product, for example. Chosen once: the app's people live apart.»
@@ -62,14 +66,26 @@ factory» stops being a mode: it is simply a node holding apps of their own.
   it back.
 - 804-5 The instruction: CLAUDE.md §1, §3, §5, §7 — «node mode» replaced by the element's app (the owner's word; seal), the skills
   that name the node type (node-type removed; create-element, design-and-settings-of-elements, integrator checked).
-- 804-6 Delivery: prebuild, one core build, eyes of the birth window; the push (his paste), ONE server update; then the Marina test
+- 804-6 Fixed at birth (the owner, 16:42): nothing changes an element's kind later — the CONFIG link switch goes from «Строительство →
+  Настройки сайта», `npm run look -- --own|--linked` and the per-element switching of `scripts/node-type.mjs` (a sibling's look copy,
+  `look --like`, stays: it is design, not the kind).
+- 804-7 The own app knows its owner (the owner, 16:42): (a) the session of an own app starts with one more instruction part — «your
+  owner is this app's owner, not the node's architect; the architect hosts the node» — put by the node like the mode files
+  (`lib/agent-kit/modes.cjs`; the sealed source of the element instruction, `npm run instruction:element`); a project element reads
+  nothing extra; (b) the first session of an own app opens with the acquaintance step with its owner, the same kind as the node's
+  first contact (`know-the-architect`): name, language, how to address, what the app is for — a skill of the custom template (released),
+  kept in the element's own picture; (c) its Telegram bot is activated by its owner (the existing allowlist), the activation words say
+  whose bot it is. To measure first in the next session: how modes.cjs builds an element's system prompt, the template's skills.
+- 804-8 Delivery: prebuild, one core build, eyes of the birth window; the push (his paste), ONE server update; then the Marina test
   (born «an app of its own»: its admin in its app, the «Домен» page, the delete window).
 
 ## Proofs (two planes each)
 
 - Tests: birth `--app own` → an organization in the sign-in and `app: own`; `--app project` → none and `app: project`; negative — an
   entry without the field and with an organization reads `own`. Wallet / browser / tools / tree per element with negative controls.
-- Eyes: the birth window with the one question; the Passport without the mode card. Live on the server: Marina born as an own app.
+- Eyes: the birth window with the one question; the Passport without the mode card; no CONFIG link switch on an element.
+- An own app's first session: the extra instruction part present (its system prompt), the acquaintance question first; a project
+  element's — absent (negative). Live on the server: Marina born as an own app.
 
 ## Not in it
 
