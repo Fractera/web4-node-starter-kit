@@ -17,7 +17,7 @@ The conversation: session 4b49a5ce-2683-4b9b-93a5-4085f0b8a858 (2026-11-19, 08:3
 
 - Export (support.claude.com/en/articles/9450526): Settings › Privacy › «Export data», web or Desktop only (not the iOS/Android app),
   a download link by e-mail, expires in 24 h and may work once, the whole account (chats + user data), NO original uploaded files.
-  The archive's inner layout is not documented — read it on his real archive (window e8da1817 waits for it in ~/Downloads).
+  The archive's inner layout is not documented — read it on his real archive (the window was dropped at his word on the pause; ask again when 791 resumes).
 - Connectors (code.claude.com/docs/en/mcp): signed in with a claude.ai subscription, Claude Code gets the account's connectors by
   itself; not with ANTHROPIC_API_KEY / setup-token. Per-folder off switch: `disabledMcpServers` in ~/.claude.json.
   Desktop servers: `claude mcp add-from-claude-desktop`.
