@@ -252,6 +252,8 @@ refuses; 804-7a own-app.md + modes ownAppText, brief own picture/first meeting, 
 **Committed: core 5a06d498** (97 files, seal 35c09af1836a). Custom template workshop **5fca218** (know-the-owner, passport `app`, the people line of the element instruction — src changed in the core, rendered only into custom: root's folder is not mine, native at its next release). ~18:40 the dry release v0.3.219 starts. NEW PHRASES to agree with Roma: wallet oneWallet; glossary one-owner/site-factory texts; ownAppBot (ru/en). Next: seal, commit, 804-7b
 template (know-the-owner skill, passport reads `app`, use-site-settings/build.md lines, element instruction src line), prebuild, build.
 
+## 805 — NEW (2026-11-19 ~18:00 UTC): the owner's server-test report — plan new-steps/805-own-app-sign-in-domain-page-and-users.md (his words verbatim there): admin pages link in the menu, the «Домен» page rows 3–4, own-domain sign-in refused, a Users section for an app of its own. Being measured; 804's delivery questions still unanswered.
+
 ## 804 — LIVE on this computer (2026-11-19 17:50 UTC, build after 2 tries)
 
 Build 17:45–17:50 RC=0 (the 17:38 one failed: modes.cjs required element-app by a cwd path → relative, fixed). Proofs: doors —
