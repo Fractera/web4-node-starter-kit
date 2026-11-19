@@ -226,7 +226,8 @@ Roma works in the TERMINAL (no main bot). Step 803 is in work by his go; plan de
   working process has beyond custom v0.3.217 (his 15:01 «перенеси из руут стартового шаблона в Custom стартовый шаблон рабочий процесс.,
   После этого делай необходимый сборку а я пока удаляю Марину») — v0.3.218 already holds the Mini App (tg/**, api/tg-menu); port only
   what root lists, release v0.3.219 (the push: his paste with gh credential — the node token 403s, the ssh key is aifa-agi's).
-- NEXT: both reports → port + release if needed → ONE core build (serve:rebuild:detached after prebuild RC=0) → eyes → tell him; then
+- 15:04 auth 803-1 DONE: commit 88dd6e7 (no push, no tag), test:element-admins 24/24 (10 new; all three rules spoilt → 7 failed), prebuild RC=0; agent closed; deployed here by me 15:06 (ok, 104 s). root's worker: «Ничего сверх v0.3.217» → nothing to port (custom v0.3.218 holds root's working process). root's 6feec48 (showcase leftover in the admin gate) undeployed — my deploy refused by the classifier. His old window 7f47ee9d (core push permission) dropped at his word. 15:07 core prebuild RC=0 → core build.
+- NEXT (was): both reports → port + release if needed → ONE core build (serve:rebuild:detached after prebuild RC=0) → eyes → tell him; then
   delivery to the server (auth push+tag v2.4.44, core push to fork + Fractera, ONE server update) only on his word; his test: Marina
   deleted, recreated, admin window, incognito sign-in on her domain.
 - Clues: pushes from me are refused by the classifier — every push is his window (ask-person --copy) with the gh-credential form:
