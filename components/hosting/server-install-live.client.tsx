@@ -99,7 +99,7 @@ export function ServerInstallLive({ host, port, running, runKey, words, stage }:
       <LiveLog done={!running} failed={state === "failed"} lines={log?.lines.length ? log.lines : [words.reading]} title={title} />
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         {log ? <Small className="text-muted-foreground tabular-nums">{words.machine.replace("{mem}", String(log.memAvailMb ?? "—")).replace("{disk}", String(log.diskFreeGb ?? "—")).replace("{cpu}", String(log.cpuPct ?? "—"))}</Small> : null}
-        {log?.file ? <Small className="font-mono text-muted-foreground">{words.file.replace("{file}", log.file)}</Small> : null}
+        {log?.file ? <Small className="text-muted-foreground">{words.file.replace("{file}", log.file)}</Small> : null}
         {running && !log ? <Spinner className="size-4 text-muted-foreground" /> : null}
       </div>
       {failed ? <Small className="text-muted-foreground" role="status">{words.unreadable.replace("{reason}", failed)}</Small> : null}
