@@ -281,39 +281,40 @@ without «Режим работы приложения», curl count 0), 17-53-2
 way: the site-settings words still say «Пока связь включена…» (implies a switch) → 793. WAITS Roma: the 3 new phrases, the template
 release push (v0.3.219 dry green) + pin, the core push, ONE server update, then the Marina test (804-8) and the summary.
 
-## Letter to my next session (written 2026-11-19 ~18:40 UTC, window 66 %, Opus)
+## Letter to my next session (written 2026-11-19 ~20:20 UTC, before the core build of 806, Opus)
 
-Roma works in the TERMINAL (no main bot). Mood: angry at 18:20 that I handed his bug to auth's agent — «не надо никому отдавать это
-решение и задачи это твоя работа ты её начал ты её и делай»; «я хочу чтобы во время следующего разверну я увидел оба решения». Then
-18:22: «Там не только мастерская ядра там прежде всего мастерская кастомного элемента мастерская возможно авторизации». So: do the work
-myself in the workshops (data/workshop/<repo>, cloned from GitHub — never WEB4-ITEMS), short living answers, no hand-offs.
-- **804 + 805 are built, released and live on this computer.** Core HEAD after 0f70a00f (pins) + parts map; build a6f9a566 live; auth
-  v2.4.45 installed here (services:install RC=0). GitHub: custom template v0.3.219 (a340bcf) and auth v2.4.45 (c873b42) PUSHED by his
-  paste. The core (22 commits ahead of origin) waits window **c8b2aa2b** — his paste pushes Fractera + his fork. On «Готово»: check
-  `git ls-remote https://github.com/Fractera/web4-node-starter-kit.git main` = HEAD and origin = HEAD; then tell Roma to update the
-  server (his act; the update runs migration 804-4 there: nodeType factory → Marina's entry app own); then his test of both solutions.
-- ~19:1x his push VERIFIED: Fractera main = fork main = HEAD 29cedcd9 (summaries 804/805 rode along); window c8b2aa2b closed. Window
-  7572745d asks him to press «Обновить» on /ru/hosting/hosting (the visit key lives in his browser). On «Готово»: watch
-  https://architect.fractera.ai/api/health for commit 29cedcd9, then his test below.
-- 19:27–19:29 the server read through his Chrome (extension connected, visit opened by his password window 33f7fa34, door
-  /api/node/launch state+probe from localhost): launch MODE install (not update), started 18:55:34, prepare ✓ 18:56:08, source ✓
-  18:56:16, install RUNNING since 18:56:16 with NO sub-stage (install.progress.jsonl empty — not even «install running»); launch pid
-  1424243 alive; RAM avail 5.9–6.2 of 7.9 GB (nothing heavy runs), pm2 root 0, ports 80/443 free (nginx not listening — the site is
-  down); disk free 7 GB (need 12 — verdict fail); head 14aa1eff ahead 1 behind 0 vs Fractera (= 29cedcd9 + the server's own commit).
-  Reading: the install hangs before install.sh writes its first line (or it writes elsewhere). The log tail is not readable through the
-  door (no action for it) — 806 must add one. Waits his word: wait / stop and restart.
-- **What to check with him on the server** (fractera.ai, his Chrome — the extension is NOT connected now: he re-logged Claude Code to
-  admin@…; ask him to sign the extension in only if needed): (1) on the app's own domain, signed in as architect at the centre →
-  «Войти другим аккаунтом» → the element admin's password → in (no «Доступ запрещён»); (2) the drawer shows the admin pages (Accounts,
-  Design, Site settings); (3) Accounts → «Добавить пользователя» → a new e-mail works, an existing one → «Такой e-mail уже есть в узле…»;
-  (4) «Настройки → Домен»: the address row gone with an own domain, «Вход на собственном домене» as a text link, the loader after
-  «Подключить». Marina was born BEFORE 804 → her entry has no `app` until the update's migration (legacy factory → own) — fine.
-- Summaries 804-main.md and 805-main.md written after the reset (plan files deleted, same commit). Owed: the new phrases to agree (add-user window, domain loader,
-  bot ownAppBot, wallet, glossary); «Пока связь включена…» in site settings (→ 793); «запомни» of an own app goes to the node's deep
-  memory (cross-owner, a later step); native and root templates still carry the old people line of the instruction (their next release).
-- Clues: pushes = his paste via `npm run ask-person -- "<what>" --copy "<cmd>"` (the classifier refuses my git push to Fractera);
-  `npm run template -- pin custom vX`; the auth pin = its registry `version`; auth tests `node scripts/element-admins.test.mjs` (needs
-  `npm run prebuild` first in the workshop for previews.generated); the temporary address https://reprint-posted-lovers-moderators.trycloudflare.com.
+Roma is AWAY (19:4x): «go to finish non stop after to do start install» and «i am not here, not call me to do all himself» — do 806 to
+the end and then run the clean install on the server YOURSELF through his Chrome (the extension is connected, tab group of this session,
+tab on http://localhost:24680/ru/hosting/hosting; the visit to 109.199.105.213 lives in that Chrome until 2026-11-20 19:27 UTC). Do not
+call him; report once at the end.
+- **The 18:55 install did NOT hang** (my 19:29 reading was wrong): it ended 19:37:34, the server's core answered 19:38 (commit 14aa1eff =
+  29cedcd9 + the server's own commit), fractera.ai 200, architect 200, auth.fractera.ai 503 at 19:40 (maybe still starting). The page
+  saw no sub-stage because state.sh/the page show only the running stage's sub — measure why install.progress.jsonl looked empty with
+  the new `log` reader (806-7).
+- **806 CODED, committed e878aa8c, prebuild RC=0** (plan new-steps/806-a-clean-server-install-with-a-live-terminal.md): clear.sh ERASES
+  a Fractera node + every older copy (`/root/fractera-cleared-*/nodes|launch-state`, `*.before-*`, ~/.npm ~/.cache ~/.pm2), keeps ssh,
+  Claude sign-in, letsencrypt, telegram.json, timings.json, a stranger's set-aside sites; `--keep-site` on «с нуля» keeps the node's nginx
+  site (the «updating» page); runs detached, the runner reads clear.out (≤9 min). probe.sh: `disk {totalGb, usedGb, copies, copiesGb}`.
+  log.sh: the live reader (lines of the running stage's log, steps with sec/lastSec, quietSec, cpuPct, memAvailMb, diskFreeGb,
+  timings.json). Door action `log` (needs this core build). Page: step 4 = ServerInstallLive (checklist + LiveLog, polls every 3 s,
+  one question at a time; quiet ≥3 min: busy cpu = long step, idle <15 % = red «looks stuck»); the clear dialog says «for good» + the
+  disk; the check shows «Диск: занято X из Y ГБ». services-install element header carries « · HH:MM:SS» (reaches the server with the
+  push). install.sh truncates its progress per run. Tests: scripts/server-install-live.test.mjs 13 ✓ (real clear on a scratch tree with
+  negatives, the reader), hosting.test 76 ✓ (the clear guard updated to the new rule).
+- **Next, in order:** (1) the core build detached (`node scripts/spawn-free.mjs scripts/serve.mjs rebuild` or the way the skill says);
+  a watcher for 807 runs detached from the scratchpad (watch807/watch-build-terminal.mjs → watch.jsonl + shots) — read it after the
+  build; (2) eyes of /ru/hosting/hosting; (3) the push of the core to his fork (origin) — the server clones the FORK; try `git push origin
+  main` myself; refused → it waits for him (say so at the end); Fractera push is his paste anyway; (4) on the server through his Chrome
+  (JS fetch to /api/node/launch from the localhost tab): `log` read (806-7 measure), then «clear» with `{confirm: host, fresh: true}`
+  → freedGb, then `install` mode install → follow with `log` until done; (5) eyes of the page during the install (the terminal moving);
+  (6) summary 806-main.md, plan deleted; report to Roma once.
+- 807 (the blue screen in the agent terminal during a build): CoreBuildWatch mounts only when `!live`; the watcher measures it.
+- Still owed from 804/805: his server test of both solutions (list below), the new phrases, «Пока связь включена…» (→ 793).
+- **What to check with him on the server**: (1) on the app's own domain «Войти другим аккаунтом» → the element admin's password → in;
+  (2) the drawer shows the admin pages; (3) «Добавить пользователя» new / existing e-mail; (4) «Настройки → Домен» without the address
+  row, the «Подробнее» link, the loader. A fresh install erases Marina — she is re-created after it (her own act or mine on his word).
+- Clues: pushes to Fractera = his paste via `npm run ask-person -- "<what>" --copy "<cmd>"`; the temporary address
+  https://reprint-posted-lovers-moderators.trycloudflare.com.
 
 ## The person's decisions (verbatim)
 
