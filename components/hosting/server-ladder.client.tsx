@@ -10,6 +10,8 @@ import { RecordsStep } from "@/components/hosting/server-ladder-records.client"
 import { DomainStep, domainLines, WhereStep, WhoStep } from "@/components/hosting/server-ladder-steps.client"
 import type { LadderWay, ServerLadderWords } from "@/components/hosting/server-ladder.i18n"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Badge } from "@/components/ui/badge"
 import { H2, Small } from "@/components/ui/typography"
 import { normalWay } from "@/lib/hosting/launch-domain.mjs"
 
@@ -48,11 +50,14 @@ function fromServer(a: Raw): LadderView | null {
   }
 }
 
-export function ServerLadder({ words, domainWords, dialogUi, fallback }: {
-  words: ServerLadderWords; domainWords: ServerDomainWords; dialogUi: AppDialogUi; fallback?: string
+/** `folded` (800-2, the owner 2026-11-19: «по умолчанию … схлопнута в аккордеон. Сейчас она раскрыта и не видно где добавлять домен
+ *  кастомный»): the domain page shows the ladder as ONE closed row under its subheading, like the additional domains' cards below it. */
+export function ServerLadder({ words, domainWords, dialogUi, fallback, folded = false }: {
+  words: ServerLadderWords; domainWords: ServerDomainWords; dialogUi: AppDialogUi; fallback?: string; folded?: boolean
 }) {
   const door = `${BASE}/api/node/server/domain`
   const [view, setView] = useState<LadderView | null>(null)
+  const [unfolded, setUnfolded] = useState("")
   const [answered, setAnswered] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState("")
@@ -128,20 +133,39 @@ export function ServerLadder({ words, domainWords, dialogUi, fallback }: {
     records: <RecordsStep busy={busy} onCheck={acts.check} view={view} words={words} />,
   }
 
+  const rungs = [
+    ...(["domain", "where", "who", "records"] as const).map((id) => ({ id, title: words.step[id], done: done[id], summary: summary[id], body: body[id] })),
+    ...(view.server ? serverEndRungs({ busy, end: view.server, onAct: acts.server, readOnly: view.readOnly, words: domainWords, zone: view.zone }) : []),
+  ]
+  const ladder = (
+    <Ladder className={folded ? "rounded-none border-0 bg-transparent" : undefined} focus={prefill ? "domain" : null} id="server-domain" locked={words.locked} rungs={rungs} />
+  )
+  const on = Boolean(view.server?.steps.active)
+  const step = Math.min(rungs.filter((r) => r.done).length + 1, rungs.length)
+
   return (
     <div className="flex flex-col gap-3" data-block="server-ladder">
-      <H2 variant="ui">{words.title}</H2>
-      <Small className="text-foreground">{words.lead.replace("{ip}", view.ip ?? "")}</Small>
+      <div className="flex flex-col gap-1" data-block="server-ladder-head">
+        <H2 variant="ui">{words.title}</H2>
+        <Small className={folded ? "text-muted-foreground" : "text-foreground"}>{words.lead.replace("{ip}", view.ip ?? "")}</Small>
+      </div>
       {error ? <Small className="text-destructive" data-block="server-ladder-error">{error}</Small> : null}
-      <Ladder
-        focus={prefill ? "domain" : null}
-        id="server-domain"
-        locked={words.locked}
-        rungs={[
-          ...(["domain", "where", "who", "records"] as const).map((id) => ({ id, title: words.step[id], done: done[id], summary: summary[id], body: body[id] })),
-          ...(view.server ? serverEndRungs({ busy, end: view.server, onAct: acts.server, readOnly: view.readOnly, words: domainWords, zone: view.zone }) : []),
-        ]}
-      />
+      {folded ? (
+        <Accordion className="rounded-lg border border-border bg-card" collapsible data-block="server-ladder-fold" onValueChange={setUnfolded} type="single" value={prefill ? "ladder" : unfolded}>
+          <AccordionItem className="border-b-0" value="ladder">
+            <AccordionTrigger className="px-4 py-3 hover:no-underline">
+              <span className="flex min-w-0 flex-wrap items-center gap-2">
+                <span className="text-muted-foreground">{words.fold.row}</span>
+                <span className="truncate font-mono font-semibold text-foreground" data-block="server-ladder-fold-zone">{view.zone ?? words.fold.none}</span>
+                <Badge className={on ? "border-success/50 text-success" : "text-muted-foreground"} data-block="server-ladder-fold-state" variant="outline">
+                  {on ? words.fold.on : words.fold.step.replace("{n}", String(step)).replace("{m}", String(rungs.length))}
+                </Badge>
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="border-t border-border pb-0">{ladder}</AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      ) : ladder}
     </div>
   )
 }

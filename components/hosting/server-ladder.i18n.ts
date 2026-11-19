@@ -32,12 +32,15 @@ export type ServerLadderWords = {
     checkedAt: string
   }
   ready: { summary: string; certs: string; unchecked: string; issue: string; waiting: string }
+  /** 800-2 (the owner, 2026-11-19: «по умолчанию вкладка свой домен для сервера была схлопнута в аккордеон»): the domain page's closed row */
+  fold: { row: string; none: string; on: string; step: string }
 }
 
 const en: ServerLadderWords = {
   title: "Your domain for the server",
   lead: "The domain brings visitors straight to the server {ip}. The node finds out where the domain's records are kept and shows what to write and where.",
   locked: "Opens after the step above.",
+  fold: { row: "Server domain:", none: "not chosen yet", on: "on", step: "step {n} of {m}" },
   step: { domain: "The domain", where: "Where the domain's records live", who: "Who writes the records", records: "The records", ready: "Check and certificates" },
   domain: {
     label: "A domain or a subdomain",
@@ -122,6 +125,7 @@ const ru: ServerLadderWords = {
   title: "Свой домен для сервера",
   lead: "Домен приведёт посетителей прямо на сервер {ip}. Узел сам выяснит, где хранятся записи домена, и покажет, что и куда вписать.",
   locked: "Откроется после шага выше.",
+  fold: { row: "Домен сервера:", none: "ещё не выбран", on: "включён", step: "шаг {n} из {m}" },
   step: { domain: "Домен", where: "Где живут записи домена", who: "Кто внесёт записи", records: "Записи", ready: "Проверка и сертификаты" },
   domain: {
     label: "Домен или поддомен",

@@ -21,7 +21,8 @@ export type Rung = { id: string; title: string; done: boolean; warn?: boolean; e
 type RungState = "done" | "warn" | "error" | "current" | "locked"
 
 /** `focus` — a rung a body sends the person back to on purpose («take a subdomain instead»); without it the ladder follows its current rung. */
-export function Ladder({ id, rungs, locked, focus = null }: { id: string; rungs: Rung[]; locked: string; focus?: string | null }) {
+/** `className` (800-2) — a ladder inside another card drops its own frame («rounded-none border-0 bg-transparent»). */
+export function Ladder({ id, rungs, locked, focus = null, className }: { id: string; rungs: Rung[]; locked: string; focus?: string | null; className?: string }) {
   const open = openOf(rungs)
   const aim = focus ?? currentOf(rungs) ?? ""
   const [value, setValue] = useState(aim)
@@ -31,7 +32,7 @@ export function Ladder({ id, rungs, locked, focus = null }: { id: string; rungs:
     setValue(aim)
   }
   return (
-    <Accordion className="rounded-lg border border-border bg-card" collapsible data-block={`ladder-${id}`} onValueChange={setValue} type="single" value={value}>
+    <Accordion className={cn("rounded-lg border border-border bg-card", className)} collapsible data-block={`ladder-${id}`} onValueChange={setValue} type="single" value={value}>
       {rungs.map((r, i) => {
         // 762 (the owner, 2026-11-16: «должен гореть оранжевым восклицательным знаком даже если мы его пропускаем а голубую галочку … когда Telegram будет действительно установлен»)
         const state: RungState = !open[i] ? "locked" : r.error ? "error" : r.done ? (r.warn ? "warn" : "done") : "current"

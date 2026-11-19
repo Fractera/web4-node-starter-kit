@@ -17,7 +17,7 @@ export function DomainPlace({ ladderWords, domainWords, dialogUi }: { ladderWord
   if (place?.kind !== "server") return null
   return (
     <div className="my-6" data-block="domain-place-server">
-      <ServerLadder dialogUi={dialogUi} domainWords={domainWords} words={ladderWords} />
+      <ServerLadder dialogUi={dialogUi} domainWords={domainWords} folded words={ladderWords} />
     </div>
   )
 }
