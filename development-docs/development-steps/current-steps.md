@@ -252,31 +252,30 @@ refuses; 804-7a own-app.md + modes ownAppText, brief own picture/first meeting, 
 **Committed: core 5a06d498** (97 files, seal 35c09af1836a). Custom template workshop **5fca218** (know-the-owner, passport `app`, the people line of the element instruction — src changed in the core, rendered only into custom: root's folder is not mine, native at its next release). ~18:40 the dry release v0.3.219 starts. NEW PHRASES to agree with Roma: wallet oneWallet; glossary one-owner/site-factory texts; ownAppBot (ru/en). Next: seal, commit, 804-7b
 template (know-the-owner skill, passport reads `app`, use-site-settings/build.md lines, element instruction src line), prebuild, build.
 
-## Letter to my next session (written 2026-11-19 ~16:58 UTC, window 69 %, Opus)
+## Letter to my next session (written 2026-11-19 ~19:00 UTC, before the core build of 804)
 
-Roma works in the TERMINAL (no main bot). Start by telling him in one line that you continue after a reset, then build 804.
-- **804 = GO** (his 16:56 «ты сейчас будешь строить локальной версии там же будешь что-то проверять а я могу себе спокойно протестировать
-  сервер …» taken as the go; the birth words as in the plan, without «отвязать можно позже»). Plan:
-  development-docs/development-steps/new-steps/804-one-question-at-birth-instead-of-the-node-type.md — read it whole, his words verbatim
-  are at its top (16:26, 16:37, 16:40 the natives+root rule, 16:42 the owner/acquaintance and «no later kind change»). Build LOCALLY
-  only; no push and no server update without his word. First measure: how lib/agent-kit/modes.cjs builds an element's system prompt
-  (804-7a), the custom template's skills (804-7b), the CONFIG link switch UI in «Строительство → Настройки сайта» and `npm run look
-  --own|--linked` (804-6). Interface files: load interface-design, use-primitives, use-shadcn; a decision card before UI code; every new
-  phrase agreed (his rule).
-- **803 is DONE and on the server** (core f8497858→41a52c7e, auth v2.4.44, custom template v0.3.218): the element admin lives in the
-  element's app on a factory node, the last architect is kept, the sign-in choice page (/continue-as), the Users tab hides deletion on
-  one's own/the last architect, the custom «Домен» page = one card of closed rows (my deviation from the card — one card instead of three
-  sections — told him; redo if he asks), the delete window names the word («Для подтверждения введите слово «{name}»»).
-  Roma tests the SERVER himself now: creates Marina (factory → an own app), her admin in the birth window, incognito sign-in on her
-  domain, the «Домен» page, the delete window; then he may delete the whole server. When he reports — check in his Chrome
-  (architect.fractera.ai, /api/node/users) and fix what he names.
-- Clues: every push is his paste (ask-person --copy) with the gh credential form
-  `git -c credential.helper= -c credential.helper='!gh auth git-credential' push https://github.com/Fractera/<repo>.git <refs>` (+ `git
-  push origin main` for the fork); an element folder's branch may not be main → push `<tag>^{commit}:refs/heads/main <tag>`. A template
-  release: `npm run template -- release <kind> vX --dry`, then the release (403 for the node token → his gh-credential push of main+tag),
-  then `npm run template -- pin`. Never read WEB4-ITEMS/** — ask the element's agent (`npm run task -- <id> --work` for a check).
-  Deploying an element from the core may be refused by the classifier — then tell him. root's 6feec48 (showcase leftover in its admin
-  gate) is still undeployed. Local core: 7bbda625+ live; the build after prebuild RC=0 only.
+Roma works in the TERMINAL (no main bot). He re-logged Claude Code (/login, account admin@…) and said «continue». I am mid-804.
+- **Committed in the core:** 5a06d498 (the core part, 97 files), 07715f9e (element instruction src people line), 0c79da6e (wallet part
+  1.0.2), 73c44a23 (birth window = shadcn RadioGroup, components/ui/radio-group.tsx + card). Prebuild RC=0 at ~18:58. NOT pushed.
+- **Custom template workshop** data/workshop/fractera-custom-item-starter: 5fca218 + d40fbd9 (know-the-owner skill, passport `app`,
+  people line, use-site-settings, build.md, glossary, browser own-app); `npm run template -- release custom v0.3.219 --dry` GREEN.
+  The real release = a push of main+tag to GitHub → WAITS Roma's word (his rule: no push without his word); then `npm run template --
+  pin custom v0.3.219`. Births here take v0.3.218 until then (its passport prints the old node.type line — harmless default).
+- **The core build** started detached ~19:00 (`npm run serve:rebuild:detached`). On return: `npm run serve:status`; proofs of two
+  planes — (1) eyes: an element draft's birth window shows «Чем будет этот элемент?» with two radio cards (create a draft? none exists
+  here — use `npm run eyes` on /ru/architect/<draft> only if a draft exists; else a DOM render probe of BirthButton), Passport root
+  /ru/architect without the «Режим работы приложения» card, root «Строительство → Настройки сайта» shows the state line without a
+  button; (2) doors: GET /api/node/projects rows carry `app` (root → project), POST /api/node/type → 404, PATCH
+  /api/architect/items/root/links → 404/405; `npm run contacts` line «apps of their own here: 0». Then summary
+  completed-steps/804-main.md (mistakes: I rebuilt the parts map before the last UI edit twice; the shadcn CLI added an npm package «cn»
+  — reverted), then tell Roma: what was built, the NEW PHRASES to agree (wallet «Этот элемент — часть вашего проекта: у проекта один
+  кошелёк — кошелёк узла.»; glossary one-owner/site-factory texts; bot ownAppBot ru «Это бот «{name}» — самостоятельного приложения: у
+  него свой хозяин и свои люди, отдельно от остального проекта. Агент приложения познакомится с вами в первом разговоре.»), my deviation
+  (migration by the legacy type, not by the sign-in), what waits his word: template release push, core push, ONE server update; the
+  open item: «запомни» of an own app goes to the node's deep memory through the main agent (cross-owner — a later step).
+- Clues: every push is his paste (ask-person --copy) with `git -c credential.helper= -c credential.helper='!gh auth git-credential' push
+  https://github.com/Fractera/<repo>.git <refs>`; never read WEB4-ITEMS/**; the temporary address today:
+  https://reprint-posted-lovers-moderators.trycloudflare.com.
 
 ## The person's decisions (verbatim)
 
