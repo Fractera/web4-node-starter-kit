@@ -8,6 +8,7 @@ State: PLAN — waits the owner's «да» (phrases included). Asked 2026-11-19 
 элементы не повторно спрашивают какой я хочу элемент для одного хозяина или для нескольких то есть дублируется вопрос мне кажется это
 конфликт логики? Может быть тогда на уровне ядра имеет смысл вообще все это убрать и просто хранить в общем реестре ядра перечисления
 элементов какие являются связанными с ядром а какие нет?» — then «no first separate logic, go to plan».
+- 16:40, the rule: «по дефолту все нативные шаблоны идущие по умолчанию и руут являются связанными с одним хозяином».
 
 ## Measured (2026-11-19)
 
@@ -32,7 +33,8 @@ Every element answers ONE question at its birth, kept in its registry entry `app
   its settings page, as today);
 - **an app of its own** — its own people and accounts (its organization in the sign-in), its own look and settings; fixed at birth
   (people do not move between apps).
-Native elements and root are always «part of the project». «A factory» stops being a mode: it is simply a node holding apps of their own.
+By default every preinstalled native element and root is «part of the project» — linked to the one owner (the owner's rule, 16:40). «A
+factory» stops being a mode: it is simply a node holding apps of their own.
 
 ## The words (to agree before code)
 
@@ -47,8 +49,8 @@ Native elements and root are always «part of the project». «A factory» stops
 
 ## Substeps
 
-- 804-1 The element's app: `lib/web4-items/element-app.cjs` — `appOf(id)` reads the registry entry `app`; natives and root →
-  `project`; an entry without the field → `own` when the sign-in has its organization, else `project` (the migration rule, measured
+- 804-1 The element's app: `lib/web4-items/element-app.cjs` — `appOf(id)` reads the registry entry `app`; the preinstalled native
+  elements and root → `project` by default (the owner's rule); an entry without the field → `own` when the sign-in has its organization, else `project` (the migration rule, measured
   once per element and written into the registry by `services-install`).
 - 804-2 The birth: the window asks the one question (the words above); `item-birth --app project|own` → the CONFIG link (look), the
   sign-in organization (own only) and the registry field; `birthLook`/node type gone from the birth.
