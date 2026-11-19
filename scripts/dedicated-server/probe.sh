@@ -48,6 +48,7 @@ DISK_FREE_GB="$(df -BG --output=avail /home 2>/dev/null | tail -1 | tr -dc '0-9'
 DISK_TOTAL_GB="$(df -BG --output=size /home 2>/dev/null | tail -1 | tr -dc '0-9')" \
 DISK_USED_GB="$(df -BG --output=used /home 2>/dev/null | tail -1 | tr -dc '0-9')" \
 COPIES="$(ls -d /root/fractera-cleared-*/nodes/*/ /home/fractera/*.before-*/ 2>/dev/null | sed 's#/$##' | paste -sd, -)" \
+HEAVY="$(timeout 30 du -xs --block-size=1G /* /root/* /root/.[!.]* /home/*/* /home/*/.[!.]* /var/* /var/lib/* /usr/* /opt/* 2>/dev/null | sort -rn | awk '$1 >= 1 {print $2":"$1}' | head -14 | paste -sd, -)" \
 COPIES_GB="$(c="$(ls -d /root/fractera-cleared-*/nodes/*/ /home/fractera/*.before-*/ 2>/dev/null)"; [ -n "$c" ] && timeout 20 du -scBG $c 2>/dev/null | awk '$2 == "total" {print $1}' | tr -dc '0-9')" \
 IPV6="$([ -f /proc/net/if_inet6 ] && echo true || echo false)" \
 PORT80="$(busy 80)" PORT443="$(busy 443)" \
@@ -91,7 +92,9 @@ print(json.dumps({
   "os": {"id": e["OS_ID"], "version": e["OS_VERSION"], "pretty": e["OS_PRETTY"], "arch": e["ARCH"]},
   "cores": n("CORES"), "ramMb": n("RAM_MB"), "availMb": n("AVAIL_MB"), "swapMb": n("SWAP_MB"), "diskFreeGb": n("DISK_FREE_GB"),
   "disk": {"totalGb": n("DISK_TOTAL_GB"), "usedGb": n("DISK_USED_GB"), "copies": [x for x in (e.get("COPIES") or "").split(",") if x],
-           "copiesGb": int(e["COPIES_GB"]) if e.get("COPIES_GB", "").isdigit() else None},
+           "copiesGb": int(e["COPIES_GB"]) if e.get("COPIES_GB", "").isdigit() else None,
+           # 806-2 (the owner, 2026-11-19: «чем может быть занята 74 ГБ после очистки»): the largest folders, GB, whole numbers ≥ 1
+           "heavy": [{"path": x.rsplit(":", 1)[0], "gb": int(x.rsplit(":", 1)[1])} for x in (e.get("HEAVY") or "").split(",") if ":" in x and x.rsplit(":", 1)[1].isdigit()]},
   "ipv6": b("IPV6"), "port80Busy": b("PORT80"), "port443Busy": b("PORT443"), "nginx": b("NGINX"), "systemd": b("SYSTEMD"),
   "nodeVersion": e.get("NODE_VERSION") or None, "publicIp": e.get("PUBLIC_IP") or None, "nodeThere": b("NODE_THERE"),
   "ufw": e["UFW"], "sshPort": n("SSH_PORT"),

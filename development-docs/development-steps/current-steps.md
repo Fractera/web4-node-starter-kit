@@ -283,6 +283,14 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-19 ~20:20 UTC, before the core build of 806, Opus)
 
+**UPDATE 20:20 UTC (usage limit hit):** core build f22c10be LIVE; 807 measured (bare rebuild → reader 0 lines) and fixed e56b73ad
+(serve.mjs writes logs/core-build.log) — proof at the NEXT core build; 806-7 cause fixed fec0535c (state.sh took «launch» as the running
+stage); fork pushed to fec0535c (Fractera push still his paste). Server: clear «с нуля» done 20:07–20:16 — free 3 → 72 GB of 145, copies
+none, verdict ok; domain step 3 redone (fractera.ai, dns, detect, check ok; www missing); FRESH INSTALL STARTED 20:19:14 (mode install).
+Open: 74 GB still used — 17 GB swap, the rest unknown: probe `heavy` (du, 30 s) timed out on big dirs — measure with a longer budget;
+the clear's 9-min runner cap was too short (erase took ~9 min; the tab was closed mid-way). Next: follow the install with `log`, eyes of
+the live terminal, then the 804/805 checks, Marina re-created, summary 806-main.md.
+
 Roma is AWAY (19:4x): «go to finish non stop after to do start install» and «i am not here, not call me to do all himself» — do 806 to
 the end and then run the clean install on the server YOURSELF through his Chrome (the extension is connected, tab group of this session,
 tab on http://localhost:24680/ru/hosting/hosting; the visit to 109.199.105.213 lives in that Chrome until 2026-11-20 19:27 UTC). Do not
