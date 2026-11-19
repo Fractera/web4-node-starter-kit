@@ -105,9 +105,9 @@ export function DeleteElementButton({ lang, id, name, internet, ui, dialogUi }: 
       >
         <div className="flex flex-col gap-2">
           {riskLine && <p className="text-sm font-medium text-destructive" data-delete-risk>{riskLine}</p>}
-          <p className="text-sm font-semibold text-foreground select-all" data-delete-name>{name}</p>
-          {internet ? <p className="text-xs text-muted-foreground" data-delete-address>{w.addressLine.replace("{address}", internet)}</p> : null}
-          <Label htmlFor={`confirm-element-${id}`}>{w.label}</Label>
+          {/* ✗ 2026-11-19 (the owner): «форма явно показывает что я должен ввести адрес … Ты должен явно написать введите слово Марина» —
+              the word to type is named in the label itself; the address line is gone */}
+          <Label htmlFor={`confirm-element-${id}`}>{w.label.replace("{name}", name)}</Label>
           <Input id={`confirm-element-${id}`} value={typed} onChange={(e) => setTyped(e.target.value)} autoComplete="off" spellCheck={false} />
           {error ? <p className="text-sm text-destructive" role="alert">{error}</p> : null}
         </div>

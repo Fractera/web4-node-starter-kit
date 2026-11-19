@@ -28,10 +28,10 @@ export type ElementSettingsUi = {
   /** 713-3: `lineOn`/`lineOff` — the CONFIG link as one line on top of «Site settings». */
   linkCard: { on: string; off: string; turnOn: string; turnOff: string; busy: string; failed: string; lineOn: string; lineOff: string }
   remove: Card
-  /** 749-1: `title` carries `{name}` — the element's name for people; `addressLine` carries `{address}`, shown only with a node domain. */
+  /** 749-1: `title` carries `{name}` — the element's name for people; 803 (the owner): `label` carries `{name}` too — the word to type, named. */
   /** 750-4: an element the door cannot delete (installed with the node, not born in it) — the line instead of the button. */
   removeRefused: string
-  removeDialog: { title: string; text: string; label: string; confirm: string; deleting: string; cancel: string; mismatch: string; failed: string; riskNever: string; riskAhead: string; riskNone: string; addressLine: string }
+  removeDialog: { title: string; text: string; label: string; confirm: string; deleting: string; cancel: string; mismatch: string; failed: string; riskNever: string; riskAhead: string; riskNone: string }
   /** 567: включение элемента — признак узла «выключен» с причиной. */
   power: Card
   /** 567-6: «Элемент в сети Web4» на «Настройках сайта». */
@@ -236,8 +236,8 @@ const DICT: Record<string, ElementSettingsUi> = {
     removeRefused: "This element came with the node's installation and was not born in it, so it cannot be deleted from here. You can turn it off with «Element power».",
     removeDialog: {
       title: "Delete «{name}» for good?",
-      text: "Its process stops, its address on the internet and its record in the node disappear, and its folder with the code is erased. This cannot be undone. Type the element's name to confirm:",
-      label: "Name",
+      text: "Its process stops, its address on the internet and its record in the node disappear, and its folder with the code is erased. This cannot be undone.",
+      label: "To confirm, type the word «{name}»",
       confirm: "Delete for good",
       deleting: "Deleting…",
       cancel: "Cancel",
@@ -246,7 +246,6 @@ const DICT: Record<string, ElementSettingsUi> = {
       riskNever: "The element was never sent to GitHub: all {n} of its commits will be lost.",
       riskAhead: "{n} commit(s) of the element are not in GitHub — they will be lost.",
       riskNone: "Everything the element has is already in GitHub.",
-      addressLine: "Its address on the internet: {address}",
     },
   },
   ru: {
@@ -445,8 +444,8 @@ const DICT: Record<string, ElementSettingsUi> = {
     removeRefused: "Этот элемент пришёл с установкой узла, а не родился в нём, поэтому удалить его отсюда нельзя. Выключить его можно карточкой «Включение элемента».",
     removeDialog: {
       title: "Удалить «{name}» насовсем?",
-      text: "Его процесс остановится, адрес в интернете и запись в узле исчезнут, папка с кодом будет стёрта. Отменить это нельзя. Для подтверждения введите название элемента:",
-      label: "Название",
+      text: "Его процесс остановится, адрес в интернете и запись в узле исчезнут, папка с кодом будет стёрта. Отменить это нельзя.",
+      label: "Для подтверждения введите слово «{name}»",
       confirm: "Удалить навсегда",
       deleting: "Удаляю…",
       cancel: "Отмена",
@@ -455,7 +454,6 @@ const DICT: Record<string, ElementSettingsUi> = {
       riskNever: "Элемент ни разу не выгружался в GitHub: все его коммиты ({n}) будут потеряны.",
       riskAhead: "Коммитов, которых нет в GitHub: {n} — они будут потеряны.",
       riskNone: "Всё, что есть у элемента, уже лежит в GitHub.",
-      addressLine: "Адрес в интернете: {address}",
     },
   },
 }
