@@ -3099,6 +3099,7 @@
         "app/[lang]/(architectLayer)/_components/element-deploy.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-describe.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-discovery-alarm.tsx",
+        "app/[lang]/(architectLayer)/_components/element-domain-more.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-domain.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-github.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-messenger-settings.client.tsx",
@@ -3492,6 +3493,7 @@
       },
       "usedBy": [
         "app/[lang]/(architectLayer)/_components/capability-cards.client.tsx",
+        "app/[lang]/(architectLayer)/_components/element-domain-more.client.tsx",
         "components/ai-elements/web-preview.tsx",
         "components/hosting/server-domain-certs.client.tsx",
         "components/tools-tab/tool-card.client.tsx"
@@ -4210,6 +4212,7 @@
       },
       "usedBy": [
         "app/[lang]/(architectLayer)/_components/element-deploy.client.tsx",
+        "app/[lang]/(architectLayer)/_components/element-domain.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-github.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-mini-app.client.tsx",
         "app/[lang]/(architectLayer)/_components/live-log.client.tsx",
