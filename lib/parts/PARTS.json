@@ -3,7 +3,7 @@
   "counts": {
     "tool": 34,
     "composite": 34,
-    "primitive": 35,
+    "primitive": 36,
     "section": 74
   },
   "parts": [
@@ -3827,6 +3827,7 @@
         ]
       },
       "usedBy": [
+        "app/[lang]/(architectLayer)/_components/birth-button.client.tsx",
         "app/[lang]/(architectLayer)/_components/capability-cards.client.tsx",
         "app/[lang]/(architectLayer)/_components/create-draft-button.client.tsx",
         "app/[lang]/(architectLayer)/_components/cron-switch.client.tsx",
@@ -3979,6 +3980,32 @@
         "components/element-docs/product-quiz.client.tsx",
         "components/element-docs/reverse-engineering.client.tsx",
         "components/preview/element-preview.client.tsx"
+      ]
+    },
+    {
+      "id": "ui-radio-group",
+      "kind": "primitive",
+      "path": "components/ui/radio-group.tsx",
+      "export": "RadioGroup, RadioGroupItem",
+      "what": {
+        "en": "A radio group — one choice out of several options, with keyboard arrows. (shadcn/ui)",
+        "ru": "Группа переключателей — один выбор из нескольких вариантов, стрелками с клавиатуры."
+      },
+      "how": "import { RadioGroup, RadioGroupItem } from \"@/components/ui/radio-group\" — one owner per kind; a card-like option is a <label> holding a RadioGroupItem.",
+      "words": {
+        "en": [
+          "radio group",
+          "one of several",
+          "choice"
+        ],
+        "ru": [
+          "переключатели",
+          "один из вариантов",
+          "выбор варианта"
+        ]
+      },
+      "usedBy": [
+        "app/[lang]/(architectLayer)/_components/birth-button.client.tsx"
       ]
     },
     {

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation"
 import { Sprout } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { AppDialog } from "@/components/dialog/app-dialog.client"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import type { Web4DraftsUi } from "../_i18n/web4-drafts.i18n"
@@ -43,22 +45,20 @@ export function BirthButton({ id, ui, dialogUi, born = false, native = false }: 
   const repoOk = REPO_URL.test(repo.trim())
   const ready = native || app === "project" || (app === "own" && (source === "starter" || (source === "repo" && repoOk)))
 
-  /** Карточка-вариант: shadcn Button с role=radio; выбранная — с рамкой основного цвета. */
-  const option = (value: string, title: string, text: string, checked: boolean, pick: () => void, mark: string) => (
-    <Button
+  /** 804-2: a choice card — a shadcn Label holding a RadioGroupItem (keyboard arrows, focus); the chosen one has the primary frame. */
+  const option = (group: string, value: string, title: string, text: string, mark: string) => (
+    <Label
       key={value}
-      type="button"
-      variant="outline"
-      role="radio"
-      aria-checked={checked}
-      onClick={pick}
-      disabled={starting}
-      className={`h-auto w-full flex-col items-start gap-1 whitespace-normal p-3 text-left ${checked ? "border-primary ring-2 ring-primary/40" : ""}`}
+      htmlFor={`${group}-${id}-${value}`}
+      className="flex cursor-pointer items-start gap-3 rounded-lg border border-border p-3 font-normal transition-colors hover:bg-muted/50 has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
       {...{ [mark]: value }}
     >
-      <span className="font-semibold text-foreground">{title}</span>
-      <span className="text-xs font-normal text-muted-foreground">{text}</span>
-    </Button>
+      <RadioGroupItem id={`${group}-${id}-${value}`} value={value} disabled={starting} className="mt-0.5" />
+      <span className="flex flex-col gap-1">
+        <span className="text-sm font-semibold text-foreground">{title}</span>
+        <span className="text-xs text-muted-foreground">{text}</span>
+      </span>
+    </Label>
   )
   const [s, setS] = useState<State>({ state: "idle", lines: [] })
   const timer = useRef<number | null>(null)
@@ -143,15 +143,19 @@ export function BirthButton({ id, ui, dialogUi, born = false, native = false }: 
           </>
         }
       >
-        {!native && <div className="flex flex-col gap-2" role="radiogroup" aria-label={ui.appQuestion} data-birth-app>
-          <p className="text-sm font-medium text-foreground">{ui.appQuestion}</p>
-          {option("project", ui.appProject, ui.appProjectText, app === "project", () => setApp("project"), "data-birth-app-option")}
-          {option("own", ui.appOwn, ui.appOwnText, app === "own", () => setApp("own"), "data-birth-app-option")}
+        {!native && <div className="flex flex-col gap-2" data-birth-app>
+          <p className="text-sm font-medium text-foreground" id={`birth-app-${id}`}>{ui.appQuestion}</p>
+          <RadioGroup value={app} onValueChange={(v) => setApp(v as "project" | "own")} aria-labelledby={`birth-app-${id}`} className="gap-2">
+            {option("app", "project", ui.appProject, ui.appProjectText, "data-birth-app-option")}
+            {option("app", "own", ui.appOwn, ui.appOwnText, "data-birth-app-option")}
+          </RadioGroup>
           {/* 367-3 (владелец: «нажатие на вторую карточку … увеличит её в длину и покажет два варианта»): откуда код самостоятельного. */}
           {app === "own" && (
-            <div className="ml-4 flex flex-col gap-2 border-l-2 border-primary/40 pl-3" role="radiogroup" aria-label={ui.sourcePick} data-birth-source>
-              {option("starter", ui.sourceStarter, ui.sourceStarterText, source === "starter", () => setSource("starter"), "data-birth-source-option")}
-              {option("repo", ui.sourceRepo, ui.sourceRepoText, source === "repo", () => setSource("repo"), "data-birth-source-option")}
+            <div className="ml-4 flex flex-col gap-2 border-l-2 border-primary/40 pl-3" data-birth-source>
+              <RadioGroup value={source} onValueChange={(v) => setSource(v as "starter" | "repo")} aria-label={ui.sourcePick} className="gap-2">
+                {option("source", "starter", ui.sourceStarter, ui.sourceStarterText, "data-birth-source-option")}
+                {option("source", "repo", ui.sourceRepo, ui.sourceRepoText, "data-birth-source-option")}
+              </RadioGroup>
               {source === "repo" && (
                 <div className="flex flex-col gap-1.5">
                   <Input

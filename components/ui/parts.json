@@ -160,6 +160,29 @@
    }
   },
   {
+   "id": "ui-radio-group",
+   "kind": "primitive",
+   "path": "components/ui/radio-group.tsx",
+   "export": "RadioGroup, RadioGroupItem",
+   "what": {
+    "en": "A radio group — one choice out of several options, with keyboard arrows. (shadcn/ui)",
+    "ru": "Группа переключателей — один выбор из нескольких вариантов, стрелками с клавиатуры."
+   },
+   "how": "import { RadioGroup, RadioGroupItem } from \"@/components/ui/radio-group\" — one owner per kind; a card-like option is a <label> holding a RadioGroupItem.",
+   "words": {
+    "en": [
+     "radio group",
+     "one of several",
+     "choice"
+    ],
+    "ru": [
+     "переключатели",
+     "один из вариантов",
+     "выбор варианта"
+    ]
+   }
+  },
+  {
    "id": "ui-collapsible",
    "kind": "primitive",
    "path": "components/ui/collapsible.tsx",
