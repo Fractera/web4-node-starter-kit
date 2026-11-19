@@ -147,6 +147,11 @@ t('the checklist: the stages, the install\'s own steps, one line per element —
   assert.equal(el.root.state, 'running'); assert.ok(el.root.sec >= 360)
   assert.equal(l1.steps.find((s) => s.id === 'build').sec, 600)
 })
+t('806-7: the page\'s state names the install\'s own steps while it runs (the «launch» row is never the running stage)', () => {
+  const r = spawnSync('bash', [path.join(here, 'dedicated-server', 'state.sh'), 'node', live.dir], { encoding: 'utf8', env: { ...process.env, STATE_NODE_DIR: live.node } })
+  const st = JSON.parse(r.stdout.trim().split('\n').pop())
+  assert.deepEqual(st.sub.map((x) => x.id), ['install', 'deps', 'build', 'elements'])
+})
 t('how long the log has been quiet', () => assert.ok(l1.quietSec >= 395 && l1.quietSec < 460, String(l1.quietSec)))
 t('negative: a running launch writes no stopwatch', () => assert.equal(existsSync(path.join(live.dir, 'timings.json')), false))
 const fin = launchTree('fin', { running: false })

@@ -64,7 +64,9 @@ SUB = {
     "start": os.path.join(node, "logs", "dedicated-server", "start-live.progress.jsonl"),
 }
 # The stage that runs — or the one that failed: its own steps name what stopped it.
-running = next((s["id"] for s in progress if s.get("state") == "running"), None) or next((s["id"] for s in progress if s.get("state") == "failed" and s["id"] != "launch"), None)
+# 806-7 ✗ 2026-11-19 18:56–19:37: the row «launch» itself is «running» for the whole launch and stood first — the running stage read as
+# «launch», which has no steps of its own, so the page showed no step of the install for 41 minutes. The launch row is never the stage.
+running = next((s["id"] for s in progress if s.get("state") == "running" and s["id"] != "launch"), None) or next((s["id"] for s in progress if s.get("state") == "failed" and s["id"] != "launch"), None)
 sub = stages(SUB[running]) if running in SUB else []
 update = read(os.path.join(node, "data", "node", "node-update.json")) if running == "update" else None
 # 784 ✗ 2026-11-18 16:07 (the install stopped and nobody — the page, the computer — could see why): a failed launch carries the last
