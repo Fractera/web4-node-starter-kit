@@ -37,7 +37,19 @@ if [ -d "$NODE_DIR/.git" ] && [ "${DRY_RUN:-0}" != 1 ] && id -u fractera >/dev/n
 fi
 # Other Fractera nodes in the node user's home (another fork's folder name): a server holding one is not this computer's.
 OTHER_NODES="$(for d in /home/fractera/*/; do d="${d%/}"; [ "$d" = "$NODE_DIR" ] && continue; [ -f "$d/scripts/dedicated-server/launch.sh" ] && basename "$d"; done 2>/dev/null | paste -sd, -)"
+if [ "${FRACTERA_HEAVY:-}" = 1 ]; then
+  nice -n 10 du -x --block-size=1G --max-depth=3 / 2>/dev/null | sort -rn | awk '$1 >= 2 {print $2":"$1}' | head -25 > /root/.fractera/heavy.tmp && mv /root/.fractera/heavy.tmp /root/.fractera/heavy.txt
+  rm -f /root/.fractera/heavy.running
+  exit 0
+fi
 . /etc/os-release 2>/dev/null
+# 806-2: the largest folders — `du` over a whole disk outlasts a probe (✗ 2026-11-19: 30 s cut it on 145 GB), so this script starts
+# itself again detached in the measuring mode and the probe reads the last answer; a new one when the last is older than 10 minutes
+H=/root/.fractera
+if [ "${DRY_RUN:-0}" != 1 ] && [ -d "$H" ] && [ -z "$(find "$H/heavy.txt" -mmin -10 2>/dev/null)" ] && [ -z "$(find "$H/heavy.running" -mmin -30 2>/dev/null)" ]; then
+  touch "$H/heavy.running"
+  FRACTERA_HEAVY=1 setsid bash "$0" >/dev/null 2>&1 < /dev/null &
+fi
 busy() { ss -ltnH "( sport = :$1 )" 2>/dev/null | grep -q . && echo true || echo false; }
 OS_ID="${ID:-unknown}" OS_VERSION="${VERSION_ID:-}" OS_PRETTY="${PRETTY_NAME:-Linux}" ARCH="$(uname -m)" \
 CORES="$(nproc 2>/dev/null || echo 1)" \
@@ -48,7 +60,8 @@ DISK_FREE_GB="$(df -BG --output=avail /home 2>/dev/null | tail -1 | tr -dc '0-9'
 DISK_TOTAL_GB="$(df -BG --output=size /home 2>/dev/null | tail -1 | tr -dc '0-9')" \
 DISK_USED_GB="$(df -BG --output=used /home 2>/dev/null | tail -1 | tr -dc '0-9')" \
 COPIES="$(ls -d /root/fractera-cleared-*/nodes/*/ /home/fractera/*.before-*/ 2>/dev/null | sed 's#/$##' | paste -sd, -)" \
-HEAVY="$(timeout 30 du -xs --block-size=1G /* /root/* /root/.[!.]* /home/*/* /home/*/.[!.]* /var/* /var/lib/* /usr/* /opt/* 2>/dev/null | sort -rn | awk '$1 >= 1 {print $2":"$1}' | head -14 | paste -sd, -)" \
+HEAVY="$(cat /root/.fractera/heavy.txt 2>/dev/null | paste -sd, -)" \
+HEAVY_AT="$(date -u -r /root/.fractera/heavy.txt +%Y-%m-%dT%H:%M:%SZ 2>/dev/null)" \
 COPIES_GB="$(c="$(ls -d /root/fractera-cleared-*/nodes/*/ /home/fractera/*.before-*/ 2>/dev/null)"; [ -n "$c" ] && timeout 20 du -scBG $c 2>/dev/null | awk '$2 == "total" {print $1}' | tr -dc '0-9')" \
 IPV6="$([ -f /proc/net/if_inet6 ] && echo true || echo false)" \
 PORT80="$(busy 80)" PORT443="$(busy 443)" \
@@ -93,7 +106,8 @@ print(json.dumps({
   "cores": n("CORES"), "ramMb": n("RAM_MB"), "availMb": n("AVAIL_MB"), "swapMb": n("SWAP_MB"), "diskFreeGb": n("DISK_FREE_GB"),
   "disk": {"totalGb": n("DISK_TOTAL_GB"), "usedGb": n("DISK_USED_GB"), "copies": [x for x in (e.get("COPIES") or "").split(",") if x],
            "copiesGb": int(e["COPIES_GB"]) if e.get("COPIES_GB", "").isdigit() else None,
-           # 806-2 (the owner, 2026-11-19: «чем может быть занята 74 ГБ после очистки»): the largest folders, GB, whole numbers ≥ 1
+           "heavyAt": e.get("HEAVY_AT") or None,
+           # 806-2 (the owner, 2026-11-19: «чем может быть занята 74 ГБ после очистки»): the largest folders, GB (≥ 2), depth 3
            "heavy": [{"path": x.rsplit(":", 1)[0], "gb": int(x.rsplit(":", 1)[1])} for x in (e.get("HEAVY") or "").split(",") if ":" in x and x.rsplit(":", 1)[1].isdigit()]},
   "ipv6": b("IPV6"), "port80Busy": b("PORT80"), "port443Busy": b("PORT443"), "nginx": b("NGINX"), "systemd": b("SYSTEMD"),
   "nodeVersion": e.get("NODE_VERSION") or None, "publicIp": e.get("PUBLIC_IP") or None, "nodeThere": b("NODE_THERE"),

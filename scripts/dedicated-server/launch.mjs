@@ -591,7 +591,8 @@ const verbs = {
       await exec(client, `rm -f ${q(out)}`)
       await startDetached(client, `${DRY}bash ${q(`${DIR}/clear.sh`)} --dir ${q(DIR)}${fresh ? ' --keep-site' : ''}${nodes.map((n) => ` --node ${q(n)}`).join('')}`, out)
       let cleared = null
-      for (const t0 = Date.now(); !cleared && Date.now() - t0 < 540_000;) {
+      // ✗ 2026-11-19 20:07–20:16: ~140 GB of three old nodes took about 9 minutes to erase — the wait is 25 minutes now
+      for (const t0 = Date.now(); !cleared && Date.now() - t0 < 1_500_000;) {
         await new Promise((res) => setTimeout(res, dry ? 200 : 3000))
         const r = await exec(client, `tail -n 1 ${q(out)} 2>/dev/null || true`, { timeoutMs: 20_000 })
         try { const v = JSON.parse(r.stdout.trim()); if (v && typeof v === 'object' && 'nodes' in v) cleared = v } catch { /* not yet */ }
