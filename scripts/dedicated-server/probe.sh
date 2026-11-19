@@ -47,8 +47,8 @@ SWAP_MB="$(awk '/SwapTotal/ {print int($2/1024)}' /proc/meminfo 2>/dev/null || e
 DISK_FREE_GB="$(df -BG --output=avail /home 2>/dev/null | tail -1 | tr -dc '0-9')" \
 DISK_TOTAL_GB="$(df -BG --output=size /home 2>/dev/null | tail -1 | tr -dc '0-9')" \
 DISK_USED_GB="$(df -BG --output=used /home 2>/dev/null | tail -1 | tr -dc '0-9')" \
-COPIES="$(ls -d /root/fractera-cleared-*/nodes/* /home/fractera/*.before-* 2>/dev/null | paste -sd, -)" \
-COPIES_GB="$(c="$(ls -d /root/fractera-cleared-*/nodes/* /home/fractera/*.before-* 2>/dev/null)"; [ -n "$c" ] && timeout 15 du -scBG $c 2>/dev/null | tail -1 | tr -dc '0-9')" \
+COPIES="$(ls -d /root/fractera-cleared-*/nodes/*/ /home/fractera/*.before-*/ 2>/dev/null | sed 's#/$##' | paste -sd, -)" \
+COPIES_GB="$(c="$(ls -d /root/fractera-cleared-*/nodes/*/ /home/fractera/*.before-*/ 2>/dev/null)"; [ -n "$c" ] && timeout 20 du -scBG $c 2>/dev/null | awk '$2 == "total" {print $1}' | tr -dc '0-9')" \
 IPV6="$([ -f /proc/net/if_inet6 ] && echo true || echo false)" \
 PORT80="$(busy 80)" PORT443="$(busy 443)" \
 NGINX="$(command -v nginx >/dev/null && echo true || echo false)" \
