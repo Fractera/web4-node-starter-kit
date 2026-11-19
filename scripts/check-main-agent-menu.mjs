@@ -59,7 +59,12 @@ const borrowed = new Set(Object.entries(PLACE).map(([slug, parent]) => `${parent
 
 // 530-1: и «Настройки → Платежи» — у главного агента та же ветка (остальные настройки элемента у ядра законно другие).
 // 709: «Рабочего процесса» у главного агента нет (владелец 2026-11-09) — сверяются Messenger и Платежи.
+// 801-5 (the owner, 2026-11-19: «раздел Messenger … не должен быть доступен до появления Lagrix, не удаляй, а скрой»): a section
+// commented out of the element's tree until Lagrix AND hidden at the main agent (`MAIN_AGENT_HIDDEN`) is not compared — its folders
+// wait for Lagrix on both sides. Hidden on one side only stays an error.
+const hiddenAtMain = new Set(scheme.MAIN_AGENT_HIDDEN ?? [])
 for (const section of ['messenger', 'settings/payments']) {
+  if (treePaths(section).length === 0 && hiddenAtMain.has(section)) continue
   const onDisk = new Set(folders(section))
   for (const p of treePaths(section)) {
     if (!onDisk.has(p) && !borrowed.has(p)) errors.push(`у элемента есть «${p}», у главного агента — нет (ни папки build/${p}, ни места в схеме)`)

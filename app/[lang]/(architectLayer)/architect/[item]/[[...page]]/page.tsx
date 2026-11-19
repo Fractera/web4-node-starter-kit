@@ -40,7 +40,10 @@ import { elementSettingsUi } from '../../../_i18n/element-settings.i18n'
 import { ElementDescribe } from '../../../_components/element-describe.client'
 import { ElementAddress } from '../../../_components/element-address.client'
 import { ElementDomain } from '../../../_components/element-domain.client'
+import { ElementCertificate } from '../../../_components/element-certificate.client'
 import { domainRecord } from '@/lib/web4-items/element-domain'
+import { holdsApex } from '@/lib/hosting/hostnames.mjs'
+import { serverDomainWords } from '@/components/hosting/server-domain.i18n'
 import { primaryDomain } from '@/lib/domain/node-domains'
 import { ElementOwnDomainSignIn } from '../../../_components/element-own-domain-signin'
 import { readStaticCopy } from '@/lib/web4-items/static-copy-state'
@@ -400,14 +403,26 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   const sui = elementSettingsUi(lang)
   // 328: «Настройки» раскрывается — «Опасная зона» (прежняя страница) и «Настройки сайта» (конфигуратор элемента).
   // 443-5: «Настройки → Домен» — главное зеркало и адрес элемента (прежде — в «Опасной зоне»).
+  // 801-2/801-4 (владелец 2026-11-19): у каждого элемента — карточка «Сертификат безопасности»; элемент на корне домена узла
+  // (`holdsApex`, правило таблицы имён) домен не выбирает — вместо «Главного зеркала» строка о домене узла.
+  const apexHolder = holdsApex(item)
   const domainSettings = key === 'settings/domain'
     ? (entry
-      ? <ElementDangerZone ui={sui} badge={false} cards={domainRecord(item) && primaryDomain() ? ['mirror', 'address', 'signIn'] : ['mirror', 'address']} actions={{
+      ? <ElementDangerZone ui={sui} badge={false} nav cards={[
+          apexHolder ? 'apex' : 'mirror', 'certificate', 'address', ...(!apexHolder && domainRecord(item) && primaryDomain() ? ['signIn' as const] : []),
+        ]} actions={{
           // 446-3: оранжевая карточка — только при подключённом своём домене; центр входа — `auth.<зона узла>`.
           signIn: domainRecord(item) && primaryDomain()
             ? <ElementOwnDomainSignIn ui={sui} domain={domainRecord(item)!.domain} center={`auth.${primaryDomain()!.name}`} />
             : null,
           mirror: <ElementDomain id={item} lang={lang} ui={sui} current={domainRecord(item)} />,
+          apex: (
+            <div className="flex flex-col gap-1.5" data-block="element-apex-domain">
+              <a className={`${buttonVariants({ variant: 'outline', size: 'sm' })} w-fit`} href={`/${lang}/hosting/domain`}>{sui.apex.action}</a>
+              <p className="text-sm text-muted-foreground">{sui.apex.pending}</p>
+            </div>
+          ),
+          certificate: <ElementCertificate id={item} domain={apexHolder ? null : domainRecord(item)?.domain ?? null} apex={apexHolder} lang={lang} ui={sui} domainWords={serverDomainWords(lang)} />,
           address: <ElementAddress id={item} lang={lang} ui={sui} current={slug} internet={domainRecord(item)?.url.replace("https://", "") ?? address} />,
         }} />
       : <p className="my-4 text-sm text-muted-foreground">{sui.notBorn}</p>)

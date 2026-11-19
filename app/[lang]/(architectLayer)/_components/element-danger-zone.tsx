@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
+import { PageAnchors } from '@/components/nav/page-anchors.client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import type { ElementSettingsUi } from '../_i18n/element-settings.i18n'
 
 // РАЗДЕЛ «НАСТРОЙКИ» — DANGER ZONE WEB4 ЭЛЕМЕНТА (325). Слово владельца 2026-09-27: «обязательной страницы которые называется
@@ -12,27 +14,30 @@ import type { ElementSettingsUi } from '../_i18n/element-settings.i18n'
 
 // 324-7: связи с узлом — по карточке на связь; 706-1: CONFIG переехал в «Строительство → Настройки сайта», Дизайн и Секции сняты.
 // 567: «Включение элемента» — признак узла «выключен», перед удалением.
-type Key = 'describe' | 'address' | 'mirror' | 'signIn' | 'config' | 'power' | 'remove'
+type Key = 'describe' | 'address' | 'mirror' | 'apex' | 'certificate' | 'signIn' | 'config' | 'power' | 'remove'
 
 // 443-5: «Главное зеркало» и «Адрес элемента» живут на странице «Настройки → Домен» — та же сетка карточек, без метки опасности.
-export function ElementDangerZone({ ui, actions = {}, cards = ['describe', 'power', 'remove'], badge = true }: {
-  ui: ElementSettingsUi; actions?: Partial<Record<Key, ReactNode>>; cards?: Key[]; badge?: boolean
+// 801 (владелец 2026-11-19: «отсутствует верхнее меню … моргать стрелочка … карточки расположи по одной в ряд»): `nav` — карточки в одну
+// колонку, у каждой свой якорь, сверху меню страницы, внизу стрелка вниз (`components/nav/page-anchors.client.tsx`).
+export function ElementDangerZone({ ui, actions = {}, cards = ['describe', 'power', 'remove'], badge = true, nav = false }: {
+  ui: ElementSettingsUi; actions?: Partial<Record<Key, ReactNode>>; cards?: Key[]; badge?: boolean; nav?: boolean
 }) {
   return (
-    <section className="my-6 flex flex-col gap-3" data-element-danger-zone={badge ? '' : undefined} data-element-settings-cards={cards.join(' ')} aria-label={badge ? ui.badge : undefined}>
+    <section className="my-6 flex flex-col gap-3" data-block="element-settings-cards" data-element-danger-zone={badge ? '' : undefined} data-element-settings-cards={cards.join(' ')} aria-label={badge ? ui.badge : undefined}>
       {badge && (
         <span className="w-fit rounded-md border border-destructive/40 px-2 py-0.5 text-[length:var(--fs-small)] font-medium text-destructive">
           {ui.badge}
         </span>
       )}
-      <div className="grid gap-3 md:grid-cols-2">
+      {nav && <PageAnchors items={cards.map((key) => ({ id: `card-${key}`, label: ui[key].title }))} label={ui.pageNav.label} down={ui.pageNav.down} />}
+      <div className={nav ? 'flex flex-col gap-6' : 'grid gap-3 md:grid-cols-2'} data-block="element-settings-cards-grid">
         {cards.map((key) => {
           const c = ui[key]
           const danger = key === 'remove'
           // 446-3: информационная карточка — в тоне предупреждения (оранжевая), без действия.
           const warn = key === 'signIn'
           return (
-            <Card key={key} size="sm" className={danger ? 'bg-destructive/5 ring-destructive/40' : warn ? 'bg-warning/10 ring-warning/50 md:col-span-2' : undefined} data-danger-card={key}>
+            <Card key={key} id={nav ? `card-${key}` : undefined} size="sm" className={cn(danger ? 'bg-destructive/5 ring-destructive/40' : warn ? 'bg-warning/10 ring-warning/50 md:col-span-2' : undefined, nav && 'scroll-mt-32')} data-danger-card={key}>
               <CardHeader>
                 <CardTitle className={danger ? 'font-semibold text-destructive' : 'font-semibold'}>{c.title}</CardTitle>
               </CardHeader>

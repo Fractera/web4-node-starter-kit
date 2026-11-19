@@ -127,6 +127,31 @@
           "вход островка"
         ]
       }
+    },
+    {
+      "id": "server-cert-state",
+      "kind": "composite",
+      "path": "components/hosting/server-cert-state.client.tsx",
+      "export": "ServerCertState",
+      "what": {
+        "en": "The certificate of some names of a server node: «being issued», followed live until HTTPS answers, or «HTTPS works · valid until <date>», with those names list (issue, renew, own certificate).",
+        "ru": "Сертификат нескольких имён узла на сервере: «выпускается» — с живым слежением, пока не ответит HTTPS, или «HTTPS работает · действует до <даты>», со списком этих имён (выпуск, продление, свой сертификат)."
+      },
+      "how": "<ServerCertState owner={{ hosts: [domain, `www.${domain}`] } | { service: id } | { apex: true }} expect words={{ loading, issuing, ready }} domainWords={serverDomainWords(lang)} list?/> — on a server node only.",
+      "words": {
+        "en": [
+          "certificate",
+          "https",
+          "ssl",
+          "certificate expiry"
+        ],
+        "ru": [
+          "сертификат",
+          "https",
+          "ssl",
+          "срок сертификата"
+        ]
+      }
     }
   ]
 }

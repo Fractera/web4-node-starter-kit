@@ -18,7 +18,18 @@ import { StageLog } from "@/components/hosting/stage-log"
 // run — the list follows its progress); a person whose region cannot reach Let's Encrypt, or who has their own certificate, uploads the
 // pair for one name. The private key typed here leaves this island the moment it is sent.
 
-export type CertRow = { host: string; optional: boolean; dns: string; cert: string; daysLeft: number | null; certSource: string | null }
+/** 801-3: `notAfter` — the certificate's end (ISO), `kind` and `service` — the name's place in the names table and its element. */
+export type CertRow = {
+  host: string; optional: boolean; dns: string; cert: string; daysLeft: number | null; certSource: string | null
+  notAfter?: string | null; kind?: string; service?: string | null; https?: boolean | null
+}
+
+/** The certificate's end in the page's own language («17 февраля 2027 г.»); none — «». */
+export function certDate(iso: string | null | undefined): string {
+  if (!iso) return ""
+  const d = new Date(iso)
+  return Number.isNaN(d.getTime()) ? "" : d.toLocaleDateString(document.documentElement.lang || undefined, { day: "numeric", month: "long", year: "numeric" })
+}
 export type CertsRun = { running: boolean; ok?: boolean; detail?: string; hosts?: Array<{ host: string; state: string; detail?: string }> } | null
 type Act = (action: string, extra?: Record<string, unknown>) => Promise<void>
 
@@ -45,6 +56,7 @@ export function CertsStep({ rows, run, helper, words, busy, readOnly, onAct }: {
             <Badge variant={r.cert === "ok" ? "default" : r.cert === "expiring" ? "secondary" : "outline"}>
               {words.certState[r.cert as keyof ServerDomainWords["certState"]] ?? r.cert}
               {r.daysLeft !== null ? ` · ${words.daysLeft.replace("{n}", String(r.daysLeft))}` : ""}
+              {r.notAfter ? ` · ${certDate(r.notAfter)}` : ""}
               {r.certSource === "own" ? ` · ${words.own}` : ""}
             </Badge>
             {r.optional ? <span className="text-muted-foreground text-xs">{words.table.optional}</span> : null}

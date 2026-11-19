@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { CircleAlert } from "lucide-react"
+import { toast } from "sonner"
+import { useNodePlace } from "@/components/node-state/use-node-place.client"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -24,6 +26,7 @@ export function ElementDomain({ id, lang, ui, current: record }: { id: string; l
   const current = record?.domain ?? null
   const w = ui.mirrorCard
   const router = useRouter()
+  const place = useNodePlace()
   const [list, setList] = useState<Listed[] | null>(null)
   const [loadFailed, setLoadFailed] = useState(false)
   const [picked, setPicked] = useState("")
@@ -58,7 +61,12 @@ export function ElementDomain({ id, lang, ui, current: record }: { id: string; l
       const r = await fetch(`${BASE}/api/architect/items/${id}/domain`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name: picked }) })
       const j = (await r.json().catch(() => null)) as { ok?: boolean; error?: string; add?: Array<{ type: string; name: string; value: string }> } | null
       if (j?.ok && j.add?.length) setToAdd(`${w.errors["server-add"]} ${j.add.map((a) => `${a.type} ${a.name} → ${a.value}`).join(" · ")}`)
-      if (j?.ok) { setPicked(""); router.refresh(); setBusy(false); return }
+      if (j?.ok) {
+        // 801-3 (владелец 2026-11-19: «нужно, чтобы всплыло какое-то уведомление … идёт установка сертификата»): на сервере сертификат
+        // выпускается минуты после подключения — человек слышит это сразу, а карточка «Сертификат безопасности» следит за выпуском.
+        if (place?.kind === "server") toast.info(ui.certificateCard.toast, { description: ui.certificateCard.toastText, duration: 15000 })
+        setPicked(""); router.refresh(); setBusy(false); return
+      }
       setError(w.errors[j?.error ?? ""] ?? `${w.errors.failed} ${j?.error ?? r.status}`)
     } catch { setError(w.errors.failed) }
     setBusy(false)

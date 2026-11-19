@@ -3,6 +3,7 @@
 
 import { useState } from "react"
 import { DnsRecords } from "@/components/hosting/dns-records"
+import { ServerCertState } from "@/components/hosting/server-cert-state.client"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { Small } from "@/components/ui/typography"
@@ -54,6 +55,10 @@ export function DomainServerPipeline({ lang, domain: d, holder, forItem, words: 
         {time && !busy ? <Small className="text-muted-foreground">{fill(s.checked, { time })}</Small> : null}
       </div>
       {error ? <p className="text-destructive text-sm" role="alert">{error}</p> : null}
+      {/* 801-3: a domain connected to an element — its certificate on the card, followed while it is issued */}
+      {here && holder ? (
+        <ServerCertState expect list={false} owner={{ hosts: [d.name, `www.${d.name}`] }} words={{ loading: s.certLoading, issuing: s.certIssuing, ready: s.certReady }} />
+      ) : null}
       {here && !holder && forItem ? (
         <a className="w-fit font-medium text-primary text-sm underline-offset-4 hover:underline" href={`/${lang}/architect/${forItem}/settings/domain`}>{fill(s.back, { item: forItem })}</a>
       ) : null}

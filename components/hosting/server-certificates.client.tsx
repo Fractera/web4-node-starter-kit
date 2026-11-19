@@ -3,7 +3,7 @@
 
 import { Check, X } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
-import { CertsStep, type CertRow, type CertsRun } from "@/components/hosting/server-domain-certs.client"
+import { CertsStep, certDate, type CertRow, type CertsRun } from "@/components/hosting/server-domain-certs.client"
 import type { ServerCertificatesWords } from "@/components/hosting/server-certificates.i18n"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import { useNodePlace } from "@/components/node-state/use-node-place.client"
@@ -75,7 +75,10 @@ export function ServerCertificates({ words, domainWords }: { words: ServerCertif
             <TableRow data-host={r.host} key={r.host}>
               <TableCell className="font-mono text-xs">{r.host}</TableCell>
               <TableCell><Badge variant={r.cert === "ok" ? "default" : r.cert === "expiring" ? "secondary" : "destructive"}>{domainWords.certState[r.cert as keyof ServerDomainWords["certState"]] ?? r.cert}</Badge></TableCell>
-              <TableCell className="text-xs tabular-nums">{r.daysLeft !== null ? domainWords.daysLeft.replace("{n}", String(r.daysLeft)) : "—"}</TableCell>
+              <TableCell className="text-xs tabular-nums">
+                {r.daysLeft !== null ? domainWords.daysLeft.replace("{n}", String(r.daysLeft)) : "—"}
+                {r.notAfter ? <span className="block text-muted-foreground">{certDate(r.notAfter)}</span> : null}
+              </TableCell>
               <TableCell className="text-xs">{r.certSource ? (r.certSource === "own" ? domainWords.own : "Let's Encrypt") : "—"}</TableCell>
               <TableCell>{r.https === true ? <Check aria-label="ok" className="size-4 text-primary" /> : r.https === false && httpsDue(r) ? <X aria-label="fail" className="size-4 text-destructive" /> : "—"}</TableCell>
             </TableRow>

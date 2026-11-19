@@ -4,6 +4,8 @@ type Card = { title: string; text: string; action: string; pending: string }
 
 export type ElementSettingsUi = {
   badge: string
+  /** 801: the top menu of «Настройки → Домен» and its arrow down (`components/nav/page-anchors.client.tsx`). */
+  pageNav: { label: string; down: string }
   notBorn: string
   agentNotBorn: string
   describe: Card
@@ -19,6 +21,11 @@ export type ElementSettingsUi = {
   describeCard: { empty: string; take: string; taking: string; taken: string; takenAt: string; how: string; errors: Record<string, string> }
   address: Card
   mirror: Card
+  /** 801-4: the element that holds the node's apex — its domain is the node's, no other domain is chosen for it. */
+  apex: Card
+  /** 801-2: «Сертификат безопасности» on «Настройки → Домен»; 801-3: its words while the certificate is issued. */
+  certificate: Card
+  certificateCard: { noDomain: string; cloudflare: string; loading: string; issuing: string; ready: string; all: string; toast: string; toastText: string }
   config: Card
   /** 713-3: `lineOn`/`lineOff` — the CONFIG link as one line on top of «Site settings». */
   linkCard: { on: string; off: string; turnOn: string; turnOff: string; busy: string; failed: string; lineOn: string; lineOff: string }
@@ -37,6 +44,7 @@ export type ElementSettingsUi = {
 const DICT: Record<string, ElementSettingsUi> = {
   en: {
     badge: "Danger zone",
+    pageNav: { label: "On this page", down: "Further down" },
     notBorn: "The element is not born yet: give birth to it on its home page — its settings appear after that.",
     agentNotBorn: "The element is not born yet: give birth to it on its home page — then its agent, Claude Code, can be started here.",
     describe: {
@@ -165,6 +173,28 @@ const DICT: Record<string, ElementSettingsUi> = {
       action: "Connect the main mirror",
       pending: "Planned (step 324).",
     },
+    apex: {
+      title: "Main mirror",
+      text: "This element is the site at the root of the node's domain: it always lives on the node's domain, and no other domain is chosen for it.",
+      action: "The node's domain",
+      pending: "The node's domain is changed on the core's «Domain activation» page.",
+    },
+    certificate: {
+      title: "Security certificate",
+      text: "The certificate that lets the domain open over HTTPS: who issued it, until when it is valid, and whether it renews by itself.",
+      action: "All certificates",
+      pending: "",
+    },
+    certificateCard: {
+      noDomain: "Connect a domain first: its certificate appears here.",
+      cloudflare: "On this computer the domain goes through Cloudflare: Cloudflare issues and renews its certificate, nothing to do here.",
+      loading: "Reading the certificate…",
+      issuing: "The certificate is being issued — usually a few minutes. Until then the address does not open.",
+      ready: "HTTPS works · valid until {date} · renews by itself 30 days before the end.",
+      all: "All certificates of the server",
+      toast: "The domain is connected",
+      toastText: "Issuing its certificate — usually a few minutes; until then the address does not open. The «Security certificate» card follows it.",
+    },
     web4: {
       title: "Use this element in the Web4 network",
       lead: "Choose with the star. Web4 is the network of agents: other nodes' agents find this element and send it orders through Lagrix.",
@@ -229,6 +259,7 @@ const DICT: Record<string, ElementSettingsUi> = {
   },
   ru: {
     badge: "Опасная зона",
+    pageNav: { label: "На этой странице", down: "Ниже ещё" },
     notBorn: "Элемент ещё не рождён: родите его на главной — настройки появятся после этого.",
     agentNotBorn: "Элемент ещё не рождён: родите его на главной — тогда здесь можно будет запустить его агента, Claude Code.",
     describe: {
@@ -356,6 +387,28 @@ const DICT: Record<string, ElementSettingsUi> = {
       text: "Подключить второй собственный домен к корню этого элемента; текущий поддомен будет переадресовывать на него.",
       action: "Подключить главное зеркало",
       pending: "Запланировано (шаг 324).",
+    },
+    apex: {
+      title: "Главное зеркало",
+      text: "Этот элемент — сайт на корне домена узла: он всегда живёт на домене узла, другой домен для него не выбирается.",
+      action: "Домен узла",
+      pending: "Домен узла меняется на странице ядра «Активация домена».",
+    },
+    certificate: {
+      title: "Сертификат безопасности",
+      text: "Сертификат, с которым домен открывается по HTTPS: кто его выдал, до какого числа он действует и продлевается ли сам.",
+      action: "Все сертификаты",
+      pending: "",
+    },
+    certificateCard: {
+      noDomain: "Сначала подключите домен: его сертификат появится здесь.",
+      cloudflare: "На этом компьютере домен идёт через Cloudflare: сертификат выдаёт и продлевает Cloudflare, здесь ничего делать не нужно.",
+      loading: "Читаю сертификат…",
+      issuing: "Сертификат выпускается — обычно несколько минут. До этого адрес не открывается.",
+      ready: "HTTPS работает · действует до {date} · продлится сам за 30 дней до конца.",
+      all: "Все сертификаты сервера",
+      toast: "Домен подключён",
+      toastText: "Выпускаю сертификат — обычно несколько минут; до этого адрес не открывается. Карточка «Сертификат безопасности» следит за ним.",
     },
     web4: {
       title: "Использовать этот элемент в сети Web4",

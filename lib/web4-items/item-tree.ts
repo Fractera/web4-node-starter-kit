@@ -94,7 +94,7 @@ export const MOVED_PAGES: Record<string, string> = {
   "build/mcp": "build/i2i/mcp",
   "build/find": "build/f2f/find",
   "build/publish": "build/f2f/publish",
-  "h2a/native-chat": "messenger/h2a/native",
+  "h2a/native-chat": "telegram",
   // 538: два пункта переезда свёрнуты в «Реверс-инжиниринг».
   "build/product-design/from-nextjs": "product-design/reverse-engineering",
   "build/product-design/from-framework": "product-design/reverse-engineering",
@@ -108,6 +108,14 @@ export const MOVED_PAGES: Record<string, string> = {
   "build/terminal": "terminal",
   "build/telegram": "telegram",
   "messenger/h2a/telegram": "telegram",
+  // 801-5: «Messenger» закомментирован до запуска Lagrix — каждый его адрес ведёт в «Telegram-бот» (H2A живёт там).
+  "messenger": "telegram",
+  "messenger/h2h": "telegram",
+  "messenger/h2h/native": "telegram",
+  "messenger/h2h/telegram": "telegram",
+  "messenger/h2a": "telegram",
+  "messenger/h2a/native": "telegram",
+  "messenger/settings": "telegram",
   "reverse-engineering": "product-design/reverse-engineering",
   "external-github": "build/github",
   // 706-1: «Блоки» сняты вместе с элементом Blocks (владелец 2026-11-09); прежние адреса ведут в «Дизайн».
@@ -212,88 +220,90 @@ export const ITEM_TREE: TreePage[] = [
   { slug: "subscription", words: w("Claude Code subscription", "Signing the element's agent in to the Claude Code subscription.", "Подписка Claude Code", "Вход агента элемента в подписку Claude Code.") },
   { slug: "terminal", words: w("Terminal", "A live Claude Code in the element's folder: started and stopped here.", "Терминал", "Живой Claude Code в папке элемента: запускается и останавливается здесь.") },
   { slug: "telegram", words: w("Telegram bot", "A bot that talks to the same agent session.", "Telegram-бот", "Бот, который говорит с той же сессией агента.") },
-  // 528-1: Messenger — сразу под «Живым сайтом»: H2H, H2A и их настройки.
-  {
-    slug: "messenger",
-    project: false,
-    words: w("Messenger", "How people reach you and this element's agent: other people (H2H), you and your agent (H2A), and the rules for both.", "Messenger", "Как с вами и с агентом этого элемента связываются: другие люди (H2H), вы и ваш агент (H2A) — и правила для обоих."),
-    about: {
-      en: [
-        "H2H is people talking to people through their agents: your friends and acquaintances on Fractera, and important people you could not reach otherwise. H2A is you talking to this element's agent: here, in Telegram, or in any messenger you build with the terminal.",
-        "In «Settings» you set what a stranger pays for a first contact and what the agent holding the conversation for you must never do and should look for.",
-      ],
-      ru: [
-        "H2H — люди общаются с людьми через своих агентов: ваши друзья и знакомые на Fractera и важные люди, до которых иначе не достучаться. H2A — вы общаетесь с агентом этого элемента: здесь, в Telegram или в любом мессенджере, который вы соберёте терминалом.",
-        "В «Настройках» вы задаёте, сколько незнакомец платит за первый контакт, и что агенту, который ведёт разговор за вас, запрещено и что ему искать.",
-      ],
-    },
-    pages: [
-      {
-        slug: "h2h",
-        needs: "h2h",
-        words: w("H2H", "Talking to other people through their agents — friends, and important people you cannot reach otherwise.", "H2H", "Общение с другими людьми через их агентов — с друзьями и с важными людьми, до которых иначе не достучаться."),
-        about: {
-          en: [
-            "Here is the native way for people to talk to each other: your close friends or acquaintances who run their own agent on Fractera.",
-            "The connection goes without any outside server — unlike WhatsApp, for example — and is encrypted with SSL (TLS) certificates, so your conversations stay fully confidential for as long as the SSL standards themselves stay reliable.",
-            "Its special feature is reaching important people you could never contact otherwise. The messenger starts with a preliminary conversation through your agent: it contacts the important person's agent and tries to prove why you need to talk. That agent brings the request to its owner with its assessment, and the person decides. If they agree, they appear in your contact list and you talk to them just as you would to a friend.",
-          ],
-          ru: [
-            "Здесь — нативный способ связи между людьми: это могут быть ваши близкие друзья или знакомые, которые развернули своего агента в инфраструктуре Fractera.",
-            "Соединение идёт без какого-либо внешнего сервера — в отличие, например, от WhatsApp — и шифруется сертификатами SSL (TLS), поэтому ваши разговоры остаются полностью конфиденциальными, пока надёжны сами стандарты SSL.",
-            "Особенность этого способа — возможность связаться с важными людьми, до которых иначе не достучаться. Мессенджер начинает с предварительного разговора через вашего агента: он связывается с агентом важного человека и старается доказать, зачем вам нужен разговор. Тот агент приносит обращение своему владельцу со своей оценкой, а решает сам человек. Если он согласен, он появляется в вашем списке контактов, и вы общаетесь с ним так же, как с другом.",
-          ],
-        },
-        pages: [
-          {
-            slug: "native",
-            words: w("Native messenger", "Your contacts and conversations with them, with no outside server.", "Нативный мессенджер", "Ваши контакты и разговоры с ними — без внешнего сервера."),
-            about: {
-              en: ["Contacts you already know, and the people whose agents agreed to bring your request — each with its conversation. It is programmed in the next steps."],
-              ru: ["Контакты, которых вы знаете, и люди, чьи агенты согласились передать ваше обращение, — у каждого свой разговор. Мессенджер программируется следующими шагами."],
-            },
-          },
-          {
-            slug: "telegram",
-            words: w("Telegram bot", "Talking to people through Telegram.", "Telegram-бот", "Общение с людьми через Telegram."),
-            about: {
-              en: ["How Telegram serves conversations between people is still being decided."],
-              ru: ["Как Telegram будет служить разговорам людей — ещё решается."],
-            },
-          },
-          dashboard("Your contacts and conversations, in short.", "Ваши контакты и разговоры — коротко."),
-        ],
-      },
-      {
-        slug: "h2a",
-        needs: "h2a",
-        words: w("H2A", "How you talk to this element's agent: here, in Telegram, or in a messenger you build.", "H2A", "Как вы общаетесь с агентом этого элемента: здесь, в Telegram или в мессенджере, который вы соберёте."),
-        about: {
-          en: [
-            "This is about how a person talks to their own agent inside this element. Telegram works by default, and you can build any other messenger with the terminal.",
-            "The native chat is a conversation with the element's agent right here, for those who would rather not use Telegram.",
-          ],
-          ru: [
-            "Здесь — о том, как человек общается с собственным агентом внутри этого элемента. По умолчанию работает Telegram, а любые другие мессенджеры вы можете создать с помощью терминала.",
-            "Нативный чат — разговор с агентом элемента прямо здесь, для тех, кто не хочет пользоваться Telegram.",
-          ],
-        },
-        pages: [
-          {
-            slug: "native",
-            words: w("Native chat", "Talk to the element's agent right here, without Telegram.", "Нативный чат", "Разговор с агентом элемента прямо здесь, без Telegram."),
-            about: {
-              en: ["This chat will replace Telegram for those who do not want to use it: you write to the element's agent on this page. It is programmed in the next steps."],
-              ru: ["Этот чат заменит Telegram тем, кто не хочет им пользоваться: вы пишете агенту элемента прямо на этой странице. Он программируется следующими шагами."],
-            },
-          },
-          dashboard("Who you talk to through this element's agent, in short.", "С кем вы общаетесь через агента этого элемента — коротко."),
-        ],
-      },
-      // 528-2 (владелец 2026-10-18): тариф первого контакта и правила агента, который ведёт диалог; хранятся в паспорте элемента.
-      { slug: "settings", network: true, words: w("Settings", "What a stranger pays for a first contact, and the rules for the agent that holds the conversation for you.", "Настройки", "Сколько незнакомец платит за первый контакт и правила для агента, который ведёт разговор за вас.") },
-    ],
-  },
+  // 801-5 (владелец 2026-11-19: «раздел Messenger закомментировать, он не должен быть доступен до появления Lagrix, то есть не удаляй
+  // его, а скрой»): весь раздел закомментирован до запуска Lagrix, как разделы A2A в 706; его адреса ведут в «Telegram-бот» (MOVED_PAGES).
+  // // 528-1: Messenger — сразу под «Живым сайтом»: H2H, H2A и их настройки.
+  // {
+  //   slug: "messenger",
+  //   project: false,
+  //   words: w("Messenger", "How people reach you and this element's agent: other people (H2H), you and your agent (H2A), and the rules for both.", "Messenger", "Как с вами и с агентом этого элемента связываются: другие люди (H2H), вы и ваш агент (H2A) — и правила для обоих."),
+  //   about: {
+  //     en: [
+  //       "H2H is people talking to people through their agents: your friends and acquaintances on Fractera, and important people you could not reach otherwise. H2A is you talking to this element's agent: here, in Telegram, or in any messenger you build with the terminal.",
+  //       "In «Settings» you set what a stranger pays for a first contact and what the agent holding the conversation for you must never do and should look for.",
+  //     ],
+  //     ru: [
+  //       "H2H — люди общаются с людьми через своих агентов: ваши друзья и знакомые на Fractera и важные люди, до которых иначе не достучаться. H2A — вы общаетесь с агентом этого элемента: здесь, в Telegram или в любом мессенджере, который вы соберёте терминалом.",
+  //       "В «Настройках» вы задаёте, сколько незнакомец платит за первый контакт, и что агенту, который ведёт разговор за вас, запрещено и что ему искать.",
+  //     ],
+  //   },
+  //   pages: [
+  //     {
+  //       slug: "h2h",
+  //       needs: "h2h",
+  //       words: w("H2H", "Talking to other people through their agents — friends, and important people you cannot reach otherwise.", "H2H", "Общение с другими людьми через их агентов — с друзьями и с важными людьми, до которых иначе не достучаться."),
+  //       about: {
+  //         en: [
+  //           "Here is the native way for people to talk to each other: your close friends or acquaintances who run their own agent on Fractera.",
+  //           "The connection goes without any outside server — unlike WhatsApp, for example — and is encrypted with SSL (TLS) certificates, so your conversations stay fully confidential for as long as the SSL standards themselves stay reliable.",
+  //           "Its special feature is reaching important people you could never contact otherwise. The messenger starts with a preliminary conversation through your agent: it contacts the important person's agent and tries to prove why you need to talk. That agent brings the request to its owner with its assessment, and the person decides. If they agree, they appear in your contact list and you talk to them just as you would to a friend.",
+  //         ],
+  //         ru: [
+  //           "Здесь — нативный способ связи между людьми: это могут быть ваши близкие друзья или знакомые, которые развернули своего агента в инфраструктуре Fractera.",
+  //           "Соединение идёт без какого-либо внешнего сервера — в отличие, например, от WhatsApp — и шифруется сертификатами SSL (TLS), поэтому ваши разговоры остаются полностью конфиденциальными, пока надёжны сами стандарты SSL.",
+  //           "Особенность этого способа — возможность связаться с важными людьми, до которых иначе не достучаться. Мессенджер начинает с предварительного разговора через вашего агента: он связывается с агентом важного человека и старается доказать, зачем вам нужен разговор. Тот агент приносит обращение своему владельцу со своей оценкой, а решает сам человек. Если он согласен, он появляется в вашем списке контактов, и вы общаетесь с ним так же, как с другом.",
+  //         ],
+  //       },
+  //       pages: [
+  //         {
+  //           slug: "native",
+  //           words: w("Native messenger", "Your contacts and conversations with them, with no outside server.", "Нативный мессенджер", "Ваши контакты и разговоры с ними — без внешнего сервера."),
+  //           about: {
+  //             en: ["Contacts you already know, and the people whose agents agreed to bring your request — each with its conversation. It is programmed in the next steps."],
+  //             ru: ["Контакты, которых вы знаете, и люди, чьи агенты согласились передать ваше обращение, — у каждого свой разговор. Мессенджер программируется следующими шагами."],
+  //           },
+  //         },
+  //         {
+  //           slug: "telegram",
+  //           words: w("Telegram bot", "Talking to people through Telegram.", "Telegram-бот", "Общение с людьми через Telegram."),
+  //           about: {
+  //             en: ["How Telegram serves conversations between people is still being decided."],
+  //             ru: ["Как Telegram будет служить разговорам людей — ещё решается."],
+  //           },
+  //         },
+  //         dashboard("Your contacts and conversations, in short.", "Ваши контакты и разговоры — коротко."),
+  //       ],
+  //     },
+  //     {
+  //       slug: "h2a",
+  //       needs: "h2a",
+  //       words: w("H2A", "How you talk to this element's agent: here, in Telegram, or in a messenger you build.", "H2A", "Как вы общаетесь с агентом этого элемента: здесь, в Telegram или в мессенджере, который вы соберёте."),
+  //       about: {
+  //         en: [
+  //           "This is about how a person talks to their own agent inside this element. Telegram works by default, and you can build any other messenger with the terminal.",
+  //           "The native chat is a conversation with the element's agent right here, for those who would rather not use Telegram.",
+  //         ],
+  //         ru: [
+  //           "Здесь — о том, как человек общается с собственным агентом внутри этого элемента. По умолчанию работает Telegram, а любые другие мессенджеры вы можете создать с помощью терминала.",
+  //           "Нативный чат — разговор с агентом элемента прямо здесь, для тех, кто не хочет пользоваться Telegram.",
+  //         ],
+  //       },
+  //       pages: [
+  //         {
+  //           slug: "native",
+  //           words: w("Native chat", "Talk to the element's agent right here, without Telegram.", "Нативный чат", "Разговор с агентом элемента прямо здесь, без Telegram."),
+  //           about: {
+  //             en: ["This chat will replace Telegram for those who do not want to use it: you write to the element's agent on this page. It is programmed in the next steps."],
+  //             ru: ["Этот чат заменит Telegram тем, кто не хочет им пользоваться: вы пишете агенту элемента прямо на этой странице. Он программируется следующими шагами."],
+  //           },
+  //         },
+  //         dashboard("Who you talk to through this element's agent, in short.", "С кем вы общаетесь через агента этого элемента — коротко."),
+  //       ],
+  //     },
+  //     // 528-2 (владелец 2026-10-18): тариф первого контакта и правила агента, который ведёт диалог; хранятся в паспорте элемента.
+  //     { slug: "settings", network: true, words: w("Settings", "What a stranger pays for a first contact, and the rules for the agent that holds the conversation for you.", "Настройки", "Сколько незнакомец платит за первый контакт и правила для агента, который ведёт разговор за вас.") },
+  //   ],
+  // },
   // 528-1: «Рабочий процесс» — что элемент делает, когда уже работает (451-2: a2a — рабочий процесс; i2i и f2f — строительный).
   {
     slug: "workflow",

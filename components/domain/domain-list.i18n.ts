@@ -122,6 +122,10 @@ const DICT: Record<string, DomainListWords> = {
       now: "Now {name} leads to: {where}.",
       nowhere: "nowhere, no A records yet",
       here: "{name} leads to this server ({ip}). Connect it to an element: open the element → «Settings» → «Domain».",
+      // 801-3: the certificate of a connected domain, on its card
+      certLoading: "Reading the certificate…",
+      certIssuing: "Its certificate is being issued — usually a few minutes. Until then the address does not open.",
+      certReady: "HTTPS works · the certificate is valid until {date} · renews by itself.",
       aaaa: "The name also has an AAAA (IPv6) record: {where}. Delete it, or the certificate will not be issued.",
       note: "If the name leads to another site now, that site stops opening on it after the change. DNS takes from a few minutes to an hour.",
       check: "Check again", checking: "Checking…", checked: "Checked at {time}",
@@ -292,6 +296,10 @@ const DICT: Record<string, DomainListWords> = {
       now: "Сейчас {name} ведёт на: {where}.",
       nowhere: "никуда, записей A пока нет",
       here: "{name} ведёт на этот сервер ({ip}). Подключите его к элементу: откройте элемент → «Настройки» → «Домен».",
+      // 801-3: сертификат подключённого домена — на его карточке
+      certLoading: "Читаю сертификат…",
+      certIssuing: "Сертификат выпускается — обычно несколько минут. До этого адрес не открывается.",
+      certReady: "HTTPS работает · сертификат действует до {date} · продлится сам.",
       aaaa: "У имени есть ещё запись AAAA (IPv6): {where}. Удалите её, иначе сертификат не выпустится.",
       note: "Если имя сейчас ведёт на другой сайт, после замены он перестанет на нём открываться. DNS обновляется от нескольких минут до часа.",
       check: "Проверить снова", checking: "Проверяю…", checked: "Проверено в {time}",
