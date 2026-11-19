@@ -295,6 +295,13 @@ myself in the workshops (data/workshop/<repo>, cloned from GitHub — never WEB4
 - ~19:1x his push VERIFIED: Fractera main = fork main = HEAD 29cedcd9 (summaries 804/805 rode along); window c8b2aa2b closed. Window
   7572745d asks him to press «Обновить» on /ru/hosting/hosting (the visit key lives in his browser). On «Готово»: watch
   https://architect.fractera.ai/api/health for commit 29cedcd9, then his test below.
+- 19:27–19:29 the server read through his Chrome (extension connected, visit opened by his password window 33f7fa34, door
+  /api/node/launch state+probe from localhost): launch MODE install (not update), started 18:55:34, prepare ✓ 18:56:08, source ✓
+  18:56:16, install RUNNING since 18:56:16 with NO sub-stage (install.progress.jsonl empty — not even «install running»); launch pid
+  1424243 alive; RAM avail 5.9–6.2 of 7.9 GB (nothing heavy runs), pm2 root 0, ports 80/443 free (nginx not listening — the site is
+  down); disk free 7 GB (need 12 — verdict fail); head 14aa1eff ahead 1 behind 0 vs Fractera (= 29cedcd9 + the server's own commit).
+  Reading: the install hangs before install.sh writes its first line (or it writes elsewhere). The log tail is not readable through the
+  door (no action for it) — 806 must add one. Waits his word: wait / stop and restart.
 - **What to check with him on the server** (fractera.ai, his Chrome — the extension is NOT connected now: he re-logged Claude Code to
   admin@…; ask him to sign the extension in only if needed): (1) on the app's own domain, signed in as architect at the centre →
   «Войти другим аккаунтом» → the element admin's password → in (no «Доступ запрещён»); (2) the drawer shows the admin pages (Accounts,
