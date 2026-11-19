@@ -41,6 +41,7 @@ import { ElementDescribe } from '../../../_components/element-describe.client'
 import { ElementAddress } from '../../../_components/element-address.client'
 import { ElementDomain } from '../../../_components/element-domain.client'
 import { ElementCertificate } from '../../../_components/element-certificate.client'
+import { ElementDomainRows } from '../../../_components/element-domain-rows.client'
 import { domainRecord } from '@/lib/web4-items/element-domain'
 import { serverDomainWords } from '@/components/hosting/server-domain.i18n'
 import { primaryDomain } from '@/lib/domain/node-domains'
@@ -406,17 +407,15 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   // любую работу с доменом»): у элемента на корне домена узла (`holdsApex`) этой страницы нет вовсе — дерево её прячет (`ownDomain`).
   const domainSettings = key === 'settings/domain'
     ? (entry
-      ? <ElementDangerZone ui={sui} badge={false} nav cards={[
-          'mirror', 'certificate', 'address', ...(domainRecord(item) && primaryDomain() ? ['signIn' as const] : []),
-        ]} actions={{
-          // 446-3: оранжевая карточка — только при подключённом своём домене; центр входа — `auth.<зона узла>`.
-          signIn: domainRecord(item) && primaryDomain()
-            ? <ElementOwnDomainSignIn ui={sui} domain={domainRecord(item)!.domain} center={`auth.${primaryDomain()!.name}`} />
-            : null,
-          mirror: <ElementDomain id={item} lang={lang} ui={sui} current={domainRecord(item)} />,
-          certificate: <ElementCertificate id={item} domain={domainRecord(item)?.domain ?? null} lang={lang} ui={sui} domainWords={serverDomainWords(lang)} />,
-          address: <ElementAddress id={item} lang={lang} ui={sui} current={slug} internet={domainRecord(item)?.url.replace("https://", "") ?? address} />,
-        }} />
+      ? <ElementDomainRows label={sui.pageNav.label} down={sui.pageNav.down} rows={[
+          // 803-4: one bordered card of closed rows — each row's title and line are its card's own words, the body its fields.
+          { id: 'domain-mirror', title: sui.mirror.title, line: sui.mirror.text, body: <ElementDomain id={item} lang={lang} ui={sui} current={domainRecord(item)} /> },
+          { id: 'domain-certificate', title: sui.certificate.title, line: sui.certificate.text, body: <ElementCertificate id={item} domain={domainRecord(item)?.domain ?? null} lang={lang} ui={sui} domainWords={serverDomainWords(lang)} /> },
+          { id: 'domain-address', title: sui.address.title, line: sui.address.text, body: <ElementAddress id={item} lang={lang} ui={sui} current={slug} internet={domainRecord(item)?.url.replace("https://", "") ?? address} /> },
+          // 446-3: только при подключённом своём домене; центр входа — `auth.<зона узла>`.
+          ...(domainRecord(item) && primaryDomain() ? [{ id: 'domain-sign-in', title: sui.signIn.title, line: sui.signIn.text, tone: 'warning' as const,
+            body: <ElementOwnDomainSignIn ui={sui} domain={domainRecord(item)!.domain} center={`auth.${primaryDomain()!.name}`} /> }] : []),
+        ]} />
       : <p className="my-4 text-sm text-muted-foreground">{sui.notBorn}</p>)
     : null
   const settings = key === 'settings/danger-zone'

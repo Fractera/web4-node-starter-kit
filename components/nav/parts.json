@@ -31,7 +31,7 @@
         "en": "A long page's own top menu — one link per part, sticky under the site header — and a blinking arrow at the bottom while a part lies below the screen.",
         "ru": "Своё верхнее меню длинной страницы — по ссылке на каждую её часть, прилипает под шапкой сайта — и мигающая стрелка внизу, пока ниже экрана есть часть."
       },
-      "how": "<PageAnchors items={[{ id, label }]} label down /> above the parts; each part carries its id and scroll-mt-32.",
+      "how": "<PageAnchors items={[{ id, label }]} label down onGo?>{the parts}</PageAnchors> — the menu above, the strip with the arrow at the bottom of the content; each part carries its id and scroll-mt-32.",
       "words": {
         "en": [
           "page menu",
