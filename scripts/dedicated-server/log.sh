@@ -86,7 +86,8 @@ def tail(path, n=150):
         mtime = None
     return out.split("\n") if out else [], size, mtime
 
-HEADER = re.compile(r"^── (\S+) — .* · (\d\d):(\d\d):(\d\d)$")
+# a server on an older core prints the header without its time: the element is still a line, only its seconds are unknown
+HEADER = re.compile(r"^── (\S+) — .*?(?: · (\d\d):(\d\d):(\d\d))?$")
 
 def elements(log_path, parent):
     """One line per element of the last `services:install` in this log; `parent` — the step that ran it (its start, end and state):
@@ -107,7 +108,7 @@ def elements(log_path, parent):
     for line in text.splitlines():
         m = HEADER.match(line)
         if m:
-            t = epoch(f"{day}T{m.group(2)}:{m.group(3)}:{m.group(4)}Z")
+            t = epoch(f"{day}T{m.group(2)}:{m.group(3)}:{m.group(4)}Z") if m.group(2) else None
             if t is not None and last is not None and t < last - 3600:  # past midnight
                 t += 86400
             last = t
