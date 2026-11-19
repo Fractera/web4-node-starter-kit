@@ -92,6 +92,9 @@ if [ ${#NODES[@]} -gt 0 ]; then
   done
   for c in "$HOME_DIR"/*.before-*; do erase "$c"; done
   erase "$HOME_DIR/.npm"; erase "$HOME_DIR/.cache"; erase "$HOME_DIR/.pm2"
+  # ✗ measured 2026-11-19 after a clear: root's own npm cache held 24 GB (the installs' global packages, earlier installers) — a cache only,
+  # npm fetches again what it needs
+  erase "$ROOT_DIR/.npm/_cacache"
   if [ "$KEEP_SITE" != 1 ]; then
     for f in "$NGINX_DIR"/sites-enabled/* "$NGINX_DIR"/conf.d/*.conf; do
       [ -e "$f" ] || continue

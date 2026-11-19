@@ -37,6 +37,7 @@ function tree(name) {
   put(path.join(root, 'fractera-cleared-20261119-081456', 'nodes', 'web4-node-starter-kit', 'big'))
   put(path.join(root, 'fractera-cleared-20261119-081456', 'nginx', 'shop'), 'server { }') // a stranger's site kept by an earlier clear
   put(path.join(root, '.ssh', 'authorized_keys'))
+  put(path.join(root, '.npm', '_cacache', 'index-v5', 'x'))
   put(path.join(base, 'etc', 'letsencrypt', 'live', 'fractera.ai', 'fullchain.pem'))
   put(path.join(nginx, 'sites-enabled', 'fractera'), `${MARK}server { }`)
   put(path.join(nginx, 'sites-enabled', 'blog'), 'server { }')
@@ -64,7 +65,10 @@ t('the copies of earlier clears and launches are erased', () => {
   assert.equal(existsSync(path.join(a.root, 'fractera-cleared-20261119-081456', 'nodes')), false)
   assert.equal(existsSync(path.join(a.home, 'web4-node-starter-kit.before-20261118T000000Z')), false)
 })
-t('the node user\'s caches are erased', () => { for (const c of ['.npm', '.cache', '.pm2']) assert.equal(existsSync(path.join(a.home, c)), false, c) })
+t('the node user\'s caches and root\'s npm cache are erased', () => {
+  for (const c of ['.npm', '.cache', '.pm2']) assert.equal(existsSync(path.join(a.home, c)), false, c)
+  assert.equal(existsSync(path.join(a.root, '.npm', '_cacache')), false)
+})
 t('negative: the keys, the Claude sign-in, the certificates, a stranger\'s kept site, the bot token and the stopwatch stay', () => {
   for (const k of ['.ssh/authorized_keys', '.claude/settings.json', '.local/bin/claude']) assert.ok(existsSync(path.join(a.home, k)), k)
   assert.ok(existsSync(path.join(a.root, '.ssh', 'authorized_keys')))
