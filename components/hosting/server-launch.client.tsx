@@ -35,11 +35,11 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 type CoreRow = CertRow & { zone: string; label: string; kind: string; https: boolean | null; status: number | null; off?: boolean }
 export type LaunchState = {
   host?: string
-  cleared?: { state?: string; detail?: string; stopped?: number; backup?: string } | null
-  probe: { publicIp?: string | null; otherNodes?: string[]; fractera: { head: string | null; ahead: number | null; behind: number | null; phase: string | null; launching: boolean; origin?: string | null; movedFrom?: { from?: string | null; at?: string | null } | null } | null } | null
+  cleared?: { state?: string; detail?: string; stopped?: number; backup?: string | null; nodes?: string[]; erased?: string[]; freedGb?: number; freeGb?: number } | null
+  probe: { /** 806-2 */ diskFreeGb?: number; disk?: { totalGb: number; usedGb: number; copies: string[]; copiesGb: number | null }; publicIp?: string | null; otherNodes?: string[]; fractera: { head: string | null; ahead: number | null; behind: number | null; phase: string | null; launching: boolean; origin?: string | null; movedFrom?: { from?: string | null; at?: string | null } | null } | null } | null
   /** 744-4 (D49): what the server is to this node — `lib/hosting/relation.mjs`, computed by the runner from the probe */
   relation?: { kind: "clean" | "related" | "unrelated"; nodeUnrelated: boolean; nodes?: string[]; reasons: Array<{ id: string; from?: string | null; at?: string | null; origin?: string; folders?: string[]; sites?: string[]; count?: number }> } | null
-  launch: { state: "running" | "done" | "failed"; mode?: string; failed?: string | null; detail?: string; version?: { head: string; behind: number | null } | null } | null
+  launch: { state: "running" | "done" | "failed"; mode?: string; startedAt?: string; failed?: string | null; detail?: string; version?: { head: string; behind: number | null } | null } | null
   progress: Stage[]
   sub: Stage[]
   update: { state?: string; stage?: string; summary?: string; reason?: string } | null
@@ -231,7 +231,7 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
     ),
     check: <CheckStep busy={busy} dialogUi={dialogUi} onAct={async (a, x) => { await act(a, x) }} state={state} words={words} />,
     domain: <LaunchDomain busy={busy} dialogUi={dialogUi} lang={lang} launchWords={words} note={words.domainNote} onAct={act} state={state} words={ladderWords} />,
-    install: <InstallStep busy={busy} onAct={act} state={state} strategy={strategy} words={words} />,
+    install: <InstallStep busy={busy} onAct={act} state={state} strategy={strategy} target={target} words={words} />,
     telegram: <TelegramStep busy={busy} lang={lang} onAct={act} state={state} words={words} />,
     recheck: <RecheckStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,
     certs: <CertsLaunchStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,

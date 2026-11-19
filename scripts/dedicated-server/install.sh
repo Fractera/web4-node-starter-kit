@@ -9,8 +9,11 @@ cd "$(dirname "$0")/../.." || exit 1
 NODE_DIR="$(pwd)"
 mkdir -p logs/dedicated-server
 export PROGRESS="$NODE_DIR/logs/dedicated-server/install.progress.jsonl" LOG="$NODE_DIR/logs/dedicated-server/install.log"
+# 806-5: the checklist is about THIS run — its progress starts empty (every stage still skips what an earlier run finished)
+: > "$PROGRESS"
 . "$NODE_DIR/scripts/dedicated-server/stages.sh"
 export PATH="$HOME/.local/bin:$PATH" NODE_ENV=
+echo "### $(date -u +%Y-%m-%dT%H:%M:%SZ) — the install of this run begins" >> "$LOG"
 emit install running
 
 # No quick tunnel on the server: its public face is nginx (the IP, then the domain). Since 741-4 the place record decides (`tunnelAllowed`,

@@ -562,14 +562,19 @@ console.log('737-7 the judge of a server (the owner\'s test server, 2026-11-13: 
   })
 }
 
-console.log('737-7 a busy server: freed, never erased')
+// 806-1 (the owner, 2026-11-19: «полная очистка»): a STRANGER's programs and sites are still set aside, never erased; a Fractera node
+// is erased only through the script's one `erase` (its run on a scratch tree — scripts/server-install-live.test.mjs).
+console.log('737-7 / 806-1 a busy server: a stranger set aside, a Fractera node erased by one function')
 {
   if (process.platform !== 'win32') {
     const { spawnSync } = await import('node:child_process')
-    t('clear.sh is valid bash and erases nothing by its own words (no rm -rf, no apt purge, no dropdb)', () => {
+    t('clear.sh is valid bash; no apt purge, no dropdb; every rm -rf is the one erase() or the empty backup', () => {
       assert.equal(spawnSync('bash', ['-n', join(import.meta.dirname, 'dedicated-server', 'clear.sh')]).status, 0)
       const text = readFileSync(join(import.meta.dirname, 'dedicated-server', 'clear.sh'), 'utf8')
-      assert.ok(!/rm -rf|apt(-get)? (purge|remove)|dropdb|DROP DATABASE/i.test(text))
+      assert.ok(!/apt(-get)? (purge|remove)|dropdb|DROP DATABASE/i.test(text))
+      const rm = text.split('\n').filter((l) => /\brm -rf\b/.test(l) && !l.trim().startsWith('#'))
+      assert.deepEqual(rm.map((l) => l.trim()), ['run rm -rf -- "$1" && ERASED+=("$1")', 'rm -rf -- "$BACKUP"; BACKUP=""'])
+      assert.ok(/grep -q 'Managed by the Fractera node \(step 737\)' "\$f" 2>\/dev\/null && continue\n\s+name=/.test(text), 'a stranger\'s site is moved, never passed to erase')
     })
   }
 }

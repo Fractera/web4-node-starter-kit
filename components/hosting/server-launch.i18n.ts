@@ -4,6 +4,8 @@
 // проверка установка и обновления сертификатов безопасности который должен заканчиваться чек листом … Только после этого … сообщаешь
 // пользователю о том что его сервер готов».
 
+import { LIVE_EN, LIVE_RU, type LiveWords } from "./server-install-live.i18n"
+
 export type LaunchStep = "server" | "check" | "domain" | "install" | "telegram" | "recheck" | "certs" | "ready"
 type Verdict = "ok" | "warn" | "fail"
 
@@ -60,6 +62,8 @@ export type ServerLaunchWords = {
   /** 744-7: `silent` — Fractera stands there, its node does not answer yet (the next step waits for it); `ask` reads the server again */
   install: { text: string; install: string; update: string; again: string; running: string; done: string; failed: string; leave: string; silent: string; ask: string }
   stage: Record<string, string>
+  /** 806-4: the live install — the server's own log and checklist */
+  live: LiveWords
   recheck: { text: string; button: string; gate: string; noDomain: string }
   /** 758: step 5 — the server's own bot while the server installs; `{stage}` the installation's stage, `{tail}` the token's last four, `{bot}` @name */
   telegram: {
@@ -77,7 +81,7 @@ export type ServerLaunchWords = {
    *  (`ReadyWords`, `check:ready-words`); `missing` names what the check still lacks — `{host}` */
   ready: { text: string; activate: string; activating: string; signinOk: string; signinFail: string; signinButton: string; signinChecking: string; signinHint: string; signinHintLabel: string; links: string; site: string; panel: string; signin: string; next: string; first: string; done: string; claimLead: string; claimSteps: string[]; claimEmail: string; claimGo: string; claimSending: string; claimSent: string; claimOpen: string; claimFailed: string; claimLoss: string; claimed: string; missing: { title: string; cert: string; https: string; signin: string } }
   dangerZone: string
-  busy: { title: string; text: string; clear: string; clearTitle: string; risks: string[]; agree: string; clearConfirm: string; notNow: string; clearing: string; cleared: string; failed: string; nodeTitle: string; nodeText: string; nodeClear: string; nodeRisk: string; freshTitle: string; freshText: string; freshClear: string; freshRisk: string; freshAgree: string }
+  busy: { title: string; text: string; clear: string; clearTitle: string; risks: string[]; agree: string; clearConfirm: string; notNow: string; clearing: string; cleared: string; failed: string; nodeTitle: string; nodeText: string; nodeClear: string; nodeRisk: string; freshTitle: string; freshText: string; freshClear: string; freshRisk: string; freshAgree: string; freshDisk: string; copiesNone: string; erasedDone: string }
 }
 
 const STAGE_EN = {
@@ -146,7 +150,7 @@ const en: ServerLaunchWords = {
   verdict: { ok: "The server fits.", warn: "The server will do — read the notes.", fail: "The node cannot live on this server:" },
   item: { os: "System", arch: "Processor", memory: "Free memory, MB (a fresh node holds)", disk: "Free disk, GB (needed)", cores: "Cores (recommended)", ram: "Memory, MB (recommended)", ports: "Ports 80/443", address: "Public address", systemd: "Autostart (systemd)", sites: "nginx already serves other sites — the node would break them; free the server first", others: "Programs of another installation run as root (pm2 processes)" },
   fractera: { none: "Fractera is not installed here.", there: "Fractera is installed: version {head}.", behind: "It is {n} commits behind your fork.", latest: "It has everything your fork has.", unknown: "How far behind it is could not be measured (GitHub did not answer).", launching: "A launch is running on this server now." },
-  strategy: { install: "Next: install a fresh Fractera from your fork.", update: "Next: update it ({n} behind).", latest: "Next: nothing to install — go on to the domain.", running: "Next: follow the launch below.", clear: "Next: delete the previous state — a copy of it stays on the server." },
+  strategy: { install: "Next: install a fresh Fractera from your fork.", update: "Next: update it ({n} behind).", latest: "Next: nothing to install — go on to the domain.", running: "Next: follow the launch below.", clear: "Next: delete the previous state — it is erased for good, a clean disk." },
   relation: { clean: "A clean server: no Fractera, no other sites or programs.", related: "Related to this node: Fractera from your fork.", unrelated: "Not related to this node:" },
   reason: { moved: "a copy moved here from {from} on {date} (the old move, not a launch from your fork)", "other-fork": "a node from another fork: {origin}", "no-origin": "a node without a GitHub source", "other-nodes": "other Fractera nodes: {folders}", "foreign-sites": "nginx sites: {sites}", "root-programs": "programs of root in pm2: {n}" },
   preflight: { ok: "A trial merge on the server passed: the update will go through.", stop: "A trial merge on the server stops on files changed both there and in Fractera: {files}. The update would be refused; the server is untouched.", unknown: "Could not check in advance whether the update will pass." },
@@ -193,6 +197,7 @@ const en: ServerLaunchWords = {
     silent: "Fractera is installed, but the server's node does not answer yet: the next step waits for it.", ask: "Ask the server again",
   },
   stage: STAGE_EN,
+  live: LIVE_EN,
   telegram: {
     text: "While the server installs, give it a Telegram bot of its own: from then on you talk to the server's main agent from the phone. You can skip it and connect it later.",
     how: ["In Telegram open @BotFather and send /newbot.", "BotFather asks for a name, then the bot's address. Copy them from here one by one and paste them into the chat:", "BotFather answers with a token like 1234567890:AA… — paste it here, in the field below."],
@@ -253,14 +258,17 @@ const en: ServerLaunchWords = {
   dangerZone: "Danger zone",
   busy: {
     freshTitle: "Install again, from zero",
-    freshText: "The server already runs this node's earlier install. To start from zero without reinstalling the system: the old node stops and moves whole into a copy on the server — nothing is erased — and a fresh node from your fork is installed in its place.",
+    freshText: "The server already runs this node's earlier install. To start from zero without reinstalling the system: the old node stops and is ERASED for good together with every older copy and the caches — a clean disk, as on a new server — and a fresh node from your fork is installed in its place.",
     freshClear: "Install from zero…",
-    freshRisk: "The node on {host} stops at once and its folder moves whole into /root/fractera-cleared-… — its data, keys and history stay there; its sites stop answering until the new node is up. The certificates stay on the server and are used again.",
-    freshAgree: "I understand: the node on {host} stops and a new one is installed",
+    freshRisk: "The node on {host} stops at once and is erased for good: its data, keys and history, and every older copy in /root/fractera-cleared-… — nothing can be brought back. While the new node installs, its sites answer «the node is updating». The certificates, SSH keys and the server's Claude Code sign-in stay.",
+    freshAgree: "I understand: the node on {host} is erased for good and a new one is installed",
+    freshDisk: "The disk now: {used} of {total} GB used, {free} GB free; older copies of the node: {copies}.",
+    copiesNone: "none",
+    erasedDone: "The server is cleaned: erased for good — {nodes} and {count} older copies and caches; {freed} GB freed, {free} GB free now. The check ran again.",
     nodeTitle: "This server holds a Fractera node that is not this node's",
-    nodeText: "Delete the previous state: the node stops and is set aside whole — nothing is erased — and a fresh node from your fork goes in its place.",
+    nodeText: "Delete the previous state: the node stops and is erased for good with every older copy — a clean disk — and a fresh node from your fork goes in its place.",
     nodeClear: "Delete the previous state…",
-    nodeRisk: "The node {nodes} stops at once and its folder moves whole into /root/fractera-cleared-… — its data, keys and history stay there; its sites stop answering until the new node is installed.",
+    nodeRisk: "The node {nodes} stops at once and is erased for good — its data, keys and history and every older copy in /root/fractera-cleared-…; nothing can be brought back. Its sites stop answering until the new node is installed.",
     title: "The server is taken by another installation",
     text: "Other programs and sites already run on this server. The node can free it for itself — or you simply do not go on.",
     clear: "Free the server…",
@@ -274,7 +282,7 @@ const en: ServerLaunchWords = {
     agree: "I understand: the sites and programs on {host} stop",
     clearConfirm: "Stop them and free the server",
     notNow: "Not now",
-    clearing: "Freeing the server: the earlier programs stop, the foreign sites move to a backup folder there. Under a minute; the check runs again by itself.",
+    clearing: "Cleaning the server: the earlier programs stop, a Fractera node and its older copies are erased, the foreign sites move to a backup folder there. Up to a few minutes; the check runs again by itself.",
     cleared: "The server is freed: programs stopped — {n}, everything kept in {backup}. The check ran again.",
     failed: "Freeing failed:",
   },
@@ -331,7 +339,7 @@ const ru: ServerLaunchWords = {
   verdict: { ok: "Сервер подходит.", warn: "Сервер подойдёт — прочитайте замечания.", fail: "Узел не сможет жить на этом сервере:" },
   item: { os: "Система", arch: "Процессор", memory: "Свободная память, МБ (свежий узел держит)", disk: "Свободный диск, ГБ (нужно)", cores: "Ядра (рекомендуется)", ram: "Память, МБ (рекомендуется)", ports: "Порты 80/443", address: "Публичный адрес", systemd: "Автозапуск (systemd)", sites: "nginx уже обслуживает другие сайты — узел их сломает; сначала освободите сервер", others: "Работают программы другой установки от root (процессы pm2)" },
   fractera: { none: "Fractera здесь не установлена.", there: "Fractera установлена: версия {head}.", behind: "Отстаёт от вашего форка на {n} коммитов.", latest: "В нём всё, что есть в вашем форке.", unknown: "Насколько отстаёт, измерить не удалось (GitHub не ответил).", launching: "На этом сервере сейчас идёт запуск." },
-  strategy: { install: "Дальше: установить свежую Fractera из вашего форка.", update: "Дальше: обновить (отстаёт на {n}).", latest: "Дальше: ставить нечего, переходите к домену.", running: "Дальше: следите за запуском ниже.", clear: "Дальше: удалить прежнее состояние — его копия останется на сервере." },
+  strategy: { install: "Дальше: установить свежую Fractera из вашего форка.", update: "Дальше: обновить (отстаёт на {n}).", latest: "Дальше: ставить нечего, переходите к домену.", running: "Дальше: следите за запуском ниже.", clear: "Дальше: удалить прежнее состояние — оно стирается навсегда, диск чистый." },
   relation: { clean: "Чистый сервер: ни Fractera, ни других сайтов и программ.", related: "Связан с этим узлом: Fractera из вашего форка.", unrelated: "Не связан с этим узлом:" },
   reason: { moved: "копия, перенесённая сюда с {from} {date} (старый переезд, а не запуск из вашего форка)", "other-fork": "узел из другого форка: {origin}", "no-origin": "узел без источника на GitHub", "other-nodes": "другие узлы Fractera: {folders}", "foreign-sites": "сайты nginx: {sites}", "root-programs": "программ root в pm2: {n}" },
   preflight: { ok: "Пробное слияние на сервере прошло: обновление пройдёт.", stop: "Пробное слияние на сервере останавливается на файлах, изменённых и там, и в Fractera: {files}. Обновление было бы отклонено; сервер не тронут.", unknown: "Заранее проверить, пройдёт ли обновление, не удалось." },
@@ -378,6 +386,7 @@ const ru: ServerLaunchWords = {
     silent: "Fractera установлена, но узел сервера пока не отвечает: следующий шаг его ждёт.", ask: "Спросить сервер ещё раз",
   },
   stage: STAGE_RU,
+  live: LIVE_RU,
   telegram: {
     text: "Пока сервер ставится, подключите ему собственного Telegram-бота: дальше с главным агентом сервера можно говорить с телефона. Шаг можно пропустить и вернуться к нему позже.",
     how: ["В Telegram откройте @BotFather и отправьте /newbot.", "BotFather попросит имя, затем адрес бота. Скопируйте их отсюда по очереди и вставьте в чат:", "BotFather пришлёт токен вида 1234567890:AA… — вставьте его сюда, в поле ниже."],
@@ -438,14 +447,17 @@ const ru: ServerLaunchWords = {
   dangerZone: "Опасная зона",
   busy: {
     freshTitle: "Установить заново, с нуля",
-    freshText: "На сервере уже стоит прежняя установка этого узла. Чтобы начать с нуля без переустановки системы: старый узел остановится и целиком уйдёт в копию на сервере — ничего не стирается, — а на его место встанет свежий узел из вашего форка.",
+    freshText: "На сервере уже стоит прежняя установка этого узла. Чтобы начать с нуля без переустановки системы: старый узел остановится и будет СТЁРТ навсегда вместе со всеми старыми копиями и кэшами — чистый диск, как на новом сервере, — а на его место встанет свежий узел из вашего форка.",
     freshClear: "Установить с нуля…",
-    freshRisk: "Узел на {host} сразу остановится, его папка целиком уйдёт в /root/fractera-cleared-… — данные, ключи и история останутся там; его сайты не будут отвечать, пока не встанет новый узел. Сертификаты остаются на сервере и пойдут в дело снова.",
-    freshAgree: "Я понимаю: узел на {host} остановится и будет установлен новый",
+    freshRisk: "Узел на {host} сразу остановится и будет стёрт навсегда: его данные, ключи и история и все старые копии в /root/fractera-cleared-… — вернуть их будет нельзя. Пока ставится новый узел, его сайты отвечают «узел обновляется». Сертификаты, ключи SSH и вход Claude Code на сервере остаются.",
+    freshAgree: "Я понимаю: узел на {host} будет стёрт навсегда и установлен новый",
+    freshDisk: "Диск сейчас: занято {used} из {total} ГБ, свободно {free} ГБ; старые копии узла: {copies}.",
+    copiesNone: "нет",
+    erasedDone: "Сервер очищен: стёрто навсегда — {nodes}, а также старые копии и кэши ({count}); освобождено {freed} ГБ, свободно {free} ГБ. Проверка повторена.",
     nodeTitle: "На сервере узел Fractera, не связанный с этим узлом",
-    nodeText: "Удалить прежнее состояние: узел остановится и целиком уйдёт в копию на сервере — ничего не стирается, — а на его место встанет свежий узел из вашего форка.",
+    nodeText: "Удалить прежнее состояние: узел остановится и будет стёрт навсегда со всеми старыми копиями — чистый диск, — а на его место встанет свежий узел из вашего форка.",
     nodeClear: "Удалить прежнее состояние…",
-    nodeRisk: "Узел {nodes} сразу остановится, его папка целиком уйдёт в /root/fractera-cleared-… — данные, ключи и история останутся там; его сайты перестанут отвечать, пока не встанет новый узел.",
+    nodeRisk: "Узел {nodes} сразу остановится и будет стёрт навсегда — его данные, ключи и история и все старые копии в /root/fractera-cleared-…; вернуть их будет нельзя. Его сайты перестанут отвечать, пока не встанет новый узел.",
     title: "Сервер занят другой установкой",
     text: "На сервере уже работают другие программы и сайты. Узел может освободить сервер для себя — или вы просто не продолжаете.",
     clear: "Очистить сервер…",
@@ -459,7 +471,7 @@ const ru: ServerLaunchWords = {
     agree: "Я понимаю: сайты и программы на {host} остановятся",
     clearConfirm: "Остановить и освободить",
     notNow: "Не сейчас",
-    clearing: "Освобождаю сервер: прежние программы останавливаются, чужие сайты уходят в резервную папку там же. Меньше минуты; проверка повторится сама.",
+    clearing: "Очищаю сервер: прежние программы останавливаются, узел Fractera и его старые копии стираются, чужие сайты уходят в резервную папку там же. До нескольких минут; проверка повторится сама.",
     cleared: "Сервер освобождён: остановлено программ — {n}, всё сохранено в {backup}. Проверка повторена.",
     failed: "Очистка не прошла:",
   },

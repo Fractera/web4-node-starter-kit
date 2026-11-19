@@ -366,6 +366,16 @@ const verbs = {
     try { done({ ok: true, state: await readState(client) }) } finally { client.end() }
   },
 
+  // 806-3: the live reader — the running stage's log tail and the checklist with times (`log.sh`), asked every few seconds by the page
+  async log() {
+    const { client } = await byKey()
+    try {
+      await scripts(client, ['log.sh'])
+      const r = await exec(client, `bash ${q(`${DIR}/log.sh`)} ${q(FOLDER)} ${q(DIR)}`, { timeoutMs: 20_000 })
+      done({ ok: true, log: JSON.parse(r.stdout.trim().split('\n').pop() ?? '') })
+    } finally { client.end() }
+  },
+
   async probe() {
     const { client } = await byKey()
     try { await probe(client); done({ ok: true, state: await readState(client) }) } finally { client.end() }
@@ -569,14 +579,23 @@ const verbs = {
       // 744-4: an unrelated node is set aside whole; beside a related node only the strangers go.
       const s0 = await readState(client)
       // 784 (the owner, 2026-11-18, Telegram 642/662: «будем делать перестановку на уровне ниже переустановки операционной системы … мне
-      // нужна кнопка очистить данный сервер»): `--fresh` — the person chose «с нуля» for a server holding THIS node's own older install:
-      // the related node is set aside whole too (stopped, moved into the backup, nothing erased), so a fresh install follows.
+      // нужна кнопка очистить данный сервер»): `--fresh` — the person chose «с нуля» for a server holding THIS node's own older install.
+      // 806-1 (the owner, 2026-11-19: «полная очистка»): every Fractera node named here is ERASED with every older copy, the Easy
+      // Starter's way; `--keep-site` keeps this node's own nginx site so its «updating» page answers while the fresh node installs (806-6).
       const fresh = args.includes('--fresh') && Boolean(s0.probe?.fractera)
       const nodes = fresh ? [...new Set([FOLDER, ...(s0.relation?.nodes ?? []), ...(s0.probe?.otherNodes ?? [])])] : s0.relation?.nodes ?? []
       await scripts(client, ['clear.sh'])
-      const r = await exec(client, `${DRY}bash ${q(`${DIR}/clear.sh`)} --dir ${q(DIR)}${nodes.map((n) => ` --node ${q(n)}`).join('')}`, { timeoutMs: 180_000 })
+      // 806-1: an erase of whole nodes (millions of files) may outlast one SSH call — the script runs detached on the server and this
+      // runner reads its one answer line; a dropped connection cuts nothing there.
+      const out = `${DIR}/clear.out`
+      await exec(client, `rm -f ${q(out)}`)
+      await startDetached(client, `${DRY}bash ${q(`${DIR}/clear.sh`)} --dir ${q(DIR)}${fresh ? ' --keep-site' : ''}${nodes.map((n) => ` --node ${q(n)}`).join('')}`, out)
       let cleared = null
-      try { cleared = JSON.parse(r.stdout.trim().split('\n').pop()) } catch { /* the script said nothing readable */ }
+      for (const t0 = Date.now(); !cleared && Date.now() - t0 < 540_000;) {
+        await new Promise((res) => setTimeout(res, dry ? 200 : 3000))
+        const r = await exec(client, `tail -n 1 ${q(out)} 2>/dev/null || true`, { timeoutMs: 20_000 })
+        try { const v = JSON.parse(r.stdout.trim()); if (v && typeof v === 'object' && 'nodes' in v) cleared = v } catch { /* not yet */ }
+      }
       await probe(client)
       done({ ok: Boolean(cleared), cleared, state: await readState(client) })
     } finally { client.end() }
@@ -600,7 +619,7 @@ export function launchRecords(zone, ip, dnsZone = null) {
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   if (!verbs[verb]) {
-    console.log('Запуск сервера: connect · close · state · probe · install --mode install|update · domain --name · way --way · detect · dns · door · telegram · signin · clear --confirm')
+    console.log('Запуск сервера: connect · close · state · log · probe · install --mode install|update · domain --name · way --way · detect · dns · door · telegram · signin · clear --confirm')
     process.exit(verb ? 2 : 0)
   }
   if (!(IPV4.test(host) || isHostName(host)) || !Number.isInteger(port) || port < 1 || port > 65535) {

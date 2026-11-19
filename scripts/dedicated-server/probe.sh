@@ -45,6 +45,10 @@ RAM_MB="$(awk '/MemTotal/ {print int($2/1024)}' /proc/meminfo 2>/dev/null || ech
 AVAIL_MB="$(awk '/MemAvailable/ {print int($2/1024)}' /proc/meminfo 2>/dev/null || echo 0)" \
 SWAP_MB="$(awk '/SwapTotal/ {print int($2/1024)}' /proc/meminfo 2>/dev/null || echo 0)" \
 DISK_FREE_GB="$(df -BG --output=avail /home 2>/dev/null | tail -1 | tr -dc '0-9')" \
+DISK_TOTAL_GB="$(df -BG --output=size /home 2>/dev/null | tail -1 | tr -dc '0-9')" \
+DISK_USED_GB="$(df -BG --output=used /home 2>/dev/null | tail -1 | tr -dc '0-9')" \
+COPIES="$(ls -d /root/fractera-cleared-*/nodes/* /home/fractera/*.before-* 2>/dev/null | paste -sd, -)" \
+COPIES_GB="$(c="$(ls -d /root/fractera-cleared-*/nodes/* /home/fractera/*.before-* 2>/dev/null)"; [ -n "$c" ] && timeout 15 du -scBG $c 2>/dev/null | tail -1 | tr -dc '0-9')" \
 IPV6="$([ -f /proc/net/if_inet6 ] && echo true || echo false)" \
 PORT80="$(busy 80)" PORT443="$(busy 443)" \
 NGINX="$(command -v nginx >/dev/null && echo true || echo false)" \
@@ -86,6 +90,8 @@ def access():
 print(json.dumps({
   "os": {"id": e["OS_ID"], "version": e["OS_VERSION"], "pretty": e["OS_PRETTY"], "arch": e["ARCH"]},
   "cores": n("CORES"), "ramMb": n("RAM_MB"), "availMb": n("AVAIL_MB"), "swapMb": n("SWAP_MB"), "diskFreeGb": n("DISK_FREE_GB"),
+  "disk": {"totalGb": n("DISK_TOTAL_GB"), "usedGb": n("DISK_USED_GB"), "copies": [x for x in (e.get("COPIES") or "").split(",") if x],
+           "copiesGb": int(e["COPIES_GB"]) if e.get("COPIES_GB", "").isdigit() else None},
   "ipv6": b("IPV6"), "port80Busy": b("PORT80"), "port443Busy": b("PORT443"), "nginx": b("NGINX"), "systemd": b("SYSTEMD"),
   "nodeVersion": e.get("NODE_VERSION") or None, "publicIp": e.get("PUBLIC_IP") or None, "nodeThere": b("NODE_THERE"),
   "ufw": e["UFW"], "sshPort": n("SSH_PORT"),

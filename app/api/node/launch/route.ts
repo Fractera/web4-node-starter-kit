@@ -28,6 +28,8 @@ import { closeWindowProcess, openWindowProcess } from "@/lib/hosting/window-proc
 //                                                              window closes)
 //   POST { action: "window", host, port }                       the server's own panel through SSH while the visit lasts (744-3, D45)
 //   POST { action: "state" | "probe", host, port }              the server's state; the server checked again
+//   POST { action: "log", host, port }                         806-3: the live install — its log tail, its checklist with times, how long
+//                                                              the log has been quiet and how busy the processor is (`log.sh` there)
 //   POST { action: "install", host, port, mode }                the launch started on the server (install · update)
 //   POST { action: "domain" | "way" | "detect" | "dns", host, port, name?, way? }   the domain step, kept on the server
 //   POST { action: "dns-check" | "certs" | "check" | "activate" | "claim", host, port }   the server node's own domain door; `claim`
@@ -55,7 +57,7 @@ const HOST = /^(?=.{4,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/
 const FINGERPRINT = /^SHA256:[A-Za-z0-9+/]{43}$/
 const DOOR_ACTIONS = ["dns-check", "certs", "check", "activate", "claim"]
 // How long each act may take: the check of a server measures its version over the network; a certificate run starts detached there.
-const TIMEOUT: Record<string, number> = { connect: 150_000, probe: 150_000, state: 60_000, install: 120_000, domain: 120_000, way: 60_000, detect: 90_000, dns: 90_000, door: 200_000, signin: 90_000, clear: 240_000, telegram: 90_000 }
+const TIMEOUT: Record<string, number> = { connect: 150_000, probe: 150_000, state: 60_000, install: 120_000, domain: 120_000, way: 60_000, detect: 90_000, dns: 90_000, door: 200_000, signin: 90_000, clear: 600_000, telegram: 90_000, log: 30_000 }
 
 
 /** 760-8: a value of the core's environment — the Cloudflare token stays in this process; only what the plan needs leaves. */
@@ -164,7 +166,8 @@ export async function POST(req: NextRequest) {
     }
     return json({ ok: w.ok, ...(w.ok ? { window: { url: w.url } } : { reason: w.reason }), visit: { deadline: visit.deadline } })
   }
-  if (["state", "probe", "detect", "dns", "signin"].includes(action)) return answer(action, at)
+  // 806-3: «log» — the live reader of the install: the running stage's own log and the checklist, read over SSH by this visit
+  if (["state", "probe", "detect", "dns", "signin", "log"].includes(action)) return answer(action, at)
   if (action === "install") return answer("install", [...at, "--mode", body?.mode === "update" ? "update" : "install"])
   if (action === "domain") return answer("domain", [...at, "--name", String(body?.name ?? "").slice(0, 260)])
   if (action === "way") return answer("way", [...at, "--way", String(body?.way ?? "")])

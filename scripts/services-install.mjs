@@ -670,7 +670,9 @@ for (const entry of registry.services) {
   if (ONLY && entry.id !== ONLY) continue
   let builtDist = null
   const dir = entryDir(entry)
-  say(`\n── ${entry.id} — ${entry.born ? 'рождённый' : entry.version}`)
+  // 806-5: the header carries the time (UTC) — the server's live reader (scripts/dedicated-server/log.sh) draws one checklist line per
+  // element from it, with how long each took
+  say(`\n── ${entry.id} — ${entry.born ? 'рождённый' : entry.version} · ${new Date().toISOString().slice(11, 19)}`)
   // 645-4: под `npm run launch` — строка `===PROGRESS===` на каждый элемент («элемент 7 из 13: граф знаний»).
   progressElement(++elementNo, entry.id)
 

@@ -18,11 +18,15 @@ import { Small } from "@/components/ui/typography"
 // 🔒 THE RISK IS SAID BEFORE THE ACT, WITH THE SERVER'S OWN NAMES: the sites the probe found and the number of programs; the button stays
 // locked until the person ticks «I understand», and the door frees nothing without the server's address sent back from this dialog.
 
-export type BusyState = { host?: string; sites: string[]; programs: number; nodes?: string[]; clear?: { state?: string; detail?: string; stopped?: number; backup?: string } }
+/** 806-1: a Fractera node is erased by the clear — the answer names it (`nodes`, `erased`) and the gigabytes it freed; `disk` — the
+ *  server's disk before the act (probe.sh), said in the dialog. */
+export type BusyDisk = { totalGb: number; usedGb: number; freeGb: number; copies: string[]; copiesGb: number | null }
+export type BusyState = { host?: string; sites: string[]; programs: number; nodes?: string[]; disk?: BusyDisk | null; clear?: { state?: string; detail?: string; stopped?: number; backup?: string | null; nodes?: string[]; erased?: string[]; freedGb?: number; freeGb?: number } }
 type Start = (action: string, extra?: Record<string, unknown>) => Promise<void>
 
 // 784 (the owner, 2026-11-18: «мне нужна кнопка очистить данный сервер»): `fresh` — the same choice for a server holding THIS node's own
-// older install: «Установить с нуля» sets it aside whole (the door's `fresh`), the risk said first, «I understand» before the button.
+// older install: «Установить с нуля» (the door's `fresh`), the risk said first, «I understand» before the button. 806-1 (the owner,
+// 2026-11-19: «полная очистка»): the old node is ERASED with every older copy — the dialog says «for good» and the disk as it is now.
 export function ServerBusy({ busy, words, dialogUi, disabled, onStart, fresh = false }: { busy: BusyState; words: ServerLaunchWords["busy"]; dialogUi: AppDialogUi; disabled: boolean; onStart: Start; fresh?: boolean }) {
   const [open, setOpen] = useState<"clear" | null>(null)
   const [agree, setAgree] = useState(false)
@@ -32,7 +36,10 @@ export function ServerBusy({ busy, words, dialogUi, disabled, onStart, fresh = f
   const node = (busy.nodes ?? []).length > 0
   // 744 wishes: a line about sites or programs the server does not have is not shown («сайты: —.», «0 программ» read as nonsense)
   const has = (r: string) => (!r.includes("{sites}") || busy.sites.length > 0) && (!r.includes("{n}") || busy.programs > 0)
-  const risks = fresh ? [words.freshRisk] : (node ? [words.nodeRisk, ...words.risks] : words.risks).filter(has)
+  const d = busy.disk
+  const copies = d?.copies.length ? `${d.copies.length}${d.copiesGb !== null ? ` · ${d.copiesGb} GB` : ""}` : words.copiesNone
+  const disk = (fresh || node) && d ? [words.freshDisk.replace("{used}", String(d.usedGb)).replace("{total}", String(d.totalGb)).replace("{free}", String(d.freeGb)).replace("{copies}", copies)] : []
+  const risks = [...(fresh ? [words.freshRisk] : (node ? [words.nodeRisk, ...words.risks] : words.risks).filter(has)), ...disk]
   const clearing = busy.clear?.state === "running"
 
   async function go() {
@@ -44,9 +51,13 @@ export function ServerBusy({ busy, words, dialogUi, disabled, onStart, fresh = f
   // The owner's run, 2026-11-13 16:26: the server was freed and probed again, but the same red panel with the same buttons stayed — «похоже
   // ничего не работает». A freed server shows one calm line; while freeing, a spinner says what happens.
   if (busy.clear?.state === "done") {
+    const c = busy.clear
+    const erased = (c.nodes ?? []).length > 0
     return (
-      <p className="mt-3 rounded-lg border border-primary/40 bg-primary/5 p-3 text-foreground text-sm" data-block="server-busy-freed">
-        {words.cleared.replace("{n}", String(busy.clear.stopped ?? 0)).replace("{backup}", busy.clear.backup ?? "")}
+      <p className="mt-3 rounded-lg border border-primary/40 bg-primary/5 p-3 text-foreground text-sm" data-block="server-busy-freed" data-erased={erased ? "1" : "0"}>
+        {erased
+          ? words.erasedDone.replace("{nodes}", (c.nodes ?? []).join(", ")).replace("{count}", String(Math.max(0, (c.erased ?? []).length - (c.nodes ?? []).length))).replace("{freed}", String(c.freedGb ?? 0)).replace("{free}", String(c.freeGb ?? "—"))
+          : words.cleared.replace("{n}", String(c.stopped ?? 0)).replace("{backup}", c.backup ?? "")}
       </p>
     )
   }

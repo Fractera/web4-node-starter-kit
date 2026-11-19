@@ -10,7 +10,7 @@ import type { LaunchState } from "@/components/hosting/server-launch.client"
 import { installedOf } from "@/components/hosting/server-launch-rungs"
 import { finalCheck, httpsWaits } from "@/lib/hosting/final-check.mjs"
 import type { ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
-import { StageLog } from "@/components/hosting/stage-log"
+import { ServerInstallLive } from "@/components/hosting/server-install-live.client"
 import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
@@ -28,17 +28,16 @@ import { Small } from "@/components/ui/typography"
 type Act = (action: string, extra?: Record<string, unknown>) => Promise<unknown>
 const fill = (t: string, map: Record<string, string>) => Object.entries(map).reduce((s, [k, v]) => s.split(`{${k}}`).join(v), t)
 
-export function InstallStep({ state, strategy, words, busy, onAct }: { state: LaunchState; strategy: Strategy; words: ServerLaunchWords; busy: boolean; onAct: Act }) {
+export function InstallStep({ state, strategy, words, busy, onAct, target }: { state: LaunchState; strategy: Strategy; words: ServerLaunchWords; busy: boolean; onAct: Act; target: { host: string; port: number } }) {
   const w = words.install
   const l = state.launch
   const running = l?.state === "running"
   const head = l?.version?.head ?? state.probe?.fractera?.head ?? ""
-  const current = state.progress.find((s) => s.state === "running" || s.state === "failed")
   return (
     <div className="flex flex-col gap-2" data-block="server-launch-install">
       <Small className="text-muted-foreground">{w.text}</Small>
-      {state.progress.length ? <StageLog labels={words.stage} stages={state.progress.filter((s) => s.id !== "launch")} /> : null}
-      {current && state.sub.length ? <div className="ml-6" data-block="server-launch-sub"><StageLog labels={words.stage} stages={state.sub.filter((s) => !["prepare", "install", "start"].includes(s.id))} /></div> : null}
+      {/* 806-4: the server's own log and checklist, live, instead of one «running» line for 40 minutes */}
+      {l ? <ServerInstallLive host={target.host} port={target.port} running={running} runKey={l.startedAt ?? ""} stage={words.stage} words={words.live} /> : null}
       {state.update?.summary || state.update?.reason ? <Small className="text-muted-foreground">{state.update.summary ?? state.update.reason}</Small> : null}
       {running ? <Small className="text-foreground">{w.running} {w.leave}</Small> : null}
       {l?.state === "done" ? <Small className="text-foreground">{fill(w.done, { head: head.slice(0, 8) })}</Small> : null}

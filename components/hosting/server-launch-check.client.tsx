@@ -30,6 +30,11 @@ export function CheckStep({ state, words, dialogUi, busy, onAct }: { state: Laun
   const f = state.probe?.fractera ?? null
   const strategy = strategyOf(state)
   const items = v?.items ?? []
+  // 806-2: the disk whole — what is used and what an earlier install left; the probe measures it, the verdict only the free part
+  const d = state.probe?.disk
+  const lw = words.live
+  const disk = d ? lw.disk.replace("{used}", String(d.usedGb)).replace("{total}", String(d.totalGb)).replace("{free}", String(state.probe?.diskFreeGb ?? "—"))
+    .replace("{copies}", d.copies.length ? lw.copies.replace("{n}", String(d.copies.length)).replace("{gb}", d.copiesGb !== null ? ` · ${d.copiesGb} GB` : "") : "") : null
   // 744-4: the clear follows the verdict — the node itself when it is not related, only the strangers beside a related one.
   const rel = state.relation ?? null
   const why = (id: string) => rel?.reasons.find((r) => r.id === id)
@@ -57,6 +62,7 @@ export function CheckStep({ state, words, dialogUi, busy, onAct }: { state: Laun
           </li>
         ))}
       </ul>
+      {disk ? <Small className="text-muted-foreground tabular-nums" data-block="server-launch-disk">{disk}</Small> : null}
       <div className="flex flex-col gap-1 rounded-md bg-muted/40 p-3" data-block="server-launch-fractera">
         {f?.head ? (
           <>
