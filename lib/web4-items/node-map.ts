@@ -33,8 +33,8 @@ export function saveNodeMap(): NodeMapResult {
   const { registry } = syncRegistryMap(ROOT)
   if (!registry) return { ok: false, written: false, pushed: false, reason: "registry-unreadable" }
   const file = join(ROOT, SNAPSHOT)
-  // 553: тип узла едет в снимке — установщик возвращает его на свежей машине.
-  const next = JSON.stringify({ _: "Snapshot of this node's WEB4 ITEMS (step 374): every item with its port, address, own domain, description and repository. Restored by the installer on a fresh clone of this fork.", nodeType: (registry as { nodeType?: string }).nodeType ?? "project", services: registry.services }, null, 2) + "\n"
+  // 804-4: типа узла нет — ответ каждого рождённого элемента (`app`) едет в его записи вместе со всем остальным.
+  const next = JSON.stringify({ _: "Snapshot of this node's WEB4 ITEMS (step 374): every item with its port, address, own domain, description and repository. Restored by the installer on a fresh clone of this fork.", services: registry.services }, null, 2) + "\n"
   let prev = ""
   try { prev = readFileSync(file, "utf8") } catch { /* первый снимок */ }
   const written = prev !== next

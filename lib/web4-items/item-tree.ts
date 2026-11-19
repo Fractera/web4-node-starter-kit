@@ -63,7 +63,7 @@ export type TreePage = {
   /** 578-5 (владелец 2026-10-23: «разместить вкладку блоки внутри всех нативных и кастомных элементов, обеспечивая её как кнопку
    *  которая просто напросто открывает новую вкладку»): пункт меню открывается в новой вкладке. */
   newTab?: true
-  // 553-6: на едином проекте (nodeType project) страницы нет — в меню и по адресу
+  // 553-6 → 804-3: у элемента — части проекта (`app: project`, lib/web4-items/element-app.cjs) страницы нет — в меню и по адресу
   project?: false
   doc?: { file: string; folder?: boolean; deep?: boolean }
   about?: Record<"en" | "ru", string[]>
@@ -150,9 +150,9 @@ export function movedPage(path: string[]): string | null {
 }
 
 // 472: что у элемента есть — для условий `needs`/`unless`. Один ответ для меню, маршрута и списка страниц раздела.
-export type TreeContext = { catalog: boolean; messengers: Record<Messenger, boolean>; native?: boolean; nodeType?: "project" | "factory"; memory?: boolean; auth?: boolean; web4?: boolean; payment?: boolean; apex?: boolean }
+export type TreeContext = { catalog: boolean; messengers: Record<Messenger, boolean>; native?: boolean; app?: "project" | "own"; memory?: boolean; auth?: boolean; web4?: boolean; payment?: boolean; apex?: boolean }
 export function treeVisible(p: TreePage, c: TreeContext): boolean {
-  if (p.project === false && c.nodeType === "project") return false
+  if (p.project === false && c.app === "project") return false
   if (p.needs === "catalog" && !c.catalog) return false
   if (p.needs && p.needs !== "catalog" && !c.messengers[p.needs]) return false
   if (p.unless && c.messengers[p.unless]) return false

@@ -111,7 +111,7 @@ Routing a wish (the owner: «соотносится ли это с возмож�
 Show with `open` or `focus` (no tokens); read or act with the extension only when the task needs the page's content. An element inside its
 field acts and brings the tab forward with its own `npm run browser -- focus` (the core's door `/api/node/browser`: an address or a host,
 no list, no titles); outside its field it passes the words to you by `tell-core`. An element on its own person's subscription and an app
-factory are refused: the browser of this computer is the architect's. Not measured: Windows and Linux (a window can be raised, a tab
+of its own (step 804) are refused: the browser of this computer is the architect's. Not measured: Windows and Linux (a window can be raised, a tab
 cannot), Safari, Firefox; a dedicated server has no browser.
 
 ## The person's own hands — skill `act-with-the-person`

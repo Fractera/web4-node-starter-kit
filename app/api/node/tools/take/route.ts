@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { elementOf } from "@/lib/element-key.cjs"
 import { doTake, planTake } from "@/lib/parts/take.mjs"
 import { elementDir } from "@/lib/web4-items/element-github"
-import nodeType from "@/lib/web4-items/node-type.cjs"
+import elementApp from "@/lib/web4-items/element-app.cjs"
 
 // TAKE A TOOL (node step 733-5). The element's command `npm run tool:take -- <tool> [--from <element>] [--dry]` calls this door over the
 // machine's loopback with its own key `X-Element-Key` (`<id>.<mac>`, written by the installer). 🔒 THE KEY NAMES THE ELEMENT: the files go
@@ -29,8 +29,10 @@ export async function POST(req: NextRequest) {
   if (!receiver) return NextResponse.json({ ok: false, error: `no folder of the element «${caller}»` }, { status: 404, headers: HEADERS })
   let source = process.cwd()
   if (from !== "core") {
-    // A neighbour's tool only on a single project: between owners of an app factory nothing is exchanged in this step.
-    if (nodeType.readNodeType(process.cwd()) !== "project") return NextResponse.json({ ok: false, error: "an app factory: tools are taken from the core only" }, { status: 403, headers: HEADERS })
+    // A neighbour's tool only between the elements of the project (804-3): an app of its own takes the core's tools only, and its own
+    // tools go to nobody — between owners nothing is exchanged in this step.
+    if (elementApp.appOf(caller, process.cwd()) === "own") return NextResponse.json({ ok: false, error: "an app of its own: tools are taken from the core only" }, { status: 403, headers: HEADERS })
+    if (elementApp.appOf(from, process.cwd()) === "own") return NextResponse.json({ ok: false, error: `«${from}» is an app of its own: its tools are not given to other elements` }, { status: 403, headers: HEADERS })
     const dir = from === caller ? null : elementDir(from)
     if (!dir) return NextResponse.json({ ok: false, error: `no element «${from}» to take from` }, { status: 404, headers: HEADERS })
     source = dir

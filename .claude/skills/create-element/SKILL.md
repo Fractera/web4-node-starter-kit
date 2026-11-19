@@ -39,17 +39,19 @@ The owner of Fractera, 2026-10-23: «не всегда в наш проект п
    - the **task** — the person's words first, verbatim, then your restatement and what «done» will look like;
    - **who leads it** — the architect (default: they work with its agent in its terminal or Telegram) or you (`supervise
      main`: its «done» wakes you, skill `supervise-element`, at most 10 cycles);
-   - **on its own or one with the project** (node step 679; the owner, 2026-11-08: «прежде элемента запрашивать самостоятельно ли это
-     будет элемент или единой с ядром … если нет комментирует»). Ask it every time, in plain words, and explain if the person does not
-     know what it means: **one with the project** — it starts with the site's look (a copy of its tokens, then its own: every element
-     designs its own pages in its Design tab, node step 716) and follows the shared CONFIG (menu, footer, switches): the node reads like
-     one site. **On its own** — the template's look and its own settings: it can be a separate product or brand (a clip studio, a
-     client's shop), and nothing of the project changes it. Your pick and why. `--look project|own` (`--look-like <id>` starts from a
-     sibling's look). Later, on the person's word, `npm run look -- <id> --own` or `--linked` (the CONFIG link).
+   - **what it will be — part of your project or an app of its own** (node step 804; the owner, 2026-11-19: «при создании элементы
+     не повторно спрашивают какой я хочу элемент для одного хозяина или для нескольких … хранить в общем реестре ядра перечисления
+     элементов какие являются связанными с ядром а какие нет»). Ask it every time, in the words of the birth window, and explain if the
+     person does not know what it means: **«Частью вашего проекта»** — the same people and sign-in as the whole project; its look and
+     settings follow CONFIG and change with it (it starts with the site's look, then designs its own pages in its Design tab, node step
+     716): the node reads like one site. **«Самостоятельным приложением»** — its own people and accounts, its own look and settings: a
+     client's site or a separate product (a clip studio, a client's shop); nothing of the project changes it, and it has its own owner
+     whom its own agent gets to know. Chosen once: the app's people live apart — nothing switches it later. Your pick and why. `--app
+     project|own` (required; `--look-like <id>` starts an app of its own from a sibling's look).
    Custom by default. Native (`--native`) only for a job of the node itself that is never sold and never leaves it.
 4. **Create.** Write the task into a file in this folder (no shell quoting of the person's words), then:
    ```
-   npm run create -- --role "<one sentence>" --name "<the name the person sees in the menu>" --vector-file vector-<words>.md --quiz-file quiz-<words>.json --describe "<what it is for in this node, 1–3 sentences>" --look own|project --area "<the field>" --grows "<a job>; <another>" --brief-file task-<words>.md [--close-after-first-session] [--supervise main] [--native]
+   npm run create -- --role "<one sentence>" --name "<the name the person sees in the menu>" --vector-file vector-<words>.md --quiz-file quiz-<words>.json --describe "<what it is for in this node, 1–3 sentences>" --app project|own --area "<the field>" --grows "<a job>; <another>" --brief-file task-<words>.md [--close-after-first-session] [--supervise main] [--native]
    ```
    **The quiz draft** (core step 736; the owner, 2026-11-13: «при создании нового элемента ты опишешь все что тебе ясно об этом
    элементе в продуктовом Quiz. Создашь первый шаг которому будет описано что разработка проекта начинается с анализа существующего

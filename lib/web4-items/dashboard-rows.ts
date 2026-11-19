@@ -10,6 +10,7 @@ import { listDrafts } from "@/lib/web4-items/drafts"
 import { addressOf } from "@/lib/web4-items/address-file.mjs"
 import { elementLabel } from "@/lib/web4-items/element-name"
 import { domainRecord } from "@/lib/web4-items/element-domain"
+import elementApp from "@/lib/web4-items/element-app.cjs"
 import { birthState } from "@/lib/web4-items/birth"
 import paths from "@/lib/web4-items/paths.cjs"
 import deployLock from "@/lib/deploy/deploy-lock.cjs"
@@ -57,6 +58,8 @@ export type ProjectRow = {
   /** 548-10: роль элемента в узле одной фразой — назначенная главным агентом (`data/node/roles.json`) или умолчание службы
    *  (`WEB4-ITEMS-REGISTRY/roles.json`); нет — `null`. По ней агент соседа понимает, кто что делает. */
   role: string | null
+  /** 804-3: чем элемент стал при рождении — часть проекта (`project`) или самостоятельное приложение (`own`); черновик — `null`. */
+  app: "project" | "own" | null
 }
 
 /** 548-10: роли элементов — умолчания служб узла (в git) и назначенные на этом узле (данные, вне git); второе сильнее. */
@@ -183,6 +186,7 @@ async function row(id: string, entry: RegistryEntry | null, custom: boolean, lan
     open: `/architect/${addressOf(id)}`,
     online: null,
     role,
+    app: entry ? (elementApp.appOf(id, process.cwd()) as "project" | "own") : null,
   }
 }
 

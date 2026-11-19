@@ -26,7 +26,7 @@ export type ElementSettingsUi = {
   certificateCard: { noDomain: string; cloudflare: string; loading: string; issuing: string; ready: string; all: string; toast: string; toastText: string }
   config: Card
   /** 713-3: `lineOn`/`lineOff` — the CONFIG link as one line on top of «Site settings». */
-  linkCard: { on: string; off: string; turnOn: string; turnOff: string; busy: string; failed: string; lineOn: string; lineOff: string }
+  linkCard: { lineOn: string; lineOff: string }
   remove: Card
   /** 749-1: `title` carries `{name}` — the element's name for people; 803 (the owner): `label` carries `{name}` too — the word to type, named. */
   /** 750-4: an element the door cannot delete (installed with the node, not born in it) — the line instead of the button. */
@@ -142,7 +142,7 @@ const DICT: Record<string, ElementSettingsUi> = {
       text: "Project settings (name, description, SEO, icons, languages) come from the CONFIG element. Turned off, the element keeps the last settings it got as its own and changes them only on its own settings page.",
       action: "", pending: "",
     },
-    linkCard: { on: "Connected", off: "Disconnected — the element lives on its own", turnOn: "Connect", turnOff: "Disconnect", busy: "Saving…", failed: "Not saved:", lineOn: "The site settings come from the node's CONFIG — shared with every linked element.", lineOff: "The element keeps its own site settings — the link to the node's CONFIG is off." },
+    linkCard: { lineOn: "The site settings come from the node's CONFIG — shared with every linked element.", lineOff: "The element keeps its own site settings — the link to the node's CONFIG is off." },
     signIn: {
       title: "Sign-in on your own domain",
       text: "Read this before you decide that sign-in is broken: on an own domain it works through the node's sign-in center.",
@@ -350,7 +350,7 @@ const DICT: Record<string, ElementSettingsUi> = {
       text: "Настройки проекта (название, описание, SEO, иконки, языки) приходят от элемента CONFIG. Отключите — элемент оставит себе последние полученные настройки и дальше меняет их только на своей странице настроек.",
       action: "", pending: "",
     },
-    linkCard: { on: "Подключено", off: "Отключено — элемент живёт самостоятельно", turnOn: "Подключить", turnOff: "Отключить", busy: "Сохраняю…", failed: "Не сохранено:", lineOn: "Настройки сайта приходят из CONFIG узла — общие для всех связанных элементов.", lineOff: "Элемент ведёт свои настройки сайта — связь с CONFIG узла выключена." },
+    linkCard: { lineOn: "Настройки сайта приходят из CONFIG узла — общие для всех связанных элементов.", lineOff: "Элемент ведёт свои настройки сайта — связь с CONFIG узла выключена." },
     signIn: {
       title: "Вход на собственном домене",
       text: "Прочитайте, прежде чем решить, что вход сломан: на собственном домене он работает через центр входа узла.",

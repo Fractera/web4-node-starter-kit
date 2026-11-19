@@ -214,6 +214,44 @@ reads me in the terminal. Build dec1677e live, the page clean (seen: step 1 open
 15:40 UTC: the whole path from zero (window like 698cb5ae), then admission + my restart with the channel. Meanwhile possible: 798-3 the
 server page (same three steps, design, order — every visible phrase agreed with him first), push the day's commits (his act).
 
+## 804 — in progress (2026-11-19 from ~17:00 UTC, after the reset)
+
+17:05 the temporary address was dead → `serve:publish` → https://reprint-posted-lovers-moderators.trycloudflare.com (200 from the
+internet); told Roma in the terminal. Measured for 804 (do not measure again):
+- The element's system prompt = `lib/agent-kit/modes.cjs` `promptArgs(dir, mode, outDir, key=element id, pass)`: [soul, session note,
+  memory.md, commands, chat.md, the element's own `.claude/modes/<mode>.md`, pass file, soul.user] → `data/node/agent-prompts/<key>.md`;
+  elements without groups — `soulArgs`. Callers — every kit bridge (`…/_agent-kit/server/bridge.cjs:318,329`). → 804-7a adds the own-app
+  part here (no template release for it).
+- 🔴 `lib/agent-kit/memory/brief.cjs`: EVERY element's session start gets «The architect, as the node's main agent knows them» (the main
+  agent's user/feedback index lines). An own app has another owner → that would leak the architect's personal picture. 804-7a: an own
+  app gets its OWN picture (`data/services/<id>/memory`, its native memory) and, with none, a first-meeting line → its acquaintance skill.
+- The birth: `scripts/item-birth.mjs` `--look project|own` (links.json config), org only `if nodeType === 'factory'` (line ~338),
+  askAdmin for every custom birth (778-3), registry entry has no `app`; window `app/[lang]/(architectLayer)/_components/birth-button.client.tsx`
+  (question lookQuestion, options lookProject/lookOwn, factory hint) → args `lib/web4-items/birth-args.mjs`.
+- The CONFIG link switch: `_components/element-link.client.tsx` (variant line) used once — `[item]/[[...page]]/page.tsx:447`
+  (configLine above «Настройки сайта»), door PATCH `/api/architect/items/[id]/links`, `npm run look -- <id> --own|--linked`
+  (main-agent-cli.mjs:269–282), `node-type.mjs look`.
+- Readers of nodeType: node-wallet.ts oneWallet (wallet door 409 one-wallet, words oneWallet), browser.cjs elementMay ('app-factory'),
+  node-index.mjs nodeTools, tools/take door 403, tree-context.ts (effectiveMessengers, nodeType in TreeContext; item-tree `project:false`),
+  /api/node/projects, /api/node/type + components/app-mode + node-passport, scripts/node-type.mjs, main-agent-cli 210, services-install
+  132 (snapshot), node-update 161, check-microservices 64, node-map.ts snapshot field, know-the-architect «The app mode» paragraph (782).
+- The snapshot (node-map.ts) keeps `services` whole → `app` rides along. Sign-in orgs list: GET /api/node/users/organizations (local: []).
+- Migration rule chosen: a born custom entry without `app` → the legacy node type (factory → own) — exactly the rule 554-1 used to create
+  the org at birth; differs only if the type was switched after a birth (named to Roma as my deviation from «measured in the sign-in»).
+
+**~18:10 UTC — the core part of 804 CODED (uncommitted until the commit below):** 804-1 `lib/web4-items/element-app.cjs` + test 8 ✓;
+804-2 birth `--app` (item-birth, birth-args, birth.ts, door accepts app|look, window «Чем будет этот элемент?», create requires --app);
+804-3 readers per element (browser 'own-app', node-index, tools/take, tree-context/item-tree `app`, wallet oneWallet(element) + new
+phrase «Этот элемент — часть вашего проекта: у проекта один кошелёк — кошелёк узла.», projects rows `app`); 804-4 the switch gone
+(app-mode card+section kind, /api/node/type, node-type.mjs+skill, node-type.cjs; withNodeKey → element-node-key.cjs printed by contacts;
+migration lib/migrations/804-4-element-apps.mjs ran here: nodeType dropped; check-microservices refuses nodeType, check-migrations knows
+CJS definitions); 804-5 CLAUDE.md §1/3/5/7/8 + know-the-architect (app mode paragraph out) + create-element + help-in-browser; glossary
+terms one-owner/site-factory rewritten (new phrases); 804-6 ElementLink = a state line, links door deleted, `look --own|--linked`
+refuses; 804-7a own-app.md + modes ownAppText, brief own picture/first meeting, recall leaves own apps out for MAIN, test own-app 7 ✓;
+804-7c mount `__web4ElementApp`, the kit bot's ownAppBot words on admission (new phrase), agent-kit:update of 12 groups.
+NEW PHRASES to agree with Roma: wallet oneWallet; glossary one-owner/site-factory texts; ownAppBot (ru/en). Next: seal, commit, 804-7b
+template (know-the-owner skill, passport reads `app`, use-site-settings/build.md lines, element instruction src line), prebuild, build.
+
 ## Letter to my next session (written 2026-11-19 ~16:58 UTC, window 69 %, Opus)
 
 Roma works in the TERMINAL (no main bot). Start by telling him in one line that you continue after a reset, then build 804.

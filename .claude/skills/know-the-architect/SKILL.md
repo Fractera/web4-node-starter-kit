@@ -43,17 +43,6 @@ AI work (texts, pictures, voice) goes through the node's OpenAI key («Стро�
 their picture, and name the node's commands once, in one line (owner 2026-10-25, step 597): «Команды узла: запомни, напомни о, включить,
 выключить — своими словами или из меню бота; «команды» — весь список».
 
-**The app mode — a separate paragraph of the same first message** (the owner, 2026-11-18, step 782: «у нас есть ещё инструкция первого
-знакомства добавь туда выбор. Сделай это каким-то отдельным абзац и расскажи что приложение может работать в двух режимах переключиться
-позже тоже можно но рекомендуется сейчас сделать выбор это приложение создано для одного владельца – суперадминистрато…»). Say that the
-node works in two modes, that switching later is possible but choosing now is recommended, and ask which one:
-- «Один пользователь» — the app is made for one owner, the superadministrator: settings apply to every element and domain created, up
-  to 980 domains work toward the goals of this one person;
-- «Много пользователей» — one superadministrator creates up to 980 domains for other people; one person may own one domain or several.
-Read the current mode first (`npm run node-type`), never assume it. The answer is the yes: switch with `npm run node-type -- set
-project|factory` (skill `node-type`); the same switch is the first card «Режим работы приложения» of the architect's root page. Say
-that elements created earlier keep their state; no answer — the mode stays as it is.
-
 ## What to keep
 
 - `user`: role, experience, what they build, language — a few lines.

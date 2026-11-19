@@ -30,11 +30,11 @@ const t = async (name, fn) => {
 
 const messengers = { h2a: false, h2h: false, a2a: false }
 const CTX = {
-  auth: { catalog: false, messengers, native: true, nodeType: 'project', memory: false, auth: true, web4: false, payment: false },
-  data: { catalog: false, messengers, native: true, nodeType: 'project', memory: true, auth: false, web4: false, payment: false },
-  config: { catalog: false, messengers, native: true, nodeType: 'project', memory: false, auth: false, web4: false, payment: false },
-  stripe: { catalog: false, messengers, native: true, nodeType: 'project', memory: false, auth: false, web4: false, payment: true },
-  custom: { catalog: false, messengers, native: false, nodeType: 'project', memory: false, auth: false, web4: false, payment: false },
+  auth: { catalog: false, messengers, native: true, app: 'project', memory: false, auth: true, web4: false, payment: false },
+  data: { catalog: false, messengers, native: true, app: 'project', memory: true, auth: false, web4: false, payment: false },
+  config: { catalog: false, messengers, native: true, app: 'project', memory: false, auth: false, web4: false, payment: false },
+  stripe: { catalog: false, messengers, native: true, app: 'project', memory: false, auth: false, web4: false, payment: true },
+  custom: { catalog: false, messengers, native: false, app: 'project', memory: false, auth: false, web4: false, payment: false },
 }
 /** Is the page at `path` open to this element — every node of its trail visible (the route's own rule)? */
 const opens = (tree, path, c) => {

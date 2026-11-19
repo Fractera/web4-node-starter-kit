@@ -51,7 +51,7 @@ const require = createRequire(import.meta.url)
 const supervision = require('../lib/web4-items/supervision.cjs')
 // 670-2: поручение рабочему процессу элемента — запись, которую его «закончил» забирает и будит тебя с отчётом.
 const jobs = require('../lib/web4-items/jobs.cjs')
-const nodeType = require('../lib/web4-items/node-type.cjs')
+const elementApp = require('../lib/web4-items/element-app.cjs')
 // 603-1: самоописание элементов — паспорт и измеренное одним модулем (что это, где живёт, где данные, двери из кода, кто зависит).
 const self = require('../lib/a2a/self-description.cjs')
 const nameFile = require('../lib/web4-items/name-file.cjs')
@@ -198,7 +198,7 @@ if (cmd === 'contacts') {
   const r = await core('/api/node/projects').catch(() => null)
   const rows = Array.isArray(r?.body?.rows) ? r.body.rows : registry().map((s) => ({ id: s.id, custom: Boolean(s.born), service: s.id, status: 'unknown' }))
   const role = roles()
-  const line = (x) => `- ${x.id} · ${x.service} · ${x.custom ? 'custom' : 'native'} · ${x.status} — ${role[x.id] ?? x.role ?? (firstSentence(x.description) || 'no role yet')} — ${reachOf(x.id)}`
+  const line = (x) => `- ${x.id} · ${x.service} · ${x.custom ? 'custom' : 'native'}${x.app === 'own' ? ' · an app of its own' : ''} · ${x.status} — ${role[x.id] ?? x.role ?? (firstSentence(x.description) || 'no role yet')} — ${reachOf(x.id)}`
   if (one) {
     const x = rows.find((y) => y.id === one || y.service === one || addressOf(y.id) === one)
     if (!x) fail(`no element «${one}» in this node — who does a job: npm run find -- <English words>`)
@@ -206,9 +206,12 @@ if (cmd === 'contacts') {
     process.exit(0)
   }
   console.log(`Node ${ZONE || '(no domain yet)'} — core ${ORIGIN}: the registry of elements, waking agents, birth of new elements. You are its main agent (terminal ${ORIGIN}/${LANG}/architect/build/terminal).`)
-  // 553-1: тип узла — одной строкой постоянного размера (548-14: пробуждение не растёт с узлом).
-  const type = nodeType.readNodeType(ROOT)
-  console.log(`Node type: ${type} — ${type === 'factory' ? 'an app factory: hosting of projects of different owners; new custom elements are born on their own settings' : 'a single project: one owner, every element under the core\'s CONFIG'} (npm run node-type -- get)`)
+  // 804-4: типа узла нет — каждый рождённый элемент ответил при рождении, часть ли он проекта; одной строкой постоянного размера
+  // (548-14: пробуждение не растёт с узлом). 654-6: свой элемент, ещё держащий ключ данных узла, — названием (его ключ открывает всех).
+  const own = elementApp.ownApps(ROOT)
+  console.log(`Elements: part of the project (the project's people, sign-in and CONFIG) unless born as an app of their own — apps of their own here: ${own.length}${own.length ? ' (npm run contacts -- --all marks each)' : ''}`)
+  const keyed = require('../lib/web4-items/element-node-key.cjs').withNodeKey(ROOT)
+  if (keyed.length) console.log(`Stores: ${keyed.map((x) => x.id).join(', ')} still hold the node's data key (born before 654-6) — it opens every element's space; each takes its own key with the custom template's update`)
   console.log(MACHINE_FACT)
   const bornIds = new Set(registry().filter((s) => s.born).map((s) => s.id))
   for (const x of rows.filter((y) => !bornIds.has(y.id))) console.log(line(x))
@@ -221,7 +224,7 @@ if (cmd === 'contacts') {
 // (`data/services/<id>/links.json`, нет файла или ключа — связь включена): включена — CONFIG в ядре, выключена — вкладка элемента. Без модели.
 if (cmd === 'look') {
   const [one] = rest
-  if (!one) fail('look <id> [--own | --linked | --like <id>] — where the design and the site settings of this element are changed; the CONFIG link switch and a sibling\'s look on the person\'s word')
+  if (!one) fail('look <id> [--like <id>] — where the design and the site settings of this element are changed; a sibling\'s look on the person\'s word')
   const r = await core('/api/node/projects').catch(() => null)
   const rows = Array.isArray(r?.body?.rows) ? r.body.rows : []
   const x = rows.find((y) => y.id === one || y.service === one || addressOf(y.id) === one)
@@ -263,20 +266,9 @@ if (cmd === 'look') {
     console.log(`In its intake: development-docs/pre-steps/${stem}.md — its agent applies it (npm run design:take). Wake it on the person's word: npm run task -- ${x.id} "Take the look waiting in your intake"`)
     process.exit(0)
   }
-  // 679-2 (владелец 2026-11-08: «чтобы у тебя была возможность по такой команде переводить секции дизайн и прочее связи с узлом в
-  // самостоятельно режим»): по слову человека — та же дверь, что выключатель «Опасной зоны» (`PATCH /api/architect/items/<id>/links`).
-  // 716 (владелец 2026-11-10: элементов «Дизайн» и «Блоки» нет): связь одна — CONFIG; облик элемента всегда его собственный.
-  const turn = has('--own') ? false : has('--linked') ? true : null
-  if (turn !== null) {
-    if (!x.custom || x.id === 'root') fail(`${x.id}: only a born custom element has the CONFIG link`)
-    const listAt = rest.findIndex((w) => w === '--own' || w === '--linked') + 1
-    const asked = (rest[listAt] && !rest[listAt].startsWith('--') ? rest[listAt] : 'config').split(',').map((k) => k.trim()).filter(Boolean)
-    const bad = asked.filter((k) => k !== 'config')
-    if (bad.length) fail(`unknown link ${bad.join(', ')} — the only link is config: an element's look is always its own (its Design tab)`)
-    const r = await core(`/api/architect/items/${encodeURIComponent(x.id)}/links`, { method: 'PATCH', body: JSON.stringify({ kind: 'config', on: turn }) }).catch((e) => ({ status: 0, body: { error: e.message } }))
-    if (!r.body?.ok) fail(`${x.id}: the CONFIG link was not switched (${r.status} ${r.body?.error ?? ''}) — the person can switch it on ${ORIGIN}/${LANG}/${addressOf(x.id)}/settings/danger-zone`)
-    console.log(`===LOOK_SWITCHED=== ${x.id}: config ${turn ? 'linked to the project' : 'own'}`)
-  }
+  // 804-6 (the owner, 2026-11-19: «если где-то в CONFIG у элемента есть возможность потом изменить тип это надо убрать»): the CONFIG
+  // link is fixed at the birth by its one answer (part of the project → linked, an app of its own → its own); `--own | --linked` is gone.
+  if (has('--own') || has('--linked')) fail(`${x.id}: the CONFIG link is fixed at the element's birth (part of the project or an app of its own) and never switched after`)
   const links = readJson(join(ROOT, 'data', 'services', x.id, 'links.json'), {}) ?? {}
   const shared = `${ORIGIN}/${LANG}/architect/config`
   const tab = (t) => `${ORIGIN}/${LANG}/${addressOf(x.id)}/build/${t}`
@@ -290,10 +282,8 @@ if (cmd === 'look') {
   console.log(links.config !== false
     ? `Site settings (name, menu, footer, switches): linked to the shared CONFIG — change it there: ${shared} (it applies to every element that follows it)`
     : `Site settings (name, menu, footer, switches): own — change them in its tab: ${tab('site-settings')}`)
-  // У root меню в ядре — папки страниц, «Опасной зоны» с выключателем связи у него нет (замер 2026-10-24: 404).
-  console.log(x.id === 'root'
-    ? 'Give the person the link; never change the values yourself.'
-    : `The switch of the CONFIG link: ${ORIGIN}/${LANG}/${addressOf(x.id)}/settings/danger-zone; on the person's word you switch it yourself: npm run look -- ${x.id} --own | --linked.`)
+  // 804-6: no switch — what the element is was answered at its birth.
+  console.log('Give the person the link; never change the values yourself. The CONFIG link was fixed at the element\'s birth (part of the project or an app of its own) and is never switched.')
   process.exit(0)
 }
 
@@ -1071,11 +1061,14 @@ if (cmd === 'create') {
   const briefFile = flag('--brief-file')
   const brief = (briefFile ? (existsSync(briefFile) ? readFileSync(briefFile, 'utf8') : fail(`no file ${briefFile}`)) : flag('--brief') ?? '').trim()
   const by = flag('--supervise') ?? 'architect'
-  // 706-2: `--look-like <id>` — облик соседа (его бриф и шрифты с цветами, забранные в ядро); значит самостоятельный.
+  // 804-2 (the owner, 2026-11-19: one question at an element's birth instead of the node's type): `--app project|own` — part of the
+  // project or an app of its own, the person's answer, fixed for good; `--look` is its older name. 706-2: `--look-like <id>` — a
+  // sibling's look (its brief, fonts and colours taken into the core); that is an app of its own. A native element is part of the project.
   const lookLike = flag('--look-like')
-  const look = lookLike ? 'own' : flag('--look')
-  if (look !== null && look !== 'own' && look !== 'project') fail('--look own|project')
-  if (lookLike && flag('--look') === 'project') fail('--look-like gives the element its own look: drop --look project')
+  const asked = flag('--app') ?? flag('--look')
+  const look = lookLike ? 'own' : has('--native') ? 'project' : asked
+  if (look !== 'own' && look !== 'project') fail('--app project|own — ask the person first: «Чем будет этот элемент? Частью вашего проекта (те же люди и вход, облик и настройки из CONFIG) или самостоятельным приложением (свои люди и учётные записи, свой облик и настройки; выбирается один раз)»')
+  if (lookLike && asked === 'project') fail('--look-like gives the element a look of its own, so it is an app of its own: drop --app project')
   // 683 (разбор экзамена D5): рождение — подшаг шага ядра; нет имени элемента в `current-steps.md` — предупреждение, не отказ.
   { const nm = (flag('--name') ?? '').trim(); let steps = ''; try { steps = readFileSync(join(ROOT, 'development-docs', 'development-steps', 'current-steps.md'), 'utf8') } catch { /* нет записей */ }
     if (nm && !steps.toLocaleLowerCase().includes(nm.toLocaleLowerCase())) console.log(`note: «${nm}» is not in current-steps.md — a birth is a substep of a core step: write the person's decision and this substep there (skill use-development-steps)`) }
@@ -1112,7 +1105,7 @@ if (cmd === 'create') {
     for (const k of ['actors', 'modules', 'openQuestions', 'notNow']) if (!Array.isArray(q[k])) bad.push(`${k} — a list ([] when empty)`)
     if (bad.length) fail(`--quiz-file: ${bad.join('; ')}`)
   }
-  if (!role || !brief) fail('create --role "<one sentence>" --name "<the name people see in the menu>" --vector-file <path> --quiz-file <path> [--describe "<what it is for, 1–3 sentences, for the passport and the header>"] [--look own|project | --look-like <id>] [--close-after-first-session] (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--different "<their words>" --boundary owner|money|secrets|control|face|channel|sleep|visibility] [--native] [--supervise main|architect] [--no-wake]')
+  if (!role || !brief) fail('create --role "<one sentence>" --name "<the name people see in the menu>" --vector-file <path> --quiz-file <path> [--describe "<what it is for, 1–3 sentences, for the passport and the header>"] --app project|own [--look-like <id>] [--close-after-first-session] (--brief "<the task, the person\'s words first>" | --brief-file <path>) [--area "<the field it is the natural home for>"] [--grows "<a job it may grow into>; <another>"] [--different "<their words>" --boundary owner|money|secrets|control|face|channel|sleep|visibility] [--native] [--supervise main|architect] [--no-wake]')
   if (!['main', 'architect'].includes(by)) fail('--supervise main|architect')
   // 670-3: область нового элемента — проверяется до рождения, пишется вместе с ролью.
   const newArea = areaPatch(flag('--area'), flag('--grows'))
@@ -1175,8 +1168,8 @@ if (cmd === 'create') {
   renameSync(tmp, draftsFile)
   console.log(`draft ${id} — birth starts (clone of the template, install, build: a few minutes)`)
 
-  // 2. Рождение — тот же путь, что кнопка «Родить элемент». 553-1: облик выбирает `item-birth.mjs` по типу узла.
-  const birth = spawnSync(process.execPath, [join(ROOT, 'scripts', 'item-birth.mjs'), id, ...(has('--native') ? ['--native'] : []), ...(look ? ['--look', look] : []), ...(lookLike ? ['--look-like', lookLike] : []), ...((flag('--name') ?? '').trim() ? ['--name', flag('--name').trim()] : []), '--describe', ((flag('--describe') ?? '').trim() || role), ...(vectorFile ? ['--vector-file', resolve(vectorFile)] : [])], { cwd: ROOT, encoding: 'utf8', windowsHide: true, timeout: 20 * 60_000 })
+  // 2. Рождение — тот же путь, что кнопка «Родить элемент»; 804-2: ответ человека — `--app`.
+  const birth = spawnSync(process.execPath, [join(ROOT, 'scripts', 'item-birth.mjs'), id, ...(has('--native') ? ['--native'] : []), '--app', look, ...(lookLike ? ['--look-like', lookLike] : []), ...((flag('--name') ?? '').trim() ? ['--name', flag('--name').trim()] : []), '--describe', ((flag('--describe') ?? '').trim() || role), ...(vectorFile ? ['--vector-file', resolve(vectorFile)] : [])], { cwd: ROOT, encoding: 'utf8', windowsHide: true, timeout: 20 * 60_000 })
   const log = `${birth.stdout ?? ''}${birth.stderr ?? ''}`
   if (!/===BIRTH_OK===/.test(log)) fail(`birth of ${id} failed: ${log.trim().split(/\r?\n/).slice(-3).join(' | ')}`)
   const dir = itemDir(id)

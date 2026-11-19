@@ -36,15 +36,15 @@ try {
     assert.equal(nameFile.displayName('qwert', { root, address: 'qwert' }), 'qwert')
   })
   test('the birth carries the name: a custom element, with and without a repository', () => {
-    assert.deepEqual(birthArgs('qwert', { look: 'project' }, 'Проба имени'), ['qwert', '--look', 'project', '--name', 'Проба имени'])
-    assert.deepEqual(birthArgs('qwert', { look: 'own', repo: 'https://github.com/o/p' }, 'Сайт'), ['qwert', '--look', 'own', '--repo', 'https://github.com/o/p', '--name', 'Сайт'])
+    assert.deepEqual(birthArgs('qwert', { app: 'project' }, 'Проба имени'), ['qwert', '--app', 'project', '--name', 'Проба имени'])
+    assert.deepEqual(birthArgs('qwert', { app: 'own', repo: 'https://github.com/o/p' }, 'Сайт'), ['qwert', '--app', 'own', '--repo', 'https://github.com/o/p', '--name', 'Сайт'])
   })
   test('the birth carries the name: a native element', () => {
     assert.deepEqual(birthArgs('qwert', { native: true }, 'Контент-завод'), ['qwert', '--native', '--name', 'Контент-завод'])
   })
   test('negative: without a name the birth says nothing about it (as before 749)', () => {
-    assert.deepEqual(birthArgs('qwert', { look: 'project' }), ['qwert', '--look', 'project'])
-    assert.deepEqual(birthArgs('qwert', { look: 'project' }, '   '), ['qwert', '--look', 'project'])
+    assert.deepEqual(birthArgs('qwert', { app: 'project' }), ['qwert', '--app', 'project'])
+    assert.deepEqual(birthArgs('qwert', { app: 'project' }, '   '), ['qwert', '--app', 'project'])
     assert.deepEqual(birthArgs('qwert', { native: true }, null), ['qwert', '--native'])
   })
 } finally {

@@ -43,7 +43,7 @@ export type NodeWalletWords = {
   noNodeWallet: string
   nodeWalletLink: string
   addOwn: string
-  /** 553-6: единый проект — кошелёк один, у элемента своего нет. */
+  /** 553-6 → 804-3: элемент — часть проекта: кошелёк один, у элемента своего нет. */
   oneWallet: string
   ownNote: string
   afterRemove: string
@@ -100,7 +100,7 @@ const UI: Record<"en" | "ru", NodeWalletWords> = {
     noNodeWallet: "The node has no wallet yet, so there is nothing to inherit.",
     nodeWalletLink: "Node wallet",
     addOwn: "Add its own wallet",
-    oneWallet: "This node is a single project: it has one wallet, the node's. Every element uses it.",
+    oneWallet: "This element is part of your project: the project has one wallet, the node's.",
     ownNote: "The network sees an element with its own wallet as a separate node: the wallet's address is a node's name.",
     afterRemove: "Removing the own wallet returns the element to the node wallet",
   },
@@ -152,7 +152,7 @@ const UI: Record<"en" | "ru", NodeWalletWords> = {
     noNodeWallet: "У узла пока нет кошелька — наследовать нечего.",
     nodeWalletLink: "Кошелёк узла",
     addOwn: "Добавить свой кошелёк",
-    oneWallet: "Узел — единый проект: кошелёк один — кошелёк узла, им пользуются все элементы.",
+    oneWallet: "Этот элемент — часть вашего проекта: у проекта один кошелёк — кошелёк узла.",
     ownNote: "Элемент со своим кошельком сеть видит отдельным узлом: адрес кошелька — имя узла.",
     afterRemove: "Удалив свой кошелёк, элемент снова работает кошельком узла",
   },

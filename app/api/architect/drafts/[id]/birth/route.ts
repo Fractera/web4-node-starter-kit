@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { getDraft } from "@/lib/web4-items/drafts"
 import { checkRepoOwner } from "@/lib/web4-items/repo-owner.mjs"
-import { BIRTH_LOOKS, birthState, isRepoUrl, markRevalidated, startBirth, wasRevalidated } from "@/lib/web4-items/birth"
+import { BIRTH_APPS, birthState, isRepoUrl, markRevalidated, startBirth, wasRevalidated } from "@/lib/web4-items/birth"
 import { getService } from "@/lib/microservices/registry"
 
 // РОЖДЕНИЕ ЧЕРНОВИКА (319-3). POST — запустить `scripts/item-birth.mjs <id>` отдельным процессом (только кнопкой человека);
@@ -23,18 +23,19 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const draft = getDraft(id)
   if (!draft) return NextResponse.json({ ok: false, reason: "not-found" }, { status: 404 })
   if (getService(id)) return NextResponse.json({ ok: false, reason: "born" }, { status: 409 })
-  // 582: черновик нативного элемента рождается из нативного шаблона; облик и репозиторий у него не спрашиваются.
+  // 582: черновик нативного элемента рождается из нативного шаблона; вопрос и репозиторий у него не спрашиваются — он часть проекта.
   if (draft.native) {
     const n = startBirth(id, { native: true })
     if (!n.ok) return NextResponse.json({ ok: false, reason: n.reason }, { status: n.reason === "running" ? 409 : 500 })
     return NextResponse.json({ ok: true, state: "running" }, { status: 202 })
   }
-  // 367: облик элемента — ответ человека в окне рождения; закрытый список, иначе 400 (рождение не стартует).
-  const body = (await req.json().catch(() => null)) as { look?: unknown; source?: unknown; repo?: unknown } | null
-  const look = BIRTH_LOOKS.find((l) => l === body?.look)
-  if (!look) return NextResponse.json({ ok: false, reason: "bad-look" }, { status: 400 })
+  // 804-2 (367 before): what the element will be — the person's answer in the birth window (`app`; an older page sends `look`, the
+  // same two values); a closed list, else 400 and nothing starts.
+  const body = (await req.json().catch(() => null)) as { app?: unknown; look?: unknown; source?: unknown; repo?: unknown } | null
+  const app = BIRTH_APPS.find((l) => l === (body?.app ?? body?.look))
+  if (!app) return NextResponse.json({ ok: false, reason: "bad-app" }, { status: 400 })
   // 367-3: самостоятельный элемент рождается из стартера Fractera или из репозитория человека (https-адрес Git; проверка формы).
-  const source = look === "own" && body?.source === "repo" ? "repo" : "starter"
+  const source = app === "own" && body?.source === "repo" ? "repo" : "starter"
   const repo = source === "repo" ? String(body?.repo ?? "").trim() : ""
   if (source === "repo" && !isRepoUrl(repo)) return NextResponse.json({ ok: false, reason: "bad-repo" }, { status: 400 })
   // 367-5: только ваш репозиторий — владелец совпадает с аккаунтом узла; отказ показывается в окне, ничего не клонируется.
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const own = checkRepoOwner(repo)
     if (!own.ok) return NextResponse.json({ ok: false, reason: own.reason, message: own.message }, { status: 400 })
   }
-  const r = startBirth(id, { look, repo: source === "repo" ? repo : null })
+  const r = startBirth(id, { app, repo: source === "repo" ? repo : null })
   if (!r.ok) return NextResponse.json({ ok: false, reason: r.reason }, { status: r.reason === "running" ? 409 : 500 })
   return NextResponse.json({ ok: true, state: "running" }, { status: 202 })
 }

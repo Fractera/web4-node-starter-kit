@@ -63,15 +63,17 @@ t('profiles: a folder, an exact name or account, the letter case between twins, 
   assert.equal(b.resolveProfile('nobody', list).reason, 'no-profile')
   assert.equal(b.maskEmail('r672442251@gmail.com'), 'r6…@gmail.com')
 })
-t('the elements\' door: an element of the architect may; another person\'s element (own subscription) and an app factory may not', () => {
+t('the elements\' door: an element of the architect may; another person\'s element (own subscription) and an app of its own may not', () => {
   const tmp = mkdtempSync(join(tmpdir(), 'browser-'))
   try {
     assert.equal(b.elementMay(tmp, 'root'), null, 'no registry — a single project')
     mkdirSync(join(tmp, 'data', 'services', 'anna', 'claude'), { recursive: true })
     assert.equal(b.elementMay(tmp, 'anna'), 'own-subscription')
     mkdirSync(join(tmp, 'WEB4-ITEMS-REGISTRY'), { recursive: true })
-    writeFileSync(join(tmp, 'WEB4-ITEMS-REGISTRY', 'web4-items.json'), JSON.stringify({ nodeType: 'factory', items: [] }))
-    assert.equal(b.elementMay(tmp, 'root'), 'app-factory')
+    writeFileSync(join(tmp, 'WEB4-ITEMS-REGISTRY', 'web4-items.json'), JSON.stringify({ services: [{ id: 'root', kind: 'user' }, { id: 'marina', kind: 'user', born: { from: 'custom' }, app: 'own' }, { id: 'shop', kind: 'user', born: { from: 'custom' }, app: 'project' }] }))
+    assert.equal(b.elementMay(tmp, 'marina'), 'own-app', 'an app of its own (804-3)')
+    assert.equal(b.elementMay(tmp, 'shop'), null, 'negative: part of the project may')
+    assert.equal(b.elementMay(tmp, 'root'), null, 'negative: root is part of the project')
   } finally { rmSync(tmp, { recursive: true, force: true }) }
 })
 

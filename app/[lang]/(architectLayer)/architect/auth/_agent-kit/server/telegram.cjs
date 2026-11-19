@@ -410,6 +410,12 @@ async function idleTick(service) {
     // допущенного при выключенном терминале — не «терминал не активен», а тот же вопрос с кнопками; после «Запустить» агент
     // получает это сообщение. 597-4: с вещью и подписью; команды узла — по `idleDecision`; прочие «/…» и неподключённая
     // подписка — прежнее сообщение о состоянии.
+    // 804-7c (the owner, 2026-11-19: «ты как агент в равной степени и телеграммы чётко должны понимать свое разделение кто твой хозяин»):
+    // the bot of an app of its own tells the person it just admitted whose bot it is — kept, it is the result of the admission.
+    if (activated && service !== 'build' && ownAppOf(service)) {
+      const t = await askTable(service)
+      await sendKept(token, { chat_id: msg.chat.id, text: (t.ownAppBot ?? ASK.en.ownAppBot)(shortName(named(service))), disable_web_page_preview: true })
+    }
     // 604: a folder trust question waits for this chat's «yes» — a short plain yes answers it here, with no agent turned on. Anything
     // else goes on as before, and the main agent, woken by it, reads the person's meaning (the pending question rides in its prompt).
     if (!activated && trustWaitingVia(service).length && trustYes(msg.text)) {
@@ -643,6 +649,8 @@ const ASK = {
     keyNotDeleted: 'The bot could not delete the message with the key — delete it yourself.',
     // 737-11a: the bot of a dedicated server that is still rehearsing.
     silentServer: 'This bot is connected to your dedicated server. The project still runs on your computer — after the move the main agent will answer you here.',
+    // 804-7c: the bot of an app of its own, to the person it just admitted.
+    ownAppBot: (a) => `This is the bot of «${a}», an app of its own: it has its own owner and its own people, apart from the rest of the project. Its agent will get to know you in your first conversation.`,
     trustLine: 'Its folder is not trusted in Claude Code yet — «Turn on» trusts it as well.',
     waitingTerminal: (a, link) => `Agent ${a} is waiting for your answer in the terminal: ${link}`,
     // 597-4: «turn on» typed to a sleeping agent's bot — the agent starts with no task.
@@ -695,6 +703,7 @@ const ASK = {
     keyRejected: (why) => `OpenAI не принял ключ (${why}) — остаётся прежний.`,
     keyNotDeleted: 'Бот не смог удалить сообщение с ключом — удалите его сами.',
     silentServer: 'Этот бот подключён к вашему выделенному серверу. Проект пока работает на вашем компьютере — после переезда здесь вам ответит главный агент.',
+    ownAppBot: (a) => `Это бот «${a}» — самостоятельного приложения: у него свой хозяин и свои люди, отдельно от остального проекта. Агент приложения познакомится с вами в первом разговоре.`,
     trustLine: 'Его папка ещё не подтверждена в Claude Code — «Включить» подтвердит и её.',
     waitingTerminal: (a, link) => `Агент ${a} ждёт вашего ответа в терминале: ${link}`,
     onNow: (a) => `Агент ${a} включён — пишите ему.`,
@@ -734,6 +743,10 @@ function humanPrompt(service, chatId, who, said, thing = null) {
 // 597-4: the node's commands (`lib/agent-kit/commands.cjs`) — put on `globalThis` by the bridge's mount (`lib/agent-kit/mount.cjs`).
 // 🛑 Not `require(path.join(ROOT, …))`: a door imports this file, and the core's build cannot resolve a path from the working folder
 // («server relative imports are not implemented yet», ✗ 552-6; repeated in 597-4 and found by the rebuild of 599-4 — 26 errors).
+// 804-7c: what the element is (`lib/web4-items/element-app.cjs`), put on `globalThis` by the same mount; not mounted — not an own app.
+const ownAppOf = (service) => {
+  try { return globalThis.__web4ElementApp?.appOf(String(service).split('--')[0], ROOT) === 'own' } catch { return false }
+}
 const nodeCommands = () => {
   const m = globalThis.__web4NodeCommands
   if (!m) throw new Error('the node commands are not mounted')

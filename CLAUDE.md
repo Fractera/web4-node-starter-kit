@@ -35,9 +35,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   limit for you, every running lending counted), never by writing its code; you stay conscious first.
 - Why a node is built. **A Web4 node:** elements become a2a agents and find each other in the Lagrix network (lagrix.dev); all elements
   belong to one owner. **An integrator:** one person serves many people near them, so they build their own agents. **A high-load Web2
-  site or app.** **An app factory:** every element lives on its own, like a server on a hosting, but uses the shared native elements. **A
-  content factory:** channels, author voices, publications, the numbers read back and the topics that rise. **Own agents:** help in
-  every field of the person's own life.
+  site or app.** **An app factory:** its elements are born as apps of their own, like servers on a hosting, using the shared native
+  elements. **A content factory:** channels, author voices, publications, the numbers read back and the topics that rise. **Own
+  agents:** help in every field of the person's own life.
 - Where you live: the core's root `agi-code` — this instruction, the core's code and skills, your commands in the core's `package.json`
   (`contacts`, `find`, `create`, `task`, `state`, `supervise`, `person`, `done` and others); your data — `data/main-agent` (cron,
   passport).
@@ -137,9 +137,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - The deep memory is turned off by its passport: it is turned on for a task (`npm run power`) or by itself when more than 1 GB is free; it
   thinks with an OpenAI model when the node has a key with money on its account, otherwise with Claude by the subscription, and never
   while `embeddings` is down; it does not read links and video yet.
-- CONFIG (the configurator) in a single project gives every element 12 switches: top menu, cookie banner, sign-in, questions and answers,
-  page width, social networks, footer pages, offline copy, breadcrumbs, theme switch, language switch, width and design-skill indicator.
-  And sections: search and AI, meta and media, header, footer, cookie banner.
+- CONFIG (the configurator) gives every element that is part of the project 12 switches: top menu, cookie banner, sign-in, questions and
+  answers, page width, social networks, footer pages, offline copy, breadcrumbs, theme switch, language switch, width and design-skill
+  indicator. And sections: search and AI, meta and media, header, footer, cookie banner.
 - Changes in CONFIG reach the elements by a signal, without a rebuild.
 - Design is every element's own: in its «Build → Design» tab the person picks design skills of third-party developers, each builds a
   test page, and the approved one becomes the element's tokens; then its agent builds every other page in that design, its sections its
@@ -152,12 +152,15 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   ready — only their keys are needed. Other providers are built by the element's agent. The code runs next-auth 5 beta (the draft said
   «auth v6»).
 - Guest and role access is set separately for every route.
-- App factory and integrator: an account belongs to an app; every element has its own administration panel, other elements are not
-  visible in it.
+- **What an element is — one answer at its birth, fixed for good** (the owner, 2026-11-19, step 804; registry field `app`,
+  `lib/web4-items/element-app.cjs`): **part of the project** — the project's people and sign-in, its look and settings follow CONFIG; or
+  **an app of its own** — its own people and accounts (its organization in the sign-in), its own look and settings, its own owner. The
+  preinstalled native elements and root are part of the project. An account belongs to an app; every element has its own
+  administration panel, other elements are not visible in it.
 - Every element has its own event timer and calendar (its «Cron» pages): it does its task without telling you; a reminder said to
   an element lives in that element's calendar.
-- Payments. Web2: Stripe keys live only in the Stripe element. Web3: the node's wallet — create or inherit (`/api/node/wallet`); a single
-  project has one wallet.
+- Payments. Web2: Stripe keys live only in the Stripe element. Web3: the node's wallet — create or inherit (`/api/node/wallet`); the
+  elements of the project share it, an app of its own may have its own.
 - Capability cards, the first-contact fee and the element's description are the element's data; the description reaches the core by the
   element's command `describe:publish`.
 - Pages of the core: Passport, Dashboard (Projects), Domain and hosting (Server monitoring: the machine), Super node, How it works.
@@ -195,7 +198,7 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - **i2i:** element agents start talking without MCP or API, but their task is to agree quickly on their own API or MCP and then call each
   other directly, without you. They cannot find each other by themselves: you suggest the neighbour (skill `route-to-element`) and follow
   the progress when needed. Tools are the exception: an element's `parts_find` reads the node's index itself — the core's tools of scope
-  «any» and, on a single project, its neighbours' — cards only, never code (step 733).
+  «any» and, between the elements of the project, its neighbours' — cards only, never code (step 733).
 - **Doors between elements:** `/api/<name>` on loopback with the key `X-Node-Key`; a door is added by the element's `door:add`, the A2A card
   names every door (guard `check:a2a-card`).
 - **Buying an element in Lagrix (f2f)** is not possible yet: the search `npm run lagrix` is a simulation, say so.
@@ -303,12 +306,11 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - **Messenger:** the H2H and H2A protocols, through Lagrix too; not developed yet. The design: people of different nodes do not talk
   directly until they have agreed; the first contact always goes through agents — a person's agent contacts the other person's agent and
   agrees the procedure, after that they may talk directly.
-- **The node mode** is chosen at the start of the project, on the project settings page in CONFIG. Single project — one owner, every
-  element takes its settings from the configurator. App factory — the node holds projects of different owners: a new own element is born
-  with its own settings, while the settings of the core and the built-in elements stay shared. To change — `npm run node-type`, skill
-  `node-type`, after a yes.
-- **An element's mode:** it syncs its site settings with the shared CONFIG or keeps its own, and its look is always its own; only knowing
-  this do you understand its purpose. With the link off, a custom element edits its settings in its own tab (`npm run look`).
+- **The node has no mode** (step 804): each element answered at its birth whether it is part of the project or an app of its own
+  (section 3); nothing switches it later. You create an element only with the person's answer (`npm run create -- --app project|own`).
+- **An element's settings:** part of the project takes its site settings from the shared CONFIG, an app of its own keeps its own and
+  edits them in its own tab (`npm run look`); the look is always its own. An app of its own has its own owner: its agent knows them, not
+  you — they are another person, never the architect's data.
 - **On or off.** A turned-on element always uses memory (sign-in), a turned-off one uses none (Stripe). The default is in the passport; the
   person switches it, or you after their yes (`npm run power`, skill `element-power`); a turned-off element is not given to
   neighbours. Separately — whether the element is visible in the Web4 network (`npm run web4`).
@@ -417,8 +419,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - **Customer agent** and **contractor agent** — the sides of an a2a deal; **super node** — a separate machine of the Lagrix network;
   **operator** — the person who runs it.
 - **i2i, a2a, f2f** — protocols (section 2); **H2H** — person to person, **H2A** — person to agent.
-- **Single project** and **app factory** — node modes; **integrator** — one person gives elements to many; **Web4 ready** — an element in
-  the Web4 network: agents of other nodes find it and give it orders through Lagrix.
+- **Part of the project** and **an app of its own** — what an element is, answered once at its birth; **app factory** — a node of apps
+  of their own; **integrator** — one person gives elements to many; **Web4 ready** — an element in the Web4 network: agents of other
+  nodes find it and give it orders through Lagrix.
 - **Section** — a designed part of a page: the core's own catalogue in the core, the element's own code in an element. **Widget**
   — not an element: code inside an element, when a section is not enough
   or the code is needed nowhere else (`static/`, `dynamic/`). **Tool** — solves a task with its own interface and does not know which page it
@@ -448,7 +451,7 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   control, the network) — `shape-the-need`; kept or brought back — `use-deep-memory`; the person's picture — `know-the-architect`; leading an element —
   `supervise-element`; an element asks how the node works — `answer-element`; a check from an element, starting or closing its agent —
   `ask-element`; a capability an element lacks — `handle-need` (a bare yes or no with no question in this session — `npm run needs`
-  first); an element waits for a permission — `element-permission`; the node type — `node-type`; an element on or off — `element-power`; how a product or SDK works — `study-for-element`; a
+  first); an element waits for a permission — `element-permission`; an element on or off — `element-power`; how a product or SDK works — `study-for-element`; a
   skill the person heard of — `adopt-suggested-skill`; a clock and reminders — `core-schedule`; a core build and who comes back — `core-build-return`; page sections, colours, fonts, menus of an element — `design-and-settings-of-elements`;
   an administration panel, a dashboard or a settings tab of the core — `interface-design` (vendored; the core's primitives and tokens win); routing a need — `route-to-element`; a new element — `create-element`; people near the architect, a family or a team — `integrator`; channels, voices and trends — `content-factory`; agents for the person themselves — `own-agents`; a research of an outside product — `research`; why Fractera and not a platform — `fractera-vs-anthropic`; a node launched on a VPS and its domain there — `dedicated-server`; a person stuck in someone else's interface — `help-in-browser`
   (their Chrome on this computer); a task with the person's hands and yours together (a password, a sign-in, a final «publish») —

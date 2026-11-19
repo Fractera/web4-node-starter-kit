@@ -129,13 +129,10 @@ const restoreToken = githubToken('')
 if (!existsSync(join(ROOT, 'data', 'services')) && existsSync(SNAPSHOT_FILE)) {
   let snap = null
   try { snap = JSON.parse(readFileSync(SNAPSHOT_FILE, 'utf8')) } catch { say('  снимок карты не прочитан — восстанавливать нечего') }
-  // 553-1: тип узла едет в снимке и возвращается в реестр (место — сразу после `_`, как пишет `node-type.cjs`); реестр сохраняется ниже.
-  if (snap?.nodeType === 'project' || snap?.nodeType === 'factory') {
-    const { _: comment, nodeType: _old, ...rest } = registry
-    for (const k of Object.keys(registry)) delete registry[k]
-    Object.assign(registry, comment === undefined ? {} : { _: comment }, { nodeType: snap.nodeType }, rest)
-    say(`  карта узла: тип узла — ${snap.nodeType}`)
-  }
+  // 804-4: типа узла больше нет — каждый рождённый элемент несёт свой ответ (`app`, lib/web4-items/element-app.cjs). Снимок старого
+  // узла ещё хранит тип: рождённый элемент без ответа получает его по тому типу, при котором родился; в реестр тип не возвращается.
+  const { appOfEntry } = createRequire(import.meta.url)('../lib/web4-items/element-app.cjs')
+  const legacyType = snap?.nodeType === 'factory' ? 'factory' : null
   const pending = []
   for (const s of Array.isArray(snap?.services) ? snap.services : []) {
     if (!s || typeof s.id !== 'string') continue
@@ -145,7 +142,7 @@ if (!existsSync(join(ROOT, 'data', 'services')) && existsSync(SNAPSHOT_FILE)) {
       say(`  карта узла: «${s.id}»${s.github ? ` из ${s.github}` : ''} — восстановится, когда добавите токен GitHub (страница GitHub узла на этом компьютере), затем npm run serve:start`)
       continue
     }
-    if (!e) registry.services.push({ ...s })
+    if (!e) registry.services.push(s.kind === 'user' && s.born && !s.app ? { ...s, app: appOfEntry(s, { legacyType }) } : { ...s })
     else if (s.github && !e.github && restoreToken) e.github = s.github
     if (typeof s.address === 'string' && s.address !== s.id) {
       const f = join(ROOT, 'data', 'services', s.id, 'address.json')
@@ -991,8 +988,8 @@ for (const entry of registry.services) {
     // 🔒 654-6: THE NODE'S MASTER KEY IS NEVER CARRIED OVER. `DATA_SECRET` opens every element's space in every store; an element whose
     // `.env.example` no longer declares it (the custom template since 654-6 declares ELEMENT_KEY instead) loses it at this install —
     // ✗ without this line the carry-over above would keep the old value alive, and the separation would only look done. An element
-    // born from an older template still declares it and keeps it until its owner takes the template update (`npm run node-type -- get`
-    // names such elements).
+    // born from an older template still declares it and keeps it until its owner takes the template update (`npm run contacts`
+    // names such elements, 804-4).
     if (MASTER_KEYS.has(name)) continue
     if (!written.has(name) && value.trim() !== '') lines.push(`${name}=${value}`)
   }

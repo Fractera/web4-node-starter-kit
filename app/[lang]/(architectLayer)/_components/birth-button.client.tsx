@@ -10,8 +10,8 @@ import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import type { Web4DraftsUi } from "../_i18n/web4-drafts.i18n"
 import { announceGithubState } from "@/components/node-state/github-token-alarm.client"
 
-// «РОДИТЬ ЭЛЕМЕНТ» (узел, шаг 319-3; 367 — вопрос об облике). Кнопка → окно подтверждения (что произойдёт, сколько займёт и
-// каким родится элемент: «как весь проект» / «самостоятельный») → дверь
+// «РОДИТЬ ЭЛЕМЕНТ» (узел, шаг 319-3; 804-2 — один вопрос вместо типа узла). Кнопка → окно подтверждения (что произойдёт, сколько
+// займёт и чем будет элемент: «частью вашего проекта» / «самостоятельным приложением» — навсегда) → дверь
 // `POST /api/architect/drafts/<id>/birth` запускает рождение отдельным процессом → экран хода по журналу.
 //
 // 🔒 ОПРОС ДВЕРИ — ТОЛЬКО ПОКА ЭТОТ ЭКРАН ОТКРЫТ И РОЖДЕНИЕ ИДЁТ (план 319-3, подтверждён владельцем): начинается нажатием
@@ -28,21 +28,20 @@ type State = { state: "idle" | "running" | "done" | "failed"; lines: string[]; r
 
 // `born` — элемент уже в реестре узла (рождение дошло до записи и упало позже): кнопки нет, подсказка — повтор установки.
 // Иначе упавшее рождение ничего не записало, и подсказка — нажать кнопку снова.
-// 553: `suggested` — облик по типу узла (единый проект → как проект, завод → самостоятельный); человек может выбрать другой.
-// 582: `native` — черновик нативного элемента: облика и источника кода у него нет (нативный шаблон один), окно только подтверждает.
-export function BirthButton({ id, ui, dialogUi, born = false, suggested, nodeType, native = false }: { id: string; ui: Web4DraftsUi; dialogUi: AppDialogUi; born?: boolean; suggested?: "project" | "own"; nodeType?: "project" | "factory"; native?: boolean }) {
+// 582: `native` — черновик нативного элемента: вопроса и источника кода у него нет (он часть проекта), окно только подтверждает.
+export function BirthButton({ id, ui, dialogUi, born = false, native = false }: { id: string; ui: Web4DraftsUi; dialogUi: AppDialogUi; born?: boolean; native?: boolean }) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [starting, setStarting] = useState(false)
   // 367-5: отказ двери с объяснением (например, «это не ваш репозиторий — сделайте Fork») — в окне, окно не закрывается.
   const [refusal, setRefusal] = useState<string | null>(null)
-  // 367 (слово владельца 2026-10-01): облик элемента выбирает человек — «как весь проект» или «самостоятельный»; без выбора не рождаем.
-  const [look, setLook] = useState<"project" | "own" | "">(suggested ?? "")
+  // 804-2 (the owner, 2026-11-19): what the element will be — part of the project or an app of its own; no answer, no birth.
+  const [app, setApp] = useState<"project" | "own" | "">("")
   // 367-3: у самостоятельного — источник кода: стартер Fractera или репозиторий человека (адрес проверяет и дверь).
   const [source, setSource] = useState<"starter" | "repo" | "">("")
   const [repo, setRepo] = useState("")
   const repoOk = REPO_URL.test(repo.trim())
-  const ready = native || look === "project" || (look === "own" && (source === "starter" || (source === "repo" && repoOk)))
+  const ready = native || app === "project" || (app === "own" && (source === "starter" || (source === "repo" && repoOk)))
 
   /** Карточка-вариант: shadcn Button с role=radio; выбранная — с рамкой основного цвета. */
   const option = (value: string, title: string, text: string, checked: boolean, pick: () => void, mark: string) => (
@@ -89,7 +88,7 @@ export function BirthButton({ id, ui, dialogUi, born = false, suggested, nodeTyp
       const r = await fetch(`${BASE}/api/architect/drafts/${id}/birth`, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(native ? {} : look === "own" ? { look, source, ...(source === "repo" ? { repo: repo.trim() } : {}) } : { look }),
+        body: JSON.stringify(native ? {} : app === "own" ? { app, source, ...(source === "repo" ? { repo: repo.trim() } : {}) } : { app }),
       })
       if (r.status === 400) {
         const j = (await r.json().catch(() => null)) as { message?: string } | null
@@ -109,7 +108,7 @@ export function BirthButton({ id, ui, dialogUi, born = false, suggested, nodeTyp
   return (
     <div className="my-4 flex flex-col gap-3" data-birth data-birth-state={s.state}>
       {!born && !running && s.state !== "done" && (
-        <Button onClick={() => { setLook(""); setSource(""); setRepo(""); setRefusal(null); setOpen(true) }} className="w-fit gap-1.5" data-birth-start>
+        <Button onClick={() => { setApp(""); setSource(""); setRepo(""); setRefusal(null); setOpen(true) }} className="w-fit gap-1.5" data-birth-start>
           <Sprout className="size-4" aria-hidden />
           {ui.birth}
         </Button>
@@ -144,13 +143,12 @@ export function BirthButton({ id, ui, dialogUi, born = false, suggested, nodeTyp
           </>
         }
       >
-        {!native && <div className="flex flex-col gap-2" role="radiogroup" aria-label={ui.lookQuestion} data-birth-look>
-          <p className="text-sm font-medium text-foreground">{ui.lookQuestion}</p>
-          {nodeType === "factory" && <p className="text-xs text-muted-foreground" data-birth-factory-hint>{ui.lookFactoryHint}</p>}
-          {option("project", ui.lookProject, ui.lookProjectText, look === "project", () => setLook("project"), "data-birth-look-option")}
-          {option("own", ui.lookOwn, ui.lookOwnText, look === "own", () => setLook("own"), "data-birth-look-option")}
+        {!native && <div className="flex flex-col gap-2" role="radiogroup" aria-label={ui.appQuestion} data-birth-app>
+          <p className="text-sm font-medium text-foreground">{ui.appQuestion}</p>
+          {option("project", ui.appProject, ui.appProjectText, app === "project", () => setApp("project"), "data-birth-app-option")}
+          {option("own", ui.appOwn, ui.appOwnText, app === "own", () => setApp("own"), "data-birth-app-option")}
           {/* 367-3 (владелец: «нажатие на вторую карточку … увеличит её в длину и покажет два варианта»): откуда код самостоятельного. */}
-          {look === "own" && (
+          {app === "own" && (
             <div className="ml-4 flex flex-col gap-2 border-l-2 border-primary/40 pl-3" role="radiogroup" aria-label={ui.sourcePick} data-birth-source>
               {option("starter", ui.sourceStarter, ui.sourceStarterText, source === "starter", () => setSource("starter"), "data-birth-source-option")}
               {option("repo", ui.sourceRepo, ui.sourceRepoText, source === "repo", () => setSource("repo"), "data-birth-source-option")}
@@ -174,7 +172,7 @@ export function BirthButton({ id, ui, dialogUi, born = false, suggested, nodeTyp
               {!source && <p className="text-xs text-muted-foreground">{ui.sourcePick}</p>}
             </div>
           )}
-          {!look && <p className="text-xs text-muted-foreground">{ui.lookPick}</p>}
+          {!app && <p className="text-xs text-muted-foreground">{ui.appPick}</p>}
           {refusal && <p className="rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2 text-sm text-foreground" role="alert" data-birth-refusal>{refusal}</p>}
         </div>}
       </AppDialog>

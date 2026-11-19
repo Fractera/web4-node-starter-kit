@@ -18,7 +18,6 @@ import { ElementMiniApp } from '@/app/[lang]/(architectLayer)/_components/elemen
 import { elementMiniAppWords } from '@/app/[lang]/(architectLayer)/_components/element-mini-app.i18n'
 import { builtInDraft, builtInIds } from '@/lib/web4-items/built-in-elements'
 import { BirthButton } from '../../../_components/birth-button.client'
-import nodeType from '@/lib/web4-items/node-type.cjs'
 import { birthState } from '@/lib/web4-items/birth'
 import { ServicePort } from '@/components/services/service-port.client'
 import { servicePortWords } from '@/components/services/service-port.i18n'
@@ -278,7 +277,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
             // 749-4: вся часть про Lagrix — в одной закрытой полосе со словами владельца; ничего не снято.
             return <ElementHome id={item} title={hu.lagrixTitle} rating={lagrixRatingUi(lang)} wallet={nodeWalletUi(lang)} alarm={alarm} alarmMark={hu.alarmMark} />
           })()}
-          {(!entry || brokenBirth) && <BirthButton id={item} ui={ui} dialogUi={appDialogUi(lang)} born={!!entry} suggested={nodeType.birthLook({ native: false }, process.cwd()) as "project" | "own"} nodeType={nodeType.readNodeType(process.cwd()) as "project" | "factory"} native={nativeDraft} />}
+          {(!entry || brokenBirth) && <BirthButton id={item} ui={ui} dialogUi={appDialogUi(lang)} born={!!entry} native={nativeDraft} />}
         </>}
       />
     )
@@ -444,7 +443,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       // настройки сайта правятся здесь, пультом ядра; 567-6: «Сеть Web4» — только у кастомного. 713-3 («не спагетти дизайн»): связь —
       // одной строкой сверху, Web4 — последним разделом списка, а не отдельной частью под кнопкой «Сохранить».
       ? <ElementSiteSettingsRemote item={item} slug={slug} lang={lang} port={port} publicUrl={ownPublicUrl} words={elementRemoteWords(lang)} site={siteRemoteWords(lang)}
-          configLine={<ElementLink id={item} kind="config" on={readLinks(item).config} ui={sui} variant="line" />}
+          configLine={<ElementLink kind="config" on={readLinks(item).config} ui={sui} />}
           web4={!treeCtx.native ? <ElementWeb4 id={item} ui={sui} dialogUi={appDialogUi(lang)} initialOn={treeCtx.web4 !== false} bare /> : null} />
       : <p className="my-4 text-sm text-muted-foreground">{sui.notBorn}</p>)
     : null

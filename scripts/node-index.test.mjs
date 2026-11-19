@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // npm run test:node-index — the node's index of tools (733-4): an element finds its own tool first, then the core's «any» tools and,
-// on a single-project node, its neighbours' tools; a «panel» tool is never offered; an app factory hides the neighbours.
+// between the elements of the project, its neighbours' tools; a «panel» tool is never offered; an app of its own (804-3) sees only the
+// core's tools and is hidden from the others.
 import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
@@ -15,8 +16,9 @@ const tool = (id, scope, en, ru, words) => ({ id, kind: "tool", path: `_tools/${
   what: { en: `${en} — a tool that does it for a person with its own window.`, ru: `${ru} — инструмент со своим окном.` }, how: "Open it.", words: { en: words, ru: words } })
 put("lib/parts/PARTS.json", { parts: [tool("tool-crop", "any", "Image cropping", "Обрезка изображения", ["crop image", "обрезка картинки"]), tool("tool-term", "panel", "Terminal drawer", "Терминал", ["terminal", "терминал"])] })
 fs.mkdirSync(path.join(core, "lib/web4-items"), { recursive: true })
-fs.copyFileSync(path.join(HERE, "../lib/web4-items/node-type.cjs"), path.join(core, "lib/web4-items/node-type.cjs"))
-const registry = (nodeType) => put("WEB4-ITEMS-REGISTRY/web4-items.json", { nodeType, services: [{ id: "a", kind: "user" }, { id: "b", kind: "user" }] })
+fs.copyFileSync(path.join(HERE, "../lib/web4-items/element-app.cjs"), path.join(core, "lib/web4-items/element-app.cjs"))
+const born = { from: "fractera-custom-item-starter" }
+const registry = (appA, appB) => put("WEB4-ITEMS-REGISTRY/web4-items.json", { services: [{ id: "a", kind: "user", born, app: appA }, { id: "b", kind: "user", born, app: appB }] })
 put("WEB4-ITEMS/user/a/lib/parts/PARTS.json", { parts: [tool("qr-code", "any", "QR code", "QR-код", ["qr code", "qr код"])] })
 put("WEB4-ITEMS/user/b/lib/parts/PARTS.json", { parts: [tool("map-pin", "any", "Address to a map point", "Адрес в точку на карте", ["map point", "точка на карте"])] })
 const A = path.join(core, "WEB4-ITEMS/user/a")
@@ -24,7 +26,7 @@ const A = path.join(core, "WEB4-ITEMS/user/a")
 let failed = 0
 const expect = (name, ok, more = "") => { console.log(`${ok ? "✓" : "✗"} ${name}${ok ? "" : ` — ${more}`}`); if (!ok) failed++ }
 
-registry("project")
+registry("project", "project")
 let ids = nodeTools(core, A).map((t) => `${t.where.owner}:${t.id}`)
 expect("a single project: the core's «any» tool and the neighbour's tool", ids.includes("core:tool-crop") && ids.includes("b:map-pin"), ids.join(", "))
 expect("a «panel» tool is never offered", !ids.some((i) => i.endsWith("tool-term")), ids.join(", "))
@@ -38,9 +40,12 @@ r = await findParts(A, { query: "qr код", node: nodeTools(core, A) })
 expect("its own tool comes first and says «Yours»", r.parts[0]?.id === "qr-code" && /Yours/.test(partsText(r, "x")), JSON.stringify(r.parts.map((p) => p.id)))
 r = await findParts(A, { query: "бронирование столика", node: nodeTools(core, A) })
 expect("a foreign query finds nothing (negative control)", r.parts.length === 0, JSON.stringify(r.parts.map((p) => p.id)))
-registry("factory")
+registry("project", "own")
 ids = nodeTools(core, A).map((t) => `${t.where.owner}:${t.id}`)
-expect("an app factory: the neighbour hidden, the core's «any» stays", ids.includes("core:tool-crop") && !ids.includes("b:map-pin"), ids.join(", "))
+expect("an app of its own is hidden from the project's element; the core's «any» stays", ids.includes("core:tool-crop") && !ids.includes("b:map-pin"), ids.join(", "))
+registry("own", "project")
+ids = nodeTools(core, A).map((t) => `${t.where.owner}:${t.id}`)
+expect("an app of its own sees only the core's tools", ids.includes("core:tool-crop") && !ids.includes("b:map-pin"), ids.join(", "))
 
 fs.rmSync(core, { recursive: true, force: true })
 if (failed) { console.error(`===NODE_INDEX_FAILED=== ${failed}`); process.exit(1) }

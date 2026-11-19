@@ -158,6 +158,8 @@ function mergeRegistry(theirs, ours) {
   const known = new Set(services.map((s) => s.id))
   const retired = new Set(retiredNatives(theirs, ours))
   for (const o of ours.services ?? []) if (!known.has(o.id) && !retired.has(o.id)) services.push(o)
+  // 804-4: a node not yet migrated keeps its old type until the migration 804-4 (stage 5½, right below) turns it into each born
+  // element's own answer `app`; the fork's registry has no type since 804.
   const { _: comment, nodeType: _forkType, services: _s, ...rest } = theirs
   return { ...(comment === undefined ? {} : { _: comment }), ...(ours.nodeType ? { nodeType: ours.nodeType } : {}), ...rest, services }
 }

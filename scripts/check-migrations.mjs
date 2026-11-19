@@ -45,7 +45,8 @@ for (const p of code) {
   // (b) a wrapped function called outside its migration and its own defining file
   for (const [f, owner] of wraps) {
     if (p === owner) continue
-    const defines = new RegExp(`export\\s+(async\\s+)?function\\s+${f}\\b`).test(text)
+    // 804-4: a CommonJS module defines its function at the start of a line (`function f(`), an ES module exports it.
+    const defines = new RegExp(`(export\\s+(async\\s+)?|^(async\\s+)?)function\\s+${f}\\b`, 'm').test(text)
     lines.forEach((line, i) => {
       if (defines && new RegExp(`function\\s+${f}\\b`).test(line)) return
       if (new RegExp(`(?<![\\w.])${f}\\s*\\(`).test(line) && !/^\s*(\/\/|\*)/.test(line) && !defines) {

@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
 import { projectRows } from "@/lib/web4-items/dashboard-rows"
-import nodeType from "@/lib/web4-items/node-type.cjs"
 
 // ТАБЛИЦА «Dashboard → Проекты» (339). Страница предрендерена, поэтому состав узла, порты, коммиты и состояние спрашиваются
 // здесь, на запрос, — запечённые в HTML они врали бы с первой же правки.
@@ -18,6 +17,6 @@ export async function GET(req: NextRequest) {
   if (denied) return denied
   const lang = req.nextUrl.searchParams.get("lang") === "ru" ? "ru" : "en"
   const rows = await projectRows(lang)
-  // 553: тип узла — агентам элементов (`passport -- me`, часть node) и всем, кто читает состав узла.
-  return NextResponse.json({ ok: true, nodeType: nodeType.readNodeType(process.cwd()), rows }, { headers: { "Cache-Control": "no-store" } })
+  // 804-3: типа узла больше нет — каждая строка говорит, чем стал её элемент (`app`); агент элемента читает свою (`passport -- me`).
+  return NextResponse.json({ ok: true, rows }, { headers: { "Cache-Control": "no-store" } })
 }

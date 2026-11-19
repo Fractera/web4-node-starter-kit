@@ -31,8 +31,8 @@ function scopeOf(req: NextRequest): Scope {
 }
 
 function stateOf(element?: string) {
-  // 553-6: элементный ответ называет, один ли кошелёк на узел (единый проект) — островок прячет «Добавить свой».
-  return element === undefined ? { wallet: readWallet() } : { ...readElementWallet(element), oneWallet: oneWallet() }
+  // 553-6 → 804-3: элементный ответ называет, пользуется ли элемент кошельком узла (часть проекта) — островок прячет «Добавить свой».
+  return element === undefined ? { wallet: readWallet() } : { ...readElementWallet(element), oneWallet: oneWallet(element) }
 }
 
 async function gate(req: NextRequest, write: boolean): Promise<NextResponse | null> {
@@ -64,8 +64,8 @@ export async function POST(req: NextRequest) {
   if (denied) return denied
   const scope = scopeOf(req)
   if (scope instanceof NextResponse) return scope
-  // 553-6: единый проект — свой кошелёк элементу не заводится (снять прежний — DELETE — можно всегда).
-  if (scope.element !== undefined && oneWallet()) return NextResponse.json({ ok: false, error: "one-wallet", ...stateOf(scope.element) }, { status: 409, headers: NO_STORE })
+  // 553-6 → 804-3: часть проекта — свой кошелёк элементу не заводится (снять прежний — DELETE — можно всегда).
+  if (scope.element !== undefined && oneWallet(scope.element)) return NextResponse.json({ ok: false, error: "one-wallet", ...stateOf(scope.element) }, { status: 409, headers: NO_STORE })
   const body = (await req.json().catch(() => null)) as { address?: unknown; generate?: unknown } | null
   if (body?.generate === true) {
     generateWallet(scope.element)

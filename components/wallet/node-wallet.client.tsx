@@ -21,7 +21,7 @@ const walletUrl = (element?: string, extra = "") =>
   `${BASE}/api/node/wallet${element !== undefined ? `?element=${encodeURIComponent(element)}${extra ? `&${extra}` : ""}` : extra ? `?${extra}` : ""}`
 type Wallet = { address: string; kind?: "address" | "generated" } | null
 type Source = "element" | "node" | null
-// 553-6: `oneWallet` — узел единый проект: свой кошелёк элементу не завести (дверь отвечает 409 `one-wallet`).
+// 553-6 → 804-3: `oneWallet` — элемент часть проекта: свой кошелёк ему не завести (дверь отвечает 409 `one-wallet`).
 type State = { wallet: Wallet; source: Source; own: Wallet; node: Wallet; oneWallet?: boolean }
 
 const pick = (w: unknown): Wallet => {

@@ -61,9 +61,13 @@ if (!Array.isArray(reg.services)) {
   process.exit(1)
 }
 
-// ── 1а. node-type (553-1). Порча: поставить "nodeType": "bogus". Тип узла — project | factory; нет поля — project.
-if ('nodeType' in reg && reg.nodeType !== 'project' && reg.nodeType !== 'factory') {
-  fail('node-type', `nodeType обязан быть project или factory — получено «${reg.nodeType}»`)
+// ── 1а. 804-4: типа узла нет — чем стал элемент, отвечено при его рождении (`app` записи, lib/web4-items/element-app.cjs).
+// Порча: вернуть "nodeType" в реестр или поставить записи "app": "factory". Переход старого узла — миграция 804-4 (npm run migrate).
+if ('nodeType' in reg) {
+  fail('node-type', `nodeType больше не живёт в реестре (804-4): каждый рождённый элемент несёт свой ответ app — npm run migrate`)
+}
+for (const s of reg.services) {
+  if (s && 'app' in s && s.app !== 'project' && s.app !== 'own') fail('element-app', `${s.id}: app обязан быть project или own — получено «${s.app}»`)
 }
 
 const ids = new Map()

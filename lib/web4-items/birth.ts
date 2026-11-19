@@ -83,23 +83,23 @@ function liveTail(id: string): string[] {
   return clean.split(/\r?\n|\r/).map((l) => l.trim()).filter(Boolean).slice(-6).map((l) => `› ${l.slice(0, 200)}`)
 }
 
-/** Облик рождённого элемента (367, слово владельца 2026-10-01): `project` — дизайн и CONFIG проекта, связи включены; `own` —
- *  самостоятельный: файлы шаблона, связь с CONFIG выключена до первой сборки. */
-export type BirthLook = "project" | "own"
-export const BIRTH_LOOKS: BirthLook[] = ["project", "own"]
+/** 804-2 (the owner, 2026-11-19): what the element will be — the one question of its birth, kept in its registry entry `app`
+ *  (`lib/web4-items/element-app.cjs`): `project` — part of the project (its people, sign-in, CONFIG); `own` — an app of its own (its
+ *  people in its own organization, its own look and settings). Fixed at birth. Before 804 the window asked only the look (367). */
+export type BirthApp = "project" | "own"
+export const BIRTH_APPS: BirthApp[] = ["project", "own"]
 
 /** 367-3: адрес репозитория человека — https, хост, владелец/имя, необязательный `.git`. Ни пробелов, ни параметров, ни ключей в адресе. */
 export function isRepoUrl(url: string): boolean {
   return url.length <= 300 && /^https:\/\/[a-z0-9.-]+\.[a-z]{2,}\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+?(\.git)?\/?$/.test(url)
 }
 
-/** Как рождается элемент: облик и репозиторий — у кастомного; у нативного (582) — только `native`, облик выбирает сам скрипт
- *  (`birthLook({ native: true })`: «как проект» всегда) из нативного шаблона. */
-export type BirthPlan = { native: true } | { native?: false; look: BirthLook; repo?: string | null }
+/** Как рождается элемент: ответ (`app`) и репозиторий — у кастомного; у нативного (582) — только `native`: он всегда часть проекта. */
+export type BirthPlan = { native: true } | { native?: false; app: BirthApp; repo?: string | null }
 
 // Аргументы `scripts/item-birth.mjs` — `birth-args.mjs` (749-2: отдельный чистый модуль, проверяется тестом `draft-name.test.mjs`).
 
-/** Запустить рождение. Вызывающий уже проверил роли, черновик, что элемента ещё нет, `look` и адрес репозитория (`repo`). */
+/** Запустить рождение. Вызывающий уже проверил роли, черновик, что элемента ещё нет, `app` и адрес репозитория (`repo`). */
 export function startBirth(id: string, plan: BirthPlan): { ok: true } | { ok: false; reason: string } {
   if (birthState(id).state === "running") return { ok: false, reason: "running" }
   mkdirSync(LOGS(), { recursive: true })

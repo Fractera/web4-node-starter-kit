@@ -45,15 +45,13 @@ export type Web4DraftsUi = {
   birthTitle: string
   birthText: string
   birthConfirm: string
-  /** 367: облик рождённого элемента — вопрос в окне рождения. */
-  lookQuestion: string
-  lookProject: string
-  lookProjectText: string
-  lookOwn: string
-  lookOwnText: string
-  lookPick: string
-  /** 553: подсказка под вопросом облика на заводе приложений. */
-  lookFactoryHint: string
+  /** 804-2 (367 before): the one question of the birth — part of the project or an app of its own. */
+  appQuestion: string
+  appProject: string
+  appProjectText: string
+  appOwn: string
+  appOwnText: string
+  appPick: string
   /** 367-3: «Самостоятельный» раскрывается — откуда взять код. */
   sourceStarter: string
   sourceStarterText: string
@@ -160,13 +158,12 @@ const DICT: Record<string, Web4DraftsUi> = {
     birthTitle: "Give birth to this WEB4 element?",
     birthText: "The node downloads the element template, gives this draft its own copy, a port, a build and a process. It takes about three minutes and a lot of memory; the page may be closed — the birth goes on.",
     birthConfirm: "Give birth",
-    lookQuestion: "How should the element look and be set up?",
-    lookProject: "Like the whole project",
-    lookProjectText: "Takes the project's design and CONFIG settings now and follows their changes: colours, menu, languages. You can detach it from the platform at any moment.",
-    lookOwn: "An independent project",
-    lookOwnText: "Keeps the starter's own design and settings and does not follow the project; you change them on its own pages.",
-    lookPick: "Choose how the element is born.",
-    lookFactoryHint: "This node is an app factory: a new element is born on its own settings — its own header, footer and policy pages.",
+    appQuestion: "What will this element be?",
+    appProject: "Part of your project",
+    appProjectText: "The same people and sign-in as the whole project. Its look and settings follow CONFIG and change with it.",
+    appOwn: "An app of its own",
+    appOwnText: "Its own people and accounts, its own look and settings: a client's site or a separate product, for example. Chosen once: the app's people live apart.",
+    appPick: "Choose how the element is born.",
     sourceStarter: "Fractera starter template",
     sourceStarterText: "Our Next.js starter with its own design and settings.",
     sourceRepo: "From my repository",
@@ -247,13 +244,12 @@ const DICT: Record<string, Web4DraftsUi> = {
     birthTitle: "Родить этот WEB4 элемент?",
     birthText: "Узел скачает шаблон элемента и даст черновику свою копию, порт, сборку и процесс. Это около трёх минут и много памяти; страницу можно закрыть — рождение продолжится.",
     birthConfirm: "Родить",
-    lookQuestion: "Каким будет элемент — по облику и настройкам?",
-    lookProject: "Как весь проект",
-    lookProjectText: "Сразу берёт дизайн и настройки CONFIG проекта и дальше меняется вместе с ними: цвета, меню, языки. Отвязать от платформы можно в любой момент.",
-    lookOwn: "Самостоятельный проект",
-    lookOwnText: "Остаётся со своим дизайном и настройками стартера и не следует за проектом; меняете их на его собственных страницах.",
-    lookPick: "Выберите, каким родится элемент.",
-    lookFactoryHint: "Узел — завод приложений: новый элемент рождается со своими настройками — своя шапка, подвал и страницы политик.",
+    appQuestion: "Чем будет этот элемент?",
+    appProject: "Частью вашего проекта",
+    appProjectText: "Те же люди и вход, что у всего проекта. Облик и настройки берёт из CONFIG и меняется вместе с ними.",
+    appOwn: "Самостоятельным приложением",
+    appOwnText: "Свои люди и учётные записи, свой облик и настройки: например, сайт клиента или отдельный продукт. Выбирается один раз: люди приложения живут отдельно.",
+    appPick: "Выберите, каким родится элемент.",
     sourceStarter: "Стартовый шаблон Fractera",
     sourceStarterText: "Наш стартер на Next.js со своим дизайном и настройками.",
     sourceRepo: "Из своего репозитория",
