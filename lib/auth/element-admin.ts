@@ -43,9 +43,11 @@ export async function stripElementAdminRole(role: string): Promise<{ ok: true; c
  * Give an element's admin role to the account of this e-mail; no account — the sign-in creates one with this password. An existing
  * account keeps its password (the owner, 2026-11-17: the role is added, nothing else changes).
  */
-export async function grantElementAdmin(input: { email: string; password?: string; role: string }): Promise<{ ok: true; created: boolean } | { ok: false; reason: string }> {
+export async function grantElementAdmin(input: { email: string; password?: string; role: string; element?: string }): Promise<{ ok: true; created: boolean } | { ok: false; reason: string }> {
   if (!elementAdmin.isRole(input.role)) return { ok: false, reason: "not-an-element-admin-role" }
-  const r = await callAuth("element-admin", { email: input.email, role: input.role, ...(input.password ? { password: input.password } : {}) })
+  // 803-2: the element's id goes with the role — on a factory node the sign-in keeps the admin among the element's own people (its app),
+  // where its site admits them (✗ 2026-11-19 on fractera.ai: an admin kept in the node's app was refused on Marina's domain).
+  const r = await callAuth("element-admin", { email: input.email, role: input.role, ...(input.element ? { element: input.element } : {}), ...(input.password ? { password: input.password } : {}) })
   if (!r.ok) return r
   return { ok: true, created: r.body.created === true }
 }

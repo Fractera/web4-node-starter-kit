@@ -77,6 +77,18 @@ export function NodeUsers({ lang, ui, table, dialogUi }: { lang: string; ui: Nod
 
   useEffect(() => { void load() }, [load])
   useEffect(() => { void loadOrgs() }, [loadOrgs])
+  // 803-3 (the owner, 2026-11-19: «у единственного суперпользователя существует кнопка удалить и обезличить … это ошибка»): who looks
+  // (the panel's own session) and how many architects the node has — one's own record and the last architect are never offered for deletion.
+  const [guard, setGuard] = useState<{ me: string | null; architects: number }>({ me: null, architects: 0 })
+  useEffect(() => {
+    void Promise.all([
+      fetch(`${BASE}/api/me`, { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null),
+      fetch(`${BASE}/api/node/users?role=architect&perPage=10`, { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null),
+    ]).then(([me, arch]) => setGuard({
+      me: typeof me?.userId === "string" ? me.userId : null,
+      architects: Array.isArray(arch?.rows) ? arch.rows.filter((u: NodeUserRow) => u.status === "active").length : 0,
+    }))
+  }, [])
 
   const date = (s: string) => new Date(s.replace(" ", "T") + "Z").toLocaleDateString(lang === "ru" ? "ru-RU" : "en-GB", { dateStyle: "medium" })
   const cell = "px-4 py-3 align-top"
@@ -217,6 +229,7 @@ export function NodeUsers({ lang, ui, table, dialogUi }: { lang: string; ui: Nod
       {editing && (
         <UserDialog
           user={editing}
+          deletable={editing.id !== guard.me && !(editing.roles.includes("architect") && guard.architects <= 1)}
           orgs={orgs}
           admins={admins}
           ui={ui}

@@ -41,8 +41,8 @@ const draftOf = (u: NodeUserRow): Draft => ({
   roles: u.roles, orgs: u.orgs.map((o) => o.id), blocked: u.status === "blocked", marketing: triOf(u.marketing), tracking: triOf(u.tracking, true),
 })
 
-export function UserDialog({ user, orgs, admins, ui, dialogUi, lang, onClose, onChanged, onOrgsChanged }: {
-  user: NodeUserRow; orgs: Org[]; admins: ElementAdmin[]; ui: NodeUsersUi; dialogUi: AppDialogUi; lang: string
+export function UserDialog({ user, deletable = true, orgs, admins, ui, dialogUi, lang, onClose, onChanged, onOrgsChanged }: {
+  user: NodeUserRow; deletable?: boolean; orgs: Org[]; admins: ElementAdmin[]; ui: NodeUsersUi; dialogUi: AppDialogUi; lang: string
   onClose: () => void; onChanged: () => void; onOrgsChanged: () => void
 }) {
   const [view, setView] = useState<View>({ kind: "edit" })
@@ -160,7 +160,8 @@ export function UserDialog({ user, orgs, admins, ui, dialogUi, lang, onClose, on
   const footer =
     view.kind === "edit" ? (
       <>
-        <Button variant="destructive" onClick={() => setView({ kind: "anonymize" })} disabled={sending} data-action="anonymize">{ui.actions.anonymize}</Button>
+        {/* 803-3: never on one's own record, never on the node's last architect (the sign-in refuses both too) */}
+        {deletable ? <Button variant="destructive" onClick={() => setView({ kind: "anonymize" })} disabled={sending} data-action="anonymize">{ui.actions.anonymize}</Button> : null}
         <Button variant="outline" onClick={onClose}>{ui.cancel}</Button>
         <Button onClick={() => setView({ kind: "confirm" })} disabled={walletBad || uploading || Object.keys(patch()).length === 0} data-action="save">{ui.save}</Button>
       </>

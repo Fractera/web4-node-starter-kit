@@ -63,7 +63,7 @@ export async function saveElementAdmin(ask: Ask, raw: unknown, skip: boolean): P
   if (bad) return { ok: false, reason: bad, status: 400 }
   const o = raw as { email: string; password?: unknown }
   const password = typeof o.password === "string" && o.password ? o.password : undefined
-  const r = await grantElementAdmin({ email: o.email.trim(), password, role: s.role })
+  const r = await grantElementAdmin({ email: o.email.trim(), password, role: s.role, ...(s.element ? { element: s.element } : {}) })
   if (!r.ok) {
     console.log(`[node/person-asks] ${ask.id} the admin of ${s.element}: the sign-in refused — ${r.reason}`)
     return { ok: false, reason: r.reason, status: ["auth-unreachable", "no-auth-element", "no-architect-token"].includes(r.reason) ? 502 : 400 }
