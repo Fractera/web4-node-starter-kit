@@ -281,30 +281,31 @@ without «Режим работы приложения», curl count 0), 17-53-2
 way: the site-settings words still say «Пока связь включена…» (implies a switch) → 793. WAITS Roma: the 3 new phrases, the template
 release push (v0.3.219 dry green) + pin, the core push, ONE server update, then the Marina test (804-8) and the summary.
 
-## Letter to my next session (written 2026-11-19 ~19:00 UTC, before the core build of 804)
+## Letter to my next session (written 2026-11-19 ~18:40 UTC, window 66 %, Opus)
 
-Roma works in the TERMINAL (no main bot). He re-logged Claude Code (/login, account admin@…) and said «continue». I am mid-804.
-- **Committed in the core:** 5a06d498 (the core part, 97 files), 07715f9e (element instruction src people line), 0c79da6e (wallet part
-  1.0.2), 73c44a23 (birth window = shadcn RadioGroup, components/ui/radio-group.tsx + card). Prebuild RC=0 at ~18:58. NOT pushed.
-- **Custom template workshop** data/workshop/fractera-custom-item-starter: 5fca218 + d40fbd9 (know-the-owner skill, passport `app`,
-  people line, use-site-settings, build.md, glossary, browser own-app); `npm run template -- release custom v0.3.219 --dry` GREEN.
-  The real release = a push of main+tag to GitHub → WAITS Roma's word (his rule: no push without his word); then `npm run template --
-  pin custom v0.3.219`. Births here take v0.3.218 until then (its passport prints the old node.type line — harmless default).
-- **The core build** failed 17:43 (modes.cjs required element-app by a path from cwd — fixed relative, commit after 5f11a1eb); started again detached ~17:50 (`npm run serve:rebuild:detached`). On return: `npm run serve:status`; proofs of two
-  planes — (1) eyes: an element draft's birth window shows «Чем будет этот элемент?» with two radio cards (create a draft? none exists
-  here — use `npm run eyes` on /ru/architect/<draft> only if a draft exists; else a DOM render probe of BirthButton), Passport root
-  /ru/architect without the «Режим работы приложения» card, root «Строительство → Настройки сайта» shows the state line without a
-  button; (2) doors: GET /api/node/projects rows carry `app` (root → project), POST /api/node/type → 404, PATCH
-  /api/architect/items/root/links → 404/405; `npm run contacts` line «apps of their own here: 0». Then summary
-  completed-steps/804-main.md (mistakes: I rebuilt the parts map before the last UI edit twice; the shadcn CLI added an npm package «cn»
-  — reverted), then tell Roma: what was built, the NEW PHRASES to agree (wallet «Этот элемент — часть вашего проекта: у проекта один
-  кошелёк — кошелёк узла.»; glossary one-owner/site-factory texts; bot ownAppBot ru «Это бот «{name}» — самостоятельного приложения: у
-  него свой хозяин и свои люди, отдельно от остального проекта. Агент приложения познакомится с вами в первом разговоре.»), my deviation
-  (migration by the legacy type, not by the sign-in), what waits his word: template release push, core push, ONE server update; the
-  open item: «запомни» of an own app goes to the node's deep memory through the main agent (cross-owner — a later step).
-- Clues: every push is his paste (ask-person --copy) with `git -c credential.helper= -c credential.helper='!gh auth git-credential' push
-  https://github.com/Fractera/<repo>.git <refs>`; never read WEB4-ITEMS/**; the temporary address today:
-  https://reprint-posted-lovers-moderators.trycloudflare.com.
+Roma works in the TERMINAL (no main bot). Mood: angry at 18:20 that I handed his bug to auth's agent — «не надо никому отдавать это
+решение и задачи это твоя работа ты её начал ты её и делай»; «я хочу чтобы во время следующего разверну я увидел оба решения». Then
+18:22: «Там не только мастерская ядра там прежде всего мастерская кастомного элемента мастерская возможно авторизации». So: do the work
+myself in the workshops (data/workshop/<repo>, cloned from GitHub — never WEB4-ITEMS), short living answers, no hand-offs.
+- **804 + 805 are built, released and live on this computer.** Core HEAD after 0f70a00f (pins) + parts map; build a6f9a566 live; auth
+  v2.4.45 installed here (services:install RC=0). GitHub: custom template v0.3.219 (a340bcf) and auth v2.4.45 (c873b42) PUSHED by his
+  paste. The core (22 commits ahead of origin) waits window **c8b2aa2b** — his paste pushes Fractera + his fork. On «Готово»: check
+  `git ls-remote https://github.com/Fractera/web4-node-starter-kit.git main` = HEAD and origin = HEAD; then tell Roma to update the
+  server (his act; the update runs migration 804-4 there: nodeType factory → Marina's entry app own); then his test of both solutions.
+- **What to check with him on the server** (fractera.ai, his Chrome — the extension is NOT connected now: he re-logged Claude Code to
+  admin@…; ask him to sign the extension in only if needed): (1) on the app's own domain, signed in as architect at the centre →
+  «Войти другим аккаунтом» → the element admin's password → in (no «Доступ запрещён»); (2) the drawer shows the admin pages (Accounts,
+  Design, Site settings); (3) Accounts → «Добавить пользователя» → a new e-mail works, an existing one → «Такой e-mail уже есть в узле…»;
+  (4) «Настройки → Домен»: the address row gone with an own domain, «Вход на собственном домене» as a text link, the loader after
+  «Подключить». Marina was born BEFORE 804 → her entry has no `app` until the update's migration (legacy factory → own) — fine.
+- Not done / owed: the summaries completed-steps/804-main.md and 805-main.md (with mistakes: the cwd require that failed the first
+  build; the parts map rebuilt before the last UI edit three times; the shadcn CLI installed an npm package «cn» — reverted; handing his
+  bug to auth's agent), then delete the two plan files in the same commit; the new phrases to agree (add-user window, domain loader,
+  bot ownAppBot, wallet, glossary); «Пока связь включена…» in site settings (→ 793); «запомни» of an own app goes to the node's deep
+  memory (cross-owner, a later step); native and root templates still carry the old people line of the instruction (their next release).
+- Clues: pushes = his paste via `npm run ask-person -- "<what>" --copy "<cmd>"` (the classifier refuses my git push to Fractera);
+  `npm run template -- pin custom vX`; the auth pin = its registry `version`; auth tests `node scripts/element-admins.test.mjs` (needs
+  `npm run prebuild` first in the workshop for previews.generated); the temporary address https://reprint-posted-lovers-moderators.trycloudflare.com.
 
 ## The person's decisions (verbatim)
 
