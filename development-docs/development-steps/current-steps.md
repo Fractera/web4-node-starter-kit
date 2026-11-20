@@ -283,10 +283,10 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 12:20 UTC, window ~45 %, Opus — context reset at the end of 808/809)
 
-**NOW:** 811 — 811-5 (a..e) + 811-5g (the loopback hole closed by the kernel's uid, his «Го» 137) CODED and committed, dry tests
-green (plan file section «811-5 + 811-5g — CODED»). NEXT: ask him for the ONE core build (811-2..5g), then push the fork, «Установить с
-нуля» on 109.199.105.213, proofs 811-7 (list in the plan, incl. the live measures of 5b/5g). Talk in TELEGRAM (chat_id 90413601, ru),
-colour marks.
+**NOW:** 811 — 811-5 + 5g committed (5f376c4d, eaa81f12), prebuild RC=0. His «Запускай сборку» (140, 13:35 UTC): core build
+started ~13:37 detached (serve:rebuild). ON RETURN: serve:status, eyes a page (0 console errors), then push the fork (git push to the
+fork; 808 lives there), tell him to press «Установить с нуля» on the server page (his act — a window, npm run ask-person), then 811-7
+proofs on 109.199.105.213 (list in the plan). Telegram chat_id 90413601, ru, colour marks.
 
 Roma talks in TELEGRAM now: main bot = his existing @fractera_factory_e90e_bot (saved by him 2026-11-19 23:49; chat_id 90413601, ru).
 Done since 2026-11-19 evening (all committed, fork pushed up to cdac6592; Fractera push = his paste, not done):
