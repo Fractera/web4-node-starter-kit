@@ -17,7 +17,7 @@ export async function requireAdmin(): Promise<void> {
   if (shouldBypassAuth()) return
 
   const h = await headers()
-  if (h.get("x-agent-identity")) return
+  // 818-2: the self-written agent label opens nothing (817 H1)
 
   const authUrl = nodeAuthUrl()
   if (!authUrl) throw new Error(serviceMissing("auth"))

@@ -254,22 +254,21 @@ export async function apiAuthGate(request: NextRequest): Promise<NextResponse> {
     }
 
     if (!shouldBypassAuthEdge()) {
-      const agentIdentity = request.headers.get("x-agent-identity");
-      if (!agentIdentity) {
-        const sessionToken =
-          request.cookies.get("authjs.session-token") ??
-          request.cookies.get("__Secure-authjs.session-token");
+      // 818-2: the self-written agent label never opens the gate (817 H1: it did, from the internet too); the node's own scripts on this
+      // machine are the owner at it and passed above.
+      const sessionToken =
+        request.cookies.get("authjs.session-token") ??
+        request.cookies.get("__Secure-authjs.session-token");
 
-        if (!sessionToken) {
-          return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
+      if (!sessionToken) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
 
-        // Admin-gate the service-page API namespaces (role, not just a cookie).
-        if (ADMIN_API_PREFIXES.some((p) => pathname.startsWith(p))) {
-          const session = await getSession(request);
-          if (!session?.roles?.includes("architect")) {
-            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-          }
+      // Admin-gate the service-page API namespaces (role, not just a cookie).
+      if (ADMIN_API_PREFIXES.some((p) => pathname.startsWith(p))) {
+        const session = await getSession(request);
+        if (!session?.roles?.includes("architect")) {
+          return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
       }
     }

@@ -30,7 +30,10 @@ export type AppSession = {
 }
 
 export async function getSession(req?: NextRequest): Promise<AppSession | null> {
-  const agentId = req?.headers.get('x-agent-identity')
+  // 🔒 818-2 (the red team 817 H1, measured 2026-11-20: `x-agent-identity: outsider` from the INTERNET got «outsider@agent», role agent,
+  // on the server's domain and on this computer's temporary address — media-proxy and openai-models answered it). A label a caller
+  // writes itself is believed only from the node's own user at this machine (`isOwnerAtMachine`: loopback, no edge, no element peer).
+  const agentId = req && isOwnerAtMachine(req) ? req.headers.get('x-agent-identity') : null
   if (agentId) {
     return { userId: `${agentId}@agent`, email: `${agentId}@agent`, roles: ['agent'] }
   }
