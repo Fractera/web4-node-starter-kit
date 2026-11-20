@@ -31,7 +31,8 @@ State: PLAN — waits the owner's «да». Order agreed 2026-11-20 (Telegram 81
 - Agents: the element's `claude` starts as `fe-<id>` through one fixed launcher (`/usr/local/sbin/fractera-agent <id>`, sudoers for the
   group of element users only), cwd its folder, `CLAUDE_CONFIG_DIR` inside it — then `!` in its terminal sees only its folder.
 - `claude` and Node.js reachable for every element user (system-wide, read-only).
-- An existing server (Marina a8ifp) moves to the wall by one migration in the next server update.
+- No migration (the owner, Telegram 119, 2026-11-20: «миграции нам не нужна мы можем заново установить сервер»): the test server is
+  installed again from zero (its data — Marina a8ifp, throughsongs.com — goes; re-created for the proofs).
 
 ## Substeps
 
@@ -42,7 +43,7 @@ State: PLAN — waits the owner's «да». Order agreed 2026-11-20 (Telegram 81
 - 811-3 birth/deletion on a server: `fe-<id>` created/removed through the helper; folder ownership.
 - 811-4 processes as `fe-<id>`: start, stop, restart, status, logs; serve:status reads them.
 - 811-5 the element agent as `fe-<id>` (terminal, work sessions, Telegram bot of the element).
-- 811-6 the migration of an installed server.
+- 811-6 a fresh install of the test server from zero («Установить с нуля»), Marina and throughsongs.com again.
 - 811-7 proofs on the server: as `fe-a8ifp` — `cat` of the node's `.env.local` and `ls` of another element → Permission denied (the
   negative), its own folder works; Marina's site, sign-in, agent and bot work as before.
 
