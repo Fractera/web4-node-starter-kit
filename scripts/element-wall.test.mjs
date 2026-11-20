@@ -5,7 +5,7 @@ import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { mkdirSync, mkdtempSync, readFileSync, realpathSync, symlinkSync, writeFileSync, existsSync, cpSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
 
@@ -523,6 +523,51 @@ console.log('811-5g who opened the connection — asked of Linux')
     assert.match(readFileSync(join(here, '..', 'lib', 'auth', 'owner-at-machine.ts'), 'utf8'), /if \(req\.headers\.get\(PEER_HEADER\)\) return false/)
     assert.match(readFileSync(join(here, '..', 'lib', 'agent-kit', 'mount.cjs'), 'utf8'), /peer-uid\.cjs'\)\.stamp\(req, process\.cwd\(\)\)\) \{\n\s+socket\.destroy\(\)/)
     assert.match(readFileSync(join(here, '..', 'server.js'), 'utf8'), /peer\.stamp\(req, __dirname\)\n\s+handle\(req, res\)/)
+  })
+}
+
+console.log('811-6 a continued install that never went live takes the fork\'s newest code (real git, launch.sh\'s own functions)')
+{
+  const launch = readFileSync(join(DS, 'launch.sh'), 'utf8')
+  const fn = (name) => { const i = launch.indexOf(`${name}() {`); assert.ok(i >= 0, name); const j = launch.indexOf('\n}\n', i); return launch.slice(i, j + 3) }
+  const harness = (nodeDir, fork) => [
+    'set -u', `NODE_DIR=${JSON.stringify(nodeDir)}`, `FORK=${JSON.stringify(fork)}`, 'NODE_USER=me',
+    'as_node() { bash -c "$1"; }',
+    'runuser() { while [ "$1" != "--" ]; do shift; done; shift; "$@"; }',
+    fn('ever_live'), fn('do_source').replace(/\n  as_node "cd \$NODE_DIR && node scripts\/ensure-env[^\n]*/, ''), 'do_source',
+  ].join('\n')
+  const g = (cwd, ...a) => { const r = spawnSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', ...a], { cwd, encoding: 'utf8' }); assert.equal(r.status, 0, `git ${a.join(' ')}: ${r.stderr}`); return r.stdout.trim() }
+  const setup = () => {
+    const fork = tmp('renew-fork-'); g(fork, 'init', '-q', '-b', 'main'); writeFileSync(join(fork, 'a.txt'), '1'); g(fork, 'add', '.'); g(fork, 'commit', '-qm', 'one')
+    const node = join(tmp('renew-srv-'), 'node'); g(dirname(node), 'clone', '-q', fork, node)
+    mkdirSync(join(node, 'development-docs'), { recursive: true }); writeFileSync(join(node, 'development-docs', 'x.md'), 'fresh'); g(node, 'add', '.'); g(node, 'commit', '-qm', 'fresh project')
+    writeFileSync(join(fork, 'a.txt'), '2 - the fix'); g(fork, 'commit', '-qam', 'the fix')
+    return { fork, node }
+  }
+  t('never live, only the fresh documents of its own → reset to the fork\'s head, the fresh mark removed', () => {
+    const { fork, node } = setup()
+    mkdirSync(join(node, 'logs'), { recursive: true }); writeFileSync(join(node, 'logs', 'fresh-project.json'), '{}')
+    const r = spawnSync('bash', ['-c', harness(node, fork)], { encoding: 'utf8' })
+    assert.equal(r.status, 0, r.stderr); assert.match(r.stdout, /===SOURCE_RENEWED===/)
+    assert.equal(g(node, 'rev-parse', 'HEAD'), g(fork, 'rev-parse', 'HEAD'))
+    assert.equal(readFileSync(join(node, 'a.txt'), 'utf8'), '2 - the fix')
+    assert.equal(existsSync(join(node, 'logs', 'fresh-project.json')), false)
+  })
+  t('negative: the server has its own change outside development-docs → nothing renewed', () => {
+    const { fork, node } = setup()
+    writeFileSync(join(node, 'mine.txt'), 'own work'); g(node, 'add', '.'); g(node, 'commit', '-qm', 'own work')
+    const head = g(node, 'rev-parse', 'HEAD')
+    const r = spawnSync('bash', ['-c', harness(node, fork)], { encoding: 'utf8' })
+    assert.equal(r.status, 0, r.stderr); assert.match(r.stdout, /===SOURCE_KEPT=== .*mine\.txt/)
+    assert.equal(g(node, 'rev-parse', 'HEAD'), head)
+  })
+  t('negative: a node that went live is never renewed here (its updates go by the updater)', () => {
+    const { fork, node } = setup()
+    mkdirSync(join(node, 'data', 'node'), { recursive: true }); writeFileSync(join(node, 'data', 'node', 'server.json'), '{"phase":"live"}')
+    const head = g(node, 'rev-parse', 'HEAD')
+    const r = spawnSync('bash', ['-c', harness(node, fork)], { encoding: 'utf8' })
+    assert.equal(r.status, 0, r.stderr); assert.doesNotMatch(r.stdout, /SOURCE_/)
+    assert.equal(g(node, 'rev-parse', 'HEAD'), head)
   })
 }
 

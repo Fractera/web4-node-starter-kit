@@ -77,11 +77,30 @@ trap 'finish $?' EXIT
 # runs in a subshell (`stages.sh`), and functions reach it whole — no command is built by nested quoting.
 as_node() { runuser -l "$NODE_USER" -c "$1"; }
 
+# Was this node ever live here? Its own mark (do_mark below) says so; no mark — never.
+ever_live() { python3 -c 'import json,sys
+try: print(json.load(open(sys.argv[1])).get("phase",""))
+except Exception: print("")' "$NODE_DIR/data/node/server.json" 2>/dev/null | grep -qx live; }
+
 do_source() {
   if [ ! -d "$NODE_DIR/.git" ]; then
     # An earlier folder without a node in it is moved aside, never erased.
     if [ -e "$NODE_DIR" ]; then mv "$NODE_DIR" "$NODE_DIR.before-$(date -u +%Y%m%dT%H%M%SZ)"; fi
     as_node "git clone --quiet $FORK $NODE_DIR" || return 1
+  elif ! ever_live; then
+    # 811-6 (live 2026-11-20 16:03): «Продолжить установку» ran the server's OLD copy of the installer — the fix pushed meanwhile never
+    # reached it (only the helpers come from this computer). An install that never went live takes the fork's newest code on every
+    # continue: nothing of a person lives in its tracked files yet (data/, logs/, .env.local and the elements are outside git and stay).
+    # 🔒 Only when the server's own side since the fork holds nothing but the fresh project's documents; anything else stays as it is.
+    as_node "cd $NODE_DIR && git fetch --quiet $FORK main" || return 1
+    local own
+    own="$(runuser -u "$NODE_USER" -- git -C "$NODE_DIR" diff --name-only FETCH_HEAD...HEAD | grep -v '^development-docs/' | head -1)"
+    if [ -z "$own" ]; then
+      as_node "cd $NODE_DIR && git reset --quiet --hard FETCH_HEAD && rm -f logs/fresh-project.json" || return 1
+      echo "===SOURCE_RENEWED=== $(runuser -u "$NODE_USER" -- git -C "$NODE_DIR" rev-parse --short HEAD) (the install never went live)"
+    else
+      echo "===SOURCE_KEPT=== the server has its own change outside development-docs ($own) — the code is not renewed"
+    fi
   fi
   as_node "cd $NODE_DIR && node scripts/ensure-env.mjs && node scripts/check-origin.mjs && node scripts/fresh-project.mjs"
 }
