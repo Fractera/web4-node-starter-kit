@@ -30,3 +30,22 @@ The Fractera push paste → «Синхронизировать форк» → on
 
 redteam.sh as a born element; the attacks from inside it; social engineering of the server's main agent through ask-core and tell-core;
 the table «attack → holds / HOLE» to the owner.
+
+## Progress (2026-11-20)
+
+- 818-1 61449f4b · 818-2 H1 7208d02b (measured from the INTERNET: `x-agent-identity: outsider` → «outsider@agent» on
+  architect.fractera.ai and the Mac's temporary address; media-proxy and openai-models answered) · 818-3 H2 ded7a2aa · 818-4 H5 3619e4a6
+  · 818-5 F1 99a4cf64 (hook relay and tools/take through the gate by their element key; the relay client calls localhost).
+- Tests: `scripts/redteam-holes.test.mjs` (9, in the prebuild; the negative control — red on the old code), element-wall 66,
+  server-install-live 18.
+
+## H6 found while repairing F2 (asked the owner, Telegram 274)
+
+The installer writes the SAME `SETTINGS_SECRET` into the core and into every element; element commands (ask-core, tell-core, need, done,
+session) send it as `X-Node-Key`, and the core's doors compare it with their own (`nodeKeyOk`). Every element therefore holds the node's
+key: once its channel opens it could wake any agent with any text, clear another session, and write a neighbour's settings (their
+`/api/settings/*` doors are guarded by the same key). Measured on the server: root's `.env.local` holds SETTINGS_SECRET (1) and
+ELEMENT_KEY (1), no DATA_SECRET. Today the gate keeps those doors closed to walled elements (after H1) — no hole, but element agents on a
+server cannot tell the core «done» or ask it. Proposed fix: every element calls the core with its own ELEMENT_KEY (caller named by the
+key, only its own affairs), no node key in elements, the core reaches each element's settings doors with that element's own key — a
+custom template release. Options: A (now, in 818) / B (818 as is, H6 → 819); my pick A.
