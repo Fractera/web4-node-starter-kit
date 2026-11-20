@@ -29,7 +29,7 @@ now = time.time()
 
 def read(path):
     try:
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             return json.load(f)
     except Exception:
         return None
@@ -44,7 +44,7 @@ def stages(path):
     """Every id once, in its first order: its first «running», its last state and time."""
     order, rows = [], {}
     try:
-        with open(path, errors="replace") as f:
+        with open(path, encoding="utf-8", errors="replace") as f:
             for line in f:
                 try:
                     s = json.loads(line)
@@ -94,7 +94,7 @@ def elements(log_path, parent):
     the last element runs while its parent runs, every other one ended where the next began."""
     since = parent.get("start")
     try:
-        with open(log_path, errors="replace") as f:
+        with open(log_path, encoding="utf-8", errors="replace") as f:
             text = f.read()
     except Exception:
         return []
@@ -173,7 +173,7 @@ for x in steps:
 if launch.get("state") == "done" and launch.get("startedAt") and timings.get("run") != launch.get("startedAt"):
     try:
         tmp = os.path.join(d, "timings.json.tmp")
-        with open(tmp, "w") as f:
+        with open(tmp, "w", encoding="utf-8") as f:
             json.dump({"run": launch.get("startedAt"), "mode": launch.get("mode"), "sec": {key(x): x["sec"] for x in steps if x["sec"] is not None and x["state"] == "done"}}, f)
         os.replace(tmp, os.path.join(d, "timings.json"))
     except Exception:
