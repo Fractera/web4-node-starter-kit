@@ -515,6 +515,19 @@ function findStandaloneServer(dir, distDir = '.next') {
   return null
 }
 
+// 811-6 (live 2026-11-20 16:03, root on the server: «EPERM, Operation not permitted …/.next-a/standalone/public/images/launch»): on a
+// dedicated server the standalone folder belongs to the element's own user (its build ran as fe-<id>); the node may write there by the
+// folder's ACL but never set the mode of a file it does not own, which cpSync does. Inside a walled element the copy runs as the element
+// itself (`run` wraps it through the helper); everywhere else — as before.
+function copyTree(from, to, cwd) {
+  if (wall.asElement(ROOT, cwd, 'cp', []).wrapped) {
+    const r = run('cp', ['-R', `${from}/.`, to], cwd, { quiet: true })
+    if (r.rc !== 0) throw new Error(`cp ${relative(cwd, from)} → ${relative(cwd, to)} as the element: ${r.out.trim().slice(-300)}`)
+    return
+  }
+  cpSync(from, to, { recursive: true })
+}
+
 function resolveStart(dir, props, distDir = '.next') {
   // 367-4: элемент из репозитория человека несёт запускатель узла (`fractera-start.mjs`), названный в паспорте `runtime.entry`
   // (+ `entryArgs` — режим next / node:<файл> / static:<папка>). Он и есть процесс pm2: окружение читает сам, порт берёт оттуда.
@@ -527,12 +540,8 @@ function resolveStart(dir, props, distDir = '.next') {
     // Статика — рядом с найденным сервером, а не в корне standalone; папка сборки — та, в
     // которую собирали (280-9: .next-a / .next-b у элементов со сборкой без простоя).
     const staticFrom = join(dir, distDir, 'static')
-    if (existsSync(staticFrom)) {
-      cpSync(staticFrom, join(standaloneDir, distDir, 'static'), { recursive: true })
-    }
-    if (existsSync(join(dir, 'public'))) {
-      cpSync(join(dir, 'public'), join(standaloneDir, 'public'), { recursive: true })
-    }
+    if (existsSync(staticFrom)) copyTree(staticFrom, join(standaloneDir, distDir, 'static'), dir)
+    if (existsSync(join(dir, 'public'))) copyTree(join(dir, 'public'), join(standaloneDir, 'public'), dir)
     return { cmd: 'node', args: [relative(dir, join(standaloneDir, 'server.js')).split('\\').join('/')], cwd: dir }
   }
 

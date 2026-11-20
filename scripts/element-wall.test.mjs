@@ -75,6 +75,13 @@ t('811-6: every call names its element\'s folder safe for git (command scope); a
   assert.match(r.out, new RegExp(`GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0=${NODE.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/WEB4-ITEMS/user/shop `))
   assert.match(readFileSync(helper, 'utf8'), /cd -- "\$HOMES\/\$id" 2>\/dev\/null \|\| cd \/; act setpriv/)
 })
+t('811-6: the installer copies the start\'s static and public files AS the element on a walled server (never cpSync into its tree)', () => {
+  const src = readFileSync(join(here, 'services-install.mjs'), 'utf8')
+  assert.match(src, /function copyTree\(from, to, cwd\) \{\n  if \(wall\.asElement\(ROOT, cwd, 'cp', \[\]\)\.wrapped\) \{\n    const r = run\('cp', \['-R', `\$\{from\}\/\.`, to\], cwd/)
+  const body = src.slice(src.indexOf('function resolveStart('), src.indexOf('// ── Сам обход'))
+  assert.doesNotMatch(body, /cpSync\(/, 'resolveStart copies only through copyTree')
+  assert.equal((body.match(/copyTree\(/g) ?? []).length, 2)
+})
 t('negative: a repeat add (the user exists) never walks the folder as root — the two top folders only', () => {
   const shim = tmp('wall-shim-'); writeFileSync(join(shim, 'id'), '#!/bin/sh\nexit 0\n', { mode: 0o755 })
   const r = helperRun(['add', 'shop', 'WEB4-ITEMS/user/shop'], { PATH: `${shim}:${process.env.PATH}` })
