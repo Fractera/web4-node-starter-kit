@@ -2,6 +2,7 @@
 import { appendFileSync, mkdirSync } from "node:fs"
 import { join } from "node:path"
 import { NextRequest, NextResponse } from "next/server"
+import { EDGE_HEADER } from "@/lib/hosting/edge.mjs"
 
 import { elementOf } from "@/lib/element-key.cjs"
 import { doTake, planTake } from "@/lib/parts/take.mjs"
@@ -18,6 +19,10 @@ const HEADERS = { "Cache-Control": "no-store" }
 const ID = /^[a-z0-9][a-z0-9-]{0,62}$/
 
 export async function POST(req: NextRequest) {
+  // 818-5: loopback only, like the hook relay — the gate lets this door through by name (its key guards it)
+  if (req.headers.get("cf-connecting-ip") || req.headers.get("cf-ray") || req.headers.get(EDGE_HEADER)) {
+    return NextResponse.json({ ok: false, error: "loopback only" }, { status: 403, headers: HEADERS })
+  }
   const caller = elementOf(req.headers.get("x-element-key") ?? "", process.env.DATA_SECRET ?? "")
   if (!caller) return NextResponse.json({ ok: false, error: "the element's own key is required (X-Element-Key)" }, { status: 401, headers: HEADERS })
   let body: { tool?: unknown; from?: unknown; dry?: unknown; update?: unknown }

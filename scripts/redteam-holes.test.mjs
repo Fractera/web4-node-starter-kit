@@ -65,5 +65,24 @@ t('H1 requireAdmin and requireRole let no label in', () => {
   rmSync(base, { recursive: true, force: true })
 }
 
+t('F1 the gate lets in the two doors that name their caller by its own key; never a door of the node key (817 H6)', () => {
+  const src = read('proxy/common.ts')
+  const list = src.slice(src.indexOf('const PUBLIC_API_PREFIXES = ['), src.indexOf('];', src.indexOf('const PUBLIC_API_PREFIXES = [')))
+  for (const d of ['/api/node/hook-relay', '/api/node/tools/take']) assert.ok(list.includes(`"${d}"`), d)
+  for (const d of ['/api/agents/wake', '/api/agents/done', '/api/agents/session', '/api/node/notice', '/api/node/needs', '/api/node/launch']) assert.ok(!list.includes(`"${d}"`), `${d} must stay behind the gate`)
+})
+t('F1 both let-in doors check the element key and refuse the internet themselves', () => {
+  for (const p of ['app/api/node/hook-relay/route.ts', 'app/api/node/tools/take/route.ts']) {
+    const src = code(read(p))
+    assert.match(src, /elementOf\(req\.headers\.get\("x-element-key"\)/, p)
+    assert.match(src, /cf-connecting-ip[\s\S]*EDGE_HEADER[\s\S]*loopback only/, p)
+  }
+})
+t('F1 the relay\'s client calls where the core listens (localhost), never a fixed 127.0.0.1', () => {
+  const src = code(read('lib/agent-kit/hook-relay.cjs'))
+  assert.doesNotMatch(src, /host: '127\.0\.0\.1'/)
+  assert.match(src, /FRACTERA_CORE_HOST \|\| 'localhost'/)
+})
+
 if (failed) { console.log(`===REDTEAM_HOLES_FAILED=== ${failed} failed, ${passed} passed`); process.exit(1) }
 console.log(`===REDTEAM_HOLES_OK=== ${passed} passed`)

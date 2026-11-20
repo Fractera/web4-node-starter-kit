@@ -56,6 +56,11 @@ const ADMIN_API_PREFIXES: string[] = [];
 // возможность работает у разработчика и падает у покупателя.
 const PUBLIC_API_PREFIXES = [
   "/api/health",
+  // 818-5 (817 F1): a walled element has no session and is not the owner at the machine; these two doors name their caller by its own
+  // key (X-Element-Key, an HMAC of the node's DATA_SECRET over its id) and refuse the internet themselves — the key guards them, not the
+  // gate. The doors of the NODE key stay behind the gate for elements (817 H6: every element holds SETTINGS_SECRET).
+  "/api/node/hook-relay",
+  "/api/node/tools/take",
   // Сигнал узла «настройки сменились» (конец сборки ядра, каталог элементов) — у службы нет сессии; дверь стережёт ключ узла
   // (X-Settings-Key), а не роль.
   "/api/settings/changed",
