@@ -211,3 +211,16 @@ the source, sync. Only custom (walled) elements change; natives and home compute
   (title «Self-hosted AI workspace…», 106 KB) — root cloned by the node, moved to its tag, built, its start files copied and served AS
   fe-root (unit under pm2 through element-shim). Ladder steps 1–6 done. The core build of this run took ~12 min under memory pressure
   (10 elements up, 350 MB free) — 812-7.
+
+## 811-7 live (2026-11-20 18:20 server time, the server 109.199.105.213, core 1f7b36ae)
+
+Run in the server's own terminal (its panel through the launch page's SSH window, `!` lines as the node user `fractera`):
+- `sudo -n /usr/local/sbin/fractera-element run root -- /bin/cat ~/web4-node-starter-kit/.env.local` → «Permission denied» (negative).
+- `… run root -- /bin/ls …/WEB4-ITEMS/core/auth` → «cannot open directory … Permission denied» (another element, negative).
+- `… run root -- /bin/ls .` → APP-CONFIG, CLAUDE.md, DESIGN-CONFIG, LICENSE (its own folder, positive).
+- 811-5g: `… run root -- curl -s http://[::1]:24680/api/me` → `{"error":"Unauthorized"}`; the same curl as `fractera` →
+  `owner@machine`, roles architect, viaMachine (positive control). Measured on the way: the core listens on [::1] only, the elements
+  on 127.0.0.1 — a curl to 127.0.0.1:24680 gets no answer from anyone.
+- `pm2 restart fractera-svc-root` → online, restarts 1, uptime 12 s and growing; 127.0.0.1:24683/api/health → 200 (the port freed
+  and retaken by the walled process).
+- Not measured here: Marina's site, sign-in and bot after the wall (the server has only root as a custom element).
