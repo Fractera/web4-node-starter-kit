@@ -319,6 +319,9 @@ Open:
   hook — for an own app's admin (another person) that is the node's keys and the neighbours. Asked him (Telegram): A sign-in+Telegram+Cron
   now, the terminal as a chat with the agent without a shell (my pick); B the terminal only to the architect's own elements; C a real
   terminal after an OS sandbox per element (a Linux user per element; large). Waits.
+- 2026-11-20 10:39 UTC, the owner (Telegram 72): «Также я хочу быть уверен что уведомление страницах администратора также работают как и
+  работают в административной панели архитектора чтобы он мог выполнять действия от системы» → 810 also: the element agent's ask-person
+  window (orange, «Готово» wakes the agent — act-with-the-person) shown on the element admin's own pages, as on the architect's panel.
 
 - 2026-11-20 10:34 UTC, the owner (Telegram 63, a photo of the server's /ru/a8ifp/settings/domain): «Поставь в план перед сборкой ядра
   эту страницу … переработать с использованием навыка дизайна административных панелей в стиле в котором создается подключение сервера …
