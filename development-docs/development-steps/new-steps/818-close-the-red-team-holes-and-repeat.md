@@ -49,3 +49,12 @@ ELEMENT_KEY (1), no DATA_SECRET. Today the gate keeps those doors closed to wall
 server cannot tell the core «done» or ask it. Proposed fix: every element calls the core with its own ELEMENT_KEY (caller named by the
 key, only its own affairs), no node key in elements, the core reaches each element's settings doors with that element's own key — a
 custom template release. Options: A (now, in 818) / B (818 as is, H6 → 819); my pick A.
+
+## Review before the reinstall (the owner, Telegram 275: «критически отнесись к своему исследованию и повтори его»)
+
+Fixed: a foreign pm2 killed with its apps (`pm2 kill` on its folder), listeners named by owner (a foreign app is also «node»), the node user
+read from /etc/fractera/node.env or given by the installer, record's project name as Claude Code makes it, every install erases what is
+not Fractera (Telegram 277: «Один сервер это только проект Fractera … больше ничего») — prepare's stage «foreign».
+Known red, not 818's and not in the prebuild: `scripts/launch-footprint.test.mjs` (by hand, 744-8) fails on the tree before 818 too —
+the 784 trace `logs/launch-trace.jsonl` it does not know, and A→B→A where A's second state has no probe. The reinstall uses one server;
+to be fixed with the test (BACKLOG).
