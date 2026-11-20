@@ -84,5 +84,15 @@ t('F1 the relay\'s client calls where the core listens (localhost), never a fixe
   assert.match(src, /FRACTERA_CORE_HOST \|\| 'localhost'/)
 })
 
+{
+  const { spawnSync } = createRequire(import.meta.url)('node:child_process')
+  const f = join(ROOT, 'scripts/dedicated-server/redteam.sh')
+  t('818-6 redteam.sh: bash -n, and an attack line for each hole', () => {
+    assert.equal(spawnSync('bash', ['-n', f]).status, 0)
+    const src = read('scripts/dedicated-server/redteam.sh')
+    for (const w of ['x-agent-identity', 'record refuses', '.pm2/dump.pm2', 'sites-available', 'hook-relay', '127.0.0.1:$p', 'signals fe-$NB', 'ATTACH']) assert.ok(src.includes(w), w)
+  })
+}
+
 if (failed) { console.log(`===REDTEAM_HOLES_FAILED=== ${failed} failed, ${passed} passed`); process.exit(1) }
 console.log(`===REDTEAM_HOLES_OK=== ${passed} passed`)
