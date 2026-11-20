@@ -61,6 +61,12 @@ case "$verb" in
     # root's record: readable by everyone (an id and a folder, no secret) — the node's git shim maps a folder to its element by it (811-4b)
     act install -d -m 0755 "$RECORDS"
     if [ "$DRY" = 1 ]; then echo "DRY: record $RECORDS/$id FOLDER=$folder"; else printf 'FOLDER=%s\n' "$folder" > "$RECORDS/$id"; chmod 0644 "$RECORDS/$id"; fi
+    # 811-6 (measured live 2026-11-20 14:34 on the server: «git: failed to stat …/WEB4-ITEMS/user/root: Permission denied»): Ubuntu makes a
+    # home 0750 and `walls` runs only at the node's start — the user could not even reach its own folder during the install. The way to it
+    # is opened here: pass-through only (o+x, never o+r) on every folder above its folder and its data folder.
+    for p in "$(dirname -- "$NODE_DIR")" "$NODE_DIR" "$NODE_DIR/WEB4-ITEMS" "$NODE_DIR/$(dirname -- "$folder")" "$NODE_DIR/data" "$NODE_DIR/data/services"; do
+      [ -d "$p" ] && [ ! -L "$p" ] && act chmod o+x "$p"
+    done
     for d in "$dir" "$data"; do
       act chmod 2770 "$d"
       if [ "$fresh" = 1 ]; then act setfacl -R -P -m "$(acl_of "$id")" "$d"; else act setfacl -m "$(acl_of "$id")" "$d"; fi

@@ -57,6 +57,13 @@ t('add shop WEB4-ITEMS/user/shop', () => {
   assert.equal((r.out.match(/setfacl -R -P/g) ?? []).length, 2, 'the folder and the data folder')
   assert.match(r.out, /ELEMENT_ADDED shop/)
 })
+t('811-6: add opens the way to its folder — o+x (never o+r) on the home, the node, WEB4-ITEMS, its kind, data, data/services', () => {
+  const r = helperRun(['add', 'shop', 'WEB4-ITEMS/user/shop'])
+  for (const p of [join(R, 'home', 'fractera'), NODE, join(NODE, 'WEB4-ITEMS'), join(NODE, 'WEB4-ITEMS', 'user'), join(NODE, 'data'), join(NODE, 'data', 'services')]) {
+    assert.match(r.out, new RegExp(`DRY: chmod o\\+x ${p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'm'), p)
+  }
+  assert.doesNotMatch(r.out, /chmod o\+r/)
+})
 t('negative: a repeat add (the user exists) never walks the folder as root — the two top folders only', () => {
   const shim = tmp('wall-shim-'); writeFileSync(join(shim, 'id'), '#!/bin/sh\nexit 0\n', { mode: 0o755 })
   const r = helperRun(['add', 'shop', 'WEB4-ITEMS/user/shop'], { PATH: `${shim}:${process.env.PATH}` })
