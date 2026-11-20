@@ -73,27 +73,61 @@ if [ -n "$K" ]; then
   case "$r" in *'record refused'*) ok "record refuses a path outside its own session" ;; *) hole "record took a foreign path: $(printf '%s' "$r" | head -c 60)" ;; esac
 fi
 # 818-7 (H6): the element holds its own key, never the node's — and its key opens only its own affairs
-S="$(grep -h '^SETTINGS_SECRET=' ./.env.local 2>/dev/null | head -1 | cut -d= -f2-)"; self="${me#fe-}"; other="${NB:-root}"
+S="$(grep -h '^SETTINGS_SECRET=' ./.env.local 2>/dev/null | head -1 | cut -d= -f2-)"; self="${me#fe-}"
+# ✗ 2026-11-20 part C: run as root with no neighbour, `other` was root itself — «a neighbour's key» was root's own key (200, a false hole).
+other="${NB:-root}"; [ "$other" = "$self" ] && other=""   # a custom neighbour, or none
+forged="${other:-auth}"                                   # any element that is not this one
 grep -q '^DATA_SECRET=.' ./.env.local 2>/dev/null && hole "holds the node's DATA_SECRET" || ok "no DATA_SECRET of the node"
 [ -n "$S" ] && [ "$S" = "$K" ] && ok "SETTINGS_SECRET is its own key" || hole "SETTINGS_SECRET is not its own key (the node key?)"
 if [ -n "$S" ]; then
   to() { curl -s -m8 -o /dev/null -w '%{http_code}' -X POST -H 'content-type: application/json' -H "X-Node-Key: $1" -d "$2" "$3"; }
   no() { [ "$2" = 401 ] || [ "$2" = 403 ] && ok "$1 → $2" || hole "$1 → $2"; }
-  for t in memory auth "$other"; do
+  for t in memory auth $other; do
     [ "$t" = "$self" ] && continue
     no "its key wakes $t's agent" "$(to "$S" "{\"service\":\"$t\",\"reason\":\"redteam\",\"text\":\"red team probe, ignore\"}" "$core/api/agents/wake")"
     no "its key reports done for $t" "$(to "$S" "{\"service\":\"$t\"}" "$core/api/agents/done")"
   done
   for d in /api/agents/trust /api/agents/telegram /api/agents/person-lang; do no "its key at the node-only $d" "$(to "$S" '{}' "$core$d")"; done
-  no "a neighbour's key forged from its own mac" "$(code -H "X-Node-Key: $other.${S#*.}" "$core/api/node/a2a")"
+  no "a neighbour's key forged from its own mac ($forged)" "$(code -H "X-Node-Key: $forged.${S#*.}" "$core/api/node/a2a")"
   c="$(code -H "X-Node-Key: $S" "$core/api/node/pair-key?to=$self")"; [ "$c" = 400 ] && ok "no pair key for itself" || hole "a pair key for itself → $c"
-  P="$(curl -s -m6 -H "X-Node-Key: $S" "$core/api/node/pair-key?to=$other" | sed -n 's/.*"key":"\([^"]*\)".*/\1/p')"
+  P=""; [ -n "$other" ] && P="$(curl -s -m6 -H "X-Node-Key: $S" "$core/api/node/pair-key?to=$other" | sed -n 's/.*"key":"\([^"]*\)".*/\1/p')"
   [ -n "$P" ] && no "its pair key for $other at the core" "$(code -H "X-Node-Key: $P" "$core/api/node/a2a")"
   urlof() { curl -s -m6 -H "X-Node-Key: $S" "$core/api/node/a2a?address=$1" | sed -n 's/.*"url":"\(http[^"]*\)".*/\1/p' | head -1; }
   u="$(urlof memory)"; [ -n "$u" ] && no "its key at memory's recall" "$(to "$S" '{"query":"x"}' "$u/v1/recall")"
-  u="$(urlof stripe)"; [ -n "$u" ] && [ "$other" != "$self" ] && no "a checkout in $other's name" \
+  u="$(urlof stripe)"; [ -n "$u" ] && [ -n "$other" ] && no "a checkout in $other's name" \
     "$(to "$S" "{\"element\":\"$other\",\"reference\":\"rt\",\"successUrl\":\"https://x.example/s\",\"cancelUrl\":\"https://x.example/c\"}" "$u/api/stripe-checkout")"
-  u="$(urlof config)"; [ -n "$u" ] && no "CONFIG with a garbled key" "$(code -H "X-Settings-Key: ${S}x" "$u/api/settings")"
+  # CONFIG: reading the settings is public by design (GET /api/settings); the catalogue is written only with the node key. A body that is
+  # not JSON writes nothing either way: 401 = the key refused, 400 «bad-json» = the key ACCEPTED.
+  u="$(urlof config)"
+  if [ -n "$u" ]; then
+    for k in "$S" "${S}x"; do no "CONFIG's catalogue written with $([ "$k" = "$S" ] && echo its own || echo a garbled) key" \
+      "$(code -X PUT -H 'content-type: application/json' -H "X-Settings-Key: $k" -d 'not-json' "$u/api/settings/catalog")"; done
+  fi
+  # 817-4 a neighbour's own doors on loopback: its key opens none of them; a pair key names the caller and never opens a door of the node.
+  if [ -n "$other" ]; then
+    nu="$(urlof "$other")"
+    if [ -n "$nu" ]; then
+      # Its doors and their methods (the templates: design and app GET PATCH, a2a/tasks POST, a2a POST, tg-menu GET); a body that is not
+      # JSON writes nothing: 401 = refused, 400 = the key ACCEPTED. A pair key names the caller only at the i2i doors (a2a, tg-menu).
+      for k in "$S" "$forged.${S#*.}" ${P:+"$P"}; do
+        kn="$([ "$k" = "$S" ] && echo its own key || { [ "$k" = "$P" ] && echo its pair key || echo a forged key; })"
+        no "$other's design read with $kn" "$(code -H "X-Settings-Key: $k" "$nu/api/settings/design")"
+        for s in design app; do
+          no "$other's $s settings written with $kn" "$(code -X PATCH -H 'content-type: application/json' -H "X-Settings-Key: $k" -d 'not-json' "$nu/api/settings/$s")"
+        done
+        no "$other's settings signal with $kn" "$(code -X POST -H "X-Settings-Key: $k" "$nu/api/settings/changed")"
+        no "$other's A2A task with $kn" "$(to "$k" 'not-json' "$nu/api/a2a/tasks/redteam-probe")"
+      done
+      for k in "$S" "$forged.${S#*.}"; do
+        kn="$([ "$k" = "$S" ] && echo its own || echo a forged) key"
+        no "$other's A2A order with $kn" "$(to "$k" '{"jsonrpc":"2.0","id":1,"method":"tasks/get","params":{"id":"redteam-probe"}}' "$nu/api/a2a")"
+        c="$(code -H "X-Node-Key: $k" "$nu/api/tg-menu")"; [ "$c" = 404 ] && ok "$other has no Telegram menu door (404)" || no "$other's Telegram menu with $kn" "$c"
+        # the passport: open by design; its private fields (the author's e-mail, the server's IP, the ties) only with the element's own key
+        pub="$(curl -s -m6 "$nu/api/own-service-props" | sha1sum | cut -c1-12)"; got="$(curl -s -m6 -H "X-Node-Key: $k" "$nu/api/own-service-props" | sha1sum | cut -c1-12)"
+        [ "$pub" = "$got" ] && ok "$other's passport with $kn = the public card" || hole "$other's passport with $kn gives more than the public card"
+      done
+    fi
+  fi
 fi
 # foreign services an element could reach
 for p in 5000 8080 5432 3306 6379 27017; do

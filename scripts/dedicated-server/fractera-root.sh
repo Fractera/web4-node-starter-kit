@@ -26,7 +26,10 @@ case "$verb" in
     # The «the node is updating» page nginx shows while the node rebuilds (from the node's own folder, a fixed path).
     [ -f "$NODE_DIR/scripts/dedicated-server/updating.html" ] && install -D -m 0644 -o root -g root "$NODE_DIR/scripts/dedicated-server/updating.html" /var/www/fractera-maint/.fractera-updating.html
     [ -f "$SITE" ] && cp -a "$SITE" "$SITE.previous"
-    install -m 0644 -o root -g root "$src" "$SITE"
+    # 818 part C (✗ 2026-11-20, H5 came back): the site names every element's port — root and the node's own group read it, an element
+    # user never. It was 0644 here; the walls' 0640 root:root left the node unable to read what it applied (serve.mjs), so it re-applied
+    # at every start and this line wrote 0644 again.
+    install -m 0640 -o root -g "$(id -gn "$NODE_USER")" "$src" "$SITE"
     ln -sf "$SITE" /etc/nginx/sites-enabled/fractera
     rm -f /etc/nginx/sites-enabled/default
     if nginx -t 2>&1; then systemctl reload nginx || systemctl restart nginx; echo NGINX_APPLIED

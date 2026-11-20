@@ -248,6 +248,10 @@ case "$verb" in
       act chmod o-rwx "$e"
     done
     for n in /etc/nginx/sites-available/* /etc/nginx/conf.d/*.conf; do [ -f "$n" ] && [ ! -L "$n" ] && act chmod 0640 "$n"; done
+    # The node's own site stays readable to the node's group: serve.mjs compares it with the generator and applies only a change (818 part C).
+    for n in /etc/nginx/sites-available/fractera /etc/nginx/sites-available/fractera.previous; do
+      [ -f "$n" ] && [ ! -L "$n" ] && act chgrp "$(id -gn "$NODE_USER")" "$n"
+    done
     echo "WALLS_APPLIED ${#allow[@]}" ;;
   list)
     for f in "$RECORDS"/*; do [ -f "$f" ] && printf '%s %s\n' "$(basename -- "$f")" "$(sed -n 's/^FOLDER=//p' "$f")"; done; true ;;
