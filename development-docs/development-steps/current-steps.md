@@ -283,11 +283,13 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 17:15 UTC, window ~60 %, Opus max — reset before the release build)
 
-**NOW (18:00 UTC):** Roma «Хорошо стартуй» (Telegram 253) = yes to the Mac build (815-8 + 816) AND to 817 (red team, plan 74d30126).
-The Mac build launched at d0099f53+ (prebuild green). After it: (1) proof 815-8 — `curl /api/node/deploy &` then /api/health during it must
-answer in ms (was 6.4 s); (2) 816 — the Pult state's `node` on the Mac (place home); (3) start 817 on the server: open the SSH window
-(Chrome → localhost:24680/ru/hosting/hosting → fetch POST /api/node/launch {action:"window",host:"109.199.105.213",port:22} → localhost:25680),
-the server terminal (`!` lines) — create redteam via the server's main agent, then the attacks of the plan, table to Roma.
+**NOW (18:15 UTC):** the Mac at 5870162d (815-8 + 816) — the proof FAILED: /api/health during GET /api/node/deploy still 5–6 s. The real
+freeze: previous-version.cjs fromGit (60 sync git show per element, 5.7 s). 815-9 fixed 65c1c586 (cat-file --batch, cached; 333 ms / 4 ms),
+prebuild GREEN, the Mac build launched again. After it: the same proof (health during deploy must be ms).
+817 channel FOUND: the server's terminal in «login» mode is a plain shell — open the SSH window (Chrome tab → fetch POST /api/node/launch
+{action:"window",host:"109.199.105.213",port:22}; the visit lasts until 19:27 UTC), POST localhost:25680/ru/build/agent-api/ticket, then ws
+ws://localhost:25680/pty/build {type:"init",mode:"login",ticket} → send Ctrl-C, then {type:"stdin",data:"cmd\r"} and read the output
+(node + the `ws` package from the Mac's node_modules). Then create redteam via the server's `npm run create` and the attacks of the plan.
 
 **NOW (18:25):** the Mac core build ada53203 is live (eyes of the hosting page clean, no console errors). 811-7 PROVEN on the server
 (b6498d79, the plan's «811-7 live»). Fractera main = ada53203 (his paste 18:3x, ls-remote verified). Fork aifa-agi = ada53203 (his sync). The server's update RUNNING since 17:31:44 (his
