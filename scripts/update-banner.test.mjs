@@ -6,6 +6,7 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createRequire } from 'node:module'
 import { bannerView } from '../lib/deploy/update-banner.mjs'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -72,6 +73,33 @@ t('815-6 the update door starts without spawnSync and keeps one trial merge per 
   const upd = readFileSync(join(ROOT, 'app/api/node/update/route.ts'), 'utf8')
   assert.doesNotMatch(upd, /spawnSync\(|import \{[^}]*spawnSync/)
   assert.match(upd, /verdict\.pending \?\?= runPreflight\(\)/)
+})
+
+t('815-9 the rollback versions of the board: the same answer as git show one by one, read in one git process and kept (negative: the old walk is gone)', () => {
+  const req = createRequire(import.meta.url)
+  const { execFileSync } = req('node:child_process')
+  const prev = req(join(ROOT, 'lib/deploy/previous-version.cjs'))
+  const reg = JSON.parse(readFileSync(join(ROOT, prev.REGISTRY_REL), 'utf8')).services ?? []
+  const t0 = Date.now()
+  const fast = reg.map((x) => prev.previousVersion(x.id)?.version ?? null)
+  const first = Date.now() - t0
+  const t1 = Date.now()
+  reg.forEach((x) => prev.previousVersion(x.id))
+  const again = Date.now() - t1
+  assert.ok(first < 3000 && again < 100, `first ${first} ms, again ${again} ms`)
+  // the reference: the slow way, for two elements whose answer comes from git
+  const shas = execFileSync('git', ['log', '--format=%H', '-n', '60', '--', prev.REGISTRY_REL], { cwd: ROOT, encoding: 'utf8' }).split('\n').filter(Boolean)
+  for (const x of reg.slice(0, 3)) {
+    const cur = x.version
+    let want = null
+    for (const sha of shas) {
+      const v = (JSON.parse(execFileSync('git', ['show', `${sha}:${prev.REGISTRY_REL}`], { cwd: ROOT, encoding: 'utf8' })).services ?? []).find((y) => y.id === x.id)?.version
+      if (v && v !== cur) { want = v; break }
+    }
+    const got = fast[reg.indexOf(x)]
+    if (prev.previousVersion(x.id)?.source === 'git') assert.equal(got, want, x.id)
+  }
+  assert.doesNotMatch(readFileSync(join(ROOT, 'lib/deploy/previous-version.cjs'), 'utf8'), /for \(const sha of shas\) \{\n\s*const text = execFileSync/)
 })
 
 if (failed) { console.log(`===UPDATE_BANNER_FAILED=== ${failed} failed, ${passed} passed`); process.exit(1) }
