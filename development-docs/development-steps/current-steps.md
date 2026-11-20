@@ -283,6 +283,10 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-19 ~20:20 UTC, before the core build of 806, Opus)
 
+**UPDATE 2026-11-20 ~00:20 UTC:** his «Danger zone удаление Telegram bot» + «если я ввёл своё название … подключить уже существующего
+бота» → committed: TelegramRemove (kit core client) + door action «remove» (route.ts.tpl) + removeBot in telegram.cjs; step 1 rows show
+the connected bot's real name (getMe). The templates have no bot page code (the core's kit draws it for root and custom) — no release.
+Core build now; then eyes of the danger zone, his new token (window 06a62d58 still waits).
 **UPDATE 23:50 UTC:** build fbdbab1e live; eyes: root's bot page = the old BotFather ladder with editable name fields; the main
 bot page shows @Fractera_build_mc47x_bot connected, admitted 1 — BUT Telegram answers 401 to its token (revoked yesterday). Window
 06a62d58: his new token from @BotFather (Revoke) on /ru/build/telegram step 2 (or a new bot). On «Готово»: a reply through the bot.
