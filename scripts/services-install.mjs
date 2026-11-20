@@ -49,6 +49,7 @@ import { dropStaleTypes } from '../lib/deploy/stale-types.mjs'
 import { progressElement } from './progress.mjs'
 // 654-6: the element's own key — the core's copy of the stores' function (its test vector: scripts/check-element-key.mjs).
 const { elementKeyOf } = createRequire(import.meta.url)('../lib/element-key.cjs')
+import { NODE_KEYS, isCustomEntry, nodeKeyValue } from '../lib/web4-items/element-env-keys.mjs'
 const elementAdmin = createRequire(import.meta.url)('../lib/web4-items/element-admin-role.cjs')
 
 const require = createRequire(import.meta.url)
@@ -967,8 +968,15 @@ for (const entry of registry.services) {
     '',
   ]
 
+  // 818-7c (817 H6): A CUSTOM ELEMENT HOLDS ONLY ITS OWN KEY — its SETTINGS_SECRET is its ELEMENT_KEY, DATA_SECRET is withheld
+  // (`lib/web4-items/element-env-keys.mjs`); a native element keeps both, as before.
+  const custom = isCustomEntry(entry)
   for (const v of vars) {
-    if (v.kind === 'secret') {
+    const own = nodeKeyValue(v.name, entry, sharedSecret)
+    if (own !== undefined) {
+      if (v.name === 'DATA_SECRET') say(`  ⚠ DATA_SECRET is withheld from the custom element «${entry.id}» (818-7c): its .env.example is of an older template — take the template update; its own key (ELEMENT_KEY) opens its stores`)
+      lines.push(`${v.name}=${own}`)
+    } else if (v.kind === 'secret') {
       lines.push(`${v.name}=${sharedSecret(v.name)}`)
     } else if (v.kind === 'element-key') {
       // 654-6: the element's own key — made from the node's DATA_SECRET (the same one every native element holds), never stored by the
@@ -1021,6 +1029,7 @@ for (const entry of registry.services) {
     // born from an older template still declares it and keeps it until its owner takes the template update (`npm run contacts`
     // names such elements, 804-4).
     if (MASTER_KEYS.has(name)) continue
+    if (custom && NODE_KEYS.has(name)) continue // 818-7c: a key of the whole node is never carried into a custom element
     if (!written.has(name) && value.trim() !== '') lines.push(`${name}=${value}`)
   }
 

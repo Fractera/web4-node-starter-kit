@@ -277,4 +277,30 @@ t('NEGATIVE CONTROL: the reader guard finds a new reader', () => {
 })
 rmSync(FIX, { recursive: true, force: true })
 
+console.log('T4 — the installer: a custom element holds only its own key')
+const { NODE_KEYS, nodeKeyValue } = await import('../lib/web4-items/element-env-keys.mjs')
+const shared = (n) => ENV[n]
+t('a custom element: SETTINGS_SECRET is its own key, DATA_SECRET is withheld; a native keeps the node\'s values', () => {
+  const root = { id: 'root', kind: 'user' }
+  assert.equal(nodeKeyValue('SETTINGS_SECRET', root, shared), ROOTKEY)
+  assert.notEqual(nodeKeyValue('SETTINGS_SECRET', root, shared), ENV.SETTINGS_SECRET)
+  assert.equal(nodeKeyValue('DATA_SECRET', root, shared), '')
+  assert.equal(nodeKeyValue('SETTINGS_SECRET', { id: 'config', kind: 'core' }, shared), undefined, 'a native: the installer\'s own rule')
+  assert.equal(nodeKeyValue('ELEMENT_KEY', root, shared), undefined)
+  assert.equal(nodeKeyValue('OPENAI_API_KEY', root, shared), undefined)
+  assert.deepEqual([...NODE_KEYS].sort(), ['DATA_SECRET', 'SETTINGS_SECRET'])
+})
+t('NEGATIVE CONTROL: the installer\'s rule before 818-7c (kind secret → the shared value) gave root the node key', () => {
+  const old = (name) => shared(name)
+  assert.equal(old('SETTINGS_SECRET'), ENV.SETTINGS_SECRET)
+  assert.notEqual(nodeKeyValue('SETTINGS_SECRET', { id: 'root', kind: 'user' }, shared), old('SETTINGS_SECRET'))
+})
+t('the installer asks this rule first and never carries a key of the whole node into a custom element', () => {
+  const src = readFileSync(join(ROOT, 'scripts', 'services-install.mjs'), 'utf8')
+  const rule = src.indexOf('const own = nodeKeyValue(v.name, entry, sharedSecret)')
+  const secret = src.indexOf("} else if (v.kind === 'secret') {")
+  assert.ok(rule > 0 && secret > rule, 'the custom rule stands before the shared secret')
+  assert.ok(src.includes('if (custom && NODE_KEYS.has(name)) continue'), 'the carry-over')
+})
+
 console.log(`\nnode-key-split: ${passed} passed${process.exitCode ? ', FAILURES above' : ''}`)
