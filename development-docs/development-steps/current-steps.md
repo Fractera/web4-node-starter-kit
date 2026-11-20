@@ -312,6 +312,14 @@ Open:
 
 ## The person's decisions (verbatim)
 
+- 2026-11-20 10:16 UTC, the owner (Telegram 45): «Сейчас ведро [ядро] собирать ещё рано потому что я хочу решить проблему которую ты мне
+  обещал … связанные с авторизацией на выделенном сервере … пока этот элемент находится на субдомене авто авторизация работает корректно.
+  Как только элементы начинают работать на полноценном домене пользователь с этим уже учётной записью уже не может авторизоваться … я с
+  тобой рядом буду проходить авторизацию» → 808 (84ccf98f) waits the build with 5ff18507. Told him (46): 803/805 fixed by tests only, never
+  live on the server; server 10:2x: fractera.ai/auth/architect 200 (architect commit d8aa36bd built 2026-11-19 21:52), throughsongs.com
+  000. Proposed a joint live test in his Chrome: auth version (v2.4.45?) → element on a subdomain (control) → the same element on
+  throughsongs.com → the failure seen live. Waits «готов».
+
 - 2026-11-20 09:4x UTC, the owner (Telegram): «перед тем как ты будешь уходить на сборку … меня будешь спрашивать» (memory
   ask-before-core-build); «я пока просто собираю информацию будут ещё обновления прежде будем собирать» — 5ff18507 (the certificates card
   hidden on the computer) waits the next build. Then: «когда ты развёртывает сервер то он получает тот же самый репозиторий GitHub … у
