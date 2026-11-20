@@ -284,8 +284,8 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 ## Letter to my next session (written 2026-11-20 17:15 UTC, window ~60 %, Opus max — reset before the release build)
 
 **NOW (18:25):** the Mac core build ada53203 is live (eyes of the hosting page clean, no console errors). 811-7 PROVEN on the server
-(b6498d79, the plan's «811-7 live»). The Fractera push window 759caaea is open — the sha ada53203 (fast-forward over b6266b2c);
-after his «Готово»: `git ls-remote … refs/heads/main` must equal ada53203. Then he syncs the fork and updates the server's core build.
+(b6498d79, the plan's «811-7 live»). Fractera main = ada53203 (his paste 18:3x, ls-remote verified). NOW his: on the SERVER's panel «Синхронизировать форк»
+→ «Обновить сборку ядра»; then check the server's /api/health commit = ada53203 and the fork aifa-agi main = ada53203.
 The fork stays at 67aecf80 for his sync test (below). Next after that: 812, the Pult button on the server's bot, Windows red in three-os.
 
 **WHO WAITS:** Roma (owner) is at lunch — Telegram 223 (17:00): «У меня перерыв на обед продолжались без остановки действуй от моего
