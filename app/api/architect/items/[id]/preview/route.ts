@@ -8,6 +8,7 @@ import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { isBornElement } from "@/lib/web4-items/element-delete"
 import deployLock from "@/lib/deploy/deploy-lock.cjs"
 import liveLog from "@/lib/deploy/live-log.cjs"
+import { unitActive } from "@/lib/hosting/element-wall.cjs"
 
 // ПРЕДПРОСМОТР ЭЛЕМЕНТА (337-4). GET — состояние (`data/services/<id>/preview.json`, живость процессов измеряется здесь же);
 // POST `{ action: "stage" | "promote" | "discard" }` — запускает `scripts/element-preview.mjs` вне дерева процессов ядра.
@@ -28,7 +29,9 @@ function read(id: string): Preview | null {
   let p: Preview | null = null
   try { p = JSON.parse(readFileSync(join(ROOT, "data", "services", id, "preview.json"), "utf8")) as Preview } catch { return null }
   if (p.state === "building" && !alive(p.pid)) return { ...p, state: "failed", note: "сборка предпросмотра прервана — процесс исчез" }
-  if (p.state === "ready" && !alive(p.serverPid)) return { ...p, state: "failed", note: "сервер предпросмотра погас" }
+  // 811-4: on a dedicated server a walled element's preview is a systemd unit of its own user (`lib/hosting/element-wall.cjs`)
+  const serverAlive = typeof p.unit === "string" ? unitActive(p.unit) : alive(p.serverPid)
+  if (p.state === "ready" && !serverAlive) return { ...p, state: "failed", note: "сервер предпросмотра погас" }
   // Идёт «Принять» (сервер предпросмотра уже погашен — это норма). Процесс приёма исчез, не убрав запись, — приём кончился.
   if (p.state === "promoting" && !alive(p.pid)) return null
   // Идёт «Отклонить» (уборка папки). Процесс уборки исчез — предпросмотра нет.

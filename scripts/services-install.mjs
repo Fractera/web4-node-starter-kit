@@ -63,6 +63,7 @@ const NODE_ENV_FILE = join(ROOT, '.env.local')
 const IS_WIN = process.platform === 'win32'
 const say = (m) => console.log(m)
 const liveLog = createRequire(import.meta.url)('../lib/deploy/live-log.cjs')
+const wall = createRequire(import.meta.url)('../lib/hosting/element-wall.cjs')
 const LIVE_LOG = process.env.FRACTERA_LIVE_LOG || null
 const warn = []
 const missingForeign = []
@@ -91,7 +92,10 @@ function childEnv() {
 function run(cmd, args, cwd, { quiet = false, env = {} } = {}) {
   // 353-3: развёртывание передаёт журнал хода (`FRACTERA_LIVE_LOG`) — `npm ci` и сборка пишут в него по мере работы, страница
   // видит движение. Только npm: вывод git и pm2 здесь разбирается как данные. `out` тот же — читается из журнала после выхода.
-  if (LIVE_LOG && !quiet && cmd === 'npm') {
+  // 811-4: inside a walled element's folder (a dedicated server) the element's code runs as its own user, with only `env`
+  const w = wall.asElement(ROOT, cwd, cmd, args, env)
+  if (w.wrapped) { cmd = w.cmd; args = w.args }
+  if (LIVE_LOG && !quiet && (cmd === 'npm' || w.wrapped)) {
     return liveLog.runLive(cmd, args, { cwd, shell: IS_WIN, windowsHide: true, env: { ...childEnv(), ...env } }, LIVE_LOG)
   }
   const r = spawnSync(cmd, args, {
@@ -591,13 +595,20 @@ async function warmUp(start, healthPath) {
     if (await freeOnBothStacks(c)) { port = c; break }
   }
   if (!port) return { note: 'нет свободного порта для прогрева' }
-  const proc = spawn(process.execPath, start.args, {
+  const warmEnv = { PORT: String(port), HOSTNAME: '127.0.0.1', NODE_ENV: 'production', CONFIG_SERVICE_URL: '' }
+  // 811-4: a walled element warms up as its own user, a unit the node can stop (it cannot signal a root sudo)
+  const unit = wall.unitOf(ROOT, start.cwd, 'warm', process.execPath, start.args, warmEnv)
+  if (unit) {
+    const u = spawnSync(unit.start.cmd, unit.start.args, { encoding: 'utf8' })
+    if (u.status !== 0) return { note: `прогрев своим пользователем не запустился: ${(u.stdout + u.stderr).trim().slice(-200)}` }
+  }
+  const proc = unit ? null : spawn(process.execPath, start.args, {
     cwd: start.cwd, windowsHide: true, stdio: 'ignore',
     // 668 (✗ 2026-11-06: прогрев каждого элемента подписывался своим запасным портом — ANTI-PATTERNS «A probe of an element on a spare
     // port …»): у прогрева нет адреса CONFIG — он только отвечает на страницы.
     env: { ...childEnv(), PORT: String(port), HOSTNAME: '127.0.0.1', NODE_ENV: 'production', CONFIG_SERVICE_URL: '' },
   })
-  const stop = () => { try { proc.kill() } catch { /* уже вышел */ } }
+  const stop = () => { try { if (unit) spawnSync(unit.stop.cmd, unit.stop.args); else proc.kill() } catch { /* уже вышел */ } }
   const base = `http://127.0.0.1:${port}`
   const t0 = Date.now()
   try {
@@ -778,6 +789,14 @@ for (const entry of registry.services) {
     say('  ОШИБКА: у элемента нет паспорта (OWN-SERVICE-PROPS.json или OWN-SERVICE-PROPS/) — установщику не у кого спросить, как его ставить')
     failed += 1
     continue
+  }
+
+  // 811-3/811-4: on a dedicated server a custom element gets its own Linux user and its folder's ACLs (`lib/hosting/element-wall.cjs`)
+  // BEFORE its packages and build: from here on its own code (install scripts, build, warm-up) runs as that user; elsewhere nothing.
+  {
+    const w = wall.ensureElementUser(ROOT, entry, dir)
+    if (w.skipped !== 'native' && w.skipped !== 'no-wall') say(w.ok ? `  своя стена: пользователь fe-${entry.id}` : `  ⚠ своя стена не поставлена: ${w.out}`)
+    if (!w.ok) warn.push(`  ⚠ ${entry.id}: своя стена (811) не поставлена — ${w.out}`)
   }
 
   // Отметка прошлой установки — она же ответ на вопрос «ставился ли блок ЗДЕСЬ».
@@ -1145,13 +1164,6 @@ for (const entry of registry.services) {
     warm?.stop?.()
   }
 
-  // 811-3: on a dedicated server a custom element gets its own Linux user and its folder's ACLs (`lib/hosting/element-wall.cjs`) —
-  // after its packages and build, before anything of it starts; elsewhere nothing happens.
-  {
-    const wall = require('../lib/hosting/element-wall.cjs').ensureElementUser(ROOT, entry, dir)
-    if (wall.skipped !== 'native' && wall.skipped !== 'no-wall') say(wall.ok ? `  своя стена: пользователь fe-${entry.id}` : `  ⚠ своя стена не поставлена: ${wall.out}`)
-    if (!wall.ok) warn.push(`  ⚠ ${entry.id}: своя стена (811) не поставлена — ${wall.out}`)
-  }
   summary.push({ id: entry.id, version: version, port, stack: props.runtime?.stack })
 }
 

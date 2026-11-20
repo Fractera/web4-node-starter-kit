@@ -84,6 +84,10 @@ function serviceApps() {
         HOSTNAME: '127.0.0.1',
       },
     })
+    // 811-4: on a dedicated server a custom element's server runs as its own Linux user (`lib/hosting/element-wall.cjs`, the helper's
+    // `serve`): pm2 still holds it, the node's logs and restarts stay; only the program it runs becomes `sudo -n fractera-element serve`.
+    const walledApp = require('./lib/hosting/element-wall.cjs').serveApp(root, s, stamp)
+    if (walledApp) Object.assign(apps[apps.length - 1], walledApp)
 
   }
   // 663-6 (владелец 2026-11-06: «Включить в 663 (Рекомендую)»): ОДИН сторож на все элементы вместо `fractera-svc-<id>-watch` у

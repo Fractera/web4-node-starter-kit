@@ -52,8 +52,12 @@ function childEnv(extra = {}) {
   return { ...out, ...extra }
 }
 
+// 811-4: on a dedicated server the element's code (its build, its preview server) runs as its own Linux user (`lib/hosting/element-wall.cjs`)
+const wall = createRequire(import.meta.url)('../lib/hosting/element-wall.cjs')
+
 function run(cmd, args, env = {}) {
-  const r = spawnSync(cmd, args, { cwd: dir, encoding: 'utf8', shell: IS_WIN, windowsHide: true, env: childEnv(env) })
+  const w = wall.asElement(ROOT, dir, cmd, args, env)
+  const r = spawnSync(w.cmd, w.args, { cwd: dir, encoding: 'utf8', shell: IS_WIN, windowsHide: true, env: childEnv(env) })
   return { rc: r.status ?? 1, out: (r.stdout ?? '') + (r.stderr ?? '') }
 }
 
@@ -101,6 +105,7 @@ async function freePort() {
 }
 
 function killPreview(s) {
+  if (s?.unit) { const u = wall.unitOf(ROOT, dir, 'preview', 'node', []); if (u) spawnSync(u.stop.cmd, u.stop.args); return }
   if (!s?.serverPid || !alive(s.serverPid)) return
   if (IS_WIN) spawnSync('taskkill', ['/PID', String(s.serverPid), '/T', '/F'], { windowsHide: true })
   else try { process.kill(s.serverPid) } catch { /* уже нет */ }
@@ -122,7 +127,7 @@ if (action === 'stage') {
   // прежний сервер гасится (на Windows живой сервер держит файлы папки) и сборка идёт заново в ту же соседнюю папку.
   if (current && current.state === 'ready') {
     const head = spawnSync('git', ['-C', dir, 'rev-parse', '--short=7', 'HEAD'], { encoding: 'utf8', windowsHide: true }).stdout?.trim() || null
-    if (head && current.commit === head && alive(current.serverPid)) process.exit(0)
+    if (head && current.commit === head && (current.unit ? wall.unitActive(current.unit) : alive(current.serverPid))) process.exit(0)
     killPreview(current)
   }
   const live = typeof stamp.dist === 'string' && stamp.dist.startsWith('.next') ? stamp.dist : String(stamp.start?.args?.[0] ?? '').split(/[\\/]/)[0]
@@ -172,19 +177,28 @@ if (action === 'stage') {
   const start = { cmd: 'node', args: [relative(dir, join(server, 'server.js')).split('\\').join('/')], cwd: dir }
   const port = await freePort()
   if (!port) { save({ state: 'failed', target, commit, note: 'нет свободного порта для предпросмотра' }); process.exit(1) }
-  const proc = spawn(process.execPath, start.args, {
-    cwd: dir, detached: true, windowsHide: true, stdio: 'ignore',
-    env: childEnv({ PORT: String(port), HOSTNAME: '127.0.0.1', NODE_ENV: 'production' }),
-  })
-  proc.unref()
+  const previewEnv = { PORT: String(port), HOSTNAME: '127.0.0.1', NODE_ENV: 'production' }
+  const unit = wall.unitOf(ROOT, dir, 'preview', process.execPath, start.args, previewEnv)
+  let proc
+  if (unit) {
+    const u = spawnSync(unit.start.cmd, unit.start.args, { encoding: 'utf8' })
+    if (u.status !== 0) { save({ state: 'failed', target, commit, note: `предпросмотр своим пользователем не запустился: ${(u.stdout + u.stderr).trim().slice(-200)}` }); process.exit(1) }
+    proc = { pid: null }
+  } else {
+    proc = spawn(process.execPath, start.args, {
+      cwd: dir, detached: true, windowsHide: true, stdio: 'ignore',
+      env: childEnv(previewEnv),
+    })
+    proc.unref()
+  }
   const health = passport?.health?.path || '/'
   let ok = false
   for (const t1 = Date.now(); Date.now() - t1 < 180000;) {
     try { if ((await fetch(`http://127.0.0.1:${port}${health}`, { signal: AbortSignal.timeout(15000) })).status < 500) { ok = true; break } } catch { /* ещё не слушает */ }
     await new Promise((r) => setTimeout(r, 1000))
   }
-  if (!ok) { killPreview({ serverPid: proc.pid }); save({ state: 'failed', target, commit, note: 'сервер предпросмотра не ответил за 3 минуты' }); process.exit(1) }
-  save({ state: 'ready', target, commit, report, port, serverPid: proc.pid, start, seconds: Math.round((Date.now() - t0) / 1000), readyAt: new Date().toISOString() })
+  if (!ok) { killPreview({ serverPid: proc.pid, unit: unit?.unit }); save({ state: 'failed', target, commit, note: 'сервер предпросмотра не ответил за 3 минуты' }); process.exit(1) }
+  save({ state: 'ready', target, commit, report, port, serverPid: proc.pid, ...(unit ? { unit: unit.unit } : {}), start, seconds: Math.round((Date.now() - t0) / 1000), readyAt: new Date().toISOString() })
   process.exit(0)
 }
 

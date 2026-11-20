@@ -23,6 +23,7 @@ GROUP=fractera-el
 HOMES="$R/var/lib/fractera-el"
 RECORDS="$ETC/elements"
 SHARED_BIN="$R/usr/local/lib/fractera/bin"
+LOGS="$R/var/log/fractera-el"
 ID_RE='^[a-z0-9][a-z0-9-]{0,27}[a-z0-9]$'      # fe-<id> stays within useradd's 32 characters
 FOLDER_RE='^WEB4-ITEMS/[a-z0-9-]+/[A-Za-z0-9][A-Za-z0-9._-]{0,99}$'
 KEY_RE='^[A-Za-z_][A-Za-z0-9_]{0,63}$'
@@ -52,6 +53,10 @@ case "$verb" in
       act useradd --system --gid "$GROUP" --home-dir "$HOMES/$id" --create-home --shell /usr/sbin/nologin "fe-$id"
     fi
     act install -d -m 0700 -o "fe-$id" -g "$GROUP" "$HOMES/$id"
+    # its own git trusts its own folder (owned by the node: git refuses a repository of another owner) — written AS the user, so root
+    # never writes into a home the user controls
+    [ "$fresh" = 1 ] && act setpriv --no-new-privs --reuid="fe-$id" --regid="$GROUP" --init-groups -- env -i HOME="$HOMES/$id" \
+      git config --global safe.directory "$dir"
     [ -e "$data" ] || act install -d -m 2770 -o "$NODE_USER" -g "$NODE_USER" "$data"
     act install -d -m 0700 "$RECORDS"
     if [ "$DRY" = 1 ]; then echo "DRY: record $RECORDS/$id FOLDER=$folder"; else printf 'FOLDER=%s\n' "$folder" > "$RECORDS/$id"; chmod 0600 "$RECORDS/$id"; fi
@@ -63,6 +68,7 @@ case "$verb" in
   remove)
     # remove <id> — every process of the user ends, its files go back to the node, the user and its home go
     id_arg "${1:-}"; id="$1"
+    act systemctl stop "fractera-el-$id-*" >/dev/null 2>&1
     if id -u "fe-$id" >/dev/null 2>&1; then
       act pkill -KILL -u "fe-$id"
       for d in "$NODE_DIR/$(record_of "$id" 2>/dev/null)" "$NODE_DIR/data/services/$id"; do
@@ -73,13 +79,27 @@ case "$verb" in
       act userdel "fe-$id"
     fi
     act rm -rf -- "$HOMES/$id"
-    act rm -f -- "$RECORDS/$id"
+    act rm -f -- "$RECORDS/$id" "$LOGS/$id"-*.log
     echo "ELEMENT_REMOVED $id" ;;
-  run)
-    # run <id> [KEY=VALUE …] -- <program> [args …] — the program as fe-<id>, in its folder, with a clean environment and umask 007
+  run|unit-start)
+    # run <id> [--in <sub>] [KEY=VALUE …] -- <program> [args …] — a SHORT program as fe-<id> (npm ci, a build, git): in its folder, a clean
+    # environment, umask 007; the caller waits for it.
+    # unit-start <id> [--unit <tag>] [--in <sub>] [KEY=VALUE …] -- <program> … — a LONG one (its server, a preview, a warm-up) as a
+    # transient systemd unit fractera-el-<id>-<tag> (default tag serve) with User=fe-<id>: the node's user cannot signal a root sudo,
+    # systemd stops the whole group (KillMode=control-group), so no element process outlives its stop on a port. Its output goes to
+    # /var/log/fractera-el/<id>-<tag>.log (root's folder; the node reads it). A unit of that name still running is stopped first.
     id_arg "${1:-}"; id="$1"; shift
+    tag=serve
+    if [ "$verb" = unit-start ] && [ "${1:-}" = "--unit" ]; then
+      tag="${2:-}"; [[ "$tag" =~ ^[a-z]{1,12}$ ]] || die "bad unit tag"; shift 2
+    fi
     folder="$(record_of "$id")" || exit 3
     dir="$NODE_DIR/$folder"; real_dir "$dir" || die "the element folder is gone"
+    # --in <subfolder> — a folder inside the element's own (a standalone build starts in .next/standalone), never outside it
+    if [ "${1:-}" = "--in" ]; then
+      sub="${2:-}"; [[ "$sub" =~ $PATH_RE ]] && [[ "$sub" != *..* ]] && real_dir "$dir/$sub" || die "bad --in folder"
+      dir="$dir/$sub"; shift 2
+    fi
     envs=()
     while [ $# -gt 0 ] && [ "$1" != "--" ]; do
       key="${1%%=*}"
@@ -87,14 +107,30 @@ case "$verb" in
       case "$key" in LD_*|BASH_ENV|ENV|BASH_FUNC_*|PATH|HOME|USER|LOGNAME|SHELL|NODE_OPTIONS) die "environment entry $key is not allowed";; esac
       envs+=("$1"); shift
     done
-    [ "${1:-}" = "--" ] && [ -n "${2:-}" ] || die "run <id> [KEY=VALUE …] -- <program> [args …]"
+    [ "${1:-}" = "--" ] && [ -n "${2:-}" ] || die "$verb <id> [KEY=VALUE …] -- <program> [args …]"
     shift
     base=(HOME="$HOMES/$id" USER="fe-$id" LOGNAME="fe-$id" SHELL=/bin/bash LANG=C.UTF-8 TERM="${TERM:-xterm-256color}"
       PATH="$SHARED_BIN:/usr/local/bin:/usr/bin:/bin" DISABLE_AUTOUPDATER=1)
+    if [ "$verb" = unit-start ]; then
+      unit="fractera-el-$id-$tag"; log="$LOGS/$id-$tag.log"
+      act install -d -m 0750 -o root -g "$NODE_USER" "$LOGS"
+      act systemctl stop "$unit" >/dev/null 2>&1; act systemctl reset-failed "$unit" >/dev/null 2>&1
+      act install -m 0640 -o root -g "$NODE_USER" /dev/null "$log"
+      sets=(); for e in "${base[@]}" "${envs[@]+"${envs[@]}"}"; do sets+=("--setenv=$e"); done
+      act systemd-run --quiet --collect --unit="$unit" --uid="fe-$id" --gid="$GROUP" -p WorkingDirectory="$dir" -p UMask=0007 \
+        -p NoNewPrivileges=yes -p KillMode=control-group -p TimeoutStopSec=10 -p StandardOutput="append:$log" -p StandardError="append:$log" \
+        "${sets[@]}" -- "$@"
+      echo "UNIT_STARTED $unit"; exit 0
+    fi
     umask 007
     cd -- "$dir" || exit 1
     if [ "$DRY" = 1 ]; then act setpriv --no-new-privs --reuid="fe-$id" --regid="$GROUP" --init-groups -- env -i "${base[@]}" "${envs[@]+"${envs[@]}"}" "$@"; exit 0; fi
     exec setpriv --no-new-privs --reuid="fe-$id" --regid="$GROUP" --init-groups -- env -i "${base[@]}" "${envs[@]+"${envs[@]}"}" "$@" ;;
+  unit-stop)
+    # unit-stop <id> [--unit <tag>] — that unit of the element stops (its whole process group)
+    id_arg "${1:-}"; id="$1"; tag=serve
+    if [ "${2:-}" = "--unit" ]; then tag="${3:-}"; [[ "$tag" =~ ^[a-z]{1,12}$ ]] || die "bad unit tag"; fi
+    act systemctl stop "fractera-el-$id-$tag"; echo "UNIT_STOPPED fractera-el-$id-$tag" ;;
   signal)
     # signal <id> <pid> <TERM|INT|HUP|KILL> — only a process of that element's user
     id_arg "${1:-}"; id="$1"; pid="${2:-}"; sig="${3:-}"
@@ -107,7 +143,7 @@ case "$verb" in
   stop)
     # stop <id> — every process of the element's user gets TERM
     id_arg "${1:-}"; id="$1"; id -u "fe-$id" >/dev/null 2>&1 || die "no element $id here" 3
-    act pkill -TERM -u "fe-$id"; echo "ELEMENT_STOPPED $id" ;;
+    act systemctl stop "fractera-el-$id-*"; act pkill -TERM -u "fe-$id"; echo "ELEMENT_STOPPED $id" ;;
   claude-share)
     # The node user's Claude Code (install.sh → ensure-claude → ~/.local/bin/claude, a link into ~/.local/share/claude/versions) is copied
     # where every element user can run it and none can change it. Only a file inside that folder, only a Linux program (ELF).
@@ -168,6 +204,6 @@ case "$verb" in
   list)
     for f in "$RECORDS"/*; do [ -f "$f" ] && printf '%s %s\n' "$(basename -- "$f")" "$(sed -n 's/^FOLDER=//p' "$f")"; done; true ;;
   *)
-    echo "verbs: add <id> <folder> · remove <id> · run <id> [KEY=VALUE …] -- <program> … · signal <id> <pid> <sig> · stop <id> · claude-share · walls · list" >&2
+    echo "verbs: add <id> <folder> · remove <id> · run|unit-start <id> [--unit <tag>] [--in <sub>] [KEY=VALUE …] -- <program> … · unit-stop <id> [--unit <tag>] · signal <id> <pid> <sig> · stop <id> · claude-share · walls · list" >&2
     exit 2 ;;
 esac

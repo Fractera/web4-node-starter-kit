@@ -17,13 +17,13 @@ const tmp = (p) => realpathSync(mkdtempSync(join(tmpdir(), p)))
 let passed = 0
 const t = (name, fn) => { try { fn(); passed += 1; console.log(`  ✓ ${name}`) } catch (e) { console.error(`  ✗ ${name}\n    ${e.message.split('\n').slice(0, 4).join('\n    ')}`); process.exitCode = 1 } }
 
-// One «server»: root R, /etc/fractera in ETC, the node in R/home/fractera/node with one custom element «shop».
+// One «server»: root R, /etc/fractera in ETC, the node in R/home/fractera/node with one custom element «shop» (kind user) and a native «auth» (kind core).
 const R = tmp('wall-root-')
 const ETC = join(R, 'etc', 'fractera')
 const NODE = join(R, 'home', 'fractera', 'node')
 mkdirSync(join(ETC, 'elements'), { recursive: true })
-mkdirSync(join(NODE, 'WEB4-ITEMS', 'custom', 'shop'), { recursive: true })
-mkdirSync(join(NODE, 'WEB4-ITEMS', 'native', 'auth'), { recursive: true })
+mkdirSync(join(NODE, 'WEB4-ITEMS', 'user', 'shop'), { recursive: true })
+mkdirSync(join(NODE, 'WEB4-ITEMS', 'core', 'auth'), { recursive: true })
 mkdirSync(join(NODE, 'data', 'services', 'build'), { recursive: true })
 mkdirSync(join(NODE, 'lib', 'agent-kit'), { recursive: true })
 mkdirSync(join(NODE, 'scripts', 'dedicated-server'), { recursive: true })
@@ -31,7 +31,7 @@ writeFileSync(join(NODE, 'lib', 'agent-kit', 'relay.cjs'), '// relay\n')
 writeFileSync(join(NODE, '.env.local'), 'SECRET=1\n')
 writeFileSync(join(ETC, 'node.env'), `NODE_USER=fractera\nNODE_DIR=${NODE}\n`)
 const outside = tmp('wall-outside-')
-symlinkSync(outside, join(NODE, 'WEB4-ITEMS', 'custom', 'linked'))
+symlinkSync(outside, join(NODE, 'WEB4-ITEMS', 'user', 'linked'))
 
 const helperRun = (args, extra = {}) => {
   const r = spawnSync('bash', [helper, ...args], { encoding: 'utf8', env: { PATH: process.env.PATH, FRACTERA_ELEMENT_DRY: '1', FRACTERA_ELEMENT_ETC: ETC, FRACTERA_ELEMENT_ROOT: R, ...extra } })
@@ -46,44 +46,44 @@ t('bash -n (this machine\'s bash and the script\'s syntax)', () => {
 t('without a verb it names its verbs and refuses', () => { refused([], /verbs: add/) })
 
 console.log('811-2 add — the user, its home, its record, ACLs on its folder and data folder')
-t('add shop WEB4-ITEMS/custom/shop', () => {
-  const r = helperRun(['add', 'shop', 'WEB4-ITEMS/custom/shop'])
+t('add shop WEB4-ITEMS/user/shop', () => {
+  const r = helperRun(['add', 'shop', 'WEB4-ITEMS/user/shop'])
   assert.equal(r.status, 0, r.out)
   assert.match(r.out, /DRY: useradd --system --gid fractera-el --home-dir \S+\/var\/lib\/fractera-el\/shop --create-home --shell \/usr\/sbin\/nologin fe-shop/)
   assert.match(r.out, /install -d -m 2770 -o fractera -g fractera \S+\/data\/services\/shop/)
-  assert.match(r.out, /record \S+elements\/shop FOLDER=WEB4-ITEMS\/custom\/shop/)
+  assert.match(r.out, /record \S+elements\/shop FOLDER=WEB4-ITEMS\/user\/shop/)
   assert.match(r.out, /setfacl -R -P -m u:fe-shop:rwX\\?,g:fractera:rwX\\?,o::---\\?,d:u:fe-shop:rwX/)
   assert.equal((r.out.match(/setfacl -R -P/g) ?? []).length, 2, 'the folder and the data folder')
   assert.match(r.out, /ELEMENT_ADDED shop/)
 })
 t('negative: a repeat add (the user exists) never walks the folder as root — the two top folders only', () => {
   const shim = tmp('wall-shim-'); writeFileSync(join(shim, 'id'), '#!/bin/sh\nexit 0\n', { mode: 0o755 })
-  const r = helperRun(['add', 'shop', 'WEB4-ITEMS/custom/shop'], { PATH: `${shim}:${process.env.PATH}` })
+  const r = helperRun(['add', 'shop', 'WEB4-ITEMS/user/shop'], { PATH: `${shim}:${process.env.PATH}` })
   assert.equal(r.status, 0, r.out)
   assert.doesNotMatch(r.out, /useradd|setfacl -R/)
   assert.equal((r.out.match(/DRY: setfacl -m u:fe-shop/g) ?? []).length, 2)
 })
 t('negative: a bad id (capitals, too long for useradd, a leading dash)', () => {
-  refused(['add', 'Shop', 'WEB4-ITEMS/custom/shop'], /bad element id/)
-  refused(['add', 'a'.repeat(30), 'WEB4-ITEMS/custom/shop'], /bad element id/)
-  refused(['add', '-x', 'WEB4-ITEMS/custom/shop'], /bad element id/)
-  assert.equal(helperRun(['add', 'a'.repeat(29), 'WEB4-ITEMS/custom/shop']).status, 0, '29 characters → fe-<id> is 32, useradd\'s limit')
+  refused(['add', 'Shop', 'WEB4-ITEMS/user/shop'], /bad element id/)
+  refused(['add', 'a'.repeat(30), 'WEB4-ITEMS/user/shop'], /bad element id/)
+  refused(['add', '-x', 'WEB4-ITEMS/user/shop'], /bad element id/)
+  assert.equal(helperRun(['add', 'a'.repeat(29), 'WEB4-ITEMS/user/shop']).status, 0, '29 characters → fe-<id> is 32, useradd\'s limit')
 })
 t('negative: a folder outside WEB4-ITEMS, with .., absolute, missing', () => {
   refused(['add', 'shop', 'data/node'], /bad element folder/)
-  refused(['add', 'shop', 'WEB4-ITEMS/custom/..'], /bad element folder/)
+  refused(['add', 'shop', 'WEB4-ITEMS/user/..'], /bad element folder/)
   refused(['add', 'shop', '/etc'], /bad element folder/)
-  refused(['add', 'shop', 'WEB4-ITEMS/custom/none'], /not a real folder/)
+  refused(['add', 'shop', 'WEB4-ITEMS/user/none'], /not a real folder/)
 })
-t('negative: a symlinked element folder is never opened', () => { refused(['add', 'linked', 'WEB4-ITEMS/custom/linked'], /not a real folder/) })
+t('negative: a symlinked element folder is never opened', () => { refused(['add', 'linked', 'WEB4-ITEMS/user/linked'], /not a real folder/) })
 t('negative: a symlinked data folder is never opened', () => {
   symlinkSync(outside, join(NODE, 'data', 'services', 'evil'))
-  mkdirSync(join(NODE, 'WEB4-ITEMS', 'custom', 'evil'))
-  refused(['add', 'evil', 'WEB4-ITEMS/custom/evil'], /data folder is not a real folder/)
+  mkdirSync(join(NODE, 'WEB4-ITEMS', 'user', 'evil'))
+  refused(['add', 'evil', 'WEB4-ITEMS/user/evil'], /data folder is not a real folder/)
 })
 
 console.log('811-2 run — as fe-<id>, in its folder, a clean environment')
-writeFileSync(join(ETC, 'elements', 'shop'), 'FOLDER=WEB4-ITEMS/custom/shop\n')
+writeFileSync(join(ETC, 'elements', 'shop'), 'FOLDER=WEB4-ITEMS/user/shop\n')
 t('run shop PORT=24700 -- node server.js', () => {
   const r = helperRun(['run', 'shop', 'PORT=24700', 'CLAUDE_CONFIG_DIR=/x/y', '--', 'node', 'server.js'])
   assert.equal(r.status, 0, r.out)
@@ -116,8 +116,8 @@ t('walls with one readable file', () => {
   const r = helperRun(['walls'])
   assert.equal(r.status, 0, r.out)
   assert.match(r.out, /DRY: chmod 0711 \S+\/home\/fractera \S+\/home\/fractera\/node/)
-  assert.match(r.out, /find \S+node -mindepth 1 \( -path \S+WEB4-ITEMS\/custom\/shop -o -path \S+data\/services\/shop -o -false \) -prune -o ! -type l -exec chmod o-rwx/)
-  assert.doesNotMatch(r.out, /-path \S+native\/auth/, 'a native element is closed, never pruned')
+  assert.match(r.out, /find \S+node -mindepth 1 \( -path \S+WEB4-ITEMS\/user\/shop -o -path \S+data\/services\/shop -o -false \) -prune -o ! -type l -exec chmod o-rwx/)
+  assert.doesNotMatch(r.out, /-path \S+core\/auth/, 'a native element is closed, never pruned')
   assert.match(r.out, /chmod o-rwx \S+data\/services\/build/, 'the node\'s own data folder closed')
   assert.match(r.out, /chmod o\+r \S+lib\/agent-kit\/relay\.cjs/)
   assert.match(r.out, /chmod o\+x \S+node\/lib\/agent-kit\n[\s\S]*chmod o\+x \S+node\/lib\n/)
@@ -177,7 +177,7 @@ t('start.sh applies the wall before the node starts; launch uploads the helper',
 t('clear.sh (a node cleared) erases the element users\' homes and root\'s records of them', () => {
   const base = tmp('wall-clear-'); const h = tmp('wall-clear-home-'); const rt = tmp('wall-clear-rootdir-'); const ng = tmp('wall-clear-nginx-')
   mkdirSync(join(base, 'var', 'lib', 'fractera-el', 'shop'), { recursive: true }); mkdirSync(join(base, 'etc', 'fractera', 'elements'), { recursive: true })
-  writeFileSync(join(base, 'etc', 'fractera', 'elements', 'shop'), 'FOLDER=WEB4-ITEMS/custom/shop\n')
+  writeFileSync(join(base, 'etc', 'fractera', 'elements', 'shop'), 'FOLDER=WEB4-ITEMS/user/shop\n')
   mkdirSync(join(h, 'node'))
   const r = spawnSync('bash', [join(DS, 'clear.sh'), '--node', 'node', '--dir', join(rt, '.fractera')], { encoding: 'utf8', env: { PATH: process.env.PATH, CLEAR_TEST: '1', CLEAR_HOME: h, CLEAR_ROOT: rt, CLEAR_NGINX: ng, CLEAR_BASE: base } })
   assert.equal(r.status, 0, r.stderr)
@@ -194,14 +194,14 @@ console.log('811-3 the node\'s side — birth and deletion ask the helper only w
   writeFileSync(fake, `#!/bin/sh\necho "$@" >> '${calls}'\necho ELEMENT_OK\n`, { mode: 0o755 })
   const nodeEnv = join(W, 'node.env'); writeFileSync(nodeEnv, `NODE_USER=fractera\nNODE_DIR=${NODE}\n`)
   const opts = { helper: fake, nodeEnv, anyPlatform: true, prefix: ['env'] }
-  const shop = join(NODE, 'WEB4-ITEMS', 'custom', 'shop')
-  t('a custom element gets its user: add <id> WEB4-ITEMS/custom/<address>', () => {
+  const shop = join(NODE, 'WEB4-ITEMS', 'user', 'shop')
+  t('a custom element gets its user: add <id> WEB4-ITEMS/user/<address>', () => {
     const r = wall.ensureElementUser(NODE, { id: 'shop', kind: 'user' }, shop, opts)
     assert.equal(r.ok, true, r.out)
-    assert.equal(readFileSync(calls, 'utf8').trim(), 'add shop WEB4-ITEMS/custom/shop')
+    assert.equal(readFileSync(calls, 'utf8').trim(), 'add shop WEB4-ITEMS/user/shop')
   })
   t('negative: a native element never gets a user', () => {
-    assert.equal(wall.ensureElementUser(NODE, { id: 'auth', kind: 'core' }, join(NODE, 'WEB4-ITEMS', 'native', 'auth'), opts).skipped, 'native')
+    assert.equal(wall.ensureElementUser(NODE, { id: 'auth', kind: 'core' }, join(NODE, 'WEB4-ITEMS', 'core', 'auth'), opts).skipped, 'native')
   })
   t('negative: no wall when the helper is missing, node.env names another node, or the machine is not Linux', () => {
     assert.equal(wall.wallOn(NODE, { ...opts, helper: join(W, 'none') }), false)
@@ -222,9 +222,86 @@ console.log('811-3 the node\'s side — birth and deletion ask the helper only w
   await new Promise((r) => setTimeout(r, 300))
   t('deletion reached the helper', () => { assert.match(readFileSync(calls, 'utf8'), /^remove shop$/m) })
   t('the installer and the delete door call it', () => {
-    assert.match(readFileSync(join(here, 'services-install.mjs'), 'utf8'), /element-wall\.cjs'\)\.ensureElementUser\(ROOT, entry, dir\)/)
+    const inst = readFileSync(join(here, 'services-install.mjs'), 'utf8')
+    assert.match(inst, /wall\.ensureElementUser\(ROOT, entry, dir\)/)
+    assert.ok(inst.indexOf('wall.ensureElementUser(ROOT, entry, dir)') < inst.indexOf("run('npm', ['ci'"), 'the user exists before the element\'s install scripts run')
     assert.match(readFileSync(join(here, '..', 'lib', 'web4-items', 'element-delete.ts'), 'utf8'), /removeElementUserAsync\(ROOT, id\)/)
   })
 }
+
+console.log('811-4 the element\'s code runs as its own user — short programs by run, long ones as units')
+writeFileSync(join(ETC, 'elements', 'shop'), 'FOLDER=WEB4-ITEMS/user/shop\n')
+mkdirSync(join(NODE, 'WEB4-ITEMS', 'user', 'shop', '.next', 'standalone'), { recursive: true })
+t('unit-start shop: a transient unit as fe-shop, the group stopped as one, the log in root\'s folder', () => {
+  const r = helperRun(['unit-start', 'shop', '--in', '.next/standalone', 'PORT=24700', '--', '/usr/bin/node', 'server.js'])
+  assert.equal(r.status, 0, r.out)
+  assert.match(r.out, /systemd-run --quiet --collect --unit=fractera-el-shop-serve --uid=fe-shop --gid=fractera-el -p WorkingDirectory=\S+user\/shop\/\.next\/standalone/)
+  assert.match(r.out, /-p KillMode=control-group -p TimeoutStopSec=10 -p StandardOutput=append:\S+var\/log\/fractera-el\/shop-serve\.log/)
+  assert.match(r.out, /--setenv=HOME=\S+fractera-el\/shop .*--setenv=PORT=24700 -- \/usr\/bin\/node server\.js/)
+  assert.match(r.out, /UNIT_STARTED fractera-el-shop-serve/)
+})
+t('unit-start --unit preview; unit-stop --unit preview', () => {
+  assert.match(helperRun(['unit-start', 'shop', '--unit', 'preview', '--', 'node']).out, /--unit=fractera-el-shop-preview/)
+  assert.match(helperRun(['unit-stop', 'shop', '--unit', 'preview']).out, /DRY: systemctl stop fractera-el-shop-preview/)
+})
+t('negative: --in outside the folder, a bad unit tag, a unit of an element without a record', () => {
+  refused(['unit-start', 'shop', '--in', '..', '--', 'node'], /bad --in folder/)
+  refused(['unit-start', 'shop', '--in', '/etc', '--', 'node'], /bad --in folder/)
+  refused(['run', 'shop', '--in', 'none', '--', 'node'], /bad --in folder/)
+  refused(['unit-start', 'shop', '--unit', 'Serve;x', '--', 'node'], /bad unit tag/)
+  refused(['unit-stop', 'shop', '--unit', '../x'], /bad unit tag/)
+  assert.equal(refused(['unit-start', 'other', '--', 'node'], /no element other/).status, 3)
+})
+t('the shim parses; pm2 only ever signals the node\'s own bash', () => {
+  const r = spawnSync('bash', ['-n', join(DS, 'element-shim.sh')], { encoding: 'utf8' }); assert.equal(r.status, 0, r.stderr)
+  const sh = readFileSync(join(DS, 'element-shim.sh'), 'utf8')
+  assert.match(sh, /trap stop TERM INT HUP/); assert.match(sh, /systemctl is-active --quiet "\$unit"/)
+})
+{
+  const require = createRequire(import.meta.url)
+  const wall = require('../lib/hosting/element-wall.cjs')
+  const W = tmp('wall-411-')
+  const fake = join(W, 'fractera-element'); writeFileSync(fake, '#!/bin/sh\n', { mode: 0o755 })
+  const nodeEnv = join(W, 'node.env'); writeFileSync(nodeEnv, `NODE_USER=fractera\nNODE_DIR=${NODE}\n`)
+  const passwd = join(W, 'passwd'); writeFileSync(passwd, 'root:x:0:0::/root:/bin/bash\nfe-shop:x:998:997::/var/lib/fractera-el/shop:/usr/sbin/nologin\n')
+  mkdirSync(join(NODE, 'WEB4-ITEMS-REGISTRY'), { recursive: true })
+  writeFileSync(join(NODE, 'WEB4-ITEMS-REGISTRY', 'web4-items.json'), JSON.stringify({ services: [{ id: 'shop', kind: 'user' }, { id: 'auth', kind: 'core' }] }))
+  const opts = { helper: fake, nodeEnv, passwd, anyPlatform: true, prefix: ['/usr/bin/sudo', '-n'], node: '/usr/bin/node' }
+  const shop = join(NODE, 'WEB4-ITEMS', 'user', 'shop')
+  // walledEntryAt reads the registry through paths.cjs of THIS node — the test node is elsewhere, so the entry's folder is given by
+  // the real paths module only when the test's ROOT matches; check by what the module returns
+  const at = wall.walledEntryAt(NODE, shop)
+  t('serveApp: pm2 runs the shim with the node\'s order only', () => {
+    assert.ok(at && at.entry.id === 'shop', 'the folder maps to its element')
+    const app = wall.serveApp(NODE, { id: 'shop', kind: 'user' }, { port: 24700, start: { args: ['server.js'], cwd: join(shop, '.next', 'standalone') } }, opts)
+    assert.equal(app.interpreter, '/bin/bash'); assert.match(app.script, /element-shim\.sh$/)
+    assert.deepEqual(app.args, ['shop', '--in', '.next/standalone', 'PORT=24700', 'HOSTNAME=127.0.0.1', 'NODE_ENV=production', '--', '/usr/bin/node', 'server.js'])
+  })
+  t('negative: no shim for a native, without the user, without the wall', () => {
+    const st = { port: 1, start: { args: ['s.js'] } }
+    assert.equal(wall.serveApp(NODE, { id: 'auth', kind: 'core' }, st, opts), null)
+    assert.equal(wall.serveApp(NODE, { id: 'shop', kind: 'user' }, st, { ...opts, passwd: join(W, 'none') }), null)
+    assert.equal(wall.serveApp(NODE, { id: 'shop', kind: 'user' }, st, { ...opts, helper: join(W, 'none') }), null)
+  })
+  t('asElement: never the node\'s environment — only what is given, the refused keys dropped', () => {
+    const w = wall.asElement(NODE, shop, 'npm', ['run', 'build'], { NEXT_DIST_DIR: '.next-b', LD_PRELOAD: '/x', PATH: '/tmp', DATA_SECRET: undefined }, opts)
+    assert.equal(w.wrapped, 'shop')
+    assert.deepEqual(w.args.slice(0, 5), ['-n', fake, 'run', 'shop', 'NEXT_DIST_DIR=.next-b'])
+    assert.ok(!w.args.some((a) => /LD_PRELOAD|PATH=|DATA_SECRET/.test(a)), w.args.join(' '))
+  })
+  t('negative: outside a walled element\'s folder the command stays as it was', () => {
+    assert.deepEqual(wall.asElement(NODE, join(NODE, 'lib'), 'npm', ['ci'], {}, opts), { cmd: 'npm', args: ['ci'] })
+    assert.equal(wall.unitOf(NODE, join(NODE, 'WEB4-ITEMS', 'core', 'auth'), 'warm', 'node', [], {}, opts), null)
+  })
+}
+t('the installer, the preview and its readers use the units', () => {
+  const inst = readFileSync(join(here, 'services-install.mjs'), 'utf8')
+  assert.match(inst, /wall\.unitOf\(ROOT, start\.cwd, 'warm'/); assert.match(inst, /wall\.asElement\(ROOT, cwd, cmd, args, env\)/)
+  const prev = readFileSync(join(here, 'element-preview.mjs'), 'utf8')
+  assert.match(prev, /wall\.unitOf\(ROOT, dir, 'preview'/); assert.match(prev, /wall\.asElement\(ROOT, dir, cmd, args, env\)/)
+  assert.match(readFileSync(join(here, '..', 'lib', 'deploy', 'preview-lock.cjs'), 'utf8'), /unitActive\(p\.unit\)/)
+  assert.match(readFileSync(join(here, '..', 'app', 'api', 'architect', 'items', '[id]', 'preview', 'route.ts'), 'utf8'), /unitActive\(p\.unit\)/)
+  assert.match(readFileSync(join(here, '..', 'ecosystem.config.cjs'), 'utf8'), /serveApp\(root, s, stamp\)/)
+})
 
 console.log(`\n${passed} passed${process.exitCode ? ', some FAILED' : ''}`)

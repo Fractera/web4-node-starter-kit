@@ -66,6 +66,24 @@ State: PLAN — waits the owner's «да». Order agreed 2026-11-20 (Telegram 81
 - Test: element-wall 27 ✓ (+ the node side: native refused, no wall without helper / other node / non-Linux, a bad folder never reaches
   the helper, repeat add only the two top folders).
 
+## 811-4 the element's code as its own user — CODED (2026-11-20 ~13:50 UTC)
+
+- Found: the node runs element code in more places than its server — `npm ci` (install scripts), `npm run build` (next.config), the
+  warm-up and the preview server (services-install.mjs, element-preview.mjs). As the node's user that code could read .env.local.
+- Short programs (npm ci, build, git in its folder) → `wall.asElement` → the helper's `run` as fe-<id>, ONLY the given env (never the
+  node's), `--in <sub>` checked inside its folder. The installer ensures the user BEFORE npm ci (moved up from 811-3).
+- Long programs → transient systemd units `fractera-el-<id>-<tag>` (User=fe-<id>, KillMode=control-group, UMask 0007, NoNewPrivileges,
+  log in root's /var/log/fractera-el): the server under pm2 through `scripts/dedicated-server/element-shim.sh` (the node's own bash: starts
+  the unit, tails its log, stops it on TERM/INT/HUP, ends 1 when the unit dies → pm2 restarts); the warm-up (tag warm) and the preview
+  (tag preview; preview.json keeps `unit`, its readers ask `systemctl is-active`). Chosen over «pm2 → sudo → element»: whether the node's
+  user may signal a root sudo is NOT measured (no Linux here) — the unit design works either way. Memory: a bash shim ~3 MB per element.
+- Git: a fresh fe-<id> gets `safe.directory` of its folder, written as that user (git refuses a repository of another owner).
+- paths.cjs: `itemDirAt(root, id, kind)` (itemDir unchanged); the wall maps a folder to its element through it.
+- Tests: element-wall 36 ✓ (units, --in/tag negatives, the shim, serveApp/asElement/unitOf with a test registry, env never leaks);
+  hosting 76, hosting-launch 27, server-install-live 16, delete-agents 5, node-remove 5 ✓; tsc rc 0.
+- 🔴 To measure live (811-7): pm2 stop/restart of a walled element frees its port; spawnSync timeouts of `run` (a sudo the node may not
+  kill); node-side git in element folders as the node's user still trusts the element's .git/config (core.fsmonitor, hooks) — next.
+
 ## The shape (on a dedicated server only; a home computer is unchanged — one person)
 
 - Every CUSTOM element gets its own Linux user `fe-<id>` (no shell login, no sudo) at its birth on a server, removed at its deletion;
