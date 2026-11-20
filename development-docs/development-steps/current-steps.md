@@ -297,6 +297,9 @@ look, then v0.3.220 into root; the core CI run of 7a902d5b (queued at 21:26; ada
 root password, for redteam.sh) and 33cb777b (Roma, Telegram 309: step 7 «www.fractera.ai — нет записи»; 813 made www required today,
 public DNS has no www record; the «Вписать записи» button lives in the folded rung «Кто внесёт записи», the records rung offers only
 «Проверить» — OWED (core, next build): the records rung offers the write itself when Cloudflare can and a required name is missing).
+22:25 Roma «Ок» (Telegram 315) to a core build for ca3ae4df (the TXT-shadowed www fix; prebuild RC=0). ON RETURN: serve:status; tell
+Roma: step 3.3 «Вписать записи» now names www → confirm → «Проверить записи»; then push ca3ae4df to Fractera + fork; window bb037e18
+(root password) still open for redteam.sh.
 The text below is the earlier letter (its 7f is done).
 
 **WHO WAITS:** Roma (owner) in TELEGRAM (chat_id 90413601, ru, colour marks). His words: Telegram 280 (19:30) «что можно сделать
