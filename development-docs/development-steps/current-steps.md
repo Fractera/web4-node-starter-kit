@@ -317,7 +317,9 @@ Open:
   бардак множество текстов полей противоречащих друг друга» → plan new-steps/809-the-element-domain-page-like-the-server-launch.md, BEFORE
   the core build. Live test so far: subdomain sign-in of marina2 ✓ (roles user+elementAdmin002, one account); throughsongs.com connected
   10:31 (HTTPS 200); its «Войти» → continue-as (803) → «another account» → form requireRole=user (805) ✓; defect: those auth screens are
-  English on a ru site (lang lost). Waits his Marina sign-in on throughsongs.com (window 6eb72b5c).
+  English on a ru site (lang lost). 10:35 his Marina sign-in on throughsongs.com ✓: /api/me 200 marina2 (same id 77UMJ…), roles
+  user+elementAdmin002; drawer admin links; /ru/admin/users opens with her one record — 803/805 PROVEN LIVE on the server. Open: the auth
+  screens' language (a task for the sign-in element), 809.
 
 - 2026-11-20 10:16 UTC, the owner (Telegram 45): «Сейчас ведро [ядро] собирать ещё рано потому что я хочу решить проблему которую ты мне
   обещал … связанные с авторизацией на выделенном сервере … пока этот элемент находится на субдомене авто авторизация работает корректно.
