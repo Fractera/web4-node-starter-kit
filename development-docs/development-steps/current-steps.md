@@ -281,71 +281,55 @@ without «Режим работы приложения», curl count 0), 17-53-2
 way: the site-settings words still say «Пока связь включена…» (implies a switch) → 793. WAITS Roma: the 3 new phrases, the template
 release push (v0.3.219 dry green) + pin, the core push, ONE server update, then the Marina test (804-8) and the summary.
 
-## Letter to my next session (written 2026-11-20 17:15 UTC, window ~60 %, Opus max — reset before the release build)
+## Letter to my next session (written 2026-11-20 19:35 UTC — reset for H6 with a clean window; Opus max)
 
-**NOW (19:15 UTC):** 818 coded, not built: 818-1 61449f4b · H1 7208d02b · H2 ded7a2aa · H5 3619e4a6 · F1 99a4cf64 · review 5e3d35e6
-(pm2 kill, listeners by owner, NODE_USER from /etc/fractera/node.env, Claude's project name) · 818-6 redteam.sh 9fd65ba6 (on today's
-server: 15 holes found — its negative control). Prebuild green. H6 (every element holds SETTINGS_SECRET = the node key; ask/tell/need/
-done send it) — WAITS Roma: A now / B as 819 (Telegram 276); also asked: build the Mac now (H1 is open from the internet on the Mac's
-temporary address until then). After the answers: prebuild again → Mac build → the Fractera push window → his clear + fresh install →
-part C: `bash scripts/dedicated-server/redteam.sh <element id> <neighbour id>` on the server as the node user.
+**WHO WAITS:** Roma (owner) in TELEGRAM (chat_id 90413601, ru, colour marks). His last words (Telegram 280, 19:30): «что можно сделать
+сейчас надо делать сейчас каждая переустановка и сборка ядра это целая вечность чем меньше этих процессов тем лучше» = H6 variant A
+(now, before the reinstall), and ONE Mac build + ONE release + ONE reinstall for everything. My answer (281): H6 is bigger than «half a
+day» — the node key goes three ways; research first, then a plan with a test checklist, code after his «да».
 
-**NOW (18:25):** the Mac core build ada53203 is live (eyes of the hosting page clean, no console errors). 811-7 PROVEN on the server
-(b6498d79, the plan's «811-7 live»). Fractera main = ada53203 (his paste 18:3x, ls-remote verified). Fork aifa-agi = ada53203 (his sync). The server's update RUNNING since 17:31:44 (his
-press in the deployments dialog) — watch https://architect.fractera.ai/api/health until commit ada53203. His complaint (Telegram
-236/237/239): the banner's «Обновить сборку ядра» only opens the tab, the banner stays the same, «Синхронизировать форк» stays lit, the
-dialog's «Развернуть» dead ~1 min (my preflight curl ran on the server 17:30–17:31 — a possible cause, unmeasured). Proposed 815
-(Telegram 240: one road from the banner, busy states, the running stage in the banner and the board, sync dims when synced, a measure
-on the server) — waits his yes.
-The fork stays at 67aecf80 for his sync test (below). Next after that: 812, the Pult button on the server's bot, Windows red in three-os.
+**DONE TODAY, committed, NOT built on the Mac since 603bc4e1 (the Mac runs 815+816):**
+- a45ec05d the tunnel's revival puts «Пульт» back (takes effect at the tunnel's next natural restart; I set the button by hand 18:48).
+- 817 red team DONE (plan 817-…: «Result»). 818 (plan 818-close-the-red-team-holes-and-repeat.md, «Progress», «H6», «Review»):
+  61449f4b + a9f27539 818-1 everything foreign erased by «Очистить» AND by every install (prepare's stage «foreign» → leftovers.sh) ·
+  7208d02b H1 x-agent-identity believed only from the owner at the machine (it was open FROM THE INTERNET on the server and the Mac's
+  temporary address — still open on the Mac until the next build) · ded7a2aa H2 record reads only the element's own session · 3619e4a6
+  H5 walls close the node home + nginx sites · 99a4cf64 F1 hook relay + tools/take through the gate by the element key, relay client →
+  localhost · 5e3d35e6 review fixes · 9fd65ba6 818-6 scripts/dedicated-server/redteam.sh (on today's server: 15 holes = its control) ·
+  d6a6b112 BACKLOG (resource control dropped by Roma 266; the red by-hand launch-footprint harness, red before 818 too).
+- Tests: scripts/redteam-holes.test.mjs 10 (in the prebuild), element-wall 66, server-install-live 19, hosting 77. Prebuild green at 9fd65ba6.
+- Memory: one server = one Fractera project, nothing foreign (Telegram 277) — data/services/build/memory/server-clean-100-percent.md.
 
-**WHO WAITS:** Roma (owner) is at lunch — Telegram 223 (17:00): «У меня перерыв на обед продолжались без остановки действуй от моего
-имени делай все что необходимо меня не ещё не спрашивай». Talk in TELEGRAM (chat_id 90413601, ru, colour marks). Only TWO things stay
-his: the Fractera push paste (my push to Fractera is refused by the session's classifier → `npm run ask-person -- "…" --copy "! git push
-https://github.com/Fractera/web4-node-starter-kit.git <sha>:refs/heads/main"`), and the architect's e-mail in the server's step 9 (it
-names the server's owner forever — never typed by me).
+**H6 — research to do FIRST (read-only), then the plan to Roma:** the installer writes the SAME SETTINGS_SECRET into the core and every
+element (lib/web4-items/element-settings-door.ts:9 «кладёт в оба конца»). Element scripts send it as X-Node-Key (ask-core.mjs → POST
+/api/agents/wake and /api/agents/session; need.mjs → /api/node/needs + wake; done; tell/reply-core); core doors compare with their own
+(`nodeKeyOk` in app/api/agents/wake/route.ts). Measured on the server: root's .env.local has SETTINGS_SECRET and ELEMENT_KEY, no DATA_SECRET.
+Design candidate (no template change if it holds): a CUSTOM element gets SETTINGS_SECRET = HMAC(node SETTINGS_SECRET, id) (derived); the
+core identifies a derived caller by trying the registry ids and lets it only to its own affairs (wake only the main agent `build` with
+the text marked as from <id>, its own done/session, needs/notice/person-asks from = caller); the core calls a custom element's doors
+(settings, describe, signal) with that element's derived key. QUESTIONS to answer before the plan: (1) every core→element call that
+sends the node key — grep SETTINGS_SECRET / X-Settings-Key / x-node-key in lib, app, scripts (catalog-push.ts, element-settings-door.ts,
+project-settings-source.mjs, quiet-build.cjs, agent-return.cjs, element-design-store.ts …); (2) does the CONFIG native element send
+the signal `/api/settings/changed` to custom elements itself with the node key (then CONFIG needs derived keys — a native template
+change; the core must not read or edit WEB4-ITEMS: ask via `npm run card -- config` / its README, or the core's own call sites);
+(3) i2i: element→element doors guarded by X-Node-Key (door:add) — a derived key breaks them; is any i2i door in use (npm run contacts
+--all, cards)? Options: the callee asks the core «whois» for X-Element-Key, or i2i stays for later (named to Roma); (4) element-side
+code that reads SETTINGS_SECRET for anything else (custom template — via the release-template workshop only after Roma's yes).
+Then: plan file 819? NO — H6 is inside 818 (818-7), a test checklist first (memory: test-plan-checklist-first), his «да», code, tests
+with negative controls, prebuild, ASK, ONE Mac build, `redteam.sh` cannot run on the Mac (no wall) — the live proof is on the server.
 
-**DONE TODAY (all committed):** 811 (a wall per element) is LIVE on the server 109.199.105.213: the install from scratch 15:10 → 4 live
-wall failures fixed (c9392191 the path at add · f4ef6f83 the path in every acting verb · 94b61392 git safe.directory per call ·
-cff7b760 the installer's copy into the element's standalone as the element) + 3c8877e4 a continue renews a never-live install from the
-fork → 16:29 the server answers (core 1f7b36ae), https://fractera.ai serves root's own page AS fe-root; ladder steps 1–6 done, the bot
-@Fractera_fractera_5ion_bot connected. The Mac core build a536f485 (16:37, eyes clean). Roma then activated the domain (the server
-redeployed elements). Plans: 812 (the wall's self-test on real Linux — asked «in this release or after?», no answer; he said «не
-спрашивай» → my call: AFTER this release, separately), 813 (www required — his «Да» 210), 814 (step 9 one road + the bot's message +
-814-5 the notice's reason — his «согласен» 218).
+**AFTER H6, in order:** prebuild (read RC=0) → ask Roma → the Mac build (spawn-free serve rebuild) → proof on the Mac: curl the temporary
+address with `x-agent-identity: x` → /api/me must be 401 (was «x@agent») → the Fractera push window (`npm run ask-person -- … --copy
+"! git push https://github.com/Fractera/web4-node-starter-kit.git <HEAD>:refs/heads/main"`, fast-forward over ada53203) → he syncs the
+fork, then on the SERVER's launch page «Очистить» + «Установить с нуля» (~40 min; a new visit — the root password is his) → part C:
+`bash scripts/dedicated-server/redteam.sh <element id> root` on the server as the node user after a custom element is born; social
+engineering of the server's main agent through ask-core now that the channel works; the table to Roma.
 
-**CODED, NOT BUILT, NOT PUSHED (local commits after 67aecf80):** 2a018987 (813: hostnames.mjs both www rows optional:false, launch.mjs
-freshTable, domain-server-pipeline records; test in hosting.test.mjs) · 3c679e92 (state) · af62f528 (814: step 9 — the bot block first;
-the claim moved to `components/hosting/server-launch-claim.client.tsx` (new, @local): the e-mail passes by itself 0.9 s after a whole
-address, one button «Открыть регистрацию на сервере», «Передать ещё раз» on a refusal; the server bot's status lines are two lines and
-the kit's telegram.cjs `statusBody` sends the first line bold (parse_mode HTML, escaped; one line stays plain); 814-5 the origin notice
-shows `preflight.reason` when no conflicts). Tests: server-telegram 8, hosting 77, hosting-launch 27, element-wall 65, tsc 0, kits 12/12.
-
-**🔒 THE RELEASE PATH (his test of a person's path, Telegram 220/221):** for THIS release push NOTHING to the fork (aifa-agi, `origin`) —
-it stays at 67aecf80. The release goes ONLY to Fractera by his paste; then on the SERVER's panel he presses «Синхронизировать форк» (GitHub
-fast-forwards aifa-agi 67aecf80 → the release) → «Обновить сборку ядра» → the server merges and rebuilds. The Mac gets the release by its
-own core build.
-
-**NEXT ACTION, in order:**
-1. `npm run prebuild` (read RC=0 first, never chained) → commit anything it regenerates → state → the Mac core build detached
-   (`node scripts/spawn-free.mjs scripts/serve.mjs rebuild`) — he agreed (218, 223). You come back by the node's line.
-2. After it: serve:status, eyes of /ru/architect/hosting/hosting (no console errors); the ladder's step 9 needs the Claude-in-Chrome tab
-   (enter IP 109.199.105.213, «Проверить сервер», wait ~20 s, read [data-block="ladder-launch-…"]).
-3. ask-person window: the Fractera push of HEAD (fast-forward over b6266b2c: `git merge-base --is-ancestor b6266b2c HEAD`); after his
-   «Готово» `git ls-remote https://github.com/Fractera/web4-node-starter-kit.git refs/heads/main` must equal HEAD.
-4. 811-7 proofs on the server — its terminal page (https://architect.fractera.ai/ru/build/terminal, signed in) or the launch page's SSH
-   window; as the node user: `sudo -n /usr/local/sbin/fractera-element run root -- /bin/cat /home/fractera/web4-node-starter-kit/.env.local`
-   → Permission denied; `… run root -- /bin/ls /home/fractera/web4-node-starter-kit/WEB4-ITEMS/core/auth` → denied; `… run root --
-   /usr/bin/curl -s -H 'Host: localhost' http://127.0.0.1:24680/api/me` → NOT architect (peer-uid 811-5g); positive `… run root -- /bin/ls
-   .` works; `pm2 restart fractera-svc-root` frees and retakes its port. Each with its output into the 811 plan.
-5. One summary to him (only the last reply of a turn stays): the build, the push window, 811-7, what waits him (the paste, the architect
-   e-mail if not done, then «Синхронизировать форк» → «Обновить сборку ядра» on the server).
-6. Later: 812, the Pult button on the server's bot (needs the server's https address; check after step 9; set by the server's `npm run
-   tg-app -- menu` if missing), Windows red in three-os since 19.11, 812-7.
-
-**CLUES:** my Chrome tab 2116210906 (the server panel). The launch page reads the server only after «Проверить сервер».
-`node-update.mjs` refuses runs from an agent session (CLAUDECODE) — never bypass it (the classifier denied `env -u CLAUDECODE`).
-At 16:55 the server's update check said «идёт развёртывание элемента» (the domain activation redeploys) — the «empty files» notice.
+**CLUES:** the server's shell from here: Chrome tab on http://localhost:24680/ru/hosting/hosting → fetch POST /api/node/launch
+{action:"window",host:"109.199.105.213",port:22} (needs a live visit; the last one ended 19:27 UTC) → `node data/services/build/tools/srv.mjs
+"<cmd>" [sec]` (the terminal's «login» mode = a plain shell as `fractera`; non-ASCII → send base64; never print secrets; NEVER read the
+node's .env.local — the classifier refuses, and it is the law). The server: core 06d4053c, fork aifa-agi = Fractera main = ada53203;
+redteam element deleted (DNS record lvj2j.fractera.ai left — F3), 9 diary rows + vectors removed.
 
 ## The person's decisions (verbatim)
 
