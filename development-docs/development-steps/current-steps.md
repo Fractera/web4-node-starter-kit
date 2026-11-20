@@ -281,70 +281,25 @@ without «Режим работы приложения», curl count 0), 17-53-2
 way: the site-settings words still say «Пока связь включена…» (implies a switch) → 793. WAITS Roma: the 3 new phrases, the template
 release push (v0.3.219 dry green) + pin, the core push, ONE server update, then the Marina test (804-8) and the summary.
 
-## Letter to my next session (written 2026-11-19 ~20:20 UTC, before the core build of 806, Opus)
+## Letter to my next session (written 2026-11-20 09:30 UTC, window 55 %, Opus)
 
-**UPDATE 00:16 UTC:** build 18ef2640 live; the danger zone seen in his Chrome (block + dialog naming the bot, «Удалить бота» locked until
-the tick; closed with Escape, nothing removed). He had saved at 23:49 the token of an EXISTING bot @fractera_factory_e90e_bot — the main
-channel came back with it at 00:13; my reply through it SENT (id 9). Window 06a62d58 closed. Telegram works again.
-**UPDATE 2026-11-20 ~00:20 UTC:** his «Danger zone удаление Telegram bot» + «если я ввёл своё название … подключить уже существующего
-бота» → committed: TelegramRemove (kit core client) + door action «remove» (route.ts.tpl) + removeBot in telegram.cjs; step 1 rows show
-the connected bot's real name (getMe). The templates have no bot page code (the core's kit draws it for root and custom) — no release.
-Core build now; then eyes of the danger zone, his new token (window 06a62d58 still waits).
-**UPDATE 23:50 UTC:** build fbdbab1e live; eyes: root's bot page = the old BotFather ladder with editable name fields; the main
-bot page shows @Fractera_build_mc47x_bot connected, admitted 1 — BUT Telegram answers 401 to its token (revoked yesterday). Window
-06a62d58: his new token from @BotFather (Revoke) on /ru/build/telegram step 2 (or a new bot). On «Готово»: a reply through the bot.
-**UPDATE ~21:30 UTC — Telegram rollback (his «да, делай откат»):** 51fb0dd1 + 0e25361c: the 8 bot-factory commits (798, 11-18 18:45–22:15)
-undone file by file (restored to 38d93914, its 9 new files deleted, the kit updated in 12 groups); item-birth kept 804 (my first restore
-lost it — fixed). The bot name/username fields are editable (CopyRow `editable`). The main bot @Fractera_build_mc47x_bot copied back
-from data/node/removed-bot-2026-11-18/main-bot into data/services/build/channel/telegram (the saved copy kept). Templates were never
-touched by the factory. Next: core build → I come back with the channel → check the bot answers, eyes of the bot page. Server: install
-done 21:03 (commit 4d91a242), dns-check/check ok, auth.fractera.ai 503, steps «activate» and the claim not done yet.
-**UPDATE ~20:40 UTC:** his «yes 100%» to erase the Easy Starter (/opt/fractera*) and Docker's unused, then «всегда стирать … на 100%» →
-c6bcaa44: leftovers.sh (Easy Starter trees, root ~/.cache + npm _cacache, docker prune; NEVER /etc/fractera = the node's own) runs inside
-every clear of a node + a door action `leftovers` {confirm: host} for a server already cleaned. Disk measured 20:23: root npm cache 24,
-swap ~16, /opt/fractera* 11, containerd 9, journal 5, node 3 (installing). The server install (started 20:19) runs; core build now
-(807 proof: a watcher again — reader lines must be > 0). After it: door `leftovers` on the server (from the localhost tab), then the
-install's end (bg watcher of architect.fractera.ai/api/health died with me — re-run), then summary 806-main.md.
-**UPDATE 20:20 UTC (usage limit hit):** core build f22c10be LIVE; 807 measured (bare rebuild → reader 0 lines) and fixed e56b73ad
-(serve.mjs writes logs/core-build.log) — proof at the NEXT core build; 806-7 cause fixed fec0535c (state.sh took «launch» as the running
-stage); fork pushed to fec0535c (Fractera push still his paste). Server: clear «с нуля» done 20:07–20:16 — free 3 → 72 GB of 145, copies
-none, verdict ok; domain step 3 redone (fractera.ai, dns, detect, check ok; www missing); FRESH INSTALL STARTED 20:19:14 (mode install).
-Open: 74 GB still used — 17 GB swap, the rest unknown: probe `heavy` (du, 30 s) timed out on big dirs — measure with a longer budget;
-the clear's 9-min runner cap was too short (erase took ~9 min; the tab was closed mid-way). Next: follow the install with `log`, eyes of
-the live terminal, then the 804/805 checks, Marina re-created, summary 806-main.md.
-
-Roma is AWAY (19:4x): «go to finish non stop after to do start install» and «i am not here, not call me to do all himself» — do 806 to
-the end and then run the clean install on the server YOURSELF through his Chrome (the extension is connected, tab group of this session,
-tab on http://localhost:24680/ru/hosting/hosting; the visit to 109.199.105.213 lives in that Chrome until 2026-11-20 19:27 UTC). Do not
-call him; report once at the end.
-- **The 18:55 install did NOT hang** (my 19:29 reading was wrong): it ended 19:37:34, the server's core answered 19:38 (commit 14aa1eff =
-  29cedcd9 + the server's own commit), fractera.ai 200, architect 200, auth.fractera.ai 503 at 19:40 (maybe still starting). The page
-  saw no sub-stage because state.sh/the page show only the running stage's sub — measure why install.progress.jsonl looked empty with
-  the new `log` reader (806-7).
-- **806 CODED, committed e878aa8c, prebuild RC=0** (plan new-steps/806-a-clean-server-install-with-a-live-terminal.md): clear.sh ERASES
-  a Fractera node + every older copy (`/root/fractera-cleared-*/nodes|launch-state`, `*.before-*`, ~/.npm ~/.cache ~/.pm2), keeps ssh,
-  Claude sign-in, letsencrypt, telegram.json, timings.json, a stranger's set-aside sites; `--keep-site` on «с нуля» keeps the node's nginx
-  site (the «updating» page); runs detached, the runner reads clear.out (≤9 min). probe.sh: `disk {totalGb, usedGb, copies, copiesGb}`.
-  log.sh: the live reader (lines of the running stage's log, steps with sec/lastSec, quietSec, cpuPct, memAvailMb, diskFreeGb,
-  timings.json). Door action `log` (needs this core build). Page: step 4 = ServerInstallLive (checklist + LiveLog, polls every 3 s,
-  one question at a time; quiet ≥3 min: busy cpu = long step, idle <15 % = red «looks stuck»); the clear dialog says «for good» + the
-  disk; the check shows «Диск: занято X из Y ГБ». services-install element header carries « · HH:MM:SS» (reaches the server with the
-  push). install.sh truncates its progress per run. Tests: scripts/server-install-live.test.mjs 13 ✓ (real clear on a scratch tree with
-  negatives, the reader), hosting.test 76 ✓ (the clear guard updated to the new rule).
-- **Next, in order:** (1) the core build detached (`node scripts/spawn-free.mjs scripts/serve.mjs rebuild` or the way the skill says);
-  a watcher for 807 runs detached from the scratchpad (watch807/watch-build-terminal.mjs → watch.jsonl + shots) — read it after the
-  build; (2) eyes of /ru/hosting/hosting; (3) the push of the core to his fork (origin) — the server clones the FORK; try `git push origin
-  main` myself; refused → it waits for him (say so at the end); Fractera push is his paste anyway; (4) on the server through his Chrome
-  (JS fetch to /api/node/launch from the localhost tab): `log` read (806-7 measure), then «clear» with `{confirm: host, fresh: true}`
-  → freedGb, then `install` mode install → follow with `log` until done; (5) eyes of the page during the install (the terminal moving);
-  (6) summary 806-main.md, plan deleted; report to Roma once.
-- 807 (the blue screen in the agent terminal during a build): CoreBuildWatch mounts only when `!live`; the watcher measures it.
-- Still owed from 804/805: his server test of both solutions (list below), the new phrases, «Пока связь включена…» (→ 793).
-- **What to check with him on the server**: (1) on the app's own domain «Войти другим аккаунтом» → the element admin's password → in;
-  (2) the drawer shows the admin pages; (3) «Добавить пользователя» new / existing e-mail; (4) «Настройки → Домен» without the address
-  row, the «Подробнее» link, the loader. A fresh install erases Marina — she is re-created after it (her own act or mine on his word).
-- Clues: pushes to Fractera = his paste via `npm run ask-person -- "<what>" --copy "<cmd>"`; the temporary address
-  https://reprint-posted-lovers-moderators.trycloudflare.com.
+Roma talks in TELEGRAM now: main bot = his existing @fractera_factory_e90e_bot (saved by him 2026-11-19 23:49; chat_id 90413601, ru).
+Done since 2026-11-19 evening (all committed, fork pushed up to cdac6592; Fractera push = his paste, not done):
+- 806 (clean server install with a live terminal) + 807 (core build live log) — closed, summary completed-steps/806-main.md.
+- Telegram rollback of the bot factory (798) — 51fb0dd1, 0e25361c (item-birth kept 804); editable bot name fields; danger zone
+  «Удалить бота…» on every bot page (4dc2ae2e, kit core client telegram-remove.client.tsx, door action «remove», removeBot in
+  telegram.cjs). Templates root/custom needed nothing (the core's kit draws their bot pages). Seen live in his Chrome.
+- The Pult was empty: its button led to architect.throughsongs.com, a name that no longer exists (throughsongs.com went to the server
+  109.199.105.213). 09:2x he switched the domain off on this computer; the tunnel rose a new temporary address
+  https://raise-trek-preston-developments.trycloudflare.com; I re-set the button (`npm run tg-app -- menu`) → 200 from outside. Asked
+  him to reopen the Pult (Telegram message 17). Note: the tunnel's own writer re-set the button at 09:23 still to the dead domain —
+  watch whether that repeats (a defect: the writer should read the domain state after the switch-off).
+- `npm run serve:publish -- --new` is refused by the auto-mode classifier — a window with --copy for him if needed.
+Open:
+- Server 109.199.105.213: install done 21:03 (4d91a242); dns-check/check ok; auth.fractera.ai answers 503; domain not activated; the
+  architect claim; Marina re-created; then his 804/805 test (list in the earlier letters / summaries 804-main, 805-main).
+- Fractera push (window with --copy), the new phrases of 804/805/806 to agree, «Пока связь включена…» (793).
+- Server disk after the clean: ~46 GB used besides the node (swap ~16, system, journal) — fine; leftovers are erased by every clear now.
 
 ## The person's decisions (verbatim)
 
