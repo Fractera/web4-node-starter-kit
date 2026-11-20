@@ -335,6 +335,16 @@ OLD session's exit, after `session.stop` + the new spawn 1.5 s later, runs `rese
 main card is `agentOf("build", false)` (lib/node/tg-app/state.ts:207) — the live session list never counts for the main agent. His
 «Разбудить» answered «already-running» (23:33:59, 23:34:26). Fix proposed (with 818-8, one core build): onExit skips the record and the
 health when a newer session of the service is registered; the main card counts the live list. Then `npm run agent-kit:update`.
+**Roma 354 (23:41): «В течение обе проблемы но мне ждут тестировать»** = fix both, fast. DONE in code: commit **19a8d7e9** (pushed to the
+fork, ls-remote = HEAD): lib/hosting/node-window.cjs + test (6, in the prebuild), installer/serve/element-readable/redteam; bridge onExit
+guard (all 12 kit copies via `agent-kit:update -- <group>`), state.ts mainLive. Prebuild RC=0. Window bb037e18 — Roma pressed «Готово»
+23:42 (the red team had used the visit already). **NEXT (in order):** (1) Mac core build `npm run serve:rebuild:detached` (~23:50) — I go
+off and come back by myself; (2) on return: `npm run serve:status`; check data/services/build/session-mode.json running:true after the
+return; (3) the server update: Chrome tab 2116210946 on http://localhost:24680/ru/hosting/hosting → the server's «Обновить» (the launch
+door, mode update; the server merges the fork 19a8d7e9) — ~15 min, watch https://architect.fractera.ai/api/health commit; (4) proofs from
+the internet: curl -sI https://z6esw.fractera.ai/logout?lang=ru and /login and https://fractera.ai/login → https://auth.fractera.ai/…;
+z6esw tell-core (SE3) reaches the main agent; redteam.sh z6esw → root (window lines); (5) tell Roma «готово к тесту»; (6) delete z6esw
+after his test (F3: its DNS record).
 
 **NEXT ACTION 2 — 819 (approved, Telegram 335 «Это ещё нужно пофиксить. Обязательно включи режим максимального размышления и
 необходимый навык дизайна. Аккуратно без лишней избыточный информации поправь тексты ошибок кнопки.»):** plan
