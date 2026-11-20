@@ -10,7 +10,8 @@ mkdir -p logs/dedicated-server
 export PROGRESS="$NODE_DIR/logs/dedicated-server/start-$PHASE.progress.jsonl" LOG="$NODE_DIR/logs/dedicated-server/start-$PHASE.log"
 : > "$PROGRESS"
 . "$NODE_DIR/scripts/dedicated-server/stages.sh"
-export PATH="$HOME/.local/bin:$PATH" NODE_ENV=
+# 811-4b: the node's git shim first — inside a walled element's folder git runs as that element (scripts/dedicated-server/node-git.sh)
+export PATH="/usr/local/lib/fractera/node-bin:$HOME/.local/bin:$PATH" NODE_ENV=
 emit start running
 
 # The last copy brought this computer's element env files back (with its paths): the installer writes them again for this machine —

@@ -286,8 +286,8 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 **NOW:** 811 — his «Вперед» (Telegram 122) = the «да» on the CODE of 811. DONE: 811-2 1d2a1dd7 (helper fractera-element), 811-3
 a56dc232 (birth/deletion: lib/hosting/element-wall.cjs), 811-4 9dad7aed (element code as fe-<id>: `run` for short programs, systemd units
 + bash shim under pm2 for the server/warm-up/preview). test:element-wall 36 ✓, tsc rc 0. NEXT 811-4b (git shim + ProtectProc — plan file),
-811-5 the agent as fe-<id> + hook relay — WAITS his answer (Telegram, asked ~14:00): on a server an element agent on the NODE's
-subscription would need the node's Claude token → own account per element, or lend through the core? Then ONE core build (ask him
+811-5 the agent as fe-<id> + hook relay — his «Да» (128): own Claude account per element on a server; without it the core works through
+its own session, the token never goes to the element. Then ONE core build (ask him
 first), push the fork, «Установить с нуля» on 109.199.105.213, proofs 811-7 (incl. pm2 restart frees the port). Talk in TELEGRAM.
 
 Roma talks in TELEGRAM now: main bot = his existing @fractera_factory_e90e_bot (saved by him 2026-11-19 23:49; chat_id 90413601, ru).
@@ -309,6 +309,9 @@ Open:
 - Server disk after the clean: ~46 GB used besides the node (swap ~16, system, journal) — fine; leftovers are erased by every clear now.
 
 ## The person's decisions (verbatim)
+
+- 2026-11-20 12:53 UTC, the owner (Telegram 128): «Да» — to «on a server every element has its own Claude account, its sign-in in the
+  admin cabinet (810); until it signs in, the core does the work through its own session, the token is never given to the element» (811-5).
 
 - 2026-11-20 11:22–11:45 UTC — his «Го» (90): core build 11:22–11:26 RC=0 LIVE e2f8faba (808+809+5ff18507); eyes
   logs/eyes/2026-11-20T11-28-03-236Z.png: «Активация домена» at home without «Дополнительные домены» (measure: not found), 0 console

@@ -313,3 +313,10 @@ module.exports = {
     ...serviceApps(),
   ],
 }
+
+// 811-4b: on a walled server every process of the node finds the node's git shim first — inside a custom element's folder git runs as
+// that element's own user (scripts/dedicated-server/node-git.sh); elsewhere the shim is the real git. Nothing changes anywhere else.
+{
+  const nodeBin = require('./lib/hosting/element-wall.cjs').nodeBinPath(root)
+  if (nodeBin) for (const app of module.exports.apps) app.env = { ...(app.env || {}), PATH: `${nodeBin}:${process.env.PATH || '/usr/local/bin:/usr/bin:/bin'}` }
+}

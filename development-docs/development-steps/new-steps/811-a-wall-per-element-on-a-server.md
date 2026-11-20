@@ -84,7 +84,10 @@ State: PLAN — waits the owner's «да». Order agreed 2026-11-20 (Telegram 81
 - 🔴 To measure live (811-7): pm2 stop/restart of a walled element frees its port; spawnSync timeouts of `run` (a sudo the node may not
   kill); node-side git in element folders as the node's user still trusts the element's .git/config (core.fsmonitor, hooks) — next.
 
-## 811-4b (next, mine — no decision needed)
+## 811-4b — CODED (2026-11-20 ~14:20 UTC): `scripts/dedicated-server/node-git.sh` → /usr/local/lib/fractera/node-bin/git, first on the
+node's PATH (ecosystem `nodeBinPath`, install.sh, start.sh); root's records 0755/0644 (id → folder, no secret) so the shim maps a folder;
+units `ProtectProc=invisible`. Test element-wall 44 ✓ (in folder / subfolder / relative -C / --git-dir / GIT_DIR / symlink → the
+element's; core, native, no user, `..` out, another user → the real git). The plan as it was:
 
 - Git in an element's folder run by the NODE (53 git call sites in the core, ~15 into element folders: element-*.ts, dashboard-rows,
   node-map, item-birth, element-import, element-preview, the github binding): the element controls its .git/config — core.fsmonitor and
@@ -93,6 +96,10 @@ State: PLAN — waits the owner's «да». Order agreed 2026-11-20 (Telegram 81
   folder to its element by its records) → git as fe-<id>; elsewhere /usr/bin/git. One file instead of 15 edits.
 - Process visibility: /proc is world-readable — a git URL with a token in another process's args is visible to every element user. The
   units get `ProtectProc=invisible`; the agent's shell (811-5) needs the same (a unit, or hidepid for the element group).
+
+## The owner's decision for 811-5 (Telegram 128, 2026-11-20 12:53 UTC): «Да» — on a server every element has its own Claude account
+(its sign-in in the admin cabinet, 810); until it signs in, the core does the work through its own session; the node's token never
+goes to an element.
 
 ## The shape (on a dedicated server only; a home computer is unchanged — one person)
 

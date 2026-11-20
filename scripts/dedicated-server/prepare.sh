@@ -45,9 +45,10 @@ stage git "su - $NODE_USER -c 'git config --global http.version HTTP/1.1'"
 # 811-2: the wall between elements — their users' group, homes and shared programs; the element helper beside the root helper, one
 # sudoers file for both (scripts/dedicated-server/fractera-element.sh).
 stage element-group "getent group fractera-el >/dev/null || groupadd --system fractera-el;
-  install -d -m 0711 -o root -g root /var/lib/fractera-el; install -d -m 0755 -o root -g root /usr/local/lib/fractera/bin"
+  install -d -m 0711 -o root -g root /var/lib/fractera-el; install -d -m 0755 -o root -g root /usr/local/lib/fractera/bin;
+  install -D -m 0755 -o root -g root '$HERE/node-git.sh' /usr/local/lib/fractera/node-bin/git"
 stage helper "install -d -m 0755 /etc/fractera; printf 'NODE_USER=%s\nNODE_DIR=%s\n' '$NODE_USER' '$NODE_DIR' > /etc/fractera/node.env;
-  install -d -m 0700 /etc/fractera/elements;
+  install -d -m 0755 /etc/fractera/elements;
   install -m 0755 -o root -g root '$HERE/fractera-root.sh' /usr/local/sbin/fractera-root;
   install -m 0755 -o root -g root '$HERE/fractera-element.sh' /usr/local/sbin/fractera-element;
   printf '%s ALL=(root) NOPASSWD: /usr/local/sbin/fractera-root, /usr/local/sbin/fractera-element\n' '$NODE_USER' > /etc/sudoers.d/fractera; chmod 0440 /etc/sudoers.d/fractera;

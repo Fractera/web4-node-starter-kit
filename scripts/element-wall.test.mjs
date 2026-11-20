@@ -164,7 +164,7 @@ t('prepare.sh (DRY_RUN): acl, the group, both helpers in one sudoers line, root\
   assert.match(r.stdout, /DRY element-group: getent group fractera-el \S+ \|\| groupadd --system fractera-el/)
   assert.match(r.stdout, /install -m 0755 -o root -g root '\S+fractera-element\.sh' \/usr\/local\/sbin\/fractera-element/)
   assert.match(r.stdout, /NOPASSWD: \/usr\/local\/sbin\/fractera-root, \/usr\/local\/sbin\/fractera-element/)
-  assert.match(r.stdout, /install -d -m 0700 \/etc\/fractera\/elements/)
+  assert.match(r.stdout, /install -d -m 0755 \/etc\/fractera\/elements/)
   const order = ['DRY user:', 'DRY element-group:', 'DRY helper:'].map((s) => r.stdout.indexOf(s))
   assert.ok(order.every((n, i) => n >= 0 && (i === 0 || n > order[i - 1])), `order ${order}`)
 })
@@ -303,5 +303,53 @@ t('the installer, the preview and its readers use the units', () => {
   assert.match(readFileSync(join(here, '..', 'app', 'api', 'architect', 'items', '[id]', 'preview', 'route.ts'), 'utf8'), /unitActive\(p\.unit\)/)
   assert.match(readFileSync(join(here, '..', 'ecosystem.config.cjs'), 'utf8'), /serveApp\(root, s, stamp\)/)
 })
+
+console.log('811-4b the node\'s git inside an element\'s folder runs as that element')
+{
+  const G = tmp('wall-git-')
+  const gnode = join(G, 'node'); const recs = join(G, 'elements')
+  for (const d of ['WEB4-ITEMS/user/shop/src', 'WEB4-ITEMS/user/fresh', 'WEB4-ITEMS/core/auth', 'lib']) mkdirSync(join(gnode, d), { recursive: true })
+  mkdirSync(recs); writeFileSync(join(recs, 'shop'), 'FOLDER=WEB4-ITEMS/user/shop\n')
+  symlinkSync(join(gnode, 'WEB4-ITEMS', 'user', 'shop'), join(gnode, 'lib', 'shop-link'))
+  const me = spawnSync('id', ['-un'], { encoding: 'utf8' }).stdout.trim()
+  const envFile = join(G, 'node.env')
+  const shimRun = (cwd, args, extra = {}, user = me) => {
+    writeFileSync(envFile, `NODE_USER=${user}\nNODE_DIR=${gnode}\n`)
+    const r = spawnSync('bash', [join(DS, 'node-git.sh'), ...args], { cwd, encoding: 'utf8', env: { PATH: process.env.PATH, HOME: G, FRACTERA_GIT_TEST_ENV: envFile, FRACTERA_GIT_TEST_RECORDS: recs, FRACTERA_GIT_TEST_SUDO: 'echo', ...extra } })
+    return `${r.stdout}${r.stderr}`.trim()
+  }
+  const H = '/usr/local/sbin/fractera-element run'
+  const shop = join(gnode, 'WEB4-ITEMS', 'user', 'shop')
+  t('in its folder: git status → the helper runs /usr/bin/git as shop', () => {
+    assert.equal(shimRun(shop, ['status']), `${H} shop -- /usr/bin/git status`)
+  })
+  t('in a subfolder: --in src', () => { assert.equal(shimRun(join(shop, 'src'), ['log', '-1']), `${H} shop --in src -- /usr/bin/git log -1`) })
+  t('from the core with a relative -C: made absolute, still the element\'s', () => {
+    assert.equal(shimRun(gnode, ['-C', 'WEB4-ITEMS/user/shop', 'rev-parse', 'HEAD']), `${H} shop -- /usr/bin/git -C ${gnode}/WEB4-ITEMS/user/shop rev-parse HEAD`)
+  })
+  t('--git-dir=… and GIT_DIR point into it: the element\'s', () => {
+    assert.match(shimRun(gnode, ['--git-dir=WEB4-ITEMS/user/shop/.git', 'log']), new RegExp(`^${H} shop -- /usr/bin/git --git-dir=${gnode}/WEB4-ITEMS/user/shop/.git log$`))
+    assert.match(shimRun(gnode, ['status'], { GIT_DIR: 'WEB4-ITEMS/user/shop/.git' }), new RegExp(`^${H} shop GIT_DIR=${gnode}/WEB4-ITEMS/user/shop/.git -- /usr/bin/git status$`))
+  })
+  t('through a symlink of the core into the element: still the element\'s (the real path decides)', () => {
+    assert.match(shimRun(join(gnode, 'lib', 'shop-link'), ['status']), new RegExp(`^${H} shop -- `))
+  })
+  t('negative: the core, a native, an element without its user, .. out of the element — the real git', () => {
+    for (const [cwd, args] of [[gnode, ['status']], [join(gnode, 'WEB4-ITEMS', 'core', 'auth'), ['status']], [join(gnode, 'WEB4-ITEMS', 'user', 'fresh'), ['status']], [gnode, ['-C', 'WEB4-ITEMS/user/shop/../..', 'status']]]) {
+      const out = shimRun(cwd, args); assert.doesNotMatch(out, /fractera-element/, `${cwd} ${args.join(' ')} → ${out}`)
+    }
+  })
+  t('negative: another user (an element, root) always gets the real git', () => {
+    assert.doesNotMatch(shimRun(shop, ['status'], {}, 'fractera-not-me'), /fractera-element/)
+  })
+  t('the installer puts the shim first; units hide other users\' processes; records readable', () => {
+    assert.match(readFileSync(join(DS, 'prepare.sh'), 'utf8'), /node-git\.sh' \/usr\/local\/lib\/fractera\/node-bin\/git/)
+    for (const f of ['install.sh', 'start.sh']) assert.match(readFileSync(join(DS, f), 'utf8'), /export PATH="\/usr\/local\/lib\/fractera\/node-bin:/)
+    assert.match(readFileSync(join(DS, 'launch.mjs'), 'utf8'), /'node-git\.sh'/)
+    assert.match(readFileSync(join(here, '..', 'ecosystem.config.cjs'), 'utf8'), /nodeBinPath\(root\)/)
+    assert.match(helperRun(['unit-start', 'shop', '--', 'node']).out, /-p ProtectProc=invisible/)
+    assert.match(helperRun(['add', 'shop', 'WEB4-ITEMS/user/shop']).out, /install -d -m 0755 \S+elements/)
+  })
+}
 
 console.log(`\n${passed} passed${process.exitCode ? ', some FAILED' : ''}`)

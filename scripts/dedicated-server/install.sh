@@ -12,7 +12,8 @@ export PROGRESS="$NODE_DIR/logs/dedicated-server/install.progress.jsonl" LOG="$N
 # 806-5: the checklist is about THIS run — its progress starts empty (every stage still skips what an earlier run finished)
 : > "$PROGRESS"
 . "$NODE_DIR/scripts/dedicated-server/stages.sh"
-export PATH="$HOME/.local/bin:$PATH" NODE_ENV=
+# 811-4b: the node's git shim first — inside a walled element's folder git runs as that element (scripts/dedicated-server/node-git.sh)
+export PATH="/usr/local/lib/fractera/node-bin:$HOME/.local/bin:$PATH" NODE_ENV=
 echo "### $(date -u +%Y-%m-%dT%H:%M:%SZ) — the install of this run begins" >> "$LOG"
 emit install running
 

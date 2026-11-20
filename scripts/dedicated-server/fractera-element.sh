@@ -11,7 +11,7 @@
 # 🔒 ROOT NEVER RECURSES INTO A TREE AN ELEMENT USER CAN WRITE WHILE IT RUNS: the ACLs are set at `add` (physical walk, -P), the chown back
 # at `remove` after every process of the user is killed — a planted symlink is never followed (setfacl -P, chown -P -h, find ! -type l).
 # 🔒 Every argument is checked against a pattern; the element's folder is read from root's own record (/etc/fractera/elements/<id>),
-# written at `add`, never from an argument of a later verb. The node's folder is read from /etc/fractera/node.env.
+# written at `add`, never from an argument of a later verb (readable by all since 811-4b: an id and a folder, no secret). The node's folder is read from /etc/fractera/node.env.
 # DRY: FRACTERA_ELEMENT_DRY=1 prints the acts instead of running them, with FRACTERA_ELEMENT_ETC / FRACTERA_ELEMENT_ROOT as test roots
 # (scripts/element-wall.test.mjs). sudo's env_reset strips both, so through sudo they never reach this script.
 set -u
@@ -58,8 +58,9 @@ case "$verb" in
     [ "$fresh" = 1 ] && act setpriv --no-new-privs --reuid="fe-$id" --regid="$GROUP" --init-groups -- env -i HOME="$HOMES/$id" \
       git config --global safe.directory "$dir"
     [ -e "$data" ] || act install -d -m 2770 -o "$NODE_USER" -g "$NODE_USER" "$data"
-    act install -d -m 0700 "$RECORDS"
-    if [ "$DRY" = 1 ]; then echo "DRY: record $RECORDS/$id FOLDER=$folder"; else printf 'FOLDER=%s\n' "$folder" > "$RECORDS/$id"; chmod 0600 "$RECORDS/$id"; fi
+    # root's record: readable by everyone (an id and a folder, no secret) — the node's git shim maps a folder to its element by it (811-4b)
+    act install -d -m 0755 "$RECORDS"
+    if [ "$DRY" = 1 ]; then echo "DRY: record $RECORDS/$id FOLDER=$folder"; else printf 'FOLDER=%s\n' "$folder" > "$RECORDS/$id"; chmod 0644 "$RECORDS/$id"; fi
     for d in "$dir" "$data"; do
       act chmod 2770 "$d"
       if [ "$fresh" = 1 ]; then act setfacl -R -P -m "$(acl_of "$id")" "$d"; else act setfacl -m "$(acl_of "$id")" "$d"; fi
@@ -118,7 +119,7 @@ case "$verb" in
       act install -m 0640 -o root -g "$NODE_USER" /dev/null "$log"
       sets=(); for e in "${base[@]}" "${envs[@]+"${envs[@]}"}"; do sets+=("--setenv=$e"); done
       act systemd-run --quiet --collect --unit="$unit" --uid="fe-$id" --gid="$GROUP" -p WorkingDirectory="$dir" -p UMask=0007 \
-        -p NoNewPrivileges=yes -p KillMode=control-group -p TimeoutStopSec=10 -p StandardOutput="append:$log" -p StandardError="append:$log" \
+        -p NoNewPrivileges=yes -p ProtectProc=invisible -p KillMode=control-group -p TimeoutStopSec=10 -p StandardOutput="append:$log" -p StandardError="append:$log" \
         "${sets[@]}" -- "$@"
       echo "UNIT_STARTED $unit"; exit 0
     fi
