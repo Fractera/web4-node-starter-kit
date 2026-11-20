@@ -148,6 +148,7 @@ const RULES = {
   'app/api/agents/person-lang/route.ts': ['isNode(callerOf(req.headers))'],
   'app/api/node/study/route.ts': ['isNode(callerOf(req.headers))'],
   'app/api/settings/changed/route.ts': ['isNode(callerOf(req.headers, { header: "x-settings-key" }))'],
+  'app/api/node/pair-key/route.ts': ['const me = callerElement(caller)', 'to === me', '!isCustom(entry)', 'pairKeyOf(me, keyFor(to))'],
 }
 const routes = (dir) => {
   const out = []
@@ -303,4 +304,21 @@ t('the installer asks this rule first and never carries a key of the whole node 
   assert.ok(src.includes('if (custom && NODE_KEYS.has(name)) continue'), 'the carry-over')
 })
 
+console.log('T5 — the pair key of the API between elements')
+const { pairKeyOf, pairCallerOf, elementOf } = createRequire(import.meta.url)('../lib/element-key.cjs')
+t('the callee reads the caller from its pair key with its own key; nobody else can use it', () => {
+  const pair = pairKeyOf('root', SHOPKEY) // root calls shop
+  assert.equal(pairCallerOf(pair, SHOPKEY), 'root')
+  const third = elementKeyOf('third', ENV.DATA_SECRET)
+  assert.equal(pairCallerOf(pair, third), null, 'a pair key for shop opens a third element')
+  assert.equal(pairCallerOf(ROOTKEY, SHOPKEY), null, 'root\'s own key at shop\'s door')
+  assert.equal(elementOf(pair, ENV.DATA_SECRET), null, 'a pair key as an element key at the core or a store')
+  assert.equal(call({ 'x-node-key': pair }), null, 'a pair key at the core\'s doors')
+  assert.equal(pairCallerOf(`third.${pair.split('.')[1]}`, SHOPKEY), null, 'a caller swapped in a pair key')
+})
+t('NEGATIVE CONTROL: with one shared key (before 818-7) every element called every door and no door knew who called', () => {
+  const old = (given) => given === ENV.SETTINGS_SECRET
+  assert.equal(old(ENV.SETTINGS_SECRET), true)
+  assert.equal(pairCallerOf(ENV.SETTINGS_SECRET, SHOPKEY), null)
+})
 console.log(`\nnode-key-split: ${passed} passed${process.exitCode ? ', FAILURES above' : ''}`)

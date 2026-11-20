@@ -2,7 +2,7 @@
 // graph, memory and the core's installer keep the same function), so one fixed secret and id must give one fixed key everywhere. A copy
 // that drifts would refuse every element of the node, or let a wrong key in — this guard stops the build first. Part of `prebuild`.
 import { createRequire } from 'node:module'
-const { elementKeyOf, elementOf, isElementId } = createRequire(import.meta.url)('../lib/element-key.cjs')
+const { elementKeyOf, elementOf, isElementId, pairKeyOf, pairCallerOf } = createRequire(import.meta.url)('../lib/element-key.cjs')
 
 const SECRET = 'fractera-test-secret'
 const ROOT = 'root.J4UAgJ_XnToPRyXPKaG5TB69cVHfiWh8FomI5RRQNHI'
@@ -18,9 +18,18 @@ ok(elementOf(ROOT, 'another-node-secret') === null, 'a key of another node passe
 ok(elementOf('root', SECRET) === null && elementOf('.x', SECRET) === null && elementOf(42, SECRET) === null, 'a key without a mac passes')
 ok(!isElementId('../x') && !isElementId('Root') && !isElementId('a.b') && !isElementId('-a') && !isElementId(''), 'a bad element id is taken')
 ok(elementKeyOf('../x', SECRET) === null, 'a key is made for a bad id')
+// 818-7d: the pair key — shop calling root's doors; root checks it with its own key (the same vector in the templates' lib/node-key.ts).
+const PAIR = 'shop.RC4iWl7CFXQjhqxT-kLwO1s0vhuPjg5-ow2YQPTwjE4'
+ok(pairKeyOf('shop', ROOT) === PAIR, 'the pair key\'s test vector changed (shop → root)')
+ok(pairCallerOf(PAIR, ROOT) === 'shop', 'a good pair key is not read')
+ok(pairCallerOf(PAIR, elementKeyOf('blocks', SECRET)) === null, 'a pair key for root opens another element')
+ok(pairCallerOf(`blocks.${PAIR.slice('shop.'.length)}`, ROOT) === null, 'a pair key with a swapped caller passes')
+ok(pairCallerOf(elementKeyOf('shop', SECRET), ROOT) === null, 'the caller\'s own key passes as a pair key')
+ok(elementOf(PAIR, SECRET) === null, 'a pair key passes as an element key')
+ok(pairCallerOf(PAIR, '') === null && pairKeyOf('../x', ROOT) === null && pairKeyOf('shop', '') === null, 'a pair key without a callee key or for a bad id')
 
 if (fails.length) {
   console.error(`✗ check-element-key (654-1; the core copy — 654-6):\n  ${fails.join('\n  ')}`)
   process.exit(1)
 }
-console.log('✓ check-element-key: the element key matches its test vector and refuses 8 bad forms (654-1; the core copy — 654-6)')
+console.log('✓ check-element-key: the element key and the pair key match their test vectors and refuse 14 bad forms (654-1, 818-7d; the core copy)')
