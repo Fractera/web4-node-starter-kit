@@ -64,6 +64,12 @@ t('811-6: add opens the way to its folder — o+x (never o+r) on the home, the n
   }
   assert.doesNotMatch(r.out, /chmod o\+r/)
 })
+t('811-6: run opens the same way before it acts as the user (the git shim runs git before the installer\'s add)', () => {
+  writeFileSync(join(ETC, 'elements', 'shop'), 'FOLDER=WEB4-ITEMS/user/shop\n')
+  const r = spawnSync('bash', ['-c', `grep -n 'open_way "\$folder" >/dev/null' ${JSON.stringify(helper)}`], { encoding: 'utf8' })
+  assert.equal(r.status, 0, 'run|unit-start|agent call open_way')
+  assert.equal(helperRun(['run', 'shop', '--', '/usr/bin/git', 'status']).status, 0)
+})
 t('negative: a repeat add (the user exists) never walks the folder as root — the two top folders only', () => {
   const shim = tmp('wall-shim-'); writeFileSync(join(shim, 'id'), '#!/bin/sh\nexit 0\n', { mode: 0o755 })
   const r = helperRun(['add', 'shop', 'WEB4-ITEMS/user/shop'], { PATH: `${shim}:${process.env.PATH}` })

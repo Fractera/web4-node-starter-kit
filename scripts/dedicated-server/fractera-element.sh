@@ -34,6 +34,17 @@ id_arg() { [[ "${1:-}" =~ $ID_RE ]] || die "bad element id"; }
 # A real directory under the node's folder, no symlink on the way (cd -P resolves; the result must equal the joined path).
 real_dir() { local p="$1"; [ -d "$p" ] && [ ! -L "$p" ] || return 1; [ "$(cd -P -- "$p" 2>/dev/null && pwd -P)" = "$p" ]; }
 record_of() { [ -f "$RECORDS/$1" ] || die "no element $1 here" 3; sed -n 's/^FOLDER=//p' "$RECORDS/$1" | head -1; }
+# 811-6 (measured live 2026-11-20 14:34 and 15:00 on the server: «git: failed to stat …/WEB4-ITEMS/user/root: Permission denied»): Ubuntu
+# makes a home 0750 and `walls` runs only at the node's start — the element's user could not even reach its own folder during the install
+# (the node's git shim runs git as it BEFORE the installer's `add`). Every verb that acts as the user opens the way first: pass-through
+# only (o+x, never o+r) on each folder above its folder and its data folder.
+open_way() {
+  local p
+  for p in "$(dirname -- "$NODE_DIR")" "$NODE_DIR" "$NODE_DIR/WEB4-ITEMS" "$NODE_DIR/$(dirname -- "$1")" "$NODE_DIR/data" "$NODE_DIR/data/services"; do
+    [ -d "$p" ] && [ ! -L "$p" ] && act chmod o+x "$p"
+  done
+  return 0
+}
 acl_of() { echo "u:fe-$1:rwX,g:$NODE_USER:rwX,o::---,d:u:fe-$1:rwX,d:g:$NODE_USER:rwX,d:o::---"; }
 
 verb="${1:-}"; shift || true
@@ -61,12 +72,7 @@ case "$verb" in
     # root's record: readable by everyone (an id and a folder, no secret) — the node's git shim maps a folder to its element by it (811-4b)
     act install -d -m 0755 "$RECORDS"
     if [ "$DRY" = 1 ]; then echo "DRY: record $RECORDS/$id FOLDER=$folder"; else printf 'FOLDER=%s\n' "$folder" > "$RECORDS/$id"; chmod 0644 "$RECORDS/$id"; fi
-    # 811-6 (measured live 2026-11-20 14:34 on the server: «git: failed to stat …/WEB4-ITEMS/user/root: Permission denied»): Ubuntu makes a
-    # home 0750 and `walls` runs only at the node's start — the user could not even reach its own folder during the install. The way to it
-    # is opened here: pass-through only (o+x, never o+r) on every folder above its folder and its data folder.
-    for p in "$(dirname -- "$NODE_DIR")" "$NODE_DIR" "$NODE_DIR/WEB4-ITEMS" "$NODE_DIR/$(dirname -- "$folder")" "$NODE_DIR/data" "$NODE_DIR/data/services"; do
-      [ -d "$p" ] && [ ! -L "$p" ] && act chmod o+x "$p"
-    done
+    open_way "$folder"
     for d in "$dir" "$data"; do
       act chmod 2770 "$d"
       if [ "$fresh" = 1 ]; then act setfacl -R -P -m "$(acl_of "$id")" "$d"; else act setfacl -m "$(acl_of "$id")" "$d"; fi
@@ -106,6 +112,7 @@ case "$verb" in
     fi
     folder="$(record_of "$id")" || exit 3
     dir="$NODE_DIR/$folder"; real_dir "$dir" || die "the element folder is gone"
+    open_way "$folder" >/dev/null
     # --in <subfolder> — a folder inside the element's own (a standalone build starts in .next/standalone), never outside it
     if [ "${1:-}" = "--in" ]; then
       sub="${2:-}"; [[ "$sub" =~ $PATH_RE ]] && [[ "$sub" != *..* ]] && real_dir "$dir/$sub" || die "bad --in folder"
