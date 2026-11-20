@@ -28,7 +28,6 @@ export function TelegramStep({ lang, state, words, busy, onAct }: { lang: string
   const t = state.telegram ?? null
   const [token, setToken] = useState("")
   const [asking, setAsking] = useState(false)
-  const [link, setLink] = useState<string | null>(null)
   const running = state.launch?.state === "running"
   const stage = state.progress.find((s) => s.state === "running")
   const bot = t?.username ? `@${t.username}` : t?.name ?? ""
@@ -56,29 +55,17 @@ export function TelegramStep({ lang, state, words, busy, onAct }: { lang: string
     const a = (await onAct("telegram", { op: "token", token: value, lines })) as { ok?: boolean } | null
     if (a?.ok) setAsking(false)
   }
-  async function getLink() {
-    const a = (await onAct("telegram", { op: "link" })) as { ok?: boolean; link?: string } | null
-    if (a?.ok && a.link) setLink(a.link)
-  }
-
   return (
     <div className="flex flex-col gap-3" data-block="server-launch-telegram" data-bot={t?.configured ? "on" : t?.pending ? "waits" : t?.skipped ? "later" : "none"}>
       {running ? <Small className="text-muted-foreground">{fill(w.installing, { stage: stage ? words.stage[stage.id] ?? stage.id : "…" })}</Small> : null}
       {!running && !state.core ? <Small className="text-muted-foreground">{w.waitNode}</Small> : null}
 
+      {/* the owner, Telegram 170 (2026-11-20): «активация бота должна быть на том шаге [«Сервер готов»] … прыгать с девятого на шестой шаг
+          никто не будет» — here only that the bot is connected and where it is activated */}
       {t?.configured ? (
-        <div className="flex flex-col gap-2" data-block="server-launch-telegram-on">
+        <div className="flex flex-col gap-1" data-block="server-launch-telegram-on">
           <Small className="text-foreground">{fill(w.on, { bot })}</Small>
-          <Small className="text-muted-foreground">{fill(w.admitted, { n: String(t.allowed) })}</Small>
-          <AgentLine busy={busy} lang={lang} onAct={onAct} state={state} words={w} />
-          {link ? (
-            <div className="flex flex-col gap-1" data-block="server-launch-telegram-link">
-              <a className={buttonVariants({ variant: "link", size: "sm", className: "w-fit px-0" })} href={link} rel="noopener noreferrer" target="_blank">{link}</a>
-              <Small className="text-muted-foreground">{w.linkNote}</Small>
-            </div>
-          ) : (
-            <Button className="w-fit" disabled={busy} onClick={() => void getLink()} size="sm" variant="outline">{w.link}</Button>
-          )}
+          <Small className="text-muted-foreground">{w.activateAt}</Small>
         </div>
       ) : null}
 
@@ -127,6 +114,35 @@ export function TelegramStep({ lang, state, words, busy, onAct }: { lang: string
           ) : null}
         </form>
       ) : null}
+    </div>
+  )
+}
+
+/** The bot's activation in the step «Сервер готов» (the owner, Telegram 170): the people admitted, the invite link the person opens and
+ *  presses «Старт» in, and the server's agent signed in to Claude Code. Drawn only once the bot is connected to the server's node. */
+export function TelegramActivation({ lang, state, words, busy, onAct }: { lang: string; state: LaunchState; words: ServerLaunchWords; busy: boolean; onAct: Act }) {
+  const w = words.telegram
+  const t = state.telegram ?? null
+  const [link, setLink] = useState<string | null>(null)
+  if (!t?.configured) return null
+  const bot = t.username ? `@${t.username}` : t.name ?? ""
+  async function getLink() {
+    const a = (await onAct("telegram", { op: "link" })) as { ok?: boolean; link?: string } | null
+    if (a?.ok && a.link) setLink(a.link)
+  }
+  return (
+    <div className="mt-4 flex flex-col gap-2 border-t pt-4" data-block="server-launch-telegram-activation">
+      <p className="font-medium text-foreground text-sm">{fill(w.activationTitle, { bot })}</p>
+      <Small className="text-muted-foreground">{fill(w.admitted, { n: String(t.allowed) })}</Small>
+      {link ? (
+        <div className="flex flex-col gap-1" data-block="server-launch-telegram-link">
+          <a className={buttonVariants({ variant: "link", size: "sm", className: "w-fit px-0" })} href={link} rel="noopener noreferrer" target="_blank">{link}</a>
+          <Small className="text-muted-foreground">{w.linkNote}</Small>
+        </div>
+      ) : (
+        <Button className="w-fit" disabled={busy} onClick={() => void getLink()} size="sm" variant="outline">{w.link}</Button>
+      )}
+      <AgentLine busy={busy} lang={lang} onAct={onAct} state={state} words={w} />
     </div>
   )
 }

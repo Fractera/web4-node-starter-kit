@@ -1,6 +1,7 @@
 "use client"
 // @part ladder-step — a step ladder with one rung open at a time (an accordion): a done rung is one line of what it did, a locked rung one muted line of what opens it; and the older single rung with its grey line
 import { Check, Lock, TriangleAlert } from "lucide-react"
+import { Spinner } from "@/components/ui/spinner"
 import { type ReactNode, useState } from "react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { H3 } from "@/components/ui/typography"
@@ -17,7 +18,8 @@ import { cn } from "@/lib/utils"
 
 /** `warn` — a rung passed without its result (skipped, «later»): the ladder goes on past it, its mark is an orange «!», never a check. */
 /** `error` (775, the owner 2026-11-17: «внутри есть ошибка — голубой кружок не покраснел»): a problem measured inside the rung — its mark turns red with «!». */
-export type Rung = { id: string; title: string; done: boolean; warn?: boolean; error?: boolean; summary?: string | null; body: ReactNode }
+/** `busy` — the rung's work runs right now (the server's installation): its mark turns, so a closed rung still shows it (Telegram 173). */
+export type Rung = { id: string; title: string; done: boolean; warn?: boolean; error?: boolean; busy?: boolean; summary?: string | null; body: ReactNode }
 type RungState = "done" | "warn" | "error" | "current" | "locked"
 
 /** `focus` — a rung a body sends the person back to on purpose («take a subdomain instead»); without it the ladder follows its current rung. */
@@ -40,7 +42,7 @@ export function Ladder({ id, rungs, locked, focus = null, className }: { id: str
           <AccordionItem data-block={`ladder-${id}-${r.id}`} data-rung={state} data-step={i + 1} disabled={!open[i]} key={r.id} value={r.id}>
             <AccordionTrigger className="px-4 py-3 disabled:opacity-100 [&:disabled>svg]:hidden [&>svg]:translate-y-1">
               <span className="flex min-w-0 items-start gap-3">
-                <RungMark n={i + 1} state={state} />
+                <RungMark busy={r.busy === true && state !== "locked" && state !== "error"} n={i + 1} state={state} />
                 <span className="flex min-w-0 flex-col gap-0.5 pt-0.5">
                   <span className={state === "current" ? "font-semibold text-foreground" : state === "done" || state === "warn" ? "text-foreground" : "text-muted-foreground"}>{r.title}</span>
                   {(state === "done" || state === "warn") && r.summary && value !== r.id ? <span className="break-words font-normal text-muted-foreground">{r.summary}</span> : null}
@@ -62,7 +64,9 @@ export function Ladder({ id, rungs, locked, focus = null, className }: { id: str
 }
 
 /** The rung's mark: a check when done, an orange «!» when passed without its result, its number in the accent where the ladder stands, a muted number while locked. */
-function RungMark({ n, state }: { n: number; state: RungState }) {
+function RungMark({ n, state, busy = false }: { n: number; state: RungState; busy?: boolean }) {
+  // the owner, Telegram 173 (2026-11-20): «для этого единственного аккордеона заменить голубую галочку на индикатор загрузки Loader который вращается»
+  if (busy) return <Spinner aria-hidden className="size-6 shrink-0 text-primary" data-block="ladder-rung-busy" role={undefined} />
   const look = state === "done" ? "bg-primary text-primary-foreground" : state === "warn" ? "bg-warning text-background" : state === "error" ? "bg-destructive text-background" : state === "current" ? "border border-primary text-primary" : "bg-muted text-muted-foreground"
   return (
     <span aria-hidden className={cn("inline-flex size-6 shrink-0 items-center justify-center rounded-full text-xs tabular-nums", look)}>

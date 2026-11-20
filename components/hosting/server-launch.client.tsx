@@ -12,7 +12,7 @@ import { CheckStep, strategyOf } from "@/components/hosting/server-launch-check.
 import { LaunchDanger } from "@/components/hosting/server-launch-danger.client"
 import { LaunchDomain } from "@/components/hosting/server-launch-domain.client"
 import { RepoStep } from "@/components/hosting/server-launch-repo.client"
-import { TelegramStep } from "@/components/hosting/server-launch-telegram.client"
+import { TelegramActivation, TelegramStep } from "@/components/hosting/server-launch-telegram.client"
 import { telegramWarn } from "@/lib/hosting/server-telegram.mjs"
 import { CertsLaunchStep, type ClaimShown, InstallStep, ReadyStep, RecheckStep } from "@/components/hosting/server-launch-end.client"
 import { LAUNCH_ORDER, launchDone, launchSummary, untilText } from "@/components/hosting/server-launch-rungs"
@@ -234,7 +234,7 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
     telegram: <TelegramStep busy={busy} lang={lang} onAct={act} state={state} words={words} />,
     recheck: <RecheckStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,
     certs: <CertsLaunchStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,
-    ready: <ReadyStep busy={busy} claim={claim?.host === target.host ? claim : { sent: null, claimed: null }} onAct={act} onClaim={(c) => setClaim({ ...c, host: target.host })} state={state} words={words} />,
+    ready: <><ReadyStep busy={busy} claim={claim?.host === target.host ? claim : { sent: null, claimed: null }} onAct={act} onClaim={(c) => setClaim({ ...c, host: target.host })} state={state} words={words} /><TelegramActivation busy={busy} lang={lang} onAct={act} state={state} words={words} /></>,
   }
   return (
     <section className="my-6 flex flex-col gap-3" data-block="server-launch" data-host={target.host}>
@@ -242,7 +242,7 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
       <LaunchRememberSwitch on={remembering} onChange={(v) => toggle(v, target)} words={words.remember} />
       {error ? <Small className="text-destructive" data-block="server-launch-error">{error}</Small> : null}
       {busy && doing ? <Small className="flex items-center gap-2 text-muted-foreground" data-block="server-launch-doing" role="status"><Spinner className="size-4" />{words.doing[doing] ?? words.doing.any}</Small> : null}
-      <Ladder id="launch" locked={words.locked} rungs={LAUNCH_ORDER.map((id) => ({ id, title: words.step[id], done: done[id], warn: id === "telegram" && telegramWarn(state.telegram), summary: summary[id], body: body[id] }))} />
+      <Ladder id="launch" locked={words.locked} rungs={LAUNCH_ORDER.map((id) => ({ id, title: words.step[id], done: done[id], busy: id === "install" && state.launch?.state === "running", warn: id === "telegram" && telegramWarn(state.telegram), summary: summary[id], body: body[id] }))} />
       {strategy !== "running" && (state.relation?.kind === "unrelated" || state.probe?.fractera?.head) ? <LaunchDanger busy={busy} dialogUi={dialogUi} onAct={async (a, x) => { await act(a, x) }} state={state} words={words} /> : null}
     </section>
   )

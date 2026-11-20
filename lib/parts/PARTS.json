@@ -4264,6 +4264,7 @@
         "components/domain/domain-server-pipeline.client.tsx",
         "components/element-docs/element-orders.client.tsx",
         "components/element-docs/reverse-engineering.client.tsx",
+        "components/hosting/ladder-step.tsx",
         "components/hosting/server-busy.client.tsx",
         "components/hosting/server-cert-state.client.tsx",
         "components/hosting/server-install-live.client.tsx",

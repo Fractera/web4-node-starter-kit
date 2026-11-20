@@ -75,7 +75,7 @@ export type ServerLaunchWords = {
   /** 758: step 5 — the server's own bot while the server installs; `{stage}` the installation's stage, `{tail}` the token's last four, `{bot}` @name */
   telegram: {
     text: string; how: string[]; nameLabel: string; usernameLabel: string; copy: string; copied: string; openBotFather: string; replace: string; cancel: string; found: string; notFound: string; label: string; tokenNote: string; save: string; later: string; laterNote: string; connectNow: string
-    pending: string; rejected: string; on: string; admitted: string; link: string; linkNote: string; installing: string; waitNode: string
+    pending: string; rejected: string; on: string; activateAt: string; activationTitle: string; admitted: string; link: string; linkNote: string; installing: string; waitNode: string
     /** 761-2/761-14: the bot's own lines — `{site}` `{link}` the site, `{terminal}` `{subscription}` the server panel's pages (or `noPanel`) */
     lines: { active: string; inactive: string; noSubscription: string; noPanel: string }
     /** 761-1: can the server's agent answer */
@@ -227,6 +227,8 @@ const en: ServerLaunchWords = {
     connectNow: "Connect a bot",
     pending: "The bot {bot}is checked by Telegram, its token …{tail} is kept on the server; the bot switches on by itself when the server's node starts.",
     on: "Bot {bot} is connected to the server's main agent.",
+    activateAt: "The bot is activated in the step «Server ready»: the invite link and the server's Claude Code sign-in.",
+    activationTitle: "Telegram bot of the server {bot}",
     admitted: "People admitted: {n}. Open the link and press Start — the server's agent greets you.",
     link: "Get the invite link",
     linkNote: "The link admits whoever opens it first: open it yourself, do not forward it.",
@@ -426,6 +428,8 @@ const ru: ServerLaunchWords = {
     connectNow: "Подключить бота",
     pending: "Бот {bot}проверен Telegram, его токен …{tail} хранится на сервере; бот включится сам, когда запустится узел сервера.",
     on: "Бот {bot} подключён к главному агенту сервера.",
+    activateAt: "Активация бота — в шаге «Сервер готов»: ссылка-приглашение и вход Claude Code на сервере.",
+    activationTitle: "Telegram-бот сервера {bot}",
     admitted: "Допущено людей: {n}. Откройте ссылку и нажмите «Старт» — агент сервера поздоровается.",
     link: "Получить ссылку-приглашение",
     linkNote: "Ссылка допускает того, кто откроет её первым: откройте сами, не пересылайте.",
