@@ -43,6 +43,10 @@ One script, three places, one verdict.
 - 812-6 my rule (self-review, the owner's yes): a server-side change is never called «ready for a server» on DRY proofs; the second plane
   is the self-test on Linux.
 
+- 812-7 (found 2026-11-20 16:25, Telegram 202/203): a continued install rebuilds the core whenever HEAD moves (`build.sha` = the whole
+  HEAD) — a fix in `scripts/` alone cost ~12 min of core build under memory pressure (10 elements running, 350 MB free). The core is
+  rebuilt only when what it is built from changed (`git diff --name-only <built>..HEAD` outside scripts/dedicated-server, docs, tests).
+
 ## Price named aloud
 
 My work ~2–3 h; GitHub's runner costs nothing while the repository is public; +~10 s per server install; no resident process.
