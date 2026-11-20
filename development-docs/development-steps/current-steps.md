@@ -283,8 +283,9 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 17:15 UTC, window ~60 %, Opus max — reset before the release build)
 
-**NOW:** the release 813+814 is coded locally (af62f528, after the fork's 67aecf80) — next: prebuild → the Mac core build → the Fractera
-push window → 811-7 proofs. The fork stays at 67aecf80 for his sync test (below).
+**NOW (17:40):** prebuild GREEN after three leftovers of 813/814 fixed (25ba5438 final-check probe → claimOpen · 60674263 ClaimWords so
+check:ready-words holds · 9b24f455 plan names 6–8 words). The Mac core build launched detached at HEAD 9b24f455 — next: step 2 below.
+The fork stays at 67aecf80 for his sync test (below).
 
 **WHO WAITS:** Roma (owner) is at lunch — Telegram 223 (17:00): «У меня перерыв на обед продолжались без остановки действуй от моего
 имени делай все что необходимо меня не ещё не спрашивай». Talk in TELEGRAM (chat_id 90413601, ru, colour marks). Only TWO things stay
