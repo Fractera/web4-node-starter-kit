@@ -66,8 +66,10 @@ case "$verb" in
     act install -d -m 0700 -o "fe-$id" -g "$GROUP" "$HOMES/$id"
     # its own git trusts its own folder (owned by the node: git refuses a repository of another owner) — written AS the user, so root
     # never writes into a home the user controls
-    [ "$fresh" = 1 ] && act setpriv --no-new-privs --reuid="fe-$id" --regid="$GROUP" --init-groups -- env -i HOME="$HOMES/$id" \
-      git config --global safe.directory "$dir"
+    # ✗ 2026-11-20 15:55 live: run from the caller's folder (the node's, closed to the user) git could not read its cwd and wrote nothing
+    # — so it runs from the user's own home now, and every `run` also names the folder safe for that one call (below)
+    [ "$fresh" = 1 ] && ( cd -- "$HOMES/$id" 2>/dev/null || cd /; act setpriv --no-new-privs --reuid="fe-$id" --regid="$GROUP" --init-groups -- env -i HOME="$HOMES/$id" \
+      git config --global safe.directory "$dir" )
     [ -e "$data" ] || act install -d -m 2770 -o "$NODE_USER" -g "$NODE_USER" "$data"
     # root's record: readable by everyone (an id and a folder, no secret) — the node's git shim maps a folder to its element by it (811-4b)
     act install -d -m 0755 "$RECORDS"
@@ -128,7 +130,11 @@ case "$verb" in
     [ "${1:-}" = "--" ] && [ -n "${2:-}" ] || die "$verb <id> [KEY=VALUE …] -- <program> [args …]"
     shift
     base=(HOME="$HOMES/$id" USER="fe-$id" LOGNAME="fe-$id" SHELL=/bin/bash LANG=C.UTF-8 TERM="${TERM:-xterm-256color}"
-      PATH="$SHARED_BIN:/usr/local/bin:/usr/bin:/bin" DISABLE_AUTOUPDATER=1)
+      PATH="$SHARED_BIN:/usr/local/bin:/usr/bin:/bin" DISABLE_AUTOUPDATER=1
+      # 811-6 (live 15:55: «git config --global --add safe.directory …/WEB4-ITEMS/user/root»): the element's folder belongs to the node, so
+      # the user's git refuses it as «dubious ownership»; git respects safe.directory given in the command scope (git-config, SCOPES —
+      # protected configuration), so every call names its own element's folder as safe, whatever its home's .gitconfig holds
+      GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0="$NODE_DIR/$folder")
     if [ "$verb" = agent ]; then
       unit="fractera-el-$id-$tag"
       act systemctl stop "$unit" >/dev/null 2>&1; act systemctl reset-failed "$unit" >/dev/null 2>&1

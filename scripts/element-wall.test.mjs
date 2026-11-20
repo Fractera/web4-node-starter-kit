@@ -70,6 +70,11 @@ t('811-6: run opens the same way before it acts as the user (the git shim runs g
   assert.equal(r.status, 0, 'run|unit-start|agent call open_way')
   assert.equal(helperRun(['run', 'shop', '--', '/usr/bin/git', 'status']).status, 0)
 })
+t('811-6: every call names its element\'s folder safe for git (command scope); add writes .gitconfig from the user\'s own home', () => {
+  const r = helperRun(['run', 'shop', '--', '/usr/bin/git', 'status'])
+  assert.match(r.out, new RegExp(`GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe.directory GIT_CONFIG_VALUE_0=${NODE.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/WEB4-ITEMS/user/shop `))
+  assert.match(readFileSync(helper, 'utf8'), /cd -- "\$HOMES\/\$id" 2>\/dev\/null \|\| cd \/; act setpriv/)
+})
 t('negative: a repeat add (the user exists) never walks the folder as root — the two top folders only', () => {
   const shim = tmp('wall-shim-'); writeFileSync(join(shim, 'id'), '#!/bin/sh\nexit 0\n', { mode: 0o755 })
   const r = helperRun(['add', 'shop', 'WEB4-ITEMS/user/shop'], { PATH: `${shim}:${process.env.PATH}` })
@@ -102,7 +107,7 @@ t('run shop PORT=24700 -- node server.js', () => {
   const r = helperRun(['run', 'shop', 'PORT=24700', 'CLAUDE_CONFIG_DIR=/x/y', '--', 'node', 'server.js'])
   assert.equal(r.status, 0, r.out)
   assert.match(r.out, /setpriv --no-new-privs --reuid=fe-shop --regid=fractera-el --init-groups -- env -i HOME=\S+fractera-el\/shop USER=fe-shop/)
-  assert.match(r.out, /PATH=\S+\/usr\/local\/lib\/fractera\/bin:\/usr\/local\/bin:\/usr\/bin:\/bin DISABLE_AUTOUPDATER=1 PORT=24700 CLAUDE_CONFIG_DIR=\/x\/y node server.js$/m)
+  assert.match(r.out, /PATH=\S+\/usr\/local\/lib\/fractera\/bin:\/usr\/local\/bin:\/usr\/bin:\/bin DISABLE_AUTOUPDATER=1 GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=safe\.directory GIT_CONFIG_VALUE_0=\S+\/WEB4-ITEMS\/user\/shop PORT=24700 CLAUDE_CONFIG_DIR=\/x\/y node server.js$/m)
 })
 t('negative: LD_PRELOAD, PATH, HOME, NODE_OPTIONS, BASH_ENV are refused', () => {
   for (const e of ['LD_PRELOAD=/x.so', 'PATH=/tmp', 'HOME=/root', 'NODE_OPTIONS=--require=/x', 'BASH_ENV=/x']) refused(['run', 'shop', e, '--', 'node'], /not allowed/)
