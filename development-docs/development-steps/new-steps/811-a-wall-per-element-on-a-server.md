@@ -207,3 +207,7 @@ the source, sync. Only custom (walled) elements change; natives and home compute
 - Continue ran the server's OLD installer (only helpers come from the Mac). Fixed 3c8877e4: launch.sh's do_source — an install that
   never went live (no `phase: live` mark) and whose own side since the fork is only development-docs is reset to the fork's head on
   every continue (tested with real git: renewed / own change kept / live never touched). His continue 16:09 took it: the core rebuilds.
+- 811-6 LIVE 2026-11-20 16:29 UTC: the install ended — the server's core 1f7b36ae answers, https://fractera.ai serves root's own page
+  (title «Self-hosted AI workspace…», 106 KB) — root cloned by the node, moved to its tag, built, its start files copied and served AS
+  fe-root (unit under pm2 through element-shim). Ladder steps 1–6 done. The core build of this run took ~12 min under memory pressure
+  (10 elements up, 350 MB free) — 812-7.
