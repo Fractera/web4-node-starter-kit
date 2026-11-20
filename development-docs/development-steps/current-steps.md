@@ -283,10 +283,10 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 12:20 UTC, window ~45 %, Opus — context reset at the end of 808/809)
 
-**NOW:** 811 — 811-5 + 5g committed (5f376c4d, eaa81f12), prebuild RC=0. His «Запускай сборку» (140, 13:35 UTC): core build
-started ~13:37 detached (serve:rebuild). ON RETURN: serve:status, eyes a page (0 console errors), then push the fork (git push to the
-fork; 808 lives there), tell him to press «Установить с нуля» on the server page (his act — a window, npm run ask-person), then 811-7
-proofs on 109.199.105.213 (list in the plan). Telegram chat_id 90413601, ru, colour marks.
+**NOW:** 811 — core build 13:37–13:41 RC ok, LIVE 74d0a7b3; eyes logs/eyes/2026-11-20T13-41-53-482Z.png 0 console errors; on the Mac a
+forged x-fractera-peer is stripped (still owner@machine — no wall here), hook-relay door without key 401. Fork pushed e2f8faba..74d0a7b3
+(ls-remote ✓). Window 4635a86e «Установить с нуля» waits for him (its «Готово» wakes me). THEN 811-7 on 109.199.105.213 (plan list +
+the live measures of 5b/5g). Telegram chat_id 90413601, ru, colour marks.
 
 Roma talks in TELEGRAM now: main bot = his existing @fractera_factory_e90e_bot (saved by him 2026-11-19 23:49; chat_id 90413601, ru).
 Done since 2026-11-19 evening (all committed, fork pushed up to cdac6592; Fractera push = his paste, not done):
