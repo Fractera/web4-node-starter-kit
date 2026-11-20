@@ -312,6 +312,15 @@ Open:
 
 ## The person's decisions (verbatim)
 
+- 2026-11-20 10:49–10:54 UTC, the owner (Telegram 76, 78, 81): own apps only on a dedicated server; on a home computer (Mac/Windows) the
+  node's own domain + element subdomains, NO additional element domains, NO own-app choice at birth («имелось в виду … дополнительные домены
+  для элементов»); «В целом я во всём согласен … внести окончательные изменения в ядро все которые накопили за сегодняшнюю работу сделать
+  новую сборку и потом приступить к изменению бутстрап чтобы мы могли вернуться к процессу установки терминалов для элементов». ORDER
+  proposed (Telegram 82): 809 core (home/server rules + the element «Домен» page: home = address only, server = launch-style ladder;
+  layout to him first; the stale throughsongs.com entry of data/node/domains.json) → ONE core build (808 + 809 + 5ff18507) → push +
+  server update (his word) → 811 the server installer: a Linux user per element (the OS wall) → 810 the element admin's cabinet (Claude
+  Code sign-in, terminal, Telegram, Cron, action windows) on top of the wall. Auth screens' language — the sign-in element, any time.
+
 - 2026-11-20 10:38 UTC, the owner (Telegram 70): «В личном кабинете на странице администратора не хватает страницы в которой жизнь
   необходимо для работы администратора: Вход Claude Code Agent · Терминал · Telegram · крон события» → step 810 (to plan): the custom
   template's admin drawer (today Accounts · Design · Site settings) + doors of the core. 🔴 Found: element agents run as the node's OS user
