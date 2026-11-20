@@ -30,6 +30,13 @@ State: AGREED — the owner (Telegram 241, 17:33): «Поддерживаю тв
   — the core process is frozen for the whole read; the board asks it on open, 0.8 s after every action and every 3 s while deploying.
 - Mac (fccfbd29, before 815-8): GET /api/node/deploy 6.7 s; /api/health sent DURING it waited 6.4 s (the freeze, the negative control).
 
+## Proof on the Mac (603bc4e1, 2026-11-20 18:16 UTC)
+
+- 5870162d (815-8 only): GET /api/node/deploy 5.9–6.0 s, /api/health sent during it 4.9–5.5 s — the freeze stayed (a negative result:
+  async git status was not the cause).
+- 603bc4e1 (815-9, rollback versions in one git process, kept): GET /api/node/deploy 0.30–0.33 s (1.0 s cold), /api/health during it
+  0.006–0.013 s (0.6 s cold). The server gets 815 with the next release.
+
 ## Substeps
 
 - 815-1 measure on the server after the release lands: GET /api/node/update, GET /api/node/deploy, POST preflight — each alone and the
@@ -44,6 +51,8 @@ State: AGREED — the owner (Telegram 241, 17:33): «Поддерживаю тв
 - 815-6 the board's start: the same busy state on «Развернуть» (the dialog's button) and the update door answers without spawnSync.
 - 815-8 the deployments door reads every element at once with async git (`elementCodeStateAsync`); the sync helper stays for the
   single-element callers (rollback, the element page).
+- 815-9 the rollback versions (`lib/deploy/previous-version.cjs`) from the registry history read once by `git cat-file --batch`, kept
+  per registry state (mtime, size; at most 5 min) — measured 5.7 s → 333 ms → 4 ms.
 - 815-7 proof: tests of the banner states (DOM probe as in final-check: behind / synced / running / failed), eyes of the banner on the Mac
   and on the server through the SSH window; the owner's live walk on the next release.
 
