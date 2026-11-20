@@ -300,23 +300,15 @@ day» — the node key goes three ways; research first, then a plan with a test 
 - Tests: scripts/redteam-holes.test.mjs 10 (in the prebuild), element-wall 66, server-install-live 19, hosting 77. Prebuild green at 9fd65ba6.
 - Memory: one server = one Fractera project, nothing foreign (Telegram 277) — data/services/build/memory/server-clean-100-percent.md.
 
-**H6 — research to do FIRST (read-only), then the plan to Roma:** the installer writes the SAME SETTINGS_SECRET into the core and every
-element (lib/web4-items/element-settings-door.ts:9 «кладёт в оба конца»). Element scripts send it as X-Node-Key (ask-core.mjs → POST
-/api/agents/wake and /api/agents/session; need.mjs → /api/node/needs + wake; done; tell/reply-core); core doors compare with their own
-(`nodeKeyOk` in app/api/agents/wake/route.ts). Measured on the server: root's .env.local has SETTINGS_SECRET and ELEMENT_KEY, no DATA_SECRET.
-Design candidate (no template change if it holds): a CUSTOM element gets SETTINGS_SECRET = HMAC(node SETTINGS_SECRET, id) (derived); the
-core identifies a derived caller by trying the registry ids and lets it only to its own affairs (wake only the main agent `build` with
-the text marked as from <id>, its own done/session, needs/notice/person-asks from = caller); the core calls a custom element's doors
-(settings, describe, signal) with that element's derived key. QUESTIONS to answer before the plan: (1) every core→element call that
-sends the node key — grep SETTINGS_SECRET / X-Settings-Key / x-node-key in lib, app, scripts (catalog-push.ts, element-settings-door.ts,
-project-settings-source.mjs, quiet-build.cjs, agent-return.cjs, element-design-store.ts …); (2) does the CONFIG native element send
-the signal `/api/settings/changed` to custom elements itself with the node key (then CONFIG needs derived keys — a native template
-change; the core must not read or edit WEB4-ITEMS: ask via `npm run card -- config` / its README, or the core's own call sites);
-(3) i2i: element→element doors guarded by X-Node-Key (door:add) — a derived key breaks them; is any i2i door in use (npm run contacts
---all, cards)? Options: the callee asks the core «whois» for X-Element-Key, or i2i stays for later (named to Roma); (4) element-side
-code that reads SETTINGS_SECRET for anything else (custom template — via the release-template workshop only after Roma's yes).
-Then: plan file 819? NO — H6 is inside 818 (818-7), a test checklist first (memory: test-plan-checklist-first), his «да», code, tests
-with negative controls, prebuild, ASK, ONE Mac build, `redteam.sh` cannot run on the Mac (no wall) — the live proof is on the server.
+**H6 — RESEARCH DONE 20:00 UTC (read-only), plan = section «818-7» of the 818 plan file, sent to Roma in Telegram, WAITS his «да»
+(A2 my pick / A1).** The four questions answered there: (1) the core's outbound calls to elements — 9 call sites named in 818-7b; (2)
+CONFIG signals every subscribed element itself with the node key (its card) → CONFIG release; (3) i2i API rests on the shared key, none in
+use (root is the only custom element) → pair keys (A2) or later (A1); (4) the custom template sends SETTINGS_SECRET to the core, CONFIG
+(MCP read), Stripe (the selling skill), neighbours (a2a.mjs, door:add) — the value flip keeps them all working except neighbours. NEW
+FACT: on the server there is no network wall between fe-* users, so neighbours' settings/A2A/integration doors and memory/Stripe are open
+to any element TODAY (818's «no hole» was wrong). The design reuses ELEMENT_KEY (lib/element-key.cjs; the stores already verify it).
+NEXT after «да»: 818-7a → 7g in order, the checklist T1–T6 first in tests with negative controls; natives and templates via the
+release-template skill (load it first); prebuild, ASK, ONE Mac build.
 
 **AFTER H6, in order:** prebuild (read RC=0) → ask Roma → the Mac build (spawn-free serve rebuild) → proof on the Mac: curl the temporary
 address with `x-agent-identity: x` → /api/me must be 401 (was «x@agent») → the Fractera push window (`npm run ask-person -- … --copy
