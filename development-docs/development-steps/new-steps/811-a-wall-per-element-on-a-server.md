@@ -19,6 +19,18 @@ State: PLAN — waits the owner's «да». Order agreed 2026-11-20 (Telegram 81
   is a hook (`elements:isolate`) — Claude Code's `!` runs a shell past it.
 - The node's keys: `.env.local` of the core; elements reach data only through doors with their own key (`X-Element-Key`).
 
+## 811-1 measured by code (2026-11-20 ~12:00 UTC; sent to him, Telegram 121)
+
+- `claude` on a server lives in the node user's home (`install.sh` ensure-claude → ~/.local/bin/claude) → element users cannot run it →
+  the installer puts it in a shared read-only place.
+- The element agent's hooks are the CORE's files (`lib/agent-kit/limits.cjs`, `pulse.cjs`, `modes.cjs`, `scripts/element-boundary-hook.mjs`)
+  and write into the core's `data/services/<id>` (context, pulse, autoMemoryDirectory) → read-only access to exactly these hook files;
+  `data/services/<id>` owned by the element's user.
+- An element's server is started by its watcher («сторож», `lib/web4-items/elements-watch.cjs`, under the node's pm2), not by pm2 directly
+  → the watcher starts it through the fixed launcher as `fe-<id>`: no pm2 per user, no systemd (my pick).
+- npm cache and home per element user: `/var/lib/fractera-el/<id>` (disk measured live).
+- Live later (after the fresh install): the element's bot, its build under its user, «Permission denied» on the neighbours.
+
 ## The shape (on a dedicated server only; a home computer is unchanged — one person)
 
 - Every CUSTOM element gets its own Linux user `fe-<id>` (no shell login, no sudo) at its birth on a server, removed at its deletion;
