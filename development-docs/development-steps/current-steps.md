@@ -283,14 +283,13 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 12:20 UTC, window ~45 %, Opus — context reset at the end of 808/809)
 
-**NOW:** 811-6 DONE live 16:29 — the server 109.199.105.213 installed (core 1f7b36ae answers; https://fractera.ai serves root's real
-page — root built and runs as fe-root under the wall; ladder steps 1–6 done, the bot connected). 4 wall failures fixed + continue
-renews the code. NOW: the core build on the Mac (his yes 175: after the install) — 77cdf5de (bot activation in «Сервер готов», install
-spinner), 46bb1871 (CPU label) + the helper commits. ON RETURN: serve:status + eyes; tell him; his steps 7–9 (records recheck, certs,
-«Включить домен», the architect's e-mail) with the new step 9; then 811-7 proofs through the server's own terminal (the node user may run
-the helper: `sudo -n /usr/local/sbin/fractera-element run root -- cat <node>/.env.local` → denied, ls another element → denied, curl
--H 'Host: localhost' 127.0.0.1:24680/api/me as fe-root → not architect); Fractera push window for the new commits; 812 on his yes.
-Telegram chat_id 90413601, ru, colour marks. My Chrome tab 2116210896 (the server page) may be closed after.
+**NOW:** the server is live (811-6 done); he does ladder steps 7–9. I code the release 813 (www required — 2a018987, local) + 814
+(step 9 one road, the bot's first message, 814-5 the notice's reason), his yes (218). 🔒 HIS TEST OF THE PERSON'S PATH (Telegram 220/221):
+for this release NOTHING goes to the fork (aifa-agi) — `git push origin` is OFF until the server test is done; the fork stays at
+67aecf80; the release goes ONLY to Fractera (his «!» paste of `git push https://github.com/Fractera/web4-node-starter-kit.git
+<release>:refs/heads/main`, a fast-forward over 67aecf80); then on the server's panel he presses «Синхронизировать форк» → «Обновить
+сборку ядра». The Mac gets the release by its own core build. 811-7 proofs after step 9. 812 asked (in this release or after).
+Telegram chat_id 90413601, ru, colour marks.
 
 Roma talks in TELEGRAM now: main bot = his existing @fractera_factory_e90e_bot (saved by him 2026-11-19 23:49; chat_id 90413601, ru).
 Done since 2026-11-19 evening (all committed, fork pushed up to cdac6592; Fractera push = his paste, not done):
