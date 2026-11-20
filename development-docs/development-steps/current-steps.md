@@ -300,8 +300,8 @@ day» — the node key goes three ways; research first, then a plan with a test 
 - Tests: scripts/redteam-holes.test.mjs 10 (in the prebuild), element-wall 66, server-install-live 19, hosting 77. Prebuild green at 9fd65ba6.
 - Memory: one server = one Fractera project, nothing foreign (Telegram 277) — data/services/build/memory/server-clean-100-percent.md.
 
-**H6 — RESEARCH DONE 20:00 UTC (read-only), plan = section «818-7» of the 818 plan file, sent to Roma in Telegram, WAITS his «да»
-(A2 my pick / A1).** The four questions answered there: (1) the core's outbound calls to elements — 9 call sites named in 818-7b; (2)
+**H6 — RESEARCH DONE 20:00 UTC (read-only), plan = section «818-7» of the 818 plan file, sent to Roma in Telegram (285); APPROVED 19:58 UTC, Telegram 286:
+«Делай по максимуму на максимальном размышлении» = A2, everything.** The four questions answered there: (1) the core's outbound calls to elements — 9 call sites named in 818-7b; (2)
 CONFIG signals every subscribed element itself with the node key (its card) → CONFIG release; (3) i2i API rests on the shared key, none in
 use (root is the only custom element) → pair keys (A2) or later (A1); (4) the custom template sends SETTINGS_SECRET to the core, CONFIG
 (MCP read), Stripe (the selling skill), neighbours (a2a.mjs, door:add) — the value flip keeps them all working except neighbours. NEW

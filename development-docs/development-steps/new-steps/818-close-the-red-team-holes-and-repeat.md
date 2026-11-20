@@ -39,11 +39,12 @@ the table «attack → holds / HOLE» to the owner.
 - Tests: `scripts/redteam-holes.test.mjs` (9, in the prebuild; the negative control — red on the old code), element-wall 66,
   server-install-live 18.
 
-## 818-7 H6 — the node key leaves the custom elements (owner: variant A now, Telegram 280; plan sent, waits «да»)
+## 818-7 H6 — the node key leaves the custom elements (owner: variant A now, Telegram 280; plan Telegram 285; APPROVED A2, Telegram 286)
 
 The owner, Telegram 280 (19:30 UTC): «что можно сделать сейчас надо делать сейчас каждая переустановка и сборка ядра это целая вечность
 чем меньше этих процессов тем лучше». Telegram 284 (19:33): «Помнишь что взаимодействие элементов у нас запланировано по двум протоколом
-i2i и апи если сейчас это имеет значение».
+i2i и апи если сейчас это имеет значение». Telegram 286 (19:58), to the plan (285) and its fork: «Делай по максимуму на максимальном
+размышлении» = A2, everything, Opus max.
 
 **Found by the code (research 2026-11-20 19:35–20:00 UTC; the live proof is part C).** The installer gives every custom element the node
 key `SETTINGS_SECRET` (kind `secret`, the custom template's `.env.example`). It opens, from inside any custom element:
