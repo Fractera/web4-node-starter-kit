@@ -104,7 +104,7 @@
     {
       "id": "config",
       "repo": "https://github.com/Fractera/fractera-config-starter.git",
-      "version": "v1.2.52",
+      "version": "v1.2.53",
       "provides": [
         "project-settings"
       ],
@@ -166,7 +166,7 @@
     {
       "id": "stripe",
       "repo": "https://github.com/Fractera/fractera-stripe-starter.git",
-      "version": "v1.3.45",
+      "version": "v1.3.46",
       "port": 24691,
       "provides": [
         "payments"
