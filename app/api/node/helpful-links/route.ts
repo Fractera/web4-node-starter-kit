@@ -1,6 +1,6 @@
 // @api give the node's checked helpful links that fit a need
-import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
+import { callerOf } from "@/lib/node/caller"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { findLinks, present } from "@/lib/helpful-links.cjs"
 
@@ -13,18 +13,10 @@ export const dynamic = "force-dynamic"
 
 const HEADERS = { "Cache-Control": "no-store" }
 
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
-
 type Link = Parameters<typeof present>[0]
 
 export async function GET(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
+  if (!callerOf(req.headers)) {
     const denied = await requireRoles(req, ["architect"])
     if (denied) return denied
   }

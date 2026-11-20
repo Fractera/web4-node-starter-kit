@@ -1,6 +1,6 @@
 // @api check a site's robots.txt and find its terms before analysis
-import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
+import { callerOf } from "@/lib/node/caller"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { siteRules, siteRulesText } from "@/lib/site-rules.mjs"
 
@@ -13,16 +13,8 @@ export const dynamic = "force-dynamic"
 
 const HEADERS = { "Cache-Control": "no-store" }
 
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
-
 export async function GET(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
+  if (!callerOf(req.headers)) {
     const denied = await requireRoles(req, ["architect", "admin"])
     if (denied) return denied
   }

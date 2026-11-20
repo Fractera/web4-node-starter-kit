@@ -1,6 +1,6 @@
 // @api list an element's Telegram bots or write through one
-import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
+import { callerOf, isNode } from "@/lib/node/caller"
 
 // БОТЫ ЭЛЕМЕНТА ДЛЯ ЯДРА (шаг 552-6; владелец 2026-10-20: «научи ядро при необходимости работать с этими агентами то есть если ядро
 // решила написать человеку через Messenger она должна сумме это сделать равную как и все прочее»). POST с ключом узла:
@@ -18,16 +18,8 @@ type Telegram = {
   send: (service: string, slot: string, text: string) => Promise<{ ok: boolean; sent?: number; error?: string }>
 }
 
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
-
 export async function POST(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
+  if (!isNode(callerOf(req.headers))) {
     return NextResponse.json({ ok: false, error: "node key required (X-Node-Key)" }, { status: 401, headers: HEADERS })
   }
   let body: { service?: unknown; slot?: unknown; text?: unknown }

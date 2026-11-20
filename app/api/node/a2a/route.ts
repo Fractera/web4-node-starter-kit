@@ -1,6 +1,6 @@
 // @api find which node element can do a job and where
-import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
+import { callerOf } from "@/lib/node/caller"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { findEntries, nodeEntries } from "@/lib/a2a/node-registry"
 import { telegramConnected } from "@/lib/a2a/telegram-relay"
@@ -14,14 +14,6 @@ import power from "@/lib/web4-items/element-power.cjs"
 // `telegram` — подключён ли бот элемента (токен и допущенный), измеряется по его папке при запросе (408-5): реестр и визитка
 // элемента читают одну и ту же папку, поэтому не расходятся.
 export const dynamic = "force-dynamic"
-
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
 
 // 671-3 (670-8, «the caller waits»): спит ли сосед — `by-rule` (усыпило правило нагрузки, привратник держит порт и будит на первый
 // вызов: вызывающий ждёт холодный старт и повторяет) или `off` (выключил человек: вызов отказывает сразу, с причиной). Реестр читается
@@ -37,7 +29,7 @@ function sleepOf(id: string): Sleep {
 const withTelegram = <T extends { id: string }>(e: T) => ({ ...e, telegram: telegramConnected(e.id), ...sleepOf(e.id) })
 
 export async function GET(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
+  if (!callerOf(req.headers)) {
     const denied = await requireRoles(req, ["architect", "admin"])
     if (denied) return denied
   }

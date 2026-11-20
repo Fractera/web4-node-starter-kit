@@ -1,6 +1,6 @@
 // @api list the main agent action requests and confirm one done
-import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
+import { actsFor, callerOf, refusal, type Caller } from "@/lib/node/caller"
 
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
@@ -20,13 +20,6 @@ export const dynamic = "force-dynamic"
 const ROOT = process.cwd()
 const noStore = { headers: { "Cache-Control": "no-store" } }
 
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
 const str = (v: unknown): string | null => (typeof v === "string" ? v : null)
 const lang2 = (req: NextRequest): "en" | "ru" => (req.nextUrl.searchParams.get("lang") === "ru" ? "ru" : "en")
 
@@ -50,11 +43,17 @@ export async function GET(req: NextRequest) {
 }
 
 /** An element agent's own requests: put, drop or list — with the node key and its id (761-16d). */
-async function fromElement(req: NextRequest) {
+async function fromElement(req: NextRequest, caller: Caller) {
   let body: { from?: unknown; text?: unknown; href?: unknown; why?: unknown; hint?: unknown; copy?: unknown; secret?: unknown; drop?: unknown; done?: unknown; list?: unknown }
   try { body = await req.json() } catch { return NextResponse.json({ ok: false, reason: "invalid JSON" }, { status: 400, ...noStore }) }
   const from = typeof body.from === "string" ? body.from.trim() : ""
   if (from === "build" || !known(from)) return NextResponse.json({ ok: false, reason: "from must be an element of this node" }, { status: 400, ...noStore })
+  // 818-7a (817 H6): an element's own key puts, lists and closes only its own requests — a key for ANOTHER element's account is never
+  // asked of the person in its name; the node key — for any.
+  if (!actsFor(caller, from)) {
+    const r = refusal(caller)
+    return NextResponse.json({ ok: false, reason: r.reason }, { status: r.status, ...noStore })
+  }
   if (body.list === true) return NextResponse.json({ ok: true, asks: (asks.open(ROOT) as Ask[]).filter((a) => a.by === from) }, noStore)
   // 761-16b: the person answered «Готово · <id>» in Telegram and the element's running agent got it — it closes its own request, no wake
   if (typeof body.done === "string") {
@@ -83,8 +82,9 @@ async function fromElement(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const key = req.headers.get("x-node-key")
   if (key) {
-    if (!nodeKeyOk(key)) return NextResponse.json({ ok: false, reason: "node key required (X-Node-Key)" }, { status: 401, ...noStore })
-    return fromElement(req)
+    const caller = callerOf(req.headers)
+    if (!caller) return NextResponse.json({ ok: false, reason: refusal(null).reason }, { status: 401, ...noStore })
+    return fromElement(req, caller)
   }
   if (isTemporaryPublicAddress(req)) return NextResponse.json({ ok: false, reason: "temporary address" }, { status: 403, ...noStore })
   const denied = await requireRoles(req, ["architect", "admin"])

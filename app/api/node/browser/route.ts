@@ -1,6 +1,6 @@
 // @api let an element bring a page of the person's browser forward
-import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
+import { actsFor, callerOf, refusal } from "@/lib/node/caller"
 
 import { listServices } from "@/lib/microservices/registry"
 import browser from "@/lib/node/browser.cjs"
@@ -19,19 +19,12 @@ export const dynamic = "force-dynamic"
 const ROOT = process.cwd()
 const HEADERS = { "Cache-Control": "no-store" }
 
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
-
 type Result = { ok: boolean; reason?: string; host?: string; profile?: string; front?: string }
 
 export async function POST(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
-    return NextResponse.json({ ok: false, reason: "node key required (X-Node-Key)" }, { status: 401, headers: HEADERS })
+  const caller = callerOf(req.headers)
+  if (!caller) {
+    return NextResponse.json({ ok: false, reason: refusal(null).reason }, { status: 401, headers: HEADERS })
   }
   let body: { from?: unknown; focus?: unknown; open?: unknown; profile?: unknown }
   try { body = await req.json() } catch {
@@ -41,6 +34,11 @@ export async function POST(req: NextRequest) {
   const known = (listServices() as unknown as { id: string }[]).some((s) => s.id === from)
   if (from === "build" || !/^[a-z][a-z0-9-]{0,39}$/.test(from) || !known) {
     return NextResponse.json({ ok: false, reason: "from must be an element of this node" }, { status: 400, headers: HEADERS })
+  }
+  // 818-7a (817 H6): an element's own key acts only for itself; the node key — for anyone.
+  if (!actsFor(caller, from)) {
+    const r = refusal(caller)
+    return NextResponse.json({ ok: false, reason: r.reason }, { status: r.status, headers: HEADERS })
   }
   const denied = browser.elementMay(ROOT, from) as string | null
   if (denied) {

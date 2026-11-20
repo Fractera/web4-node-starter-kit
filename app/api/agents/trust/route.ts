@@ -1,6 +1,6 @@
 // @api the person's yes to the folder trust question of an element agent
-import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
+import { callerOf, isNode } from "@/lib/node/caller"
 
 // ДОВЕРИЕ ПАПКЕ — ОТВЕТ ЧЕЛОВЕКА (шаг 604; владелец 2026-10-26: «Достаточно будет просто отправить запрос … вопрос задается один раз
 // в случае подтверждения больше не повторяется пользователи говорить да хоккей подтверждаю и всё»). POST `{ service }` с ключом узла
@@ -13,16 +13,8 @@ const HEADERS = { "Cache-Control": "no-store" }
 
 type Trust = (key: string) => (Record<string, unknown> & { ok: boolean }) | Promise<Record<string, unknown> & { ok: boolean }>
 
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
-
 export async function POST(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
+  if (!isNode(callerOf(req.headers))) {
     return NextResponse.json({ ok: false, reason: "node key required (X-Node-Key)" }, { status: 401, headers: HEADERS })
   }
   let body: { service?: unknown }

@@ -1,6 +1,6 @@
 // @api render the project header and footer for an element
-import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
+import { callerOf } from "@/lib/node/caller"
 import { coreShellData } from "@/lib/shell/core-shell-data"
 import { kitManifest, kitRender } from "@/lib/shell-kit/kit"
 import type { ShellData } from "@/components/shell/shell-types"
@@ -21,14 +21,6 @@ export const dynamic = "force-dynamic"
 const HEADERS = { "Cache-Control": "no-store" }
 const LANG = /^[a-z]{2,3}(-[A-Za-z0-9]{2,8})?$/
 const HREF = /^\/[A-Za-z0-9/_\-.?=&{}%]{0,200}$/
-
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
 
 const MAX_BODY = 256 * 1024
 
@@ -65,7 +57,7 @@ async function render(props: ShellKitProps) {
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ lang: string }> }) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
+  if (!callerOf(req.headers)) {
     return NextResponse.json({ ok: false, error: "node key required (X-Node-Key)" }, { status: 401, headers: HEADERS })
   }
   const { lang } = await params
@@ -95,7 +87,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ lan
 }
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ lang: string }> }) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
+  if (!callerOf(req.headers)) {
     return NextResponse.json({ ok: false, error: "node key required (X-Node-Key)" }, { status: 401, headers: HEADERS })
   }
   const { lang } = await params

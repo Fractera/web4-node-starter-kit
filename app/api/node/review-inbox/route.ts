@@ -1,8 +1,8 @@
 // @api element agent leaves a self-review finding about something outside it
-import { timingSafeEqual } from "node:crypto"
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 import { NextRequest, NextResponse } from "next/server"
+import { actsFor, callerOf, refusal } from "@/lib/node/caller"
 
 // ЯЩИК УЗЛА ДЛЯ НАХОДОК РАЗБОРА (шаг 410-4; владелец 2026-10-06 согласовал план: «находку не про свой элемент агент не чинит, а
 // кладёт в общий ящик ядра»). Агент элемента после разбора (навык `self-review`) нашёл, что спотыкался не о свой навык, а о ядро,
@@ -14,19 +14,12 @@ const HEADERS = { "Cache-Control": "no-store" }
 const KEEP = 500
 const FILE = () => join(process.cwd(), "data", "review-inbox.jsonl")
 
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
-
 const str = (v: unknown, n: number) => (typeof v === "string" ? v.trim().slice(0, n) : "")
 
 export async function POST(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
-    return NextResponse.json({ ok: false, error: "node key required (X-Node-Key)" }, { status: 401, headers: HEADERS })
+  const caller = callerOf(req.headers)
+  if (!caller) {
+    return NextResponse.json({ ok: false, error: refusal(null).reason }, { status: 401, headers: HEADERS })
   }
   let body: Record<string, unknown>
   try { body = (await req.json()) as Record<string, unknown> } catch {
@@ -35,6 +28,11 @@ export async function POST(req: NextRequest) {
   const row = { at: new Date().toISOString(), from: str(body.from, 64), where: str(body.where, 120), signal: str(body.signal, 1200), proposal: str(body.proposal, 1200) }
   if (!row.from || !row.signal || !row.proposal) {
     return NextResponse.json({ ok: false, error: "from, signal and proposal are required" }, { status: 400, headers: HEADERS })
+  }
+  // 818-7a (817 H6): an element's own key acts only for itself; the node key — for anyone.
+  if (!actsFor(caller, row.from)) {
+    const r = refusal(caller)
+    return NextResponse.json({ ok: false, error: r.reason }, { status: r.status, headers: HEADERS })
   }
   const file = FILE()
   mkdirSync(join(process.cwd(), "data"), { recursive: true })

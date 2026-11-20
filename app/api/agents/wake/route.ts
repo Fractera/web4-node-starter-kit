@@ -1,6 +1,6 @@
 // @api wake the Claude Code agent of a node element without a browser
-import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
+import { callerOf, isNode, markedFrom, refusal, wakeAllowed } from "@/lib/node/caller"
 
 import supervision from "@/lib/web4-items/supervision.cjs"
 import { telegramConnected } from "@/lib/a2a/telegram-relay"
@@ -23,17 +23,10 @@ type Wake = (service: string, opts: { text?: string; from?: string; about?: stri
 // (`data/node/supervision.json`, `lib/web4-items/supervision.cjs`): включается без вопроса в Telegram — человек этот вопрос уже
 // решил, выбрав надзор. Нет записи надзора — флаг ничего не меняет.
 
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
-
 export async function POST(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
-    return NextResponse.json({ ok: false, reason: "node key required (X-Node-Key)" }, { status: 401, headers: HEADERS })
+  const caller = callerOf(req.headers)
+  if (!caller) {
+    return NextResponse.json({ ok: false, reason: refusal(null).reason }, { status: 401, headers: HEADERS })
   }
   let body: { service?: unknown; reason?: unknown; text?: unknown; from?: unknown; about?: unknown; declineUrl?: unknown; supervised?: unknown }
   try { body = await req.json() } catch {
@@ -42,6 +35,21 @@ export async function POST(req: NextRequest) {
   const service = typeof body.service === "string" ? body.service.trim() : ""
   if (!/^[a-z][a-z0-9-]{0,39}$/.test(service)) {
     return NextResponse.json({ ok: false, reason: "service must be an element id" }, { status: 400, headers: HEADERS })
+  }
+  // 818-7a (817 H6): an element's own key wakes only its own agent, or the main agent in its own name — never a neighbour's agent, never
+  // with a reason of the node; its words for the main agent carry the name its KEY gave, and no mark of the node it could forge.
+  const me = isNode(caller) ? null : (caller as { element: string }).element
+  if (me) {
+    if (!wakeAllowed(caller, { ...body, service })) {
+      const r = refusal(caller, "only its own agent, or the main agent in its own name")
+      return NextResponse.json({ ok: false, reason: r.reason }, { status: r.status, headers: HEADERS })
+    }
+    if (service === "build") {
+      body.from = me
+      body.declineUrl = undefined
+      if (typeof body.text === "string") body.text = markedFrom(me, body.text)
+      if (typeof body.about === "string") body.about = body.about.replace(/⟦/g, "[").replace(/⟧/g, "]")
+    }
   }
   const wake = (globalThis as { __web4AgentWake?: Wake }).__web4AgentWake
   if (typeof wake !== "function") {

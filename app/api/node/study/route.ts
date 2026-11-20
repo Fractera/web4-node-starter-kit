@@ -1,8 +1,8 @@
 // @api list test accounts for analysis, open a login window, end one
 import { spawn, spawnSync } from "node:child_process"
-import { timingSafeEqual } from "node:crypto"
 import { join } from "node:path"
 import { NextRequest, NextResponse } from "next/server"
+import { callerOf, isNode } from "@/lib/node/caller"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { endStudy, listStudy, siteOf, stateOf } from "@/lib/study/study.mjs"
 
@@ -16,21 +16,13 @@ export const dynamic = "force-dynamic"
 
 const HEADERS = { "Cache-Control": "no-store" }
 
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
-
 function killTree(pid: number) {
   if (process.platform === "win32") spawnSync("taskkill", ["/PID", String(pid), "/T", "/F"], { windowsHide: true, stdio: "ignore" })
   else { try { process.kill(-pid, "SIGTERM") } catch { try { process.kill(pid, "SIGTERM") } catch { /* gone */ } } }
 }
 
 export async function GET(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
+  if (!isNode(callerOf(req.headers))) {
     const denied = await requireRoles(req, ["architect", "admin"])
     if (denied) return denied
   }

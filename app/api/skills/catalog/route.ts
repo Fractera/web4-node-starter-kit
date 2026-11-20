@@ -1,6 +1,6 @@
 // @api an element finds checked catalog skills by a request's meaning
-import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
+import { callerOf } from "@/lib/node/caller"
 import { findInCatalogFile } from "@/lib/agent-kit/skills/catalog-index.mjs"
 
 // THE SKILLS CATALOG FOR THE ELEMENTS (node step 627-4). The node's deep memory looks here for a skill when no service handles a request
@@ -12,16 +12,8 @@ export const dynamic = "force-dynamic"
 
 const HEADERS = { "Cache-Control": "no-store" }
 
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
-
 export async function POST(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
+  if (!callerOf(req.headers)) {
     return NextResponse.json({ ok: false, error: "node key required (X-Node-Key)" }, { status: 401, headers: HEADERS })
   }
   const body = (await req.json().catch(() => null)) as { query?: unknown; n?: unknown; terms?: unknown; rephrasings?: unknown } | null

@@ -1,6 +1,6 @@
 // @api pin one agent conversation so the log keeps it
-import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
+import { actsFor, callerOf, refusal } from "@/lib/node/caller"
 import { dataFetch } from "@/lib/fractera/data-service"
 
 // ЗАКРЕПИТЬ БЕСЕДУ В ЖУРНАЛЕ (шаг 412-5). Владелец 2026-10-06 выбрал «б»: беседы, на которые ссылается сводка заказа, журнал
@@ -10,21 +10,19 @@ export const dynamic = "force-dynamic"
 
 const HEADERS = { "Cache-Control": "no-store" }
 
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
-
 export async function POST(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
-    return NextResponse.json({ ok: false, error: "node key required (X-Node-Key)" }, { status: 401, headers: HEADERS })
+  const caller = callerOf(req.headers)
+  if (!caller) {
+    return NextResponse.json({ ok: false, error: refusal(null).reason }, { status: 401, headers: HEADERS })
   }
   let body: { contextId?: unknown; by?: unknown }
   try { body = await req.json() } catch {
     return NextResponse.json({ ok: false, error: "invalid JSON" }, { status: 400, headers: HEADERS })
+  }
+  // 818-7a (817 H6): an element pins in its own name (`by`, `scripts/order-save.mjs` of the templates); the node — in any.
+  if (!actsFor(caller, body.by)) {
+    const r = refusal(caller)
+    return NextResponse.json({ ok: false, error: r.reason }, { status: r.status, headers: HEADERS })
   }
   if (typeof body.contextId !== "string" || !body.contextId.trim()) {
     return NextResponse.json({ ok: false, error: "contextId is required" }, { status: 400, headers: HEADERS })

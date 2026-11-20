@@ -1,6 +1,6 @@
 // @api keep the capability requests of the node elements
-import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
+import { actsFor, callerElement, callerOf, isNode, refusal } from "@/lib/node/caller"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { createNeed, listNeeds, readNeed } from "@/lib/web4-items/needs.mjs"
 
@@ -12,19 +12,18 @@ export const dynamic = "force-dynamic"
 
 const HEADERS = { "Cache-Control": "no-store" }
 
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
-
 export async function POST(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
-    return NextResponse.json({ ok: false, error: "node key required (X-Node-Key)" }, { status: 401, headers: HEADERS })
+  const caller = callerOf(req.headers)
+  if (!caller) {
+    return NextResponse.json({ ok: false, error: refusal(null).reason }, { status: 401, headers: HEADERS })
   }
   const body = (await req.json().catch(() => null)) as { from?: unknown; need?: unknown; use?: unknown } | null
+  // 818-7a (817 H6): an element's own key asks only in its own name; the node key — in any.
+  if (!isNode(caller) && body && body.from === undefined) body.from = callerElement(caller)
+  if (!actsFor(caller, body?.from)) {
+    const r = refusal(caller)
+    return NextResponse.json({ ok: false, error: r.reason }, { status: r.status, headers: HEADERS })
+  }
   try {
     const need = createNeed(process.cwd(), { from: body?.from, need: body?.need, use: body?.use })
     return NextResponse.json({ ok: true, need }, { headers: HEADERS })
@@ -34,17 +33,21 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
+  const caller = callerOf(req.headers)
+  if (!caller) {
     const denied = await requireRoles(req, ["architect"])
     if (denied) return denied
   }
+  // 818-7a: an element reads only its own needs.
+  const own = caller && !isNode(caller) ? callerElement(caller) : null
   const id = req.nextUrl.searchParams.get("id")
   if (id) {
-    const need = readNeed(process.cwd(), id)
+    const found = readNeed(process.cwd(), id) as { from?: unknown } | null
+    const need = own && found?.from !== own ? null : found
     return need
       ? NextResponse.json({ ok: true, need }, { headers: HEADERS })
       : NextResponse.json({ ok: false, error: "no such need" }, { status: 404, headers: HEADERS })
   }
-  const from = req.nextUrl.searchParams.get("from")
+  const from = own ?? req.nextUrl.searchParams.get("from")
   return NextResponse.json({ ok: true, needs: listNeeds(process.cwd(), { from: from || null }) }, { headers: HEADERS })
 }

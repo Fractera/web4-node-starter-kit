@@ -15,6 +15,7 @@ import { authBaseFromHost, connectedDomainAuthBase, publicAuthBaseFor } from "@/
 import { authUrl as nodeAuthUrl } from "@/lib/microservices/urls";
 import { signInClosedPage } from "@/lib/auth/sign-in-closed.mjs";
 import { crossSiteRefusal } from "@/lib/auth/cross-site-wall";
+import { fromInternet, isElementDoor } from "@/lib/node/element-doors.mjs";
 import {
   SUPPORTED_LANGUAGES,
   DEFAULT_LANGUAGE,
@@ -58,7 +59,7 @@ const PUBLIC_API_PREFIXES = [
   "/api/health",
   // 818-5 (817 F1): a walled element has no session and is not the owner at the machine; these two doors name their caller by its own
   // key (X-Element-Key, an HMAC of the node's DATA_SECRET over its id) and refuse the internet themselves — the key guards them, not the
-  // gate. The doors of the NODE key stay behind the gate for elements (817 H6: every element holds SETTINGS_SECRET).
+  // gate. The doors an element reaches by its own key through X-Node-Key pass the gate by the rule below (818-7a), not by this list.
   "/api/node/hook-relay",
   "/api/node/tools/take",
   // Сигнал узла «настройки сменились» (конец сборки ядра, каталог элементов) — у службы нет сессии; дверь стережёт ключ узла
@@ -224,6 +225,14 @@ export async function apiAuthGate(request: NextRequest): Promise<NextResponse> {
     //
     // Признак и доказательство его безопасности — `lib/auth/owner-at-machine.ts`.
     if (isOwnerAtMachine(request)) {
+      return NextResponse.next();
+    }
+
+    // 818-7a (817 H6, F2): AN ELEMENT'S OWN KEY reaches the doors that serve elements — from THIS machine only. A walled element has no
+    // session and is never the owner at the machine (811-5g), so its `tell-core`, `need` and «done» stopped here; the node key it was
+    // given instead opened everything. The gate judges no key: the door names the caller by it and lets an element only its own
+    // affairs (`lib/node/caller.ts`); the list of such doors — `lib/node/element-doors.mjs`. Through Cloudflare or the edge — never.
+    if (isElementDoor(pathname) && request.headers.get("x-node-key") && !fromInternet(request.headers)) {
       return NextResponse.next();
     }
 

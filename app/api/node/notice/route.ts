@@ -1,6 +1,6 @@
 // @api a scheduled notice of an element into the main chat
-import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
+import { actsFor, callerOf, refusal } from "@/lib/node/caller"
 
 import { listServices } from "@/lib/microservices/registry"
 import { elementName } from "@/lib/web4-items/dashboard-rows"
@@ -15,17 +15,10 @@ export const dynamic = "force-dynamic"
 
 const HEADERS = { "Cache-Control": "no-store" }
 
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
-
 export async function POST(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
-    return NextResponse.json({ ok: false, reason: "node key required (X-Node-Key)" }, { status: 401, headers: HEADERS })
+  const caller = callerOf(req.headers)
+  if (!caller) {
+    return NextResponse.json({ ok: false, reason: refusal(null).reason }, { status: 401, headers: HEADERS })
   }
   let body: { from?: unknown; kind?: unknown; text?: unknown }
   try { body = await req.json() } catch {
@@ -35,6 +28,11 @@ export async function POST(req: NextRequest) {
   const known = from === "build" || (listServices() as unknown as { id: string }[]).some((s) => s.id === from)
   if (!/^[a-z][a-z0-9-]{0,39}$/.test(from) || !known) {
     return NextResponse.json({ ok: false, reason: "from must be an element of this node" }, { status: 400, headers: HEADERS })
+  }
+  // 818-7a (817 H6): an element's own key acts only for itself; the node key — for anyone.
+  if (!actsFor(caller, from)) {
+    const r = refusal(caller)
+    return NextResponse.json({ ok: false, reason: r.reason }, { status: r.status, headers: HEADERS })
   }
   const kind = (typeof body.kind === "string" ? body.kind : "reminder") as NoticeKind
   if (!NOTICE_KINDS.includes(kind)) return NextResponse.json({ ok: false, reason: `kind is one of: ${NOTICE_KINDS.join(", ")}` }, { status: 400, headers: HEADERS })

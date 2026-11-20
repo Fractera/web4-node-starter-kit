@@ -1,6 +1,6 @@
 // @api woken element agent reports work done or closes its terminal
-import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
+import { actsFor, callerOf, refusal } from "@/lib/node/caller"
 import { buildAfterGeneration } from "@/lib/main-agent/element-design-build"
 
 // КОНЕЦ РАБОТЫ ПРОБУЖДЁННОГО АГЕНТА (шаг 409-5; владелец 2026-10-05: «предложение закрыть», «Ответ текстом»). POST `{ service }`
@@ -16,17 +16,10 @@ const HEADERS = { "Cache-Control": "no-store" }
 
 type Done = (service: string, opts: { close?: boolean; reviewed?: boolean }) => (Record<string, unknown> & { ok: boolean }) | Promise<Record<string, unknown> & { ok: boolean }>
 
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
-
 export async function POST(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
-    return NextResponse.json({ ok: false, reason: "node key required (X-Node-Key)" }, { status: 401, headers: HEADERS })
+  const caller = callerOf(req.headers)
+  if (!caller) {
+    return NextResponse.json({ ok: false, reason: refusal(null).reason }, { status: 401, headers: HEADERS })
   }
   let body: { service?: unknown; close?: unknown; reviewed?: unknown }
   try { body = await req.json() } catch {
@@ -35,6 +28,11 @@ export async function POST(req: NextRequest) {
   const service = typeof body.service === "string" ? body.service.trim() : ""
   if (!/^[a-z][a-z0-9-]{0,39}$/.test(service)) {
     return NextResponse.json({ ok: false, reason: "service must be an element id" }, { status: 400, headers: HEADERS })
+  }
+  // 818-7a (817 H6): an element's own key acts only for itself; the node key — for anyone.
+  if (!actsFor(caller, service)) {
+    const r = refusal(caller)
+    return NextResponse.json({ ok: false, reason: r.reason }, { status: r.status, headers: HEADERS })
   }
   const done = (globalThis as { __web4AgentDone?: Done }).__web4AgentDone
   if (typeof done !== "function") {

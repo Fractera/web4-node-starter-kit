@@ -1,6 +1,6 @@
 // @api keep the first task from the root home for the main agent
-import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
+import { actsFor, callerElement, callerOf, isNode, refusal } from "@/lib/node/caller"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { readFirstTask, takeFirstTask, writeFirstTask } from "@/lib/web4-items/first-task"
 
@@ -11,24 +11,23 @@ export const dynamic = "force-dynamic"
 
 const HEADERS = { "Cache-Control": "no-store" }
 
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
-
+// 818-7a (817 H6): reading or taking the task is the node's or the architect's; an element only offers one, in its own name.
 async function allowed(req: NextRequest): Promise<NextResponse | null> {
-  if (nodeKeyOk(req.headers.get("x-node-key"))) return null
+  if (isNode(callerOf(req.headers))) return null
   return requireRoles(req, ["architect"])
 }
 
 export async function POST(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
-    return NextResponse.json({ ok: false, error: "node key required (X-Node-Key)" }, { status: 401, headers: HEADERS })
+  const caller = callerOf(req.headers)
+  if (!caller) {
+    return NextResponse.json({ ok: false, error: refusal(null).reason }, { status: 401, headers: HEADERS })
   }
   const body = (await req.json().catch(() => null)) as { text?: unknown; from?: unknown } | null
+  if (!isNode(caller) && body && body.from === undefined) body.from = callerElement(caller)
+  if (!actsFor(caller, body?.from)) {
+    const r = refusal(caller)
+    return NextResponse.json({ ok: false, error: r.reason }, { status: r.status, headers: HEADERS })
+  }
   const text = typeof body?.text === "string" ? body.text.trim() : ""
   if (!text) return NextResponse.json({ ok: false, error: "empty task" }, { status: 400, headers: HEADERS })
   const task = writeFirstTask(text, typeof body?.from === "string" ? body.from : null)

@@ -1,7 +1,7 @@
 // @api element agent downloads a skill the person approved and the node checked
-import { timingSafeEqual } from "node:crypto"
 import { readFile } from "node:fs/promises"
 import { NextRequest, NextResponse } from "next/server"
+import { callerOf } from "@/lib/node/caller"
 import { archivePathOf } from "@/lib/agent-kit/skills/suggested.mjs"
 
 // A SKILL HANDED TO AN ELEMENT (node steps 628, 640). `npm run skills -- hand` packs the checked copy — a suggestion the person approved, one
@@ -12,16 +12,8 @@ export const dynamic = "force-dynamic"
 
 const HEADERS = { "Cache-Control": "no-store" }
 
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
-
 export async function GET(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
+  if (!callerOf(req.headers)) {
     return NextResponse.json({ ok: false, error: "node key required (X-Node-Key)" }, { status: 401, headers: HEADERS })
   }
   const id = req.nextUrl.searchParams.get("id") ?? ""

@@ -1,6 +1,6 @@
 // @api clear an agent session, switch its model or read its state
-import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
+import { actsFor, callerOf, refusal } from "@/lib/node/caller"
 
 // КОМАНДЫ СЕССИИ АГЕНТА (шаг 620; владелец 2026-10-30: «нужна команда очистки контекста … нужна команда для переключения на модель
 // Opus … Sonnet … haiku»). POST `{ service, action: "clear" [, continue: true] }` или `{ service, action: "model", model: "opus" | "sonnet" | "haiku" }` с
@@ -13,17 +13,10 @@ const HEADERS = { "Cache-Control": "no-store" }
 
 type SessionCommand = (service: string, opts: { action?: string; model?: string; effort?: string; continue?: boolean }) => Record<string, unknown> & { ok: boolean }
 
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
-
 export async function POST(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
-    return NextResponse.json({ ok: false, reason: "node key required (X-Node-Key)" }, { status: 401, headers: HEADERS })
+  const caller = callerOf(req.headers)
+  if (!caller) {
+    return NextResponse.json({ ok: false, reason: refusal(null).reason }, { status: 401, headers: HEADERS })
   }
   let body: { service?: unknown; action?: unknown; model?: unknown; effort?: unknown; continue?: unknown }
   try { body = await req.json() } catch {
@@ -32,6 +25,11 @@ export async function POST(req: NextRequest) {
   const service = typeof body.service === "string" ? body.service.trim() : ""
   if (!/^[a-z][a-z0-9-]{0,39}$/.test(service)) {
     return NextResponse.json({ ok: false, reason: "service must be an element id" }, { status: 400, headers: HEADERS })
+  }
+  // 818-7a (817 H6): an element's own key acts only for itself; the node key — for anyone.
+  if (!actsFor(caller, service)) {
+    const r = refusal(caller)
+    return NextResponse.json({ ok: false, reason: r.reason }, { status: r.status, headers: HEADERS })
   }
   const action = typeof body.action === "string" ? body.action : ""
   // 675-1: `status` — работает ли сессия сейчас (карта живых сессий `_agent-kit/server/session.cjs`); его спрашивает сборка ядра

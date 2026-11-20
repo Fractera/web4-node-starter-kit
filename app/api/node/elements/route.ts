@@ -1,8 +1,8 @@
 // @api list every element of the node with its role and power
-import { timingSafeEqual } from "node:crypto"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { NextRequest, NextResponse } from "next/server"
+import { callerOf } from "@/lib/node/caller"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { listServices } from "@/lib/microservices/registry"
 import power from "@/lib/web4-items/element-power.cjs"
@@ -14,14 +14,6 @@ import power from "@/lib/web4-items/element-power.cjs"
 // Кто вправе: элемент узла с ключом узла (`X-Node-Key`) или архитектор/админ. Портов нет: квизу они не нужны.
 export const dynamic = "force-dynamic"
 
-function nodeKeyOk(given: string | null): boolean {
-  const expected = process.env.SETTINGS_SECRET ?? ""
-  if (!expected || !given) return false
-  const a = Buffer.from(given)
-  const b = Buffer.from(expected)
-  return a.length === b.length && timingSafeEqual(a, b)
-}
-
 function nodeRoles(): Record<string, string> {
   // Те же два файла, что читают поиск A2A и сводка проектов: умолчания служб в git и назначенные на узле.
   const read = (p: string) => { try { return JSON.parse(readFileSync(p, "utf8")) as Record<string, unknown> } catch { return {} } }
@@ -32,7 +24,7 @@ function nodeRoles(): Record<string, string> {
 type Row = { id: string; kind?: string; address?: string; summary?: string; a2a?: { address?: string; description?: string } }
 
 export async function GET(req: NextRequest) {
-  if (!nodeKeyOk(req.headers.get("x-node-key"))) {
+  if (!callerOf(req.headers)) {
     const denied = await requireRoles(req, ["architect", "admin"])
     if (denied) return denied
   }
