@@ -303,6 +303,14 @@ Open:
 
 ## The person's decisions (verbatim)
 
+- 2026-11-20 09:4x UTC, the owner (Telegram): «перед тем как ты будешь уходить на сборку … меня будешь спрашивать» (memory
+  ask-before-core-build); «я пока просто собираю информацию будут ещё обновления прежде будем собирать» — 5ff18507 (the certificates card
+  hidden on the computer) waits the next build. Then: «когда ты развёртывает сервер то он получает тот же самый репозиторий GitHub … у
+  пользователя сервера должна быть возможность ввести собственно GitHub не так ли?» → proposed (not coded, he is thinking): a field
+  «Репозиторий сервера» on launch step 1 (default — this fork; any Fractera fork accepted after a check); the server's own token on its
+  GitHub page; a second node on the same fork works on its own branch. Also asked: root has no /tg mini app (custom has, 778/790) —
+  port it from custom? waits his word.
+
 - 2026-11-19 19:3x UTC, the owner (terminal): «живая лента которую я видел раньше которая возвращал отдельный чтец уже несколько дней не существует а вместо этого я вижу голубую экран с одной единственной палочкой нижней подчёркивания … Раньше когда ты уходил на сборку я видел процесс на голубом экране сейчас его нет» → step 807 (with 806). Read so far (no change since 11-07/11-14 in build-reader, core-terminal, core-build-watch): CoreBuildWatch shows the build log ONLY while `active` is false — a blue xterm with a lone cursor means the terminal still counts the agent as working during the build, so the log never mounts; CoreTerminal asks the reader 127.0.0.1:25680 only on localhost/127.0.0.1 (via an own domain or the temporary address — «none»). To measure at the next core build: his address, `active`, data-core-build, the reader's /status.
 
 - 2026-11-19 19:2x UTC, the owner (terminal), during the silent server update (19:04→, 443 and 80 closed, the extension not visible to this account): «Мне нужен другой процесс установки сервера это никуда не годится ты можешь создать какой-то внешний чтец и показывать этот процесс установки сервера так как ты показываешь все процессы когда например собирается наш проект что-то вроде терминала? Я хочу видеть что что-то происходит» — «after finish». → step 806 (plan after this update ends): the server page shows a live terminal of the server's launch.log + a checklist of 20–25 stages (one per element) with times and a red «молчит N мин»; reuse the core's «Build log» part (parts_find: the deploy core-terminal); nginx keeps updating.html up during an update. Plan first, code after his «да».
