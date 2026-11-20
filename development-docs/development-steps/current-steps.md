@@ -283,15 +283,12 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 12:20 UTC, window ~45 %, Opus — context reset at the end of 808/809)
 
-**NOW:** 811 — his «Вперед» (Telegram 122, 12:19) = the «да» on the CODE of 811 (plan new-steps/811-a-wall-per-element-on-a-server.md,
-811-1 measured by code, written there). Start 811-2 the installer (`prepare.sh`, `install.sh` ensure-claude → a shared read-only claude,
-`fractera-root.sh`: the element users' group, the launcher `/usr/local/sbin/fractera-agent`/element-run, sudoers for that group only,
-node folder 0711 + core files o-rwx, `.env.local` 0600, hook files readable), dry tests with negatives (hosting-launch.test style). Then
-811-3 birth/deletion (fe-<id> via the helper, data/services/<id> owned), 811-4 the watcher starts the element as fe-<id>, 811-5 the agent
-(bridge.cjs spawns through the launcher). Then ONE core build (ask him first — memory ask-before-core-build; c5d3da88 the main address
-look waits it too), push the fork (I may), «Установить с нуля» on 109.199.105.213 (his word; Marina + throughsongs.com again), proofs.
-No migration (his 119). 808/809 CLOSED (completed-steps/808-main.md). Open: Fractera push (his paste window), the auth screens' language.
-Talk with him in TELEGRAM (reply tool, chat_id 90413601, ru); short living answers, colour marks in the terminal.
+**NOW:** 811 — his «Вперед» (Telegram 122) = the «да» on the CODE of 811. 811-2 DONE 1d2a1dd7 (helper fractera-element: add/remove/run/
+signal/stop/claude-share/walls/list; ACLs not chown; prepare/start/launch/clear carry it; test:element-wall 19 ✓). 🔴 for 811-5: hooks read
+secrets (progress.cjs — bot tokens) → a relay to a core door with the element key; 🔴 element agent on the node's subscription = token
+leak → his decision. NEXT 811-3 birth/deletion on a server (place record lib/hosting/place.mjs; item-birth + delete call `sudo -n
+fractera-element add|remove`), 811-4 watcher starts as fe-<id> (`run`), 811-5 bridge spawns claude via `run` + hook relay. Then ONE core
+build (ask him first), push the fork, «Установить с нуля» on 109.199.105.213, proofs. Talk in TELEGRAM (chat_id 90413601, ru).
 
 Roma talks in TELEGRAM now: main bot = his existing @fractera_factory_e90e_bot (saved by him 2026-11-19 23:49; chat_id 90413601, ru).
 Done since 2026-11-19 evening (all committed, fork pushed up to cdac6592; Fractera push = his paste, not done):

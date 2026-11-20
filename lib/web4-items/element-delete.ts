@@ -111,6 +111,12 @@ export async function deleteElement(id: string): Promise<{ ok: boolean; steps: S
   for (const name of [`fractera-svc-${id}`, `fractera-svc-${id}-watch`]) await pm2(["delete", name])
   await pm2(["save"])
   steps.push({ step: "pm2", ok: true })
+  // 1б. 811-3: на выделенном сервере — свой пользователь элемента (fe-<id>): его процессы гаснут, файлы возвращаются узлу, пользователь
+  // уходит (`lib/hosting/element-wall.cjs`); дома и на сервере до 811 — ничего.
+  {
+    const wall = await (await import("@/lib/hosting/element-wall.cjs")).removeElementUserAsync(ROOT, id)
+    steps.push({ step: "wall", ok: wall.ok, detail: "skipped" in wall ? String(wall.skipped) : wall.out?.slice(-200) })
+  }
 
   // 1а. Свой домен элемента (324-10): снимается до поддомена — имя и www уходят из туннеля и DNS, переадресация исчезает с
   // записью; домен остаётся в списке узла свободным. Импорт на месте: модуль домена сам берёт отсюда чтение ключа.

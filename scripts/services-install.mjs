@@ -1145,6 +1145,13 @@ for (const entry of registry.services) {
     warm?.stop?.()
   }
 
+  // 811-3: on a dedicated server a custom element gets its own Linux user and its folder's ACLs (`lib/hosting/element-wall.cjs`) —
+  // after its packages and build, before anything of it starts; elsewhere nothing happens.
+  {
+    const wall = require('../lib/hosting/element-wall.cjs').ensureElementUser(ROOT, entry, dir)
+    if (wall.skipped !== 'native' && wall.skipped !== 'no-wall') say(wall.ok ? `  своя стена: пользователь fe-${entry.id}` : `  ⚠ своя стена не поставлена: ${wall.out}`)
+    if (!wall.ok) warn.push(`  ⚠ ${entry.id}: своя стена (811) не поставлена — ${wall.out}`)
+  }
   summary.push({ id: entry.id, version: version, port, stack: props.runtime?.stack })
 }
 

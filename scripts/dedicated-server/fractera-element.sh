@@ -44,7 +44,11 @@ case "$verb" in
     dir="$NODE_DIR/$folder"; data="$NODE_DIR/data/services/$id"
     real_dir "$dir" || die "the element folder is not a real folder of the node"
     [ ! -e "$data" ] || real_dir "$data" || die "the element data folder is not a real folder of the node"
+    # 🔒 a NEW user only gets the recursive walk: once fe-<id> exists it may write in its folder while root walks it (a component swapped
+    # for a symlink between the walk and the act); a repeat `add` touches the two top folders only — new files inherit the defaults
+    fresh=0
     if ! id -u "fe-$id" >/dev/null 2>&1; then
+      fresh=1
       act useradd --system --gid "$GROUP" --home-dir "$HOMES/$id" --create-home --shell /usr/sbin/nologin "fe-$id"
     fi
     act install -d -m 0700 -o "fe-$id" -g "$GROUP" "$HOMES/$id"
@@ -53,7 +57,7 @@ case "$verb" in
     if [ "$DRY" = 1 ]; then echo "DRY: record $RECORDS/$id FOLDER=$folder"; else printf 'FOLDER=%s\n' "$folder" > "$RECORDS/$id"; chmod 0600 "$RECORDS/$id"; fi
     for d in "$dir" "$data"; do
       act chmod 2770 "$d"
-      act setfacl -R -P -m "$(acl_of "$id")" "$d"
+      if [ "$fresh" = 1 ]; then act setfacl -R -P -m "$(acl_of "$id")" "$d"; else act setfacl -m "$(acl_of "$id")" "$d"; fi
     done
     echo "ELEMENT_ADDED $id" ;;
   remove)

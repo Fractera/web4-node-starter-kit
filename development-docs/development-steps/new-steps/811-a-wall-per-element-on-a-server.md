@@ -56,6 +56,16 @@ State: PLAN — waits the owner's «да». Order agreed 2026-11-20 (Telegram 81
   copying them to fe-<id> hands the node's token to the element. On a server an element agent runs on its own Claude account
   (memory one-element-one-claude-account) — or the core lends work through itself, never the token.
 
+## 811-3 birth and deletion — CODED (2026-11-20 ~13:15 UTC)
+
+- `lib/hosting/element-wall.cjs`: the wall is on where the helper is installed and /etc/fractera/node.env names THIS node (Linux only);
+  custom elements (registry kind `user`, root among them — §3: equal to every custom one; the plan's «root stays the node's» corrected)
+  get `add`, natives never. `services-install.mjs` ensures the user after packages and build (birth goes through it, so do install
+  and update); the delete door removes it async right after pm2 (step «wall»).
+- The helper's repeat `add` no longer walks the folder (a found hole: root's setfacl -R over a tree a running fe-<id> can write).
+- Test: element-wall 27 ✓ (+ the node side: native refused, no wall without helper / other node / non-Linux, a bad folder never reaches
+  the helper, repeat add only the two top folders).
+
 ## The shape (on a dedicated server only; a home computer is unchanged — one person)
 
 - Every CUSTOM element gets its own Linux user `fe-<id>` (no shell login, no sudo) at its birth on a server, removed at its deletion;

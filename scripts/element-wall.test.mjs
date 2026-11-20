@@ -7,6 +7,7 @@ import { mkdirSync, mkdtempSync, readFileSync, realpathSync, symlinkSync, writeF
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createRequire } from 'node:module'
 
 if (process.platform === 'win32') { console.log('· skipped on Windows: the server side is a Linux shell'); process.exit(0) }
 const here = fileURLToPath(new URL('.', import.meta.url))
@@ -54,6 +55,13 @@ t('add shop WEB4-ITEMS/custom/shop', () => {
   assert.match(r.out, /setfacl -R -P -m u:fe-shop:rwX\\?,g:fractera:rwX\\?,o::---\\?,d:u:fe-shop:rwX/)
   assert.equal((r.out.match(/setfacl -R -P/g) ?? []).length, 2, 'the folder and the data folder')
   assert.match(r.out, /ELEMENT_ADDED shop/)
+})
+t('negative: a repeat add (the user exists) never walks the folder as root — the two top folders only', () => {
+  const shim = tmp('wall-shim-'); writeFileSync(join(shim, 'id'), '#!/bin/sh\nexit 0\n', { mode: 0o755 })
+  const r = helperRun(['add', 'shop', 'WEB4-ITEMS/custom/shop'], { PATH: `${shim}:${process.env.PATH}` })
+  assert.equal(r.status, 0, r.out)
+  assert.doesNotMatch(r.out, /useradd|setfacl -R/)
+  assert.equal((r.out.match(/DRY: setfacl -m u:fe-shop/g) ?? []).length, 2)
 })
 t('negative: a bad id (capitals, too long for useradd, a leading dash)', () => {
   refused(['add', 'Shop', 'WEB4-ITEMS/custom/shop'], /bad element id/)
@@ -176,5 +184,47 @@ t('clear.sh (a node cleared) erases the element users\' homes and root\'s record
   assert.ok(!existsSync(join(base, 'var', 'lib', 'fractera-el', 'shop')) && !existsSync(join(base, 'etc', 'fractera', 'elements', 'shop')), r.stdout)
   assert.ok(existsSync(join(base, 'var', 'lib', 'fractera-el')), 'the homes folder itself stays (prepare.sh owns it)')
 })
+
+console.log('811-3 the node\'s side — birth and deletion ask the helper only where the wall is')
+{
+  const require = createRequire(import.meta.url)
+  const wall = require('../lib/hosting/element-wall.cjs')
+  const W = tmp('wall-node-side-')
+  const fake = join(W, 'fractera-element'); const calls = join(W, 'calls.txt')
+  writeFileSync(fake, `#!/bin/sh\necho "$@" >> '${calls}'\necho ELEMENT_OK\n`, { mode: 0o755 })
+  const nodeEnv = join(W, 'node.env'); writeFileSync(nodeEnv, `NODE_USER=fractera\nNODE_DIR=${NODE}\n`)
+  const opts = { helper: fake, nodeEnv, anyPlatform: true, prefix: ['env'] }
+  const shop = join(NODE, 'WEB4-ITEMS', 'custom', 'shop')
+  t('a custom element gets its user: add <id> WEB4-ITEMS/custom/<address>', () => {
+    const r = wall.ensureElementUser(NODE, { id: 'shop', kind: 'user' }, shop, opts)
+    assert.equal(r.ok, true, r.out)
+    assert.equal(readFileSync(calls, 'utf8').trim(), 'add shop WEB4-ITEMS/custom/shop')
+  })
+  t('negative: a native element never gets a user', () => {
+    assert.equal(wall.ensureElementUser(NODE, { id: 'auth', kind: 'core' }, join(NODE, 'WEB4-ITEMS', 'native', 'auth'), opts).skipped, 'native')
+  })
+  t('negative: no wall when the helper is missing, node.env names another node, or the machine is not Linux', () => {
+    assert.equal(wall.wallOn(NODE, { ...opts, helper: join(W, 'none') }), false)
+    const other = join(W, 'other.env'); writeFileSync(other, `NODE_DIR=${W}\n`)
+    assert.equal(wall.wallOn(NODE, { ...opts, nodeEnv: other }), false)
+    if (process.platform !== 'linux') assert.equal(wall.wallOn(NODE, { helper: fake, nodeEnv }), false)
+    assert.equal(wall.ensureElementUser(NODE, { id: 'shop', kind: 'user' }, shop, { ...opts, helper: join(W, 'none') }).skipped, 'no-wall')
+  })
+  t('negative: a folder outside WEB4-ITEMS/<kind>/<address> is refused before the helper', () => {
+    const before = readFileSync(calls, 'utf8')
+    assert.equal(wall.ensureElementUser(NODE, { id: 'x', kind: 'user' }, join(NODE, 'data'), opts).ok, false)
+    assert.equal(readFileSync(calls, 'utf8'), before, 'the helper was not called')
+  })
+  t('deletion: remove <id> (async, for the door)', async () => {
+    const r = await wall.removeElementUserAsync(NODE, 'shop', opts)
+    assert.equal(r.ok, true)
+  })
+  await new Promise((r) => setTimeout(r, 300))
+  t('deletion reached the helper', () => { assert.match(readFileSync(calls, 'utf8'), /^remove shop$/m) })
+  t('the installer and the delete door call it', () => {
+    assert.match(readFileSync(join(here, 'services-install.mjs'), 'utf8'), /element-wall\.cjs'\)\.ensureElementUser\(ROOT, entry, dir\)/)
+    assert.match(readFileSync(join(here, '..', 'lib', 'web4-items', 'element-delete.ts'), 'utf8'), /removeElementUserAsync\(ROOT, id\)/)
+  })
+}
 
 console.log(`\n${passed} passed${process.exitCode ? ', some FAILED' : ''}`)
