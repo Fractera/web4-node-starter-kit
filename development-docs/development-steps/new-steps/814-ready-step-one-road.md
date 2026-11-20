@@ -27,3 +27,12 @@ State: PLAN — layout proposed (Telegram 213, 2026-11-20 ~16:55 UTC), waits his
   the subscription page link (after signing in as the architect); the other node lines shortened the same way; sent with parse_mode HTML,
   the words escaped.
 - 814-4 proof: eyes of step 9 (bot first, one button), a test of the lines (HTML escaped, bold), live — the bot's answer after «Старт».
+
+## 814-5 (found 2026-11-20 16:55, Telegram 214/215): the origin notice shows a refusal's reason, never an empty file list
+
+The owner saw on the server «Пробное слияние останавливается на файлах, изменённых и здесь, и в Fractera: . Обновление было бы
+отклонено» and read it as «servers can no longer sync with Fractera». The server's own answer (POST /api/node/update preflight):
+`{ ok:false, state:"refused", stage:"check", reason:"идёт развёртывание элемента — повторите, когда оно закончится" }` — the elements were
+redeploying after «Включить домен». `components/node-state/origin-notice.client.tsx` prints `preflightStop` with `conflicts` whatever the
+refusal was. Fix: conflicts → the file list; no conflicts and a reason → the reason in words. The merge itself replayed on a copy of the
+server's exact state (fork cff7b760 + its fresh project commit, then the fork's 3c8877e4): clean, no conflict.
