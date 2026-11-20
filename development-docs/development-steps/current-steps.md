@@ -281,136 +281,57 @@ without «Режим работы приложения», curl count 0), 17-53-2
 way: the site-settings words still say «Пока связь включена…» (implies a switch) → 793. WAITS Roma: the 3 new phrases, the template
 release push (v0.3.219 dry green) + pin, the core push, ONE server update, then the Marina test (804-8) and the summary.
 
-## Letter to my next session (written 2026-11-20 ~21:30 UTC — reset between H6's core part and its template/native part; Opus max)
+## Letter to my next session (written 2026-11-20 22:59 UTC — reset at 62 % before part C; Opus effort max)
 
-**NEXT ACTION (22:56 UTC) — BUILD STEP 819** (plan new-steps/819-server-domain-step-as-one-button.md, substeps 819-1..5). The owner
-APPROVED it, Telegram 335 (22:54): «Это ещё нужно пофиксить. Обязательно включи режим максимального размышления и необходимый навык
-дизайна. Аккуратно без лишней избыточный информации поправь тексты ошибок кнопки.» So: Opus effort max (switched at 22:56), load the
-skills interface-design, use-primitives, use-shadcn BEFORE any .tsx; the layout of the domain card to Roma as a screenshot before the
-build (memory compact-ui-folds-instructions); also tidy the error texts and buttons of the launch page's steps 3, 7, 8 — short, no
-excess. Fixes already committed, not built: ca3ae4df (TXT-shadowed www), 065a48d4 (way none → dns). Roma is on the server page now:
-step 8 «Проверить и дополнить» (www's certificate) then «Проверить HTTPS из интернета» → step 9; the window bb037e18 (root password,
-redteam.sh) still open. Then ONE core build with 819, push Fractera + fork.
+**WHO WAITS:** Roma (owner) in TELEGRAM (chat_id 90413601, ru, colour marks; living words, emoji; short — he hates long texts and names
+that do not match his screen: say «шаг 3.3», the numbers he sees). Mood: tired, late night, frustrated by the domain step (my bugs) but
+working with me; he passed the server's launch to the end and SIGNED IN on the server's panel (Telegram 339).
 
-**NOW (21:30 UTC) — 818-7 CLOSED ON THE MAC** (summary completed-steps/818-7.md): core built 7a902d5b, CONFIG merged+deployed
-(32f51d2 = v1.2.54), Stripe v1.3.46 installed (off until keys), root flipped to its own key; live L1, L3–L6 ✓; Fractera main and the
-fork aifa-agi = 7a902d5b (pushed with Roma's key, 293). NEXT = PART C: Roma on the SERVER's launch page «Очистить» + «Установить с
-нуля» (~40 min; his root password — a new visit), then a custom element born on the server, `bash scripts/dedicated-server/redteam.sh
-<id> root` as the node user, social engineering through ask-core, the table to Roma. OWED: root's 5 local commits published with his
-look, then v0.3.220 into root; the core CI run of 7a902d5b (queued at 21:26; ada53203's run had failed — read its cause).
-21:34 Roma pressed «Готово» (ask 3e986979): the server shows its «Обновляется» page = the clean install runs; I have no live visit
-(need-password), so a background watch waits architect.fractera.ai/api/health with a commit. Core CI 469adf40: ubuntu ✓, windows ✗
-— the log.sh UTF-8 fix (469adf40) made the checklist test pass there, but the process then ends SILENTLY with exit 1 right after it
-(no ✗ line, no summary; not reproducible on the Mac with Latin-1 + PYTHONIOENCODING=cp1252) — owed, the scripts are Ubuntu-only.
-22:12 the server answers (commit f6b7f703 — not on GitHub, the server's own records commit). Windows open: bb037e18 (a visit with the
-root password, for redteam.sh) and 33cb777b (Roma, Telegram 309: step 7 «www.fractera.ai — нет записи»; 813 made www required today,
-public DNS has no www record; the «Вписать записи» button lives in the folded rung «Кто внесёт записи», the records rung offers only
-«Проверить» — OWED (core, next build): the records rung offers the write itself when Cloudflare can and a required name is missing).
-22:25 Roma «Ок» (Telegram 315) to a core build for ca3ae4df (the TXT-shadowed www fix; prebuild RC=0). ON RETURN: serve:status; tell
-Roma: step 3.3 «Вписать записи» now names www → confirm → «Проверить записи»; then push ca3ae4df to Fractera + fork; window bb037e18
-(root password) still open for redteam.sh.
-The text below is the earlier letter (its 7f is done).
+**NEXT ACTION 1 — PART C, NOW (Roma 339, 22:57: «прямо сейчас я смог зайти в административную панель поэтому у тебя есть всё что тебе
+необходимо для того чтобы нажать начать тестирование?» — I answered yes, 340):** the red team on the fresh server 109.199.105.213
+(fractera.ai, core f6b7f703 = the fork's 469adf40 + the server's records commit; it carries redteam.sh WITH the H6 attacks, 0c3c8209).
+The shell: Roma's Chrome holds the visit cookie (path /api/node/launch). With the Claude-in-Chrome tools (tabs_context_mcp createIfEmpty;
+my group tab 2116210940 may be gone) open http://localhost:24680/ru/hosting/hosting and run in the page `fetch('/api/node/launch',
+{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'window',host:'109.199.105.213',port:22})})`
+→ { window: { url } } → then `node data/services/build/tools/srv.mjs "<cmd>" [sec]` (the terminal's login mode = a plain shell as the
+node user; non-ASCII → base64; NEVER print secrets; NEVER read the node's .env.local). If my tab has no visit (need-password): it is
+another Chrome profile — ask Roma one line to press «Проверить сервер» on that page in his window, or use his tab (tabs_context).
+Run as the node user in the node folder: `bash scripts/dedicated-server/redteam.sh root` (root = the only custom element; neighbour
+checks need a second one — say so). Then social engineering of the server's main agent through ask-core (plan 818 part C). Send Roma
+the table (HOLDS/HOLE per attack) in Telegram. Close the window bb037e18 (root password) after: `npm run ask-person -- done bb037e18`.
 
-**WHO WAITS:** Roma (owner) in TELEGRAM (chat_id 90413601, ru, colour marks). His words: Telegram 280 (19:30) «что можно сделать
-сейчас надо делать сейчас каждая переустановка и сборка ядра это целая вечность чем меньше этих процессов тем лучше»; 284 (19:33)
-«Помнишь что взаимодействие элементов у нас запланировано по двум протоколом i2i и апи если сейчас это имеет значение»; 286 (19:58) to my
-plan 285: «Делай по максимуму на максимальном размышлении» = A2, EVERYTHING (incl. the pair keys and the 4 releases custom, root, config,
-stripe). My last Telegram to him: 287 «Принял: A2 … Перед сборкой ядра спрошу тебя». He has the account re-logged (/login) — just «continue».
+**NEXT ACTION 2 — 819 (approved, Telegram 335 «Это ещё нужно пофиксить. Обязательно включи режим максимального размышления и
+необходимый навык дизайна. Аккуратно без лишней избыточный информации поправь тексты ошибок кнопки.»):** plan
+new-steps/819-server-domain-step-as-one-button.md (819-1..5). The decision card went to Roma (Telegram 338) — WAIT for his yes before
+any .tsx (design file .interface-design/system.md: card first). Load interface-design, use-primitives, use-shadcn before .tsx. My design:
+- step 3: ONE card — Field «Домен» + primary «Подключить»; under it one status line of what the node does; then one line per name
+  (same look as step 7's list); AppDialog only when a removal is needed (name what stops opening — WhereStep's `live` text); manual card
+  (no key / zone not visible / other DNS): the two records + names that need their own A, copy buttons, ChromeHelp, «Проверить». Remove
+  the question «Есть ли доступ», the rung «Где живут записи», «Записи уже верны — дальше», long instructions. Keep `domainSteps` (the
+  runner gates install by it) — the new door makes all four facts true in one press.
+- the door: new action `connect-domain` in app/api/node/launch/route.ts = domain(name) if changed → detect if missing → Cloudflare plan
+  (token + visible) → removals need body.remove (else answer reason "confirm" with the plan) → writePlan → way «dns» → run("dns") →
+  { state, cf }. Manual path: way «dns» + run("dns"), answer manual reason. Tests in scripts/launch-door.test.mjs (stand-in runner).
+- step 7: the gate line names the names that do not lead to the server.
+- step 8 (CertsLaunchStep, components/hosting/server-launch-end.client.tsx): one checklist (drop the CertsStep badge list there), ONE
+  primary button: missing certificate (required, dns ok, cert not ok/expiring) → act("certs"), wait for certsRun running→done (the page
+  polls every 5 s while running), then act("check"); else act("check"). Extract the upload collapsible of CertsStep
+  (components/hosting/server-domain-certs.client.tsx) as its own export for reuse.
+- texts: hard step numbers drifted (ru `summary.pointed` «шаг 5», `cf.written` «шаг 6», errors `not-ready` «шаг 6», `check-first`
+  «шаге 6 … шаге 4», telegram agent «шаг 5») — resolve `{#<step id>}` from LAUNCH_ORDER in serverLaunchWords; shorten domainNote,
+  recheck.text; en the same keys.
+- Already committed, NOT built: ca3ae4df (TXT-shadowed www gets its A), 065a48d4 (the write turns way «none» into «dns»). Core live
+  34aa1fb3 = Fractera = fork. After 819: ONE core build (ask Roma first), push Fractera + fork (his 293 covers today's pushes).
 
-**WHERE I STAND — 818-7 (plan: section «818-7» of new-steps/818-close-the-red-team-holes-and-repeat.md, with the test checklist):**
-- 7a 2ca76f3b — `lib/node/caller.ts` (callerOf: node key / element key `<id>.<mac>` / none; never from cf-*/edge; the 811-5g stamp
-  `x-fractera-peer`: an element's user is never the node, another element's key refused there; actsFor, refusal, wakeAllowed, markedFrom
-  neutralises ⟦⟧) · 25 doors converted by rule (own affairs / read / node only) · the gate rule in `proxy/common.ts` (element key on loopback
-  reaches `lib/node/element-doors.mjs` ELEMENT_DOORS). FOUND: the gate let ANY request with a dummy `authjs.session-token` cookie through —
-  so before 7a the node-key doors were open to walled elements too (cookie presence only); now the doors judge the key.
-- 7b 49122e71 + 1f6de78b — `lib/node/element-call-key.cjs` keyFor(id) (custom kind `user` → its own key from DATA_SECRET, native → node
-  key) / keyForUrl(url) (loopback port → that element's key, else null) / entryOf · call sites: element-settings-door, design-config,
-  own-service-props, catalog-push (signalTheRest per element — it also covers CONFIG's 401s), project-settings-source, wake door keeps an
-  element's declineUrl on its own port, the kit's tellTask/declineCaller via `globalThis.__web4CallKey` (mount.cjs; computed require is
-  refused in telegram.cjs by check:agent-kits) — master edited, `npm run agent-kit:update -- <group>` for all 12 groups.
-- 7c 4ef90cf5 — `lib/web4-items/element-env-keys.mjs` nodeKeyValue: custom SETTINGS_SECRET = its ELEMENT_KEY, DATA_SECRET withheld (loud
-  line), never carried over; `scripts/services-install.mjs` uses it first.
-- 7d CORE 0f8421ba — `lib/element-key.cjs` pairKeyOf/pairCallerOf (label `fractera-pair-key:v1:`; test vector in
-  scripts/check-element-key.mjs: pairKeyOf('shop', ROOT_VECTOR) = `shop.RC4iWl7CFXQjhqxT-kLwO1s0vhuPjg5-ow2YQPTwjE4`) · door
-  `app/api/node/pair-key/route.ts` GET ?to= (element callers only, custom neighbour only, not itself) → {to, port, key}.
-- Tests: `scripts/node-key-split.test.mjs` 28 (T1–T5, negative controls, in the prebuild after redteam-holes); tsc green (negative control
-  done); proxy-split 8, redteam-holes 10, cross-site-wall 14, person-asks 22, element-wall 66, tools-protocol 13/13, check-api 123 green.
-- NOT DONE: prebuild not run yet; nothing built; nothing pushed.
-- SESSION 2 (after the 20:31 reset), uncommitted in the core: `keyToCall` in lib/node/element-call-key.cjs + the pair-key door widened
-  (a native gets a custom element's own key; anyone calling a native gets key null = present your own) + T5 (31 ✓, negative control
-  red); the instruction source line 52 → `neighbourFetch` (coverage OK, generated into custom/native workshops and root's folder).
-  NATIVE workshop commit ab6d9da (lib/element-key.mjs, lib/neighbour.mjs, lib/node-key.ts nodeCaller, a2a.mjs, door-add recipe,
-  check-element-key in the prebuild) — dry release GREEN; the real release stopped ===TEMPLATE_NO_RIGHT=== (node token 403) after
-  tagging v0.1.79 LOCALLY (never pushed). STRIPE workshop bf294c3 (scope.mjs: an element pays/reads in its own name; prebuild RC=0).
-  CONFIG workshop 693a153 (readerOf; subscribe in own name; each signal signed with the subscriber's key from the core; readers.test
-  6 ✓, negative control red; prebuild RC=0). CUSTOM workshop 7108833 (nodeCaller own key / pair key; A2A doors; executor trusts the
-  pair key's caller) — dry release GREEN. ROOT: HEAD v3.0.69-5-g6feec48, 5 own commits NOT on GitHub → the rollout leaves it alone
-  (template.mjs: HEAD ≠ pin) — root works after the flip without the new files (its doors compare with its own key); no root release.
-  CONFIG element has its own commit 4718bde (not on GitHub) → services:install will NOT move it to a new tag: the «Обновить» door
-  (app/api/architect/items/config/update) merges the tag, then deploy.
-- RELEASED with Roma's key (293), each verified main == tag on GitHub: native v0.1.79 ab6d9da (CI ✓) · custom v0.3.220 7108833
-  (CI ✓) · stripe v1.3.46 bf294c3 (CI ✓) · config v1.2.53 693a153 — CI ✗: MY apostrophe in a single-quoted tool text of
-  lib/config-store/mcp-tools.mjs («your element's own key») broke the parse; I ran tsc BEFORE that text edit and the prebuild does not
-  parse lib/*.mjs. Fix committed in the workshop («your own element key»), full `npm run build` running → tag v1.2.54, push, re-pin.
-  Pins in the core: 4bd80366 (native), 65abc4c3 (custom), e92dfe5c (stripe v1.3.46 + config v1.2.53 → must become v1.2.54).
-  Core commits: 3c2a78df (keyToCall, the door for natives, the instruction line), 7g = redteam.sh H6 attacks + check-element-key ids
-  (the words guard failed the first prebuild: «blocks» in two 7d test lines). Second core prebuild running.
-  DONE since: config v1.2.54 5206efd released (local `npm run build` RC=0), pinned b5733cf2; core 0c3c8209 (7g); core prebuild RC=0.
-  ROOT decision (mine): NO root release now — root's GitHub repo (v3.0.69) lacks the skill telegram-mini-app that the generated
-  instruction names (root's prebuild in its workshop failed SKILL_PROCESS), while root's ELEMENT has it in its 5 local commits (likely
-  template rollouts whose push hit the node token's 403 — unverified, I may not read root's folder). The root workshop is back at
-  v3.0.69, clean. Root after the flip works on its old code (its doors compare with its own key; CONFIG, Stripe, the core accept it).
-  Root's element keeps an uncommitted CLAUDE.md + seal from my `templates` run (names lib/neighbour.mjs, which root lacks) — its build
-  passes (guards check skills, not helpers). Offer Roma: publish root's 5 commits with his look → v0.3.220 rolls into root later.
-  21:09 UTC the ONE core build STARTED (Roma 297 «да»): `node scripts/spawn-free.mjs scripts/serve.mjs rebuild` → logs/core-build.log.
-  ON RETURN: `npm run serve:status`; tail logs/core-build.log (RC); then IN ORDER: (1) CONFIG — its element has its own commit
-  4718bde → POST the update door app/api/architect/items/config/update (merge v1.2.54) → `POST /api/node/deploy {ids:["config"]}`;
-  (2) `npm run services:install -- --only stripe` (no own work → checkout v1.3.46 + build); (3) the flip `npm run services:install --
-  --only root`; (4) L1–L6 (plan 818-7); (5) push the core to Fractera (Roma 293) + sync the fork; (6) tell Roma → server «Очистить» +
-  «Установить с нуля», then part C (redteam.sh on the server). Was: ASK Roma before the ONE core build (+ root: 5 own commits not on GitHub, the
-  rollout refuses HEAD ≠ pin — ask whether to publish them) → build → config update door + deploy → services:install stripe → flip
-  root → L1–L6 → push the core to Fractera (293 allows). Roma 291: «до 980 кастомных элементов» — nothing is
-  stored per pair, an HMAC per call.
+**NEXT ACTION 3 — 820 (Roma 337, the architect's e-mail on step 9):** plan stub new-steps/820-architect-email-on-step-9-locked-and-shown.md;
+he wants «полноценный этап планирования» — measure whether a re-sent claim replaces the pending e-mail, write substeps, his yes first.
 
-**NEXT — 7d templates + 7e natives (load skill release-template; Roma's «да» to these releases is 286):**
-1. NATIVE template (`npm run template -- clone native --install` exists at data/workshop/fractera-native-item-starter, v0.1.78):
-   `lib/node-key.ts` → nodeKeyOk accepts the node key OR an element key verified with DATA_SECRET (inline elementOf, same label
-   `fractera-element-key:v1:` and test vector as lib/element-key.cjs) + `nodeCaller(given)` → {node}|{element}; release v0.1.79, pin.
-2. STRIPE (workshop clone data/workshop/fractera-stripe-starter — cloned DETACHED at v1.3.45; `git checkout main` first): copy the new
-   native lib/node-key.ts; its 4 doors (stripe-checkout, -payments, -products, -status) use nodeKeyOk; scope checkout (element from the
-   key, never the body) and payments (?element forced); commit, tag v1.3.46, push (node token data/node/github/.env), pin `version` in
-   WEB4-ITEMS-REGISTRY/web4-items.json (one-file commit).
-3. CONFIG (workshop clone data/workshop/fractera-config-starter — DETACHED at v1.2.52; checkout main): `lib/config-store/architect-auth.mjs`
-   keyOk (x-settings-key vs SETTINGS_SECRET) stays NODE-ONLY for writes (catalog PUT, settings writes); add readerOf (node or element key
-   via DATA_SECRET) for reads: `lib/config-store/mcp-tools.mjs:43` (MCP get/version/subscribe), `lib/config-store/settings-door.ts:16`
-   (GET); `lib/config-store/subscribers.mjs:60` signals with the node key → sign each subscriber with ITS key (record the subscriber's
-   caller at subscribe; element → elementKeyOf(id, DATA_SECRET), node → node key) — CRITICAL: today CONFIG hands the node key to every
-   subscribed custom element. Tag v1.2.53, push, pin.
-4. CUSTOM template (data/workshop/fractera-custom-item-starter v0.3.219) and ROOT (repo Fractera/fractera-root-starter v3.0.69; check
-   root's passport elementType — if custom, `npm run template -- rollout custom <v> <paths>` brings the files into root with its own
-   tag/push/pin): `lib/node-key.ts` → own key (SETTINGS_SECRET = the core/natives) OR a pair key (pairCallerOf with the own key) +
-   `nodeCaller`; `app/api/a2a/route.ts` + `app/api/a2a/tasks/[id]/route.ts` (local keyOk → lib/node-key.ts); `scripts/a2a.mjs` (calls
-   neighbours with KEY → get the pair key `GET <core>/api/node/pair-key?to=<id>` with its own key); new `lib/neighbour.ts`
-   (neighbourFetch(id, path, init): pair key from the core, cached; http://127.0.0.1:<port>); `scripts/door-add.mjs` recipe text; the
-   instruction: core `lib/instructions/element/element-instruction.src.md:52` («… with the header X-Node-Key» → the neighbour helper) →
-   `npm run instruction:element` → template CLAUDE.md. Template test with the pair vector. Release, pin, rollout.
-5. 7f: prebuild (READ RC=0) → ASK Roma (memory ask-before-core-build) → ONE Mac core build → `services:install -- --only root` (the flip)
-   and config (new tag) → live L1–L6 (plan 818-7). 7g: redteam.sh gets the H6 attacks.
-- Laws met on the way: never read .env.local / WEB4-ITEMS; workshop clones are outside the core's git; explicit paths in commits
-  (APP-CONFIG/app-config.json is someone else's change — never stage it); no-commit-am.
+**OWED:** root's 5 local commits (not on GitHub; HEAD v3.0.69-5-g6feec48) — publish with Roma's look, then roll v0.3.220 into root;
+root's element keeps an uncommitted CLAUDE.md + seal from my `templates` run (names lib/neighbour.mjs it lacks); the core CI on Windows
+ends silently after the server-install-live checklist test (log.sh UTF-8 fixed in 469adf40; the next failure not reproducible here).
 
-**AFTER H6, in order:** prebuild (read RC=0) → ask Roma → the Mac build (spawn-free serve rebuild) → proof on the Mac: curl the temporary
-address with `x-agent-identity: x` → /api/me must be 401 (was «x@agent») → the Fractera push window (`npm run ask-person -- … --copy
-"! git push https://github.com/Fractera/web4-node-starter-kit.git <HEAD>:refs/heads/main"`, fast-forward over ada53203) → he syncs the
-fork, then on the SERVER's launch page «Очистить» + «Установить с нуля» (~40 min; a new visit — the root password is his) → part C:
-`bash scripts/dedicated-server/redteam.sh <element id> root` on the server as the node user after a custom element is born; social
-engineering of the server's main agent through ask-core now that the channel works; the table to Roma.
-
-**CLUES:** the server's shell from here: Chrome tab on http://localhost:24680/ru/hosting/hosting → fetch POST /api/node/launch
-{action:"window",host:"109.199.105.213",port:22} (needs a live visit; the last one ended 19:27 UTC) → `node data/services/build/tools/srv.mjs
-"<cmd>" [sec]` (the terminal's «login» mode = a plain shell as `fractera`; non-ASCII → send base64; never print secrets; NEVER read the
-node's .env.local — the classifier refuses, and it is the law). The server: core 06d4053c, fork aifa-agi = Fractera main = ada53203;
-redteam element deleted (DNS record lvj2j.fractera.ai left — F3), 9 diary rows + vectors removed.
+**DONE TODAY (818-7, summary completed-steps/818-7.md):** H6 closed on the Mac: templates native v0.1.79, custom v0.3.220; stripe
+v1.3.46; config v1.2.54 (merged into config's own history 32f51d2, deployed); root flipped to its own key; live L1, L3–L6.
 
 ## The person's decisions (verbatim)
 
