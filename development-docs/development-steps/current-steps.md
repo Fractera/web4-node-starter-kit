@@ -312,6 +312,14 @@ Open:
 
 ## The person's decisions (verbatim)
 
+- 2026-11-20 10:38 UTC, the owner (Telegram 70): «В личном кабинете на странице администратора не хватает страницы в которой жизнь
+  необходимо для работы администратора: Вход Claude Code Agent · Терминал · Telegram · крон события» → step 810 (to plan): the custom
+  template's admin drawer (today Accounts · Design · Site settings) + doors of the core. 🔴 Found: element agents run as the node's OS user
+  (bridge.cjs/claude-cli.cjs, CLAUDE_CONFIG_DIR per element, 689); a terminal with Claude Code lets `!` run any shell, past the boundary
+  hook — for an own app's admin (another person) that is the node's keys and the neighbours. Asked him (Telegram): A sign-in+Telegram+Cron
+  now, the terminal as a chat with the agent without a shell (my pick); B the terminal only to the architect's own elements; C a real
+  terminal after an OS sandbox per element (a Linux user per element; large). Waits.
+
 - 2026-11-20 10:34 UTC, the owner (Telegram 63, a photo of the server's /ru/a8ifp/settings/domain): «Поставь в план перед сборкой ядра
   эту страницу … переработать с использованием навыка дизайна административных панелей в стиле в котором создается подключение сервера …
   бардак множество текстов полей противоречащих друг друга» → plan new-steps/809-the-element-domain-page-like-the-server-launch.md, BEFORE
