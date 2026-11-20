@@ -283,9 +283,10 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 17:15 UTC, window ~60 %, Opus max — reset before the release build)
 
-**NOW (17:40):** prebuild GREEN after three leftovers of 813/814 fixed (25ba5438 final-check probe → claimOpen · 60674263 ClaimWords so
-check:ready-words holds · 9b24f455 plan names 6–8 words). The Mac core build launched detached at HEAD 9b24f455 — next: step 2 below.
-The fork stays at 67aecf80 for his sync test (below).
+**NOW (18:25):** the Mac core build ada53203 is live (eyes of the hosting page clean, no console errors). 811-7 PROVEN on the server
+(b6498d79, the plan's «811-7 live»). The Fractera push window 759caaea is open — the sha ada53203 (fast-forward over b6266b2c);
+after his «Готово»: `git ls-remote … refs/heads/main` must equal ada53203. Then he syncs the fork and updates the server's core build.
+The fork stays at 67aecf80 for his sync test (below). Next after that: 812, the Pult button on the server's bot, Windows red in three-os.
 
 **WHO WAITS:** Roma (owner) is at lunch — Telegram 223 (17:00): «У меня перерыв на обед продолжались без остановки действуй от моего
 имени делай все что необходимо меня не ещё не спрашивай». Talk in TELEGRAM (chat_id 90413601, ru, colour marks). Only TWO things stay
