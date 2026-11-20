@@ -283,6 +283,15 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 ~21:30 UTC — reset between H6's core part and its template/native part; Opus max)
 
+**NEXT ACTION (22:56 UTC) — BUILD STEP 819** (plan new-steps/819-server-domain-step-as-one-button.md, substeps 819-1..5). The owner
+APPROVED it, Telegram 335 (22:54): «Это ещё нужно пофиксить. Обязательно включи режим максимального размышления и необходимый навык
+дизайна. Аккуратно без лишней избыточный информации поправь тексты ошибок кнопки.» So: Opus effort max (switched at 22:56), load the
+skills interface-design, use-primitives, use-shadcn BEFORE any .tsx; the layout of the domain card to Roma as a screenshot before the
+build (memory compact-ui-folds-instructions); also tidy the error texts and buttons of the launch page's steps 3, 7, 8 — short, no
+excess. Fixes already committed, not built: ca3ae4df (TXT-shadowed www), 065a48d4 (way none → dns). Roma is on the server page now:
+step 8 «Проверить и дополнить» (www's certificate) then «Проверить HTTPS из интернета» → step 9; the window bb037e18 (root password,
+redteam.sh) still open. Then ONE core build with 819, push Fractera + fork.
+
 **NOW (21:30 UTC) — 818-7 CLOSED ON THE MAC** (summary completed-steps/818-7.md): core built 7a902d5b, CONFIG merged+deployed
 (32f51d2 = v1.2.54), Stripe v1.3.46 installed (off until keys), root flipped to its own key; live L1, L3–L6 ✓; Fractera main and the
 fork aifa-agi = 7a902d5b (pushed with Roma's key, 293). NEXT = PART C: Roma on the SERVER's launch page «Очистить» + «Установить с
