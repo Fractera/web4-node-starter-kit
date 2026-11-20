@@ -204,5 +204,7 @@ export function tgState(lang: Lang): TgState {
   // 781-4: the main agent's card carries its channel — «спит — Разбудить», «не слышит — Переподключить» (`lib/node/main-channel.cjs`).
   const c = contextWindow.read(ROOT) as (TgContext & { session: string }) | null
   const context: TgContext | null = c ? { used: c.used, window: c.window, percent: c.percent, model: c.model, at: c.at } : null
-  return { node: nodeOf(lang), context, builds, asks: waiting, main: { ...agentOf("build", false), channel: mainChannel.health(ROOT, "build") as TgChannel, autostart: autostart.state().on as boolean | null }, elements: elementsOf(lang, builds), limits: limitsOf(), at: new Date().toISOString() }
+  // 818 (the owner, Telegram 352: «почему пульт врёт?»): the main agent's card counts its live session too, never the record alone.
+  const mainLive = ((sessions() as { service: string; running?: boolean }[]) ?? []).some((s) => s.service === "build" && s.running)
+  return { node: nodeOf(lang), context, builds, asks: waiting, main: { ...agentOf("build", mainLive), channel: mainChannel.health(ROOT, "build") as TgChannel, autostart: autostart.state().on as boolean | null }, elements: elementsOf(lang, builds), limits: limitsOf(), at: new Date().toISOString() }
 }

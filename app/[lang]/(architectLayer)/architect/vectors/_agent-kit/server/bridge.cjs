@@ -434,12 +434,17 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
     watchAsk(born)
   })
   child.onExit(() => {
+    // 818 (✗ 2026-11-20 23:34, the owner, Telegram 352: «пульт говорит что ты спишь … почему пульт врёт?»): a model switch or a clear stops
+    // this session and starts the next one of the same service 1.5 s later; this process often exits after that. Its «running: false ·
+    // medium» and «asleep» belong to it alone — never written over the session that already replaced it.
+    const now = session.current(service)
+    const replaced = Boolean(now && now !== born)
     session.exited(born)
     // 666: сессии нет — следующая родится на medium без рабочих процессов, если человек снова не выберет другое.
     // 708-1: причина остановки (`session.stop`) или «вышла сама»; закрытие человеком/агентом — чистый конец, остальное предложит продолжить.
-    if (mode !== 'work') resetMode(element, born.endReason ?? 'exited')
+    if (mode !== 'work' && !replaced) resetMode(element, born.endReason ?? 'exited')
     // 781-1: no session — «спит»; a session the node closed for its channel keeps «failed» (the panel and the Pult show it until a wake).
-    if (born.channel && mode !== 'work' && born.endReason !== 'channel-failed' && born.endReason !== 'channel-heal') health.writeState(process.cwd(), element, { state: 'asleep', service, why: born.endReason ?? 'exited' })
+    if (born.channel && mode !== 'work' && !replaced && born.endReason !== 'channel-failed' && born.endReason !== 'channel-heal') health.writeState(process.cwd(), element, { state: 'asleep', service, why: born.endReason ?? 'exited' })
     // 639: «выключить?» и «ждёт ответа в терминале» этой сессии потеряли смысл — исчезают через 30 с
     telegram.sessionEnded(service)
     startQueuedPass(element)

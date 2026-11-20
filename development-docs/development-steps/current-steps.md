@@ -327,6 +327,14 @@ elements NODE_DOMAIN_FILE=/etc/fractera/public/logs/domain.json (the templates d
 redteam checks the window and /login → auth.<zone>. Rejected: o+x on logs/ (every 0644 log made between starts would open). Then: fork
 push, server update, z6esw sign-in + tell-core proven, redteam again, z6esw deleted. Also owed to Roma 347: the element page that offers
 «create an account» before the domain — look at it. srv.mjs now cancels the login mode's `claude auth login` + zsh's new-user menu.
+**Roma 352 (23:35): «пульт говорит что ты спишь … переключить на максимальный режим размышления … почему пульт врёт?»** Measured: his
+Pult switch WORKED — core log 23:34:18 «model opus · max from Telegram → scheduled», 23:34:30 «build: модель → opus · max, тот же
+разговор продолжен» (this session). The Pult lies by a race in the bridge (kits/_agent-kit/core/server/bridge.cjs `child.onExit`): the
+OLD session's exit, after `session.stop` + the new spawn 1.5 s later, runs `resetMode` (running:false, effort medium) and
+`health.writeState asleep` unconditionally → data/services/build/session-mode.json = running false · medium (23:34:30); and the Pult's
+main card is `agentOf("build", false)` (lib/node/tg-app/state.ts:207) — the live session list never counts for the main agent. His
+«Разбудить» answered «already-running» (23:33:59, 23:34:26). Fix proposed (with 818-8, one core build): onExit skips the record and the
+health when a newer session of the service is registered; the main card counts the live list. Then `npm run agent-kit:update`.
 
 **NEXT ACTION 2 — 819 (approved, Telegram 335 «Это ещё нужно пофиксить. Обязательно включи режим максимального размышления и
 необходимый навык дизайна. Аккуратно без лишней избыточный информации поправь тексты ошибок кнопки.»):** plan

@@ -5,3 +5,7 @@
 # readable by element users is the only line that comes here then).
 # 811-5a: the relay itself — node builtins only, no secret; it posts a walled session's hook events to the core with the element's key.
 lib/agent-kit/hook-relay.cjs
+# 818-8: the node's public window — the domain's zone and names, the core's port (lib/hosting/node-window.cjs): an element's sign-in
+# links and its ask-core, tell-core, need and notices find the node by them; the node writes them, the element only reads.
+data/node-window/logs/domain.json
+data/node-window/logs/runtime.json

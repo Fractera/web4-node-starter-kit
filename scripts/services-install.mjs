@@ -55,6 +55,7 @@ const elementAdmin = createRequire(import.meta.url)('../lib/web4-items/element-a
 const require = createRequire(import.meta.url)
 const { isFree, PORT_BLOCK_START, PORT_BLOCK_END, blockPorts, isBlockPort } = require('../lib/server-port.cjs')
 const { authEnvOverrides, publicAuth } = require('../lib/domain/public-auth.cjs')
+const nodeWindow = require('../lib/hosting/node-window.cjs')
 
 const ROOT = process.cwd()
 // 🔒 Пути элементов — из одного места узла (272): `lib/web4-items/paths.cjs`.
@@ -434,7 +435,9 @@ function derivedValue(name, ctx) {
     // перерисовки (`pages:refresh` отвечал 200, страница оставалась прежней). Папка элемента — абсолютная.
     case 'ELEMENT_DIR': return ctx.dir
     // Файл подключённого домена — у узла; собранный сервер элемента сам его не найдёт (сайт вёл «Войти» на петлю).
-    case 'NODE_DOMAIN_FILE': return join(ROOT, 'logs', 'domain.json')
+    // 818-8: за стеной сервера (811) пользователь элемента папку logs/ узла не читает — его файл домена в окне узла
+    // (data/node-window/logs/, lib/hosting/node-window.cjs), рядом runtime.json ядра; без стены — файл узла, как всегда.
+    case 'NODE_DOMAIN_FILE': return nodeWindow.domainFileFor(ROOT, { id: ctx.id, kind: ctx.kind })
     // 299: реестр узла — какие элементы стоят здесь. Элемент настроек показывает по нему ссылки на все элементы перед
     // выключением меню или входа (слово владельца: «откуда мы знаем какие у нас есть сервисы? … AGI config»).
     case 'NODE_ITEMS_FILE': return paths.REGISTRY_FILE
@@ -589,6 +592,8 @@ const REBUILD = process.argv.includes('--rebuild')
 const KEEP_UNDEPLOYED = process.argv.includes('--keep-undeployed')
 // 576-1: начало установки — копии, снятые с прогрева после него, проход «все адреса» в конце второй раз не снимает.
 const INSTALL_STARTED_AT = new Date().toISOString()
+// 818-8: окно узла для элементов за стеной — до того, как их окружение назовёт его (смена домена приходит сюда же переустановкой).
+{ const w = nodeWindow.writeNodeWindow(ROOT); if (!w.ok) say(`  окно узла для элементов за стеной не записано: ${w.reason}`) }
 
 // ── Прогрев свежей сборки (280-9) ───────────────────────────────────────────
 //
@@ -951,7 +956,7 @@ for (const entry of registry.services) {
     continue
   }
 
-  const ctx = { port, id: entry.id, props, nodePort, dir }
+  const ctx = { port, id: entry.id, kind: entry.kind, props, nodePort, dir }
   // 340-4 / 341-1: набор языков, язык по умолчанию и разблокированные для поисковиков — `elementLanguages`: свой APP-CONFIG
   // элемента, а у подключённого к CONFIG — поверх него копия настроек проекта.
 

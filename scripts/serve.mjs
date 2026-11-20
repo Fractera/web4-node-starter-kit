@@ -43,6 +43,11 @@ const root = path.join(here, '..')
 function reapplyServerEdge() {
   const { nodePhase } = createRequire(import.meta.url)('../lib/hosting/phase.cjs')
   if (nodePhase(root) !== 'live') return
+  // 818-8: the node's public window for walled elements — the core's runtime.json is fresh after every start (lib/hosting/node-window.cjs).
+  try {
+    const w = createRequire(import.meta.url)('../lib/hosting/node-window.cjs').writeNodeWindow(root)
+    if (!w.ok) console.log(`818-8: the node's window for walled elements not written — ${w.reason}`)
+  } catch (e) { console.log(`818-8: the node's window for walled elements not written — ${e instanceof Error ? e.message : e}`) }
   const last = (r) => String(r.stderr || r.stdout || r.error?.message || '').trim().split('\n').pop()
   const w = spawnSync(process.execPath, [path.join(root, 'scripts', 'server.mjs'), 'nginx', '--write', '--root', root], { cwd: root, encoding: 'utf8', timeout: 60_000 })
   if (w.status !== 0) { console.log(`741-1: nginx not regenerated — ${last(w)}`); return }

@@ -129,6 +129,15 @@ if [ -n "$S" ]; then
     fi
   fi
 fi
+# 818-8 the node's public window: readable (the element finds the node's domain and the core by it), never writable, no secret in it
+W="$N/data/node-window/logs"
+for f in "$W/domain.json" "$W/runtime.json"; do
+  readable "$f" && ok "reads the node's window $(basename "$f")" || hole "the node's window $(basename "$f") is unreadable (sign-in and the core lost)"
+  [ -w "$f" ] && hole "writes the node's window $(basename "$f")" || ok "cannot write the node's window $(basename "$f")"
+  grep -q -i -E '"[a-z_]*(token|secret|password|key)[a-z_]*"' "$f" 2>/dev/null && hole "a secret-like field in the window $(basename "$f")" || ok "no secret-like field in $(basename "$f")"
+done
+[ -w "$W" ] && hole "writes the window folder" || ok "cannot write the window folder"
+listable "$N/data" && hole "lists $N/data" || ok "cannot list $N/data"
 # foreign services an element could reach
 for p in 5000 8080 5432 3306 6379 27017; do
   (exec 3<>"/dev/tcp/127.0.0.1/$p") 2>/dev/null && hole "a foreign service listens on 127.0.0.1:$p" || ok "nothing on 127.0.0.1:$p"
