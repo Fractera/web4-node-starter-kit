@@ -283,11 +283,14 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 12:20 UTC, window ~45 %, Opus — context reset at the end of 808/809)
 
-**NOW:** 811 — LIVE on the Mac 74d0a7b3; Fractera and the fork were at b6266b2c (badge 12 px, his pushes 13:50/13:55); the server
-109.199.105.213 installs from CLEAN Fractera (his choice, started ~13:56). After it: 77cdf5de (bot activation moved to «Сервер готов»,
-the install rung's spinner; Telegram 170/173) is committed + fork pushed, NOT built — his word (175): build the core only after the
-server install ends; the server stays 1+ commit behind on purpose («заодно проверим» the behind line). THEN: core build (ask-free: he
-agreed), Fractera push window for 77cdf5de.., 811-7 proofs on the server. Telegram chat_id 90413601, ru, colour marks.
+**NOW:** 811-6 live on 109.199.105.213 — the fresh install (from the fork, started 15:10) built the core and 10 natives; root failed 3
+times on the wall (c9392191 path at add · f4ef6f83 path at every run · 94b61392 git «dubious ownership»: safe.directory per call in the
+command scope + add's gitconfig from the user's home; test 61 ✓). «Продолжить установку» pressed ~15:59 by me in my Chrome tab
+(tabId 2116210896, the server page). HIS ASK (Telegram 195, 15:58): max effort, think hard how such failures of root/custom never repeat.
+MY ANSWER TO DEVELOP: the wall was proven only DRY on a Mac; every live failure was a Linux fact (home 0750, a closed cwd, git's
+ownership check) — a REAL Linux rehearsal before any server: the server scripts run for real in an Ubuntu 24.04 machine (a container
+or GitHub Actions ubuntu-24.04) with a real custom element (useradd, ACLs, the git shim, npm ci, build, systemd-run as fe-<id>), as a
+gate before a release. Then: watch root's result, the core build on the Mac (77cdf5de + 46bb1871), Fractera push, 811-7.
 
 Roma talks in TELEGRAM now: main bot = his existing @fractera_factory_e90e_bot (saved by him 2026-11-19 23:49; chat_id 90413601, ru).
 Done since 2026-11-19 evening (all committed, fork pushed up to cdac6592; Fractera push = his paste, not done):
