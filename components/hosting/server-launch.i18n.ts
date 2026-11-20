@@ -88,7 +88,7 @@ export type ServerLaunchWords = {
    *  (`ReadyWords`, `check:ready-words`); `missing` names what the check still lacks — `{host}` */
   ready: { text: string; activate: string; activating: string; signinOk: string; signinFail: string; signinButton: string; signinChecking: string; signinHint: string; signinHintLabel: string; links: string; site: string; panel: string; signin: string; next: string; first: string; done: string; claimLead: string; claimSteps: string[]; claimEmail: string; claimRetry: string; claimSending: string; claimSent: string; claimOpen: string; claimFailed: string; claimLoss: string; claimed: string; missing: { title: string; cert: string; https: string; signin: string } }
   dangerZone: string
-  busy: { title: string; text: string; clear: string; clearTitle: string; risks: string[]; agree: string; clearConfirm: string; notNow: string; clearing: string; cleared: string; failed: string; nodeTitle: string; nodeText: string; nodeClear: string; nodeRisk: string; freshTitle: string; freshText: string; freshClear: string; freshRisk: string; freshAgree: string; freshDisk: string; copiesNone: string; erasedDone: string }
+  busy: { title: string; text: string; clear: string; clearTitle: string; risks: string[]; agree: string; clearConfirm: string; notNow: string; clearing: string; cleared: string; foreignGone: string; foreignLeft: string; failed: string; nodeTitle: string; nodeText: string; nodeClear: string; nodeRisk: string; freshTitle: string; freshText: string; freshClear: string; freshRisk: string; freshAgree: string; freshDisk: string; copiesNone: string; erasedDone: string }
 }
 
 /** 814: the claim words only — the claim island never sees `done`, `links` or the other ready words (744-6, `check:ready-words`) */
@@ -286,6 +286,7 @@ const en: ServerLaunchWords = {
     freshAgree: "I understand: the node on {host} is erased for good and a new one is installed",
     freshDisk: "The disk now: {used} of {total} GB used, {free} GB free; older copies of the node: {copies}.",
     copiesNone: "none",
+    foreignGone: "Foreign programs erased: {list}.", foreignLeft: "Still listening and not Fractera's: {list} — erase it before the install.",
     erasedDone: "The server is cleaned: erased for good — {nodes} and {count} older copies and caches; {freed} GB freed, {free} GB free now. The check ran again.",
     nodeTitle: "This server holds a Fractera node that is not this node's",
     nodeText: "Delete the previous state: the node stops and is erased for good with every older copy — a clean disk — and a fresh node from your fork goes in its place.",
@@ -487,6 +488,7 @@ const ru: ServerLaunchWords = {
     freshAgree: "Я понимаю: узел на {host} будет стёрт навсегда и установлен новый",
     freshDisk: "Диск сейчас: занято {used} из {total} ГБ, свободно {free} ГБ; старые копии узла: {copies}.",
     copiesNone: "нет",
+    foreignGone: "Чужие программы стёрты: {list}.", foreignLeft: "Всё ещё слушает порт и не Fractera: {list} — сотрите до установки.",
     erasedDone: "Сервер очищен: стёрто навсегда — {nodes}, а также старые копии и кэши ({count}); освобождено {freed} ГБ, свободно {free} ГБ. Проверка повторена.",
     nodeTitle: "На сервере узел Fractera, не связанный с этим узлом",
     nodeText: "Удалить прежнее состояние: узел остановится и будет стёрт навсегда со всеми старыми копиями — чистый диск, — а на его место встанет свежий узел из вашего форка.",

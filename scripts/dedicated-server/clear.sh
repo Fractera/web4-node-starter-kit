@@ -147,5 +147,6 @@ erased += left.get("erased") or []
 gb = lambda kb: round(int(kb or 0) / 1048576, 1)
 print(json.dumps({"backup": backup or None, "stopped": int(stopped or 0), "sites": [s for s in sites.split(",") if s],
                   "nodes": [s for s in nodes.split(",") if s], "erased": erased, "docker": left.get("docker"),
+                  "purged": left.get("purged") or [], "pm2Killed": left.get("pm2Killed") or [], "foreignListening": left.get("foreignListening") or [],
                   "freedGb": max(0.0, round(gb(after) - gb(before), 1)), "freeGb": gb(after)}))
 PY

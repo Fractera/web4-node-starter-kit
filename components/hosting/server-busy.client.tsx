@@ -21,7 +21,7 @@ import { Small } from "@/components/ui/typography"
 /** 806-1: a Fractera node is erased by the clear — the answer names it (`nodes`, `erased`) and the gigabytes it freed; `disk` — the
  *  server's disk before the act (probe.sh), said in the dialog. */
 export type BusyDisk = { totalGb: number; usedGb: number; freeGb: number; copies: string[]; copiesGb: number | null }
-export type BusyState = { host?: string; sites: string[]; programs: number; nodes?: string[]; disk?: BusyDisk | null; clear?: { state?: string; detail?: string; stopped?: number; backup?: string | null; nodes?: string[]; erased?: string[]; freedGb?: number; freeGb?: number } }
+export type BusyState = { host?: string; sites: string[]; programs: number; nodes?: string[]; disk?: BusyDisk | null; clear?: { state?: string; detail?: string; stopped?: number; backup?: string | null; nodes?: string[]; erased?: string[]; freedGb?: number; freeGb?: number; purged?: string[]; pm2Killed?: string[]; foreignListening?: string[] } }
 type Start = (action: string, extra?: Record<string, unknown>) => Promise<void>
 
 // 784 (the owner, 2026-11-18: «мне нужна кнопка очистить данный сервер»): `fresh` — the same choice for a server holding THIS node's own
@@ -53,12 +53,20 @@ export function ServerBusy({ busy, words, dialogUi, disabled, onStart, fresh = f
   if (busy.clear?.state === "done") {
     const c = busy.clear
     const erased = (c.nodes ?? []).length > 0
+    // 818-1 (the owner, Telegram 271: «ты третий раз говоришь мне что-то остается»): the foreign programs erased are named, and whatever
+    // still listens and is not Fractera's is named in red — never a silent leftover.
+    const gone = [...(c.purged ?? []), ...(c.pm2Killed ?? []).map((u) => `pm2 (${u})`)]
+    const left = c.foreignListening ?? []
     return (
-      <p className="mt-3 rounded-lg border border-primary/40 bg-primary/5 p-3 text-foreground text-sm" data-block="server-busy-freed" data-erased={erased ? "1" : "0"}>
-        {erased
-          ? words.erasedDone.replace("{nodes}", (c.nodes ?? []).join(", ")).replace("{count}", String(Math.max(0, (c.erased ?? []).length - (c.nodes ?? []).length))).replace("{freed}", String(c.freedGb ?? 0)).replace("{free}", String(c.freeGb ?? "—"))
-          : words.cleared.replace("{n}", String(c.stopped ?? 0)).replace("{backup}", c.backup ?? "")}
-      </p>
+      <div className="mt-3 flex flex-col gap-1 rounded-lg border border-primary/40 bg-primary/5 p-3 text-foreground text-sm" data-block="server-busy-freed" data-erased={erased ? "1" : "0"}>
+        <p>
+          {erased
+            ? words.erasedDone.replace("{nodes}", (c.nodes ?? []).join(", ")).replace("{count}", String(Math.max(0, (c.erased ?? []).length - (c.nodes ?? []).length))).replace("{freed}", String(c.freedGb ?? 0)).replace("{free}", String(c.freeGb ?? "—"))
+            : words.cleared.replace("{n}", String(c.stopped ?? 0)).replace("{backup}", c.backup ?? "")}
+        </p>
+        {gone.length > 0 ? <p data-block="server-busy-foreign-gone">{words.foreignGone.replace("{list}", gone.join(", "))}</p> : null}
+        {left.length > 0 ? <p className="text-destructive" data-block="server-busy-foreign-left" role="status">{words.foreignLeft.replace("{list}", left.join(", "))}</p> : null}
+      </div>
     )
   }
   return (

@@ -108,12 +108,21 @@ t('negative: a folder name «..» or «.» erases nothing', () => {
 console.log('806-8 · what earlier installers left')
 {
   const L = path.join(scratch, 'left')
-  for (const f of ['opt/fractera/app/x', 'opt/fractera-main/x', 'root/.cache/camoufox/x', 'root/.npm/_cacache/x', 'root/.ssh/authorized_keys', 'etc/fractera/node.env', 'home/fractera/web4-node-starter-kit/x', 'etc/letsencrypt/live/a/x']) put(path.join(L, f))
+  for (const f of ['opt/fractera/app/x', 'opt/fractera-main/x', 'root/.cache/camoufox/x', 'root/.npm/_cacache/x', 'root/.ssh/authorized_keys', 'etc/fractera/node.env', 'home/fractera/web4-node-starter-kit/x', 'etc/letsencrypt/live/a/x',
+    'root/.pm2/dump.pm2', 'home/olduser/.pm2/dump.pm2', 'home/fractera/.pm2/dump.pm2', 'var/lib/docker/x', 'var/lib/containerd/x', 'var/lib/postgresql/14/main/x', 'etc/apache2/x', 'var/lib/mysql/x', 'var/www/html/index.html', 'var/www/oldsite/x', 'var/www/fractera-acme/x']) put(path.join(L, f))
   const r = spawnSync('bash', [path.join(here, 'dedicated-server', 'leftovers.sh')], { encoding: 'utf8', env: { ...process.env, LEFT_ROOT: L, LEFT_TEST: '1' } })
   const out = JSON.parse(r.stdout.trim().split('\n').pop())
   t('the Easy Starter\'s trees and root\'s caches are erased', () => {
     for (const f of ['opt/fractera', 'opt/fractera-main', 'root/.cache', 'root/.npm/_cacache']) assert.equal(existsSync(path.join(L, f)), false, f)
-    assert.equal(out.erased.length, 4)
+    assert.equal(out.erased.length, 13)
+  })
+  t('818-1 everything foreign goes: other users\' pm2, Docker\'s and the databases\' data, Apache, every site but the node\'s', () => {
+    for (const f of ['root/.pm2', 'home/olduser/.pm2', 'var/lib/docker', 'var/lib/containerd', 'var/lib/postgresql', 'etc/apache2', 'var/lib/mysql', 'var/www/html', 'var/www/oldsite']) assert.equal(existsSync(path.join(L, f)), false, f)
+    assert.deepEqual(out.pm2Killed.sort(), ['olduser', 'root'])
+    assert.ok(Array.isArray(out.purged) && Array.isArray(out.foreignListening))
+  })
+  t('818-1 negative: the node user\'s own pm2 and the node\'s ACME folder stay', () => {
+    for (const f of ['home/fractera/.pm2/dump.pm2', 'var/www/fractera-acme/x']) assert.ok(existsSync(path.join(L, f)), f)
   })
   t('negative: the node, its /etc/fractera, the keys and the certificates stay', () => {
     for (const f of ['home/fractera/web4-node-starter-kit/x', 'etc/fractera/node.env', 'root/.ssh/authorized_keys', 'etc/letsencrypt/live/a/x']) assert.ok(existsSync(path.join(L, f)), f)
