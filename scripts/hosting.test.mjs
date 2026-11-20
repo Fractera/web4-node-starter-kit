@@ -433,7 +433,8 @@ if (process.platform !== 'win32') {
     assert.equal(r.status, 0, r.stderr)
     const lines = readText(join(scripts, 'prepare.progress.jsonl'), 'utf8').trim().split('\n').map((l) => JSON.parse(l))
     const done = lines.filter((l) => l.state === 'done').map((l) => l.id)
-    assert.deepEqual(done, ['apt-lock', 'swap', 'apt', 'node', 'pm2', 'certbot', 'user', 'git', 'element-group', 'helper', 'nginx', 'firewall', 'resolver', 'pm2-startup', 'prepare'])
+    assert.deepEqual(done, ['apt-lock', 'foreign', 'swap', 'apt', 'node', 'pm2', 'certbot', 'user', 'git', 'element-group', 'helper', 'nginx', 'firewall', 'resolver', 'pm2-startup', 'prepare'])
+    assert.match(r.stdout, /DRY foreign: NODE_USER='fractera' bash '\S+\/leftovers\.sh'/, '818-1: every install erases what is not Fractera, for the node user it was given')
   })
   t('negative: a command smuggled in place of the folder, a bad user, a bad port — refused before any stage', () => {
     for (const a of [['fractera', "x'; rm -rf / #", '22'], ['Root;', 'x', '22'], ['fractera', 'x', '22;reboot']]) {

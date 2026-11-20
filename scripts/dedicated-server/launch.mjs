@@ -409,7 +409,7 @@ const verbs = {
       // 808: the server's own repository (step 4) — «own» without GitHub's yes is refused as the page keeps step 5 closed
       const fork = s.repo?.url ?? null
       if (!fork) return fail(s.repo?.mode === 'own' ? 'repo-not-chosen' : 'no-fork', { state: s })
-      await scripts(client, ['launch.sh', 'prepare.sh', 'stages.sh', 'fractera-root.sh', 'fractera-element.sh', 'node-git.sh', 'state.sh'])
+      await scripts(client, ['launch.sh', 'prepare.sh', 'stages.sh', 'fractera-root.sh', 'fractera-element.sh', 'node-git.sh', 'state.sh', 'leftovers.sh'])
       // 743-5: this computer's stage 0 — the update of a server of any version is done by the target's own updater
       await upload(client, `${DIR}/node-update-stage0.mjs`, readFileSync(path.join(here, '..', 'node-update-stage0.mjs')), 0o700)
       await startDetached(client, `${DRY}bash ${q(`${DIR}/launch.sh`)} ${REMOTE_USER} ${q(FOLDER)} ${port} ${q(fork)} ${mode} ${q(ip)}`, `${DIR}/launch.out`)

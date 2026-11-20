@@ -31,7 +31,9 @@ fi
 # 🔒 THE NODE'S OWN STAY: the packages of prepare.sh (git curl ca-certificates rsync nginx ufw build-essential python3 python3-venv openssl
 # psmisc acl), nodejs, certbot, /var/www/fractera-* and everything named NEVER TOUCHED above.
 # the node user as the installer wrote it (prepare.sh → /etc/fractera/node.env) — its pm2 and its sockets are the node's, never foreign
+GIVEN_USER="${NODE_USER:-}"
 NODE_USER="$(sed -n 's/^NODE_USER=\([a-z_][a-z0-9_-]*\)$/\1/p' "$R/etc/fractera/node.env" 2>/dev/null | head -1)"
+[[ "$GIVEN_USER" =~ ^[a-z][a-z0-9-]{1,30}$ ]] && NODE_USER="$GIVEN_USER"   # the installer's own argument (prepare.sh) wins
 NODE_USER="${NODE_USER:-fractera}"
 FOREIGN_PKGS=()
 PM2_KILLED=()

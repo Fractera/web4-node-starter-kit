@@ -18,6 +18,10 @@ emit prepare running
 
 # apt waits for the provider's own first-boot upgrades instead of failing on their lock (easy starter: DPkg::Lock::Timeout + fuser).
 stage apt-lock "mkdir -p /etc/apt/apt.conf.d && printf 'DPkg::Lock::Timeout \"600\";\\n' > /etc/apt/apt.conf.d/99fractera-lock-timeout"
+# 818-1 (the owner, 2026-11-20, Telegram 277: «не бывает на нём никаких чужих процессов и исходи из этого. Один сервер это только проект
+# Fractera только один проект больше ничего»): every install and update erases what is not Fractera first — the same script as the page's
+# «Очистить» (leftovers.sh); ✗ 817: a fresh VPS with Docker, Postgres and Apache but no pm2 or nginx read «clean» to the probe.
+stage foreign "NODE_USER='$NODE_USER' bash '$HERE/leftovers.sh'"
 
 # Swap before anything heavy: ✗ easy starter 2026-08-23, 956 MB and no swap — `npm install` was killed (137) at 33 %.
 # ✗ Paid again 2026-11-13 on the owner's 8 GB test server: the core is ONE Next app (126 pages, 1671 source files) and its Turbopack build
