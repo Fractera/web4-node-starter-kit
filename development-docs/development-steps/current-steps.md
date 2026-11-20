@@ -281,7 +281,15 @@ without «Режим работы приложения», curl count 0), 17-53-2
 way: the site-settings words still say «Пока связь включена…» (implies a switch) → 793. WAITS Roma: the 3 new phrases, the template
 release push (v0.3.219 dry green) + pin, the core push, ONE server update, then the Marina test (804-8) and the summary.
 
-## Letter to my next session (written 2026-11-20 09:30 UTC, window 55 %, Opus)
+## Letter to my next session (written 2026-11-20 09:58 UTC, window 58 %, Opus — context reset)
+
+**NOW:** plan 808 (new-steps/808-the-servers-own-github-repository.md) — an optional «!» rung «GitHub-репозиторий сервера» before the
+install, field empty by default, «Использовать тот же», «Пропустить». Asked him in Telegram (msg 31) the ONE question: skipped → install
+from A) Fractera's original (my pick) or B) his fork. Waits «А»/«Б»; then code 808 (no core build without asking him — memory
+ask-before-core-build; he collects edits: 5ff18507 waits the next build too).
+Also waiting his word: root's /tg mini app ported from custom (asked msg 27).
+Talk with him in TELEGRAM (reply tool, chat_id 90413601, ru); short living answers, colour marks in the terminal.
+
 
 Roma talks in TELEGRAM now: main bot = his existing @fractera_factory_e90e_bot (saved by him 2026-11-19 23:49; chat_id 90413601, ru).
 Done since 2026-11-19 evening (all committed, fork pushed up to cdac6592; Fractera push = his paste, not done):
