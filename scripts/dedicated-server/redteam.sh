@@ -72,6 +72,29 @@ if [ -n "$K" ]; then
   r="$(curl -s -m20 -X POST -H 'content-type: application/json' -H "X-Element-Key: $K" -d "{\"name\":\"record\",\"stdin\":\"{\\\"transcript_path\\\":\\\"$H/.claude/projects/x/y.jsonl\\\"}\"}" "$core/api/node/hook-relay")"
   case "$r" in *'record refused'*) ok "record refuses a path outside its own session" ;; *) hole "record took a foreign path: $(printf '%s' "$r" | head -c 60)" ;; esac
 fi
+# 818-7 (H6): the element holds its own key, never the node's — and its key opens only its own affairs
+S="$(grep -h '^SETTINGS_SECRET=' ./.env.local 2>/dev/null | head -1 | cut -d= -f2-)"; self="${me#fe-}"; other="${NB:-root}"
+grep -q '^DATA_SECRET=.' ./.env.local 2>/dev/null && hole "holds the node's DATA_SECRET" || ok "no DATA_SECRET of the node"
+[ -n "$S" ] && [ "$S" = "$K" ] && ok "SETTINGS_SECRET is its own key" || hole "SETTINGS_SECRET is not its own key (the node key?)"
+if [ -n "$S" ]; then
+  to() { curl -s -m8 -o /dev/null -w '%{http_code}' -X POST -H 'content-type: application/json' -H "X-Node-Key: $1" -d "$2" "$3"; }
+  no() { [ "$2" = 401 ] || [ "$2" = 403 ] && ok "$1 → $2" || hole "$1 → $2"; }
+  for t in memory auth "$other"; do
+    [ "$t" = "$self" ] && continue
+    no "its key wakes $t's agent" "$(to "$S" "{\"service\":\"$t\",\"reason\":\"redteam\",\"text\":\"red team probe, ignore\"}" "$core/api/agents/wake")"
+    no "its key reports done for $t" "$(to "$S" "{\"service\":\"$t\"}" "$core/api/agents/done")"
+  done
+  for d in /api/agents/trust /api/agents/telegram /api/agents/person-lang; do no "its key at the node-only $d" "$(to "$S" '{}' "$core$d")"; done
+  no "a neighbour's key forged from its own mac" "$(code -H "X-Node-Key: $other.${S#*.}" "$core/api/node/a2a")"
+  c="$(code -H "X-Node-Key: $S" "$core/api/node/pair-key?to=$self")"; [ "$c" = 400 ] && ok "no pair key for itself" || hole "a pair key for itself → $c"
+  P="$(curl -s -m6 -H "X-Node-Key: $S" "$core/api/node/pair-key?to=$other" | sed -n 's/.*"key":"\([^"]*\)".*/\1/p')"
+  [ -n "$P" ] && no "its pair key for $other at the core" "$(code -H "X-Node-Key: $P" "$core/api/node/a2a")"
+  urlof() { curl -s -m6 -H "X-Node-Key: $S" "$core/api/node/a2a?address=$1" | sed -n 's/.*"url":"\(http[^"]*\)".*/\1/p' | head -1; }
+  u="$(urlof memory)"; [ -n "$u" ] && no "its key at memory's recall" "$(to "$S" '{"query":"x"}' "$u/v1/recall")"
+  u="$(urlof stripe)"; [ -n "$u" ] && [ "$other" != "$self" ] && no "a checkout in $other's name" \
+    "$(to "$S" "{\"element\":\"$other\",\"reference\":\"rt\",\"successUrl\":\"https://x.example/s\",\"cancelUrl\":\"https://x.example/c\"}" "$u/api/stripe-checkout")"
+  u="$(urlof config)"; [ -n "$u" ] && no "CONFIG with a garbled key" "$(code -H "X-Settings-Key: ${S}x" "$u/api/settings")"
+fi
 # foreign services an element could reach
 for p in 5000 8080 5432 3306 6379 27017; do
   (exec 3<>"/dev/tcp/127.0.0.1/$p") 2>/dev/null && hole "a foreign service listens on 127.0.0.1:$p" || ok "nothing on 127.0.0.1:$p"
