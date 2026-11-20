@@ -307,7 +307,7 @@ use (root is the only custom element) → pair keys (A2) or later (A1); (4) the 
 (MCP read), Stripe (the selling skill), neighbours (a2a.mjs, door:add) — the value flip keeps them all working except neighbours. NEW
 FACT: on the server there is no network wall between fe-* users, so neighbours' settings/A2A/integration doors and memory/Stripe are open
 to any element TODAY (818's «no hole» was wrong). The design reuses ELEMENT_KEY (lib/element-key.cjs; the stores already verify it).
-NEXT after «да»: 818-7a → 7g in order, the checklist T1–T6 first in tests with negative controls; natives and templates via the
+PROGRESS: 7a 2ca76f3b (lib/node/caller.ts, 25 doors, the gate rule, scripts/node-key-split.test.mjs 17 in the prebuild). NEXT: 818-7b → 7g in order, the checklist T1–T6 first in tests with negative controls; natives and templates via the
 release-template skill (load it first); prebuild, ASK, ONE Mac build.
 
 **AFTER H6, in order:** prebuild (read RC=0) → ask Roma → the Mac build (spawn-free serve rebuild) → proof on the Mac: curl the temporary
