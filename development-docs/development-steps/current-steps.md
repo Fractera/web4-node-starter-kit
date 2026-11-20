@@ -283,6 +283,14 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 ~21:30 UTC — reset between H6's core part and its template/native part; Opus max)
 
+**NOW (21:30 UTC) — 818-7 CLOSED ON THE MAC** (summary completed-steps/818-7.md): core built 7a902d5b, CONFIG merged+deployed
+(32f51d2 = v1.2.54), Stripe v1.3.46 installed (off until keys), root flipped to its own key; live L1, L3–L6 ✓; Fractera main and the
+fork aifa-agi = 7a902d5b (pushed with Roma's key, 293). NEXT = PART C: Roma on the SERVER's launch page «Очистить» + «Установить с
+нуля» (~40 min; his root password — a new visit), then a custom element born on the server, `bash scripts/dedicated-server/redteam.sh
+<id> root` as the node user, social engineering through ask-core, the table to Roma. OWED: root's 5 local commits published with his
+look, then v0.3.220 into root; the core CI run of 7a902d5b (queued at 21:26; ada53203's run had failed — read its cause).
+The text below is the earlier letter (its 7f is done).
+
 **WHO WAITS:** Roma (owner) in TELEGRAM (chat_id 90413601, ru, colour marks). His words: Telegram 280 (19:30) «что можно сделать
 сейчас надо делать сейчас каждая переустановка и сборка ядра это целая вечность чем меньше этих процессов тем лучше»; 284 (19:33)
 «Помнишь что взаимодействие элементов у нас запланировано по двум протоколом i2i и апи если сейчас это имеет значение»; 286 (19:58) to my
