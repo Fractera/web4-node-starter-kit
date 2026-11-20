@@ -293,6 +293,10 @@ look, then v0.3.220 into root; the core CI run of 7a902d5b (queued at 21:26; ada
 (need-password), so a background watch waits architect.fractera.ai/api/health with a commit. Core CI 469adf40: ubuntu ✓, windows ✗
 — the log.sh UTF-8 fix (469adf40) made the checklist test pass there, but the process then ends SILENTLY with exit 1 right after it
 (no ✗ line, no summary; not reproducible on the Mac with Latin-1 + PYTHONIOENCODING=cp1252) — owed, the scripts are Ubuntu-only.
+22:12 the server answers (commit f6b7f703 — not on GitHub, the server's own records commit). Windows open: bb037e18 (a visit with the
+root password, for redteam.sh) and 33cb777b (Roma, Telegram 309: step 7 «www.fractera.ai — нет записи»; 813 made www required today,
+public DNS has no www record; the «Вписать записи» button lives in the folded rung «Кто внесёт записи», the records rung offers only
+«Проверить» — OWED (core, next build): the records rung offers the write itself when Cloudflare can and a required name is missing).
 The text below is the earlier letter (its 7f is done).
 
 **WHO WAITS:** Roma (owner) in TELEGRAM (chat_id 90413601, ru, colour marks). His words: Telegram 280 (19:30) «что можно сделать
