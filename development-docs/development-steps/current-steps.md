@@ -334,7 +334,12 @@ stripe). My last Telegram to him: 287 «Принял: A2 … Перед сбор
   v3.0.69, clean. Root after the flip works on its old code (its doors compare with its own key; CONFIG, Stripe, the core accept it).
   Root's element keeps an uncommitted CLAUDE.md + seal from my `templates` run (names lib/neighbour.mjs, which root lacks) — its build
   passes (guards check skills, not helpers). Offer Roma: publish root's 5 commits with his look → v0.3.220 rolls into root later.
-  NEXT: ASK Roma before the ONE core build (+ root: 5 own commits not on GitHub, the
+  21:09 UTC the ONE core build STARTED (Roma 297 «да»): `node scripts/spawn-free.mjs scripts/serve.mjs rebuild` → logs/core-build.log.
+  ON RETURN: `npm run serve:status`; tail logs/core-build.log (RC); then IN ORDER: (1) CONFIG — its element has its own commit
+  4718bde → POST the update door app/api/architect/items/config/update (merge v1.2.54) → `POST /api/node/deploy {ids:["config"]}`;
+  (2) `npm run services:install -- --only stripe` (no own work → checkout v1.3.46 + build); (3) the flip `npm run services:install --
+  --only root`; (4) L1–L6 (plan 818-7); (5) push the core to Fractera (Roma 293) + sync the fork; (6) tell Roma → server «Очистить» +
+  «Установить с нуля», then part C (redteam.sh on the server). Was: ASK Roma before the ONE core build (+ root: 5 own commits not on GitHub, the
   rollout refuses HEAD ≠ pin — ask whether to publish them) → build → config update door + deploy → services:install stripe → flip
   root → L1–L6 → push the core to Fractera (293 allows). Roma 291: «до 980 кастомных элементов» — nothing is
   stored per pair, an HMAC per call.
@@ -380,6 +385,10 @@ node's .env.local — the classifier refuses, and it is the law). The server: co
 redteam element deleted (DNS record lvj2j.fractera.ai left — F3), 9 diary rows + vectors removed.
 
 ## The person's decisions (verbatim)
+
+- 2026-11-20 21:07 UTC, the owner (Telegram 297), to my ask 296 (the ONE core build, root left as is): «Да отлично делай это. Потом
+  нова я установка сервера полная очистка не так ли?» — yes: after the Mac proofs, push to Fractera, sync the fork, then on the
+  server's launch page «Очистить» + «Установить с нуля» (a full clean install).
 
 - 2026-11-20 20:44 UTC, the owner (Telegram 293), to my question 292 (the node's GitHub token gets 403 on Fractera's template repos;
   may I use his gh key, account Fractera, for the 5 releases of 818-7): «Сегодня даю тебе право делать гит пуш». Used as
