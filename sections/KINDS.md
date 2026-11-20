@@ -39,7 +39,7 @@
 | `cta01` | `cta` | Page material | призыв к действию | text?: string; href: string; label: string; secondary?: { href: string; label: string } | [карточка](kinds/cta.md) |
 | `callout01` | `callout` | Page material | — | title: string; text: string; action?: { href: string; label: string; external?: boolean } | — |
 | `table01` | `table` | Page material | — | headers: string[]; rows: string[][]; caption?: string | — |
-| `docref01` | `docref` | Page material | a card that leads somewhere: a document to download or a page to open | title: string; summary: string; href: string; label?: string; kicker?: string; navigate?: boolean | [карточка](kinds/docref.md) |
+| `docref01` | `docref` | Page material | a card that leads somewhere: a document to download or a page to open | title: string; summary: string; href: string; label?: string; kicker?: string; navigate?: boolean; place?: 'home' \| 'server' | [карточка](kinds/docref.md) |
 | `founder01` | `founder` | Testimonials and social proof | the owner's quote, signed from settings | text: string | [карточка](kinds/founder.md) |
 | `columns01` | `columns` | Page material | — | children: PageItem[]; cols?: 2 \| 3 | — |
 | `group01` | `group` | Page material | — | children: PageItem[] | — |

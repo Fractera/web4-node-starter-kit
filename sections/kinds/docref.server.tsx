@@ -11,7 +11,7 @@ import { inline } from '@/lib/content/sections/inline'
 const BUTTON = "inline-flex w-fit shrink-0 items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:bg-primary/90"
 
 export const docref: SectionRenderer<'docref'> = (b, { key: k, ui }) => (b.navigate ? (
-  <aside key={k} className="my-6 flex flex-col gap-4 rounded-2xl border border-primary/30 bg-primary/[0.05] p-6 sm:flex-row sm:items-center sm:justify-between">
+  <aside key={k} className="my-6 flex flex-col gap-4 rounded-2xl border border-primary/30 bg-primary/[0.05] p-6 sm:flex-row sm:items-center sm:justify-between" data-place={b.place}>
     <div className="flex flex-col gap-1.5">
       {b.kicker && <p className="text-xs font-semibold uppercase tracking-widest text-primary">{b.kicker}</p>}
       <p className="text-base font-semibold text-foreground">{inline(b.title, `${k}-t`)}</p>
@@ -23,7 +23,7 @@ export const docref: SectionRenderer<'docref'> = (b, { key: k, ui }) => (b.navig
     </Link>
   </aside>
 ) : (
-  <aside key={k} className="my-6 flex flex-col gap-4 rounded-2xl border border-primary/30 bg-primary/[0.05] p-6 sm:flex-row sm:items-center sm:justify-between">
+  <aside key={k} className="my-6 flex flex-col gap-4 rounded-2xl border border-primary/30 bg-primary/[0.05] p-6 sm:flex-row sm:items-center sm:justify-between" data-place={b.place}>
     <div className="flex flex-col gap-1.5">
       <p className="text-xs font-semibold uppercase tracking-widest text-primary">
         {b.kicker ?? ui.fullDocumentation}

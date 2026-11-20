@@ -5183,7 +5183,7 @@
         "en": "Page material section «docref» (docref): What a page is written FROM: paragraphs, lists, quotes, tables, code, callouts.",
         "ru": "a card that leads somewhere: a document to download or a page to open — **Type:** Navigation. A named destination with one sentence of what is there and one button."
       },
-      "how": "A page names the kind «docref» in its language cell with the fields title: string; summary: string; href: string; label?: string; kicker?: string; navigate?: boolean.",
+      "how": "A page names the kind «docref» in its language cell with the fields title: string; summary: string; href: string; label?: string; kicker?: string; navigate?: boolean; place?: 'home' | 'server'.",
       "words": {
         "en": [
           "docref",

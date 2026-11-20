@@ -151,7 +151,8 @@ export type LeafItem =
   // for a .pdf instead of the default "Download .md"); optional `kicker` overrides
   // the eyebrow above the title (default "Full documentation").
   // 291: `navigate` — карточка ведёт на СТРАНИЦУ (переход, next/link), а не скачивает документ (`download`).
-  | { kind: 'docref'; title: string; summary: string; href: string; label?: string; kicker?: string; navigate?: boolean }
+  // `place` (742-3): a card of a page that lives in one place only — the other place hides it (`data-place`, styles/globals.css)
+  | { kind: 'docref'; title: string; summary: string; href: string; label?: string; kicker?: string; navigate?: boolean; place?: 'home' | 'server' }
   // "Did you know" callout — icon + tinted panel for an aside fact (e.g. the page
   // auto-updates in real time as an AI agent edits it). title is the lead-in.
   // `action` — необязательная кнопка под текстом (шаг 535, владелец 2026-10-18: кнопка карточки «Главное: открывать эту панель не

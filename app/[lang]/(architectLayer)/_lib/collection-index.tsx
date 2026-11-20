@@ -66,6 +66,9 @@ export function CollectionIndex({
       href: `/${lang}${dir.replace(/^\/architect(?=\/|$)/, '')}/${p.meta.slug}`,
       label: ui.openSection,
       navigate: true,
+      // the owner, 2026-11-20: «в самом левом меню у тебя нету вкладки сертификаты … а правый экран … четыре карточки вместо трёх» —
+      // a page of one place only (`meta.place`) hides its card in the other place too, by the same rule as its menu item (742-3)
+      ...(p.meta.place ? { place: p.meta.place } : {}),
     }
   })
 
