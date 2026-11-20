@@ -284,8 +284,12 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 ## Letter to my next session (written 2026-11-20 17:15 UTC, window ~60 %, Opus max — reset before the release build)
 
 **NOW (18:25):** the Mac core build ada53203 is live (eyes of the hosting page clean, no console errors). 811-7 PROVEN on the server
-(b6498d79, the plan's «811-7 live»). Fractera main = ada53203 (his paste 18:3x, ls-remote verified). NOW his: on the SERVER's panel «Синхронизировать форк»
-→ «Обновить сборку ядра»; then check the server's /api/health commit = ada53203 and the fork aifa-agi main = ada53203.
+(b6498d79, the plan's «811-7 live»). Fractera main = ada53203 (his paste 18:3x, ls-remote verified). Fork aifa-agi = ada53203 (his sync). The server's update RUNNING since 17:31:44 (his
+press in the deployments dialog) — watch https://architect.fractera.ai/api/health until commit ada53203. His complaint (Telegram
+236/237/239): the banner's «Обновить сборку ядра» only opens the tab, the banner stays the same, «Синхронизировать форк» stays lit, the
+dialog's «Развернуть» dead ~1 min (my preflight curl ran on the server 17:30–17:31 — a possible cause, unmeasured). Proposed 815
+(Telegram 240: one road from the banner, busy states, the running stage in the banner and the board, sync dims when synced, a measure
+on the server) — waits his yes.
 The fork stays at 67aecf80 for his sync test (below). Next after that: 812, the Pult button on the server's bot, Windows red in three-os.
 
 **WHO WAITS:** Roma (owner) is at lunch — Telegram 223 (17:00): «У меня перерыв на обед продолжались без остановки действуй от моего
