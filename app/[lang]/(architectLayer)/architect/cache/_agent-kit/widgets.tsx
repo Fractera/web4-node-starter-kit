@@ -67,7 +67,7 @@ export function agentKitWidget(page: AgentKitPage, service: string, lang: string
       return (
         <>
           <TelegramAppNeeded words={agentLinksWords(lang)} />
-          <TelegramChannel service={service} lang={lang} words={telegramChannelWords(lang)} slot={slot} />
+          <TelegramChannel service={service} lang={lang} words={telegramChannelWords(lang)} slot={slot} dialogUi={appDialogUi(lang)} />
         </>
       )
   }

@@ -64,6 +64,8 @@ export type TelegramChannelWords = {
   locked: string
   errors: Record<string, string>
   retry: string
+  /** Danger zone (the owner, 2026-11-19): the bot taken off the node, the ladder from step 1 again */
+  remove: { zone: string; title: string; text: string; button: string; dialogTitle: string; risks: string[]; agree: string; confirm: string; cancel: string; done: string }
 }
 
 const DICT: Record<string, TelegramChannelWords> = {
@@ -121,6 +123,22 @@ const DICT: Record<string, TelegramChannelWords> = {
     openTerminal: "Open the terminal",
     openChat: "Open the chat",
     allowedCount: "Allowed: {n}",
+    remove: {
+      zone: "Danger zone",
+      title: "Remove the bot from this node",
+      text: "If the bot stopped answering or you want to connect another one: its token, its admitted people and its messages leave the node, and the steps above start again from step 1.",
+      button: "Remove the bot…",
+      dialogTitle: "Remove @{bot} from the node?",
+      risks: [
+        "The bot's token, the list of admitted people and its kept messages are erased from this computer for good.",
+        "The bot itself stays in Telegram — delete it in @BotFather if it is no longer needed, or connect it again with a new token.",
+        "Until a bot is connected again, this agent does not answer in Telegram; the terminal works as before.",
+      ],
+      agree: "I understand: @{bot} leaves this node",
+      confirm: "Remove the bot",
+      cancel: "Not now",
+      done: "The bot is removed. Start again from step 1.",
+    },
     notes: [
       "The bot answers while this computer is on and the agent is running in the terminal.",
       "It spends your Claude subscription — the same limit as the terminal and your own work.",
@@ -199,6 +217,22 @@ const DICT: Record<string, TelegramChannelWords> = {
     openTerminal: "Открыть терминал",
     openChat: "Открыть чат",
     allowedCount: "Допущено: {n}",
+    remove: {
+      zone: "Опасная зона",
+      title: "Удалить бота с этого узла",
+      text: "Если бот перестал отвечать или вы хотите подключить другого: его токен, допущенные люди и сообщения уйдут с узла, и шаги выше начнутся заново с первого.",
+      button: "Удалить бота…",
+      dialogTitle: "Удалить @{bot} с узла?",
+      risks: [
+        "Токен бота, список допущенных и его сохранённые сообщения навсегда стираются с этого компьютера.",
+        "Сам бот остаётся в Telegram — удалите его в @BotFather, если он больше не нужен, или подключите снова с новым токеном.",
+        "Пока бот не подключён снова, этот агент в Telegram не отвечает; терминал работает как прежде.",
+      ],
+      agree: "Я понимаю: @{bot} уйдёт с этого узла",
+      confirm: "Удалить бота",
+      cancel: "Не сейчас",
+      done: "Бот удалён. Начните заново с шага 1.",
+    },
     notes: [
       "Бот отвечает, пока этот компьютер включён и в терминале запущен агент.",
       "Он тратит вашу подписку Claude — тот же лимит, что у терминала и вашей работы.",

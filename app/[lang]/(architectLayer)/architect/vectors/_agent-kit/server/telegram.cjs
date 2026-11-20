@@ -1201,6 +1201,23 @@ function suggestion(service) {
   return { name: `Fractera-${element}`, username: `Fractera_${handle}${tail}` }
 }
 
+/**
+ * The bot taken off the node (the owner, 2026-11-19: «мы должны иметь кнопку удалить бота чтобы повторить полный процесс установки …
+ * если что-то случилось то исправить эту ситуацию нельзя»): its token, admitted people, kept messages and inbox are erased; the person's
+ * language (`person.json`) stays. The node's reader finds no token on its next tick and is silent; the page starts again at step 1.
+ * The bot itself stays in Telegram — its owner deletes it in @BotFather.
+ */
+function removeBot(service) {
+  const dir = stateDir(service)
+  const gone = []
+  for (const name of ['.env', 'access.json', 'bot.json', 'bot.pid', 'messages.json', 'activation.json', 'inbox', 'approved']) {
+    const p = path.join(dir, name)
+    if (!existsSync(p)) continue
+    try { rmSync(p, { recursive: true, force: true }); gone.push(name) } catch { /* named below by what stayed */ }
+  }
+  return { ok: !existsSync(path.join(dir, '.env')), removed: gone }
+}
+
 function channelState(service) {
   const token = storedToken(service)
   const bot = readJson(botFile(service), {})
@@ -1354,6 +1371,8 @@ async function answerTrustHere(service, token, chatId) {
 }
 
 module.exports = {
+  // the bot taken off the node — the danger zone of its page
+  removeBot,
   // 639: итог остаётся, служебное исчезает; вопросы закрытой сессии исчезают.
   sendKept, sendVanishing, sessionEnded,
   // 737-11a: one read of the bot — its test proves the rehearsing server's bot admits and answers one line, and starts nothing.

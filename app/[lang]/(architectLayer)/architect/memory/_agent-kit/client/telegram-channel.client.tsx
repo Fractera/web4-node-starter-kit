@@ -10,6 +10,8 @@ import { Small } from "@/components/ui/typography"
 import { Spinner } from "@/components/ui/spinner"
 import type { TelegramChannelWords } from "../words/telegram-channel.i18n"
 import { CopyRow, Step, StepPoints } from "@/components/auth/setup-ladder.client"
+import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
+import { TelegramRemove } from "./telegram-remove.client"
 
 // КАНАЛ TELEGRAM → CLAUDE CODE: ЧЕТЫРЕ СТУПЕНИ, КАК В ПАМЯТИ (267-3).
 //
@@ -34,6 +36,7 @@ type State = {
   configured: boolean
   tail: string | null
   botUsername: string | null
+  botName?: string | null
   allowed: number
   running: boolean
   terminalWithoutChannel: boolean
@@ -57,7 +60,7 @@ function Locked({ text }: { text: string }) {
 // ступени 1–3 через дверь `remote.door` (она пересылает каждое действие двери канала сервера), ссылки системных строк — от адреса сервера
 // `remote.origin`, ступень 4 — строка `remote.doneText` без терминала этого компьютера.
 export type TelegramRemote = { door: string; origin: string; doneText: string }
-export function TelegramChannel({ service, lang, words, slot, remote }: { service: string; lang: string; words: TelegramChannelWords; slot?: string; remote?: TelegramRemote }) {
+export function TelegramChannel({ service, lang, words, slot, remote, dialogUi }: { service: string; lang: string; words: TelegramChannelWords; slot?: string; remote?: TelegramRemote; dialogUi?: AppDialogUi }) {
   const door = remote ? remote.door : `${BASE}/${lang}/architect/${service}/agent-api/channel${slot ? `?slot=${slot}` : ""}`
   const [state, setState] = useState<State | null | "forbidden" | "silent">(null)
   const [token, setToken] = useState("")
@@ -205,8 +208,9 @@ export function TelegramChannel({ service, lang, words, slot, remote }: { servic
           {words.step1Text.split("{cmd}")[1]}
         </p>
         <StepPoints items={words.step1Points} />
-        <CopyRow id="tg-name" label={words.nameLabel} value={state.suggestion.name} copy={words.copy} copied={words.copied} editable />
-        <CopyRow id="tg-username" label={words.usernameLabel} value={state.suggestion.username} copy={words.copy} copied={words.copied} editable />
+        {/* the owner, 2026-11-19: a token of an EXISTING bot connects that bot — Telegram names it (getMe), and once connected these rows show its real name */}
+        <CopyRow id="tg-name" label={words.nameLabel} value={state.botUsername ? state.botName ?? "" : state.suggestion.name} copy={words.copy} copied={words.copied} editable />
+        <CopyRow id="tg-username" label={words.usernameLabel} value={state.botUsername ?? state.suggestion.username} copy={words.copy} copied={words.copied} editable />
         <div className="mt-3">
           <a href={BOTFATHER} target="_blank" rel="noreferrer noopener" className={buttonVariants({ variant: "outline" })}>
             {words.openBotFather}
@@ -351,6 +355,9 @@ export function TelegramChannel({ service, lang, words, slot, remote }: { servic
           {error}
         </p>
       )}
+      {!slot && dialogUi && configured ? (
+        <TelegramRemove bot={state.botUsername ?? ""} dialogUi={dialogUi} onRemove={async () => { const r = await post("remove"); setActivationUrl(""); await load(); return Boolean(r.ok) }} words={words.remove} />
+      ) : null}
     </div>
   )
 }

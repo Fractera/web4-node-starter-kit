@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
-import { activationLink, channelState, isService, saveMessages, saveToken, startIdlePoller } from "../../_agent-kit/server/telegram.cjs"
+import { activationLink, channelState, isService, removeBot, saveMessages, saveToken, startIdlePoller } from "../../_agent-kit/server/telegram.cjs"
 import { isBornItem } from "../../_agent-kit/server/workspace.cjs"
 import * as slots from "../../_agent-kit/server/telegram-slots.cjs"
 import { findTreePath, treeVisible } from "@/lib/web4-items/item-tree"
@@ -104,6 +104,12 @@ export async function POST(req: NextRequest, ctx: Ctx) {
       return NextResponse.json(activationLink(service), noStore)
     case "messages":
       return NextResponse.json(saveMessages(service, body.messages), noStore)
+    // the owner, 2026-11-19: the danger zone of the bot page — the bot taken off the node, the steps from the first again
+    case "remove": {
+      const removed = removeBot(service)
+      if (removed.ok) await savePassport(service)
+      return NextResponse.json(removed, noStore)
+    }
     default:
       return NextResponse.json({ ok: false, error: "unknown-action" }, { status: 400 })
   }
