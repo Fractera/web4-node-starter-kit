@@ -73,4 +73,20 @@ t('a node on a subdomain plans node and *.node inside its zone', () => {
   assert.equal(p.names.includes('example.org'), false, 'the zone apex of someone else is never planned')
 })
 
+t('818 (Telegram 312): www with TXT checks of its own — the star does not reach it, so it gets its own A; the TXT stays', () => {
+  const zone = [
+    { id: 'a-apex', type: 'A', name: 'fractera.ai', content: IP, proxied: false },
+    { id: 'a-star', type: 'A', name: '*.fractera.ai', content: IP, proxied: false },
+    { id: 't-1', type: 'TXT', name: 'www.fractera.ai', content: 'smithery-verification=x' },
+    { id: 't-2', type: 'TXT', name: 'www.fractera.ai', content: 'yandex-verification: y' },
+  ]
+  const p = planServerRecords({ base: BASE, hosts: HOSTS, ip: IP, records: zone })
+  assert.deepEqual(p.add.map((a) => a.host), ['www.fractera.ai'])
+  assert.deepEqual(p.remove, [])
+  assert.equal(planIsEmpty(p), false, 'the card would say «records already correct» and nothing leads www to the server')
+  const done = planServerRecords({ base: BASE, hosts: HOSTS, ip: IP, records: [...zone, { id: 'a-www', type: 'A', name: 'www.fractera.ai', content: IP, proxied: false }] })
+  assert.equal(planIsEmpty(done), true)
+  // negative control: a name with NO records of its own is the star's, no A is added for it
+  assert.deepEqual(planServerRecords({ base: BASE, hosts: HOSTS, ip: IP, records: zone.slice(0, 2) }).add, [])
+})
 console.log(process.exitCode ? `✗ server-records: failed (${passed} passed)` : `✓ server-records: ${passed} cases`)

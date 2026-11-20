@@ -32,7 +32,7 @@ export async function writePlan(opts: { token: string; zoneId: string; base: str
     results.push({ host: r.host, act: "remove", ok: d.ok, ...(d.ok ? {} : { reason: d.reason }) })
   }
   if (results.some((x) => !x.ok)) return { ok: false, results }
-  for (const host of [...new Set([opts.base, `*.${opts.base}`, ...opts.plan.change.map((c) => c.host)])]) {
+  for (const host of [...new Set([opts.base, `*.${opts.base}`, ...opts.plan.add.map((x) => x.host), ...opts.plan.change.map((c) => c.host)])]) {
     const w = await upsertServerRecord(opts.token, opts.zoneId, host, opts.ip, null)
     results.push({ host, act: "write", ok: w.ok, ...(w.ok ? {} : { reason: (w as { reason?: string }).reason }) })
   }

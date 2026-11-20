@@ -384,7 +384,8 @@ export async function recordsOnNames(token: string, zoneId: string, names: strin
   for (const name of names) {
     const list = await send<Array<{ id: string; type: string; name: string; content: string; proxied?: boolean }>>("GET", `/zones/${zoneId}/dns_records?name=${encodeURIComponent(name)}&per_page=100`, token)
     if (!list.ok) return list
-    for (const r of list.result) if (["A", "AAAA", "CNAME"].includes(r.type)) out.push({ id: r.id, type: r.type, name: r.name, content: r.content, proxied: Boolean(r.proxied) })
+    // 818 (Telegram 312): every type — a TXT on a name stops the zone's star for that name, and the plan must see it.
+    for (const r of list.result) out.push({ id: r.id, type: r.type, name: r.name, content: r.content, proxied: Boolean(r.proxied) })
   }
   return { ok: true as const, result: out }
 }
