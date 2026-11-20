@@ -18,4 +18,8 @@ is a note.
 
 ---
 
-*Nothing is owed yet.*
+- **Resource control of elements on a server** (dropped from 818 by the owner, Telegram 266: «отправляем в игнор требования контроля
+  ресурсов»): a default MemoryMax/TasksMax on each element's serve unit, its limit and use in the Pult's element card, a maximum on the
+  core's dashboard, limits on the native elements' doors (answer size, request time) — measured by 817 H3 (no limit, pids 9483).
+- **`scripts/launch-footprint.test.mjs` is red** (by hand, 744-8): it does not know the 784 trace `logs/launch-trace.jsonl`, and in
+  A→B→A A's second state has no probe — red before 818 too; fix the test or the runner.
