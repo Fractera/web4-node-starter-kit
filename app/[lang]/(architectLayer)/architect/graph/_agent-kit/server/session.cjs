@@ -66,6 +66,8 @@ function stop(service, reason = 'stopped') {
   s.endReason = reason
   closeAll(s, reason)
   try { s.proc.kill() } catch { /* уже мёртв */ }
+  // 811-5b: a walled element's agent is a unit of root's helper — the node's user cannot signal it; the helper stops the unit
+  try { s.wallStop?.() } catch { /* the unit is gone */ }
   return { ok: true, was: true, pid: s.pid }
 }
 

@@ -283,12 +283,10 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 12:20 UTC, window ~45 %, Opus — context reset at the end of 808/809)
 
-**NOW:** 811 — his «Вперед» (122) = «да» on the CODE; his «Да» (128) = own Claude account per element on a server, the node's token
-never to an element. DONE: 811-2 1d2a1dd7 · 811-3 a56dc232 · 811-4 9dad7aed · 811-4b 50101939 (git shim, ProtectProc). test:element-wall
-44 ✓, hosting 76, hosting-launch 27, tsc rc 0. NEXT 811-5a…f — measured and written in the plan file (section «811-5 measured»): start
-with the kit copies (bridge.cjs of [item] = kits/_agent-kit/core — find the sync/guard), then 5a hook relay, 5b session, 5c shell, 5d
-claude-cli, 5e bun. Then ONE core build (ASK him first), push the fork, «Установить с нуля» on 109.199.105.213, proofs 811-7 (incl.
-pm2 restart frees the port, pty close ends the agent). Talk in TELEGRAM (chat_id 90413601, ru), colour marks.
+**NOW:** 811 — 811-5 (a..e) + 811-5g (the loopback hole closed by the kernel's uid, his «Го» 137) CODED and committed, dry tests
+green (plan file section «811-5 + 811-5g — CODED»). NEXT: ask him for the ONE core build (811-2..5g), then push the fork, «Установить с
+нуля» on 109.199.105.213, proofs 811-7 (list in the plan, incl. the live measures of 5b/5g). Talk in TELEGRAM (chat_id 90413601, ru),
+colour marks.
 
 Roma talks in TELEGRAM now: main bot = his existing @fractera_factory_e90e_bot (saved by him 2026-11-19 23:49; chat_id 90413601, ru).
 Done since 2026-11-19 evening (all committed, fork pushed up to cdac6592; Fractera push = his paste, not done):
@@ -309,6 +307,15 @@ Open:
 - Server disk after the clean: ~46 GB used besides the node (swap ~16, system, journal) — fine; leftovers are erased by every clear now.
 
 ## The person's decisions (verbatim)
+
+- 2026-11-20 13:06–13:13 UTC, the owner (Telegram 135, 137): «я думал что мы строим пункт номер два? … элементы и ядро взаимодействуют …
+  только по протоколу … i2i … api или mcp … систему защиты чтобы она была непрошибаемой» then «Го». My answer (138): 811-5g = the OS
+  truth, no template change — server.js sees each request's socket, asks Linux (/proc/net/tcp → uid) who opened it; a fe-* peer never
+  gets owner-at-machine whatever headers it sends (server.js stamps/strips a header the proxy trusts). Supersedes the «Ок» to variant 1.
+
+- 2026-11-20 13:03 UTC, the owner (Telegram 134): «Ок» — to variant 1 of the loopback hole (Telegram 133): on a walled server
+  owner-at-machine also needs the node's proof header (a secret only the node user reads); the node's own callers send it through one
+  helper; elements keep their keyed doors → substep 811-5g.
 
 - 2026-11-20 12:53 UTC, the owner (Telegram 128): «Да» — to «on a server every element has its own Claude account, its sign-in in the
   admin cabinet (810); until it signs in, the core does the work through its own session, the token is never given to the element» (811-5).

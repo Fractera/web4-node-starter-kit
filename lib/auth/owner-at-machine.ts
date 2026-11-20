@@ -1,6 +1,8 @@
 import type { NextRequest } from "next/server"
 import { EDGE_HEADER } from "../hosting/edge.mjs"
 
+const PEER_HEADER = "x-fractera-peer"
+
 // ХОЗЯИН ЗА КЛАВИАТУРОЙ ЭТОЙ МАШИНЫ — ПРАВИЛО ДОПУСКА БЕЗ ВХОДА (2026-09-19).
 //
 // 🔒 РЕШЕНИЕ ВЛАДЕЛЬЦА, дословно: «need rule if app is in the test flow then to
@@ -66,6 +68,9 @@ export function isOwnerAtMachine(req?: NextRequest): boolean {
   // 737-2: метка nginx выделенного сервера — запрос пришёл из интернета через его край, какой бы `Host` ни прислал клиент
   // (`curl -H 'Host: localhost' http://<IP>/` иначе получил бы терминал сервера). Подробно — `lib/hosting/edge.mjs`.
   if (req.headers.get(EDGE_HEADER)) return false
+  // 811-5g: `server.js` asked Linux who opened this connection — an element's own user on a walled server (`lib/hosting/peer-uid.cjs`;
+  // the header is removed from every request first, so no client sends it in) is never the owner at the machine.
+  if (req.headers.get(PEER_HEADER)) return false
   // Прокси, поставленный человеком перед приложением, называет исходный хост
   // здесь. Он тоже означает «не с машины».
   const forwarded = req.headers.get("x-forwarded-host")

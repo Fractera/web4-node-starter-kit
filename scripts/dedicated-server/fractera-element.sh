@@ -82,16 +82,20 @@ case "$verb" in
     act rm -rf -- "$HOMES/$id"
     act rm -f -- "$RECORDS/$id" "$LOGS/$id"-*.log
     echo "ELEMENT_REMOVED $id" ;;
-  run|unit-start)
+  run|unit-start|agent)
     # run <id> [--in <sub>] [KEY=VALUE …] -- <program> [args …] — a SHORT program as fe-<id> (npm ci, a build, git): in its folder, a clean
     # environment, umask 007; the caller waits for it.
     # unit-start <id> [--unit <tag>] [--in <sub>] [KEY=VALUE …] -- <program> … — a LONG one (its server, a preview, a warm-up) as a
     # transient systemd unit fractera-el-<id>-<tag> (default tag serve) with User=fe-<id>: the node's user cannot signal a root sudo,
     # systemd stops the whole group (KillMode=control-group), so no element process outlives its stop on a port. Its output goes to
     # /var/log/fractera-el/<id>-<tag>.log (root's folder; the node reads it). A unit of that name still running is stopped first.
+    # agent <id> [--unit <tag>] [--in <sub>] [KEY=VALUE …] -- <program> … — the element's AGENT (811-5b: claude, its login shell) as the unit
+    # fractera-el-<id>-<tag> (default tag agent) on the caller's terminal (`systemd-run --pty`, it waits for the unit): the same walls as a
+    # long program — ProtectProc=invisible hides every other user's process (a token in another process's arguments), the whole group
+    # ends with the unit; the node stops it with unit-stop when the session closes.
     id_arg "${1:-}"; id="$1"; shift
-    tag=serve
-    if [ "$verb" = unit-start ] && [ "${1:-}" = "--unit" ]; then
+    tag=serve; [ "$verb" = agent ] && tag=agent
+    if [ "$verb" != run ] && [ "${1:-}" = "--unit" ]; then
       tag="${2:-}"; [[ "$tag" =~ ^[a-z]{1,12}$ ]] || die "bad unit tag"; shift 2
     fi
     folder="$(record_of "$id")" || exit 3
@@ -112,6 +116,15 @@ case "$verb" in
     shift
     base=(HOME="$HOMES/$id" USER="fe-$id" LOGNAME="fe-$id" SHELL=/bin/bash LANG=C.UTF-8 TERM="${TERM:-xterm-256color}"
       PATH="$SHARED_BIN:/usr/local/bin:/usr/bin:/bin" DISABLE_AUTOUPDATER=1)
+    if [ "$verb" = agent ]; then
+      unit="fractera-el-$id-$tag"
+      act systemctl stop "$unit" >/dev/null 2>&1; act systemctl reset-failed "$unit" >/dev/null 2>&1
+      sets=(); for e in "${base[@]}" "${envs[@]+"${envs[@]}"}"; do sets+=("--setenv=$e"); done
+      if [ "$DRY" = 1 ]; then act systemd-run --quiet --collect --pty --unit="$unit" --uid="fe-$id" --gid="$GROUP" -p WorkingDirectory="$dir" -p UMask=0007 \
+        -p NoNewPrivileges=yes -p ProtectProc=invisible -p KillMode=control-group -p TimeoutStopSec=10 "${sets[@]}" -- "$@"; exit 0; fi
+      exec systemd-run --quiet --collect --pty --unit="$unit" --uid="fe-$id" --gid="$GROUP" -p WorkingDirectory="$dir" -p UMask=0007 \
+        -p NoNewPrivileges=yes -p ProtectProc=invisible -p KillMode=control-group -p TimeoutStopSec=10 "${sets[@]}" -- "$@"
+    fi
     if [ "$verb" = unit-start ]; then
       unit="fractera-el-$id-$tag"; log="$LOGS/$id-$tag.log"
       act install -d -m 0750 -o root -g "$NODE_USER" "$LOGS"
@@ -158,6 +171,12 @@ case "$verb" in
     [ "$(head -c 4 -- "$target" | od -An -c | tr -d ' ')" = '177ELF' ] || die "claude is not a Linux program"
     act install -d -m 0755 -o root -g root "$SHARED_BIN"
     act install -m 0755 -o root -g root "$target" "$SHARED_BIN/claude"
+    # 811-5e: bun runs the Telegram plugin's server inside the element's session — the node's ~/.bun/bin/bun (Bun's installer), a real
+    # Linux program file, copied the same way; no bun yet → the element's bot waits for the next start of the node.
+    bun="$R/home/$NODE_USER/.bun/bin/bun"
+    if [ -f "$bun" ] && [ ! -L "$bun" ] && [ "$(head -c 4 -- "$bun" | od -An -c | tr -d ' ')" = '177ELF' ]; then
+      act install -m 0755 -o root -g root "$bun" "$SHARED_BIN/bun"; echo "BUN_SHARED $bun"
+    fi
     echo "CLAUDE_SHARED $target" ;;
   walls)
     # The node's folder: pass-through only for others, its files without «other» rights; the element folders keep their own ACLs; the
@@ -205,6 +224,6 @@ case "$verb" in
   list)
     for f in "$RECORDS"/*; do [ -f "$f" ] && printf '%s %s\n' "$(basename -- "$f")" "$(sed -n 's/^FOLDER=//p' "$f")"; done; true ;;
   *)
-    echo "verbs: add <id> <folder> · remove <id> · run|unit-start <id> [--unit <tag>] [--in <sub>] [KEY=VALUE …] -- <program> … · unit-stop <id> [--unit <tag>] · signal <id> <pid> <sig> · stop <id> · claude-share · walls · list" >&2
+    echo "verbs: add <id> <folder> · remove <id> · run|unit-start|agent <id> [--unit <tag>] [--in <sub>] [KEY=VALUE …] -- <program> … · unit-stop <id> [--unit <tag>] · signal <id> <pid> <sig> · stop <id> · claude-share · walls · list" >&2
     exit 2 ;;
 esac

@@ -3,3 +3,5 @@
 # 🔒 Empty on purpose (811-2): the element agent's hooks are the core's files and read the node's secrets (progress.cjs — the bot tokens,
 # the main agent's chat; pulse.cjs — data/node/limits), so they are not opened here: 811-5 runs them through the core's door (a relay
 # readable by element users is the only line that comes here then).
+# 811-5a: the relay itself — node builtins only, no secret; it posts a walled session's hook events to the core with the element's key.
+lib/agent-kit/hook-relay.cjs

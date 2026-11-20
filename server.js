@@ -12,6 +12,8 @@ const { execFileSync } = require('node:child_process')
 const next = require('next')
 const { pickPort, writeRuntime } = require('./lib/server-port.cjs')
 const { mountAgentKits } = require('./lib/agent-kit/mount.cjs')
+// 811-5g: who opened the connection, asked of Linux — on a walled server an element's own user is never «the owner at the machine».
+const peer = require('./lib/hosting/peer-uid.cjs')
 
 // ── Хэш коммита. Он нужен не для красоты: без него нельзя отличить «сайт
 // работает» от «работает ИМЕННО та сборка, которую я только что поставил».
@@ -60,6 +62,7 @@ async function main() {
   await app.prepare()
 
   const server = createServer((req, res) => {
+    peer.stamp(req, __dirname)
     handle(req, res)
   })
   // Туннель Cloudflare держит простаивающее соединение с узлом до 90 с (cloudflared `keepAliveTimeout`, по умолчанию 1m30s —

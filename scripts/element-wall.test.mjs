@@ -15,6 +15,7 @@ const DS = join(here, 'dedicated-server')
 const helper = join(DS, 'fractera-element.sh')
 const tmp = (p) => realpathSync(mkdtempSync(join(tmpdir(), p)))
 let passed = 0
+const ta = async (name, fn) => { try { await fn(); passed += 1; console.log(`  ✓ ${name}`) } catch (e) { console.error(`  ✗ ${name}\n    ${e.message.split('\n').slice(0, 4).join('\n    ')}`); process.exitCode = 1 } }
 const t = (name, fn) => { try { fn(); passed += 1; console.log(`  ✓ ${name}`) } catch (e) { console.error(`  ✗ ${name}\n    ${e.message.split('\n').slice(0, 4).join('\n    ')}`); process.exitCode = 1 } }
 
 // One «server»: root R, /etc/fractera in ETC, the node in R/home/fractera/node with one custom element «shop» (kind user) and a native «auth» (kind core).
@@ -349,6 +350,154 @@ console.log('811-4b the node\'s git inside an element\'s folder runs as that ele
     assert.match(readFileSync(join(here, '..', 'ecosystem.config.cjs'), 'utf8'), /nodeBinPath\(root\)/)
     assert.match(helperRun(['unit-start', 'shop', '--', 'node']).out, /-p ProtectProc=invisible/)
     assert.match(helperRun(['add', 'shop', 'WEB4-ITEMS/user/shop']).out, /install -d -m 0755 \S+elements/)
+  })
+}
+
+console.log('811-5b the helper\'s agent verb — the element\'s agent as a unit on the caller\'s pty')
+{
+  writeFileSync(join(ETC, 'elements', 'shop'), 'FOLDER=WEB4-ITEMS/user/shop\n')
+  t('agent shop: systemd-run --pty as fe-shop, other users\' processes invisible, the group ends with the unit', () => {
+    const r = helperRun(['agent', 'shop', '--unit', 'agent', 'CLAUDE_CONFIG_DIR=/x/claude', '--', '/usr/local/lib/fractera/bin/claude', '--model', 'opus'])
+    assert.equal(r.status, 0, r.out)
+    assert.match(r.out, /systemd-run --quiet --collect --pty --unit=fractera-el-shop-agent --uid=fe-shop --gid=fractera-el/)
+    assert.match(r.out, /-p ProtectProc=invisible -p KillMode=control-group/)
+    assert.match(r.out, /--setenv=CLAUDE_CONFIG_DIR=\/x\/claude/)
+    assert.match(r.out, /-- \/usr\/local\/lib\/fractera\/bin\/claude --model opus$/m)
+  })
+  t('agent without --unit is tag agent; --unit shell; negatives: bad tag, PATH, LD_PRELOAD, unknown element', () => {
+    assert.match(helperRun(['agent', 'shop', '--', '/bin/bash']).out, /--unit=fractera-el-shop-agent/)
+    assert.match(helperRun(['agent', 'shop', '--unit', 'shell', '--', '/bin/bash']).out, /--unit=fractera-el-shop-shell/)
+    refused(['agent', 'shop', '--unit', 'Bad1', '--', 'x'], /bad unit tag/)
+    refused(['agent', 'shop', 'PATH=/tmp', '--', 'x'], /PATH is not allowed/)
+    refused(['agent', 'shop', 'LD_PRELOAD=/tmp/x.so', '--', 'x'], /not allowed/)
+    refused(['agent', 'ghost', '--', 'x'], /no element ghost/)
+  })
+  t('claude-share also shares bun (only a real ELF file)', () => {
+    const src = readFileSync(helper, 'utf8')
+    assert.match(src, /\.bun\/bin\/bun/)
+    assert.match(src, /install -m 0755 -o root -g root "\$bun" "\$SHARED_BIN\/bun"/)
+  })
+}
+
+console.log('811-5a the hook relay — the walled session\'s hooks run by the core for the caller only')
+{
+  const require = createRequire(import.meta.url)
+  const relayRun = require('../lib/agent-kit/hook-relay-run.cjs')
+  const at = { node: '/usr/bin/node', relay: '/n/lib/agent-kit/hook-relay.cjs' }
+  t('the session\'s hooks → the relay (exec and shell forms, the pulse keeps its event); a hook not in the list is dropped', () => {
+    const hooks = {
+      Stop: [{ hooks: [{ type: 'command', command: 'node /n/lib/agent-kit/memory/record.cjs shop' }, { type: 'command', command: 'node /n/lib/agent-kit/pulse.cjs shop turn-end' }]}],
+      SessionStart: [{ matcher: 'startup', hooks: [{ type: 'command', command: '/opt/node', args: ['/n/lib/agent-kit/memory/brief.cjs', 'shop'] }] }],
+      PreToolUse: [{ matcher: 'Bash', hooks: [{ type: 'command', command: '/opt/node', args: ['/n/lib/agent-kit/guard-search.cjs', '/n'] }] },
+        { matcher: '*', hooks: [{ type: 'command', command: '/opt/node', args: ['/n/lib/agent-kit/progress.cjs', '/n', 'shop'], async: true, timeout: 30 }] }],
+    }
+    const r = relayRun.relayHooks(hooks, at)
+    assert.equal(r.hooks.Stop[0].hooks[0].command, '/usr/bin/node /n/lib/agent-kit/hook-relay.cjs record')
+    assert.equal(r.hooks.Stop[0].hooks[1].command, '/usr/bin/node /n/lib/agent-kit/hook-relay.cjs pulse turn-end')
+    assert.deepEqual(r.hooks.SessionStart[0].hooks[0], { type: 'command', command: '/usr/bin/node', args: [at.relay, 'brief'] })
+    assert.equal(r.hooks.SessionStart[0].matcher, 'startup')
+    assert.equal(r.hooks.PreToolUse.length, 1, 'the guard of the main agent is dropped')
+    assert.deepEqual(r.hooks.PreToolUse[0].hooks[0], { type: 'command', async: true, timeout: 30, command: '/usr/bin/node', args: [at.relay, 'progress'] })
+    assert.deepEqual(r.dropped, ['PreToolUse'])
+    assert.equal(relayRun.relayLine({ type: 'command', command: 'node /n/lib/agent-kit/limits.cjs shop' }, at).command, '/usr/bin/node /n/lib/agent-kit/hook-relay.cjs limits')
+  })
+  t('negative: the door\'s list — an unknown name, a pulse event not in its list, a path for a name → nothing runs', () => {
+    assert.equal(relayRun.planOf('/n', 'rm', 'shop'), null)
+    assert.equal(relayRun.planOf('/n', 'pulse', 'shop', '../../x'), null)
+    assert.equal(relayRun.planOf('/n', '../lib/agent-kit/pulse.cjs', 'shop'), null)
+    assert.deepEqual(relayRun.planOf('/n', 'pulse', 'shop', 'turn-end').args, ['shop', 'turn-end'])
+  })
+  await ta('a relayed hook runs for the CALLER, in its folder, with its own Claude folder; stdin reaches it', async () => {
+    const n = tmp('relay-node-')
+    mkdirSync(join(n, 'lib', 'agent-kit'), { recursive: true })
+    mkdirSync(join(n, 'data', 'services', 'shop', 'claude'), { recursive: true })
+    const dir = tmp('relay-shop-')
+    writeFileSync(join(n, 'lib', 'agent-kit', 'window.cjs'), "let s='';process.stdin.on('data',c=>s+=c).on('end',()=>{console.log(JSON.stringify({argv:process.argv.slice(2),cwd:process.cwd(),cfg:process.env.CLAUDE_CONFIG_DIR,stdin:s}));process.exit(3)})\n")
+    return relayRun.runRelayed({ root: n, id: 'shop', dir, name: 'window', stdin: '{"e":1}', env: { PATH: process.env.PATH, CLAUDE_CONFIG_DIR: '/node/own' } }).then((r) => {
+      const o = JSON.parse(r.stdout)
+      assert.deepEqual(o.argv, ['shop']); assert.equal(o.cwd, dir); assert.equal(o.cfg, join(n, 'data', 'services', 'shop', 'claude')); assert.equal(o.stdin, '{"e":1}'); assert.equal(r.code, 3)
+    })
+  })
+}
+
+console.log('811-5b the walled launch — files copied, the skills server relayed, only its own environment')
+{
+  const require = createRequire(import.meta.url)
+  const n = tmp('launch-node-')
+  for (const f of ['lib/hosting/element-wall.cjs', 'lib/agent-kit/hook-relay-run.cjs', 'lib/agent-kit/walled-session.cjs']) { mkdirSync(join(n, f, '..'), { recursive: true }); cpSync(join(here, '..', f), join(n, f)) }
+  mkdirSync(join(n, 'data', 'node', 'agent-prompts'), { recursive: true })
+  const P = (f) => join(n, 'data', 'node', 'agent-prompts', f)
+  writeFileSync(P('shop.md'), 'the soul')
+  writeFileSync(P('shop-skills-mcp.json'), JSON.stringify({ mcpServers: { 'node-skills': { command: '/opt/node', args: ['/n/lib/agent-kit/skills/mcp.mjs'] } } }))
+  writeFileSync(P('shop-mcp.json'), JSON.stringify({ mcpServers: { rea: { command: '/opt/node', args: ['rea.mjs', 'mcp'] } } }))
+  const { walledLaunch, walledShell } = require(join(n, 'lib', 'agent-kit', 'walled-session.cjs'))
+  const settings = { autoCompactEnabled: false, hooks: { Stop: [{ hooks: [{ type: 'command', command: `node ${n}/lib/agent-kit/pulse.cjs shop turn-end` }] }] }, statusLine: { type: 'command', command: `node ${n}/lib/agent-kit/limits.cjs shop` } }
+  const args = ['--add-dir', `${n}/data/services/shop`, '--mcp-config', P('shop-mcp.json'), P('shop-skills-mcp.json'), '--settings', JSON.stringify(settings), '--append-system-prompt-file', P('shop.md'),
+    '--append-system-prompt', `rule: node "${n}/scripts/element-github-push.mjs" shop — then`, '--model', 'opus', 'first task']
+  const env = { PATH: '/home/fractera/.local/bin:/usr/bin', HOME: '/home/fractera', DATA_SECRET: 'NEVER', SETTINGS_SECRET: 'NEVER', CLAUDE_CONFIG_DIR: `${n}/data/services/shop/claude`, TELEGRAM_STATE_DIR: `${n}/data/services/shop/channel/telegram`, FRACTERA_PASS: 'main' }
+  const L = walledLaunch({ root: n, id: 'shop', key: 'shop.mac', args, env, port: 24680, node: '/usr/bin/node', mode: 'build', opts: { prefix: ['sudo', '-n'] } })
+  const sep = L.args.indexOf('--')
+  const head = L.args.slice(0, sep); const tail = L.args.slice(sep + 1)
+  t('sudo -n <helper> agent shop --unit agent, then only the kept keys and the element\'s key', () => {
+    assert.equal(L.cmd, 'sudo')
+    assert.deepEqual(head.slice(0, 6), ['-n', '/usr/local/sbin/fractera-element', 'agent', 'shop', '--unit', 'agent'])
+    assert.deepEqual(head.slice(6).sort(), [`CLAUDE_CONFIG_DIR=${n}/data/services/shop/claude`, 'FRACTERA_CORE_PORT=24680', 'FRACTERA_HOOK_KEY=shop.mac', 'FRACTERA_PASS=main', `TELEGRAM_STATE_DIR=${n}/data/services/shop/channel/telegram`].sort())
+    assert.equal(tail[0], '/usr/local/lib/fractera/bin/claude')
+  })
+  t('negative: the node\'s secrets and its PATH/HOME never reach the element (args nor env)', () => {
+    const all = JSON.stringify([L.args, L.env])
+    assert.doesNotMatch(all, /NEVER/); assert.doesNotMatch(all, /\/home\/fractera/)
+  })
+  t('hooks and status line → the relay; the prompt file copied into its data folder; skills via the relay; REA dropped; the push rule → the relay', () => {
+    const s = JSON.parse(tail[tail.indexOf('--settings') + 1])
+    assert.equal(s.hooks.Stop[0].hooks[0].command, `/usr/bin/node ${n}/lib/agent-kit/hook-relay.cjs pulse turn-end`)
+    assert.equal(s.statusLine.command, `/usr/bin/node ${n}/lib/agent-kit/hook-relay.cjs limits`)
+    const pf = tail[tail.indexOf('--append-system-prompt-file') + 1]
+    assert.equal(pf, join(n, 'data', 'services', 'shop', 'session', 'shop.md')); assert.equal(readFileSync(pf, 'utf8'), 'the soul')
+    const mi = tail.indexOf('--mcp-config')
+    assert.equal(tail[mi + 2], '--settings', 'one config left')
+    assert.deepEqual(JSON.parse(readFileSync(tail[mi + 1], 'utf8')), { mcpServers: { 'node-skills': { command: '/usr/bin/node', args: [`${n}/lib/agent-kit/hook-relay.cjs`, 'mcp', 'skills'] } } })
+    assert.ok(L.dropped.includes('mcp rea'))
+    assert.equal(tail[tail.indexOf('--append-system-prompt') + 1], `rule: node ${n}/lib/agent-kit/hook-relay.cjs github-push — then`)
+    assert.equal(tail[tail.length - 1], 'first task')
+  })
+  t('a work session is the unit «work»; the login shell is the unit «shell» with its own Claude folder only', () => {
+    assert.equal(walledLaunch({ root: n, id: 'shop', key: 'k', args: [], env: {}, port: 1, mode: 'work', opts: { prefix: ['sudo'] } }).unitTag, 'work')
+    const sh = walledShell({ root: n, id: 'shop', home: '/h/claude', opts: { prefix: ['sudo'] } })
+    assert.deepEqual(sh.args.slice(1), ['agent', 'shop', '--unit', 'shell', 'CLAUDE_CONFIG_DIR=/h/claude', '--', '/bin/bash', '-l'])
+  })
+}
+
+console.log('811-5g who opened the connection — asked of Linux')
+{
+  const require = createRequire(import.meta.url)
+  const peer = require('../lib/hosting/peer-uid.cjs')
+  const d = tmp('peer-')
+  // the core listens on 24680 (0x6068); a client socket from port 51000 (0xC738) of uid 1007, and the server's side owned by 1000
+  writeFileSync(join(d, 'tcp'), '  sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode\n' +
+    '   0: 0100007F:6068 0100007F:C738 01 00000000:00000000 00:00000000 00000000  1000        0 1 1\n' +
+    '   1: 0100007F:C738 0100007F:6068 01 00000000:00000000 00:00000000 00000000  1007        0 2 1\n')
+  writeFileSync(join(d, 'passwd'), 'fractera:x:1000:1000::/home/fractera:/bin/bash\nfe-shop:x:1007:998::/var/lib/fractera-el/shop:/usr/sbin/nologin\nwww-data:x:33:33::/var/www:/usr/sbin/nologin\n')
+  const opts = { files: [join(d, 'tcp')], passwd: join(d, 'passwd') }
+  t('the client socket\'s line names fe-shop → element shop', () => {
+    assert.equal(peer.peerUid({ remoteAddress: '127.0.0.1', remotePort: 51000, localPort: 24680 }, opts), 1007)
+    assert.equal(peer.elementPeer({ remoteAddress: '::ffff:127.0.0.1', remotePort: 51000, localPort: 24680 }, opts), 'shop')
+  })
+  t('negative: the node\'s own user, another port, not loopback → nobody', () => {
+    writeFileSync(join(d, 'tcp2'), readFileSync(join(d, 'tcp'), 'utf8').replace(' 1007 ', ' 1000 '))
+    assert.equal(peer.elementPeer({ remoteAddress: '127.0.0.1', remotePort: 51000, localPort: 24680 }, { ...opts, files: [join(d, 'tcp2')] }), null)
+    assert.equal(peer.elementPeer({ remoteAddress: '127.0.0.1', remotePort: 51001, localPort: 24680 }, opts), null)
+    assert.equal(peer.peerUid({ remoteAddress: '10.0.0.5', remotePort: 51000, localPort: 24680 }, opts), null)
+  })
+  t('negative: a header sent by the client is always removed (no wall here → nothing set back)', () => {
+    const req = { headers: { 'x-fractera-peer': 'forged', host: 'localhost' }, socket: {} }
+    peer.stamp(req, NODE)
+    assert.equal(req.headers['x-fractera-peer'], undefined)
+  })
+  t('the owner-at-machine rule refuses a stamped request; the core\'s pty sockets refuse it; server.js stamps every request', () => {
+    assert.match(readFileSync(join(here, '..', 'lib', 'auth', 'owner-at-machine.ts'), 'utf8'), /if \(req\.headers\.get\(PEER_HEADER\)\) return false/)
+    assert.match(readFileSync(join(here, '..', 'lib', 'agent-kit', 'mount.cjs'), 'utf8'), /peer-uid\.cjs'\)\.stamp\(req, process\.cwd\(\)\)\) \{\n\s+socket\.destroy\(\)/)
+    assert.match(readFileSync(join(here, '..', 'server.js'), 'utf8'), /peer\.stamp\(req, __dirname\)\n\s+handle\(req, res\)/)
   })
 }
 

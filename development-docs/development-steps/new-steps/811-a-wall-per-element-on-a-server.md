@@ -121,6 +121,37 @@ the source, sync. Only custom (walled) elements change; natives and home compute
   CLAUDE_CONFIG_DIR (689).
 - 811-5f: the --add-dir data/services/<id> and autoMemoryDirectory stay (ACL-opened to fe-<id> in 811-3).
 
+- 🔴 FOUND 2026-11-20 ~15:10 UTC (before 811-5 code) — THE LOOPBACK HOLE: `isOwnerAtMachine` (lib/auth/owner-at-machine.ts, used by
+  get-session.ts) gives role architect to any request with Host localhost and no Cloudflare/edge header. On a walled server fe-<id> (its
+  agent's `!`, its server's code) can `curl -H 'Host: localhost' 127.0.0.1:<core>/api/architect/...` and act as the architect — the wall
+  means nothing until this closes. Also element-github-push.mjs calls /api/architect/items/<id>/github/push with no key (relies on it).
+  Proposed 811-5g (asked the owner): on a walled server owner-at-machine also needs a node proof header — a random secret in a 0600 file
+  of the node (data/node is closed to element users); the node's own loopback callers send it through one helper. Elements keep their
+  keyed doors. `logs/runtime.json` (port only) into element-readable.txt so element scripts find the core.
+
+## 811-5 + 811-5g — CODED (2026-11-20 ~16:00 UTC), dry tests green, NOT built
+
+- 5a the relay: `lib/agent-kit/hook-relay.cjs` (builtins only; the one line of element-readable.txt) → door `/api/node/hook-relay`
+  (X-Element-Key; loopback only) → `lib/agent-kit/hook-relay-run.cjs` (fixed list: record, brief, recall, window, limits, progress,
+  pulse <event of 4>, github-push, mcp:skills — the id is the key's, the cwd the element's folder, CLAUDE_CONFIG_DIR its own).
+- 5b `lib/agent-kit/walled-session.cjs` + bridge: walled = wall on, custom element, fe-<id> exists. No own account (or lent) → refused
+  `no-account` (the owner, 128). Else: --settings hooks/statusLine → relay; prompt/mcp files copied into data/services/<id>/session/;
+  skills MCP through the relay (`mcp skills`, one request per line), REA dropped on a server (said in the log); the GitHub rule → relay
+  `github-push`; env = CLAUDE_CONFIG_DIR, TELEGRAM_STATE_DIR, FRACTERA_PASS, COLORTERM, LANG, LC_ALL + FRACTERA_HOOK_KEY/CORE_PORT only.
+  Program: helper verb `agent` = `systemd-run --pty` unit fractera-el-<id>-agent|work (ProtectProc=invisible, KillMode=control-group);
+  session.stop also calls `unit-stop` (the node's user cannot signal root's sudo).
+- 5c the login shell: the same verb, unit `shell`, `/bin/bash -l` with its own CLAUDE_CONFIG_DIR; closing the socket stops the unit.
+- 5d not changed: `claude auth status/logout` as the node reads/writes the element's Claude folder through the group ACL (to see live).
+- 5e `claude-share` also copies the node's ~/.bun/bin/bun (real ELF only) into the shared bin.
+- 5g `lib/hosting/peer-uid.cjs`: server.js removes `x-fractera-peer` from every request, and on a walled server sets it back when
+  /proc/net/tcp(6) says the client socket's uid is fe-<id>; `isOwnerAtMachine` refuses a stamped request; mount.cjs destroys a stamped
+  upgrade (the core's pty sockets). No template change.
+- Tests: element-wall 58 ✓ (+ agent verb and its negatives, relay map and list negatives, a real relayed run, the launch: env never
+  carries the node's secrets/PATH/HOME, files, MCP; peer: fe line → element, node's uid / other port / not loopback → nobody, forged
+  header removed); hosting 76, hosting-launch 27, proxy-split 8, check:api, check:agent-kits 12/12, tsc 0.
+- 🔴 To measure live (811-7): `systemd-run --pty` under sudo inside node-pty (ends with the pty? exit code), the relay's latency per
+  hook, the bot's bun as fe-<id>, a fe-<id> curl to the core's /api/architect → 401/redirect (the negative of 5g).
+
 ## The shape (on a dedicated server only; a home computer is unchanged — one person)
 
 - Every CUSTOM element gets its own Linux user `fe-<id>` (no shell login, no sudo) at its birth on a server, removed at its deletion;

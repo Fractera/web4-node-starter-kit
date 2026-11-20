@@ -27,6 +27,8 @@ const os = require('node:os')
 const modes = require(path.join(process.cwd(), 'lib', 'agent-kit', 'modes.cjs'))
 // 708: разговор, оборванный случайно, продолжается — его номер задаёт узел (`--session-id`), продолжение — `--resume` (`lib/agent-kit/resume.cjs`).
 const resume = require(path.join(process.cwd(), 'lib', 'agent-kit', 'resume.cjs'))
+// 811-5b: a custom element's agent on a dedicated server runs as its own Linux user (`lib/agent-kit/walled-session.cjs`).
+const walledSession = () => require(path.join(process.cwd(), 'lib', 'agent-kit', 'walled-session.cjs'))
 const { randomUUID } = require('node:crypto')
 // 624-1: доступная память — один модуль ядра; `os.freemem()` на macOS видит только пустые страницы (свободно 114 МБ при 79% свободной).
 const { availableMb, topApps } = require(path.join(process.cwd(), 'lib', 'free-memory.cjs'))
@@ -228,6 +230,12 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   // чтобы и он видел ту же папку. Нет папки — подписка узла, как прежде.
   const ownHome = ownClaudeDir(element)
   if (ownHome) env = { ...env, CLAUDE_CONFIG_DIR: ownHome }
+  // 811-5b (the owner, Telegram 128): on a server the element's agent runs only on its own Claude account — never on the node's token.
+  const walled = walledSession().walledAt(process.cwd(), cwd)
+  if (walled && !ownHome) {
+    notice('[⟦node · no-account⟧ на сервере агент элемента работает только на своём аккаунте Claude — войдите в кабинете администратора элемента; до входа работу делает главный агент]')
+    return { ok: false, reason: 'no-account' }
+  }
   const bin = resolveBin('claude', env.PATH || env.Path)
   if (!bin) {
     notice('[claude не найден ни в PATH, ни в ~/.local/bin — установите Claude Code]')
@@ -367,15 +375,33 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   const holdFirst = hold && viaChannel
   if (firstPrompt && !holdFirst) args = [...args, firstPrompt.startsWith('-') ? ` ${firstPrompt}` : firstPrompt]
   const t0 = Date.now()
+  // 811-5b: walled — the same session through the root helper as fe-<id>: hooks by the relay, files copied into its data folder, only
+  // its own environment (`walled-session.cjs`).
+  let run = { cmd: bin, args, env, stop: null }
+  if (walled) {
+    const key = require(path.join(process.cwd(), 'lib', 'element-key.cjs')).elementKeyOf(walled.id, process.env.DATA_SECRET ?? '')
+    if (!key) {
+      notice('[агент элемента не запущен: у узла нет DATA_SECRET — ключ элемента для его хуков не выводится]')
+      return { ok: false, reason: 'no-key' }
+    }
+    try {
+      run = walledSession().walledLaunch({ root: process.cwd(), id: walled.id, key, args, env, port: Number(process.env.PORT) || 24680, node: process.execPath, mode })
+    } catch (err) {
+      notice(`[агент элемента не запущен: ${err instanceof Error ? err.message : String(err)}]`)
+      return { ok: false, reason: 'spawn-failed' }
+    }
+    if (run.dropped.length) console.log(`[agents] ${service}: на сервере без ${run.dropped.join(', ')}`)
+  }
   let child
   try {
-    child = pty.spawn(bin, args, { cols: 120, rows: 32, cwd, env, name: 'xterm-256color' })
+    child = pty.spawn(run.cmd, run.args, { cols: 120, rows: 32, cwd, env: run.env, name: 'xterm-256color' })
   } catch (err) {
     notice(`[claude не запустился: ${err instanceof Error ? err.message : String(err)}]`)
     return { ok: false, reason: 'spawn-failed' }
   }
   // 548-13: канал — это аргументы плагина Telegram, а не любые аргументы (поручение и `--add-dir` каналом не делают).
   const born = session.register({ service, pid: child.pid, proc: child, cwd, channel: viaChannel })
+  if (run.stop) born.wallStop = run.stop
   born.taskUrls = new Set()
   born.pass = pass
   // 666: с чем родилась сессия — Telegram называет это человеку («Режим: Opus · max · ultracode»), запись — для узла и агента.
@@ -1343,8 +1369,14 @@ function onConnection(ws, service) {
       const shell = shellPath()
       // 689: у элемента на подписке своего человека `claude auth login` пишет вход в ЕГО папку, а вход узла не трогает.
       const home = ownClaudeDir(service)
+      // 811-5c: on a server the element's shell is its own user's (`!` there sees only its folder), never the node's
+      const walled = serviceDir(service) ? walledSession().walledAt(process.cwd(), serviceDir(service)) : null
+      const ws_ = walled ? walledSession().walledShell({ root: process.cwd(), id: walled.id, home: home ?? require('./workspace.cjs').ownClaudeHome(service) }) : null
       try {
-        own = pty.spawn(shell, [], { cols: 100, rows: 24, cwd: serviceDir(service) || os.homedir(), env: home ? { ...shellEnv(shell), CLAUDE_CONFIG_DIR: home } : shellEnv(shell), name: 'xterm-256color' })
+        own = ws_
+          ? pty.spawn(ws_.cmd, ws_.args, { cols: 100, rows: 24, cwd: serviceDir(service), env: ws_.env, name: 'xterm-256color' })
+          : pty.spawn(shell, [], { cols: 100, rows: 24, cwd: serviceDir(service) || os.homedir(), env: home ? { ...shellEnv(shell), CLAUDE_CONFIG_DIR: home } : shellEnv(shell), name: 'xterm-256color' })
+        if (ws_) own.wallStop = ws_.stop
       } catch (err) {
         ws.send(`\r\n[оболочка ${shell} не запустилась: ${err instanceof Error ? err.message : String(err)}]\r\n`)
         fail('spawn-failed')
@@ -1412,6 +1444,7 @@ function onConnection(ws, service) {
         const child = own
         own = null
         try { child.kill() } catch { /* уже мёртв */ }
+        try { child.wallStop?.() } catch { /* 811-5c: the unit is gone */ }
       }
       // Уход со страницы отключает, но не убивает.
       if (attached) {
