@@ -184,3 +184,12 @@ the source, sync. Only custom (walled) elements change; natives and home compute
 
 - Memory: a user costs nothing; systemd units nothing; an extra pm2 daemon per element would be ~50 MB each (why 811-1 measures).
 - Disk: npm caches per user — measured in 811-1.
+
+## 811-6 live (2026-11-20)
+
+- The fresh install (from the fork, his step 4) stopped at «Пакеты, сборка и элементы»: `root` → «git: failed to stat
+  …/WEB4-ITEMS/user/root: Permission denied» — fe-root could not reach its folder (Ubuntu's home 0750; `walls` runs only at start).
+  Fixed c9392191: the helper's `add` opens pass-through (o+x) above the element and its data folder; test 59 ✓. «Продолжить установку»
+  pressed 14:4x — every start uploads the helper from this Mac, so the fix rode in without a core build.
+- «Очередь пакетов» took 38 min — the fresh Ubuntu's own unattended upgrades held apt. To do (with the owner): name that wait on the
+  page («Ubuntu обновляет себя, ждём») so a long quiet stage does not read as a hang.
