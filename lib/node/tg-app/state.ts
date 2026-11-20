@@ -19,6 +19,9 @@ import { serviceUrl } from "@/lib/microservices/registry"
 import { addressOf } from "@/lib/web4-items/address-file.mjs"
 import { diskPassport } from "@/lib/web4-items/dashboard-rows"
 import { registryDescription } from "@/lib/web4-items/element-describe"
+import { metaForLang } from "@/config/app-config"
+import { readPlace } from "@/lib/node-state/place"
+import bases from "@/lib/auth/sign-in-bases.cjs"
 
 const ROOT = process.cwd()
 
@@ -45,7 +48,11 @@ export type TgBuilds = { running: boolean; current: string | null; queue: string
 export type TgChannel = { bot: boolean; state: string; why: string | null; since: string | null }
 /** 788-1: how full the main agent's context window is — the same reading as `npm run session -- context`; `null` — no journal yet. */
 export type TgContext = { used: number; window: number | null; percent: number | null; model: string; at: string | null }
-export type TgState = { context: TgContext | null; builds: TgBuilds; asks: TgAsk[]; main: TgAgent & { channel: TgChannel; autostart: boolean | null }; elements: TgElement[]; limits: TgLimit[]; at: string }
+/** 816 (the owner, 2026-11-20, Telegram 249: «Верхняя строка … должна содержать в себе название этого узла берётся из CONFIG проекта.
+ *  Ниже покажи является ли это локальная или vps»): the site name from CONFIG (the same as the pages' titles) and where the node lives —
+ *  the detected place (`lib/hosting/place.mjs`), never a guess; on a server, its panel's own address. */
+export type TgNode = { name: string | null; place: "home" | "server" | "unknown"; web: string | null }
+export type TgState = { node: TgNode; context: TgContext | null; builds: TgBuilds; asks: TgAsk[]; main: TgAgent & { channel: TgChannel; autostart: boolean | null }; elements: TgElement[]; limits: TgLimit[]; at: string }
 
 const readJson = <T>(file: string, fallback: T): T => {
   try { return JSON.parse(readFileSync(file, "utf8")) as T } catch { return fallback }
@@ -176,6 +183,14 @@ function limitsOf(): TgLimit[] {
 }
 
 /** The whole picture for the Mini App, in the person's language. */
+function nodeOf(lang: Lang): TgNode {
+  let name: string | null = null
+  try { name = metaForLang(lang).siteName.trim() || null } catch { /* no config — the title alone */ }
+  let web: string | null = null
+  try { web = (bases.signInBases(ROOT) as { web?: string | null }).web ?? null } catch { /* no domain */ }
+  return { name, place: readPlace().kind, web }
+}
+
 export function tgState(lang: Lang): TgState {
   const waiting = (asks.open(ROOT) as { id: string; text: string; why?: string | null; hint?: string | null; copy?: string | null; by?: string; at: string; secret?: TgAsk["secret"]; action?: string | null }[])
     .map((a) => ({
@@ -189,5 +204,5 @@ export function tgState(lang: Lang): TgState {
   // 781-4: the main agent's card carries its channel — «спит — Разбудить», «не слышит — Переподключить» (`lib/node/main-channel.cjs`).
   const c = contextWindow.read(ROOT) as (TgContext & { session: string }) | null
   const context: TgContext | null = c ? { used: c.used, window: c.window, percent: c.percent, model: c.model, at: c.at } : null
-  return { context, builds, asks: waiting, main: { ...agentOf("build", false), channel: mainChannel.health(ROOT, "build") as TgChannel, autostart: autostart.state().on as boolean | null }, elements: elementsOf(lang, builds), limits: limitsOf(), at: new Date().toISOString() }
+  return { node: nodeOf(lang), context, builds, asks: waiting, main: { ...agentOf("build", false), channel: mainChannel.health(ROOT, "build") as TgChannel, autostart: autostart.state().on as boolean | null }, elements: elementsOf(lang, builds), limits: limitsOf(), at: new Date().toISOString() }
 }

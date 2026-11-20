@@ -24,6 +24,23 @@ await t('the page: noindex, data-block on its containers, both languages, no nod
   assert.ok(ru.includes('textContent') && !/innerHTML\s*=/.test(ru), 'the node\'s words are put as text, never as markup')
 })
 
+await t('816: the top line carries the node\'s name from CONFIG, the line below — «Локальный компьютер» or «VPS · host» (negatives: no name, no place)', () => {
+  const ru = page.html('ru')
+  const at = ru.indexOf('var nd=s.node'), end = ru.indexOf("W.placeHome:'';", at) + "W.placeHome:'';".length
+  assert.ok(at > 0 && end > at, 'the header is filled from the state')
+  const W = req(join(ROOT, 'lib', 'node', 'tg-app', 'words.cjs')).ru
+  const show = (node) => {
+    const els = { title: { textContent: '' }, where: { textContent: '' } }
+    new Function('s', 'W', 'document', ru.slice(at, end))({ node }, W, { getElementById: (id) => els[id] })
+    return [els.title.textContent, els.where.textContent]
+  }
+  assert.deepEqual(show({ name: 'Fractera', place: 'home', web: null }), ['Пульт узла · Fractera', 'Локальный компьютер'])
+  assert.deepEqual(show({ name: 'Fractera', place: 'server', web: 'https://architect.fractera.ai' }), ['Пульт узла · Fractera', 'VPS · architect.fractera.ai'])
+  assert.deepEqual(show({ name: null, place: 'server', web: null }), ['Пульт узла', 'VPS'])
+  assert.deepEqual(show({ name: '', place: 'unknown', web: null }), ['Пульт узла', ''])
+  assert.ok(ru.includes('id="where"') && ru.includes('data-block="tg-app-where"'))
+})
+
 put('data/services/build/channel/telegram/.env', 'TELEGRAM_BOT_TOKEN=123:TEST\n')
 put('data/services/build/channel/telegram/access.json', JSON.stringify({ allowFrom: ['90413601'] }))
 put('data/services/build/channel/telegram/person.json', JSON.stringify({ lang: 'ru' }))
