@@ -6,7 +6,7 @@ import { requireRoles } from "@/lib/auth/require-roles"
 import { serviceUrl } from "@/lib/microservices/registry"
 import paths from "@/lib/web4-items/paths.cjs"
 import elementProps from "@/lib/web4-items/element-props.cjs"
-import { settingsKey } from "@/lib/web4-items/element-settings-door"
+import { keyFor } from "@/lib/node/element-call-key.cjs"
 
 // ОФОРМЛЕНИЕ САЙТА ИЗ ЯДРА (280-6).
 //
@@ -52,7 +52,7 @@ function settingsElements(): { id: string; door: string }[] {
 async function siteDoor(init: RequestInit = {}, id = "root", door = "/api/settings/design"): Promise<Response | { unavailable: string }> {
   const site = serviceUrl(id)
   if (!site) return { unavailable: "no-site-element" }
-  const key = settingsKey()
+  const key = keyFor(id) // 818-7b: the element's own key, never the node key to a custom element
   if (!key) return { unavailable: "no-settings-key" }
   try {
     return await fetch(`${site.replace(/\/+$/, "")}${door}`, {

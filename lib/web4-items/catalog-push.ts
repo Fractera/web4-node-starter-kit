@@ -2,6 +2,7 @@ import "server-only"
 import { serviceUrl, listServices } from "@/lib/microservices/registry"
 import power from "@/lib/web4-items/element-power.cjs"
 import { catalogEntries } from "@/lib/web4-items/dashboard-rows"
+import { keyFor } from "@/lib/node/element-call-key.cjs"
 
 // КАТАЛОГ «ВСЕ ПРОЕКТЫ» → CONFIG (узел, шаг 553). Ядро считает карточки главных страниц элементов и кладёт их в элемент config
 // дверью `PUT /api/settings/catalog` ключом узла; config шлёт подписчикам сигнал, и каждый элемент, подключённый к CONFIG,
@@ -14,7 +15,7 @@ export type CatalogPush = { ok: boolean; version?: string; notified?: unknown[];
 
 export async function refreshCatalog(reason: string): Promise<CatalogPush> {
   const base = serviceUrl("config")
-  const key = process.env.SETTINGS_SECRET?.trim()
+  const key = keyFor("config") // 818-7b: a native element — the node key
   if (!base) return { ok: false, reason: "no-config" }
   if (!key) return { ok: false, reason: "no-key" }
   try {
@@ -28,7 +29,7 @@ export async function refreshCatalog(reason: string): Promise<CatalogPush> {
     })
     const b = (await r.json().catch(() => ({}))) as { ok?: boolean; version?: string; notified?: unknown[]; reason?: string }
     const out: CatalogPush = r.ok && b.ok ? { ok: true, version: b.version, notified: b.notified, en: en.length, ru: ru.length } : { ok: false, reason: b.reason ?? `http-${r.status}` }
-    if (out.ok) out.signalled = await signalTheRest(key, out.version ?? "", b.notified)
+    if (out.ok) out.signalled = await signalTheRest(out.version ?? "", b.notified)
     console.log(`[catalog] ${reason}: ${en.length} en, ${ru.length} ru → ${out.ok ? `принят, версия ${out.version}${out.signalled?.length ? `; сигнал ядра: ${out.signalled.join(", ")}` : ""}` : `отказ (${out.reason})`}`)
     return out
   } catch (e) {
@@ -43,7 +44,7 @@ export async function refreshCatalog(reason: string): Promise<CatalogPush> {
 // каталог до них не доходил. Ядро после принятого каталога зовёт ту же дверь `/api/settings/changed` у каждого включённого элемента
 // реестра, которого CONFIG не достал; элемент забирает копию, перерисовывает страницы и подписывается снова. Только по действию
 // человека — там же, где сам каталог.
-async function signalTheRest(key: string, version: string, notified: unknown): Promise<string[]> {
+async function signalTheRest(version: string, notified: unknown): Promise<string[]> {
   const reached = new Set(
     (Array.isArray(notified) ? notified : [])
       .filter((n): n is { who?: string; url?: string; ok?: boolean } => typeof n === "object" && n !== null && (n as { ok?: boolean }).ok === true)
@@ -54,6 +55,9 @@ async function signalTheRest(key: string, version: string, notified: unknown): P
     .map(async (s) => {
       const url = `http://127.0.0.1:${s.port}/api/settings/changed`
       if (reached.has(url)) return null
+      // 818-7b (817 H6): each element is signalled with ITS key — a custom element's own, a native's the node key.
+      const key = keyFor(s.id)
+      if (!key) return `${s.id} (без ключа)`
       try {
         const r = await fetch(url, {
           method: "POST",

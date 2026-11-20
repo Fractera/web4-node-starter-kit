@@ -1,6 +1,7 @@
 // @api wake the Claude Code agent of a node element without a browser
 import { NextRequest, NextResponse } from "next/server"
 import { callerOf, isNode, markedFrom, refusal, wakeAllowed } from "@/lib/node/caller"
+import { keyForUrl } from "@/lib/node/element-call-key.cjs"
 
 import supervision from "@/lib/web4-items/supervision.cjs"
 import { telegramConnected } from "@/lib/a2a/telegram-relay"
@@ -49,6 +50,9 @@ export async function POST(req: NextRequest) {
       body.declineUrl = undefined
       if (typeof body.text === "string") body.text = markedFrom(me, body.text)
       if (typeof body.about === "string") body.about = body.about.replace(/⟦/g, "[").replace(/⟧/g, "]")
+    } else if (typeof body.declineUrl === "string" && keyForUrl(body.declineUrl)?.id !== me) {
+      // 818-7b: the task door a woken agent's states go to is the waking element's own (its port) — never a neighbour's.
+      body.declineUrl = undefined
     }
   }
   const wake = (globalThis as { __web4AgentWake?: Wake }).__web4AgentWake

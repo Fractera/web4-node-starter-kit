@@ -977,14 +977,15 @@ async function closeAsk(service, token, p, outcome, keep, t) {
   }
 }
 
-/** Ответ вызывающему «человек не стал запускать» — его дверью задачи, ключом узла, только по петле. */
+/** Ответ вызывающему «человек не стал запускать» — его дверью задачи, ключом ЕЁ элемента, только по петле. */
 async function declineCaller(url, text) {
   try {
-    const u = new URL(url)
-    if (u.hostname !== '127.0.0.1' && u.hostname !== 'localhost') return
-    await fetch(u, {
+    // 818-7b (817 H6): the element listening on the door's port gets its own key; any other address gets nothing.
+    const to = globalThis.__web4CallKey?.keyForUrl(url) ?? null // the core's module, put by `lib/agent-kit/mount.cjs`
+    if (!to) return
+    await fetch(new URL(url), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Node-Key': process.env.SETTINGS_SECRET ?? '' },
+      headers: { 'Content-Type': 'application/json', 'X-Node-Key': to.key },
       body: JSON.stringify({ text, failed: true }),
       signal: AbortSignal.timeout(10_000),
     })

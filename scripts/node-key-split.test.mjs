@@ -8,7 +8,8 @@
 // Negative controls: the comparison the doors had before 818-7 accepts what callerOf refuses; the guard finds a planted old door.
 import assert from 'node:assert/strict'
 import { createHmac } from 'node:crypto'
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { createRequire } from 'node:module'
 import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -193,5 +194,87 @@ t('the gate: the element\'s rule stands after the owner at the machine and befor
   const cookie = src.indexOf('const sessionToken =')
   assert.ok(owner > 0 && rule > owner && cookie > rule, `owner ${owner}, rule ${rule}, cookie ${cookie}`)
 })
+
+console.log('T3 — the core calls an element with that element\'s key')
+const { keyFor, keyForUrl } = createRequire(import.meta.url)('../lib/node/element-call-key.cjs')
+const FIX = mkdtempSync(join(tmpdir(), 'node-key-split-'))
+mkdirSync(join(FIX, 'WEB4-ITEMS-REGISTRY'))
+writeFileSync(join(FIX, 'WEB4-ITEMS-REGISTRY', 'web4-items.json'), JSON.stringify({ services: [
+  { id: 'config', kind: 'core', port: 24689 }, { id: 'root', kind: 'user', port: 24690 }, { id: 'shop', kind: 'user', port: 24691 },
+] }))
+const at = { root: FIX, env: ENV }
+t('a custom element gets its own key, a native the node key, an unknown id nothing', () => {
+  assert.equal(keyFor('root', at), ROOTKEY)
+  assert.equal(keyFor('shop', at), SHOPKEY)
+  assert.notEqual(keyFor('root', at), ENV.SETTINGS_SECRET)
+  assert.equal(keyFor('config', at), ENV.SETTINGS_SECRET)
+  assert.equal(keyFor('nobody', at), '')
+  assert.equal(keyFor('root', { root: FIX, env: { SETTINGS_SECRET: ENV.SETTINGS_SECRET } }), '', 'no DATA_SECRET — no key, never the node key instead')
+})
+t('a task door gets the key of the element on its port — and an address that is no element gets nothing', () => {
+  assert.deepEqual(keyForUrl('http://127.0.0.1:24690/api/a2a/tasks/t1', at), { id: 'root', key: ROOTKEY })
+  assert.deepEqual(keyForUrl('http://localhost:24691/api/a2a/tasks/t1', at), { id: 'shop', key: SHOPKEY })
+  for (const u of ['http://127.0.0.1:24680/api/agents/done', 'http://evil.example:24690/x', 'https://127.0.0.1:24690/x', 'http://127.0.0.1/x', 'nonsense']) {
+    assert.equal(keyForUrl(u, at), null, u)
+  }
+})
+t('NEGATIVE CONTROL: the kit before 818-7b sent the node key to any loopback task door', () => {
+  const old = (url) => (['127.0.0.1', 'localhost'].includes(new URL(url).hostname) ? ENV.SETTINGS_SECRET : null)
+  assert.equal(old('http://127.0.0.1:24690/api/a2a/tasks/t1'), ENV.SETTINGS_SECRET)
+  assert.equal(old('http://127.0.0.1:9/anything'), ENV.SETTINGS_SECRET)
+  assert.notEqual(keyForUrl('http://127.0.0.1:24690/api/a2a/tasks/t1', at).key, ENV.SETTINGS_SECRET)
+})
+// Who in the core may read the node key, and why: each goes to the core's own doors or to a native element. A new reader is a decision:
+// an element's door takes `keyFor(id)` (lib/node/element-call-key.cjs), never SETTINGS_SECRET.
+const READERS = {
+  'lib/node/caller.ts': 'compares what callers present',
+  'lib/node/element-call-key.cjs': 'gives the node key to native elements only',
+  'lib/agent-kit/skills/catalog-index.mjs': 'the embeddings element (native)',
+  'lib/deploy/agent-return.cjs': 'the core\'s own doors',
+  'lib/deploy/quiet-build.cjs': 'the core\'s own signal door',
+  'scripts/element-boundary-hook.mjs': 'the core\'s permission door (the element\'s own key first)',
+  'scripts/load-rule.mjs': 'the core\'s notice door',
+  'scripts/main-agent-cli.mjs': 'the core\'s doors',
+  'scripts/node-commands.mjs': 'the core\'s doors',
+}
+const READ = /process\.env\.SETTINGS_SECRET|\^SETTINGS_SECRET=|\.SETTINGS_SECRET\b/
+const codeFiles = (dir) => {
+  const out = []
+  const walk = (d) => {
+    for (const n of readdirSync(d)) {
+      if (n === 'node_modules' || n.startsWith('.')) continue
+      const p = join(d, n)
+      if (statSync(p).isDirectory()) walk(p)
+      else if (/\.(c|m)?(j|t)sx?$/.test(n) && !/\.test\.mjs$/.test(n)) out.push(relative(ROOT, p).split('\\').join('/'))
+    }
+  }
+  walk(join(ROOT, dir))
+  return out
+}
+const readers = (files) => files.filter((f) => READ.test(readFileSync(join(ROOT, f), 'utf8')) && !(f in READERS) && f !== 'scripts/check-boundary-hook.mjs')
+t('nobody else in the core reads the node key — an element\'s door is called with keyFor(id)', () => {
+  assert.deepEqual(readers(['lib', 'app', 'scripts', 'proxy'].flatMap(codeFiles)), [])
+})
+t('the calls of 818-7b keep the element\'s key', () => {
+  const has = (f, ...needles) => { const s = readFileSync(join(ROOT, f), 'utf8'); for (const n of needles) assert.ok(s.includes(n), `${f}: «${n}»`) }
+  has('lib/web4-items/element-settings-door.ts', 'const key = keyFor(id)')
+  has('app/api/architect/design-config/route.ts', 'const key = keyFor(id)')
+  has('app/api/node/own-service-props/route.ts', '"X-Node-Key": keyFor(id)')
+  has('lib/web4-items/catalog-push.ts', 'const key = keyFor(s.id)', 'keyFor("config")')
+  has('lib/web4-items/project-settings-source.mjs', 'const key = keyFor(provider.id, { root })')
+  has('app/api/agents/wake/route.ts', 'keyForUrl(body.declineUrl)?.id !== me')
+  has('lib/agent-kit/mount.cjs', 'globalThis.__web4CallKey = require(')
+  for (const f of ['bridge.cjs', 'telegram.cjs']) {
+    const p = `app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/server/${f}`
+    has(p, 'globalThis.__web4CallKey?.keyForUrl(url)')
+    assert.equal(/'X-Node-Key': process\.env\.SETTINGS_SECRET/.test(readFileSync(join(ROOT, p), 'utf8')), false, `${p} still sends the node key`)
+  }
+})
+t('NEGATIVE CONTROL: the reader guard finds a new reader', () => {
+  const tmp = join(ROOT, 'scripts', `.node-key-split-probe-${process.pid}.mjs`)
+  writeFileSync(tmp, 'fetch(u, { headers: { "X-Node-Key": process.env.SETTINGS_SECRET } })\n')
+  try { assert.deepEqual(readers([relative(ROOT, tmp)]), [relative(ROOT, tmp)]) } finally { rmSync(tmp, { force: true }) }
+})
+rmSync(FIX, { recursive: true, force: true })
 
 console.log(`\nnode-key-split: ${passed} passed${process.exitCode ? ', FAILURES above' : ''}`)

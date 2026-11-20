@@ -601,14 +601,16 @@ function watchPrompt(s) {
   }, PROMPT_QUIET_MS)
   s.promptTimer.unref?.()
 }
-/** Дверь задачи вызывающего — только петля этой машины, ключ узла; отказ двери (задача уже закрыта) — не ошибка. */
+/** Дверь задачи вызывающего — только петля этой машины, ключ ЕЁ элемента; отказ двери (задача уже закрыта) — не ошибка. */
 async function tellTask(url, state) {
   try {
-    const u = new URL(url)
-    if (u.hostname !== '127.0.0.1' && u.hostname !== 'localhost') return
-    await fetch(u, {
+    // 818-7b (817 H6): the door's own element is found by its port and gets ITS key — never the node key to a custom element; an
+    // address that is no element of this machine gets nothing.
+    const to = globalThis.__web4CallKey?.keyForUrl(url) ?? null // the core's module, put by `lib/agent-kit/mount.cjs`
+    if (!to) return
+    await fetch(new URL(url), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Node-Key': process.env.SETTINGS_SECRET ?? '' },
+      headers: { 'Content-Type': 'application/json', 'X-Node-Key': to.key },
       body: JSON.stringify({ state }),
       signal: AbortSignal.timeout(10_000),
     })

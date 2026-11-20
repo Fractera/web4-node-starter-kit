@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { idOfAddress } from "@/lib/web4-items/element-address"
 import { serviceUrl } from "@/lib/microservices/registry"
+import { keyFor } from "@/lib/node/element-call-key.cjs"
 
 // ПАСПОРТ ЭЛЕМЕНТА ГЛАЗАМИ ЯДРА (417). Владелец 2026-10-06: паспорт — главная дверь элемента, «это же Джейсон будет возвращаться в
 // ядро». Ядро спрашивает дверь элемента `GET /api/own-service-props` с ключом узла — так в ответе есть и закрытые поля (почта автора,
@@ -18,7 +19,7 @@ export async function GET(req: NextRequest) {
   if (!id || !base) return NextResponse.json({ ok: false, error: "not-installed" }, { status: 404 })
   try {
     const r = await fetch(`${base}/api/own-service-props`, {
-      headers: { "X-Node-Key": process.env.SETTINGS_SECRET ?? "" },
+      headers: { "X-Node-Key": keyFor(id) }, // 818-7b: the element's own key; the node key only to a native one
       cache: "no-store",
       signal: AbortSignal.timeout(8000),
     })
