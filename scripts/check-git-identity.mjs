@@ -21,6 +21,7 @@ const EXEMPT = new Map([
   ['scripts/template.mjs', "the author's template workshop tool — commits in the workshop with the author's own identity, never on a node"],
   ['components/node-state/origin-notice.i18n.ts', 'the word «merge» is the name of an update stage shown to the person, not a git call'],
   ['lib/agent-kit/system-part.cjs', 'a set of git verbs the system-part guard recognises in a command line, not a git call'],
+  ['scripts/dedicated-server/node-git.sh', 'the server\'s git shim (811-4b) passes the caller\'s own identity variables through to the element\'s git — it signs nothing itself'],
 ])
 // Tests build their own throwaway repositories with their own identities.
 const isTest = (p) => /\.test\.(mjs|cjs|js|ts)$/.test(p) || p.startsWith('scripts/catalog/fixtures/')

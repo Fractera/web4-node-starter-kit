@@ -41,3 +41,5 @@ Closed 2026-11-20. Repository: the core (`main`), commits 84ccf98f (808), e2f8fa
 ## Next
 
 811 — the server installer's wall (a Linux user per element), plan first; then 810 — the element admin's cabinet (terminal A).
+
+Surfaces seen: the server page step 4 «GitHub-репозиторий сервера» in the owner's Chrome after the 11:22 build (LIVE e2f8faba); eyes logs/eyes/2026-11-20T11-28-03-236Z.png (0 console errors).
