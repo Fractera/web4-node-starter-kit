@@ -10,7 +10,7 @@ import rollback from "@/lib/deploy/previous-version.cjs"
 import deployLock from "@/lib/deploy/deploy-lock.cjs"
 import previewLock from "@/lib/deploy/preview-lock.cjs"
 import liveLog from "@/lib/deploy/live-log.cjs"
-import { elementCodeState } from "@/lib/web4-items/element-code-state"
+import { elementCodeStateAsync } from "@/lib/web4-items/element-code-state"
 import elementProps from "@/lib/web4-items/element-props.cjs"
 
 // ДАШБОРД РАЗВЁРТЫВАНИЙ — ДВЕРЬ (280-11b).
@@ -75,9 +75,10 @@ function mtime(file: string): number | null {
   }
 }
 
-function elements() {
+// 815-8: every element at once, git without blocking the core (✗ 9–11 s frozen on the server, measured 2026-11-20)
+async function elements() {
   const registry = readJson<{ services?: Entry[] }>(paths.REGISTRY_FILE)
-  return (registry?.services ?? []).map((s) => {
+  return Promise.all((registry?.services ?? []).map(async (s) => {
     const dir = paths.entryDir(s)
     const stamp = readJson<{ at?: string; version?: string }>(join(dir, ".install-stamp.json"))
     const passport = elementProps.readElementProps(dir) as { settings?: { owns?: string[] } } | null // 417: обе раскладки
@@ -92,7 +93,7 @@ function elements() {
       }
     }
     // 337-2: правки кода и «последний коммит ≠ работающий» — тоже ожидание развёртывания, а не только настройки.
-    const code = stamp ? elementCodeState(dir) : null
+    const code = stamp ? await elementCodeStateAsync(dir) : null
     return {
       id: s.id,
       version: s.version ?? null,
@@ -106,7 +107,7 @@ function elements() {
       // 287: предыдущая рабочая версия — для кнопки «Вернуть»; `source: git` — успех той версии не записан.
       previous: stamp ? rollback.previousVersion(s.id) : null,
     }
-  })
+  }))
 }
 
 export async function GET(req: NextRequest) {
@@ -128,7 +129,7 @@ export async function GET(req: NextRequest) {
     {
       ok: true,
       core: { commit: process.env.WEB4_COMMIT ?? null, builtAt: process.env.NEXT_PUBLIC_BUILT_AT ?? null, deploy: readCoreDeploy(), log: coreLogTail() },
-      elements: elements(),
+      elements: await elements(),
       // 337-1: осиротевшая запись (running, процесса нет) исправляется на «прервано» при этом же чтении.
       deployment: deployLock.readState(),
       // 353-3: `?log=<id>` — хвост журнала хода развёртывания этого элемента (страница читает его, пока идёт работа).
@@ -188,7 +189,7 @@ export async function POST(req: NextRequest) {
     startFree("core-deploy.mjs", [])
     return NextResponse.json({ ok: true, core: "started" })
   }
-  const known = new Set(elements().filter((e) => e.installed).map((e) => e.id))
+  const known = new Set((await elements()).filter((e) => e.installed).map((e) => e.id))
   // 287: откат — та же команда, что с машины (`npm run deploy:rollback -- <id>`), отдельным процессом.
   if (typeof body.rollback === "string") {
     if (!known.has(body.rollback)) return NextResponse.json({ ok: false, reason: "no-elements" }, { status: 400 })

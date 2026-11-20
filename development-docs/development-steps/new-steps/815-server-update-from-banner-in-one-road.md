@@ -22,6 +22,14 @@ State: AGREED — the owner (Telegram 241, 17:33): «Поддерживаю тв
 - 17:31:44 the update started at his fourth press; the door's `update` spawnSync blocks the Next process up to 10 s.
 - «Синхронизировать форк» stays on the banner after the sync (an underline link, still there).
 
+## 815-1 measured (2026-11-20 17:52 UTC, the server after the update to ada53203, through the SSH window; and the Mac)
+
+- Server: GET /api/node/update 0.27 s · GET /api/node/deploy 10.8 s, 9.4 s (during a preflight), 8.7 s · POST preflight with nothing to
+  merge 3.5 s · the deployments page itself 1.8 s.
+- The cause of the dead minute: `elementCodeState` runs two SYNCHRONOUS git calls per element (11 elements) inside GET /api/node/deploy
+  — the core process is frozen for the whole read; the board asks it on open, 0.8 s after every action and every 3 s while deploying.
+- Mac (fccfbd29, before 815-8): GET /api/node/deploy 6.7 s; /api/health sent DURING it waited 6.4 s (the freeze, the negative control).
+
 ## Substeps
 
 - 815-1 measure on the server after the release lands: GET /api/node/update, GET /api/node/deploy, POST preflight — each alone and the
@@ -34,6 +42,8 @@ State: AGREED — the owner (Telegram 241, 17:33): «Поддерживаю тв
   running, as the board already does) and hides «Синхронизировать форк» and the rebuild button; the board's core card says the same.
 - 815-5 «Синхронизировать форк» only while the fork is behind Fractera (or unknown); a synced fork shows no sync button.
 - 815-6 the board's start: the same busy state on «Развернуть» (the dialog's button) and the update door answers without spawnSync.
+- 815-8 the deployments door reads every element at once with async git (`elementCodeStateAsync`); the sync helper stays for the
+  single-element callers (rollback, the element page).
 - 815-7 proof: tests of the banner states (DOM probe as in final-check: behind / synced / running / failed), eyes of the banner on the Mac
   and on the server through the SSH window; the owner's live walk on the next release.
 

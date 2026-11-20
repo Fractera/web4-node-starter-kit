@@ -60,5 +60,19 @@ t('7 the board dialog: «Развернуть» locks with a spinner at the pres
   assert.match(card, /<Spinner/)
 })
 
+const door = readFileSync(join(ROOT, 'app/api/node/deploy/route.ts'), 'utf8')
+const codeState = readFileSync(join(ROOT, 'lib/web4-items/element-code-state.ts'), 'utf8')
+t('815-8 the deployments door reads the elements without freezing the core: async git, all at once (negative: no sync call left)', () => {
+  assert.match(door, /await elementCodeStateAsync\(dir\)/)
+  assert.match(door, /Promise\.all\(/)
+  assert.doesNotMatch(door, /[^.\w]elementCodeState\(/)
+  assert.match(codeState, /export async function elementCodeStateAsync[\s\S]*gitAsync\(dir/)
+})
+t('815-6 the update door starts without spawnSync and keeps one trial merge per target', () => {
+  const upd = readFileSync(join(ROOT, 'app/api/node/update/route.ts'), 'utf8')
+  assert.doesNotMatch(upd, /spawnSync\(|import \{[^}]*spawnSync/)
+  assert.match(upd, /verdict\.pending \?\?= runPreflight\(\)/)
+})
+
 if (failed) { console.log(`===UPDATE_BANNER_FAILED=== ${failed} failed, ${passed} passed`); process.exit(1) }
 console.log(`===UPDATE_BANNER_OK=== ${passed} passed`)
