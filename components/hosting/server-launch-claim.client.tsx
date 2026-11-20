@@ -3,7 +3,7 @@
 
 import { ExternalLink } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
-import type { ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
+import type { ClaimWords } from "@/components/hosting/server-launch.i18n"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
@@ -18,8 +18,8 @@ const fill = (t: string, map: Record<string, string>) => Object.entries(map).red
 export type ClaimShown = { sent: string | null; claimed: boolean | null }
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-export function Claim({ zone, words, busy, onAct, shown, onShown }: { zone: string; words: ServerLaunchWords; busy: boolean; onAct: Act; shown: ClaimShown; onShown: (c: ClaimShown) => void }) {
-  const w = words.ready
+export function Claim({ zone, words, busy, onAct, shown, onShown }: { zone: string; words: ClaimWords; busy: boolean; onAct: Act; shown: ClaimShown; onShown: (c: ClaimShown) => void }) {
+  const w = words
   const [email, setEmail] = useState(shown.sent ?? "")
   const [sending, setSending] = useState(false)
   const [failed, setFailed] = useState<string | null>(null)

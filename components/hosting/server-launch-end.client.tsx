@@ -171,7 +171,7 @@ export function ReadyStep({ state, words, busy, onAct, claim, onClaim }: ReadyPr
 }
 
 /** The words that call the server usable — drawn only under a passed final check (744-6, `check:ready-words`). 796: the links «Сайт ·
- *  Панель · Вход» only once the architect exists — before that one road, the architect's e-mail and «Перейти на сервер». */
+ *  Панель · Вход» only once the architect exists — before that one road, the architect's e-mail and the one registration button (814). */
 function ReadyWords({ state, words, busy, onAct, claim, onClaim }: ReadyProps) {
   const w = words.ready
   const zone = state.core?.zone ?? ""
@@ -198,7 +198,7 @@ function ReadyWords({ state, words, busy, onAct, claim, onClaim }: ReadyProps) {
           </Small>
           <Small className="text-muted-foreground">{w.next}</Small>
         </>
-      ) : <Claim busy={busy} onAct={onAct} onShown={onClaim} shown={claim} words={words} zone={zone} />}
+      ) : <Claim busy={busy} onAct={onAct} onShown={onClaim} shown={claim} words={w} zone={zone} />}
     </>
   )
 }

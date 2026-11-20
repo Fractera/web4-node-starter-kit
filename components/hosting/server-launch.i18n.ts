@@ -91,6 +91,9 @@ export type ServerLaunchWords = {
   busy: { title: string; text: string; clear: string; clearTitle: string; risks: string[]; agree: string; clearConfirm: string; notNow: string; clearing: string; cleared: string; failed: string; nodeTitle: string; nodeText: string; nodeClear: string; nodeRisk: string; freshTitle: string; freshText: string; freshClear: string; freshRisk: string; freshAgree: string; freshDisk: string; copiesNone: string; erasedDone: string }
 }
 
+/** 814: the claim words only — the claim island never sees `done`, `links` or the other ready words (744-6, `check:ready-words`) */
+export type ClaimWords = Pick<ServerLaunchWords["ready"], "claimLead" | "claimSteps" | "claimEmail" | "claimRetry" | "claimSending" | "claimSent" | "claimOpen" | "claimFailed" | "claimLoss">
+
 const STAGE_EN = {
   launch: "Launch", prepare: "Server preparation", source: "Fractera from your fork", install: "Packages, build and elements", update: "The node's own update",
   mark: "The server node's mark", start: "Start", version: "Version",
