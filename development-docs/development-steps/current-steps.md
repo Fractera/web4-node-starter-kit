@@ -283,12 +283,12 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 12:20 UTC, window ~45 %, Opus — context reset at the end of 808/809)
 
-**NOW:** 811 — his «Вперед» (Telegram 122) = the «да» on the CODE of 811. 811-2 DONE 1d2a1dd7 (helper fractera-element: add/remove/run/
-signal/stop/claude-share/walls/list; ACLs not chown; prepare/start/launch/clear carry it; test:element-wall 19 ✓). 🔴 for 811-5: hooks read
-secrets (progress.cjs — bot tokens) → a relay to a core door with the element key; 🔴 element agent on the node's subscription = token
-leak → his decision. NEXT 811-3 birth/deletion on a server (place record lib/hosting/place.mjs; item-birth + delete call `sudo -n
-fractera-element add|remove`), 811-4 watcher starts as fe-<id> (`run`), 811-5 bridge spawns claude via `run` + hook relay. Then ONE core
-build (ask him first), push the fork, «Установить с нуля» on 109.199.105.213, proofs. Talk in TELEGRAM (chat_id 90413601, ru).
+**NOW:** 811 — his «Вперед» (Telegram 122) = the «да» on the CODE of 811. DONE: 811-2 1d2a1dd7 (helper fractera-element), 811-3
+a56dc232 (birth/deletion: lib/hosting/element-wall.cjs), 811-4 9dad7aed (element code as fe-<id>: `run` for short programs, systemd units
++ bash shim under pm2 for the server/warm-up/preview). test:element-wall 36 ✓, tsc rc 0. NEXT 811-4b (git shim + ProtectProc — plan file),
+811-5 the agent as fe-<id> + hook relay — WAITS his answer (Telegram, asked ~14:00): on a server an element agent on the NODE's
+subscription would need the node's Claude token → own account per element, or lend through the core? Then ONE core build (ask him
+first), push the fork, «Установить с нуля» on 109.199.105.213, proofs 811-7 (incl. pm2 restart frees the port). Talk in TELEGRAM.
 
 Roma talks in TELEGRAM now: main bot = his existing @fractera_factory_e90e_bot (saved by him 2026-11-19 23:49; chat_id 90413601, ru).
 Done since 2026-11-19 evening (all committed, fork pushed up to cdac6592; Fractera push = his paste, not done):
