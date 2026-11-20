@@ -105,9 +105,9 @@ if (!esbuild) {
   rmSync(dir, { recursive: true, force: true })
   const has = (html, text) => html.includes(text)
 
-  await t('the DOM: the check passed, the architect awaited (796) → «Your server is ready» and the e-mail road, no links yet', () => {
+  await t('the DOM: the check passed, the architect awaited (796) → «Your server is ready», the e-mail road and the one registration button, no links yet', () => {
     const html = render(state())
-    assert.ok(has(html, words.ready.done) && has(html, words.ready.claimGo) && has(html, 'id="launch-claim-email"') && !has(html, 'href="https://architect.example.org/"'))
+    assert.ok(has(html, words.ready.done) && has(html, words.ready.claimOpen) && has(html, 'id="launch-claim-email"') && !has(html, 'href="https://architect.example.org/"'))
     assert.ok(!has(html, words.ready.missing.title) && has(html, 'data-ready="1"'))
   })
   await t('the DOM: the architect registered (796) → the links «Site · Panel · Sign-in», no e-mail field', () => {
@@ -116,7 +116,7 @@ if (!esbuild) {
   })
   await t('the DOM, negative: sign-in elsewhere → none of the ready words, the links or the code; what is missing is named', () => {
     const html = render(state({ signin: { ok: false, providers: 200, location: 'http://127.0.0.1:24681/login' } }))
-    assert.ok(!has(html, words.ready.done) && !has(html, 'href="https://architect.example.org/"') && !has(html, words.ready.claimGo))
+    assert.ok(!has(html, words.ready.done) && !has(html, 'href="https://architect.example.org/"') && !has(html, words.ready.claimOpen))
     assert.ok(has(html, words.ready.missing.title) && has(html, words.ready.missing.signin.replace('{host}', 'auth.example.org')) && has(html, 'data-ready="0"'))
   })
   await t('the DOM: the domain not switched on yet → only «switch the domain on», no ready word', () => {
