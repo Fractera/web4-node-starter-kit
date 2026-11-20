@@ -283,12 +283,10 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 09:58 UTC, window 58 %, Opus — context reset)
 
-**NOW:** plan 808 (new-steps/808-the-servers-own-github-repository.md) — an optional «!» rung «GitHub-репозиторий сервера» before the
-install, field empty by default, «Использовать тот же», «Пропустить». His shape (msg 37): default «Тот же проект», mode «Чистый Fractera» = nested ladder
-(GitHub account · fork · address «Проверить»: a DIRECT fork, law 368). «Давай» (39) → CODED (commit below), tests 27+18+5 green, live GitHub
-check green, prebuild RC=0; NOT built — ask him «собрать?»; then eyes of /ru/hosting launch ladder (9 rungs). Then; then code 808 (no core build without asking him — memory
-ask-before-core-build; he collects edits: 5ff18507 waits the next build too).
-Also waiting his word: root's /tg mini app ported from custom (asked msg 27).
+**NOW:** 808/809 CLOSED (summary completed-steps/808-main.md, c5d3da88; live here e2f8faba and on the server 1067e2e6). The main
+address look (active contrast blue, the other struck through — his Telegram 111) committed c5d3da88, waits the NEXT core build. Next:
+811 plan (the server installer's wall: a Linux user per element) for his «да», then 810 (the element admin's cabinet, terminal A).
+Open: Fractera push (his paste window), the auth screens' language (sign-in element).
 Talk with him in TELEGRAM (reply tool, chat_id 90413601, ru); short living answers, colour marks in the terminal.
 
 
