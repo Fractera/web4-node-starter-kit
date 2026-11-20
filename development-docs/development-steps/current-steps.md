@@ -283,13 +283,16 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 17:15 UTC, window ~60 %, Opus max — reset before the release build)
 
-**NOW (18:40 UTC):** the Mac at 603bc4e1: 815 PROVEN (deploy door 6.7 s → 0.3 s, health during it 6.4 s → 6–13 ms; plan 44483e19).
-816 (the Pult header) live on the Mac — Roma to look. 817 DONE (b32bb67a, the plan's «Result»): holds for files, neighbours, sudo,
-sockets, forged headers, data; holes H1 x-agent-identity passes the gate, H2 relay record reads any transcript as the node, H3 no memory
-limit, H4 foreign Docker/Postgres/Apache on the server, H5 low reads; F1/F2 walled agents cannot reach the core. Cleaned: redteam
-deleted (DNS record lvj2j.fractera.ai left — F3), 9 diary rows + 9 vectors removed, /tmp clean. PROPOSED 818 (Telegram 260): H1, H2, H3,
-H5 first, then F1/F2 and a repeat attack with social engineering; H4 — his decision. Waits his yes. The server gets 815/816 with the
-next Fractera release (his paste) — not asked yet.
+**NOW (19:05 UTC):** 818 AGREED (Telegram 271 «Всё запускай … закрывайте дыры побыстрее»; resource control dropped, 266). Done, not built:
+818-1 61449f4b (clear erases everything foreign + page names it), 818-2 H1 7208d02b (x-agent-identity: measured from the INTERNET too —
+«outsider@agent» on architect.fractera.ai and the Mac's temporary address; now believed only from the owner at the machine), 818-3 H2
+ded7a2aa (record reads only the element's own session). Tests: scripts/redteam-holes.test.mjs (in the prebuild, negative controls).
+Asked Roma (Telegram 273) for an early Mac build after H2 to close H1 on the Mac's public address — no answer yet.
+NEXT: 818-4 H5 (~/.pm2, ~/.claude 0700, nginx site 0640, .gitconfig 0600 in prepare.sh/walls), 818-5 F1/F2 — the gate must let an
+element in by its VALID X-Element-Key for its doors (hook-relay, tools/take, ask/tell-core doors) since H1 removed the agent pass;
+the relay client must call where the core listens ([::1]); ask-core needs the core's address in the element's folder; 818-6
+redteam.sh; prebuild → ask → Mac build → the release window → his clear + fresh install → part C.
+The tunnel revival fix a45ec05d (the Pult button) takes effect at the tunnel's next natural restart.
 
 **NOW (18:25):** the Mac core build ada53203 is live (eyes of the hosting page clean, no console errors). 811-7 PROVEN on the server
 (b6498d79, the plan's «811-7 live»). Fractera main = ada53203 (his paste 18:3x, ls-remote verified). Fork aifa-agi = ada53203 (his sync). The server's update RUNNING since 17:31:44 (his
