@@ -15,8 +15,8 @@ import type { ElementSettingsUi } from '../_i18n/element-settings.i18n'
 // 567: «Включение элемента» — признак узла «выключен», перед удалением.
 type Key = 'describe' | 'address' | 'mirror' | 'certificate' | 'signIn' | 'config' | 'power' | 'remove'
 
-// 443-5 → 803-4: «Главное зеркало», «Сертификат» и «Адрес элемента» живут на странице «Настройки → Домен» строками одной карточки
-// (`element-domain-rows.client.tsx`); здесь — карточки «Опасной зоны».
+// 443-5 → 809: «Главное зеркало», «Сертификат» и «Адрес элемента» живут на странице «Настройки → Домен» (на сервере — лесенка
+// `element-domain-ladder.client.tsx`, дома — адрес элемента); здесь — карточки «Опасной зоны».
 export function ElementDangerZone({ ui, actions = {}, cards = ['describe', 'power', 'remove'], badge = true }: {
   ui: ElementSettingsUi; actions?: Partial<Record<Key, ReactNode>>; cards?: Key[]; badge?: boolean
 }) {

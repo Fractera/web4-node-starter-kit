@@ -1,7 +1,7 @@
 # 809 — the element's «Домен» page rebuilt in the style of the server launch
 
-State: IN WORK — his «да, вписывай в 809 и 810, терминал А» (terminal, 2026-11-20 ~11:00 UTC). Before the next core build (808 84ccf98f and
-5ff18507 wait in the same build). The server ladder's layout sent (Telegram 84) — its code after his yes on it; the home rules now.
+State: CODED 2026-11-20 ~11:45 UTC, prebuild RC=0, NOT built (waits his word on the build) — his «да, вписывай в 809 и 810, терминал А» (terminal, 2026-11-20 ~11:00 UTC). Before the next core build (808 84ccf98f and
+5ff18507 wait in the same build). The server ladder layout (Telegram 84) — his «Да» (Telegram 85, 11:14).
 
 ## The owner's words (verbatim, Telegram 63, with a photo of /ru/a8ifp/settings/domain on the server)
 

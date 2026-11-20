@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { isBornElement } from "@/lib/web4-items/element-delete"
+import { extraDomainsAllowed } from "@/lib/hosting/home-rules.mjs"
+import { readPlace } from "@/lib/node-state/place"
 import { attachDomain, checkDomain, detachDomain, domainOf, setPrimary } from "@/lib/web4-items/element-domain"
 import { refreshCatalog } from "@/lib/web4-items/catalog-push"
 
@@ -32,6 +34,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const denied = await requireRoles(req, ROLES)
   if (denied) return denied
   if (!isBornElement(id)) return NextResponse.json({ ok: false, error: "not-a-born-element" }, { status: 404 })
+  // 809-1 (the owner, 2026-11-20): an element's own domain only on a dedicated server; a home computer keeps the elements' subdomains.
+  if (!extraDomainsAllowed(readPlace())) return NextResponse.json({ ok: false, error: "domains-on-server-only" }, { status: 403, ...noStore })
   let name = ""
   try { name = String(((await req.json()) as { name?: unknown }).name ?? "") } catch { return NextResponse.json({ ok: false, error: "bad-request" }, { status: 400 }) }
   const r = await attachDomain(id, name)

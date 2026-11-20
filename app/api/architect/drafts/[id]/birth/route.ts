@@ -1,6 +1,8 @@
 // @api start a draft's birth into an element and report its progress
 import { revalidatePath } from "next/cache"
 import { NextRequest, NextResponse } from "next/server"
+import { ownAppAllowed } from "@/lib/hosting/home-rules.mjs"
+import { readPlace } from "@/lib/node-state/place"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { getDraft } from "@/lib/web4-items/drafts"
 import { checkRepoOwner } from "@/lib/web4-items/repo-owner.mjs"
@@ -34,6 +36,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const body = (await req.json().catch(() => null)) as { app?: unknown; look?: unknown; source?: unknown; repo?: unknown } | null
   const app = BIRTH_APPS.find((l) => l === (body?.app ?? body?.look))
   if (!app) return NextResponse.json({ ok: false, reason: "bad-app" }, { status: 400 })
+  // 809-1 (the owner, 2026-11-20): an app of its own only on a dedicated server; a home computer has one person.
+  if (app === "own" && !ownAppAllowed(readPlace())) return NextResponse.json({ ok: false, reason: "own-on-server-only" }, { status: 400 })
   // 367-3: самостоятельный элемент рождается из стартера Fractera или из репозитория человека (https-адрес Git; проверка формы).
   const source = app === "own" && body?.source === "repo" ? "repo" : "starter"
   const repo = source === "repo" ? String(body?.repo ?? "").trim() : ""

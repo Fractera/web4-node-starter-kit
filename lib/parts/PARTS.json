@@ -52,6 +52,7 @@
         "app/[lang]/(architectLayer)/_components/create-draft-button.client.tsx",
         "app/[lang]/(architectLayer)/_components/delete-draft-button.client.tsx",
         "app/[lang]/(architectLayer)/_components/delete-element-button.client.tsx",
+        "app/[lang]/(architectLayer)/_components/element-domain-ladder.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-power.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-web4.client.tsx",
         "app/[lang]/(architectLayer)/architect/[item]/_agent-kit/client/claude-subscription.client.tsx",
@@ -2182,6 +2183,7 @@
         ]
       },
       "usedBy": [
+        "app/[lang]/(architectLayer)/_components/element-domain-ladder.client.tsx",
         "components/domain/domain-main.client.tsx",
         "components/domain/domain-pipeline.client.tsx"
       ]
@@ -2271,8 +2273,8 @@
         ]
       },
       "usedBy": [
+        "app/[lang]/(architectLayer)/_components/birth-button.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-address.client.tsx",
-        "app/[lang]/(architectLayer)/_components/element-certificate.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-domain.client.tsx",
         "app/[lang]/(architectLayer)/_components/owner-band.client.tsx",
         "components/architect/person-ask-card.client.tsx",
@@ -2424,9 +2426,7 @@
           "стрелка вниз"
         ]
       },
-      "usedBy": [
-        "app/[lang]/(architectLayer)/_components/element-domain-rows.client.tsx"
-      ]
+      "usedBy": []
     },
     {
       "id": "project-footer",
@@ -2505,7 +2505,7 @@
         ]
       },
       "usedBy": [
-        "app/[lang]/(architectLayer)/_components/element-certificate.client.tsx",
+        "app/[lang]/(architectLayer)/_components/element-domain-ladder.client.tsx",
         "components/domain/domain-server-pipeline.client.tsx"
       ]
     },
@@ -2912,7 +2912,6 @@
       "usedBy": [
         "_tools/block-task/client/block-task.client.tsx",
         "app/[lang]/(architectLayer)/_components/cron-calendar.client.tsx",
-        "app/[lang]/(architectLayer)/_components/element-domain-rows.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-home.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-messenger-settings.client.tsx",
         "app/[lang]/(architectLayer)/_components/owner-band.client.tsx",
@@ -3063,11 +3062,11 @@
         "app/[lang]/(architectLayer)/_components/delete-draft-button.client.tsx",
         "app/[lang]/(architectLayer)/_components/delete-element-button.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-address.client.tsx",
-        "app/[lang]/(architectLayer)/_components/element-certificate.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-danger-zone.tsx",
         "app/[lang]/(architectLayer)/_components/element-deploy.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-describe.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-discovery-alarm.tsx",
+        "app/[lang]/(architectLayer)/_components/element-domain-ladder.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-domain-more.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-domain.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-github.client.tsx",
@@ -3328,6 +3327,7 @@
         ]
       },
       "usedBy": [
+        "app/[lang]/(architectLayer)/_components/element-domain-ladder.client.tsx",
         "components/ai-elements/message.tsx",
         "components/form/voice-control.client.tsx",
         "components/hosting/server-ladder-steps.client.tsx",
@@ -3626,6 +3626,7 @@
       },
       "usedBy": [
         "app/[lang]/(architectLayer)/_components/capability-cards.client.tsx",
+        "app/[lang]/(architectLayer)/_components/element-domain-ladder.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-messenger-settings.client.tsx",
         "components/element-settings/brief-editor.client.tsx",
         "components/form/voice-field.client.tsx",
@@ -4064,6 +4065,7 @@
         ]
       },
       "usedBy": [
+        "app/[lang]/(architectLayer)/_components/element-domain-ladder.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-domain.client.tsx",
         "components/ai-elements/prompt-input.tsx",
         "components/auth/resend-dns.client.tsx",
@@ -4221,6 +4223,7 @@
       },
       "usedBy": [
         "app/[lang]/(architectLayer)/_components/element-deploy.client.tsx",
+        "app/[lang]/(architectLayer)/_components/element-domain-ladder.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-domain.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-github.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-mini-app.client.tsx",
@@ -4480,7 +4483,7 @@
         "_tools/fact-draft/client/fact-draft.client.tsx",
         "_tools/socials-ai/client/socials-ai-dialog.client.tsx",
         "app/[lang]/(architectLayer)/_components/draft-cards.tsx",
-        "app/[lang]/(architectLayer)/_components/element-certificate.client.tsx",
+        "app/[lang]/(architectLayer)/_components/element-domain-ladder.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-github.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-messenger-settings.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-mini-app.client.tsx",

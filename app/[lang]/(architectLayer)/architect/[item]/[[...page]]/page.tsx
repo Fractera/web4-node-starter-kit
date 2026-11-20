@@ -39,9 +39,7 @@ import { elementSettingsUi } from '../../../_i18n/element-settings.i18n'
 import { ElementDescribe } from '../../../_components/element-describe.client'
 import { ElementAddress } from '../../../_components/element-address.client'
 import { ElementDomain } from '../../../_components/element-domain.client'
-import { ElementCertificate } from '../../../_components/element-certificate.client'
-import { ElementDomainRows } from '../../../_components/element-domain-rows.client'
-import { ElementDomainMore } from '../../../_components/element-domain-more.client'
+import { ElementDomainLadder } from '../../../_components/element-domain-ladder.client'
 import { domainRecord } from '@/lib/web4-items/element-domain'
 import { serverDomainWords } from '@/components/hosting/server-domain.i18n'
 import { primaryDomain } from '@/lib/domain/node-domains'
@@ -407,23 +405,24 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   // любую работу с доменом»): у элемента на корне домена узла (`holdsApex`) этой страницы нет вовсе — дерево её прячет (`ownDomain`).
   const domainSettings = key === 'settings/domain'
     ? (entry
-      ? <ElementDomainRows label={sui.pageNav.label} down={sui.pageNav.down} rows={[
-          // 803-4: one bordered card of closed rows — each row's title and line are its card's own words, the body its fields.
-          // 805 (the owner, 2026-11-19): the note on sign-in on an own domain is a «Подробнее» text link under this row, not a row of its own.
-          { id: 'domain-mirror', title: sui.mirror.title, line: sui.mirror.text, body: <>
-            <ElementDomain id={item} lang={lang} ui={sui} current={domainRecord(item)} />
-            {domainRecord(item) && primaryDomain() && (
-              <ElementDomainMore label={sui.signIn.title}>
+      // 809 (the owner, 2026-11-20: «переработать … в стиле в котором создается подключение сервера»; Telegram 76/78: an element's own
+      // domain only on a dedicated server). The place is the node's, never printed into this prebuilt page: both views are drawn and the
+      // page's place hides one (`data-place`, styles/globals.css). Home — the element's address and one line; server — the ladder, and
+      // the address card below it only while the element has no own domain (805).
+      ? <div className="my-4 flex flex-col gap-6" data-block="element-domain-page">
+          <div className="flex flex-col gap-3" data-block="element-domain-home" data-place="home">
+            <ElementAddress id={item} lang={lang} ui={sui} current={slug} internet={address} />
+            <p className="text-sm text-muted-foreground">{sui.domainLadder.home} <a className="font-medium text-primary underline-offset-4 hover:underline" href={`/${lang}/architect/hosting/hosting`}>{sui.domainLadder.homeLink}</a></p>
+          </div>
+          <div className="flex flex-col gap-6" data-block="element-domain-server" data-place="server">
+            <ElementDomainLadder id={item} lang={lang} ui={sui} record={domainRecord(item)} dialogUi={appDialogUi(lang)} domainWords={serverDomainWords(lang)}
+              signIn={domainRecord(item) && primaryDomain() ? <>
                 <p className="mb-2 text-sm text-muted-foreground">{sui.signIn.text}</p>
                 <ElementOwnDomainSignIn ui={sui} domain={domainRecord(item)!.domain} center={`auth.${primaryDomain()!.name}`} />
-              </ElementDomainMore>
-            )}
-          </> },
-          { id: 'domain-certificate', title: sui.certificate.title, line: sui.certificate.text, body: <ElementCertificate id={item} domain={domainRecord(item)?.domain ?? null} lang={lang} ui={sui} domainWords={serverDomainWords(lang)} /> },
-          // 805 (the owner: «если мы подключили уже собственный домен это часть не должна существовать»): the element's service address
-          // row lives only while the element has no own domain.
-          ...(domainRecord(item) ? [] : [{ id: 'domain-address', title: sui.address.title, line: sui.address.text, body: <ElementAddress id={item} lang={lang} ui={sui} current={slug} internet={address} /> }]),
-        ]} />
+              </> : null} />
+            {domainRecord(item) ? null : <ElementAddress id={item} lang={lang} ui={sui} current={slug} internet={address} />}
+          </div>
+        </div>
       : <p className="my-4 text-sm text-muted-foreground">{sui.notBorn}</p>)
     : null
   const settings = key === 'settings/danger-zone'

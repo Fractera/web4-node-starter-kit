@@ -20,6 +20,8 @@ import { dirname, join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { createRequire } from 'node:module'
 import { machineArgs } from '../lib/deploy/git-identity.mjs'
+import { nodePlace } from '../lib/hosting/place.mjs'
+import { ownAppAllowed } from '../lib/hosting/home-rules.mjs'
 
 const require = createRequire(import.meta.url)
 const { REGISTRY_FILE, itemDir, entryDir } = require('../lib/web4-items/paths.cjs')
@@ -71,6 +73,8 @@ if (process.argv.includes('--print-look') || process.argv.includes('--print-app'
   say(`app: ${app}`)
   process.exit(0)
 }
+// 809-1 (the owner, 2026-11-20): an app of its own is born only on a dedicated server — a home computer has one person.
+if (app === 'own' && !ownAppAllowed(nodePlace(ROOT))) fail('самостоятельное приложение рождается только на выделенном сервере: на домашнем компьютере элемент — часть проекта (--app project)')
 
 // 1. Черновик существует и ещё не родился.
 let drafts = []

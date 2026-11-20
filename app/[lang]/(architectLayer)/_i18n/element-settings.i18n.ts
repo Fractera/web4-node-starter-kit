@@ -24,6 +24,13 @@ export type ElementSettingsUi = {
   /** 801-2: «Сертификат безопасности» on «Настройки → Домен»; 801-3: its words while the certificate is issued. */
   certificate: Card
   certificateCard: { noDomain: string; cloudflare: string; loading: string; issuing: string; ready: string; all: string; toast: string; toastText: string }
+  /** 809 (the owner, 2026-11-20): the page on a dedicated server is a ladder in the launch page's style; at home — the address only.
+   *  `{names}` free domains, `{domain}` `{ip}` `{date}` `{primary}` `{subdomain}` */
+  domainLadder: {
+    locked: string; steps: { list: string; connect: string; records: string; cert: string; primary: string }
+    free: string; connected: string; recordsOk: string; recordsLead: string; recordsWait: string; recheck: string; rechecking: string; certOk: string; primaryDone: string
+    more: string; home: string; homeLink: string; danger: string; detach: string; detachTitle: string; detachText: string; cancel: string; refused: Record<string, string>
+  }
   config: Card
   /** 713-3: `lineOn`/`lineOff` — the CONFIG link as one line on top of «Site settings». */
   linkCard: { lineOn: string; lineOff: string }
@@ -177,6 +184,20 @@ const DICT: Record<string, ElementSettingsUi> = {
       text: "The certificate that lets the domain open over HTTPS: who issued it, until when it is valid, and whether it renews by itself.",
       action: "All certificates",
       pending: "",
+    },
+    domainLadder: {
+      locked: "Opens after the step before it",
+      steps: { list: "The domain in the node's list", connect: "Connect it to the element", records: "The records lead to the server", cert: "Certificate and HTTPS", primary: "The main address" },
+      free: "{names} — free", connected: "connected: {domain}", recordsOk: "A @ and www → {ip}",
+      recordsLead: "Write these records at the domain's registrar — until they lead here, no certificate can be issued:",
+      recordsWait: "Asking public DNS…", recheck: "Check again", rechecking: "Checking…",
+      certOk: "HTTPS works · until {date}", primaryDone: "{primary}; the other address answers 301",
+      more: "More",
+      home: "An element's own domains are connected on a dedicated server; on a home computer the element lives at its address on the node's domain.",
+      homeLink: "Dedicated server activation",
+      danger: "Danger zone", detach: "Disconnect the domain", detachTitle: "Disconnect {domain}?",
+      detachText: "The site stops opening at {domain}; the element lives at {subdomain} again.", cancel: "Cancel",
+      refused: { "domains-on-server-only": "An element's own domain is connected only on a dedicated server." },
     },
     certificateCard: {
       noDomain: "Connect a domain first: its certificate appears here.",
@@ -386,6 +407,20 @@ const DICT: Record<string, ElementSettingsUi> = {
       text: "Сертификат, с которым домен открывается по HTTPS: кто его выдал, до какого числа он действует и продлевается ли сам.",
       action: "Все сертификаты",
       pending: "",
+    },
+    domainLadder: {
+      locked: "Откроется после предыдущего шага",
+      steps: { list: "Домен в списке узла", connect: "Подключить к элементу", records: "Записи ведут на сервер", cert: "Сертификат и HTTPS", primary: "Главный адрес" },
+      free: "{names} — свободен", connected: "подключён {domain}", recordsOk: "A @ и www → {ip}",
+      recordsLead: "Впишите эти записи у регистратора домена — пока они не ведут сюда, сертификат не выпустится:",
+      recordsWait: "Спрашиваю публичные DNS…", recheck: "Проверить снова", rechecking: "Проверяю…",
+      certOk: "HTTPS работает · до {date}", primaryDone: "{primary}, второй адрес отвечает 301",
+      more: "Подробнее",
+      home: "Собственные домены элементов подключаются на выделенном сервере; на домашнем компьютере элемент живёт по своему адресу на домене узла.",
+      homeLink: "Активация выделенного сервера",
+      danger: "Опасная зона", detach: "Отключить домен", detachTitle: "Отключить {domain}?",
+      detachText: "Сайт перестанет открываться на {domain}; элемент снова будет жить на {subdomain}.", cancel: "Отмена",
+      refused: { "domains-on-server-only": "Собственный домен элемента подключается только на выделенном сервере." },
     },
     certificateCard: {
       noDomain: "Сначала подключите домен: его сертификат появится здесь.",

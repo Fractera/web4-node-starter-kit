@@ -11,6 +11,7 @@ import { AppDialog } from "@/components/dialog/app-dialog.client"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import type { Web4DraftsUi } from "../_i18n/web4-drafts.i18n"
 import { announceGithubState } from "@/components/node-state/github-token-alarm.client"
+import { useNodePlace } from "@/components/node-state/use-node-place.client"
 
 // «РОДИТЬ ЭЛЕМЕНТ» (узел, шаг 319-3; 804-2 — один вопрос вместо типа узла). Кнопка → окно подтверждения (что произойдёт, сколько
 // займёт и чем будет элемент: «частью вашего проекта» / «самостоятельным приложением» — навсегда) → дверь
@@ -43,7 +44,10 @@ export function BirthButton({ id, ui, dialogUi, born = false, native = false }: 
   const [source, setSource] = useState<"starter" | "repo" | "">("")
   const [repo, setRepo] = useState("")
   const repoOk = REPO_URL.test(repo.trim())
-  const ready = native || app === "project" || (app === "own" && (source === "starter" || (source === "repo" && repoOk)))
+  // 809-1 (the owner, 2026-11-20: «возможность самостоятельного … появляется только на выделенном сервере»): at home there is no question —
+  // the element is part of the project; the door refuses «own» there too.
+  const askApp = useNodePlace()?.kind === "server"
+  const ready = native || !askApp || app === "project" || (app === "own" && (source === "starter" || (source === "repo" && repoOk)))
 
   /** 804-2: a choice card — a shadcn Label holding a RadioGroupItem (keyboard arrows, focus); the chosen one has the primary frame. */
   const option = (group: string, value: string, title: string, text: string, mark: string) => (
@@ -88,7 +92,7 @@ export function BirthButton({ id, ui, dialogUi, born = false, native = false }: 
       const r = await fetch(`${BASE}/api/architect/drafts/${id}/birth`, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(native ? {} : app === "own" ? { app, source, ...(source === "repo" ? { repo: repo.trim() } : {}) } : { app }),
+        body: JSON.stringify(native ? {} : !askApp ? { app: "project" } : app === "own" ? { app, source, ...(source === "repo" ? { repo: repo.trim() } : {}) } : { app }),
       })
       if (r.status === 400) {
         const j = (await r.json().catch(() => null)) as { message?: string } | null
@@ -143,7 +147,7 @@ export function BirthButton({ id, ui, dialogUi, born = false, native = false }: 
           </>
         }
       >
-        {!native && <div className="flex flex-col gap-2" data-birth-app>
+        {!native && askApp && <div className="flex flex-col gap-2" data-birth-app>
           <p className="text-sm font-medium text-foreground" id={`birth-app-${id}`}>{ui.appQuestion}</p>
           <RadioGroup value={app} onValueChange={(v) => setApp(v as "project" | "own")} aria-labelledby={`birth-app-${id}`} className="gap-2">
             {option("app", "project", ui.appProject, ui.appProjectText, "data-birth-app-option")}

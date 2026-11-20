@@ -312,6 +312,14 @@ Open:
 
 ## The person's decisions (verbatim)
 
+- 2026-11-20 ~11:45 UTC — 809 CODED (commit below): 809-1 home rules (lib/hosting/home-rules.mjs; item-birth + birth door refuse `own` at
+  home; the domain door POST refuses at home `domains-on-server-only`; birth window asks only on a server; «Дополнительные домены»
+  data-place=server; test home-rules 2 ✓ with negatives) · 809-2 the server ladder `element-domain-ladder.client.tsx` (5 rungs, danger zone
+  with AppDialog) and the home card (address + line), both drawn, the place hides one; element-domain-rows + element-certificate retired
+  · 809-3 the stale throughsongs.com entry removed through DELETE /api/domain/list (backup in the session scratchpad). Prebuild RC=0.
+  NOT built: waits his word on the ONE core build (808 + 809 + 5ff18507); then eyes at home (home card; the server ladder by
+  data-node-place=server in the eyes page), push + server update by his word, his look on the server.
+
 - 2026-11-20 10:49–10:54 UTC, the owner (Telegram 76, 78, 81): own apps only on a dedicated server; on a home computer (Mac/Windows) the
   node's own domain + element subdomains, NO additional element domains, NO own-app choice at birth («имелось в виду … дополнительные домены
   для элементов»); «В целом я во всём согласен … внести окончательные изменения в ядро все которые накопили за сегодняшнюю работу сделать

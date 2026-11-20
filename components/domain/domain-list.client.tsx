@@ -30,10 +30,11 @@ type List = {
 
 /** One section: its subheading and one line above, its card below (the page «Сервер»'s pattern). */
 // 799: the main domain's section is this computer's Cloudflare ladder — hidden on a server (`data-place="home"`, styles/globals.css), whose
-// own ladder stands above; the additional domains' section shows on both, its cards measuring public DNS on a server.
+// own ladder stands above. 809-1 (the owner, 2026-11-20): the additional domains' section lives only on a server (`data-place="server"`) —
+// a home computer keeps the node's own domain and the elements' subdomains.
 function Section({ id, title, lead, children }: { id: "main" | "extra"; title: string; lead: string; children: ReactNode }) {
   return (
-    <section className="flex flex-col gap-3" data-block={`domain-section-${id}`} data-domain-section={id} data-place={id === "main" ? "home" : undefined}>
+    <section className="flex flex-col gap-3" data-block={`domain-section-${id}`} data-domain-section={id} data-place={id === "main" ? "home" : "server"}>
       <div className="flex flex-col gap-1" data-block={`domain-section-${id}-head`}>
         <H2 variant="ui">{title}</H2>
         <Small className="text-muted-foreground">{lead}</Small>
