@@ -312,6 +312,13 @@ Open:
 
 ## The person's decisions (verbatim)
 
+- 2026-11-20 10:34 UTC, the owner (Telegram 63, a photo of the server's /ru/a8ifp/settings/domain): «Поставь в план перед сборкой ядра
+  эту страницу … переработать с использованием навыка дизайна административных панелей в стиле в котором создается подключение сервера …
+  бардак множество текстов полей противоречащих друг друга» → plan new-steps/809-the-element-domain-page-like-the-server-launch.md, BEFORE
+  the core build. Live test so far: subdomain sign-in of marina2 ✓ (roles user+elementAdmin002, one account); throughsongs.com connected
+  10:31 (HTTPS 200); its «Войти» → continue-as (803) → «another account» → form requireRole=user (805) ✓; defect: those auth screens are
+  English on a ru site (lang lost). Waits his Marina sign-in on throughsongs.com (window 6eb72b5c).
+
 - 2026-11-20 10:16 UTC, the owner (Telegram 45): «Сейчас ведро [ядро] собирать ещё рано потому что я хочу решить проблему которую ты мне
   обещал … связанные с авторизацией на выделенном сервере … пока этот элемент находится на субдомене авто авторизация работает корректно.
   Как только элементы начинают работать на полноценном домене пользователь с этим уже учётной записью уже не может авторизоваться … я с
