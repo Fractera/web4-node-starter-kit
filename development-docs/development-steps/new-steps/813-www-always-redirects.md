@@ -1,6 +1,6 @@
 # 813 — www always redirects to the domain
 
-State: PLAN — proposed to the owner 2026-11-20 16:45 UTC (Telegram 209), after 811-7; waits his «да».
+State: PLANNED — the owner «Да» (Telegram 210, 2026-11-20 16:43 UTC) to «Планирую 813?»; done after 811-7.
 
 ## The owner's words (verbatim, Telegram 208)
 
