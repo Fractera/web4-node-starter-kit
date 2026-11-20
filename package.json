@@ -77,6 +77,7 @@
     "test:server-names-delete": "node scripts/server-names-delete.test.mjs",
     "test:hosting": "node scripts/hosting.test.mjs",
     "test:hosting-launch": "node scripts/hosting-launch.test.mjs",
+    "test:element-wall": "node scripts/element-wall.test.mjs",
     "test:launch-footprint": "node scripts/launch-footprint.test.mjs",
     "test:cross-site-wall": "node scripts/cross-site-wall.test.mjs",
     "test:proxy-split": "node scripts/proxy-split.test.mjs",

@@ -90,6 +90,16 @@ if [ ${#NODES[@]} -gt 0 ]; then
     # an old backup that kept nothing of a stranger's is empty now: it goes whole
     if [ -z "$(find "$b/nginx" -type f 2>/dev/null | head -1)" ] && ! grep -q '"name"' "$b/pm2.json" 2>/dev/null; then erase "$b"; fi
   done
+  # 811-2: the elements' own users go with the node — their processes, accounts, homes and root's records of them (the group and the
+  # helper stay: prepare.sh owns them and the next install needs them)
+  if [ "$TEST" != 1 ]; then
+    for u in $(getent passwd 2>/dev/null | cut -d: -f1 | grep -E '^fe-[a-z0-9-]+$'); do
+      run pkill -KILL -u "$u" >/dev/null 2>&1 || true
+      run userdel "$u" >/dev/null 2>&1 || true
+    done
+  fi
+  for h in "${CLEAR_BASE:-}"/var/lib/fractera-el/*; do erase "$h"; done
+  for r in "${CLEAR_BASE:-}"/etc/fractera/elements/*; do erase "$r"; done
   for c in "$HOME_DIR"/*.before-*; do erase "$c"; done
   erase "$HOME_DIR/.npm"; erase "$HOME_DIR/.cache"; erase "$HOME_DIR/.pm2"
   # ✗ measured 2026-11-19 after a clear: root's own npm cache held 24 GB (the installs' global packages, earlier installers) — a cache only,

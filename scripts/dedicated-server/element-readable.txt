@@ -1,0 +1,5 @@
+# FILES OF THE NODE AN ELEMENT'S OWN USER MAY READ ON A DEDICATED SERVER (node step 811-2) — one path from the node's folder per line.
+# `fractera-element walls` gives each o+r and its folders o+x; every other file of the core stays closed to element users.
+# 🔒 Empty on purpose (811-2): the element agent's hooks are the core's files and read the node's secrets (progress.cjs — the bot tokens,
+# the main agent's chat; pulse.cjs — data/node/limits), so they are not opened here: 811-5 runs them through the core's door (a relay
+# readable by element users is the only line that comes here then).

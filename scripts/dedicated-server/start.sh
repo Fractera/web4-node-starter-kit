@@ -17,6 +17,10 @@ emit start running
 # quick when packages and builds are already here — and rebuilds only what the copy changed.
 stage elements 'npm run services:install'
 stage build 'head=$(git rev-parse HEAD); if [ ! -f .next/BUILD_ID ] || [ "$(cat logs/dedicated-server/build.sha 2>/dev/null)" != "$head" ]; then npm run build && echo "$head" > logs/dedicated-server/build.sha; fi'
+# 811-2: the wall between elements before anything starts — Claude Code shared read-only with element users, the node's files closed to
+# them (an update brings new files with the default umask, so every start applies it again).
+soft_stage claude-share 'sudo -n /usr/local/sbin/fractera-element claude-share'
+stage walls 'sudo -n /usr/local/sbin/fractera-element walls'
 stage serve 'npm run serve:start'
 stage nginx 'node scripts/server.mjs nginx --write && sudo -n /usr/local/sbin/fractera-root nginx-apply'
 stage save 'pm2 save'

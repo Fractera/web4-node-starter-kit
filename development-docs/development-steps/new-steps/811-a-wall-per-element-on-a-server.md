@@ -31,6 +31,31 @@ State: PLAN — waits the owner's «да». Order agreed 2026-11-20 (Telegram 81
 - npm cache and home per element user: `/var/lib/fractera-el/<id>` (disk measured live).
 - Live later (after the fresh install): the element's bot, its build under its user, «Permission denied» on the neighbours.
 
+## 811-2 the installer — CODED (2026-11-20 ~12:50 UTC), dry tests green
+
+- `scripts/dedicated-server/fractera-element.sh` → /usr/local/sbin/fractera-element (root helper, same sudoers line as fractera-root):
+  `add <id> <folder>` (user fe-<id>, home /var/lib/fractera-el/<id>, root's record /etc/fractera/elements/<id>, POSIX ACLs on the
+  folder and data/services/<id>: fe-<id> + the node's group rwX, other nothing, the same as defaults; setfacl -P) · `remove` (kill,
+  chown back -P -h, ACLs off, userdel) · `run <id> [K=V…] -- prog` (setpriv --no-new-privs as fe-<id>, env -i, umask 007, its folder;
+  LD_*/PATH/HOME/NODE_OPTIONS/BASH_ENV refused) · `signal` (by uid) · `stop` · `claude-share` (the node's claude → /usr/local/lib/fractera/bin,
+  only from ~/.local/share/claude, only ELF) · `walls` (node folder 0711, every core file o-rwx — natives included — except folders of
+  elements with a record; `element-readable.txt` opened; .env* 0600) · `list`.
+- Chosen over the plan: ACLs instead of chown to fe-<id> (the core keeps building and deploying through its group, no ownership dance;
+  files the element creates stay reachable by the core by the default ACL). Root never walks a tree an element user can write while it runs.
+- prepare.sh: apt `acl`, stage `element-group` (group fractera-el, /var/lib/fractera-el 0711, /usr/local/lib/fractera/bin), helper +
+  /etc/fractera/elements 0700 + one sudoers line for both helpers. start.sh: soft `claude-share`, `walls` before `serve`. launch.mjs
+  uploads the helper. clear.sh: fe-* users, their homes and records erased with the node.
+- Tests: `npm run test:element-wall` 19 ✓ (negatives: ids, folders with .., absolute, symlinked folder and data folder, env keys,
+  pid not the element's, allow-list .., absolute, missing, symlink; claude outside the store, not ELF); hosting 76 ✓ (stage list +
+  element-group), hosting-launch 27 ✓, server-install-live 16 ✓.
+- 🔴 FOUND for 811-5: the hooks' closure is wider than 811-1 said — progress.cjs reads the element's bot token AND, when the main agent
+  leads the element, the main bot's chat; pulse.cjs reads data/node/limits; plus node-line, lending, permission, window, memory/record.cjs.
+  So hooks can NOT run as fe-<id> with read rights: 811-5 = a relay (one readable file in element-readable.txt) that posts the hook
+  event to a core door with the element's own key; the core runs the real hook as the node's user.
+- 🔴 FOUND for 810/811-5 (his decision): an element agent on the NODE's subscription would need the node's ~/.claude credentials —
+  copying them to fe-<id> hands the node's token to the element. On a server an element agent runs on its own Claude account
+  (memory one-element-one-claude-account) — or the core lends work through itself, never the token.
+
 ## The shape (on a dedicated server only; a home computer is unchanged — one person)
 
 - Every CUSTOM element gets its own Linux user `fe-<id>` (no shell login, no sudo) at its birth on a server, removed at its deletion;

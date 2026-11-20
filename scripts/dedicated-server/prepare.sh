@@ -32,7 +32,7 @@ stage swap 'mem=$(awk "/MemTotal/ {print int(\$2/1024)}" /proc/meminfo); sw=$(aw
     mkswap /swapfile-fractera; swapon /swapfile-fractera;
     grep -q "^/swapfile-fractera" /etc/fstab || echo "/swapfile-fractera none swap sw 0 0" >> /etc/fstab; sysctl -w vm.swappiness=10;
   fi; swapon --show=NAME,SIZE --noheadings'
-stage apt 'wait_for_apt; apt-get update -qq && apt-get install -y -qq git curl ca-certificates rsync nginx ufw build-essential python3 python3-venv openssl psmisc'
+stage apt 'wait_for_apt; apt-get update -qq && apt-get install -y -qq git curl ca-certificates rsync nginx ufw build-essential python3 python3-venv openssl psmisc acl'
 # Node 22 — the major the node runs on everywhere (macOS 22.19 measured); NodeSource as the easy starter did.
 stage node 'v=$(node --version 2>/dev/null | cut -d. -f1); if [ "$v" != "v22" ]; then wait_for_apt; curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get install -y -qq nodejs; fi; node --version'
 stage pm2 'command -v pm2 >/dev/null || npm install -g pm2@latest; pm2 --version'
@@ -42,9 +42,15 @@ soft_stage certbot 'command -v certbot >/dev/null || { snap install --classic ce
 stage user "id -u $NODE_USER >/dev/null 2>&1 || useradd -m -s /bin/bash $NODE_USER"
 # git over HTTP/1.1: ✗ measured by the easy starter 2026-09-02 — «expected flush after ref listing» over HTTP/2 on one provider's network.
 stage git "su - $NODE_USER -c 'git config --global http.version HTTP/1.1'"
+# 811-2: the wall between elements — their users' group, homes and shared programs; the element helper beside the root helper, one
+# sudoers file for both (scripts/dedicated-server/fractera-element.sh).
+stage element-group "getent group fractera-el >/dev/null || groupadd --system fractera-el;
+  install -d -m 0711 -o root -g root /var/lib/fractera-el; install -d -m 0755 -o root -g root /usr/local/lib/fractera/bin"
 stage helper "install -d -m 0755 /etc/fractera; printf 'NODE_USER=%s\nNODE_DIR=%s\n' '$NODE_USER' '$NODE_DIR' > /etc/fractera/node.env;
+  install -d -m 0700 /etc/fractera/elements;
   install -m 0755 -o root -g root '$HERE/fractera-root.sh' /usr/local/sbin/fractera-root;
-  printf '%s ALL=(root) NOPASSWD: /usr/local/sbin/fractera-root\n' '$NODE_USER' > /etc/sudoers.d/fractera; chmod 0440 /etc/sudoers.d/fractera;
+  install -m 0755 -o root -g root '$HERE/fractera-element.sh' /usr/local/sbin/fractera-element;
+  printf '%s ALL=(root) NOPASSWD: /usr/local/sbin/fractera-root, /usr/local/sbin/fractera-element\n' '$NODE_USER' > /etc/sudoers.d/fractera; chmod 0440 /etc/sudoers.d/fractera;
   visudo -cf /etc/sudoers.d/fractera"
 stage nginx 'install -d -m 0755 /var/www/fractera-acme; rm -f /etc/nginx/sites-enabled/default; systemctl enable --now nginx'
 # The firewall from the first minute: only SSH, 80 and 443. The node's own ports (24680–25679) answer on loopback for nginx and are
