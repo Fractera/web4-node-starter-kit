@@ -283,13 +283,13 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 17:15 UTC, window ~60 %, Opus max — reset before the release build)
 
-**NOW (18:15 UTC):** the Mac at 5870162d (815-8 + 816) — the proof FAILED: /api/health during GET /api/node/deploy still 5–6 s. The real
-freeze: previous-version.cjs fromGit (60 sync git show per element, 5.7 s). 815-9 fixed 65c1c586 (cat-file --batch, cached; 333 ms / 4 ms),
-prebuild GREEN, the Mac build launched again. After it: the same proof (health during deploy must be ms).
-817 channel FOUND: the server's terminal in «login» mode is a plain shell — open the SSH window (Chrome tab → fetch POST /api/node/launch
-{action:"window",host:"109.199.105.213",port:22}; the visit lasts until 19:27 UTC), POST localhost:25680/ru/build/agent-api/ticket, then ws
-ws://localhost:25680/pty/build {type:"init",mode:"login",ticket} → send Ctrl-C, then {type:"stdin",data:"cmd\r"} and read the output
-(node + the `ws` package from the Mac's node_modules). Then create redteam via the server's `npm run create` and the attacks of the plan.
+**NOW (18:40 UTC):** the Mac at 603bc4e1: 815 PROVEN (deploy door 6.7 s → 0.3 s, health during it 6.4 s → 6–13 ms; plan 44483e19).
+816 (the Pult header) live on the Mac — Roma to look. 817 DONE (b32bb67a, the plan's «Result»): holds for files, neighbours, sudo,
+sockets, forged headers, data; holes H1 x-agent-identity passes the gate, H2 relay record reads any transcript as the node, H3 no memory
+limit, H4 foreign Docker/Postgres/Apache on the server, H5 low reads; F1/F2 walled agents cannot reach the core. Cleaned: redteam
+deleted (DNS record lvj2j.fractera.ai left — F3), 9 diary rows + 9 vectors removed, /tmp clean. PROPOSED 818 (Telegram 260): H1, H2, H3,
+H5 first, then F1/F2 and a repeat attack with social engineering; H4 — his decision. Waits his yes. The server gets 815/816 with the
+next Fractera release (his paste) — not asked yet.
 
 **NOW (18:25):** the Mac core build ada53203 is live (eyes of the hosting page clean, no console errors). 811-7 PROVEN on the server
 (b6498d79, the plan's «811-7 live»). Fractera main = ada53203 (his paste 18:3x, ls-remote verified). Fork aifa-agi = ada53203 (his sync). The server's update RUNNING since 17:31:44 (his
