@@ -101,6 +101,26 @@ element's; core, native, no user, `..` out, another user → the real git). The 
 (its sign-in in the admin cabinet, 810); until it signs in, the core does the work through its own session; the node's token never
 goes to an element.
 
+## 811-5 measured (2026-11-20 ~14:30 UTC) — substeps, each with dry tests and negatives
+
+The element kit `app/[lang]/(architectLayer)/architect/[item]/_agent-kit/server/` — its bridge.cjs is IDENTICAL to the shared kit
+`architect/kits/_agent-kit/core/server/bridge.cjs` (other natives' kits are copies too): find the sync/guard of the copies FIRST, edit
+the source, sync. Only custom (walled) elements change; natives and home computers stay as they are (gate: element-wall.cjs).
+- 811-5a hook relay: `lib/agent-kit/hook-relay.cjs` (the ONE line of element-readable.txt) — reads stdin, POSTs {script, args, stdin} to
+  a core door (`/api/node/hook-relay`, loopback, X-Element-Key from the element's own env file; the core port passed as an argument by the
+  bridge) → the core checks the key's element = the hook's element and the script is in a fixed list (memory/record.cjs, pulse.cjs,
+  window.cjs, progress.cjs, limits.cjs statusLine, guard-search none for elements), runs it as the node's user, returns stdout + code.
+  bridge: for a walled element every hook/statusLine command → the relay.
+- 811-5b the claude session (bridge.cjs:372 pty.spawn): walled → `sudo -n fractera-element run <id> CLAUDE_CONFIG_DIR=<its own> … --
+  /usr/local/lib/fractera/bin/claude <args>` in the pty (the pty's close hangs sudo up — kernel SIGHUP, no permission needed; measure
+  live). The owner's yes (128): no own account → no element session: the wake answers «⟦node · no-account⟧ sign in in the admin
+  cabinet» and the main agent does the work through its own session; the node's ~/.claude never reaches fe-<id>.
+- 811-5c the element's terminal shell (bridge.cjs:1347): walled → the shell through the helper's run (bash as fe-<id>, its folder).
+- 811-5d claude-cli.cjs auth status / logout of the element's own config dir, and the session's other `claude` calls: as fe-<id>.
+- 811-5e bun (the Telegram plugin's server) shared read-only like claude (`claude-share` → also bun), the plugin in the element's own
+  CLAUDE_CONFIG_DIR (689).
+- 811-5f: the --add-dir data/services/<id> and autoMemoryDirectory stay (ACL-opened to fe-<id> in 811-3).
+
 ## The shape (on a dedicated server only; a home computer is unchanged — one person)
 
 - Every CUSTOM element gets its own Linux user `fe-<id>` (no shell login, no sudo) at its birth on a server, removed at its deletion;

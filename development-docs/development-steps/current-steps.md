@@ -283,12 +283,12 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 12:20 UTC, window ~45 %, Opus — context reset at the end of 808/809)
 
-**NOW:** 811 — his «Вперед» (Telegram 122) = the «да» on the CODE of 811. DONE: 811-2 1d2a1dd7 (helper fractera-element), 811-3
-a56dc232 (birth/deletion: lib/hosting/element-wall.cjs), 811-4 9dad7aed (element code as fe-<id>: `run` for short programs, systemd units
-+ bash shim under pm2 for the server/warm-up/preview). test:element-wall 36 ✓, tsc rc 0. NEXT 811-4b (git shim + ProtectProc — plan file),
-811-5 the agent as fe-<id> + hook relay — his «Да» (128): own Claude account per element on a server; without it the core works through
-its own session, the token never goes to the element. Then ONE core build (ask him
-first), push the fork, «Установить с нуля» on 109.199.105.213, proofs 811-7 (incl. pm2 restart frees the port). Talk in TELEGRAM.
+**NOW:** 811 — his «Вперед» (122) = «да» on the CODE; his «Да» (128) = own Claude account per element on a server, the node's token
+never to an element. DONE: 811-2 1d2a1dd7 · 811-3 a56dc232 · 811-4 9dad7aed · 811-4b 50101939 (git shim, ProtectProc). test:element-wall
+44 ✓, hosting 76, hosting-launch 27, tsc rc 0. NEXT 811-5a…f — measured and written in the plan file (section «811-5 measured»): start
+with the kit copies (bridge.cjs of [item] = kits/_agent-kit/core — find the sync/guard), then 5a hook relay, 5b session, 5c shell, 5d
+claude-cli, 5e bun. Then ONE core build (ASK him first), push the fork, «Установить с нуля» on 109.199.105.213, proofs 811-7 (incl.
+pm2 restart frees the port, pty close ends the agent). Talk in TELEGRAM (chat_id 90413601, ru), colour marks.
 
 Roma talks in TELEGRAM now: main bot = his existing @fractera_factory_e90e_bot (saved by him 2026-11-19 23:49; chat_id 90413601, ru).
 Done since 2026-11-19 evening (all committed, fork pushed up to cdac6592; Fractera push = his paste, not done):
