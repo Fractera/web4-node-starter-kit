@@ -283,6 +283,9 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-19 ~20:20 UTC, before the core build of 806, Opus)
 
+**UPDATE 00:16 UTC:** build 18ef2640 live; the danger zone seen in his Chrome (block + dialog naming the bot, «Удалить бота» locked until
+the tick; closed with Escape, nothing removed). He had saved at 23:49 the token of an EXISTING bot @fractera_factory_e90e_bot — the main
+channel came back with it at 00:13; my reply through it SENT (id 9). Window 06a62d58 closed. Telegram works again.
 **UPDATE 2026-11-20 ~00:20 UTC:** his «Danger zone удаление Telegram bot» + «если я ввёл своё название … подключить уже существующего
 бота» → committed: TelegramRemove (kit core client) + door action «remove» (route.ts.tpl) + removeBot in telegram.cjs; step 1 rows show
 the connected bot's real name (getMe). The templates have no bot page code (the core's kit draws it for root and custom) — no release.
