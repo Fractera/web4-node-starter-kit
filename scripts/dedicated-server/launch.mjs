@@ -24,6 +24,9 @@
 //                                   744-6: `door activate` is refused (`not-ready`, the names missing) until every required name has a
 //                                   certificate and HTTPS; this computer's «launched» mark is written only when the final check passed
 //                                   (`lib/hosting/final-check.mjs`) — the answer carries `ready: { ok, missing }`
+//   repo                            808, step 4: the server's own GitHub repository (stdin `body`: { op: same|own|account|fork|url, url? })
+//                                   — kept in `/root/.fractera/repo.json`; `url` only with GitHub's yes (a DIRECT fork, law 368); none — this
+//                                   node's fork; `install` clones what is kept and is refused (`repo-not-chosen`) while «own» has no fork
 //   clear --confirm <host>          a server taken by another installation: freed (stopped and kept, never erased), then checked again;
 //                                   744-4: a node not related to this one is set aside whole (`clear.sh --node`)
 // 🔒 THE COMPUTER KEEPS NO STATE OF A SERVER (738) AND NO KEY TO IT (744-3): only the map of pins (`lib/hosting/ssh.mjs`) and the ledger
@@ -46,6 +49,7 @@ import { domainMissing } from '../../lib/hosting/launch-domain.mjs'
 import { relationOf } from '../../lib/hosting/relation.mjs'
 import { q, startDetached } from '../../lib/hosting/remote.mjs'
 import { cleanDomain } from '../../lib/hosting/server-domain.mjs'
+import { forkCheck, nextRepo, readRepo } from '../../lib/hosting/server-repo.mjs'
 import { checkToken, cleanLines, greetText, readWaiting, tailOf, telegramView, TOKEN_SHAPE, tokenFrom } from '../../lib/hosting/server-telegram.mjs'
 import { markLaunched } from '../../lib/hosting/launched.mjs'
 import { closeVisit, connect, exec, openVisit, serverDir, upload } from '../../lib/hosting/ssh.mjs'
@@ -125,8 +129,11 @@ async function readState(client) {
     s.domain = { ...(s.domain ?? {}), ...record }
   }
   s.verdict = s.probe ? judge(s.probe, { ramMb: null, copyBytes: null }, host) : null
+  // 808: the server's own repository — this node's fork by default, or the person's own fork once GitHub confirmed it
+  s.repo = readRepo((await exec(client, `cat ${q(REPO_FILE())} 2>/dev/null || true`)).stdout, forkUrl())
   // 744-4 (D49): what the server IS to this node — clean · related · unrelated with its reasons — before anything is offered.
-  s.relation = s.probe ? relationOf(s.probe, forkUrl()) : null
+  // 808: measured by the SERVER's own fork: a server the person put on their own fork is related to this launch, never «a stranger».
+  s.relation = s.probe ? relationOf(s.probe, s.repo.url ?? forkUrl()) : null
   if (s.relation?.nodeUnrelated) s.relation.nodes = [...(s.probe?.fractera ? [FOLDER] : []), ...(s.probe?.otherNodes ?? [])]
   s.records = launchRecords(s.domain?.domain ?? null, ipOf(s), s.domain?.detect?.zone ?? null)
   s.telegram = await readTelegram(client, Boolean(s.core), { zone: s.core?.zone ?? s.domain?.domain ?? null, ip: ipOf(s) })
@@ -210,6 +217,9 @@ async function serverDoor(client, body) {
   const r = await exec(client, cmd, { timeoutMs: 180_000, stdin: JSON.stringify(body) })
   try { return JSON.parse(r.stdout) } catch { return null }
 }
+
+// 808: the server's own repository
+const REPO_FILE = () => `${DIR}/repo.json`
 
 // ── 758: the server's own bot ──
 const TELEGRAM_FILE = () => `${DIR}/telegram.json`
@@ -396,8 +406,9 @@ const verbs = {
       if (!dry && s.verdict?.level === 'fail') return fail('server-unfit', { state: s })
       const ip = ipOf(s)
       if (!ip) return fail('no-ip', { state: s })
-      const fork = forkUrl()
-      if (!fork) return fail('no-fork', { state: s })
+      // 808: the server's own repository (step 4) — «own» without GitHub's yes is refused as the page keeps step 5 closed
+      const fork = s.repo?.url ?? null
+      if (!fork) return fail(s.repo?.mode === 'own' ? 'repo-not-chosen' : 'no-fork', { state: s })
       await scripts(client, ['launch.sh', 'prepare.sh', 'stages.sh', 'fractera-root.sh', 'state.sh'])
       // 743-5: this computer's stage 0 — the update of a server of any version is done by the target's own updater
       await upload(client, `${DIR}/node-update-stage0.mjs`, readFileSync(path.join(here, '..', 'node-update-stage0.mjs')), 0o700)
@@ -507,6 +518,26 @@ const verbs = {
         return done({ ok: true, answer, ready, state: fresh })
       }
       done({ ok: answer?.ok !== false, answer, state: await readState(client) })
+    } finally { client.end() }
+  },
+
+  // 808: step 4 — the server's own repository, chosen before the installation; never changed under a node (only the clear frees it).
+  async repo() {
+    const body = (await input()).body ?? {}
+    const op = ['same', 'own', 'account', 'fork', 'url'].find((a) => a === body?.op)
+    if (!op) return fail('bad-action')
+    // the tests' dry runs never call GitHub: LAUNCH_DRY_REPO=<reason> plays a refusal, otherwise the address is taken as a fork
+    const check = op !== 'url' ? null : dry ? (process.env.LAUNCH_DRY_REPO ? { ok: false, reason: process.env.LAUNCH_DRY_REPO } : { ok: true, url: String(body.url ?? '').replace(/\/?$/, '').replace(/(\.git)?$/, '.git') }) : await forkCheck(body.url)
+    if (check && !check.ok) return fail(`repo-${check.reason}`, check.parent ? { parent: check.parent } : {})
+    const { client } = await byKey()
+    try {
+      const s0 = await readState(client)
+      if (['running', 'done'].includes(s0.launch?.state) || s0.probe?.fractera) return fail('repo-installed', { state: s0 })
+      const record = nextRepo(s0.repo, { op, ...(check?.ok ? { url: check.url } : {}) })
+      await exec(client, `mkdir -p ${q(DIR)} && chmod 700 ${q(DIR)}`)
+      await upload(client, `${REPO_FILE()}.tmp`, `${JSON.stringify({ ...record, at: new Date().toISOString() })}\n`, 0o600)
+      await exec(client, `mv ${q(`${REPO_FILE()}.tmp`)} ${q(REPO_FILE())}`)
+      done({ ok: true, state: await readState(client) })
     } finally { client.end() }
   },
 
@@ -641,7 +672,7 @@ export function launchRecords(zone, ip, dnsZone = null) {
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   if (!verbs[verb]) {
-    console.log('Запуск сервера: connect · close · state · log · probe · install --mode install|update · domain --name · way --way · detect · dns · door · telegram · signin · clear --confirm · leftovers --confirm')
+    console.log('Запуск сервера: connect · close · state · log · probe · install --mode install|update · domain --name · way --way · detect · dns · door · repo · telegram · signin · clear --confirm · leftovers --confirm')
     process.exit(verb ? 2 : 0)
   }
   if (!(IPV4.test(host) || isHostName(host)) || !Number.isInteger(port) || port < 1 || port > 65535) {

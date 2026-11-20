@@ -37,6 +37,7 @@ import { closeWindowProcess, openWindowProcess } from "@/lib/hosting/window-proc
 //                                                              returns the architect's one-time code once (739-5), kept nowhere here
 //   POST { action: "upload", host, port, name, fullchain, privkey }                  the person's own certificate for one name (stdin)
 //   POST { action: "signin", host, port }                      where sign-in leads, asked from the internet
+//   POST { action: "repo", host, port, op, url? }             808, step 4: the server's own repository — op same|own|account|fork|url
 //   POST { action: "telegram", host, port, op, token?, lines? } 758/761, step 5: the server's own bot — op token|skip|link|messages; the token goes on to
 //                                                               the runner's stdin and the server, never back and never into a log
 //   POST { action: "clear", host, port, confirm, fresh? }      a busy server freed — the dialog sends back the address it named; `fresh`
@@ -58,7 +59,7 @@ const HOST = /^(?=.{4,253}$)([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/
 const FINGERPRINT = /^SHA256:[A-Za-z0-9+/]{43}$/
 const DOOR_ACTIONS = ["dns-check", "certs", "check", "activate", "claim"]
 // How long each act may take: the check of a server measures its version over the network; a certificate run starts detached there.
-const TIMEOUT: Record<string, number> = { connect: 150_000, probe: 150_000, state: 60_000, install: 120_000, domain: 120_000, way: 60_000, detect: 90_000, dns: 90_000, door: 200_000, signin: 90_000, clear: 1_560_000, telegram: 90_000, log: 30_000, leftovers: 1_560_000 }
+const TIMEOUT: Record<string, number> = { connect: 150_000, probe: 150_000, state: 60_000, install: 120_000, domain: 120_000, way: 60_000, detect: 90_000, dns: 90_000, door: 200_000, signin: 90_000, clear: 1_560_000, telegram: 90_000, repo: 90_000, log: 30_000, leftovers: 1_560_000 }
 
 
 /** 760-8: a value of the core's environment — the Cloudflare token stays in this process; only what the plan needs leaves. */
@@ -191,6 +192,12 @@ export async function POST(req: NextRequest) {
     return answer("door", at, { body: { action, ...(email ? { email } : {}) } })
   }
   if (DOOR_ACTIONS.includes(action)) return answer("door", at, { body: { action } })
+  // 808: step 4 — the server's own repository; GitHub is asked by the runner (a direct fork of the original, law 368)
+  if (action === "repo") {
+    const op = ["same", "own", "account", "fork", "url"].find((o) => o === body?.op)
+    if (!op) return json({ ok: false, reason: "bad-action" }, 400)
+    return answer("repo", at, { body: { op, ...(op === "url" ? { url: String(body?.url ?? "").trim().slice(0, 300) } : {}) } })
+  }
   if (action === "telegram") {
     const op = ["token", "skip", "link", "messages"].find((o) => o === body?.op)
     if (!op) return json({ ok: false, reason: "bad-action" }, 400)

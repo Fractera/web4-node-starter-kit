@@ -11,6 +11,7 @@ import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
 import { CheckStep, strategyOf } from "@/components/hosting/server-launch-check.client"
 import { LaunchDanger } from "@/components/hosting/server-launch-danger.client"
 import { LaunchDomain } from "@/components/hosting/server-launch-domain.client"
+import { RepoStep } from "@/components/hosting/server-launch-repo.client"
 import { TelegramStep } from "@/components/hosting/server-launch-telegram.client"
 import { telegramWarn } from "@/lib/hosting/server-telegram.mjs"
 import { CertsLaunchStep, type ClaimShown, InstallStep, ReadyStep, RecheckStep } from "@/components/hosting/server-launch-end.client"
@@ -53,6 +54,8 @@ export type LaunchState = {
   records: DnsZone[]
   week: number | null
   /** 758: the server's own bot as the page may know it — never the token (`lib/hosting/server-telegram.mjs`) */
+  /** 808: the server's own repository (`lib/hosting/server-repo.mjs` readRepo) — `url` what the installation clones */
+  repo?: { mode: "same" | "own"; url: string | null; account: boolean; fork: boolean; checkedAt: string | null } | null
   telegram?: { configured: boolean; pending: boolean; skipped: boolean; tail: string | null; username: string | null; name: string | null; allowed: number; rejected: string | null; live: boolean; signedIn?: boolean | null; greeted?: boolean } | null
 }
 type Answer = { ok?: boolean; reason?: string; state?: LaunchState; fingerprint?: string; seen?: string | null; pinned?: string | null; cleared?: LaunchState["cleared"]; week?: number; want?: number; over?: string[]; visit?: { deadline: string } | null }
@@ -102,15 +105,10 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
 
   async function closeAccess() {
     if (!target) return
-    setBusy(true)
-    setClosing(true)
+    setBusy(true); setClosing(true)
     try {
       await post({ action: "close", host: target.host, port: target.port })
-      forget()
-      setTarget(null)
-      setState(null)
-      setError("")
-      setPanel({ url: null, opening: false })
+      forget(); setTarget(null); setState(null); setError(""); setPanel({ url: null, opening: false })
     } finally { setBusy(false); setClosing(false) }
   }
 
@@ -231,6 +229,7 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
     ),
     check: <CheckStep busy={busy} dialogUi={dialogUi} onAct={async (a, x) => { await act(a, x) }} state={state} words={words} />,
     domain: <LaunchDomain busy={busy} dialogUi={dialogUi} lang={lang} launchWords={words} note={words.domainNote} onAct={act} state={state} words={ladderWords} />,
+    repo: <RepoStep busy={busy} onAct={act} state={state} words={words} />,
     install: <InstallStep busy={busy} onAct={act} state={state} strategy={strategy} target={target} words={words} />,
     telegram: <TelegramStep busy={busy} lang={lang} onAct={act} state={state} words={words} />,
     recheck: <RecheckStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,

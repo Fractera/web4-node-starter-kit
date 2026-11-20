@@ -18,7 +18,9 @@ import { telegramSettled } from "@/lib/hosting/server-telegram.mjs"
 // 758 (the owner, 2026-11-16: «Telegram может быть в пятым шагом то есть в тот момент когда идёт установка сервера у пользователя есть
 // время подключить Telegram»): step 4 is done once the installation RUNS, so step 5 opens beside it; step 5 is done when the bot is set
 // (or waits, or «later») AND the installation answers — so the records' second check still stands after a living node.
-export const LAUNCH_ORDER: LaunchStep[] = ["server", "check", "domain", "install", "telegram", "recheck", "certs", "ready"]
+// 808 (the owner, 2026-11-20, Telegram 37): the server's own repository stands before the installation — the source must be known
+// before `git clone`; done by «the same project» (the default), by a fork GitHub confirmed, or by a Fractera already standing there.
+export const LAUNCH_ORDER: LaunchStep[] = ["server", "check", "domain", "repo", "install", "telegram", "recheck", "certs", "ready"]
 
 /** The end of this browser's access to the server, in the person's own clock. */
 export const untilText = (iso: string) => new Date(iso).toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" })
@@ -47,6 +49,7 @@ export function launchDone(s: LaunchState, strategy: Strategy): Record<LaunchSte
     // 744-4: nothing goes on while the server holds a state not related to this node — only its clear is open.
     check: Boolean(s.verdict) && s.verdict?.level !== "fail" && s.relation?.kind !== "unrelated",
     domain: Object.values(domainSteps(s.domain)).every(Boolean),
+    repo: s.launch?.state === "running" || s.launch?.state === "done" || Boolean(s.probe?.fractera) || Boolean(s.repo?.url),
     install: s.launch?.state === "running" || (installedOf(s, strategy) && Boolean(s.core)),
     telegram: installedOf(s, strategy) && Boolean(s.core) && telegramSettled(s.telegram),
     recheck: Boolean(s.core?.steps.dns),
@@ -64,6 +67,14 @@ function pointed(results: Array<{ state?: string }> | undefined, words: { pointe
   return results?.length ? fill(words.pointed, { ok: String(results.filter((r) => r.state === "ok").length), all: String(results.length) }) : ""
 }
 
+/** 808: step 4's line — which repository the server takes (`owner/repo`, never the `.git` tail). */
+function repoSummary(s: LaunchState, words: ServerLaunchWords) {
+  const url = s.probe?.fractera?.origin ?? s.repo?.url
+  if (!url) return undefined
+  const repo = url.replace(/^https:\/\/github\.com\//, "").replace(/\.git$/, "")
+  return fill(s.repo?.mode === "own" ? words.summary.repoOwn : words.summary.repoSame, { repo })
+}
+
 /** One line of what each done step did — the server's own facts, never «готово». The last step has none: it is open when done. */
 export function launchSummary(s: LaunchState, target: { host: string; until: string | null }, words: ServerLaunchWords, ladderWords: ServerLadderWords) {
   const w = words.summary
@@ -78,6 +89,7 @@ export function launchSummary(s: LaunchState, target: { host: string; until: str
     domain: s.domain?.domain
       ? [s.domain.domain, way ? ladderWords.who.option[normalWay(way) as "dns" | "none"] : "", s.domain.from === "server" && s.domain.since ? fill(w.since, { date: dayText(s.domain.since) }) : "", pointed(s.domain.check?.results, w)].filter(Boolean).join(" · ")
       : undefined,
+    repo: repoSummary(s, words),
     install: s.launch?.state === "running" ? w.installing : fill(w.install, { head }),
     telegram: s.telegram?.configured ? fill(w.botOn, { bot: s.telegram.username ? `@${s.telegram.username}` : "" }) : s.telegram?.pending ? fill(w.botWaits, { tail: s.telegram.tail ?? "" }) : s.telegram?.skipped ? w.botLater : undefined,
     recheck: fill(w.recheck, count((r) => r.dns === "ok")),

@@ -1,6 +1,6 @@
 # 808 — the server's own GitHub repository (an optional step of the launch ladder)
 
-State: PLAN — waits the owner's «да» on the one open question (what a skipped step installs from). Asked 2026-11-20 ~09:55 UTC.
+State: CODED 2026-11-20 ~10:40 UTC after his «Давай» (Telegram 39) — tests green, prebuild RC=0, NOT built (waits his word on the core build), not seen live.
 
 ## The owner's words (verbatim, Telegram 2026-11-20)
 
@@ -33,7 +33,40 @@ State: PLAN — waits the owner's «да» on the one open question (what a skip
   server stands on the latest release and has no fork of its own until one is given on its GitHub page. Other: this node's fork anyway
   (then «skip» only hides the choice).
 
+## Collision found after his «А» (2026-11-20 ~10:05 UTC)
+
+- `scripts/check-origin.mjs` (step 368, the owner 2026-10-01; CLAUDE.md §2 «Installation — only from a direct fork») refuses the original
+  itself («Это сам оригинал, а не ваш форк») and a fork of a fork; it runs in `do_source` of `launch.sh` → A as asked would fail at the
+  install. So a given address must be a DIRECT fork (GitHub: fork = true, parent = Fractera/web4-node-starter-kit) — not «history holds».
+- `relationOf(probe, forkUrl())` judges a server by THIS node's fork: a server on another fork reads «unrelated» (other-fork) → the page
+  would offer to clear it. The kept repository must become the server's own measure.
+- Asked him: B (skipped → this node's fork; my pick now) or a law change (the server may stand on the original — his word, §2 and 368).
+
+## The owner's shape (Telegram 37, 2026-11-20 10:01 UTC, verbatim)
+
+«– при входе по умолчанию стоит тоже самое репозиторий и подсказка режим вы переносите работу собственного проекты из локальной машины на
+удалённый сервер. – Есть второй режим: поднять чистый стартер Fractera на любом vps переключении появляется новая лесенка внутри этого шага:
+– зарегистрируйте аккаунт GitHub кнопка сделано – в собственном аккаунте GitHub сделайте Fork репозитория Fractera ссылка на репозиторий
+Fractera. Кнопка сделана – введите ссылку на свой Repository. Кнопка проверить. Если всё хорошо то Лесенька шага открывается. Обязательно
+испортите [изучите] специально инструкцию для дизайна стиль дизайна используют такой же как и у всей страницы для развёртывания сервера.»
+
+→ fits the law (only a direct fork). Proposed to him (waits «да»): mode 1 «Тот же проект» (default, this node's fork; code and updates
+shared, the server's data its own — no «перенос» of data); mode 2 «Чистый Fractera» — a nested ladder of 3 rungs (GitHub account «Сделано»
+· fork with the link «Сделано» · the address «Проверить» = GitHub API: fork, parent = original); no «!» (the step is never empty); after the
+install the step shows the server's origin read-only.
+
 ## Substeps
+
+- 808-1 lib `lib/hosting/server-repo.mjs`: forkCheck(url) (GitHub public API, direct fork of the original, reasons), repoView; tests with
+  negatives (the original itself, a fork of a fork, not a fork, 404, silent).
+- 808-2 the runner: verb `repo` (mode same | own + url → `/root/.fractera/repo.json`), `state.sh`/readState reports it; `install` clones
+  the kept fork (same → forkUrl()); relationOf measured by the server's own fork; refusal `repo-not-chosen` for own without a check.
+- 808-3 the rung «GitHub-репозиторий сервера» between domain and install: a mode switch, the nested ladder (the part `Ladder`), words
+  ru/en, ladder order; the page's design skills first.
+- 808-4 tests (runner dry: install source by mode; relation), prebuild, eyes of the page; the core build only after his yes.
+
+## Old substeps (before his shape)
+
 
 - 808-1 the rung: words (ru/en), the field + «Использовать тот же» + «Пропустить» + «Проверить», «!» state; ladder order and numbers.
 - 808-2 the runner: `repo` verb (check + keep on the server), `install` reads the kept repo (or the skip's source); `state.sh` reports it.

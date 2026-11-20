@@ -104,7 +104,8 @@ if (!esbuild) {
   const core = (dns = false) => ({ zone: 'example.com', rows: [], steps: { domain: true, dns, certs: false, check: false, active: false }, certsRun: null, helper: true, checkAt: null, dnsAt: null })
   const server = (over = {}) => ({
     host: '203.0.113.7', probe: { publicIp: '203.0.113.7', fractera: null }, relation: { kind: 'clean', nodeUnrelated: false, reasons: [] },
-    verdict: { level: 'ok', items: [] }, launch: null, progress: [], sub: [], update: null, domain: null, mark: null, core: null, records: [], week: null, ...over,
+    verdict: { level: 'ok', items: [] }, launch: null, progress: [], sub: [], update: null, domain: null, mark: null, core: null, records: [], week: null,
+    repo: { mode: 'same', url: 'https://github.com/aifa-agi/web4-node-starter-kit.git', account: false, fork: false, checkedAt: null }, ...over,
   })
   /** which of the eight steps are open on this state — the launch's own facts through the one rule */
   const open = (s, strategy = 'install') => {
@@ -113,8 +114,16 @@ if (!esbuild) {
     return Object.fromEntries(R.LAUNCH_ORDER.map((id, i) => [id, o[i]]))
   }
 
-  await t('the order: the domain before the installation, the server\'s bot fifth (758), the second check after them (D46)', () => {
-    assert.deepEqual(R.LAUNCH_ORDER, ['server', 'check', 'domain', 'install', 'telegram', 'recheck', 'certs', 'ready'])
+  await t('the order: the domain, then the server\'s repository (808) before the installation, the server\'s bot after it (758), the second check after them (D46)', () => {
+    assert.deepEqual(R.LAUNCH_ORDER, ['server', 'check', 'domain', 'repo', 'install', 'telegram', 'recheck', 'certs', 'ready'])
+  })
+  await t('808 «own» without a fork GitHub confirmed: step 4 open, the installation locked; negative: the confirmed fork or «same» opens it; a Fractera already there closes step 4 by itself', () => {
+    const d = { domain: { domain: 'example.com', detect, way: 'dns', check: checked } }
+    const own = (url) => server({ ...d, repo: { mode: 'own', url, account: true, fork: true, checkedAt: null } })
+    assert.deepEqual([open(own(null)).repo, open(own(null)).install], [true, false])
+    assert.equal(open(own('https://github.com/person/web4-node-starter-kit.git')).install, true)
+    assert.equal(open(server(d)).install, true)
+    assert.equal(R.launchDone(server({ ...d, repo: null, probe: { publicIp: '203.0.113.7', fractera: { head: 'a' } } }), 'latest', false).repo, true)
   })
   await t('a checked clean server without a domain: step 3 open, the installation locked (✗ 738 opened it here)', () => {
     const o = open(server())

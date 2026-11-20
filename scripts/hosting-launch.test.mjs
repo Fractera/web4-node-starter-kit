@@ -156,6 +156,21 @@ await t('install before step 3 is refused with every missing fact named; «regis
 })
 
 console.log('738-3/4 the launch: on the server, read back by its address')
+await t('808 step 4: the server\'s own repository — «own» without a fork refuses the install; GitHub\'s no keeps nothing; its yes is cloned; «same» again', async () => {
+  assert.equal((await run(A, 'state')).a?.state.repo.url, FORK) // no record — this node's fork, the default
+  assert.equal((await run(A, 'repo', [], { key: A.key, body: { op: 'own' } })).a?.ok, true)
+  const refused = await run(A, 'install', ['--mode', 'install'])
+  assert.equal(refused.a?.reason, 'repo-not-chosen', refused.out)
+  process.env.LAUNCH_DRY_REPO = 'fork-of-fork'
+  const no = await run(A, 'repo', [], { key: A.key, body: { op: 'url', url: 'https://github.com/someone/fork-of-fork' } })
+  delete process.env.LAUNCH_DRY_REPO
+  assert.equal(no.a?.reason, 'repo-fork-of-fork', no.out)
+  assert.equal(JSON.parse(readFileSync(join(A.dir, 'repo.json'), 'utf8')).url, undefined)
+  const yes = await run(A, 'repo', [], { key: A.key, body: { op: 'url', url: 'https://github.com/person/web4-node-starter-kit' } })
+  assert.deepEqual([yes.a?.ok, yes.a?.state.repo.mode, yes.a?.state.repo.url], [true, 'own', 'https://github.com/person/web4-node-starter-kit.git'], yes.out)
+  assert.notEqual(yes.a?.state.relation?.kind, 'unrelated') // measured by the server's own fork
+  assert.equal((await run(A, 'repo', [], { key: A.key, body: { op: 'same' } })).a?.state.repo.url, FORK)
+})
 await t('install: launch.sh runs on the server (dry) — prepare · source · install · mark · start · version, all done; launch.json says done', async () => {
   const r = await run(A, 'install', ['--mode', 'install'])
   assert.equal(r.a?.ok, true, r.out)
@@ -164,6 +179,10 @@ await t('install: launch.sh runs on the server (dry) — prepare · source · in
   assert.equal(s?.launch?.state, 'done', JSON.stringify(s?.launch))
   assert.deepEqual(s.progress.filter((x) => x.id !== 'launch').map((x) => `${x.id}:${x.state}`), ['prepare:done', 'source:done', 'install:done', 'mark:done', 'start:done', 'version:done'])
   assert.equal(JSON.parse(readFileSync(join(A.dir, 'launch.json'), 'utf8')).fork, FORK)
+})
+await t('808 negative: the repository is never changed under an installed node', async () => {
+  const r = await run(A, 'repo', [], { key: A.key, body: { op: 'own' } })
+  assert.equal(r.a?.reason, 'repo-installed', r.out)
 })
 await t('parallel servers: B launches while A shows its own finished launch — each answers from its own folder', async () => {
   domainReady(B)

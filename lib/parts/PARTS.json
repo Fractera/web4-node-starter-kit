@@ -3263,6 +3263,7 @@
         "components/hosting/server-launch-cf.client.tsx",
         "components/hosting/server-launch-check.client.tsx",
         "components/hosting/server-launch-end.client.tsx",
+        "components/hosting/server-launch-repo.client.tsx",
         "components/hosting/server-launch-telegram.client.tsx",
         "components/hosting/server-launch.client.tsx",
         "components/menu/footer/admin-link.client.tsx",
@@ -3329,7 +3330,8 @@
       "usedBy": [
         "components/ai-elements/message.tsx",
         "components/form/voice-control.client.tsx",
-        "components/hosting/server-ladder-steps.client.tsx"
+        "components/hosting/server-ladder-steps.client.tsx",
+        "components/hosting/server-launch-repo.client.tsx"
       ]
     },
     {
@@ -3632,6 +3634,7 @@
         "components/hosting/server-domain-certs.client.tsx",
         "components/hosting/server-ladder-steps.client.tsx",
         "components/hosting/server-launch-end.client.tsx",
+        "components/hosting/server-launch-repo.client.tsx",
         "components/hosting/server-launch-telegram.client.tsx",
         "components/hosting/server-launch.client.tsx",
         "components/official/official-account.client.tsx",
@@ -3754,6 +3757,7 @@
         "components/form/voice-control.client.tsx",
         "components/hosting/server-ladder-steps.client.tsx",
         "components/hosting/server-launch-end.client.tsx",
+        "components/hosting/server-launch-repo.client.tsx",
         "components/hosting/server-launch-telegram.client.tsx",
         "components/hosting/server-launch.client.tsx",
         "components/node-remove/node-remove.client.tsx",
@@ -4578,6 +4582,7 @@
         "components/hosting/server-launch-danger.client.tsx",
         "components/hosting/server-launch-domain.client.tsx",
         "components/hosting/server-launch-end.client.tsx",
+        "components/hosting/server-launch-repo.client.tsx",
         "components/hosting/server-launch-telegram.client.tsx",
         "components/hosting/server-launch.client.tsx",
         "components/node-state/node-place.client.tsx",

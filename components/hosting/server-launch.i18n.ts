@@ -6,7 +6,7 @@
 
 import { LIVE_EN, LIVE_RU, type LiveWords } from "./server-install-live.i18n"
 
-export type LaunchStep = "server" | "check" | "domain" | "install" | "telegram" | "recheck" | "certs" | "ready"
+export type LaunchStep = "server" | "check" | "domain" | "repo" | "install" | "telegram" | "recheck" | "certs" | "ready"
 type Verdict = "ok" | "warn" | "fail"
 
 export type ServerLaunchWords = {
@@ -36,7 +36,7 @@ export type ServerLaunchWords = {
   locked: string
   step: Record<LaunchStep, string>
   /** 744-7: one line of what a done step did, shown while it is closed — `{host}` `{time}` `{head}`, `{ok}` of `{all}` required names */
-  summary: { server: string; clean: string; related: string; warn: string; install: string; installing: string; recheck: string; certs: string; since: string; pointed: string; botOn: string; botWaits: string; botLater: string }
+  summary: { server: string; clean: string; related: string; warn: string; install: string; installing: string; recheck: string; certs: string; since: string; pointed: string; botOn: string; botWaits: string; botLater: string; repoSame: string; repoOwn: string }
   connected: string
   /** 744-3: access for one day — `{time}` the deadline in the person's own clock */
   access: { until: string; close: string; closing: string }
@@ -61,6 +61,13 @@ export type ServerLaunchWords = {
   cf: { title: string; lead: string; add: string; change: string; remove: string; blocked: string; nothing: string; proceed: string; written: string; write: string; byHand: string; confirmTitle: string; confirmLead: string; confirmRemove: string; confirm: string; cancel: string; noKey: string; notVisible: string; keyLink: string; again: string }
   /** 744-7: `silent` — Fractera stands there, its node does not answer yet (the next step waits for it); `ask` reads the server again */
   install: { text: string; install: string; update: string; again: string; running: string; done: string; failed: string; leave: string; silent: string; ask: string }
+  /** 808: step 4 — the server's own GitHub repository: «the same project» (this node's fork) or a clean Fractera from the person's own fork;
+   *  `{repo}` an address, `{name}` owner/repo as GitHub names it */
+  repo: {
+    same: string; own: string; sameText: string; ownText: string; done: string; installed: string
+    account: string; accountText: string; accountOpen: string; fork: string; forkText: string; forkOpen: string
+    url: string; urlLabel: string; urlNote: string; check: string; checked: string
+  }
   stage: Record<string, string>
   /** 806-4: the live install — the server's own log and checklist */
   live: LiveWords
@@ -121,14 +128,14 @@ const en: ServerLaunchWords = {
   connecting: "Connecting to the server…",
   checking: "The access is open. Checking the server… up to two minutes on a new server.",
   checkFailed: "The access is open for a day, but the server's check did not finish ({reason}). Press «Check the server» again — no password needed.",
-  doing: { "records-plan": "Asking Cloudflare whether the node can write the records itself…", "records-write": "Writing the records into Cloudflare and checking them…", any: "Working on the server…", clear: "Freeing the server… under a minute.", domain: "Checking the domain…", detect: "Looking up where the domain's records live…", way: "Saving the way…", "dns-check": "Asking public DNS for every name…", dns: "Asking public DNS for every name…", certs: "Issuing certificates… about a minute per name.", check: "Checking HTTPS of every name from the internet…", activate: "Switching the domain on… sign-in restarts, up to a minute.", install: "Starting the installation…", state: "Reading the server…" },
+  doing: { "records-plan": "Asking Cloudflare whether the node can write the records itself…", "records-write": "Writing the records into Cloudflare and checking them…", any: "Working on the server…", clear: "Freeing the server… under a minute.", domain: "Checking the domain…", detect: "Looking up where the domain's records live…", way: "Saving the way…", "dns-check": "Asking public DNS for every name…", dns: "Asking public DNS for every name…", certs: "Issuing certificates… about a minute per name.", check: "Checking HTTPS of every name from the internet…", activate: "Switching the domain on… sign-in restarts, up to a minute.", install: "Starting the installation…", state: "Reading the server…", repo: "Checking and saving on the server…" },
   another: "Another server",
   locked: "opens when the step before it is done",
-  step: { server: "The server", check: "Check the server", domain: "Domain activation", install: "Server installation", telegram: "The server's Telegram bot", recheck: "Second check of the records", certs: "Security certificates", ready: "The server is ready" },
+  step: { server: "The server", check: "Check the server", domain: "Domain activation", repo: "The server's GitHub repository", install: "Server installation", telegram: "The server's Telegram bot", recheck: "Second check of the records", certs: "Security certificates", ready: "The server is ready" },
   summary: {
     server: "{host} · access until {time}", clean: "A clean server", related: "Fractera from your fork ({head})", warn: "read the notes",
     install: "Fractera {head} installed, the server's node answers", installing: "the installation runs on the server", recheck: "{ok} of {all} names point to the server", certs: "{ok} of {all} names: a certificate and HTTPS",
-    botOn: "bot {bot} connected", botWaits: "the token …{tail} waits for the server's node", botLater: "no bot — later",
+    botOn: "bot {bot} connected", botWaits: "the token …{tail} waits for the server's node", botLater: "no bot — later", repoSame: "the same project · {repo}", repoOwn: "your own fork · {repo}",
     since: "recorded {date}",
     pointed: "{ok} of {all} names point to the server now — step 5 checks again",
   },
@@ -141,6 +148,7 @@ const en: ServerLaunchWords = {
     auth: "The server refused the password.", "bad-email": "This does not look like an e-mail address.", "auth-too-old": "The server's sign-in is older than the e-mail claim — install the server again from zero (the danger zone below).", claimed: "The architect is already registered on this server.", "need-password": "This browser has no open access to this server: type the root password — access lasts a day.", "no-password-login": "This server takes no password login (the provider switched it off). Switch password login for root on in the provider's panel, or reinstall the server with a password — the node never uses a provider's keys.", "key-refused": "The server's SSH does not know an access deadline (OpenSSH older than 8.2): the node gives no access without one. Update the server's system.", "visit-install": "The access could not be written on the server.", unrelated: "This server holds a state not related to this node: delete the previous state first.", "domain-not-ready": "The domain (step 3) is not ready yet: finish it, then install.", unreachable: "The server does not answer on this address and port.",
     timeout: "The server did not answer in time.", "bad-address": "That is not a server address.", "bad-password": "The password cannot contain line breaks.",
     running: "A launch is already running on this server.", "server-unfit": "The node cannot live on this server: see the check.", "no-ip": "The server's IPv4 address is unknown.", "no-fork": "This node has no GitHub fork to install from.",
+    "repo-bad-url": "That is not a GitHub repository address: it looks like https://github.com/<login>/<repository>.", "repo-original": "This is Fractera's original itself, not your fork: press «Fork» and enter the address of your copy.", "repo-fork-of-fork": "This is a fork of someone else's fork: only a direct fork of Fractera can be installed.", "repo-not-fork": "This repository is not a fork of Fractera.", "repo-not-found": "GitHub does not know this repository, or it is private.", "repo-github-limit": "GitHub limited the checks for now: try again in an hour.", "repo-github-silent": "GitHub did not answer now: try again in a minute.", "repo-installed": "Fractera already stands on the server: its repository changes only by clearing the server.", "repo-not-chosen": "First the step «The server's GitHub repository»: check your fork or choose «The same project».",
     "le-limit": "Let's Encrypt's weekly limit would be passed: {week} certificates this week, {want} more needed{over}. Wait until the week frees up.", "not-live": "The server's node does not run yet.",
     "not-confirmed": "The address in the dialog does not match.", "public-address": "This address is read-only.", "on-server": "A server node launches nothing.", network: "The node did not answer.", unreadable: "The answer could not be read.",
     "tunnel-record": "A name leads to this computer's own tunnel: move it off the computer first.", "plan-changed": "The zone changed since you looked: read the new list and confirm again.", "cloudflare-read": "Cloudflare did not answer the reading of the zone.", "cloudflare-write": "Cloudflare refused a record: try again in a minute.",
@@ -195,6 +203,15 @@ const en: ServerLaunchWords = {
     text: "Server preparation, a fresh Fractera from your fork, the build of the core and of every element, the start. About 40–50 minutes on a server with 8 GB. You may close the page and come back: the installation runs on the server.",
     install: "Install", update: "Update", again: "Continue the installation", running: "Installing on the server…", done: "Installed: version {head}.", failed: "The installation stopped at «{stage}».", leave: "You may close this page: the server goes on by itself.",
     silent: "Fractera is installed, but the server's node does not answer yet: the next step waits for it.", ask: "Ask the server again",
+  },
+  repo: {
+    same: "The same project", own: "A clean Fractera",
+    sameText: "The server gets your project's code from the same GitHub repository as this computer: {repo}. Updates are shared; the server's data is its own.",
+    ownText: "A clean Fractera starter on any VPS: the server installs from your own fork of Fractera.",
+    done: "Done", installed: "The server stands on {repo}. Its repository changes only by clearing the server (the danger zone below).",
+    account: "Register a GitHub account", accountText: "A free account — the server's own repository lives in it.", accountOpen: "Open GitHub",
+    fork: "Fork the Fractera repository", forkText: "Open Fractera's repository and press «Fork» in your account.", forkOpen: "Open the Fractera repository",
+    url: "Enter the address of your repository", urlLabel: "Your fork's address", urlNote: "For example https://github.com/<your-login>/web4-node-starter-kit", check: "Check", checked: "GitHub confirmed: {name} is a direct fork of Fractera.",
   },
   stage: STAGE_EN,
   live: LIVE_EN,
@@ -310,14 +327,14 @@ const ru: ServerLaunchWords = {
   connecting: "Подключаюсь к серверу…",
   checking: "Доступ открыт. Проверяю сервер… на новом сервере до двух минут.",
   checkFailed: "Доступ открыт на сутки, но проверка сервера не закончилась ({reason}). Нажмите «Проверить сервер» ещё раз — пароль не нужен.",
-  doing: { "records-plan": "Спрашиваю Cloudflare, может ли узел вписать записи сам…", "records-write": "Вписываю записи в Cloudflare и проверяю их…", any: "Выполняю шаг на сервере…", clear: "Освобождаю сервер… меньше минуты.", domain: "Проверяю домен…", detect: "Ищу, где живут записи домена…", way: "Сохраняю способ…", "dns-check": "Спрашиваю публичные DNS о каждом имени…", dns: "Спрашиваю публичные DNS о каждом имени…", certs: "Выпускаю сертификаты… около минуты на имя.", check: "Проверяю HTTPS каждого имени из интернета…", activate: "Включаю домен… вход перезапускается, до минуты.", install: "Запускаю установку…", state: "Читаю состояние сервера…" },
+  doing: { "records-plan": "Спрашиваю Cloudflare, может ли узел вписать записи сам…", "records-write": "Вписываю записи в Cloudflare и проверяю их…", any: "Выполняю шаг на сервере…", clear: "Освобождаю сервер… меньше минуты.", domain: "Проверяю домен…", detect: "Ищу, где живут записи домена…", way: "Сохраняю способ…", "dns-check": "Спрашиваю публичные DNS о каждом имени…", dns: "Спрашиваю публичные DNS о каждом имени…", certs: "Выпускаю сертификаты… около минуты на имя.", check: "Проверяю HTTPS каждого имени из интернета…", activate: "Включаю домен… вход перезапускается, до минуты.", install: "Запускаю установку…", state: "Читаю состояние сервера…", repo: "Проверяю и сохраняю на сервере…" },
   another: "Другой сервер",
   locked: "откроется, когда будет готов предыдущий шаг",
-  step: { server: "Сервер", check: "Проверка сервера", domain: "Активация домена", install: "Установка сервера", telegram: "Telegram-бот сервера", recheck: "Повторная проверка записей", certs: "Сертификаты безопасности", ready: "Сервер готов" },
+  step: { server: "Сервер", check: "Проверка сервера", domain: "Активация домена", repo: "GitHub-репозиторий сервера", install: "Установка сервера", telegram: "Telegram-бот сервера", recheck: "Повторная проверка записей", certs: "Сертификаты безопасности", ready: "Сервер готов" },
   summary: {
     server: "{host} · доступ до {time}", clean: "Чистый сервер", related: "Fractera из вашего форка ({head})", warn: "есть замечания",
     install: "Fractera {head} установлена, узел сервера отвечает", installing: "на сервере идёт установка", recheck: "{ok} из {all} имён ведут на сервер", certs: "{ok} из {all} имён: сертификат и HTTPS",
-    botOn: "бот {bot} подключён", botWaits: "токен …{tail} ждёт узел сервера", botLater: "без бота — позже",
+    botOn: "бот {bot} подключён", botWaits: "токен …{tail} ждёт узел сервера", botLater: "без бота — позже", repoSame: "тот же проект · {repo}", repoOwn: "свой форк · {repo}",
     since: "записано {date}",
     pointed: "сейчас на сервер ведут {ok} из {all} имён — шаг 5 проверит ещё раз",
   },
@@ -330,6 +347,7 @@ const ru: ServerLaunchWords = {
     auth: "Сервер не принял пароль.", "bad-email": "Это не похоже на адрес электронной почты.", "auth-too-old": "Вход на сервере старше, чем вход по e-mail архитектора — установите сервер заново, с нуля (опасная зона внизу).", claimed: "Архитектор на этом сервере уже зарегистрирован.", "need-password": "У этого браузера нет открытого доступа к этому серверу: введите пароль root — доступ откроется на сутки.", "no-password-login": "Этот сервер не принимает вход по паролю (провайдер его выключил). Включите вход по паролю для root в панели провайдера или переустановите сервер с паролем — ключи провайдера узел не использует.", "key-refused": "SSH сервера не знает срока доступа (OpenSSH старше 8.2): без срока узел доступа не даёт. Обновите систему сервера.", "visit-install": "Не удалось записать доступ на сервер.", unrelated: "На сервере состояние, не связанное с этим узлом: сначала удалите прежнее состояние.", "domain-not-ready": "Домен (шаг 3) ещё не готов: закончите его, затем установка.", unreachable: "Сервер не отвечает на этом адресе и порту.",
     timeout: "Сервер не ответил вовремя.", "bad-address": "Это не адрес сервера.", "bad-password": "В пароле не может быть переносов строки.",
     running: "На этом сервере уже идёт запуск.", "server-unfit": "Узел не сможет жить на этом сервере: смотрите проверку.", "no-ip": "IPv4-адрес сервера неизвестен.", "no-fork": "У этого узла нет форка на GitHub, из которого ставить.",
+    "repo-bad-url": "Это не адрес репозитория GitHub: он выглядит так — https://github.com/<логин>/<репозиторий>.", "repo-original": "Это сам оригинал Fractera, а не ваш форк: нажмите «Fork» и введите адрес своей копии.", "repo-fork-of-fork": "Это форк чужого форка: ставится только прямой форк Fractera.", "repo-not-fork": "Этот репозиторий — не форк Fractera.", "repo-not-found": "GitHub не знает такого репозитория, или он закрыт.", "repo-github-limit": "GitHub временно ограничил проверки: повторите через час.", "repo-github-silent": "GitHub сейчас не ответил: попробуйте ещё раз через минуту.", "repo-installed": "На сервере уже стоит Fractera: репозиторий меняется только очисткой сервера.", "repo-not-chosen": "Сначала шаг «GitHub-репозиторий сервера»: проверьте свой форк или выберите «Тот же проект».",
     "le-limit": "Будет превышен недельный лимит Let's Encrypt: за неделю {week} сертификатов, нужно ещё {want}{over}. Дождитесь, пока неделя освободится.", "not-live": "Узел на сервере ещё не работает.",
     "not-confirmed": "Адрес в диалоге не совпадает.", "public-address": "Этот адрес только для чтения.", "on-server": "Узел на сервере ничего не запускает.", network: "Узел не ответил.", unreadable: "Ответ не удалось прочитать.",
     "tunnel-record": "Имя ведёт на туннель этого компьютера: сначала уберите его с компьютера.", "plan-changed": "Зона изменилась, пока вы смотрели: прочитайте новый список и подтвердите снова.", "cloudflare-read": "Cloudflare не ответил на чтение зоны.", "cloudflare-write": "Cloudflare не принял запись: попробуйте через минуту.",
@@ -384,6 +402,15 @@ const ru: ServerLaunchWords = {
     text: "Подготовка сервера, свежая Fractera из вашего форка, сборка ядра и всех элементов, запуск. Около 40–50 минут на сервере с 8 ГБ. Страницу можно закрыть и вернуться: установка идёт на самом сервере.",
     install: "Установить", update: "Обновить", again: "Продолжить установку", running: "Идёт установка на сервере…", done: "Установлено: версия {head}.", failed: "Установка остановилась на этапе «{stage}».", leave: "Эту страницу можно закрыть: сервер продолжит сам.",
     silent: "Fractera установлена, но узел сервера пока не отвечает: следующий шаг его ждёт.", ask: "Спросить сервер ещё раз",
+  },
+  repo: {
+    same: "Тот же проект", own: "Чистый Fractera",
+    sameText: "Сервер получит код вашего проекта из того же репозитория GitHub, что и этот компьютер: {repo}. Обновления общие, данные у сервера свои.",
+    ownText: "Чистый стартер Fractera на любом VPS: сервер ставится из вашего собственного форка Fractera.",
+    done: "Сделано", installed: "Сервер стоит на {repo}. Сменить репозиторий можно только очисткой сервера (опасная зона внизу).",
+    account: "Зарегистрируйте аккаунт GitHub", accountText: "Аккаунт бесплатный — в нём будет жить собственный репозиторий сервера.", accountOpen: "Открыть GitHub",
+    fork: "Сделайте форк репозитория Fractera", forkText: "Откройте репозиторий Fractera и нажмите «Fork» в своём аккаунте.", forkOpen: "Открыть репозиторий Fractera",
+    url: "Введите ссылку на свой репозиторий", urlLabel: "Адрес вашего форка", urlNote: "Например https://github.com/<ваш-логин>/web4-node-starter-kit", check: "Проверить", checked: "GitHub подтвердил: {name} — прямой форк Fractera.",
   },
   stage: STAGE_RU,
   live: LIVE_RU,
