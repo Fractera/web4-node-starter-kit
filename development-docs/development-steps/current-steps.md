@@ -312,6 +312,14 @@ Open:
 
 ## The person's decisions (verbatim)
 
+- 2026-11-20 11:22–11:45 UTC — his «Го» (90): core build 11:22–11:26 RC=0 LIVE e2f8faba (808+809+5ff18507); eyes
+  logs/eyes/2026-11-20T11-28-03-236Z.png: «Активация домена» at home without «Дополнительные домены» (measure: not found), 0 console
+  errors. His «Го» (95): pushed the fork 83415389..e2f8faba (ls-remote ✓); in his Chrome the server page: step 4 «GitHub-репозиторий
+  сервера · тот же проект · aifa-agi/web4-node-starter-kit» LIVE (808 seen); server behind 20, preflight ok → «Обновить» pressed ~11:44
+  → «на сервере идёт установка». A background watch waits architect.fractera.ai/api/health commit ≠ d8aa36bd. NEXT: the server's
+  /ru/a8ifp/settings/domain — the 5-rung ladder with throughsongs.com (all done → rung 5 open), the danger zone; then tell Roma.
+  Fractera push (the original) — his paste window, later.
+
 - 2026-11-20 ~11:45 UTC — 809 CODED (commit below): 809-1 home rules (lib/hosting/home-rules.mjs; item-birth + birth door refuse `own` at
   home; the domain door POST refuses at home `domains-on-server-only`; birth window asks only on a server; «Дополнительные домены»
   data-place=server; test home-rules 2 ✓ with negatives) · 809-2 the server ladder `element-domain-ladder.client.tsx` (5 rungs, danger zone
