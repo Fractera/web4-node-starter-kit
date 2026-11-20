@@ -193,3 +193,7 @@ the source, sync. Only custom (walled) elements change; natives and home compute
   pressed 14:4x — every start uploads the helper from this Mac, so the fix rode in without a core build.
 - «Очередь пакетов» took 38 min — the fresh Ubuntu's own unattended upgrades held apt. To do (with the owner): name that wait on the
   page («Ubuntu обновляет себя, ждём») so a long quiet stage does not read as a hang.
+- 2nd live failure (continue, c9392191): root failed again — the node's git shim runs git as fe-root (the tag checkout) BEFORE the
+  installer's `add`; then «Старт» stopped (services-install failed on root). Fixed f4ef6f83: `run|unit-start|agent` call open_way
+  first; test 60 ✓. Waiting the owner's yes for «Установить с нуля» (the only road on the page now; the server holds nothing).
+- His Telegram 184: «процессор 10%» read ambiguous → «процессор занят на 10%» (46bb1871, needs the core build on the Mac).
