@@ -95,7 +95,9 @@ export function ViewportBadge() {
       <span className="mt-1 font-mono text-[10px] uppercase leading-none tracking-widest opacity-70">
         {stepName(width)}
       </span>
-      {place && <span className="mt-1 font-mono text-sm font-bold leading-none" data-node-place-label>{PLACE[place].label}</span>}
+      {/* the owner, 2026-11-18 ~20:40: «нижняя строчка … не помещается в размера оранжевого круга уменьши шрифт на два пикселя» — 14 → 12 px
+          (lost in the Telegram rollback 51fb0dd1, brought back at his word 2026-11-20, Telegram 163) */}
+      {place && <span className="mt-1 font-mono text-xs font-bold leading-none" data-node-place-label>{PLACE[place].label}</span>}
     </div>
   );
 }
