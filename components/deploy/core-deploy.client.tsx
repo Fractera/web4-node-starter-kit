@@ -5,6 +5,7 @@ import { Rocket } from "lucide-react"
 import { AppDialog } from "@/components/dialog/app-dialog.client"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { CoreTerminal, type CoreTerminalWords } from "./core-terminal.client"
 
 // «РАЗВЕРНУТЬ» ЯДРА (узел, шаг 555). Слово владельца 2026-10-21: «нажатие эту кнопки автоматически приводит к подсказке проверьте какие
@@ -67,6 +68,9 @@ export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkCha
   const [sessions, setSessions] = useState<Session[] | null>(null)
   const [note, setNote] = useState<string | null>(null)
   const [begun, setBegun] = useState(false)
+  // 815-6 (владелец 2026-11-20, Telegram 239: «Первые три раза кнопка не нажалась»): the press is seen at once — «Развернуть» locks with a
+  // spinner until the door answers.
+  const [starting, setStarting] = useState(false)
   // 642-2: когда запуск принят — терминал под карточкой; `since` отделяет итог этого запуска от прежнего.
   const [since, setSince] = useState(0)
   // Режим запоминается в момент запуска: к концу обновления форк уже не впереди, и `update` стал бы false посреди работы.
@@ -87,6 +91,10 @@ export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkCha
     void loadSessions()
   }
   async function start() {
+    setStarting(true)
+    try { await startNow() } finally { setStarting(false) }
+  }
+  async function startNow() {
     // The last check at the click: a rebuild while the synced fork holds changes would rebuild the old code — ask the board again and let
     // the window turn into «Update the node from the fork» instead of starting.
     if (!update) {
@@ -142,7 +150,10 @@ export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkCha
           footer={
             <>
               <Button variant="outline" onClick={() => setOpen(false)}>{words.cancel}</Button>
-              <Button onClick={() => void start()} data-core-deploy-start>{words.start}</Button>
+              <Button onClick={() => void start()} disabled={starting} data-core-deploy-start={starting ? "starting" : "on"}>
+                {starting ? <Spinner data-icon="inline-start" aria-hidden /> : null}
+                {words.start}
+              </Button>
             </>
           }
         >

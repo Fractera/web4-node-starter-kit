@@ -18,6 +18,13 @@ export type OriginNoticeWords = {
   /** 646: the door refused the check for another reason — `{reason}`. */
   checkRefused: string
   running: string
+  /** 815-3: the press started the update, the door has not answered yet / the door refused the start — `{reason}`. */
+  starting: string
+  startRefused: string
+  /** 815-3: the door took the press but the node never said «running» within 45 s. */
+  startSilent: string
+  /** 815-4: minutes since the update started — `{min}`. */
+  minutes: string
   failed: string
   refused: string
   interrupted: string
@@ -42,7 +49,7 @@ const DICT: Record<"en" | "ru", OriginNoticeWords> = {
   en: {
     forkBehind: "The original Fractera has {n} new changes that your fork does not have yet. Press «Sync the fork», on GitHub press «Sync fork», then «Check again» here. Everything keeps working as it is.",
     sync: "Sync the fork",
-    nodeBehind: "Your fork is synced: {n} changes are waiting for this node. «Update the core build» opens the Deployments tab: there the node takes them from the fork, puts the elements on their new versions and rebuilds the core — about 10–15 minutes.",
+    nodeBehind: "Your fork is synced: {n} changes are waiting for this node. «Update the core build» takes them from the fork, puts the elements on their new versions and rebuilds the core — about 10–15 minutes; the pages do not answer while the core builds.",
     rebuild: "Update the core build",
     rebuildWaitSync: "Sync the fork first, then «Check again»",
     rebuildNothing: "Nothing to take: this node is on its fork's version",
@@ -52,6 +59,10 @@ const DICT: Record<"en" | "ru", OriginNoticeWords> = {
     openHere: "Open on this computer",
     checkRefused: "The check was refused: {reason}",
     running: "The node is updating — stage «{stage}». While the core builds, these pages do not answer: open this page again in a few minutes.",
+    starting: "Starting the update…",
+    startRefused: "The update did not start: {reason}.",
+    startSilent: "the node did not answer — open this page again in a minute",
+    minutes: "{min} min",
     failed: "The update did not go through: {reason}",
     refused: "The update did not start: {reason}",
     interrupted: "The update was interrupted at stage «{stage}» (the computer was off or the process stopped). Check again and start it once more.",
@@ -69,7 +80,7 @@ const DICT: Record<"en" | "ru", OriginNoticeWords> = {
   ru: {
     forkBehind: "В оригинале Fractera {n} новых изменений, которых пока нет в вашем форке. Нажмите «Синхронизировать форк», на GitHub — «Sync fork», затем здесь «Проверить снова». Всё продолжает работать как есть.",
     sync: "Синхронизировать форк",
-    nodeBehind: "Форк синхронизирован: {n} изменений ждут этот узел. «Обновить сборку ядра» откроет вкладку «Развёртывание»: там узел заберёт их из форка, поставит элементы на новые версии и пересоберёт ядро — около 10–15 минут.",
+    nodeBehind: "Форк синхронизирован: {n} изменений ждут этот узел. «Обновить сборку ядра» заберёт их из форка, поставит элементы на новые версии и пересоберёт ядро — около 10–15 минут; пока собирается ядро, страницы не отвечают.",
     rebuild: "Обновить сборку ядра",
     rebuildWaitSync: "Сначала синхронизируйте форк, затем «Проверить снова»",
     rebuildNothing: "Забирать нечего: узел на версии своего форка",
@@ -79,6 +90,10 @@ const DICT: Record<"en" | "ru", OriginNoticeWords> = {
     openHere: "Открыть на этом компьютере",
     checkRefused: "Проверка не выполнена: {reason}",
     running: "Узел обновляется — этап «{stage}». Пока собирается ядро, эти страницы не отвечают: откройте эту страницу снова через несколько минут.",
+    starting: "Запускаю обновление…",
+    startRefused: "Обновление не запустилось: {reason}.",
+    startSilent: "узел не ответил — откройте эту страницу снова через минуту",
+    minutes: "{min} мин",
     failed: "Обновление не прошло: {reason}",
     refused: "Обновление не начато: {reason}",
     interrupted: "Обновление прервано на этапе «{stage}» (компьютер выключался или процесс остановлен). Проверьте снова и запустите ещё раз.",

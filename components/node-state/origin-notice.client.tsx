@@ -4,9 +4,11 @@ import { useEffect, useState } from "react"
 import { CircleCheck, ExternalLink, RefreshCw, TriangleAlert } from "lucide-react"
 import type { OriginNoticeWords } from "./origin-notice.i18n"
 import { useSnooze } from "./snooze"
+import { bannerView } from "@/lib/deploy/update-banner.mjs"
 import { OpenOnThisComputerButton } from "./open-on-this-computer.client"
 import { isTemporaryHostname } from "@/components/shell/temporary-host"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 // ПОЛОСА «ВЕРСИЯ УСТАРЕЛА» НАД СЛОЕМ АРХИТЕКТОРА (шаги 368, 632-4). Слово владельца 2026-10-01: «никакой запрет представить не будем,
@@ -35,7 +37,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
-type Update = { state: string; stage?: string; summary?: string; reason?: string; changes?: number; finishedAt?: string }
+type Update = { state: string; stage?: string; summary?: string; reason?: string; changes?: number; startedAt?: string; finishedAt?: string }
 type Body = { fork: boolean; behindBy: number; nodeBehind: number; repo: string | null; update: Update | null; checkedAt?: string | null }
 // 743-4: the trial merge of the update — asked once, when the node is behind its synced fork, before anyone presses.
 type Preflight = { ok: boolean; conflicts?: string[]; reason?: string } | "checking" | "unknown" | null
@@ -52,13 +54,41 @@ export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: 
   const { hidden, snooze } = useSnooze(`node-update-done-${done?.finishedAt ?? ""}`)
   const evenSnooze = useSnooze(`node-even-${d?.checkedAt ?? ""}`)
 
-  useEffect(() => {
-    setOnTemporary(isTemporaryHostname(window.location.hostname))
+  // 815-3: «Обновить сборку ядра» starts the update here, in one press; `starting` from the press until the node says «running».
+  const [starting, setStarting] = useState(false)
+  const [startRefused, setStartRefused] = useState<string | null>(null)
+  // 815-4: the state is asked again only while an update starts or runs; a failed read keeps what was shown (the core builds and is
+  // silent — the banner must not vanish then).
+  const load = (keep: boolean) =>
     fetch(`${BASE}/api/node/update`, { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
-      .then((b: Body | null) => setD(b))
-      .catch(() => setD(null))
+      .then((b: Body | null) => { if (b || !keep) setD(b) })
+      .catch(() => { if (!keep) setD(null) })
+  useEffect(() => {
+    setOnTemporary(isTemporaryHostname(window.location.hostname))
+    void load(false)
   }, [])
+  const runningNow = d?.update?.state === "running"
+  useEffect(() => {
+    if (!runningNow && !starting) return
+    const t = setInterval(() => void load(true), starting ? 2000 : 5000)
+    return () => clearInterval(t)
+  }, [runningNow, starting])
+  useEffect(() => {
+    if (!starting) return
+    if (runningNow) { setStarting(false); return }
+    const t = setTimeout(() => { setStarting(false); setStartRefused(words.startSilent) }, 45_000)
+    return () => clearTimeout(t)
+  }, [starting, runningNow, words.startSilent])
+  const start = async () => {
+    setStarting(true)
+    setStartRefused(null)
+    const r = await fetch(`${BASE}/api/node/update`, { method: "POST", cache: "no-store", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "update" }) }).catch(() => null)
+    const b = r ? ((await r.json().catch(() => null)) as { error?: string; reason?: string } | null) : null
+    if (r?.ok) { void load(true); return }
+    setStarting(false)
+    setStartRefused(b?.reason ?? b?.error ?? (r ? `HTTP ${r.status}` : words.startSilent))
+  }
 
   const askPreflight = !onTemporary && d?.fork === true && d.behindBy === 0 && d.nodeBehind > 0 && d.update?.state !== "running"
   useEffect(() => {
@@ -82,31 +112,23 @@ export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: 
     }
   }
 
-  if (!d?.fork) return null
+  // 815-7: what is shown is decided by one pure function, proven state by state (`scripts/update-banner.test.mjs`)
+  const view = bannerView(d, { starting, doneHidden: !done || hidden, evenHidden: evenSnooze.hidden })
+  if (!d || !view) return null
   const u = d.update
   const stage = words.stages[u?.stage ?? ""] ?? u?.stage ?? ""
-  let text: string | null = null
-  let canCheck = true
-  let even = false
-  const running = u?.state === "running"
-  if (running) {
-    text = fill(words.running, { stage })
-    canCheck = false
-  } else if (u && (u.state === "failed" || u.state === "refused" || u.state === "interrupted")) {
-    text = fill(words[u.state as "failed" | "refused" | "interrupted"], { stage, reason: u.reason ?? "" })
-  } else if (d.behindBy > 0) {
-    text = fill(words.forkBehind, { n: d.behindBy })
-  } else if (d.nodeBehind > 0) {
-    text = fill(words.nodeBehind, { n: d.nodeBehind })
-  } else if (done && !hidden) {
-    text = fill(words.done, { summary: done.summary ?? "" })
-  } else if (!evenSnooze.hidden) {
-    even = true
-    text = d.checkedAt ? fill(words.even, { date: new Date(d.checkedAt).toLocaleString(lang) }) : words.evenNever
-  }
-  if (!text) return null
+  const running = view.kind === "running"
+  const even = view.kind === "even"
   const forkBehind = d.behindBy > 0
-  const canRebuild = !forkBehind && d.nodeBehind > 0
+  const canCheck = view.check
+  const min = running && u?.startedAt ? Math.max(0, Math.round((Date.now() - new Date(u.startedAt).getTime()) / 60000)) : null
+  const text =
+    running ? fill(words.running, { stage }) + (min !== null ? ` · ${fill(words.minutes, { min })}` : "")
+    : view.kind === "failed" || view.kind === "refused" || view.kind === "interrupted" ? fill(words[view.kind], { stage, reason: u?.reason ?? "" })
+    : view.kind === "forkBehind" ? fill(words.forkBehind, { n: d.behindBy })
+    : view.kind === "nodeBehind" ? fill(words.nodeBehind, { n: d.nodeBehind })
+    : view.kind === "done" ? fill(words.done, { summary: done?.summary ?? "" })
+    : d.checkedAt ? fill(words.even, { date: new Date(d.checkedAt).toLocaleString(lang) }) : words.evenNever
 
   return (
     <div className={even ? "mx-4 mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground" : "mx-4 mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-md border border-warning/50 bg-warning/10 px-3 py-2 text-sm text-foreground"} role="status" data-origin-outdated={d.behindBy} data-node-behind={d.nodeBehind} data-node-update={u?.state ?? "none"} data-origin-even={even ? "true" : undefined}>
@@ -118,18 +140,21 @@ export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: 
             {preflight === "checking" ? words.preflightChecking : preflight === "unknown" ? words.preflightUnknown : preflight.ok ? words.preflightOk : (preflight.conflicts?.length ? fill(words.preflightStop, { files: preflight.conflicts.join(", ") }) : fill(words.preflightRefused, { reason: preflight.reason ?? words.preflightUnknown }))}
           </span>
         ) : null}
+        {startRefused ? <span className="block text-destructive" data-node-update-refused>{fill(words.startRefused, { reason: startRefused })}</span> : null}
         {onTemporary ? <span className="block text-muted-foreground">{words.checkHere}</span> : refused ? <span className="block text-destructive">{fill(words.checkRefused, { reason: refused })}</span> : null}
       </span>
-      {d.repo && !running && (
+      {/* 815-5: the fork is synced — nothing to sync; the button stays only while the fork is behind, or at rest («even») */}
+      {d.repo && view.sync && (
         <a href={d.repo} target="_blank" rel="noopener noreferrer" className={forkBehind ? "inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 font-medium text-primary-foreground" : "inline-flex items-center gap-1 underline"} data-node-update-sync>
           {words.sync}
           <ExternalLink className="size-3" aria-hidden />
         </a>
       )}
-      {!running && (canRebuild ? (
-        <a href={`${BASE}/${lang}/build/deployments`} className="rounded-md bg-primary px-3 py-1.5 font-medium text-primary-foreground" data-node-update-rebuild="on">
-          {words.rebuild}
-        </a>
+      {view.rebuild !== "none" && (view.rebuild !== "off" ? (
+        <Button type="button" size="sm" onClick={() => void start()} disabled={starting || preflight === "checking"} data-node-update-rebuild={starting ? "starting" : "on"}>
+          {starting || preflight === "checking" ? <Spinner data-icon="inline-start" aria-hidden /> : null}
+          {starting ? words.starting : words.rebuild}
+        </Button>
       ) : (
         // A disabled button fires no pointer events — the hint hangs on a focusable wrapper.
         <TooltipProvider><Tooltip><TooltipTrigger asChild><span className="inline-flex" tabIndex={0}>
