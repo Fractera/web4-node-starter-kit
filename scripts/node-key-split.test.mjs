@@ -148,7 +148,7 @@ const RULES = {
   'app/api/agents/person-lang/route.ts': ['isNode(callerOf(req.headers))'],
   'app/api/node/study/route.ts': ['isNode(callerOf(req.headers))'],
   'app/api/settings/changed/route.ts': ['isNode(callerOf(req.headers, { header: "x-settings-key" }))'],
-  'app/api/node/pair-key/route.ts': ['const me = callerElement(caller)', 'to === me', '!isCustom(entry)', 'pairKeyOf(me, keyFor(to))'],
+  'app/api/node/pair-key/route.ts': ['const caller = callerOf(req.headers)', 'keyToCall(caller, to)'],
 }
 const routes = (dir) => {
   const out = []
@@ -276,7 +276,6 @@ t('NEGATIVE CONTROL: the reader guard finds a new reader', () => {
   writeFileSync(tmp, 'fetch(u, { headers: { "X-Node-Key": process.env.SETTINGS_SECRET } })\n')
   try { assert.deepEqual(readers([relative(ROOT, tmp)]), [relative(ROOT, tmp)]) } finally { rmSync(tmp, { force: true }) }
 })
-rmSync(FIX, { recursive: true, force: true })
 
 console.log('T4 — the installer: a custom element holds only its own key')
 const { NODE_KEYS, nodeKeyValue } = await import('../lib/web4-items/element-env-keys.mjs')
@@ -316,9 +315,34 @@ t('the callee reads the caller from its pair key with its own key; nobody else c
   assert.equal(call({ 'x-node-key': pair }), null, 'a pair key at the core\'s doors')
   assert.equal(pairCallerOf(`third.${pair.split('.')[1]}`, SHOPKEY), null, 'a caller swapped in a pair key')
 })
+const { keyToCall } = createRequire(import.meta.url)('../lib/node/element-call-key.cjs')
+t('the core\'s door: an element gets the pair key for a custom neighbour, its own key stays its own for a native', () => {
+  const r = keyToCall({ element: 'root' }, 'shop', at)
+  assert.equal(r.status, 200)
+  assert.deepEqual(r.body, { ok: true, to: 'shop', port: 24691, key: pairKeyOf('root', SHOPKEY) })
+  assert.equal(pairCallerOf(r.body.key, SHOPKEY), 'root', 'shop reads root from it')
+  assert.deepEqual(keyToCall({ element: 'root' }, 'config', at).body, { ok: true, to: 'config', port: 24689, key: null })
+})
+t('the core\'s door: a native gets a custom element\'s own key, and null for a native', () => {
+  assert.deepEqual(keyToCall({ node: true }, 'shop', at).body, { ok: true, to: 'shop', port: 24691, key: SHOPKEY })
+  assert.deepEqual(keyToCall({ node: true }, 'config', at).body, { ok: true, to: 'config', port: 24689, key: null })
+})
+t('the core\'s door refuses: nobody, itself, a bad id, an unknown element, no data secret — and never answers with the node key', () => {
+  assert.equal(keyToCall(null, 'shop', at).status, 401)
+  assert.equal(keyToCall({}, 'shop', at).status, 401)
+  assert.equal(keyToCall({ element: 'root' }, 'root', at).status, 400)
+  for (const to of ['', '../x', 'Shop', 'a.b']) assert.equal(keyToCall({ element: 'root' }, to, at).status, 400, to)
+  assert.equal(keyToCall({ element: 'root' }, 'nobody', at).status, 404)
+  assert.equal(keyToCall({ element: 'root' }, 'shop', { root: FIX, env: { SETTINGS_SECRET: ENV.SETTINGS_SECRET } }).status, 503)
+  assert.equal(keyToCall({ node: true }, 'shop', { root: FIX, env: { SETTINGS_SECRET: ENV.SETTINGS_SECRET } }).status, 503)
+  for (const c of [{ element: 'root' }, { node: true }]) for (const to of ['shop', 'config']) {
+    assert.notEqual(keyToCall(c, to, at).body.key, ENV.SETTINGS_SECRET, `${JSON.stringify(c)} → ${to}`)
+  }
+})
 t('NEGATIVE CONTROL: with one shared key (before 818-7) every element called every door and no door knew who called', () => {
   const old = (given) => given === ENV.SETTINGS_SECRET
   assert.equal(old(ENV.SETTINGS_SECRET), true)
   assert.equal(pairCallerOf(ENV.SETTINGS_SECRET, SHOPKEY), null)
 })
+rmSync(FIX, { recursive: true, force: true })
 console.log(`\nnode-key-split: ${passed} passed${process.exitCode ? ', FAILURES above' : ''}`)
