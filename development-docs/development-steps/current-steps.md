@@ -283,10 +283,11 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 12:20 UTC, window ~45 %, Opus — context reset at the end of 808/809)
 
-**NOW:** 811 — core build 13:37–13:41 RC ok, LIVE 74d0a7b3; eyes logs/eyes/2026-11-20T13-41-53-482Z.png 0 console errors; on the Mac a
-forged x-fractera-peer is stripped (still owner@machine — no wall here), hook-relay door without key 401. Fork pushed e2f8faba..74d0a7b3
-(ls-remote ✓). Window 4635a86e «Установить с нуля» waits for him (its «Готово» wakes me). THEN 811-7 on 109.199.105.213 (plan list +
-the live measures of 5b/5g). Telegram chat_id 90413601, ru, colour marks.
+**NOW:** 811 — LIVE on the Mac 74d0a7b3; Fractera and the fork were at b6266b2c (badge 12 px, his pushes 13:50/13:55); the server
+109.199.105.213 installs from CLEAN Fractera (his choice, started ~13:56). After it: 77cdf5de (bot activation moved to «Сервер готов»,
+the install rung's spinner; Telegram 170/173) is committed + fork pushed, NOT built — his word (175): build the core only after the
+server install ends; the server stays 1+ commit behind on purpose («заодно проверим» the behind line). THEN: core build (ask-free: he
+agreed), Fractera push window for 77cdf5de.., 811-7 proofs on the server. Telegram chat_id 90413601, ru, colour marks.
 
 Roma talks in TELEGRAM now: main bot = his existing @fractera_factory_e90e_bot (saved by him 2026-11-19 23:49; chat_id 90413601, ru).
 Done since 2026-11-19 evening (all committed, fork pushed up to cdac6592; Fractera push = his paste, not done):
