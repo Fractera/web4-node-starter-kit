@@ -283,6 +283,13 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 17:15 UTC, window ~60 %, Opus max — reset before the release build)
 
+**NOW (17:40 UTC, usage limit hit):** 815 agreed (Telegram 241), plan 670a430b; 815-2..6 CODED in the last commit (tsc 0, NOT built):
+the door's preflight cached per (HEAD, origin/main) + shared in flight, update start via async sh; the banner = `lib/deploy/update-banner.mjs`
+bannerView + one-press start, «Запускаю…», running stage · N мин, sync only when fork behind/even; core-deploy dialog busy.
+NEXT: write `scripts/update-banner.test.mjs` (the 7 checklist states incl. negatives; wire into prebuild like final-check) → prebuild →
+ASK Roma before the core build → 815-1 measure on the server through the SSH window (localhost:25680) → eyes on Mac + server.
+The server's update was running (elements stage 17:36; watch https://architect.fractera.ai/api/health for ada53203) — check its end.
+
 **NOW (18:25):** the Mac core build ada53203 is live (eyes of the hosting page clean, no console errors). 811-7 PROVEN on the server
 (b6498d79, the plan's «811-7 live»). Fractera main = ada53203 (his paste 18:3x, ls-remote verified). Fork aifa-agi = ada53203 (his sync). The server's update RUNNING since 17:31:44 (his
 press in the deployments dialog) — watch https://architect.fractera.ai/api/health until commit ada53203. His complaint (Telegram
