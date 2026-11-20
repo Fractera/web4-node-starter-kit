@@ -1,6 +1,6 @@
 # 814 — «Сервер готов» as one road; the server bot's first message only the essence
 
-State: PLAN — layout proposed (Telegram 213, 2026-11-20 ~16:55 UTC), waits his «да»; with 813 after 811-7, one core build.
+State: AGREED — the owner (Telegram 218, 16:57): «Я согласен на твоё решение аккумулировать … все необходимые изменения»; with 813, one core build after 811-7.
 
 ## The owner's words (verbatim, Telegram 212)
 

@@ -308,7 +308,7 @@ const ipOf = (s) => (IPV4.test(host) ? host : s?.probe?.publicIp ?? null)
 /** The names of a fresh node before it is installed: the site, its panel and sign-in; every element's name is covered by `*`. */
 export function freshTable(zone) {
   const row = (h, label, kind, optional = false) => ({ host: h, zone, label, kind, service: null, port: null, redirectTo: null, optional })
-  return { zone, corePort: 24680, rows: [row(zone, '@', 'apex'), row(`www.${zone}`, 'www', 'www', true), row(`architect.${zone}`, 'architect', 'architect'), row(`auth.${zone}`, 'auth', 'auth')] }
+  return { zone, corePort: 24680, rows: [row(zone, '@', 'apex'), row(`www.${zone}`, 'www', 'www'), row(`architect.${zone}`, 'architect', 'architect'), row(`auth.${zone}`, 'auth', 'auth')] }
 }
 
 // ── the ledger of certificates per registered domain (738-5) ──

@@ -44,7 +44,7 @@ export function DomainServerPipeline({ lang, domain: d, holder, forItem, words: 
         <>
           <Small className="text-muted-foreground">{s.lead}</Small>
           {ip ? <DnsRecords words={{ zone: s.zone, type: s.type, name: s.name, value: s.value, state: "", optional: s.optional, wildcard: "" }}
-            zones={[{ zone: d.name, records: [{ type: "A", name: "@", value: ip, host: d.name }, { type: "A", name: "www", value: ip, host: `www.${d.name}`, optional: true }] }]} /> : null}
+            zones={[{ zone: d.name, records: [{ type: "A", name: "@", value: ip, host: d.name }, { type: "A", name: "www", value: ip, host: `www.${d.name}` }] }]} /> : null}
           {d.pointsTo ? <Small className="text-foreground" data-block="domain-server-now">{fill(s.now, { name: d.name, where: d.pointsTo.length ? d.pointsTo.join(", ") : s.nowhere })}</Small> : null}
           {d.aaaa?.length ? <Small className="text-destructive" role="status">{fill(s.aaaa, { where: d.aaaa.join(", ") })}</Small> : null}
           <Small className="text-muted-foreground">{s.note}</Small>

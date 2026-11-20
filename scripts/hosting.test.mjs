@@ -8,6 +8,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { dnsRecords, isHostName, nodeNames, primaryZone } from '../lib/hosting/hostnames.mjs'
+import { finalCheck } from '../lib/hosting/final-check.mjs'
 import { readableKeyPair } from '../lib/hosting/ssh.mjs'
 
 let passed = 0
@@ -50,6 +51,17 @@ t('the tunnel layout: apex → root, architect → core, auth → auth, address 
     'example.org>root:24683', 'www.example.org>nginx→example.org', 'architect.example.org>core:24680', 'auth.example.org>auth:24681',
     'data.example.org>data:24682', 'settings.example.org>config:24685', 'bd5ln.example.org>bd5ln:24684',
   ])
+})
+t('813: www is a required name — the node\'s domain and an element\'s own domain; the fresh launch table too; the final check needs it', () => {
+  const root = fixture({ services: SERVICES, runtime: { port: 24680 }, domain: 'example.org', own: { bd5ln: { domain: 'pics.example.net', primary: 'domain' } } })
+  const rows = nodeNames({ root }).rows
+  for (const h of ['www.example.org', 'www.pics.example.net']) assert.equal(rows.find((r) => r.host === h)?.optional, false, h)
+  assert.match(readFileSync(fileURLToPath(new URL('./dedicated-server/launch.mjs', import.meta.url)), 'utf8'), /row\(`www\.\$\{zone\}`, 'www', 'www'\)/, 'the fresh launch table: www without «optional»')
+  const state = (wwwCert) => ({ domain: { signin: { ok: true } }, core: { zone: 'example.org', steps: { active: true }, rows: [
+    { host: 'example.org', kind: 'apex', optional: false, cert: 'ok', https: true }, { host: 'www.example.org', kind: 'www', optional: false, cert: wwwCert, https: wwwCert === 'ok' ? true : null },
+    { host: 'architect.example.org', kind: 'architect', optional: false, cert: 'ok', https: true }] } })
+  assert.equal(finalCheck(state('ok')).ok, true)
+  assert.equal(finalCheck(state('missing')).ok, false, 'negative: www without its certificate stops the final check')
 })
 t('negative: an element without a port and a deleted element\'s data folder never appear', () => {
   const root = fixture({ services: SERVICES, domain: 'example.org', own: { s3v6y: { domain: 'left.example.net', primary: 'domain' } } })
