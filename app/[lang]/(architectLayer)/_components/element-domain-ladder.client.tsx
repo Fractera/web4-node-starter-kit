@@ -156,8 +156,9 @@ export function ElementDomainLadder({ id, lang, ui, record, dialogUi, domainWord
         <div className="flex flex-col gap-2" data-block="element-domain-ladder-primary">
           <ButtonGroup>
             {(["subdomain", "domain"] as Primary[]).filter((p) => p === "domain" || record.subdomain).map((p) => (
-              <Button disabled={Boolean(busy) || record.primary === p} key={p} onClick={() => void door("PATCH", { primary: p }, "primary")} size="sm" variant={record.primary === p ? "default" : "outline"}>
-                <span className="font-mono">{p === "domain" ? record.domain : record.subdomain}</span>
+              // 809 (the owner, 2026-11-20, Telegram 111): the active address — contrast blue, never the pale disabled look; the other — struck through
+              <Button className={record.primary === p ? "disabled:opacity-100" : undefined} disabled={Boolean(busy) || record.primary === p} key={p} onClick={() => void door("PATCH", { primary: p }, "primary")} size="sm" variant={record.primary === p ? "default" : "outline"}>
+                <span className={record.primary === p ? "font-mono" : "font-mono line-through"}>{p === "domain" ? record.domain : record.subdomain}</span>
               </Button>
             ))}
           </ButtonGroup>
