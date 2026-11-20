@@ -239,6 +239,15 @@ case "$verb" in
       while [ "$p" != "." ]; do act chmod o+x "$NODE_DIR/$p"; p="$(dirname -- "$p")"; done
     done
     for e in "$NODE_DIR"/.env*; do [ -f "$e" ] && [ ! -L "$e" ] && act chmod 0600 "$e"; done
+    # 818-4 (the red team 817 H5, measured 2026-11-20: an element listed ~/.pm2 and read pm2's dump and log — every process, path and port —
+    # read ~/.claude/settings.json, ~/.gitconfig and the nginx site): the node user's home is only a way to the node's folder; everything
+    # else in it is closed to others, links never followed; the nginx sites are root's (nginx's master reads them as root).
+    home_dir="$(dirname -- "$NODE_DIR")"
+    for e in "$home_dir"/.[!.]* "$home_dir"/*; do
+      [ -e "$e" ] && [ ! -L "$e" ] && [ "$e" != "$NODE_DIR" ] || continue
+      act chmod o-rwx "$e"
+    done
+    for n in /etc/nginx/sites-available/* /etc/nginx/conf.d/*.conf; do [ -f "$n" ] && [ ! -L "$n" ] && act chmod 0640 "$n"; done
     echo "WALLS_APPLIED ${#allow[@]}" ;;
   list)
     for f in "$RECORDS"/*; do [ -f "$f" ] && printf '%s %s\n' "$(basename -- "$f")" "$(sed -n 's/^FOLDER=//p' "$f")"; done; true ;;

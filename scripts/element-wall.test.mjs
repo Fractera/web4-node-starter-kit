@@ -150,6 +150,17 @@ t('walls with one readable file', () => {
   assert.match(r.out, /chmod 0600 \S+\/\.env\.local/)
   assert.match(r.out, /WALLS_APPLIED 1/)
 })
+t('818-4 H5 walls close the node user\'s home except the way to the node (negative: the node folder and a link stay untouched)', () => {
+  const home = dirname(NODE)
+  for (const d of ['.pm2', '.claude']) mkdirSync(join(home, d), { recursive: true })
+  writeFileSync(join(home, '.gitconfig'), '[user]\n')
+  try { symlinkSync(join(home, '.gitconfig'), join(home, '.link-to-gitconfig')) } catch { /* exists */ }
+  const r = helperRun(['walls'])
+  assert.equal(r.status, 0, r.out)
+  for (const d of ['.pm2', '.claude', '.gitconfig']) assert.match(r.out, new RegExp(`DRY: chmod o-rwx \\S+/home/fractera/${d.replace('.', '\\.')}\\n`), d)
+  assert.doesNotMatch(r.out, /chmod o-rwx \S+\/home\/fractera\/node\n/, 'the node folder keeps its 0711')
+  assert.doesNotMatch(r.out, /chmod o-rwx \S+\.link-to-gitconfig/, 'a link is never followed')
+})
 t('negative: the allow list refuses .., an absolute path, a missing file, a symlink', () => {
   for (const bad of ['../../etc/passwd', '/etc/passwd', 'lib/none.cjs', 'lib/agent-kit/../../.env.local']) {
     writeFileSync(list, `${bad}\n`); refused(['walls'], /bad readable path|not a file of the node/)
