@@ -308,6 +308,36 @@ stripe). My last Telegram to him: 287 «Принял: A2 … Перед сбор
 - Tests: `scripts/node-key-split.test.mjs` 28 (T1–T5, negative controls, in the prebuild after redteam-holes); tsc green (negative control
   done); proxy-split 8, redteam-holes 10, cross-site-wall 14, person-asks 22, element-wall 66, tools-protocol 13/13, check-api 123 green.
 - NOT DONE: prebuild not run yet; nothing built; nothing pushed.
+- SESSION 2 (after the 20:31 reset), uncommitted in the core: `keyToCall` in lib/node/element-call-key.cjs + the pair-key door widened
+  (a native gets a custom element's own key; anyone calling a native gets key null = present your own) + T5 (31 ✓, negative control
+  red); the instruction source line 52 → `neighbourFetch` (coverage OK, generated into custom/native workshops and root's folder).
+  NATIVE workshop commit ab6d9da (lib/element-key.mjs, lib/neighbour.mjs, lib/node-key.ts nodeCaller, a2a.mjs, door-add recipe,
+  check-element-key in the prebuild) — dry release GREEN; the real release stopped ===TEMPLATE_NO_RIGHT=== (node token 403) after
+  tagging v0.1.79 LOCALLY (never pushed). STRIPE workshop bf294c3 (scope.mjs: an element pays/reads in its own name; prebuild RC=0).
+  CONFIG workshop 693a153 (readerOf; subscribe in own name; each signal signed with the subscriber's key from the core; readers.test
+  6 ✓, negative control red; prebuild RC=0). CUSTOM workshop 7108833 (nodeCaller own key / pair key; A2A doors; executor trusts the
+  pair key's caller) — dry release GREEN. ROOT: HEAD v3.0.69-5-g6feec48, 5 own commits NOT on GitHub → the rollout leaves it alone
+  (template.mjs: HEAD ≠ pin) — root works after the flip without the new files (its doors compare with its own key); no root release.
+  CONFIG element has its own commit 4718bde (not on GitHub) → services:install will NOT move it to a new tag: the «Обновить» door
+  (app/api/architect/items/config/update) merges the tag, then deploy.
+- RELEASED with Roma's key (293), each verified main == tag on GitHub: native v0.1.79 ab6d9da (CI ✓) · custom v0.3.220 7108833
+  (CI ✓) · stripe v1.3.46 bf294c3 (CI ✓) · config v1.2.53 693a153 — CI ✗: MY apostrophe in a single-quoted tool text of
+  lib/config-store/mcp-tools.mjs («your element's own key») broke the parse; I ran tsc BEFORE that text edit and the prebuild does not
+  parse lib/*.mjs. Fix committed in the workshop («your own element key»), full `npm run build` running → tag v1.2.54, push, re-pin.
+  Pins in the core: 4bd80366 (native), 65abc4c3 (custom), e92dfe5c (stripe v1.3.46 + config v1.2.53 → must become v1.2.54).
+  Core commits: 3c2a78df (keyToCall, the door for natives, the instruction line), 7g = redteam.sh H6 attacks + check-element-key ids
+  (the words guard failed the first prebuild: «blocks» in two 7d test lines). Second core prebuild running.
+  DONE since: config v1.2.54 5206efd released (local `npm run build` RC=0), pinned b5733cf2; core 0c3c8209 (7g); core prebuild RC=0.
+  ROOT decision (mine): NO root release now — root's GitHub repo (v3.0.69) lacks the skill telegram-mini-app that the generated
+  instruction names (root's prebuild in its workshop failed SKILL_PROCESS), while root's ELEMENT has it in its 5 local commits (likely
+  template rollouts whose push hit the node token's 403 — unverified, I may not read root's folder). The root workshop is back at
+  v3.0.69, clean. Root after the flip works on its old code (its doors compare with its own key; CONFIG, Stripe, the core accept it).
+  Root's element keeps an uncommitted CLAUDE.md + seal from my `templates` run (names lib/neighbour.mjs, which root lacks) — its build
+  passes (guards check skills, not helpers). Offer Roma: publish root's 5 commits with his look → v0.3.220 rolls into root later.
+  NEXT: ASK Roma before the ONE core build (+ root: 5 own commits not on GitHub, the
+  rollout refuses HEAD ≠ pin — ask whether to publish them) → build → config update door + deploy → services:install stripe → flip
+  root → L1–L6 → push the core to Fractera (293 allows). Roma 291: «до 980 кастомных элементов» — nothing is
+  stored per pair, an HMAC per call.
 
 **NEXT — 7d templates + 7e natives (load skill release-template; Roma's «да» to these releases is 286):**
 1. NATIVE template (`npm run template -- clone native --install` exists at data/workshop/fractera-native-item-starter, v0.1.78):
@@ -350,6 +380,12 @@ node's .env.local — the classifier refuses, and it is the law). The server: co
 redteam element deleted (DNS record lvj2j.fractera.ai left — F3), 9 diary rows + vectors removed.
 
 ## The person's decisions (verbatim)
+
+- 2026-11-20 20:44 UTC, the owner (Telegram 293), to my question 292 (the node's GitHub token gets 403 on Fractera's template repos;
+  may I use his gh key, account Fractera, for the 5 releases of 818-7): «Сегодня даю тебе право делать гит пуш». Used as
+  TEMPLATE_GITHUB_TOKEN=$(gh auth token) for one run each, never kept; the core's push to Fractera today is mine too.
+- 2026-11-20 20:33 UTC, the owner (Telegram 291): «Продолжай помни что у нас может быть до 980 кастомных элементов если это имеет
+  значение» — nothing is stored per pair; a pair key is an HMAC per call.
 
 - 2026-11-20 13:06–13:13 UTC, the owner (Telegram 135, 137): «я думал что мы строим пункт номер два? … элементы и ядро взаимодействуют …
   только по протоколу … i2i … api или mcp … систему защиты чтобы она была непрошибаемой» then «Го». My answer (138): 811-5g = the OS
