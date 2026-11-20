@@ -281,34 +281,60 @@ without «Режим работы приложения», curl count 0), 17-53-2
 way: the site-settings words still say «Пока связь включена…» (implies a switch) → 793. WAITS Roma: the 3 new phrases, the template
 release push (v0.3.219 dry green) + pin, the core push, ONE server update, then the Marina test (804-8) and the summary.
 
-## Letter to my next session (written 2026-11-20 19:35 UTC — reset for H6 with a clean window; Opus max)
+## Letter to my next session (written 2026-11-20 ~21:30 UTC — reset between H6's core part and its template/native part; Opus max)
 
-**WHO WAITS:** Roma (owner) in TELEGRAM (chat_id 90413601, ru, colour marks). His last words (Telegram 280, 19:30): «что можно сделать
-сейчас надо делать сейчас каждая переустановка и сборка ядра это целая вечность чем меньше этих процессов тем лучше» = H6 variant A
-(now, before the reinstall), and ONE Mac build + ONE release + ONE reinstall for everything. My answer (281): H6 is bigger than «half a
-day» — the node key goes three ways; research first, then a plan with a test checklist, code after his «да».
+**WHO WAITS:** Roma (owner) in TELEGRAM (chat_id 90413601, ru, colour marks). His words: Telegram 280 (19:30) «что можно сделать
+сейчас надо делать сейчас каждая переустановка и сборка ядра это целая вечность чем меньше этих процессов тем лучше»; 284 (19:33)
+«Помнишь что взаимодействие элементов у нас запланировано по двум протоколом i2i и апи если сейчас это имеет значение»; 286 (19:58) to my
+plan 285: «Делай по максимуму на максимальном размышлении» = A2, EVERYTHING (incl. the pair keys and the 4 releases custom, root, config,
+stripe). My last Telegram to him: 287 «Принял: A2 … Перед сборкой ядра спрошу тебя». He has the account re-logged (/login) — just «continue».
 
-**DONE TODAY, committed, NOT built on the Mac since 603bc4e1 (the Mac runs 815+816):**
-- a45ec05d the tunnel's revival puts «Пульт» back (takes effect at the tunnel's next natural restart; I set the button by hand 18:48).
-- 817 red team DONE (plan 817-…: «Result»). 818 (plan 818-close-the-red-team-holes-and-repeat.md, «Progress», «H6», «Review»):
-  61449f4b + a9f27539 818-1 everything foreign erased by «Очистить» AND by every install (prepare's stage «foreign» → leftovers.sh) ·
-  7208d02b H1 x-agent-identity believed only from the owner at the machine (it was open FROM THE INTERNET on the server and the Mac's
-  temporary address — still open on the Mac until the next build) · ded7a2aa H2 record reads only the element's own session · 3619e4a6
-  H5 walls close the node home + nginx sites · 99a4cf64 F1 hook relay + tools/take through the gate by the element key, relay client →
-  localhost · 5e3d35e6 review fixes · 9fd65ba6 818-6 scripts/dedicated-server/redteam.sh (on today's server: 15 holes = its control) ·
-  d6a6b112 BACKLOG (resource control dropped by Roma 266; the red by-hand launch-footprint harness, red before 818 too).
-- Tests: scripts/redteam-holes.test.mjs 10 (in the prebuild), element-wall 66, server-install-live 19, hosting 77. Prebuild green at 9fd65ba6.
-- Memory: one server = one Fractera project, nothing foreign (Telegram 277) — data/services/build/memory/server-clean-100-percent.md.
+**WHERE I STAND — 818-7 (plan: section «818-7» of new-steps/818-close-the-red-team-holes-and-repeat.md, with the test checklist):**
+- 7a 2ca76f3b — `lib/node/caller.ts` (callerOf: node key / element key `<id>.<mac>` / none; never from cf-*/edge; the 811-5g stamp
+  `x-fractera-peer`: an element's user is never the node, another element's key refused there; actsFor, refusal, wakeAllowed, markedFrom
+  neutralises ⟦⟧) · 25 doors converted by rule (own affairs / read / node only) · the gate rule in `proxy/common.ts` (element key on loopback
+  reaches `lib/node/element-doors.mjs` ELEMENT_DOORS). FOUND: the gate let ANY request with a dummy `authjs.session-token` cookie through —
+  so before 7a the node-key doors were open to walled elements too (cookie presence only); now the doors judge the key.
+- 7b 49122e71 + 1f6de78b — `lib/node/element-call-key.cjs` keyFor(id) (custom kind `user` → its own key from DATA_SECRET, native → node
+  key) / keyForUrl(url) (loopback port → that element's key, else null) / entryOf · call sites: element-settings-door, design-config,
+  own-service-props, catalog-push (signalTheRest per element — it also covers CONFIG's 401s), project-settings-source, wake door keeps an
+  element's declineUrl on its own port, the kit's tellTask/declineCaller via `globalThis.__web4CallKey` (mount.cjs; computed require is
+  refused in telegram.cjs by check:agent-kits) — master edited, `npm run agent-kit:update -- <group>` for all 12 groups.
+- 7c 4ef90cf5 — `lib/web4-items/element-env-keys.mjs` nodeKeyValue: custom SETTINGS_SECRET = its ELEMENT_KEY, DATA_SECRET withheld (loud
+  line), never carried over; `scripts/services-install.mjs` uses it first.
+- 7d CORE 0f8421ba — `lib/element-key.cjs` pairKeyOf/pairCallerOf (label `fractera-pair-key:v1:`; test vector in
+  scripts/check-element-key.mjs: pairKeyOf('shop', ROOT_VECTOR) = `shop.RC4iWl7CFXQjhqxT-kLwO1s0vhuPjg5-ow2YQPTwjE4`) · door
+  `app/api/node/pair-key/route.ts` GET ?to= (element callers only, custom neighbour only, not itself) → {to, port, key}.
+- Tests: `scripts/node-key-split.test.mjs` 28 (T1–T5, negative controls, in the prebuild after redteam-holes); tsc green (negative control
+  done); proxy-split 8, redteam-holes 10, cross-site-wall 14, person-asks 22, element-wall 66, tools-protocol 13/13, check-api 123 green.
+- NOT DONE: prebuild not run yet; nothing built; nothing pushed.
 
-**H6 — RESEARCH DONE 20:00 UTC (read-only), plan = section «818-7» of the 818 plan file, sent to Roma in Telegram (285); APPROVED 19:58 UTC, Telegram 286:
-«Делай по максимуму на максимальном размышлении» = A2, everything.** The four questions answered there: (1) the core's outbound calls to elements — 9 call sites named in 818-7b; (2)
-CONFIG signals every subscribed element itself with the node key (its card) → CONFIG release; (3) i2i API rests on the shared key, none in
-use (root is the only custom element) → pair keys (A2) or later (A1); (4) the custom template sends SETTINGS_SECRET to the core, CONFIG
-(MCP read), Stripe (the selling skill), neighbours (a2a.mjs, door:add) — the value flip keeps them all working except neighbours. NEW
-FACT: on the server there is no network wall between fe-* users, so neighbours' settings/A2A/integration doors and memory/Stripe are open
-to any element TODAY (818's «no hole» was wrong). The design reuses ELEMENT_KEY (lib/element-key.cjs; the stores already verify it).
-PROGRESS: 7a 2ca76f3b (lib/node/caller.ts, 25 doors, the gate rule, scripts/node-key-split.test.mjs in the prebuild) · 7b 49122e71+1f6de78b (lib/node/element-call-key.cjs keyFor/keyForUrl, 9 call sites, the kit via globalThis.__web4CallKey, all 12 kit copies) · 7c (lib/web4-items/element-env-keys.mjs, the installer). Tests 26. NEXT: 818-7d (pair key: core door + custom/root templates) → 7e (CONFIG, Stripe) → 7f → 7g, the checklist T1–T6 first in tests with negative controls; natives and templates via the
-release-template skill (load it first); prebuild, ASK, ONE Mac build.
+**NEXT — 7d templates + 7e natives (load skill release-template; Roma's «да» to these releases is 286):**
+1. NATIVE template (`npm run template -- clone native --install` exists at data/workshop/fractera-native-item-starter, v0.1.78):
+   `lib/node-key.ts` → nodeKeyOk accepts the node key OR an element key verified with DATA_SECRET (inline elementOf, same label
+   `fractera-element-key:v1:` and test vector as lib/element-key.cjs) + `nodeCaller(given)` → {node}|{element}; release v0.1.79, pin.
+2. STRIPE (workshop clone data/workshop/fractera-stripe-starter — cloned DETACHED at v1.3.45; `git checkout main` first): copy the new
+   native lib/node-key.ts; its 4 doors (stripe-checkout, -payments, -products, -status) use nodeKeyOk; scope checkout (element from the
+   key, never the body) and payments (?element forced); commit, tag v1.3.46, push (node token data/node/github/.env), pin `version` in
+   WEB4-ITEMS-REGISTRY/web4-items.json (one-file commit).
+3. CONFIG (workshop clone data/workshop/fractera-config-starter — DETACHED at v1.2.52; checkout main): `lib/config-store/architect-auth.mjs`
+   keyOk (x-settings-key vs SETTINGS_SECRET) stays NODE-ONLY for writes (catalog PUT, settings writes); add readerOf (node or element key
+   via DATA_SECRET) for reads: `lib/config-store/mcp-tools.mjs:43` (MCP get/version/subscribe), `lib/config-store/settings-door.ts:16`
+   (GET); `lib/config-store/subscribers.mjs:60` signals with the node key → sign each subscriber with ITS key (record the subscriber's
+   caller at subscribe; element → elementKeyOf(id, DATA_SECRET), node → node key) — CRITICAL: today CONFIG hands the node key to every
+   subscribed custom element. Tag v1.2.53, push, pin.
+4. CUSTOM template (data/workshop/fractera-custom-item-starter v0.3.219) and ROOT (repo Fractera/fractera-root-starter v3.0.69; check
+   root's passport elementType — if custom, `npm run template -- rollout custom <v> <paths>` brings the files into root with its own
+   tag/push/pin): `lib/node-key.ts` → own key (SETTINGS_SECRET = the core/natives) OR a pair key (pairCallerOf with the own key) +
+   `nodeCaller`; `app/api/a2a/route.ts` + `app/api/a2a/tasks/[id]/route.ts` (local keyOk → lib/node-key.ts); `scripts/a2a.mjs` (calls
+   neighbours with KEY → get the pair key `GET <core>/api/node/pair-key?to=<id>` with its own key); new `lib/neighbour.ts`
+   (neighbourFetch(id, path, init): pair key from the core, cached; http://127.0.0.1:<port>); `scripts/door-add.mjs` recipe text; the
+   instruction: core `lib/instructions/element/element-instruction.src.md:52` («… with the header X-Node-Key» → the neighbour helper) →
+   `npm run instruction:element` → template CLAUDE.md. Template test with the pair vector. Release, pin, rollout.
+5. 7f: prebuild (READ RC=0) → ASK Roma (memory ask-before-core-build) → ONE Mac core build → `services:install -- --only root` (the flip)
+   and config (new tag) → live L1–L6 (plan 818-7). 7g: redteam.sh gets the H6 attacks.
+- Laws met on the way: never read .env.local / WEB4-ITEMS; workshop clones are outside the core's git; explicit paths in commits
+  (APP-CONFIG/app-config.json is someone else's change — never stage it); no-commit-am.
 
 **AFTER H6, in order:** prebuild (read RC=0) → ask Roma → the Mac build (spawn-free serve rebuild) → proof on the Mac: curl the temporary
 address with `x-agent-identity: x` → /api/me must be 401 (was «x@agent») → the Fractera push window (`npm run ask-person -- … --copy
