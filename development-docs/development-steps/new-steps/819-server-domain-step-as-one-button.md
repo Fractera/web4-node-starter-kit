@@ -37,6 +37,9 @@ One card «Домен», no rungs:
 - 819-4 (the owner, Telegram 329, 22:48 UTC: «она восьмом шаге кнопка проверить протокол из интернета бледные а должна быть голубая так
   как на предыдущих шагах сказать даже точнее синие запомни измени потом»): step 8's «Проверить HTTPS из интернета» is the primary
   (blue) button like the earlier steps' — rides in 819's build.
+- 819-5 (the owner, Telegram 332, 22:48 UTC: «я проверил шаги из интернета но девятый шаг не открылся»): a name that came to point at the
+  server AFTER the certificates were issued (www at 22:43) got no certificate — `https://www.fractera.ai` answered «unrecognized name»;
+  only «Проверить и дополнить» issues it. Step 8's HTTPS check must issue the missing certificate itself before it checks.
 
 ## Not included
 
