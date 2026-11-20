@@ -28,7 +28,7 @@ const LOG = join(node, 'runner-calls.jsonl')
 // The stand-in runner: what a real one would answer, keyed by what it got.
 mkdirSync(join(node, 'scripts', 'dedicated-server'), { recursive: true })
 writeFileSync(join(node, 'scripts', 'dedicated-server', 'launch.mjs'), `
-import { appendFileSync } from 'node:fs'
+import { appendFileSync, existsSync, readFileSync } from 'node:fs'
 let text = ''
 for await (const c of process.stdin) text += c
 const input = JSON.parse(text || '{}')
@@ -38,7 +38,7 @@ const say = (o) => console.log('===LAUNCH=== ' + JSON.stringify(o))
 const deadline = new Date(Date.now() + 24 * 3600e3).toISOString()
 if (verb === 'connect' && input.password) say({ ok: true, fingerprint: 'SHA256:x', visit: { key: ${JSON.stringify(KEY)}, deadline }, state: {} })
 else if (verb === 'close') say(input.key === ${JSON.stringify(KEY)} ? { ok: true, closed: true } : { ok: false, reason: 'need-password' })
-else say(input.key === ${JSON.stringify(KEY)} ? { ok: true, state: { seen: true, domain: { domain: 'example.test', way: 'dns', detect: { zone: 'example.test' } }, records: [{ records: [{ host: 'example.test' }, { host: 'www.example.test' }] }], probe: { publicIp: '203.0.113.7' } } } : { ok: false, reason: 'need-password' })
+else say(input.key === ${JSON.stringify(KEY)} ? { ok: true, state: { seen: true, domain: { domain: 'example.test', way: existsSync(${JSON.stringify(join(node, 'way.txt'))}) ? readFileSync(${JSON.stringify(join(node, 'way.txt'))}, 'utf8') : 'dns', detect: { zone: 'example.test' } }, records: [{ records: [{ host: 'example.test' }, { host: 'www.example.test' }] }], probe: { publicIp: '203.0.113.7' } } } : { ok: false, reason: 'need-password' })
 `)
 const calls = () => readFileSync(LOG, 'utf8').trim().split('\n').map((l) => JSON.parse(l))
 // The stand-in window (`scripts/server.mjs window --key-stdin`): its marker line, then alive until its close file appears.
@@ -150,6 +150,8 @@ await t('a new password while a visit lives: the runner gets the old key too, to
 console.log('760-8 the node writes the server\'s records with its Cloudflare key')
 await t('after «Вписать записи» the answer carries the plan read AGAIN and what was written (✗ 2026-11-16: the card kept the old plan and the owner pressed twice); negative: the plan before the write is not empty', async () => {
   writeFileSync(join(node, '.env.local'), 'CLOUDFLARE_API_TOKEN=cf-test-token-760\n')
+  // 818 (Telegram 321/324, five presses): the server keeps the way «none» — the write must turn it into «dns», or step 3.3 never closes
+  writeFileSync(join(node, 'way.txt'), 'none')
   // a fake Cloudflare: one zone, the apex on another hosting and a CNAME on www — as fractera.ai on Vercel
   let records = [
     { id: 'r-apex', type: 'A', name: 'example.test', content: '76.76.21.21', proxied: true },
@@ -178,8 +180,10 @@ await t('after «Вписать записи» the answer carries the plan read 
     const visit = pair(await post({ action: 'connect', password: PASSWORD }))
     const before = await (await post({ action: 'records-plan' }, { cookie: visit })).json()
     assert.deepEqual([before.cf.visible, before.cf.plan.remove.map((r) => r.id).sort()], [true, ['r-apex', 'r-www']], JSON.stringify(before))
+    const n0 = calls().length
     const res = await post({ action: 'records-write', remove: before.cf.plan.remove.map((r) => r.id) }, { cookie: visit })
     const body = await res.json()
+    assert.deepEqual(calls().slice(n0).filter((c) => c.argv[0] === 'way').map((c) => c.argv[c.argv.indexOf('--way') + 1]), ['dns'], 'the way «none» became «dns»')
     assert.equal(res.status, 200, JSON.stringify(body))
     assert.deepEqual([body.cf.plan.add.length, body.cf.plan.change.length, body.cf.plan.remove.length], [0, 0, 0], 'the answer carries the plan as it is NOW: nothing left to write')
     assert.deepEqual([body.cf.written.remove, body.cf.written.add + body.cf.written.change > 0], [2, true], JSON.stringify(body.cf.written))
@@ -189,6 +193,7 @@ await t('after «Вписать записи» the answer carries the plan read 
   } finally {
     globalThis.fetch = realFetch
     rmSync(join(node, '.env.local'), { force: true })
+    rmSync(join(node, 'way.txt'), { force: true })
   }
 })
 

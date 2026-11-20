@@ -231,7 +231,9 @@ export async function POST(req: NextRequest) {
       const w = await writePlan({ token, zoneId: read.zoneId, base: zone, ip, plan: read.plan })
       if (!w.ok) return json({ ok: false, reason: "cloudflare-write", results: w.results, cf }, 502)
     }
-    if (!now.state?.domain?.way) await run("way", [...at, "--way", "dns"], { key: visit?.key ?? null })
+    // ✗ 2026-11-20 22:44 (the owner, Telegram 321/324, five presses): a domain whose way was «none» (no access) kept it — the press wrote
+    // the records and the way stayed «none», so step 3.3 never closed. The node writing the records IS the way «dns».
+    if (now.state?.domain?.way !== "dns") await run("way", [...at, "--way", "dns"], { key: visit?.key ?? null })
     // ✗ 2026-11-16 (the owner pressed «Вписать записи» twice: the records were written, the card still showed the old plan): the answer
     // carries the plan read AGAIN after the write and what was written, so the card shows the zone as it is now.
     const after = await readPlan({ token, dnsZone, base: zone, hosts, ip })
