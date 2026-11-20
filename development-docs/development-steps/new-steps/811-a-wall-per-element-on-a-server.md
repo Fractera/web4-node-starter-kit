@@ -197,3 +197,13 @@ the source, sync. Only custom (walled) elements change; natives and home compute
   installer's `add`; then «Старт» stopped (services-install failed on root). Fixed f4ef6f83: `run|unit-start|agent` call open_way
   first; test 60 ✓. Waiting the owner's yes for «Установить с нуля» (the only road on the page now; the server holds nothing).
 - His Telegram 184: «процессор 10%» read ambiguous → «процессор занят на 10%» (46bb1871, needs the core build on the Mac).
+- 3rd live failure (fresh install from scratch 15:10, root at ~15:50): git as fe-root refused its folder («dubious ownership») — add's
+  `git config --global safe.directory` had run from the node's closed cwd and failed silently. Fixed 94b61392: every helper call names
+  its element's folder safe in git's command scope (GIT_CONFIG_COUNT; git-config SCOPES: protected configuration = system, global,
+  command — git-scm.com, read 2026-11-20) + add writes the gitconfig from the user's own home. root then BUILT as fe-root (first time).
+- 4th live failure (16:03): services-install's `resolveStart` cpSync of static/public into the standalone folder the element's build
+  made → EPERM (cpSync sets modes on files the node does not own). Fixed cff7b760: inside a walled element the copy runs as the element
+  (`copyTree` → the helper's run `cp -R`). Class of 2–4: «the node touches what now belongs to the element».
+- Continue ran the server's OLD installer (only helpers come from the Mac). Fixed 3c8877e4: launch.sh's do_source — an install that
+  never went live (no `phase: live` mark) and whose own side since the fork is only development-docs is reset to the fork's head on
+  every continue (tested with real git: renewed / own change kept / live never touched). His continue 16:09 took it: the core rebuilds.

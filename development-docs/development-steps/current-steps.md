@@ -283,11 +283,10 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 12:20 UTC, window ~45 %, Opus — context reset at the end of 808/809)
 
-**NOW:** 811-6 live — root passed the git threshold after 94b61392 and builds as fe-root (16:02, resumed by me in my Chrome tab
-2116210896). 812 proposed (Telegram 198, plan new-steps/812-a-wall-self-test-on-real-linux.md): the wall's self-test on real Linux —
-one script on GitHub ubuntu-24.04 and as the server's first stage, loud helper failures, my rule. Waits his «да». NEXT: root's
-result → the launch's later steps (bot, records, certificates, ready) with him → core build on the Mac (77cdf5de, 46bb1871 + the
-helper commits) → Fractera push window → 811-7 proofs → 812 on his yes. Telegram chat_id 90413601, ru, colour marks.
+**NOW:** 811-6 live — 4 wall failures fixed (c9392191, f4ef6f83, 94b61392, cff7b760) + continue renews a never-live install from the
+fork (3c8877e4); his «Продолжить» 16:09 → the server rebuilds its core on the new code, then root. Watching in my Chrome tab 2116210896.
+812 proposed (Telegram 198/201), waits his «да». NEXT: root's start (pm2 → element-shim → unit) → the ladder's later steps with him →
+core build on the Mac → Fractera push window → 811-7 proofs → 812. Telegram chat_id 90413601, ru, colour marks.
 
 Roma talks in TELEGRAM now: main bot = his existing @fractera_factory_e90e_bot (saved by him 2026-11-19 23:49; chat_id 90413601, ru).
 Done since 2026-11-19 evening (all committed, fork pushed up to cdac6592; Fractera push = his paste, not done):
