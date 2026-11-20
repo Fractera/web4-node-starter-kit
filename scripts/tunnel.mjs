@@ -234,6 +234,14 @@ async function tick() {
         deadSince = null
         patchState({ dead: false, deadSince: null, reason: null })
         log('туннель снова отвечает — приговор снят')
+        // ✗ 2026-11-20 18:09–18:17 (the owner, Telegram 268: «почему у меня исчезло пульт телеграмма а вместо этого появилось левое
+        // меню?»): a verdict fell between two core builds, the second build's end found no live address and set the default menu, and
+        // the revival here never put «Пульт» back. The address answers again — the button follows it, as at its birth (771-3).
+        try {
+          createRequire(import.meta.url)('../lib/node/tg-menu.cjs').refresh(root)
+            .then((r) => log(`кнопка меню бота: ${r.ok ? r.state : `не переставлена (${r.why ?? r.state})`}`))
+            .catch((e) => log(`кнопка меню бота не переставлена: ${e.message}`))
+        } catch (e) { log(`кнопка меню бота не переставлена: ${e.message}`) }
       } else if (failures > 0) {
         log(`туннель отвечает — счётчик неудач сброшен с ${failures}`)
       } else if (!everOk) {

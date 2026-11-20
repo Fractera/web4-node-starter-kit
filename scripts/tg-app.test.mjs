@@ -1,7 +1,7 @@
 // Node step 771: «Пульт узла» in Telegram — the page carries no data and no markup from the node; the main bot's menu button follows the
 // node's HTTPS address (own domain, else a live temporary address) and falls back to the command menu without one.
 import assert from 'node:assert/strict'
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
@@ -39,6 +39,14 @@ await t('816: the top line carries the node\'s name from CONFIG, the line below 
   assert.deepEqual(show({ name: null, place: 'server', web: null }), ['Пульт узла', 'VPS'])
   assert.deepEqual(show({ name: '', place: 'unknown', web: null }), ['Пульт узла', ''])
   assert.ok(ru.includes('id="where"') && ru.includes('data-block="tg-app-where"'))
+})
+
+await t('the tunnel\'s revival puts «Пульт» back (✗ 2026-11-20 18:17: the verdict was lifted, the default menu stayed — Telegram 268)', () => {
+  const src = readFileSync(join(ROOT, 'scripts', 'tunnel.mjs'), 'utf8')
+  const at = src.indexOf("log('туннель снова отвечает — приговор снят')")
+  assert.ok(at > 0, 'the revival line')
+  const next = src.indexOf('} else if (failures > 0)', at)
+  assert.ok(/tg-menu\.cjs'\)\.refresh\(root\)/.test(src.slice(at, next)), 'the revival refreshes the menu button')
 })
 
 put('data/services/build/channel/telegram/.env', 'TELEGRAM_BOT_TOKEN=123:TEST\n')
