@@ -289,6 +289,10 @@ fork aifa-agi = 7a902d5b (pushed with Roma's key, 293). NEXT = PART C: Roma on t
 нуля» (~40 min; his root password — a new visit), then a custom element born on the server, `bash scripts/dedicated-server/redteam.sh
 <id> root` as the node user, social engineering through ask-core, the table to Roma. OWED: root's 5 local commits published with his
 look, then v0.3.220 into root; the core CI run of 7a902d5b (queued at 21:26; ada53203's run had failed — read its cause).
+21:34 Roma pressed «Готово» (ask 3e986979): the server shows its «Обновляется» page = the clean install runs; I have no live visit
+(need-password), so a background watch waits architect.fractera.ai/api/health with a commit. Core CI 469adf40: ubuntu ✓, windows ✗
+— the log.sh UTF-8 fix (469adf40) made the checklist test pass there, but the process then ends SILENTLY with exit 1 right after it
+(no ✗ line, no summary; not reproducible on the Mac with Latin-1 + PYTHONIOENCODING=cp1252) — owed, the scripts are Ubuntu-only.
 The text below is the earlier letter (its 7f is done).
 
 **WHO WAITS:** Roma (owner) in TELEGRAM (chat_id 90413601, ru, colour marks). His words: Telegram 280 (19:30) «что можно сделать
