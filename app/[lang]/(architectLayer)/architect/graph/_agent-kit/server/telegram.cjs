@@ -336,6 +336,16 @@ function claudeSignedIn(service) {
   return new Promise((resolve) => setImmediate(() => resolve(claudeAuthState(ownClaudeDir(service)).loggedIn)))
 }
 
+// 814-3 (the owner, Telegram 212, 2026-11-20: «Первое сообщение … должно содержать наверное жирный шрифт: вы начнёте получать ответы сразу
+// же после подключения к активной подписке … сейчас там приходят и избыточное информация»): a status of two or more lines is sent with its
+// first line bold (Telegram's HTML mode, every part escaped); a one-line status (the node's own fallback, an older launch) stays plain text.
+const escHtml = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+function statusBody(text) {
+  const [first, ...rest] = String(text).split('\n')
+  if (!rest.length) return { text }
+  return { text: `<b>${escHtml(first)}</b>\n${escHtml(rest.join('\n'))}`, parse_mode: 'HTML' }
+}
+
 /** Состояние словами: подписка не подключена → сначала она; иначе — активен ли терминал. */
 async function statusMessage(service) {
   const m = { ...FALLBACK, ...readJson(messagesFile(service), {}) }
@@ -477,7 +487,7 @@ async function idleTick(service) {
     answered.add(msg.chat.id)
     // 639: «подписка не подключена» ждёт действия человека — остаётся; состояние терминала — исчезает
     const status = await statusMessage(service)
-    await (status.trouble ? sendKept : sendVanishing)(token, { chat_id: msg.chat.id, text: status.text, disable_web_page_preview: true })
+    await (status.trouble ? sendKept : sendVanishing)(token, { chat_id: msg.chat.id, ...statusBody(status.text), disable_web_page_preview: true })
   }
 }
 

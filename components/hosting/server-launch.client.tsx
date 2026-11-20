@@ -14,7 +14,8 @@ import { LaunchDomain } from "@/components/hosting/server-launch-domain.client"
 import { RepoStep } from "@/components/hosting/server-launch-repo.client"
 import { TelegramActivation, TelegramStep } from "@/components/hosting/server-launch-telegram.client"
 import { telegramWarn } from "@/lib/hosting/server-telegram.mjs"
-import { CertsLaunchStep, type ClaimShown, InstallStep, ReadyStep, RecheckStep } from "@/components/hosting/server-launch-end.client"
+import { CertsLaunchStep, InstallStep, ReadyStep, RecheckStep } from "@/components/hosting/server-launch-end.client"
+import type { ClaimShown } from "@/components/hosting/server-launch-claim.client"
 import { LAUNCH_ORDER, launchDone, launchSummary, untilText } from "@/components/hosting/server-launch-rungs"
 import type { LaunchStep, ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
 import type { Detect } from "@/components/hosting/server-ladder.client"
@@ -234,7 +235,7 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
     telegram: <TelegramStep busy={busy} lang={lang} onAct={act} state={state} words={words} />,
     recheck: <RecheckStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,
     certs: <CertsLaunchStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,
-    ready: <><ReadyStep busy={busy} claim={claim?.host === target.host ? claim : { sent: null, claimed: null }} onAct={act} onClaim={(c) => setClaim({ ...c, host: target.host })} state={state} words={words} /><TelegramActivation busy={busy} lang={lang} onAct={act} state={state} words={words} /></>,
+    ready: <><TelegramActivation busy={busy} lang={lang} onAct={act} state={state} words={words} /><ReadyStep busy={busy} claim={claim?.host === target.host ? claim : { sent: null, claimed: null }} onAct={act} onClaim={(c) => setClaim({ ...c, host: target.host })} state={state} words={words} /></>,
   }
   return (
     <section className="my-6 flex flex-col gap-3" data-block="server-launch" data-host={target.host}>

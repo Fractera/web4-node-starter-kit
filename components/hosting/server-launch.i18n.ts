@@ -86,7 +86,7 @@ export type ServerLaunchWords = {
   certs: { budget: string; limit: string; checklist: string; name: string; dns: string; cert: string; https: string; httpsButton: string; off: string; afterOn: string; notDue: string }
   /** 744-6: `done` · `links` · `site` · `panel` · `signin` · `next` and the claim words are drawn only under a passed final check
    *  (`ReadyWords`, `check:ready-words`); `missing` names what the check still lacks — `{host}` */
-  ready: { text: string; activate: string; activating: string; signinOk: string; signinFail: string; signinButton: string; signinChecking: string; signinHint: string; signinHintLabel: string; links: string; site: string; panel: string; signin: string; next: string; first: string; done: string; claimLead: string; claimSteps: string[]; claimEmail: string; claimGo: string; claimSending: string; claimSent: string; claimOpen: string; claimFailed: string; claimLoss: string; claimed: string; missing: { title: string; cert: string; https: string; signin: string } }
+  ready: { text: string; activate: string; activating: string; signinOk: string; signinFail: string; signinButton: string; signinChecking: string; signinHint: string; signinHintLabel: string; links: string; site: string; panel: string; signin: string; next: string; first: string; done: string; claimLead: string; claimSteps: string[]; claimEmail: string; claimRetry: string; claimSending: string; claimSent: string; claimOpen: string; claimFailed: string; claimLoss: string; claimed: string; missing: { title: string; cert: string; https: string; signin: string } }
   dangerZone: string
   busy: { title: string; text: string; clear: string; clearTitle: string; risks: string[]; agree: string; clearConfirm: string; notNow: string; clearing: string; cleared: string; failed: string; nodeTitle: string; nodeText: string; nodeClear: string; nodeRisk: string; freshTitle: string; freshText: string; freshClear: string; freshRisk: string; freshAgree: string; freshDisk: string; copiesNone: string; erasedDone: string }
 }
@@ -235,9 +235,9 @@ const en: ServerLaunchWords = {
     installing: "The installation goes on meanwhile: {stage}.",
     waitNode: "The installation is done; waiting for the server's node to answer.",
     lines: {
-      active: "Server {site} ({link}) · this message was sent by the server's node. The agent's terminal is on — write, Claude Code answers.",
-      inactive: "Server {site} ({link}) · this message was sent by the server's node. The agent is off, Claude Code will not answer. Start it: {terminal}",
-      noSubscription: "Server {site} ({link}) · this message was sent by the server's node. Claude Code on this server is not signed in to a subscription. Sign in: {subscription}",
+      active: "The server's agent is on — write, Claude Code answers.\nServer {site}: {link}",
+      inactive: "The server's agent is off — answers come once it is started.\nThe architect starts it after signing in: {terminal}",
+      noSubscription: "You will get answers as soon as an active Claude Code subscription is connected.\nConnecting it is open after signing in as the architect: {subscription}",
       noPanel: "the server's panel, opened from the launch page",
     },
     agentOn: "The server's agent is signed in to Claude Code and can answer; the greeting comes to Telegram by itself.",
@@ -270,8 +270,8 @@ const en: ServerLaunchWords = {
     next: "Next, in the server's own panel: its Claude Code subscription and its Telegram bot.", first: "The first registration on the server becomes its architect for good — and only with the e-mail you give on this step.", done: "Your server is ready.",
     missing: { title: "Not ready yet — the final check still misses:", cert: "{host}: no valid certificate", https: "{host}: HTTPS does not answer from the internet", signin: "sign-in does not lead to https://{host} yet" },
     claimLead: "To get the right to create the architect's account on the new server, we need your e-mail. Attention: only the person with exactly the same e-mail gets the right to become the first superuser, who can create other superusers.",
-    claimSteps: ["Type your e-mail address. Write it down and keep it.", "Press «Go to the server», and when «Open the registration on the server» appears, press it. You land on the sign-in tab.", "Register with the very same e-mail address and make up a password. Write the password down and keep it."],
-    claimEmail: "The architect's e-mail", claimGo: "Go to the server", claimSending: "Passing your e-mail to the server, this takes up to 15 seconds…", claimSent: "The server waits for the architect's registration with {email}.", claimOpen: "Open the registration on the server", claimFailed: "The server did not take the e-mail: {reason}. Try again.",
+    claimSteps: ["Type your e-mail address. Write it down and keep it.", "The node passes the address to the server by itself — wait for «The server waits for the architect's registration…» under the field.", "Press «Open the registration on the server» and register with the very same e-mail address; make up a password. Write the password down and keep it."],
+    claimEmail: "The architect's e-mail", claimRetry: "Pass it again", claimSending: "Passing your e-mail to the server, this takes up to 15 seconds…", claimSent: "The server waits for the architect's registration with {email}.", claimOpen: "Open the registration on the server", claimFailed: "The server did not take the e-mail: {reason}. Try again.",
     claimLoss: "Attention: if you lose the e-mail address and the password before you create another superuser, you cannot restore access to the server. You would have to install the server again, and all its data would be lost for good.", claimed: "The architect is already registered on this server.",
   },
   dangerZone: "Danger zone",
@@ -436,9 +436,9 @@ const ru: ServerLaunchWords = {
     installing: "Установка тем временем идёт: {stage}.",
     waitNode: "Установка закончилась; ждём, когда ответит узел сервера.",
     lines: {
-      active: "Сервер {site} ({link}) · это сообщение прислал узел сервера. Терминал агента включён — пишите, Claude Code ответит.",
-      inactive: "Сервер {site} ({link}) · это сообщение прислал узел сервера. Агент выключен, Claude Code не ответит. Включить: {terminal}",
-      noSubscription: "Сервер {site} ({link}) · это сообщение прислал узел сервера. Claude Code на этом сервере не вошёл в подписку. Войти: {subscription}",
+      active: "Агент сервера на связи — пишите, Claude Code ответит.\nСервер {site}: {link}",
+      inactive: "Агент сервера сейчас выключен — ответы появятся, когда его включат.\nВключить его может архитектор после входа: {terminal}",
+      noSubscription: "Вы начнёте получать ответы сразу после подключения активной подписки Claude Code.\nПодключение доступно после входа с ролью архитектора: {subscription}",
       noPanel: "пульт сервера на странице запуска",
     },
     agentOn: "Агент сервера вошёл в Claude Code и может отвечать; приветствие придёт в Telegram само.",
@@ -471,8 +471,8 @@ const ru: ServerLaunchWords = {
     next: "Дальше — в панели самого сервера: подписка Claude Code и Telegram-бот сервера.", first: "Первая регистрация на сервере навсегда становится его архитектором — и только с тем e-mail, который вы укажете на этом шаге.", done: "Ваш сервер готов.",
     missing: { title: "Пока не готов — финальной проверке не хватает:", cert: "{host}: нет действующего сертификата", https: "{host}: HTTPS не отвечает из интернета", signin: "вход пока не ведёт на https://{host}" },
     claimLead: "Чтобы вы получили право создать учётную запись архитектора на новом сервере, нам понадобится ваш e-mail. Внимание: только пользователь с точно таким же e-mail получит право стать первым суперпользователем, который может создавать других суперпользователей.",
-    claimSteps: ["Введите электронный адрес. Запишите и сохраните его.", "Нажмите кнопку «Перейти на сервер», а когда появится «Открыть регистрацию на сервере», нажмите её. Вы попадёте на вкладку авторизации.", "Зарегистрируйтесь с тем же самым электронным адресом, придумайте пароль. Запишите и сохраните пароль."],
-    claimEmail: "E-mail архитектора", claimGo: "Перейти на сервер", claimSending: "Передаю ваш e-mail серверу, это займёт до 15 секунд…", claimSent: "Сервер ждёт регистрации архитектора с адресом {email}.", claimOpen: "Открыть регистрацию на сервере", claimFailed: "Сервер не принял e-mail: {reason}. Попробуйте ещё раз.",
+    claimSteps: ["Введите электронный адрес. Запишите и сохраните его.", "Узел сам передаст адрес серверу — дождитесь под полем строки «Сервер ждёт регистрации архитектора…».", "Нажмите «Открыть регистрацию на сервере» и зарегистрируйтесь с тем же самым адресом, придумайте пароль. Запишите и сохраните пароль."],
+    claimEmail: "E-mail архитектора", claimRetry: "Передать ещё раз", claimSending: "Передаю ваш e-mail серверу, это займёт до 15 секунд…", claimSent: "Сервер ждёт регистрации архитектора с адресом {email}.", claimOpen: "Открыть регистрацию на сервере", claimFailed: "Сервер не принял e-mail: {reason}. Попробуйте ещё раз.",
     claimLoss: "Внимание: если вы потеряете электронный адрес и пароль прежде, чем создадите нового суперпользователя, вы не сможете восстановить доступ к серверу. Вам придётся заново установить сервер, все данные будут потеряны безвозвратно.", claimed: "Архитектор на этом сервере уже зарегистрирован.",
   },
   dangerZone: "Опасная зона",

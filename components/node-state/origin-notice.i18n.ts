@@ -32,6 +32,8 @@ export type OriginNoticeWords = {
   preflightOk: string
   /** `{files}` — the files where the merge would stop. */
   preflightStop: string
+  /** 814-5: the check refused for a reason that is no file (an element deploying, the network) — the reason itself, never an empty list */
+  preflightRefused: string
   preflightUnknown: string
   stages: Record<string, string>
 }
@@ -60,6 +62,7 @@ const DICT: Record<"en" | "ru", OriginNoticeWords> = {
     preflightChecking: "Checking whether the update will pass…",
     preflightOk: "A trial merge passed: the update will go through.",
     preflightStop: "A trial merge stops on files changed both here and in Fractera: {files}. The update would be refused; the node is untouched.",
+    preflightRefused: "The update check is put off: {reason}. The node is untouched.",
     preflightUnknown: "Could not check in advance whether the update will pass.",
     stages: { check: "check", fetch: "taking the fork", preflight: "trial merge", backup: "backup", local: "local changes", merge: "merge", registry: "registry", deps: "dependencies", guards: "build guards", elements: "elements", core: "core build", skills: "skills base" },
   },
@@ -86,6 +89,7 @@ const DICT: Record<"en" | "ru", OriginNoticeWords> = {
     preflightChecking: "Проверяю, пройдёт ли обновление…",
     preflightOk: "Пробное слияние прошло: обновление пройдёт.",
     preflightStop: "Пробное слияние останавливается на файлах, изменённых и здесь, и в Fractera: {files}. Обновление было бы отклонено; узел не тронут.",
+    preflightRefused: "Проверка обновления отложена: {reason}. Узел не тронут.",
     preflightUnknown: "Заранее проверить, пройдёт ли обновление, не удалось.",
     stages: { check: "проверка", fetch: "забираю форк", preflight: "пробное слияние", backup: "копия несохранённого", local: "разбор несохранённого", merge: "слияние", registry: "реестр", deps: "зависимости", guards: "сторожа сборки", elements: "элементы", core: "сборка ядра", skills: "база навыков" },
   },

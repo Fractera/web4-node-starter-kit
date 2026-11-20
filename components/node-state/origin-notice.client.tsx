@@ -38,7 +38,7 @@ const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 type Update = { state: string; stage?: string; summary?: string; reason?: string; changes?: number; finishedAt?: string }
 type Body = { fork: boolean; behindBy: number; nodeBehind: number; repo: string | null; update: Update | null; checkedAt?: string | null }
 // 743-4: the trial merge of the update — asked once, when the node is behind its synced fork, before anyone presses.
-type Preflight = { ok: boolean; conflicts?: string[] } | "checking" | "unknown" | null
+type Preflight = { ok: boolean; conflicts?: string[]; reason?: string } | "checking" | "unknown" | null
 
 const fill = (s: string, v: Record<string, string | number>) => s.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ""))
 
@@ -66,7 +66,7 @@ export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: 
     setPreflight("checking")
     fetch(`${BASE}/api/node/update`, { method: "POST", cache: "no-store", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "preflight" }) })
       .then((r) => r.json())
-      .then((b: { ok?: boolean; preflight?: { ok: boolean; conflicts?: string[] } }) => setPreflight(b?.ok && b.preflight ? b.preflight : "unknown"))
+      .then((b: { ok?: boolean; preflight?: { ok: boolean; conflicts?: string[]; reason?: string } }) => setPreflight(b?.ok && b.preflight ? b.preflight : "unknown"))
       .catch(() => setPreflight("unknown"))
   }, [askPreflight, preflight])
 
@@ -115,7 +115,7 @@ export function OriginNotice({ words, lang }: { words: OriginNoticeWords; lang: 
         {text}
         {askPreflight && preflight !== null ? (
           <span className={typeof preflight === "object" && !preflight.ok ? "block text-destructive" : "block text-muted-foreground"} data-node-update-preflight={typeof preflight === "object" ? (preflight.ok ? "ok" : "stop") : preflight}>
-            {preflight === "checking" ? words.preflightChecking : preflight === "unknown" ? words.preflightUnknown : preflight.ok ? words.preflightOk : fill(words.preflightStop, { files: (preflight.conflicts ?? []).join(", ") })}
+            {preflight === "checking" ? words.preflightChecking : preflight === "unknown" ? words.preflightUnknown : preflight.ok ? words.preflightOk : (preflight.conflicts?.length ? fill(words.preflightStop, { files: preflight.conflicts.join(", ") }) : fill(words.preflightRefused, { reason: preflight.reason ?? words.preflightUnknown }))}
           </span>
         ) : null}
         {onTemporary ? <span className="block text-muted-foreground">{words.checkHere}</span> : refused ? <span className="block text-destructive">{fill(words.checkRefused, { reason: refused })}</span> : null}

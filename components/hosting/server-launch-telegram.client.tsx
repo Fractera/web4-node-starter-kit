@@ -131,7 +131,8 @@ export function TelegramActivation({ lang, state, words, busy, onAct }: { lang: 
     if (a?.ok && a.link) setLink(a.link)
   }
   return (
-    <div className="mt-4 flex flex-col gap-2 border-t pt-4" data-block="server-launch-telegram-activation">
+    // 814-1 (the owner, Telegram 212): the bot first, then the architect — one road down the step
+    <div className="mb-4 flex flex-col gap-2 border-b pb-4" data-block="server-launch-telegram-activation">
       <p className="font-medium text-foreground text-sm">{fill(w.activationTitle, { bot })}</p>
       <Small className="text-muted-foreground">{fill(w.admitted, { n: String(t.allowed) })}</Small>
       {link ? (

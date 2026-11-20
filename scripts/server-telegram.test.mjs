@@ -13,26 +13,39 @@ const t = (name, fn) => { try { fn(); passed += 1; console.log(`  ✓ ${name}`) 
 const req = createRequire(import.meta.url)
 const src = req('node:fs').readFileSync(new URL('../components/hosting/server-launch.i18n.ts', import.meta.url), 'utf8')
 const lineSets = [...src.matchAll(/lines: \{\n\s+active: "([^"]+)",\n\s+inactive: "([^"]+)",\n\s+noSubscription: "([^"]+)",\n\s+noPanel: "([^"]+)",/g)]
-  .map((m) => ({ active: m[1], inactive: m[2], noSubscription: m[3], noPanel: m[4] }))
+  // the source's «\n» escapes read as the string they are (the page sends real line breaks)
+  .map((m) => Object.fromEntries(['active', 'inactive', 'noSubscription', 'noPanel'].map((k, i) => [k, m[i + 1].replace(/\\n/g, '\n')])))
 
 console.log('761 the server bot names its site')
-t('T1 both languages carry the bot\'s three lines; each line names the site with its https link and never «this computer»', () => {
+// 814-3 (the owner, Telegram 212, 2026-11-20): the bot's status is only the essence — its first line (sent bold) says what the person
+// gets and when, the second the one page where the architect acts; the bot's own name already carries the site (761-14's «site in
+// every line» retired by this word).
+t('T1 both languages: two lines each — the essence first, then the page where the architect acts; never «this computer», no placeholder', () => {
   assert.equal(lineSets.length, 2, 'en and ru')
   for (const [i, lang] of [[0, 'en'], [1, 'ru']]) {
     const l = botLines(lineSets[i], { zone: 'fractera.ai', ip: '109.199.105.213', lang })
     for (const k of ['active', 'inactive', 'noSubscription']) {
-      assert.ok(l[k].includes('fractera.ai (https://fractera.ai)'), `${lang} ${k}: ${l[k]}`)
-      assert.ok(!/this computer|этом компьютере/i.test(l[k]), `${lang} ${k} says «this computer»`)
+      assert.equal(l[k].split('\n').length, 2, `${lang} ${k}: two lines`)
+      assert.ok(!/this computer|этом компьютере|this message was sent|это сообщение прислал/i.test(l[k]), `${lang} ${k}: ${l[k]}`)
+      assert.ok(!l[k].includes('{'), `${lang} ${k}: a placeholder left`)
     }
-    assert.ok(l.noSubscription.includes(`https://architect.fractera.ai/${lang}/build/subscription`), l.noSubscription)
-    assert.ok(l.inactive.includes(`https://architect.fractera.ai/${lang}/build/terminal`), l.inactive)
+    assert.ok(l.noSubscription.split('\n')[1].endsWith(`https://architect.fractera.ai/${lang}/build/subscription`), l.noSubscription)
+    assert.ok(l.inactive.split('\n')[1].endsWith(`https://architect.fractera.ai/${lang}/build/terminal`), l.inactive)
   }
+  assert.match(botLines(lineSets[1], { zone: 'fractera.ai', lang: 'ru' }).noSubscription, /^Вы начнёте получать ответы сразу после подключения активной подписки Claude Code\./)
 })
-t('T1 negative: a server without a domain names its IP and the panel place, never an empty link', () => {
+t('T1 negative: a server without a domain names the panel place, never an empty link', () => {
   const l = botLines(lineSets[1], { ip: '109.199.105.213', lang: 'ru' })
-  assert.ok(l.noSubscription.includes('109.199.105.213 (http://109.199.105.213)'), l.noSubscription)
   assert.ok(l.noSubscription.endsWith(lineSets[1].noPanel), l.noSubscription)
   assert.ok(!l.noSubscription.includes('{'), 'a placeholder left')
+})
+t('814-3: the bot sends a two-line status with its first line bold (HTML, escaped); a one-line status stays plain text', () => {
+  const kit = req('node:fs').readFileSync(new URL('../app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/server/telegram.cjs', import.meta.url), 'utf8')
+  const body = kit.slice(kit.indexOf('const escHtml'), kit.indexOf('/** Состояние словами'))
+  const statusBody = new Function(`${body}; return statusBody`)()
+  assert.deepEqual(statusBody('a <b> & c\nlink https://x.org/?a=1&b=2'), { text: '<b>a &lt;b&gt; &amp; c</b>\nlink https://x.org/?a=1&amp;b=2', parse_mode: 'HTML' })
+  assert.deepEqual(statusBody('This message was sent by your node.'), { text: 'This message was sent by your node.' }, 'negative: one line — no HTML mode')
+  assert.match(kit, /\.\.\.statusBody\(status\.text\), disable_web_page_preview: true/)
 })
 t('the lines the runner accepts: three strings ≤ 1000 and a language; anything else is refused', () => {
   const ok = botLines(lineSets[0], { zone: 'x.org', lang: 'en' })

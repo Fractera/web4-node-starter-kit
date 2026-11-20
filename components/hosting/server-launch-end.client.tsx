@@ -11,6 +11,7 @@ import { installedOf } from "@/components/hosting/server-launch-rungs"
 import { finalCheck, httpsWaits } from "@/lib/hosting/final-check.mjs"
 import type { ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
 import { ServerInstallLive } from "@/components/hosting/server-install-live.client"
+import { Claim, type ClaimShown } from "@/components/hosting/server-launch-claim.client"
 import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
@@ -199,51 +200,5 @@ function ReadyWords({ state, words, busy, onAct, claim, onClaim }: ReadyProps) {
         </>
       ) : <Claim busy={busy} onAct={onAct} onShown={onClaim} shown={claim} words={words} zone={zone} />}
     </>
-  )
-}
-
-/** 796 (the owner, Telegram 686 — his text): the architect of a fresh server is the e-mail given here; the server's sign-in element keeps
- *  its hash and lets only that e-mail register first. The e-mail lives in this island's memory only (744-7: kept above the ladder). */
-export type ClaimShown = { sent: string | null; claimed: boolean | null }
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-function Claim({ zone, words, busy, onAct, shown, onShown }: { zone: string; words: ServerLaunchWords; busy: boolean; onAct: Act; shown: ClaimShown; onShown: (c: ClaimShown) => void }) {
-  const w = words.ready
-  const [email, setEmail] = useState(shown.sent ?? "")
-  const [sending, setSending] = useState(false)
-  const [failed, setFailed] = useState<string | null>(null)
-  const register = `https://auth.${zone}/register`
-  const ok = EMAIL.test(email.trim())
-  // ✗ 2026-11-18 22:5x (the owner): a tab opened at the press stood on about:blank ~10 s while the e-mail travelled to the server over
-  // SSH — «никто не будет ждать 10 секунд». Now the page itself waits with words, and the server's yes gives a real link: no blank tab.
-  async function go() {
-    setSending(true); setFailed(null)
-    const a = (await onAct("claim", { email: email.trim().toLowerCase() })) as { reason?: string; answer?: { ok?: boolean; reason?: string } } | undefined
-    setSending(false)
-    if (a?.answer?.ok) { onShown({ sent: email.trim().toLowerCase(), claimed: false }); return }
-    if (a?.answer?.reason === "claimed") { onShown({ sent: null, claimed: true }); return }
-    setFailed(a?.answer?.reason ?? a?.reason ?? "network")
-  }
-  return (
-    <div className="flex flex-col gap-3 rounded-md bg-muted/40 p-3" data-block="server-launch-claim">
-      <Small className="text-foreground">{w.claimLead}</Small>
-      <ol className="flex list-decimal flex-col gap-1 pl-5 text-foreground text-sm">{w.claimSteps.map((t) => <li key={t}>{t}</li>)}</ol>
-      <Field>
-        <FieldLabel htmlFor="launch-claim-email">{w.claimEmail}</FieldLabel>
-        <Input autoComplete="email" id="launch-claim-email" inputMode="email" onChange={(e) => setEmail(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && ok && !busy) void go() }} type="email" value={email} />
-      </Field>
-      <div className="flex flex-wrap items-center gap-2" data-block="server-launch-claim-go">
-        <Button disabled={busy || sending || !ok} onClick={() => void go()}>{sending ? <Spinner className="size-4" /> : null}{w.claimGo}</Button>
-        {sending ? <Small className="text-muted-foreground" role="status">{w.claimSending}</Small> : null}
-      </div>
-      {failed ? <Small className="text-destructive" data-block="server-launch-claim-failed" role="status">{fill(w.claimFailed, { reason: failed })}</Small> : null}
-      {shown.sent && !sending ? (
-        <div className="flex flex-col gap-2" data-block="server-launch-claim-sent">
-          <Small className="text-foreground">{fill(w.claimSent, { email: shown.sent })}</Small>
-          <div><a className={buttonVariants({})} href={register} rel="noopener noreferrer" target="_blank">{w.claimOpen}<ExternalLink aria-hidden data-icon /></a></div>
-        </div>
-      ) : null}
-      <Small className="rounded-md border border-warning/50 bg-warning/10 px-3 py-2 font-medium text-foreground" role="note">! {w.claimLoss}</Small>
-    </div>
   )
 }
