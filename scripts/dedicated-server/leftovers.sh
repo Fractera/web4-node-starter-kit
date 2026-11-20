@@ -30,6 +30,9 @@ fi
 # itself purged with its data, the foreign servers and databases purged with theirs, every pm2 that is not the node user's killed.
 # 🔒 THE NODE'S OWN STAY: the packages of prepare.sh (git curl ca-certificates rsync nginx ufw build-essential python3 python3-venv openssl
 # psmisc acl), nodejs, certbot, /var/www/fractera-* and everything named NEVER TOUCHED above.
+# the node user as the installer wrote it (prepare.sh → /etc/fractera/node.env) — its pm2 and its sockets are the node's, never foreign
+NODE_USER="$(sed -n 's/^NODE_USER=\([a-z_][a-z0-9_-]*\)$/\1/p' "$R/etc/fractera/node.env" 2>/dev/null | head -1)"
+NODE_USER="${NODE_USER:-fractera}"
 FOREIGN_PKGS=()
 PM2_KILLED=()
 LIVE=1; [ "${LEFT_TEST:-0}" = 1 ] && LIVE=0   # the test erases files under LEFT_ROOT only: no docker, no apt, no signals
@@ -41,9 +44,13 @@ fi
 # every pm2 that is not the node user's (root's own, an old project's user): its daemon killed, its folder erased
 for home in "$R/root" "$R"/home/*; do
   [ -d "$home/.pm2" ] || continue
-  [ "$(basename "$home")" = "${NODE_USER:-fractera}" ] && continue
+  [ "$(basename "$home")" = "$NODE_USER" ] && continue
   u="$(basename "$home")"
-  [ "$LIVE" = 1 ] && { pkill -u "$u" -f 'PM2 v' >/dev/null 2>&1; pkill -u "$u" -f 'pm2' >/dev/null 2>&1; }
+  if [ "$LIVE" = 1 ]; then
+    # `pm2 kill` against THAT daemon's folder stops its apps and the daemon (a bare pkill of the daemon may leave the apps running)
+    command -v pm2 >/dev/null 2>&1 && PM2_HOME="$home/.pm2" timeout 30 pm2 kill >/dev/null 2>&1
+    pkill -u "$u" -f 'PM2 v' >/dev/null 2>&1
+  fi
   erase "$home/.pm2"; PM2_KILLED+=("$u")
 done
 # the foreign servers and databases, with their packages
@@ -61,8 +68,17 @@ for p in /var/lib/docker /var/lib/containerd /etc/docker /var/lib/postgresql /et
 for p in "$R"/var/www/*; do [ -e "$p" ] || continue; case "$(basename "$p")" in fractera-*) ;; *) erase "$p" ;; esac; done
 # What still listens and is not the node's: named, never silent (the owner: «ты третий раз говоришь мне что-то остается»).
 FOREIGN_LISTEN=""
-[ "$LIVE" = 1 ] && FOREIGN_LISTEN="$(ss -ltnpH 2>/dev/null | awk '{print $4, $6}' | grep -vE 'users:\(\("(nginx|sshd|systemd-resolve|node|next-server|cloudflared|PM2)' \
-  | grep -vE '^(127\.0\.0\.(53|54)|\[::1\]):|%lo:53 ' | sed -E 's/users:\(\("([^"]+)".*/\1/' | sort -u | tr '\n' ';')"
+if [ "$LIVE" = 1 ]; then
+  # By OWNER, not by name (a foreign app is also called «node»): the node user's and the element users' sockets are ours; of root's and
+  # the system's only nginx, sshd, the resolver and cloudflared. Everything else that listens is named.
+  FOREIGN_LISTEN="$(ss -ltnpH 2>/dev/null | while read -r _ _ _ addr _ procs; do
+      pid="$(printf '%s' "$procs" | sed -nE 's/.*pid=([0-9]+).*/\1/p' | head -1)"; [ -n "$pid" ] || continue
+      u="$(ps -o user= -p "$pid" 2>/dev/null | tr -d ' ')"; c="$(ps -o comm= -p "$pid" 2>/dev/null)"
+      case "$u" in "$NODE_USER"|fe-*) continue ;; esac
+      case "$c" in nginx|sshd|systemd-resolve|systemd-resolved|cloudflared) continue ;; esac
+      printf '%s %s (%s)\n' "$addr" "$c" "$u"
+    done | sort -u | tr '\n' ';')"
+fi
 AFTER="$(free_kb)"
 python3 - "$DOCKER" "${BEFORE:-0}" "${AFTER:-0}" "$(IFS=,; echo "${FOREIGN_PKGS[*]+"${FOREIGN_PKGS[*]}"}")" "$(IFS=,; echo "${PM2_KILLED[*]+"${PM2_KILLED[*]}"}")" "$FOREIGN_LISTEN" "${ERASED[@]+"${ERASED[@]}"}" <<'PY'
 import json, sys

@@ -34,7 +34,7 @@ t('H1 requireAdmin and requireRole let no label in', () => {
   const { transcriptRefusal, runRelayed } = createRequire(import.meta.url)(join(ROOT, 'lib/agent-kit/hook-relay-run.cjs'))
   const base = realpathSync(mkdtempSync(join(tmpdir(), 'h2-')))
   const node = join(base, 'node'), el = join(node, 'WEB4-ITEMS', 'user', 'root'), shop = join(node, 'WEB4-ITEMS', 'user', 'root-shop')
-  const proj = (d) => d.replace(/[/\\.]/g, '-')
+  const proj = (d) => d.replace(/[^a-zA-Z0-9]/g, '-')
   const home = join(base, 'home', '.claude', 'projects')
   const put = (f) => { mkdirSync(dirname(f), { recursive: true }); writeFileSync(f, '{"type":"user"}\n') }
   for (const d of [el, shop]) mkdirSync(d, { recursive: true })
