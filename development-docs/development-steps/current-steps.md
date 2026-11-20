@@ -283,10 +283,11 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-20 17:15 UTC, window ~60 %, Opus max — reset before the release build)
 
-**NOW (17:42 UTC):** 815 coded + tested (80fbe93c update-banner.test 9/9 in the prebuild, 1ad07e17 parts map) — prebuild GREEN at
-1ad07e17. ASKED Roma (Telegram) for the Mac core build — wait for his yes, then spawn-free serve rebuild. The server's own update (ada53203)
-was in its core build at 17:41 («Сайт обновляется» page) — check https://architect.fractera.ai/api/health → ada53203, then 815-1 measure
-through the SSH window (localhost:25680) and eyes of its banner.
+**NOW (17:58 UTC):** the Mac live at fccfbd29 (815-2..7). The server updated: core 06d4053c (its merge of ada53203), update done.
+815-1 MEASURED (plan): GET /api/node/deploy froze the core 9–11 s on the server (sync git ×2 × 11 elements) — the dead minute.
+815-8 coded 045494e0 (async git, Promise.all), prebuild GREEN. ASKED Roma (Telegram 248) for one more Mac build — on yes: spawn-free
+serve rebuild; proof after it: `curl /api/node/deploy &` + `/api/health` during it must answer in ms (was 6.4 s). Then the 815 summary,
+the release push window for Fractera (HEAD over ada53203) when he wants the server to get 815.
 
 **NOW (18:25):** the Mac core build ada53203 is live (eyes of the hosting page clean, no console errors). 811-7 PROVEN on the server
 (b6498d79, the plan's «811-7 live»). Fractera main = ada53203 (his paste 18:3x, ls-remote verified). Fork aifa-agi = ada53203 (his sync). The server's update RUNNING since 17:31:44 (his
