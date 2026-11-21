@@ -52,7 +52,10 @@ export type TgContext = { used: number; window: number | null; percent: number |
  *  Ниже покажи является ли это локальная или vps»): the site name from CONFIG (the same as the pages' titles) and where the node lives —
  *  the detected place (`lib/hosting/place.mjs`), never a guess; on a server, its panel's own address. */
 export type TgNode = { name: string | null; place: "home" | "server" | "unknown"; web: string | null }
-export type TgState = { node: TgNode; context: TgContext | null; builds: TgBuilds; asks: TgAsk[]; main: TgAgent & { channel: TgChannel; autostart: boolean | null }; elements: TgElement[]; limits: TgLimit[]; at: string }
+/** 818 (the owner, Telegram 374–378: the server's panel said «идёт сборка ядра», its Pult «узел в сети · агент спит · Разбудить»): the
+ *  node's update — the same record the terminal's watcher reads (`data/node/node-update.json`, a dead pid is no update). */
+export type TgUpdate = { running: boolean; stage: string | null; since: string | null }
+export type TgState = { update: TgUpdate | null; node: TgNode; context: TgContext | null; builds: TgBuilds; asks: TgAsk[]; main: TgAgent & { channel: TgChannel; autostart: boolean | null }; elements: TgElement[]; limits: TgLimit[]; at: string }
 
 const readJson = <T>(file: string, fallback: T): T => {
   try { return JSON.parse(readFileSync(file, "utf8")) as T } catch { return fallback }
@@ -102,6 +105,13 @@ function agentOf(id: string, live: boolean): TgAgent {
     email: login === "node" ? accountNow() : null,
     bot: typeof bot === "string" && /^[A-Za-z0-9_]{3,64}$/.test(bot) ? bot : null,
   }
+}
+
+function updateOf(): TgUpdate | null {
+  const u = readJson<{ state?: string; stage?: string; pid?: number; startedAt?: string } | null>(join(ROOT, "data", "node", "node-update.json"), null)
+  if (u?.state !== "running") return null
+  if (u.pid) { try { process.kill(u.pid, 0) } catch { return null } }
+  return { running: true, stage: typeof u.stage === "string" && u.stage ? u.stage : null, since: typeof u.startedAt === "string" ? u.startedAt : null }
 }
 
 function buildsOf(): TgBuilds {
@@ -206,5 +216,5 @@ export function tgState(lang: Lang): TgState {
   const context: TgContext | null = c ? { used: c.used, window: c.window, percent: c.percent, model: c.model, at: c.at } : null
   // 818 (the owner, Telegram 352: «почему пульт врёт?»): the main agent's card counts its live session too, never the record alone.
   const mainLive = ((sessions() as { service: string; running?: boolean }[]) ?? []).some((s) => s.service === "build" && s.running)
-  return { node: nodeOf(lang), context, builds, asks: waiting, main: { ...agentOf("build", mainLive), channel: mainChannel.health(ROOT, "build") as TgChannel, autostart: autostart.state().on as boolean | null }, elements: elementsOf(lang, builds), limits: limitsOf(), at: new Date().toISOString() }
+  return { update: updateOf(), node: nodeOf(lang), context, builds, asks: waiting, main: { ...agentOf("build", mainLive), channel: mainChannel.health(ROOT, "build") as TgChannel, autostart: autostart.state().on as boolean | null }, elements: elementsOf(lang, builds), limits: limitsOf(), at: new Date().toISOString() }
 }

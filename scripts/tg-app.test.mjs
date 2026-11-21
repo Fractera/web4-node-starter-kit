@@ -24,6 +24,21 @@ await t('the page: noindex, data-block on its containers, both languages, no nod
   assert.ok(ru.includes('textContent') && !/innerHTML\s*=/.test(ru), 'the node\'s words are put as text, never as markup')
 })
 
+await t('818: a node update shows on the Pult with its stage, and the main agent offers no «Разбудить» meanwhile (negative: no update — nothing)', () => {
+  const ru = page.html('ru')
+  const at = ru.indexOf('function updating(u)'), end = ru.indexOf('function builds(', at)
+  assert.ok(at > 0 && end > at, 'the update banner exists')
+  const W = req(join(ROOT, 'lib', 'node', 'tg-app', 'words.cjs')).ru
+  const el = (tag, cls, text) => ({ cls, textContent: text ?? '', kids: [], attrs: {}, setAttribute(k, v) { this.attrs[k] = v }, appendChild(c) { this.kids.push(c) } })
+  const updating = new Function('el', 'W', `${ru.slice(at, end)}; return updating`)(el, W)
+  const box = updating({ running: true, stage: 'элементы', since: '2026-11-21T00:10:00Z' })
+  assert.equal(box.attrs['data-block'], 'tg-app-node-update')
+  assert.match(box.kids[0].textContent, /^Узел обновляется — этап «элементы» с /)
+  assert.equal(updating(null), null)
+  assert.equal(updating({ running: false }), null)
+  assert.ok(ru.includes('mainAgent(s.main,!!up)') && ru.includes('var cr=busy?null:chanRow(a)'), 'no wake button while the node updates')
+})
+
 await t('816: the top line carries the node\'s name from CONFIG, the line below — «Локальный компьютер» or «VPS · host» (negatives: no name, no place)', () => {
   const ru = page.html('ru')
   const at = ru.indexOf('var nd=s.node'), end = ru.indexOf("W.placeHome:'';", at) + "W.placeHome:'';".length
