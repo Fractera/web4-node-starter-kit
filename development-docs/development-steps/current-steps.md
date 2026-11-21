@@ -281,6 +281,21 @@ without «Режим работы приложения», curl count 0), 17-53-2
 way: the site-settings words still say «Пока связь включена…» (implies a switch) → 793. WAITS Roma: the 3 new phrases, the template
 release push (v0.3.219 dry green) + pin, the core push, ONE server update, then the Marina test (804-8) and the summary.
 
+## NEW TASK (2026-11-21 09:47–09:58 UTC, Telegram 409, 412) — the custom template's Mini App and private layer, planning stage
+
+- 409: «Текущем заданием встанет создание нового телеграм мини app дизайна и соответствующие архитектуры внутри приватного слоя
+  кастомного шаблона … приватный слой до сих пор называется слой архитектора … заменить этот слой на слой администратора элемента» —
+  I agreed (411): «Администрирование» on screen, «element admin layer» in docs; routes/folders unchanged; the architect passes as a guest.
+- 412 (verbatim gist, his structure): Дашборд (tied to the home page, quick navigation, may stay public, lists projects) · Проекты («огромный
+  шаблон который я тебе передам ниже»; sorting: popular = most pages, actual = with Cron tasks; maybe a state manager) · Крон события (the
+  common cron of all the element's projects) · Настройки: own instruction of the element (how to talk — a part inside the general
+  instruction), about the owner («меня зовут Марина…»), about the project (goals), skills used, subscriptions with end dates, MCP
+  connectors · «устройство этого элемента» — to discuss. «то что мы построили раньше в рабочем процессе нужно все убрать … рабочий процесс
+  будет состоять ровно из тех же шагов» · next he sends a big file (the architecture), then how the element agent learns its own nature.
+- NO plan and NO code before his file; then a plan with substeps for his yes (template release: custom; the core's «Рабочий процесс»).
+- Parked: the server tails (z6esw tell-core, redteam with Green team, deleting z6esw/qxld4) — the SSH visit did not open in my Chrome
+  profile (his two «Готово» came from another profile); the Pult update banner 2303b5e2 waits the next core build; my effort → max.
+
 ## Letter to my next session (written 2026-11-20 22:59 UTC — reset at 62 % before part C; Opus effort max)
 
 **WHO WAITS:** Roma (owner) in TELEGRAM (chat_id 90413601, ru, colour marks; living words, emoji; short — he hates long texts and names
