@@ -49,6 +49,9 @@ joy at the 258-commit fast-forward. Keep it: every Telegram answer — living wo
 own expense; colour marks only as structure, never instead of a voice. Today he was fine, a little teasing; the open question: the
 password and action windows right in the Telegram Pult — he has not said yes yet.
 2026-11-21 10:20: morning — warm and fast; tested the server with me overnight (sign-in, Green team), loves the Mini App mocks; keep pictures first, live work, short Telegram.
+2026-11-21 10:42: «Великолепно», «exelent» to the live Mini App screens (449–455); generous with ideas — the capability ladder (822, his
+law 447: the node is one community, whoever pays buys for all) and «О разработке» (823: news, support cards, report to @roma_armstrong).
+He let me choose the order (442) and liked that I chose analysis first, then building. Keep: decide, say why in one line, deliver.
 2026-11-18 17:40: evening — engaged in the Mini App design, likes the look («Общий дизайн мне нравится»), but sharp when I decide
 structure alone (757) or spread unfinished work beyond root (761). Owned both plainly. Ask before structure; show pictures first.
 
@@ -347,8 +350,9 @@ His answer 447 (10:30): «один узел как одно сообщество
 
 **821 RELEASED (2026-11-21 ~10:52 UTC):** workshop commit bf38996 → custom v0.3.221 on GitHub (tag 8d0510b8, Roma's gh key for one run,
 his 426); prebuild RC=0, check:types OK, test:tg-projects + test:tg-menu OK, eyes 390 px light/dark. NEXT: `npm run template -- pin
-custom v0.3.221` (one-file commit) → a fresh test element on the Mac (part of the project) → eyes of its /tg and the core's «Рабочий
-процесс» mirror → Roma. Then the ONE core build (ask first): the Pult's «О разработке» (823), the element's own-agent-state door, the
+custom v0.3.221` (one-file commit) — DONE b3e1cb69 (not pushed). The fresh test element was REFUSED by create's duplicate guard
+(«this job looks like root (match 0.42)») — not forced: instead a production `next build` of the workshop (v0.3.221) + `next start`
+on 24711 + eyes = the production proof; the core's mirror proven by code (element-tg-menu.ts reads one mode, children with «/»). Then the ONE core build (ask first): the Pult's «О разработке» (823), the element's own-agent-state door, the
 chat-context hook, the status-door filter.
 **823 PROPOSED:** «О разработке» (news from GitHub `news/`, «Поддержать проект» 3 Stripe cards, «Нашли проблему» → @roma_armstrong);
 his 458/459/461; waits the three Stripe links (asked 460) and his «да». Star Messages confirmed from telegram.org/faq (Premium) and

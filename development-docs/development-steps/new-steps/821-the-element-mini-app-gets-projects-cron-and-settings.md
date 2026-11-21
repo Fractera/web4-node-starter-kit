@@ -106,6 +106,18 @@ person's next message; it lives until another section is opened or ~30 min of si
 - Next: guards (tsc, check:shadcn-parts, typography, parts-map, i18n, widgets:ids, routes, static/protected) → T1/T3/T4/T5 → the rename
   «Администрирование» → the element skill «projects» → commit → release v0.3.221 → a fresh test element → the core's mirror.
 
+## Released and proven in production (2026-11-21 10:46–10:56 UTC)
+
+- Workshop commit bf38996 → custom **v0.3.221** on GitHub (tag 8d0510b8; Roma's gh key for one run, his 426), pinned in the core
+  b3e1cb69 (not pushed yet). Gates: prebuild RC=0, check:types OK, `npm run test:tg-projects` (T1, T4 + negatives), `npm run
+  test:tg-menu` (the new shape), T3 live (a folder `_pages/projects/social/` drew «Folder wins T3»; removed → the catalog's screen).
+- A fresh test element was refused by create's duplicate guard («looks like root, match 0.42») — not forced. Instead: `next build` of
+  v0.3.221 in the workshop RC=0 (/[lang]/tg prerendered, revalidate 5m) + `next start` on 24711 (stopped after): every screen 200,
+  /tg/projects/nope and /tg/a2a 404; eyes 390 px, no console errors: logs/eyes/2026-11-21T10-54-51-140Z (home), 10-54-56-218Z
+  (projects), 10-55-00-547Z (Instagram), 10-55-04-800Z (settings, dark).
+- T5 by code: the core's lib/web4-items/element-tg-menu.ts reads one mode and children with «/» (its SLUG accepts `projects/business`).
+- Left for the core build (asked first): the agent card and fuel door, the chat-context hook, the status-door filter; and 823.
+
 ## Substeps
 
 - 821-1 the picture before code: a mock on the template's tokens at phone width, light and dark — «Проекты» (4 sections, sort), a group,
