@@ -48,7 +48,9 @@ The owner of Fractera, 2026-10-23: «не всегда в наш проект п
      client's site or a separate product (a clip studio, a client's shop); nothing of the project changes it, and it has its own owner
      whom its own agent gets to know. Chosen once: the app's people live apart — nothing switches it later. Your pick and why. `--app
      project|own` (required; `--look-like <id>` starts an app of its own from a sibling's look).
-   Custom by default. Native (`--native`) only for a job of the node itself that is never sold and never leaves it.
+   Custom by default — the person's products. Native (`--native`) for a job of the node itself that is never sold and never leaves it,
+   and for a heavy shared tool many elements use — image generation, a music clip, video editing, mailings (the owner, 2026-11-21:
+   «все это должно уходить в группу нативных элементов»; CLAUDE.md §3).
 4. **Create.** Write the task into a file in this folder (no shell quoting of the person's words), then:
    ```
    npm run create -- --role "<one sentence>" --name "<the name the person sees in the menu>" --vector-file vector-<words>.md --quiz-file quiz-<words>.json --describe "<what it is for in this node, 1–3 sentences>" --app project|own --area "<the field>" --grows "<a job>; <another>" --brief-file task-<words>.md [--close-after-first-session] [--supervise main] [--native]

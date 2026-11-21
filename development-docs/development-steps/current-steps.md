@@ -328,6 +328,11 @@ real element. Base UI Button: `render={<a/>} nativeButton={false}`, not asChild.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-21 13:35–13:36 UTC, the owner (Telegram 532, 533 — intake pre-steps/2026-11-21-element-knows-its-nature.md; 534): his vision of
+  the element's nature → step 825 (checklist, critique, a substep per idea), and «На следующем этапе не пытаюсь искать меня и задавать
+  вопросы действую от моего лица исходя из стратегии максимального блага для проекта с возможностью его эволюционного развития. Я ушел на
+  перерыв буду через один час удачной работы без остановки» → I act on his behalf for 825 without asking; report when he is back.
+
 - 2026-11-21 13:18 UTC: core build 1e53388a LIVE (REBUILD_RC=0; __web4TgStarter in 12 server chunks); pushed origin + Fractera main
   1e53388a. Roma updates the server and tests Diana's bot → the proof on the server is his «Привет» → «Включить» waking the agent.
 

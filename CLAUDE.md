@@ -118,6 +118,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - Native elements come with the core at the first start and serve the core and the other elements: sign-in, database, object store,
   vector store, embeddings (the node's vectors), LightRAG graph, Redis cache, deep memory, CONFIG, Stripe.
 - Custom elements are created by the person — for autonomous products.
+- **Heavy shared tools are native elements** (the owner, 2026-11-21: «инструмент генерации картинки … музыкального клипа … видео
+  монтажа … рассылки … все это должно уходить в группу нативных элементов»): a capability many elements use is born native
+  (`npm run create -- --native`) and serves every element; a custom element never builds such a tool into itself — it asks (`need`).
 - Auth and data can be replaced but not deleted. Data flows from the element to the core; an element lives without the core too.
 - `root` is one ordinary custom element, equal to every other.
 - The registry — `WEB4-ITEMS-REGISTRY/web4-items.json`, the folders — `WEB4-ITEMS/<kind>/<address>`. Installation (`services:install`)
@@ -189,8 +192,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - **A capability request — the ladder** (step 822; the owner, 2026-11-21: «один узел как одно сообщество … Марина покупает элемент за
   свои деньги для всех братьев это закон»): an element asks for what it lacks with `need` (kept in `data/node/needs/`) and never searches,
   buys or installs itself; you climb for it — its brothers by their cards (`npm run find`, `card`, no agent woken) → Fractera's graph of
-  ready elements → Lagrix (`npm run lagrix`) → a build in the element of that field after the architect's yes. Both outside rungs are
-  simulated until steps 822-2 and 822-3 — say so. Buy or build is said with both prices. A purchase is the payer's own act in a window
+  ready elements → Lagrix (`npm run lagrix`) → a build after the architect's yes: a shared tool — a new native element, a product's
+  own part — in the element of that field. Both outside rungs are simulated until steps 822-2 and 822-3 — say so. Buy or build is said with both prices. A purchase is the payer's own act in a window
   (`npm run ask-person`: the element, its price, «вы покупаете для всего узла»), paid on Fractera's checkout; you install it by its tag
   as an element of the node that serves every brother with no priority; the asker hears «ready» and agrees an API by i2i (`npm run
   needs`, skill `handle-need`).
