@@ -361,6 +361,9 @@ GO given 2026-11-21 ~11:30 UTC in the terminal («go to next step go») → the 
 my-agent answers only root and no e-mail; status sessions = root only; the node key sees all → release v0.3.223 → push the core
 (ask). Live agent card needs a custom element born from v0.3.223 (none on this Mac: root is the root-starter; the test element was
 refused by the duplicate guard).
+**821 CORE BUILT (2026-11-21 11:42 UTC):** core build bfb1915b live; /api/node/my-agent and the status door answer 401 without a key;
+custom v0.3.223 released (workshop 1f84362) and pinned 606b383. Core NOT pushed (19+ commits) — ask Roma. Live agent card: needs a
+custom element from v0.3.223 (none on this Mac). NEXT: 823 (wait his Payment Links later), 822-2 search door.
 **823 PROPOSED:** «О разработке» (news from GitHub `news/`, «Поддержать проект» 3 Stripe cards, «Нашли проблему» → @roma_armstrong);
 his 458/459/461; waits the three Stripe links (asked 460) and his «да». Star Messages confirmed from telegram.org/faq (Premium) and
 core.telegram.org/api/paid-messages (users, supergroups, channels).
