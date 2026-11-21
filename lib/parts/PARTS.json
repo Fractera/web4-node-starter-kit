@@ -4667,6 +4667,7 @@
         "components/orbit-layers/parts.tsx",
         "components/services/service-port.client.tsx",
         "components/services/service-reach.client.tsx",
+        "components/shell/shell-account.client.tsx",
         "components/table/server-table-tools.client.tsx",
         "components/table/table-tools.client.tsx",
         "components/tools-tab/tool-card.client.tsx",
