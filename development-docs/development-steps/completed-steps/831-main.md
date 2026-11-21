@@ -14,7 +14,7 @@ the server by itself 0.9 s after the last key (814-2).
 | Repository | Commit | What |
 |---|---|---|
 | core | 2622237a | `components/hosting/action-button.client.tsx` (@part action-button), every step of the server page and the server's domain ladder, 831-2 the claim dialog (address large, the loss named, a tick, red confirm), words en/ru |
-| core | 2a7…, 7cc8888d | the final-check DOM test to the new road; the letter |
+| core | abebd38f, 7cc8888d | the final-check DOM test to the new road; the letter |
 
 Core built 18:47–18:53 UTC, /api/health commit 7cc8888d; pushed to the fork and Fractera.
 
