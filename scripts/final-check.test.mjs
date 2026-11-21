@@ -96,7 +96,7 @@ if (!esbuild) {
 } else {
   const src = 'import { renderToStaticMarkup } from "react-dom/server"\nimport { ReadyStep } from "@/components/hosting/server-launch-end.client"\n' +
     'import { serverLaunchWords } from "@/components/hosting/server-launch.i18n"\nexport const words = serverLaunchWords("en")\n' +
-    'export const render = (state, claimed = false) => renderToStaticMarkup(<ReadyStep busy={false} claim={{ sent: null, claimed }} onAct={async () => null} onClaim={() => {}} state={state} words={words} />)'
+    'export const render = (state, claimed = false) => renderToStaticMarkup(<ReadyStep busy={false} claim={{ sent: null, claimed }} onAct={async () => null} onClaim={() => {}} state={state} words={words} dialogUi={{ close: "Close", scrollHint: "" }} />)'
   const built = await esbuild.build({ stdin: { contents: src, loader: 'tsx', resolveDir: ROOT, sourcefile: 'ready-probe.tsx' }, bundle: true, platform: 'node', format: 'cjs', target: 'node20', packages: 'external', write: false, absWorkingDir: ROOT, logLevel: 'silent', jsx: 'automatic' })
   const dir = mkdtempSync(join(tmpdir(), 'final-check-'))
   const file = join(dir, 'probe.cjs')
@@ -107,7 +107,8 @@ if (!esbuild) {
 
   await t('the DOM: the check passed, the architect awaited (796) → «Your server is ready», the e-mail road and the one registration button, no links yet', () => {
     const html = render(state())
-    assert.ok(has(html, words.ready.done) && has(html, words.ready.claimOpen) && has(html, 'id="launch-claim-email"') && !has(html, 'href="https://architect.example.org/"'))
+    // 831-2: before the address is confirmed in the dialog the one button is «Назначить архитектора», never the registration
+    assert.ok(has(html, words.ready.done) && has(html, words.ready.claimButton) && !has(html, '/register"') && has(html, 'id="launch-claim-email"') && !has(html, 'href="https://architect.example.org/"'))
     assert.ok(!has(html, words.ready.missing.title) && has(html, 'data-ready="1"'))
   })
   await t('the DOM: the architect registered (796) → the links «Site · Panel · Sign-in», no e-mail field', () => {
