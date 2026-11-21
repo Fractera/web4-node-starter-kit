@@ -337,9 +337,12 @@ Found: hooks with relative paths fail after the agent `cd`s (plan file 832, «Fo
    neighbour ✗, twice ✗, look-alike ✗), the frame /<lang>/element-agent/<id|address>/<subscription|terminal|telegram|openai>
    (guards: page-composition/seo/aio exempt it like the panel). Template v0.3.229 (6d69e342, pinned 6664823): the drawer —
    Дашборд, Проекты ▸ (built project pages, Collapsible), the 4 agent links to the frame; for architect + own admin.
-   NEXT: core build detached → eyes /ru/element-agent/j58fl/subscription (owner at the keyboard) → push core → npm run task j58fl
-   (merge v0.3.229: components/shell/shell-types.ts, shell-account.client.tsx, lib/shell/site-shell-data.ts,
-   lib/menu/account-links.ts, lib/parts/PARTS.json) → tell Roma the reinstall picks it all up.
+   LIVE + PUSHED b4970b9c (fork + Fractera): 95a41180 the frame left out of the afterFiles rewrite (dynamic routes match after it;
+   was 404), b4970b9c the frame hides node menus (data-node-menu + globals.css), OpenAI tab shows only the key, and an element's own
+   admin works only on the element's own Claude account (ticket ownOnly → socket refuses without own home; claude-auth hides the
+   node's login, refuses own:false). Eyes: 4 tabs 200, unknown 404, panel 200, screenshots sent (653). j58fl task: merge v0.3.229
+   (woke 21:13). WAITS HIS ANSWER (655): on the Mac, close «an admitted bot person turns an own-app element's agent on the node's
+   subscription» too? my pick yes. He reinstalls the server and tests the checklist (640) + the drawer/frame.
 1. DONE (see 832) — PROMISED (Telegram 612): find what triggered the SERVER's second rebuild of every element after its update (his Pult 18:37 — all
    «в очереди на сборку»). Read the server's logs through the page's log door (this Chrome has access until Sun 09:47; page
    http://localhost:24680/ru/hosting/hosting, IP 109.199.105.213) or ask the server's own agent. My stated hypothesis: per-node NEXT_PUBLIC_*
