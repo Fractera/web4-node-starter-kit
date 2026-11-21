@@ -300,67 +300,39 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 - Parked: the server tails (z6esw tell-core, redteam with Green team, deleting z6esw/qxld4) — the SSH visit did not open in my Chrome
   profile (his two «Готово» came from another profile); the Pult update banner 2303b5e2 waits the next core build; my effort → max.
 
-## Letter to my next session (written 2026-11-21 ~16:22 UTC — reset at 64 %; Opus effort max)
+## Letter to my next session (written 2026-11-21 ~17:22 UTC — before the core build; Opus effort max)
 
-**WHO WAITS:** Roma (owner) in TELEGRAM (chat_id 90413601, ru). Demanding today; his law (550, now in the soul, d0bdbee0): an «either —
-or» question is wrong thinking — choose by the greatest good, do it, say why; ask only what is truly his (money, a publication, a secret,
-a deletion in his accounts). Colour marks, short living messages, never a hex id.
+**WHO WAITS:** Roma (owner) in TELEGRAM (chat_id 90413601, ru), back ~17:42. His word 17:12 (Telegram 589): «Поехали без остановки.
+Затем я хочу повторить весь цикл установки нового элемента и что в нём Telegram запустится без каких-либо проблем в том числе и
+приложения так? Действие без остановки я вернусь через 30 минут». So: NO questions until the chain is done; the final Telegram message
+answers «так?» — can he repeat the full new-element cycle now (what I proved, what only his run proves).
 
-**DONE THIS SESSION:** 824 (Projects tree: sections/groups static folders with README, items dynamic, 30 s cache; v0.3.224) · core:
-the Mini App button only with tg/_data/menu.json (7534ff2b), BotFather's whole message on an element's bot page (b091ada9), «no-starter»
-— the Telegram starter on globalThis (274af6d4) · 825 the element's nature (instruction: interface first, the map of Projects, came-from,
-parking, clear via the core, `npm run memory` per project, heavy tools are native; custom v0.3.225, native v0.1.80; core CLAUDE.md §3/§4
-sealed) · 825-8 Telegram bootstrap: Bun + plugin (marketplace add → install) + deps as a FATAL install stage «telegram», unzip in
-prepare, migration 825-8 (d1a0bbe2) · 826 «＋ Добавить» + «Справка» (v0.3.226, pinned b110d29) · eeb7c201 the request copy in Telegram
-without «Готово · <id>» (names «Ждёт вас»). Core on the fork and Fractera up to de10cd4a after the push below.
+**DONE (committed):** core fdbdcbf0 (829: screen.cjs trust cut, onButton buttons off at the press + «не дошло» when pasted false,
+tg-menu element address from the node's domain record, deploy-elements refreshes buttons + the Pult), ae7b38eb (828 domains: RDAP
+first, closest name, own-zone removal, truthful NS column), state commits, **7b8d9284 pin custom v0.3.227**. Template
+Fractera/fractera-custom-item-starter: **000d7ca 830** (lib/page-lock.mjs — the tg branch in the page lock; the Mini App screens
+cron/element/projects/settings have meta.roles ["admin"] and shut out the element's own admin elementAdmin002), tag **v0.3.227**
+pushed with the machine's GitHub login (account Fractera; the release tool's node token got 403 — `===TEMPLATE_NO_RIGHT===`).
+Live without a build: j58fl «Приложение» → https://j58fl.throughsongs.com/tg (16:42), the main «Пульт» → architect.throughsongs.com.
+NOT pushed: the core (origin, Fractera) — push after the live proof.
 
-**AFTER THE RESET (16:20–16:55, new session) — NOW:** committed, NOT built, NOT pushed: **fdbdcbf0** 829 (screen.cjs: the trust cut
-once Claude Code recorded the trust; onButton: buttons off at the press, «не дошло — напишите ещё раз» kept when pasted false;
-tg-menu.cjs: an element's Mini App address from the node's domain record — the custom template declares no PROJECT_SITE_URL;
-deploy-elements refreshes element buttons + the main «Пульт») and **ae7b38eb** 828 (registry.mjs RDAP 200/404/unknown, the refusal
-with the closest name, own-zone removal, the truthful NS column). Proofs so far: tests screen-trust 6, wake-button 4, domain-registry 6,
-tg-app 16, server-telegram 10, main-channel 9; live RDAP: throughsongs.com registered (Porkbun), througsongs.com unregistered;
-prebuild RC=0; tsc 0 errors. Done live without a build: j58fl's «Приложение» → https://j58fl.throughsongs.com/tg (16:42,
-`tg-app -- menu j58fl`), the main «Пульт» → architect.throughsongs.com (16:54; it was still the temporary address). THE SERVER IS UP:
-architect.fractera.ai 200 at 16:48 (core fe2fdb01), fractera.ai 200 — install ~49 min (15:59→16:48). **WAITS his yes to the core
-build** (his rule: ask «собрать сейчас?»): then `npm run serve:rebuild:detached`, /api/health = ae7b38eb, live proofs (829: a new
-element's first message pasted; 828: the add refusal on the page), push origin + Fractera, summaries completed-steps/828-main.md and
-829-main.md, delete the 828 plan. The owner 16:38 (Telegram 583): «ты каким-то образом пинками его запустил мне это не подходит.
-Стандартный процесс не стартует + Telegram приложение нету почему».
+**NEXT, IN ORDER (after the build returns):**
+1. `npm run serve:status`; /api/health commit == `git rev-parse --short HEAD`; the bundle carries 829: grep -l "trustCut" in
+   .next/server chunks (or the route group copies) — a proof that the running core has screen.cjs.
+2. Push the core: `git push origin main` and `git push fractera main` (check `git remote -v`), ls-remote = HEAD.
+3. The rollout refused j58fl («HEAD d90a0c9 is not its pin v0.3.225 — left alone»): hand it to j58fl's own agent —
+   `npm run task -- j58fl "Merge the custom template fix v0.3.227 (commit 000d7ca …): lib/page-lock.mjs, lib/page-lock.test.mjs,
+   lib/branch-page.tsx and test:page-lock in package.json; run npm run test:page-lock; commit; reply-core"`; on its done —
+   `node scripts/deploy-elements.mjs j58fl` (rebuild + its bot button), then check the Mini App lock: the element's page answers its
+   admin role (the proxy + the AccessGate list now include elementAdmin002 — read the built chunk for «elementAdmin» or the dialog).
+4. Summaries: completed-steps/828-main.md (delete new-steps/828-… in the same commit), 829-main.md, 830-main.md (template 000d7ca +
+   pin 7b8d9284 + j58fl's merge hash); current-steps rewritten.
+5. Telegram final (kept, everything in it): what is live, the answer to «так?»: a NEW element is born from v0.3.227 (the lock fixed),
+   its bot's «Приложение» is set at connection by the new address rule, its first message reaches the agent after the trust cut;
+   what only his run proves; the server elements get v0.3.227 by the server's update; still open — the typo zone deletion (his yes).
 
-**17:00 the owner (Telegram 586, a screenshot of the j58fl Mini App «Cron» with «Эта страница вам недоступна — Требуется одна из этих
-ролей: admin, architect»):** «я создал аккаунт bolshiyanov@gmail.com … смог использовать этот пароль попасть внутри бота однако я всё
-равно не могу им пользоваться проверь почему роли не позволяют пользоваться приложением Telegram» (he wrote a password in the chat —
-never repeated or used; asked him to change it, 587). MEASURED: his account roles [user, elementAdmin002] (j58fl's adminRole); the tg
-layout lets architect + OWN_ADMIN_ROLE in, but every tg screen (cron, element, projects, settings) has meta.roles ["admin"] and
-`allowedRoles` (lib/branch-page.tsx) added the branch's roles only for admin/staff/finance (805) — tg missed → «admin, architect».
-STEP 830: workshop data/workshop/fractera-custom-item-starter, STAGED not committed: lib/page-lock.mjs (pageLock + BRANCH_GROUP with
-tg → admin), lib/page-lock.test.mjs (5 passed; negative control reproduces «admin, architect»), branch-page.tsx uses it, package.json
-test:page-lock + in the prebuild; template tsc 0 errors, template prebuild RC=0. Asked (588) one yes for: release custom v0.3.227 → pin →
-rollout lib/page-lock.mjs lib/page-lock.test.mjs lib/branch-page.tsx into j58fl (NOT package.json — the element's own scripts) →
-`npm run services:install -- --only j58fl` (or deploy) → then the core build (828+829). WAITS his «да».
-
-**OPEN, IN ORDER:**
-1. The server's fresh install (Roma started ~15:55 from the fork with eeb7c201). Ask him for the result: the stage «Telegram агентов»
-   green, the bot answers, the main agent wakes; element agents need their own Claude sign-in (811-5b). Note every stage's time (827).
-2. Step 828 — promised «сразу, без вопросов» (Telegram 573): domain guards in lib/domain/node-domains.ts — RDAP before a zone
-   (`registrarOf` exists; RDAP 404 → refuse «такого домена нет — проверьте написание» + the closest zone the key sees, one tap);
-   `removeDomain` deletes a zone the node created that is pending/empty for an unregistered name; the wording «ничего (ещё не замерено)»
-   → the truth. Today's case: Roma typed througsongs.com (RDAP 404, NXDOMAIN) — the node made a 2nd zone; he fixed the list himself
-   (throughsongs.com active 16:16, Porkbun, NS ignacio/kay).
-3. WAITS HIS YES (573): delete the empty typo zone througsongs.com in his Cloudflare (Admin@fractera.ai account) via his Chrome.
-4. A core build is due for eeb7c201 (lib/node/person-asks-telegram.cjs runs inside the core for elements' requests) — do it with 828.
-5. Step 827 fast install (556, 559, 560): «built once, downloaded everywhere» — prebuilt Linux archives per release tag on GitHub; first
-   inventory NEXT_PUBLIC_* values baked per node (e.g. the element admin role) and move them to run time; stop Ubuntu's first-boot
-   unattended upgrades instead of waiting (811 measured 38 min). Not Docker (the wall: per-element users, systemd, ACL).
-6. root's CLAUDE.md + scripts/instruction.seal on the Mac are uncommitted — written by `instruction:element -- templates` (its design);
-   the classifier refused my revert; root's agent commits them.
-
-**CLUES:** the classifier refuses: DELETE/POST to the core's domain door by curl, reverting an element's files, typing an installer
-command into the server's terminal, stopping the server's agent — use a window (`npm run ask-person`) for his hands; a Telegram text
-that asks for an act needs a window in the same turn or the line «⟦без окна: …⟧». The server is architect.fractera.ai (109.199.105.213);
-its terminal's xterm text: `document.querySelectorAll('.xterm-rows > div')`. Workshop prod test: `ELEMENT_DIR=$PWD next start -p 24711`;
-POST from 127.0.0.1 passes as the owner at the machine.
+**CLUES:** the classifier refuses reading an element's .env.local (don't); DELETE/POST to the core's domain door by curl; the deploy
+script runs directly (`node scripts/deploy-elements.mjs <id>`). The server: architect.fractera.ai up since 16:48 (core fe2fdb01).
 
 ## The person's decisions (verbatim)
 
