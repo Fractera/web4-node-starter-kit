@@ -1,6 +1,7 @@
 "use client"
 // @local — step 4 «Записи» of the server's domain ladder (one route: the tab «Выделенный сервер»): the quick way and the full list, written by hand at the registrar
 
+import { ActionButton } from "@/components/hosting/action-button.client"
 import { Check, Copy } from "lucide-react"
 import { useState } from "react"
 import type { LadderView } from "@/components/hosting/server-ladder.client"
@@ -109,7 +110,7 @@ export function RecordsStep({ view, words, busy, onCheck }: { view: LadderView; 
       </Accordion>
       {view.readOnly ? null : (
         <div className="flex flex-wrap items-center gap-3">
-          <Button disabled={busy} onClick={() => void onCheck()} size="sm">{w.check}</Button>
+          <ActionButton disabled={busy} onAction={() => onCheck()}>{w.check}</ActionButton>
           {view.dnsAt ? <Small className="text-muted-foreground">{fill(w.checkedAt, { time: new Date(view.dnsAt).toLocaleTimeString() })}</Small> : null}
         </div>
       )}

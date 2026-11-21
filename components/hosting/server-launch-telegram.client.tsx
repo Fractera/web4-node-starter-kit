@@ -1,6 +1,7 @@
 "use client"
 // @local — step 5 of the launch ladder (one route: «Активация выделенного сервера»): the server's own Telegram bot, made while the server installs
 
+import { ActionButton } from "@/components/hosting/action-button.client"
 import { useEffect, useRef, useState } from "react"
 import { ExternalLink } from "lucide-react"
 import { CopyRow } from "@/components/auth/setup-ladder.client"
@@ -27,6 +28,8 @@ export function TelegramStep({ lang, state, words, busy, onAct }: { lang: string
   const w = words.telegram
   const t = state.telegram ?? null
   const [token, setToken] = useState("")
+  // 831: a press with no token says so under the field instead of a pale button
+  const [tried, setTried] = useState(false)
   const [asking, setAsking] = useState(false)
   const running = state.launch?.state === "running"
   const stage = state.progress.find((s) => s.state === "running")
@@ -70,18 +73,18 @@ export function TelegramStep({ lang, state, words, busy, onAct }: { lang: string
       ) : null}
 
       {t?.pending ? <Small className="text-foreground" data-block="server-launch-telegram-waits">{fill(w.pending, { tail: t.tail ?? "", bot: bot ? `${bot} ` : "" })}</Small> : null}
-      {(t?.pending || t?.configured) && !asking ? <Button className="w-fit" disabled={busy} onClick={() => setAsking(true)} size="sm" variant="outline">{w.replace}</Button> : null}
+      {(t?.pending || t?.configured) && !asking ? <ActionButton className="w-fit" disabled={busy} kind="second" onAction={() => setAsking(true)}>{w.replace}</ActionButton> : null}
       {t?.rejected && showForm ? <Small className="text-destructive">{fill(w.rejected, { tail: t.rejected })}</Small> : null}
 
       {t?.skipped && !asking ? (
         <div className="flex flex-wrap items-center gap-3" data-block="server-launch-telegram-later">
           <Small className="text-muted-foreground">{w.laterNote}</Small>
-          <Button disabled={busy} onClick={() => setAsking(true)} size="sm" variant="outline">{w.connectNow}</Button>
+          <ActionButton disabled={busy} onAction={() => setAsking(true)}>{w.connectNow}</ActionButton>
         </div>
       ) : null}
 
       {showForm ? (
-        <form className="flex flex-col gap-3" data-block="server-launch-telegram-form" onSubmit={(e) => { e.preventDefault(); void save() }}>
+        <form className="flex flex-col gap-3" data-block="server-launch-telegram-form" onSubmit={(e) => { e.preventDefault(); if (found) void save(); else setTried(true) }}>
           <Small className="max-w-prose text-foreground">{w.text}</Small>
           <ol className="flex list-decimal flex-col gap-2 pl-5 text-foreground text-sm" data-block="server-launch-telegram-how">
             <li>{w.how[0]}</li>
@@ -96,12 +99,12 @@ export function TelegramStep({ lang, state, words, busy, onAct }: { lang: string
           <Field>
             <FieldLabel htmlFor="server-launch-telegram-token">{w.label}</FieldLabel>
             <Input autoComplete="off" id="server-launch-telegram-token" onChange={(e) => setToken(e.target.value)} spellCheck={false} type="password" value={token} />
-            <FieldDescription>{token.trim() ? (found ? fill(w.found, { tail: tailOf(found) ?? "" }) : w.notFound) : w.tokenNote}</FieldDescription>
+            <FieldDescription className={tried && !found ? "text-destructive" : undefined}>{token.trim() || tried ? (found ? fill(w.found, { tail: tailOf(found) ?? "" }) : w.notFound) : w.tokenNote}</FieldDescription>
           </Field>
           <div className="flex flex-wrap gap-2" data-block="server-launch-telegram-actions">
-            <Button disabled={busy || !found} size="sm" type="submit">{w.save}</Button>
-            {asking && (t?.pending || t?.configured) ? <Button disabled={busy} onClick={() => { setAsking(false); setToken("") }} size="sm" type="button" variant="ghost">{w.cancel}</Button> : null}
-            {!t?.skipped && !t?.pending && !t?.configured ? <Button disabled={busy} onClick={() => void onAct("telegram", { op: "skip" })} size="sm" type="button" variant="ghost">{w.later}</Button> : null}
+            <ActionButton disabled={busy} onAction={() => found ? save() : setTried(true)}>{w.save}</ActionButton>
+            {asking && (t?.pending || t?.configured) ? <ActionButton disabled={busy} kind="second" onAction={() => { setAsking(false); setToken("") }}>{w.cancel}</ActionButton> : null}
+            {!t?.skipped && !t?.pending && !t?.configured ? <ActionButton disabled={busy} kind="second" onAction={() => onAct("telegram", { op: "skip" })}>{w.later}</ActionButton> : null}
           </div>
           {/* Telegram 710: «вкладка создать при помощи Telegram должна выглядеть как аккордеон и быть по умолчанию закрытой» */}
           {agent ? (
@@ -141,7 +144,7 @@ export function TelegramActivation({ lang, state, words, busy, onAct }: { lang: 
           <Small className="text-muted-foreground">{w.linkNote}</Small>
         </div>
       ) : (
-        <Button className="w-fit" disabled={busy} onClick={() => void getLink()} size="sm" variant="outline">{w.link}</Button>
+        <ActionButton className="w-fit" disabled={busy} kind="second" onAction={() => getLink()}>{w.link}</ActionButton>
       )}
       <AgentLine busy={busy} lang={lang} onAct={onAct} state={state} words={w} />
     </div>
@@ -175,7 +178,7 @@ function AgentLine({ lang, state, words, busy, onAct }: { lang: string; state: L
       {page ? (
         <a className={buttonVariants({ size: "sm", className: "w-fit" })} href={page} rel="noopener noreferrer" target="_blank">{words.signInOpen}</a>
       ) : (
-        <Button className="w-fit" disabled={busy} onClick={() => void signIn()} size="sm">{words.signIn}</Button>
+        <ActionButton className="w-fit" disabled={busy} onAction={() => signIn()}>{words.signIn}</ActionButton>
       )}
       {watching ? <Small className="text-muted-foreground">{words.signInWatch}</Small> : null}
     </div>

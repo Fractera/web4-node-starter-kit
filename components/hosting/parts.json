@@ -152,6 +152,34 @@
           "срок сертификата"
         ]
       }
+    },
+    {
+      "id": "action-button",
+      "kind": "composite",
+      "path": "components/hosting/action-button.client.tsx",
+      "export": "ActionButton, ActionKind",
+      "what": {
+        "en": "One button rule for a step's actions (831): the main action dark blue and never pale for an empty field (the press says what is missing), the pressed button pale with a spinner and its «…» word until its own promise settles, secondary actions outline, dangerous red.",
+        "ru": "Одно правило кнопок действий шага (831): главное действие тёмно-синее и не бледнеет из-за пустого поля (нажатие говорит, чего не хватает), нажатая кнопка бледнеет с индикатором и словом «…», пока не закончится её действие, второстепенные — с рамкой, опасные — красные."
+      },
+      "how": "<ActionButton kind=\"main\" onAction={() => onAct(\"probe\")} pendingText={w.checking} disabled={busy}>{w.check}</ActionButton> — onAction returning a promise keeps this button pending; `pending` for an action that outlives the press; `disabled` only while another action of the page runs.",
+      "words": {
+        "en": [
+          "button",
+          "action",
+          "loading",
+          "spinner",
+          "pending",
+          "submit"
+        ],
+        "ru": [
+          "кнопка",
+          "действие",
+          "загрузка",
+          "индикатор",
+          "нажатие"
+        ]
+      }
     }
   ]
 }

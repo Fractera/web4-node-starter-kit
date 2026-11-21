@@ -1,6 +1,8 @@
 "use client"
 // @local — steps 4–7 of the launch ladder (one route: «Активация выделенного сервера»): installation, the records again, certificates, ready
 
+import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
+import { ActionButton } from "@/components/hosting/action-button.client"
 import { Check, ExternalLink, Info, X } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { CertsStep } from "@/components/hosting/server-domain-certs.client"
@@ -16,7 +18,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Spinner } from "@/components/ui/spinner"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Small } from "@/components/ui/typography"
@@ -46,14 +47,14 @@ export function InstallStep({ state, strategy, words, busy, onAct, target }: { s
       {installedOf(state, strategy) && !state.core ? (
         <div className="flex flex-wrap items-center gap-3" data-block="server-launch-silent">
           <Small className="text-foreground">{w.silent}</Small>
-          <Button disabled={busy} onClick={() => void onAct("state")} size="sm" variant="outline">{w.ask}</Button>
+          <ActionButton disabled={busy} onAction={() => onAct("state")}>{w.ask}</ActionButton>
         </div>
       ) : null}
       {strategy !== "latest" && !running ? (
         <div className="flex flex-wrap gap-2">
-          <Button disabled={busy} onClick={() => void onAct("install", { mode: state.probe?.fractera?.head ? "update" : "install" })} size="sm">
+          <ActionButton disabled={busy} onAction={() => onAct("install", { mode: state.probe?.fractera?.head ? "update" : "install" })}>
             {l?.state === "failed" ? w.again : state.probe?.fractera?.head ? w.update : w.install}
-          </Button>
+          </ActionButton>
         </div>
       ) : null}
     </div>
@@ -76,7 +77,7 @@ export function RecheckStep({ state, words, domainWords, busy, onAct }: { state:
         ))}
       </ul>
       {state.core.dnsAt && !state.core.steps.dns ? <Small className="text-destructive">{words.recheck.gate}</Small> : null}
-      <div><Button disabled={busy} onClick={() => void onAct("dns-check")} size="sm">{words.recheck.button}</Button></div>
+      <div><ActionButton disabled={busy} onAction={() => onAct("dns-check")}>{words.recheck.button}</ActionButton></div>
     </div>
   )
 }
@@ -113,7 +114,7 @@ export function CertsLaunchStep({ state, words, domainWords, busy, onAct }: { st
         </Table>
         {core.rows.some((r) => r.https !== true && waits(r)) ? <Small className="text-muted-foreground" data-block="server-launch-not-due">{w.notDue}</Small> : null}
         <div className="flex flex-wrap items-center gap-3">
-          <Button disabled={busy || Boolean(core.certsRun?.running)} onClick={() => void onAct("check")} size="sm" variant="outline">{w.httpsButton}</Button>
+          <ActionButton disabled={busy} onAction={() => onAct("check")} pending={Boolean(core.certsRun?.running)}>{w.httpsButton}</ActionButton>
           {core.checkAt ? <Small className="text-muted-foreground">{domainWords.checkedAt} {new Date(core.checkAt).toLocaleString()}</Small> : null}
         </div>
       </div>
@@ -121,13 +122,13 @@ export function CertsLaunchStep({ state, words, domainWords, busy, onAct }: { st
   )
 }
 
-type ReadyProps = { state: LaunchState; words: ServerLaunchWords; busy: boolean; onAct: Act; claim: ClaimShown; onClaim: (c: ClaimShown) => void }
+type ReadyProps = { state: LaunchState; words: ServerLaunchWords; busy: boolean; onAct: Act; claim: ClaimShown; onClaim: (c: ClaimShown) => void; dialogUi: AppDialogUi }
 
 // 744-6. The owner, 2026-11-14: «мы не должны говорить пользу о том что сервер доступен если все сертификаты безопасности не установлены и на
 // последнем этапе заключительной проверки … мы эти проверки не завершили». «Ваш сервер готов», the links and the architect's code are
 // `ReadyWords`, drawn only under a passed `finalCheck` (every required name: a certificate and HTTPS; the domain on; sign-in leading to
 // auth.<zone>) — `check:ready-words` holds it; otherwise the step names what the check still misses.
-export function ReadyStep({ state, words, busy, onAct, claim, onClaim }: ReadyProps) {
+export function ReadyStep({ state, words, busy, onAct, claim, onClaim, dialogUi }: ReadyProps) {
   const w = words.ready
   const zone = state.core?.zone ?? ""
   const s = state.domain?.signin
@@ -137,7 +138,7 @@ export function ReadyStep({ state, words, busy, onAct, claim, onClaim }: ReadyPr
       <div className="flex flex-col gap-2" data-block="server-launch-ready">
         <Small className="text-muted-foreground">{fill(w.text, { zone })}</Small>
         <Small className="text-foreground">{w.first}</Small>
-        <div><Button disabled={busy} onClick={() => void onAct("activate")} size="sm">{busy ? w.activating : w.activate}</Button></div>
+        <div><ActionButton disabled={busy} onAction={() => onAct("activate")} pendingText={w.activating}>{w.activate}</ActionButton></div>
       </div>
     )
   }
@@ -148,7 +149,7 @@ export function ReadyStep({ state, words, busy, onAct, claim, onClaim }: ReadyPr
   const recheck = async () => { setChecking(true); try { await onAct("signin") } finally { setChecking(false) } }
   return (
     <div className="flex flex-col gap-2" data-block="server-launch-ready" data-ready={final.ok ? "1" : "0"}>
-      {final.ok ? <ReadyWords busy={busy} claim={claim} onAct={onAct} onClaim={onClaim} state={state} words={words} /> : (
+      {final.ok ? <ReadyWords busy={busy} dialogUi={dialogUi} claim={claim} onAct={onAct} onClaim={onClaim} state={state} words={words} /> : (
         <div className="flex flex-col gap-1" data-block="server-launch-missing">
           <Small className="text-foreground">{w.missing.title}</Small>
           <ul className="flex list-disc flex-col gap-1 pl-5 text-sm text-muted-foreground">
@@ -158,7 +159,7 @@ export function ReadyStep({ state, words, busy, onAct, claim, onClaim }: ReadyPr
       )}
       <div className="flex flex-col gap-1" data-block="server-launch-signin">
         <div className="flex items-center gap-1">
-          <Button disabled={busy || checking} onClick={() => void recheck()} size="sm" variant="outline">{checking ? <Spinner className="size-4" /> : null}{checking ? w.signinChecking : w.signinButton}</Button>
+          <ActionButton disabled={busy} kind="second" onAction={() => recheck()} pending={checking} pendingText={w.signinChecking}>{w.signinButton}</ActionButton>
           <TooltipProvider><Tooltip>
             <TooltipTrigger asChild><Button aria-label={w.signinHintLabel} className="size-8" size="icon" variant="ghost"><Info aria-hidden /></Button></TooltipTrigger>
             <TooltipContent className="max-w-xs">{fill(w.signinHint, { zone })}</TooltipContent>
@@ -172,7 +173,7 @@ export function ReadyStep({ state, words, busy, onAct, claim, onClaim }: ReadyPr
 
 /** The words that call the server usable — drawn only under a passed final check (744-6, `check:ready-words`). 796: the links «Сайт ·
  *  Панель · Вход» only once the architect exists — before that one road, the architect's e-mail and the one registration button (814). */
-function ReadyWords({ state, words, busy, onAct, claim, onClaim }: ReadyProps) {
+function ReadyWords({ state, words, busy, onAct, claim, onClaim, dialogUi }: ReadyProps) {
   const w = words.ready
   const zone = state.core?.zone ?? ""
   const architect = state.core?.rows.find((r) => r.kind === "architect")?.host ?? zone
@@ -198,7 +199,7 @@ function ReadyWords({ state, words, busy, onAct, claim, onClaim }: ReadyProps) {
           </Small>
           <Small className="text-muted-foreground">{w.next}</Small>
         </>
-      ) : <Claim busy={busy} onAct={onAct} onShown={onClaim} shown={claim} words={w} zone={zone} />}
+      ) : <Claim busy={busy} dialogUi={dialogUi} onAct={onAct} onShown={onClaim} shown={claim} words={w} zone={zone} />}
     </>
   )
 }

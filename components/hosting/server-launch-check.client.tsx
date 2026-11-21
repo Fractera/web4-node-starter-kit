@@ -1,6 +1,7 @@
 "use client"
 // @local — step 2 of the launch ladder (one route: «Активация выделенного сервера»): the server measured, its Fractera and the strategy
 
+import { ActionButton } from "@/components/hosting/action-button.client"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import type { LaunchState } from "@/components/hosting/server-launch.client"
 import type { ServerLaunchWords } from "@/components/hosting/server-launch.i18n"
@@ -81,7 +82,7 @@ export function CheckStep({ state, words, dialogUi, busy, onAct }: { state: Laun
       {/* 795: the freeing itself lives in the danger zone at the bottom of the page */}
       {taken && taken.clear?.state !== "done" ? <Small className="font-medium text-destructive" data-block="server-launch-busy-below">{words.busyBelow}</Small> : null}
       <div>
-        <Button disabled={busy} onClick={() => void onAct("probe")} size="sm" variant="ghost">{words.recheckServer}</Button>
+        <ActionButton disabled={busy} kind="second" onAction={() => onAct("probe")}>{words.recheckServer}</ActionButton>
       </div>
     </div>
   )

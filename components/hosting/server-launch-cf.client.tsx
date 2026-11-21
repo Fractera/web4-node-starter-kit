@@ -1,6 +1,7 @@
 "use client"
 // @local — step 3 of the launch when the domain's DNS is in Cloudflare (one route: «Активация выделенного сервера»): the node's own write, or the key first
 
+import { ActionButton } from "@/components/hosting/action-button.client"
 import { type ReactNode, useState } from "react"
 import { AppDialog } from "@/components/dialog/app-dialog.client"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
@@ -31,7 +32,7 @@ export function CloudflareWrite({ cf, words, busy, dialogUi, manual, onWrite, on
         <Small className="max-w-prose text-foreground">{fill(cf.key ? words.notVisible : words.noKey, { zone })}</Small>
         <div className="flex flex-wrap items-center gap-2" data-block="server-launch-cf-key-actions">
           <a className={buttonVariants({ size: "sm", variant: "outline" })} href="domain">{words.keyLink}</a>
-          <Button disabled={busy} onClick={() => void onAgain()} size="sm" variant="ghost">{words.again}</Button>
+          <ActionButton disabled={busy} kind="second" onAction={() => onAgain()}>{words.again}</ActionButton>
         </div>
         {manual}
       </div>
@@ -59,9 +60,9 @@ export function CloudflareWrite({ cf, words, busy, dialogUi, manual, onWrite, on
         {/* ✗ 2026-11-18 15:17 (Telegram 707): a zone that already leads every name to the server left no way on — step 3.4 never
             opened. The same door with nothing to write sets the way and checks the records; the zone is not touched. */}
         {lines.length
-          ? <Button disabled={busy || plan.blocked.length > 0} onClick={() => setOpen(true)} size="sm">{words.write}</Button>
-          : <Button disabled={busy || plan.blocked.length > 0} onClick={() => void onWrite([])} size="sm">{words.proceed}</Button>}
-        <Button onClick={() => setHand((h) => !h)} size="sm" variant="ghost">{words.byHand}</Button>
+          ? <ActionButton disabled={busy || plan.blocked.length > 0} onAction={() => setOpen(true)}>{words.write}</ActionButton>
+          : <ActionButton disabled={busy || plan.blocked.length > 0} onAction={() => onWrite([])}>{words.proceed}</ActionButton>}
+        <ActionButton kind="second" onAction={() => setHand((h) => !h)}>{words.byHand}</ActionButton>
       </div>
       {hand ? manual : null}
       <AppDialog

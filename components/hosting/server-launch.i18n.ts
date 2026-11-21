@@ -25,6 +25,8 @@ export type ServerLaunchWords = {
   /** 795: the password field appears only when the server asks for it — its lead and the button that opens the access */
   passwordAsk: string
   openAccess: string
+  /** 831: what a press with an empty field says */
+  hostMissing: string; passwordMissing: string
   /** 795: a server busy with another install — its «free» lives in the danger zone at the bottom */
   busyBelow: string
   connecting: string
@@ -86,13 +88,13 @@ export type ServerLaunchWords = {
   certs: { budget: string; limit: string; checklist: string; name: string; dns: string; cert: string; https: string; httpsButton: string; off: string; afterOn: string; notDue: string }
   /** 744-6: `done` · `links` · `site` · `panel` · `signin` · `next` and the claim words are drawn only under a passed final check
    *  (`ReadyWords`, `check:ready-words`); `missing` names what the check still lacks — `{host}` */
-  ready: { text: string; activate: string; activating: string; signinOk: string; signinFail: string; signinButton: string; signinChecking: string; signinHint: string; signinHintLabel: string; links: string; site: string; panel: string; signin: string; next: string; first: string; done: string; claimLead: string; claimSteps: string[]; claimEmail: string; claimRetry: string; claimSending: string; claimSent: string; claimOpen: string; claimFailed: string; claimLoss: string; claimed: string; missing: { title: string; cert: string; https: string; signin: string } }
+  ready: { text: string; activate: string; activating: string; signinOk: string; signinFail: string; signinButton: string; signinChecking: string; signinHint: string; signinHintLabel: string; links: string; site: string; panel: string; signin: string; next: string; first: string; done: string; claimLead: string; claimSteps: string[]; claimEmail: string; claimRetry: string; claimSending: string; claimSent: string; claimOpen: string; claimFailed: string; claimLoss: string; claimed: string; claimButton: string; claimMissing: string; claimDialogTitle: string; claimDialogText: string; claimDialogAgree: string; claimDialogConfirm: string; claimDialogBack: string; missing: { title: string; cert: string; https: string; signin: string } }
   dangerZone: string
   busy: { title: string; text: string; clear: string; clearTitle: string; risks: string[]; agree: string; clearConfirm: string; notNow: string; clearing: string; cleared: string; foreignGone: string; foreignLeft: string; failed: string; nodeTitle: string; nodeText: string; nodeClear: string; nodeRisk: string; freshTitle: string; freshText: string; freshClear: string; freshRisk: string; freshAgree: string; freshDisk: string; copiesNone: string; erasedDone: string }
 }
 
 /** 814: the claim words only — the claim island never sees `done`, `links` or the other ready words (744-6, `check:ready-words`) */
-export type ClaimWords = Pick<ServerLaunchWords["ready"], "claimLead" | "claimSteps" | "claimEmail" | "claimRetry" | "claimSending" | "claimSent" | "claimOpen" | "claimFailed" | "claimLoss">
+export type ClaimWords = Pick<ServerLaunchWords["ready"], "claimLead" | "claimSteps" | "claimEmail" | "claimRetry" | "claimSending" | "claimSent" | "claimOpen" | "claimFailed" | "claimLoss" | "claimButton" | "claimMissing" | "claimDialogTitle" | "claimDialogText" | "claimDialogAgree" | "claimDialogConfirm" | "claimDialogBack">
 
 const STAGE_EN = {
   launch: "Launch", prepare: "Server preparation", source: "Fractera from your fork", install: "Packages, build and elements", update: "The node's own update",
@@ -127,6 +129,7 @@ const en: ServerLaunchWords = {
   connect: "Check the server",
   passwordAsk: "This browser has no access to the server yet. Type the root password from your provider's letter — it opens the access for one day.",
   openAccess: "Open the access",
+  hostMissing: "Type the server's IP address first.", passwordMissing: "Type the root password from the provider's letter.",
   busyBelow: "The server is busy with another installation — it is freed in the «Danger zone» at the bottom of the page.",
   connecting: "Connecting to the server…",
   checking: "The access is open. Checking the server… up to two minutes on a new server.",
@@ -275,6 +278,7 @@ const en: ServerLaunchWords = {
     claimLead: "To get the right to create the architect's account on the new server, we need your e-mail. Attention: only the person with exactly the same e-mail gets the right to become the first superuser, who can create other superusers.",
     claimSteps: ["Type your e-mail address. Write it down and keep it.", "The node passes the address to the server by itself — wait for «The server waits for the architect's registration…» under the field.", "Press «Open the registration on the server» and register with the very same e-mail address; make up a password. Write the password down and keep it."],
     claimEmail: "The architect's e-mail", claimRetry: "Pass it again", claimSending: "Passing your e-mail to the server, this takes up to 15 seconds…", claimSent: "The server waits for the architect's registration with {email}.", claimOpen: "Open the registration on the server", claimFailed: "The server did not take the e-mail: {reason}. Try again.",
+    claimButton: "Make this e-mail the architect", claimMissing: "Type the whole e-mail first, for example name@mail.com.", claimDialogTitle: "The server's architect for good", claimDialogText: "Only {email} will be able to register as the architect of this server — the account that owns it and every element on it. A typo cannot be fixed later: the server would be lost to you, and the only way back is to install it again from zero.", claimDialogAgree: "I checked the address letter by letter: {email}", claimDialogConfirm: "Make it the architect", claimDialogBack: "Back, I will check",
     claimLoss: "Attention: if you lose the e-mail address and the password before you create another superuser, you cannot restore access to the server. You would have to install the server again, and all its data would be lost for good.", claimed: "The architect is already registered on this server.",
   },
   dangerZone: "Danger zone",
@@ -329,6 +333,7 @@ const ru: ServerLaunchWords = {
   connect: "Проверить сервер",
   passwordAsk: "У этого браузера ещё нет доступа к серверу. Введите пароль root из письма провайдера — он откроет доступ на сутки.",
   openAccess: "Открыть доступ",
+  hostMissing: "Сначала впишите IP-адрес сервера.", passwordMissing: "Впишите пароль root из письма провайдера.",
   busyBelow: "Сервер занят другой установкой — освободить его можно в «Опасной зоне» внизу страницы.",
   connecting: "Подключаюсь к серверу…",
   checking: "Доступ открыт. Проверяю сервер… на новом сервере до двух минут.",
@@ -477,6 +482,7 @@ const ru: ServerLaunchWords = {
     claimLead: "Чтобы вы получили право создать учётную запись архитектора на новом сервере, нам понадобится ваш e-mail. Внимание: только пользователь с точно таким же e-mail получит право стать первым суперпользователем, который может создавать других суперпользователей.",
     claimSteps: ["Введите электронный адрес. Запишите и сохраните его.", "Узел сам передаст адрес серверу — дождитесь под полем строки «Сервер ждёт регистрации архитектора…».", "Нажмите «Открыть регистрацию на сервере» и зарегистрируйтесь с тем же самым адресом, придумайте пароль. Запишите и сохраните пароль."],
     claimEmail: "E-mail архитектора", claimRetry: "Передать ещё раз", claimSending: "Передаю ваш e-mail серверу, это займёт до 15 секунд…", claimSent: "Сервер ждёт регистрации архитектора с адресом {email}.", claimOpen: "Открыть регистрацию на сервере", claimFailed: "Сервер не принял e-mail: {reason}. Попробуйте ещё раз.",
+    claimButton: "Назначить архитектора", claimMissing: "Сначала впишите e-mail целиком, например name@mail.com.", claimDialogTitle: "Архитектор сервера — навсегда", claimDialogText: "Зарегистрироваться архитектором этого сервера сможет только {email} — это владелец сервера и всех элементов на нём. Опечатку потом не исправить: сервер будет для вас потерян, а вернуть его можно только установкой с нуля.", claimDialogAgree: "Я проверил адрес по буквам: {email}", claimDialogConfirm: "Назначить архитектором", claimDialogBack: "Назад, проверю",
     claimLoss: "Внимание: если вы потеряете электронный адрес и пароль прежде, чем создадите нового суперпользователя, вы не сможете восстановить доступ к серверу. Вам придётся заново установить сервер, все данные будут потеряны безвозвратно.", claimed: "Архитектор на этом сервере уже зарегистрирован.",
   },
   dangerZone: "Опасная зона",

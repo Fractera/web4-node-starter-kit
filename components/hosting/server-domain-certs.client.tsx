@@ -1,6 +1,7 @@
 "use client"
 // @local — the certificate step of the server's domain (one route: the tab «Выделенный сервер»); its pieces are the part stage-log and shadcn primitives
 
+import { ActionButton } from "@/components/hosting/action-button.client"
 import { ChevronDown } from "lucide-react"
 import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
@@ -67,7 +68,7 @@ export function CertsStep({ rows, run, helper, words, busy, readOnly, onAct }: {
       {running ? <Small className="text-muted-foreground">{words.certsRunning}</Small> : null}
       {run && !running && run.detail ? <Small className="break-all text-destructive">{run.detail}</Small> : null}
       <div>
-        <Button disabled={busy || running || readOnly || !helper} onClick={() => void onAct("certs")} size="sm">{words.certsButton}</Button>
+        <ActionButton disabled={busy || readOnly || !helper} onAction={() => onAct("certs")} pending={running}>{words.certsButton}</ActionButton>
       </div>
       {readOnly ? null : (
         <Collapsible data-block="server-domain-upload">

@@ -1,6 +1,7 @@
 "use client"
 // @local — the launch of a dedicated server (one route: «Активация выделенного сервера»); its pieces are the parts ladder-step and stage-log
 
+import { ActionButton } from "@/components/hosting/action-button.client"
 import { type ReactNode, useCallback, useEffect, useState } from "react"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import type { DnsZone } from "@/components/hosting/dns-records"
@@ -188,13 +189,13 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
             <Small className="text-muted-foreground">{words.changed.text}</Small>
             <Small className="break-all font-mono text-foreground">{words.changed.seen} {changed.seen}</Small>
             {changed.pinned ? <Small className="break-all font-mono text-muted-foreground">{words.changed.pinned} {changed.pinned}</Small> : null}
-            <div><Button disabled={busy || !form.password} onClick={() => void connect(changed.seen)} size="sm" variant="destructive">{words.changed.trust}</Button></div>
+            <div><ActionButton disabled={busy} kind="danger" onAction={() => form.password ? connect(changed.seen) : setError(words.passwordMissing)}>{words.changed.trust}</ActionButton></div>
           </div>
         ) : null}
         {/* 761-16: «no access» is the person's action, not a failure — an orange card with «!» (the owner: a window you cannot miss) */}
         {error && !changed ? (error === words.errors["need-password"] ? <Small role="alert" className="rounded-md border border-warning/50 bg-warning/10 px-3 py-2 font-medium text-foreground" data-block="server-launch-need-hands">! {error}</Small> : <Small className="text-destructive" data-block="server-launch-error">{error}</Small>) : null}
         <div className="flex flex-wrap items-center gap-3">
-          <Button disabled={busy || !form.host.trim() || (askPass && !form.password)} onClick={() => void connect()}>{askPass ? words.openAccess : words.connect}</Button>
+          <ActionButton disabled={busy} onAction={() => !form.host.trim() ? setError(words.hostMissing) : askPass && !form.password ? setError(words.passwordMissing) : connect()} size="default">{askPass ? words.openAccess : words.connect}</ActionButton>
           {busy ? <Small className="text-muted-foreground">{doing === "checking" ? words.checking : words.connecting}</Small> : null}
         </div>
       </div>
@@ -217,13 +218,13 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
         <Small className="break-all text-muted-foreground">{words.connected.replace("{host}", target.host).replace("{fp}", target.fingerprint ?? "—")}</Small>
         <div className="flex flex-wrap items-center gap-3" data-block="server-launch-access-actions">
           {target.until ? <Small className="font-medium text-foreground tabular-nums">{words.access.until.replace("{time}", untilText(target.until))}</Small> : null}
-          <Button disabled={busy} onClick={() => void closeAccess()} size="sm" variant="outline">{closing ? words.access.closing : words.access.close}</Button>
-          <Button disabled={busy} onClick={() => { setTarget(null); setState(null); setError(""); setPanel({ url: null, opening: false }); setForm({ host: "", port: "22", password: "" }) }} size="sm" variant="ghost">{words.another}</Button>
+          <ActionButton disabled={busy} kind="second" onAction={() => closeAccess()} pendingText={words.access.closing}>{words.access.close}</ActionButton>
+          <ActionButton disabled={busy} kind="second" onAction={() => { setTarget(null); setState(null); setError(""); setPanel({ url: null, opening: false }); setForm({ host: "", port: "22", password: "" }) }}>{words.another}</ActionButton>
         </div>
         <div className="flex flex-wrap items-center gap-3" data-block="server-launch-panel">
           {panel.url
             ? <a className={buttonVariants({ variant: "link", size: "sm", className: "px-0" })} href={panel.url} rel="noopener noreferrer" target="_blank">{words.window.link.replace("{url}", panel.url)}</a>
-            : <Button disabled={busy || panel.opening} onClick={() => void openPanel()} size="sm" variant="outline">{panel.opening ? words.window.opening : words.window.open}</Button>}
+            : <ActionButton disabled={busy} kind="second" onAction={() => openPanel()} pending={panel.opening} pendingText={words.window.opening}>{words.window.open}</ActionButton>}
           <Small className="text-muted-foreground">{words.window.note}</Small>
         </div>
       </div>
@@ -235,7 +236,7 @@ export function ServerLaunch({ lang, words, ladderWords, domainWords, dialogUi }
     telegram: <TelegramStep busy={busy} lang={lang} onAct={act} state={state} words={words} />,
     recheck: <RecheckStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,
     certs: <CertsLaunchStep busy={busy} domainWords={domainWords} onAct={act} state={state} words={words} />,
-    ready: <><TelegramActivation busy={busy} lang={lang} onAct={act} state={state} words={words} /><ReadyStep busy={busy} claim={claim?.host === target.host ? claim : { sent: null, claimed: null }} onAct={act} onClaim={(c) => setClaim({ ...c, host: target.host })} state={state} words={words} /></>,
+    ready: <><TelegramActivation busy={busy} lang={lang} onAct={act} state={state} words={words} /><ReadyStep busy={busy} dialogUi={dialogUi} claim={claim?.host === target.host ? claim : { sent: null, claimed: null }} onAct={act} onClaim={(c) => setClaim({ ...c, host: target.host })} state={state} words={words} /></>,
   }
   return (
     <section className="my-6 flex flex-col gap-3" data-block="server-launch" data-host={target.host}>

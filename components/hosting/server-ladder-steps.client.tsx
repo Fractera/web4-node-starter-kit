@@ -1,6 +1,7 @@
 "use client"
 // @local — steps 1–3 of the server's domain ladder (one route: the tab «Выделенный сервер»): the domain, where its records live, who writes them
 
+import { ActionButton } from "@/components/hosting/action-button.client"
 import { Check, Copy } from "lucide-react"
 import { useEffect, useState } from "react"
 import type { LadderView } from "@/components/hosting/server-ladder.client"
@@ -49,7 +50,7 @@ export function DomainStep({ view, words, busy, prefill, onSave }: { view: Ladde
         <div className="flex flex-wrap items-center gap-3">
           <Small className="font-mono text-foreground">{fill(w.line, { zone: view.zone, ip: view.ip ?? "" })}</Small>
           {view.own ? <Small className="text-muted-foreground">{w.own}</Small> : null}
-          {view.canType ? <Button disabled={busy} onClick={() => { setName(""); setEditing(true) }} size="sm" variant="ghost">{w.change}</Button> : null}
+          {view.canType ? <ActionButton disabled={busy} kind="second" onAction={() => { setName(""); setEditing(true) }}>{w.change}</ActionButton> : null}
         </div>
         {run ? <Small className={run.state === "failed" ? "break-all text-destructive" : "text-muted-foreground"}>{words.run[run.state as keyof ServerLadderWords["run"]]} {run.state === "failed" ? run.detail ?? "" : ""}</Small> : null}
       </div>
@@ -60,12 +61,12 @@ export function DomainStep({ view, words, busy, prefill, onSave }: { view: Ladde
     <form className="flex flex-col gap-3" data-block="server-ladder-domain-form" onSubmit={(e) => { e.preventDefault(); void onSave(name); setEditing(false) }}>
       <Field>
         <FieldLabel htmlFor="server-ladder-domain">{w.label}</FieldLabel>
-        <Input autoComplete="off" id="server-ladder-domain" inputMode="url" onChange={(e) => setName(e.target.value)} placeholder={w.placeholder} spellCheck={false} value={name} />
+        <Input autoComplete="off" id="server-ladder-domain" required inputMode="url" onChange={(e) => setName(e.target.value)} placeholder={w.placeholder} spellCheck={false} value={name} />
         <FieldDescription>{w.hint}</FieldDescription>
       </Field>
       <div className="flex gap-2">
-        <Button disabled={busy || !name.trim()} size="sm" type="submit">{w.submit}</Button>
-        {view.zone ? <Button disabled={busy} onClick={() => setEditing(false)} size="sm" type="button" variant="ghost">{w.cancel}</Button> : null}
+        <ActionButton disabled={busy} onAction={() => { if (!name.trim()) return (document.getElementById("server-ladder-domain") as HTMLInputElement | null)?.reportValidity(); setEditing(false); return onSave(name) }}>{w.submit}</ActionButton>
+        {view.zone ? <ActionButton disabled={busy} kind="second" onAction={() => setEditing(false)}>{w.cancel}</ActionButton> : null}
       </div>
     </form>
   )
@@ -96,10 +97,10 @@ export function WhereStep({ view, words, busy, onAgain, onSub }: { view: LadderV
       {d.site && d.aKind !== "server" ? (
         <div className="flex flex-col gap-2 rounded-md border border-destructive/40 bg-destructive/5 p-3" data-block="server-ladder-live">
           <Small className="text-foreground">{fill(w.live, { name: d.name, title: d.site.title ?? String(d.site.status) })}</Small>
-          {!d.sub && view.canType ? <Button className="w-fit" disabled={busy} onClick={() => onSub(`node.${d.name}`)} size="sm" variant="outline">{w.sub}</Button> : null}
+          {!d.sub && view.canType ? <ActionButton className="w-fit" disabled={busy} kind="second" onAction={() => onSub(`node.${d.name}`)}>{w.sub}</ActionButton> : null}
         </div>
       ) : null}
-      {view.readOnly ? null : <Button className="w-fit" disabled={busy} onClick={() => void onAgain()} size="sm" variant="ghost">{w.again}</Button>}
+      {view.readOnly ? null : <ActionButton className="w-fit" disabled={busy} kind="second" onAction={() => onAgain()}>{w.again}</ActionButton>}
     </div>
   )
 }

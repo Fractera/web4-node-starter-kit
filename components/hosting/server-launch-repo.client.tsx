@@ -1,6 +1,7 @@
 "use client"
 // @local — step 4 of the launch ladder (one route: «Активация выделенного сервера»): the server's own GitHub repository
 
+import { ActionButton } from "@/components/hosting/action-button.client"
 import { ExternalLink } from "lucide-react"
 import { useState } from "react"
 import { Ladder } from "@/components/hosting/ladder-step"
@@ -41,7 +42,7 @@ export function RepoStep({ state, words, busy, onAct }: { state: LaunchState; wo
           <Small className="text-muted-foreground">{w.accountText}</Small>
           <div className="flex flex-wrap gap-2" data-block="server-launch-repo-account-actions">
             <a className={buttonVariants({ size: "sm", variant: "outline" })} href="https://github.com/signup" rel="noopener noreferrer" target="_blank">{w.accountOpen}<ExternalLink data-icon="inline-end" /></a>
-            <Button disabled={busy} onClick={() => void onAct("repo", { op: "account" })} size="sm">{w.done}</Button>
+            <ActionButton disabled={busy} onAction={() => onAct("repo", { op: "account" })}>{w.done}</ActionButton>
           </div>
         </div>
       ),
@@ -53,7 +54,7 @@ export function RepoStep({ state, words, busy, onAct }: { state: LaunchState; wo
           <Small className="text-muted-foreground">{w.forkText}</Small>
           <div className="flex flex-wrap gap-2" data-block="server-launch-repo-fork-actions">
             <a className={buttonVariants({ size: "sm", variant: "outline" })} href={ORIGINAL_URL} rel="noopener noreferrer" target="_blank">{w.forkOpen}<ExternalLink data-icon="inline-end" /></a>
-            <Button disabled={busy} onClick={() => void onAct("repo", { op: "fork" })} size="sm">{w.done}</Button>
+            <ActionButton disabled={busy} onAction={() => onAct("repo", { op: "fork" })}>{w.done}</ActionButton>
           </div>
         </div>
       ),
@@ -64,11 +65,11 @@ export function RepoStep({ state, words, busy, onAct }: { state: LaunchState; wo
         <form className="flex flex-col gap-3" data-block="server-launch-repo-url" onSubmit={(e) => { e.preventDefault(); if (url.trim()) void onAct("repo", { op: "url", url: url.trim() }) }}>
           <Field>
             <FieldLabel htmlFor="server-launch-repo-url">{w.urlLabel}</FieldLabel>
-            <Input autoComplete="off" id="server-launch-repo-url" inputMode="url" onChange={(e) => setUrl(e.target.value)} placeholder={r?.url ? shown(r.url) : "https://github.com/…"} spellCheck={false} value={url} />
+            <Input autoComplete="off" id="server-launch-repo-url" required inputMode="url" onChange={(e) => setUrl(e.target.value)} placeholder={r?.url ? shown(r.url) : "https://github.com/…"} spellCheck={false} value={url} />
             <FieldDescription>{w.urlNote}</FieldDescription>
           </Field>
           {r?.mode === "own" && r.url ? <Small className="text-foreground" data-block="server-launch-repo-checked">{fill(w.checked, { name: shown(r.url) })}</Small> : null}
-          <Button className="w-fit" disabled={busy || !url.trim()} size="sm" type="submit">{w.check}</Button>
+          <ActionButton className="w-fit" disabled={busy} onAction={() => url.trim() ? onAct("repo", { op: "url", url: url.trim() }) : (document.getElementById("server-launch-repo-url") as HTMLInputElement | null)?.reportValidity()}>{w.check}</ActionButton>
         </form>
       ),
     },

@@ -1,6 +1,7 @@
 "use client"
 // @local — the last steps of a server node's own domain ladder (one route: the tab of the server itself): certificates · HTTPS · switch on
 
+import { ActionButton } from "@/components/hosting/action-button.client"
 import type { Rung } from "@/components/hosting/ladder-step"
 import { CertsStep, type CertRow, type CertsRun } from "@/components/hosting/server-domain-certs.client"
 import type { ServerDomainWords } from "@/components/hosting/server-domain.i18n"
@@ -58,7 +59,7 @@ export function serverEndRungs({ end, words, busy, readOnly, zone, onAct }: {
         </ul>
         {end.rows.some(waits) ? <Small className="text-muted-foreground" data-block="server-ladder-not-due">{words.httpsNotDue}</Small> : null}
         <div className="flex flex-wrap items-center gap-3">
-          <Button disabled={busy || readOnly} onClick={() => void onAct("check")} size="sm">{words.checkButton}</Button>
+          <ActionButton disabled={busy || readOnly} onAction={() => onAct("check")}>{words.checkButton}</ActionButton>
           {end.checkAt ? <Small className="text-muted-foreground">{words.checkedAt} {when(end.checkAt)}</Small> : null}
         </div>
       </div>
@@ -66,12 +67,12 @@ export function serverEndRungs({ end, words, busy, readOnly, zone, onAct }: {
     active: end.steps.active ? (
       <div className="flex flex-col gap-3">
         <Small className="text-foreground">{words.activeOn.split("{url}")[0]}<a className="underline" href={`https://${architect}/`}>{`https://${architect}/`}</a></Small>
-        <div><Button disabled={busy || readOnly} onClick={() => void onAct("deactivate")} size="sm" variant="outline">{words.deactivate}</Button></div>
+        <div><ActionButton disabled={busy || readOnly} kind="second" onAction={() => onAct("deactivate")}>{words.deactivate}</ActionButton></div>
       </div>
     ) : (
       <div className="flex flex-col gap-3">
         <Small className="text-muted-foreground">{words.activeText.replace("{architect}", architect).replace("{zone}", zone ?? "")}</Small>
-        <div><Button disabled={busy || readOnly} onClick={() => void onAct("activate")} size="sm">{words.activate}</Button></div>
+        <div><ActionButton disabled={busy || readOnly} onAction={() => onAct("activate")}>{words.activate}</ActionButton></div>
       </div>
     ),
   }
