@@ -118,6 +118,8 @@ if (!existsSync(REGISTRY)) {
   process.exit(1)
 }
 const registry = JSON.parse(readFileSync(REGISTRY, 'utf8'))
+// 834-12: the ids this install started with — an element deleted from the panel meanwhile must not come back (`registry-merge.cjs`)
+const registryAtStart = new Set(registry.services.map((s) => s.id))
 
 // ── 374-5: ВОССТАНОВЛЕНИЕ ПРОЕКТА ИЗ СВОЕГО ФОРКА ──────────────────────────────
 // Слово владельца 2026-10-02: «Если нужно восстановить весь проект то просто делаем Fork основного проекта» — уточнено: клон
@@ -1191,6 +1193,16 @@ for (const entry of registry.services) {
 }
 
 // ── 6. Фактические порты — обратно в реестр ──────────────────────────────────
+// 834-12 (✗ 2026-11-21 21:50: j58fl deleted from the panel during its deployment came back as a ghost entry): the disk decides which
+// elements exist, this install — what it measured about the ones it installed.
+{
+  const { mergeRegistry } = require('../lib/web4-items/registry-merge.cjs')
+  const disk = (() => { try { return JSON.parse(readFileSync(REGISTRY, 'utf8')) } catch { return null } })()
+  const m = mergeRegistry(registry, disk, registryAtStart)
+  registry.services = m.registry.services
+  if (m.dropped.length) say(`  удалены из панели во время установки — в реестр не возвращаю: ${m.dropped.join(', ')}`)
+  if (m.born?.length) say(`  рождены во время установки — сохранены в реестре: ${m.born.join(', ')}`)
+}
 writeFileSync(REGISTRY, JSON.stringify(registry, null, 2) + '\n', 'utf8')
 
 // ── 7. NEXT_PUBLIC_* узла — единственное вынужденное исключение ──────────────
