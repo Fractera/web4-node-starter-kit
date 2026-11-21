@@ -353,6 +353,9 @@ with the stage, no wake) — committed, NOT built (next build). The server's bot
 **Server live 73f9667b (00:22). PROVEN from the internet:** z6esw /logout → https://auth.fractera.ai/logout?…redirectUrl=z6esw → back to
 https://z6esw.fractera.ai/ru; z6esw /login, fractera.ai /login and /logout → https://auth.fractera.ai/… (negative: 23:2x all four → 127.0.0.1:24681).
 Window **1a59622b** (root password) for the inside proofs: z6esw tell-core (SE3), redteam.sh z6esw root (window lines), delete z6esw.
+Roma 386–390 (00:27–00:29): signed in on fractera.ai (architect) ✓; «вошёл в root — я architect в Red team; вышел в Red team — вышел и из
+root» → answered: by design (part of the project = one sign-in on the zone); offered «Выйти отсюда / Выйти везде» — his «Это решение
+работает» (00:29) = keep the shared sign-in, no buttons.
 
 **NEXT ACTION 2 — 819 (approved, Telegram 335 «Это ещё нужно пофиксить. Обязательно включи режим максимального размышления и
 необходимый навык дизайна. Аккуратно без лишней избыточный информации поправь тексты ошибок кнопки.»):** plan
