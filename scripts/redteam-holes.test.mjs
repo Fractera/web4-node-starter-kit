@@ -94,5 +94,18 @@ t('F1 the relay\'s client calls where the core listens (localhost), never a fixe
   })
 }
 
+// 821 (found by 818's red team, closed in 821): the status door gave an element's own key the list of every live session — the node's
+// composition. And the new door «my agent» answers an element only about itself, without the architect's e-mail.
+t('S1 the status door filters the live sessions to the caller\'s own unless it holds the node key (821)', () => {
+  const src = code(read('app/api/agents/session/route.ts'))
+  assert.match(src, /\.filter\(\(\[key\]\) => isNode\(caller\) \|\| key === service\)/, 'the sessions list must be filtered by isNode(caller) || key === service')
+})
+t('S1 «my agent» takes the element from its own key and never sends the node\'s e-mail (821)', () => {
+  const door = code(read('app/api/node/my-agent/route.ts'))
+  assert.match(door, /"element" in caller \? caller\.element/, 'the id comes from the element key')
+  const state = code(read('lib/node/tg-app/state.ts'))
+  assert.match(state, /agent: \{ \.\.\.agentOf\(id, live\), email: null \}/, 'ownAgentOf strips the e-mail')
+})
+
 if (failed) { console.log(`===REDTEAM_HOLES_FAILED=== ${failed} failed, ${passed} passed`); process.exit(1) }
 console.log(`===REDTEAM_HOLES_OK=== ${passed} passed`)
