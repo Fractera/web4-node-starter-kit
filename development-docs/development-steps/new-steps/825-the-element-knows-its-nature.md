@@ -49,3 +49,23 @@ State: GO 2026-11-21 13:36 UTC — the owner's 532–534 (intake pre-steps/2026-
 - 825-5 Fractera's search and Lagrix from the element's side — check and words.
 - 825-6 heavy tools are native — core CLAUDE.md (seal), skills, element instruction.
 - 825-7 render, release, pin, proofs.
+
+## Done 2026-11-21 13:37–14:05 UTC (the owner away, his 534)
+
+- 825-1, 825-2: the element instruction source — «What you are for» (a chat answers with an artifact; you build the interface first;
+  the list of what it has; once per topic), «Your person's focus — the map of Projects» (only when the folder has tg/; README first;
+  every result tagged; came-from; parking; a clear only through the core's `tell-core` — `clear` is the main agent's command).
+- 825-3: `npm run memory -- remember|recall "<words>" [--project <group>/<item>]` in the custom template (lib/memory/project-memory.mjs
+  + test in the prebuild; scripts/memory.mjs through neighbourFetch('memory', '/v1/…'), from = the element only; recall lists the
+  project's tagged pages; asleep → the line to ask the core); passport `calls` + memory; skill telegram-mini-app «Focus».
+  NOT proven live: the workshop has no ELEMENT_KEY — the first real custom element born from v0.3.225 proves it.
+- 825-4: wall audit — local-node knowledge (pair keys, the wall), own-domain-sign-in (auth's and the core's files are not yours),
+  take-card-payment and self-review (SETTINGS_SECRET is the element's own key since 818-7c). Runtime.json reads stay (core-door rule).
+- 825-5: need-capability already says the outside rungs are simulated (822-1) — no change.
+- 825-6: core CLAUDE.md §3 (heavy shared tools are native) + §4 ladder, sealed 6323376a6e3b; skills create-element, handle-need; the
+  element instruction (common line → native too).
+- 825-7: custom v0.3.225 (4f1c9c5) and native v0.1.80 (0adfa83) released and pinned (4f8ee573, 72529fbf); core 43bf6fd4 pushed to the
+  fork and Fractera. `instruction:element -- templates` also wrote root's CLAUDE.md and seal on the Mac (its design, 734-1) — left
+  uncommitted in root (the classifier refused my revert); root's agent commits it.
+- Proof 1: check:instruction (core and template) green, the template prebuild and release guards green, tests 18/18 and 5/5.
+  Proof 2: root's worker asked to answer five questions from its new CLAUDE.md (13:58) — its report decides.
