@@ -3556,6 +3556,7 @@
         "app/[lang]/(architectLayer)/_components/element-domain-more.client.tsx",
         "components/ai-elements/web-preview.tsx",
         "components/hosting/server-domain-certs.client.tsx",
+        "components/shell/shell-account.client.tsx",
         "components/tools-tab/tool-card.client.tsx"
       ]
     },
