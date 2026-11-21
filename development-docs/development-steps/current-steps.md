@@ -328,6 +328,12 @@ real element. Base UI Button: `render={<a/>} nativeButton={false}`, not asChild.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-21 11:49 UTC, the owner (Telegram 484): «Запомни что на корни у нас не будет мини Apple корень будет работать просто через
+  чат. Мини приложения это часть относящиеся только к основному шаблону она не относится к корневой странице она не относится к
+  нативным.» → the Mini App (/tg) lives only in the custom template; root and native elements work through the chat. Nothing built for
+  root (its template never had /tg). Found: lib/node/tg-menu.cjs elementTarget sets a «Приложение» button to <site>/tg for ANY user
+  element with an HTTPS site — root on the server would open a 404; fix by capability (the element has tg/_data/menu.json), waits his yes + the next core build.
+
 - 2026-11-20 21:07 UTC, the owner (Telegram 297), to my ask 296 (the ONE core build, root left as is): «Да отлично делай это. Потом
   нова я установка сервера полная очистка не так ли?» — yes: after the Mac proofs, push to Fractera, sync the fork, then on the
   server's launch page «Очистить» + «Установить с нуля» (a full clean install).
