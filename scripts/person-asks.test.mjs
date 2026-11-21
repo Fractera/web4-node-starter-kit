@@ -50,10 +50,11 @@ t('the press wakes the main agent with a known node line that names the request'
   assert.ok(line.includes('«пароль»') && line.includes('Check the result yourself'))
 })
 
-t('761-16b the Telegram message: the act, the hint, the command apart, «on the computer», and the reply button «Готово · <id>»', () => {
+t('761-16b, 826 the Telegram message: the act, the hint, the command apart, «on the computer», «Ждёт вас» and no button with the id', () => {
   const m = tg.message({ id: 'ab12cd34', text: 'Введите пароль', href: '/ru/architect/hosting/hosting', hint: 'нажмите «Отмена»', copy: 'npm run x' }, 'ru')
   assert.ok(m.text.includes('Введите пароль') && m.text.includes('<pre>npm run x</pre>') && m.text.includes('на компьютере'), m.text)
-  assert.equal(m.keyboard.keyboard[0][0].text, 'Готово · ab12cd34')
+  assert.deepEqual(m.keyboard, { remove_keyboard: true }, '826: no button with the id — the Pult\'s «Ждёт вас» confirms')
+  assert.ok(m.text.includes('Ждёт вас') && !m.text.includes('ab12cd34'), '826: the message names «Ждёт вас», never the id')
   assert.equal(tg.doneId('Готово · ab12cd34'), 'ab12cd34')
   assert.equal(tg.doneId('Done · ab12cd34'), 'ab12cd34')
   assert.equal(tg.doneId('готово'), null)

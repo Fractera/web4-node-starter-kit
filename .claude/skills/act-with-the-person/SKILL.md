@@ -75,10 +75,11 @@ npm run ask-person -- "<what to do, one sentence, their language>" --href <where
 ## 5. Telegram (761-16b)
 
 When the asker has a bot (the main agent's, or the element's own — an element without one speaks through the main bot), `ask-person`
-also sends ONE message there: the act, why, the hint, the command apart in mono, «это делается на компьютере» when it is, and a reply
-button «Готово · <id>». The window in the panel stays. Their press in Telegram arrives to you as a plain message «Готово · <id>» →
-`npm run ask-person -- done <id>` (closes the window; `===ASK_ALREADY===` — it was closed in the panel: say so), then check the
-result. «Готово» in the panel closes it in Telegram too («✓ Закрыто в пульте»). No bot — the window alone, and the command says so.
+also sends ONE message there: the act, why, the hint, the command apart in mono, «это делается на компьютере» when it is, and where
+to confirm — the Pult's «Ждёт вас» (the bot's menu button). No button with the request's id (826, the owner: «я тебе что машина чтобы
+шестнадцатеричный код понимать … у нас для этого есть раздел ждёт вас»): the press in the Pult or the panel wakes you (person-done).
+A «Готово · <id>» still arriving as a message (an old keyboard, typed by hand) → `npm run ask-person -- done <id>` (`===ASK_ALREADY===`
+— it was closed in the panel: say so), then check the result. No bot — the window alone, and the command says so.
 
 ## 6. Never
 
