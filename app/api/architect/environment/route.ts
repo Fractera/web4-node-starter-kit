@@ -1,4 +1,5 @@
 // @api read which environment variables are set and save the OpenAI key
+import elementAgentRoles from "@/lib/auth/element-agent-roles.cjs"
 import { NextRequest, NextResponse } from "next/server"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
@@ -19,15 +20,17 @@ function targetOk(target: string): boolean {
   return target === "core" || isBornElement(target)
 }
 
-async function gate(req: NextRequest): Promise<NextResponse | null> {
+// 834-3 (the owner, Telegram 644: «A4 ещё нужно OpenAI ключ пробросить»): an element's own admin sets ITS element's key — never the
+// core's, never a neighbour's (`lib/auth/element-agent-roles.cjs`); the architect and the node's admin, as before, any target.
+async function gate(req: NextRequest, target = "core"): Promise<NextResponse | null> {
   if (isTemporaryPublicAddress(req)) return NextResponse.json({ ok: false, error: "temporary-address" }, { status: 403 })
-  return requireRoles(req, ["architect", "admin"])
+  return requireRoles(req, target !== "core" && isBornElement(target) ? elementAgentRoles.agentRoles(process.cwd(), target) : ["architect", "admin"])
 }
 
 export async function GET(req: NextRequest) {
-  const denied = await gate(req)
-  if (denied) return denied
   const target = req.nextUrl.searchParams.get("target") ?? ""
+  const denied = await gate(req, target)
+  if (denied) return denied
   if (!targetOk(target)) return NextResponse.json({ ok: false, error: "unknown-target" }, { status: 404 })
   const set = setNames(target)
   const coreHasKey = Boolean(process.env.OPENAI_API_KEY) || setNames("core").includes("OPENAI_API_KEY")
@@ -35,11 +38,11 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const denied = await gate(req)
-  if (denied) return denied
   let body: { target?: unknown; name?: unknown; value?: unknown } = {}
   try { body = await req.json() } catch { return NextResponse.json({ ok: false, error: "bad-request" }, { status: 400 }) }
   const target = typeof body.target === "string" ? body.target : ""
+  const denied = await gate(req, target)
+  if (denied) return denied
   const name = typeof body.name === "string" ? body.name : ""
   const value = typeof body.value === "string" ? body.value.trim() : ""
   if (!targetOk(target)) return NextResponse.json({ ok: false, error: "unknown-target" }, { status: 404 })

@@ -5,6 +5,8 @@ import { getSession } from "@/lib/auth/get-session"
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { mintTicket } from "../../_agent-kit/server/ticket.cjs"
+import { isBornItem } from "../../_agent-kit/server/workspace.cjs"
+import elementAgentRoles from "@/lib/auth/element-agent-roles.cjs"
 
 // БИЛЕТ НА ТЕРМИНАЛ СЛУЖБЫ (267-1).
 // 🔒 ДВЕРЬ КОПИИ КОМПЛЕКТА АГЕНТА (271): шаблон `kits/_agent-kit/api/*/route.ts.tpl`, установщик подставил
@@ -16,13 +18,24 @@ import { mintTicket } from "../../_agent-kit/server/ticket.cjs"
 // кому переслали ссылку быстрого туннеля, нельзя.
 export const dynamic = "force-dynamic"
 
-const ROLES = ["architect", "admin"] as const
+const INSTALLED: string = "embeddings"
+// Параметры маршрута — словарь строк: у обычной копии там только `lang`, у общей — ещё и `item`.
+type Ctx = { params: Promise<Record<string, string>> }
+async function serviceOf(ctx: Ctx): Promise<string | null> {
+  if (INSTALLED !== "__BORN__") return INSTALLED
+  const id = (await ctx.params)?.item ?? ""
+  return isBornItem(id) ? id : null
+}
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest, ctx: Ctx) {
   if (isTemporaryPublicAddress(req)) return NextResponse.json({ ok: false, reason: "temporary-address" }, { status: 403 })
-  const denied = await requireRoles(req, ROLES)
+  const service = await serviceOf(ctx)
+  if (!service) return NextResponse.json({ ok: false, reason: "unknown-service" }, { status: 404 })
+  // 834-3: the architect, the node's admin, or THIS element's own admin (`lib/auth/element-agent-roles.cjs`)
+  const denied = await requireRoles(req, elementAgentRoles.agentRoles(process.cwd(), service))
   if (denied) return denied
   const session = await getSession(req)
-  const { ticket, expiresInMs } = mintTicket(session?.email ?? "architect@node")
+  // 834-2: the ticket names its element — another element's socket refuses it
+  const { ticket, expiresInMs } = mintTicket(session?.email ?? "architect@node", service)
   return NextResponse.json({ ok: true, ticket, expiresInMs }, { headers: { "Cache-Control": "no-store" } })
 }

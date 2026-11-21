@@ -1,6 +1,7 @@
 // @api tell the data agent page whose Claude subscription it runs on, and switch it to its own person's subscription
 import { mkdirSync, rmSync } from "node:fs"
 import { NextRequest, NextResponse } from "next/server"
+import elementAgentRoles from "@/lib/auth/element-agent-roles.cjs"
 
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
@@ -36,9 +37,11 @@ async function serviceOf(ctx: Ctx): Promise<string | null> {
   return isBornItem(id) ? id : null
 }
 
-async function guard(req: NextRequest) {
+async function guard(req: NextRequest, ctx: Ctx) {
   if (isTemporaryPublicAddress(req)) return NextResponse.json({ ok: false, reason: "temporary-address" }, { status: 403 })
-  return requireRoles(req, ROLES)
+  // 834-3: the architect, the node's admin, or THIS element's own admin (`lib/auth/element-agent-roles.cjs`) — never a neighbour's
+  const service = await serviceOf(ctx)
+  return requireRoles(req, service ? elementAgentRoles.agentRoles(process.cwd(), service) : ROLES)
 }
 
 const masked = (email: string | null) => {
@@ -51,7 +54,7 @@ const running = (service: string) =>
   Boolean(status(service)?.running) || Boolean(status(modes.sessionKey(service, "work"))?.running)
 
 export async function GET(req: NextRequest, ctx: Ctx) {
-  const denied = await guard(req)
+  const denied = await guard(req, ctx)
   if (denied) return denied
   const service = await serviceOf(ctx)
   const own = service ? ownClaudeDir(service) : null
@@ -69,7 +72,7 @@ export async function GET(req: NextRequest, ctx: Ctx) {
 }
 
 export async function POST(req: NextRequest, ctx: Ctx) {
-  const denied = await guard(req)
+  const denied = await guard(req, ctx)
   if (denied) return denied
   const service = await serviceOf(ctx)
   const home = service ? ownClaudeHome(service) : null

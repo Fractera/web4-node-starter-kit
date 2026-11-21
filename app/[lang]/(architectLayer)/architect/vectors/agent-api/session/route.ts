@@ -1,5 +1,6 @@
 // @api report or stop the vectors agent terminal session
 import { NextRequest, NextResponse } from "next/server"
+import elementAgentRoles from "@/lib/auth/element-agent-roles.cjs"
 
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
@@ -33,9 +34,11 @@ async function serviceOf(ctx: Ctx): Promise<string | null> {
   return isBornItem(id) ? id : null
 }
 
-async function guard(req: NextRequest) {
+async function guard(req: NextRequest, ctx: Ctx) {
   if (isTemporaryPublicAddress(req)) return NextResponse.json({ ok: false, reason: "temporary-address" }, { status: 403 })
-  return requireRoles(req, ROLES)
+  // 834-3: the architect, the node's admin, or THIS element's own admin (`lib/auth/element-agent-roles.cjs`) — never a neighbour's
+  const service = await serviceOf(ctx)
+  return requireRoles(req, service ? elementAgentRoles.agentRoles(process.cwd(), service) : ROLES)
 }
 
 const unknown = () => NextResponse.json({ ok: false, reason: "unknown-service" }, { status: 404 })
@@ -45,7 +48,7 @@ const noModes = () => NextResponse.json({ ok: false, reason: "no-modes" }, { sta
 const keyOf = (service: string, dir: string, mode: unknown) => (mode === "work" ? (modes.hasGroups(dir) ? modes.sessionKey(service, "work") : null) : service)
 
 export async function GET(req: NextRequest, ctx: Ctx) {
-  const denied = await guard(req)
+  const denied = await guard(req, ctx)
   if (denied) return denied
   const service = await serviceOf(ctx)
   const dir = service ? serviceDir(service) : null
@@ -59,7 +62,7 @@ export async function GET(req: NextRequest, ctx: Ctx) {
 }
 
 export async function POST(req: NextRequest, ctx: Ctx) {
-  const denied = await guard(req)
+  const denied = await guard(req, ctx)
   if (denied) return denied
   const service = await serviceOf(ctx)
   const dir = service ? serviceDir(service) : null

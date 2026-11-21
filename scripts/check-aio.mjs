@@ -70,7 +70,8 @@ const mdRoutes = walkDirs(LANG_DIR, "index.md");
 // markdown-версии прилетело странице настроек: по модели гейта всё, что не
 // `(protectedLayer)`, публично. Карта для ИИ — приглашение прочитать; страница за
 // замком роли в неё не попадает, и markdown-двойник ей не нужен.
-const CLOSED_LAYERS = ["(protectedLayer)", "(architectLayer)"];
+// 834-4: the element agent frame is closed like the panel
+const CLOSED_LAYERS = ["(protectedLayer)", "(architectLayer)", "(elementAgentLayer)"];
 const isClosed = p => CLOSED_LAYERS.some(m => p.includes(m));
 
 const pageDirs = walkPages(LANG_DIR).filter(d => !isClosed(rel(d)));

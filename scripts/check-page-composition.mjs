@@ -75,6 +75,11 @@ const EXEMPT = [
     match: "(architectLayer)",
     why: "внутренний кокпит архитектора: он настраивает сайт, а не является его страницей; живёт на той же общей оболочке",
   },
+  {
+    // 834-4 (the owner, Telegram 641/644): the same cockpit for ONE element, opened by its own admin — the panel's own agent widgets
+    match: "(elementAgentLayer)",
+    why: "кокпит агента одного элемента для его администратора: те же виджеты агента, что у кокпита архитектора, без меню узла",
+  },
 ]
 
 // 🛑 ДОЛГ, А НЕ ИСКЛЮЧЕНИЕ. Дата, причина и то, чего ждёт каждая строка.

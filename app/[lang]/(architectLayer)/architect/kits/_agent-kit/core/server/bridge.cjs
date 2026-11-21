@@ -1400,7 +1400,7 @@ function onConnection(ws, service) {
       if (msg.type === 'init') {
         if (started) return
         // Билет одноразовый и живёт минуту; его выдала дверь под ролью архитектора.
-        if (!redeemTicket(msg.ticket)) {
+        if (!redeemTicket(msg.ticket, service)) { // 834-2: only a ticket of THIS element
           fail('bad-ticket')
           return
         }

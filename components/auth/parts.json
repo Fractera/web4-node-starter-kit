@@ -48,6 +48,31 @@
           "уведомление о роли"
         ]
       }
+    },
+    {
+      "id": "access-gate",
+      "kind": "composite",
+      "path": "components/auth/access-gate.client.tsx",
+      "export": "AccessGate",
+      "what": {
+        "en": "The client lock of a page: asks /api/me and, without one of the given roles, shows the one window «this page is not available to you» with sign-in and a way home.",
+        "ru": "Клиентский замок страницы: спрашивает /api/me и без одной из названных ролей показывает единое окно «эта страница вам недоступна» со входом и путём на главную."
+      },
+      "how": "Wrap a page's content: <AccessGate roles={…} lang ui={accessGateUi(lang)} dialogUi={appDialogUi(lang)}>…</AccessGate>; the real lock is still every door the page calls.",
+      "words": {
+        "en": [
+          "access gate",
+          "page lock",
+          "roles",
+          "not available"
+        ],
+        "ru": [
+          "замок страницы",
+          "роли",
+          "доступ",
+          "недоступна"
+        ]
+      }
     }
   ]
 }

@@ -1,5 +1,6 @@
 // @api set up the __SERVICE__ agent Telegram bot and read its state
 import { NextRequest, NextResponse } from "next/server"
+import elementAgentRoles from "@/lib/auth/element-agent-roles.cjs"
 
 import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
@@ -34,9 +35,11 @@ async function serviceOf(ctx: Ctx): Promise<string | null> {
   return isBornItem(id) ? id : null
 }
 
-async function guard(req: NextRequest) {
+async function guard(req: NextRequest, ctx: Ctx) {
   if (isTemporaryPublicAddress(req)) return NextResponse.json({ ok: false, error: "temporary-address" }, { status: 403 })
-  return requireRoles(req, ROLES)
+  // 834-3: the architect, the node's admin, or THIS element's own admin (`lib/auth/element-agent-roles.cjs`) — never a neighbour's
+  const service = await serviceOf(ctx)
+  return requireRoles(req, service ? elementAgentRoles.agentRoles(process.cwd(), service) : ROLES)
 }
 
 const unknown = () => NextResponse.json({ ok: false, error: "unknown-service" }, { status: 404 })
@@ -65,7 +68,7 @@ async function savePassport(service: string) {
 }
 
 export async function GET(req: NextRequest, ctx: Ctx) {
-  const denied = await guard(req)
+  const denied = await guard(req, ctx)
   if (denied) return denied
   const service = await serviceOf(ctx)
   if (!service || !isService(service)) return unknown()
@@ -75,7 +78,7 @@ export async function GET(req: NextRequest, ctx: Ctx) {
 }
 
 export async function POST(req: NextRequest, ctx: Ctx) {
-  const denied = await guard(req)
+  const denied = await guard(req, ctx)
   if (denied) return denied
   const service = await serviceOf(ctx)
   if (!service || !isService(service)) return unknown()

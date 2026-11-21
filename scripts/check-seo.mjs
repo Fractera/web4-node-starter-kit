@@ -45,7 +45,8 @@ const warnings = [];
 // ✗ Соблазн был противоположный и неверный: дописать `generateMetadata` странице,
 // чтобы гейт замолчал. Это подделало бы ответ — метаданные существовали бы ради
 // проверки, а не ради читателя, которого у закрытой страницы нет.
-const PRIVATE_MARKERS = ["(protectedLayer)", "(architectLayer)"];
+// 834-4: the element agent frame is closed like the panel (its own admin and the architect only), never indexed
+const PRIVATE_MARKERS = ["(protectedLayer)", "(architectLayer)", "(elementAgentLayer)"];
 
 function walk(dir, out = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {

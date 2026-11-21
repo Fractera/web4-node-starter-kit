@@ -27,7 +27,10 @@ function sweep(s, now) {
 }
 
 /** Выдать билет вошедшему. Роль здесь не проверяется — это работа двери. */
-function mintTicket(email) {
+// 834-2: a ticket names its element (`service`) — the socket of another element refuses it. Before 834 every ticket was the architect's,
+// and any element's socket took it; once an element's own admin gets tickets for its own agent, that would open a neighbour's terminal.
+/** @param {string} email @param {string | null} [service] */
+function mintTicket(email, service = null) {
   const s = store()
   const now = Date.now()
   sweep(s, now)
@@ -37,12 +40,13 @@ function mintTicket(email) {
     s.delete(oldest[0])
   }
   const ticket = randomBytes(32).toString('base64url')
-  s.set(ticket, { email, expiresAt: now + TTL_MS })
+  s.set(ticket, { email, service: typeof service === 'string' && service ? service : null, expiresAt: now + TTL_MS })
   return { ticket, expiresInMs: TTL_MS }
 }
 
 /** Погасить билет: почта владельца или `null`. */
-function redeemTicket(ticket) {
+/** @param {string} ticket @param {string | null} [service] */
+function redeemTicket(ticket, service = null) {
   if (typeof ticket !== 'string' || !ticket) return null
   const s = store()
   const now = Date.now()
@@ -50,6 +54,7 @@ function redeemTicket(ticket) {
   const found = s.get(ticket)
   if (!found) return null
   s.delete(ticket)
+  if (found.service && found.service !== service && !String(service ?? '').startsWith(`${found.service}--`)) return null // its work session «<id>--work» is its own
   return found.expiresAt > now ? found.email : null
 }
 
