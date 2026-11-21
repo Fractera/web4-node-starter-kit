@@ -479,7 +479,7 @@ async function idleTick(service) {
       // 597-4: «включить» — само согласие человека: агент стартует без поручения (ноль токенов), вопроса с кнопками нет.
       // 620: «/opus», «/sonnet», «/haiku» спящему агенту — то же согласие, сразу на этой модели (как кнопки 611).
       if (d.do === 'start') {
-        let out = typeof starter === 'function' ? await starter(service, d.model ? { model: d.model } : {}) : { ok: false, reason: 'no-starter' }
+        let out = starterFn() ? await starterFn()(service, d.model ? { model: d.model } : {}) : { ok: false, reason: 'no-starter' }
         // 614-1: «включён — пишите ему» — только когда встал канал; не встал — сессия уже закрыта, человеку «Извините…».
         const ch = out.ok && typeof out.channelReady === 'function' ? await out.channelReady() : null
         if (ch && !ch.up) out = { ok: false, reason: ch.reason === 'channel' ? 'channel' : 'session-ended', waited: ch.waited }
@@ -945,9 +945,13 @@ async function askEffort(service) {
   return { ok: true, pending: true, asked: p.asked.length }
 }
 
-let starter = null
-/** bridge.cjs кладёт сюда запуск с подтверждением — без круговой зависимости модулей. */
-function setStarter(fn) { starter = fn }
+/** bridge.cjs кладёт сюда запуск с подтверждением — без круговой зависимости модулей.
+ *  🔒 824 (the owner, Telegram 515–517: a new element's bot answered «Агент piiic не включился: no-starter»): ON `globalThis`, not in this
+ *  module. The door that saves a born element's token (`agent-api/channel/route.ts`) starts the bot's poller from ITS OWN bundled copy of
+ *  this file, where the bridge never called setStarter — the poller kept that copy until the core restarted, and every «Включить» of a
+ *  freshly connected bot found no starter. One process, one starter, whichever copy reads it. */
+function setStarter(fn) { globalThis.__web4TgStarter = fn }
+const starterFn = () => (typeof globalThis.__web4TgStarter === 'function' ? globalThis.__web4TgStarter : null)
 
 /**
  * Спросить человека в Telegram, запускать ли терминал. Запрос уже висит — задача добавляется к нему, и вопрос приходит ЗАНОВО
@@ -1048,7 +1052,7 @@ async function onButton(service, token, q) {
   }
   await tg(token, 'answerCallbackQuery', { callback_query_id: q.id, text: t.toast })
   const text = p.items.map((it) => it.text).filter(Boolean).join('\n\n')
-  const out = typeof starter === 'function' ? await starter(service, { text: text || undefined, taskUrls: p.items.map((it) => it.declineUrl).filter(Boolean), ...choice }) : { ok: false, reason: 'no-starter' }
+  const out = starterFn() ? await starterFn()(service, { text: text || undefined, taskUrls: p.items.map((it) => it.declineUrl).filter(Boolean), ...choice }) : { ok: false, reason: 'no-starter' }
   // 614-1: «получил ваше сообщение» — только когда встал канал и поручение ушло в сессию. Не встал — сессия уже закрыта, запрос остаётся
   // (`pending.json`), кнопки переезжают под «Извините…» внизу переписки: нажмёт ещё раз — агент получит то же сообщение.
   const ch = out.ok && typeof out.channelReady === 'function' ? await out.channelReady() : null
@@ -1393,8 +1397,8 @@ async function answerTrustHere(service, token, chatId) {
 }
 
 module.exports = {
-  // 824: the token from the token alone or BotFather's whole message.
-  tokenFrom,
+  // 824: the token from the token alone or BotFather's whole message; the starter any copy of this file sees.
+  tokenFrom, starterFn,
   // the bot taken off the node — the danger zone of its page
   removeBot,
   // 639: итог остаётся, служебное исчезает; вопросы закрытой сессии исчезают.

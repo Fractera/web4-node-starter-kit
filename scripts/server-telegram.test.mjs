@@ -101,4 +101,20 @@ await t('824 (Telegram 510): an element\'s bot page takes BotFather\'s whole mes
   assert.equal(kit.tokenFrom('Done! Congratulations on your new bot.'), null, 'negative: a message without a token')
 })
 
+await t('824 (Telegram 515–517): the starter set by the bridge is seen by every copy of the kit — the door\'s bundled copy too (no «no-starter»)', async () => {
+  const master = req('../app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/server/telegram.cjs')
+  const copy = req('../app/[lang]/(architectLayer)/architect/[item]/_agent-kit/server/telegram.cjs') // another module instance, as a bundle is
+  assert.notEqual(master, copy)
+  const before = globalThis.__web4TgStarter
+  try {
+    delete globalThis.__web4TgStarter
+    assert.equal(copy.starterFn(), null, 'negative: no bridge — no starter')
+    const fn = async () => ({ ok: true })
+    master.setStarter(fn)
+    assert.equal(copy.starterFn(), fn, 'the copy that never met the bridge sees its starter')
+  } finally {
+    if (before) globalThis.__web4TgStarter = before; else delete globalThis.__web4TgStarter
+  }
+})
+
 console.log(process.exitCode ? `===SERVER_TELEGRAM_FAILED=== ${passed} passed` : `===SERVER_TELEGRAM_OK=== ${passed} passed`)
