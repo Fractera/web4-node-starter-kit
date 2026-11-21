@@ -27,6 +27,9 @@ Plane 2 — waits the owner's tap in Telegram on a Mini App screen (no session o
 188.114.96.5/.97.5 time out after 17:27 while other sites and the temporary address answer — a network block in front of this Mac,
 not the node (hypothesis; the tunnel registered four connections in Madrid).
 
+Surfaces seen: none — the Mini App screens open only in the owner's Telegram session (his account is not mine to use); the
+proof is his tap on «Cron» in j58fl's «Приложение».
+
 ## Mistakes
 
 - 805 fixed the same hole for three branches and left no test; the Mini App branch came later and fell into it. Now the rule has its test.
