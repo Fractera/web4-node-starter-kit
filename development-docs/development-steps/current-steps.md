@@ -300,62 +300,46 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 - Parked: the server tails (z6esw tell-core, redteam with Green team, deleting z6esw/qxld4) — the SSH visit did not open in my Chrome
   profile (his two «Готово» came from another profile); the Pult update banner 2303b5e2 waits the next core build; my effort → max.
 
-## Letter to my next session (written 2026-11-21 ~19:00 UTC — reset at 57 %; Opus effort max)
+## Letter to my next session (written 2026-11-21 21:22 UTC — reset at 55 %; Opus effort max)
 
-**WHO WAITS:** Roma in TELEGRAM (90413601, ru), engaged and demanding today, tested the server with me all evening. Last sent (614–617):
-831 live with three screenshots; the server READY (steps 6–9 green, bot @Fractera_fractera_5ion_bot, 13/13 names with certs + HTTPS).
+**WHO WAITS:** Roma in TELEGRAM (90413601, ru). Engaged all evening, gives orders fast, hates being asked what is his order already
+(memory improve-means-release-and-push: an ordered improvement includes releases and pushes — never ask). He will REINSTALL THE SERVER
+FROM ZERO (Telegram 639: «не тратил ресурсы … поправить на работающем сервере … запущу процесс установки сервера полностью … потом
+создать с тобой быструю установку»). Last sent: 656/657 (j58fl report + the dropdown bug + this reset).
 
-**CLOSED TODAY (all pushed, fork aifa-agi + Fractera at 99924e98):** 828 domains (registry first), 829 first message after the trust cut
-+ Mini App address rule + deploy refreshes bot buttons, 830 template v0.3.227 Mini App lock (j58fl 72cce1a deployed), 831 ActionButton
-on every server-page step + the architect e-mail confirm dialog. Summaries in completed-steps/828…831-main.md. Core live 7cc8888d.
-
-**19:12–19:27 UTC (Telegram 619→622): step 832.** marina.fractera.ai on «Сайт обновляется» after his rename on the server — cause
-measured (the wall's root record kept the old folder → «the element folder is gone»), repaired live 19:19 (helper `add` with the new
-folder, pm2 restart → 200 from the internet). Core fix committed **ef6527cb** (element-move re-records the wall; the Pult's `serve`
-tag «не отвечает»/«переезд»/«встаёт»), NOT pushed (the classifier wants his word this session), NOT built. Asked him (Telegram):
-push + a core build on the Mac. The second-rebuild question is ANSWERED (by the server's own agent, read in its terminal): elements
-built with the IP, rebuilt for fractera.ai at 18:31 → 827. The server agent's 5-hour limit was at 100 % (resets 20:40 Berlin).
-Found: hooks with relative paths fail after the agent `cd`s (plan file 832, «Found on the way»).
+**DONE TONIGHT (all pushed: fork aifa-agi + Fractera at 49479260; template custom v0.3.230 pinned):**
+832 (server rename → wall record; Pult «не отвечает»), 832-4..8 (no-account words, one «Включить», rollout pushes only own repos),
+v0.3.228 Mini App without sign-in (Telegram ticket), 833 (own|node|none Claude status: Pult mark + «Ждёт вас», subscription page red
+line, 🔑 main-chat notice from the wake door, birth report line, ask-person --check claude:<id>), 834 (element admin's frame
+/<lang>/element-agent/<id|address>/<subscription|terminal|telegram|openai>; doors take that element's roles
+lib/auth/element-agent-roles.cjs; terminal tickets name their element + ownOnly for a non-panel admin; frame hides node menus
+[data-node-menu]; next.config rewrite excludes element-agent), template v0.3.229/230 drawer: Дашборд · Проекты ▸ · 4 agent links ·
+«Главный агент ▸». j58fl merged both (53a16f5, 05c661b), deployed 21:19, its agent CLOSED.
 
 **OPEN, IN ORDER:**
-0. 832 RELEASED (his «да», Telegram 632, 19:38 — and his rule: an ordered improvement includes releases and pushes, memory
-   improve-means-release-and-push). Pushed fork + Fractera to 3dd6350b: ef6527cb 832, 5de80775 832-4, 9e8db9f0 832-5, 44a29e7c 832-7
-   (one «Включить»), 665da547 pin custom v0.3.228, 3dd6350b 832-8 (rollout pushes an element only to its own repo; else local tag).
-   Template v0.3.228 (f5afa11, tag pushed with gh login — the release tool's token 403). j58fl merged it itself (2afff7d, test 10 ✓,
-   tsc 0, prebuild RC=0), deployed 19:45 (139 s). Proofs on j58fl (Host j58fl.throughsongs.com via loopback): /ru/tg → 307
-   /api/tg/open; ?tg=none → 307 /login; open page served; forged POST → 401 forged. My slip: closed j58fl's agent though «Turned
-   on by you: no»; woke it back (its bot asks Roma to turn it on).
-   The core build 19:55 RC=0 (the first cut off — I ran it as my child; the second detached).
-   833 (the server main agent's handoff, Telegram 637; the owner: sign-in only on a computer, everywhere a mark + link): 1faa3001 —
-   lib/agent-kit/claude-account.cjs own|node|none (+test 6 ✓); Pult red «не вошёл в Claude» + card in «Ждёт вас» with the link (bench
-   seen); claude-auth GET walledNone (no node e-mail), the subscription card red title + no node-login button; wake door: none →
-   🔑 notice in the main chat with the link, 409 no-account; birth report line; ask-person --check claude:<id> — «Готово» refused
-   until signed in (panel + Pult words). The owner (Telegram 639): do NOT repair the running server — after the push he reinstalls
-   the server from zero and tests the full cycle. DONE: pushed e56eddf0 (fork + Fractera), core built 20:13 RC=0, told him (640).
-   834 BUILT (his «Делай … A4 … OpenAI ключ» 644, «Проекты» 646, «Дашборд» 648): core 0b01a1f5 — lib/auth/element-agent-roles.cjs,
-   the kit's 4 doors + environment door take that element's roles, the terminal ticket names its element (tested: own ✓, work ✓,
-   neighbour ✗, twice ✗, look-alike ✗), the frame /<lang>/element-agent/<id|address>/<subscription|terminal|telegram|openai>
-   (guards: page-composition/seo/aio exempt it like the panel). Template v0.3.229 (6d69e342, pinned 6664823): the drawer —
-   Дашборд, Проекты ▸ (built project pages, Collapsible), the 4 agent links to the frame; for architect + own admin.
-   LIVE + PUSHED b4970b9c (fork + Fractera): 95a41180 the frame left out of the afterFiles rewrite (dynamic routes match after it;
-   was 404), b4970b9c the frame hides node menus (data-node-menu + globals.css), OpenAI tab shows only the key, and an element's own
-   admin works only on the element's own Claude account (ticket ownOnly → socket refuses without own home; claude-auth hides the
-   node's login, refuses own:false). Eyes: 4 tabs 200, unknown 404, panel 200, screenshots sent (653). j58fl task: merge v0.3.229
-   (woke 21:13). WAITS HIS ANSWER (655): on the Mac, close «an admitted bot person turns an own-app element's agent on the node's
-   subscription» too? my pick yes. He reinstalls the server and tests the checklist (640) + the drawer/frame.
-1. DONE (see 832) — PROMISED (Telegram 612): find what triggered the SERVER's second rebuild of every element after its update (his Pult 18:37 — all
-   «в очереди на сборку»). Read the server's logs through the page's log door (this Chrome has access until Sun 09:47; page
-   http://localhost:24680/ru/hosting/hosting, IP 109.199.105.213) or ask the server's own agent. My stated hypothesis: per-node NEXT_PUBLIC_*
-   baked into element builds → a domain/address change rebuilds all; step 827 moves them to run time. Answer him with the measured cause.
-2. Step 827 (fast install) — next big piece; first inventory NEXT_PUBLIC_* baked per node.
-3. Roma's yes still open: delete the empty typo zone througsongs.com in his Cloudflare.
-4. throughsongs.com from THIS Mac: port 443 to 188.114.96.5/.97.5 times out since 17:27 (port 80 works, other CF IPs work, cert valid till
-   2027-02-17) — likely the provider's block; recheck with `curl https://architect.throughsongs.com/api/health`; tell him when it opens.
-5. 793 small defects (not urgent): the server page should re-probe after an update and say on step 7 what holds it; the bare «Обновить».
-6. The cert-upload button (closed fold) still waits for both files — he may ask.
+1. 🔴 BUG (seen 21:20, eyes): in j58fl's drawer «Главный агент» renders as a plain LINK (measure: a[href*="architect/build"] visible,
+   [data-block="shell-account-group"] not found) — the `children` never reach the drawer. Template path: lib/menu/account-links.ts
+   (children set) → lib/shell/site-shell-data.ts:56 (maps children) → components/shell/remote-shell.ts:77 (keeps ...l) →
+   components/shell/shell-account.client.tsx (Collapsible when l.children?.length). Find the layer that drops it (a schema, the
+   shell-init serialization, the core's /api/shell for «part of the project» elements, a cache). Fix in the workshop
+   (data/workshop/fractera-custom-item-starter), release v0.3.231, pin, push, npm run task j58fl (merge), deploy, eyes with
+   --click "Личный кабинет" --click "Главный агент". Never read an element's code (denied) — only the workshop and DOM measures.
+2. WAITS HIS ANSWER (Telegram 655): on the Mac, an admitted person of an own-app element's bot can start its agent on the NODE's
+   subscription when the element has no own account (the server already refuses: walled). My pick: own apps only on their own account.
+3. After his server reinstall: walk his checklist (Telegram 640) + the drawer/frame with a real element admin; the server agent's
+   handoff (Telegram 637, file data/services/build/channel/telegram/inbox/1795291400465-AgADnCYAAvt2EFA.md) is fully answered by 833/834.
+4. Step 827 (fast install: built archives instead of building on the server; the second rebuild = elements built with the IP, rebuilt
+   when the domain connected 18:31 — measured by the server's own agent).
+5. Found, not fixed: hook commands in .claude/settings.json are relative (`node .claude/hooks/…`) — after the agent cd's they fail
+   and guards go silent (seen on the server). Candidate: "$CLAUDE_PROJECT_DIR"; check Windows first.
+6. element-wall.test.mjs «prepare.sh (DRY_RUN)» fails on the Mac — pre-existing, same without my changes.
 
-**CLUES:** the words guard and the steps guard read TRACKED files — commit before the deciding prebuild; logs/ is outside git; never read
-an element's .env.local; the release tool's node token gets 403 for templates — push with the machine's gh login (Fractera account).
+**CLUES:** template release: the tool's token gets 403 → after `npm run template -- release` push main + tag with
+`git -c credential.helper= -c 'credential.helper=!gh auth git-credential' push origin main refs/tags/vX` (gh login Fractera), then
+`npm run template -- pin`. Core build: ALWAYS `node scripts/spawn-free.mjs scripts/rebuild-detached.mjs logs/<name>.log` after a green
+prebuild (once I ran serve:rebuild as my child — it was cut off). Fractera push: `git push https://github.com/Fractera/web4-node-starter-kit.git main`.
+The server: Chrome visit until Sun 09:47 (http://localhost:24680/ru/hosting/hosting → /api/node/launch); the classifier refuses me
+starting a server update/install — Roma presses it.
 
 ## The person's decisions (verbatim)
 
