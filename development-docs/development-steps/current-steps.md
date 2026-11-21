@@ -317,6 +317,10 @@ lib/auth/element-agent-roles.cjs; terminal tickets name their element + ownOnly 
 «Главный агент ▸». j58fl merged both (53a16f5, 05c661b), deployed 21:19, its agent CLOSED.
 
 **OPEN, IN ORDER:**
+0. 834-11 (Telegram 664: «Проекты» missing under Дашборд — hidden when no built pages, my wrong choice): now always shown with a line
+   «Пока нет построенных страниц». Core 90d058bf (shell kit e50faacb7f, child without href = Small line), template v0.3.231 pinned
+   cbcce630, pushed. j58fl's agent tasked to merge v0.3.231 (21:5x) → then POST /api/node/deploy {ids:[j58fl]}, eyes --click
+   "Личный кабинет" --click "Проекты", screenshot to Roma. Still pending: his «собрать сейчас?» for 834-10 (Telegram 663).
 1. 🟠 FOUND 21:30 (commit 2ad60228, 834-9): the CORE renders every element's header/drawer (shell kit, app/api/shell-kit) with its OWN
    components/shell, which lacked ShellLink.children — the template had it (834-6), the core not. Fixed in the core, shell kit rebuilt
    (562f10e1ca, read from .shell-kit at runtime, no core rebuild); j58fl refreshes by ISR (≤10 min). NEXT: eyes proof, push fork +
