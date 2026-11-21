@@ -300,31 +300,41 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 - Parked: the server tails (z6esw tell-core, redteam with Green team, deleting z6esw/qxld4) — the SSH visit did not open in my Chrome
   profile (his two «Готово» came from another profile); the Pult update banner 2303b5e2 waits the next core build; my effort → max.
 
-## Letter to my next session (written 2026-11-21 ~11:47 UTC — reset at 56 % after 821 closed; Opus effort max)
+## Letter to my next session (written 2026-11-21 ~16:22 UTC — reset at 64 %; Opus effort max)
 
-**WHO WAITS:** Roma (owner) in TELEGRAM (chat_id 90413601, ru). Warm, fast, generous with ideas today («Великолепно», «exelent»,
-«Конечно отправляй»). Pictures first, short living messages with colour marks and emoji.
+**WHO WAITS:** Roma (owner) in TELEGRAM (chat_id 90413601, ru). Demanding today; his law (550, now in the soul, d0bdbee0): an «either —
+or» question is wrong thinking — choose by the greatest good, do it, say why; ask only what is truly his (money, a publication, a secret,
+a deletion in his accounts). Colour marks, short living messages, never a hex id.
 
-**DONE TODAY:** 821 CLOSED — custom template v0.3.221 (Mini App: home, Projects 4 sections/46 directions, Cron, Element, Settings,
-«Администрирование»), v0.3.222 (822-1: the element's purpose from his 440 + the capability ladder), v0.3.223 (agent card + context
-gauge island, «Перейти в чат» posts the section); core build bfb1915b live (GET /api/node/my-agent, status door filtered for an element
-key, came-from hook; red-team test S1 with a negative control). Core pushed to aifa-agi AND Fractera main = 4460a999 (his 478 «Конечно
-отправляй»). Production proof of the template in the workshop (next build + start 24711, eyes). Plans: new-steps/821 (done), 822
-(822-1 done; 822-2 the search door + magnifier, 822-3 Fractera's private graph element + checkout + private-repo install), 823.
+**DONE THIS SESSION:** 824 (Projects tree: sections/groups static folders with README, items dynamic, 30 s cache; v0.3.224) · core:
+the Mini App button only with tg/_data/menu.json (7534ff2b), BotFather's whole message on an element's bot page (b091ada9), «no-starter»
+— the Telegram starter on globalThis (274af6d4) · 825 the element's nature (instruction: interface first, the map of Projects, came-from,
+parking, clear via the core, `npm run memory` per project, heavy tools are native; custom v0.3.225, native v0.1.80; core CLAUDE.md §3/§4
+sealed) · 825-8 Telegram bootstrap: Bun + plugin (marketplace add → install) + deps as a FATAL install stage «telegram», unzip in
+prepare, migration 825-8 (d1a0bbe2) · 826 «＋ Добавить» + «Справка» (v0.3.226, pinned b110d29) · eeb7c201 the request copy in Telegram
+without «Готово · <id>» (names «Ждёт вас»). Core on the fork and Fractera up to de10cd4a after the push below.
 
-**HIS LAWS / DECISIONS TODAY (verbatim in the plans):** 447 «один узел как одно сообщество … Марина покупает элемент за свои деньги для
-всех братьев это закон»; 472 support cards: amounts only ($1/$5/$20 a month), no perks, he makes the 3 Stripe Payment Links himself in a
-future step by my instructions; 473 support copy: «проект разрабатывается и поддерживается одним разработчиком … я Рома Армстронг» + his
-photo from Fractera's GitHub.
+**OPEN, IN ORDER:**
+1. The server's fresh install (Roma started ~15:55 from the fork with eeb7c201). Ask him for the result: the stage «Telegram агентов»
+   green, the bot answers, the main agent wakes; element agents need their own Claude sign-in (811-5b). Note every stage's time (827).
+2. Step 828 — promised «сразу, без вопросов» (Telegram 573): domain guards in lib/domain/node-domains.ts — RDAP before a zone
+   (`registrarOf` exists; RDAP 404 → refuse «такого домена нет — проверьте написание» + the closest zone the key sees, one tap);
+   `removeDomain` deletes a zone the node created that is pending/empty for an unregistered name; the wording «ничего (ещё не замерено)»
+   → the truth. Today's case: Roma typed througsongs.com (RDAP 404, NXDOMAIN) — the node made a 2nd zone; he fixed the list himself
+   (throughsongs.com active 16:16, Porkbun, NS ignacio/kay).
+3. WAITS HIS YES (573): delete the empty typo zone througsongs.com in his Cloudflare (Admin@fractera.ai account) via his Chrome.
+4. A core build is due for eeb7c201 (lib/node/person-asks-telegram.cjs runs inside the core for elements' requests) — do it with 828.
+5. Step 827 fast install (556, 559, 560): «built once, downloaded everywhere» — prebuilt Linux archives per release tag on GitHub; first
+   inventory NEXT_PUBLIC_* values baked per node (e.g. the element admin role) and move them to run time; stop Ubuntu's first-boot
+   unattended upgrades instead of waiting (811 measured 38 min). Not Docker (the wall: per-element users, systemd, ACL).
+6. root's CLAUDE.md + scripts/instruction.seal on the Mac are uncommitted — written by `instruction:element -- templates` (its design);
+   the classifier refused my revert; root's agent commits them.
 
-**NEXT ACTION:** ask Roma what is next, offering: (a) 823 «О разработке» (news from GitHub `news/` folder, 3 support cards without links
-until his Payment Links, «Нашли проблему?» → t.me/roma_armstrong via web_app_open_tg_link; template + core Pult; the found cards are in
-Fractera/fractera-easy-starter lib/i18n/locales/*/sponsorship.ts); (b) 822-2 the search door; (c) a live custom element from v0.3.223
-to see the agent card (create's duplicate guard refused a test element «looks like root» — needs his word on a boundary or a rollout to
-root, which waits his word). The workshop dev server may still run on 24710.
-
-**CLUES:** the classifier refused a script reading .env.local to derive element keys — never retry; live element-key proofs only on a
-real element. Base UI Button: `render={<a/>} nativeButton={false}`, not asChild. check:page-sequence needs single-quoted widget keys.
+**CLUES:** the classifier refuses: DELETE/POST to the core's domain door by curl, reverting an element's files, typing an installer
+command into the server's terminal, stopping the server's agent — use a window (`npm run ask-person`) for his hands; a Telegram text
+that asks for an act needs a window in the same turn or the line «⟦без окна: …⟧». The server is architect.fractera.ai (109.199.105.213);
+its terminal's xterm text: `document.querySelectorAll('.xterm-rows > div')`. Workshop prod test: `ELEMENT_DIR=$PWD next start -p 24711`;
+POST from 127.0.0.1 passes as the owner at the machine.
 
 ## The person's decisions (verbatim)
 
