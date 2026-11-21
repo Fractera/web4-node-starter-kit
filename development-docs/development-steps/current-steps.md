@@ -328,6 +328,14 @@ real element. Base UI Button: `render={<a/>} nativeButton={false}`, not asChild.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-21 14:57 UTC, the owner (Telegram 538, 539): «не могу на сервере никак убрать твою красную новую шапку … Telegram до сих пор не
+  работает» · «почему ты меня ждал почему ты сам это не сделал». Found in his Chrome (architect.fractera.ai, server core 83df9e98 built
+  14:42): the red banner «Telegram главного агента вас не слышит»; «Переподключить» did not help — /mcp has no telegram at all; the
+  server's own agent (asked read-only from its terminal): plugin 0.0.7 present, no node_modules, NO BUN. Fix efb105b0: ensure-bun in
+  preinstall + migration 825-8 (+ npm-package fallback without unzip) + unzip in prepare.sh; pushed to fork + Fractera. The classifier
+  refused me stopping the server's agent and telling it to run Bun's installer → Roma updates the server; the build's agent return
+  relaunches with the channel. Proof waits his update.
+
 - 2026-11-21 13:45 UTC: 825 DONE (plan new-steps/825, summary there): custom v0.3.225, native v0.1.80, core CLAUDE.md §3/§4 sealed,
   core 43bf6fd4 on the fork and Fractera; root's worker proved the new instruction live. Open: the live memory proof on a real element;
   root's CLAUDE.md+seal uncommitted (written by instruction:element); «Добавить» + «Справка» waits his yes; the server update waits him.
