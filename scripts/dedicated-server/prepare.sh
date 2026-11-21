@@ -36,7 +36,7 @@ stage swap 'mem=$(awk "/MemTotal/ {print int(\$2/1024)}" /proc/meminfo); sw=$(aw
     mkswap /swapfile-fractera; swapon /swapfile-fractera;
     grep -q "^/swapfile-fractera" /etc/fstab || echo "/swapfile-fractera none swap sw 0 0" >> /etc/fstab; sysctl -w vm.swappiness=10;
   fi; swapon --show=NAME,SIZE --noheadings'
-stage apt 'wait_for_apt; apt-get update -qq && apt-get install -y -qq git curl ca-certificates rsync nginx ufw build-essential python3 python3-venv openssl psmisc acl'
+stage apt 'wait_for_apt; apt-get update -qq && apt-get install -y -qq git curl ca-certificates rsync nginx ufw build-essential python3 python3-venv openssl psmisc acl unzip'
 # Node 22 — the major the node runs on everywhere (macOS 22.19 measured); NodeSource as the easy starter did.
 stage node 'v=$(node --version 2>/dev/null | cut -d. -f1); if [ "$v" != "v22" ]; then wait_for_apt; curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get install -y -qq nodejs; fi; node --version'
 stage pm2 'command -v pm2 >/dev/null || npm install -g pm2@latest; pm2 --version'

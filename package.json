@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "postinstall": "node scripts/ensure-pty.mjs && node scripts/ensure-eyes.mjs",
-    "preinstall": "node scripts/check-local.mjs && node scripts/ensure-env.mjs && node scripts/ensure-claude.mjs && node scripts/ensure-cloudflared.mjs",
+    "preinstall": "node scripts/check-local.mjs && node scripts/ensure-env.mjs && node scripts/ensure-claude.mjs && node scripts/ensure-bun.mjs && node scripts/ensure-cloudflared.mjs",
     "launch": "node scripts/launch.mjs",
     "eyes": "node scripts/eyes.mjs",
     "eyes:install": "node scripts/ensure-eyes.mjs",
