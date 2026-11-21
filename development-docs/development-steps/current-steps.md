@@ -300,24 +300,29 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 - Parked: the server tails (z6esw tell-core, redteam with Green team, deleting z6esw/qxld4) — the SSH visit did not open in my Chrome
   profile (his two «Готово» came from another profile); the Pult update banner 2303b5e2 waits the next core build; my effort → max.
 
-## Letter to my next session (written 2026-11-21 ~18:50 UTC — before the core build for 831; window 56 %)
+## Letter to my next session (written 2026-11-21 ~19:00 UTC — reset at 57 %; Opus effort max)
 
-**WHO WAITS:** Roma in TELEGRAM (90413601, ru). His word 18:46 (Telegram 611, a screenshot of the SERVER's Pult 18:37: every element
-«в очереди на сборку» after the update): «У нас нету вариантов всегда будет двойной цикл запуска … Если для ускоренной сборки это
-необходимо то пусть будет так или что? Отвечай на этот вопрос одновременно запускай сборку всех прошлых решений». Answered (612) and the
-core build started ~18:50 for 831.
+**WHO WAITS:** Roma in TELEGRAM (90413601, ru), engaged and demanding today, tested the server with me all evening. Last sent (614–617):
+831 live with three screenshots; the server READY (steps 6–9 green, bot @Fractera_fractera_5ion_bot, 13/13 names with certs + HTTPS).
 
-**DONE TODAY (pushed unless noted):** 828 domains, 829 first message + Mini App button rule, 830 template v0.3.227 (j58fl 72cce1a,
-deployed) — summaries in completed-steps; core 73870c68 on fork + Fractera. NOT PUSHED: 8ae01b1d, 496a7805 (793 lines), 0d99b57e
-(state), **2622237a 831** (ActionButton @part, every server-page step, 831-2 the architect e-mail only through a confirm dialog), the
-final-check test fix, 830 «Surfaces seen» — prebuild RC=0 at 18:45.
+**CLOSED TODAY (all pushed, fork aifa-agi + Fractera at 99924e98):** 828 domains (registry first), 829 first message after the trust cut
++ Mini App address rule + deploy refreshes bot buttons, 830 template v0.3.227 Mini App lock (j58fl 72cce1a deployed), 831 ActionButton
+on every server-page step + the architect e-mail confirm dialog. Summaries in completed-steps/828…831-main.md. Core live 7cc8888d.
 
-**NEXT:** 1) after the build: /api/health == HEAD; eyes on http://localhost:24680/ru/hosting/hosting (this Chrome has access to the server
-until Sun 09:47 — «Проверить сервер», IP 109.199.105.213): step 6 «Подключить бота» dark, press with empty token → red line; step 9
-claim dialog if reachable; screenshots to Roma. 2) push origin + `git push https://github.com/Fractera/web4-node-starter-kit.git main`.
-3) completed-steps/831-main.md («Surfaces seen:» with logs/eyes paths). 4) the server's second rebuild cycle: find its trigger in the
-server's logs (via the page's log door) — my answer 612 says what I know and that 827 removes the cause (per-node NEXT_PUBLIC_* baked).
-Background watches: throughsongs.com 443 (blocked from this Mac since 17:27, likely the provider; cert valid till 2027-02-17).
+**OPEN, IN ORDER:**
+1. PROMISED (Telegram 612): find what triggered the SERVER's second rebuild of every element after its update (his Pult 18:37 — all
+   «в очереди на сборку»). Read the server's logs through the page's log door (this Chrome has access until Sun 09:47; page
+   http://localhost:24680/ru/hosting/hosting, IP 109.199.105.213) or ask the server's own agent. My stated hypothesis: per-node NEXT_PUBLIC_*
+   baked into element builds → a domain/address change rebuilds all; step 827 moves them to run time. Answer him with the measured cause.
+2. Step 827 (fast install) — next big piece; first inventory NEXT_PUBLIC_* baked per node.
+3. Roma's yes still open: delete the empty typo zone througsongs.com in his Cloudflare.
+4. throughsongs.com from THIS Mac: port 443 to 188.114.96.5/.97.5 times out since 17:27 (port 80 works, other CF IPs work, cert valid till
+   2027-02-17) — likely the provider's block; recheck with `curl https://architect.throughsongs.com/api/health`; tell him when it opens.
+5. 793 small defects (not urgent): the server page should re-probe after an update and say on step 7 what holds it; the bare «Обновить».
+6. The cert-upload button (closed fold) still waits for both files — he may ask.
+
+**CLUES:** the words guard and the steps guard read TRACKED files — commit before the deciding prebuild; logs/ is outside git; never read
+an element's .env.local; the release tool's node token gets 403 for templates — push with the machine's gh login (Fractera account).
 
 ## The person's decisions (verbatim)
 
