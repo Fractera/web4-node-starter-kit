@@ -328,6 +328,10 @@ real element. Base UI Button: `render={<a/>} nativeButton={false}`, not asChild.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-21 12:02 UTC, the owner (Telegram 494): «Делай реализацию … только последние элементы каждого маршрута оставались
+  динамическими … а группы и подгруппы были статическими … readme.md … что сюда можно класть а что нельзя» → step 824 DONE: custom
+  v0.3.224 (tree tg/_projects, 50 READMEs, items.json at run time, 30 s on tg and admin), pinned 74f0eff3; plan new-steps/824.
+
 - 2026-11-21 11:57 UTC, the owner (Telegram 490): «мне понравилось то что ты сделал дерево на маршруте Telegram а то что касается
   страниц которые построится из этого дерева на уровне публичных или приватных … это уже выбор агента программиста и пользователя» →
   the 243-folder proposal withdrawn; the Mini App's catalog stays as built (projects.json); a page of an item is the agent's and the
