@@ -328,7 +328,10 @@ lib/auth/element-agent-roles.cjs; terminal tickets name their element + ownOnly 
    shell-init serialization, the core's /api/shell for «part of the project» elements, a cache). Fix in the workshop
    (data/workshop/fractera-custom-item-starter), release v0.3.231, pin, push, npm run task j58fl (merge), deploy, eyes with
    --click "Личный кабинет" --click "Главный агент". Never read an element's code (denied) — only the workshop and DOM measures.
-2. WAITS HIS ANSWER (Telegram 655): on the Mac, an admitted person of an own-app element's bot can start its agent on the NODE's
+2. 🟢 DECIDED (Telegram 662, Roma: «согласен с твоим мнением»): own apps only on their own account → 834-10 commit 4806f79f, pushed
+   (fork + Fractera): claude-account.cjs accountOf → none for app:own without own sign-in (9 tests ✓); every kit bridge refuses; wake
+   door notice text neutral. WAITS A CORE BUILD (asked Roma «собрать сейчас?»). No own app on this node yet — live proof needs one.
+   Old text: WAITS HIS ANSWER (Telegram 655): on the Mac, an admitted person of an own-app element's bot can start its agent on the NODE's
    subscription when the element has no own account (the server already refuses: walled). My pick: own apps only on their own account.
 3. After his server reinstall: walk his checklist (Telegram 640) + the drawer/frame with a real element admin; the server agent's
    handoff (Telegram 637, file data/services/build/channel/telegram/inbox/1795291400465-AgADnCYAAvt2EFA.md) is fully answered by 833/834.
