@@ -1,0 +1,125 @@
+# Generates tg/_data/projects.json — the owner's «Projects» template (Telegram 416–417), 4 sections (Telegram 424/425).
+import json, sys, re
+S = [
+ ("business", "Дело", "Business", "briefcase", [
+  ("product", "Продукт и услуги", "Product and services", "package", "Что вы продаёте, сколько это стоит и куда растёт.", "What you sell, what it costs and where it grows.",
+   [("value","Описание и ценность","Description and value"),("pricing","Тарифы и цены","Plans and prices"),("roadmap","План развития (roadmap)","Roadmap"),("cases","Кейсы и отзывы","Cases and reviews")]),
+  ("my-services", "Мои услуги", "My services", "hand-helping", "Услуги, которые вы оказываете людям, от заявки до результата.", "The services you give people, from the request to the result.",
+   [("formats","Виды услуг и форматы","Kinds and formats"),("briefs","Брифы и приём заявок","Briefs and requests"),("stages","Этапы реализации","Stages of the work"),("booking","Расписание и запись","Schedule and booking"),("quality","Стандарты и чек-листы качества","Quality standards and checklists")]),
+  ("sales", "Продажи", "Sales", "shopping-cart", "Каталог и путь клиента от интереса до оплаты.", "The catalog and the client's way from interest to payment.",
+   [("catalog","Каталог","Catalog"),("funnel","Воронка и обработка заявок","Funnel and requests")]),
+  ("customers", "Покупатели", "Customers", "users", "Кто у вас покупает и как удержать каждого.", "Who buys from you and how to keep each of them.",
+   [("new","Новые","New"),("regular","Постоянные","Regular"),("fading","Угасающие","Fading"),("vip","VIP и амбассадоры","VIP and ambassadors"),("feedback","Отзывы и обратная связь","Reviews and feedback")]),
+  ("suppliers", "Поставщики", "Suppliers", "truck", "Откуда приходит товар и на каких условиях.", "Where the goods come from and on what terms.",
+   [("wholesale","Опт","Wholesale"),("retail","Розница","Retail"),("logistics","Логистика и условия","Logistics and terms")]),
+  ("production", "Производство", "Production", "factory", "Как делается ваш товар: оборудование, материалы, качество.", "How your product is made: equipment, materials, quality.",
+   [("equipment","Оборудование","Equipment"),("materials","Материалы","Materials"),("technology","Технология и контроль качества","Technology and quality control")]),
+  ("subscriptions", "Подписки", "Subscriptions", "repeat", "Подписки, которые вы продаёте своим клиентам.", "The subscriptions you sell to your clients.",
+   [("monthly","Ежемесячная","Monthly"),("yearly","Годовая / пробный доступ","Yearly / trial")]),
+  ("competitors", "Конкуренты", "Competitors", "telescope", "Что делают другие и чем вы лучше.", "What others do and how you are better.",
+   [("product-research","Продуктовые исследования","Product research"),("financial-research","Финансовые исследования","Financial research"),("offers","Маркетинг и офферы","Marketing and offers")]),
+  ("economy", "Экономика", "Economy", "calculator", "Деньги дела: доходы, расходы, бюджет и налоги.", "The money of the business: income, costs, budget and taxes.",
+   [("income","Доходы и расходы","Income and costs"),("budget","Бюджет и налоги","Budget and taxes")]),
+  ("investors", "Инвесторы", "Investors", "trending-up", "Всё, что нужно показать тем, кто вложит деньги.", "Everything to show those who will invest.",
+   [("metrics","Метрики","Metrics"),("analytics","Аналитика","Analytics"),("pitch","Питч-дек и условия","Pitch deck and terms")]),
+  ("fintech", "Финтех и платёжные сервисы", "Fintech and payments", "credit-card", "Счета, приём оплат, переводы и их безопасность.", "Accounts, taking payments, transfers and their safety.",
+   [("accounts","Банковские счета, карты и необанки","Bank accounts, cards and neobanks"),("acquiring","Платёжные шлюзы и приём оплат (эквайринг)","Payment gateways and acquiring"),("transfers","Международные переводы и обмен валют","International transfers and exchange"),("billing","Биллинг, рассрочки и рекуррентные платежи","Billing, instalments and recurring payments"),("loyalty","Финансовые трекеры, кэшбэк и программы лояльности","Finance trackers, cashback and loyalty"),("kyc","Безопасность счетов, лимиты и верификация (KYC)","Account safety, limits and KYC")]),
+  ("legal", "Юридическое и документы", "Legal and documents", "scale", "Договоры, налоги, права и разрешения.", "Contracts, taxes, rights and licences.",
+   [("contracts","Договоры и оферта","Contracts and offer"),("taxes","Налоги и отчётность","Taxes and reporting"),("copyright","Авторские права","Copyright"),("licences","Лицензии и разрешения","Licences and permits")]),
+  ("assets", "Организация активов", "Assets", "landmark", "Чем вы владеете: недвижимость, доли, бренды, цифровые активы.", "What you own: property, shares, brands, digital assets.",
+   [("property","Недвижимость и земельные участки","Property and land"),("shares","Доли в бизнесе и ценные бумаги","Business shares and securities"),("ip","Интеллектуальная собственность, патенты и бренды","Intellectual property, patents and brands"),("equipment","Оборудование, техника и материальные ценности","Equipment and tangible assets"),("digital","Цифровые активы, домены и аккаунты","Digital assets, domains and accounts"),("registry","Реестр владения, оценка стоимости и страхование","Ownership registry, valuation and insurance")]),
+  ("team", "Команда и подрядчики", "Team and contractors", "handshake", "Кто делает работу вместе с вами.", "Who does the work with you.",
+   [("freelancers","Фрилансеры","Freelancers"),("partners","Партнёры","Partners"),("roles","Зоны ответственности","Areas of responsibility"),("hiring","Поиск и найм","Search and hiring")]),
+  ("hr", "Персонал и HR", "Staff and HR", "user-cog", "Штат, графики, зарплаты и развитие людей.", "Staff, schedules, pay and growth of people.",
+   [("structure","Структура команды и штатное расписание","Team structure and staffing"),("onboarding","Онбординг и база знаний для новичков","Onboarding and a knowledge base"),("pay","Зарплаты, премии и система KPI","Pay, bonuses and KPI"),("shifts","Графики смен, отпуска и больничные","Shifts, holidays and sick leave"),("growth","Оценка, обучение и мотивация сотрудников","Reviews, training and motivation"),("vacancies","Кадровый резерв и вакансии","Talent pool and vacancies")]),
+  ("digital-staff", "Цифровые сотрудники", "Digital staff", "bot", "ИИ-сотрудники, которые работают на вас круглые сутки.", "AI staff that work for you around the clock.",
+   [("sales-ai","AI-менеджер по продажам и обработке лидов","AI sales and lead manager"),("assistant","AI-ассистент (почта, календарь, сводки)","AI assistant (mail, calendar, digests)"),("support","AI-оператор поддержки клиентов","AI support operator"),("smm","AI-контент-мейкер и SMM-специалист","AI content maker and SMM"),("analyst","AI-аналитик и ресёрчер","AI analyst and researcher"),("rules","Инструкции, роли и контроль качества работы","Instructions, roles and quality control")]),
+ ]),
+ ("audience", "Голос и аудитория", "Voice and audience", "megaphone", [
+  ("social", "Соцсети", "Social networks", "share-2", "Ваши каналы и публикации в них.", "Your channels and what you publish there.",
+   [("instagram","Instagram","Instagram"),("youtube","YouTube","YouTube"),("telegram","Telegram","Telegram")]),
+  ("platform", "Платформа", "Platform", "globe", "Площадки, где живут ваши тексты и сайт.", "The places where your texts and site live.",
+   [("medium","Медиум","Medium"),("site","Свой сайт / лендинг","Own site / landing")]),
+  ("content", "Контент", "Content", "clapperboard", "Всё, из чего делаются ваши публикации.", "Everything your publications are made of.",
+   [("author","Портрет автора","Author portrait"),("images","Картинки","Images"),("video","Видео","Video"),("editing","Монтаж","Editing"),("music","Музыка","Music"),("clip","Клип","Clip"),("texts","Тексты и сценарии","Texts and scripts"),("covers","Обложки и дизайн","Covers and design"),("shorts","Короткие форматы (Reels / Shorts)","Short formats (Reels / Shorts)")]),
+  ("mailings", "Рассылки", "Mailings", "mail", "Письма и сообщения, которые греют и возвращают людей.", "Letters and messages that warm people up and bring them back.",
+   [("email","Имейл","Email"),("whatsapp","WhatsApp","WhatsApp"),("telegram","Telegram","Telegram"),("funnels","Автоворонки и прогревы","Auto-funnels and warm-ups")]),
+  ("marketing", "Маркетинг и трафик", "Marketing and traffic", "target", "Откуда приходят люди и сколько это стоит.", "Where people come from and what it costs.",
+   [("ads","Платная реклама","Paid ads"),("collabs","Коллаборации и блогеры","Collaborations and bloggers"),("promos","Акции и спецпредложения","Promotions and special offers"),("seo","Органика и SEO","Organic and SEO")]),
+  ("brand", "Бренд и упаковка", "Brand and packaging", "badge-check", "Как вас узнают и как вы звучите.", "How people recognise you and how you sound.",
+   [("positioning","Позиционирование","Positioning"),("identity","Фирменный стиль","Visual identity"),("tov","Тон голоса (ToV)","Tone of voice"),("personal","Личный бренд","Personal brand")]),
+  ("community", "Комьюнити и нетворкинг", "Community and networking", "users-round", "Люди вокруг вас: клубы, контакты, партнёры.", "The people around you: clubs, contacts, partners.",
+   [("clubs","Клубы и чаты","Clubs and chats"),("contacts","Полезные контакты","Useful contacts"),("affiliate","Партнёрские программы","Affiliate programs"),("experts","База экспертов","Experts")]),
+  ("events", "Мероприятия и события", "Events", "calendar-clock", "Эфиры, встречи и поводы рассказать о себе.", "Broadcasts, meetings and reasons to be heard.",
+   [("webinars","Вебинары и эфиры","Webinars and broadcasts"),("conferences","Конференции и встречи","Conferences and meetings"),("launch","Чек-листы запуска","Launch checklists"),("newsjacking","Календарь инфоповодов","News hooks calendar")]),
+  ("watch", "Дозорный", "Watchtower", "radar", "Новости и тренды вашей ниши, пока они свежие.", "News and trends of your niche while they are fresh.",
+   [("cnn","CNN","CNN"),("trends","Тренды и новости ниши","Niche trends and news")]),
+ ]),
+ ("knowledge", "Знания и инструменты", "Knowledge and tools", "library", [
+  ("ideas", "Идеи", "Ideas", "lightbulb", "Место, где идеи не теряются.", "The place where ideas are not lost.",
+   [("business","Бизнес","Business"),("personal","Контент и личные проекты","Content and personal projects")]),
+  ("focus", "Задачи и фокус", "Tasks and focus", "list-checks", "Цели, задачи и ритм, который их двигает.", "Goals, tasks and the rhythm that moves them.",
+   [("goals","Цели на месяц / год","Goals for the month / year"),("current","Текущие задачи","Current tasks"),("routine","Регулярная рутина","Routine"),("sprints","Спринты и дедлайны","Sprints and deadlines")]),
+  ("analytics", "Аналитика и гипотезы", "Analytics and hypotheses", "flask-conical", "Проверяйте идеи цифрами, а не чувством.", "Check ideas with numbers, not with feelings.",
+   [("tests","Идеи для тестов","Test ideas"),("ab","A/B-эксперименты","A/B experiments"),("dashboards","Дашборды и отчёты","Dashboards and reports"),("insights","Выводы и инсайты","Conclusions and insights")]),
+  ("knowledge-base", "База знаний", "Knowledge base", "book-open", "Всё, что вы прочли, собрали и хотите найти снова.", "Everything you read, collected and want to find again.",
+   [("references","Референсы и вдохновение","References and inspiration"),("books","Книги и курсы","Books and courses"),("guides","Гайды и чек-листы","Guides and checklists"),("archive","Архив материалов","Archive")]),
+  ("tools", "Инструменты и сервисы", "Tools and services", "wrench", "Софт, облака и доступы, на которых держится работа.", "The software, clouds and access the work rests on.",
+   [("software","Рабочий софт","Software"),("cloud","Облака и хранилища","Clouds and storage"),("domains","Домены и хостинг","Domains and hosting"),("access","Доступы и пароли","Access and passwords")]),
+  ("automation", "Нейросети и автоматизация", "AI tools and automation", "workflow", "Инструменты и связки, которые работают за вас.", "Tools and links that work for you.",
+   [("ai-tools","AI-инструменты","AI tools"),("prompts","Библиотека промптов","Prompt library"),("bots","Чат-боты и скрипты","Chat bots and scripts"),("integrations","Связки сервисов","Service integrations")]),
+  ("ai", "Искусственный интеллект", "Artificial intelligence", "sparkles", "Модели, агенты и всё новое в мире ИИ.", "Models, agents and everything new in AI.",
+   [("llm","Чаты и языковые модели","Chats and language models"),("system-prompts","Библиотека промптов и системных инструкций","Prompts and system instructions"),("generation","Генерация картинок, видео и звука","Images, video and sound generation"),("agents","AI-агенты и сценарии автоматизации","AI agents and automation scenarios"),("rag","Базы знаний и обучение моделей (RAG)","Knowledge bases and model training (RAG)"),("news","Новости, обзоры и подборки нейросетей","News, reviews and AI selections")]),
+  ("web3", "Блокчейн и Web3", "Blockchain and Web3", "blocks", "Кошельки, активы, контракты и сообщества Web3.", "Wallets, assets, contracts and Web3 communities.",
+   [("wallets","Криптокошельки, биржи и хранение ключей","Wallets, exchanges and key storage"),("defi","Портфель активов, стейкинг и DeFi","Portfolio, staking and DeFi"),("contracts","Смарт-контракты, токеномика и запуск проектов","Smart contracts, tokenomics and launches"),("nft","NFT, DAO и Web3-сообщества","NFT, DAO and Web3 communities"),("airdrops","Тестнеты, аирдропы и ончейн-аналитика","Testnets, airdrops and on-chain analytics"),("networks","Блокчейн-сети, комиссии и кроссчейн-мосты","Networks, fees and bridges")]),
+  ("career", "Карьера и учёба", "Career and study", "graduation-cap", "Ваш рост: учёба, портфолио, следующая ступень.", "Your growth: study, portfolio, the next step.",
+   [("cv","Резюме и портфолио","CV and portfolio"),("jobs","Поиск работы и собеседования","Job search and interviews"),("study","Университет, курсы и экзамены","University, courses and exams"),("grades","План развития и грейды","Growth plan and grades")]),
+  ("job-search", "Поиск работы и трудоустройство", "Job search", "search", "Отклики, собеседования и сравнение офферов в одном месте.", "Applications, interviews and offers in one place.",
+   [("boards","Площадки (LinkedIn, HeadHunter, профильные биржи)","Job boards (LinkedIn, HeadHunter, niche boards)"),("letters","Резюме, сопроводительные письма и портфолио","CV, cover letters and portfolio"),("pipeline","Воронка откликов и статусы вакансий","Applications pipeline and statuses"),("interviews","Подготовка к собеседованиям и тестовые задания","Interview prep and test tasks"),("offers","Сравнение офферов и условий","Comparing offers"),("recruiters","Контакты рекрутеров и рекомендации","Recruiters and referrals")]),
+ ]),
+ ("life", "Жизнь", "Life", "heart", [
+  ("self", "Самосовершенствование", "Self-improvement", "heart-pulse", "Здоровье, тело, голова и привычки: всё, что держит вас в форме.", "Health, body, mind and habits: everything that keeps you in shape.",
+   [("health","Здоровье","Health"),("psychology","Психология","Psychology"),("sport","Спорт","Sport"),("habits","Привычки и режим","Habits and routine"),("learning","Обучение и навыки","Learning and skills")]),
+  ("finance", "Личные финансы и инвестиции", "Personal finance and investing", "piggy-bank", "Ваши деньги: траты, накопления, инвестиции и платежи.", "Your money: spending, savings, investing and payments.",
+   [("budget","Бюджет и личные траты","Budget and spending"),("savings","Накопления и финансовые цели","Savings and goals"),("investing","Инвестиции, акции и крипта","Investing, stocks and crypto"),("payments","Кредиты и регулярные платежи","Loans and regular payments")]),
+  ("family", "Семья и отношения", "Family and relationships", "heart-handshake", "Даты, подарки, дети и общие планы.", "Dates, gifts, children and shared plans.",
+   [("dates","Важные даты и идеи подарков","Important dates and gift ideas"),("household","Семейный бюджет и дела","Family budget and chores"),("kids","Дети, кружки и развитие","Children and activities"),("plans","Совместные планы и досуг","Shared plans and leisure")]),
+  ("home", "Дом и умный дом", "Home and smart home", "house", "Дом, его устройства, ремонт и быт.", "Your home, its devices, repairs and daily life.",
+   [("scenarios","Сценарии автоматизации","Automation scenarios"),("devices","Устройства и датчики","Devices and sensors"),("renovation","Ремонт и интерьер","Renovation and interior"),("upkeep","Быт и обслуживание","Upkeep"),("shopping","Покупки для дома","Home shopping")]),
+  ("food", "Питание и рецепты", "Food and recipes", "utensils-crossed", "Меню, рецепты, покупки и рацион.", "Menus, recipes, shopping and diet.",
+   [("menu","Меню на неделю","Weekly menu"),("recipes","Книга рецептов","Recipe book"),("shopping","Список покупок","Shopping list"),("nutrition","Калории, БЖУ и рацион","Calories and nutrition")]),
+  ("travel", "Путешествия и релокация", "Travel and relocation", "plane", "Маршруты, жильё, документы и бюджет поездок.", "Routes, stays, documents and trip budgets.",
+   [("routes","Маршруты и билеты","Routes and tickets"),("stays","Жильё и отели","Stays and hotels"),("wishlist","Вишлист стран и мест","Places wishlist"),("packing","Чек-листы сборов и документы","Packing lists and documents"),("budget","Бюджет поездок","Trip budget")]),
+  ("car", "Авто и транспорт", "Car and transport", "car", "Обслуживание, расходы и всё, что связано с машиной.", "Service, costs and everything about your car.",
+   [("service","ТО, ремонт и пробег","Service, repairs and mileage"),("insurance","Страховки, налоги и штрафы","Insurance, taxes and fines"),("fuel","Расходы на топливо и мойку","Fuel and washing"),("parts","Тюнинг и запчасти","Tuning and parts")]),
+  ("pets", "Питомцы", "Pets", "paw-print", "Здоровье, уход и покупки для ваших питомцев.", "Health, care and shopping for your pets.",
+   [("health","Здоровье, прививки и анализы","Health, vaccines and tests"),("care","Корм, уход и режим","Food, care and routine"),("vets","Ветклиники и груминг","Vets and grooming"),("training","Дрессировка и покупки","Training and shopping")]),
+  ("hobby", "Творчество и хобби", "Creativity and hobbies", "palette", "То, что вы делаете для души.", "What you do for the soul.",
+   [("music","Музыка и инструменты","Music and instruments"),("art","Рисование, фото и дизайн","Drawing, photo and design"),("diy","Рукоделие и DIY","Crafts and DIY"),("collecting","Коллекционирование","Collecting")]),
+  ("media", "Кино, книги и музыка", "Films, books and music", "film", "Что посмотреть, прочесть и послушать, и что вы об этом думаете.", "What to watch, read and hear, and what you think of it.",
+   [("films","Фильмы и сериалы","Films and series"),("books","Книги и конспекты","Books and notes"),("music","Музыка и подкасты","Music and podcasts"),("ratings","Рекомендации и оценки","Recommendations and ratings")]),
+  ("games", "Игры и гейминг", "Games", "gamepad-2", "Во что играть, как пройти и с кем.", "What to play, how to beat it and with whom.",
+   [("backlog","Бэклог (во что поиграть)","Backlog"),("guides","Прохождения, гайды и билды","Walkthroughs, guides and builds"),("esports","Киберспорт и турниры","Esports and tournaments"),("squad","Стримы, кланы и напарники","Streams, clans and teammates"),("hardware","Железо, консоли и девайсы","Hardware and consoles"),("gamedev","Геймдев и моды","Game dev and mods")]),
+ ]),
+]
+SLUG = re.compile(r'^[a-z0-9]+(-[a-z0-9]+)*$')
+out = {"_": "THE PROJECTS OF THIS ELEMENT (node step 821; the owner, Telegram 416–417, 424). Four sections, 46 groups, each with its items — the person sees them all from the first day, empty but ready («сама архитектура вдохновит его»). An item's address is /<lang>/tg/projects/<group>/<item>; the agent puts real work there as a page folder `../_pages/projects/<group>/<item>/` (skill telegram-mini-app, «Projects»). The person's own item («добавить») is a folder there too, with its own slug. Edit only here.",
+       "sections": []}
+groups_seen = set()
+for (sslug, sru, sen, sicon, groups) in S:
+    sec = {"slug": sslug, "icon": sicon, "title": {"en": sen, "ru": sru}, "groups": []}
+    for (g, gru, gen, gicon, pru, pen, items) in groups:
+        assert SLUG.match(g) and g not in groups_seen, g
+        groups_seen.add(g)
+        its = []
+        seen = set()
+        for (i, iru, ien) in items:
+            assert SLUG.match(i) and i not in seen, (g, i)
+            seen.add(i)
+            its.append({"slug": i, "title": {"en": ien, "ru": iru}})
+        sec["groups"].append({"slug": g, "icon": gicon, "title": {"en": gen, "ru": gru}, "line": {"en": pen, "ru": pru}, "items": its})
+    out["sections"].append(sec)
+assert len(groups_seen) == 46, len(groups_seen)
+assert not (groups_seen & {s[0] for s in S})
+json.dump(out, open(sys.argv[1], "w"), ensure_ascii=False, indent=1)
+print("groups", len(groups_seen), "items", sum(len(g["items"]) for s in out["sections"] for g in s["groups"]))

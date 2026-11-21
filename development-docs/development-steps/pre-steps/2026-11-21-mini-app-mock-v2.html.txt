@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>821 v2 — Mini App элемента в языке пульта</title>
+<style>
+/* Telegram-native: the Mini App takes Telegram's own theme params (bg, secondary bg, text, hint, link, button) — the same family as the
+   node's Pult. Values below stand in for var(--tg-theme-*) in light mode. */
+:root{--bg:#efeff4;--card:#fff;--text:#000;--hint:#8e8e93;--link:#2481cc;--btn:#2481cc;--btn-text:#fff;--line:rgba(60,60,67,.12);
+--gold:#c79a12;--green:#34c759;--red:#ff3b30;--chip:#e6f0fa}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#d9d9de;font:15px/1.35 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;color:var(--text);-webkit-font-smoothing:antialiased;padding:28px 24px}
+.row{display:flex;gap:28px;align-items:flex-start}
+.cap{font-size:12px;color:#555;margin:0 0 8px 4px;font-weight:500}
+.phone{width:390px;height:844px;background:var(--bg);border-radius:30px;overflow:hidden;position:relative;box-shadow:0 0 0 1px rgba(0,0,0,.08)}
+.tg{height:52px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid var(--line)}
+.tg .x{color:var(--link);font-size:16px}.tg .c{text-align:center;font-weight:600;font-size:16px}.tg .c div{font-size:12px;font-weight:400;color:var(--hint)}
+.tg .dots{width:28px;height:28px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--link);color:var(--link);display:grid;place-items:center;font-size:13px}
+.pad{padding:14px 16px 24px}
+.hdr{display:flex;align-items:flex-start;gap:10px}
+.menu{width:38px;height:38px;border-radius:12px;background:#fff;display:grid;place-items:center;font-size:18px;flex:none}
+.hdr .t{flex:1}
+.hdr h1{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.15}
+.hdr .where{font-size:14px;color:var(--hint);margin-top:3px}
+.ref{width:38px;height:38px;border-radius:50%;background:#fff;display:grid;place-items:center;color:var(--link);font-size:18px;flex:none}
+.status{font-size:13px;color:var(--hint);margin:10px 0 12px}
+.status i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:6px}
+.card{background:var(--card);border-radius:16px;padding:14px 16px;margin-bottom:10px}
+.lbl{font-size:13px;color:var(--hint)}
+.agent{display:flex;align-items:center;gap:10px}
+.agent .t{flex:1}.agent b{display:block;font-size:17px;font-weight:600;margin-top:2px}.agent s{display:block;text-decoration:none;font-size:13px;color:var(--hint);margin-top:2px}
+.pill{background:var(--link);color:#fff;font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px}
+.pill.wait{background:var(--chip);color:var(--link)}
+.sect{font-size:13px;color:var(--hint);letter-spacing:.06em;text-transform:uppercase;margin:16px 4px 8px;font-weight:500}
+.big{font-size:34px;font-weight:700;color:var(--gold);letter-spacing:-.02em;margin-top:2px;font-variant-numeric:tabular-nums}
+.bar{height:8px;border-radius:4px;background:#e9e9ee;overflow:hidden;margin:8px 0 6px}.bar i{display:block;height:100%;background:var(--gold);border-radius:4px}
+.two{display:flex;gap:16px}.two>div{flex:1}.two b{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}.two .bar i{background:var(--link)}
+.small{font-size:12.5px;color:var(--hint)}
+.nav{background:var(--card);border-radius:16px;overflow:hidden}
+.ni{display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid var(--line)}
+.ni:first-child{border-top:0}
+.ico{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:#fff;font-size:16px;flex:none}
+.ni .t{flex:1}.ni b{display:block;font-weight:600;font-size:16px}.ni s{display:block;text-decoration:none;font-size:13px;color:var(--hint)}
+.chev{color:#c4c4c7;font-size:20px}
+.blue{background:#2481cc}.orange{background:#ff9500}.gray{background:#8e8e93}.purple{background:#af52de}.green{background:#34c759}
+.drawer{position:absolute;inset:52px 0 0 0;display:flex}
+.sheet{width:300px;background:var(--bg);height:100%;padding:16px 12px;box-shadow:1px 0 0 var(--line)}
+.scrim{flex:1;background:rgba(0,0,0,.32)}
+.sh{display:flex;gap:10px;align-items:center;padding:0 4px 14px}
+.letter{width:42px;height:42px;border-radius:12px;background:#2481cc;color:#fff;display:grid;place-items:center;font-weight:700;font-size:18px}
+.sh b{font-size:16px}.sh div div{font-size:13px;color:var(--hint)}
+.dg{background:#fff;border-radius:14px;overflow:hidden;margin-bottom:12px}
+.di{display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:1px solid var(--line);font-size:15px}
+.di:first-child{border-top:0}.di .ico{width:28px;height:28px;font-size:13px;border-radius:7px}
+.di.cur{background:#eef4fb;font-weight:600}
+.sub{padding:8px 12px 8px 50px;border-top:1px solid var(--line);font-size:14px;color:#3c3c43}
+.seg{display:flex;background:#e3e3e8;border-radius:9px;padding:2px;margin:4px 0 12px}
+.seg span{flex:1;text-align:center;font-size:13px;font-weight:500;padding:6px 0;border-radius:7px;color:#3c3c43}
+.seg .on{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.prog{font-size:12px;color:var(--hint);font-variant-numeric:tabular-nums}
+.more{display:block;text-align:center;font-size:14px;color:var(--link);padding:10px 0 2px}
+</style>
+</head>
+<body>
+<div class="row">
+
+<!-- A. Главная элемента -->
+<div><div class="cap">A · Главная мини-приложения элемента — верх как у пульта</div>
+<div class="phone">
+  <div class="tg"><span class="x">Закрыть</span><div class="c">Студия Марины<div>мини-приложение</div></div><span class="dots">⋯</span></div>
+  <div class="pad">
+    <div class="hdr"><div class="menu">☰</div><div class="t"><h1>Студия Марины</h1><div class="where">часть проекта Fractera</div></div><div class="ref">↻</div></div>
+    <div class="status"><i></i>элемент в сети · обновлено 10:12</div>
+    <div class="card"><div class="lbl">Агент элемента</div><div class="agent"><div class="t"><b>Opus · усилие high</b><s>marina@…</s></div><span class="pill wait">ждёт</span><span class="chev">›</span></div></div>
+    <div class="sect">Топливо подписки</div>
+    <div class="card"><div class="lbl">Контекстное окно · 1 000 000 токенов</div><div class="big">18 %</div><div class="bar"><i style="width:18%"></i></div><div class="small">занято 182 400 из 1 000 000</div></div>
+    <div class="sect">Ждёт вас</div>
+    <div class="card" style="color:var(--hint)">Ничего не ждёт — всё сделано ✓</div>
+    <div class="sect">Разделы</div>
+    <div class="nav">
+      <div class="ni"><div class="ico blue">▦</div><div class="t"><b>Проекты</b><s>46 направлений · начато 2</s></div><span class="chev">›</span></div>
+      <div class="ni"><div class="ico orange">◷</div><div class="t"><b>Cron</b><s>3 задачи · ближайшая сегодня в 07:00</s></div><span class="chev">›</span></div>
+      <div class="ni"><div class="ico purple">◈</div><div class="t"><b>Элемент</b><s>сайт, люди, агент, строительство</s></div><span class="chev">›</span></div>
+      <div class="ni"><div class="ico gray">⚙</div><div class="t"><b>Настройки</b><s>заполнено 2 из 6</s></div><span class="chev">›</span></div>
+    </div>
+  </div>
+</div></div>
+
+<!-- B. Ящик -->
+<div><div class="cap">B · Левое меню — выезжающий ящик (то же дерево в ядре)</div>
+<div class="phone">
+  <div class="tg"><span class="x">Закрыть</span><div class="c">Студия Марины<div>мини-приложение</div></div><span class="dots">⋯</span></div>
+  <div class="pad" style="opacity:.5"><div class="hdr"><div class="menu">☰</div><div class="t"><h1>Студия Марины</h1></div></div></div>
+  <div class="drawer"><div class="sheet">
+    <div class="sh"><div class="letter">М</div><div><b>Студия Марины</b><div>Администрирование</div></div></div>
+    <div class="dg"><div class="di cur"><div class="ico blue">⌂</div>Главная</div></div>
+    <div class="dg">
+      <div class="di"><div class="ico blue">▦</div>Проекты</div>
+      <div class="sub">Дело</div><div class="sub">Голос и аудитория</div><div class="sub">Знания и инструменты</div><div class="sub">Жизнь</div>
+    </div>
+    <div class="dg"><div class="di"><div class="ico orange">◷</div>Cron</div></div>
+    <div class="dg"><div class="di"><div class="ico purple">◈</div>Элемент</div>
+      <div class="sub">Сайт</div><div class="sub">Люди</div><div class="sub">Агент</div><div class="sub">Строительство</div></div>
+    <div class="dg"><div class="di"><div class="ico gray">⚙</div>Настройки</div></div>
+  </div><div class="scrim"></div></div>
+</div></div>
+
+<!-- C. Проекты -->
+<div><div class="cap">C · Проекты — 4 раздела, всё готово с первого дня</div>
+<div class="phone">
+  <div class="tg"><span class="x">‹ Назад</span><div class="c">Студия Марины<div>мини-приложение</div></div><span class="dots">⋯</span></div>
+  <div class="pad">
+    <div class="hdr"><div class="menu">☰</div><div class="t"><h1>Проекты</h1><div class="where">46 направлений — выберите любое</div></div></div>
+    <div style="height:10px"></div>
+    <div class="seg"><span class="on">Все</span><span>Популярные</span><span>Актуальные</span></div>
+    <div class="sect" style="display:flex;justify-content:space-between"><span>Жизнь</span><span class="prog">начато 1 из 11</span></div>
+    <div class="nav">
+      <div class="ni"><div class="ico green">♥</div><div class="t"><b>Самосовершенствование</b><s>● 2 страницы · задача в Cron</s></div><span class="chev">›</span></div>
+      <div class="ni"><div class="ico purple">₽</div><div class="t"><b>Личные финансы</b><s>бюджет, накопления, инвестиции</s></div><span class="chev">›</span></div>
+      <div class="ni"><div class="ico orange">✈</div><div class="t"><b>Путешествия и релокация</b><s>маршруты, жильё, вишлист</s></div><span class="chev">›</span></div>
+    </div><span class="more">ещё 8 направлений</span>
+    <div class="sect" style="display:flex;justify-content:space-between"><span>Голос и аудитория</span><span class="prog">начато 1 из 9</span></div>
+    <div class="nav">
+      <div class="ni"><div class="ico blue">✦</div><div class="t"><b>Соцсети</b><s>● 1 страница · Instagram</s></div><span class="chev">›</span></div>
+      <div class="ni"><div class="ico purple">▤</div><div class="t"><b>Контент</b><s>портрет автора, картинки, видео…</s></div><span class="chev">›</span></div>
+    </div><span class="more">ещё 7 направлений</span>
+  </div>
+</div></div>
+
+<!-- D. Элемент -->
+<div><div class="cap">D · Элемент — экраны узла, которые делают его полноценным</div>
+<div class="phone">
+  <div class="tg"><span class="x">‹ Назад</span><div class="c">Студия Марины<div>мини-приложение</div></div><span class="dots">⋯</span></div>
+  <div class="pad">
+    <div class="hdr"><div class="menu">☰</div><div class="t"><h1>Элемент</h1><div class="where">всё, чем элемент живёт как сервер</div></div></div>
+    <div class="sect">Сайт</div>
+    <div class="nav">
+      <div class="ni"><div class="ico blue">↗</div><div class="t"><b>Открыть сайт</b><s>marina.fractera.ai</s></div><span class="chev">›</span></div>
+      <div class="ni"><div class="ico purple">◐</div><div class="t"><b>Дизайн</b><s>цвета, шрифты, навык дизайна</s></div><span class="chev">›</span></div>
+      <div class="ni"><div class="ico gray">☰</div><div class="t"><b>Настройки сайта</b><s>название, меню, языки, вход</s></div><span class="chev">›</span></div>
+    </div>
+    <div class="sect">Люди</div>
+    <div class="nav"><div class="ni"><div class="ico green">☺</div><div class="t"><b>Пользователи</b><s>учётные записи и роли</s></div><span class="chev">›</span></div></div>
+    <div class="sect">Агент</div>
+    <div class="nav">
+      <div class="ni"><div class="ico orange">✳</div><div class="t"><b>Подписка Claude Code</b><s>вход в свой аккаунт</s></div><span class="chev">›</span></div>
+      <div class="ni"><div class="ico blue">✈</div><div class="t"><b>Telegram-бот</b><s>@marina_studio_bot</s></div><span class="chev">›</span></div>
+    </div>
+    <div class="sect">Строительство</div>
+    <div class="nav">
+      <div class="ni"><div class="ico gray">▶</div><div class="t"><b>Текущий шаг</b><s>что агент строит сейчас</s></div><span class="chev">›</span></div>
+      <div class="ni"><div class="ico green">⬆</div><div class="t"><b>Предпросмотр и развёртывание</b><s>принять или откатить</s></div><span class="chev">›</span></div>
+    </div>
+  </div>
+</div></div>
+
+</div>
+</body>
+</html>

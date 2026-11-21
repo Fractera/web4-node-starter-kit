@@ -60,6 +60,34 @@ State: PROPOSED 2026-11-21 ~10:15 UTC — waits the owner's «да» to this pla
 - «Элемент» rows that live in the core (the agent card, fuel, Claude subscription, the bot, deploy) need a core door «my own» with the
   element's key → one core build at the end; until then those rows say «скоро». Site, design, site settings, users — the element's own pages.
 
+## The owner, Telegram 434 (10:16 UTC) — the item's screen and the chat context (verbatim gist)
+
+«внутри каждого элемента … добрались мы до вкладке Instagram там должен быть небольшой дашборд с … минимальными графиками диаграммами например
+всего страниц 10 (… сколько проектов было выпущено) активные страницы две (… связаны с Krohn событиями). Задач на сегодня одна. … открыти сайт
+или перейти в чат. … внутри самого элемента мы не будем решать задачи сайта сайт для того и существуют чтобы заменить собой артефакты
+существующие по умолчанию в облачной версии … когда мы переходим в чат … пробросить сообщения– подсказку для агента … пользователь перешёл в
+чат и раздела: мои проект/дело/соцсети/инстаграм … чтобы не было так что пользователь думает … про тренировку агент думает что речь идёт про
+Instagram».
+My answer (435, waits his yes): the item screen = 3 numbers + a small chart (pages released, active = tied to Cron, tasks today) and two
+buttons «Открыть сайт» (the item's pages on the element's site — the artifacts) and «Перейти в чат». The chat context: the button tells the
+element's door «the person is now in Проекты › … › Instagram» (SERVICE_DATA_DIR/tg-context.json, with time), closes the Mini App; a
+UserPromptSubmit hook of the element's agent (the core's agent kit, like the memory lines) adds «⟦came from the section: …⟧» to the
+person's next message; it lives until another section is opened or ~30 min of silence. One element door + one small core change (the hook)
+→ in the same core build at the end.
+
+## Done so far (2026-11-21 ~10:20 UTC)
+
+- The workshop runs `next dev` on http://127.0.0.1:24710 (ELEMENT_DIR=the workshop, NEXT_PUBLIC_SUPPORTED_LANGUAGES=en,ru, AUTH_SERVICE_URL
+  =http://127.0.0.1:24681; /ru/tg 200 — the old 789 placeholder for now).
+- The catalog generated: `app/[lang]/(protectedLayer)/tg/_data/projects.json` — 4 sections, 46 groups, 193 items, ru/en, lucide icons
+  checked to exist (generator: the session scratchpad 821/gen/catalog.py — copied into the plan's history by the commit of the catalog).
+- Found by reading the template: pages are data (`_pages/<slug>/{en,ru,meta}.json`, body items `{kind:"widget-…"}`, `meta.bare` = widgets
+  only); widgets registered in `<branch>/_widgets/index.tsx` (pattern: admin's); `childRoute` (lib/branch-page.tsx) 404s a slug without a
+  folder → needs a `virtual` option for catalog addresses; the drawer `tg-shell.client.tsx` already hides the mode tabs with one mode;
+  CronSchedule (lib/cron/due.ts) gets an optional `project`; SUBSCRIPTIONS.json is an example (`example: true`); no `.mcp.json`.
+- Finding for the red team (818): the core's `POST /api/agents/session {action:"status"}` answers an element's own key with `sessions` —
+  the list of EVERY live session of the node (its composition) → filter to its own for an element caller.
+
 ## Substeps
 
 - 821-1 the picture before code: a mock on the template's tokens at phone width, light and dark — «Проекты» (4 sections, sort), a group,
