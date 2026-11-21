@@ -316,6 +316,16 @@ pushed with the machine's GitHub login (account Fractera; the release tool's nod
 Live without a build: j58fl «Приложение» → https://j58fl.throughsongs.com/tg (16:42), the main «Пульт» → architect.throughsongs.com.
 NOT pushed: the core (origin, Fractera) — push after the live proof.
 
+**18:30–18:32 the owner (Telegram 605, 606):** «требуется аудит всех кнопок … если кнопка кликабельная она тёмно-синие если я её называю
+она становится голубой и в ней появляется индикатор загрузки … нужен запуск процесса аудита кнопок» · «кнопка на последнем девятом шаге
+включить … тёмно-синие на старте становится голубой с текстом включаю… единственное не хватает индикатора загрузки». STEP 831 audit
+done (Telegram 607, waits his «да»): 45 buttons on the server page; main actions disabled until a field is filled render pale (connect,
+domain submit, repo check, bot save, cert upload, claim retry); main actions in outline (step 8 httpsButton, state ask, connectNow,
+replace); spinners only on 2. Rule: main = default, never disabled for an empty field (the reason under the field on press); pressed =
+that button disabled + Spinner + «…ing» word; secondary = outline everywhere; red = destructive only. One shared part (parts_find:
+nothing ready), screenshots before/after, one core build. Done already: 828/829/830 live and pushed (73870c68 on fork + Fractera);
+793 got two server-page defects (8ae01b1d, 496a7805 — not pushed). The server updated to 0f96fe8d at 18:19; step 6 (its bot) holds 7.
+
 **NEXT, IN ORDER (after the build returns):**
 1. `npm run serve:status`; /api/health commit == `git rev-parse --short HEAD`; the bundle carries 829: grep -l "trustCut" in
    .next/server chunks (or the route group copies) — a proof that the running core has screen.cjs.
