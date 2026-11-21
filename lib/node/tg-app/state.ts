@@ -22,6 +22,7 @@ import { registryDescription } from "@/lib/web4-items/element-describe"
 import { metaForLang } from "@/config/app-config"
 import { readPlace } from "@/lib/node-state/place"
 import bases from "@/lib/auth/sign-in-bases.cjs"
+import { elementMemory } from "@/lib/web4-items/machine"
 
 const ROOT = process.cwd()
 
@@ -36,7 +37,7 @@ export type TgAsk = { id: string; text: string; why: string | null; hint: string
  * channel. `null` — not known yet (the default model, an agent that never ran).
  */
 export type TgAgent = { mode: "coding" | "waiting" | "sleeping"; model: string | null; effort: string | null; ultracode: boolean; account: "node" | "own" | null; email: string | null; bot: string | null }
-export type TgElement = { build: "building" | "queued" | null; id: string; name: string; native: boolean; required: boolean; on: boolean; offReason: string | null; live: boolean; step: string | null; turn: { event: string; at: string; last: string | null } | null; agent: TgAgent ; description: string | null; site: string | null; botLink: string | null }
+export type TgElement = { build: "building" | "queued" | null; serve: TgServe; id: string; name: string; native: boolean; required: boolean; on: boolean; offReason: string | null; live: boolean; step: string | null; turn: { event: string; at: string; last: string | null } | null; agent: TgAgent ; description: string | null; site: string | null; botLink: string | null }
 /**
  * 2026-11-17 (the owner: «пульт как будто бы заморожен на определённом аккаунте»): a limit is measured only by an agent's turn (Claude Code
  * hands it to the status line); the account is read now, by code. `account` — the e-mail it was measured on; `stale` — measured on another
@@ -149,15 +150,34 @@ function descriptionOf(e: Entry): string | null {
   } catch { return null }
 }
 
-function elementsOf(lang: Lang, builds: TgBuilds): TgElement[] {
+/**
+ * 832 (the owner, Telegram 619, 2026-11-21 19:12: «вижу такую надпись [Сайт обновляется] но при этом если я открываю пульт то в нём нет
+ * информации что например идёт сборка или ещё что-то такое»): why a turned-on element's site shows the node's «updating» page while no
+ * build holds it — its folder is moving to a new address (`data/services/<id>/move.json`, `scripts/element-move.mjs`), or its server is
+ * not running (pm2: errored, stopped, waiting restart) or still starting. `null` — it serves, or the node does not know (pm2 silent).
+ */
+export type TgServe = "moving" | "starting" | "down" | null
+const MOVE_FRESH_MS = 15 * 60_000
+function serveOf(e: Entry, on: boolean, build: TgElement["build"], procs: Map<string, string> | null): TgServe {
+  if (!on || build) return null
+  const m = readJson<{ state?: string; at?: string } | null>(join(ROOT, "data", "services", e.id, "move.json"), null)
+  if (m?.state === "moving" && m.at && Date.now() - Date.parse(m.at) < MOVE_FRESH_MS) return "moving"
+  const status = procs?.get(e.id)
+  if (!status || status === "online" || status === "off") return null
+  return status === "launching" ? "starting" : "down"
+}
+
+function elementsOf(lang: Lang, builds: TgBuilds, procs: Map<string, string> | null): TgElement[] {
   const entries = readJson<{ services?: Entry[] }>(paths.REGISTRY_FILE, {}).services ?? []
   const live = new Set(((sessions() as { service: string; running?: boolean }[]) ?? []).filter((s) => s.running).map((s) => s.service))
   return entries.map((e): TgElement => {
     const off = power.offOf(e)
     let dir: string | null = null
     try { dir = (paths.entryDir(e) as string | null) ?? null; if (dir && !existsSync(dir)) dir = null } catch { dir = null }
+    const build: TgElement["build"] = builds.current === e.id ? "building" : builds.queue.includes(e.id) && !builds.done.includes(e.id) ? "queued" : null
     return {
-      build: builds.current === e.id ? "building" : builds.queue.includes(e.id) && !builds.done.includes(e.id) ? "queued" : null,
+      build,
+      serve: serveOf(e, !off, build, procs),
       id: e.id,
       name: elementName(e.id, lang),
       native: e.kind !== "user",
@@ -203,6 +223,12 @@ function limitsOf(): TgLimit[] {
     })
 }
 
+/** 832: every element's pm2 status by id (`off` for a turned-off one); `null` — pm2 did not answer, the Pult then says nothing of it. */
+async function processes(): Promise<Map<string, string> | null> {
+  const rows = await elementMemory().catch(() => null)
+  return rows ? new Map(rows.filter((r) => r.kind === "element").map((r) => [r.id, r.status])) : null
+}
+
 /** The whole picture for the Mini App, in the person's language. */
 function nodeOf(lang: Lang): TgNode {
   let name: string | null = null
@@ -212,7 +238,7 @@ function nodeOf(lang: Lang): TgNode {
   return { name, place: readPlace().kind, web }
 }
 
-export function tgState(lang: Lang): TgState {
+export async function tgState(lang: Lang): Promise<TgState> {
   const waiting = (asks.open(ROOT) as { id: string; text: string; why?: string | null; hint?: string | null; copy?: string | null; by?: string; at: string; secret?: TgAsk["secret"]; action?: string | null }[])
     .map((a) => ({
       id: a.id, text: a.text, why: a.why ?? null, hint: a.hint ?? null, copy: a.copy ?? null, by: a.by ?? "build", at: a.at,
@@ -227,5 +253,5 @@ export function tgState(lang: Lang): TgState {
   const context: TgContext | null = c ? { used: c.used, window: c.window, percent: c.percent, model: c.model, at: c.at } : null
   // 818 (the owner, Telegram 352: «почему пульт врёт?»): the main agent's card counts its live session too, never the record alone.
   const mainLive = ((sessions() as { service: string; running?: boolean }[]) ?? []).some((s) => s.service === "build" && s.running)
-  return { update: updateOf(), node: nodeOf(lang), context, builds, asks: waiting, main: { ...agentOf("build", mainLive), channel: mainChannel.health(ROOT, "build") as TgChannel, autostart: autostart.state().on as boolean | null }, elements: elementsOf(lang, builds), limits: limitsOf(), at: new Date().toISOString() }
+  return { update: updateOf(), node: nodeOf(lang), context, builds, asks: waiting, main: { ...agentOf("build", mainLive), channel: mainChannel.health(ROOT, "build") as TgChannel, autostart: autostart.state().on as boolean | null }, elements: elementsOf(lang, builds, await processes()), limits: limitsOf(), at: new Date().toISOString() }
 }

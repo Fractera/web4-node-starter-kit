@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
   }
   const lang = langOf(req)
   const action = typeof body?.action === "string" ? body.action : ""
-  if (action === "state") return NextResponse.json({ ok: true, state: tgState(lang) }, { headers: HEADERS })
+  if (action === "state") return NextResponse.json({ ok: true, state: await tgState(lang) }, { headers: HEADERS })
 
   const id = typeof body?.id === "string" ? body.id : ""
   if (action === "done" || action === "secret") {

@@ -21,6 +21,7 @@ import elementProps from '../lib/web4-items/element-props.cjs'
 import deployLock from '../lib/deploy/deploy-lock.cjs'
 import elementPower from '../lib/web4-items/element-power.cjs'
 import { addressOf } from '../lib/web4-items/address-file.mjs'
+import elementWall from '../lib/hosting/element-wall.cjs'
 
 const ROOT = join(paths.ITEMS_DIR, '..')
 const IS_WIN = process.platform === 'win32'
@@ -86,6 +87,21 @@ if (!moved) {
   fail(`rename-${lastErr}`, 'папку держит другой процесс — закройте терминал агента этого элемента и повторите переименование')
 }
 say('папка перенесена')
+// 832 (✗ measured 2026-11-21 19:09 on the owner's server: marina.fractera.ai «Сайт обновляется», pm2 «waiting restart» ×10, the shim's log
+// «the element folder is gone»): on a dedicated server a custom element runs behind its wall, and root's record
+// (/etc/fractera/elements/<id>) still named the old folder — the helper refused to start it. The record is written again by the helper's
+// own `add` (a repeat add: the record and the two top folders only, no recursive walk); the folder kept its ACLs through the rename.
+// Its agent's history lives in its own home (0700, fe-<id>) — moved as the element's user by the helper's `run`.
+if (elementWall.wallOn(ROOT) && elementWall.userExists(id)) {
+  const r = elementWall.ensureElementUser(ROOT, entry, target)
+  if (!r.ok) {
+    say(`стена: запись папки не обновлена — ${String(r.out ?? '').trim().slice(-200)}`)
+    try { renameSync(target, source); say('папка возвращена') } catch (e) { say(`папку вернуть не удалось: ${e?.code ?? e}`) }
+    for (const n of [...names].reverse()) if (wasOnline.has(n)) run(['start', n])
+    fail('wall-record', 'сервер не принял новую папку элемента — переименование отменено')
+  }
+  say('стена: запись папки обновлена')
+}
 
 // Абсолютные пути прежней папки — в обоих написаниях (обратные и прямые косые).
 const variants = (p) => [p, p.split('\\').join('/'), p.split('\\').join('\\\\')]
@@ -113,6 +129,12 @@ if (existsSync(hOld) && !existsSync(hNew)) {
   try { renameSync(hOld, hNew); say('история агента перенесена') } catch (e) { say(`история агента не перенесена: ${e?.code ?? e}`) }
 }
 
+// 832: a walled element's agent keeps its history in its own home (0700, fe-<id>) — moved as that user by the helper's `run`.
+if (elementWall.wallOn(ROOT) && elementWall.userExists(id)) {
+  const home = `/var/lib/fractera-el/${id}/.claude/projects`
+  const h = spawnSync('/usr/bin/sudo', ['-n', elementWall.HELPER, 'run', id, '--', 'mv', '-n', '-T', `${home}/${enc(source)}`, `${home}/${enc(target)}`], { encoding: 'utf8' })
+  if (h.status === 0) say('история агента элемента перенесена (его дом)')
+}
 for (const n of names) run(['delete', n])
 // 567: выключенный элемент после переноса не поднимается — его нет в ecosystem.
 const offNow = elementPower.isOffById(id, ROOT)
