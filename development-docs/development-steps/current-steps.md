@@ -332,11 +332,14 @@ Found: hooks with relative paths fail after the agent `cd`s (plan file 832, «Fo
    🔑 notice in the main chat with the link, 409 no-account; birth report line; ask-person --check claude:<id> — «Готово» refused
    until signed in (panel + Pult words). The owner (Telegram 639): do NOT repair the running server — after the push he reinstalls
    the server from zero and tests the full cycle. DONE: pushed e56eddf0 (fork + Fractera), core built 20:13 RC=0, told him (640).
-   834 OPEN — WAITS HIS A/Б (Telegram 641 → my 643): an element's own admin has no «Подписка Claude Code / Терминал / Telegram-бот»
-   of ITS element — the template drawer (lib/menu/account-links.ts) shows 4 links only to the architect, to the MAIN agent's
-   build/* pages; the core panel admits only architect/admin. My pick A: the drawer shows the element's three pages to architect +
-   its own admin; the core serves them in a bare frame (no node menu), gated to architect + that element's own admin (role from
-   lib/web4-items/element-admin-role.cjs), pages + their agent-api doors + the pty socket. Б: only the subscription link.
+   834 BUILT (his «Делай … A4 … OpenAI ключ» 644, «Проекты» 646, «Дашборд» 648): core 0b01a1f5 — lib/auth/element-agent-roles.cjs,
+   the kit's 4 doors + environment door take that element's roles, the terminal ticket names its element (tested: own ✓, work ✓,
+   neighbour ✗, twice ✗, look-alike ✗), the frame /<lang>/element-agent/<id|address>/<subscription|terminal|telegram|openai>
+   (guards: page-composition/seo/aio exempt it like the panel). Template v0.3.229 (6d69e342, pinned 6664823): the drawer —
+   Дашборд, Проекты ▸ (built project pages, Collapsible), the 4 agent links to the frame; for architect + own admin.
+   NEXT: core build detached → eyes /ru/element-agent/j58fl/subscription (owner at the keyboard) → push core → npm run task j58fl
+   (merge v0.3.229: components/shell/shell-types.ts, shell-account.client.tsx, lib/shell/site-shell-data.ts,
+   lib/menu/account-links.ts, lib/parts/PARTS.json) → tell Roma the reinstall picks it all up.
 1. DONE (see 832) — PROMISED (Telegram 612): find what triggered the SERVER's second rebuild of every element after its update (his Pult 18:37 — all
    «в очереди на сборку»). Read the server's logs through the page's log door (this Chrome has access until Sun 09:47; page
    http://localhost:24680/ru/hosting/hosting, IP 109.199.105.213) or ask the server's own agent. My stated hypothesis: per-node NEXT_PUBLIC_*
