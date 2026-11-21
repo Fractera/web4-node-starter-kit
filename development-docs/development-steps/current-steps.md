@@ -325,11 +325,13 @@ Found: hooks with relative paths fail after the agent `cd`s (plan file 832, «Fo
    tsc 0, prebuild RC=0), deployed 19:45 (139 s). Proofs on j58fl (Host j58fl.throughsongs.com via loopback): /ru/tg → 307
    /api/tg/open; ?tg=none → 307 /login; open page served; forged POST → 401 forged. My slip: closed j58fl's agent though «Turned
    on by you: no»; woke it back (its bot asks Roma to turn it on).
-   NEXT after this core build (started ~19:50, detached): serve:status → tell Roma: the build done; ask him to press «Обновить» on
-   the server page (the classifier refused my starting the server update); after the update, on the server: `npm run template --
-   clone custom --install` then `npm run template -- rollout custom v0.3.228 <the 12 paths> --elements y43ib --merge-base v0.3.227`
-   then `npm run services:install -- --only y43ib` (through the server agent's shell `!`, model-free) → curl marina /ru/tg 307 →
-   his tap on Marina's bot button = the last proof. Also on the server: the element bots' one «Включить» and the no-account answer.
+   The core build 19:55 RC=0 (the first cut off — I ran it as my child; the second detached).
+   833 (the server main agent's handoff, Telegram 637; the owner: sign-in only on a computer, everywhere a mark + link): 1faa3001 —
+   lib/agent-kit/claude-account.cjs own|node|none (+test 6 ✓); Pult red «не вошёл в Claude» + card in «Ждёт вас» with the link (bench
+   seen); claude-auth GET walledNone (no node e-mail), the subscription card red title + no node-login button; wake door: none →
+   🔑 notice in the main chat with the link, 409 no-account; birth report line; ask-person --check claude:<id> — «Готово» refused
+   until signed in (panel + Pult words). The owner (Telegram 639): do NOT repair the running server — after the push he reinstalls
+   the server from zero and tests the full cycle. NEXT: push, core build detached, tell him «можно переустанавливать».
 1. DONE (see 832) — PROMISED (Telegram 612): find what triggered the SERVER's second rebuild of every element after its update (his Pult 18:37 — all
    «в очереди на сборку»). Read the server's logs through the page's log door (this Chrome has access until Sun 09:47; page
    http://localhost:24680/ru/hosting/hosting, IP 109.199.105.213) or ask the server's own agent. My stated hypothesis: per-node NEXT_PUBLIC_*
