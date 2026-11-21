@@ -328,6 +328,14 @@ real element. Base UI Button: `render={<a/>} nativeButton={false}`, not asChild.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-21 12:18–12:19 UTC, the owner (Telegram 502): «проект не эксплуатируется сейчас нигде … дело необходимое сборки скажи
+  когда я могу приступить к тестированию на сервере» → core 7534ff2b (the Mini App button only with tg/_data/menu.json; test + negative
+  control), prebuild RC=0, ~12:25 core build serve:rebuild detached; then push origin + Fractera main, tell him the server steps (update
+  the core on the server; a custom element there to see the Mini App). Found: the Mac's root carries /tg merged by earlier rollouts
+  (v0.3.215–217) — the root template has none, so the server's root gets no button; the Mac's root leftover is root's own agent's work
+  later. Telegram 503/505/506: a «Добавить» button on a group → a window adding an item (writes items.json); NO delete, NO edit
+  (typos — the element's agent); a small «Справка» at the bottom → design proposed after the build, waits his yes (template v0.3.225).
+
 - 2026-11-21 12:02 UTC, the owner (Telegram 494): «Делай реализацию … только последние элементы каждого маршрута оставались
   динамическими … а группы и подгруппы были статическими … readme.md … что сюда можно класть а что нельзя» → step 824 DONE: custom
   v0.3.224 (tree tg/_projects, 50 READMEs, items.json at run time, 30 s on tg and admin), pinned 74f0eff3; plan new-steps/824.
