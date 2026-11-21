@@ -47,6 +47,19 @@ State: PROPOSED 2026-11-21 ~10:15 UTC — waits the owner's «да» to this pla
 - **The rename** «слой/страницы архитектора» → «Администрирование» in the template's visible texts, READMEs and skills; routes, folders
   and the locks («the architect passes every lock») stay.
 
+## The owner's words after the plan (2026-11-21 10:08–10:12 UTC)
+
+- Telegram 426: «просто поднять кастомный шаблон сейчас в локальном компьютере и будем с ним работать … обновлять и выгружать на GitHub
+  смотреть на живую» → the workshop runs `next dev` on http://127.0.0.1:24710 (scratchpad 821/dev.log); template pushes today are his word.
+- Telegram 429: «продублируем верхнюю часть этого пульта … оставить шапку а эти карточки … под шапкой и уже ниже будет сам раздел который
+  будет иметь левое меню с подвижным ящиком … попробуй спроектировать красивый дизайн» · 431: «подумай … куда добавить органично те экраны
+  которые у нас существуют в узла потому что без них также элемент не может быть полноценным».
+- Mock v1 approved («выглядят хорошо богато мне нравятся», 431) — logs/eyes/2026-11-21T10-09-28-665Z.png. Mock v2 (the Pult's family:
+  Telegram theme colours, grouped cards; A home with the agent card, fuel, «ждёт вас», 4 sections · B the drawer · C projects · D «Элемент»:
+  Сайт / Люди / Агент / Строительство) — logs/eyes/2026-11-21T10-12-21-677Z.png, sent 432–433.
+- «Элемент» rows that live in the core (the agent card, fuel, Claude subscription, the bot, deploy) need a core door «my own» with the
+  element's key → one core build at the end; until then those rows say «скоро». Site, design, site settings, users — the element's own pages.
+
 ## Substeps
 
 - 821-1 the picture before code: a mock on the template's tokens at phone width, light and dark — «Проекты» (4 sections, sort), a group,
