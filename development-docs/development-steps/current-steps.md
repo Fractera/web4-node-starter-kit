@@ -328,6 +328,14 @@ real element. Base UI Button: `render={<a/>} nativeButton={false}`, not asChild.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-21 15:19 UTC, the owner (Telegram 542): «правильный вопрос в том как правильно сделать bootstrap чтобы при установке поднялся
+  Telegram … думать из концепции … Пропиши эту инструкцию в фрагменте души. Скажи потом что делать запускать установку сервера с нуля?
+  … режим максимального размышления … чтобы не получилось так что через час установки ты что-то забыл» → d1a0bbe2: telegram-ready
+  (Bun → plugin via marketplace → deps, fatal stage «telegram» in install.sh), unzip in prepare, the soul line (sealed). Walk of the path:
+  the main agent — proven in an empty Claude home; a walled element on a server runs only on its own Claude account (811-5b) — after its
+  sign-in its channelLaunch installs the plugin into its own home with Bun present. Recommend: fresh install («Очистить» + «Установить
+  с нуля»). Core build ~15:3x for the stage words; then push.
+
 - 2026-11-21 14:57 UTC, the owner (Telegram 538, 539): «не могу на сервере никак убрать твою красную новую шапку … Telegram до сих пор не
   работает» · «почему ты меня ждал почему ты сам это не сделал». Found in his Chrome (architect.fractera.ai, server core 83df9e98 built
   14:42): the red banner «Telegram главного агента вас не слышит»; «Переподключить» did not help — /mcp has no telegram at all; the
