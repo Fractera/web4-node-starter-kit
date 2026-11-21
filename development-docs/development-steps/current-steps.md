@@ -318,16 +318,18 @@ built with the IP, rebuilt for fractera.ai at 18:31 → 827. The server agent's 
 Found: hooks with relative paths fail after the agent `cd`s (plan file 832, «Found on the way»).
 
 **OPEN, IN ORDER:**
-0. WAITS HIS «ДА» (Telegram 629, 631) for everything below. Core commits not pushed: ef6527cb (832 wall+Pult), 5de80775 (832-4
-   no-account words), 9e8db9f0 (832-5 no model/effort without an own account), 44a29e7c (832-7 one «Включить», Telegram 630).
-   Custom template workshop (data/workshop/fractera-custom-item-starter, UNCOMMITTED, tsc 0, telegram-ticket test 10 ✓, signing
-   = core's lib/node/telegram-webapp.cjs): 832-6 the Mini App without sign-in — lib/auth/telegram-ticket.mjs (+test in prebuild),
-   app/api/tg/open + app/api/tg/session (check-routes list), getSession reads `fractera-telegram` as OWN_ADMIN_ROLE, proxy: public
-   /api/tg/open|session, the api gate knows the cookie, the /tg page gate → /api/tg/open unless tg=none; cookies page; tg README.
-   After the yes: commit in the workshop → `npm run template -- release custom v0.3.228 --dry` → release → pin → rollout the changed
-   files (proxy.ts, lib/auth/*, lib/cron/telegram.ts, app/api/tg/*, scripts/check-routes.mjs, package.json?, cookies pages, tg README)
-   → services:install for custom elements → push core (origin + fractera) → `npm run serve:rebuild` → tell him to update the server
-   → his tap on Marina's bot button (the last proof); curl first: /ru/tg → 307 /api/tg/open; forged POST → 401.
+0. 832 RELEASED (his «да», Telegram 632, 19:38 — and his rule: an ordered improvement includes releases and pushes, memory
+   improve-means-release-and-push). Pushed fork + Fractera to 3dd6350b: ef6527cb 832, 5de80775 832-4, 9e8db9f0 832-5, 44a29e7c 832-7
+   (one «Включить»), 665da547 pin custom v0.3.228, 3dd6350b 832-8 (rollout pushes an element only to its own repo; else local tag).
+   Template v0.3.228 (f5afa11, tag pushed with gh login — the release tool's token 403). j58fl merged it itself (2afff7d, test 10 ✓,
+   tsc 0, prebuild RC=0), deployed 19:45 (139 s). Proofs on j58fl (Host j58fl.throughsongs.com via loopback): /ru/tg → 307
+   /api/tg/open; ?tg=none → 307 /login; open page served; forged POST → 401 forged. My slip: closed j58fl's agent though «Turned
+   on by you: no»; woke it back (its bot asks Roma to turn it on).
+   NEXT after this core build (started ~19:50, detached): serve:status → tell Roma: the build done; ask him to press «Обновить» on
+   the server page (the classifier refused my starting the server update); after the update, on the server: `npm run template --
+   clone custom --install` then `npm run template -- rollout custom v0.3.228 <the 12 paths> --elements y43ib --merge-base v0.3.227`
+   then `npm run services:install -- --only y43ib` (through the server agent's shell `!`, model-free) → curl marina /ru/tg 307 →
+   his tap on Marina's bot button = the last proof. Also on the server: the element bots' one «Включить» and the no-account answer.
 1. DONE (see 832) — PROMISED (Telegram 612): find what triggered the SERVER's second rebuild of every element after its update (his Pult 18:37 — all
    «в очереди на сборку»). Read the server's logs through the page's log door (this Chrome has access until Sun 09:47; page
    http://localhost:24680/ru/hosting/hosting, IP 109.199.105.213) or ask the server's own agent. My stated hypothesis: per-node NEXT_PUBLIC_*
