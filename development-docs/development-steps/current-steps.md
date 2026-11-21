@@ -328,6 +328,9 @@ real element. Base UI Button: `render={<a/>} nativeButton={false}`, not asChild.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-21 13:07 UTC: core build 535b989f LIVE (REBUILD_RC=0, /api/health); /ru/root/telegram carries «сообщение BotFather целиком: узел
+  сам найдёт в нём токен». Pushed origin + Fractera main. Told Roma to update the server again. Waits: his yes to «Добавить» + «Справка».
+
 - 2026-11-21 12:58 UTC, the owner (Telegram 510): «на активации телеграмма в элементе … ввести токен … обнови кастомные элемент он
   также должен работать совсем сообщением целиком» → core b091ada9: the agent kit master's saveToken uses tokenFrom (the server's 784
   rule), words en/ru, copied to all 12 groups; test 824 in server-telegram.test (9 passed); prebuild RC=0; ~13:05 core build detached.
