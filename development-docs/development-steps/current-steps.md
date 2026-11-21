@@ -314,6 +314,20 @@ sealed) · 825-8 Telegram bootstrap: Bun + plugin (marketplace add → install) 
 prepare, migration 825-8 (d1a0bbe2) · 826 «＋ Добавить» + «Справка» (v0.3.226, pinned b110d29) · eeb7c201 the request copy in Telegram
 without «Готово · <id>» (names «Ждёт вас»). Core on the fork and Fractera up to de10cd4a after the push below.
 
+**AFTER THE RESET (16:20–16:55, new session) — NOW:** committed, NOT built, NOT pushed: **fdbdcbf0** 829 (screen.cjs: the trust cut
+once Claude Code recorded the trust; onButton: buttons off at the press, «не дошло — напишите ещё раз» kept when pasted false;
+tg-menu.cjs: an element's Mini App address from the node's domain record — the custom template declares no PROJECT_SITE_URL;
+deploy-elements refreshes element buttons + the main «Пульт») and **ae7b38eb** 828 (registry.mjs RDAP 200/404/unknown, the refusal
+with the closest name, own-zone removal, the truthful NS column). Proofs so far: tests screen-trust 6, wake-button 4, domain-registry 6,
+tg-app 16, server-telegram 10, main-channel 9; live RDAP: throughsongs.com registered (Porkbun), througsongs.com unregistered;
+prebuild RC=0; tsc 0 errors. Done live without a build: j58fl's «Приложение» → https://j58fl.throughsongs.com/tg (16:42,
+`tg-app -- menu j58fl`), the main «Пульт» → architect.throughsongs.com (16:54; it was still the temporary address). THE SERVER IS UP:
+architect.fractera.ai 200 at 16:48 (core fe2fdb01), fractera.ai 200 — install ~49 min (15:59→16:48). **WAITS his yes to the core
+build** (his rule: ask «собрать сейчас?»): then `npm run serve:rebuild:detached`, /api/health = ae7b38eb, live proofs (829: a new
+element's first message pasted; 828: the add refusal on the page), push origin + Fractera, summaries completed-steps/828-main.md and
+829-main.md, delete the 828 plan. The owner 16:38 (Telegram 583): «ты каким-то образом пинками его запустил мне это не подходит.
+Стандартный процесс не стартует + Telegram приложение нету почему».
+
 **OPEN, IN ORDER:**
 1. The server's fresh install (Roma started ~15:55 from the fork with eeb7c201). Ask him for the result: the stage «Telegram агентов»
    green, the bot answers, the main agent wakes; element agents need their own Claude sign-in (811-5b). Note every stage's time (827).
