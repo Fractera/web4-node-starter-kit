@@ -7,17 +7,16 @@
 // had bun from an earlier hand install, so nothing showed there. Elements behind the wall copy the node user's `~/.bun/bin/bun`
 // (`scripts/dedicated-server/fractera-element.sh`, 811-5e) — they need it here first.
 //
-// 🔒 THE COMMANDS — FROM THE PRIMARY SOURCE (bun.sh/docs/installation): macOS and Linux `curl -fsSL https://bun.sh/install | bash`
-// → `~/.bun/bin/bun` (on Linux the script needs `unzip` — the server's prepare stage installs it); Windows `npm install -g bun` (the
-// same reason ensure-claude avoids `irm … | iex`: an antivirus alarm measured 2026-10-02).
+// 🔒 ONE PATH, NO «IF» (the owner, 2026-11-21, Telegram 542: «правильный вопрос в том как правильно сделать bootstrap чтобы при
+// установке поднялся Telegram»): the official installer, its prerequisites guaranteed before it — FROM THE PRIMARY SOURCE
+// (bun.sh/docs/installation): macOS and Linux `curl -fsSL https://bun.sh/install | bash` → `~/.bun/bin/bun` (Linux needs `unzip`: the
+// server's prepare stage installs it as root, macOS ships it); Windows `npm install -g bun` (ensure-claude's reason: `irm … | iex` raised
+// an antivirus alarm, measured 2026-10-02).
 //
-// 🛑 NEVER FAILS THE INSTALL. No network, no curl, no unzip — `===BUN_FAILED===` with the reason and the command; the node installs on,
-// its agents work in the terminal, only Telegram waits for bun.
+// Exit code: 0 with bun; without — 0 in `preinstall` (a desktop node still installs, its terminal works), 1 with `--strict` (the server's
+// stage `telegram`, `scripts/telegram-ready.mjs`: a server without Telegram is not a finished server).
 import { spawnSync } from 'node:child_process'
-import { chmodSync, copyFileSync, existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync } from 'node:fs'
 import { createRequire } from 'node:module'
-import { homedir, tmpdir } from 'node:os'
-import { join } from 'node:path'
 
 const require = createRequire(import.meta.url)
 const { resolveBin } = require('../app/[lang]/(architectLayer)/architect/[item]/_agent-kit/server/claude-cli.cjs')
@@ -35,29 +34,6 @@ if (found) {
   console.log(`===BUN_PRESENT=== ${found} ${version(found) ?? ''}`.trim())
   process.exit(0)
 }
-// Linux without unzip (an older server, prepared before unzip joined its apt list; the node user has no root to add it): Bun's own
-// npm package — `bun` with its platform binary `@oven/bun-linux-*` as an optional dependency, no unzip, no script run — into a scratch
-// folder, the binary copied to `~/.bun/bin/bun` as a real file (an element behind the wall copies only a real ELF, 811-5e).
-if (process.platform === 'linux' && !resolveBin('unzip', process.env.PATH || '')) {
-  const tmp = mkdtempSync(join(tmpdir(), 'bun-npm-'))
-  const r = spawnSync('npm', ['install', '--no-save', '--no-audit', '--no-fund', '--ignore-scripts', '--prefix', tmp, 'bun'], { encoding: 'utf8', timeout: 600_000 })
-  const oven = join(tmp, 'node_modules', '@oven')
-  const pkg = (existsSync(oven) ? readdirSync(oven) : []).filter((d) => d.startsWith(`bun-linux-${process.arch === 'arm64' ? 'aarch64' : 'x64'}`)).sort((a, b) => a.length - b.length)[0]
-  const bin = pkg ? join(oven, pkg, 'bin', 'bun') : null
-  if (bin && existsSync(bin)) {
-    const dest = join(homedir(), '.bun', 'bin')
-    mkdirSync(dest, { recursive: true })
-    copyFileSync(bin, join(dest, 'bun'))
-    chmodSync(join(dest, 'bun'), 0o755)
-  }
-  rmSync(tmp, { recursive: true, force: true })
-  const got = find()
-  const v = got ? version(got) : null
-  if (got && v) { console.log(`===BUN_INSTALLED=== ${got} ${v} (npm package, no unzip)`); process.exit(0) }
-  console.error(`===BUN_FAILED=== no unzip, and Bun's npm package did not give a binary: ${String(r.stderr ?? '').slice(-300) || `npm ended with code ${r.status}`}`)
-  console.error('  sudo apt-get install -y unzip, then: ' + MANUAL)
-  process.exit(0)
-}
 console.log('Bun not found — installing it the official way (the Telegram channel of the agents runs on it).')
 const r = isWindows
   ? spawnSync('npm.cmd', ['install', '-g', 'bun'], { encoding: 'utf8', stdio: 'inherit', windowsHide: true, shell: true, timeout: 600_000 })
@@ -69,6 +45,6 @@ if (after && v) {
   process.exit(0)
 }
 console.error(`===BUN_FAILED=== ${r.error ? String(r.error.message) : `the installer ended with code ${r.status}`}`)
-console.error('The node installs on; the agents\' Telegram channel waits for Bun. Install it yourself:')
+console.error('The agents\' Telegram channel needs Bun. Install it yourself:')
 console.error(`  ${MANUAL}`)
-process.exit(0)
+process.exit(process.argv.includes('--strict') ? 1 : 0)

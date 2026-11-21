@@ -28,6 +28,9 @@ stage migrate 'node scripts/migrate.mjs --by install'
 # preinstall: check-local, ensure-env, ensure-claude (the official installer → ~/.local/bin/claude), ensure-cloudflared;
 # postinstall: ensure-pty (node-pty builds with build-essential + python3), ensure-eyes (Chromium; its system libraries come next).
 stage deps 'lock=$(sha256sum package-lock.json | cut -c1-16); if [ ! -d node_modules ] || [ "$(cat logs/dedicated-server/deps.sha 2>/dev/null)" != "$lock" ]; then npm ci --no-audit --no-fund && echo "$lock" > logs/dedicated-server/deps.sha; fi'
+# 825-8 (the owner, 2026-11-21: «как правильно сделать bootstrap чтобы при установке поднялся Telegram»): Bun, the Telegram plugin and its
+# dependencies, each verified — FATAL: a server whose agents cannot hear Telegram is not a finished server (scripts/telegram-ready.mjs).
+stage telegram 'node scripts/telegram-ready.mjs'
 soft_stage eyes 'sudo -n /usr/local/sbin/fractera-root playwright-deps && npm run -s eyes:install'
 stage build 'head=$(git rev-parse HEAD); if [ ! -f .next/BUILD_ID ] || [ "$(cat logs/dedicated-server/build.sha 2>/dev/null)" != "$head" ]; then npm run build && echo "$head" > logs/dedicated-server/build.sha; fi'
 # Every element: its packages and its build for Linux, its env file regenerated with this machine's paths (own and foreign keys kept),

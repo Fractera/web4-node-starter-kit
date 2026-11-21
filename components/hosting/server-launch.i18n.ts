@@ -99,14 +99,14 @@ const STAGE_EN = {
   mark: "The server node's mark", start: "Start", version: "Version",
   "apt-lock": "Package queue", foreign: "Foreign software erased", swap: "Swap", apt: "System packages", node: "Node.js 22", pm2: "Process manager", certbot: "Certbot", user: "The node's user",
   git: "Git", helper: "Root helper", nginx: "nginx", firewall: "Firewall", resolver: "DNS resolver", "pm2-startup": "Autostart", marks: "Marks",
-  deps: "The node's packages", eyes: "The agent's eyes", build: "The core's build", elements: "Elements", serve: "Start", save: "Process list saved", "launch-mark": "Install mark",
+  deps: "The node's packages", telegram: "Telegram for the agents", eyes: "The agent's eyes", build: "The core's build", elements: "Elements", serve: "Start", save: "Process list saved", "launch-mark": "Install mark",
 }
 const STAGE_RU = {
   launch: "Запуск", prepare: "Подготовка сервера", source: "Fractera из вашего форка", install: "Пакеты, сборка и элементы", update: "Собственное обновление узла",
   mark: "Метка узла сервера", start: "Старт", version: "Версия",
   "apt-lock": "Очередь пакетов", foreign: "Чужие программы стёрты", swap: "Подкачка", apt: "Системные пакеты", node: "Node.js 22", pm2: "Менеджер процессов", certbot: "Certbot", user: "Пользователь узла",
   git: "Git", helper: "Помощник root", nginx: "nginx", firewall: "Файрвол", resolver: "DNS-резолвер", "pm2-startup": "Автозапуск", marks: "Метки",
-  deps: "Пакеты узла", eyes: "Глаза агента", build: "Сборка ядра", elements: "Элементы", serve: "Запуск", save: "Сохранение списка", "launch-mark": "Отметка установки",
+  deps: "Пакеты узла", telegram: "Telegram агентов", eyes: "Глаза агента", build: "Сборка ядра", elements: "Элементы", serve: "Запуск", save: "Сохранение списка", "launch-mark": "Отметка установки",
 }
 
 const en: ServerLaunchWords = {
