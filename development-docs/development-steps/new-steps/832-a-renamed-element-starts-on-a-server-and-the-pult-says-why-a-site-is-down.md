@@ -17,12 +17,19 @@
 - 832-2 the Pult: `serve` per element — `moving` (move.json fresh), `starting` (pm2 launching), `down` (errored/stopped/waiting restart);
   a red tag «не отвечает» and one short line; a native that is down is shown even when natives are folded. `tgState` async (pm2 jlist).
 - 832-3 the bench (`tg-app:preview`) carries a down element.
+- 832-4 (Telegram 625: «Агент marina не включился: no-account. Нажмите «Включить» ещё раз») — the kit's `failedWords`: `no-account` names
+  the element's «Подписка Claude Code» page (https://architect.<zone>/<lang>/<address>/subscription), never «press again». 5de80775.
+- 832-5 (Telegram 627: model → effort → nothing, «по циклу … в четвёртый раз») — the kit's `accountMissing`: a walled element without its
+  own Claude home is «not signed in» for the bot — no «Включить», no model, no effort; one kept answer with the page. The core hands
+  `walled-session.cjs` to the kit through `globalThis.__web4WalledSession` (mount.cjs; a computed require does not build there).
 
 ## Test checklist
 - [x] live: the old record → the shim's «folder is gone» (negative); the new record → health 200 and the site 200 from the internet.
 - [x] the bench at 390 px: the tag and the line fit, no console errors (logs/eyes/2026-11-21T19-23-42-224Z.png).
 - [x] tg-app test green; element-wall test — the one failing case (prepare.sh DRY) fails the same without this change (pre-existing).
 - [ ] after the core build: the Pult on a node with an element stopped shows «не отвечает» (the server after its next update).
+- [x] 832-5 wall check both ways: a fake wall → walled true; this Mac → false (the Mac's bots unchanged).
+- [ ] 832-5 on the server after its update: a message to marina's bot → one answer with the subscription link, no model/effort buttons.
 - [ ] on the server's next rename: move log «стена: запись папки обновлена» and the site back without a hand.
 
 ## Found on the way (not in this step)

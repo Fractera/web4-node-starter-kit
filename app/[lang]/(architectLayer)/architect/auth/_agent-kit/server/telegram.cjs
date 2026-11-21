@@ -344,7 +344,23 @@ const FALLBACK = {
 
 // 689: у элемента на подписке своего человека «вошёл ли» спрашивается в ЕГО папке Claude Code, а не у узла.
 function claudeSignedIn(service) {
+  if (accountMissing(service)) return Promise.resolve(false) // 832-5: the node's own login is never this element's on a server
   return new Promise((resolve) => setImmediate(() => resolve(claudeAuthState(ownClaudeDir(service)).loggedIn)))
+}
+
+/**
+ * 832-5 (the owner, Telegram 627: «Telegram элемента на сервере … выводит мне необходимость выбрать модель потом … усилия я все это выбираю
+ * и ничего не меняется … по циклу»): on a dedicated server an element's agent runs only on its own Claude account (811-5b, bridge.cjs
+ * `no-account`). Without it there is nothing to choose and nothing to turn on — the bot says so with the page, never asks model or effort.
+ */
+function accountMissing(service) {
+  if (service === MAIN_AGENT) return false
+  try {
+    const dir = serviceDir(service)
+    if (!dir || ownClaudeDir(service)) return false
+    const ws = globalThis.__web4WalledSession // mount.cjs — a computed require does not build in this module
+    return Boolean(ws && typeof ws.walledAt === 'function' && ws.walledAt(process.cwd(), dir))
+  } catch { return false }
 }
 
 // 814-3 (the owner, Telegram 212, 2026-11-20: «Первое сообщение … должно содержать наверное жирный шрифт: вы начнёте получать ответы сразу
@@ -360,6 +376,7 @@ function statusBody(text) {
 /** Состояние словами: подписка не подключена → сначала она; иначе — активен ли терминал. */
 async function statusMessage(service) {
   const m = { ...FALLBACK, ...readJson(messagesFile(service), {}) }
+  if (accountMissing(service)) return { text: failedWords(await askTable(service), shortName(named(service)), 'no-account', service), trouble: true }
   if ((await claudeSignedIn(service)) === false) return { text: m.noSubscription, trouble: true }
   return { text: running(service) ? m.active : m.inactive, trouble: false }
 }
