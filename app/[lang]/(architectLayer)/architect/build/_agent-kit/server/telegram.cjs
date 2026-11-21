@@ -659,7 +659,7 @@ const ASK = {
     yourMessage: (q) => `Your message: «${q}»`,
     goCalls: 'Turn on and answer', goHuman: 'Turn on and pass',
     // 611 (owner 2026-10-30): three buttons — the model of the session is chosen by the person.
-    goMax: 'Turn on — maximum model (Opus)', goMid: 'Turn on — medium model (Sonnet)', goEco: 'Turn on — economy model (Haiku)',
+    goOn: 'Turn on', goMax: 'Turn on — maximum model (Opus)', goMid: 'Turn on — medium model (Sonnet)', goEco: 'Turn on — economy model (Haiku)',
     // 666 (owner 2026-11-06): Opus → the effort of the session; ultracode → a warning with two buttons.
     effortAsk: (a) => `Agent ${a} — the Opus model. Which effort should it work with?`,
     fxLow: 'Low', fxMedium: 'Medium (default)', fxHigh: 'High', fxXhigh: 'Very high (xhigh)', fxMax: 'Maximum (max)',
@@ -718,7 +718,7 @@ const ASK = {
     offHuman: (a) => `Агент ${a} выключен. Включить его и передать ему ваше сообщение?`,
     yourMessage: (q) => `Ваше сообщение: «${q}»`,
     goCalls: 'Включить и ответить', goHuman: 'Включить и передать',
-    goMax: 'Включить — максимальная модель (Opus)', goMid: 'Включить — средняя модель (Sonnet)', goEco: 'Включить — экономная модель (Haiku)',
+    goOn: 'Включить', goMax: 'Включить — максимальная модель (Opus)', goMid: 'Включить — средняя модель (Sonnet)', goEco: 'Включить — экономная модель (Haiku)',
     // 666: слова владельца предупреждения — «внимания ультра кот запускает рабочие процессы с множеством суб агентов которые автоматикой
     // Claude Code Agent с максимальной эффективностью размышлений. Это может привести к экстремально высоким расходам токенов»; кнопки —
     // «продолжить», «выбрать другую модель».
@@ -908,12 +908,11 @@ const buttons = (p, t) => {
   // 666: без запроса («/opus») отказывать некому — «Не сейчас», как человеку.
   const human = allHuman(p.items) || p.items.length === 0
   return {
-    // 611 (владелец 2026-10-30: «включить с максимальной моделью – включить со средней моделью – включить сэкономлю моделью»): модель
-    // сессии — с кнопки; по одной кнопке в строке, длинные подписи. Старая кнопка `…:go` в прежних сообщениях — модель по умолчанию.
+    // 832-7 (the owner of the node, Telegram 630, 2026-11-21: «выбор модели и выбор усилий совершенно не нужен у нас для этого есть пульт
+    // это устаревшая процедура»): one «Включить» — the session starts with the model and effort the Pult set (`…:go` with no model = the
+    // launch's own choice); the model and effort buttons of 611/666 are gone. Their handlers stay for buttons in older messages.
     inline_keyboard: [
-      [{ text: t.goMax ?? ASK.en.goMax, callback_data: `wake:${p.id}:go:opus` }],
-      [{ text: t.goMid ?? ASK.en.goMid, callback_data: `wake:${p.id}:go:sonnet` }],
-      [{ text: t.goEco ?? ASK.en.goEco, callback_data: `wake:${p.id}:go:haiku` }],
+      [{ text: t.goOn ?? ASK.en.goOn, callback_data: `wake:${p.id}:go` }],
       [{ text: human ? t.noHuman : t.noCalls(callersOf(p.items)), callback_data: `wake:${p.id}:no` }],
     ],
   }
