@@ -345,6 +345,15 @@ capability-ladder-own-fractera-lagrix-build.md (5 cracks; no private-repo instal
 His answer 447 (10:30): «один узел как одно сообщество … Марина покупает элемент за свои деньги для всех братьев это закон» — variant
 (c) everywhere; acknowledged 448. 822-1 (texts) waits its turn after 821's screens; he has not yet said «да» to 822's substeps.
 
+**821 RELEASED (2026-11-21 ~10:52 UTC):** workshop commit bf38996 → custom v0.3.221 on GitHub (tag 8d0510b8, Roma's gh key for one run,
+his 426); prebuild RC=0, check:types OK, test:tg-projects + test:tg-menu OK, eyes 390 px light/dark. NEXT: `npm run template -- pin
+custom v0.3.221` (one-file commit) → a fresh test element on the Mac (part of the project) → eyes of its /tg and the core's «Рабочий
+процесс» mirror → Roma. Then the ONE core build (ask first): the Pult's «О разработке» (823), the element's own-agent-state door, the
+chat-context hook, the status-door filter.
+**823 PROPOSED:** «О разработке» (news from GitHub `news/`, «Поддержать проект» 3 Stripe cards, «Нашли проблему» → @roma_armstrong);
+his 458/459/461; waits the three Stripe links (asked 460) and his «да». Star Messages confirmed from telegram.org/faq (Premium) and
+core.telegram.org/api/paid-messages (users, supergroups, channels).
+
 **PARKED (say so if asked):** the server tails — z6esw («Red team», project) and qxld4 («Green team», own app, Roma's) still on
 109.199.105.213; z6esw's tell-core (SE3) not proven after 818-8; redteam.sh with the window lines not re-run; delete z6esw (+ qxld4 if he
 says) — the SSH visit never opened in MY Chrome profile (his «Готово» twice came from another profile; my tabs are in «Browser 1»). The

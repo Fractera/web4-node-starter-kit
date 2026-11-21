@@ -88,6 +88,24 @@ person's next message; it lives until another section is opened or ~30 min of si
 - Finding for the red team (818): the core's `POST /api/agents/session {action:"status"}` answers an element's own key with `sessions` —
   the list of EVERY live session of the node (its composition) → filter to its own for an element caller.
 
+## Done 2026-11-21 10:25–10:41 UTC (after the reset; the owner's 438 «идеально начиная строительство»)
+
+- Code in the workshop (not committed yet): `tg/_libs/projects.ts` (catalog per lang; pages = the SITE's pages whose meta.json says
+  `project` — the owner's 434 «сайт … заменить собой артефакты», not folders of the Mini App; active/today = calendar entries with
+  `project`), `_libs/element-facts.ts`, `_libs/words.ts` (Intl.PluralRules); `lib/branch-page.tsx` `virtual(slug, lang)`; `PageMeta.project`,
+  `CronSchedule.project`; shadcn `Item` added by hand (the registry's item lists a bogus dependency «cn» — the CLI added it to package.json;
+  reverted) + its card in components/ui/parts.json; `_components/tg-list.tsx` (TgGroup/TgRow/TgRows/TgNote/TgIcon on Item),
+  `tg-head.client.tsx` (☰ beside the large title; the shell's bar hides by `group-has-[[data-tg-head]]`), `tg-to-chat.client.tsx`
+  (`web_app_close`, drawn only inside Telegram), `tg-bridge.client.tsx` (Telegram's theme → `--tg-theme-*` + `data-tg-theme`, Back button,
+  events once per webview); globals.css `--tg-page`/`--tg-card` + the Telegram mapping; widgets home / projects (+ screens, sort island) /
+  cron / element / settings; pages `_data` + `_pages/{projects,cron,element,settings}` bare; a2a*, help, subscriptions removed; menu.json one
+  mode (Главная, Проекты with its 4 sections, Cron, Элемент, Настройки; common []), role «Администрирование».
+- Proofs so far: /ru/tg, /tg/projects, /tg/projects/<section|group|group/item> 200, /tg/projects/nope 404, /tg/a2a 404 (T2); eyes at 390 px,
+  no console errors: logs/eyes/2026-11-21T10-40-21-821Z (home), 10-34-42-393Z (projects), 10-40-26-124Z (Instagram), 10-39-24-727Z (drawer),
+  10-40-30-618Z (element), 10-39-54-949Z (settings), 10-39-45-978Z (cron) — sent to Roma 449–455.
+- Next: guards (tsc, check:shadcn-parts, typography, parts-map, i18n, widgets:ids, routes, static/protected) → T1/T3/T4/T5 → the rename
+  «Администрирование» → the element skill «projects» → commit → release v0.3.221 → a fresh test element → the core's mirror.
+
 ## Substeps
 
 - 821-1 the picture before code: a mock on the template's tokens at phone width, light and dark — «Проекты» (4 sections, sort), a group,
