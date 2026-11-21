@@ -317,6 +317,11 @@ lib/auth/element-agent-roles.cjs; terminal tickets name their element + ownOnly 
 «Главный агент ▸». j58fl merged both (53a16f5, 05c661b), deployed 21:19, its agent CLOSED.
 
 **OPEN, IN ORDER:**
+00. 22:20: Roma DELETED j58fl from the panel at 21:50:45 during its deployment (catalog «delete»), born sgnou (v0.3.231) at 21:55.
+   The deploy wrote back a ghost registry entry → fixed 834-12 (28ebe047, registry-merge.cjs) and the ghost line removed from the
+   registry by hand (folder and data were gone). 834-11 proven on sgnou (eyes 22:06: «Проекты ▸ · Пока нет построенных страниц»).
+   Domain throughsongs.com: TCP to Cloudflare 188.114.96.5/97.5 blocked from this network, tunnel up (mad) — ISP block; a 2-hour
+   background check tells Roma when it opens. Still pending: «собрать сейчас?» for 834-10 (core build).
 0. 834-11 (Telegram 664: «Проекты» missing under Дашборд — hidden when no built pages, my wrong choice): now always shown with a line
    «Пока нет построенных страниц». Core 90d058bf (shell kit e50faacb7f, child without href = Small line), template v0.3.231 pinned
    cbcce630, pushed. j58fl's agent tasked to merge v0.3.231 (21:5x) → then POST /api/node/deploy {ids:[j58fl]}, eyes --click
