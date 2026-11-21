@@ -307,7 +307,12 @@ if (cmd === 'rollout') {
     if (!tag || gitOk(dir, ['ls-remote', '--tags', 'origin', `refs/tags/${tag}`])) fail('FAIL', `${s.id}: no free next tag after ${s.version}`)
     git(dir, ['commit', '-q', '-m', `${message} (template ${kind} ${version})`, '--', ...all])
     git(dir, ['tag', '-a', tag, '-m', `${tag}: ${message}`])
-    push(dir, s.repo, tag)
+    // 832-8 (measured 2026-11-21: j58fl's registry `repo` is the TEMPLATE's own repository, and an element born on a dedicated server has
+    // none of its own): an element is pushed only to a repository of its own — never to the template it was born from (its HEAD would
+    // land on the template's main). Without one, the release stays on this node: the commit and the tag here, the pin below.
+    const norm = (u) => String(u ?? '').replace(/\.git$/, '').replace(/\/+$/, '').toLowerCase()
+    if (s.repo && norm(s.repo) !== norm(pin.repo)) push(dir, s.repo, tag)
+    else console.log(`· ${s.id}: no repository of its own — ${tag} stays on this node`)
     pins.push([s.id, s.version, tag])
     console.log(`✓ ${s.id} ${s.version} → ${tag} (${all.join(', ')})`)
   }
