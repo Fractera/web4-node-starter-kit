@@ -356,6 +356,10 @@ Window **1a59622b** (root password) for the inside proofs: z6esw tell-core (SE3)
 Roma 386–390 (00:27–00:29): signed in on fractera.ai (architect) ✓; «вошёл в root — я architect в Red team; вышел в Red team — вышел и из
 root» → answered: by design (part of the project = one sign-in on the zone); offered «Выйти отсюда / Выйти везде» — his «Это решение
 работает» (00:29) = keep the shared sign-in, no buttons.
+Roma 392 (00:30): «Красная команда принадлежит Марине, а корень Филиппов … работать так не должно» → elements of different owners are
+born «own app»; Red team was «project» only for the test. Roma created «Green team» himself as an own app: qxld4.fractera.ai, signed in
+qq@qq.qq · user + elementAdmin003 (00:40); 398 (00:50): «Похоже все работает правильно … fractera.ai — роль архитектора, зелёная команда —
+администратора, всё как мы планировали» = own-app isolation on a subdomain of the same zone PROVEN by his hands.
 
 **NEXT ACTION 2 — 819 (approved, Telegram 335 «Это ещё нужно пофиксить. Обязательно включи режим максимального размышления и
 необходимый навык дизайна. Аккуратно без лишней избыточный информации поправь тексты ошибок кнопки.»):** plan
