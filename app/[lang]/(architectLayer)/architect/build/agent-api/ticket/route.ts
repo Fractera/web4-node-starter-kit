@@ -36,6 +36,8 @@ export async function POST(req: NextRequest, ctx: Ctx) {
   if (denied) return denied
   const session = await getSession(req)
   // 834-2: the ticket names its element — another element's socket refuses it
-  const { ticket, expiresInMs } = mintTicket(session?.email ?? "architect@node", service)
+  // 834-7: an element's own admin (not the architect, not the node's admin) — its socket runs only on the element's OWN account
+  const panel = (session?.roles ?? []).some((r) => r === "architect" || r === "admin")
+  const { ticket, expiresInMs } = mintTicket(session?.email ?? "architect@node", service, { ownOnly: !panel })
   return NextResponse.json({ ok: true, ticket, expiresInMs }, { headers: { "Cache-Control": "no-store" } })
 }

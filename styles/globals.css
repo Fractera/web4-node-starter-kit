@@ -1140,3 +1140,7 @@ html[data-no-github] [data-alert~="no-github"] { color: var(--color-destructive)
   75%, 100% { transform: scale(6); opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) { [data-attention-dot] > span:first-child { animation: none; } }
+
+/* 834-4 (the owner, Telegram 641/644): the element agent frame — one element's agent for its own admin — shows nothing of the node:
+   the node's own menus in the top bar (`data-node-menu`, components/menu/top/top-menu.server.tsx) are hidden on its pages. */
+body:has([data-element-agent-frame]) [data-node-menu] { display: none; }

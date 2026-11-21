@@ -8,7 +8,7 @@
         "en": "Environment variables",
         "ru": "Переменные окружения"
       },
-      "version": "1.0.0",
+      "version": "1.0.1",
       "parts": [],
       "scope": "panel",
       "path": "components/environment/environment-panel.tsx",

@@ -534,7 +534,7 @@
         "en": "Environment variables",
         "ru": "Переменные окружения"
       },
-      "version": "1.0.0",
+      "version": "1.0.1",
       "parts": [],
       "scope": "panel",
       "path": "components/environment/environment-panel.tsx",
@@ -571,7 +571,7 @@
         "components/ui/input",
         "lib/env-file"
       ],
-      "bodyHash": "282636dae7281267"
+      "bodyHash": "888d3ac43711bdb5"
     },
     {
       "id": "node-wallet",

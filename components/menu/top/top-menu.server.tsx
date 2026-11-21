@@ -29,8 +29,9 @@ export function TopMenu({ lang }: { lang: string }) {
       data={data}
       // 356-1: только ядро знает, что ждёт архитектора, — открытые терминалы и готовые предпросмотры.
       surface={{ attentionUrl: `/api/node/attention?lang=${lang}`, attentionWords: ui.attention }}
-      navSlot={<AllProjects lang={lang} nativeLabel={ui.nativeElements} customLabel={ui.customElements} menuLabel={ui.menu} allProjectsLabel={ui.allProjects} searchWords={menuSearchWords(lang)} dialogUi={appDialogUi(lang)} />}
-      leftSlot={leftHas ? <DrawerToggle side="left" labels={{ open: ui.openLeft, close: ui.closeLeft }} /> : undefined}
+      // 834-4: `data-node-menu` — the node's own menus; the element agent frame hides them (styles/globals.css)
+      navSlot={<span data-node-menu className="contents"><AllProjects lang={lang} nativeLabel={ui.nativeElements} customLabel={ui.customElements} menuLabel={ui.menu} allProjectsLabel={ui.allProjects} searchWords={menuSearchWords(lang)} dialogUi={appDialogUi(lang)} /></span>}
+      leftSlot={leftHas ? <span data-node-menu className="contents"><DrawerToggle side="left" labels={{ open: ui.openLeft, close: ui.closeLeft }} /></span> : undefined}
       rightSlot={rightHas ? <DrawerToggle side="right" labels={{ open: ui.openRight, close: ui.closeRight }} /> : undefined}
     />
     </>

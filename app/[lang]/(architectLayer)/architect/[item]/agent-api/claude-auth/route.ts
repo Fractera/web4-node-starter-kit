@@ -1,6 +1,7 @@
 // @api tell the born WEB4 element agent page whose Claude subscription it runs on, and switch it to its own person's subscription
 import { mkdirSync, rmSync } from "node:fs"
 import { NextRequest, NextResponse } from "next/server"
+import { getSession } from "@/lib/auth/get-session"
 import elementAgentRoles from "@/lib/auth/element-agent-roles.cjs"
 
 import { requireRoles } from "@/lib/auth/require-roles"
@@ -61,7 +62,9 @@ export async function GET(req: NextRequest, ctx: Ctx) {
   // 833-3 (the server's main agent, handoff 2026-11-21: «архитектор увидел аккаунт узла с полной почтой и решил, что Марина вошла»): on a
   // dedicated server a walled element runs ONLY on its own account (811-5b) — without one the node's login is not its login: the page
   // hears «not signed in» and `walledNone`, never the node's e-mail.
-  if (service && claudeAccount.accountOf(process.cwd(), service) === "none") {
+  // 834-7: an element's own admin sees and uses only the element's OWN account — the node's login (its e-mail, «Войти заново») is never theirs
+  const panel = ((await getSession(req))?.roles ?? []).some((r) => r === "architect" || r === "admin")
+  if (service && (claudeAccount.accountOf(process.cwd(), service) === "none" || (!panel && !own))) {
     return NextResponse.json({ ok: true, canOwn: Boolean(ownClaudeHome(service)), own: false, walledNone: true, loggedIn: false, method: null, email: null, plan: null }, noStore)
   }
   const state = claudeAuthState(own)
@@ -80,6 +83,9 @@ export async function POST(req: NextRequest, ctx: Ctx) {
   const body = (await req.json().catch(() => null)) as { own?: unknown } | null
   if (typeof body?.own !== "boolean") return NextResponse.json({ ok: false, reason: "bad-request" }, { status: 400, ...noStore })
   if (running(service)) return NextResponse.json({ ok: false, reason: "agent-running" }, { status: 409, ...noStore })
+  // 834-7: the element's own admin may take its own subscription, never hand the element back to the node's
+  const panel = ((await getSession(req))?.roles ?? []).some((r) => r === "architect" || r === "admin")
+  if (!body.own && !panel) return NextResponse.json({ ok: false, reason: "own-only" }, { status: 403, ...noStore })
   if (body.own) {
     mkdirSync(home, { recursive: true })
   } else if (ownClaudeDir(service)) {

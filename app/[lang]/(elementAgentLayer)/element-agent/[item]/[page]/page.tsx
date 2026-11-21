@@ -39,11 +39,11 @@ export default async function ElementAgentPage({ params }: { params: Promise<Par
   const here = page as ElementAgentPage
   const base = `/${lang}/element-agent/${item}`
   const widget = here === "openai"
-    ? <EnvironmentPanel target={id} lang={lang} />
+    ? <EnvironmentPanel target={id} lang={lang} only={["OPENAI_API_KEY"]} />
     : agentKitWidget(KIT[here], id, lang, undefined, { terminal: `${base}/terminal`, telegram: `${base}/telegram` })
   return (
     <AccessGate roles={elementAgentRoles.agentRoles(root, id)} lang={lang} ui={accessGateUi(lang)} dialogUi={appDialogUi(lang)}>
-      <main data-block="element-agent" data-app-column="" className="mx-auto flex w-full flex-col gap-6 px-4 py-8">
+      <main data-block="element-agent" data-element-agent-frame="" data-app-column="" className="mx-auto flex w-full flex-col gap-6 px-4 py-8">
         <div data-block="element-agent-head" className="flex flex-col gap-1">
           <Small className="text-muted-foreground">{w.eyebrow}</Small>
           <H1>{elementName(id, l)}</H1>

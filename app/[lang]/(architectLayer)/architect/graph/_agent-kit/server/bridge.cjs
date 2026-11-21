@@ -13,7 +13,7 @@
 
 const { existsSync, mkdirSync, readFileSync, readdirSync, statSync, unlinkSync, writeFileSync } = require('node:fs')
 const path = require('node:path')
-const { redeemTicket } = require('./ticket.cjs')
+const { redeemGrant } = require('./ticket.cjs')
 const session = require('./session.cjs')
 const { serviceDir, ownClaudeDir, onLoan } = require('./workspace.cjs')
 const { claudeBin, claudeEfforts, resolveBin } = require('./claude-cli.cjs')
@@ -1400,8 +1400,14 @@ function onConnection(ws, service) {
       if (msg.type === 'init') {
         if (started) return
         // Билет одноразовый и живёт минуту; его выдала дверь под ролью архитектора.
-        if (!redeemTicket(msg.ticket, service)) { // 834-2: only a ticket of THIS element
+        const grant = redeemGrant(msg.ticket, service) // 834-2: only a ticket of THIS element
+        if (!grant) {
           fail('bad-ticket')
+          return
+        }
+        // 834-7: an element's own admin works only on the element's OWN Claude account — never signs in or spends the node's
+        if (grant.ownOnly && !ownClaudeDir(String(service).replace(/--.*$/, ''))) {
+          fail('own-account-needed')
           return
         }
         if (msg.mode === 'agent') {
