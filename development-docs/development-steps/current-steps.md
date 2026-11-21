@@ -328,6 +328,12 @@ real element. Base UI Button: `render={<a/>} nativeButton={false}`, not asChild.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-21 11:57 UTC, the owner (Telegram 490): «мне понравилось то что ты сделал дерево на маршруте Telegram а то что касается
+  страниц которые построится из этого дерева на уровне публичных или приватных … это уже выбор агента программиста и пользователя» →
+  the 243-folder proposal withdrawn; the Mini App's catalog stays as built (projects.json); a page of an item is the agent's and the
+  person's choice, public or admin, tagged `project` in its meta.json. A new page = a data folder read at run time (ELEMENT_DIR set by
+  services-install), seen within 5 min, no rebuild; a new widget or section = code = the element's rebuild.
+
 - 2026-11-21 11:53 UTC, the owner (Telegram 487): «смотрю на архитектуру Next маршрутов и не понимаю почему там не появилась наша
   структура … должен был построить по согласованию со мной обновлённое дерево» — my 821 kept 4/46/193 in tg/_data/projects.json
   (virtual addresses), never showed the tree. Asked (488–489, tree file sent): data folders tg/_pages/projects/<section>/<group>/<item>/
