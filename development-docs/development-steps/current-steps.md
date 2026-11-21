@@ -342,7 +342,8 @@ the status-door filter (below) = ONE core build at the end (ask him first).
 440–442 (the element's purpose; «an element buys an element for all its brothers» via Fractera's graph; «решать тебе»). I chose: a short
 critical analysis first, then 821. Intake pre-steps/2026-11-21-element-buys-an-element-for-its-brothers.md; plan new-steps/822-the-
 capability-ladder-own-fractera-lagrix-build.md (5 cracks; no private-repo install exists in code). Sent 445–446 with the plan file.
-WAITS HIS ANSWER to one question: across owners only the architect buys a shared element, inside one owner «one buys for all»?
+His answer 447 (10:30): «один узел как одно сообщество … Марина покупает элемент за свои деньги для всех братьев это закон» — variant
+(c) everywhere; acknowledged 448. 822-1 (texts) waits its turn after 821's screens; he has not yet said «да» to 822's substeps.
 
 **PARKED (say so if asked):** the server tails — z6esw («Red team», project) and qxld4 («Green team», own app, Roma's) still on
 109.199.105.213; z6esw's tell-core (SE3) not proven after 818-8; redteam.sh with the window lines not re-run; delete z6esw (+ qxld4 if he

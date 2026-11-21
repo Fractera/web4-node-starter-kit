@@ -35,7 +35,11 @@ of the node → tells Марина «ready» → Марина and the new elemen
    integrator's node), her money would buy a thing the architect's node owns and every other owner uses free. Three variants: (a) a
    shared element is bought only by the architect — the element asks, the architect pays; (b) the payer's owner pays and the element is
    hers, shared by her choice; (c) the payer pays for everyone, with her explicit consent on the checkout window («вы покупаете для
-   всего узла»). My pick: (c) inside one owner, (a) across owners. ← the one question to the owner.
+   всего узла»). My pick was (c) inside one owner, (a) across owners. **DECIDED by the owner, Telegram 447 (10:30 UTC), verbatim:
+   «Смотри надо рассматривать один узел как одно сообщество в котором существует правила мы вместе строим один общий проект и каждый
+   вкладывает то что считает необходимым. С этой точки зрения Марина покупает элемент за свои деньги для всех братьев это закон»** —
+   variant (c) for every node: the node is one community building one project; whoever pays buys for all brothers, no priority. The
+   checkout window says so plainly («вы покупаете для всего узла») — the payer's consent is the window, not a question.
 4. **The purchase is a program; its fuel is a second bill.** Pictures cost money per call (a provider key). Ten brothers on one bought
    element spend one key. The door already knows who calls (the pair key, 818-7), and the node keeps a ledger of paid calls (skill
    `money-and-resources`) — so: the element is shared, the fuel is counted per caller, and across owners a quota or a charge. Decided
