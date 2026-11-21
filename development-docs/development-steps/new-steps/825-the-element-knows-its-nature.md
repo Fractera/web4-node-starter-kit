@@ -68,4 +68,7 @@ State: GO 2026-11-21 13:36 UTC — the owner's 532–534 (intake pre-steps/2026-
   fork and Fractera. `instruction:element -- templates` also wrote root's CLAUDE.md and seal on the Mac (its design, 734-1) — left
   uncommitted in root (the classifier refused my revert); root's agent commits it.
 - Proof 1: check:instruction (core and template) green, the template prebuild and release guards green, tests 18/18 and 5/5.
-  Proof 2: root's worker asked to answer five questions from its new CLAUDE.md (13:58) — its report decides.
+  Proof 2 (13:44, live): root's worker, asked five questions, answered all from its new CLAUDE.md — interface first; came-from → the
+  project's pages and memory, parking in current-step.md; image generation → a native element through `need`, then i2i; tagged pages +
+  `npm run memory -- remember/recall --project`; a clear only when closed, done by the core on `tell-core`. 825 DONE except the live
+  memory proof (a real element from v0.3.225).

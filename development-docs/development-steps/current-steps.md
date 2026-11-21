@@ -328,6 +328,10 @@ real element. Base UI Button: `render={<a/>} nativeButton={false}`, not asChild.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-21 13:45 UTC: 825 DONE (plan new-steps/825, summary there): custom v0.3.225, native v0.1.80, core CLAUDE.md §3/§4 sealed,
+  core 43bf6fd4 on the fork and Fractera; root's worker proved the new instruction live. Open: the live memory proof on a real element;
+  root's CLAUDE.md+seal uncommitted (written by instruction:element); «Добавить» + «Справка» waits his yes; the server update waits him.
+
 - 2026-11-21 13:35–13:36 UTC, the owner (Telegram 532, 533 — intake pre-steps/2026-11-21-element-knows-its-nature.md; 534): his vision of
   the element's nature → step 825 (checklist, critique, a substep per idea), and «На следующем этапе не пытаюсь искать меня и задавать
   вопросы действую от моего лица исходя из стратегии максимального блага для проекта с возможностью его эволюционного развития. Я ушел на
