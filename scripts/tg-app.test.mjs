@@ -98,12 +98,20 @@ await t('no bot — nothing is called (negative control)', async () => {
   assert.equal(seen.length, before)
 })
 
-await t('778: an element bot opens the element\'s Mini App (<its HTTPS address>/tg) per allowed chat; a loopback address — the default menu; no bot — no-bot', async () => {
+await t('778, 824: an element bot opens the element\'s Mini App (<its HTTPS address>/tg) per allowed chat only when it has one (root and native — the chat); a loopback address — the default menu; no bot — no-bot', async () => {
   const el = 'el778'
   put(`data/services/${el}/channel/telegram/.env`, 'TELEGRAM_BOT_TOKEN=123456:ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef_-12\n')
   put(`data/services/${el}/channel/telegram/access.json`, JSON.stringify({ allowFrom: ['111', '222'] }))
   put(`items/${el}/.env.local`, 'PROJECT_SITE_URL=https://el778.example.com/\n')
   const dirOf = (id) => join(tmp, 'items', id)
+  // 824 negative first: an HTTPS site but no Mini App of its own (root, a native element) — the bot keeps the chat (Telegram 484).
+  const seen0 = []
+  const r0 = await menu.refreshElement(tmp, el, { dirOf, fetchImpl: async (_t, m, c) => { seen0.push([c, m]); return { ok: true } } })
+  assert.equal(r0.state, 'default')
+  assert.equal(seen0[0][1].type, 'default')
+  assert.equal(menu.hasMiniApp(el, dirOf), false)
+  put(`items/${el}/app/[lang]/(protectedLayer)/tg/_data/menu.json`, '{}')
+  assert.equal(menu.hasMiniApp(el, dirOf), true)
   const seen = []
   const r = await menu.refreshElement(tmp, el, { dirOf, fetchImpl: async (_token, m, chat) => { seen.push([chat, m]); return { ok: true } } })
   assert.equal(r.ok, true)
