@@ -328,6 +328,10 @@ real element. Base UI Button: `render={<a/>} nativeButton={false}`, not asChild.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-21 15:31 UTC: core build 7b005468 LIVE; fork and Fractera = 7b005468 (install.sh stage telegram, prepare unzip verified in the
+  fork). Window aeff9b65 «Переустановить сервер с нуля» put; Telegram 549 told Roma. root--work was stopped by the build after its
+  report (13:44) — nothing to re-hand. Waits: the fresh server install (watch the «Telegram агентов» stage), his yes/no to «Добавить».
+
 - 2026-11-21 15:19 UTC, the owner (Telegram 542): «правильный вопрос в том как правильно сделать bootstrap чтобы при установке поднялся
   Telegram … думать из концепции … Пропиши эту инструкцию в фрагменте души. Скажи потом что делать запускать установку сервера с нуля?
   … режим максимального размышления … чтобы не получилось так что через час установки ты что-то забыл» → d1a0bbe2: telegram-ready
