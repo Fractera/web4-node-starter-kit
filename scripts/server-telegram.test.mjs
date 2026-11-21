@@ -91,4 +91,14 @@ await t('784 (Telegram 714): the token from the token alone or BotFather\'s whol
   assert.deepEqual(await checkToken(T, async () => { throw new Error('offline') }), { ok: false, reason: 'telegram-silent' })
 })
 
+await t('824 (Telegram 510): an element\'s bot page takes BotFather\'s whole message too — the kit\'s tokenFrom reads like the server\'s', async () => {
+  const kit = req('../app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/server/telegram.cjs')
+  const T = '8123456789:AAFq0-dry_run_secret_of_35_chars_xy'
+  for (const x of [`  ${T}\n`, `Use this token to access the HTTP API:\n${T}\nKeep your token secure`, `Use this token to access the HTTP API: ${T}Keep your token secure`, 'Done! Congratulations on your new bot.', '']) {
+    assert.equal(kit.tokenFrom(x), tokenFrom(x), JSON.stringify(x).slice(0, 60))
+  }
+  assert.equal(kit.tokenFrom(`Done! ... Use this token to access the HTTP API: ${T}Keep your token secure`), T)
+  assert.equal(kit.tokenFrom('Done! Congratulations on your new bot.'), null, 'negative: a message without a token')
+})
+
 console.log(process.exitCode ? `===SERVER_TELEGRAM_FAILED=== ${passed} passed` : `===SERVER_TELEGRAM_OK=== ${passed} passed`)

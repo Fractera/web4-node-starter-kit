@@ -136,10 +136,21 @@ async function tg(token, method, params = {}) {
 }
 
 /** Сохранить токен, проверив его у самого Telegram (`getMe`): форма ещё не значит «рабочий». */
+/** 824 (the owner, Telegram 510: «обнови кастомные элемент он также должен работать совсем сообщением целиком»; the server's form
+ *  since 784): the token from what was pasted — the token alone, or BotFather's whole message. A one-line field glues the next word to
+ *  the token, so inside a message the secret is read as exactly 35 characters (what BotFather issues); `getMe` confirms it below.
+ *  The same rule as `lib/hosting/server-telegram.mjs` tokenFrom. */
+function tokenFrom(text) {
+  const t = String(text ?? '').trim()
+  if (TOKEN_SHAPE.test(t)) return t
+  const m = t.slice(0, 4096).match(/(?<![0-9])\d{6,12}:[A-Za-z0-9_-]{35}/)
+  return m ? m[0] : null
+}
+
 async function saveToken(service, raw) {
-  const token = String(raw ?? '').trim()
-  if (!token) return { ok: false, error: 'empty-token' }
-  if (!TOKEN_SHAPE.test(token)) return { ok: false, error: 'bad-format' }
+  if (!String(raw ?? '').trim()) return { ok: false, error: 'empty-token' }
+  const token = tokenFrom(raw)
+  if (!token) return { ok: false, error: 'bad-format' }
   const me = await tg(token, 'getMe')
   if (me.description === 'unreachable') return { ok: false, error: 'telegram-unreachable' }
   if (!me.ok || !me.result?.username) return { ok: false, error: 'token-rejected' }
@@ -1382,6 +1393,8 @@ async function answerTrustHere(service, token, chatId) {
 }
 
 module.exports = {
+  // 824: the token from the token alone or BotFather's whole message.
+  tokenFrom,
   // the bot taken off the node — the danger zone of its page
   removeBot,
   // 639: итог остаётся, служебное исчезает; вопросы закрытой сессии исчезают.

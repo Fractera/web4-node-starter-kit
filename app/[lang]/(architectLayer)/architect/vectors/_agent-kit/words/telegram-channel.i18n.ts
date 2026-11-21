@@ -82,7 +82,7 @@ const DICT: Record<string, TelegramChannelWords> = {
     step1Points: [
       "First it asks for a name — what people see in the chat header.",
       "Then a username — the address of the bot; it must end with «bot».",
-      "At the end BotFather sends a token: a long line with a colon. Copy it for the next step.",
+      "At the end BotFather sends a token: a long line with a colon. Copy it — or its whole message — for the next step.",
     ],
     openBotFather: "Open @BotFather",
     nameLabel: "A name you can use",
@@ -92,8 +92,8 @@ const DICT: Record<string, TelegramChannelWords> = {
 
     step2Title: "Bring the token",
     step2Text: "The node checks it with Telegram itself and keeps it on this computer. It is never shown again — only its last four characters.",
-    tokenLabel: "Bot token",
-    tokenHint: "looks like 123456789:AA… — sent by BotFather",
+    tokenLabel: "The bot's token, or BotFather's whole message",
+    tokenHint: "looks like 123456789:AA… — or paste BotFather's whole message: the node finds the token itself",
     saveToken: "Save token",
     saving: "Checking with Telegram…",
     tokenSaved: "Bot @{username} saved · token …{tail}",
@@ -148,7 +148,7 @@ const DICT: Record<string, TelegramChannelWords> = {
     locked: "Complete the step above first.",
     errors: {
       "empty-token": "Paste the token first.",
-      "bad-format": "That does not look like a bot token: digits, a colon, then a long line of letters.",
+      "bad-format": "No bot token here: paste the token (digits, a colon, a long line of letters) or BotFather's whole message.",
       "token-rejected": "Telegram does not recognise this token. Copy it from BotFather again.",
       "token-used-by-another-bot": "This token already belongs to another bot of this element. Create a separate bot at BotFather.",
       "unknown-slot": "This page has no such bot.",
@@ -176,7 +176,7 @@ const DICT: Record<string, TelegramChannelWords> = {
     step1Points: [
       "Сначала он спросит имя — его видят в заголовке чата.",
       "Затем имя пользователя — адрес бота; оно обязано оканчиваться на «bot».",
-      "В конце BotFather пришлёт токен — длинную строку с двоеточием. Скопируйте её для следующей ступени.",
+      "В конце BotFather пришлёт токен — длинную строку с двоеточием. Скопируйте её или всё сообщение целиком для следующей ступени.",
     ],
     openBotFather: "Открыть @BotFather",
     nameLabel: "Имя, которое можно взять",
@@ -186,8 +186,8 @@ const DICT: Record<string, TelegramChannelWords> = {
 
     step2Title: "Принесите токен",
     step2Text: "Узел проверит его у самого Telegram и сохранит на этом компьютере. Больше он не показывается — только четыре последних знака.",
-    tokenLabel: "Токен бота",
-    tokenHint: "вида 123456789:AA… — его присылает BotFather",
+    tokenLabel: "Токен бота или всё сообщение BotFather",
+    tokenHint: "вида 123456789:AA… — или вставьте сообщение BotFather целиком: узел сам найдёт в нём токен",
     saveToken: "Сохранить токен",
     saving: "Проверяю у Telegram…",
     tokenSaved: "Бот @{username} сохранён · токен …{tail}",
@@ -242,7 +242,7 @@ const DICT: Record<string, TelegramChannelWords> = {
     locked: "Сначала пройдите ступень выше.",
     errors: {
       "empty-token": "Сначала вставьте токен.",
-      "bad-format": "Это не похоже на токен бота: цифры, двоеточие, затем длинная строка букв.",
+      "bad-format": "Токена здесь нет: вставьте токен (цифры, двоеточие, длинная строка букв) или сообщение BotFather целиком.",
       "token-rejected": "Telegram не узнаёт этот токен. Скопируйте его у BotFather заново.",
       "token-used-by-another-bot": "Этот токен уже у другого бота этого элемента. Создайте у BotFather отдельного бота.",
       "unknown-slot": "У этой страницы нет такого бота.",
