@@ -331,7 +331,12 @@ Found: hooks with relative paths fail after the agent `cd`s (plan file 832, «Fo
    seen); claude-auth GET walledNone (no node e-mail), the subscription card red title + no node-login button; wake door: none →
    🔑 notice in the main chat with the link, 409 no-account; birth report line; ask-person --check claude:<id> — «Готово» refused
    until signed in (panel + Pult words). The owner (Telegram 639): do NOT repair the running server — after the push he reinstalls
-   the server from zero and tests the full cycle. NEXT: push, core build detached, tell him «можно переустанавливать».
+   the server from zero and tests the full cycle. DONE: pushed e56eddf0 (fork + Fractera), core built 20:13 RC=0, told him (640).
+   834 OPEN — WAITS HIS A/Б (Telegram 641 → my 643): an element's own admin has no «Подписка Claude Code / Терминал / Telegram-бот»
+   of ITS element — the template drawer (lib/menu/account-links.ts) shows 4 links only to the architect, to the MAIN agent's
+   build/* pages; the core panel admits only architect/admin. My pick A: the drawer shows the element's three pages to architect +
+   its own admin; the core serves them in a bare frame (no node menu), gated to architect + that element's own admin (role from
+   lib/web4-items/element-admin-role.cjs), pages + their agent-api doors + the pty socket. Б: only the subscription link.
 1. DONE (see 832) — PROMISED (Telegram 612): find what triggered the SERVER's second rebuild of every element after its update (his Pult 18:37 — all
    «в очереди на сборку»). Read the server's logs through the page's log door (this Chrome has access until Sun 09:47; page
    http://localhost:24680/ru/hosting/hosting, IP 109.199.105.213) or ask the server's own agent. My stated hypothesis: per-node NEXT_PUBLIC_*
