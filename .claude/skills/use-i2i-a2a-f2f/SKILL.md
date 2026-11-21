@@ -42,6 +42,10 @@ Old addresses `connectors/{catalog,api,mcp}`, `build/{api,mcp,catalog}` and `web
 - **Never in an F2F card or a deal:** keys, tokens, passwords, personal data, storage contents; a counterparty is an agent's address,
   never a person's name, e-mail or phone.
 - **The node works without Lagrix.** i2i never needs it; only paid a2a deals and f2f exchanges go through it.
+- **A whole element bought from Fractera's graph** (step 822; the owner, 2026-11-21: «Марина покупает элемент за свои деньги для всех
+  братьев это закон») is f2f's sibling: the element itself changes hands, from Fractera's catalogue instead of another project. The
+  core installs it as an element of the node; it serves every brother with no priority for the payer; the payer pays on Fractera's
+  checkout in their own window. The order of the search — the ladder of skill `handle-need`, §1b.
 - **i2i works today; a2a is a plan** (owner 2026-11-07: «i2i we can use just now , but a2a it must discribed for feature»). A neighbour's
   job → `npm run task -- <id> --work [--skill <id>]` (670-2). An outside order → `new-steps/672-…` (not built): the element's door
   serves it, never a Claude session on the owner's subscription (skill `provider-rules`). The Lagrix search answers a2a and f2f in one

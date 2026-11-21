@@ -1,6 +1,6 @@
 ---
 name: handle-need
-description: "Builder skill. An element of this node asked for a capability it lacks: your input says «Element <id> needs a capability: «…» — need need-…», or the architect answered yes or no about building one, or an element you led to build it said it is done. Find who already does it by the A2A cards and tell the element; nobody does — ask the architect once whether to build it, and where; on yes lead the owner element to build it as a door, check its card names it, tell the asking element it is ready."
+description: "Builder skill. An element of this node asked for a capability it lacks: your input says «Element <id> needs a capability: «…» — need need-…», or the architect answered about building or buying one, or an element you led to build it said it is done. The ladder: brothers by their A2A cards → Fractera's graph → Lagrix → a build; a bought element serves every brother, the payer's act is a window; tell the asker «ready»."
 ---
 
 # Handle a capability request of an element
@@ -32,6 +32,24 @@ A hint, not a law. Owner of the node, 2026-10-24: «Получив на уров
      in <owner>; when it is ready the core wakes you — nothing to wait for now, finish as usual."`
 4. Before you close: `npm run needs` — a need still «requested» came while you worked: handle it the same way. Then
    `npm run done -- --close`.
+
+## 1b. Nobody here — Fractera's graph, Lagrix, then a build (step 822)
+
+The owner, 2026-11-21 (Telegram 447): «надо рассматривать один узел как одно сообщество в котором существует правила мы вместе строим
+один общий проект и каждый вкладывает то что считает необходимым. С этой точки зрения Марина покупает элемент за свои деньги для всех
+братьев это закон».
+
+1. Before you ask about a build, the outside rungs in this order: Fractera's graph of ready elements, then Lagrix (`npm run lagrix`).
+   Both are simulated until steps 822-2 and 822-3 — the architect hears «simulated», never a simulated offer as a real one.
+2. A ready element found (once the rungs live): one question where the architect reads you — the element, what it does, its price,
+   the build's price beside it (tokens and days), and the law: «whoever pays buys it for every element of the node, no priority».
+3. The payer is a person, and paying is their own act: a window — `npm run ask-person -- "<pay for X on Fractera>" --href <Fractera's
+   checkout> --why "платит только человек"` with «вы покупаете для всего узла» in its words; never your click, never the node's Stripe
+   element (it receives the node's own sales). Their «Готово» wakes you: check the right to install yourself.
+4. Install it by its tag as an element of the node (its registry entry, `services:install`, the birth checks) → read its card → tell
+   the asker «ready — element <x>, its doors; agree an API once with skill use-i2i» → `npm run needs -- answer <need> --told`. The other
+   brothers find it by its card on their own `need`; nobody is told unasked.
+5. Nothing anywhere, or the architect prefers a build → §1, point 3 (missing → the owner element → §2).
 
 ## 2. The architect's answer
 

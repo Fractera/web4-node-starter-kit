@@ -89,6 +89,19 @@ about a provider's product needs its primary source; the element names what IT h
   technical cards (Lagrix doc 20 fields), the checkout (Stripe of Fractera), the entitlement per node, the re-review on a new tag; the
   core's installer from a private repository by tag.
 
+## 822-1 DONE 2026-11-21 ~11:10 UTC (texts only; the owner's 441 «описать и интегрировать … как инструкции и навыков» is his word)
+
+- Core CLAUDE.md §4: «A capability request — the ladder» (brothers → Fractera's graph → Lagrix → a build; the outside rungs simulated
+  until 822-2/822-3; the payer's window; installed for every brother; the old «⚠ need exists only in memory — step 609» corrected:
+  needs live in data/node/needs/); «Buying a whole element»; «Nobody here — Fractera's graph, then the Lagrix rung». Sealed e48cacfb56e3.
+- Skills: handle-need §1b (the outside rungs, the payer's window, install, «ready»), use-i2i-a2a-f2f (a whole element bought from
+  Fractera's graph — f2f's sibling).
+- The element instruction (core source lib/instructions/element/element-instruction.src.md, custom variant only): §1 «What you are
+  for» (440) and §5 item 6 (the ladder from the element's side) + the element skill need-capability §5. Generated into the custom
+  workshop only (ROOT_TEMPLATE_DIR → the root-starter workshop, reverted: root waits the owner's word) → custom v0.3.222 (workshop
+  7b5d2c6, tag b3b2334f, Roma's gh key for one run), pinned b0b6074c. Template prebuild RC=0, dry release green.
+- T1 ✓ (core check:instruction OK, the template's seal regenerated and its prebuild green). T2/T3 wait 822-2 (the search door).
+
 ## Test checklist (shown before the code, marked after)
 
 - T1 the sealed texts carry the ladder in the same order in the core and the element; `check:instruction` green, seals renewed.
