@@ -328,6 +328,11 @@ real element. Base UI Button: `render={<a/>} nativeButton={false}`, not asChild.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-21 12:27 UTC: core build fbc44311 LIVE (REBUILD_RC=0, /api/health commit fbc44311); live gate: data/auth/memory hasMiniApp
+  false, the Mac's root true (its old rollout leftover). Pushed: origin and Fractera main = fbc44311. Told Roma the server steps
+  (update banner on the server's panel → a custom element there → its bot's «Приложение»). Waits: his yes to the «Добавить» + «Справка»
+  design (507) → template v0.3.225.
+
 - 2026-11-21 12:18–12:19 UTC, the owner (Telegram 502): «проект не эксплуатируется сейчас нигде … дело необходимое сборки скажи
   когда я могу приступить к тестированию на сервере» → core 7534ff2b (the Mini App button only with tg/_data/menu.json; test + negative
   control), prebuild RC=0, ~12:25 core build serve:rebuild detached; then push origin + Fractera main, tell him the server steps (update
