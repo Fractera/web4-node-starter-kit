@@ -357,7 +357,7 @@ chat-context hook, the status-door filter.
 **821 CORE PART CODED (2026-11-21 ~11:20 UTC, b5ff8622, not built, not pushed):** GET /api/node/my-agent (own agent card + context,
 no node e-mail), the status door filtered for an element key, the came-from hook (test:came-from 7/7). Template workshop 1f84362
 (island tg-agent.client.tsx + doors tg/api/{agent,context}, prebuild RC=0) — NOT released yet (v0.3.223 after the core build proof).
-NEXT: Roma's «да» to the ONE core build (serve:rebuild; load skill core-build-return first) → a live script with root's element key:
+GO given 2026-11-21 ~11:30 UTC in the terminal («go to next step go») → the ONE core build started detached (spawn-free serve.mjs rebuild); on return: npm run serve:status, curl /api/node/my-agent without a key → 401, → a live script with root's element key:
 my-agent answers only root and no e-mail; status sessions = root only; the node key sees all → release v0.3.223 → push the core
 (ask). Live agent card needs a custom element born from v0.3.223 (none on this Mac: root is the root-starter; the test element was
 refused by the duplicate guard).
