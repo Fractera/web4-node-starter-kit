@@ -483,7 +483,7 @@ async function idleTick(service) {
         // 614-1: «включён — пишите ему» — только когда встал канал; не встал — сессия уже закрыта, человеку «Извините…».
         const ch = out.ok && typeof out.channelReady === 'function' ? await out.channelReady() : null
         if (ch && !ch.up) out = { ok: false, reason: ch.reason === 'channel' ? 'channel' : 'session-ended', waited: ch.waited }
-        const said = out.ok ? `${(t.onNow ?? ASK.en.onNow)(a)}${modeLine(out, t)}` : out.reason === 'memory' ? t.memory(a, out.freeMb, out.perSessionMb, out.top) : out.reason === 'channel' ? (t.channelFailed ?? ASK.en.channelFailed)(a, out.waited) : t.failed(a, String(out.reason ?? 'unknown'))
+        const said = out.ok ? `${(t.onNow ?? ASK.en.onNow)(a)}${modeLine(out, t)}` : out.reason === 'memory' ? t.memory(a, out.freeMb, out.perSessionMb, out.top) : out.reason === 'channel' ? (t.channelFailed ?? ASK.en.channelFailed)(a, out.waited) : failedWords(t, a, out.reason, service)
         // 639: «включён — пишите ему» исчезает; беда (память, канал) остаётся — она ждёт действия человека.
         if (out.ok) await sendVanishing(token, { chat_id: msg.chat.id, text: said, disable_web_page_preview: true })
         else await sendKept(token, { chat_id: msg.chat.id, text: said, disable_web_page_preview: true })
@@ -608,6 +608,12 @@ function sectionPaths(service) {
   return { terminal: `/architect/${service}/terminal`, subscription: `/architect/${service}/claude-code` }
 }
 
+/** 832-4: why an agent did not turn on, in the person's words; `no-account` names the page where its own Claude account is signed in. */
+function failedWords(t, a, reason, service, via) {
+  if (reason === 'no-account') return (t.noAccount ?? ASK.en.noAccount)(a, `${coreOrigin()}/${personLang(via || service)}${sectionPaths(service).subscription}`)
+  return t.failed(a, String(reason ?? 'unknown'))
+}
+
 /** Адрес ядра, который человек откроет с телефона: `architect.<зона>`, без своей зоны — эта машина. */
 function coreOrigin() {
   const zone = readJson(path.join(ROOT, 'logs', 'domain.json'), null)?.zone
@@ -659,6 +665,7 @@ const ASK = {
       `\nClose what you do not need — the Claude Code installation chat, spare browser tabs — and press «Turn on» again.` +
       `\nIf this happens often, the node is cramped on this computer: ask the main agent which computer or VPS to move to.`,
     failed: (a, r) => `Agent ${a} did not turn on: ${r}. Press «Turn on» again.`,
+    noAccount: (a, link) => `On the server agent ${a} works only on its own Claude account — it has none yet. Sign in to Claude on the element's page «Claude Code subscription»: ${link}\nThen press «Turn on». Until then, write to me in the main bot — I will do it myself.`,
     declineText: (a) => `The owner of ${a} chose not to turn its agent on now.`,
     toast: 'Turning on…',
     moved: '↓ More questions came — the updated question is below.',
@@ -717,6 +724,8 @@ const ASK = {
       `\nЗакройте лишнее — установочный чат Claude Code, ненужные вкладки браузера — и нажмите «Включить» ещё раз.` +
       `\nЕсли так бывает часто, узлу тесно на этом компьютере: спросите главного агента, на какой компьютер или VPS перейти.`,
     failed: (a, r) => `Агент ${a} не включился: ${r}. Нажмите «Включить» ещё раз.`,
+    // 832-4 (the owner, Telegram 625: «Агент marina не включился: no-account. Нажмите «Включить» ещё раз» — the press can never help)
+    noAccount: (a, link) => `Агент ${a} на сервере работает только на своём аккаунте Claude — его ещё нет. Войдите в Claude на странице элемента «Подписка Claude Code»: ${link}\nПосле входа нажмите «Включить». А пока всё, что нужно, пишите мне в главный бот — сделаю сам.`,
     declineText: (a) => `Хозяин ${a} не стал сейчас включать его агента.`,
     toast: 'Включаю…',
     moved: '↓ Пришли ещё вопросы — обновлённый вопрос ниже.',
@@ -1090,7 +1099,7 @@ async function onButton(service, token, q) {
     for (const x of p.asked) await (lost ? sendKept : sendVanishing)(token, { chat_id: x.chat, text: startedText, disable_web_page_preview: true })
     for (const x of p.asked) vanish(token, x.chat, x.messageId) // 639: вопрос отвечен — уходит вместе с «включён»
   } else {
-    const why = out.reason === 'memory' ? t.memory(a, out.freeMb, out.perSessionMb, out.top) : t.failed(a, String(out.reason ?? 'unknown'))
+    const why = out.reason === 'memory' ? t.memory(a, out.freeMb, out.perSessionMb, out.top) : failedWords(t, a, out.reason, service)
     await closeAsk(service, token, p, why, true, t)
   }
 }
