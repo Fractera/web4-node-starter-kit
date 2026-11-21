@@ -309,8 +309,17 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 + Mini App address rule + deploy refreshes bot buttons, 830 template v0.3.227 Mini App lock (j58fl 72cce1a deployed), 831 ActionButton
 on every server-page step + the architect e-mail confirm dialog. Summaries in completed-steps/828…831-main.md. Core live 7cc8888d.
 
+**19:12–19:27 UTC (Telegram 619→622): step 832.** marina.fractera.ai on «Сайт обновляется» after his rename on the server — cause
+measured (the wall's root record kept the old folder → «the element folder is gone»), repaired live 19:19 (helper `add` with the new
+folder, pm2 restart → 200 from the internet). Core fix committed **ef6527cb** (element-move re-records the wall; the Pult's `serve`
+tag «не отвечает»/«переезд»/«встаёт»), NOT pushed (the classifier wants his word this session), NOT built. Asked him (Telegram):
+push + a core build on the Mac. The second-rebuild question is ANSWERED (by the server's own agent, read in its terminal): elements
+built with the IP, rebuilt for fractera.ai at 18:31 → 827. The server agent's 5-hour limit was at 100 % (resets 20:40 Berlin).
+Found: hooks with relative paths fail after the agent `cd`s (plan file 832, «Found on the way»).
+
 **OPEN, IN ORDER:**
-1. PROMISED (Telegram 612): find what triggered the SERVER's second rebuild of every element after its update (his Pult 18:37 — all
+0. His word → `git push origin main` + `git push fractera main`; his yes to a build → `npm run serve:rebuild` (skill core-build-return).
+1. DONE (see 832) — PROMISED (Telegram 612): find what triggered the SERVER's second rebuild of every element after its update (his Pult 18:37 — all
    «в очереди на сборку»). Read the server's logs through the page's log door (this Chrome has access until Sun 09:47; page
    http://localhost:24680/ru/hosting/hosting, IP 109.199.105.213) or ask the server's own agent. My stated hypothesis: per-node NEXT_PUBLIC_*
    baked into element builds → a domain/address change rebuilds all; step 827 moves them to run time. Answer him with the measured cause.
