@@ -328,6 +328,18 @@ element's first message pasted; 828: the add refusal on the page), push origin +
 829-main.md, delete the 828 plan. The owner 16:38 (Telegram 583): «ты каким-то образом пинками его запустил мне это не подходит.
 Стандартный процесс не стартует + Telegram приложение нету почему».
 
+**17:00 the owner (Telegram 586, a screenshot of the j58fl Mini App «Cron» with «Эта страница вам недоступна — Требуется одна из этих
+ролей: admin, architect»):** «я создал аккаунт bolshiyanov@gmail.com … смог использовать этот пароль попасть внутри бота однако я всё
+равно не могу им пользоваться проверь почему роли не позволяют пользоваться приложением Telegram» (he wrote a password in the chat —
+never repeated or used; asked him to change it, 587). MEASURED: his account roles [user, elementAdmin002] (j58fl's adminRole); the tg
+layout lets architect + OWN_ADMIN_ROLE in, but every tg screen (cron, element, projects, settings) has meta.roles ["admin"] and
+`allowedRoles` (lib/branch-page.tsx) added the branch's roles only for admin/staff/finance (805) — tg missed → «admin, architect».
+STEP 830: workshop data/workshop/fractera-custom-item-starter, STAGED not committed: lib/page-lock.mjs (pageLock + BRANCH_GROUP with
+tg → admin), lib/page-lock.test.mjs (5 passed; negative control reproduces «admin, architect»), branch-page.tsx uses it, package.json
+test:page-lock + in the prebuild; template tsc 0 errors, template prebuild RC=0. Asked (588) one yes for: release custom v0.3.227 → pin →
+rollout lib/page-lock.mjs lib/page-lock.test.mjs lib/branch-page.tsx into j58fl (NOT package.json — the element's own scripts) →
+`npm run services:install -- --only j58fl` (or deploy) → then the core build (828+829). WAITS his «да».
+
 **OPEN, IN ORDER:**
 1. The server's fresh install (Roma started ~15:55 from the fork with eeb7c201). Ask him for the result: the stage «Telegram агентов»
    green, the bot answers, the main agent wakes; element agents need their own Claude sign-in (811-5b). Note every stage's time (827).
