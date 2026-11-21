@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
   }
   // 833-4 (the server's main agent, handoff 2026-11-21: «Человек узнал о проблеме только после того, как упала задача»): on a server an
   // element's agent runs only on its own Claude account — without one nothing is asked in its bot (a «Включить» that can never work): the
-  // person hears it at once in the main chat, with the page where the account is signed in on a computer, and the caller gets no-account.
+  // person hears it at once in the main chat (834-10: an app of its own too, on any node — `claude-account.cjs`), with the page where the account is signed in on a computer, and the caller gets no-account.
   if (service !== "build" && claudeAccount.accountOf(process.cwd(), service) === "none") {
     const root = process.cwd()
     const lang = noticeLang(root)
@@ -111,8 +111,8 @@ export async function POST(req: NextRequest) {
     const link = web ? `${web}${claudeAccount.subscriptionPath(root, service, lang)}` : claudeAccount.subscriptionPath(root, service, lang)
     const name = elementName(service, lang)
     const text = lang === "ru"
-      ? `Задача для «${name}» не запустилась: на сервере его агент работает только на своём аккаунте Claude, а входа нет. Откройте на компьютере ${link} и войдите — можно тем же аккаунтом.`
-      : `A task for «${name}» did not start: on a server its agent works only on its own Claude account, and none is signed in. Open ${link} on a computer and sign in — the same account will do.`
+      ? `Задача для «${name}» не запустилась: его агент работает только на своём аккаунте Claude, а входа нет. Откройте на компьютере ${link} и войдите — можно тем же аккаунтом.`
+      : `A task for «${name}» did not start: its agent works only on its own Claude account, and none is signed in. Open ${link} on a computer and sign in — the same account will do.`
     const sent = await sendNotice(root, { kind: "account", from: service, who: name, text }).catch(() => ({ ok: false }))
     console.log(`[agents/wake] ${service} → no-account (the person ${sent.ok ? "told" : "NOT told"} in the main chat)`)
     return NextResponse.json({ ok: false, reason: "no-account", told: sent.ok, link }, { status: 409, headers: HEADERS })

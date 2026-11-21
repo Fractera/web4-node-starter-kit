@@ -1315,7 +1315,7 @@ if (cmd === 'create') {
   // 833-5 (the server's main agent, handoff 2026-11-21: «отчёт заканчивается этой строкой, чтобы первая задача не падала молча»): on a
   // server the newborn's agent runs only on its own Claude account — the report's last line says so, with the page to sign in on a computer.
   if (require('../lib/agent-kit/claude-account.cjs').accountOf(ROOT, id) === 'none') {
-    console.log(`claude: NO account of its own — on a server its agent runs only on its own; it will not start until the person signs in on a computer: ${ORIGIN}${require('../lib/agent-kit/claude-account.cjs').subscriptionPath(ROOT, id, LANG)} — tell the person`)
+    console.log(`claude: NO account of its own — its agent runs only on its own (a server's wall or an app of its own); it will not start until the person signs in on a computer: ${ORIGIN}${require('../lib/agent-kit/claude-account.cjs').subscriptionPath(ROOT, id, LANG)} — tell the person`)
   }
   process.exit(0)
 }

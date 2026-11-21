@@ -32,6 +32,7 @@ const modes = require(path.join(process.cwd(), 'lib', 'agent-kit', 'modes.cjs'))
 const resume = require(path.join(process.cwd(), 'lib', 'agent-kit', 'resume.cjs'))
 // 811-5b: a custom element's agent on a dedicated server runs as its own Linux user (`lib/agent-kit/walled-session.cjs`).
 const walledSession = () => require(path.join(process.cwd(), 'lib', 'agent-kit', 'walled-session.cjs'))
+const ownAppOf = (id) => { try { return require(path.join(process.cwd(), 'lib', 'web4-items', 'element-app.cjs')).isOwnApp(id, process.cwd()) } catch { return false } }
 const { randomUUID } = require('node:crypto')
 // 624-1: доступная память — один модуль ядра; `os.freemem()` на macOS видит только пустые страницы (свободно 114 МБ при 79% свободной).
 const { availableMb, topApps } = require(path.join(process.cwd(), 'lib', 'free-memory.cjs'))
@@ -235,8 +236,9 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   if (ownHome) env = { ...env, CLAUDE_CONFIG_DIR: ownHome }
   // 811-5b (the owner, Telegram 128): on a server the element's agent runs only on its own Claude account — never on the node's token.
   const walled = walledSession().walledAt(process.cwd(), cwd)
-  if (walled && !ownHome) {
-    notice('[⟦node · no-account⟧ на сервере агент элемента работает только на своём аккаунте Claude — войдите в кабинете администратора элемента; до входа работу делает главный агент]')
+  // 834-10 (the owner, Telegram 662): an app of its own runs only on its own account on any node — the node's subscription is never its own.
+  if ((walled || ownAppOf(element)) && !ownHome) {
+    notice('[⟦node · no-account⟧ агент элемента работает только на своём аккаунте Claude — войдите в кабинете администратора элемента; до входа работу делает главный агент]')
     return { ok: false, reason: 'no-account' }
   }
   const bin = resolveBin('claude', env.PATH || env.Path)
