@@ -122,6 +122,18 @@ export async function createZone(token: string, accountId: string, name: string)
   return send<CfZoneDetails>("POST", "/zones", token, { name, account: { id: accountId }, type: "full" })
 }
 
+/** 828-2: does the zone hold any DNS record — `GET /zones/{zone_id}/dns_records?per_page=1` (developers.cloudflare.com, «List DNS
+ *  Records», read 2026-11-21). `null` — Cloudflare did not answer. */
+export async function zoneHasRecords(token: string, zoneId: string): Promise<boolean | null> {
+  const r = await call<unknown[]>(`/zones/${zoneId}/dns_records?per_page=1`, token)
+  return r.ok ? r.result.length > 0 : null
+}
+
+/** 828-2: delete a zone — `DELETE /zones/{zone_id}`, permission Zone Write (developers.cloudflare.com, «Delete Zone», read 2026-11-21). */
+export async function deleteZone(token: string, zoneId: string) {
+  return send<{ id: string }>("DELETE", `/zones/${zoneId}`, token)
+}
+
 /** Перезапустить проверку активации зоны (docs: «Rerun the Activation Check», `/zones/{zone_id}/activation_check`). */
 export async function activationCheck(token: string, zoneId: string) {
   return send<{ id: string }>("PUT", `/zones/${zoneId}/activation_check`, token)

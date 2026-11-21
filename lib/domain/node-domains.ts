@@ -2,7 +2,9 @@ import "server-only"
 import { mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { isDnsLabel } from "@/lib/web4-items/dns-label.mjs"
-import { accountOfZone, activationCheck, createZone, getIngress, listAccounts, listZones, verifyToken, workersAccess, zoneByName } from "@/lib/domain/cloudflare"
+import { accountOfZone, activationCheck, createZone, deleteZone, getIngress, listAccounts, listZones, verifyToken, workersAccess, zoneByName, zoneHasRecords } from "@/lib/domain/cloudflare"
+import { closestName, registryOf } from "@/lib/domain/registry.mjs"
+import { zoneFate } from "@/lib/domain/own-zone.mjs"
 import { envValue } from "@/lib/web4-items/element-delete"
 import { lookup } from "@/lib/hosting/dns-check.mjs"
 import { placeKind } from "@/lib/hosting/place.mjs"
@@ -38,6 +40,10 @@ export type NodeDomain = {
   registrarNs?: string[]; nsMatch?: boolean; activationAsked?: boolean; addedAt: string; checkedAt?: string
   /** Регистратор домена по RDAP (324-2): только имя — экран чужого сервиса не описывается. `null` — RDAP не ответил. */
   registrar?: string | null
+  /** 828: what the zone's registry said of the name (RDAP 200 / 404 / anything else) — `unregistered` is refused, `unknown` never stops a name */
+  registry?: Registry
+  /** 828-2: the id of the zone the node itself created for this name — only such a zone may leave Cloudflare with the entry */
+  createdZoneId?: string
   /** 775: what the person added it for — the main domain's section («main») or the elements' («element»); none — an older entry */
   for?: DomainFor
   /** 799: on a server node — where public DNS leads the name now (A), the server's own IPv4, an IPv6 record that leads elsewhere */
@@ -46,6 +52,9 @@ export type NodeDomain = {
   aaaa?: string[]
 }
 export type DomainFor = "main" | "element"
+export type Registry = "registered" | "unregistered" | "unknown"
+/** 828: a refusal of an unregistered name carries the name it most likely meant; `closestHere` — the node already has that one */
+export type NotRegistered = { ok: false; error: "not-registered"; closest: string | null; closestHere: boolean }
 export type Shape = "ok" | "bad-shape" | "with-www" | "primary" | "exists"
 
 /**
@@ -137,38 +146,35 @@ export function domainHolder(name: string): string | null {
 
 const DOH = "https://cloudflare-dns.com/dns-query"
 
-/** Серверы имён, которые домен отдаёт сейчас в интернете (их ставит регистратор). Пусто — не удалось спросить. */
-async function registrarNs(name: string): Promise<string[]> {
+/** Серверы имён, которые домен отдаёт сейчас в интернете (их ставит регистратор). 828-3: `null` — DNS не ответил (раньше это
+ *  был пустой список, и карточка не отличала «не удалось спросить» от «серверов имён нет»). */
+async function registrarNs(name: string): Promise<string[] | null> {
   try {
     const r = await fetch(`${DOH}?name=${encodeURIComponent(name)}&type=NS`, { headers: { accept: "application/dns-json" }, cache: "no-store", signal: AbortSignal.timeout(8000) })
+    if (!r.ok) return null
     const j = (await r.json()) as { Answer?: Array<{ type: number; data: string }> }
     return (j.Answer ?? []).filter((x) => x.type === 2).map((x) => x.data.toLowerCase().replace(/\.$/, "")).sort()
-  } catch { return [] }
-}
-
-// РЕГИСТРАТОР ПО RDAP (324-2). Замер 2026-09-28: реестр IANA (`data.iana.org/rdap/dns.json`) даёт сервер RDAP зоны — .dev →
-// pubapi.registry.google, .com → rdap.verisign.com; ответ называет регистратора (сущность с ролью registrar, vCard fn).
-// Список серверов читается раз за жизнь процесса. Не ответил — `null`: «регистратор неизвестен», а не ошибка карточки.
-let rdapBootstrap: Promise<Array<[string[], string[]]> | null> | null = null
-async function registrarOf(name: string): Promise<string | null> {
-  rdapBootstrap ??= fetch("https://data.iana.org/rdap/dns.json", { signal: AbortSignal.timeout(8000) })
-    .then((r) => r.json())
-    .then((j: { services?: Array<[string[], string[]]> }) => j.services ?? null)
-    .catch(() => null)
-  const services = await rdapBootstrap
-  const tld = name.split(".").pop() ?? ""
-  const base = services?.find(([tlds]) => tlds.includes(tld))?.[1]?.[0]
-  if (!base) return null
-  try {
-    const r = await fetch(`${base.endsWith("/") ? base : `${base}/`}domain/${encodeURIComponent(name)}`, { headers: { accept: "application/rdap+json" }, signal: AbortSignal.timeout(8000) })
-    const j = (await r.json()) as { entities?: Array<{ roles?: string[]; vcardArray?: [string, Array<[string, unknown, string, unknown]>] }> }
-    const reg = j.entities?.find((e) => e.roles?.includes("registrar"))
-    const fn = reg?.vcardArray?.[1]?.find((v) => v[0] === "fn")?.[3]
-    return typeof fn === "string" && fn.trim() ? fn.trim() : null
   } catch { return null }
 }
 
-type Observed = Pick<NodeDomain, "state" | "status" | "zoneId" | "nameServers" | "registrarNs" | "nsMatch" | "activationAsked" | "registrar" | "pointsTo" | "serverIp" | "aaaa">
+// РЕГИСТРАТОР ПО RDAP (324-2) — 828: one question to the registry gives both the registrar's name and whether the name exists at all
+// (`lib/domain/registry.mjs`, RFC 7480: 404 — no such domain). Measured 2026-09-28: IANA's bootstrap names the RDAP server of a zone —
+// .dev → pubapi.registry.google, .com → rdap.verisign.com.
+
+/**
+ * 828 (✗ 2026-11-21: «througsongs.com» became a zone): the name an unregistered typo most likely meant — among the zones the node's key
+ * sees and the node's own domains. One the node has not got yet — the page offers it in one tap; one it has — the page only names it.
+ */
+async function notRegistered(name: string): Promise<NotRegistered> {
+  const own = [primaryDomain()?.name, ...readList().map((d) => d.name)].filter((x): x is string => !!x && x !== name)
+  const key = placeKind(ROOT) === "server" ? null : envValue("CLOUDFLARE_API_TOKEN")
+  const seen = key ? await listZones(key) : null
+  const zones = seen?.ok ? seen.result.map((z) => z.name) : []
+  const closest = closestName(name, [...own, ...zones])
+  return { ok: false, error: "not-registered", closest, closestHere: !!closest && own.includes(closest) }
+}
+
+type Observed = Pick<NodeDomain, "state" | "status" | "zoneId" | "nameServers" | "registrarNs" | "nsMatch" | "activationAsked" | "registrar" | "registry" | "pointsTo" | "serverIp" | "aaaa">
 
 /** 799: the IPv4 the server node was launched on (`data/node/server.json`, written by the launch) — the value of the A records. */
 export function serverIp(): string | null {
@@ -187,12 +193,13 @@ export function serverIp(): string | null {
 async function observeOnServer(name: string): Promise<Observed | { error: string }> {
   const ip = serverIp()
   if (!ip) return { error: "no-server-ip" }
-  const [a, aaaa, registrar] = await Promise.all([lookup(name, "A"), lookup(name, "AAAA"), registrarOf(name)])
+  const [a, aaaa, reg] = await Promise.all([lookup(name, "A"), lookup(name, "AAAA"), registryOf(name)])
   if (a === null) return { error: "dns-unreachable" }
+  const registrar = reg.registrar, registry = reg.state as Registry
   const v6 = aaaa ?? []
   const here = a.length > 0 && a.every((x: string) => x === ip) && v6.length === 0
   const status = here ? undefined : v6.length && a.includes(ip) ? "aaaa" : a.length ? "elsewhere" : "no-records"
-  return { state: here ? "active" : "pending", status, pointsTo: a, serverIp: ip, aaaa: v6, registrar, zoneId: undefined, nameServers: undefined, registrarNs: undefined, nsMatch: undefined, activationAsked: undefined }
+  return { state: here ? "active" : "pending", status, pointsTo: a, serverIp: ip, aaaa: v6, registrar, registry, zoneId: undefined, nameServers: undefined, registrarNs: undefined, nsMatch: undefined, activationAsked: undefined }
 }
 
 /** Всё, что узел может узнать о домене сейчас: зона, её серверы имён, серверы у регистратора; совпали — просит активацию. */
@@ -200,16 +207,18 @@ async function observe(name: string): Promise<Observed | { error: string }> {
   if (placeKind(ROOT) === "server") return observeOnServer(name)
   const key = envValue("CLOUDFLARE_API_TOKEN")
   if (!key) return { error: "no-key" }
-  const [z, reg, registrar] = await Promise.all([zoneByName(key, name), registrarNs(name), registrarOf(name)])
+  const [z, ns, r] = await Promise.all([zoneByName(key, name), registrarNs(name), registryOf(name)])
   if (!z.ok) return { error: `cloudflare:${z.reason}` }
+  // 828-3: `registrarNs` absent — public DNS did not answer (the card says so instead of «nothing»).
+  const reg = ns ?? undefined, registrar = r.registrar, registry = r.state as Registry
   // 775: a zone the key no longer sees leaves nothing of its old measure behind (✗ 2026-11-17: throughsongs.com «not-visible» kept «active»).
-  if (!z.result) return { state: "not-visible", status: undefined, zoneId: undefined, nameServers: undefined, nsMatch: undefined, activationAsked: undefined, registrarNs: reg, registrar }
+  if (!z.result) return { state: "not-visible", status: undefined, zoneId: undefined, nameServers: undefined, nsMatch: undefined, activationAsked: undefined, registrarNs: reg, registrar, registry }
   const assigned = (z.result.name_servers ?? []).map((n) => n.toLowerCase()).sort()
-  const nsMatch = assigned.length > 0 && assigned.every((n) => reg.includes(n))
+  const nsMatch = assigned.length > 0 && assigned.every((n) => (reg ?? []).includes(n))
   const active = z.result.status === "active"
   let activationAsked = false
   if (!active && nsMatch) activationAsked = (await activationCheck(key, z.result.id)).ok
-  return { state: active ? "active" : "pending", status: z.result.status, zoneId: z.result.id, nameServers: assigned, registrarNs: reg, nsMatch, activationAsked, registrar }
+  return { state: active ? "active" : "pending", status: z.result.status, zoneId: z.result.id, nameServers: assigned, registrarNs: reg, nsMatch, activationAsked, registrar, registry }
 }
 
 function save(name: string, patch: Partial<NodeDomain>): NodeDomain | null {
@@ -220,13 +229,15 @@ function save(name: string, patch: Partial<NodeDomain>): NodeDomain | null {
   return writeList(list) ? list[i] : null
 }
 
-/** «Добавить домен»: форма → запись (`unknown`) → сразу первый замер. */
-export async function addDomain(input: string, forWhat: DomainFor = "element"): Promise<{ ok: true; domain: NodeDomain } | { ok: false; error: string }> {
+/** «Добавить домен»: форма → реестр (828) → запись (`unknown`) → сразу первый замер. */
+export async function addDomain(input: string, forWhat: DomainFor = "element"): Promise<{ ok: true; domain: NodeDomain } | { ok: false; error: string } | NotRegistered> {
   const name = normalizeDomain(input)
   const shape = domainShape(name)
   if (shape !== "ok") return { ok: false, error: shape }
   // 775: one main domain — a second candidate is refused while one waits or the node already has its main domain.
   if (forWhat === "main" && (primaryDomain() || readList().some((d) => domainSection(d, false) === "main"))) return { ok: false, error: "main-exists" }
+  // 828: the registry first — a name it does not know is never written, and no zone is ever made for it.
+  if ((await registryOf(name)).state === "unregistered") return notRegistered(name)
   if (!writeList([...readList(), { name, state: "unknown", addedAt: new Date().toISOString(), for: forWhat }])) return { ok: false, error: "write-failed" }
   return checkDomain(name)
 }
@@ -244,12 +255,15 @@ export async function checkDomain(name: string): Promise<{ ok: true; domain: Nod
  *  324-2: основного домена ещё нет (первый домен узла) — аккаунт узнаётся у ключа (`/accounts`); ключ видит не ровно один
  *  аккаунт — отказ `no-account`, и карточка просит Account ID (запасное поле по слову владельца: «если нажатие вернёт
  *  ошибку, то подсунешь вторую кнопку и напишешь попробуй снова»). Названный аккаунт проверяет сам Cloudflare при создании. */
-export async function createDomainZone(name: string, accountId?: string): Promise<{ ok: true; domain: NodeDomain } | { ok: false; error: string }> {
+export async function createDomainZone(name: string, accountId?: string): Promise<{ ok: true; domain: NodeDomain } | { ok: false; error: string } | NotRegistered> {
   if (!readList().some((d) => d.name === name)) return { ok: false, error: "not-found" }
   const key = envValue("CLOUDFLARE_API_TOKEN")
   if (!key) return { ok: false, error: "no-key" }
   const seen = await zoneByName(key, name)
   if (seen.ok && seen.result) return checkDomain(name)
+  // 828: an entry already in the list (added before the registry was asked) gets no zone either while its registry does not know it.
+  const r = await registryOf(name)
+  if (r.state === "unregistered") { save(name, { registry: "unregistered", registrar: null }); return notRegistered(name) }
   const primary = primaryDomain()
   let account: string
   if (primary) {
@@ -268,6 +282,8 @@ export async function createDomainZone(name: string, accountId?: string): Promis
   }
   const created = await createZone(key, account, name)
   if (!created.ok) return { ok: false, error: /zone\.create/.test(created.reason) ? "no-zone-permission" : created.reason }
+  // 828-2: the node remembers the zone it made — only that zone may leave Cloudflare when the entry is removed.
+  save(name, { createdZoneId: created.result.id })
   return checkDomain(name)
 }
 
@@ -302,13 +318,32 @@ export async function nodeKeyState(): Promise<
   return { present: true, tail: key.slice(-4), status: v.ok ? v.result.status : null, workers, tunnel, id: v.ok ? v.result.id : null, zones }
 }
 
-/** Убрать дополнительный домен из списка — только если он не подключён к элементу. Зона в Cloudflare не трогается. */
-export function removeDomain(name: string): { ok: true } | { ok: false; error: string; holder?: string } {
+export type ZoneFate = "deleted" | "kept-active" | "kept-records" | "kept-failed" | null
+
+/**
+ * Убрать домен из списка — только если он не подключён к элементу. 828-2: зону, которую узел сам создал (`createdZoneId`), он забирает с
+ * собой, пока она пустая и не активна (`lib/domain/own-zone.mjs`); чужую, активную или с записями — не трогает и говорит почему.
+ */
+export async function removeDomain(name: string): Promise<{ ok: true; zone: ZoneFate } | { ok: false; error: string; holder?: string }> {
   const list = readList()
-  if (!list.some((d) => d.name === name)) return { ok: false, error: "not-found" }
+  const entry = list.find((d) => d.name === name)
+  if (!entry) return { ok: false, error: "not-found" }
   const holder = domainHolder(name)
   if (holder) return { ok: false, error: "attached", holder }
-  return writeList(list.filter((d) => d.name !== name)) ? { ok: true } : { ok: false, error: "write-failed" }
+  const zone = await ownZoneLeaves(entry)
+  return writeList(readList().filter((d) => d.name !== name)) ? { ok: true, zone } : { ok: false, error: "write-failed" }
+}
+
+async function ownZoneLeaves(d: NodeDomain): Promise<ZoneFate> {
+  const key = d.createdZoneId && placeKind(ROOT) !== "server" ? envValue("CLOUDFLARE_API_TOKEN") : null
+  if (!key || !d.createdZoneId) return d.createdZoneId ? "kept-failed" : null
+  const seen = await zoneByName(key, d.name)
+  if (!seen.ok) return "kept-failed"
+  const zone = seen.result
+  const hasRecords = zone && zone.id === d.createdZoneId && zone.status !== "active" ? await zoneHasRecords(key, zone.id) : false
+  const fate = zoneFate({ createdZoneId: d.createdZoneId, zone, hasRecords })
+  if (fate !== "delete") return fate
+  return (await deleteZone(key, d.createdZoneId)).ok ? "deleted" : "kept-failed"
 }
 
 /** Туннель узла (`logs/domain.json` → `tunnelId`), или `null` — узел без туннеля. */

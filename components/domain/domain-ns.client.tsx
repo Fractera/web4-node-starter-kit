@@ -4,6 +4,7 @@
 import { Check, Plus, X } from "lucide-react"
 import type { DomainListWords } from "./domain-list.i18n"
 import type { PipelineDomain } from "./domain-pipeline.client"
+import { nsNothing } from "@/lib/domain/registry.mjs"
 
 /** Name servers compare without case and the trailing dot (`NS1.Example.com.` == `ns1.example.com`). */
 const nsKey = (s: string) => s.trim().toLowerCase().replace(/\.$/, "")
@@ -13,6 +14,8 @@ const sameNs = (a: string, b: string) => nsKey(a) === nsKey(b)
 // one already there a green check; a server seen now that is not wanted — a red cross (remove).
 export function DomainNs({ domain: d, words: w }: { domain: PipelineDomain; words: DomainListWords }) {
   const p = w.pipe
+  // 828-3 (✗ 2026-11-21: «ничего (ещё не замерено)» after a measure had found no such domain): the empty column says what was measured.
+  const nothing = { "not-yet": p.nothingYet, "no-domain": p.nsNoDomain, "ask-failed": p.nsAskFailed, none: p.nsNone }[nsNothing(d) as string] ?? p.nothingYet
   return (
     <div className="flex flex-col gap-2" data-block="domain-ns">
       {d.state !== "active" && <p className="text-sm text-foreground">{p.step2Text}</p>}
@@ -45,7 +48,7 @@ export function DomainNs({ domain: d, words: w }: { domain: PipelineDomain; word
                 )
               })}
             </ul>
-          ) : <p className="text-sm text-muted-foreground">{p.nothingYet}</p>}
+          ) : <p className="text-sm text-muted-foreground" data-ns-nothing={nsNothing(d)}>{nothing}</p>}
         </div>
       </div>
       {d.registrar && <p className="text-sm text-foreground" data-pipe-registrar>{p.registrar} <span className="font-medium">{d.registrar}</span></p>}

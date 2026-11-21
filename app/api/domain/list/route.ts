@@ -13,6 +13,8 @@ import bases from "@/lib/auth/sign-in-bases.cjs"
 // PUT `{ name }` — замерить заново (зона, серверы имён у регистратора; совпали — запрос активации); DELETE `{ name }` — убрать
 // из списка (подключённый к элементу — 409); DELETE `{ name, detach: true }` (373-1) — сначала отключить от элемента (поддомен
 // снова ведёт на элемент), потом убрать из списка. Всё по кнопке человека. Ворота architect/admin; на временном адресе — отказ.
+// 828: POST of a name its registry does not know — 409 `not-registered` with `closest` (the name it most likely meant) and
+// `closestHere` (the node already has it); nothing is written, no zone is made.
 
 export const dynamic = "force-dynamic"
 
@@ -81,6 +83,7 @@ export async function DELETE(req: NextRequest) {
     const off = await detachDomain(holder)
     if (!off.ok) return NextResponse.json(off, { status: 409, ...noStore })
   }
-  const r = removeDomain(name)
+  // 828-2: the zone the node itself created leaves with the entry while it is empty and inactive; the answer names its fate (`zone`).
+  const r = await removeDomain(name)
   return NextResponse.json(r, { status: r.ok ? 200 : 409, ...noStore })
 }

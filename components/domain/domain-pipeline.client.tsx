@@ -29,6 +29,8 @@ type AddressRecord = { name: string; type: string; content: string }
 export type PipelineDomain = {
   name: string; state: string; status?: string; nameServers?: string[]; registrarNs?: string[]; nsMatch?: boolean
   activationAsked?: boolean; checkedAt?: string; registrar?: string | null
+  /** 828: what the registry said of the name — `unregistered` gets no zone */
+  registry?: string
 }
 
 export function DomainPipeline({ lang, role = "element", domain: d, words: w, ladderWords, onChanged, hasPrimary, forItem, holder = null, architect = null }: {
@@ -129,7 +131,11 @@ export function DomainPipeline({ lang, role = "element", domain: d, words: w, la
     </Button>
   )
 
-  const zoneBody: ReactNode = (
+  // 828: an entry whose registry does not know the name (added before the registry was asked) — no «Создать зону», the refusal and a
+  // recheck (bought just now — the registry knows it in minutes).
+  const zoneBody: ReactNode = d.registry === "unregistered" ? (
+    <><p className="text-sm text-destructive" role="alert" data-pipe-not-registered>{w.errors["not-registered"]}</p>{checkButton}</>
+  ) : (
     <>
       <p className="text-sm text-foreground">{p.step1Todo}</p>
       <Button type="button" size="sm" className="w-fit" onClick={createZone} disabled={busy !== null} data-pipe-create-zone>{busy === "zone" ? p.creating : p.createZone}</Button>

@@ -17,7 +17,8 @@ import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
-export type Extra = ServerDomain & { holder: string | null; holderAddress?: string | null }
+/** 828-2: `createdZoneId` — the node itself created this domain's zone in Cloudflare (it may leave with the entry) */
+export type Extra = ServerDomain & { holder: string | null; holderAddress?: string | null; createdZoneId?: string }
 
 // 372: «active» is the zone's status in Cloudflare; beside it — whether the domain is connected (the node's main one or an element's).
 const BADGE: Record<string, string> = {
@@ -68,23 +69,31 @@ export function DomainCards({ lang, dialogUi, role, domains, primaryName, archit
   const [error, setError] = useState<Record<string, string>>({})
   // 373-1: a domain connected to an element is removed after a confirmation inside its card (the element named).
   const [confirm, setConfirm] = useState<string | null>(null)
+  // 828: the name an unregistered one most likely meant (`here` — the node already has it); 828-2: what became of the node's own zone.
+  const [closest, setClosest] = useState<{ name: string; here: boolean } | null>(null)
+  const [notice, setNotice] = useState<string | null>(null)
 
   async function act(method: "POST" | "DELETE", domain: string, slot: string, detach = false) {
     setBusy(slot)
     setError((e) => ({ ...e, [slot]: "" }))
+    setClosest(null)
+    setNotice(null)
     try {
       const r = await fetch(`${BASE}/api/domain/list`, {
         method,
         headers: { "content-type": "application/json" },
         body: JSON.stringify(detach ? { name: domain, detach: true } : method === "POST" ? { name: domain, for: role } : { name: domain }),
       })
-      const d = (await r.json().catch(() => null)) as { ok?: boolean; error?: string; domain?: { name: string } } | null
+      const d = (await r.json().catch(() => null)) as { ok?: boolean; error?: string; domain?: { name: string }; zone?: string | null; closest?: string | null; closestHere?: boolean } | null
       if (d?.ok) {
         setConfirm(null)
         await onChanged()
         if (method === "POST" && d.domain) { setName(""); setOpen(d.domain.name) }
+        const fate = d.zone ? ({ deleted: w.pipe.zoneDeleted, "kept-active": w.pipe.zoneKeptActive, "kept-records": w.pipe.zoneKeptRecords, "kept-failed": w.pipe.zoneKeptFailed } as Record<string, string>)[d.zone] : null
+        if (method === "DELETE" && fate) setNotice(fate.replace("{domain}", domain))
       } else {
         const code = d?.error ?? String(r.status)
+        if (code === "not-registered" && d?.closest) setClosest({ name: d.closest, here: d.closestHere === true })
         setError((e) => ({ ...e, [slot]: w.errors[code] ?? `${w.errors.unknown} ${code}` }))
       }
     } catch {
@@ -151,10 +160,21 @@ export function DomainCards({ lang, dialogUi, role, domains, primaryName, archit
               </Button>
             </div>
             {error.add && <p className="text-sm text-destructive" role="alert">{error.add}</p>}
+            {closest && (closest.here ? (
+              <p className="text-sm text-muted-foreground" data-domain-closest-here>{w.pipe.closestHere.replace("{name}", closest.name)}</p>
+            ) : (
+              <div className="flex flex-wrap items-center gap-2" data-block="domain-closest" data-domain-closest={closest.name}>
+                <p className="text-sm text-foreground">{w.pipe.didYouMean.replace("{name}", closest.name)}</p>
+                <Button type="button" size="sm" variant="outline" onClick={() => { setName(closest.name); void act("POST", closest.name, "add") }} disabled={busy !== null}>
+                  {w.pipe.addClosest.replace("{name}", closest.name)}
+                </Button>
+              </div>
+            ))}
           </AccordionContent>
         </AccordionItem>
       )}
     </Accordion>
+    {notice && <p className="text-sm text-foreground" role="status" data-domain-zone-fate>{notice}</p>}
     <AppDialog
       open={confirm !== null}
       onOpenChange={(o) => { if (!o) setConfirm(null) }}
@@ -170,7 +190,8 @@ export function DomainCards({ lang, dialogUi, role, domains, primaryName, archit
       }
     >
       <p className="text-sm text-foreground text-pretty">
-        {confirmed ? (confirmed.holder ? w.detachConfirm.replace("{domain}", confirmed.name).replace("{element}", confirmed.holderAddress ?? confirmed.holder) : w.removeConfirm.replace("{domain}", confirmed.name)) : ""}
+        {/* 828-2: a zone the node created leaves with the entry while empty and inactive — the dialog says so instead of «not touched» */}
+        {confirmed ? (confirmed.holder ? w.detachConfirm.replace("{domain}", confirmed.name).replace("{element}", confirmed.holderAddress ?? confirmed.holder) : (confirmed.createdZoneId ? w.pipe.ownZoneNote : w.removeConfirm).replace("{domain}", confirmed.name)) : ""}
       </p>
     </AppDialog>
     </>
