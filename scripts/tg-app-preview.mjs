@@ -25,15 +25,17 @@ const state = {
   asks: [],
   main: { ...agent({ mode: 'waiting', effort: 'max' }), channel: { bot: true, state: 'hears', why: null, since: now }, autostart: true },
   elements: [
-    { build: null, serve: null, id: 'root', name: ru ? 'Главный сайт' : 'Main site', native: false, required: false, on: true, offReason: null, live: false, step: ru ? 'Шаг 4 — страница тарифов (в работе)' : 'Step 4 — the pricing page (in progress)', turn: { event: 'turn-end', at: now, last: ru ? 'собрал раздел цен' : 'built the prices section' }, agent: agent({ bot: 'example_root_bot' }),
+    { build: null, serve: null, claude: 'node', subscription: null, id: 'root', name: ru ? 'Главный сайт' : 'Main site', native: false, required: false, on: true, offReason: null, live: false, step: ru ? 'Шаг 4 — страница тарифов (в работе)' : 'Step 4 — the pricing page (in progress)', turn: { event: 'turn-end', at: now, last: ru ? 'собрал раздел цен' : 'built the prices section' }, agent: agent({ bot: 'example_root_bot' }),
       description: ru ? 'Сайт проекта: главная страница, тарифы и вход для клиентов.' : 'The project site: home, pricing and sign-in for clients.', site: 'https://example.com', botLink: 'https://t.me/example_root_bot' },
-    { build: null, serve: null, id: 'shop', name: ru ? 'Магазин керамики' : 'Ceramics shop', native: false, required: false, on: true, offReason: null, live: true, step: null, turn: { event: 'turn-start', at: now, last: null }, agent: agent({ mode: 'coding' }),
+    { build: null, serve: null, claude: 'node', subscription: null, id: 'shop', name: ru ? 'Магазин керамики' : 'Ceramics shop', native: false, required: false, on: true, offReason: null, live: true, step: null, turn: { event: 'turn-start', at: now, last: null }, agent: agent({ mode: 'coding' }),
       description: ru ? 'Каталог изделий студии и заказы с оплатой.' : 'The studio catalogue and paid orders.', site: null, botLink: null },
     // 832: an element whose server is down — the tag «не отвечает» and the line why visitors see «Сайт обновляется»
-    { build: null, serve: 'down', id: 'marina', name: ru ? 'Сайт Марины' : 'Marina\'s site', native: false, required: false, on: true, offReason: null, live: false, step: null, turn: null, agent: agent(), description: null, site: 'https://marina.example.com', botLink: null },
-    { build: null, serve: null, id: 'notes', name: ru ? 'Заметки семьи' : 'Family notes', native: false, required: false, on: false, offReason: ru ? 'выключен на ночь' : 'off for the night', live: false, step: null, turn: null, agent: agent(),
+    { build: null, serve: 'down', claude: 'node', subscription: null, id: 'marina', name: ru ? 'Сайт Марины' : 'Marina\'s site', native: false, required: false, on: true, offReason: null, live: false, step: null, turn: null, agent: agent(), description: null, site: 'https://marina.example.com', botLink: null },
+    // 833-2: an element on a server whose agent has no Claude account of its own — the red mark and a card in «Ждёт вас»
+    { build: null, serve: null, claude: 'none', subscription: 'https://architect.example.com/ru/anna/subscription', id: 'anna', name: ru ? 'Студия Анны' : 'Anna\'s studio', native: false, required: false, on: true, offReason: null, live: false, step: null, turn: null, agent: agent(), description: null, site: null, botLink: null },
+    { build: null, serve: null, claude: 'node', subscription: null, id: 'notes', name: ru ? 'Заметки семьи' : 'Family notes', native: false, required: false, on: false, offReason: ru ? 'выключен на ночь' : 'off for the night', live: false, step: null, turn: null, agent: agent(),
       description: null, site: null, botLink: null },
-    { build: null, serve: null, id: 'auth', name: ru ? 'Вход' : 'Sign-in', native: true, required: true, on: true, offReason: null, live: false, step: null, turn: null, agent: agent(), description: null, site: null, botLink: null },
+    { build: null, serve: null, claude: 'node', subscription: null, id: 'auth', name: ru ? 'Вход' : 'Sign-in', native: true, required: true, on: true, offReason: null, live: false, step: null, turn: null, agent: agent(), description: null, site: null, botLink: null },
   ],
   limits: [{ who: 'node', account: 'owner@example.com', current: 'owner@example.com', stale: false, at: now, fiveHour: { used: 41, resetsAt: now }, sevenDay: { used: 63, resetsAt: now } }],
   at: now,

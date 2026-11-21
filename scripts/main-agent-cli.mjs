@@ -1312,6 +1312,11 @@ if (cmd === 'create') {
   console.log(`agent: ${woke}`)
   console.log(`led by: ${by === 'main' ? 'you (the main agent): its «done» wakes you — skill supervise-element' : 'the architect'}`)
   console.log(`the architect continues here: terminal ${terminalOf(id)} · development documents ${ORIGIN}/${LANG}/${addressOf(id)}/build/documents/instruction · a Telegram bot is connected on ${ORIGIN}/${LANG}/${addressOf(id)}/telegram`)
+  // 833-5 (the server's main agent, handoff 2026-11-21: «отчёт заканчивается этой строкой, чтобы первая задача не падала молча»): on a
+  // server the newborn's agent runs only on its own Claude account — the report's last line says so, with the page to sign in on a computer.
+  if (require('../lib/agent-kit/claude-account.cjs').accountOf(ROOT, id) === 'none') {
+    console.log(`claude: NO account of its own — on a server its agent runs only on its own; it will not start until the person signs in on a computer: ${ORIGIN}${require('../lib/agent-kit/claude-account.cjs').subscriptionPath(ROOT, id, LANG)} — tell the person`)
+  }
   process.exit(0)
 }
 

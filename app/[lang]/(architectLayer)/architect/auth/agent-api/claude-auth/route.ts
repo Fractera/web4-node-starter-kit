@@ -8,6 +8,7 @@ import { claudeAuthState, claudeOwnLogout } from "../../_agent-kit/server/claude
 import { status } from "../../_agent-kit/server/session.cjs"
 import { isBornItem, ownClaudeDir, ownClaudeHome } from "../../_agent-kit/server/workspace.cjs"
 import modes from "@/lib/agent-kit/modes.cjs"
+import claudeAccount from "@/lib/agent-kit/claude-account.cjs"
 
 // СОСТОЯНИЕ ПОДПИСКИ CLAUDE CODE (267-2) И СВОЯ ПОДПИСКА ЭЛЕМЕНТА (689). По умолчанию подписка одна на машину — у всех служб ответ
 // одинаковый. 689 (владелец 2026-11-08: «if user need personal claude subscribtion , then can add to own element»): у элемента может
@@ -54,6 +55,12 @@ export async function GET(req: NextRequest, ctx: Ctx) {
   if (denied) return denied
   const service = await serviceOf(ctx)
   const own = service ? ownClaudeDir(service) : null
+  // 833-3 (the server's main agent, handoff 2026-11-21: «архитектор увидел аккаунт узла с полной почтой и решил, что Марина вошла»): on a
+  // dedicated server a walled element runs ONLY on its own account (811-5b) — without one the node's login is not its login: the page
+  // hears «not signed in» and `walledNone`, never the node's e-mail.
+  if (service && claudeAccount.accountOf(process.cwd(), service) === "none") {
+    return NextResponse.json({ ok: true, canOwn: Boolean(ownClaudeHome(service)), own: false, walledNone: true, loggedIn: false, method: null, email: null, plan: null }, noStore)
+  }
   const state = claudeAuthState(own)
   return NextResponse.json(
     { ok: true, canOwn: Boolean(service && ownClaudeHome(service)), own: Boolean(own), ...state, email: own ? masked(state.email) : state.email },

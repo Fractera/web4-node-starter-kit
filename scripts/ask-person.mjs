@@ -3,6 +3,7 @@
 //   [--secret server-root --host <ip> [--port 22]]   768: the person types the server's root password in the window's masked field
 //   [--secret element-admin --element <id>]   778-3: the admin of a custom element — e-mail and password, or «Пропустить» (the birth puts it itself)
 //   [--action autostart]   781-5: the window's button turns the autostart on (the core writes the LaunchAgent); «Готово» is that press
+//   [--check claude:<id>]   833-6: «Готово» closes the window only when that element's own Claude account is signed in
 //   [--signin]   777: «sign in as the architect» — the button's link is built by the node's one builder (lib/auth/sign-in-link.cjs):
 //                the sign-in form with the way back to the same panel page on the node's own domain; never an --href of yours
 // npm run ask-person -- list | drop <id> | done <id>   (done: the person answered «Готово · <id>» in Telegram — you close it, no wake)
@@ -39,6 +40,8 @@ if (args[0] === 'list') {
   if (!a) process.exitCode = 1
 } else {
   const signin = has('--signin') ? 'architect' : null
+  // 833-6: `--check claude:<id>` — «Готово» closes it only when that element's own Claude account is signed in
+  const check = flag('--check')
   const href = flag('--href')
   const why = flag('--why')
   const hint = flag('--hint')
@@ -60,7 +63,7 @@ if (args[0] === 'list') {
     if (secretKind && secretKind !== 'server-root' && secretKind !== 'openai') throw new Error(`--secret ${secretKind}: the main agent asks server-root (--host <ip> [--port 22]), openai (the node's OpenAI key) or element-admin (--element <id>); an element's key is asked by that element`)
     const secret = secretKind === 'openai' ? { kind: 'openai' } : secretKind ? { kind: 'server-root', host, port: port ? Number(port) : 22 } : null
     if (signin && href) throw new Error('--signin builds its own link (the way back to the panel on the domain): drop --href')
-    const a = asks.add(ROOT, { text: args.join(' '), href, why, hint, copy, secret, signin, action })
+    const a = asks.add(ROOT, { text: args.join(' '), href, why, hint, copy, secret, signin, action, check })
     const t = await tg.announce(ROOT, a)
     if (t.sent) asks.setTg(ROOT, a.id, { via: t.via, sent: t.sent })
     const how = a.secret?.kind === 'openai' ? ' The person types the key in the window or in the Telegram form (never in a chat); OpenAI checks it live, saving wakes you (person-done).' : a.secret ? ' The person types the password in the window\'s masked field (never in a chat); their browser opens the visit, and «Сохранить» wakes you (person-done).' : ''

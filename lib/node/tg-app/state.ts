@@ -23,6 +23,7 @@ import { metaForLang } from "@/config/app-config"
 import { readPlace } from "@/lib/node-state/place"
 import bases from "@/lib/auth/sign-in-bases.cjs"
 import { elementMemory } from "@/lib/web4-items/machine"
+import claudeAccount from "@/lib/agent-kit/claude-account.cjs"
 
 const ROOT = process.cwd()
 
@@ -37,7 +38,7 @@ export type TgAsk = { id: string; text: string; why: string | null; hint: string
  * channel. `null` — not known yet (the default model, an agent that never ran).
  */
 export type TgAgent = { mode: "coding" | "waiting" | "sleeping"; model: string | null; effort: string | null; ultracode: boolean; account: "node" | "own" | null; email: string | null; bot: string | null }
-export type TgElement = { build: "building" | "queued" | null; serve: TgServe; id: string; name: string; native: boolean; required: boolean; on: boolean; offReason: string | null; live: boolean; step: string | null; turn: { event: string; at: string; last: string | null } | null; agent: TgAgent ; description: string | null; site: string | null; botLink: string | null }
+export type TgElement = { build: "building" | "queued" | null; serve: TgServe; claude: "own" | "node" | "none"; subscription: string | null; id: string; name: string; native: boolean; required: boolean; on: boolean; offReason: string | null; live: boolean; step: string | null; turn: { event: string; at: string; last: string | null } | null; agent: TgAgent ; description: string | null; site: string | null; botLink: string | null }
 /**
  * 2026-11-17 (the owner: «пульт как будто бы заморожен на определённом аккаунте»): a limit is measured only by an agent's turn (Claude Code
  * hands it to the status line); the account is read now, by code. `account` — the e-mail it was measured on; `stale` — measured on another
@@ -167,6 +168,19 @@ function serveOf(e: Entry, on: boolean, build: TgElement["build"], procs: Map<st
   return status === "launching" ? "starting" : "down"
 }
 
+/** 833-1: whose Claude account the element's agent runs on (`lib/agent-kit/claude-account.cjs`); the core and natives never «none». */
+function claudeOf(e: Entry): TgElement["claude"] {
+  if (e.kind !== "user") return "node"
+  try { return claudeAccount.accountOf(ROOT, e.id) as TgElement["claude"] } catch { return "node" }
+}
+
+/** 833-2: the element's «Подписка Claude Code» on the node's own address (the person opens it on the computer). */
+function subscriptionUrl(id: string, lang: Lang): string | null {
+  let web: string | null = null
+  try { web = (bases.signInBases(ROOT) as { web?: string | null }).web ?? null } catch { /* no domain */ }
+  return web ? `${web.replace(/\/+$/, "")}${claudeAccount.subscriptionPath(ROOT, id, lang)}` : null
+}
+
 function elementsOf(lang: Lang, builds: TgBuilds, procs: Map<string, string> | null): TgElement[] {
   const entries = readJson<{ services?: Entry[] }>(paths.REGISTRY_FILE, {}).services ?? []
   const live = new Set(((sessions() as { service: string; running?: boolean }[]) ?? []).filter((s) => s.running).map((s) => s.service))
@@ -178,6 +192,9 @@ function elementsOf(lang: Lang, builds: TgBuilds, procs: Map<string, string> | n
     return {
       build,
       serve: serveOf(e, !off, build, procs),
+      // 833-2: on a server an element's agent runs only on its own Claude account — «none» is a red mark and a line in «Ждёт вас»
+      claude: claudeOf(e),
+      subscription: claudeOf(e) === "none" ? subscriptionUrl(e.id, lang) : null,
       id: e.id,
       name: elementName(e.id, lang),
       native: e.kind !== "user",

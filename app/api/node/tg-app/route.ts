@@ -50,7 +50,8 @@ export async function POST(req: NextRequest) {
     if (!ask) return no("gone", 410)
     if (action === "done") {
       if (ask.secret) return no("secret-needs-a-value", 400)
-      await closeAsk(id, { via: "telegram" })
+      const closed = await closeAsk(id, { via: "telegram" })
+      if (closed?.notYet) return no(closed.notYet, 409)
       return NextResponse.json({ ok: true }, { headers: HEADERS })
     }
     if (!ask.secret?.kind || !asks.TELEGRAM_FORM.has(ask.secret.kind)) return no("computer-only", 400)

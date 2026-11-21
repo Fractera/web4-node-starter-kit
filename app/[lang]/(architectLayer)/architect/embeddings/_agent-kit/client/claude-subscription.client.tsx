@@ -7,6 +7,7 @@ import { Button, buttonVariants } from "@/components/ui/button"
 import { AppDialog } from "@/components/dialog/app-dialog.client"
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
+import { cn } from "@/lib/utils"
 import type { ClaudeSubscriptionWords } from "../words/claude-subscription.i18n"
 import { createMouseFilter, MOUSE_OFF } from "./mouse-filter.mjs"
 import { extractAuthUrl } from "./terminal-auth.mjs"
@@ -31,7 +32,8 @@ const BUFFER_LIMIT = 8000
 const DETECT_DELAY_MS = 300
 
 // 689: `own` — элемент на подписке своего человека (своя папка Claude Code); тогда и почта, и лимит — его.
-type Auth = { loggedIn: boolean | null; email: string | null; plan: string | null; own?: boolean }
+// 833-3: `walledNone` — on a server this element has no account of its own, and the node's login is never its login.
+type Auth = { loggedIn: boolean | null; email: string | null; plan: string | null; own?: boolean; walledNone?: boolean }
 
 export function ClaudeSubscription({ service, lang, words }: { service: string; lang: string; words: ClaudeSubscriptionWords }) {
   const api = `${BASE}/${lang}/architect/${service}/agent-api`
@@ -52,7 +54,7 @@ export function ClaudeSubscription({ service, lang, words }: { service: string; 
       const res = await fetch(`${api}/claude-auth`, { cache: "no-store" })
       if (res.status === 401 || res.status === 403) return setAuth("forbidden")
       const d = (await res.json()) as Auth
-      setAuth({ loggedIn: d.loggedIn ?? null, email: d.email ?? null, plan: d.plan ?? null, own: d.own === true })
+      setAuth({ loggedIn: d.loggedIn ?? null, email: d.email ?? null, plan: d.plan ?? null, own: d.own === true, walledNone: d.walledNone === true })
     } catch {
       setAuth({ loggedIn: null, email: null, plan: null })
     }
@@ -169,6 +171,7 @@ export function ClaudeSubscription({ service, lang, words }: { service: string; 
   const state = auth === "checking" ? null : auth
   const on = state?.loggedIn === true
   const unknown = state !== null && state.loggedIn === null
+  const walledNone = state?.walledNone === true
 
   return (
     <div className="my-6 flex flex-col gap-3" data-claude-subscription data-state={auth === "checking" ? "checking" : on ? "on" : unknown ? "unknown" : "off"}>
@@ -177,19 +180,19 @@ export function ClaudeSubscription({ service, lang, words }: { service: string; 
           <p className="text-muted-foreground text-sm">{words.checking}</p>
         ) : (
           <>
-            <p className="flex items-center gap-2 font-medium text-sm">
+            <p className={cn("flex items-center gap-2 font-medium text-sm", walledNone && "text-destructive")} data-claude-walled={walledNone ? "none" : undefined}>
               {on ? <Check className="size-4 shrink-0" aria-hidden /> : <CircleAlert className="size-4 shrink-0" aria-hidden />}
-              {on ? words.onTitle : unknown ? words.unknownTitle : words.offTitle}
+              {on ? words.onTitle : walledNone ? words.walledTitle : unknown ? words.unknownTitle : words.offTitle}
             </p>
             <p className="mt-1 text-muted-foreground text-sm">
-              {on
+              {walledNone ? words.walledText : on
                 ? (state?.own ? words.ownOnText : words.onText).replace("{email}", state?.email ?? "—").replace("{plan}", state?.plan ?? "—")
                 : unknown
                   ? words.unknownText
                   : words.offText}
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
-              {!open && (
+              {!open && !walledNone && (
                 <Button type="button" onClick={startLogin} disabled={starting} aria-busy={starting} variant={on ? "outline" : "default"} data-claude-login>
                   {starting ? <Spinner className="size-4" /> : <KeyRound className="size-4" aria-hidden />}
                   {starting ? words.starting : on ? words.relogin : words.login}

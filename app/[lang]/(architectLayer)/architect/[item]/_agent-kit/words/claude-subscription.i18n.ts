@@ -10,6 +10,9 @@ export type ClaudeSubscriptionWords = {
   onText: string
   offTitle: string
   offText: string
+  /** 833-3: a walled element on a dedicated server with no account of its own */
+  walledTitle: string
+  walledText: string
   unknownTitle: string
   unknownText: string
   login: string
@@ -48,6 +51,8 @@ const DICT: Record<string, ClaudeSubscriptionWords> = {
     onText: "Account {email} · plan {plan}. Every agent of this node works under it.",
     offTitle: "Not connected",
     offText: "Agents of this node cannot start until you sign in to your Claude subscription.",
+    walledTitle: "This element's agent is not signed in to Claude",
+    walledText: "On a server an element's agent works only on its own Claude account, never on the node's. Choose «own subscription» below and sign in — the same account will do.",
     unknownTitle: "Claude Code did not answer",
     unknownText: "The command-line tool may not be installed on this computer, or it did not respond in time.",
     login: "Sign in with Claude subscription",
@@ -82,6 +87,8 @@ const DICT: Record<string, ClaudeSubscriptionWords> = {
     onText: "Учётная запись {email} · тариф {plan}. Под ней работают все агенты этого узла.",
     offTitle: "Не подключена",
     offText: "Агенты этого узла не запустятся, пока вы не войдёте в свою подписку Claude.",
+    walledTitle: "Агент этого элемента не вошёл в Claude",
+    walledText: "На сервере агент элемента работает только на своём аккаунте Claude, никогда на аккаунте узла. Выберите ниже «свою подписку» и войдите — можно тем же аккаунтом.",
     unknownTitle: "Claude Code не ответил",
     unknownText: "Возможно, программа не установлена на этом компьютере или не успела ответить.",
     login: "Войти по подписке Claude",

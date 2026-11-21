@@ -113,6 +113,7 @@ export async function POST(req: NextRequest) {
   }
   const out = await closeAsk(id, { saved, via: "window" })
   if (!out) return NextResponse.json({ ok: true, already: true }, noStore)
+  if ("notYet" in out) return NextResponse.json({ ok: false, reason: out.notYet }, { status: 409, ...noStore })
   const { woke, who } = out
   return NextResponse.json({ ok: true, woke, who, ...(saved ? { saved: true, restarted: saved.restarted, ...(saved.admin ? { admin: saved.admin } : {}) } : {}) }, noStore)
 }

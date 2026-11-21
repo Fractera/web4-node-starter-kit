@@ -1,6 +1,7 @@
 // THE PERSON'S SECRET SAVED AND THE REQUEST CLOSED (node steps 768-3, 768-4) — one road for the panel's window
 // (`/api/node/person-asks`) and the Telegram form (`/api/node/secret-entry`). The value is checked, written into the asking element's own
 // key file and dropped here: never logged, never answered back, never in the request's file; the asker wakes with its name and a tail.
+import claudeAccount from "@/lib/agent-kit/claude-account.cjs"
 import { listServices } from "@/lib/microservices/registry"
 import asks from "@/lib/node/person-asks.cjs"
 import nodeLine from "@/lib/agent-kit/node-line.cjs"
@@ -80,6 +81,13 @@ export async function saveSecret(ask: Ask, raw: unknown, { skip = false }: { ski
 
 /** Close the request once and wake the one who asked; Telegram learns it. `null` — it was already closed. */
 export async function closeAsk(id: string, { saved = null, via = "window" }: { saved?: Saved | null; via?: "window" | "telegram" } = {}) {
+  // 833-6: a sign-in window stays open until the element's own Claude account is really signed in (`check: "claude:<id>"`)
+  const waiting = (asks.open(ROOT) as (Ask & { check?: string })[]).find((x) => x.id === id)
+  const claudeOf = typeof waiting?.check === "string" && waiting.check.startsWith("claude:") ? waiting.check.slice(7) : null
+  if (claudeOf && !claudeAccount.ownSignedIn(ROOT, claudeOf)) {
+    console.log(`[node/person-asks] ${id} «Готово» (${via}) refused — ${claudeOf} is not signed in to its own Claude account yet`)
+    return { notYet: "not-signed-in" as const }
+  }
   const a = asks.done(ROOT, id) as Ask | null
   if (!a) return null
   // the one who asked wakes: the main agent (`build`) or the element whose agent put the request

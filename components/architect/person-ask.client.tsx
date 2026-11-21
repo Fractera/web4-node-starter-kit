@@ -69,7 +69,9 @@ export function PersonAsk({ url, ui, band }: { url: string; ui: PersonAskUi; ban
     setBusy(true)
     try {
       const r = await fetch(url, { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: a.id }) })
-      const d = (await r.json().catch(() => null)) as { ok?: boolean } | null
+      const d = (await r.json().catch(() => null)) as { ok?: boolean; reason?: string } | null
+      // 833-6: a sign-in window stays until the element's own Claude account is signed in — said in words, the card stays
+      if (d?.reason === "not-signed-in") { toast.error(ui.notSignedIn); return }
       if (!r.ok || !d?.ok) throw new Error(String(r.status))
       const rest = asks.filter((x) => x.id !== a.id)
       known.current.delete(a.id)
