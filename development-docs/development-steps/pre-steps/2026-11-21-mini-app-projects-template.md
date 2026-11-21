@@ -81,11 +81,9 @@ Telegram 411: «Администрирование» on screen; routes and folde
 организация активов – – недвижимость и земельные участки – – доли в бизнесе и ценные бумаги – – интеллектуальная собственность, патенты и бренды – – оборудование, техника и материальные ценности – – цифровые активы, домены и аккаунты – – реестр владения, оценка стоимости и страхование – – добавить
 ```
 
-A PDF came in the same forwarded batch (Telegram 418) — a personal document; it is NOT kept here (personal data never goes into git);
-asked the owner whether it is an example of a project's content.
+A PDF came in the same batch (Telegram 418) by mistake (Telegram 420: «прикреплён по ошибке проигнорируй его») — not kept, not used.
 
 ## Open questions for the owner (before any plan)
 
 - Is a «project» of an element one of these groups (with its sub-items as its sections, «добавить» = the person's own), and do «pages»
   (popular = most pages) mean the pages the agent makes inside a project?
-- Where the PDF belongs, if anywhere (an example of a project's document, e.g. «юридическое и документы»?).
