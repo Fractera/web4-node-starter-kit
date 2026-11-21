@@ -328,6 +328,13 @@ real element. Base UI Button: `render={<a/>} nativeButton={false}`, not asChild.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-21 15:40 UTC, the owner (Telegram 555): «другая технология быстрой установки на сервер … контейнер … это же не немыслимо вот
+  так долго устанавливать» → no record of the earlier talk found (memory, diary, docs) — said so. My pick (556): step 827 «built once,
+  downloaded everywhere» — every Fractera release (core + templates by tag) published as Linux build archives on GitHub, the installer
+  downloads instead of building (a build on the server only for an element its agent changed); prepare stops Ubuntu's first-boot
+  unattended upgrades instead of waiting (811 measured «Очередь пакетов» 38 min). Not Docker: the wall is per-element Linux users,
+  systemd, ACL, nginx. First: measure this install's stage times. 827 comes after the «Добавить» step (826).
+
 - 2026-11-21 15:36 UTC, the owner (Telegram 550): «Ты что не поставил себе максимальный вид размышления. Логика мышления это не
   бутстрап это в принципе. В принципе если у тебя возникает вопрос или или то это уже неправильное поведение а правильное это
   придерживаться стратегии максимальной выгоды для пользователя не в отношении бута только а вообще» → the soul line made general
