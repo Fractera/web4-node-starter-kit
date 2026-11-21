@@ -328,6 +328,16 @@ real element. Base UI Button: `render={<a/>} nativeButton={false}`, not asChild.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-21 15:36 UTC, the owner (Telegram 550): «Ты что не поставил себе максимальный вид размышления. Логика мышления это не
+  бутстрап это в принципе. В принципе если у тебя возникает вопрос или или то это уже неправильное поведение а правильное это
+  придерживаться стратегии максимальной выгоды для пользователя не в отношении бута только а вообще» → the soul line made general
+  (sealed); my «Добавить: да или нет?» was exactly that mistake — he asked for it himself (503, 505, 506). NEXT ACTION (after the
+  switch to Opus max): build in the custom template the Mini App «＋ Добавить» on a group screen (AppDialog: name, one line; the
+  element's door checks Telegram initData + admin role, appends to the group's items.json, revalidates; no delete, no edit — typos
+  via the agent) and «Справка» at the bottom (AppDialog: what goes here, what to neighbours, add works without a build, typos via the
+  agent); tests + negatives, prod build, eyes, release v0.3.226, pin, push; report to Roma in Telegram. The server reinstall runs on
+  his side (window aeff9b65).
+
 - 2026-11-21 15:31 UTC: core build 7b005468 LIVE; fork and Fractera = 7b005468 (install.sh stage telegram, prepare unzip verified in the
   fork). Window aeff9b65 «Переустановить сервер с нуля» put; Telegram 549 told Roma. root--work was stopped by the build after its
   report (13:44) — nothing to re-hand. Waits: the fresh server install (watch the «Telegram агентов» stage), his yes/no to «Добавить».
