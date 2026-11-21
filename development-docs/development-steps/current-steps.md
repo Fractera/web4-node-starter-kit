@@ -328,6 +328,9 @@ real element. Base UI Button: `render={<a/>} nativeButton={false}`, not asChild.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-21 13:18 UTC: core build 1e53388a LIVE (REBUILD_RC=0; __web4TgStarter in 12 server chunks); pushed origin + Fractera main
+  1e53388a. Roma updates the server and tests Diana's bot → the proof on the server is his «Привет» → «Включить» waking the agent.
+
 - 2026-11-21 13:09–13:12 UTC, the owner (Telegram 515, 517, 519): on the SERVER a new element «Diana» (piiic, an app of its own), its bot
   @piiic_messenger_h2a_rzkih_bot answers «Агент piiic не включился: no-starter», the terminal sleeps. Read in his Chrome (Telegram Web).
   Cause: agent-api/channel/route.ts starts a born element's poller from its bundled copy of telegram.cjs where setStarter was never
