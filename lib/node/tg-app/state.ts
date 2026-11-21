@@ -107,6 +107,17 @@ function agentOf(id: string, live: boolean): TgAgent {
   }
 }
 
+/** 821: one element's own agent card and the fill of its context window, for that element's own Mini App (the core's door
+ *  GET /api/node/my-agent) — what the Pult shows of it, never another element's. The e-mail of the node's subscription is the architect's:
+ *  it never goes to an element (an app of its own has another owner). The context — the record its status line writes (limits.cjs). */
+export type TgOwnAgent = { agent: TgAgent; live: boolean; context: { percent: number; size: number | null } | null }
+export function ownAgentOf(id: string): TgOwnAgent {
+  const live = ((sessions() as { service: string; running?: boolean }[]) ?? []).some((s) => s.service === id && s.running)
+  const rec = readJson<{ used?: number; size?: number } | null>(join(ROOT, "data", "services", id, "context.json"), null)
+  const context = rec && typeof rec.used === "number" ? { percent: rec.used, size: typeof rec.size === "number" ? rec.size : null } : null
+  return { agent: { ...agentOf(id, live), email: null }, live, context }
+}
+
 function updateOf(): TgUpdate | null {
   const u = readJson<{ state?: string; stage?: string; pid?: number; startedAt?: string } | null>(join(ROOT, "data", "node", "node-update.json"), null)
   if (u?.state !== "running") return null

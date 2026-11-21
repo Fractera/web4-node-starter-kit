@@ -1,6 +1,6 @@
 // @api clear an agent session, switch its model or read its state
 import { NextRequest, NextResponse } from "next/server"
-import { actsFor, callerOf, refusal } from "@/lib/node/caller"
+import { actsFor, callerOf, isNode, refusal } from "@/lib/node/caller"
 
 // КОМАНДЫ СЕССИИ АГЕНТА (шаг 620; владелец 2026-10-30: «нужна команда очистки контекста … нужна команда для переключения на модель
 // Opus … Sonnet … haiku»). POST `{ service, action: "clear" [, continue: true] }` или `{ service, action: "model", model: "opus" | "sonnet" | "haiku" }` с
@@ -38,7 +38,11 @@ export async function POST(req: NextRequest) {
   if (action === "status") {
     const map = (globalThis as { __web4TerminalSessions?: Map<string, { startedAt?: string; byPerson?: boolean }> }).__web4TerminalSessions
     const live = map?.get(service)
-    const sessions = [...(map?.entries() ?? [])].map(([key, s]) => ({ service: key, byPerson: s.byPerson !== false }))
+    // 821 (the red team's finding of 817/818): an element's own key sees only its own session — the list of every live session is the
+    // node's composition, and the composition is never given to an element (CLAUDE.md §6). The node key sees them all (675-3).
+    const sessions = [...(map?.entries() ?? [])]
+      .filter(([key]) => isNode(caller) || key === service)
+      .map(([key, s]) => ({ service: key, byPerson: s.byPerson !== false }))
     return NextResponse.json({ ok: true, service, running: Boolean(live), startedAt: live?.startedAt ?? null, sessions }, { headers: HEADERS })
   }
   const model = typeof body.model === "string" ? body.model : undefined

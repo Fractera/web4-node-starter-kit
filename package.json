@@ -102,6 +102,7 @@
     "node:readiness": "node scripts/node-readiness.mjs",
     "template": "node scripts/template.mjs",
     "instruction:element": "node lib/instructions/element/build.mjs",
+    "test:came-from": "node scripts/came-from.test.mjs",
     "serve:rebuild:detached": "node scripts/rebuild-detached.mjs",
     "check:skill-headers": "node scripts/check-skill-headers.mjs",
     "check:shape-examples": "node scripts/check-shape-examples.mjs",
