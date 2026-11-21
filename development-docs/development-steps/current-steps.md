@@ -345,6 +345,14 @@ door, mode update; the server merges the fork 19a8d7e9) — ~15 min, watch https
 the internet: curl -sI https://z6esw.fractera.ai/logout?lang=ru and /login and https://fractera.ai/login → https://auth.fractera.ai/…;
 z6esw tell-core (SE3) reaches the main agent; redteam.sh z6esw → root (window lines); (5) tell Roma «готово к тесту»; (6) delete z6esw
 after his test (F3: its DNS record).
+**00:00–00:25 UTC 2026-11-21:** Mac core build RC=0 live 31e5e903 (session-mode running:true, effort high — Roma wants max: switch with
+`npm run session -- model opus --effort max --continue` at a quiet moment). The SSH visit died with the build → Roma pressed the server
+panel's «Обновить сборку ядра» himself (Telegram 361–369; a red line «идёт развёртывание элемента» cleared by itself). Roma 374–378: the
+server Pult said «узел в сети · спит · Разбудить» during the update → fix **2303b5e2** (Pult reads data/node/node-update.json: banner
+with the stage, no wake) — committed, NOT built (next build). The server's bot switched to «⏳ Ядро собирается» at 00:16 by itself.
+**Server live 73f9667b (00:22). PROVEN from the internet:** z6esw /logout → https://auth.fractera.ai/logout?…redirectUrl=z6esw → back to
+https://z6esw.fractera.ai/ru; z6esw /login, fractera.ai /login and /logout → https://auth.fractera.ai/… (negative: 23:2x all four → 127.0.0.1:24681).
+Window **1a59622b** (root password) for the inside proofs: z6esw tell-core (SE3), redteam.sh z6esw root (window lines), delete z6esw.
 
 **NEXT ACTION 2 — 819 (approved, Telegram 335 «Это ещё нужно пофиксить. Обязательно включи режим максимального размышления и
 необходимый навык дизайна. Аккуратно без лишней избыточный информации поправь тексты ошибок кнопки.»):** plan
