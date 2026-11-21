@@ -300,80 +300,31 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 - Parked: the server tails (z6esw tell-core, redteam with Green team, deleting z6esw/qxld4) — the SSH visit did not open in my Chrome
   profile (his two «Готово» came from another profile); the Pult update banner 2303b5e2 waits the next core build; my effort → max.
 
-## Letter to my next session (written 2026-11-21 ~10:22 UTC — reset at 60 % in the middle of step 821; Opus effort max)
+## Letter to my next session (written 2026-11-21 ~11:47 UTC — reset at 56 % after 821 closed; Opus effort max)
 
-**WHO WAITS:** Roma (owner) in TELEGRAM (chat_id 90413601, ru). Morning, engaged and constructive: he liked both mocks («выглядят хорошо
-богато мне нравятся»), wants FAST live work («поднять кастомный шаблон сейчас в локальном компьютере … смотреть на живую»), short
-messages, ideas welcome. Colour marks + living words + emoji.
+**WHO WAITS:** Roma (owner) in TELEGRAM (chat_id 90413601, ru). Warm, fast, generous with ideas today («Великолепно», «exelent»,
+«Конечно отправляй»). Pictures first, short living messages with colour marks and emoji.
 
-**STEP 821 — the custom element's Mini App** (plan new-steps/821-the-element-mini-app-gets-projects-cron-and-settings.md — read it whole:
-his words verbatim 409/412/416–417/424/426/429/431/434, the design, the substeps, the test checklist, «Done so far»). Intake with the 46
-groups: pre-steps/2026-11-21-mini-app-projects-template.md. Mocks: logs/eyes/2026-11-21T10-09-28-665Z.png (v1, 6 screens),
-logs/eyes/2026-11-21T10-12-21-677Z.png (v2, the Pult's family: A home with agent card/fuel/«ждёт вас»/sections, B drawer, C projects,
-D «Элемент»: Сайт/Люди/Агент/Строительство); v2 source: pre-steps/2026-11-21-mini-app-mock-v2.html.txt.
+**DONE TODAY:** 821 CLOSED — custom template v0.3.221 (Mini App: home, Projects 4 sections/46 directions, Cron, Element, Settings,
+«Администрирование»), v0.3.222 (822-1: the element's purpose from his 440 + the capability ladder), v0.3.223 (agent card + context
+gauge island, «Перейти в чат» posts the section); core build bfb1915b live (GET /api/node/my-agent, status door filtered for an element
+key, came-from hook; red-team test S1 with a negative control). Core pushed to aifa-agi AND Fractera main = 4460a999 (his 478 «Конечно
+отправляй»). Production proof of the template in the workshop (next build + start 24711, eyes). Plans: new-steps/821 (done), 822
+(822-1 done; 822-2 the search door + magnifier, 822-3 Fractera's private graph element + checkout + private-repo install), 823.
 
-**WAITS HIS YES (Telegram 435):** the item screen (3 numbers + a small chart: pages released / active = tied to Cron / tasks today; buttons
-«Открыть сайт» and «Перейти в чат») and the chat context (the button → element door writes SERVICE_DATA_DIR/tg-context.json → closes the
-Mini App; a UserPromptSubmit hook of the element agent adds «⟦came from the section: Проекты › … › Instagram⟧» to the next message; lives
-until another section or ~30 min). His «да» → add to 821 as substeps; the hook + the element's own-agent-state door (agent card, fuel) +
-the status-door filter (below) = ONE core build at the end (ask him first).
+**HIS LAWS / DECISIONS TODAY (verbatim in the plans):** 447 «один узел как одно сообщество … Марина покупает элемент за свои деньги для
+всех братьев это закон»; 472 support cards: amounts only ($1/$5/$20 a month), no perks, he makes the 3 Stripe Payment Links himself in a
+future step by my instructions; 473 support copy: «проект разрабатывается и поддерживается одним разработчиком … я Рома Армстронг» + his
+photo from Fractera's GitHub.
 
-**NEXT ACTION (live coding in the workshop data/workshop/fractera-custom-item-starter):**
-1. Restart the dev server (it died with this session): in the workshop folder, run in background
-   `NEXT_TELEMETRY_DISABLED=1 PORT=24710 ELEMENT_DIR="$PWD" NEXT_PUBLIC_SUPPORTED_LANGUAGES=en,ru NEXT_PUBLIC_ALL_LANGUAGES=en,ru
-   NEXT_PUBLIC_DEFAULT_LOCALE=ru NEXT_PUBLIC_LANG=ru AUTH_SERVICE_URL=http://127.0.0.1:24681 NEXT_PUBLIC_AUTH_URL=http://localhost:24681
-   ./node_modules/.bin/next dev --port 24710 --hostname 127.0.0.1` → http://127.0.0.1:24710/ru/tg (200 before; eyes `--width 390`).
-2. Load skills interface-design, use-primitives, use-shadcn (the hook refuses .tsx otherwise); `parts_find` before a new interface file;
-   every new .tsx starts `// @local — …` (or `// @part`); data-block on containers (`npm run widgets:ids`); words in `*.i18n.ts` en+ru;
-   ≤250 lines per component; typography primitives (H1/H2 variant="ui"/Small/Eyebrow), shadcn Button/Tabs/Collapsible, tokens only (the
-   mock's iOS colours become the element's tokens; tiles neutral `bg-muted`).
-3. Build in this order, showing Roma screenshots as you go: `tg/_libs/projects.ts` (catalog per lang; page counts = folders under
-   `tg/_pages/projects/<group>`; actual = enabled schedules of `data/cron.json` with `project`) → `lib/branch-page.tsx` childRoute option
-   `virtual(slug)` for catalog addresses (`projects/<section>`, `projects/<group>`, `projects/<group>/<item>`; a real folder wins) →
-   widgets in `tg/_widgets/` (registry `index.tsx` like admin's): `widget-static-tg-home`, `widget-dynamic-tg-projects` (sort via shadcn
-   Tabs, client state), `widget-static-tg-cron`, `widget-static-tg-element` (links /admin/design, /admin/site-settings, /admin/users,
-   the site; core-held rows «скоро»), `widget-static-tg-settings` → pages: `tg/_data` bare + home widget, `_pages/{projects,cron,element,
-   settings}` bare + widget; remove `_pages/{a2a,a2a-orders,a2a-reviews,a2a-services,a2a-wallet,help,subscriptions}` → `tg/_data/menu.json`
-   new shape (ONE mode with Главная, Проекты (children = 4 sections, add = «Все направления»), Cron, Элемент, Настройки; common []) — keep
-   the shape the core's `lib/web4-items/element-tg-menu.ts` reads (modes[].groups[].items + common) → CSS scope `[data-tg-app]` mapping
-   the tokens to Telegram theme vars with the element's tokens as fallback → the rename «слой архитектора» → «Администрирование» (texts,
-   READMEs, skills; routes untouched) → the element skill «projects» (telegram-mini-app skill section) → tests (plan's T1–T6) → commit in
-   the workshop → push the template (his 426 = today's template pushes) → release v0.3.221 (skill release-template) → a fresh test element
-   on the Mac → the core's «Рабочий процесс» mirror.
+**NEXT ACTION:** ask Roma what is next, offering: (a) 823 «О разработке» (news from GitHub `news/` folder, 3 support cards without links
+until his Payment Links, «Нашли проблему?» → t.me/roma_armstrong via web_app_open_tg_link; template + core Pult; the found cards are in
+Fractera/fractera-easy-starter lib/i18n/locales/*/sponsorship.ts); (b) 822-2 the search door; (c) a live custom element from v0.3.223
+to see the agent card (create's duplicate guard refused a test element «looks like root» — needs his word on a boundary or a rollout to
+root, which waits his word). The workshop dev server may still run on 24710.
 
-**822 PROPOSED (2026-11-21 ~10:45 UTC, after the reset):** his 438 «дизайны … идеально начиная строительство» (go on with 821) and
-440–442 (the element's purpose; «an element buys an element for all its brothers» via Fractera's graph; «решать тебе»). I chose: a short
-critical analysis first, then 821. Intake pre-steps/2026-11-21-element-buys-an-element-for-its-brothers.md; plan new-steps/822-the-
-capability-ladder-own-fractera-lagrix-build.md (5 cracks; no private-repo install exists in code). Sent 445–446 with the plan file.
-His answer 447 (10:30): «один узел как одно сообщество … Марина покупает элемент за свои деньги для всех братьев это закон» — variant
-(c) everywhere; acknowledged 448. 822-1 (texts) waits its turn after 821's screens; he has not yet said «да» to 822's substeps.
-
-**821 RELEASED (2026-11-21 ~10:52 UTC):** workshop commit bf38996 → custom v0.3.221 on GitHub (tag 8d0510b8, Roma's gh key for one run,
-his 426); prebuild RC=0, check:types OK, test:tg-projects + test:tg-menu OK, eyes 390 px light/dark. NEXT: `npm run template -- pin
-custom v0.3.221` (one-file commit) — DONE b3e1cb69 (not pushed). The fresh test element was REFUSED by create's duplicate guard
-(«this job looks like root (match 0.42)») — not forced: instead a production `next build` of the workshop (v0.3.221) + `next start`
-on 24711 + eyes = the production proof; the core's mirror proven by code (element-tg-menu.ts reads one mode, children with «/»). Then the ONE core build (ask first): the Pult's «О разработке» (823), the element's own-agent-state door, the
-chat-context hook, the status-door filter.
-**821 CORE PART CODED (2026-11-21 ~11:20 UTC, b5ff8622, not built, not pushed):** GET /api/node/my-agent (own agent card + context,
-no node e-mail), the status door filtered for an element key, the came-from hook (test:came-from 7/7). Template workshop 1f84362
-(island tg-agent.client.tsx + doors tg/api/{agent,context}, prebuild RC=0) — NOT released yet (v0.3.223 after the core build proof).
-GO given 2026-11-21 ~11:30 UTC in the terminal («go to next step go») → the ONE core build started detached (spawn-free serve.mjs rebuild); on return: npm run serve:status, curl /api/node/my-agent without a key → 401, → a live script with root's element key:
-my-agent answers only root and no e-mail; status sessions = root only; the node key sees all → release v0.3.223 → push the core
-(ask). Live agent card needs a custom element born from v0.3.223 (none on this Mac: root is the root-starter; the test element was
-refused by the duplicate guard).
-**821 CORE BUILT (2026-11-21 11:42 UTC):** core build bfb1915b live; /api/node/my-agent and the status door answer 401 without a key;
-custom v0.3.223 released (workshop 1f84362) and pinned 606b383. Core NOT pushed (19+ commits) — ask Roma. Live agent card: needs a
-custom element from v0.3.223 (none on this Mac). NEXT: 823 (wait his Payment Links later), 822-2 search door.
-**823 PROPOSED:** «О разработке» (news from GitHub `news/`, «Поддержать проект» 3 Stripe cards, «Нашли проблему» → @roma_armstrong);
-his 458/459/461; waits the three Stripe links (asked 460) and his «да». Star Messages confirmed from telegram.org/faq (Premium) and
-core.telegram.org/api/paid-messages (users, supergroups, channels).
-
-**PARKED (say so if asked):** the server tails — z6esw («Red team», project) and qxld4 («Green team», own app, Roma's) still on
-109.199.105.213; z6esw's tell-core (SE3) not proven after 818-8; redteam.sh with the window lines not re-run; delete z6esw (+ qxld4 if he
-says) — the SSH visit never opened in MY Chrome profile (his «Готово» twice came from another profile; my tabs are in «Browser 1»). The
-Pult update banner 2303b5e2 committed, NOT built. NEW FINDING: `POST /api/agents/session {action:"status"}` gives an element's key the
-`sessions` list of the whole node — filter to its own (red team, low). Proven yesterday/today: 818-8 sign-in on the server (from the
-internet + his hands), own-app isolation (his 398), the Pult race fix live (his screenshot «Opus · усилие max · программирует»).
+**CLUES:** the classifier refused a script reading .env.local to derive element keys — never retry; live element-key proofs only on a
+real element. Base UI Button: `render={<a/>} nativeButton={false}`, not asChild. check:page-sequence needs single-quoted widget keys.
 
 ## The person's decisions (verbatim)
 
