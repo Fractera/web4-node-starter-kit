@@ -328,6 +328,11 @@ real element. Base UI Button: `render={<a/>} nativeButton={false}`, not asChild.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-21 11:53 UTC, the owner (Telegram 487): «смотрю на архитектуру Next маршрутов и не понимаю почему там не появилась наша
+  структура … должен был построить по согласованию со мной обновлённое дерево» — my 821 kept 4/46/193 in tg/_data/projects.json
+  (virtual addresses), never showed the tree. Asked (488–489, tree file sent): data folders tg/_pages/projects/<section>/<group>/<item>/
+  (243, the source; projects.json generated from them) — waits his yes; plus the tg-menu fix (only elements with a Mini App menu) waits his word on the build.
+
 - 2026-11-21 11:49 UTC, the owner (Telegram 484): «Запомни что на корни у нас не будет мини Apple корень будет работать просто через
   чат. Мини приложения это часть относящиеся только к основному шаблону она не относится к корневой странице она не относится к
   нативным.» → the Mini App (/tg) lives only in the custom template; root and native elements work through the chat. Nothing built for
