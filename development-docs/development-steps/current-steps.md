@@ -328,6 +328,12 @@ real element. Base UI Button: `render={<a/>} nativeButton={false}`, not asChild.
 
 ## The person's decisions (verbatim)
 
+- 2026-11-21 13:09–13:12 UTC, the owner (Telegram 515, 517, 519): on the SERVER a new element «Diana» (piiic, an app of its own), its bot
+  @piiic_messenger_h2a_rzkih_bot answers «Агент piiic не включился: no-starter», the terminal sleeps. Read in his Chrome (Telegram Web).
+  Cause: agent-api/channel/route.ts starts a born element's poller from its bundled copy of telegram.cjs where setStarter was never
+  called. Fix 274af6d4 (starter on globalThis; test with two module instances), prebuild RC=0, ~13:20 core build; then push and Roma
+  updates the server (its core restart also restarts the poller). Waits after: his check on the server; «Добавить» + «Справка» yes.
+
 - 2026-11-21 13:07 UTC: core build 535b989f LIVE (REBUILD_RC=0, /api/health); /ru/root/telegram carries «сообщение BotFather целиком: узел
   сам найдёт в нём токен». Pushed origin + Fractera main. Told Roma to update the server again. Waits: his yes to «Добавить» + «Справка».
 
