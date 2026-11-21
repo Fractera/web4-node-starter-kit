@@ -683,6 +683,8 @@ const ASK = {
     // 614-1: the session was born, but its Telegram channel did not come up — the node closed it and reads the bot again.
     channelFailed: (a, n) => `Sorry, agent ${a} could not start: its Telegram channel did not connect within ${n} seconds, so the agent is off again. Turn it on again in a couple of minutes.`,
     channelFailedKept: (a, n) => `Sorry, agent ${a} could not start: its Telegram channel did not connect within ${n} seconds, so the agent is off again. Your message is kept — press «Turn on» again in a couple of minutes.`,
+    // 829: the agent is on, the message the person wrote while it slept did not reach it — said, never «got your message».
+    heldLost: (a) => `Agent ${a} is on, but your message did not reach it: a question stood on its terminal's screen. Write it again — now it goes straight to the agent.`,
   },
   ru: {
     oneCall: (a, c) => `Агенту ${a} пришёл вопрос от агента ${c}`,
@@ -733,6 +735,7 @@ const ASK = {
     trustGone: (a) => `Агент ${a} уже не ждёт этого ответа — вопрос закрыт или агент выключен.`,
     channelFailed: (a, n) => `Извините, агент ${a} не смог запуститься: его канал Telegram не подключился за ${n} секунд, поэтому агент снова выключен. Включите его ещё раз через пару минут.`,
     channelFailedKept: (a, n) => `Извините, агент ${a} не смог запуститься: его канал Telegram не подключился за ${n} секунд, поэтому агент снова выключен. Ваше сообщение сохранено — нажмите «Включить» ещё раз через пару минут.`,
+    heldLost: (a) => `Агент ${a} включён, но ваше сообщение до него не дошло: на экране его терминала стоял вопрос. Напишите ещё раз — теперь оно придёт агенту напрямую.`,
   },
 }
 
@@ -1051,6 +1054,10 @@ async function onButton(service, token, q) {
     return
   }
   await tg(token, 'answerCallbackQuery', { callback_query_id: q.id, text: t.toast })
+  // 829 (✗ 2026-11-21 16:25, j58fl: «что бы я не нажимал на секунду выскакивает слово загрузка»): the start waits for the channel and the
+  // paste — up to minutes — while the question kept its buttons, and once the session runs its plugin reads the bot and drops them. The
+  // buttons leave at the press; a failed start puts them back (`closeAsk` with keep, «Извините…» with buttons).
+  for (const x of p.asked) await tg(token, 'editMessageReplyMarkup', { chat_id: x.chat, message_id: x.messageId, reply_markup: { inline_keyboard: [] } })
   const text = p.items.map((it) => it.text).filter(Boolean).join('\n\n')
   const out = starterFn() ? await starterFn()(service, { text: text || undefined, taskUrls: p.items.map((it) => it.declineUrl).filter(Boolean), ...choice }) : { ok: false, reason: 'no-starter' }
   // 614-1: «получил ваше сообщение» — только когда встал канал и поручение ушло в сессию. Не встал — сессия уже закрыта, запрос остаётся
@@ -1073,12 +1080,14 @@ async function onButton(service, token, q) {
   if (out.ok) {
     rmSync(pendingFile(service), { force: true })
     // 666: без запроса — «включён, пишите ему»; строка режима говорит, с чем он включился.
-    const startedText = `${p.items.length === 0 ? (t.onNow ?? ASK.en.onNow)(a) : human ? t.startedHuman(a) : t.startedCalls(a, c)}${modeLine(out, t)}`
+    // 829: the paste did not happen (a question stood on the screen) — the person hears it and writes again; kept, it is a trouble.
+    const lost = !!text && ch?.up === true && ch.pasted === false
+    const startedText = `${lost ? (t.heldLost ?? ASK.en.heldLost)(a) : p.items.length === 0 ? (t.onNow ?? ASK.en.onNow)(a) : human ? t.startedHuman(a) : t.startedCalls(a, c)}${modeLine(out, t)}`
     // Владелец 2026-10-06: фраза не дублируется — у вопроса только снимаются кнопки, итог идёт одним сообщением ниже.
     for (const x of p.asked) await tg(token, 'editMessageReplyMarkup', { chat_id: x.chat, message_id: x.messageId, reply_markup: { inline_keyboard: [] } })
     // Владелец 2026-10-05: «нажатие кнопку ничего визуально не меняет» — правка сообщения наверху не видна; итог — новым
     // сообщением внизу, за ним пойдут ответ агента и «выключить агента?».
-    for (const x of p.asked) await sendVanishing(token, { chat_id: x.chat, text: startedText, disable_web_page_preview: true })
+    for (const x of p.asked) await (lost ? sendKept : sendVanishing)(token, { chat_id: x.chat, text: startedText, disable_web_page_preview: true })
     for (const x of p.asked) vanish(token, x.chat, x.messageId) // 639: вопрос отвечен — уходит вместе с «включён»
   } else {
     const why = out.reason === 'memory' ? t.memory(a, out.freeMb, out.perSessionMb, out.top) : t.failed(a, String(out.reason ?? 'unknown'))

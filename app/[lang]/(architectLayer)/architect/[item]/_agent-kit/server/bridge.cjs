@@ -21,6 +21,9 @@ const telegram = require('./telegram.cjs')
 const { channelLaunch } = telegram
 // 781-1/3: does the bot hear — the plugin's pid, the poison out, the state file for the panel and the Pult.
 const health = require('./channel-health.cjs')
+// 829: what stands on the terminal's screen — the detectors, and the stream without a trust dialog Claude Code already recorded.
+const screen = require('./screen.cjs')
+const { trustOnScreen, promptOnScreen, questionOnScreen, questionLine } = screen
 const os = require('node:os')
 // 552-4: режимы сессии (первое слово запроса, группы навыков, ключ сессии) — один модуль ядра, общий с прибором `check:modes`.
 // Из корня узла, как `supervision.cjs`: у копий комплекта свой путь, а модуль один.
@@ -487,17 +490,20 @@ function startQueuedPass(element) {
 // «Do you want to …» и вариант «No, and tell Claude what to do differently»; «Yes, and don't ask again for» — у большинства.
 // 🛑 Ink рисует пробелы сдвигом курсора (`ESC[nC`): он заменяется пробелом до снятия управляющих последовательностей.
 const PROMPT_QUIET_MS = 800
-const plainScreen = (raw) => raw
-  .replace(/\x1b\[\d*C/g, ' ')
-  .replace(/\x1b\[[0-9;?]*[ -\/]*[@-~]/g, '')
-  .replace(/\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)/g, '')
-  .replace(/\x1b[()][0-9A-Za-z]/g, '')
-  .replace(/\s+/g, ' ')
-/** 547: стоит ли на экране вопрос доверия папке Claude Code («Is this a project you created or one you trust?»). */
-function trustOnScreen(buffer) {
-  const tail = plainScreen(buffer.slice(-4000)).replace(/\s+/g, '')
-  return /Isthisaprojectyoucreatedoroneyoutrust/i.test(tail) && /Yes,Itrustthisfolder/i.test(tail)
+/**
+ * 829: has Claude Code recorded this session's folder as trusted — `.claude.json` of the session's Claude home (689: an element on its
+ * person's subscription has its own), `projects[<folder>].hasTrustDialogAccepted`. `null` — unknown (no file, another format, no access).
+ */
+function cwdTrusted(s) {
+  const home = ownClaudeDir(String(s.service).replace(/--.*$/, ''))
+  try {
+    const projects = JSON.parse(readFileSync(home ? path.join(home, '.claude.json') : path.join(os.homedir(), '.claude.json'), 'utf8')).projects ?? {}
+    const entry = projects[String(s.cwd).replace(/\\/g, '/')] ?? projects[s.cwd]
+    return entry ? entry.hasTrustDialogAccepted === true : false
+  } catch { return null }
 }
+/** 829: the stream every «is a question on the screen» reads — without the trust dialog Claude Code has recorded as answered. */
+const liveScreen = (s) => screen.liveStream(s, () => cwdTrusted(s))
 /**
  * 547 (владелец 2026-10-19: «ты активируешь папку также как и запускаешь агента то есть прямо из чата»): у пробуждённого агента
  * вопрос доверия папке отвечается так, как ответил бы человек, — стрелка вниз на «Yes, I trust this folder» и Enter, — но только
@@ -510,7 +516,7 @@ function watchTrust(s) {
   if (!(s.viaWake || s.answerTrust) || s.trustDone) return
   clearTimeout(s.trustTimer)
   s.trustTimer = setTimeout(() => {
-    if (session.current(s.service) !== s || s.trustDone || !trustOnScreen(s.buffer)) return
+    if (session.current(s.service) !== s || s.trustDone || !trustOnScreen(liveScreen(s))) return
     s.trustDone = true
     // 604: без согласия — вопрос в чат главного агента («Разрешить? да»), а не ссылка на терминал; ответ — `answerTrust`.
     if (!s.trustOk) { void askTrust(s).catch(() => {}); return }
@@ -522,7 +528,8 @@ function watchTrust(s) {
 /** Нажать «Yes, I trust this folder» — стрелка вниз и Enter, как человек в терминале. */
 function pressTrust(s) {
   try { s.proc.write('\x1b[B') } catch { return false }
-  setTimeout(() => { try { s.proc.write('\r') } catch { /* процесс завершён */ } }, 250)
+  // 829: the moment of the node's Enter — once Claude Code records the trust, the stream before it is no longer read (`screen.cjs`).
+  setTimeout(() => { try { s.trustEnterAt = screen.seenOf(s); s.proc.write('\r') } catch { /* процесс завершён */ } }, 250)
   return true
 }
 
@@ -552,7 +559,7 @@ async function askTrust(s) {
 function answerTrust(key) {
   const s = session.current(key)
   if (!s) { telegram.clearTrust(key); return { ok: false, reason: 'no-session' } }
-  if (!trustOnScreen(s.buffer)) { telegram.clearTrust(key); return { ok: false, reason: 'not-waiting' } }
+  if (!trustOnScreen(liveScreen(s))) { telegram.clearTrust(key); return { ok: false, reason: 'not-waiting' } }
   if (!pressTrust(s)) return { ok: false, reason: 'gone' }
   s.trustOk = true
   telegram.clearTrust(key)
@@ -571,35 +578,20 @@ function watchAsk(s) {
   clearTimeout(s.askTimer)
   s.askTimer = setTimeout(() => {
     if (session.current(s.service) !== s) return
-    const waiting = promptOnScreen(s.buffer)
+    const waiting = promptOnScreen(liveScreen(s))
     if (waiting && !s.askNotified) { s.askNotified = true; void telegram.tellWaiting(s.service).catch(() => {}) }
     if (!waiting) s.askNotified = false
   }, PROMPT_QUIET_MS)
   s.askTimer.unref?.()
 }
 
-/** Висит ли на хвосте экрана вопрос-разрешение Claude Code. */
-function promptOnScreen(buffer) {
-  const tail = plainScreen(buffer.slice(-4000))
-  return /Do you want to /.test(tail) && /(tell Claude what to do differently|Yes, and don't ask again|1\. ?Yes)/.test(tail)
-}
 
-/**
- * 636-7: стоит ли на экране ЛЮБОЙ вопрос — разрешение, доверие папке или диалог самого Claude Code с вариантами («Enter to confirm ·
- * Esc to cancel»). ✗ 2026-11-03 19:18: вставка узла ушла в диалог «Teach auto mode…», Enter выбрал «Yes», слова пропали. Вставка в
- * живую сессию ждёт, пока вопрос не уйдёт; не ушёл — не вставляется (`pasteWhenReady`, `ready`).
- */
-function questionOnScreen(buffer) {
-  if (promptOnScreen(buffer) || trustOnScreen(buffer)) return true
-  const tail = plainScreen(buffer.slice(-3000))
-  return /Enter to confirm/.test(tail) && /Esc to (cancel|exit|go back)/.test(tail)
-}
 function watchPrompt(s) {
   if (!s.taskUrls || s.taskUrls.size === 0) return
   clearTimeout(s.promptTimer)
   s.promptTimer = setTimeout(() => {
     if (session.current(s.service) !== s) return
-    const waiting = promptOnScreen(s.buffer)
+    const waiting = promptOnScreen(liveScreen(s))
     if (waiting === Boolean(s.promptWaiting)) return
     s.promptWaiting = waiting
     for (const url of s.taskUrls) void tellTask(url, waiting ? 'input-required' : 'working')
@@ -647,12 +639,6 @@ const MAIN_FROM = 'main agent'
 const startCheckMs = () => Number(process.env.AGENT_START_CHECK_MS) || 3 * 60_000
 const hhmm = (ms) => { const d = new Date(ms); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}` }
 
-/** The words of the question on the screen, one short line — for the main agent, never a guess. */
-function questionLine(buffer) {
-  const tail = plainScreen(buffer.slice(-3000))
-  const m = /(Do you want to [^?]{0,160}\?|Is this a project you created or one you trust\?|[^.?!]{0,120}Enter to confirm)/.exec(tail)
-  return (m ? m[1] : tail.slice(-160)).trim()
-}
 
 /** Did the element's conversation take anything after `at` — Claude Code writes the transcript when a message is submitted. */
 function conversationSince(s, element, at) {
@@ -673,18 +659,18 @@ function tellMain(kind, element, words) {
 /** A task into a live session: the trust question answered when the main agent leads; never dropped silently. */
 function deliver(live, element, text, { confirmed, from, about } = {}) {
   const byMain = from === MAIN_FROM
-  if (byMain && confirmed && trustOnScreen(live.buffer)) {
+  if (byMain && confirmed && trustOnScreen(liveScreen(live))) {
     live.trustOk = true
     live.trustDone = true
     pressTrust(live)
     console.log(`[agents/wake] ${live.service}: папка подтверждена — задача главного агента (736)`)
   }
   const at = Date.now()
-  void pasteWhenReady(live, text, { quietMs: 500, maxMs: byMain ? 10 * 60_000 : 120_000, ready: () => !questionOnScreen(live.buffer) }).then((ok) => {
+  void pasteWhenReady(live, text, { quietMs: 500, maxMs: byMain ? 10 * 60_000 : 120_000, ready: () => !questionOnScreen(liveScreen(live)) }).then((ok) => {
     if (!byMain) return
     if (ok) return watchStart(live, element, at, about)
     if (session.current(live.service) !== live) return tellMain('not-started', element, `Узел: задача главного агента элементу ${element} («${about ?? ''}», ${hhmm(at)}) НЕ вставлена — его сессии больше нет. Разбуди его той же задачей: npm run task -- ${element} "<задача>".`)
-    tellMain('not-started', element, `Узел: задача главного агента элементу ${element} («${about ?? ''}», ${hhmm(at)}) НЕ вставлена за 10 мин — на его экране вопрос: «${questionLine(live.buffer)}». Реши его (npm run permit — если это вопрос разрешения) и дай задачу снова: npm run task -- ${element} "<задача>".`)
+    tellMain('not-started', element, `Узел: задача главного агента элементу ${element} («${about ?? ''}», ${hhmm(at)}) НЕ вставлена за 10 мин — на его экране вопрос: «${questionLine(liveScreen(live))}». Реши его (npm run permit — если это вопрос разрешения) и дай задачу снова: npm run task -- ${element} "<задача>".`)
   })
 }
 
@@ -695,7 +681,7 @@ function watchStart(s, element, at, about) {
     // ✗ 2026-11-13 06:12 (D17): the agent did the task and was closed by the main agent before the check — «its session is gone» was a
     // false alarm. The conversation moved after the task — it started, whether the session still lives or not.
     if (conversationSince(s, element, at)) return console.log(`[agents/start] ${s.service}: работа началась (задача ${hhmm(at)})`)
-    const why = !same ? 'его сессии больше нет' : questionOnScreen(s.buffer) ? `на его экране вопрос: «${questionLine(s.buffer)}»` : 'задачи нет в его разговоре — ход не начался'
+    const why = !same ? 'его сессии больше нет' : questionOnScreen(liveScreen(s)) ? `на его экране вопрос: «${questionLine(liveScreen(s))}»` : 'задачи нет в его разговоре — ход не начался'
     console.log(`[agents/start] ${s.service}: НЕ начал за ${Math.round(startCheckMs() / 60000)} мин — ${why}`)
     tellMain('not-started', element, `Узел: агент элемента ${element} не начал работу через ${Math.round(startCheckMs() / 60000)} мин после твоей задачи («${about ?? ''}», ${hhmm(at)}): ${why}. Реши сейчас: вопрос разрешения — npm run permit; доверие папке — npm run trust -- ${element}; хода нет или сессии нет — npm run task -- ${element} "<задача>" ещё раз.`)
   }, startCheckMs())
@@ -755,7 +741,7 @@ function whenIdle(s, { quietMs = 4000, maxMs = 10 * 60_000 } = {}) {
     const timer = setInterval(() => {
       if (session.current(s.service) !== s) { clearInterval(timer); return resolve(false) }
       if (printed(s) !== last) { last = printed(s); since = Date.now() }
-      if (Date.now() - since >= quietMs && !promptOnScreen(s.buffer) && !trustOnScreen(s.buffer)) { clearInterval(timer); return resolve(true) }
+      if (Date.now() - since >= quietMs && !promptOnScreen(liveScreen(s)) && !trustOnScreen(liveScreen(s))) { clearInterval(timer); return resolve(true) }
       if (Date.now() - t0 > maxMs) { clearInterval(timer); return resolve(false) }
     }, 500)
     timer.unref?.()
@@ -875,7 +861,7 @@ function sessionCommand(service, { action, model, effort, ultracode = false, con
       if (pending.cont) {
         void clearedSince(live, element, home, before, typedAt).then((cleared) => {
           if (!cleared) return console.log(`[agents/session] ${service}: письмо после сброса не вставлено — /clear не выполнился или сессии уже нет`)
-          return pasteWhenReady(live, resetLine(service), { ready: () => !promptOnScreen(live.buffer) && !trustOnScreen(live.buffer) })
+          return pasteWhenReady(live, resetLine(service), { ready: () => !promptOnScreen(liveScreen(live)) && !trustOnScreen(liveScreen(live)) })
             .then((ok) => console.log(`[agents/session] ${service}: ${ok ? 'пробуждён письмом после сброса' : 'письмо после сброса не вставлено'}`))
         })
       }
@@ -950,13 +936,13 @@ function watchChannel(s, element, held, { t0, callerTells }) {
           watchHearing(s, element, { t0, heard: true })
           if (!held) return resolve({ up: true, seconds })
           // «получил ваше сообщение» человеку — только после вставки (✗ прибор 614: без этого оно опережало вставку на 2 с).
-          void pasteWhenReady(s, held, { quietMs: 1500, ready: () => !trustOnScreen(s.buffer) && !promptOnScreen(s.buffer) })
+          void pasteWhenReady(s, held, { quietMs: 1500, ready: () => !trustOnScreen(liveScreen(s)) && !promptOnScreen(liveScreen(s)) })
             .then((pasted) => resolve(session.current(s.service) === s ? { up: true, seconds, pasted } : { up: false, reason: 'gone' }))
         }, Math.max(0, up.at + 2000 - Date.now()))
         t.unref?.()
         return
       }
-      if (trustOnScreen(s.buffer)) deadline = Date.now() + channelWaitMs()
+      if (trustOnScreen(liveScreen(s))) deadline = Date.now() + channelWaitMs()
       if (Date.now() < deadline) return
       clearInterval(timer)
       const waited = Math.round(channelWaitMs() / 1000)
@@ -1002,7 +988,7 @@ function watchHearing(s, element, { t0, heard = false }) {
       return
     }
     if (!heard) {
-      if (trustOnScreen(s.buffer)) deadline = Date.now() + channelWaitMs()
+      if (trustOnScreen(liveScreen(s))) deadline = Date.now() + channelWaitMs()
       if (Date.now() < deadline) return
     } else {
       missing ??= Date.now()

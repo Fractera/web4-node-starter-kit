@@ -131,6 +131,27 @@ await t('778, 824: an element bot opens the element\'s Mini App (<its HTTPS addr
   assert.equal(r4.state, 'not-an-element')
 })
 
+await t('829-2: on the node\'s own domain an element\'s «Приложение» is <its address>.<zone>/tg from the node\'s record, with no PROJECT_SITE_URL in the element (the custom template declares none); negative: no domain record and no variable — the default menu', async () => {
+  const el = 'el829'
+  const root = mkdtempSync(join(tmpdir(), 'tg-app-829-'))
+  const at = (p, text) => { mkdirSync(dirname(join(root, p)), { recursive: true }); writeFileSync(join(root, p), text) }
+  at(`data/services/${el}/channel/telegram/.env`, 'TELEGRAM_BOT_TOKEN=123456:ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef_-12\n')
+  at(`data/services/${el}/channel/telegram/access.json`, JSON.stringify({ allowFrom: ['111'] }))
+  at(`items/${el}/app/[lang]/(protectedLayer)/tg/_data/menu.json`, '{}')
+  at(`items/${el}/.env.local`, 'OPENAI_API_KEY=\n')
+  const dirOf = (id) => join(root, 'items', id)
+  const seen = []
+  const none = await menu.refreshElement(root, el, { dirOf, fetchImpl: async (_t, m, c) => { seen.push([c, m]); return { ok: true } } })
+  assert.equal(none.state, 'default', 'no domain record, no variable — no address')
+  at('logs/domain.json', JSON.stringify({ zone: 'example.com', hostname: 'example.com', architectHostname: 'architect.example.com', authRouted: true }))
+  const r = await menu.refreshElement(root, el, { dirOf, fetchImpl: async (_t, m, c) => { seen.push([c, m]); return { ok: true } } })
+  assert.equal(r.state, 'mini-app')
+  assert.equal(r.url, 'https://el829.example.com/tg')
+  at(`data/services/${el}/address.json`, JSON.stringify({ address: 'shop' }))
+  assert.equal(menu.elementTarget(root, el, dirOf).url, 'https://shop.example.com/tg', 'the element\'s own address wins over its id')
+  rmSync(root, { recursive: true, force: true })
+})
+
 const choice = req(join(ROOT, 'lib', 'node', 'tg-app', 'model-choice.cjs'))
 const warn = req(join(ROOT, 'lib', 'agent-kit', 'ultracode-warning.cjs'))
 

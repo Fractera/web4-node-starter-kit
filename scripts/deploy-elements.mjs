@@ -20,6 +20,8 @@ import { createRequire } from 'node:module'
 const { startStaticCopy } = createRequire(import.meta.url)('../lib/web4-items/static-copy-start.cjs')
 const { pendingPreview } = createRequire(import.meta.url)('../lib/deploy/preview-lock.cjs')
 const liveLog = createRequire(import.meta.url)('../lib/deploy/live-log.cjs')
+// 829-2: the bots' «Приложение» / «Пульт» buttons follow the addresses a deploy changes.
+const tgMenu = createRequire(import.meta.url)('../lib/node/tg-menu.cjs')
 // 642-4: причина отказа простыми словами; проходящая (память, сеть) — один повтор, названный до него.
 const { causeOf } = createRequire(import.meta.url)('../lib/deploy/build-failure.cjs')
 const RETRY_PAUSE_MS = Number(process.env.FRACTERA_RETRY_PAUSE_MS) || 20_000
@@ -115,7 +117,17 @@ for (const id of ids) {
   // 344-3: развёрнутая версия уходит и в копию публичных страниц в Cloudflare (только у элемента со своим доменом).
   // 576-1: установщик уже снял её с прогрева новой сборки; второй раз — только если его копия не удалась.
   if (ok && !copiedSince(id, t0)) startStaticCopy(ROOT, id)
+  // 829-2 (✗ 2026-11-21 16:24, j58fl, the owner: «Telegram приложение нету почему»): the element's Mini App button was set only when its
+  // bot was connected — that minute the element still waited in this queue to move onto the node's new domain, its address was not
+  // HTTPS yet, and the button stayed the default menu for good. A deploy may change the element's address; its bot's button follows it.
+  if (ok) {
+    const m = await tgMenu.refreshElement(ROOT, id).catch((e) => ({ ok: false, state: 'error', why: e instanceof Error ? e.message : String(e) }))
+    if (m.state !== 'no-bot' && m.state !== 'not-an-element') appendFileSync(live, `Кнопка бота: ${m.state === 'mini-app' ? `«Приложение» → ${m.url}` : 'обычное меню — у элемента нет HTTPS-адреса или своего приложения'}${m.ok ? '' : ` (Telegram не принял: ${m.why})`}\n`)
+  }
 }
+// 829-2: the main bot's «Пульт» follows the node's own address too (✗ 2026-11-21: after the domain moved to throughsongs.com at 16:17 it
+// still opened the temporary address, set at 15:30) — the activation of a domain ends in this very deploy of every element.
+if (state.results.some((r) => r.ok)) await tgMenu.refresh(ROOT).catch(() => null)
 
 state.running = false
 state.current = null
