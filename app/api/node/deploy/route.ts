@@ -80,10 +80,11 @@ async function elements() {
   const registry = readJson<{ services?: Entry[] }>(paths.REGISTRY_FILE)
   return Promise.all((registry?.services ?? []).map(async (s) => {
     const dir = paths.entryDir(s)
-    const stamp = readJson<{ at?: string; version?: string }>(join(dir, ".install-stamp.json"))
+    const stamp = readJson<{ at?: string; builtAt?: string | null; version?: string }>(join(dir, ".install-stamp.json"))
     const passport = elementProps.readElementProps(dir) as { settings?: { owns?: string[] } } | null // 417: обе раскладки
     const owns = passport?.settings?.owns ?? []
-    const builtAt = stamp?.at ?? null
+    // 837-1: the last BUILD, not the last install pass (a pass that skipped the build kept it); an old stamp — its `at`
+    const builtAt = stamp?.builtAt ?? stamp?.at ?? null
     let settingsChangedAt: number | null = null
     for (const folder of owns) {
       const f = join(dir, folder)

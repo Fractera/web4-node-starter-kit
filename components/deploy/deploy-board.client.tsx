@@ -214,6 +214,9 @@ export function DeployBoard({ words, lang, dialogUi }: { words: DeployBoardWords
   const dep = state.deployment
   const forkChanges = fork && fork.behindBy === 0 ? fork.nodeBehind : 0
   const updating = fork?.update?.state === "running"
+  // 837-1 (✗ the owner on the server 2026-11-22: «если у нас все уже развернулось то почему страница до сих пор требует развёртывание ядра»): the
+  // node holds everything its fork and Fractera have — the core is current, said like an element's, and its button stops calling.
+  const coreCurrent = forkKnown && !!fork && fork.behindBy === 0 && forkChanges === 0 && !updating
 
   return (
     <div className="flex flex-col gap-4" data-deploy-board>
@@ -224,6 +227,7 @@ export function DeployBoard({ words, lang, dialogUi }: { words: DeployBoardWords
           <H2 variant="ui">{words.core}</H2>
           <span className="text-muted-foreground">{words.version}: {state.core.commit ?? "—"}</span>
           <span className="text-muted-foreground">{words.built}: {when(state.core.builtAt, lang)}</span>
+          {coreCurrent && <Badge variant="outline" data-core-current>{words.upToDate}</Badge>}
         </div>
         <span className="text-muted-foreground">{words.coreNote}</span>
         {fork && fork.behindBy > 0 && (
@@ -233,7 +237,7 @@ export function DeployBoard({ words, lang, dialogUi }: { words: DeployBoardWords
           </span>
         )}
         {updating && <span className="text-foreground" data-core-updating>{words.nodeUpdating.replace("{stage}", fork?.update?.stage ?? "")}</span>}
-        <CoreDeploy words={words.coreDeploy} dialogUi={dialogUi} last={state.core.deploy ?? null} log={state.core.log ?? []} lang={lang} disabled={running || updating} forkChanges={forkChanges} forkKnown={forkKnown} onOpen={loadFork} inProgress={updating} onStarted={() => { loadFork(); setTimeout(load, 800) }} />
+        <CoreDeploy words={words.coreDeploy} dialogUi={dialogUi} last={state.core.deploy ?? null} log={state.core.log ?? []} lang={lang} disabled={running || updating} forkChanges={forkChanges} forkKnown={forkKnown} onOpen={loadFork} inProgress={updating} current={coreCurrent} onStarted={() => { loadFork(); setTimeout(load, 800) }} />
       </section>
 
       <p className="text-muted-foreground text-sm">{words.intro}</p>

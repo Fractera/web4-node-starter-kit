@@ -36,7 +36,7 @@
 // постоянными аргументами. `windowsHide: true` — каждому порождённому процессу,
 // иначе на экране человека мигают чёрные окна консоли.
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync, readdirSync, cpSync, renameSync } from 'node:fs'
+import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync, readdirSync, cpSync, renameSync, statSync } from 'node:fs'
 import { join, dirname, relative } from 'node:path'
 import { spawnSync, spawn } from 'node:child_process'
 import { randomBytes, createHash } from 'node:crypto'
@@ -684,6 +684,15 @@ function copyLagsWhileOff(id, version) {
 
 // Папки прежних сборок, которые удаляются ПОСЛЕ перезапуска процессов (280-9).
 const retiredDists = []
+/** 837-1: when an older stamp knows no `builtAt` — the moment Next wrote the running build (its `BUILD_ID`), never «now». */
+function buildIdTime(dir, dist) {
+  for (const f of [dist ? join(dir, dist, 'BUILD_ID') : null, join(dir, '.next', 'BUILD_ID')]) {
+    if (!f) continue
+    try { return statSync(f).mtime.toISOString() } catch { /* no build there */ }
+  }
+  return null
+}
+
 /** Папка сборки, из которой служба запущена сейчас (по её отметке). */
 function currentDist(stamp) {
   // 285-4: служба без standalone-сервера (Express со встроенным Next) запускается `server.js` — по пути
@@ -1052,6 +1061,8 @@ for (const entry of registry.services) {
     .slice(0, 16)
 
   let undeployed = false
+  // 837-1: did THIS pass build the element? Only then its «собран» moves (`builtAt` of the stamp).
+  let didBuild = false
   if (props.runtime?.build) {
     // 🛑 «СОБРАНО» — ЭТО ФАЙЛ СЕРВЕРА, А НЕ ПАПКА `.next` (265-6). ✗ Оплачено: сборка, прерванная
     // на Windows `EBUSY`, стёрла standalone-сервер и оставила `.next`; следующий прогон счёл элемент
@@ -1064,6 +1075,7 @@ for (const entry of registry.services) {
     } else if (built && !FORCE && !REBUILD && stamp.version === version && stamp.env === envFingerprint) {
       say('  сборка на месте (версия и окружение те же) — пропущена')
     } else {
+      didBuild = true
       // 🔒 СБОРКА БЕЗ ПРОСТОЯ (280-9, слово владельца 2026-09-24: «blue/green build without downtime»).
       // Элемент, объявивший в паспорте `runtime.distDirEnv`, собирается В СОСЕДНЮЮ ПАПКУ (.next-a /
       // .next-b попеременно), пока работает прежняя сборка: процесс не останавливается, EBUSY не
@@ -1175,6 +1187,9 @@ for (const entry of registry.services) {
       ...(props.runtime?.distDirEnv ? { dist: builtDist ?? currentDist(stamp) } : {}),
       health: props.health?.path ?? null,
       at: new Date().toISOString(),
+      // 837-1 (✗ measured on the server 2026-11-22: every element «собран 12:20» — the update's install pass, which built nothing):
+      // the moment of the last BUILD, kept through passes that skip it; `at` stays the moment of the last install pass.
+      builtAt: didBuild ? new Date().toISOString() : (stamp.builtAt ?? buildIdTime(dir, builtDist ?? currentDist(stamp)) ?? stamp.at ?? null),
     }, null, 2), 'utf8')
     // 576-1: копия снимается ПОСЛЕ отметки — `static-copy.mjs` берёт из неё папку сборки и версию, а `--port` меняет только то,
     // откуда брать страницы. Только у элемента со сборкой в соседнюю папку: у прочих отметка не знает папки сборки.

@@ -86,6 +86,21 @@ const idOf = (dir) => {
   return dir.split(/[\\/]/).pop()
 }
 
+// 837-1 (✗ measured on the server 2026-11-22: root's template does not ignore this file — the deployments board called it «правок
+// кода: 1», and an agent's `git add -A` would carry this machine's paths into the element's repository): the node's own file is kept
+// out of the element's git by the element's LOCAL exclude list — no commit in the element, whatever its template ignores.
+const LOCAL_ONLY = '.claude/settings.local.json'
+function keepOutOfGit(dir) {
+  const exclude = join(dir, '.git', 'info', 'exclude')
+  if (!existsSync(join(dir, '.git'))) return
+  try {
+    const now = existsSync(exclude) ? readFileSync(exclude, 'utf8') : ''
+    if (now.split(/\r?\n/).some((l) => l.trim() === LOCAL_ONLY)) return
+    mkdirSync(join(dir, '.git', 'info'), { recursive: true })
+    writeFileSync(exclude, `${now}${now && !now.endsWith('\n') ? '\n' : ''}# the node's own file (core scripts/element-isolate.mjs, 837-1)\n${LOCAL_ONLY}\n`, 'utf8')
+  } catch { /* the board does not count it either (NODE_WRITES) */ }
+}
+
 // Сколько знаков списка помещается в 1 % окна — замерено 548-6: 29 994 знака у переполненного списка (журнал 22:02).
 const BUDGET_AT_ONE_PERCENT = 28_000
 const PLUGIN_SKILLS_CHARS = 1_500
@@ -156,6 +171,7 @@ for (const dir of only ? [] : elements) {
 
   mkdirSync(join(dir, '.claude'), { recursive: true })
   writeFileSync(file, JSON.stringify(s, null, 2) + '\n', 'utf8')
+  keepOutOfGit(dir)
   written++
   report.push(`${id}: список своих навыков ${own.chars} знаков, бюджет ${fraction}`)
 }

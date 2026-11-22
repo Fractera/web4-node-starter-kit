@@ -54,7 +54,7 @@ export type CoreDeployWords = {
 export type CoreDeployState = { state: "running" | "done" | "failed" | "interrupted"; startedAt?: string; finishedAt?: string; rc?: number | null } | null
 type Session = { id: string; name: string; since: string | null }
 
-export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkChanges = 0, forkKnown = true, onOpen, onStarted, inProgress }: {
+export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkChanges = 0, forkKnown = true, onOpen, onStarted, inProgress, current = false }: {
   words: CoreDeployWords; dialogUi: AppDialogUi; last: CoreDeployState; log: string[]; lang: string; disabled?: boolean; forkChanges?: number
   /** the board has heard the node about its fork (answered or failed); until then the button waits */
   forkKnown?: boolean
@@ -62,6 +62,8 @@ export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkCha
   /** 641-4: запуск принят — доска спрашивает состояние заново; `inProgress` — обновление узла уже идёт (страница открыта заново) */
   onStarted?: () => void
   inProgress?: boolean
+  /** 837-1: the core holds everything its fork has — the button is a quiet manual rebuild, not a call */
+  current?: boolean
 }) {
   const update = forkChanges > 0
   const [open, setOpen] = useState(false)
@@ -125,7 +127,7 @@ export function CoreDeploy({ words, dialogUi, last, log, lang, disabled, forkCha
     <div className="flex w-full flex-col gap-2" data-core-deploy={last?.state ?? "none"}>
       <div className="flex flex-wrap items-center gap-3">
         {!begun && !inProgress && (
-          <Button onClick={() => { onOpen?.(); setOpen(true); setSessions(null); void loadSessions() }} disabled={disabled || !forkKnown || last?.state === "running"} data-core-deploy-open={!forkKnown ? "checking" : update ? "update" : "rebuild"}>
+          <Button variant={current && !update ? "outline" : "default"} onClick={() => { onOpen?.(); setOpen(true); setSessions(null); void loadSessions() }} disabled={disabled || !forkKnown || last?.state === "running"} data-core-deploy-open={!forkKnown ? "checking" : update ? "update" : "rebuild"}>
             <Rocket className="mr-2 size-4" aria-hidden />
             {!forkKnown ? words.checking : update ? words.updateButton.replace("{n}", String(forkChanges)) : words.button}
           </Button>
