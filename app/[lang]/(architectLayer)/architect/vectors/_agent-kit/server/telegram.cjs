@@ -23,7 +23,7 @@
 
 const { spawn } = require('node:child_process')
 const { randomBytes } = require('node:crypto')
-const { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } = require('node:fs')
+const { chmodSync, existsSync, mkdirSync, readFileSync, readdirSync, lstatSync, rmSync, writeFileSync } = require('node:fs')
 const os = require('node:os')
 const path = require('node:path')
 const { isBornItem, ownClaudeDir, serviceDir } = require('./workspace.cjs')
@@ -45,6 +45,8 @@ const IDLE_POLL_MS = 3000
 
 const stateDir = (service) => path.join(/* turbopackIgnore: true */ ROOT, 'data', 'services', service, 'channel', 'telegram')
 const envFile = (service) => path.join(stateDir(service), '.env')
+// 839-8: the node's own copy of the bot's token — on a server the plugin of a walled session owns `.env` and closes it to anyone but itself
+const nodeTokenFile = (service) => path.join(stateDir(service), '.token.node')
 const accessFile = (service) => path.join(stateDir(service), 'access.json')
 const botFile = (service) => path.join(stateDir(service), 'bot.json')
 const activationFile = (service) => path.join(stateDir(service), 'activation.json')
@@ -63,12 +65,13 @@ function writeSecret(file, text) {
 }
 
 function storedToken(service) {
-  try {
-    const line = readFileSync(envFile(service), 'utf8').split(/\r?\n/).find((l) => l.startsWith('TELEGRAM_BOT_TOKEN='))
-    return line ? line.slice('TELEGRAM_BOT_TOKEN='.length).trim() : ''
-  } catch {
-    return ''
+  for (const f of [nodeTokenFile(service), envFile(service)]) {
+    try {
+      const line = readFileSync(f, 'utf8').split(/\r?\n/).find((l) => l.startsWith('TELEGRAM_BOT_TOKEN='))
+      if (line) return line.slice('TELEGRAM_BOT_TOKEN='.length).trim()
+    } catch { /* not this file, or the element's own now */ }
   }
+  return ''
 }
 
 // 639 (владелец 2026-11-03: «сообщения которые несут промежуточные результаты могут автоматически исчезать … человеку приятно смотреть и
@@ -157,6 +160,7 @@ async function saveToken(service, raw) {
   mkdirSync(stateDir(service), { recursive: true })
   writeFileSync(botFile(service), JSON.stringify({ name: me.result.first_name ?? '', username: me.result.username }, null, 2))
   writeSecret(envFile(service), `TELEGRAM_BOT_TOKEN=${token}\n`)
+  writeSecret(nodeTokenFile(service), `TELEGRAM_BOT_TOKEN=${token}\n`) // 839-8: the node's own copy
   if (!existsSync(accessFile(service))) {
     writeSecret(accessFile(service), JSON.stringify({ dmPolicy: 'allowlist', allowFrom: [], groups: {}, pending: {} }, null, 2))
   }
@@ -296,11 +300,79 @@ async function channelLaunch(service, env) {
   const withBins = { ...env, [pathKey]: dirs.join(path.delimiter), TELEGRAM_STATE_DIR: stateDir(service) }
   const ready = await preparePlugin(withBins)
   if (!ready.ok) return { ok: false, error: ready.error }
+  const opened = openForElement(service, env.CLAUDE_CONFIG_DIR)
+  if (opened) console.log(`[telegram] ${service}: за стеной — элементу открыто то, что для него положил узел (${opened} файлов и папок)`)
+  const handed = handEnvToElement(service)
+  if (handed) console.log(`[telegram] ${service}: за стеной — ${handed}`)
   return {
     ok: true,
     env: withBins,
     args: ['--channels', `plugin:${PLUGIN}`, '--add-dir', stateDir(service), '--permission-mode', 'auto', ...githubRule(service)],
   }
+}
+
+/**
+ * 839-8 (the server's main agent, 2026-11-22 19:51: a walled element's channel never came up — its token `.env` and `access.json` were the
+ * node's 0600, and the plugin the node installed into the element's Claude home is the node's too): `chmod 0600` sets the ACL mask to `---`,
+ * which silences the element user's own ACL entry. Before a walled element's session starts with its channel, everything the NODE put for it
+ * — the channel's state folder and the plugin files under its Claude home — is opened to the group (files g+r, the state g+rw, folders
+ * g+rx): the mask lets fe-<id> read again; «other» stays closed. Only the node's own files (a file of fe-<id> is its own already); a home
+ * computer (no wall) changes nothing. Returns how many were opened.
+ */
+/**
+ * 839-8 (the server's main agent, 2026-11-22 19:54, found in the plugin's server.ts: «chmodSync(ENV_FILE, 0o600)» first, inside a try whose
+ * catch swallows EPERM — a `.env` that is not the session user's own is never read, «TELEGRAM_BOT_TOKEN required»). A walled session's
+ * `.env` must belong to fe-<id>: the node writes it beside as `.env.incoming` (0640, the element reads it through its ACL), the element
+ * copies it AS ITSELF and renames it over `.env` (the helper's `run`; the token is never an argument). The node keeps reading its own
+ * copy `.token.node` — the plugin closes `.env` to everyone but its owner. Returns a line for the log, or null when nothing was to do.
+ */
+function handEnvToElement(service) {
+  const wall = globalThis.__web4ElementWall // mount.cjs
+  try {
+    const ws = globalThis.__web4WalledSession
+    const dir = serviceDir(service)
+    if (!wall || !dir || !ws || !ws.walledAt(process.cwd(), dir)) return null
+  } catch { return null }
+  const token = storedToken(service)
+  if (!token) return null
+  if (!existsSync(nodeTokenFile(service))) writeSecret(nodeTokenFile(service), `TELEGRAM_BOT_TOKEN=${token}\n`)
+  const uid = typeof process.getuid === 'function' ? process.getuid() : -1
+  try { if (lstatSync(envFile(service)).uid !== uid) return null } catch { /* no .env yet — it is made below */ }
+  const incoming = path.join(stateDir(service), '.env.incoming')
+  const part = path.join(stateDir(service), '.env.part')
+  try {
+    writeFileSync(incoming, `TELEGRAM_BOT_TOKEN=${token}\n`, { mode: 0o640 })
+    chmodSync(incoming, 0o640)
+    const a = wall.runAsElement(service, '/bin/cp', [incoming, part])
+    const b = a.ok ? wall.runAsElement(service, '/bin/mv', ['-f', part, envFile(service)]) : a
+    if (!b.ok) return `.env не передан элементу: ${(b.out || 'helper refused').slice(0, 200)}`
+    return lstatSync(envFile(service)).uid !== uid ? '.env передан элементу (его владелец — пользователь элемента)' : '.env остался у узла'
+  } catch (e) {
+    return `.env не передан элементу: ${e instanceof Error ? e.message : e}`
+  } finally {
+    try { rmSync(incoming, { force: true }) } catch { /* gone */ }
+  }
+}
+
+function openForElement(service, configDir) {
+  try {
+    const ws = globalThis.__web4WalledSession // mount.cjs — a computed require does not build in this module
+    const dir = serviceDir(service)
+    if (!dir || !ws || typeof ws.walledAt !== 'function' || !ws.walledAt(process.cwd(), dir)) return 0
+  } catch { return 0 }
+  const uid = typeof process.getuid === 'function' ? process.getuid() : -1
+  let n = 0
+  const open = (p, write, depth) => {
+    let st
+    try { st = lstatSync(p) } catch { return }
+    if (st.isSymbolicLink() || st.uid !== uid) return
+    const want = st.isDirectory() ? (st.mode | 0o050 | (write ? 0o020 : 0)) : (st.mode | 0o040 | (write ? 0o020 : 0))
+    if ((want & 0o7777) !== (st.mode & 0o7777)) { try { chmodSync(p, want & 0o7777); n++ } catch { /* not ours to change */ } }
+    if (st.isDirectory() && depth > 0) for (const e of (() => { try { return readdirSync(p) } catch { return [] } })()) open(path.join(p, e), write, depth - 1)
+  }
+  open(stateDir(service), true, 3)
+  if (configDir) open(path.join(configDir, 'plugins'), false, 12)
+  return n
 }
 
 /**
@@ -1277,7 +1349,7 @@ function suggestion(service) {
 function removeBot(service) {
   const dir = stateDir(service)
   const gone = []
-  for (const name of ['.env', 'access.json', 'bot.json', 'bot.pid', 'messages.json', 'activation.json', 'inbox', 'approved']) {
+  for (const name of ['.env', '.token.node', 'access.json', 'bot.json', 'bot.pid', 'messages.json', 'activation.json', 'inbox', 'approved']) {
     const p = path.join(dir, name)
     if (!existsSync(p)) continue
     try { rmSync(p, { recursive: true, force: true }); gone.push(name) } catch { /* named below by what stayed */ }
@@ -1440,6 +1512,8 @@ async function answerTrustHere(service, token, chatId) {
 module.exports = {
   // 824: the token from the token alone or BotFather's whole message; the starter any copy of this file sees.
   tokenFrom, starterFn,
+  // 839-8: what a walled session's channel needs from the node before it starts
+  handEnvToElement, openForElement,
   // the bot taken off the node — the danger zone of its page
   removeBot,
   // 639: итог остаётся, служебное исчезает; вопросы закрытой сессии исчезают.
