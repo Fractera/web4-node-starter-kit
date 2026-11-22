@@ -300,79 +300,49 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 - Parked: the server tails (z6esw tell-core, redteam with Green team, deleting z6esw/qxld4) — the SSH visit did not open in my Chrome
   profile (his two «Готово» came from another profile); the Pult update banner 2303b5e2 waits the next core build; my effort → max.
 
-## Letter to my next session (written 2026-11-21 21:22 UTC — reset at 55 %; Opus effort max)
+## Letter to my next session (written 2026-11-22 ~13:05 UTC — reset at ~62 %; Opus effort max)
 
-**WHO WAITS:** Roma in TELEGRAM (90413601, ru). Engaged all evening, gives orders fast, hates being asked what is his order already
-(memory improve-means-release-and-push: an ordered improvement includes releases and pushes — never ask). He will REINSTALL THE SERVER
-FROM ZERO (Telegram 639: «не тратил ресурсы … поправить на работающем сервере … запущу процесс установки сервера полностью … потом
-создать с тобой быструю установку»). Last sent: 656/657 (j58fl report + the dropdown bug + this reset).
+**WHO WAITS:** Roma in TELEGRAM (chat 90413601, ru). Mood: angry and tired — at 12:48 (Telegram 789) he caught me: «ты жёстко мне
+соврал … Ни хрена я не увидел … заходи и проверяй. Эта задача стоит раньше всех». He was right: my 01:25 «fix» of the Claude login
+window looked for `authorize?z=` read off his screenshot; CLI 2.1.330 prints `authorize?z-…` (HYPHEN); my test checked my own string.
+I owned it plainly (790, 792). Rule learned the hard way: **a parser is proven on the program's captured bytes, never on a retold
+string** — `scripts/terminal-auth.test.mjs` now does that (sample captured in a PTY, `python3` pty.fork of `claude auth login` with a
+fake `open` in PATH and a temp CLAUDE_CONFIG_DIR — scratchpad `pty-capture.py`). Talk to him alive, short, own faults, then deliver.
 
-**DONE TONIGHT (all pushed: fork aifa-agi + Fractera at 49479260; template custom v0.3.230 pinned):**
-832 (server rename → wall record; Pult «не отвечает»), 832-4..8 (no-account words, one «Включить», rollout pushes only own repos),
-v0.3.228 Mini App without sign-in (Telegram ticket), 833 (own|node|none Claude status: Pult mark + «Ждёт вас», subscription page red
-line, 🔑 main-chat notice from the wake door, birth report line, ask-person --check claude:<id>), 834 (element admin's frame
-/<lang>/element-agent/<id|address>/<subscription|terminal|telegram|openai>; doors take that element's roles
-lib/auth/element-agent-roles.cjs; terminal tickets name their element + ownOnly for a non-panel admin; frame hides node menus
-[data-node-menu]; next.config rewrite excludes element-agent), template v0.3.229/230 drawer: Дашборд · Проекты ▸ · 4 agent links ·
-«Главный агент ▸». j58fl merged both (53a16f5, 05c661b), deployed 21:19, its agent CLOSED.
+**WHERE I STAND (all pushed: fork aifa-agi + Fractera at 3cd732ab; custom template v0.3.236 pinned f32ea3b):**
+- 837-0 ca8e5463: login link detector accepts any query of the short link; deployed server version fails 4/7 of the new test, new 7/7.
+- 837-1 6047e1cb: board truth — NODE_WRITES + `.claude/settings.local.json`; passport node fields (telegramBots, visibility,
+  automation, payments, messengerSettings) are not edits (`lib/web4-items/element-code-state.ts`); `builtAt` in `.install-stamp.json`
+  moves only when a build ran (`scripts/services-install.mjs`, fallback BUILD_ID mtime); core card «актуален» + quiet button
+  (`components/deploy/deploy-board.client.tsx`, `core-deploy.client.tsx`); element-isolate writes `.git/info/exclude` locally.
+- 836 (agent pages inside the element; template v0.3.232→236), 836-5 trust question new wording, 836-6 turbopackIgnore + «access» kind —
+  all on the server since its 12:22 update (2ae96dd8) except 837-0/1.
+- The MAC core is NOT rebuilt since 981964bf (08:54): it lacks 836-5, 836-6, 837-0, 837-1. Build it when convenient (ask Roma first:
+  memory «ask before a core build»; he said «сделай обновление» at 12:43 for 837-1 — that was the server update).
+- sgnou (Mac custom element) never took the v0.3.235 merge task (queued; it stood on Claude's new trust question — I answered it by
+  hand at 09:0x). Not needed for 837 (the test runs on the server).
 
-**OPEN, IN ORDER:**
-00. 22:20: Roma DELETED j58fl from the panel at 21:50:45 during its deployment (catalog «delete»), born sgnou (v0.3.231) at 21:55.
-   The deploy wrote back a ghost registry entry → fixed 834-12 (28ebe047, registry-merge.cjs) and the ghost line removed from the
-   registry by hand (folder and data were gone). 834-11 proven on sgnou (eyes 22:06: «Проекты ▸ · Пока нет построенных страниц»).
-   Domain throughsongs.com: TCP to Cloudflare 188.114.96.5/97.5 blocked from this network, tunnel up (mad) — ISP block; a 2-hour
-   background check tells Roma when it opens. Still pending: «собрать сейчас?» for 834-10 (core build).
-   2026-11-22: Roma «domain is live» — checked from here: throughsongs.com 200, architect. 200 (/ru/hosting/domain), auth. 307 → /en; the ISP block is gone.
-   00:2x 2026-11-22 (Telegram 680, 682): his fresh server fractera.ai — elements rebuild in a queue, create + core update fail. Cause: elements bake panel/sign-in addresses at build (stale-addresses.cjs → server-domain-switch rebuildStale), node-update refuses on deploy-lock. Proposed: runtime addresses (template release) + update/create queue behind the deploy, unblocks 827. Waits his «да» for the plan.
-   00:4x: his «Ок» (689) → plan new-steps/835/835-main.md written (substep files 835-1..5 to unfold after his yes), sent (691) with a request for the creation error screenshot; waits his «да».
-   00:56 (Telegram 692): on the server after creating an element and saving its admin login, the panel dims (overlay, no window, no clicks); a new tab is clean. Mac repro: the beacon admin card (skip) leaves no overlay (probe: no full-screen fixed element, body pointer-events empty). Overlay-bearing in core: components/ui/dialog.tsx, sheet.tsx — suspect a Dialog overlay left by the birth/create dialog. Asked him 3 questions (697). My slip: `npm run ask-person -- --help` put a window «--help» and sent it to his Telegram — dropped, told him.
-   01:1x FOUND (Telegram 698/700: the dim follows a Claude sign-in on the Terminal page, a dot on the tab): xterm 6 default OSC 8 link handler calls confirm() — proven headless (default → confirm dialog; with linkHandler → none). Fixed 835-0: linkHandler window.open noopener in the kit master + agent-kit:update for 12 groups. WAITS a core build (with 834-10) — his yes.
-   01:0x (Telegram 704-707): server, marketplace.fractera.ai (bugjs) signed in as bolshiyanov.com user+elementAdmin002; architect.fractera.ai/ru/element-agent/bugjs/telegram → «Войти» + gate denied. Core /api/me → auth /api/session; auth 401s any non-node-app user (appOfUser!==NODE_APP, before the x-fractera-element check). Hypotheses: (1) session not shared to architect (cookie), (2) own app → its account not a node account — 834 frame gap. Asked him (710): press «войти», and project or own?
-   01:08 (Telegram 711), the owner: «Зачем ты вообще создал эту страницу на вкладке архитектора? … они должны были жить внутри элементы а ты по какой-то причине попытался пробросить их на странице архитектора … Если ты считаешь что это правильно значит нужно переделывать ядро?» → admitted (712): 834's frame in the core is wrong; proposed step 836 BEFORE 835 — the four agent pages inside the element (template release), the core a machine room with one door keyed by the element key (ticket, status), the core frame removed. Waits his yes.
-   01:11 (721): «А то что ты нашел готовые страницы это хорошо просто пере используй их как есть» → plan new-steps/836/836-main.md (4 substeps), sent (724) with the cost; waits his «начинай». Order: 836 → 835; one core build carries 835-0 (terminal confirm fix a424546a) + 834-10.
-   01:25 (725), the owner: the subscription login window no longer appears — «раньше это была огромная очень длинная строка … сейчас … стало очень короткой». Measured on his screen: CLI prints https://claude.ai/oauth/authorize?z=<43>; the detector knew only claude.com/cai/…&state=. Fixed 835-0b (terminal-auth.mjs: both forms, the text path cut at «Paste code» — it also fixed the old form glued to «Paste»); 7 cases pass, the old file fails 4 of them. All 13 copies updated. WAITS the same core build.
-   01:34 (730) his «Да» to the core build (835-0 a424546a + 835-0b 65528b93 + 834-10). Prebuild RC=0 (logs/prebuild-835.log). Core build started detached → logs/rebuild-835.log. ON RETURN: serve:status; proofs — terminal page: a click on an OSC 8 link opens no confirm (eyes/playwright on a core terminal page optional), the subscription page detects the short link (unit proof done); tell Roma: «Обновить» on the server; then build 836+835 together (one template release). He asked to merge them: «Возможно это большое обновление затронет много элементов» (728).
-   01:41 core build 0aad1caa RC=0, live (health commit 0aad1caa). Proof from the served chunk 0eq52o-.o_4r8.js: linkHandler window.open noopener; the pattern ai/oauth/authorize?z= and «Paste code» present. Told Roma (733): «Обновить» on the server, then Marketplace → Подписка → Войти. NEXT: 836 + 835 together (one template release).
-   02:xx–03:xx 836 built: core 97f355cf (kitAccess), e9919463 (kit-place), 297dfc69 (agent-kit:template, shadcn kit terminal + voice button, frame removed, core-terminal 1.0.1, voice-input 1.1.2); custom template released v0.3.232 (pin refused: tool ids), v0.3.233 (tag missing at first pin — pin pointed at a missing tag for minutes, fixed), v0.3.234, v0.3.235 PINNED 98ef8d9 (tools protocol 13/13). Core prebuild RC=0. NEXT: push core; core build (lid) — proofs 836-1 (curl ticket with sgnou's key → 200, another key → 403), frame 404; then sgnou's agent merges v0.3.235, deploy sgnou, eyes /ru/admin/agent/terminal; tell Roma «Обновить» + marketplace merge. Root template NOT done (root's admin is the architect — the core panel serves it).
-   08:49 (749) «Ок собери ядро» → core build started detached (logs/rebuild-836.log; prebuild RC=0 at ea6cc94a). ON RETURN: proofs 836-1/3, then sgnou merges v0.3.235.
-   08:55 core 981964bf live; proof 836-3: /ru/element-agent/sgnou/terminal → 404. Task to sgnou (TASK_OK): merge v0.3.235, prebuild, commit, report. ON ITS DONE: POST /api/node/deploy {ids:[sgnou]}; proof 836-1/2 end-to-end: GET sgnou /ru/admin/agent/terminal (eyes, terminal draws), POST sgnou /api/agent-kit/agent-api/ticket → 200 with socket (owner at machine); negative: same with a cf-connecting-ip header (internet, no session) → 401. Never read keys.
-   09:0x DEFECT found+fixed 836-5 (626248a3, NOT yet live — needs the next core build): Claude Code's trust question changed to «Is this a directory … / Yes, add it»; screen.cjs knew only the old words → sgnou stood on it, two tasks not-started. Answered by hand through its terminal socket (↓ Enter, like a person), then the Chrome-tools question kept OFF (default). sgnou now runs its core-back turn; my merge task is queued.
-   11:51 (761-762) the server agent's report: core build failed on Turbopack listing data/services/bugjs/claude/projects (0700, Permission denied) + updater called it «fetch failed». Fixed 836-6 (turbopackIgnore in workspace.cjs, paths.cjs; build-failure.cjs «access» kind, seed lines ignored; old classifier → network, new → access, proven). Core prebuild RC=0. NOT built yet (836-5 + 836-6 wait one build). 11:54 (765) Roma: «Заканчивай эту работу мы должны с тобой приступить к процедуре создании элемента через ядро и попытки понять почему он не может авторизоваться». sgnou never got the v0.3.235 merge (queued).
-   12:43 (784) Roma: «повтори размышления … и после этого сделай обновление … я вручную удалю MarketPlace с сервера затем ты вернёшься и будешь создавать новый элемент сначала как субдомен, потом … реальный домен … Твоя задача подтвердить или опровергнуть гипотезу что авторизация и приложение для телеграмма работает так как было запланировано. Я буду твоими руками … строй из этого соответствующий шаг». 12:48 (789): «ты жёстко мне соврал … Ни хрена я не увидел … Эта задача стоит раньше всех». ROOT CAUSE: CLI 2.1.330 prints authorize?z-… (hyphen); my 01:25 regex wanted «z=» (misread screenshot), tested on my own string. Fixed 837-0 ca8e5463 (+ scripts/terminal-auth.test.mjs on captured PTY bytes; deployed version fails 4/7, new 7/7). 837-1 6047e1cb (board truth: NODE_WRITES + passport node fields, builtAt, core «актуален», isolate local exclude). Template v0.3.236 pinned f32ea3b. Core prebuild RC=0. Core build NOW (no locked-dir control in this build — the login fix must not wait). NEXT: Roma «Обновить» on the server → I verify the modal live through the extension (MCP tab on architect.fractera.ai/ru/root/subscription); then write step 837 plan (server proof: birth on subdomain → sign-in → agent pages → Telegram Mini App → own domain).
-0. 834-11 (Telegram 664: «Проекты» missing under Дашборд — hidden when no built pages, my wrong choice): now always shown with a line
-   «Пока нет построенных страниц». Core 90d058bf (shell kit e50faacb7f, child without href = Small line), template v0.3.231 pinned
-   cbcce630, pushed. j58fl's agent tasked to merge v0.3.231 (21:5x) → then POST /api/node/deploy {ids:[j58fl]}, eyes --click
-   "Личный кабинет" --click "Проекты", screenshot to Roma. Still pending: his «собрать сейчас?» for 834-10 (Telegram 663).
-1. 🟠 FOUND 21:30 (commit 2ad60228, 834-9): the CORE renders every element's header/drawer (shell kit, app/api/shell-kit) with its OWN
-   components/shell, which lacked ShellLink.children — the template had it (834-6), the core not. Fixed in the core, shell kit rebuilt
-   (562f10e1ca, read from .shell-kit at runtime, no core rebuild); j58fl refreshes by ISR (≤10 min). NEXT: eyes proof, push fork +
-   Fractera, report to Roma. Drift noted: core vs template components/shell differ (starter-banner, temporary-host) — the guard
-   check:shell-kits did not catch the template side. Old text: BUG (seen 21:20, eyes): in j58fl's drawer «Главный агент» renders as a plain LINK (measure: a[href*="architect/build"] visible,
-   [data-block="shell-account-group"] not found) — the `children` never reach the drawer. Template path: lib/menu/account-links.ts
-   (children set) → lib/shell/site-shell-data.ts:56 (maps children) → components/shell/remote-shell.ts:77 (keeps ...l) →
-   components/shell/shell-account.client.tsx (Collapsible when l.children?.length). Find the layer that drops it (a schema, the
-   shell-init serialization, the core's /api/shell for «part of the project» elements, a cache). Fix in the workshop
-   (data/workshop/fractera-custom-item-starter), release v0.3.231, pin, push, npm run task j58fl (merge), deploy, eyes with
-   --click "Личный кабинет" --click "Главный агент". Never read an element's code (denied) — only the workshop and DOM measures.
-2. 🟢 DECIDED (Telegram 662, Roma: «согласен с твоим мнением»): own apps only on their own account → 834-10 commit 4806f79f, pushed
-   (fork + Fractera): claude-account.cjs accountOf → none for app:own without own sign-in (9 tests ✓); every kit bridge refuses; wake
-   door notice text neutral. WAITS A CORE BUILD (asked Roma «собрать сейчас?»). No own app on this node yet — live proof needs one.
-   Old text: WAITS HIS ANSWER (Telegram 655): on the Mac, an admitted person of an own-app element's bot can start its agent on the NODE's
-   subscription when the element has no own account (the server already refuses: walled). My pick: own apps only on their own account.
-3. After his server reinstall: walk his checklist (Telegram 640) + the drawer/frame with a real element admin; the server agent's
-   handoff (Telegram 637, file data/services/build/channel/telegram/inbox/1795291400465-AgADnCYAAvt2EFA.md) is fully answered by 833/834.
-4. Step 827 (fast install: built archives instead of building on the server; the second rebuild = elements built with the IP, rebuilt
-   when the domain connected 18:31 — measured by the server's own agent).
-5. Found, not fixed: hook commands in .claude/settings.json are relative (`node .claude/hooks/…`) — after the agent cd's they fail
-   and guards go silent (seen on the server). Candidate: "$CLAUDE_PROJECT_DIR"; check Windows first.
-6. element-wall.test.mjs «prepare.sh (DRY_RUN)» fails on the Mac — pre-existing, same without my changes.
+**NEXT ACTION, EXACTLY:** wait for Roma's «Обновить» on the server (asked in 793). When it is done: through the Claude in Chrome
+extension (MCP tab group; the extension's Chrome is signed in to architect.fractera.ai) open https://architect.fractera.ai/ru/root/subscription
+→ click `[data-claude-login]` → a dialog with the link and a code field must appear (`[role=dialog]`); if «[too-many-sessions]» —
+a login terminal is open elsewhere (ask Roma to press «Закрыть» on his tab). Then close it without entering anything («Закрыть»).
+Also read https://architect.fractera.ai/ru/build/deployments: core «актуален», root without «правок кода». Fill §7 of
+`new-steps/837/837-main.md` (H0, H1) and report to Roma with a screenshot. Then 837-2… with his hands.
 
-**CLUES:** template release: the tool's token gets 403 → after `npm run template -- release` push main + tag with
-`git -c credential.helper= -c 'credential.helper=!gh auth git-credential' push origin main refs/tags/vX` (gh login Fractera), then
-`npm run template -- pin`. Core build: ALWAYS `node scripts/spawn-free.mjs scripts/rebuild-detached.mjs logs/<name>.log` after a green
-prebuild (once I ran serve:rebuild as my child — it was cut off). Fractera push: `git push https://github.com/Fractera/web4-node-starter-kit.git main`.
-The server: Chrome visit until Sun 09:47 (http://localhost:24680/ru/hosting/hosting → /api/node/launch); the classifier refuses me
-starting a server update/install — Roma presses it.
+**STEP 837 (plan sent 794, his order 784):** prove or refute: element born on the server subdomain → admin at birth → sign-in → its own
+agent pages (836) → Telegram Mini App without a sign-in form (832-6) → the same on its own domain. Roles: I lead and record, Roma types
+passwords, the server agent reads logs (questions go through Roma, read-only). Questions sent (794): y7k93/marketplace leftovers; can
+the element's wall user read `$NODE_DOMAIN_FILE` and core `logs/runtime.json` (else 836's door says «not-on-a-node»); OOM at 00:11.
+
+**THE SERVER AGENT'S REPORT (12:39, Telegram 781) — keep:** root's «правок кода» = `.claude/settings.local.json` written by
+element-isolate (fixed 837-1); marketplace's = `telegramBots` written by the channel door at 01:13 (by design uncommitted; board fixed);
+«собран» = `.install-stamp.json` `at` rewritten each install pass (fixed); y7k93 birth: first run built, died before its result
+(deploy queue 00:02–00:24 ran at the same time, unproven cause), retry hit «папка уже существует», both wrote one log — 837-8 candidate;
+bugjs claude/projects, sessions opened by hand (chmod g+rwx, setgid lost) — 836-6 not yet proven against a 0700 folder (negative control
+on the Mac with a locked folder before a core build — skipped in the urgent build; do it in the next Mac build).
+
+**Open, owned by me:** 835 (addresses at start, update/create queue) and 827 (fast install) wait after 837; the OpenAI key page inside
+the element (836) not done; the deployments board idea (837-1) shipped.
 
 ## The person's decisions (verbatim)
 
