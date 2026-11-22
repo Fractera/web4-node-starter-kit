@@ -37,11 +37,11 @@ const ID_SHAPE = /^[a-z][a-z0-9-]{0,39}$/
 // Узел 343: папка следует адресу элемента (`data/services/<id>/address.json`); не перенесена — папка по id.
 const LABEL = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/
 const itemDir = (id, kind) => {
-  const base = path.join(ROOT, 'WEB4-ITEMS', kind === 'user' ? 'user' : 'core')
+  const base = path.join(/* turbopackIgnore: true */ ROOT, 'WEB4-ITEMS', kind === 'user' ? 'user' : 'core')
   let a = null
-  try { a = JSON.parse(readFileSync(path.join(ROOT, 'data', 'services', id, 'address.json'), 'utf8')).address } catch { /* адреса нет */ }
-  if (typeof a === 'string' && LABEL.test(a) && a !== id && existsSync(path.join(base, a))) return path.join(base, a)
-  return path.join(base, id)
+  try { a = JSON.parse(readFileSync(path.join(/* turbopackIgnore: true */ ROOT, 'data', 'services', id, 'address.json'), 'utf8')).address } catch { /* адреса нет */ }
+  if (typeof a === 'string' && LABEL.test(a) && a !== id && existsSync(path.join(/* turbopackIgnore: true */ base, a))) return path.join(/* turbopackIgnore: true */ base, a)
+  return path.join(/* turbopackIgnore: true */ base, id)
 }
 const ARCHITECT = path.join(ROOT, 'app', '[lang]', '(architectLayer)', 'architect')
 
@@ -72,7 +72,7 @@ function serviceDir(service) {
   // Корень узла — только по слову манифеста: иначе любая опечатка в имени открыла бы агенту весь узел.
   if (manifest(id)?.workspace === 'node') return ROOT
   if (manifest(id)?.workspace === 'main-agent') {
-    const dir = path.join(ROOT, 'data', 'main-agent')
+    const dir = path.join(/* turbopackIgnore: true */ ROOT, 'data', 'main-agent')
     return existsSync(path.join(dir, 'CLAUDE.md')) ? dir : null
   }
   const entry = registered().find((s) => s.id === id)
@@ -121,7 +121,7 @@ function ownClaudeHome(service) {
   const ws = manifest(id)?.workspace
   if (ws === 'node' || ws === 'main-agent') return null
   if (!serviceDir(id)) return null
-  return path.join(ROOT, 'data', 'services', id, 'claude')
+  return path.join(/* turbopackIgnore: true */ ROOT, 'data', 'services', id, 'claude')
 }
 
 /** Своя папка Claude Code элемента, если он перешёл на подписку своего человека; иначе `null` — подписка узла. */

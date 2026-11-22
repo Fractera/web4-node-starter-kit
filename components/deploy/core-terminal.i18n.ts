@@ -9,6 +9,7 @@ const FAILURE: Record<'en' | 'ru', FailureWords> = {
   en: {
     causes: {
       memory: 'Not enough memory for the build.',
+      access: 'The build may not read a folder (its rights) — this repeats on every try until it is fixed.',
       network: 'The network broke off during the build (npm or a download).',
       types: 'A type error in the code — the build stopped at the check.',
       guard: 'A build guard refused the build.',
@@ -27,6 +28,7 @@ const FAILURE: Record<'en' | 'ru', FailureWords> = {
   ru: {
     causes: {
       memory: 'Не хватило памяти на сборку.',
+      access: 'Сборке не дали прочитать папку (права) — это повторится при каждой попытке, пока не исправить.',
       network: 'Во время сборки оборвалась сеть (npm или загрузка).',
       types: 'Ошибка типов в коде — сборка остановилась на проверке.',
       guard: 'Сторож сборки не пропустил её.',
