@@ -17,7 +17,7 @@ import { fileURLToPath } from 'node:url'
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const { elementKeyOf } = createRequire(import.meta.url)('../lib/element-key.cjs')
 const { callerOf, isNode, callerElement, actsFor, refusal, wakeAllowed, markedFrom } = await import('../lib/node/caller.ts')
-const { ELEMENT_DOORS, isElementDoor, fromInternet } = await import('../lib/node/element-doors.mjs')
+const { ELEMENT_DOORS, isElementDoor, isKitDoor, fromInternet } = await import('../lib/node/element-doors.mjs')
 
 let passed = 0
 const t = (name, fn) => {
@@ -194,6 +194,30 @@ t('the gate: the element\'s rule stands after the owner at the machine and befor
   const rule = src.indexOf('if (isElementDoor(pathname) && request.headers.get("x-node-key") && !fromInternet(request.headers)) {')
   const cookie = src.indexOf('const sessionToken =')
   assert.ok(owner > 0 && rule > owner && cookie > rule, `owner ${owner}, rule ${rule}, cookie ${cookie}`)
+})
+
+// 837-0c (the owner, Telegram 821–824): on the server an element's agent pages got an empty 404 from the page gate for its four kit doors
+t('837-0c the kit doors: an element\'s four agent-api doors in the core, and nothing else of the architect layer', () => {
+  for (const p of ['/en/architect/s4tuk/agent-api/claude-auth', '/en/architect/s4tuk/agent-api/ticket', '/ru/architect/my-shop/agent-api/session',
+    '/en/architect/root/agent-api/channel']) assert.equal(isKitDoor(p), true, p)
+  for (const p of ['/en/architect/s4tuk/agent-api/telegram', '/en/architect/s4tuk/settings', '/en/architect/s4tuk/agent-api/claude-auth/x',
+    '/en/s4tuk/agent-api/claude-auth', '/api/agents/wake', '/en/architect/../agent-api/ticket', '/en/architect/S4TUK/agent-api/ticket',
+    '/en/architect/s4tuk/agent-api/ticketx']) assert.equal(isKitDoor(p), false, p)
+})
+t('837-0c the page gate: the kit-door rule stands after the owner at the machine, before the showcase and the 404, and refuses the internet', () => {
+  const src = readFileSync(join(ROOT, 'proxy', 'common.ts'), 'utf8')
+  const gate = src.indexOf('export async function architectPagesGate(')
+  const owner = src.indexOf('if (isOwnerAtMachine(request)) return null;', gate)
+  const rule = src.indexOf('if (isKitDoor(request.nextUrl.pathname) && request.headers.get("x-node-key") && !fromInternet(request.headers)) return null;', gate)
+  const showcase = src.indexOf('if (isShowcaseRequest(request)) return null;', gate)
+  const refuse = src.indexOf('return new NextResponse(null, { status: 404 });', gate)
+  assert.ok(gate > 0 && owner > gate && rule > owner && showcase > rule && refuse > showcase, `gate ${gate}, owner ${owner}, rule ${rule}, showcase ${showcase}, 404 ${refuse}`)
+})
+t('837-0c every kit door names its caller by the key (kitAccess) — the gate judges no key', () => {
+  for (const d of ['ticket', 'session', 'channel', 'claude-auth']) {
+    const src = readFileSync(join(ROOT, 'app', '[lang]', '(architectLayer)', 'architect', '[item]', 'agent-api', d, 'route.ts'), 'utf8')
+    assert.ok(src.includes('kitAccess('), d)
+  }
 })
 
 console.log('T3 — the core calls an element with that element\'s key')

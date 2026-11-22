@@ -15,7 +15,7 @@ import { authBaseFromHost, connectedDomainAuthBase, publicAuthBaseFor } from "@/
 import { authUrl as nodeAuthUrl } from "@/lib/microservices/urls";
 import { signInClosedPage } from "@/lib/auth/sign-in-closed.mjs";
 import { crossSiteRefusal } from "@/lib/auth/cross-site-wall";
-import { fromInternet, isElementDoor } from "@/lib/node/element-doors.mjs";
+import { fromInternet, isElementDoor, isKitDoor } from "@/lib/node/element-doors.mjs";
 import {
   SUPPORTED_LANGUAGES,
   DEFAULT_LANGUAGE,
@@ -546,6 +546,14 @@ export async function architectPagesGate(request: NextRequest): Promise<NextResp
 
   if (isOwnerAtMachine(request)) return null;
   if (shouldBypassAuthEdge()) return null;
+
+  // 837-0c (the owner, Telegram 821–824, on the server: «нажатие на кнопку войти по подписке не меняет ничего … тупик»; the terminal
+  // flashes and goes out): an element's agent pages (836) call its four kit doors here on loopback with its OWN key, and on a server
+  // nobody is the owner at the machine — this gate answered them an empty 404 (measured: claude-auth, session, channel — 404, 0 bytes),
+  // while on a home computer the owner's exception let them through. The rule of the element doors of `/api` (818-7a): a keyed request
+  // from THIS machine passes; the route names the caller by its key and lets it only its own id (`lib/agent-kit/kit-access.ts`).
+  // Through Cloudflare or the edge — never.
+  if (isKitDoor(request.nextUrl.pathname) && request.headers.get("x-node-key") && !fromInternet(request.headers)) return null;
 
   // 🔒 ЧЕТВЁРТОЕ ИСКЛЮЧЕНИЕ — ВИТРИНА FRACTERA (256-2), И ОНО ОТЛИЧАЕТСЯ ОТ ТРЁХ
   // ПРЕДЫДУЩИХ ТЕМ, ЧТО ПОСТОЯННО.
