@@ -952,7 +952,9 @@ function watchChannel(s, element, held, { t0, callerTells }) {
       if (Date.now() < deadline) return
       clearInterval(timer)
       const waited = Math.round(channelWaitMs() / 1000)
-      console.log(`[agents/wake] ${s.service}: канал Telegram не встал за ${waited} с — сессия закрыта, бота снова читает узел`)
+      // 839-10 (the server's main agent, Telegram 1012: «вывод сессии я не вижу … нужно … глаза на вывод сессии»): the last line of the
+      // session's screen goes into the log with the failure — a dialog that held Claude Code (onboarding, a consent) is named, never guessed.
+      console.log(`[agents/wake] ${s.service}: канал Telegram не встал за ${waited} с — сессия закрыта, бота снова читает узел · экран: «${questionLine(liveScreen(s)).slice(0, 200)}»`)
       health.writeState(process.cwd(), element, { state: 'failed', service: s.service, why: 'not-started' })
       session.stop(s.service, 'channel-failed')
       if (!callerTells) void telegram.tellChannelFailed(element, waited).catch(() => {})
