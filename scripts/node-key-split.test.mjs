@@ -198,11 +198,16 @@ t('the gate: the element\'s rule stands after the owner at the machine and befor
 
 // 837-0c (the owner, Telegram 821–824): on the server an element's agent pages got an empty 404 from the page gate for its four kit doors
 t('837-0c the kit doors: an element\'s four agent-api doors in the core, and nothing else of the architect layer', () => {
-  for (const p of ['/en/architect/s4tuk/agent-api/claude-auth', '/en/architect/s4tuk/agent-api/ticket', '/ru/architect/my-shop/agent-api/session',
-    '/en/architect/root/agent-api/channel']) assert.equal(isKitDoor(p), true, p)
-  for (const p of ['/en/architect/s4tuk/agent-api/telegram', '/en/architect/s4tuk/settings', '/en/architect/s4tuk/agent-api/claude-auth/x',
-    '/en/s4tuk/agent-api/claude-auth', '/api/agents/wake', '/en/architect/../agent-api/ticket', '/en/architect/S4TUK/agent-api/ticket',
-    '/en/architect/s4tuk/agent-api/ticketx']) assert.equal(isKitDoor(p), false, p)
+  // the form the proxy really sees: next.config redirects /:lang/architect/:path* → /:lang/:path* before the proxy (307, measured on the server)
+  for (const p of ['/en/xeket/agent-api/claude-auth', '/en/xeket/agent-api/ticket', '/ru/my-shop/agent-api/session', '/en/root/agent-api/channel',
+    '/en/architect/s4tuk/agent-api/claude-auth', '/ru/architect/my-shop/agent-api/session']) assert.equal(isKitDoor(p), true, p)
+  for (const p of ['/en/xeket/agent-api/telegram', '/en/xeket/settings', '/en/xeket/agent-api/claude-auth/x', '/en/agent-api/claude-auth',
+    '/api/agents/wake', '/en/../agent-api/ticket', '/en/XEKET/agent-api/ticket', '/en/xeket/agent-api/ticketx', '/eng/xeket/agent-api/ticket',
+    '/en/architect/s4tuk/agent-api/telegram']) assert.equal(isKitDoor(p), false, p)
+})
+t('837-0c the redirect is real: next.config sends /:lang/architect/:path* to /:lang/:path* — the rule must know the clean form', () => {
+  const cfg = readFileSync(join(ROOT, 'next.config.ts'), 'utf8')
+  assert.ok(cfg.includes('source: "/:lang([a-z]{2})/architect/:path*", destination: "/:lang/:path*"'), 'the redirect changed — recheck which form the proxy sees')
 })
 t('837-0c the page gate: the kit-door rule stands after the owner at the machine, before the showcase and the 404, and refuses the internet', () => {
   const src = readFileSync(join(ROOT, 'proxy', 'common.ts'), 'utf8')
