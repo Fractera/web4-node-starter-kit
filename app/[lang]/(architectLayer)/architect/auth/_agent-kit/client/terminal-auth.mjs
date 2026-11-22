@@ -32,9 +32,16 @@ const BEL = String.fromCharCode(7);
 const OSC = new RegExp(`${ESC}\\][^${BEL}${ESC}]*(?:${BEL}|${ESC}\\\\)`, "g");
 const CSI = new RegExp(`${ESC}\\[[0-?]*[ -/]*[@-~]`, "g");
 
-/** Ссылка входа Claude Code. Замерена на CLI 2.1.260. */
+/** Ссылка входа Claude Code — оба вида, что печатал CLI.
+ *  ✗ 2026-11-22 (Telegram 725, экран сервера): CLI стал печатать КОРОТКУЮ ссылку `https://claude.ai/oauth/authorize?z=<43 знака>`
+ *  вместо длинной `claude.com/cai/oauth/authorize…&state=…` (CLI 2.1.260). Узнавали только длинную — окно входа с полем для кода
+ *  перестало появляться у всех элементов и у ядра. Узнаём обе; короткая кончается на первом знаке вне base64url. */
 export const CLAUDE_LOGIN_URL =
-  /https:\/\/claude\.com\/cai\/oauth\/authorize.*?&state=[A-Za-z0-9][A-Za-z0-9_-]*[A-Za-z0-9]/;
+  /https:\/\/claude\.(?:com\/cai\/oauth\/authorize.*?&state=[A-Za-z0-9][A-Za-z0-9_-]*[A-Za-z0-9]|ai\/oauth\/authorize\?z=[A-Za-z0-9_-]+)/;
+
+// Видимый текст после ссылки: CLI печатает её и следующей строкой «Paste code here if prompted >». Переводы строк вырезаются без
+// пробела (заворот PTY), и это слово прилипло бы к хвосту ссылки из base64url-знаков — граница режется по нему.
+const AFTER_LINK = "Paste code";
 
 // Дверь 1 — OSC-8. CLI печатает ссылку гиперссылкой, и escape ограничивает её
 // С ОБЕИХ СТОРОН: гадать, где она кончается, не нужно вовсе.
@@ -77,6 +84,10 @@ export function extractAuthUrl(buf, detect = CLAUDE_LOGIN_URL) {
   const second = visible.indexOf("https://", start + 8);
   if (second !== -1 && second < end) {
     end = second;
+  }
+  const after = visible.indexOf(AFTER_LINK, start + 8);
+  if (after !== -1 && after < end) {
+    end = after;
   }
   return { how: "текст", url: visible.slice(start, end) };
 }
