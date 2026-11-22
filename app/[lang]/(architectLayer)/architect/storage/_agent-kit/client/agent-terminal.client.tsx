@@ -4,6 +4,8 @@ import { kitApi, kitDoor, kitSocket } from "./kit-place"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { AlertTriangle, ChevronDown, ClipboardPaste, Eraser, Square } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { ForbiddenWithExit } from "@/components/node-state/open-on-this-computer.client"
 import type { AppDialogUi } from "@/components/dialog/app-dialog.i18n"
 import { bracketedPaste, cleanPaste, pasteFromSearch } from "./terminal-paste.mjs"
@@ -53,7 +55,7 @@ export function AgentTerminal({ service, lang, words, build, dialogUi, initialPa
   // Закрытие, которое сделали мы сами, не должно читаться как обрыв связи.
   const quietCloseRef = useRef(false)
   const followUntilRef = useRef(0)
-  // 316: окно вставки. Текст приходит кнопкой «Вставить» или ссылкой `?paste=` (адрес блока из подсветки Preview);
+  // 316: окно вставки. Текст приходит кнопкой «Вставить» или ссылкой `?paste=` (адрес контейнера из подсветки Preview, `data-block`);
   // в работающий терминал он уходит ТОЛЬКО кнопкой человека в окне (спящему — вместе с запуском, 551-7 ниже).
   const [pasteOpen, setPasteOpen] = useState(false)
   const [pasteText, setPasteText] = useState(initialPaste ?? "")
@@ -294,13 +296,13 @@ export function AgentTerminal({ service, lang, words, build, dialogUi, initialPa
   if (state === "forbidden") {
     return <ForbiddenWithExit reason={words.forbidden} why={words.exitWhy} open={words.exitOpen} />
   }
-  if (noModes) return <p className="my-6 text-sm text-muted-foreground" data-agent-terminal data-state="no-modes">{words.noModes}</p>
+  if (noModes) return <p data-block="tqerp" className="my-6 text-sm text-muted-foreground" data-agent-terminal data-state="no-modes">{words.noModes}</p>
 
   const live = state === "running" || state === "connecting"
 
   return (
-    <div className="my-6 flex flex-col gap-3" data-agent-terminal data-state={state}>
-      <p className="text-sm">
+    <div data-block="r8oyr" className="my-6 flex flex-col gap-3" data-agent-terminal data-state={state}>
+      <p data-block="kauca" className="text-sm">
         {words.folderLabel}{" "}
         {folder ? (
           <code className="break-all rounded bg-muted px-2 py-0.5 font-mono text-xs" data-agent-folder={folder}>
@@ -313,25 +315,27 @@ export function AgentTerminal({ service, lang, words, build, dialogUi, initialPa
         )}
       </p>
 
-      <p className="text-muted-foreground text-xs" data-agent-first-run>{words.firstRun}</p>
+      <p data-block="jf8vu" className="text-muted-foreground text-xs" data-agent-first-run>{words.firstRun}</p>
 
       {/* 🛑 ПРЕДУПРЕЖДЕНИЕ — ДО ТЕРМИНАЛА И СВЁРНУТЫМ, как в мастерской памяти: заголовок виден всегда,
-          текст по раскрытию. `<details>` браузера — без лишнего островка. */}
-      <details className="group rounded-lg border border-destructive/50 bg-destructive/5" data-agent-warning>
-        <summary className="flex cursor-pointer list-none items-center gap-2 p-3 font-medium text-sm [&::-webkit-details-marker]:hidden">
+          текст по раскрытию. 836-2: shadcn `Collapsible` — an element's guard refuses a raw `<details>`. */}
+      <Collapsible data-block="ak9c1" className="group rounded-lg border border-destructive/50 bg-destructive/5" data-agent-warning>
+        <CollapsibleTrigger className="flex w-full cursor-pointer items-center gap-2 p-3 text-left font-medium text-sm">
           <AlertTriangle className="size-4 shrink-0" aria-hidden />
           <span className="flex-1">{words.warnTitle}</span>
-          <ChevronDown className="size-4 shrink-0 transition-transform group-open:rotate-180" aria-hidden />
-        </summary>
-        <div className="px-4 pb-4 text-sm">
-          <p>{words.warnBody}</p>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-muted-foreground">
-            {words.warnPoints.map((p) => (
-              <li key={p}>{p}</li>
-            ))}
-          </ul>
-        </div>
-      </details>
+          <ChevronDown className="size-4 shrink-0 transition-transform group-data-[state=open]:rotate-180" aria-hidden />
+        </CollapsibleTrigger>
+        <CollapsibleContent data-block="ak9c2">
+          <div data-block="pn4ae" className="px-4 pb-4 text-sm">
+            <p data-block="brm4p">{words.warnBody}</p>
+            <ul data-block="ck4e2" className="mt-2 list-disc space-y-1 pl-5 text-muted-foreground">
+              {words.warnPoints.map((p) => (
+                <li data-block="s5wyt" key={p}>{p}</li>
+              ))}
+            </ul>
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
 
       {!live && (
         <CoreBuildWatch active={state !== "checking"} words={words} build={build} sessionUrl={sessionUrl}>
@@ -341,29 +345,42 @@ export function AgentTerminal({ service, lang, words, build, dialogUi, initialPa
 
       {live && (
         <>
-          <div className="flex flex-wrap items-center gap-2">
+          <div data-block="ywsmd" className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-2 rounded-md bg-muted px-2 py-1 text-xs">
               <span className="size-2 rounded-full bg-primary" aria-hidden />
               {state === "connecting" ? words.starting : words.running}
             </span>
             <span className="text-muted-foreground text-xs">{words.keepsRunning}</span>
-            <div className="ml-auto flex gap-2">
+            <div data-block="u4t2m" className="ml-auto flex gap-2">
               <Button onClick={() => setPasteOpen(true)} size="sm" type="button" variant="outline" data-agent-paste>
                 <ClipboardPaste className="size-4" aria-hidden />
                 {words.paste}
               </Button>
-              <Button onClick={handleClear} size="sm" type="button" variant="outline" aria-label={words.clear} title={compact ? words.clear : undefined}>
-                <Eraser className="size-4" aria-hidden />
-                {!compact && words.clear}
-              </Button>
-              <Button onClick={handleStop} size="sm" type="button" variant="destructive" aria-label={words.stop} title={compact ? words.stop : undefined} data-agent-stop>
-                <Square className="size-4" aria-hidden />
-                {!compact && words.stop}
-              </Button>
+              {/* 836-2: a hint is a shadcn Tooltip, never `title=` — shown only where the button has no words (compact) */}
+              <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button onClick={handleClear} size="sm" type="button" variant="outline" aria-label={words.clear}>
+                    <Eraser className="size-4" aria-hidden />
+                    {!compact && words.clear}
+                  </Button>
+                </TooltipTrigger>
+                {compact && <TooltipContent>{words.clear}</TooltipContent>}
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button onClick={handleStop} size="sm" type="button" variant="destructive" aria-label={words.stop} data-agent-stop>
+                    <Square className="size-4" aria-hidden />
+                    {!compact && words.stop}
+                  </Button>
+                </TooltipTrigger>
+                {compact && <TooltipContent>{words.stop}</TooltipContent>}
+              </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
-          {taskAtStart && <p className="text-muted-foreground text-xs" data-agent-task-at-start>{words.taskAtStart}</p>}
-          <div className="h-[70dvh] min-h-[420px] overflow-hidden rounded-lg bg-[#0b0b0c] p-2">
+          {taskAtStart && <p data-block="bdi0z" className="text-muted-foreground text-xs" data-agent-task-at-start>{words.taskAtStart}</p>}
+          <div data-block="frgk7" className="h-[70dvh] min-h-[420px] overflow-hidden rounded-lg bg-[#0b0b0c] p-2">
             <XtermTerminal onData={handleData} onResize={handleResize} ref={termRef} autoFocus={!pasteOpen} />
           </div>
         </>

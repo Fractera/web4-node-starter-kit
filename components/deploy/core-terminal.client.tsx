@@ -121,7 +121,7 @@ export function CoreTerminal({ words, mode, since, onEnd, noReload = false }: { 
   return (
     <div className="flex flex-col gap-2" data-block="core-terminal" data-core-terminal={phase} data-core-terminal-source={source}>
       <LiveLog title={title} lines={lines.length ? lines : ["…"]} done={phase !== "running"} failed={phase === "failed"} />
-      {source === "reader" && phase === "running" && <p className="text-xs text-muted-foreground">{words.fromReader}</p>}
+      {source === "reader" && phase === "running" && <p data-block="aayof" className="text-xs text-muted-foreground">{words.fromReader}</p>}
       {/* Ядро ответило — значит, прежняя сборка работает: это проверено самим ответом. */}
       {phase === "failed" && <FailureNote words={words.failure} cause={cause} previousUp={true} retried={retried} target={mode === "update" ? "update" : "core"} />}
       {phase !== "running" && down.current && !noReload && (

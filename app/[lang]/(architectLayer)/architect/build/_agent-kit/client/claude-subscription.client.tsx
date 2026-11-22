@@ -176,24 +176,24 @@ export function ClaudeSubscription({ service, lang, words }: { service: string; 
   const walledNone = state?.walledNone === true
 
   return (
-    <div className="my-6 flex flex-col gap-3" data-claude-subscription data-state={auth === "checking" ? "checking" : on ? "on" : unknown ? "unknown" : "off"}>
-      <div className="rounded-lg border border-border bg-card p-4">
+    <div data-block="tn46c" className="my-6 flex flex-col gap-3" data-claude-subscription data-state={auth === "checking" ? "checking" : on ? "on" : unknown ? "unknown" : "off"}>
+      <div data-block="enet0" className="rounded-lg border border-border bg-card p-4">
         {auth === "checking" ? (
-          <p className="text-muted-foreground text-sm">{words.checking}</p>
+          <p data-block="q9cen" className="text-muted-foreground text-sm">{words.checking}</p>
         ) : (
           <>
-            <p className={cn("flex items-center gap-2 font-medium text-sm", walledNone && "text-destructive")} data-claude-walled={walledNone ? "none" : undefined}>
+            <p data-block="vcyqo" className={cn("flex items-center gap-2 font-medium text-sm", walledNone && "text-destructive")} data-claude-walled={walledNone ? "none" : undefined}>
               {on ? <Check className="size-4 shrink-0" aria-hidden /> : <CircleAlert className="size-4 shrink-0" aria-hidden />}
               {on ? words.onTitle : walledNone ? words.walledTitle : unknown ? words.unknownTitle : words.offTitle}
             </p>
-            <p className="mt-1 text-muted-foreground text-sm">
+            <p data-block="ri9tu" className="mt-1 text-muted-foreground text-sm">
               {walledNone ? words.walledText : on
                 ? (state?.own ? words.ownOnText : words.onText).replace("{email}", state?.email ?? "—").replace("{plan}", state?.plan ?? "—")
                 : unknown
                   ? words.unknownText
                   : words.offText}
             </p>
-            <div className="mt-3 flex flex-wrap gap-2">
+            <div data-block="mc8wn" className="mt-3 flex flex-wrap gap-2">
               {!open && !walledNone && (
                 <Button type="button" onClick={startLogin} disabled={starting} aria-busy={starting} variant={on ? "outline" : "default"} data-claude-login>
                   {starting ? <Spinner className="size-4" /> : <KeyRound className="size-4" aria-hidden />}
@@ -209,18 +209,18 @@ export function ClaudeSubscription({ service, lang, words }: { service: string; 
         )}
       </div>
 
-      <p className="text-muted-foreground text-xs">{state?.own ? words.ownQuota : words.quota}</p>
+      <p data-block="da9nc" className="text-muted-foreground text-xs">{state?.own ? words.ownQuota : words.quota}</p>
 
       {open && (
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <p className="flex-1 text-muted-foreground text-xs">{words.terminalNote}</p>
+        <div data-block="uo9pj" className="flex flex-col gap-2">
+          <div data-block="ja4m0" className="flex items-center gap-2">
+            <p data-block="l5ooo" className="flex-1 text-muted-foreground text-xs">{words.terminalNote}</p>
             <Button type="button" size="sm" variant="outline" onClick={closeTerminal}>
               <X className="size-4" aria-hidden />
               {words.close}
             </Button>
           </div>
-          <div className="h-[45dvh] min-h-[320px] overflow-hidden rounded-lg bg-[#0b0b0c] p-2">
+          <div data-block="kukcu" className="h-[45dvh] min-h-[320px] overflow-hidden rounded-lg bg-[#0b0b0c] p-2">
             <XtermTerminal onData={handleData} onResize={handleResize} ref={termRef} />
           </div>
         </div>
@@ -281,7 +281,7 @@ function AuthModal({
       title={<><KeyRound className="size-4 shrink-0" aria-hidden /> {words.modalTitle}</>}
       description={words.modalText}
       footer={
-        <div className="flex w-full flex-col gap-2">
+        <div data-block="dprzv" className="flex w-full flex-col gap-2">
           <Input
             autoComplete="off"
             disabled={sent}
@@ -296,11 +296,11 @@ function AuthModal({
         </div>
       }
     >
-      <div className="flex flex-col gap-3">
-        <div className="max-h-[110px] select-text overflow-y-auto break-all rounded-lg border border-border bg-muted/50 px-3 py-2 font-mono text-xs">
+      <div data-block="wb4kk" className="flex flex-col gap-3">
+        <div data-block="qi4rh" className="max-h-[110px] select-text overflow-y-auto break-all rounded-lg border border-border bg-muted/50 px-3 py-2 font-mono text-xs">
           {url}
         </div>
-        <div className="flex gap-2">
+        <div data-block="ytj2f" className="flex gap-2">
           <Button
             type="button"
             size="sm"

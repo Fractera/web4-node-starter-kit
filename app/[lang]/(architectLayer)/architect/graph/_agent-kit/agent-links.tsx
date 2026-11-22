@@ -19,9 +19,9 @@ export type AgentLinks = { terminal: string; telegram: string }
 export function AgentNextLinks({ links, words }: { links: AgentLinks; words: AgentLinksWords }) {
   return (
     <div className="my-6 flex flex-col gap-3 rounded-lg border p-4" data-block="agent-next-links">
-      <p className="font-medium text-sm">{words.nextTitle}</p>
-      <p className="text-muted-foreground text-sm">{words.nextText}</p>
-      <div className="flex flex-wrap gap-2">
+      <p data-block="qripj" className="font-medium text-sm">{words.nextTitle}</p>
+      <p data-block="bf9c5" className="text-muted-foreground text-sm">{words.nextText}</p>
+      <div data-block="sl711" className="flex flex-wrap gap-2">
         <Link href={links.terminal} className={buttonVariants({ variant: "default" })}>
           {words.openTerminal}
           <ArrowRight className="ml-2 size-4" aria-hidden />
@@ -39,9 +39,9 @@ export function AgentNextLinks({ links, words }: { links: AgentLinks; words: Age
 export function TelegramAppNeeded({ words }: { words: AgentLinksWords }) {
   return (
     <div className="my-6 flex flex-col gap-3 rounded-lg border p-4" data-block="telegram-app-needed">
-      <p className="font-medium text-sm">{words.appTitle}</p>
-      <p className="text-muted-foreground text-sm">{words.appText}</p>
-      <div>
+      <p data-block="zuvsk" className="font-medium text-sm">{words.appTitle}</p>
+      <p data-block="zd5lr" className="text-muted-foreground text-sm">{words.appText}</p>
+      <div data-block="s20xi">
         <a href={TELEGRAM_APPS} target="_blank" rel="noreferrer noopener" className={buttonVariants({ variant: "outline" })}>
           {words.getApp}
           <ExternalLink className="ml-2 size-4" aria-hidden />

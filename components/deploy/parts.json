@@ -8,7 +8,7 @@
         "en": "Build log",
         "ru": "Журнал сборки"
       },
-      "version": "1.0.0",
+      "version": "1.0.1",
       "parts": [],
       "scope": "panel",
       "path": "components/deploy/core-terminal.client.tsx",

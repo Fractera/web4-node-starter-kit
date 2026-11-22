@@ -59,10 +59,10 @@ function ExitButton({ href, open }: { href: string; open: string }) {
 
 export function ForbiddenWithExit({ reason, why, open }: { reason: string; why: string; open: string }) {
   const href = useLocalHref()
-  if (!href) return <p className="my-6 text-muted-foreground text-sm">{reason}</p>
+  if (!href) return <p data-block="y9w8s" className="my-6 text-muted-foreground text-sm">{reason}</p>
   return (
-    <div className="my-6 flex flex-col gap-3">
-      <p className="text-muted-foreground text-sm">{why}</p>
+    <div data-block="tg3wz" className="my-6 flex flex-col gap-3">
+      <p data-block="d0mx2" className="text-muted-foreground text-sm">{why}</p>
       <ExitButton href={href} open={open} />
     </div>
   )

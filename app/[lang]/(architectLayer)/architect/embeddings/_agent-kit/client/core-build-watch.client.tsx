@@ -116,17 +116,17 @@ export function CoreBuildWatch({ active, words, build: terminalWords, sessionUrl
   }
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-border bg-muted/40 p-5" data-block="core-build-watch" data-core-build={end ?? (silent ? "silent" : "running")}>
-      <div className="flex items-center gap-2 font-medium text-sm">
+      <div data-block="chf2m" className="flex items-center gap-2 font-medium text-sm">
         <Hammer className="size-4" aria-hidden />
         {end ? words.buildEnded : silent ? words.coreSilent : words.buildRunning}
       </div>
-      {!end && <p className="text-muted-foreground text-sm">{silent ? words.coreSilentText : words.buildNoStart}</p>}
+      {!end && <p data-block="ly52x" className="text-muted-foreground text-sm">{silent ? words.coreSilentText : words.buildNoStart}</p>}
       {build.mode === "bare"
         ? <LiveLog title={end === "done" ? terminalWords.done : end === "failed" ? terminalWords.failed : end ? words.buildBack : lines.length ? terminalWords.building : words.buildSilent} lines={lines.length ? lines : ["…"]} done={Boolean(end)} failed={end === "failed"} />
         : <CoreTerminal words={terminalWords} mode={build.mode} since={build.since} noReload onEnd={setEnd} />}
-      {woke && <p className="text-sm" data-core-build-woke>{words.buildWoke}</p>}
+      {woke && <p data-block="pbw46" className="text-sm" data-core-build-woke>{words.buildWoke}</p>}
       {end && !woke && (
-        <div className="flex flex-wrap gap-2">
+        <div data-block="skr8x" className="flex flex-wrap gap-2">
           {end !== "failed" && (
             <Button onClick={closeAndStart} type="button" data-core-build-start>
               <Play className="size-4" aria-hidden />

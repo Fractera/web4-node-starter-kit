@@ -29,14 +29,14 @@ export function SleepingCard({ words, checking, disabled, note, offer, onStart }
   )
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-border border-dashed bg-muted/40 p-5 text-muted-foreground" data-block="agent-sleeping-card" data-resume={offer ? offer.primary : "none"}>
-      <div className="flex items-center gap-2 font-medium text-foreground">
+      <div data-block="mfvu7" className="flex items-center gap-2 font-medium text-foreground">
         <Moon className="size-4" aria-hidden />
         {checking ? "…" : words.sleepingTitle}
       </div>
-      <p className="text-sm">{words.sleepingBody}</p>
-      {note && <p className="text-sm">{note}</p>}
-      {why && <p className="text-sm" data-agent-resume-why>{why}{fill ? ` ${fill}` : ""}</p>}
-      <div className="flex flex-wrap gap-2">{continueFirst ? [resumeButton, startButton] : [startButton, resumeButton]}</div>
+      <p data-block="zcybv" className="text-sm">{words.sleepingBody}</p>
+      {note && <p data-block="ha7ad" className="text-sm">{note}</p>}
+      {why && <p data-block="usbwu" className="text-sm" data-agent-resume-why>{why}{fill ? ` ${fill}` : ""}</p>}
+      <div data-block="m2v35" className="flex flex-wrap gap-2">{continueFirst ? [resumeButton, startButton] : [startButton, resumeButton]}</div>
     </div>
   )
 }

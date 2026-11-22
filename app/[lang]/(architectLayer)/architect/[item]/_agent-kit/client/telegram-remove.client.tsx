@@ -36,17 +36,17 @@ export function TelegramRemove({ bot, words, dialogUi, onRemove }: Props) {
 
   return (
     <div className="mt-6 flex flex-col gap-2" data-block="telegram-remove">
-      <H3 variant="ui">{words.zone}</H3>
-      <div className="flex flex-col gap-2 rounded-lg border border-destructive/40 bg-destructive/5 p-3">
-        <p className="font-medium text-foreground text-sm">{words.title}</p>
-        <Small className="text-muted-foreground">{words.text}</Small>
-        <div>
+      <H3 data-block="iaa89" variant="ui">{words.zone}</H3>
+      <div data-block="d9lja" className="flex flex-col gap-2 rounded-lg border border-destructive/40 bg-destructive/5 p-3">
+        <p data-block="mtpq8" className="font-medium text-foreground text-sm">{words.title}</p>
+        <Small data-block="pds5i" className="text-muted-foreground">{words.text}</Small>
+        <div data-block="vcqh1">
           <Button disabled={busy} onClick={() => setOpen(true)} size="sm" type="button" variant="destructive" data-telegram-remove>
             <Trash2 aria-hidden data-icon />
             {words.button}
           </Button>
         </div>
-        {done ? <Small className="text-foreground" role="status">{words.done}</Small> : null}
+        {done ? <Small data-block="gb8oj" className="text-foreground" role="status">{words.done}</Small> : null}
       </div>
       <AppDialog
         footer={
@@ -60,10 +60,10 @@ export function TelegramRemove({ bot, words, dialogUi, onRemove }: Props) {
         title={fill(words.dialogTitle)}
         ui={dialogUi}
       >
-        <ul className="flex list-disc flex-col gap-2 pl-5 text-foreground text-sm">
-          {words.risks.map((r) => <li key={r}>{r}</li>)}
+        <ul data-block="mtero" className="flex list-disc flex-col gap-2 pl-5 text-foreground text-sm">
+          {words.risks.map((r) => <li data-block="c9v4m" key={r}>{r}</li>)}
         </ul>
-        <div className="mt-4 flex items-center gap-2">
+        <div data-block="vh13p" className="mt-4 flex items-center gap-2">
           <Checkbox checked={agree} id="telegram-remove-agree" onCheckedChange={(v) => setAgree(v === true)} />
           <Label htmlFor="telegram-remove-agree">{fill(words.agree)}</Label>
         </div>

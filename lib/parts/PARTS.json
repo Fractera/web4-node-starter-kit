@@ -119,7 +119,7 @@
         "en": "Build log",
         "ru": "Журнал сборки"
       },
-      "version": "1.0.0",
+      "version": "1.0.1",
       "parts": [],
       "scope": "panel",
       "path": "components/deploy/core-terminal.client.tsx",
@@ -177,7 +177,7 @@
         "app/[lang]/(architectLayer)/_components/live-log.client",
         "components/ui/button"
       ],
-      "bodyHash": "d10323e1332428ba"
+      "bodyHash": "197bcf2d55b8c74f"
     },
     {
       "id": "design-colors",
@@ -556,8 +556,7 @@
       },
       "usedBy": [
         "app/[lang]/(architectLayer)/architect/[item]/[[...page]]/page.tsx",
-        "app/[lang]/(architectLayer)/architect/build/environment/page.tsx",
-        "app/[lang]/(elementAgentLayer)/element-agent/[item]/[page]/page.tsx"
+        "app/[lang]/(architectLayer)/architect/build/environment/page.tsx"
       ],
       "body": [
         "components/environment/environment-panel.client.tsx",
@@ -1543,7 +1542,7 @@
         },
         {
           "id": "tool-voice-input",
-          "version": "1.1.1"
+          "version": "1.1.2"
         }
       ],
       "scope": "any",
@@ -1656,7 +1655,7 @@
         "en": "Voice input",
         "ru": "Голосовой ввод"
       },
-      "version": "1.1.1",
+      "version": "1.1.2",
       "parts": [],
       "scope": "any",
       "what": {
@@ -1697,11 +1696,15 @@
         "_tools/voice-input/types/voice-input.ts"
       ],
       "requires": [
+        "components/ui/button",
+        "components/ui/textarea",
+        "components/ui/tooltip",
         "lib/i18n/voice-field.i18n",
         "lib/openai-error.cjs",
-        "lib/usage-ledger.cjs"
+        "lib/usage-ledger.cjs",
+        "lib/utils"
       ],
-      "bodyHash": "0fd8e36f5799ccf2"
+      "bodyHash": "dc6aca4367a99359"
     },
     {
       "id": "tools-tab",
@@ -1774,7 +1777,7 @@
       "parts": [
         {
           "id": "tool-voice-input",
-          "version": "1.1.1"
+          "version": "1.1.2"
         }
       ],
       "scope": "any",
@@ -1961,8 +1964,7 @@
         ]
       },
       "usedBy": [
-        "app/[lang]/(architectLayer)/layout.tsx",
-        "app/[lang]/(elementAgentLayer)/element-agent/[item]/[page]/page.tsx"
+        "app/[lang]/(architectLayer)/layout.tsx"
       ]
     },
     {
@@ -3115,6 +3117,7 @@
         "_tools/translations-dialog/client/translation-cell.client.tsx",
         "_tools/translations-dialog/client/translations-dialog.client.tsx",
         "_tools/video-trim/client/video-trimmer.client.tsx",
+        "_tools/voice-input/client/voice-input.client.tsx",
         "app/[lang]/(architectLayer)/_components/birth-button.client.tsx",
         "app/[lang]/(architectLayer)/_components/capability-cards.client.tsx",
         "app/[lang]/(architectLayer)/_components/create-draft-button.client.tsx",
@@ -3250,7 +3253,6 @@
         "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/sleeping-card.client.tsx",
         "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/telegram-channel.client.tsx",
         "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/telegram-remove.client.tsx",
-        "app/[lang]/(elementAgentLayer)/element-agent/[item]/[page]/page.tsx",
         "app/[lang]/_components/cookie-banner/cookie-banner.client.tsx",
         "components/accordion/accordion-section.client.tsx",
         "components/ai-elements/attachments.tsx",
@@ -3554,6 +3556,19 @@
       "usedBy": [
         "app/[lang]/(architectLayer)/_components/capability-cards.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-domain-more.client.tsx",
+        "app/[lang]/(architectLayer)/architect/[item]/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/auth/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/build/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/cache/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/config/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/data/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/embeddings/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/graph/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/memory/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/storage/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/stripe/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/agent-terminal.client.tsx",
         "components/ai-elements/web-preview.tsx",
         "components/hosting/server-domain-certs.client.tsx",
         "components/shell/shell-account.client.tsx",
@@ -4471,6 +4486,7 @@
       "usedBy": [
         "_tools/socials-ai/client/socials-ai-dialog.client.tsx",
         "_tools/translations-dialog/client/translation-cell.client.tsx",
+        "_tools/voice-input/client/voice-input.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-messenger-settings.client.tsx",
         "components/element-settings/brief-editor.client.tsx",
         "components/element-settings/site/config/field-row.client.tsx",
@@ -4504,7 +4520,21 @@
       },
       "usedBy": [
         "_tools/translations-dialog/client/translations-dialog.client.tsx",
+        "_tools/voice-input/client/voice-input.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-github.client.tsx",
+        "app/[lang]/(architectLayer)/architect/[item]/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/auth/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/build/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/cache/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/config/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/data/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/embeddings/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/graph/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/memory/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/storage/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/stripe/_agent-kit/client/agent-terminal.client.tsx",
+        "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/agent-terminal.client.tsx",
         "components/ai-elements/message.tsx",
         "components/ai-elements/prompt-input.tsx",
         "components/ai-elements/web-preview.tsx",
@@ -4597,7 +4627,6 @@
         "app/[lang]/(architectLayer)/architect/stripe/_agent-kit/client/telegram-remove.client.tsx",
         "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/telegram-channel.client.tsx",
         "app/[lang]/(architectLayer)/architect/vectors/_agent-kit/client/telegram-remove.client.tsx",
-        "app/[lang]/(elementAgentLayer)/element-agent/[item]/[page]/page.tsx",
         "app/[lang]/error.tsx",
         "components/auth/google-setup.client.tsx",
         "components/auth/resend-setup.client.tsx",

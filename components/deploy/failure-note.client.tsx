@@ -36,12 +36,12 @@ export function FailureNote({ words, cause, previousUp, retried, target }: {
   }
   const kind = cause?.kind ?? "unknown"
   return (
-    <div className="flex flex-col gap-1 rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2 text-sm" data-failure={kind}>
-      <p className="font-medium text-foreground">{words.causes[kind] ?? words.causes.unknown}</p>
-      {cause?.detail && <p className="font-mono text-xs text-muted-foreground">{words.where.replace("{detail}", cause.detail)}</p>}
-      {previousUp !== null && <p className="text-foreground" data-failure-previous={previousUp ? "up" : "down"}>{previousUp ? words.previousUp : words.previousDown}</p>}
-      {retried && <p className="text-muted-foreground" data-failure-retried>{words.retried}</p>}
-      {sent ? <p className="text-foreground" data-failure-sent>{sent}</p> : (
+    <div data-block="b0mox" className="flex flex-col gap-1 rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2 text-sm" data-failure={kind}>
+      <p data-block="u8z03" className="font-medium text-foreground">{words.causes[kind] ?? words.causes.unknown}</p>
+      {cause?.detail && <p data-block="ell34" className="font-mono text-xs text-muted-foreground">{words.where.replace("{detail}", cause.detail)}</p>}
+      {previousUp !== null && <p data-block="t8yt3" className="text-foreground" data-failure-previous={previousUp ? "up" : "down"}>{previousUp ? words.previousUp : words.previousDown}</p>}
+      {retried && <p data-block="rngkl" className="text-muted-foreground" data-failure-retried>{words.retried}</p>}
+      {sent ? <p data-block="s0s63" className="text-foreground" data-failure-sent>{sent}</p> : (
         <Button variant="outline" size="sm" className="self-start" onClick={() => void debug()} data-failure-debug={target}>{words.debug}</Button>
       )}
     </div>

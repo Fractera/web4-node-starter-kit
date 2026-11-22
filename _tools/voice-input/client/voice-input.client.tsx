@@ -1,6 +1,10 @@
 "use client";
 
 import { useVoiceRecorder, VOICE_BAR, type VoiceTargetRef } from "./use-voice-recorder";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 // ГОЛОСОВОЙ ВВОД — маленькая кнопка рядом с полем (перенос v1, шаг 232).
 //
@@ -55,38 +59,47 @@ export default function VoiceInput({
   const v = useVoiceRecorder({ targetRef, value, onChange, lang, disabled, apiUrl });
   const L = v.strings;
 
+  // 836-2: shadcn parts and theme tokens (an element's guards refuse raw controls, `title=`, `space-*` and literal colours) — the same
+  // behaviour, the same layout.
   return (
-    <div className="w-full space-y-1.5">
-      <div className="flex w-full items-center gap-2">
-        <button
-          type="button"
-          disabled={disabled || v.busy || !v.supported}
-          title={v.supported ? L.tipOk : L.tipInsecure}
-          // 417 (владелец 2026-10-06: «через 500 мс окно дёргается … микрофон исчезает»): начавшаяся запись показывает полосу громкости,
-      // окно по центру экрана растёт и кнопка уезжает из-под пальца — `pointerleave` останавливал запись. Захват указателя держит
-      // кнопку за пальцем: запись кончается, только когда его отпустили.
-      onPointerDown={(e) => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); v.start(); }}
-          onPointerUp={v.stop}
-          onPointerLeave={v.stop}
-          onPointerCancel={v.stop}
-          className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium transition-colors disabled:opacity-50 ${
-            v.recording ? "border-rose-500/50 text-rose-700 dark:text-rose-400" : "hover:bg-accent"
-          }`}
-        >
-          <MicIcon off={!v.supported} />
-          {v.busy ? L.transcribing : v.recording ? L.recording : L.hold}
-        </button>
+    <div data-block="vi8w1" className="flex w-full flex-col gap-1.5">
+      <div data-block="vi8w2" className="flex w-full items-center gap-2">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                disabled={disabled || v.busy || !v.supported}
+                // 417 (владелец 2026-10-06: «через 500 мс окно дёргается … микрофон исчезает»): начавшаяся запись показывает полосу громкости,
+                // окно по центру экрана растёт и кнопка уезжает из-под пальца — `pointerleave` останавливал запись. Захват указателя держит
+                // кнопку за пальцем: запись кончается, только когда его отпустили.
+                onPointerDown={(e) => { e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); v.start(); }}
+                onPointerUp={v.stop}
+                onPointerLeave={v.stop}
+                onPointerCancel={v.stop}
+                className={cn("gap-1.5 text-xs", v.recording && "border-destructive/50 text-destructive")}
+              >
+                <MicIcon off={!v.supported} />
+                {v.busy ? L.transcribing : v.recording ? L.recording : L.hold}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{v.supported ? L.tipOk : L.tipInsecure}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
         {/* ПОЛОСА ЗВУКА — 40px; столбики 2px через 1px, до 32px, дописываются слева
             направо; в центре плашка с прошедшим временем. */}
         {v.recording ? (
           <div
+            data-block="vi8w3"
             ref={(el) => {
               if (el) v.setBarCapacity(Math.floor(el.clientWidth / (VOICE_BAR.width + VOICE_BAR.gap)));
             }}
             className="relative h-10 min-w-[120px] flex-1 overflow-hidden rounded-md border border-border bg-muted/40"
           >
-            <div className="absolute inset-0 flex items-center" style={{ gap: `${VOICE_BAR.gap}px`, paddingInline: 2 }}>
+            <div data-block="vi8w4" className="absolute inset-0 flex items-center" style={{ gap: `${VOICE_BAR.gap}px`, paddingInline: 2 }}>
               {v.bars.map((h, i) => (
                 <span key={i} className="shrink-0 rounded-sm bg-primary/70" style={{ width: `${VOICE_BAR.width}px`, height: `${h}px` }} />
               ))}
@@ -103,40 +116,31 @@ export default function VoiceInput({
           текст встаёт в СЕРЕДИНУ документа, и выловить там чужую фразу тяжелее,
           чем один раз её прочитать. */}
       {v.draft !== null ? (
-        <div className="w-full rounded-md border border-border bg-muted/30 p-2">
-          <p className="mb-1 text-[10px] font-medium text-muted-foreground">{L.draftTitle}</p>
+        <div data-block="vi8w5" className="w-full rounded-md border border-border bg-muted/30 p-2">
+          <p data-block="vi8w6" className="mb-1 text-[10px] font-medium text-muted-foreground">{L.draftTitle}</p>
           {/* Текст ПРАВИТСЯ прямо здесь: одно неверно услышанное слово не должно
               стоить повторной диктовки всего абзаца. */}
-          <textarea
+          <Textarea
             value={v.draft}
             onChange={(e) => v.setDraft(e.target.value)}
             rows={Math.min(8, Math.max(2, v.draft.split("\n").length + 1))}
-            className="w-full resize-y rounded border border-border bg-background p-2 text-xs leading-relaxed text-foreground outline-none"
+            className="min-h-0 resize-y text-xs leading-relaxed"
           />
-          <div className="mt-1.5 flex items-center gap-2">
-            <button
-              type="button"
-              onClick={v.accept}
-              disabled={!v.draft.trim()}
-              className="rounded-md border border-primary bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground transition-colors disabled:opacity-50"
-            >
+          <div data-block="vi8w7" className="mt-1.5 flex items-center gap-2">
+            <Button type="button" size="sm" onClick={v.accept} disabled={!v.draft.trim()}>
               {L.accept}
-            </button>
-            <button
-              type="button"
-              onClick={v.discard}
-              className="rounded-md border border-border px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent"
-            >
+            </Button>
+            <Button type="button" size="sm" variant="outline" onClick={v.discard}>
               {L.discard}
-            </button>
+            </Button>
           </div>
         </div>
       ) : null}
 
       {/* Причина отказа — строкой рядом с кнопкой: тостов у инструмента нет, а
           тупика быть не должно. */}
-      {!v.supported ? <p className="text-xs text-muted-foreground">{L.tipInsecure}</p> : null}
-      {v.note ? <p className="text-xs text-amber-700 dark:text-amber-400">{v.note}</p> : null}
+      {!v.supported ? <p data-block="vi8w8" className="text-xs text-muted-foreground">{L.tipInsecure}</p> : null}
+      {v.note ? <p data-block="vi8w9" className="text-xs text-warning">{v.note}</p> : null}
     </div>
   );
 }

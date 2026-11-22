@@ -48,7 +48,7 @@ type State = {
 
 function Locked({ text }: { text: string }) {
   return (
-    <p className="mt-2 flex items-center gap-2 text-muted-foreground text-sm">
+    <p data-block="b4tim" className="mt-2 flex items-center gap-2 text-muted-foreground text-sm">
       <Lock className="size-4 shrink-0" aria-hidden />
       {text}
     </p>
@@ -182,11 +182,11 @@ export function TelegramChannel({ service, lang, words, slot, remote, dialogUi }
   }
 
   if (state === "forbidden") return <ForbiddenWithExit reason={words.forbidden} why={words.exitWhy} open={words.exitOpen} />
-  if (state === null) return <p className="my-6 text-muted-foreground text-sm">{words.loading}</p>
+  if (state === null) return <p data-block="yez30" className="my-6 text-muted-foreground text-sm">{words.loading}</p>
   if (state === "silent")
     return (
-      <div className="my-6 flex flex-col gap-2" data-telegram-channel data-silent>
-        <p className="rounded-lg border border-destructive/40 px-4 py-3 text-destructive text-sm" role="status" data-tg-error>
+      <div data-block="qvxcw" className="my-6 flex flex-col gap-2" data-telegram-channel data-silent>
+        <p data-block="x9gmu" className="rounded-lg border border-destructive/40 px-4 py-3 text-destructive text-sm" role="status" data-tg-error>
           {error ?? words.errors.network}
         </p>
         <Button className="w-fit" onClick={() => { setState(null); void load() }} size="sm" variant="outline">
@@ -198,11 +198,11 @@ export function TelegramChannel({ service, lang, words, slot, remote, dialogUi }
   const terminalHref = `/${lang}${state.links?.terminal ?? `/architect/${service}/terminal`}`
 
   return (
-    <div className="my-6 flex flex-col gap-3" data-telegram-channel data-running={state.running ? "1" : "0"}>
-      <p className="text-muted-foreground text-sm">{words.intro}</p>
+    <div data-block="ri746" className="my-6 flex flex-col gap-3" data-telegram-channel data-running={state.running ? "1" : "0"}>
+      <p data-block="ck5r1" className="text-muted-foreground text-sm">{words.intro}</p>
 
       <Step n={1} title={words.step1Title}>
-        <p className="text-muted-foreground text-sm">
+        <p data-block="kgwlg" className="text-muted-foreground text-sm">
           {/* Команду человек набирает в Telegram дословно — поэтому она выделена фоном (слово владельца: «/newbot need select with bg»). */}
           {words.step1Text.split("{cmd}")[0]}
           <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-foreground text-xs">/newbot</code>
@@ -212,7 +212,7 @@ export function TelegramChannel({ service, lang, words, slot, remote, dialogUi }
         {/* the owner, 2026-11-19: a token of an EXISTING bot connects that bot — Telegram names it (getMe), and once connected these rows show its real name */}
         <CopyRow id="tg-name" label={words.nameLabel} value={state.botUsername ? state.botName ?? "" : state.suggestion.name} copy={words.copy} copied={words.copied} editable />
         <CopyRow id="tg-username" label={words.usernameLabel} value={state.botUsername ?? state.suggestion.username} copy={words.copy} copied={words.copied} editable />
-        <div className="mt-3">
+        <div data-block="r02a1" className="mt-3">
           <a href={BOTFATHER} target="_blank" rel="noreferrer noopener" className={buttonVariants({ variant: "outline" })}>
             {words.openBotFather}
             <ExternalLink className="ml-2 size-4" aria-hidden />
@@ -221,13 +221,13 @@ export function TelegramChannel({ service, lang, words, slot, remote, dialogUi }
       </Step>
 
       <Step n={2} title={words.step2Title}>
-        <p className="text-muted-foreground text-sm">{words.step2Text}</p>
+        <p data-block="cf31z" className="text-muted-foreground text-sm">{words.step2Text}</p>
         {configured && (
-          <p className="mt-2 text-foreground text-sm" data-tg-bot>
+          <p data-block="cny1k" className="mt-2 text-foreground text-sm" data-tg-bot>
             {words.tokenSaved.replace("{username}", state.botUsername ?? "").replace("{tail}", state.tail ?? "")}
           </p>
         )}
-        <div className="mt-3 flex flex-col gap-1">
+        <div data-block="tubdq" className="mt-3 flex flex-col gap-1">
           <Label htmlFor="tg-token">{words.tokenLabel}</Label>
           <Input
             id="tg-token"
@@ -238,9 +238,9 @@ export function TelegramChannel({ service, lang, words, slot, remote, dialogUi }
             spellCheck={false}
             className="font-mono text-xs"
           />
-          <Small className="text-muted-foreground">{words.tokenHint}</Small>
+          <Small data-block="pdaw0" className="text-muted-foreground">{words.tokenHint}</Small>
         </div>
-        <div className="mt-3">
+        <div data-block="fcirp" className="mt-3">
           <Button type="button" onClick={saveToken} disabled={busy !== null || !token.trim()}>
             {busy === "token" && <Spinner className="size-4" />}
             {busy === "token" ? words.saving : words.saveToken}
@@ -249,16 +249,16 @@ export function TelegramChannel({ service, lang, words, slot, remote, dialogUi }
       </Step>
 
       <Step n={3} title={words.step3Title}>
-        <p className="text-muted-foreground text-sm">{words.step3Text}</p>
+        <p data-block="rz0qt" className="text-muted-foreground text-sm">{words.step3Text}</p>
         {!configured ? (
           <Locked text={words.locked} />
         ) : activated ? (
-          <p className="mt-2 flex items-center gap-2 text-foreground text-sm" role="status">
+          <p data-block="wg3vo" className="mt-2 flex items-center gap-2 text-foreground text-sm" role="status">
             <Check className="size-4 shrink-0" aria-hidden />
             {justActivated ? words.activated : words.allowedCount.replace("{n}", String(state.allowed))}
           </p>
         ) : (
-          <div className="mt-3 flex flex-col gap-2">
+          <div data-block="nla9v" className="mt-3 flex flex-col gap-2">
             {activationUrl ? (
               // 🔒 БОЛЬШАЯ КНОПКА — ЭТО ССЫЛКА: она перебрасывает прямо в Telegram, как в памяти.
               <a
@@ -273,12 +273,12 @@ export function TelegramChannel({ service, lang, words, slot, remote, dialogUi }
                 {words.activateBtn}
               </a>
             ) : (
-              <p className="flex items-center gap-2 text-muted-foreground text-sm">
+              <p data-block="l50ar" className="flex items-center gap-2 text-muted-foreground text-sm">
                 <Spinner className="size-4" />
                 {words.loading}
               </p>
             )}
-            <p className="flex items-center gap-2 text-muted-foreground text-sm" data-activate-wait>
+            <p data-block="h1fh9" className="flex items-center gap-2 text-muted-foreground text-sm" data-activate-wait>
               {clicked && <Spinner className="size-4" />}
               {clicked ? words.activateWaiting : words.activateHint}
             </p>
@@ -290,26 +290,26 @@ export function TelegramChannel({ service, lang, words, slot, remote, dialogUi }
         {!activated ? (
           <Locked text={words.locked} />
         ) : slot || remote ? (
-          <div className="flex flex-col gap-3" data-tg-slot={slot ?? "remote"}>
-            <p className="text-muted-foreground text-sm">{remote?.doneText ?? words.slotStep4Text}</p>
+          <div data-block="mq87v" className="flex flex-col gap-3" data-tg-slot={slot ?? "remote"}>
+            <p data-block="b25d7" className="text-muted-foreground text-sm">{remote?.doneText ?? words.slotStep4Text}</p>
             {state.botUsername && (
-              <div>
+              <div data-block="d2yqu">
                 <a href={`https://t.me/${state.botUsername}`} target="_blank" rel="noreferrer" className={buttonVariants({})} data-open-bot>
                   <Send className="size-4" aria-hidden />
                   {words.openChat} @{state.botUsername}
                 </a>
               </div>
             )}
-            <Small className="text-muted-foreground" data-allowed>
+            <Small data-block="zzib0" className="text-muted-foreground" data-allowed>
               {words.allowedCount.replace("{n}", String(state.allowed))}
             </Small>
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
-            <p className="text-muted-foreground text-sm">{words.step4Text}</p>
+          <div data-block="r3u4i" className="flex flex-col gap-3">
+            <p data-block="i1j6i" className="text-muted-foreground text-sm">{words.step4Text}</p>
 
             {/* 🔒 СОСТОЯНИЕ — ОДНОЙ КАРТОЧКОЙ, КНОПКА ВЕДЁТ В ТЕРМИНАЛ (решение владельца 2026-09-22). */}
-            <div
+            <div data-block="nralh"
               className={
                 state.running
                   ? "flex gap-2 rounded-md border border-tone-data/50 bg-tone-data/10 px-3 py-2 text-sm"
@@ -323,9 +323,9 @@ export function TelegramChannel({ service, lang, words, slot, remote, dialogUi }
               ) : (
                 <TriangleAlert className="mt-0.5 size-4 shrink-0 text-warning" aria-hidden />
               )}
-              <div className="flex flex-col gap-2">
-                <p>{state.running ? words.cardActive : state.terminalWithoutChannel ? words.cardWithoutChannel : words.cardInactive}</p>
-                <div>
+              <div data-block="vltlj" className="flex flex-col gap-2">
+                <p data-block="p5o5j">{state.running ? words.cardActive : state.terminalWithoutChannel ? words.cardWithoutChannel : words.cardInactive}</p>
+                <div data-block="zmfrl">
                   <a href={terminalHref} className={buttonVariants({ size: "sm", variant: "outline" })} data-open-terminal>
                     <TerminalSquare className="size-4" aria-hidden />
                     {words.openTerminal}
@@ -335,7 +335,7 @@ export function TelegramChannel({ service, lang, words, slot, remote, dialogUi }
             </div>
 
             {state.botUsername && (
-              <div>
+              <div data-block="csec9">
                 <a href={`https://t.me/${state.botUsername}`} target="_blank" rel="noreferrer" className={buttonVariants({})} data-open-bot>
                   <Send className="size-4" aria-hidden />
                   {words.openChat} @{state.botUsername}
@@ -343,7 +343,7 @@ export function TelegramChannel({ service, lang, words, slot, remote, dialogUi }
               </div>
             )}
 
-            <Small className="text-muted-foreground" data-allowed>
+            <Small data-block="shbul" className="text-muted-foreground" data-allowed>
               {words.allowedCount.replace("{n}", String(state.allowed))}
             </Small>
             <StepPoints items={words.notes} />
@@ -352,7 +352,7 @@ export function TelegramChannel({ service, lang, words, slot, remote, dialogUi }
       </Step>
 
       {error && (
-        <p className="rounded-lg border border-destructive/40 px-4 py-3 text-destructive text-sm" role="status" data-tg-error>
+        <p data-block="smqh8" className="rounded-lg border border-destructive/40 px-4 py-3 text-destructive text-sm" role="status" data-tg-error>
           {error}
         </p>
       )}

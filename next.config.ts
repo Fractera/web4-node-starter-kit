@@ -63,10 +63,9 @@ const nextConfig: NextConfig = {
       beforeFiles: [],
       afterFiles: [
         { source: "/:lang([a-z]{2})", destination: "/:lang/architect" },
-        // 834-4 (✗ measured 2026-11-21 20:48: /ru/element-agent/j58fl/subscription answered 404): Next matches DYNAMIC routes after the
-        // afterFiles rewrites, so the element agent frame (`(elementAgentLayer)/element-agent/[item]/[page]`) was rewritten into
-        // `architect/element-agent/…` and lost. Its prefix is left out of the rewrite; every other clean address goes on as before.
-        { source: "/:lang([a-z]{2})/:first((?!element-agent(?:/|$))[^/]+)/:rest*", destination: "/:lang/architect/:first/:rest*" },
+        // 836-3: the 834-4 element agent frame left the core (an element's agent pages live in the element itself) — and with it the
+        // exception it needed here.
+        { source: "/:lang([a-z]{2})/:path*", destination: "/:lang/architect/:path*" },
       ],
       fallback: [],
     };

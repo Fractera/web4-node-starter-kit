@@ -215,7 +215,8 @@
     "test:core-guard": "node scripts/core-guard.test.mjs",
     "test:node-records": "node scripts/node-records.test.mjs",
     "test:menu-state": "node scripts/menu-state.test.mjs",
-    "test:reset-wake": "node scripts/reset-wake.test.mjs"
+    "test:reset-wake": "node scripts/reset-wake.test.mjs",
+    "agent-kit:template": "node scripts/agent-kit-template.mjs"
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.55",

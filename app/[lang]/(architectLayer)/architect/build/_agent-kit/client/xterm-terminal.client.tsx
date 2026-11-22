@@ -170,5 +170,5 @@ export function XtermTerminal({ onData, onResize, ref, autoFocus = true }: Props
     };
   }, []);
 
-  return <div className="h-full w-full" ref={containerRef} />;
+  return <div data-block="oszwf" className="h-full w-full" ref={containerRef} />;
 }

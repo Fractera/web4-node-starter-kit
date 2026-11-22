@@ -15,8 +15,8 @@ export function LiveLog({ title, lines, done, failed }: { title: string; lines: 
     if (el) el.scrollTop = el.scrollHeight
   }, [lines])
   return (
-    <div className="flex flex-col gap-2" role="status" data-live-log={done ? (failed ? "failed" : "done") : "running"}>
-      <p className={`flex items-center gap-2 text-sm font-medium ${failed ? "text-destructive" : "text-foreground"}`}>
+    <div data-block="dwc8e" className="flex flex-col gap-2" role="status" data-live-log={done ? (failed ? "failed" : "done") : "running"}>
+      <p data-block="hwnnd" className={`flex items-center gap-2 text-sm font-medium ${failed ? "text-destructive" : "text-foreground"}`}>
         {!done && <Spinner />}
         {title}
       </p>
