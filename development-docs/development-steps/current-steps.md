@@ -377,6 +377,12 @@ template custom v0.3.238 — Roma's terminal run of the release was cut (no tag 
 template -- pin custom v0.3.238`, rollout tg/ + admin files to root, push core again. Marketplace element on fractera.ai — the server's own
 main agent (plan 841-3).
 
+**21:46 — RELEASED:** Roma ran the release himself: custom v0.3.238 (tag a121c298 on GitHub, workshop cd55b2b); pinned 73f43eaa; core pushed
+to fork and Fractera (ls-remote 73f43eaa). Rollout: root and sgnou both «HEAD is not its pin — left alone» (their own commits) — they take the
+template by their own Update/agents, nothing forced. Window e47e3af2 closed. OPEN: (1) CI of the template — windows-latest fails since
+v0.3.237 on `tg:projects --check` (CRLF checkout); fixed in workshop faf5dc4 (compare by content, proven with a CRLF copy) — rides the NEXT
+release; (2) the marketplace element on the server — window cb7347b1 (Roma sends the phrase to Orchestrator after the server's core update).
+
 **WHERE THE SERVER STANDS:** core 5d05c566 (built 20:06) = 839-8 live. Pushed and WAITING his press: 2b7985a3 (839-9, EPERM = alive) —
 «Проверить снова» showed «1 изменений», trial merge OK. After it: he writes to the etuf1 bot (Etuf1-messenger-h2a) + «Включить» → the
 channel must come up and the agent answer. If not: ask the server agent for logs/web4-out.log lines of the wake and `ls -l` of
