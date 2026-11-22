@@ -350,6 +350,15 @@ eyes of the Pult/subscription live, push fork + Fractera. Proofs so far: browser
 stays; head link on top; switch note; «Прочитано»; start screen) against a stand-in core; prebuild RC=0; core tsc clean. Step 841 (search
 + native elements in the Mini App) planned: new-steps/841-the-element-mini-app-searches-the-node.md, told Roma 964.
 
+**21:05 — USAGE LIMIT; where I stopped:** Roma 968–974: the Mini App must match mock A–D (bold coloured tiles; home top = the Pult's top) —
+DONE in workshop commit after 8daf334 (tg-home-agent.client.tsx, tg-tone.ts + --tg-tile-* tokens, head ↻, intro `kinds` block of 973); core
+state.ts gives the element its masked own e-mail, tokens used and its own asks (uncommitted in the core — commit lib/node/tg-app/state.ts).
+Local tag v0.3.238 deleted (never pushed). NEXT: rerun the workshop prebuild, then release v0.3.238 (push needs Roma's «да, выпускай» —
+classifier refused `TEMPLATE_GITHUB_TOKEN=$(gh auth token)`), pin, rollout, ONE core build (asked 965), eyes live, push. Roma 974 asks to
+use a Telegram Mini App design skill: catalog has none exact; nearest mobile-app-ui-design (491★, 12k) — tell him, propose. Marketplace
+concept saved: memory native-marketplace-concept.md + 841 plan. Browser proof 8/8 again after the redesign. Dev server 24710 + stand-in
+core 24799 may still run — kill them.
+
 **WHERE THE SERVER STANDS:** core 5d05c566 (built 20:06) = 839-8 live. Pushed and WAITING his press: 2b7985a3 (839-9, EPERM = alive) —
 «Проверить снова» showed «1 изменений», trial merge OK. After it: he writes to the etuf1 bot (Etuf1-messenger-h2a) + «Включить» → the
 channel must come up and the agent answer. If not: ask the server agent for logs/web4-out.log lines of the wake and `ls -l` of

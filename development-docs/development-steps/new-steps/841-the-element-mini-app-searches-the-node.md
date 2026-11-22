@@ -22,3 +22,10 @@
   Lagrix (both simulated today, said so) → skills (`skills_find`) and memory; the answer comes back to the element's agent and to the person
   with the element, its path and a hint — or the price to buy or build.
 - Its own release after 840 (template + one core door): a search field without the agents' road behind it would be a dead input.
+
+## The marketplace rung (the owner, Telegram 973, 2026-11-22 21:00 UTC)
+
+A person's native element can be sold: kept in the maker's own private GitHub repository, offered with «Предложить элемент в маркетплейс»
+(f2f; Lagrix later the same way). On the Fractera rung the search answers with SEVERAL LINKS to the public pages of fitting marketplace
+elements (e.g. a music-clip or video-editing element for someone building YouTube posts); the person reads them, then the procedure is agreed
+agent to agent. The welcome text already says it (840-4, `kinds`). Memory: data/services/build/memory/native-marketplace-concept.md.

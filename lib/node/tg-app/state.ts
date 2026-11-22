@@ -124,19 +124,24 @@ function agentOf(id: string, live: boolean): TgAgent {
  *  GET /api/node/my-agent) — what the Pult shows of it, never another element's. The e-mail of the node's subscription is the architect's:
  *  it never goes to an element (an app of its own has another owner). The context — the record its status line writes (limits.cjs). */
 export type TgOwnLimits = { fiveHour: { used: number; resetsAt: string | null } | null; sevenDay: { used: number; resetsAt: string | null } | null; at: string | null }
-export type TgOwnAgent = { agent: TgAgent; live: boolean; context: { percent: number; size: number | null } | null; limits: TgOwnLimits | null }
+export type TgOwnAgent = { agent: TgAgent; live: boolean; context: { percent: number; size: number | null; used: number | null } | null; limits: TgOwnLimits | null; asks: { text: string; at: string }[] }
 export function ownAgentOf(id: string): TgOwnAgent {
   const live = ((sessions() as { service: string; running?: boolean }[]) ?? []).some((s) => s.service === id && s.running)
   const agent = agentOf(id, live)
   // 840-1 (the owner, Telegram 954: «не хватало раздела лимит текущей сессии и недельный лимит»): the limits of the account this element
   // runs on — its own (own-<id>.json) or the node's; only the numbers, never the node's e-mail.
-  return { agent: { ...agent, email: null }, live, context: contextOf(id), limits: limitsFor(id, agent.account) }
+  // 840-4 (the owner's mock A, Telegram 969/971: the element's home «как у пульта»): its OWN account's e-mail, masked — never the node's (the
+  // architect's); and «Ждёт вас» — the person's acts THIS element asked for (its windows), only their words and time.
+  let email: string | null = null
+  if (agent.account === "own") { try { email = masked(claudeAccount.ownEmail(ROOT, id) as string | null) } catch { email = null } }
+  const mine = (asks.open(ROOT) as { text: string; by?: string; at: string }[]).filter((a) => a.by === id).map((a) => ({ text: a.text, at: a.at }))
+  return { agent: { ...agent, email }, live, context: contextOf(id), limits: limitsFor(id, agent.account), asks: mine }
 }
 
 /** The fill of an element's context window — the record its status line writes (limits.cjs). */
-function contextOf(id: string): { percent: number; size: number | null } | null {
-  const rec = readJson<{ used?: number; size?: number } | null>(join(ROOT, "data", "services", id, "context.json"), null)
-  return rec && typeof rec.used === "number" ? { percent: rec.used, size: typeof rec.size === "number" ? rec.size : null } : null
+function contextOf(id: string): { percent: number; size: number | null; used: number | null } | null {
+  const rec = readJson<{ used?: number; size?: number; tokens?: number } | null>(join(ROOT, "data", "services", id, "context.json"), null)
+  return rec && typeof rec.used === "number" ? { percent: rec.used, size: typeof rec.size === "number" ? rec.size : null, used: typeof rec.tokens === "number" ? rec.tokens : null } : null
 }
 
 /** 840: the limits of the account an element runs on — its own record, or the node's when it runs on the node's subscription. */
