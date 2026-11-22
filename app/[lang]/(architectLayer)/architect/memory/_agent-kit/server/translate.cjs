@@ -74,7 +74,7 @@ async function translateMap(map, lang) {
 }
 
 
-const cacheFile = (name, lang) => path.join(ROOT, 'data', 'i18n-cache', `${name}-${lang}.json`)
+const cacheFile = (name, lang) => path.join(/* turbopackIgnore: true */ ROOT, 'data', 'i18n-cache', `${name}-${lang}.json`)
 
 /**
  * Таблица текстов на языке `lang` из английской `en` (значения — строки или функции с позиционными аргументами). Функции

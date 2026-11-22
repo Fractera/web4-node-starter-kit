@@ -43,13 +43,13 @@ const ACTIVATION_LIFETIME_MS = 60 * 60 * 1000
 // 409-3: раз в 3 с (владелец 2026-10-05) — нажатие «Запустить» узел видит не позже чем через 3 с.
 const IDLE_POLL_MS = 3000
 
-const stateDir = (service) => path.join(ROOT, 'data', 'services', service, 'channel', 'telegram')
+const stateDir = (service) => path.join(/* turbopackIgnore: true */ ROOT, 'data', 'services', service, 'channel', 'telegram')
 const envFile = (service) => path.join(stateDir(service), '.env')
 const accessFile = (service) => path.join(stateDir(service), 'access.json')
 const botFile = (service) => path.join(stateDir(service), 'bot.json')
 const activationFile = (service) => path.join(stateDir(service), 'activation.json')
 const messagesFile = (service) => path.join(stateDir(service), 'messages.json')
-const pendingFile = (service) => path.join(ROOT, 'data', 'services', service, 'wake', 'pending.json')
+const pendingFile = (service) => path.join(/* turbopackIgnore: true */ ROOT, 'data', 'services', service, 'wake', 'pending.json')
 
 function readJson(file, fallback) {
   try { return JSON.parse(readFileSync(file, 'utf8')) } catch { return fallback }
@@ -95,7 +95,7 @@ async function sendKept(token, params) {
 }
 
 // Вопрос, который теряет смысл с концом сессии («выключить?», «ждёт ответа в терминале»): ключ сессии → [{ via, chat, messageId, kind }].
-const mootFile = () => path.join(ROOT, 'data', 'node', 'telegram-until-session-ends.json')
+const mootFile = () => path.join(/* turbopackIgnore: true */ ROOT, 'data', 'node', 'telegram-until-session-ends.json')
 function untilSessionEnds(key, via, kind, sent) {
   if (!sent.length) return
   const map = readJson(mootFile(), {})
@@ -289,7 +289,7 @@ async function channelLaunch(service, env) {
   // 781-2 (✗ 2026-11-18 10:14: a Claude Code session in the home folder started the plugin enabled for the whole machine, it died without a
   // token, and the machine-wide failure cache made every launch skip it for 15 minutes): before every launch with the channel the poison
   // is taken out of this session's Claude home — the cache entry removed, the plugin off globally (614-2), one key each.
-  const poison = require('./channel-health.cjs').clearPoison(env, path.join(ROOT, 'data', 'node', 'claude-settings.backup.json'))
+  const poison = require('./channel-health.cjs').clearPoison(env, path.join(/* turbopackIgnore: true */ ROOT, 'data', 'node', 'claude-settings.backup.json'))
   if (poison.cache === 'removed' || poison.global === 'turned-off') console.log(`[telegram] ${service}: перед запуском канала — ${poison.cache === 'removed' ? 'запись об отказе плагина стёрта' : ''}${poison.cache === 'removed' && poison.global === 'turned-off' ? ', ' : ''}${poison.global === 'turned-off' ? 'плагин выключен для сессий вне узла' : ''}`)
   const pathKey = Object.keys(env).find((k) => k.toUpperCase() === 'PATH') || 'PATH'
   const dirs = [...extraBins(), ...String(env[pathKey] || '').split(path.delimiter).filter(Boolean)]
@@ -386,7 +386,7 @@ async function statusMessage(service) {
 const idleKey = (service) => `__web4TelegramIdle:${service}`
 // 737-11a: a node on its dedicated server rehearsing (phase «silent», `lib/hosting/phase.cjs`) — read as a file here: this module is bundled
 // with the channel door, and a require by a computed path does not build (✗ 552-6).
-const silentServer = () => readJson(path.join(ROOT, 'data', 'node', 'server.json'), {})?.phase === 'silent'
+const silentServer = () => readJson(path.join(/* turbopackIgnore: true */ ROOT, 'data', 'node', 'server.json'), {})?.phase === 'silent'
 
 async function idleTick(service) {
   const token = storedToken(service)
@@ -586,7 +586,7 @@ async function closeTable(service) {
 function named(service) {
   let address = service
   try {
-    const a = JSON.parse(readFileSync(path.join(ROOT, 'data', 'services', service, 'address.json'), 'utf8')).address
+    const a = JSON.parse(readFileSync(path.join(/* turbopackIgnore: true */ ROOT, 'data', 'services', service, 'address.json'), 'utf8')).address
     if (typeof a === 'string' && a) address = a
   } catch { /* адрес = id */ }
   try {
@@ -618,7 +618,7 @@ function folderTrusted(service) {
 /** 547: пути разделов агента без языка — у рождённого элемента они под его адресом (797: наверху дерева, без `build/`), у служб ядра — под `architect/`. */
 function sectionPaths(service) {
   if (isBornItem(service)) {
-    const address = readJson(path.join(ROOT, 'data', 'services', service, 'address.json'), null)?.address
+    const address = readJson(path.join(/* turbopackIgnore: true */ ROOT, 'data', 'services', service, 'address.json'), null)?.address
     const a = typeof address === 'string' && /^[a-z0-9-]{1,40}$/.test(address) ? address : service
     return { terminal: `/${a}/terminal`, subscription: `/${a}/subscription` }
   }
@@ -1222,7 +1222,7 @@ function startIdlePoller(service) {
  * за прежним аккаунтом Telegram; 4 знака hex — всего 65 536 кодов на всех людей. 5 знаков base36 — 60 млн.
  */
 const NODE_CODE = (() => {
-  const file = path.join(ROOT, 'data', 'node-code.json')
+  const file = path.join(/* turbopackIgnore: true */ ROOT, 'data', 'node-code.json')
   const kept = readJson(file, null)?.code
   if (typeof kept === 'string' && /^[a-z0-9]{5}$/.test(kept)) return kept
   const code = Array.from(randomBytes(5), (b) => (b % 36).toString(36)).join('')
@@ -1237,7 +1237,7 @@ const NODE_CODE = (() => {
   }
 })()
 const elementAddress = (service) => {
-  const address = readJson(path.join(ROOT, 'data', 'services', service, 'address.json'), null)?.address
+  const address = readJson(path.join(/* turbopackIgnore: true */ ROOT, 'data', 'services', service, 'address.json'), null)?.address
   return typeof address === 'string' && /^[a-z0-9-]{1,40}$/.test(address) ? address : service
 }
 
@@ -1356,7 +1356,7 @@ async function tellChannelFailed(service, waited) {
 // Ждущие вопросы — `data/node/trust-pending.json` (ключ сессии → через какого бота спросили): его читают копия бота главного агента
 // и дверь `POST /api/agents/trust`, у каждой копии комплекта свои модули. Бота главного агента нет — прежняя ссылка на терминал.
 
-const trustFile = () => path.join(ROOT, 'data', 'node', 'trust-pending.json')
+const trustFile = () => path.join(/* turbopackIgnore: true */ ROOT, 'data', 'node', 'trust-pending.json')
 const trustPending = () => readJson(trustFile(), {})
 function setTrustPending(map) {
   mkdirSync(path.dirname(trustFile()), { recursive: true })

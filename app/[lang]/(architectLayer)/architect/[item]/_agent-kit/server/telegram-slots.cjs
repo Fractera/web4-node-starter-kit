@@ -34,7 +34,7 @@ const ANSWER = {
 }
 
 const isExtra = (slot) => EXTRA.includes(slot)
-const dir = (service, slot) => path.join(ROOT, 'data', 'services', service, 'channel', `telegram-${slot}`)
+const dir = (service, slot) => path.join(/* turbopackIgnore: true */ ROOT, 'data', 'services', service, 'channel', `telegram-${slot}`)
 const file = (service, slot, name) => path.join(dir(service, slot), name)
 
 function token(service, slot) {

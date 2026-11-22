@@ -755,6 +755,14 @@ async function rebuild() {
   let build = spawnSync(npm, ["run", "prebuild"], { cwd: root, stdio: "inherit", shell: isWindows })
   const nextBuild = () => {
     let aside = false
+    // 839-3: BEFORE the elements go aside — the helper's `run` works in the element's folder, which itemsAside moves out of the core
+    // 839-3: a walled element's Claude folders are 0700 after its first session — Turbopack lists data/services and would fail on them.
+    // Each element opens them to the node's group AS ITSELF (lib/hosting/element-wall.cjs openClaudeFolders); its sign-in files stay closed.
+    try {
+      const o = createRequire(import.meta.url)("../lib/hosting/element-wall.cjs").openClaudeFolders(root)
+      if (o.opened?.length) console.log(`Папки Claude элементов за стеной открыты узлу перед сборкой: ${o.opened.join(", ")}`)
+      if (o.failed?.length) console.error(`⚠ Не открылись папки Claude: ${o.failed.join("; ")} — сборка может упасть на их чтении`)
+    } catch (e) { console.error(`⚠ Папки Claude элементов не проверены: ${e instanceof Error ? e.message : e}`) }
     try {
       aside = itemsAside(root)
       return spawnSync(isWindows ? "npx.cmd" : "npx", ["next", "build"], { cwd: root, stdio: "inherit", shell: isWindows })
