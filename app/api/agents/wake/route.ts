@@ -123,7 +123,10 @@ export async function POST(req: NextRequest) {
   // the same as a birth (548-6). ✗ 2026-11-12 23:42: `npm run wake` (main-agent-on) left the trust question to a Telegram bot the node
   // did not have; the agent stood on it and its task was dropped. An element with its own bot keeps the question to its person.
   const byMainAgent = /^main-agent-/.test(String(body.reason ?? "")) && !telegramConnected(service)
-  const confirmed = (body.supervised === true && supervision.byMain(service)) || created || alarm || byMainAgent
+  // 841 (the owner, Telegram 963): the person pressed «Найти» in the element's own Mini App — their press is the consent; only the element's
+  // own key, only for its own agent.
+  const pressed = body.reason === "mini-app-search" && me === service
+  const confirmed = (body.supervised === true && supervision.byMain(service)) || created || alarm || byMainAgent || pressed
   const out = await wake(service, { text, from: str(body.from, 120), about: str(body.about, 600), declineUrl: str(body.declineUrl, 300), ...(confirmed ? { confirmed: true } : {}) })
   console.log(`[agents/wake] ${service} reason=${String(body.reason ?? "-").slice(0, 32)} → ${out.ok ? (out.pending ? "asked in Telegram" : out.already ? "already" : "started") : out.reason}`)
   const status = out.ok ? 200 : out.reason === "memory" ? 503 : out.reason === "no-agent-kit" || out.reason === "no-agent-dir" ? 404 : 409

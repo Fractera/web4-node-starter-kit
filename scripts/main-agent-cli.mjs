@@ -368,6 +368,18 @@ if (cmd === 'rename') {
   process.exit(0)
 }
 
+if (cmd === 'market') {
+  // 841-2 (the owner, Telegram 984/985): the Fractera marketplace rung — search v1 (`lib/web4-items/fractera-market.mjs`): the summary and
+  // links to public pages; a simulation until Fractera's side answers — said so. The rung before Lagrix on the ladder (skill handle-need).
+  const words = rest.filter((w, i) => !w.startsWith('--') && rest[i - 1] !== '--lang').join(' ').trim()
+  if (!words) fail('market "<plain words of what the person looks for>" [--lang ru|en]')
+  const { marketSearch } = await import('../lib/web4-items/fractera-market.mjs')
+  const out = await marketSearch(words, { lang: flag('--lang') || 'ru', dataDir: join(ROOT, 'data', 'node') })
+  console.log(`===MARKET_${out.mode === 'live' ? 'LIVE' : 'SIMULATION'}=== ${out.summary}`)
+  for (const x of out.items) console.log(`- ${x.title} (${x.kind}) — ${x.summary} ${x.url}`)
+  process.exit(0)
+}
+
 if (cmd === 'lagrix') {
   // 670-6: ступень Lagrix — оба вида одним контрактом: a2a (купить РЕЗУЛЬТАТ работы у чужого агента) и f2f (взять ЦЕЛЫЙ элемент); сегодня —
   // имитация (`mode: simulation`), и человеку говорится именно так. Звать — когда в узле никого нет и решается «купить или строить».

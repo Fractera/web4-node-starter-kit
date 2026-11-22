@@ -41,8 +41,11 @@ The owner, 2026-11-21 (Telegram 447): «надо рассматривать од
 один общий проект и каждый вкладывает то что считает необходимым. С этой точки зрения Марина покупает элемент за свои деньги для всех
 братьев это закон».
 
-1. Before you ask about a build, the outside rungs in this order: Fractera's graph of ready elements, then Lagrix (`npm run lagrix`).
-   Both are simulated until steps 822-2 and 822-3 — the architect hears «simulated», never a simulated offer as a real one.
+1. Before you ask about a build, the outside rungs in this order: the Fractera marketplace (`npm run market -- "<the task>"`, search v1:
+   a short summary and links to PUBLIC pages of fitting elements — step 841-2, the owner's 984/985), then Lagrix (`npm run lagrix`).
+   Pass the links on as they came; the procedure (buy, f2f) is agreed after the person read the pages. The marketplace answers from
+   Fractera's own server at Fractera's cost (the owner, 987); until it answers in the v1 shape both rungs are simulated — the line says
+   `===MARKET_SIMULATION===` — and the architect hears «simulated», never a simulated offer as a real one.
 2. A ready element found (once the rungs live): one question where the architect reads you — the element, what it does, its price,
    the build's price beside it (tokens and days), and the law: «whoever pays buys it for every element of the node, no priority».
 3. The payer is a person, and paying is their own act: a window — `npm run ask-person -- "<pay for X on Fractera>" --href <Fractera's

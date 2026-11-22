@@ -21,7 +21,8 @@ export async function GET(req: NextRequest) {
   if (!/^[a-z][a-z0-9-]{0,39}$/.test(id) || !known) {
     return NextResponse.json({ ok: false, reason: "service must be an element of this node" }, { status: 400, headers: HEADERS })
   }
-  return NextResponse.json({ ok: true, service: id, ...ownAgentOf(id) }, { headers: HEADERS })
+  const lang = req.nextUrl.searchParams.get("lang") === "ru" ? "ru" : "en"
+  return NextResponse.json({ ok: true, service: id, ...ownAgentOf(id, lang) }, { headers: HEADERS })
 }
 
 // 840-1 (the owner, Telegram 954: «выбор модели … тоже появится»): the element's own Mini App switches its OWN agent's model — Opus with

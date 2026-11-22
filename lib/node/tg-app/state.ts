@@ -124,8 +124,9 @@ function agentOf(id: string, live: boolean): TgAgent {
  *  GET /api/node/my-agent) — what the Pult shows of it, never another element's. The e-mail of the node's subscription is the architect's:
  *  it never goes to an element (an app of its own has another owner). The context — the record its status line writes (limits.cjs). */
 export type TgOwnLimits = { fiveHour: { used: number; resetsAt: string | null } | null; sevenDay: { used: number; resetsAt: string | null } | null; at: string | null }
-export type TgOwnAgent = { agent: TgAgent; live: boolean; context: { percent: number; size: number | null; used: number | null } | null; limits: TgOwnLimits | null; asks: { text: string; at: string }[] }
-export function ownAgentOf(id: string): TgOwnAgent {
+export type TgNative = { name: string; description: string | null; on: boolean }
+export type TgOwnAgent = { agent: TgAgent; live: boolean; context: { percent: number; size: number | null; used: number | null } | null; limits: TgOwnLimits | null; asks: { text: string; at: string }[]; natives: TgNative[] }
+export function ownAgentOf(id: string, lang: Lang = "en"): TgOwnAgent {
   const live = ((sessions() as { service: string; running?: boolean }[]) ?? []).some((s) => s.service === id && s.running)
   const agent = agentOf(id, live)
   // 840-1 (the owner, Telegram 954: «не хватало раздела лимит текущей сессии и недельный лимит»): the limits of the account this element
@@ -135,7 +136,14 @@ export function ownAgentOf(id: string): TgOwnAgent {
   let email: string | null = null
   if (agent.account === "own") { try { email = masked(claudeAccount.ownEmail(ROOT, id) as string | null) } catch { email = null } }
   const mine = (asks.open(ROOT) as { text: string; by?: string; at: string }[]).filter((a) => a.by === id).map((a) => ({ text: a.text, at: a.at }))
-  return { agent: { ...agent, email }, live, context: contextOf(id), limits: limitsFor(id, agent.account), asks: mine }
+  return { agent: { ...agent, email }, live, context: contextOf(id), limits: limitsFor(id, agent.account), asks: mine, natives: nativesOf(lang) }
+}
+
+/** 841 (the owner, Telegram 963: «вкладку нативной элементы внутри кастомного элемента … показываем например два и пишем ещё»): the node's
+ *  native elements — standard on every node, so nothing of this node's own composition leaks: the name, what it does, on or off. */
+function nativesOf(lang: Lang): TgNative[] {
+  const entries = readJson<{ services?: Entry[] }>(paths.REGISTRY_FILE, {}).services ?? []
+  return entries.filter((e) => e.kind !== "user").map((e) => ({ name: elementName(e.id, lang), description: descriptionOf(e), on: !power.offOf(e) }))
 }
 
 /** The fill of an element's context window — the record its status line writes (limits.cjs). */
