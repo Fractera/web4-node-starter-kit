@@ -337,6 +337,17 @@ agent's five checks (merge-base 36053916 → IN; npm run wake -- etuf1 once; web
 channel/telegram/bot.pid alive) → then Roma writes etuf1's bot. WAITING for that report. Unpushed here: 0a7db2b9 + this state (push with
 the next batch). Mac Pult: deferred (LaLiga IP block), memory spain-cloudflare-ip-blocks.
 
+**23:03 — Roma 1044: «три обновления, до сих пор не отвечает»; 1046: «жди ответа от агента, не трать токены».** Seen through the
+extension (architect.fractera.ai/ru/etuf1/terminal, etuf1 = «marketplace»): the session RUNS, past onboarding (839-11 worked), and stands
+on Claude Code's add-dir trust question «Adding a new directory: …/data/services/etuf1 — part of the repository at
+/home/fractera/web4-node-starter-kit … ❯ No, exit / Yes, add it — Your answer holds for this session». screen.cjs knows the wording;
+bridge watchTrust presses only with trustOk (a Telegram-confirmed wake), else askTrust → «Разрешить? да» in the server's main bot / npm run
+trust -- etuf1. Told Roma (1047): answer «да» or the server agent runs npm run trust -- etuf1. 🔴 DURABLE: the add-dir answer is per
+session (walled Claude home never trusted the core repo; on the Mac the core folder is trusted, so no question) → every wake will ask
+again. Candidate fix (after the agent's report, NOT built): the element's own .claude.json gets projects[<cwd>] and projects[<own data>]
+hasTrustDialogAccepted as itself (the owner's 2026-11-12 rule: the node confirms the element's own folder) — prove first on a scratch
+CLAUDE_CONFIG_DIR that a projects entry for the add-dir path suppresses the question.
+
 **DONE TODAY (pushed, live):** 840 Pult + subscription page + element doors (core 993c9b59, 73f43eaa on Fractera); custom template v0.3.238
 (Roma ran the release; pinned); 841 search + «Нативные элементы» + marketplace search v1 (`npm run market`, price) — the fractera.ai side NOT
 built: the server's agent got the 841-3 task (window cb7347b1 done 22:13); fractera.ai/api/marketplace/search → 401, /marketplace → 307
