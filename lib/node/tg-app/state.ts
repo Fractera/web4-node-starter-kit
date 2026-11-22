@@ -88,6 +88,11 @@ function turnOf(id: string): TgElement["turn"] {
   return p?.event && p.at ? { event: p.event, at: p.at, last: sentence(p.last ?? p.error ?? null, 100) } : null
 }
 
+function ownBeforeTurn(id: string): "own" | null {
+  if (id === "build") return null
+  try { return claudeAccount.accountOf(ROOT, id) === "own" ? "own" : null } catch { return null }
+}
+
 function agentOf(id: string, live: boolean): TgAgent {
   const dir = join(ROOT, "data", "services", id)
   const mode = readJson<{ running?: boolean; model?: string; effort?: string; ultracode?: boolean }>(join(dir, "session-mode.json"), {})
@@ -103,7 +108,8 @@ function agentOf(id: string, live: boolean): TgAgent {
     effort: typeof mode.effort === "string" && mode.effort ? mode.effort : null,
     // 779: the Pult's card shows Ultracode as the model when the running session was born with it
     ultracode: running && mode.ultracode === true,
-    account: login === "node" ? "node" : typeof login === "string" && login.startsWith("own-") ? "own" : null,
+    // 839-2: before its first turn an element's pulse names no login — its own account is read from its files (existence), never «unknown»
+    account: login === "node" ? "node" : typeof login === "string" && login.startsWith("own-") ? "own" : ownBeforeTurn(id),
     // 2026-11-17 (the owner: «указать … главный агент на каком аккаунте он работает то есть имейл»): the node's subscription — the e-mail of
     // the account logged in now; an element's own subscription is its person's, not shown here.
     email: login === "node" ? accountNow() : null,
