@@ -300,42 +300,45 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 - Parked: the server tails (z6esw tell-core, redteam with Green team, deleting z6esw/qxld4) — the SSH visit did not open in my Chrome
   profile (his two «Готово» came from another profile); the Pult update banner 2303b5e2 waits the next core build; my effort → max.
 
-## Letter to my next session (written 2026-11-22 ~15:55 UTC — reset at ~60 %; Opus effort max)
+## Letter to my next session (written 2026-11-22 ~20:30 UTC — reset at 55 %; Opus effort max)
 
-**WHO WAITS:** Roma in TELEGRAM (chat 90413601, ru). Mood: exhausted and furious — six rounds of «fixed» that were not, half his working
-day on one screen. His words (856, verbatim): «Вот опять ты побежал … вперёд паровоза … я хотел чтобы ты одновременно с этим провёл полное
-тестирование как будет себя вести та же самая проблема: – cuid.fractera.ai … – customName.fractera.ai, – CustomDomain. Я не буду создавать
-новые развёртывание но тестирование пока ты не ответишь на два этих вопроса … фрагмент инструкции: для пользователя критически важно решить
-задачу с минимальным расходом токенов и времени это означает что перед запуском сборки обязательно нужно проанализировать а при необходимости
-и провести дополнительную консультацию с администратором или архитектором: важно понять будет ли оптимально сборку провести прямо сейчас или
-выгоднее её отложить чтобы добавить к задаче несколько дополнительных под шагов или Тестов … у элемента и у главного агента». I answered (857):
-his worry retold, the 3-case analysis by code (unverified live), and proposed: a LAW line in the core's CLAUDE.md §6 AND the element
-instruction (lib/instructions/element/element-instruction.src.md → template release) + a skill «before a build» (the case matrix, proven-by,
-server-only traps, what to batch). Asked «Вписываю … и пишу навык?» — **WAIT his yes**; then: core CLAUDE.md edit + `npm run check:instruction
--- --seal`, element source + `npm run instruction:element` + skill `release-template` (custom AND native), the skill under .claude/skills/,
-commit, push — NO server update asked until he says.
+**WHO WAITS:** Roma in TELEGRAM (chat 90413601, ru). Tired, day-long server testing; keep messages SHORT, one action each, colour marks.
+He relays the SERVER's main agent (Orchestrator, read-only, very precise) — I give it exact read-only commands; it found 836-6 build trap,
+the plugin chmod trap, the EPERM trap. Trust its reports, prove before building (law «A build is weighed before it starts», skill
+`before-a-build`; `server-wall` skill holds every wall trap — add new ones).
 
-**WHERE I STAND:** fork + Fractera at aea2a0de (+ local letters 080ffa15, this one). Server core e72e49ec (15:14) has 837-0b/0c/0d live:
-core + native login windows ✅ (bash), element kit-door GETs 200 ✅ on xeket. NOT on the server yet: **aea2a0de 837-0e** (keyed element calls
-skip next.config's redirect AND afterFiles rewrite — a 307 loses a POST body; own-only elements: canOwn false, own folder made by the core,
-signed-in by file existence; the agent gets its folder instead of no-account) and **fe2c97de 838** (one-language updating page). The server
-strip shows «2 изменений», trial merge passed. Roma said he will NOT update/test until his two questions are answered (done in 857) — so
-the update waits his word; when he presses, verify on xeket per the plan below and the 3-case matrix.
-- Mac core rebuilt 15:48 (080ffa15, RC=0) — it REPAIRED my accident: a hook-blocked `mkdir` + `cd X;` ran a scratch `printf > package.json`,
-  `> tsconfig.json` and `next build` in the core root (files restored by git; `.next` had been wiped). Rule now in skill `server-wall` §6:
-  scratch commands only inside `cd <dir> && [ "$(pwd -P)" != <core> ] && …`.
-- Skill **`.claude/skills/server-wall/SKILL.md`** (his order 849): who runs as whom, what is open, element→core crossings, own Claude account,
-  traps (837-0b…0e, 811-6), the checklist before a server update. Update it on every new wall defect.
-- Pult: on the temporary address by hand (LaLiga block of 188.114.96.5/97.5 still on at 15:49); the rebuild had reset it — redone. When
-  `nc -z -G 5 188.114.96.5 443` passes → `npm run tg-app -- menu`. The LaLiga watcher died with the session (no watcher now).
+**HIS LAST WORDS (943 context, Telegram 942, verbatim):** «Можем ли мы сейчас сдвинуть на этот шаблон и переключиться немножко на дизайн
+пульта чтобы мы могли делать больше шагов за одну сборку. Посмотри здесь используется более смелое цветовая схема, плюс что очень важно на
+каждом элементе сразу видно его учетную запись размер по текстового окна на сколько оно израсходована расход подписки … давай уже приведём
+наш пульт к согласованному дизайну … И ещё одно … если я провалюсь на какую-то страницу в левом верхнем углу у меня появляется кнопка эта
+кнопка назад она не кликабельно это тоже исправь … твоё решение за тобой». The model = the element Mini App screens A–D (custom template
+`app/[lang]/(protectedLayer)/tg/`, «Студия Марины»: coloured icon tiles, inset lists, «‹ Назад» in Telegram's header).
+**MY ANSWER (943):** one release for: (1) Pult redesign (lib/node/tg-app/page.cjs + state.ts; layout sent: header · main agent card · fuel
+(context big + 5h/7d) · Ждёт вас · elements with a coloured tile per element and a 2nd line «account · контекст N % · 5 ч N %» + state
+badge, tap → card with Сайт/Бот · built-in folded); (2) the subscription page redesign (layout + phrases sent 905, model = core
+«Активация домена»: status line + one checklist, no empty step 1, no dashes); (3) the element Mini App «Назад» (template: Telegram
+BackButton — web_app_setup_back_button + back_button_pressed → previous screen, hidden on the home screen) → custom template release +
+rollout to etuf1/root as the release skill says. I told him: 839-9 (already waiting) — press now. **WAIT his «да» to the Pult layout; then
+send ALL phrases (Pult + subscription page) as a list for «да»; only then code** (memory compact-ui-folds-instructions: every visible phrase
+agreed first). Context fill of a walled element: show «—» until resume/context-window can read its journals (839-3 opens them only before
+builds; fix in the same release — open at session end too, or read as the element).
 
-**VERIFY AFTER HIS UPDATE (837-0e), my tab:** xeket.fractera.ai/ru/admin/agent/subscription — GET /api/agent-kit/agent-api/claude-auth →
-canOwn false, own true, walledNone false; POST …/ticket → 200 with socket; no choice card, «Войти по подписке Claude» → window (bash as
-fe-xeket, link) → close both; /ru/admin/agent/terminal start → Claude's own login screen. Then the 3-case matrix: rename xeket (case 2: wall
-record follows the folder?), then its own domain (case 3: admin sign-in through the centre). Fill 837 §7 (0e, b–e), screenshots, ONE message.
+**WHERE THE SERVER STANDS:** core 5d05c566 (built 20:06) = 839-8 live. Pushed and WAITING his press: 2b7985a3 (839-9, EPERM = alive) —
+«Проверить снова» showed «1 изменений», trial merge OK. After it: he writes to the etuf1 bot (Etuf1-messenger-h2a) + «Включить» → the
+channel must come up and the agent answer. If not: ask the server agent for logs/web4-out.log lines of the wake and `ls -l` of
+data/services/etuf1/channel/telegram (bot.pid owner/mode).
+Fork = Fractera = 2b7985a3 (+ this letter commit). Templates: custom v0.3.237, native v0.1.81, root v3.0.70 (before-a-build law released).
 
-**Open, owned by me:** 837-2…7 (the plan), the server agent's 3 questions (794), 835, 827, the Pult auto-fallback during a block (his word
-pending, 802), defects in new-steps/793 file (tunnel restarts during a block; the update strip needs «Проверить снова»).
+**DONE TODAY (all pushed, proven by tests; live where marked):** law «A build is weighed before it starts» (core §6, element source, skill
+before-a-build both sides, server-wall named in §8) · 837-0f dead-require fix + guard check:bundle-requires (live) · 839 Pult «Бот» window
+(live: etuf1's bot made) · 839-2 walled e-mail read as the element (live) · 839-3 build opens walled Claude folders + turbopackIgnore on kit
+data paths (live: builds pass) · 839-4 banner (live) · 839-5 failed build wakes the main agent with the cause · 839-6 bot sign-in by file
+existence (live) · 839-7 element gates through the hook relay · 839-8 .env handed to the element, node keeps .token.node (live) · 839-9.
+Case 1 of the matrix (cuid birth) CLOSED with inside proofs; root signed in (pre-fix element cell). Cases 2 (rename etuf1) and 3 (own
+domain) NOT done yet — after the bot works.
+
+**Open, mine:** the design release above · cases 2/3 · resume/context-window for walled journals · the subscription-page redesign ·
+837-2…7, 835, 827, Pult auto-fallback (802). Element-wall test «prepare.sh DRY_RUN» ✗ is pre-existing on macOS.
 
 ## The person's decisions (verbatim)
 
