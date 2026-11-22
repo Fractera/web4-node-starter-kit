@@ -2,7 +2,7 @@
 //
 // Признаки — из строк самой программы `claude.exe` (2026-10-07): у диалога разрешения вопрос «Do you want to …» и вариант «No, and tell
 // Claude what to do differently»; «Yes, and don't ask again for» — у большинства; у вопроса доверия папке — «Is this a project you
-// created or one you trust?» и «Yes, I trust this folder»; у прочих диалогов Claude Code — «Enter to confirm · Esc to cancel».
+// created or one you trust?» и «Yes, I trust this folder» (с 2026-11-22 ещё «Is this a directory …» и «Yes, add it»); у прочих диалогов Claude Code — «Enter to confirm · Esc to cancel».
 // 🛑 Ink рисует пробелы сдвигом курсора (`ESC[nC`): он заменяется пробелом до снятия управляющих последовательностей.
 //
 // 🔒 829 (✗ 2026-11-21 16:25–16:27, элемент j58fl: первое «Привет как дела» в бот нового элемента до агента не дошло): поток хранит всё
@@ -21,7 +21,10 @@ const plainScreen = (raw) => String(raw)
 /** 547: стоит ли на экране вопрос доверия папке Claude Code («Is this a project you created or one you trust?»). */
 function trustOnScreen(stream) {
   const tail = plainScreen(String(stream).slice(-4000)).replace(/\s+/g, '')
-  return /Isthisaprojectyoucreatedoroneyoutrust/i.test(tail) && /Yes,Itrustthisfolder/i.test(tail)
+  // ✗ 2026-11-22 08:55–09:01 (sgnou, two tasks never started): Claude Code now asks «This session hasn't worked here before. Is this a
+  // DIRECTORY you created or one you trust?» with «No, exit» first and «Yes, add it» — the old words only were known, `npm run trust`
+  // answered «no question on its screen» and the agent stood. Both wordings; the answer is the same (↓ to «Yes», Enter).
+  return /Isthisa(?:project|directory)youcreatedoroneyoutrust/i.test(tail) && /Yes,(?:Itrustthisfolder|addit)/i.test(tail)
 }
 
 /** Висит ли на хвосте экрана вопрос-разрешение Claude Code. */

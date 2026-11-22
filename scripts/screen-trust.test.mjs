@@ -24,6 +24,15 @@ const TRUST = [
   '│ Enter to confirm · Esc to exit',
   '╰──────────────────────────────────────────────────────────╯',
 ].map(ink).join('')
+// ✗ 2026-11-22: the wording Claude Code prints now — «Is this a directory …», «No, exit» first, «Yes, add it»
+const TRUST_DIR = [
+  'Accessing workspace:',
+  '/Users/x/web4-node-starter-kit/data/services/sgnou',
+  'This directory is part of the repository at /Users/x/web4-node-starter-kit.',
+  "This session hasn't worked here before. Is this a directory you created or one you trust?",
+  '❯ No, exit    Yes, add it',
+  'Enter to confirm · Esc to cancel',
+].map(ink).join('')
 const WELCOME = [
   '╭───╮ Claude Code v2.1.330',
   '│ Opus 5.5 with high effort · Claude Pro',
@@ -96,4 +105,10 @@ await t('829: a full 256 KB buffer (seen far past its length) — only what was 
   assert.equal(screen.liveStream(s, () => true), s.buffer, 'a cut before the buffer\'s start — the whole buffer')
 })
 
+await t('the new wording of the trust question («Is this a directory …», «Yes, add it») is a trust question too', () => {
+  assert.equal(screen.trustOnScreen(TRUST_DIR), true)
+})
+await t('negative: a screen with «Yes, add it» but no trust question is not one', () => {
+  assert.equal(screen.trustOnScreen(ink('Yes, add it') + ink('Enter to confirm · Esc to cancel')), false)
+})
 console.log(process.exitCode ? `===SCREEN_TRUST_FAILED=== ${passed} passed` : `===SCREEN_TRUST_OK=== ${passed} passed`)
