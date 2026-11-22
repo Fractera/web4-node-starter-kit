@@ -124,6 +124,7 @@
     "reminder": "node scripts/reminder.mjs",
     "check:term-hints": "node scripts/check-term-hints.mjs",
     "check:seo-html": "node scripts/check-seo-html.mjs",
+    "check:bundle-requires": "node scripts/check-bundle-requires.mjs",
     "check:microservices": "node scripts/check-microservices.mjs",
     "services:install": "node scripts/services-install.mjs",
     "server": "node scripts/server.mjs",

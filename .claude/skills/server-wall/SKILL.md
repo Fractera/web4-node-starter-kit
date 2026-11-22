@@ -69,6 +69,9 @@ LOGNAME, SHELL, NODE_OPTIONS.
 
 ## 5. Traps already paid for (newest first; add every new one here with its date and fix)
 
+- 2026-11-22 837-0f: after the 837-0e update a NEW element (uuy30) still got «Подписка узла» — `claude-account.cjs` loaded the wall by
+  `require(path.join(root, …))`; the core's Next bundle compiles that into «Cannot find module 'unknown'», the `catch` answered «not
+  walled». Unit tests passed (unbundled). Fix: static requires; guard `check:bundle-requires` between the build and the restart.
 - 2026-11-22 837-0e: every POST of an element's page (switch, ticket, session) → empty 500 — the 307 of next.config, Node fetch cannot
   resend the body; the own-only element was offered «Подписка узла» and its own folder did not exist → no «Войти», no terminal.
 - 2026-11-22 837-0d: the gate rule matched `/en/architect/<id>/…`, the gate sees `/en/<id>/…` (curl showed the 307) — one wasted update.
@@ -93,5 +96,8 @@ LOGNAME, SHELL, NODE_OPTIONS.
 5. Rights: anything the core writes inside an element's folder — will `fe-<id>` read it, and will the core read what `fe-<id>` writes?
 6. Tests: `scripts/node-key-split.test.mjs` (gate rules, the redirect), `scripts/element-wall.test.mjs` (helper, dry:
    `FRACTERA_ELEMENT_DRY=1`), `scripts/terminal-auth.test.mjs` (shells, the login link) — each new trap gets its negative here.
-7. On the server itself only through the owner's hands or the server's agent (read-only): `sudo -n /usr/local/sbin/fractera-element run
+7. A rule the core's routes run — read it in the BUILT code (`.next/server`), never only in `lib/`: `npm run check:bundle-requires`.
+8. Look from inside before and after (the owner, 2026-11-22, Telegram 875: «спросить … изнутри»): the server's main agent sees what this
+   computer cannot — `getent passwd fe-<id>`, `/etc/fractera/elements`, the built chunk, the door's answer on loopback.
+9. On the server itself only through the owner's hands or the server's agent (read-only): `sudo -n /usr/local/sbin/fractera-element run
    <id> -- <cmd>` proves what the element can see.

@@ -818,6 +818,18 @@ async function rebuild() {
     process.exit(1)
   }
 
+  // 837-0f: a require by a computed path in a module the bundle imports compiles into «Cannot find module 'unknown'» — a rule that
+  // silently answers «no» (✗ 2026-11-22: the wall check, three server updates). Such a build is not deployed; the previous one runs.
+  const dead = spawnSync(process.execPath, [path.join(root, "scripts", "check-bundle-requires.mjs"), root], { cwd: root, stdio: "inherit" })
+  if (dead.status !== 0) {
+    if (backedUp) restoreNext(root)
+    stopReader(root)
+    openLid(root)
+    console.error("\nСборка собралась, но в ней мёртвый require по вычисляемому пути — сборка НЕ выложена, прежняя запущена снова. Разбор выше.")
+    await agentsBackAfter(root, { agentBack, buildWhat, buildSince, summary: "the core build was NOT deployed (a dead require in the bundle — check-bundle-requires); the previous build runs again" })
+    process.exit(1)
+  }
+
   waitDeploy()
   console.log("\nСборка готова, запускаю узел…")
   // Ядро в списке остановленных — `pm2 start` поднимает его уже на новой сборке; узел без «крышки» — прежний перезапуск.
