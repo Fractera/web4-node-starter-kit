@@ -52,7 +52,10 @@ const nextConfig: NextConfig = {
       // 🪦 280-2b `/:lang → /:lang/architect` and 280-3 `siteRedirects()` (non-architect paths → the site) are gone:
       // the header and footer now link to the site by absolute addresses (the project shell, 285-3).
       { source: "/:lang([a-z]{2})/architect", destination: "/:lang", permanent: false },
-      { source: "/:lang([a-z]{2})/architect/:path*", destination: "/:lang/:path*", permanent: false },
+      // 837-0e: an element's keyed call across the wall (`X-Node-Key`, its agent pages → its kit doors) is NOT redirected: Node's fetch
+      // cannot follow a 307 with a body (POST → «detached ArrayBuffer», measured 2026-11-22 — every switch, ticket and session of an
+      // element's page died as an empty 500). It lands on the route file itself; the proxy's gate knows both forms (isKitDoor). Skill `server-wall`.
+      { source: "/:lang([a-z]{2})/architect/:path*", destination: "/:lang/:path*", permanent: false, missing: [{ type: "header", key: "x-node-key" }] },
     ];
   },
 
@@ -65,7 +68,9 @@ const nextConfig: NextConfig = {
         { source: "/:lang([a-z]{2})", destination: "/:lang/architect" },
         // 836-3: the 834-4 element agent frame left the core (an element's agent pages live in the element itself) — and with it the
         // exception it needed here.
-        { source: "/:lang([a-z]{2})/:path*", destination: "/:lang/architect/:path*" },
+        // 837-0e: a keyed element call already names `/<lang>/architect/<id>/…` and must land on that route file — without this condition the
+        // rewrite runs before dynamic routes and doubles «architect» (404; proven on a scratch Next 16.2 build, 2026-11-22).
+        { source: "/:lang([a-z]{2})/:path*", destination: "/:lang/architect/:path*", missing: [{ type: "header", key: "x-node-key" }] },
       ],
       fallback: [],
     };

@@ -33,6 +33,8 @@ const resume = require(path.join(process.cwd(), 'lib', 'agent-kit', 'resume.cjs'
 // 811-5b: a custom element's agent on a dedicated server runs as its own Linux user (`lib/agent-kit/walled-session.cjs`).
 const walledSession = () => require(path.join(process.cwd(), 'lib', 'agent-kit', 'walled-session.cjs'))
 const ownAppOf = (id) => { try { return require(path.join(process.cwd(), 'lib', 'web4-items', 'element-app.cjs')).isOwnApp(id, process.cwd()) } catch { return false } }
+// 837-0e: whose Claude account an element runs on, and its own folder made when it may run only on its own (lib/agent-kit/claude-account.cjs)
+const ownAccountRule = () => require(path.join(process.cwd(), 'lib', 'agent-kit', 'claude-account.cjs'))
 const { randomUUID } = require('node:crypto')
 // 624-1: доступная память — один модуль ядра; `os.freemem()` на macOS видит только пустые страницы (свободно 114 МБ при 79% свободной).
 const { availableMb, topApps } = require(path.join(process.cwd(), 'lib', 'free-memory.cjs'))
@@ -231,10 +233,13 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   let env = shellEnv(shell)
   // 689: элемент на подписке своего человека — вся его сессия идёт через его папку Claude Code (`CLAUDE_CONFIG_DIR`), до запуска канала,
   // чтобы и он видел ту же папку. Нет папки — подписка узла, как прежде.
-  const ownHome = ownClaudeDir(element)
-  if (ownHome) env = { ...env, CLAUDE_CONFIG_DIR: ownHome }
   // 811-5b (the owner, Telegram 128): on a server the element's agent runs only on its own Claude account — never on the node's token.
   const walled = walledSession().walledAt(process.cwd(), cwd)
+  let ownHome = ownClaudeDir(element)
+  // 837-0e (the owner, Telegram 845: «терминал … должна работать независимо от подписки»): an own-only element gets its own folder here
+  // instead of a refusal — before sign-in Claude shows its own login in the terminal; the node's login is still never its login.
+  if ((walled || ownAppOf(element)) && !ownHome && ownAccountRule().ensureOwnHome(process.cwd(), element).ok) ownHome = ownClaudeDir(element)
+  if (ownHome) env = { ...env, CLAUDE_CONFIG_DIR: ownHome }
   // 834-10 (the owner, Telegram 662): an app of its own runs only on its own account on any node — the node's subscription is never its own.
   if ((walled || ownAppOf(element)) && !ownHome) {
     notice('[⟦node · no-account⟧ агент элемента работает только на своём аккаунте Claude — войдите в кабинете администратора элемента; до входа работу делает главный агент]')
@@ -1362,6 +1367,8 @@ function onConnection(ws, service) {
       }
       const shell = shellPath()
       // 689: у элемента на подписке своего человека `claude auth login` пишет вход в ЕГО папку, а вход узла не трогает.
+      // 837-0e: an own-only element's login writes into its own folder — made first, so the walled shell finds it
+      if (serviceDir(service) && ownAccountRule().ownOnly(process.cwd(), service)) ownAccountRule().ensureOwnHome(process.cwd(), service)
       const home = ownClaudeDir(service)
       // 811-5c: on a server the element's shell is its own user's (`!` there sees only its folder), never the node's
       const walled = serviceDir(service) ? walledSession().walledAt(process.cwd(), serviceDir(service)) : null

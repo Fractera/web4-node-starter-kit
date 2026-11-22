@@ -58,6 +58,20 @@ export async function GET(req: NextRequest, ctx: Ctx) {
   const denied = await guard(req, ctx)
   if (denied) return denied
   const service = await serviceOf(ctx)
+  // 837-0e (the owner, Telegram 843: «самостоятельный … ему нельзя давать выбор»): an element that may run only on its own account — walled on
+  // a server or an app of its own — has no choice: its own folder is made here, `canOwn: false` hides the choice island, `own: true` gives
+  // the one button «Войти». Signed in is read from the files its own user wrote (existence), never by running `claude` as the node.
+  if (service && claudeAccount.ownOnly(process.cwd(), service)) {
+    const made = claudeAccount.ensureOwnHome(process.cwd(), service)
+    if (!made.ok) {
+      return NextResponse.json({ ok: true, canOwn: false, own: false, walledNone: true, loggedIn: false, method: null, email: null, plan: null, ownError: made.reason }, noStore)
+    }
+    const signedIn = claudeAccount.ownSignedIn(process.cwd(), service)
+    return NextResponse.json(
+      { ok: true, canOwn: false, own: true, walledNone: false, loggedIn: signedIn, method: signedIn ? "claude.ai" : null, email: signedIn ? masked(claudeAccount.ownEmail(process.cwd(), service)) : null, plan: null },
+      noStore,
+    )
+  }
   const own = service ? ownClaudeDir(service) : null
   // 833-3 (the server's main agent, handoff 2026-11-21: «архитектор увидел аккаунт узла с полной почтой и решил, что Марина вошла»): on a
   // dedicated server a walled element runs ONLY on its own account (811-5b) — without one the node's login is not its login: the page
@@ -82,15 +96,26 @@ export async function POST(req: NextRequest, ctx: Ctx) {
   if (!service || !home) return NextResponse.json({ ok: false, reason: "no-own-subscription" }, { status: 404, ...noStore })
   const body = (await req.json().catch(() => null)) as { own?: unknown } | null
   if (typeof body?.own !== "boolean") return NextResponse.json({ ok: false, reason: "bad-request" }, { status: 400, ...noStore })
+  // 837-0e: an own-only element has no switch — never the node's login; «own» only makes sure its folder exists
+  if (claudeAccount.ownOnly(process.cwd(), service)) {
+    if (!body.own) return NextResponse.json({ ok: false, reason: "own-only" }, { status: 403, ...noStore })
+    const made = claudeAccount.ensureOwnHome(process.cwd(), service)
+    return NextResponse.json(made.ok ? { ok: true, own: true } : { ok: false, reason: made.reason }, { status: made.ok ? 200 : 500, ...noStore })
+  }
   if (running(service)) return NextResponse.json({ ok: false, reason: "agent-running" }, { status: 409, ...noStore })
   // 834-7: the element's own admin may take its own subscription, never hand the element back to the node's
   const panel = ((await getSession(req))?.roles ?? []).some((r) => r === "architect" || r === "admin")
   if (!body.own && !panel) return NextResponse.json({ ok: false, reason: "own-only" }, { status: 403, ...noStore })
-  if (body.own) {
-    mkdirSync(home, { recursive: true })
-  } else if (ownClaudeDir(service)) {
-    claudeOwnLogout(home)
-    rmSync(home, { recursive: true, force: true })
+  // 837-0e: a failure answers its reason, never an empty 500 (✗ the page could only say «Переключить не удалось»)
+  try {
+    if (body.own) {
+      mkdirSync(home, { recursive: true })
+    } else if (ownClaudeDir(service)) {
+      claudeOwnLogout(home)
+      rmSync(home, { recursive: true, force: true })
+    }
+  } catch (e) {
+    return NextResponse.json({ ok: false, reason: (e as NodeJS.ErrnoException)?.code ?? "switch-failed" }, { status: 500, ...noStore })
   }
   return NextResponse.json({ ok: true, own: Boolean(ownClaudeDir(service)) }, noStore)
 }
