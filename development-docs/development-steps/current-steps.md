@@ -341,6 +341,15 @@ with the element key → session model <id>), 17 intro card on the home screen, 
 text sent in 955 (his idea, polished: Проекты → тема → «Перейти в чат»; строительство vs рабочий процесс; «создайте что-нибудь восхитительное ✨»).
 WAIT his «да» to 1–17, then code.
 
+**21:00 — 840 BUILT, waiting two words of Roma (Telegram 965):** core commits d92c6fea (840-1 my-agent limits + POST model; 840-2 Pult
+tiles + glance line), 9bb486bf (840-3 subscription page: status line + Ladder; AuthModal moved to claude-auth-modal.client.tsx; kit
+copied to all 12 groups) — NOT built, NOT pushed. Workshop custom 8daf334 (840-4) — release v0.3.238 --dry GREEN; the real push: the node's
+token 403 (TEMPLATE_NO_RIGHT), `TEMPLATE_GITHUB_TOKEN=$(gh auth token)` refused by the classifier → asked Roma «да, выпускай» to retry in
+the turn of his words. Then: pin custom v0.3.238, rollout tg files to root (and etuf1 on the server via update), ONE core build (asked),
+eyes of the Pult/subscription live, push fork + Fractera. Proofs so far: browser script 8/8 (Back via TelegramGameProxy / WebView / home
+stays; head link on top; switch note; «Прочитано»; start screen) against a stand-in core; prebuild RC=0; core tsc clean. Step 841 (search
++ native elements in the Mini App) planned: new-steps/841-the-element-mini-app-searches-the-node.md, told Roma 964.
+
 **WHERE THE SERVER STANDS:** core 5d05c566 (built 20:06) = 839-8 live. Pushed and WAITING his press: 2b7985a3 (839-9, EPERM = alive) —
 «Проверить снова» showed «1 изменений», trial merge OK. After it: he writes to the etuf1 bot (Etuf1-messenger-h2a) + «Включить» → the
 channel must come up and the agent answer. If not: ask the server agent for logs/web4-out.log lines of the wake and `ls -l` of

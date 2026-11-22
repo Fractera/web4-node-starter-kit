@@ -29,3 +29,4 @@
   context prints «контекст —».
 - 840-4: a test that the context door answers 401 without a session (negative) and builds the right line; eyes of the Mini App with
   a simulated `TelegramGameProxy.receiveEvent('back_button_pressed')` moves to the parent screen.
+- 840-4 committed in the workshop 8daf334; release custom v0.3.238 starting 20:49 UTC
