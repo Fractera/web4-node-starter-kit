@@ -330,10 +330,12 @@ address (104.16.x) → 200, and its POST reaches the signature check (401 no-dat
 188.114.96.5 / 188.114.97.5 among the IPs Spanish operators block on LaLiga's order (match days). Possible later fix (NOT ordered):
 tg-menu target() falls back to the live temporary address when the own domain does not answer from this computer, said aloud.
 
-**NOW (22:45):** prebuild with 839-10/11 running → logs/prebuild-839-11.log (RC at the end) → push fork (origin = aifa-agi) + Fractera
-→ through the extension «Проверить снова» on architect.fractera.ai → Roma presses «Обновить сборку ядра» → the server agent starts etuf1
-once; live checks: web4-out.log «[telegram] etuf1: за стеной — приветствие … отмечено», the channel up (bot.pid, MCP log), stat of
-data/services/etuf1/claude/.claude.json = fe-etuf1 600 with hasCompletedOnboarding; a trust/other dialog → the screen line (839-10).
+**NOW (22:50):** prebuild RC=0 (walled-channel 6/6 with the 839-11 sample and its negative) → 36053916 pushed 22:40:19 to origin
+(aifa-agi) AND Fractera (ls-remote both 36053916). Roma pressed «Обновить сборку ядра» at ~22:41 — the server built b3aebe5b (builtAt
+22:41:47, started 22:46:47) WITHOUT it: after my «Проверить снова» the strip says «Форк синхронизирован: 4 изменений ждут этот узел»,
+«Пробное слияние прошло». Telegram 1038: asked for ONE more press + gave the server agent's checks (merge-base 36053916; etuf1 once →
+web4-out.log «приветствие … отмечено», no «канал не поднялся»; stat .claude.json fe-etuf1 600; write etuf1's bot). NEXT: watch
+https://architect.fractera.ai/api/health builtAt > 22:47 → «Проверить снова» must say nothing waits → report to Roma.
 
 **DONE TODAY (pushed, live):** 840 Pult + subscription page + element doors (core 993c9b59, 73f43eaa on Fractera); custom template v0.3.238
 (Roma ran the release; pinned); 841 search + «Нативные элементы» + marketplace search v1 (`npm run market`, price) — the fractera.ai side NOT
