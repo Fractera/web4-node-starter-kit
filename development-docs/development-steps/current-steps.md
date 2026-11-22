@@ -322,6 +322,19 @@ walled-channel 6/6; server-wall trap). Core prebuild RC=0 before c1867ad0's test
 broken → ONE prebuild → push fork + Fractera (ls-remote) → Roma presses «Обновить сборку ядра» → the server agent starts etuf1 once and reads
 `logs/web4-out.log` (the screen line) and bot.pid. A trust question may still appear (projects empty) — the node handles trust (screen.cjs).
 
+**22:35–22:45 UTC — the Pult break SOLVED as a fact, deferred by Roma (1030, 1032: «сосредоточься на сервере, забудь про пульт на
+компьютере — это домен и блокировки Cloudflare»).** The broken Pult is the MAC's (the server's admin Pult works). The Mac's menu opens
+https://architect.throughsongs.com/api/node/tg-app (logs/tg-menu.json). Measured from the Mac: the zone's Cloudflare IPs 188.114.96.5 and
+188.114.97.5 do not open TCP 443 (timeout, any SNI); the same host through 104.16.230.132 / 104.21.48.1 (--resolve) → 200; the temporary
+address (104.16.x) → 200, and its POST reaches the signature check (401 no-data). The public tracker hayahora.futbol lists exactly
+188.114.96.5 / 188.114.97.5 among the IPs Spanish operators block on LaLiga's order (match days). Possible later fix (NOT ordered):
+tg-menu target() falls back to the live temporary address when the own domain does not answer from this computer, said aloud.
+
+**NOW (22:45):** prebuild with 839-10/11 running → logs/prebuild-839-11.log (RC at the end) → push fork (origin = aifa-agi) + Fractera
+→ through the extension «Проверить снова» on architect.fractera.ai → Roma presses «Обновить сборку ядра» → the server agent starts etuf1
+once; live checks: web4-out.log «[telegram] etuf1: за стеной — приветствие … отмечено», the channel up (bot.pid, MCP log), stat of
+data/services/etuf1/claude/.claude.json = fe-etuf1 600 with hasCompletedOnboarding; a trust/other dialog → the screen line (839-10).
+
 **DONE TODAY (pushed, live):** 840 Pult + subscription page + element doors (core 993c9b59, 73f43eaa on Fractera); custom template v0.3.238
 (Roma ran the release; pinned); 841 search + «Нативные элементы» + marketplace search v1 (`npm run market`, price) — the fractera.ai side NOT
 built: the server's agent got the 841-3 task (window cb7347b1 done 22:13); fractera.ai/api/marketplace/search → 401, /marketplace → 307
