@@ -69,6 +69,8 @@ LOGNAME, SHELL, NODE_OPTIONS.
 
 ## 5. Traps already paid for (newest first; add every new one here with its date and fix)
 
+- 2026-11-22 17:20: I declared «uuy30 born without a wall» from an empty `getent passwd fe-uuy30` — the element had been deleted at
+  17:06 UTC, and `remove` takes the user and the record away. Before reading the wall, prove the element is alive (registry, its port).
 - 2026-11-22 837-0f: after the 837-0e update a NEW element (uuy30) still got «Подписка узла» — `claude-account.cjs` loaded the wall by
   `require(path.join(root, …))`; the core's Next bundle compiles that into «Cannot find module 'unknown'», the `catch` answered «not
   walled». Unit tests passed (unbundled). Fix: static requires; guard `check:bundle-requires` between the build and the restart.
