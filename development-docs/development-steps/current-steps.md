@@ -348,6 +348,11 @@ again. Candidate fix (after the agent's report, NOT built): the element's own .c
 hasTrustDialogAccepted as itself (the owner's 2026-11-12 rule: the node confirms the element's own folder) — prove first on a scratch
 CLAUDE_CONFIG_DIR that a projects entry for the add-dir path suppresses the question.
 
+**23:05 — owed from 840-5:** the marketplace element (etuf1) on the server is still on custom v0.3.237 (Roma's screenshot 1049: the old
+Mini App, no tiles, agent card «ядро сейчас не отвечает»). 840-5 planned «etuf1 on a server via update» — not done (my miss, said in
+1050). After the server agent's report: update etuf1 to v0.3.238 through the extension (its element page on architect.fractera.ai), then
+check the agent card's «ядро не отвечает» on the new version (door GET /api/node/my-agent across the wall), no guessing.
+
 **DONE TODAY (pushed, live):** 840 Pult + subscription page + element doors (core 993c9b59, 73f43eaa on Fractera); custom template v0.3.238
 (Roma ran the release; pinned); 841 search + «Нативные элементы» + marketplace search v1 (`npm run market`, price) — the fractera.ai side NOT
 built: the server's agent got the 841-3 task (window cb7347b1 done 22:13); fractera.ai/api/marketplace/search → 401, /marketplace → 307
