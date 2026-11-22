@@ -322,6 +322,8 @@ fake `open` in PATH and a temp CLAUDE_CONFIG_DIR — scratchpad `pty-capture.py`
 - sgnou (Mac custom element) never took the v0.3.235 merge task (queued; it stood on Claude's new trust question — I answered it by
   hand at 09:0x). Not needed for 837 (the test runs on the server).
 
+**DO NOT PUSH docs to the fork until H1 is read** (a doc commit after his update makes the server card say «fork has changes» and spoils the «актуален» check).
+
 **NEXT ACTION, EXACTLY:** wait for Roma's «Обновить» on the server (asked in 793). When it is done: through the Claude in Chrome
 extension (MCP tab group; the extension's Chrome is signed in to architect.fractera.ai) open https://architect.fractera.ai/ru/root/subscription
 → click `[data-claude-login]` → a dialog with the link and a code field must appear (`[role=dialog]`); if «[too-many-sessions]» —
