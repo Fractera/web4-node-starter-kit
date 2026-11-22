@@ -300,52 +300,42 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 - Parked: the server tails (z6esw tell-core, redteam with Green team, deleting z6esw/qxld4) — the SSH visit did not open in my Chrome
   profile (his two «Готово» came from another profile); the Pult update banner 2303b5e2 waits the next core build; my effort → max.
 
-## Letter to my next session (written 2026-11-22 ~13:05 UTC — reset at ~62 %; Opus effort max)
+## Letter to my next session (written 2026-11-22 ~15:55 UTC — reset at ~60 %; Opus effort max)
 
-**WHO WAITS:** Roma in TELEGRAM (chat 90413601, ru). Mood: angry and tired — at 12:48 (Telegram 789) he caught me: «ты жёстко мне
-соврал … Ни хрена я не увидел … заходи и проверяй. Эта задача стоит раньше всех». He was right: my 01:25 «fix» of the Claude login
-window looked for `authorize?z=` read off his screenshot; CLI 2.1.330 prints `authorize?z-…` (HYPHEN); my test checked my own string.
-I owned it plainly (790, 792). Rule learned the hard way: **a parser is proven on the program's captured bytes, never on a retold
-string** — `scripts/terminal-auth.test.mjs` now does that (sample captured in a PTY, `python3` pty.fork of `claude auth login` with a
-fake `open` in PATH and a temp CLAUDE_CONFIG_DIR — scratchpad `pty-capture.py`). Talk to him alive, short, own faults, then deliver.
+**WHO WAITS:** Roma in TELEGRAM (chat 90413601, ru). Mood: exhausted and furious — six rounds of «fixed» that were not, half his working
+day on one screen. His words (856, verbatim): «Вот опять ты побежал … вперёд паровоза … я хотел чтобы ты одновременно с этим провёл полное
+тестирование как будет себя вести та же самая проблема: – cuid.fractera.ai … – customName.fractera.ai, – CustomDomain. Я не буду создавать
+новые развёртывание но тестирование пока ты не ответишь на два этих вопроса … фрагмент инструкции: для пользователя критически важно решить
+задачу с минимальным расходом токенов и времени это означает что перед запуском сборки обязательно нужно проанализировать а при необходимости
+и провести дополнительную консультацию с администратором или архитектором: важно понять будет ли оптимально сборку провести прямо сейчас или
+выгоднее её отложить чтобы добавить к задаче несколько дополнительных под шагов или Тестов … у элемента и у главного агента». I answered (857):
+his worry retold, the 3-case analysis by code (unverified live), and proposed: a LAW line in the core's CLAUDE.md §6 AND the element
+instruction (lib/instructions/element/element-instruction.src.md → template release) + a skill «before a build» (the case matrix, proven-by,
+server-only traps, what to batch). Asked «Вписываю … и пишу навык?» — **WAIT his yes**; then: core CLAUDE.md edit + `npm run check:instruction
+-- --seal`, element source + `npm run instruction:element` + skill `release-template` (custom AND native), the skill under .claude/skills/,
+commit, push — NO server update asked until he says.
 
-**WHERE I STAND (all pushed: fork aifa-agi + Fractera at 3cd732ab; custom template v0.3.236 pinned f32ea3b):**
-- 837-0 ca8e5463: login link detector accepts any query of the short link; deployed server version fails 4/7 of the new test, new 7/7.
-- 837-1 6047e1cb: board truth — NODE_WRITES + `.claude/settings.local.json`; passport node fields (telegramBots, visibility,
-  automation, payments, messengerSettings) are not edits (`lib/web4-items/element-code-state.ts`); `builtAt` in `.install-stamp.json`
-  moves only when a build ran (`scripts/services-install.mjs`, fallback BUILD_ID mtime); core card «актуален» + quiet button
-  (`components/deploy/deploy-board.client.tsx`, `core-deploy.client.tsx`); element-isolate writes `.git/info/exclude` locally.
-- 836 (agent pages inside the element; template v0.3.232→236), 836-5 trust question new wording, 836-6 turbopackIgnore + «access» kind —
-  all on the server since its 12:22 update (2ae96dd8) except 837-0/1.
-- The MAC core is NOT rebuilt since 981964bf (08:54): it lacks 836-5, 836-6, 837-0, 837-1. Build it when convenient (ask Roma first:
-  memory «ask before a core build»; he said «сделай обновление» at 12:43 for 837-1 — that was the server update).
-- sgnou (Mac custom element) never took the v0.3.235 merge task (queued; it stood on Claude's new trust question — I answered it by
-  hand at 09:0x). Not needed for 837 (the test runs on the server).
+**WHERE I STAND:** fork + Fractera at aea2a0de (+ local letters 080ffa15, this one). Server core e72e49ec (15:14) has 837-0b/0c/0d live:
+core + native login windows ✅ (bash), element kit-door GETs 200 ✅ on xeket. NOT on the server yet: **aea2a0de 837-0e** (keyed element calls
+skip next.config's redirect AND afterFiles rewrite — a 307 loses a POST body; own-only elements: canOwn false, own folder made by the core,
+signed-in by file existence; the agent gets its folder instead of no-account) and **fe2c97de 838** (one-language updating page). The server
+strip shows «2 изменений», trial merge passed. Roma said he will NOT update/test until his two questions are answered (done in 857) — so
+the update waits his word; when he presses, verify on xeket per the plan below and the 3-case matrix.
+- Mac core rebuilt 15:48 (080ffa15, RC=0) — it REPAIRED my accident: a hook-blocked `mkdir` + `cd X;` ran a scratch `printf > package.json`,
+  `> tsconfig.json` and `next build` in the core root (files restored by git; `.next` had been wiped). Rule now in skill `server-wall` §6:
+  scratch commands only inside `cd <dir> && [ "$(pwd -P)" != <core> ] && …`.
+- Skill **`.claude/skills/server-wall/SKILL.md`** (his order 849): who runs as whom, what is open, element→core crossings, own Claude account,
+  traps (837-0b…0e, 811-6), the checklist before a server update. Update it on every new wall defect.
+- Pult: on the temporary address by hand (LaLiga block of 188.114.96.5/97.5 still on at 15:49); the rebuild had reset it — redone. When
+  `nc -z -G 5 188.114.96.5 443` passes → `npm run tg-app -- menu`. The LaLiga watcher died with the session (no watcher now).
 
-**DO NOT PUSH docs to the fork until H1 is read** (a doc commit after his update makes the server card say «fork has changes» and spoils the «актуален» check).
+**VERIFY AFTER HIS UPDATE (837-0e), my tab:** xeket.fractera.ai/ru/admin/agent/subscription — GET /api/agent-kit/agent-api/claude-auth →
+canOwn false, own true, walledNone false; POST …/ticket → 200 with socket; no choice card, «Войти по подписке Claude» → window (bash as
+fe-xeket, link) → close both; /ru/admin/agent/terminal start → Claude's own login screen. Then the 3-case matrix: rename xeket (case 2: wall
+record follows the folder?), then its own domain (case 3: admin sign-in through the centre). Fill 837 §7 (0e, b–e), screenshots, ONE message.
 
-**14:06–14:30 UTC — 837-0b.** His photo (814): the CORE's own /ru/build/subscription → zsh newuser menu ate the typed command; my H0 was root's page only (walled `/bin/bash -l`). His 816 (angry): «почему … разные архитектуры … 40 сборок … у меня жизнь проходит» → promised (817) ONE update after walking the whole 837 path, in 40 min. Done: one shell rule in the kit master (claude-cli.cjs shellCandidates + loginShellArgs: Linux bash -l like the wall, macOS zsh, zsh -f without start-up files — zshmodules man page; macOS has no `newuser` script, so no local negative), agent-kit:update ×12 (check 12 ✓), terminal-auth test 16 ✓. Walked: 836 pages reach the core through the node window (818-8, not a risk); server RAM 7.8 GB / 4.8 free, 4 CPU; a new name → a new draft id → no y7k93 collision (837-8 stays conditional). Prebuild RC=0 (logs/prebuild-837-0b.log); commit **b3b51dfb**, pushed fork + Fractera (both = b3b51dfb); 14:37 «Проверить снова» in my tab 2116211802 → «3 изменений», trial merge passed; told him (818) — one press + delete Marketplace after the update. Watcher on builtAt≠13:53. **Was:** commit → push → «Проверить снова» (he works in tab 2116211800) → he presses «Обновить сборку ядра» → I check /ru/build/subscription + a native's subscription page → report.
-
-**14:28–14:45 UTC — the element s4tuk (837-3/4/5).** Roma created «Elements store» = s4tuk.fractera.ai (an app of its own), signed in in incognito as qq@qq.qq: roles user + elementAdmin002, the drawer has the agent pages — H(a) ✅, H(b) first half ✅ (the plain-account negative not yet). Toast said «user» though the build carries elementAdmin002 (checked in its JS) — the sign-in service gave roles without it at that moment; to re-check after the update. **837-0c ❌→fix:** the element's kit doors → core page gate empty 404 on a server (isKitDoor rule in proxy/common.ts + /api/transcribe into ELEMENT_DOORS; node-key-split 34 ✓); prebuild-837-0c RC=0; /api/transcribe added (node-key-split 34 ✓); commit **11c4cd5c** pushed fork + Fractera; «Проверить снова» → «4 изменений», trial merge passed. His 826: deleting s4tuk to re-create after the update — told him (827): the fixes are in the core, delete first, then «Обновить сборку ядра», then a new «Самостоятельным приложением» element; I check its agent pages myself. **14:47 server core 94ce85ad live** (his press; update done, 4 changes, no warnings): 0b ✅ on /ru/build/subscription and the native /ru/auth/subscription (bash, link, window; closed). s4tuk and Marketplace deleted (names answer nothing; pm2: core, natives, root). NEXT: he creates a new «Самостоятельным приложением» element → I check its /ru/admin/agent/subscription, terminal, agent start (0c live), then the toast on his sign-in. 14:53 (830) his order: drop WEB4 from the birth button, no deployment → «Родить элемент» (button, dialog, retry; en too) commit **9513d287** pushed fork + Fractera, rides the next update (831). He is birthing the draft «Marketplace» = xeket.fractera.ai. **15:03 xeket answers 200** (birth ~9 min) — H(a) ✅ again. 0c ❌ live: the redirect /:lang/architect/* → /:lang/* runs before the proxy (307 measured) → **837-0d** KIT_DOOR both forms, test 35 ✓, prebuild-837-0d running; told him (833): one more update, keep xeket. 15:08 commit **6452e908** pushed (fork + Fractera), «Проверить снова» → 3 changes, trial merge passed, asked his press (834); watcher bsw0kdwcu waits builtAt≠14:42:13. 15:10 (835, 836 «тебе нравится надо мной издеваться») he tested xeket on the OLD core (94ce85ad) — same empty page; the toast now said «администратор» → the toast ✅ on xeket. Answered (837): his test predates the fix, one press. 15:11 (838) he pressed the update; 840 «не надо следить … я сам тебе сообщу» → watcher killed. 15:13 (841) the updating page printed two languages → **step 838** (new-steps/838-…): one language chosen by the page (path, NEXT_LOCALE, browser, else en), a test in the prebuild (8 ✓, negative on the old page), serve.mjs re-applies nginx when the page alone changed; prebuild RC=0; committed LOCALLY — push together with whatever the xeket check finds (one update). Told him (842). **15:27–15:55 — 837-0e** (his 843–849, angry; 849: research the wall → skill): GET doors 200 on xeket (0c/0d ✅); every POST empty 500 (307 + fetch body, reproduced); own-only choice/folder → fixed in the core only (no template release, xeket stays); skill `.claude/skills/server-wall/` written. ✗ MY ACCIDENT 15:36: a hook-blocked mkdir + `cd X;` ran a scratch `printf > package.json`, `> tsconfig.json` and `next build` IN THE CORE → both files restored by git; the Mac core's `.next` WIPED (no BUILD_ID; it runs from memory — a restart would not come back) → **the Mac core must be rebuilt** (serve:rebuild) after the push. Prebuild-837-0e RC=0, tsc clean. Was told (823, 825): do NOT press the update yet. Watch after the update: claude-auth reads a walled element's own Claude folder as the node user — setgid loss seen on bugjs (server agent 12:39) may make a real login read as «не вошёл».
-
-**NEXT ACTION ON RETURN FROM THE MAC CORE BUILD (written ~15:58 UTC, before it):** pushed aea2a0de (837-0e + 838) to fork + Fractera; the server shows «2 изменений», trial merge passed; asked Roma (851) for «Обновить сборку ядра» and told him about MY ACCIDENT (the Mac `.next` wiped by a scratch `next build` run in the core root) — the Mac core rebuild repairs it. ON RETURN: 1) `npm run serve:status`, localhost:24680/api/health → commit aea2a0de, `.next/BUILD_ID` exists; failed → logs, fix, rebuild detached. 2) the server: architect.fractera.ai/api/health builtAt > 15:14 → in MY tab (2116211802) xeket.fractera.ai/ru/admin/agent/subscription: GET /api/agent-kit/agent-api/claude-auth → canOwn false, own true, walledNone false; POST …/ticket → 200 with socket; the page has NO choice and «Войти по подписке Claude» → the window (bash as fe-xeket, link) → close both; /ru/admin/agent/terminal start → Claude's own login screen (not a flash). 3) report to Roma with a screenshot (one message), fill 837 §7 0e, add any new trap to skill `server-wall`. 4) the Pult still on the temporary address (LaLiga watcher b1l0zsc87 — restore with `npm run tg-app -- menu` when 188.114.96.5 answers).
-
-**NEXT ACTION, EXACTLY (14:05 UTC):** H0 ✅ and H1 ✅ are read on the live server (core af4ff4da, his «Обновить сборку ядра» 13:49:13 → built 13:53, served 13:57:43; §7 of 837-main.md filled; screenshots sent 809–812). bugjs = Marketplace (address marketplace, marketplace.fractera.ai 200) — NOT deleted yet; its delete page https://architect.fractera.ai/ru/marketplace/settings/danger-zone (button present: born on the server). His 810: delete Marketplace + a new element from the template → told him (813): the server pins v0.3.236 (latest tag), order: delete → «Создать элемент» → «Название» → «Самостоятельным приложением» → «Создать», a NEW name (y7k93 may have left a folder), and to write me the name. **Then:** watch the birth (extension: sidebar/board; https://<address>.fractera.ai), H(a) — the admin window, elementAdminNNN; then 837-4 with his hands. Docs commits stay LOCAL until the next code change (a docs-only push makes the server strip say «ждут» again).
-
-**STEP 837 (plan sent 794, his order 784):** prove or refute: element born on the server subdomain → admin at birth → sign-in → its own
-agent pages (836) → Telegram Mini App without a sign-in form (832-6) → the same on its own domain. Roles: I lead and record, Roma types
-passwords, the server agent reads logs (questions go through Roma, read-only). Questions sent (794): y7k93/marketplace leftovers; can
-the element's wall user read `$NODE_DOMAIN_FILE` and core `logs/runtime.json` (else 836's door says «not-on-a-node»); OOM at 00:11.
-
-**THE SERVER AGENT'S REPORT (12:39, Telegram 781) — keep:** root's «правок кода» = `.claude/settings.local.json` written by
-element-isolate (fixed 837-1); marketplace's = `telegramBots` written by the channel door at 01:13 (by design uncommitted; board fixed);
-«собран» = `.install-stamp.json` `at` rewritten each install pass (fixed); y7k93 birth: first run built, died before its result
-(deploy queue 00:02–00:24 ran at the same time, unproven cause), retry hit «папка уже существует», both wrote one log — 837-8 candidate;
-bugjs claude/projects, sessions opened by hand (chmod g+rwx, setgid lost) — 836-6 not yet proven against a 0700 folder (negative control
-on the Mac with a locked folder before a core build — skipped in the urgent build; do it in the next Mac build).
-
-**Open, owned by me:** 835 (addresses at start, update/create queue) and 827 (fast install) wait after 837; the OpenAI key page inside
-the element (836) not done; the deployments board idea (837-1) shipped.
+**Open, owned by me:** 837-2…7 (the plan), the server agent's 3 questions (794), 835, 827, the Pult auto-fallback during a block (his word
+pending, 802), defects in new-steps/793 file (tunnel restarts during a block; the update strip needs «Проверить снова»).
 
 ## The person's decisions (verbatim)
 
