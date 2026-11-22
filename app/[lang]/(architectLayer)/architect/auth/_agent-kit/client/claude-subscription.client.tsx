@@ -1,14 +1,15 @@
 "use client"
 
 import { kitApi, kitSocket } from "./kit-place"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { type ReactNode, useCallback, useEffect, useRef, useState } from "react"
 import { ForbiddenWithExit } from "@/components/node-state/open-on-this-computer.client"
-import { Check, CircleAlert, Copy, ExternalLink, KeyRound, RotateCw, X } from "lucide-react"
-import { Button, buttonVariants } from "@/components/ui/button"
-import { AppDialog } from "@/components/dialog/app-dialog.client"
-import { Input } from "@/components/ui/input"
+import { ChevronDown, KeyRound, RotateCw, X } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Spinner } from "@/components/ui/spinner"
-import { cn } from "@/lib/utils"
+import { Ladder, type Rung } from "@/components/hosting/ladder-step"
+import { AuthModal } from "./claude-auth-modal.client"
 import type { ClaudeSubscriptionWords } from "../words/claude-subscription.i18n"
 import { createMouseFilter, MOUSE_OFF } from "./mouse-filter.mjs"
 import { extractAuthUrl } from "./terminal-auth.mjs"
@@ -16,26 +17,20 @@ import { type XtermHandle, XtermTerminal } from "./xterm-terminal.client"
 
 // ПОДПИСКА CLAUDE CODE: СОСТОЯНИЕ ВХОДА И САМ ВХОД (267-2).
 //
-// Перенос `fractera-memory-starter/app/[lang]/terminal/_components/terminal-panel.client.tsx` и
-// `auth-flow-modal.client.tsx`, с одним отличием по устройству: в памяти страница СРАЗУ открывала терминал
-// в режиме проверки. Здесь состояние сперва спрашивается дверью `/api/terminal/claude-auth` — без оболочки,
-// без процесса, — а терминал входа рождается только кнопкой. Слово владельца о мастерской памяти: «до того
-// как она будет запущена она не должна расходовать ресурсы компьютера».
-//
-// 🔒 ССЫЛКУ ИЩЕМ В СЫРОМ ПОТОКЕ (`terminal-auth.mjs`): Claude Code печатает её гиперссылкой OSC-8 или
-// текстом, разорванным переносами, — поэтому разбор ждёт паузу в потоке, а не первый кусок.
-// 🔒 ПОСЛЕ КОДА СОСТОЯНИЕ СПРАШИВАЕТСЯ ЗАНОВО, А НЕ ОБЪЯВЛЯЕТСЯ: «код отправлен» не значит «вошли».
+// Состояние сперва спрашивается дверью `claude-auth` — без оболочки и процесса; терминал входа рождается только кнопкой.
+// 🔒 ССЫЛКУ ИЩЕМ В СЫРОМ ПОТОКЕ (`terminal-auth.mjs`, ждём паузу); 🔒 после кода состояние спрашивается заново, а не объявляется.
 
 // 🔒 ДВЕРИ И СОКЕТ — В МАРШРУТЕ СЛУЖБЫ (271): `/{lang}/architect/<служба>/agent-api/*` и `/pty/<служба>`.
 
 const BUFFER_LIMIT = 8000
 const DETECT_DELAY_MS = 300
 
-// 689: `own` — элемент на подписке своего человека (своя папка Claude Code); тогда и почта, и лимит — его.
-// 833-3: `walledNone` — on a server this element has no account of its own, and the node's login is never its login.
-type Auth = { loggedIn: boolean | null; email: string | null; plan: string | null; own?: boolean; walledNone?: boolean }
+// 689: `own` — своя папка Claude Code элемента; 833-3: `walledNone` — on a server no account of its own, never the node's login.
+type Auth = { loggedIn: boolean | null; email: string | null; plan: string | null; own?: boolean; walledNone?: boolean; canOwn?: boolean }
 
-export function ClaudeSubscription({ service, lang, words }: { service: string; lang: string; words: ClaudeSubscriptionWords }) {
+// 840-3 (the owner, Telegram 905 «да», phrases 8–12): one status line, then ONE ladder (the part of «Активация домена») — «Подписка» (done by
+// itself where there is no choice, never an empty number), «Вход в Claude» with the terminal inside, «Разговор с агентом»; «Подробнее» folded.
+export function ClaudeSubscription({ service, lang, words, ownable = false, choice = null, next = null }: { service: string; lang: string; words: ClaudeSubscriptionWords; ownable?: boolean; choice?: ReactNode; next?: ReactNode }) {
   const api = kitApi(lang, service)
   const [auth, setAuth] = useState<Auth | "checking" | "forbidden">("checking")
   const [open, setOpen] = useState(false)
@@ -54,7 +49,7 @@ export function ClaudeSubscription({ service, lang, words }: { service: string; 
       const res = await fetch(`${api}/claude-auth`, { cache: "no-store" })
       if (res.status === 401 || res.status === 403) return setAuth("forbidden")
       const d = (await res.json()) as Auth
-      setAuth({ loggedIn: d.loggedIn ?? null, email: d.email ?? null, plan: d.plan ?? null, own: d.own === true, walledNone: d.walledNone === true })
+      setAuth({ loggedIn: d.loggedIn ?? null, email: d.email ?? null, plan: d.plan ?? null, own: d.own === true, walledNone: d.walledNone === true, canOwn: d.canOwn === true })
     } catch {
       setAuth({ loggedIn: null, email: null, plan: null })
     }
@@ -93,11 +88,7 @@ export function ClaudeSubscription({ service, lang, words }: { service: string; 
     check()
   }, [check])
 
-  // 🛑 ОДНО НАЖАТИЕ — ОДИН ВХОД. ✗ Оплачено владельцем 2026-09-22: «нажимаю на кнопку ничего не меняется я
-  // ещё раз нажимаю… а потом сразу открывается много вкладок на авторизацию». Кнопка оставалась живой,
-  // пока шёл запрос билета, и каждое нажатие рождало свой `claude auth login` — а тот на этой машине сам
-  // открывает вкладку в браузере. Отсюда два замка: ref отсекает повтор мгновенно (состояние React
-  // обновится только к следующей отрисовке), а `starting` показывает, что нажатие принято.
+  // 🛑 ОДНО НАЖАТИЕ — ОДИН ВХОД (владелец 2026-09-22: «сразу открывается много вкладок»): ref отсекает повтор мгновенно, `starting` виден.
   const startingRef = useRef(false)
   const [starting, setStarting] = useState(false)
 
@@ -143,21 +134,14 @@ export function ClaudeSubscription({ service, lang, words }: { service: string; 
       if (timerRef.current) clearTimeout(timerRef.current)
       timerRef.current = setTimeout(scan, DETECT_DELAY_MS)
     }
-    // Отказ моста (вход уже идёт в другой вкладке и т. п.) называется в самом терминале, а не оставляет
-    // пустой чёрный прямоугольник.
+    // Отказ моста называется в самом терминале, а не оставляет пустой чёрный прямоугольник.
     ws.onclose = (event) => {
       if (wsRef.current === ws) wsRef.current = null
       if (event.reason) termRef.current?.write(`\r\n[${event.reason}]\r\n`)
     }
   }, [api, scan, service])
 
-  useEffect(
-    () => () => {
-      if (timerRef.current) clearTimeout(timerRef.current)
-      wsRef.current?.close()
-    },
-    [],
-  )
+  useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); wsRef.current?.close() }, [])
 
   const handleData = useCallback((data: string) => send({ data, type: "stdin" }), [send])
   const handleResize = useCallback(
@@ -173,33 +157,58 @@ export function ClaudeSubscription({ service, lang, words }: { service: string; 
   const state = auth === "checking" ? null : auth
   const on = state?.loggedIn === true
   const unknown = state !== null && state.loggedIn === null
-  const walledNone = state?.walledNone === true
+  const own = state?.own === true || state?.walledNone === true
+  const terminal = open ? (
+    <div data-block="uo9pj" className="flex flex-col gap-2">
+      <div data-block="ja4m0" className="flex items-center gap-2">
+        <p data-block="l5ooo" className="flex-1 text-muted-foreground text-xs">{words.terminalNote}</p>
+        <Button type="button" size="sm" variant="outline" onClick={closeTerminal}>
+          <X className="size-4" aria-hidden />
+          {words.close}
+        </Button>
+      </div>
+      <div data-block="kukcu" className="h-[45dvh] min-h-[320px] overflow-hidden rounded-lg bg-[#0b0b0c] p-2">
+        <XtermTerminal onData={handleData} onResize={handleResize} ref={termRef} />
+      </div>
+    </div>
+  ) : null
+  const loginButton = (
+    <Button type="button" onClick={startLogin} disabled={starting} aria-busy={starting} variant={on ? "outline" : "default"} data-claude-login>
+      {starting ? <Spinner className="size-4" /> : <KeyRound className="size-4" aria-hidden />}
+      {starting ? words.starting : on ? words.relogin : words.login}
+    </Button>
+  )
+  const rungs: Rung[] = [
+    ...(ownable ? [{
+      id: "plan", title: words.stepPlan, done: state !== null, summary: own ? words.ownStep : words.ownNode,
+      body: <>{state?.canOwn && choice ? choice : <p data-block="cs840p" className="text-muted-foreground text-sm">{own ? words.ownStep : words.ownNode}</p>}</>,
+    }] : []),
+    {
+      id: "sign-in", title: words.stepSignIn, done: on, error: unknown, summary: words.signedIn,
+      body: (
+        <>
+          <p data-block="cs840s" className="text-muted-foreground text-sm">{on ? words.signedIn : unknown ? words.unknownText : ownable ? words.signInHint : words.offText}</p>
+          {!open && !on ? <div data-block="cs840b" className="flex flex-wrap gap-2">{loginButton}</div> : null}
+          {terminal}
+        </>
+      ),
+    },
+    { id: "talk", title: words.stepTalk, done: false, body: next },
+  ]
 
   return (
     <div data-block="tn46c" className="my-6 flex flex-col gap-3" data-claude-subscription data-state={auth === "checking" ? "checking" : on ? "on" : unknown ? "unknown" : "off"}>
-      <div data-block="enet0" className="rounded-lg border border-border bg-card p-4">
+      <div data-block="enet0" className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-card p-4">
         {auth === "checking" ? (
           <p data-block="q9cen" className="text-muted-foreground text-sm">{words.checking}</p>
         ) : (
           <>
-            <p data-block="vcyqo" className={cn("flex items-center gap-2 font-medium text-sm", walledNone && "text-destructive")} data-claude-walled={walledNone ? "none" : undefined}>
-              {on ? <Check className="size-4 shrink-0" aria-hidden /> : <CircleAlert className="size-4 shrink-0" aria-hidden />}
-              {on ? words.onTitle : walledNone ? words.walledTitle : unknown ? words.unknownTitle : words.offTitle}
+            <p data-block="vcyqo" className="flex min-w-0 flex-wrap items-center gap-2 text-sm" data-claude-walled={state?.walledNone ? "none" : undefined}>
+              <span data-block="cs840a" className="font-medium text-foreground">{[state?.email, own ? words.accOwn : words.accNode].filter(Boolean).join(" · ")}</span>
+              <Badge variant={on ? "default" : "destructive"} data-claude-badge={on ? "on" : "off"}>{on ? words.badgeOn : words.badgeOff}</Badge>
             </p>
-            <p data-block="ri9tu" className="mt-1 text-muted-foreground text-sm">
-              {walledNone ? words.walledText : on
-                ? (state?.own ? words.ownOnText : words.onText).replace("{email}", state?.email ?? "—").replace("{plan}", state?.plan ?? "—")
-                : unknown
-                  ? words.unknownText
-                  : words.offText}
-            </p>
-            <div data-block="mc8wn" className="mt-3 flex flex-wrap gap-2">
-              {!open && !walledNone && (
-                <Button type="button" onClick={startLogin} disabled={starting} aria-busy={starting} variant={on ? "outline" : "default"} data-claude-login>
-                  {starting ? <Spinner className="size-4" /> : <KeyRound className="size-4" aria-hidden />}
-                  {starting ? words.starting : on ? words.relogin : words.login}
-                </Button>
-              )}
+            <div data-block="mc8wn" className="flex flex-wrap gap-2">
+              {on && !open ? loginButton : null}
               <Button type="button" variant="ghost" onClick={check}>
                 <RotateCw className="size-4" aria-hidden />
                 {words.recheck}
@@ -209,22 +218,15 @@ export function ClaudeSubscription({ service, lang, words }: { service: string; 
         )}
       </div>
 
-      <p data-block="da9nc" className="text-muted-foreground text-xs">{state?.own ? words.ownQuota : words.quota}</p>
+      {state ? <Ladder id="claude-sub" rungs={rungs} locked={words.lockedTalk} focus={open ? "sign-in" : null} /> : null}
 
-      {open && (
-        <div data-block="uo9pj" className="flex flex-col gap-2">
-          <div data-block="ja4m0" className="flex items-center gap-2">
-            <p data-block="l5ooo" className="flex-1 text-muted-foreground text-xs">{words.terminalNote}</p>
-            <Button type="button" size="sm" variant="outline" onClick={closeTerminal}>
-              <X className="size-4" aria-hidden />
-              {words.close}
-            </Button>
-          </div>
-          <div data-block="kukcu" className="h-[45dvh] min-h-[320px] overflow-hidden rounded-lg bg-[#0b0b0c] p-2">
-            <XtermTerminal onData={handleData} onResize={handleResize} ref={termRef} />
-          </div>
-        </div>
-      )}
+      <Collapsible data-block="cs840m">
+        <CollapsibleTrigger className="group flex items-center gap-1 text-muted-foreground text-sm hover:text-foreground">
+          {words.more}
+          <ChevronDown className="size-4 transition-transform group-data-[state=open]:rotate-180" aria-hidden />
+        </CollapsibleTrigger>
+        <CollapsibleContent className="pt-2 text-muted-foreground text-sm">{words.moreText} {own ? words.ownQuota : words.quota}</CollapsibleContent>
+      </Collapsible>
 
       {authUrl && (
         <AuthModal
@@ -237,94 +239,10 @@ export function ClaudeSubscription({ service, lang, words }: { service: string; 
           }}
           onSend={(code) => {
             send({ data: `${code}\r`, type: "stdin" })
-            // Вход проверяется у самого `claude`, когда он успел записать учётку.
             setTimeout(check, 4000)
           }}
         />
       )}
     </div>
-  )
-}
-
-function AuthModal({
-  url,
-  words,
-  onClose,
-  onSend,
-}: {
-  url: string
-  words: ClaudeSubscriptionWords
-  onClose: () => void
-  onSend: (code: string) => void
-}) {
-  const [copied, setCopied] = useState(false)
-  const [code, setCode] = useState("")
-  const [sent, setSent] = useState(false)
-
-  const submit = () => {
-    const v = code.trim()
-    if (!v) return
-    onSend(v)
-    setSent(true)
-    setTimeout(onClose, 1200)
-  }
-
-  // 🔒 ОКНО ПРОДУКТА ОДНО — `AppDialog` (сторож `check:dialogs`): у примитива нет предела высоты и
-  // прокручиваемого тела, и длинная ссылка вытолкнула бы поле кода за край экрана.
-  return (
-    <AppDialog
-      open
-      onOpenChange={(o) => !o && onClose()}
-      size="md"
-      ui={{ close: words.close }}
-      titleClassName="flex items-center gap-2"
-      title={<><KeyRound className="size-4 shrink-0" aria-hidden /> {words.modalTitle}</>}
-      description={words.modalText}
-      footer={
-        <div data-block="dprzv" className="flex w-full flex-col gap-2">
-          <Input
-            autoComplete="off"
-            disabled={sent}
-            value={code}
-            placeholder={words.codePlaceholder}
-            onChange={(e) => setCode(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && submit()}
-          />
-          <Button type="button" className="w-full" disabled={sent || !code.trim()} onClick={submit}>
-            {sent ? words.codeSent : words.sendCode}
-          </Button>
-        </div>
-      }
-    >
-      <div data-block="wb4kk" className="flex flex-col gap-3">
-        <div data-block="qi4rh" className="max-h-[110px] select-text overflow-y-auto break-all rounded-lg border border-border bg-muted/50 px-3 py-2 font-mono text-xs">
-          {url}
-        </div>
-        <div data-block="ytj2f" className="flex gap-2">
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            onClick={async () => {
-              try {
-                await navigator.clipboard.writeText(url)
-                setCopied(true)
-                setTimeout(() => setCopied(false), 2000)
-              } catch {
-                /* буфер закрыт политикой браузера — ссылка видна и выделяется */
-              }
-            }}
-          >
-            {copied ? <Check className="size-4" aria-hidden /> : <Copy className="size-4" aria-hidden />}
-            {copied ? words.copied : words.copyLink}
-          </Button>
-          {/* Ссылка, а не кнопка-обёртка: `Button` узла не умеет `asChild`. */}
-          <a href={url} target="_blank" rel="noopener noreferrer" className={buttonVariants({ size: "sm", variant: "outline" })}>
-            <ExternalLink className="size-4" aria-hidden />
-            {words.openLink}
-          </a>
-        </div>
-      </div>
-    </AppDialog>
   )
 }

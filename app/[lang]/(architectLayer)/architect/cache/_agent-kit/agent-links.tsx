@@ -16,7 +16,14 @@ const TELEGRAM_APPS = "https://telegram.org/apps"
 export type AgentLinks = { terminal: string; telegram: string }
 
 /** Под подпиской: «Открыть терминал» и «Настроить Telegram». */
-export function AgentNextLinks({ links, words }: { links: AgentLinks; words: AgentLinksWords }) {
+export function AgentNextLinks({ links, words, bare = false }: { links: AgentLinks; words: AgentLinksWords; bare?: boolean }) {
+  // 840-3: inside the subscription page's ladder the rung's title says it — only the two buttons
+  if (bare) return (
+    <div data-block="agent-next-bare" className="flex flex-wrap gap-2">
+      <Link href={links.terminal} className={buttonVariants({ variant: "default" })}>{words.openTerminal}<ArrowRight className="ml-2 size-4" aria-hidden /></Link>
+      <Link href={links.telegram} className={buttonVariants({ variant: "outline" })}>{words.openTelegram}<ArrowRight className="ml-2 size-4" aria-hidden /></Link>
+    </div>
+  )
   return (
     <div className="my-6 flex flex-col gap-3 rounded-lg border p-4" data-block="agent-next-links">
       <p data-block="qripj" className="font-medium text-sm">{words.nextTitle}</p>

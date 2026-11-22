@@ -42,6 +42,20 @@ export type ClaudeSubscriptionWords = {
   ownQuota: string
   ownBusy: string
   ownFailed: string
+  /** 840-3: the status line and the one ladder (the owner's «да», Telegram 905, phrases 8–12 of 953) */
+  accOwn: string
+  accNode: string
+  badgeOn: string
+  badgeOff: string
+  stepPlan: string
+  stepSignIn: string
+  stepTalk: string
+  ownStep: string
+  signedIn: string
+  signInHint: string
+  lockedTalk: string
+  more: string
+  moreText: string
 }
 
 const DICT: Record<string, ClaudeSubscriptionWords> = {
@@ -80,6 +94,19 @@ const DICT: Record<string, ClaudeSubscriptionWords> = {
     ownQuota: "This element has its own subscription: its usage limit is its own and does not touch the node's.",
     ownBusy: "Turn this element's agent off first: its session runs under the subscription it started with.",
     ownFailed: "The switch did not go through. Check again in a moment.",
+    accOwn: "own subscription",
+    accNode: "the node's subscription",
+    badgeOn: "working",
+    badgeOff: "not signed in",
+    stepPlan: "Subscription",
+    stepSignIn: "Sign-in to Claude",
+    stepTalk: "Talk to the agent",
+    ownStep: "The element's own subscription: its own limit, the node's subscription is not touched.",
+    signedIn: "Signed in",
+    signInHint: "Sign in with the same account as the node, or another one.",
+    lockedTalk: "Opens after the sign-in to Claude",
+    more: "More",
+    moreText: "This is the real sign-in of Claude Code: a link appears, a window opens, paste the code Anthropic gives you.",
   },
   ru: {
     checking: "Спрашиваю Claude Code на этом компьютере…",
@@ -116,6 +143,19 @@ const DICT: Record<string, ClaudeSubscriptionWords> = {
     ownQuota: "У этого элемента собственная подписка: лимит у него свой и лимит узла не трогает.",
     ownBusy: "Сначала выключите агента этого элемента: его сессия идёт по подписке, с которой запущена.",
     ownFailed: "Переключить не удалось. Проверьте ещё раз через минуту.",
+    accOwn: "своя подписка",
+    accNode: "подписка узла",
+    badgeOn: "работает",
+    badgeOff: "не вошёл",
+    stepPlan: "Подписка",
+    stepSignIn: "Вход в Claude",
+    stepTalk: "Разговор с агентом",
+    ownStep: "Своя подписка элемента: лимит свой, подписку узла не трогает.",
+    signedIn: "Вход выполнен",
+    signInHint: "Войдите тем же аккаунтом, что у узла, или другим.",
+    lockedTalk: "Откроется после входа в Claude",
+    more: "Подробнее",
+    moreText: "Это настоящий вход Claude Code: появится ссылка, откроется окно, вставьте код, который даст Anthropic.",
   },
 }
 
