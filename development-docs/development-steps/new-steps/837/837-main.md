@@ -45,8 +45,8 @@ ladder (the element's «Настройки → Домен»), the server's main 
 ## 7. Checks and results (filled as they happen; ✅ confirmed · ❌ refuted · ⏳ waiting)
 | H | Check | How it is seen | Result |
 |---|---|---|---|
-| 0 | «Войти» on a subscription page shows the window | me, extension, architect.fractera.ai | ⏳ |
-| 1 | board: root without «правок кода», core «актуален» | me, extension | ⏳ |
+| 0 | «Войти» on a subscription page shows the window | me, extension, architect.fractera.ai | ✅ 2026-11-22 13:59 UTC — server core af4ff4da (built 13:53, his «Обновить сборку ядра» 13:49:13): /ru/root/subscription → «Войти по подписке Claude» → dialog «Claude Code — вход по вашей подписке» with the link claude.ai/oauth/authorize?z-… (the CLI 2.1.330 form), «Скопировать ссылку», «Открыть», the field «Вставьте код сюда», «Отправить код»; closed by «Закрыть» and the login terminal by its own «Закрыть» — nothing entered. Before the update the same click found no link (his 12:46 screenshot). |
+| 1 | board: root without «правок кода», core «актуален» | me, extension | ✅ 14:00 UTC — /ru/build/deployments: core af4ff4da «актуален» (собран 13:53:00); root v3.0.69 «актуален» (собран 00:24:42 — its last real build), bugjs = Marketplace v0.3.231 «актуален» (11:14:08); 0 «ждут изменения», 0 «правок кода» (before: root and bugjs «ждут изменения · правок кода: 1», every «собран» 12:20 rewritten by the install pass). |
 | a | birth OK, `https://<address>.fractera.ai` answers, the admin window comes, its account gets `elementAdminNNN` | the owner's panel + server agent (birth log) | ⏳ |
 | b | the admin signs in on the subdomain; the drawer shows Дашборд · Проекты · agent pages; `/ru/admin/*` refuses a plain account | the owner's hands, me through the extension | ⏳ |
 | c | `/ru/admin/agent/subscription` — its own account and the login window; `/terminal` — the agent starts, the socket connects; `/telegram` — the steps | the owner's hands + me | ⏳ |

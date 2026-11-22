@@ -324,12 +324,7 @@ fake `open` in PATH and a temp CLAUDE_CONFIG_DIR — scratchpad `pty-capture.py`
 
 **DO NOT PUSH docs to the fork until H1 is read** (a doc commit after his update makes the server card say «fork has changes» and spoils the «актуален» check).
 
-**NEXT ACTION, EXACTLY:** wait for Roma's «Обновить» on the server (asked in 793). When it is done: through the Claude in Chrome
-extension (MCP tab group; the extension's Chrome is signed in to architect.fractera.ai) open https://architect.fractera.ai/ru/root/subscription
-→ click `[data-claude-login]` → a dialog with the link and a code field must appear (`[role=dialog]`); if «[too-many-sessions]» —
-a login terminal is open elsewhere (ask Roma to press «Закрыть» on his tab). Then close it without entering anything («Закрыть»).
-Also read https://architect.fractera.ai/ru/build/deployments: core «актуален», root without «правок кода». Fill §7 of
-`new-steps/837/837-main.md` (H0, H1) and report to Roma with a screenshot. Then 837-2… with his hands.
+**NEXT ACTION, EXACTLY (14:05 UTC):** H0 ✅ and H1 ✅ are read on the live server (core af4ff4da, his «Обновить сборку ядра» 13:49:13 → built 13:53, served 13:57:43; §7 of 837-main.md filled; screenshots sent 809–812). bugjs = Marketplace (address marketplace, marketplace.fractera.ai 200) — NOT deleted yet; its delete page https://architect.fractera.ai/ru/marketplace/settings/danger-zone (button present: born on the server). His 810: delete Marketplace + a new element from the template → told him (813): the server pins v0.3.236 (latest tag), order: delete → «Создать элемент» → «Название» → «Самостоятельным приложением» → «Создать», a NEW name (y7k93 may have left a folder), and to write me the name. **Then:** watch the birth (extension: sidebar/board; https://<address>.fractera.ai), H(a) — the admin window, elementAdminNNN; then 837-4 with his hands. Docs commits stay LOCAL until the next code change (a docs-only push makes the server strip say «ждут» again).
 
 **STEP 837 (plan sent 794, his order 784):** prove or refute: element born on the server subdomain → admin at birth → sign-in → its own
 agent pages (836) → Telegram Mini App without a sign-in form (832-6) → the same on its own domain. Roles: I lead and record, Roma types
