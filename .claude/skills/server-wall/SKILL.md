@@ -69,6 +69,10 @@ LOGNAME, SHELL, NODE_OPTIONS.
 
 ## 5. Traps already paid for (newest first; add every new one here with its date and fix)
 
+- 2026-11-22 839-6…8: a walled element's bot said «not signed in» (`claude auth status` as the node cannot read fe-<id>'s 0600 files → read
+  by existence); its own gates in settings.local.json were core scripts (→ the relay; boundary closes on silence); its channel never came up —
+  the plugin `chmod 0600`s `.env` first and swallows EPERM on a file it does not own (→ `.env` handed to the element as itself, the node keeps
+  `.token.node`). Rule: anything a walled session's own program writes or chmods must be the element's file, not a node file opened by ACL.
 - 2026-11-22 17:20: I declared «uuy30 born without a wall» from an empty `getent passwd fe-uuy30` — the element had been deleted at
   17:06 UTC, and `remove` takes the user and the record away. Before reading the wall, prove the element is alive (registry, its port).
 - 2026-11-22 837-0f: after the 837-0e update a NEW element (uuy30) still got «Подписка узла» — `claude-account.cjs` loaded the wall by
