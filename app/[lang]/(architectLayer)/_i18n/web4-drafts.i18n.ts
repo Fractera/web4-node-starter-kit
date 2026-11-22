@@ -68,7 +68,7 @@ export type Web4DraftsUi = {
   birthInterrupted: string
   birthRepeat: string
   birthRetry: string
-  /** 338: вводный текст под заголовком черновика — виден только до нажатия «Родить WEB4 элемент»; абзацы через \n\n. */
+  /** 338: вводный текст под заголовком черновика — виден только до нажатия «Родить элемент»; абзацы через \n\n. */
   draftIntro: string
   /** 582: кнопка в зоне нативных, вводный текст черновика нативного элемента, текст окна его рождения, зона «Основное». */
   createNative: string
@@ -154,8 +154,8 @@ const DICT: Record<string, Web4DraftsUi> = {
     elementBadge: "Element",
     portLineBorn: "The element's own process answers on this port.",
     noteBorn: "The element is born from the element template and lives as its own project. Its subdomain is connected with «Address on the internet».",
-    birth: "Give birth to the WEB4 element",
-    birthTitle: "Give birth to this WEB4 element?",
+    birth: "Give birth to the element",
+    birthTitle: "Give birth to this element?",
     birthText: "The node downloads the element template, gives this draft its own copy, a port, a build and a process. It takes about three minutes and a lot of memory; the page may be closed — the birth goes on.",
     birthConfirm: "Give birth",
     appQuestion: "What will this element be?",
@@ -178,7 +178,7 @@ const DICT: Record<string, Web4DraftsUi> = {
     birthFailed: "The birth stopped:",
     birthInterrupted: "The birth process ended without a result (the node restarted or ran out of memory).",
     birthRepeat: "The element is already written into the node, its installation did not finish. To repeat it run in the node folder: npm run services:install -- --only",
-    birthRetry: "The draft is intact and nothing was written into the node — press «Give birth to the WEB4 element» to try again.",
+    birthRetry: "The draft is intact and nothing was written into the node — press «Give birth to the element» to try again.",
     draftIntro: "Your project gets its own disk space with a separate server of its own. It receives an automatic address right away, and you can connect your own domain later and turn it into a full-fledged project. It can become your website, an application, an agent automation project or a tool for your own productivity — you decide.\n\nIt is built on Next 16. Sign-in, the database and all the other services are connected automatically, and you can switch off any of them at any moment if you don't need it. A complete web3 infrastructure is created for the project, so you can sell this solution and receive orders automatically.\n\nHappy creating!",
   },
   ru: {
@@ -240,8 +240,8 @@ const DICT: Record<string, Web4DraftsUi> = {
     elementBadge: "Элемент",
     portLineBorn: "На этом порту отвечает собственный процесс элемента.",
     noteBorn: "Элемент рождён из шаблона и живёт самостоятельным проектом. Поддомен подключается кнопкой «Адрес в интернете».",
-    birth: "Родить WEB4 элемент",
-    birthTitle: "Родить этот WEB4 элемент?",
+    birth: "Родить элемент",
+    birthTitle: "Родить этот элемент?",
     birthText: "Узел скачает шаблон элемента и даст черновику свою копию, порт, сборку и процесс. Это около трёх минут и много памяти; страницу можно закрыть — рождение продолжится.",
     birthConfirm: "Родить",
     appQuestion: "Чем будет этот элемент?",
@@ -264,7 +264,7 @@ const DICT: Record<string, Web4DraftsUi> = {
     birthFailed: "Рождение остановилось:",
     birthInterrupted: "Процесс рождения закончился без результата (узел перезапускался или не хватило памяти).",
     birthRepeat: "Элемент уже записан в узел, но его установка не закончилась. Повторить её можно в папке узла: npm run services:install -- --only",
-    birthRetry: "Черновик цел, в узел ничего не записано — нажмите «Родить WEB4 элемент», чтобы попробовать снова.",
+    birthRetry: "Черновик цел, в узел ничего не записано — нажмите «Родить элемент», чтобы попробовать снова.",
     draftIntro: "Для проекта будет выделено своё дисковое пространство, и на нём разместится отдельный сервер вашего проекта. Он сразу получит автоматический адрес, а позже вы сможете привязать собственный домен и превратить его в полноценный проект. Это может стать вашим сайтом, приложением, проектом агентной автоматизации или инструментом для вашей личной эффективности — решать вам.\n\nВ основе — фреймворк Next 16. Авторизация, база данных и все остальные службы подключаются автоматически, и любую из них можно отключить в любой момент, если она вам не нужна. Для проекта будет создана полная web3-инфраструктура, чтобы вы могли продавать это решение и получать заказы автоматически.\n\nУдачного творчества!",
   },
 }
