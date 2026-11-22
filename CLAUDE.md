@@ -399,6 +399,10 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - Development documents — in every case: step → substeps → commit → summary with the hash; a plan with substeps is agreed before code;
   the state is written on every event; a step ends with a context reset.
 - «Done» is two proofs from different planes; a build is never a proof.
+- **A build is weighed before it starts** (the owner, 2026-11-22: «решить задачу с минимальным расходом токенов и времени»): a core
+  build, a template release or a server update — first the cases it touches (this computer and a server; a cuid address, a renamed
+  one, an own domain), each with its proof, and what else waits to ride in it; one build for all of it, a question to the architect
+  when the wait or the choice is theirs — skill `before-a-build`; a change an element on a server crosses the wall with — `server-wall`.
 - The answer form: the request retold → what you do → what result; the unverified is named before the word «done».
 - A built surface is seen first — `npm run eyes`, its screenshot looked at, overlaps and console read (`use-browser`) — then shown to the
   architect. The person's Chrome with the Claude extension is for acting in someone else's interface, in GitHub and on the node's own
@@ -462,7 +466,7 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   `ask-element`; a capability an element lacks — `handle-need` (a bare yes or no with no question in this session — `npm run needs`
   first); an element waits for a permission — `element-permission`; an element on or off — `element-power`; how a product or SDK works — `study-for-element`; a
   skill the person heard of — `adopt-suggested-skill`; a clock and reminders — `core-schedule`; a core build and who comes back — `core-build-return`; page sections, colours, fonts, menus of an element — `design-and-settings-of-elements`;
-  an administration panel, a dashboard or a settings tab of the core — `interface-design` (vendored; the core's primitives and tokens win); routing a need — `route-to-element`; a new element — `create-element`; people near the architect, a family or a team — `integrator`; channels, voices and trends — `content-factory`; agents for the person themselves — `own-agents`; a research of an outside product — `research`; why Fractera and not a platform — `fractera-vs-anthropic`; a node launched on a VPS and its domain there — `dedicated-server`; a person stuck in someone else's interface — `help-in-browser`
+  an administration panel, a dashboard or a settings tab of the core — `interface-design` (vendored; the core's primitives and tokens win); routing a need — `route-to-element`; a new element — `create-element`; people near the architect, a family or a team — `integrator`; channels, voices and trends — `content-factory`; agents for the person themselves — `own-agents`; a research of an outside product — `research`; why Fractera and not a platform — `fractera-vs-anthropic`; a node launched on a VPS and its domain there — `dedicated-server`; the wall between elements on a server, what crosses it and its traps — `server-wall` (kept up on every new wall defect); weighing a build, a release or a server update before it starts — `before-a-build`; a person stuck in someone else's interface — `help-in-browser`
   (their Chrome on this computer); a task with the person's hands and yours together (a password, a sign-in, a final «publish») —
   `act-with-the-person`; a request against a provider's rules, a warning or a ban — `provider-rules`; a session confirmed as ultracode — `ultracode-session`; a template release and its rollout to the elements — `release-template` (the elements' sealed
   instruction comes from `npm run instruction:element`).
