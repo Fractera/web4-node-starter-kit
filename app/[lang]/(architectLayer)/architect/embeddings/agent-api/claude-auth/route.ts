@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getSession } from "@/lib/auth/get-session"
 import elementAgentRoles from "@/lib/auth/element-agent-roles.cjs"
 
-import { requireRoles } from "@/lib/auth/require-roles"
+import { kitAccess } from "@/lib/agent-kit/kit-access"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { claudeAuthState, claudeOwnLogout } from "../../_agent-kit/server/claude-cli.cjs"
 import { status } from "../../_agent-kit/server/session.cjs"
@@ -42,7 +42,7 @@ async function guard(req: NextRequest, ctx: Ctx) {
   if (isTemporaryPublicAddress(req)) return NextResponse.json({ ok: false, reason: "temporary-address" }, { status: 403 })
   // 834-3: the architect, the node's admin, or THIS element's own admin (`lib/auth/element-agent-roles.cjs`) — never a neighbour's
   const service = await serviceOf(ctx)
-  return requireRoles(req, service ? elementAgentRoles.agentRoles(process.cwd(), service) : ROLES)
+  return (await kitAccess(req, service, service ? elementAgentRoles.agentRoles(process.cwd(), service) : ROLES)).denied // 836-1: or the element's own key — never «the panel» (no session → own account only)
 }
 
 const masked = (email: string | null) => {

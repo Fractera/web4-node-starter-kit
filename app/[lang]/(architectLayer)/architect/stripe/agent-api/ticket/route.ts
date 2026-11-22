@@ -1,8 +1,7 @@
 // @api issue a one-minute single-use ticket for the stripe agent terminal socket
 import { NextRequest, NextResponse } from "next/server"
 
-import { getSession } from "@/lib/auth/get-session"
-import { requireRoles } from "@/lib/auth/require-roles"
+import { kitAccess } from "@/lib/agent-kit/kit-access"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { mintTicket } from "../../_agent-kit/server/ticket.cjs"
 import { isBornItem } from "../../_agent-kit/server/workspace.cjs"
@@ -32,12 +31,11 @@ export async function POST(req: NextRequest, ctx: Ctx) {
   const service = await serviceOf(ctx)
   if (!service) return NextResponse.json({ ok: false, reason: "unknown-service" }, { status: 404 })
   // 834-3: the architect, the node's admin, or THIS element's own admin (`lib/auth/element-agent-roles.cjs`)
-  const denied = await requireRoles(req, elementAgentRoles.agentRoles(process.cwd(), service))
-  if (denied) return denied
-  const session = await getSession(req)
+  // 836-1: or the element itself, by its own key, for the person its own sign-in admitted (`lib/agent-kit/kit-access.ts`)
+  const access = await kitAccess(req, service, elementAgentRoles.agentRoles(process.cwd(), service))
+  if (access.denied) return access.denied
   // 834-2: the ticket names its element — another element's socket refuses it
   // 834-7: an element's own admin (not the architect, not the node's admin) — its socket runs only on the element's OWN account
-  const panel = (session?.roles ?? []).some((r) => r === "architect" || r === "admin")
-  const { ticket, expiresInMs } = mintTicket(session?.email ?? "architect@node", service, { ownOnly: !panel })
+  const { ticket, expiresInMs } = mintTicket(access.who ?? "architect@node", service, { ownOnly: !access.panel })
   return NextResponse.json({ ok: true, ticket, expiresInMs }, { headers: { "Cache-Control": "no-store" } })
 }

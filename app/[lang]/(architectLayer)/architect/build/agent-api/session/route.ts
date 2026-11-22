@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import elementAgentRoles from "@/lib/auth/element-agent-roles.cjs"
 
-import { requireRoles } from "@/lib/auth/require-roles"
+import { kitAccess } from "@/lib/agent-kit/kit-access"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { status, stop } from "../../_agent-kit/server/session.cjs"
 import { isBornItem, ownClaudeDir, serviceDir } from "../../_agent-kit/server/workspace.cjs"
@@ -38,7 +38,7 @@ async function guard(req: NextRequest, ctx: Ctx) {
   if (isTemporaryPublicAddress(req)) return NextResponse.json({ ok: false, reason: "temporary-address" }, { status: 403 })
   // 834-3: the architect, the node's admin, or THIS element's own admin (`lib/auth/element-agent-roles.cjs`) — never a neighbour's
   const service = await serviceOf(ctx)
-  return requireRoles(req, service ? elementAgentRoles.agentRoles(process.cwd(), service) : ROLES)
+  return (await kitAccess(req, service, service ? elementAgentRoles.agentRoles(process.cwd(), service) : ROLES)).denied // 836-1: or the element's own key
 }
 
 const unknown = () => NextResponse.json({ ok: false, reason: "unknown-service" }, { status: 404 })
