@@ -35,6 +35,12 @@ Write it into the step's plan as a table before the build; every touched cell ge
 | an element's keyed call | loopback, its own `X-Node-Key`, no session, a POST over a redirect loses its body |
 | the internet | `cf-*` or `x-fractera-edge`: no key is honoured |
 
+| Element's life | What differs there |
+|---|---|
+| just born | no sessions yet: its Claude folders are empty |
+| after its agent's first session | `claude` made `projects/`, `sessions/` 0700 as fe-<id> — the node cannot list them (✗ 2026-11-22: the core build died on them; fixed by 839-3 — the build opens them first) |
+| deleted | its wall user and record are gone — a check of its wall proves nothing (✗ 2026-11-22 17:20) |
+
 ## 2. Prove before the build what can be proven before it
 
 - Tests with a negative control for each touched cell (`use-testing`); a routing rule — on a scratch app, never in the core root
