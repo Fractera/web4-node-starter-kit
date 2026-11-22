@@ -12,6 +12,7 @@ import { tgState } from "@/lib/node/tg-app/state"
 import { closeAsk, saveSecret, type Ask } from "@/lib/node/person-secret-save"
 import { powerState, runElementPower } from "@/lib/web4-items/run-element-power"
 import autostartLib from "@/lib/node/autostart.cjs"
+import { botAction, guideFile } from "@/lib/node/tg-app/bot-door"
 
 // ПУЛЬТ УЗЛА В TELEGRAM (узел, шаг 771). Владелец, 2026-11-16: «раз уже я больше большую часть времени собираюсь проводить в Telegram»;
 // 23:13 — «Хорошо продолжай работать до конца». Кнопка меню бота главного агента (771-3) открывает GET — страницу; страница зовёт POST
@@ -27,6 +28,14 @@ const langOf = (req: NextRequest): "en" | "ru" => (req.nextUrl.searchParams.get(
 const no = (reason: string, status: number) => NextResponse.json({ ok: false, reason }, { status, headers: HEADERS })
 
 export async function GET(req: NextRequest) {
+  // 839: the bot guide a person forwards — a text file behind a signed link that lives an hour (lib/node/tg-app/bot-door.ts)
+  if (req.nextUrl.searchParams.has("guide")) {
+    const bot = asksTg.bot(ROOT, "build")
+    if (!bot) return no("no-bot", 409)
+    const g = guideFile(ROOT, req.nextUrl.searchParams, bot.token)
+    if (!g.ok) return new NextResponse(null, { status: g.status, headers: HEADERS })
+    return new NextResponse(g.text, { headers: { ...HEADERS, "Content-Type": "text/plain; charset=utf-8", "Content-Disposition": `attachment; filename="${g.file}"` } })
+  }
   return new NextResponse(page.html(langOf(req)), { headers: { ...HEADERS, "Content-Type": "text/html; charset=utf-8" } })
 }
 
@@ -111,6 +120,13 @@ export async function POST(req: NextRequest) {
     const out = await run("build", what)
     console.log(`[node/tg-app] channel ${what} from Telegram → ${out.ok ? out.did : out.reason}`)
     return NextResponse.json(out, { status: out.ok ? 200 : 500, headers: HEADERS })
+  }
+  // 839 (the owner, 2026-11-22, Telegram 901): an element without a bot gets one from the Pult — state, token, activation, the guide
+  if (action === "bot") {
+    const b = body as { do?: unknown; token?: unknown } | null
+    const out = await botAction(ROOT, id, b?.do, b?.token, lang, bot.token)
+    if (!out.ok) return no(out.reason, out.status)
+    return NextResponse.json(out, { headers: HEADERS })
   }
   if (action === "power") {
     const s = powerState(id, lang)

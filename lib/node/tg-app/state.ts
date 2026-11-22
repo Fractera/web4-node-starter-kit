@@ -37,7 +37,7 @@ export type TgAsk = { id: string; text: string; why: string | null; hint: string
  * Read from the node's records: the model and effort from the session's settings, the account from the agent's pulse, the bot from its
  * channel. `null` — not known yet (the default model, an agent that never ran).
  */
-export type TgAgent = { mode: "coding" | "waiting" | "sleeping"; model: string | null; effort: string | null; ultracode: boolean; account: "node" | "own" | null; email: string | null; bot: string | null }
+export type TgAgent = { mode: "coding" | "waiting" | "sleeping"; model: string | null; effort: string | null; ultracode: boolean; account: "node" | "own" | null; email: string | null; bot: string | null; botReady: boolean }
 export type TgElement = { build: "building" | "queued" | null; serve: TgServe; claude: "own" | "node" | "none"; subscription: string | null; id: string; name: string; native: boolean; required: boolean; on: boolean; offReason: string | null; live: boolean; step: string | null; turn: { event: string; at: string; last: string | null } | null; agent: TgAgent ; description: string | null; site: string | null; botLink: string | null }
 /**
  * 2026-11-17 (the owner: «пульт как будто бы заморожен на определённом аккаунте»): a limit is measured only by an agent's turn (Claude Code
@@ -95,6 +95,8 @@ function agentOf(id: string, live: boolean): TgAgent {
   const running = live || mode.running === true
   const login = pulse?.login
   const bot = readJson<{ username?: string } | null>(join(dir, "channel", "telegram", "bot.json"), null)?.username
+  // 839: a bot nobody pressed Start in yet admits nobody — the Pult keeps its window open on «Нажмите Start» instead of a dead link
+  const admitted = readJson<{ allowFrom?: unknown[] } | null>(join(dir, "channel", "telegram", "access.json"), null)?.allowFrom
   return {
     mode: !running ? "sleeping" : pulse?.event === "turn-start" ? "coding" : "waiting",
     model: typeof mode.model === "string" && mode.model ? mode.model : null,
@@ -106,6 +108,7 @@ function agentOf(id: string, live: boolean): TgAgent {
     // the account logged in now; an element's own subscription is its person's, not shown here.
     email: login === "node" ? accountNow() : null,
     bot: typeof bot === "string" && /^[A-Za-z0-9_]{3,64}$/.test(bot) ? bot : null,
+    botReady: Array.isArray(admitted) && admitted.length > 0,
   }
 }
 
