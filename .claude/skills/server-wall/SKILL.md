@@ -69,6 +69,13 @@ LOGNAME, SHELL, NODE_OPTIONS.
 
 ## 5. Traps already paid for (newest first; add every new one here with its date and fix)
 
+- 2026-11-22 839-12: past the first-run marks a walled element's session stood on Claude Code's trust question for its data folder («Adding
+  a new directory … Your answer holds for this session») — its own Claude home never trusted the node's repository, so the `--add-dir`
+  of `data/services/<id>` asks on EVERY session, and the node's trust watcher answers once per session and only on a Telegram-confirmed
+  wake. Fix: before every session the bridge marks the element's own home as itself (`telegram.markOwnHome`) — onboarding, theme,
+  `projects[<its folder>]` and `projects[<its data folder>]` `hasTrustDialogAccepted` (measured on Claude Code 2.1.330 with a scratch
+  home: the record removes the question, without it the question) — never the repository root. Rule: what Claude Code asks before its MCP
+  servers start is settled in the element's own home before the session, or a Telegram wake never gets its channel.
 - 2026-11-22 839-10/11: a walled element's channel never came up — no MCP log after 18:11, `.claude.json` without onboarding and trusted
   folders: the NODE had run `claude plugin install` with the element's CLAUDE_CONFIG_DIR, could not read its 0600 `.claude.json` and wrote a
   fresh one over it; every session then stood on Claude Code's first-run screen before its MCP servers. Fix: behind the wall every `claude`

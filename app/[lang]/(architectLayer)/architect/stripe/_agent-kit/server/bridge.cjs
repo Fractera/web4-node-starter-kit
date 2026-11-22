@@ -245,6 +245,13 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
     notice('[⟦node · no-account⟧ агент элемента работает только на своём аккаунте Claude — войдите в кабинете администратора элемента; до входа работу делает главный агент]')
     return { ok: false, reason: 'no-account' }
   }
+  // 839-12 (Roma, Telegram 1051; the server's main agent, 1054): an element's own Claude home is marked before EVERY session — the first-run
+  // screens and trust of its own two folders (its folder; its data folder, the `--add-dir` below) — or a session woken from Telegram stands
+  // on Claude Code's question and its channel never comes up (`telegram.markOwnHome`; behind the wall as the element itself).
+  if (ownHome) {
+    const marked = telegram.markOwnHome(element, ownHome, [cwd, path.join(process.cwd(), 'data', 'services', element)])
+    if (marked) console.log(`[agents] ${element}: ${marked}`)
+  }
   const bin = resolveBin('claude', env.PATH || env.Path)
   if (!bin) {
     notice('[claude не найден ни в PATH, ни в ~/.local/bin — установите Claude Code]')

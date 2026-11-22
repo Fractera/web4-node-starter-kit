@@ -353,6 +353,27 @@ Mini App, no tiles, agent card «ядро сейчас не отвечает»).
 1050). After the server agent's report: update etuf1 to v0.3.238 through the extension (its element page on architect.fractera.ai), then
 check the agent card's «ядро не отвечает» on the new version (door GET /api/node/my-agent across the wall), no guessing.
 
+**23:20 — 839-12 BUILT (uncommitted until the prebuild is green):** Roma 1051: «нормальное обновление и новая сборка ядра». The server
+agent's report 1054: core 939f1a89 has 36053916; onboarding marked ✅; fe-etuf1 600 ✅; the session stood on the add-dir trust question
+(answered by hand 23:03:27); NO bot.pid, NO .env and NO .token.node in channel/telegram (at 23:01 the page still showed «токен …F3xw»
+→ deleted 23:01–23:05, by whom unknown: the core's code deletes them only in removeBot; asked the server agent (1056) for the element
+agent's journal lines and the npm run task text). Fix: telegram.cjs seedOnboarding → markOwnHome(service, configDir, folders):
+onboarding + theme + projects[<its folder>] + projects[<its data folder>] hasTrustDialogAccepted, as the element behind the wall,
+as the node's user elsewhere, only in data/services/<id>/claude, a non-parsing file left alone; called by bridge spawnAgent before EVERY
+session with an own home (not only the channel launch). Proof 1: scratch probe on Claude Code 2.1.330 (scratchpad trust-probe/probe*.cjs):
+without the data record → «Is this a directory you created», with it → REPL, also with --add-dir channel/telegram below. Proof 2:
+walled-channel 8/8 (walled marks as the element; negative: helper refuses → untouched; home computer marks directly; negative: not the
+element's own home → untouched; negative: unparsed file left alone). Kits synced (12 groups), check:agent-kits ok, server-wall §5 trap.
+NEXT: prebuild RC=0 (logs/prebuild-839-12b.log) → commit (explicit paths) → push origin + Fractera → «Проверить снова» → Roma presses
+«Обновить сборку ядра» → Roma re-saves the marketplace bot token (Pult «Бот» or its Telegram-бот page step 2) → he writes the bot →
+proof: the server log «[agents] etuf1: … отмечены доверенными», bot.pid alive, the bot answers.
+
+**23:17 — Roma 1057 (the owner's word for sections 1–8, conditional):** «Если все заработает нужно будет обновить инструкцию чтоб более
+твёрдое запрещать подобные действия … целые сутки ремонтируют твои ошибки». Draft sent (1058) for CLAUDE.md §6: «The wall is never crossed
+by the node itself: what an element owns (its Claude home, its bot's files, its data) is changed only as the element; a change reaching a
+walled element ships to a server only after it ran as such an element on a scratch copy, and that proof is named in the update request.»
+AFTER the bot answers: write it (English, §6), `npm run check:instruction -- --seal`, commit, push with the next batch.
+
 **DONE TODAY (pushed, live):** 840 Pult + subscription page + element doors (core 993c9b59, 73f43eaa on Fractera); custom template v0.3.238
 (Roma ran the release; pinned); 841 search + «Нативные элементы» + marketplace search v1 (`npm run market`, price) — the fractera.ai side NOT
 built: the server's agent got the 841-3 task (window cb7347b1 done 22:13); fractera.ai/api/marketplace/search → 401, /marketplace → 307

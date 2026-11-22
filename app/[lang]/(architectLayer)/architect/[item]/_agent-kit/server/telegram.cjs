@@ -23,7 +23,7 @@
 
 const { spawn } = require('node:child_process')
 const { randomBytes } = require('node:crypto')
-const { chmodSync, existsSync, mkdirSync, readFileSync, readdirSync, lstatSync, rmSync, writeFileSync } = require('node:fs')
+const { chmodSync, existsSync, mkdirSync, readFileSync, readdirSync, lstatSync, realpathSync, rmSync, writeFileSync } = require('node:fs')
 const os = require('node:os')
 const path = require('node:path')
 const { isBornItem, ownClaudeDir, serviceDir } = require('./workspace.cjs')
@@ -304,8 +304,6 @@ async function channelLaunch(service, env) {
   const withBins = { ...env, [pathKey]: dirs.join(path.delimiter), TELEGRAM_STATE_DIR: stateDir(service) }
   const ready = await preparePlugin(withBins, service)
   if (!ready.ok) return { ok: false, error: ready.error }
-  const seeded = seedOnboarding(service, env.CLAUDE_CONFIG_DIR)
-  if (seeded) console.log(`[telegram] ${service}: за стеной — ${seeded}`)
   const opened = openForElement(service, env.CLAUDE_CONFIG_DIR)
   if (opened) console.log(`[telegram] ${service}: за стеной — элементу открыто то, что для него положил узел (${opened} файлов и папок)`)
   const handed = handEnvToElement(service)
@@ -338,25 +336,63 @@ function asWalled(service, program, args, env = {}) {
 }
 
 /**
- * 839-11: Claude Code's first-run screens (the text style, the version's onboarding) stand before its MCP servers start — a session woken
- * from Telegram has nobody to press Enter, and its channel never comes up. Behind the wall, before the channel starts, the element marks its
- * OWN `.claude.json` (as itself) with what those screens set: `hasCompletedOnboarding` and a `theme` when it has none. Preferences only —
- * never a consent (data use, a permission mode): a question that is the person's stays on the screen and the failure names it (839-10).
- * Returns what was done, or ''.
+ * An element's OWN Claude home (`data/services/<id>/claude`) is marked before every session of it (the bridge, `spawnAgent`), so a session
+ * woken from Telegram has nothing to stand on before its MCP servers — its channel — start:
+ * - 839-11 — Claude Code's first-run screens: `hasCompletedOnboarding` and a `theme` when it has none (preferences only);
+ * - 839-12 (Roma, Telegram 1051, 2026-11-22 23:04: «придётся сделать нормальное обновление»; the server's main agent, 1054: etuf1 stood
+ *   on «Adding a new directory: …/data/services/etuf1 … Is this a directory you created or one you trust? … Your answer holds for this
+ *   session») — trust of the element's OWN two folders only: its folder and its data folder (the session's `--add-dir`; its channel's
+ *   state is below it). The owner's rule, CLAUDE.md §4 (2026-11-12: «you must confirm the current folder automaticly»): the node confirms
+ *   the element's own folder. A Claude home of its own never trusted the node's repository, so without the record Claude Code asks on
+ *   EVERY session. Measured 2026-11-22 on Claude Code 2.1.330 with a scratch home: `projects[<data folder>].hasTrustDialogAccepted` → no
+ *   question, for that folder and for `channel/telegram` below it; without it → the question (negative). Never the repository's root:
+ *   that would trust the whole node.
+ * Behind the wall it runs AS the element (its own 0600 file; the helper cannot — nothing is written, never by the node); elsewhere (a home
+ * computer, a native element) as the node's user, whose file it is. Only in the element's own home, never the node's `~/.claude`. A file
+ * that exists but does not parse is left alone (a half-written file is never replaced); one the element cannot read was written by the node
+ * (839-11's trap) and is replaced. Returns what was done, or ''.
  */
-function seedOnboarding(service, configDir) {
-  if (!configDir) return ''
-  const file = path.join(configDir, '.claude.json')
-  const code = "const fs=require('fs'),f=process.argv[1];let j={};try{j=JSON.parse(fs.readFileSync(f,'utf8'))}catch(e){}" +
-    "if(j.hasCompletedOnboarding===true&&j.theme){process.stdout.write('kept');process.exit(0)}" +
-    "j.hasCompletedOnboarding=true;if(!j.theme)j.theme='dark';const t=f+'.fractera';fs.writeFileSync(t,JSON.stringify(j,null,2),{mode:0o600});fs.renameSync(t,f);process.stdout.write('seeded')"
-  const as = asWalled(service, 'node', ['-e', code, file])
-  if (!as) return ''
+function markOwnHome(service, configDir, folders = []) {
+  if (!configDir || !service) return ''
+  const own = path.join(/* turbopackIgnore: true */ ROOT, 'data', 'services', String(service), 'claude')
+  const real = (p) => { try { return realpathSync(p) } catch { return path.resolve(p) } }
+  if (real(configDir) !== real(own)) return ''
+  let walledHere
   try {
-    const out = require('node:child_process').execFileSync(as.cmd, as.args, { env: as.env, timeout: 15_000, encoding: 'utf8' })
-    return out.includes('seeded') ? 'приветствие Claude Code отмечено пройденным (тема, без согласий за человека)' : ''
+    const ws = globalThis.__web4WalledSession // mount.cjs — a computed require does not build in this module
+    const dir = serviceDir(service)
+    if (!dir || !ws || typeof ws.walledAt !== 'function') return ''
+    walledHere = ws.walledAt(process.cwd(), dir) === true
+  } catch { return '' }
+  const dirs = [...new Set(folders.filter(Boolean).flatMap((d) => {
+    const both = [path.resolve(d)]
+    try { both.push(realpathSync(d)) } catch { /* not made yet — its plain path */ }
+    return both
+  }))]
+  const file = path.join(configDir, '.claude.json')
+  const code = "const fs=require('fs');const [f,...dirs]=process.argv.slice(1);let j={};" +
+    "try{j=JSON.parse(fs.readFileSync(f,'utf8'))}catch(e){if(!e||(e.code!=='ENOENT'&&e.code!=='EACCES')){process.stdout.write('unparsed');process.exit(0)}}" +
+    "if(!j||typeof j!=='object'||Array.isArray(j))j={};const did=[];" +
+    "if(j.hasCompletedOnboarding!==true){j.hasCompletedOnboarding=true;did.push('onboarding')}if(!j.theme){j.theme='dark';did.push('theme')}" +
+    "if(!j.projects||typeof j.projects!=='object')j.projects={};" +
+    "for(const d of dirs){const p=j.projects[d]&&typeof j.projects[d]==='object'?j.projects[d]:{};" +
+    "if(p.hasTrustDialogAccepted!==true){j.projects[d]=Object.assign({},p,{hasTrustDialogAccepted:true});did.push('trust')}}" +
+    "if(!did.length){process.stdout.write('kept');process.exit(0)}" +
+    "const t=f+'.fractera';fs.writeFileSync(t,JSON.stringify(j,null,2),{mode:0o600});fs.renameSync(t,f);process.stdout.write('marked:'+did.join(','))"
+  const args = ['-e', code, file, ...dirs]
+  const run = walledHere ? asWalled(service, 'node', args) : { cmd: process.execPath, args, env: { PATH: process.env.PATH ?? '' } }
+  if (!run) return ''
+  try {
+    const out = require('node:child_process').execFileSync(run.cmd, run.args, { env: run.env, timeout: 15_000, encoding: 'utf8' })
+    if (out.includes('unparsed')) return 'файл Claude Code элемента не читается как JSON — оставлен как есть'
+    if (!out.includes('marked:')) return ''
+    const did = out.slice(out.indexOf('marked:') + 7)
+    const said = []
+    if (/onboarding|theme/.test(did)) said.push('приветствие Claude Code отмечено пройденным (тема, без согласий за человека)')
+    if (/trust/.test(did)) said.push('его папка и папка данных отмечены доверенными')
+    return said.join('; ')
   } catch (e) {
-    console.log(`[telegram] ${service}: отметить приветствие не удалось — ${String(e?.message ?? e).slice(0, 160)}`)
+    console.log(`[telegram] ${service}: отметить свою папку Claude не удалось — ${String(e?.message ?? e).slice(0, 160)}`)
     return ''
   }
 }
@@ -1564,8 +1600,8 @@ module.exports = {
   tokenFrom, starterFn,
   // 839-8: what a walled session's channel needs from the node before it starts
   handEnvToElement, openForElement,
-  // 839-11: behind the wall the element itself installs its plugin and marks its own first-run screens
-  asWalled, seedOnboarding,
+  // 839-11/12: behind the wall the element itself installs its plugin; its own Claude home is marked before every session
+  asWalled, markOwnHome,
   // the bot taken off the node — the danger zone of its page
   removeBot,
   // 639: итог остаётся, служебное исчезает; вопросы закрытой сессии исчезают.
