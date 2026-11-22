@@ -855,9 +855,15 @@ async function rebuild() {
 async function agentsBackAfter(root, { agentBack, buildWhat, buildSince, summary }) {
   // 771: the same Telegram message gets the result, the menu button is «Пульт» again.
   try { await buildNotice.end(root, !/FAILED|NOT deployed/.test(summary)) } catch { /* never holds the return of the agents */ }
-  if (agentBack && buildWhat === "update") {
+  const failed = /FAILED|NOT deployed/.test(summary)
+  // 839-5: a failed build of an update is waited for even when nobody was working — the waiter wakes the main agent with the cause
+  if (buildWhat === "update" && (agentBack || failed)) {
     spawnSync(process.execPath, [path.join(root, "scripts", "spawn-free.mjs"), path.join(root, "scripts", "agent-return.mjs"), "--after-update", String(buildSince)], { cwd: root, stdio: "ignore", windowsHide: true })
     console.log("Агенты, которых остановила сборка, вернутся, когда обновление узла запишет свой итог, удачный или нет (журнал: logs/agent-return.log).")
+  } else if (failed) {
+    // 839-5: a failed core build always reaches the main agent — with the cause to read and the person to tell
+    const r = agentBack ? await agentReturn.wakeAfter(root, `${summary}.${agentReturn.TELL}`) : { woke: false }
+    if (!r.woke) await agentReturn.afterBuildFailed(root, summary, process.env.FRACTERA_BUILD_LOG || "the core build log (npm run serve:status names it)")
   } else if (agentBack) await agentReturn.wakeAfter(root, summary)
   else await agentReturn.deliverHeld(root, summary)
 }
