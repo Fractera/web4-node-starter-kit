@@ -370,6 +370,13 @@ token)` refused by the classifier TWICE (also after his 994) → window e47e3af2
 be born ON the server by its main agent: spec new-steps/841-3-the-fractera-marketplace-element-on-fractera-ai.md. NEXT: core build on the
 Mac (Pult, subscription, doors) → eyes → push core to fork + Fractera → after his release: pin custom v0.3.238 + rollout root → push.
 
+**21:40 — core LIVE and PUSHED:** core build (detached via spawn-free after the first was cut with my session) builtAt 21:31, commit
+993c9b59; live proofs: subscription page screenshot (status line + ladder), /api/node/tg-app carries tile/glance/«Нативные», my-agent 401
+without a key, `npm run market` → ===MARKET_SIMULATION===. Pushed: fork aifa-agi 993c9b59, Fractera main 993c9b59 (ls-remote). STILL OPEN:
+template custom v0.3.238 — Roma's terminal run of the release was cut (no tag anywhere); window e47e3af2 waits; on its tag: `npm run
+template -- pin custom v0.3.238`, rollout tg/ + admin files to root, push core again. Marketplace element on fractera.ai — the server's own
+main agent (plan 841-3).
+
 **WHERE THE SERVER STANDS:** core 5d05c566 (built 20:06) = 839-8 live. Pushed and WAITING his press: 2b7985a3 (839-9, EPERM = alive) —
 «Проверить снова» showed «1 изменений», trial merge OK. After it: he writes to the etuf1 bot (Etuf1-messenger-h2a) + «Включить» → the
 channel must come up and the agent answer. If not: ask the server agent for logs/web4-out.log lines of the wake and `ls -l` of
