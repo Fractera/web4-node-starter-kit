@@ -1071,7 +1071,8 @@ function freshPid(file, since) {
     if (st.mtimeMs < since - 500) return null
     const pid = Number(readFileSync(file, 'utf8'))
     if (!(pid > 1)) return null
-    process.kill(pid, 0)
+    // 839-9: EPERM is a live process of another user (a walled element's plugin) — only ESRCH is dead
+    try { process.kill(pid, 0) } catch (e) { if (!e || e.code !== 'EPERM') return null }
     return { pid, at: st.mtimeMs }
   } catch {
     return null

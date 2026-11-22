@@ -8,6 +8,7 @@ import { spawnSync } from 'node:child_process'
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { createRequire } from 'node:module'
 
 const CORE = process.cwd()
 const KIT = join(CORE, 'app', '[lang]', '(architectLayer)', 'architect', 'kits', '_agent-kit', 'core', 'server', 'telegram.cjs')
@@ -63,5 +64,17 @@ t('negative: a home computer (no wall) — nothing handed, no node copy made', (
 t('the readers outside the kit take the node\'s copy first (progress, the asks\' bot)', () => {
   assert.match(readFileSync(join(CORE, 'lib', 'agent-kit', 'progress.cjs'), 'utf8'), /\['\.token\.node', '\.env'\]/)
   assert.match(readFileSync(join(CORE, 'lib', 'node', 'person-asks-telegram.cjs'), 'utf8'), /\['\.token\.node', '\.env'\]/)
+})
+t('839-9: a plugin pid of another user (EPERM) is alive; no such process (ESRCH) is dead', () => {
+  const ch = createRequire(import.meta.url)(join(CORE, 'app', '[lang]', '(architectLayer)', 'architect', 'kits', '_agent-kit', 'core', 'server', 'channel-health.cjs'))
+  const dir = mkdtempSync(join(tmpdir(), 'pid-'))
+  const real = process.kill
+  try {
+    writeFileSync(join(dir, 'bot.pid'), '424242')
+    process.kill = () => { const e = new Error('EPERM'); e.code = 'EPERM'; throw e }
+    assert.equal(ch.pluginPid(dir)?.pid, 424242)
+    process.kill = () => { const e = new Error('ESRCH'); e.code = 'ESRCH'; throw e }
+    assert.equal(ch.pluginPid(dir), null)
+  } finally { process.kill = real; rmSync(dir, { recursive: true, force: true }) }
 })
 console.log(`===WALLED_CHANNEL_OK=== ${n} passed`)

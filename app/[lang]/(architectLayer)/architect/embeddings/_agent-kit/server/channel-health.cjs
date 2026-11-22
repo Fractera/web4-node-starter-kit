@@ -71,7 +71,9 @@ function pluginPid(stateDir, sinceMs = 0) {
     if (st.mtimeMs < sinceMs - 500) return null
     const pid = Number(readFileSync(file, 'utf8'))
     if (!(pid > 1)) return null
-    process.kill(pid, 0)
+    // 839-9 (the server's main agent, 2026-11-22 21:13): a walled session's plugin runs as fe-<id> — signalling another user's process
+    // throws EPERM, which means ALIVE; only ESRCH (no such process) is dead. ✗ the node closed a hearing session after 30 s as «deaf».
+    try { process.kill(pid, 0) } catch (e) { if (!e || e.code !== 'EPERM') return null }
     return { pid, at: st.mtimeMs }
   } catch {
     return null
