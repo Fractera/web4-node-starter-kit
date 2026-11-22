@@ -1,5 +1,6 @@
 "use client"
 
+import { kitApi } from "./kit-place"
 import { useCallback, useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import type { ClaudeSubscriptionWords } from "../words/claude-subscription.i18n"
@@ -11,12 +12,11 @@ import type { ClaudeSubscriptionWords } from "../words/claude-subscription.i18n"
 // 🔒 Переключить можно только при выключенном агенте элемента (дверь отвечает 409 `agent-running`). После переключения островок входа
 // проверяет состояние заново по событию `claude-own-changed` — без таймера.
 
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 
 type State = { canOwn: boolean; own: boolean } | null
 
 export function ClaudeOwnLogin({ service, lang, words }: { service: string; lang: string; words: ClaudeSubscriptionWords }) {
-  const api = `${BASE}/${lang}/architect/${service}/agent-api/claude-auth`
+  const api = `${kitApi(lang, service)}/claude-auth`
   const [state, setState] = useState<State>(null)
   const [busy, setBusy] = useState(false)
   const [note, setNote] = useState<string | null>(null)

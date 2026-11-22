@@ -1,5 +1,6 @@
 "use client"
 
+import { kitDoor } from "./kit-place"
 import { type ReactNode, useEffect, useState } from "react"
 import { Hammer, Play, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -20,7 +21,6 @@ import { silenceVerdict } from "@/lib/deploy/core-silence.mjs"
 // 🔒 738-8: МОЛЧАНИЕ ЯДРА — НЕ СБОРКА САМО ПО СЕБЕ. Голая сборка без единого ответа чтеца дольше трёх минут называется «ядро не отвечает»
 // (`lib/deploy/core-silence.mjs`): ✗ 2026-11-13 переезд 737 остановил ядро, и терминал десять часов говорил «идёт сборка».
 
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 const READER = "http://127.0.0.1:25680/status" // READER_PORT в lib/deploy/build-reader.cjs
 const local = () => typeof window !== "undefined" && ["localhost", "127.0.0.1"].includes(window.location.hostname)
 
@@ -43,10 +43,10 @@ async function json<T>(url: string, ms = 4000): Promise<T | null> {
  * Ядро отвечает и сборки нет — `null`.
  */
 async function detect(): Promise<Build | null> {
-  const u = await json<{ update: Rec | null }>(`${BASE}/api/node/update?tail=1`)
+  const u = await json<{ update: Rec | null }>(kitDoor("/api/node/update?tail=1"))
   if (u) {
     if (u.update?.state === "running") return { mode: "update", since: Date.parse(u.update.startedAt ?? "") || Date.now() }
-    const d = await json<{ core?: { deploy: Rec | null } }>(`${BASE}/api/node/deploy?progress=1&core=1`)
+    const d = await json<{ core?: { deploy: Rec | null } }>(kitDoor("/api/node/deploy?progress=1&core=1"))
     const c = d?.core?.deploy
     return c?.state === "running" ? { mode: "rebuild", since: Date.parse(c.startedAt ?? "") || Date.now() } : null
   }
@@ -80,11 +80,11 @@ export function CoreBuildWatch({ active, words, build: terminalWords, sessionUrl
       const r = await json<{ lines?: string[] }>(READER, 2500)
       if (stop) return
       if (r) { setReaderSeen(true); setSilent(false); if (r.lines?.length) setLines(r.lines); return }
-      const u = await json<{ update: Rec | null }>(`${BASE}/api/node/update?tail=1`)
+      const u = await json<{ update: Rec | null }>(kitDoor("/api/node/update?tail=1"))
       if (stop) return
       if (!u) { setSilent(silenceVerdict({ since: build.since, readerSeen }) === "silent"); return }
       // Ядро ответило: итог — у записи, которая шла, когда ядро замолчало (кнопка «Развернуть ядро», обновление); нет такой — «ядро снова отвечает».
-      const d = await json<{ core?: { deploy: Rec | null } }>(`${BASE}/api/node/deploy?progress=1&core=1`)
+      const d = await json<{ core?: { deploy: Rec | null } }>(kitDoor("/api/node/deploy?progress=1&core=1"))
       // ✗ Снято наблюдателем 2026-11-07: ядро отвечает раньше, чем сборка пишет итог (сначала возвращаются агенты) — запись ещё «running»,
       // и страница говорила «ядро снова отвечает» вместо вердикта. Идущая запись — ждать её итога.
       const covers = (x?: Rec | null) => Boolean(x && Date.parse(x.startedAt ?? "") <= build.since && (x.state === "running" || Date.parse(x.finishedAt ?? "") >= build.since - 5000))

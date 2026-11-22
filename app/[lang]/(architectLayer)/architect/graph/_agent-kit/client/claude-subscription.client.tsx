@@ -1,5 +1,6 @@
 "use client"
 
+import { kitApi, kitSocket } from "./kit-place"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { ForbiddenWithExit } from "@/components/node-state/open-on-this-computer.client"
 import { Check, CircleAlert, Copy, ExternalLink, KeyRound, RotateCw, X } from "lucide-react"
@@ -25,7 +26,6 @@ import { type XtermHandle, XtermTerminal } from "./xterm-terminal.client"
 // текстом, разорванным переносами, — поэтому разбор ждёт паузу в потоке, а не первый кусок.
 // 🔒 ПОСЛЕ КОДА СОСТОЯНИЕ СПРАШИВАЕТСЯ ЗАНОВО, А НЕ ОБЪЯВЛЯЕТСЯ: «код отправлен» не значит «вошли».
 
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 // 🔒 ДВЕРИ И СОКЕТ — В МАРШРУТЕ СЛУЖБЫ (271): `/{lang}/architect/<служба>/agent-api/*` и `/pty/<служба>`.
 
 const BUFFER_LIMIT = 8000
@@ -36,7 +36,7 @@ const DETECT_DELAY_MS = 300
 type Auth = { loggedIn: boolean | null; email: string | null; plan: string | null; own?: boolean; walledNone?: boolean }
 
 export function ClaudeSubscription({ service, lang, words }: { service: string; lang: string; words: ClaudeSubscriptionWords }) {
-  const api = `${BASE}/${lang}/architect/${service}/agent-api`
+  const api = kitApi(lang, service)
   const [auth, setAuth] = useState<Auth | "checking" | "forbidden">("checking")
   const [open, setOpen] = useState(false)
   const [authUrl, setAuthUrl] = useState<string | null>(null)
@@ -106,6 +106,7 @@ export function ClaudeSubscription({ service, lang, words }: { service: string; 
     startingRef.current = true
     setStarting(true)
     let ticket = ""
+    let socketUrl: string | null = null
     try {
       const res = await fetch(`${api}/ticket`, { method: "POST" })
       if (res.status === 401 || res.status === 403) {
@@ -113,7 +114,9 @@ export function ClaudeSubscription({ service, lang, words }: { service: string; 
         setStarting(false)
         return setAuth("forbidden")
       }
-      ticket = ((await res.json()) as { ticket?: string }).ticket ?? ""
+      const issued = (await res.json()) as { ticket?: string; socket?: string }
+      ticket = issued.ticket ?? ""
+      socketUrl = issued.socket ?? null
     } catch {
       startingRef.current = false
       setStarting(false)
@@ -122,8 +125,7 @@ export function ClaudeSubscription({ service, lang, words }: { service: string; 
     setOpen(true)
     bufRef.current = ""
     modalRef.current = false
-    const scheme = window.location.protocol === "https:" ? "wss" : "ws"
-    const ws = new WebSocket(`${scheme}://${window.location.host}${BASE}/pty/${service}`)
+    const ws = new WebSocket(kitSocket(service, socketUrl))
     wsRef.current = ws
     ws.onopen = () => {
       // 🛑 `init` ПЕРВЫМ ДЕЙСТВИЕМ — см. островок терминала.

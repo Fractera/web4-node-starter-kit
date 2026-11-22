@@ -6,6 +6,7 @@ import { openAiKey } from "@/lib/openai-key"
 import { isBornElement } from "@/lib/web4-items/element-delete"
 import { transcribeAudio } from "@/_tools/voice-input/server/transcribe"
 import { openAiRefusal } from "@/lib/i18n/openai-error.i18n"
+import { callerElement, callerOf } from "@/lib/node/caller"
 
 // Дверь расшифровки речи для приложения.
 //
@@ -25,11 +26,13 @@ export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
 export async function POST(req: NextRequest) {
-  const denied = await requireRoles(req, PROTECTED_GROUP_ROLES.staff)
-  if (denied) return denied
-
   // 336-3: `?item=<id>` — работа над элементом: ключ ядра, нет — ключ элемента (слово владельца 2026-09-29).
   const item = req.nextUrl.searchParams.get("item")
+  // 836: the element's own agent pages (its terminal's paste window) dictate through the element's server with ITS key — for itself only
+  const byElement = Boolean(item) && callerElement(callerOf(req.headers)) === item
+  const denied = byElement ? null : await requireRoles(req, PROTECTED_GROUP_ROLES.staff)
+  if (denied) return denied
+
   const key = openAiKey(item && isBornElement(item) ? item : null)
   if (!key) {
     // Отдельный код, а не общая ошибка: клиент по нему показывает подсказку,

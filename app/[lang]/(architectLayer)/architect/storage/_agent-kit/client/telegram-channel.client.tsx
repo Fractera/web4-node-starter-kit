@@ -1,5 +1,6 @@
 "use client"
 
+import { kitApi } from "./kit-place"
 import { useCallback, useEffect, useState } from "react"
 import { ForbiddenWithExit } from "@/components/node-state/open-on-this-computer.client"
 import { Check, ExternalLink, Lock, Send, TerminalSquare, TriangleAlert } from "lucide-react"
@@ -61,7 +62,7 @@ function Locked({ text }: { text: string }) {
 // `remote.origin`, ступень 4 — строка `remote.doneText` без терминала этого компьютера.
 export type TelegramRemote = { door: string; origin: string; doneText: string }
 export function TelegramChannel({ service, lang, words, slot, remote, dialogUi }: { service: string; lang: string; words: TelegramChannelWords; slot?: string; remote?: TelegramRemote; dialogUi?: AppDialogUi }) {
-  const door = remote ? remote.door : `${BASE}/${lang}/architect/${service}/agent-api/channel${slot ? `?slot=${slot}` : ""}`
+  const door = remote ? remote.door : `${kitApi(lang, service)}/channel${slot ? `?slot=${slot}` : ""}`
   const [state, setState] = useState<State | null | "forbidden" | "silent">(null)
   const [token, setToken] = useState("")
   const [busy, setBusy] = useState<string | null>(null)

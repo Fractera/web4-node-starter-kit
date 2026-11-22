@@ -1,5 +1,6 @@
 "use client"
 
+import { kitApi, kitDoor, kitSocket } from "./kit-place"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { AlertTriangle, ChevronDown, ClipboardPaste, Eraser, Square } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -22,7 +23,6 @@ import { type ResumeOffer, SleepingCard } from "./sleeping-card.client"
 // отдаёт накопленный экран.
 // 🔒 ПАПКА АГЕНТА ПРИХОДИТ ИЗ ДВЕРИ, А НЕ ИЗ РАЗМЕТКИ: страница предрендерена, путь — факт о машине.
 
-const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
 // 🔒 ДВЕРИ И СОКЕТ — В МАРШРУТЕ СЛУЖБЫ (271): `/{lang}/architect/<служба>/agent-api/*` и `/pty/<служба>`.
 
 type State = "checking" | "sleeping" | "connecting" | "running" | "stopped" | "offline" | "forbidden"
@@ -37,7 +37,7 @@ type State = "checking" | "sleeping" | "connecting" | "running" | "stopped" | "o
 // спящему терминалу она уходит первым поручением, работающему — окном вставки, отправляет человек.
 // 675-2: `build` — слова терминала сборки ядра: пока идёт сборка, он стоит вместо карточки запуска (`CoreBuildWatch`).
 export function AgentTerminal({ service, lang, words, build, dialogUi, initialPaste, keyHref, compact = false, mode, startTask }: { service: string; lang: string; words: AgentTerminalWords; build?: CoreTerminalWords; dialogUi: AppDialogUi; initialPaste?: string; keyHref?: string; compact?: boolean; mode?: "work"; startTask?: string }) {
-  const api = `${BASE}/${lang}/architect/${service}/agent-api`
+  const api = kitApi(lang, service)
   const sessionUrl = `${api}/session${mode === "work" ? "?mode=work" : ""}`
   const keyRef = useRef(service)
   const [noModes, setNoModes] = useState(false)
@@ -124,19 +124,22 @@ export function AgentTerminal({ service, lang, words, build, dialogUi, initialPa
       setNote("")
       setTaskAtStart(false)
       let ticket = ""
+      let socketUrl: string | null = null
       try {
         const res = await fetch(`${api}/ticket`, { method: "POST" })
         if (res.status === 401 || res.status === 403) {
           setState("forbidden")
           return
         }
-        ticket = ((await res.json()) as { ticket?: string }).ticket ?? ""
+        const issued = (await res.json()) as { ticket?: string; socket?: string }
+        ticket = issued.ticket ?? ""
+        socketUrl = issued.socket ?? null
       } catch {
         setState("offline")
         return
       }
-      const scheme = window.location.protocol === "https:" ? "wss" : "ws"
-      const ws = new WebSocket(`${scheme}://${window.location.host}${BASE}/pty/${keyRef.current}`)
+      // 836: an element's own page gets the socket's address with the ticket — the core lives on another host there
+      const ws = new WebSocket(kitSocket(keyRef.current, socketUrl))
       wsRef.current = ws
       quietCloseRef.current = false
 
@@ -375,7 +378,7 @@ export function AgentTerminal({ service, lang, words, build, dialogUi, initialPa
         lang={lang}
         words={words}
         dialogUi={dialogUi}
-        voiceApiUrl={`${BASE}/api/transcribe?item=${encodeURIComponent(service)}`}
+        voiceApiUrl={kitDoor(`/api/transcribe?item=${encodeURIComponent(service)}`)}
         keyHref={keyHref}
         onInsert={insertPaste}
       />
