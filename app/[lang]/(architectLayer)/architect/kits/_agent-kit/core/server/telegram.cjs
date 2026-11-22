@@ -221,12 +221,14 @@ const pluginPath = (env = process.env) =>
  * 🛑 WINDOWS: CLI, поставленный через npm, — это `claude.cmd`, а node не запускает `.cmd` без оболочки (EINVAL после CVE-2024-27980) —
  * оболочка только для `.cmd`, путь с пробелами в кавычках, аргументы — наши константы (как `scripts/ensure-claude.mjs`).
  */
-function runClaude(bin, args, env) {
+function runClaude(bin, args, env, service = null) {
   return new Promise((resolve) => {
     const shell = process.platform === 'win32' && /\.cmd$/i.test(bin)
+    // 839-11: behind the wall the element itself runs it (asElement) — never the node against the element's Claude home
+    const as = asWalled(service, '/usr/local/lib/fractera/bin/claude', args, { CLAUDE_CONFIG_DIR: env.CLAUDE_CONFIG_DIR })
     let child
     try {
-      child = spawn(shell && /\s/.test(bin) ? `"${bin}"` : bin, args, { env, windowsHide: true, shell })
+      child = as ? spawn(as.cmd, as.args, { env: as.env, windowsHide: true }) : spawn(shell && /\s/.test(bin) ? `"${bin}"` : bin, args, { env, windowsHide: true, shell })
     } catch (err) {
       return resolve({ ok: false, out: err instanceof Error ? err.message : String(err) })
     }
@@ -244,28 +246,30 @@ function runClaude(bin, args, env) {
  * писал «Агент включён и получил ваше сообщение», а ответа не было. Команды — из CLI Claude Code: `claude plugin install`, а нет
  * каталога официальных плагинов — `claude plugin marketplace add anthropics/claude-plugins-official` и ещё раз install.
  */
-async function installPlugin(env) {
-  const claude = resolveBin('claude', env.PATH || env.Path)
+async function installPlugin(env, service = null) {
+  const claude = resolveBin('claude', env.PATH || env.Path) || (asWalled(service, 'claude', []) ? '/usr/local/lib/fractera/bin/claude' : null)
   if (!claude) return { ok: false, error: 'claude не найден — плагин Telegram ставится им' }
-  let r = await runClaude(claude, ['plugin', 'install', PLUGIN], env)
+  let r = await runClaude(claude, ['plugin', 'install', PLUGIN], env, service)
   if (!pluginPath(env)) {
-    await runClaude(claude, ['plugin', 'marketplace', 'add', 'anthropics/claude-plugins-official'], env)
-    r = await runClaude(claude, ['plugin', 'install', PLUGIN], env)
+    await runClaude(claude, ['plugin', 'marketplace', 'add', 'anthropics/claude-plugins-official'], env, service)
+    r = await runClaude(claude, ['plugin', 'install', PLUGIN], env, service)
   }
   return pluginPath(env) ? { ok: true } : { ok: false, error: `плагин ${PLUGIN} не установился: ${r.out}. Вручную: claude plugin install ${PLUGIN}` }
 }
 
-async function preparePlugin(env) {
+async function preparePlugin(env, service = null) {
   if (!pluginPath(env)) {
-    const installed = await installPlugin(env)
+    const installed = await installPlugin(env, service)
     if (!installed.ok) return installed
   }
   return new Promise((resolve) => {
     const installPath = pluginPath(env)
     if (existsSync(path.join(installPath, 'node_modules'))) return resolve({ ok: true })
-    const bun = resolveBin('bun', env.PATH || env.Path)
+    // 839-11: behind the wall the element installs its plugin's dependencies itself (bun of the shared bin, `--cwd`), the files its own
+    const as = asWalled(service, 'bun', ['install', '--cwd', installPath, '--no-summary'])
+    const bun = as ? as.cmd : resolveBin('bun', env.PATH || env.Path)
     if (!bun) return resolve({ ok: false, error: 'bun не найден — сервер плагина Telegram запускается им' })
-    const child = spawn(bun, ['install', '--no-summary'], { cwd: installPath, env, windowsHide: true })
+    const child = as ? spawn(as.cmd, as.args, { env: as.env, windowsHide: true }) : spawn(bun, ['install', '--no-summary'], { cwd: installPath, env, windowsHide: true })
     let out = ''
     child.stdout.on('data', (d) => { out += d })
     child.stderr.on('data', (d) => { out += d })
@@ -298,8 +302,10 @@ async function channelLaunch(service, env) {
   const pathKey = Object.keys(env).find((k) => k.toUpperCase() === 'PATH') || 'PATH'
   const dirs = [...extraBins(), ...String(env[pathKey] || '').split(path.delimiter).filter(Boolean)]
   const withBins = { ...env, [pathKey]: dirs.join(path.delimiter), TELEGRAM_STATE_DIR: stateDir(service) }
-  const ready = await preparePlugin(withBins)
+  const ready = await preparePlugin(withBins, service)
   if (!ready.ok) return { ok: false, error: ready.error }
+  const seeded = seedOnboarding(service, env.CLAUDE_CONFIG_DIR)
+  if (seeded) console.log(`[telegram] ${service}: за стеной — ${seeded}`)
   const opened = openForElement(service, env.CLAUDE_CONFIG_DIR)
   if (opened) console.log(`[telegram] ${service}: за стеной — элементу открыто то, что для него положил узел (${opened} файлов и папок)`)
   const handed = handEnvToElement(service)
@@ -308,6 +314,50 @@ async function channelLaunch(service, env) {
     ok: true,
     env: withBins,
     args: ['--channels', `plugin:${PLUGIN}`, '--add-dir', stateDir(service), '--permission-mode', 'auto', ...githubRule(service)],
+  }
+}
+
+/**
+ * 839-11 (the server's main agent, Telegram 1016, 2026-11-22 22:24: etuf1's `.claude.json` had no onboarding and no trusted folder, no MCP log
+ * after 18:11 — every session stood on Claude Code's first-run dialog before its servers started): at 19:48 the NODE ran `claude plugin
+ * install` with the element's CLAUDE_CONFIG_DIR — its Claude could not read the element's 0600 `.claude.json` and wrote a fresh one in its
+ * place. Behind the wall every `claude` and `bun` call into the element's Claude home runs AS the element (the helper's `run`, its own
+ * environment only). `null` — a home computer, a native element, no wall: the call runs as before.
+ * @returns {{ cmd: string, args: string[], env: Record<string, string> } | null}
+ */
+function asWalled(service, program, args, env = {}) {
+  if (!service) return null
+  try {
+    const ws = globalThis.__web4WalledSession // mount.cjs — a computed require does not build in this module
+    const wall = globalThis.__web4ElementWall
+    const dir = serviceDir(service)
+    if (!dir || !ws || !wall || typeof ws.walledAt !== 'function' || !ws.walledAt(process.cwd(), dir)) return null
+    const w = wall.asElement(process.cwd(), dir, program, args, env)
+    return w.wrapped ? { cmd: w.cmd, args: w.args, env: { PATH: '/usr/local/bin:/usr/bin:/bin' } } : null
+  } catch { return null }
+}
+
+/**
+ * 839-11: Claude Code's first-run screens (the text style, the version's onboarding) stand before its MCP servers start — a session woken
+ * from Telegram has nobody to press Enter, and its channel never comes up. Behind the wall, before the channel starts, the element marks its
+ * OWN `.claude.json` (as itself) with what those screens set: `hasCompletedOnboarding` and a `theme` when it has none. Preferences only —
+ * never a consent (data use, a permission mode): a question that is the person's stays on the screen and the failure names it (839-10).
+ * Returns what was done, or ''.
+ */
+function seedOnboarding(service, configDir) {
+  if (!configDir) return ''
+  const file = path.join(configDir, '.claude.json')
+  const code = "const fs=require('fs'),f=process.argv[1];let j={};try{j=JSON.parse(fs.readFileSync(f,'utf8'))}catch(e){}" +
+    "if(j.hasCompletedOnboarding===true&&j.theme){process.stdout.write('kept');process.exit(0)}" +
+    "j.hasCompletedOnboarding=true;if(!j.theme)j.theme='dark';const t=f+'.fractera';fs.writeFileSync(t,JSON.stringify(j,null,2),{mode:0o600});fs.renameSync(t,f);process.stdout.write('seeded')"
+  const as = asWalled(service, 'node', ['-e', code, file])
+  if (!as) return ''
+  try {
+    const out = require('node:child_process').execFileSync(as.cmd, as.args, { env: as.env, timeout: 15_000, encoding: 'utf8' })
+    return out.includes('seeded') ? 'приветствие Claude Code отмечено пройденным (тема, без согласий за человека)' : ''
+  } catch (e) {
+    console.log(`[telegram] ${service}: отметить приветствие не удалось — ${String(e?.message ?? e).slice(0, 160)}`)
+    return ''
   }
 }
 
@@ -1514,6 +1564,8 @@ module.exports = {
   tokenFrom, starterFn,
   // 839-8: what a walled session's channel needs from the node before it starts
   handEnvToElement, openForElement,
+  // 839-11: behind the wall the element itself installs its plugin and marks its own first-run screens
+  asWalled, seedOnboarding,
   // the bot taken off the node — the danger zone of its page
   removeBot,
   // 639: итог остаётся, служебное исчезает; вопросы закрытой сессии исчезают.

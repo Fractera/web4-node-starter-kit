@@ -69,6 +69,12 @@ LOGNAME, SHELL, NODE_OPTIONS.
 
 ## 5. Traps already paid for (newest first; add every new one here with its date and fix)
 
+- 2026-11-22 839-10/11: a walled element's channel never came up — no MCP log after 18:11, `.claude.json` without onboarding and trusted
+  folders: the NODE had run `claude plugin install` with the element's CLAUDE_CONFIG_DIR, could not read its 0600 `.claude.json` and wrote a
+  fresh one over it; every session then stood on Claude Code's first-run screen before its MCP servers. Fix: behind the wall every `claude`
+  and `bun` call into the element's Claude home runs AS the element (`asWalled` → helper `run`), the first-run marks (onboarding, theme —
+  never a consent) are set in its own file as itself before the channel, and a failed channel logs the last line of the screen. Rule: the
+  node never runs a program against an element's Claude home as itself — not even «just to install».
 - 2026-11-22 839-6…8: a walled element's bot said «not signed in» (`claude auth status` as the node cannot read fe-<id>'s 0600 files → read
   by existence); its own gates in settings.local.json were core scripts (→ the relay; boundary closes on silence); its channel never came up —
   the plugin `chmod 0600`s `.env` first and swallows EPERM on a file it does not own (→ `.env` handed to the element as itself, the node keeps

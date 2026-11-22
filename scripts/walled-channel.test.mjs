@@ -77,4 +77,49 @@ t('839-9: a plugin pid of another user (EPERM) is alive; no such process (ESRCH)
     assert.equal(ch.pluginPid(dir), null)
   } finally { process.kill = real; rmSync(dir, { recursive: true, force: true }) }
 })
+// 839-11 (the server's main agent, Telegram 1016): the node's own `claude plugin install` against the element's Claude home wrote a fresh
+// `.claude.json` over the element's 0600 one — no onboarding, no trusted folder, every session stood on the first-run dialog. Behind the
+// wall the element runs those calls itself; the first-run marks are set in ITS file as itself, keeping its account.
+function seedRun(walled) {
+  const root = mkdtempSync(join(tmpdir(), 'walled-seed-'))
+  mkdirSync(join(root, 'WEB4-ITEMS-REGISTRY'), { recursive: true })
+  writeFileSync(join(root, 'WEB4-ITEMS-REGISTRY', 'web4-items.json'), JSON.stringify({ services: [{ id: 'shop', kind: 'user' }] }))
+  mkdirSync(join(root, 'WEB4-ITEMS', 'user', 'shop'), { recursive: true })
+  const home = join(root, 'data', 'services', 'shop', 'claude')
+  mkdirSync(home, { recursive: true })
+  writeFileSync(join(home, '.claude.json'), JSON.stringify({ oauthAccount: { emailAddress: 'm@x.test' }, projects: {} }), { mode: 0o600 })
+  const code = `
+    const calls = []
+    globalThis.__web4WalledSession = { walledAt: () => ${walled} }
+    // the fake helper: records the call and runs the program here (as «the element»); the node never runs it itself
+    globalThis.__web4ElementWall = { asElement: (root, cwd, prog, args, env) => { calls.push({ prog, args: args.slice(0, 3), env }); return { cmd: process.execPath, args, wrapped: 'shop' } } }
+    const kit = require(${JSON.stringify(KIT)})
+    const said = kit.seedOnboarding('shop', ${JSON.stringify(home)})
+    const install = kit.asWalled('shop', '/usr/local/lib/fractera/bin/claude', ['plugin', 'install', 'telegram@claude-plugins-official'], { CLAUDE_CONFIG_DIR: ${JSON.stringify(home)} })
+    process.stdout.write(JSON.stringify({ said, calls, install, file: JSON.parse(require('node:fs').readFileSync(${JSON.stringify(join(home, '.claude.json'))}, 'utf8')) }))`
+  return { root, code }
+}
+t('839-11: behind the wall the element marks its own first-run screens and keeps its account; the plugin install runs as the element', () => {
+  const { root, code } = seedRun(true)
+  try {
+    const r = spawnSync(process.execPath, ['-e', code], { cwd: root, encoding: 'utf8' })
+    assert.equal(r.status, 0, r.stderr)
+    const o = JSON.parse(r.stdout)
+    assert.equal(o.file.hasCompletedOnboarding, true); assert.equal(o.file.theme, 'dark')
+    assert.equal(o.file.oauthAccount.emailAddress, 'm@x.test')
+    assert.ok(Array.isArray(o.calls) && o.calls[0].prog === 'node', 'the first-run marks are written by the element, not the node')
+    assert.equal(o.install.cmd, process.execPath); assert.equal(o.calls[1].env.CLAUDE_CONFIG_DIR.endsWith('claude'), true)
+    assert.match(o.said, /отмечено/)
+  } finally { rmSync(root, { recursive: true, force: true }) }
+})
+t('negative: a home computer (no wall) — nothing runs as an element, the Claude file is untouched', () => {
+  const { root, code } = seedRun(false)
+  try {
+    const r = spawnSync(process.execPath, ['-e', code], { cwd: root, encoding: 'utf8' })
+    assert.equal(r.status, 0, r.stderr)
+    const o = JSON.parse(r.stdout)
+    assert.equal(o.said, ''); assert.equal(o.install, null); assert.equal(o.calls.length, 0)
+    assert.equal(o.file.hasCompletedOnboarding, undefined)
+  } finally { rmSync(root, { recursive: true, force: true }) }
+})
 console.log(`===WALLED_CHANNEL_OK=== ${n} passed`)
