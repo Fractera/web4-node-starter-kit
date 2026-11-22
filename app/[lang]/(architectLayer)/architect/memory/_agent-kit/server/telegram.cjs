@@ -345,6 +345,13 @@ const FALLBACK = {
 // 689: у элемента на подписке своего человека «вошёл ли» спрашивается в ЕГО папке Claude Code, а не у узла.
 function claudeSignedIn(service) {
   if (accountMissing(service)) return Promise.resolve(false) // 832-5: the node's own login is never this element's on a server
+  // 839-6 (the owner, Telegram 928: a walled element's bot answered «not signed in» to a signed-in element): an element that may run only
+  // on its own account (walled, or an app of its own) has its sign-in files owned by its own user, 0600 — `claude auth status` run as the
+  // node reads nothing there. Signed in is the files' existence (lib/agent-kit/claude-account.cjs), never a `claude` run against them.
+  try {
+    const ca = globalThis.__web4ClaudeAccount // mount.cjs — a computed require does not build in this module
+    if (service !== MAIN_AGENT && ca && typeof ca.ownOnly === 'function' && ca.ownOnly(process.cwd(), service)) return Promise.resolve(ca.ownSignedIn(process.cwd(), service))
+  } catch { /* the old way below */ }
   return new Promise((resolve) => setImmediate(() => resolve(claudeAuthState(ownClaudeDir(service)).loggedIn)))
 }
 

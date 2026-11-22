@@ -31,6 +31,6 @@ export async function POST(req: NextRequest) {
   const arg = typeof body.arg === "string" ? body.arg : null
   const dir = elementDir(caller)
   if (!dir) return NextResponse.json({ ok: false, error: `no folder of the element «${caller}»` }, { status: 404, headers: HEADERS })
-  const r = await runRelayed({ root: process.cwd(), id: caller, dir, name, arg, stdin, timeoutMs: name.startsWith("mcp:") ? 110_000 : 55_000 })
+  const r = await runRelayed({ root: process.cwd(), id: caller, dir, name, arg, stdin, timeoutMs: name.startsWith("mcp:") ? 110_000 : name === "boundary" ? 590_000 : 55_000 })
   return NextResponse.json(r, { status: r.ok ? 200 : 400, headers: HEADERS })
 }

@@ -26,6 +26,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { join } from 'node:path'
 import { foreignOff, skillField } from '../lib/agent-kit/foreign-off.mjs'
 import { installMainAgent } from './main-agent-install.mjs'
+import { createRequire } from 'node:module'
 
 const ROOT = process.cwd()
 const ITEMS = join(ROOT, 'WEB4-ITEMS')
@@ -42,6 +43,13 @@ const START_HOOK = join(ROOT, '.claude', 'hooks', 'interface-design-start.mjs').
 // 725-5: the gate of a new interface file (parts_find asked, the birth declared) — idle in an element until it has its parts map.
 const PARTS_HOOK = join(ROOT, '.claude', 'hooks', 'parts-gate.mjs').replace(/\\/g, '/')
 const foreign = foreignOff()
+// 839-7 (the owner, Telegram 929: a walled element's agent blocked by «Cannot find module …/shadcn-skills.mjs»): on a dedicated server a custom
+// element's agent runs as fe-<id>, which reads no core file — its own gates go through the hook relay (the one core file it may read,
+// lib/agent-kit/hook-relay.cjs); the core runs them for it (lib/agent-kit/hook-relay-run.cjs). A home computer keeps the direct scripts.
+const wall = createRequire(import.meta.url)('../lib/hosting/element-wall.cjs')
+const RELAY = join(ROOT, 'lib', 'agent-kit', 'hook-relay.cjs').replace(/\\/g, '/')
+const walledHere = (dir) => { try { if (!wall.wallOn(ROOT)) return false; const at = wall.walledEntryAt(ROOT, dir); return Boolean(at && wall.userExists(at.entry.id)) } catch { return false } }
+const relayed = (h) => /hook-relay\.cjs"? (boundary|shadcn-skills|parts-gate|design-start)\b/.test(String(h.command ?? ''))
 const readText = (f) => { try { return readFileSync(f, 'utf8') } catch { return '' } }
 
 /** Свои навыки элемента: сколько знаков займут в списке с описаниями и какие из них вендорные.
@@ -137,13 +145,15 @@ for (const dir of only ? [] : elements) {
   delete s.permissions.blockReadsOutsideWorkingDirectories
 
   // Сторож путей: своя запись узнаётся по имени сценария и переписывается целиком.
-  const hookCmd = `node "${HOOK}" --dir "${dir.replace(/\\/g, '/')}" --data "${join(ROOT, 'data', 'services', id).replace(/\\/g, '/')}" --root "${ROOT.replace(/\\/g, '/')}"`
+  const walledEl = walledHere(dir)
+  const viaRelay = (name) => `"${process.execPath}" "${RELAY}" ${name}`
+  const hookCmd = walledEl ? viaRelay('boundary') : `node "${HOOK}" --dir "${dir.replace(/\\/g, '/')}" --data "${join(ROOT, 'data', 'services', id).replace(/\\/g, '/')}" --root "${ROOT.replace(/\\/g, '/')}"`
   // 704: решает главный агент ядра — хук ждёт его ответа до 8 минут, поэтому `timeout` 600 с; `onFailure: block` — упавший или
   // зависший сторож закрывает вызов, а не пропускает его («don't count on a stalled hook to act as a gate», code.claude.com/docs/en/hooks,
   // прочитано 2026-11-09). Тот же сценарий на `PermissionRequest` (без matcher — любой инструмент): вопрос по правилу `ask` выше и любой
   // другой вопрос Claude Code в сессии элемента идёт главному агенту ядра, а не висит в терминале.
-  const isSkills = (m) => (m.hooks ?? []).some((h) => String(h.command ?? '').includes('shadcn-skills.mjs') || String(h.command ?? '').includes('parts-gate.mjs'))
-  const isBoundary = (m) => (m.hooks ?? []).some((h) => String(h.command ?? '').includes('element-boundary-hook.mjs'))
+  const isSkills = (m) => (m.hooks ?? []).some((h) => String(h.command ?? '').includes('shadcn-skills.mjs') || String(h.command ?? '').includes('parts-gate.mjs') || /hook-relay\.cjs"? (shadcn-skills|parts-gate)\b/.test(String(h.command ?? '')))
+  const isBoundary = (m) => (m.hooks ?? []).some((h) => String(h.command ?? '').includes('element-boundary-hook.mjs') || /hook-relay\.cjs"? boundary\b/.test(String(h.command ?? '')))
   const boundaryHook = { type: 'command', command: hookCmd, timeout: 600, onFailure: 'block' }
   const pre = (s.hooks?.PreToolUse ?? []).filter((m) => !isBoundary(m))
   const perm = (s.hooks?.PermissionRequest ?? []).filter((m) => !isBoundary(m))
@@ -152,10 +162,10 @@ for (const dir of only ? [] : elements) {
     // 730-4: интерфейсный файл элемента пишется только после навыка `use-shadcn` этой сессии (хук ядра, `.claude/hooks/shadcn-skills.mjs`).
     PreToolUse: [...pre.filter((m) => !isSkills(m)), { matcher: 'Bash|PowerShell|Write|Edit|MultiEdit|NotebookEdit', hooks: [boundaryHook] },
       // 743-7: a .tsx written through the shell is held the same way
-      { matcher: 'Write|Edit|MultiEdit|Bash|PowerShell', hooks: [{ type: 'command', command: `node "${SKILLS_HOOK}"` }] },
-      { matcher: 'Write', hooks: [{ type: 'command', command: `node "${PARTS_HOOK}"` }] }],
+      { matcher: 'Write|Edit|MultiEdit|Bash|PowerShell', hooks: [{ type: 'command', command: walledEl ? viaRelay('shadcn-skills') : `node "${SKILLS_HOOK}"` }] },
+      { matcher: 'Write', hooks: [{ type: 'command', command: walledEl ? viaRelay('parts-gate') : `node "${PARTS_HOOK}"` }] }],
     PermissionRequest: [...perm, { hooks: [boundaryHook] }],
-    SessionStart: [...(s.hooks?.SessionStart ?? []).filter((m) => !(m.hooks ?? []).some((h) => String(h.command ?? '').includes('interface-design-start.mjs'))), { matcher: '*', hooks: [{ type: 'command', command: `node "${START_HOOK}"` }] }],
+    SessionStart: [...(s.hooks?.SessionStart ?? []).filter((m) => !(m.hooks ?? []).some((h) => String(h.command ?? '').includes('interface-design-start.mjs') || relayed(h))), { matcher: '*', hooks: [{ type: 'command', command: walledEl ? viaRelay('design-start') : `node "${START_HOOK}"` }] }],
   }
 
   // Чужое — вон из списка; вендорные навыки — по имени; бюджет — под свои описания.
