@@ -330,12 +330,12 @@ address (104.16.x) → 200, and its POST reaches the signature check (401 no-dat
 188.114.96.5 / 188.114.97.5 among the IPs Spanish operators block on LaLiga's order (match days). Possible later fix (NOT ordered):
 tg-menu target() falls back to the live temporary address when the own domain does not answer from this computer, said aloud.
 
-**NOW (22:50):** prebuild RC=0 (walled-channel 6/6 with the 839-11 sample and its negative) → 36053916 pushed 22:40:19 to origin
-(aifa-agi) AND Fractera (ls-remote both 36053916). Roma pressed «Обновить сборку ядра» at ~22:41 — the server built b3aebe5b (builtAt
-22:41:47, started 22:46:47) WITHOUT it: after my «Проверить снова» the strip says «Форк синхронизирован: 4 изменений ждут этот узел»,
-«Пробное слияние прошло». Telegram 1038: asked for ONE more press + gave the server agent's checks (merge-base 36053916; etuf1 once →
-web4-out.log «приветствие … отмечено», no «канал не поднялся»; stat .claude.json fe-etuf1 600; write etuf1's bot). NEXT: watch
-https://architect.fractera.ai/api/health builtAt > 22:47 → «Проверить снова» must say nothing waits → report to Roma.
+**NOW (22:58): 839-10/11 LIVE on the server.** Roma's second press: server core 939f1a89 (builtAt 22:52:22, started 22:57:21); the
+strip «Узел обновлён: 4 изменений форка, ядро 939f1a89»; my «Проверить снова» after it — nothing waits. Telegram 1042 = the server
+agent's five checks (merge-base 36053916 → IN; npm run wake -- etuf1 once; web4-out.log «приветствие … отмечено», no «канал Telegram не
+встал» — if it is there, its «экран: «…»» part; stat .claude.json fe-etuf1 600 + grep -c hasCompletedOnboarding as the element = 1;
+channel/telegram/bot.pid alive) → then Roma writes etuf1's bot. WAITING for that report. Unpushed here: 0a7db2b9 + this state (push with
+the next batch). Mac Pult: deferred (LaLiga IP block), memory spain-cloudflare-ip-blocks.
 
 **DONE TODAY (pushed, live):** 840 Pult + subscription page + element doors (core 993c9b59, 73f43eaa on Fractera); custom template v0.3.238
 (Roma ran the release; pinned); 841 search + «Нативные элементы» + marketplace search v1 (`npm run market`, price) — the fractera.ai side NOT
