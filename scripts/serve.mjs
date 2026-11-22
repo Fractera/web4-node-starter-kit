@@ -55,7 +55,12 @@ function reapplyServerEdge() {
   let applied = ''
   try { applied = readFileSync('/etc/nginx/sites-available/fractera', 'utf8') } catch { /* never applied */ }
   const fresh = readFileSync(path.join(root, 'data', 'node', 'server-side', 'nginx', 'fractera.conf'), 'utf8')
-  if (body(applied) === body(fresh)) return
+  // 838: the «updating» page reaches nginx only through nginx-apply — a changed page alone re-applies too (✗ before: only a changed site did)
+  let pageApplied = ''
+  try { pageApplied = readFileSync('/var/www/fractera-maint/.fractera-updating.html', 'utf8') } catch { /* not copied yet */ }
+  let pageSource = ''
+  try { pageSource = readFileSync(path.join(root, 'scripts', 'dedicated-server', 'updating.html'), 'utf8') } catch { /* no page in this node */ }
+  if (body(applied) === body(fresh) && pageApplied === pageSource) return
   const a = spawnSync('sudo', ['-n', '/usr/local/sbin/fractera-root', 'nginx-apply'], { encoding: 'utf8', timeout: 60_000 })
   console.log(a.status === 0 ? "741-1: the server's nginx re-applied from the core's generator" : `741-1: nginx NOT applied, the previous file stays — ${last(a)}`)
 }

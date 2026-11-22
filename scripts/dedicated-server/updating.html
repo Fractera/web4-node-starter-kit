@@ -1,24 +1,60 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="choosing">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <meta http-equiv="refresh" content="30">
-<title>Updating · Обновляется</title>
+<title>The site is updating</title>
 <style>
   body { margin: 0; min-height: 100vh; display: grid; place-items: center; font: 16px/1.5 system-ui, sans-serif; background: #fff; color: #111; }
   @media (prefers-color-scheme: dark) { body { background: #111; color: #eee; } }
   main { max-width: 32rem; padding: 2rem; text-align: center; }
   p { margin: 0.5rem 0; opacity: 0.8; }
+  .choosing main { visibility: hidden; }
 </style>
+<noscript><style>.choosing main { visibility: visible; }</style></noscript>
+<!-- 838 (the owner, 2026-11-22: «мы должны показывать текст только на одном языке на правильном языке … завтра будет 82»): nginx serves
+     this file for the core and every element of a server while the node rebuilds — no server to ask which language. Every language of
+     the node keeps its words below; ONE is shown: the address's language (/ru/…), the node's cookie NEXT_LOCALE, the browser's
+     languages, else the first entry. A new language of the node adds its entry here (scripts/updating-page.test.mjs fails without it). -->
+<script type="application/json" id="node-updating-words">
+{
+  "en": { "title": "The site is updating", "heading": "The site is updating", "line": "It will be back in a few minutes. This page refreshes by itself." },
+  "ru": { "title": "Сайт обновляется", "heading": "Сайт обновляется", "line": "Он вернётся через несколько минут. Страница обновится сама." }
+}
+</script>
 </head>
 <body>
 <main data-block="node-updating">
-  <h1>The site is updating</h1>
-  <p>It will be back in a few minutes. This page refreshes by itself.</p>
-  <h1 lang="ru">Сайт обновляется</h1>
-  <p lang="ru">Он вернётся через несколько минут. Страница обновится сама.</p>
+  <h1 id="node-updating-heading">The site is updating</h1>
+  <p id="node-updating-line">It will be back in a few minutes. This page refreshes by itself.</p>
 </main>
+<script>
+(function () {
+  var words = {}
+  try { words = JSON.parse(document.getElementById('node-updating-words').textContent) } catch (e) { /* the first entry stays */ }
+  var langs = Object.keys(words)
+  function known(tag) { var l = String(tag || '').slice(0, 2).toLowerCase(); return words[l] ? l : null }
+  function choose() {
+    var fromPath = known(location.pathname.split('/')[1])
+    if (fromPath && location.pathname.split('/')[1].length === 2) return fromPath
+    var cookie = document.cookie.match(/(?:^|;\s*)NEXT_LOCALE=([A-Za-z-]+)/)
+    if (cookie && known(cookie[1])) return known(cookie[1])
+    var browser = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language]
+    for (var i = 0; i < browser.length; i++) if (known(browser[i])) return known(browser[i])
+    return langs[0] || 'en'
+  }
+  var lang = choose()
+  var w = words[lang]
+  if (w) {
+    document.documentElement.lang = lang
+    document.title = w.title
+    document.getElementById('node-updating-heading').textContent = w.heading
+    document.getElementById('node-updating-line').textContent = w.line
+  }
+  document.documentElement.className = ''
+})()
+</script>
 </body>
 </html>
