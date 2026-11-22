@@ -323,6 +323,24 @@ send ALL phrases (Pult + subscription page) as a list for «да»; only then co
 agreed first). Context fill of a walled element: show «—» until resume/context-window can read its journals (839-3 opens them only before
 builds; fix in the same release — open at session end too, or read as the element).
 
+**ADDED 20:30 (Telegram 947):** «Перейти в чат» must leave a VISIBLE line in the chat («пользователь перешёл из вкладки, путь …»). Found:
+821 built only the hidden hook (door tg/api/context → tg-context.json → came-from line to the agent); the person sees nothing. Telegram cannot
+prefill plain text (core.telegram.org/bots/webapps: only switchInlineQuery «@bot query», sendData only for keyboard buttons). Fix = item (4)
+of the same custom release: the context door also makes the element's OWN bot send «📍 Вы пришли из раздела: Проекты › … › Instagram —
+пишите, отвечу про него» to the Telegram user from verified initData (HMAC with its bot token), keeps the hook line; phrase goes into the
+phrases list for «да». Told Roma (950).
+
+**20:27 (Telegram 951):** Roma «Да» to the Pult layout (943) + the chat line. Sent the FULL phrase list (953): Pult 1–7 (main agent card,
+badges «работает · ждёт · спит · собирается · не вошёл в Claude», fuel with context big, element 2nd line «account · контекст N % · 5 ч N %»,
+«контекст —», «без входа в Claude», «Показать все · N»), subscription page 8–12 (as 905), element Mini App 13 (Back = Telegram's own) and 14
+(«📍 Вы пришли из раздела: … Пишите — отвечу про него.»); en by me. NEXT: his «да» → code (load interface-design, use-primitives, use-shadcn).
+
+**20:30 (Telegram 954→955):** Roma adds to the ELEMENT Mini App (template tg/): 15 fuel under the agent card (context + 5 h + 7 d of the
+element's own account), 16 model choice like the main Pult («Модель», «Усилие», «Переключить»; after the element's current turn; core door
+with the element key → session model <id>), 17 intro card on the home screen, closed by «Прочитано», reopened by the drawer item «Как начать»;
+text sent in 955 (his idea, polished: Проекты → тема → «Перейти в чат»; строительство vs рабочий процесс; «создайте что-нибудь восхитительное ✨»).
+WAIT his «да» to 1–17, then code.
+
 **WHERE THE SERVER STANDS:** core 5d05c566 (built 20:06) = 839-8 live. Pushed and WAITING his press: 2b7985a3 (839-9, EPERM = alive) —
 «Проверить снова» showed «1 изменений», trial merge OK. After it: he writes to the etuf1 bot (Etuf1-messenger-h2a) + «Включить» → the
 channel must come up and the agent answer. If not: ask the server agent for logs/web4-out.log lines of the wake and `ls -l` of

@@ -38,7 +38,9 @@ export type TgAsk = { id: string; text: string; why: string | null; hint: string
  * channel. `null` — not known yet (the default model, an agent that never ran).
  */
 export type TgAgent = { mode: "coding" | "waiting" | "sleeping"; model: string | null; effort: string | null; ultracode: boolean; account: "node" | "own" | null; email: string | null; bot: string | null; botReady: boolean }
-export type TgElement = { build: "building" | "queued" | null; serve: TgServe; claude: "own" | "node" | "none"; subscription: string | null; id: string; name: string; native: boolean; required: boolean; on: boolean; offReason: string | null; live: boolean; step: string | null; turn: { event: string; at: string; last: string | null } | null; agent: TgAgent ; description: string | null; site: string | null; botLink: string | null }
+export type TgElement = { build: "building" | "queued" | null; serve: TgServe; claude: "own" | "node" | "none"; subscription: string | null; id: string; name: string; native: boolean; required: boolean; on: boolean; offReason: string | null; live: boolean; step: string | null; turn: { event: string; at: string; last: string | null } | null; agent: TgAgent ; description: string | null; site: string | null; botLink: string | null; glance: TgGlance }
+/** 840-2 (the owner, Telegram 942: «на каждом элементе сразу видно его учетную запись … контекстного окна … расход подписки»). */
+export type TgGlance = { account: string | null; context: number | null; fiveHour: number | null }
 /**
  * 2026-11-17 (the owner: «пульт как будто бы заморожен на определённом аккаунте»): a limit is measured only by an agent's turn (Claude Code
  * hands it to the status line); the account is read now, by code. `account` — the e-mail it was measured on; `stale` — measured on another
@@ -121,12 +123,37 @@ function agentOf(id: string, live: boolean): TgAgent {
 /** 821: one element's own agent card and the fill of its context window, for that element's own Mini App (the core's door
  *  GET /api/node/my-agent) — what the Pult shows of it, never another element's. The e-mail of the node's subscription is the architect's:
  *  it never goes to an element (an app of its own has another owner). The context — the record its status line writes (limits.cjs). */
-export type TgOwnAgent = { agent: TgAgent; live: boolean; context: { percent: number; size: number | null } | null }
+export type TgOwnLimits = { fiveHour: { used: number; resetsAt: string | null } | null; sevenDay: { used: number; resetsAt: string | null } | null; at: string | null }
+export type TgOwnAgent = { agent: TgAgent; live: boolean; context: { percent: number; size: number | null } | null; limits: TgOwnLimits | null }
 export function ownAgentOf(id: string): TgOwnAgent {
   const live = ((sessions() as { service: string; running?: boolean }[]) ?? []).some((s) => s.service === id && s.running)
+  const agent = agentOf(id, live)
+  // 840-1 (the owner, Telegram 954: «не хватало раздела лимит текущей сессии и недельный лимит»): the limits of the account this element
+  // runs on — its own (own-<id>.json) or the node's; only the numbers, never the node's e-mail.
+  return { agent: { ...agent, email: null }, live, context: contextOf(id), limits: limitsFor(id, agent.account) }
+}
+
+/** The fill of an element's context window — the record its status line writes (limits.cjs). */
+function contextOf(id: string): { percent: number; size: number | null } | null {
   const rec = readJson<{ used?: number; size?: number } | null>(join(ROOT, "data", "services", id, "context.json"), null)
-  const context = rec && typeof rec.used === "number" ? { percent: rec.used, size: typeof rec.size === "number" ? rec.size : null } : null
-  return { agent: { ...agentOf(id, live), email: null }, live, context }
+  return rec && typeof rec.used === "number" ? { percent: rec.used, size: typeof rec.size === "number" ? rec.size : null } : null
+}
+
+/** 840: the limits of the account an element runs on — its own record, or the node's when it runs on the node's subscription. */
+function limitsFor(id: string, account: TgAgent["account"]): TgOwnLimits | null {
+  const file = account === "own" ? `own-${id}.json` : account === "node" ? "node.json" : null
+  if (!file) return null
+  const l = readJson<{ fiveHour?: { used?: number; resetsAt?: string }; sevenDay?: { used?: number; resetsAt?: string }; at?: string } | null>(join(ROOT, "data", "node", "limits", file), null)
+  if (!l) return null
+  const pick = (x: { used?: number; resetsAt?: string } | undefined) => (x && typeof x.used === "number" ? { used: x.used, resetsAt: x.resetsAt ?? null } : null)
+  return { fiveHour: pick(l.fiveHour), sevenDay: pick(l.sevenDay), at: l.at ?? null }
+}
+
+/** 840-2: «r6…@gmail.com» — an account shown in a list without spelling out the whole address. */
+function masked(email: string | null): string | null {
+  if (!email) return null
+  const [user, host] = email.split("@")
+  return host ? `${user.slice(0, 2)}…@${host}` : null
 }
 
 function updateOf(): TgUpdate | null {
@@ -217,8 +244,19 @@ function elementsOf(lang: Lang, builds: TgBuilds, procs: Map<string, string> | n
       description: descriptionOf(e),
       site: e.kind === "user" ? siteOf(e.id) : null,
       botLink: null,
+      glance: glanceOf(e),
     }
   }).map((x) => ({ ...x, botLink: x.agent.bot ? `https://t.me/${x.agent.bot}` : null }))
+}
+
+/** 840-2: the second line of an element in the Pult — the account it runs on (masked), its context fill, the 5-hour use of that account. */
+function glanceOf(e: Entry): TgGlance {
+  const account = claudeOf(e)
+  let email: string | null = null
+  if (account === "own") { try { email = claudeAccount.ownEmail(ROOT, e.id) as string | null } catch { email = null } }
+  else if (account === "node") email = accountNow()
+  const limits = account === "none" ? null : limitsFor(e.id, account)
+  return { account: masked(email), context: contextOf(e.id)?.percent ?? null, fiveHour: limits?.fiveHour?.used ?? null }
 }
 
 /** The e-mail of the Claude Code account logged in now (the node's own; an element's own subscription lives in its folder). */
