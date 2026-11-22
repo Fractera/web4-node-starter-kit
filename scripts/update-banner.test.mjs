@@ -34,6 +34,12 @@ t('4 a refusal → its kind, and the update button is back', () => {
   const v = bannerView(body({ nodeBehind: 16, update: { state: 'refused', reason: 'идёт развёртывание элемента' } }))
   assert.deepEqual([v.kind, v.rebuild], ['refused', 'on'])
 })
+t('839-4 a failure older than the running build is history → what waits now (negative: the newest word is the failure → it stays)', () => {
+  const failed = { state: 'failed', reason: 'сборка ядра не удалась', finishedAt: '2026-11-22T18:31:00Z' }
+  assert.equal(bannerView(body({ nodeBehind: 1, builtAt: '2026-11-22T18:39:15Z', update: failed })).kind, 'nodeBehind')
+  assert.equal(bannerView(body({ nodeBehind: 1, builtAt: '2026-11-22T17:11:00Z', update: failed })).kind, 'failed')
+  assert.equal(bannerView(body({ nodeBehind: 1, update: failed })).kind, 'failed')
+})
 t('5 fork behind Fractera → «sync» is there, the update locked', () => {
   const v = bannerView(body({ behindBy: 3, nodeBehind: 0 }))
   assert.deepEqual([v.kind, v.sync, v.rebuild], ['forkBehind', true, 'off'])

@@ -91,6 +91,8 @@ async function body(lines = 8) {
     checkedAt: rec?.version?.checkedAt ?? null,
     repo: typeof rec?.url === "string" ? rec.url.replace(/\.git$/, "") : null,
     update: update(),
+    // 839-4: the running core's build time — a failure older than it is history (a later rebuild by hand succeeded), never «not passed»
+    builtAt: process.env.NEXT_PUBLIC_BUILT_AT ?? null,
     log,
   }
 }
