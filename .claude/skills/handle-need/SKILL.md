@@ -42,7 +42,7 @@ The owner, 2026-11-21 (Telegram 447): «надо рассматривать од
 братьев это закон».
 
 1. Before you ask about a build, the outside rungs in this order: the Fractera marketplace (`npm run market -- "<the task>"`, search v1:
-   a short summary and links to PUBLIC pages of fitting elements — step 841-2, the owner's 984/985), then Lagrix (`npm run lagrix`).
+   a short summary and, per element, what it does, its PUBLIC page and its price — step 841-2, the owner's 984/985/991), then Lagrix (`npm run lagrix`).
    Pass the links on as they came; the procedure (buy, f2f) is agreed after the person read the pages. The marketplace answers from
    Fractera's own server at Fractera's cost (the owner, 987); until it answers in the v1 shape both rungs are simulated — the line says
    `===MARKET_SIMULATION===` — and the architect hears «simulated», never a simulated offer as a real one.

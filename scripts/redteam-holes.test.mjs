@@ -104,7 +104,12 @@ t('S1 «my agent» takes the element from its own key and never sends the node\'
   const door = code(read('app/api/node/my-agent/route.ts'))
   assert.match(door, /"element" in caller \? caller\.element/, 'the id comes from the element key')
   const state = code(read('lib/node/tg-app/state.ts'))
-  assert.match(state, /agent: \{ \.\.\.agentOf\(id, live\), email: null \}/, 'ownAgentOf strips the e-mail')
+  // 840-4 (the owner's mock A: the element's home shows ITS account): only the element's own e-mail, masked, and only on its own account —
+  // never the node's (the architect's, `accountNow()`).
+  const own = state.slice(state.indexOf('export function ownAgentOf'), state.indexOf('function contextOf'))
+  assert.match(own, /agent\.account === "own"\) \{ try \{ email = masked\(claudeAccount\.ownEmail\(ROOT, id\)/, 'ownAgentOf gives only the element\'s own masked e-mail')
+  assert.ok(!/accountNow\(\)/.test(own), 'ownAgentOf never reads the node\'s e-mail')
+  assert.match(own, /agent: \{ \.\.\.agent, email \}/, 'the agent\'s e-mail field is the one set above, never agentOf\'s')
 })
 
 if (failed) { console.log(`===REDTEAM_HOLES_FAILED=== ${failed} failed, ${passed} passed`); process.exit(1) }

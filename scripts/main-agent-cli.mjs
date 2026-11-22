@@ -373,10 +373,10 @@ if (cmd === 'market') {
   // links to public pages; a simulation until Fractera's side answers — said so. The rung before Lagrix on the ladder (skill handle-need).
   const words = rest.filter((w, i) => !w.startsWith('--') && rest[i - 1] !== '--lang').join(' ').trim()
   if (!words) fail('market "<plain words of what the person looks for>" [--lang ru|en]')
-  const { marketSearch } = await import('../lib/web4-items/fractera-market.mjs')
+  const { marketSearch, priceText } = await import('../lib/web4-items/fractera-market.mjs')
   const out = await marketSearch(words, { lang: flag('--lang') || 'ru', dataDir: join(ROOT, 'data', 'node') })
   console.log(`===MARKET_${out.mode === 'live' ? 'LIVE' : 'SIMULATION'}=== ${out.summary}`)
-  for (const x of out.items) console.log(`- ${x.title} (${x.kind}) — ${x.summary} ${x.url}`)
+  for (const x of out.items) console.log(`- ${x.title} (${x.kind}) — ${x.summary} · ${priceText(x.price, flag('--lang') || 'ru')} · ${x.url}`)
   process.exit(0)
 }
 
