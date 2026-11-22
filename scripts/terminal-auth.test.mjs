@@ -39,4 +39,50 @@ t('the older long link (CLI 2.1.260) is still found, without «Paste»', () => a
 t('negative: another claude.ai address is not a login link', () => assert.equal(extractAuthUrl('see https://claude.ai/settings?z-abc\r\n'), null))
 t('negative: no link — nothing', () => assert.equal(extractAuthUrl('Login successful.\r\n'), null))
 
+// 837-0b — THE SHELL OF THE LOGIN TERMINAL, ONE RULE FOR THE WHOLE NODE. The owner's photo (Telegram 814): on the server the core typed
+// `claude auth login` into the node user's zsh with no start-up file, and Debian's new-user menu ate it («laude: command not found»),
+// while every walled element's `/bin/bash -l` worked (816: «почему … разные архитектуры»). Now Linux — bash -l for the core and every
+// element; macOS — zsh, with -f when it has no start-up file (zshmodules: the newuser module loads only while RCS is set); Windows — cmd.
+const { createRequire } = await import('node:module')
+const { mkdtempSync, writeFileSync, existsSync, rmSync } = await import('node:fs')
+const { tmpdir } = await import('node:os')
+const req = createRequire(join(ROOT, 'package.json'))
+const { loginShellArgs, shellCandidates } = req(join(ROOT, 'app', '[lang]', '(architectLayer)', 'architect', 'kits', '_agent-kit', 'core', 'server', 'claude-cli.cjs'))
+const walled = req(join(ROOT, 'lib', 'agent-kit', 'walled-session.cjs'))
+const bare = mkdtempSync(join(tmpdir(), 'login-shell-'))
+const withRc = mkdtempSync(join(tmpdir(), 'login-shell-rc-'))
+writeFileSync(join(withRc, '.zshrc'), '# the person\'s own\n')
+const withLogin = mkdtempSync(join(tmpdir(), 'login-shell-zlogin-'))
+writeFileSync(join(withLogin, '.zlogin'), '')
+t('Linux: bash first — the core and the native elements get what a walled element gets', () => assert.equal(shellCandidates('linux')[0], '/bin/bash'))
+t('Linux: the same shell and flag as the walled element\'s login shell', () => {
+  const w = walled.walledShell({ root: ROOT, id: 'x', home: null, opts: { prefix: ['sudo'], helper: 'h' } })
+  assert.deepEqual(w.args.slice(-2), ['/bin/bash', '-l'])
+  assert.deepEqual(loginShellArgs(shellCandidates('linux')[0], bare), ['-l'])
+})
+t('macOS: zsh stays first, its default', () => assert.equal(shellCandidates('darwin')[0], '/bin/zsh'))
+t('Windows: ComSpec, then cmd.exe; no arguments', () => { assert.equal(shellCandidates('win32', { ComSpec: 'C:\\X\\cmd.exe' })[0], 'C:\\X\\cmd.exe'); assert.deepEqual(loginShellArgs('C:\\Windows\\System32\\cmd.exe', bare), []) })
+t('zsh with no start-up file starts with -f (the server\'s node user had exactly this)', () => { assert.deepEqual(loginShellArgs('/bin/zsh', bare), ['-f']); assert.deepEqual(loginShellArgs('/usr/bin/zsh', bare), ['-f']) })
+t('negative: a person\'s own ~/.zshrc keeps their zsh as it was', () => assert.deepEqual(loginShellArgs('/bin/zsh', withRc), []))
+t('negative: any one start-up file is enough (.zlogin)', () => assert.deepEqual(loginShellArgs('/bin/zsh', withLogin), []))
+// live: this machine's own shells, in an empty home, with the arguments above, run the line the bridge types after 800 ms
+let pty = null
+try { pty = req('node-pty') } catch { /* no native module here — the live checks are skipped below */ }
+const typed = (shell) => new Promise((resolve) => {
+  let buf = ''
+  const child = pty.spawn(shell, loginShellArgs(shell, bare), { cols: 100, rows: 24, cwd: bare, env: { HOME: bare, PATH: '/usr/bin:/bin', TERM: 'xterm-256color', SHELL: shell }, name: 'xterm-256color' })
+  child.onData((d) => { buf += d })
+  setTimeout(() => child.write('echo MARK_$((6*7))\r'), 800)
+  setTimeout(() => { try { child.kill() } catch { /* gone */ } resolve(buf) }, 3000)
+})
+for (const shell of ['/bin/bash', '/bin/zsh']) {
+  if (!pty || !existsSync(shell)) { console.log(`  · live ${shell} check skipped: no node-pty or no ${shell} here`); continue }
+  const out = await typed(shell)
+  t(`live: ${shell} ${loginShellArgs(shell, bare).join(' ')} in an empty home runs the typed line, no new-user menu`, () => {
+    assert.ok(out.includes('MARK_42'), `the typed line did not run: ${JSON.stringify(out.slice(-200))}`)
+    assert.ok(!/configuration function for new users|Type one of the keys/.test(out), 'the new-user menu appeared')
+  })
+}
+for (const d of [bare, withRc, withLogin]) rmSync(d, { recursive: true, force: true })
+
 console.log(process.exitCode ? `===TERMINAL_AUTH_FAILED=== ${passed} passed` : `===TERMINAL_AUTH_OK=== ${passed} passed`)

@@ -100,4 +100,25 @@ function claudeEfforts(bin = claudeBin()) {
   return levels
 }
 
-module.exports = { claudeBin, claudeAuthState, claudeOwnLogout, claudeEfforts, extraBins, resolveBin }
+// 837-0b (the owner, Telegram 814, a photo of the server's login terminal; 816: «почему у нас в одном проекте должны существовать разные
+// архитектуры»): on the server the core and every native element typed `claude auth login` into the node user's zsh — it has none of its
+// start-up files, so Debian's zsh sourced its `newuser` script, a menu waiting for one key: «c» was eaten, «laude: command not found», no
+// link, no window — while every walled custom element got `/bin/bash -l` (lib/agent-kit/walled-session.cjs) and worked.
+// 🔒 ONE RULE FOR THE WHOLE NODE, the core and every element alike: a Linux machine's login terminal is `bash -l` — the walled shell's
+// own; macOS keeps zsh, its default, and a zsh with none of .zshenv .zprofile .zshrc .zlogin starts with -f (zshmodules, THE ZSH/NEWUSER
+// MODULE: loaded only while RCS is set; macOS ships no `newuser` script, Debian does); Windows — cmd.exe. `PTY_SHELL` overrides.
+const ZSH_START_FILES = ['.zshenv', '.zprofile', '.zshrc', '.zlogin']
+/** The shells to try, in order, for this platform. */
+function shellCandidates(platform = process.platform, env = process.env) {
+  if (platform === 'win32') return [env.ComSpec, 'C:\\Windows\\System32\\cmd.exe']
+  return platform === 'darwin' ? ['/bin/zsh', '/bin/bash', '/bin/sh'] : ['/bin/bash', '/bin/sh', '/bin/zsh']
+}
+/** Arguments of the short login terminal's shell: bash `-l` (as a walled element's), a zsh with no start-up file `-f`, else none. */
+function loginShellArgs(shell, dir = process.env.ZDOTDIR || os.homedir()) {
+  const name = path.basename(String(shell || ''))
+  if (name === 'bash') return ['-l']
+  if (name !== 'zsh') return []
+  return ZSH_START_FILES.some((f) => existsSync(path.join(dir, f))) ? [] : ['-f']
+}
+
+module.exports = { claudeBin, claudeAuthState, claudeOwnLogout, claudeEfforts, extraBins, resolveBin, shellCandidates, loginShellArgs }

@@ -16,7 +16,7 @@ const path = require('node:path')
 const { redeemGrant } = require('./ticket.cjs')
 const session = require('./session.cjs')
 const { serviceDir, ownClaudeDir, onLoan } = require('./workspace.cjs')
-const { claudeBin, claudeEfforts, resolveBin } = require('./claude-cli.cjs')
+const { claudeBin, claudeEfforts, resolveBin, shellCandidates, loginShellArgs } = require('./claude-cli.cjs')
 const telegram = require('./telegram.cjs')
 const { channelLaunch } = telegram
 // 781-1/3: does the bot hear — the plugin's pid, the poison out, the state file for the panel and the Pult.
@@ -80,9 +80,8 @@ const starting = new Set()
 
 function shellPath() {
   if (process.env.PTY_SHELL) return process.env.PTY_SHELL
-  const candidates = process.platform === 'win32'
-    ? [process.env.ComSpec, 'C:\\Windows\\System32\\cmd.exe']
-    : ['/bin/zsh', '/bin/bash', '/bin/sh']
+  // 837-0b: one rule for the core and every element — bash on Linux (a walled element's `/bin/bash -l`), zsh on macOS (claude-cli.cjs)
+  const candidates = shellCandidates()
   for (const c of candidates) if (c && existsSync(c)) return c
   return candidates[candidates.length - 1]
 }
@@ -1370,7 +1369,8 @@ function onConnection(ws, service) {
       try {
         own = ws_
           ? pty.spawn(ws_.cmd, ws_.args, { cols: 100, rows: 24, cwd: serviceDir(service), env: ws_.env, name: 'xterm-256color' })
-          : pty.spawn(shell, [], { cols: 100, rows: 24, cwd: serviceDir(service) || os.homedir(), env: home ? { ...shellEnv(shell), CLAUDE_CONFIG_DIR: home } : shellEnv(shell), name: 'xterm-256color' })
+          // 837-0b: bash -l like a walled element's; a zsh with no start-up file -f, else Debian's new-user menu eats the typed command
+          : pty.spawn(shell, loginShellArgs(shell), { cols: 100, rows: 24, cwd: serviceDir(service) || os.homedir(), env: home ? { ...shellEnv(shell), CLAUDE_CONFIG_DIR: home } : shellEnv(shell), name: 'xterm-256color' })
         if (ws_) own.wallStop = ws_.stop
       } catch (err) {
         ws.send(`\r\n[оболочка ${shell} не запустилась: ${err instanceof Error ? err.message : String(err)}]\r\n`)
