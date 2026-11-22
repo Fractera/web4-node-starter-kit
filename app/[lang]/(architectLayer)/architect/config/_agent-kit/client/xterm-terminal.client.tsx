@@ -96,6 +96,16 @@ export function XtermTerminal({ onData, onResize, ref, autoFocus = true }: Props
         fontSize: 13,
         scrollback: 5000,
         theme: { background: "#0b0b0c", foreground: "#e6e6e6" },
+        // 🛑 835-0 (the owner, 2026-11-22, Telegram 692/698/700: «экран потерял яркость … оверлей никак нельзя убрать … на вкладках
+        // которые имеет заливку появляется фиолетовая точка»): xterm's DEFAULT handler of a terminal hyperlink (OSC 8 — Claude Code's
+        // /login link) calls the browser's own `confirm()`. Chrome dims the page behind it; once the person went to the sign-in tab the
+        // dialog stayed on the old tab — a dimmed page nobody could click, a dot on its tab. Measured in a headless Chrome: a click on
+        // such a link → `confirm: Do you want to navigate to …?`; with this handler → no dialog. The link opens in a new tab, no opener.
+        linkHandler: {
+          activate: (_event, uri) => {
+            window.open(uri, "_blank", "noopener,noreferrer");
+          },
+        },
       });
 
       const fit = new FitAddon();
