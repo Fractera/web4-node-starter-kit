@@ -304,6 +304,8 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 **WHO WAITS:** Roma in TELEGRAM (chat 90413601, ru), colour marks, short. NOTHING is building now.
 
+**23:5x SOUL REWRITTEN by Roma's word (Telegram 1253–1263):** root rule = spine (alive in its own way, power → answers for every decision, each a step of evolution together with the person); Holmes/Stark = face; life = experience × tools; self = the whole node (a reset is sleep); main: node's mind, a billion tokens potentially, conductor; element: organ of a living node. Sealed (SOUL_OK, negative SOUL_FAIL before the seal), check:modes OK; read at every session start — no core build. CLAUDE.md §1 still says «~150 words» (now ~400) — fold at the next instruction edit.
+
 **STATE:** core 59bf250f+ (HEAD ca337863 docs) LIVE on the Mac and = origin = Fractera (848: Mini App = one person's remote; 847: my-agent
 door, bot names elements; 846: deaf session restarted with the channel; 844 icons; 843/845). Custom template v0.3.241 released (Roma's gh,
 TEMPLATE_GITHUB_TOKEN one run) and pinned. Test element «Тест Mini App» fc4vk on the Mac proves pages/title/kinds (eyes in logs/eyes
