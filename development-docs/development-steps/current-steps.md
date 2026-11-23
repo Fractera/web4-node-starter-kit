@@ -329,6 +329,13 @@ square PNG to localhost:24680/api/architect/icons with item=<a custom test eleme
 400 not-an-image; DELETE → head back to /api/config-image/icon-*; eyes of the field. Then push fork + Fractera, window for Roma
 «Обновить сборку ядра» on the server, live checks: Pult on a domain switch, a rename of a test element, icons.
 
+**15:56 Roma (1188, 1190, 1192):** fears the batch breaks element bots behind the wall again («пять сессий»); asked: the server element
+cmdfc (aifa.dev) bot @cmdfc_messenger_h2a_726zl_bot does not answer. His screenshot: connection active (the state message came), the
+banner «Терминал запущен до подключения бота». Told him (1193): restart the agent from its Terminal; my defect — the node should restart
+the agent with the channel itself at the bot's activation (offered for the batch, waits his yes); if it still stays silent — ask the
+server's agent read-only (wall trap). PROMISED (1189): a wall audit of the batch's three Telegram touches (843: main bot «Пульт» refresh
+at admission; refreshAll at domain activation; element-move rewrites address + refreshElement) before any build. NO BUILD without «собирай».
+
 **OPEN with Roma:** the gh key for the template release (1183); the Mac twin cck60 «F2F-маркетплейс» still has the template's code —
 import needs «Создать и выгрузить» then «Заменить код из другого репозитория» Fractera/f2f-marketplace with a Fractera key (window), or
 build native-birth-from-repo (proposed in 1147, not ordered yet). Queue: the same class-A audit in the template workshops; internal
