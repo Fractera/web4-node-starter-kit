@@ -342,6 +342,14 @@ server (no sign-in in my Chrome on architect.aifa.dev). Sent him (1205) a READ-O
 agent have mcp__plugin_telegram_telegram__* tools; core pm2 «[telegram] cmdfc» lines; the element's telegram MCP log as the element;
 ls -l of its channel folder and plugin; fe-cmdfc processes; the core commit. NEXT: diagnose from the facts, no blind build.
 
+**16:05 the server agent's facts (Roma 1206):** cmdfc's agent sees NO telegram tools; its only session started 15:44 UTC (no channel:
+telegram plugin false, no --channels), the bot connected 15:53, no start since — the «restart» never reached the core. Plugin not
+installed in its Claude home (only the marketplace source, no node_modules) — channelLaunch installs it as the element at the next channel
+start. The agent reported no .env/.token.node (likely `ls -l` without -a). Shared claude/bun in /usr/local/lib/fractera/bin appeared only
+15:33 UTC (claude-share). Sent (1207): ls -la, then close+wake cmdfc only if the token file exists; report [telegram]/[agents/start] lines,
+the process args (--channels), the tools. OWED FIX (offered, waits his yes): the node restarts an element's agent with the channel when
+its bot is admitted while a session runs without it.
+
 **OPEN with Roma:** the gh key for the template release (1183); the Mac twin cck60 «F2F-маркетплейс» still has the template's code —
 import needs «Создать и выгрузить» then «Заменить код из другого репозитория» Fractera/f2f-marketplace with a Fractera key (window), or
 build native-birth-from-repo (proposed in 1147, not ordered yet). Queue: the same class-A audit in the template workshops; internal
