@@ -319,18 +319,15 @@ Mac twin cck60 — NEVER commit it (born elements never ride the fork).
 Release v0.3.239 was refused 403 (the node key aifa-agi cannot write Fractera templates); asked Roma (1183) to release with the Mac's gh
 (Fractera). Law of release-template: without his word do not use another key.
 
-**HALF DONE — 844 site icons (Roma 1172, aifa.dev letter):** no door `api/architect/icons` (lib/site-settings/fields.ts:224), the core's
-CONFIG editor draws type «icons» disabled (components/element-settings/site/config/field-row.client.tsx:152, words iconsSlice… exist in
-fields.i18n.ts). Contract (git 23fb1ba7): upload POST /media/upload multipart field `file` + X-Data-Secret → {ok,item:{id,url}} (data's
-report 15:11); POST /media/generate-icons {media_id} → {id, files}; files served by the core's app/api/media/icons/[setId]/file/[name].
-data forwards /media/* to STORAGE before key checks — asked STORAGE (task storage --work, 15:13) who may call generate-icons and whether
-an element's own key reads a set made with the node's key. STORAGE ANSWERED 15:15 (from its code, not live): generate-icons takes BOTH keys; with X-Data-Secret the set is owner 'node' and ANY
-element reads it with its own X-Element-Key (media.mjs:523 refuses only owner≠element AND owner≠node) — the main risk is gone; answer
-200 {ok,id,files:{favicon_ico,favicon_16,favicon_32,apple_touch_icon,icon_192,icon_512,og_image,manifest}} values '<id>/<file name>',
-files at /media/icons/<id>/file/<name>; errors 400/404/500 {ok:false,error}. NEXT: build the door + the upload field +
-save iconSet into CONFIG app settings (the core's PATCH /api/node/element-settings path) + a test (head favicon new and 200 on root) →
-prebuild → ONE Mac build → push fork + Fractera → window for Roma «Обновить сборку ядра» → live checks: Pult on a domain switch, a rename
-of a test element, icons.
+**844 COMMITTED 7e184add (not built):** door app/api/architect/icons (POST multipart item+file → /media/upload → /media/generate-icons with
+X-Data-Secret → iconSet written by patchElementSettings, the Pult's pruned write moved into lib/web4-items/element-settings-door.ts;
+DELETE → iconSet null), field components/element-settings/site/config/icons-field.client.tsx (preview icon_192 via the core's
+/api/media/icons), remote-fields icons:"object", prune lets a DECLARED map pass whole (`<path>.*` mark; check:element-settings +3).
+Prebuild RC=0, tsc clean. 15:4x asked Roma «собрать сейчас?» (rule ask-before-core-build). AFTER THE BUILD — proofs: (1) curl POST a
+square PNG to localhost:24680/api/architect/icons with item=<a custom test element> → ok+iconSet; the element's page head links
+/api/media/icons/<id>/file/… and that URL answers 200 FROM THE ELEMENT (its own key reads the node's set); (2) negatives: a text file →
+400 not-an-image; DELETE → head back to /api/config-image/icon-*; eyes of the field. Then push fork + Fractera, window for Roma
+«Обновить сборку ядра» on the server, live checks: Pult on a domain switch, a rename of a test element, icons.
 
 **OPEN with Roma:** the gh key for the template release (1183); the Mac twin cck60 «F2F-маркетплейс» still has the template's code —
 import needs «Создать и выгрузить» then «Заменить код из другого репозитория» Fractera/f2f-marketplace with a Fractera key (window), or
