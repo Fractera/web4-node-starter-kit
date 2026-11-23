@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node
 import { join } from "node:path"
 
 import deployLock from "@/lib/deploy/deploy-lock.cjs"
+import tgMenu from "@/lib/node/tg-menu.cjs"
 import { applyDomainToAuth, type AuthEnvResult } from "@/lib/domain/auth-env"
 import { staleElements } from "@/lib/domain/stale-addresses.cjs"
 import { nodeNames } from "@/lib/hosting/hostnames.mjs"
@@ -79,6 +80,8 @@ export function activateServerDomain(): SwitchResult {
   }, null, 2)}\n`, "utf8")
   const authResult = auth ? applyDomainToAuth() : { files: 0, restarted: false, reason: "no-auth-service" }
   const r = rebuildStale()
+  // 843 (Telegram 1164): the bots' buttons follow the address that just changed.
+  void tgMenu.refreshAll(ROOT).catch(() => null)
   return { ok: true, auth: authResult, rebuilding: r.rebuilding, rebuildPostponed: r.postponed, urlWritten }
 }
 
@@ -96,5 +99,7 @@ export function deactivateServerDomain(): SwitchResult {
   writeServerMark(ROOT, { urlBefore: undefined })
   // Sign-in keeps the domain's settings until the next install: over the bare IP nobody signs in anyway (plain HTTP is read-only).
   const r = rebuildStale()
+  // 843 (Telegram 1164): the bots' buttons follow the address that just changed.
+  void tgMenu.refreshAll(ROOT).catch(() => null)
   return { ok: true, rebuilding: r.rebuilding, rebuildPostponed: r.postponed, urlWritten }
 }

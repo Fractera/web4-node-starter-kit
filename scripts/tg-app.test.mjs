@@ -91,6 +91,20 @@ await t('the own domain wins over a temporary address', async () => {
   put('logs/domain.json', JSON.stringify({ zone: 'example.org', activatedAt: '2026-11-16T00:00:00Z' }))
   assert.equal((await menu.refresh(tmp, { fetchImpl: stub })).url, 'https://example.org/api/node/tg-app?lang=ru')
 })
+await t('843: refreshAll sets «Пульт» from the domain at once (main bot), elements without a bot are skipped', async () => {
+  const r = await menu.refreshAll(tmp, { fetchImpl: stub })
+  assert.equal(r.main, 'panel')
+  assert.deepEqual(seen.pop().m.web_app, { url: 'https://example.org/api/node/tg-app?lang=ru' })
+})
+await t('843: turning a domain on and admitting the architect refresh the buttons (✗ aifa.dev 2026-11-23: the bot and the domain came after the first build)', () => {
+  const activate = readFileSync(join(ROOT, 'app', 'api', 'domain', 'activate', 'route.ts'), 'utf8')
+  const sw = readFileSync(join(ROOT, 'lib', 'hosting', 'server-domain-switch.ts'), 'utf8')
+  const kit = readFileSync(join(ROOT, 'app', '[lang]', '(architectLayer)', 'architect', 'kits', '_agent-kit', 'core', 'server', 'telegram.cjs'), 'utf8')
+  assert.ok(/tgMenu\.refreshAll\(ROOT\)/.test(activate), 'the home activation')
+  assert.equal((sw.match(/tgMenu\.refreshAll\(ROOT\)/g) || []).length, 2, 'both server paths')
+  const at = kit.indexOf("if (activated && service === 'build') {")
+  assert.ok(at > 0 && /__web4TgMenu\?\.refresh\(ROOT\)/.test(kit.slice(at, kit.indexOf("if (activated && service !== 'build')", at))), 'the admission to the main bot')
+})
 await t('no bot — nothing is called (negative control)', async () => {
   rmSync(join(tmp, 'data', 'services', 'build', 'channel', 'telegram', '.env'))
   const before = seen.length

@@ -632,6 +632,9 @@ async function idleTick(service) {
     // plugin's own menu).
     if (activated && service === 'build') {
       try { await nodeCommands().applyMenu(token, [sender], personLang(service)) } catch { /* the menu is a convenience — `npm run commands -- menu` sets it again */ }
+      // 843 (the aifa.dev server's agent, 2026-11-23, Telegram 1164): on a fresh server the bot comes after the first build, so the build's
+      // refresh found no bot and the «Пульт» button stayed default; the admission sets it (setMyCommands above never touches it).
+      try { await globalThis.__web4TgMenu?.refresh(ROOT) } catch { /* a convenience — `npm run tg-app -- menu` sets it again */ }
     }
     // 778 (the owner, 2026-11-17, the plan's «да»): an element's bot opens the element's Mini App (`<its address>/tg`, closed by its admin
     // role) from the menu button of the person it just admitted. The module is mounted by `lib/agent-kit/mount.cjs` (a path from the

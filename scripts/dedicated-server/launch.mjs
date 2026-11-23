@@ -115,11 +115,15 @@ async function scripts(client, names) {
 }
 
 /** The server's state, read there (`state.sh`); uploaded again when the server has none or an older one. */
-async function readState(client) {
+async function readState(client, again = true) {
   await scripts(client, ['state.sh'])
   const r = await exec(client, `bash ${q(`${DIR}/state.sh`)} ${q(FOLDER)} ${q(DIR)}`, { timeoutMs: 40_000 })
   const line = r.stdout.trim().split('\n').pop() ?? ''
   const s = JSON.parse(line)
+  // 845-C2 (✗ 2026-11-23, Telegram 1156: «установка закончена и тут же горит кнопка установить»): the probe kept on the server was taken
+  // BEFORE the install and still saw an empty server — the page offered «Установить» and hid the danger zone. A finished install with
+  // a probe that sees no Fractera is measured again, once.
+  if (again && !dry && s.launch?.state === 'done' && !s.probe?.fractera?.head) { await probe(client); return readState(client, false) }
   // 744-5: ONE DOMAIN RECORD. The server's node holds a domain (its mark) and the page has no record of it — written once, from the mark,
   // so the page and every act read the same domain and way. ✗ Measured 2026-11-14: the page read only domain.json (absent on the test
   // server) while the mark held aifa.dev and its way.

@@ -60,3 +60,17 @@ on the owner's subscription, nor one person's two subscriptions around the limit
   делать», core step 704) it comes to you as its own line `⟦node · permission⟧` and you decide it — skill `element-permission`;
 - build, change or test the element's code yourself;
 - go on after the last cycle: the node removes the record, you report and stop.
+
+## A hand that cannot (CLAUDE.md §1, the owner 2026-11-23, Telegram 1170)
+
+A task the person gave YOU, for an element whose agent cannot take it — on a server an element without its own Claude subscription cannot
+borrow the node's (the wall, 811-5b) — is not refused. Say in one line why its agent cannot and how its subscription is connected (its
+page «Подписка Claude Code»), then do it yourself through its repository, the way f2f-marketplace's landing went (842, fe9d4d7):
+1. Its repository exists (its GitHub card «Создать и выгрузить»; a repository of another account — its own key there).
+2. A clone in `data/workshop/<repo>` (https, `credential.helper` per repository), the change, its guards (`npm ci`, its prebuild), `npm run
+   eyes` on a local `next dev`, a commit in English, a push.
+3. On its «Предпросмотр и развёртывание»: «Проверить снова» → «Забрать» (fast-forward, as the element behind the wall) → deploy.
+4. One line in its `development-docs/current-step.md` («Also changed … by the core's main agent …») inside the same commit, so its agent
+   knows when it wakes.
+Never write into its folder (`WEB4-ITEMS/**`, the wall's trap), never an app of its own of another owner — there only the warning to that
+owner.

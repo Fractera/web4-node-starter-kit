@@ -1,5 +1,5 @@
-// НАПОМИНАНИЯ ПО ВРЕМЕНИ — КОМАНДА ГЛАВНОГО АГЕНТА (узел, шаг 630). Логика — одна, `lib/main-agent-cron/reminders.mjs` (её же зовёт
-// дверь элементов `/api/node/reminder`); напоминание видно в календаре главного агента, ссылка — в квитанции.
+// НАПОМИНАНИЯ ПО ВРЕМЕНИ — КОМАНДА ГЛАВНОГО АГЕНТА (узел, шаг 630). Логика — одна, `lib/main-agent-cron/reminders.mjs` (845-A2: двери
+// `/api/node/reminder` не было никогда); напоминание видно в календаре главного агента, ссылка — в квитанции.
 //   npm run reminder -- add "<YYYY-MM-DD HH:MM>" "<текст>" [--repeat once|daily|weekdays|weekly|monthly|yearly]
 //   npm run reminder -- list
 //   npm run reminder -- cancel <id>

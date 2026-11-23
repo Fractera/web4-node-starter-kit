@@ -22,6 +22,8 @@ import deployLock from '../lib/deploy/deploy-lock.cjs'
 import elementPower from '../lib/web4-items/element-power.cjs'
 import { addressOf } from '../lib/web4-items/address-file.mjs'
 import elementWall from '../lib/hosting/element-wall.cjs'
+import publicAuthMod from '../lib/domain/public-auth.cjs'
+import tgMenu from '../lib/node/tg-menu.cjs'
 
 const ROOT = join(paths.ITEMS_DIR, '..')
 const IS_WIN = process.platform === 'win32'
@@ -120,6 +122,23 @@ for (const f of ['.env.local', '.install-stamp.json', ...builds]) {
   if (s !== before) { writeFileSync(file, s); say(`пути обновлены: ${f}`) }
 }
 
+// 845-B3 (found 2026-11-23 by the research of defect classes): the element's OWN public address lives in its environment too
+// (`PROJECT_SITE_URL` = https://<address>.<zone> — its sign-in links and its bot's Mini App), written by the installer. The paths above
+// moved, the address did not, and the old subdomain is taken away by the rename — sign-in and the Mini App led nowhere until the next
+// install. The same files, the old name → the new one; root lives on the zone itself and is not renamed this way.
+const pub = publicAuthMod.publicAuth(ROOT)
+const prevName = source.split(/[\\/]/).pop(), nextName = target.split(/[\\/]/).pop()
+if (pub?.zone && id !== 'root' && prevName && nextName && prevName !== nextName) {
+  const from = `https://${prevName}.${pub.zone}`, to = `https://${nextName}.${pub.zone}`
+  for (const f of ['.env.local', ...builds]) {
+    const file = join(target, f)
+    if (!existsSync(file)) continue
+    const s = readFileSync(file, 'utf8')
+    const next = s.split(from).join(to)
+    if (next !== s) { writeFileSync(file, next); say(`адрес элемента обновлён: ${f} → ${to}`) }
+  }
+}
+
 // История разговоров агента элемента: Claude Code хранит её по рабочей папке.
 const enc = (p) => p.replace(/[:\\/]/g, '-')
 const projects = join(homedir(), '.claude', 'projects')
@@ -155,6 +174,8 @@ for (let i = 0; i < 60 && port && !up; i++) {
 }
 say(up ? `сервер отвечает на ${port}` : `сервер не ответил на ${port} за 60 с`)
 save({ state: up ? 'done' : 'started-no-answer', from: source, to: target, port })
+// 845-B3: its bot's Mini App button follows the new address.
+try { const m = await tgMenu.refreshElement(ROOT, id); if (m.state !== 'no-bot') say(`кнопка бота элемента: ${m.state}`) } catch { /* `npm run tg-app -- menu <id>` sets it again */ }
 // 548: граница агента элемента — инструкция ядра не грузится, выход за папку только с ответа человека.
 spawnSync(process.execPath, [join(ROOT, 'scripts', 'element-isolate.mjs')], { cwd: ROOT, windowsHide: true, stdio: 'inherit' })
 console.log(up ? '===MOVE_OK===' : '===MOVE_NO_ANSWER===')

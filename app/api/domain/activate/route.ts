@@ -1,5 +1,6 @@
 // @api connect or disconnect the node's main domain through its tunnel
 import { NextResponse, type NextRequest } from "next/server"
+import tgMenu from "@/lib/node/tg-menu.cjs"
 import { architectExists } from "@/lib/auth/architect-exists"
 import { revalidatePath } from "next/cache"
 import { readFileSync, writeFileSync, existsSync, mkdirSync, renameSync } from "node:fs"
@@ -306,6 +307,8 @@ export async function POST(req: NextRequest) {
       rebuilding = stale
     }
   }
+  // 843 (Telegram 1164): every bot's button follows the new HTTPS address now — the main bot's «Пульт», each element's Mini App.
+  void tgMenu.refreshAll(ROOT).catch(() => null)
   // 324-1: страница «Активация домена» скрывает тексты «как получить домен», когда он подключён — перерисовать слой.
   revalidatePath("/[lang]", "layout")
 
