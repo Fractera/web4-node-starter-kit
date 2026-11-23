@@ -65,5 +65,12 @@ const tr = prunePatch({ i18n: { name: { ru: 'Стенд', 'bad lang': 'x' }, 'se
 ok(tr?.i18n?.name?.ru === 'Стенд' && !('bad lang' in tr.i18n.name) && !('seo.robotsIndex' in tr.i18n) && !('ghost' in tr.i18n), 'translations only for declared text fields, only language codes')
 ok(prunePatch({ nothing: 1 }, decl) === null && prunePatch('x', decl) === null, 'a patch with nothing declared — nothing to send')
 
+// 844: a declared map (the icon set's files) passes whole; an emptied branch that is not a map stays pruned.
+const iconDecl = declaredFields({ type: 'object', properties: { iconSet: { anyOf: [{ type: 'object', properties: { id: { type: 'string' }, files: { type: 'object', propertyNames: { type: 'string' }, additionalProperties: { type: 'string' } } } }, { type: 'null' }] }, colors: { type: 'object', properties: { light: { type: 'object', properties: {} } } } } })
+const iconPatch = prunePatch({ iconSet: { id: 'set1', files: { favicon_ico: 'set1/favicon.ico', icon_192: 'set1/icon-192.png' } }, colors: { light: { primary: '#000' } } }, iconDecl)
+ok(iconPatch?.iconSet?.id === 'set1' && iconPatch.iconSet.files?.icon_192 === 'set1/icon-192.png' && Object.keys(iconPatch.iconSet.files).length === 2, 'a declared map (iconSet.files) reaches the element whole')
+ok(!('colors' in iconPatch), 'an object emptied by the owner is no map — nothing undeclared passes through it')
+ok(prunePatch({ iconSet: null }, iconDecl)?.iconSet === null, 'null erases the icon set')
+
 if (bad) { console.log(`\n===ELEMENT_SETTINGS_FAILED=== ${bad}`); process.exit(1) }
 console.log('\n===ELEMENT_SETTINGS_OK===')

@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
 import { idOfAddress } from "@/lib/web4-items/element-address"
-import { callElementDoor, type ElementAnswer } from "@/lib/web4-items/element-settings-door"
+import { callElementDoor, patchElementSettings, stateOf } from "@/lib/web4-items/element-settings-door"
 import settingsSchema from "@/lib/web4-items/element-settings-schema.cjs"
 
 // ПУЛЬТ ЯДРА К НАСТРОЙКАМ ЭЛЕМЕНТА (узел, шаг 712-2). Владелец 2026-11-09: «для CONFIG и для дизайна мы должны избавиться от внешних
@@ -28,16 +28,6 @@ const LANG = /^[a-z]{2}(?:-[A-Za-z]{2,4})?$/
 const json = (body: unknown, status = 200) => NextResponse.json(body, { status, headers: NO_STORE })
 const isFile = (v: unknown): v is File => typeof v === "string" && Object.hasOwn(DOORS, v)
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v)
-
-/** Ответ элемента, который не стал значениями, — причина словом. */
-function stateOf(a: ElementAnswer): { ok: false; reason: string } | null {
-  if ("unavailable" in a) return { ok: false, reason: a.unavailable }
-  if (a.status === 404) return { ok: false, reason: "template-older" }
-  if (a.status === 401) return { ok: false, reason: "bad-key" }
-  if (a.status === 409) return { ok: false, reason: String(a.body?.reason ?? "config-connected") }
-  if (a.status !== 200 || a.body?.ok !== true) return { ok: false, reason: String(a.body?.reason ?? `element-${a.status}`) }
-  return null
-}
 
 export async function GET(req: NextRequest) {
   const denied = await requireRoles(req, ROLES)
@@ -86,20 +76,7 @@ export async function PATCH(req: NextRequest) {
   const element = idOfAddress(typeof target.item === "string" ? target.item : "")
   if (!element) return json({ ok: false, reason: "unknown-element" }, 404)
   if (!isFile(target.file) || !isObj(target.patch)) return json({ ok: false, reason: "bad-body" }, 400)
-  const door = DOORS[target.file]
-  const read = await callElementDoor(element, door)
-  const bad = stateOf(read)
-  if (bad) return json(bad)
-  const current = (read as { body: Record<string, unknown> }).body
-  if (!isObj(current.schema)) return json({ ok: false, reason: "template-older" })
-  const patch = settingsSchema.prunePatch(target.patch, settingsSchema.declaredFields(current.schema))
-  if (!patch) return json({ ok: true, config: isObj(current.config) ? current.config : {}, pruned: true })
-  const a = await callElementDoor(element, door, { method: "PATCH", body: JSON.stringify(patch) })
-  const refused = stateOf(a)
-  if (refused) {
-    const status = "status" in a && [400, 409].includes(a.status) ? a.status : 200
-    return json({ ...refused, ...("status" in a && a.body?.key ? { key: a.body.key } : {}) }, status)
-  }
-  const answer = (a as { body: Record<string, unknown> }).body
-  return json({ ok: true, config: isObj(answer.config) ? answer.config : {} })
+  const r = await patchElementSettings(element, DOORS[target.file], target.patch)
+  if (!r.ok) return json({ ok: false, reason: r.reason, ...(r.key ? { key: r.key } : {}) }, r.status)
+  return json({ ok: true, config: r.config, ...(r.pruned ? { pruned: true } : {}) })
 }

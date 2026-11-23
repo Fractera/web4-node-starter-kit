@@ -60,7 +60,8 @@ export function SettingsEditorIsland({ group, lang, langs, defaultLang, editLang
       const translation = isTranslation ? i18n[field.path]?.[editLang] : undefined
       if (isTranslation && typeof translation === 'string' && translation.trim() !== '') translatedPaths.push(field.path)
       if (field.type === 'icons') {
-        values[field.path] = asText((config.iconSet as { id?: string } | undefined)?.id)
+        // 844: весь набор строкой JSON — поле значков рисует по нему предпросмотр.
+        values[field.path] = JSON.stringify(config.iconSet ?? null)
         continue
       }
       // Список соцсетей едет строкой JSON и читается тем же резолвером, что и на aifa.dev (`resolveSocialLinks`).

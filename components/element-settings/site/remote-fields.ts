@@ -3,10 +3,10 @@ import type { FieldType, RemoteFile } from "@/components/element-settings/remote
 
 // ПОЛЯ НАСТРОЕК САЙТА, КОТОРЫЕ НЕСЁТ ПУЛЬТ ЯДРА (узел, шаг 712-4). Владелец 2026-11-09: «в ядре будут представлены только те строки
 // которые совпадают с предварительно созданными в ядре». Поле редактора видно, когда элемент объявляет его тем же типом JSON; картинки
-// и наборы значков живут в собственном хранилище элемента — пульт ядра их не несёт (`null`).
+// пульт ядра пока не несёт (`null`); набор значков (844) — объект `iconSet`, его пишет своя дверь `/api/architect/icons`.
 export const REMOTE_TYPE: Record<Field["type"], FieldType | null> = {
   text: "string", textarea: "string", select: "string", combo: "string", color: "string", number: "number", switch: "boolean", socials: "array",
-  image: null, icons: null,
+  image: null, icons: "object",
 }
 
 export type Visible = (file: RemoteFile, path: string, type: FieldType) => boolean

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { ColorField } from "./color-field.client"
 import { ComboField } from "./combo-field.client"
 import { SocialsField } from "./socials-field.client"
+import { IconsField } from "./icons-field.client"
 import type { Field } from "@/lib/site-settings/fields"
 import type { FieldsUi } from "./fields.i18n"
 import { Textarea } from "@/components/ui/textarea"
@@ -149,10 +150,12 @@ export function FieldRow({
             disabled={field.locked}
             onCheckedChange={next => onChange(next ? "true" : "false")}
           />
-        ) : field.type === "image" || field.type === "icons" ? (
-          /* 299-5, первая часть: путь картинки и набор значков правятся текстом. Выборщик с кадрированием из
-             aifa.dev (image-field, icons-field) переносится следующей частью — в выпуск без него шаг не идёт. */
-          <Input id={id} value={value} onChange={e => onChange(e.target.value)} disabled={field.locked || field.type === "icons"} readOnly={field.locked || field.type === "icons"} />
+        ) : field.type === "icons" ? (
+          /* 844: набор значков — действие своей двери (`/api/architect/icons`), не значение формы. */
+          <IconsField id={id} value={value} disabled={field.locked} ui={ui} />
+        ) : field.type === "image" ? (
+          /* 299-5: путь картинки правится текстом; пульт ядра картинки пока не несёт (`remote-fields.ts`). */
+          <Input id={id} value={value} onChange={e => onChange(e.target.value)} disabled={field.locked} readOnly={field.locked} />
         ) : field.type === "socials" ? (
           <SocialsField value={value} disabled={field.locked} onChange={onChange} ui={ui} lang={lang} />
         ) : field.type === "select" ? (
