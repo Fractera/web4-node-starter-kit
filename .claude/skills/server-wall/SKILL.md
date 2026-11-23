@@ -69,6 +69,16 @@ LOGNAME, SHELL, NODE_OPTIONS.
 
 ## 5. Traps already paid for (newest first; add every new one here with its date and fix)
 
+- 2026-11-23 846 (paid: the owner's fifth silent bot, cmdfc «Diana» on aifa.dev): the element's session started 15:44 UTC before its bot
+  existed (no `--channels`, the plugin off), the bot was connected 15:53, nothing restarted the session — the bot read Start, sent the
+  state, and every word after it went nowhere; the node drew only a banner. A «close + wake» from the server's agent did not restart
+  either: wake of an element with a bot asks the person in Telegram. Fix: the admission (`/start <nonce>`) calls the bridge's
+  `channelAfterAdmission` — after the turn in flight the same conversation restarts with the channel (`restartSame`); work and loaned
+  sessions stay without it (test `admitted-channel`, with a negative control). **A silent element bot, the order of checks** (the server's
+  agent found it in 10 minutes): (1) the token — `ls -la` of `data/services/<id>/channel/telegram/` (`ls -l` hides `.env` and
+  `.token.node`; a false «no token» was reported that way); (2) the session's flags — the `fe-<id>` claude process has `--channels` and the
+  plugin on?; (3) `bun server.ts` alive as `fe-<id>`?; (4) the element's agent itself: does it see `mcp__plugin_telegram_telegram__reply`?;
+  (5) the core's pm2 lines `[telegram] <id>`, `[channel] <id>`, `[agents/start] <id>` — when the session started against when the bot came.
 - 2026-11-23 842 (caught before shipping, not paid): the node's `git fetch` into a walled element's folder would leave loose-object
   folders 0755 (the node's umask 022 → the ACL mask r-x: the element's next commit into that folder fails) and a FETCH_HEAD written in
   place (the element's own fetch → EACCES). Fix: the node's git writes in an element folder carry `-c core.sharedRepository=group`,

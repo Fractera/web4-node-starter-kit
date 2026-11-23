@@ -1126,11 +1126,18 @@ async function wake(element, { text, from, about, declineUrl, confirmed, taskUrl
       })
       return { ok: true, queued: pass, running: live.pass ?? 'main' }
     }
-    rememberTasks(live, urls)
-    if (text && task) deliver(live, element, text, { confirmed, from, about })
-    // 615-6: вставка узла (надзор, запрос элемента) в живую сессию главного агента — после неё человеку положен доклад (`done` сторожит).
-    if (text && task && from && modes.baseOf(service) === MAIN_AGENT) live.nodePasteAt = Date.now()
-    return { ok: true, already: true }
+    // 846 (the owner, 2026-11-23, Telegram 1209: «кнопка включить должна была просто один раз отработать и выполнить необходимый экшен
+    // рестарт»): the person pressed «Включить» while the session runs WITHOUT the channel — the very situation the question shows. The
+    // same conversation restarts with the channel after the turn in flight and gets the person's words, instead of a paste the agent
+    // could never answer in Telegram.
+    if (await closedForChannel(live, service, element, confirmed)) continueLast = true
+    else {
+      rememberTasks(live, urls)
+      if (text && task) deliver(live, element, text, { confirmed, from, about })
+      // 615-6: вставка узла (надзор, запрос элемента) в живую сессию главного агента — после неё человеку положен доклад (`done` сторожит).
+      if (text && task && from && modes.baseOf(service) === MAIN_AGENT) live.nodePasteAt = Date.now()
+      return { ok: true, already: true }
+    }
   }
   // 409-3: бот элемента подключён — сначала вопрос человеку в Telegram; сессия родится по кнопке «Запустить» (`confirmed`).
   // 552-4: бот и вопрос — элемента, а не ключа сессии; кнопка «Запустить» вернётся сюда с тем же текстом и тем же режимом.
@@ -1288,6 +1295,44 @@ function forgetWokenByMain(id) {
 // 409-3: кнопка «Запустить» в Telegram рождает сессию этим же путём, уже с подтверждением.
 // 614-1: и о неудаче канала человеку говорит она же (`telegram.cjs`, `onButton` и «включить»), поэтому `callerTells`.
 telegram.setStarter((service, opts) => wake(service, { ...opts, confirmed: true, callerTells: true }))
+telegram.setAdmitted((service) => channelAfterAdmission(service))
+
+/**
+ * 846 (the aifa.dev server's agent, 2026-11-23, Telegram 1208 — cmdfc «Diana»: its session started 15:44 UTC without a bot, the bot was
+ * connected 15:53, the session stayed deaf until a hand restarted it; the node only drew a banner): a person admitted to the bot while
+ * the element's build session runs WITHOUT the channel → after the turn in flight (never cut) the same conversation restarts with the
+ * channel (`restartSame`). A work session (`--work`) and a loaned subscription stay as they are: both run without the person's channel
+ * by design (552-4, 686-6). → { did: 'none' | 'restarted' | 'gone', reason? }
+ */
+async function channelAfterAdmission(service) {
+  const element = modes.baseOf(service)
+  const live = session.current(service)
+  if (!live || live.channel || starting.has(service)) return { did: 'none' }
+  if (modes.modeOfKey(service) === 'work' || onLoan(element)) return { did: 'none', reason: 'no-channel-by-design' }
+  console.log(`[channel] ${service}: человек допущен к боту, а сессия идёт без канала — перезапущу тот же разговор с каналом после хода`)
+  const idle = await whenIdle(live, { maxMs: 6 * 60 * 60_000 })
+  if (!idle || session.current(service) !== live || live.channel) return { did: 'gone' }
+  lastHeal.delete(service)
+  const r = await restartSame(live, element, 'channel-after-bot')
+  return r?.ok ? { did: 'restarted' } : { did: 'none', reason: r?.reason ?? 'not-started' }
+}
+
+/**
+ * 846: a person's press on a session without the channel — close it after its turn so `wake` starts the same conversation with the
+ * channel. Only the person's press (`confirmed`), only a session that should carry the channel (not `--work`, not on a loan), only an
+ * element whose bot is connected. → true when the session was closed for the restart.
+ */
+async function closedForChannel(live, service, element, confirmed) {
+  if (!confirmed || live.channel || modes.modeOfKey(service) === 'work' || onLoan(element) || !telegram.connected(element)) return false
+  console.log(`[channel] ${service}: «Включить» при сессии без канала — тот же разговор перезапустится с каналом после хода`)
+  const idle = await whenIdle(live, { maxMs: 10 * 60_000 })
+  if (!idle || session.current(service) !== live || live.channel) return false
+  health.clearPoison(process.env, claudeBackup())
+  lastHeal.delete(service)
+  session.stop(service, 'channel-on-press')
+  await new Promise((r) => setTimeout(r, 1500))
+  return true
+}
 
 /** Принять сокет службы — его отдаёт общее подключение узла (`lib/agent-kit/mount.cjs`). */
 function onConnection(ws, service) {

@@ -642,6 +642,11 @@ async function idleTick(service) {
     if (activated && service !== 'build') {
       try { await globalThis.__web4TgMenu?.refreshElement(ROOT, String(service).split('--')[0]) } catch { /* a convenience — `npm run tg-app -- menu <id>` sets it again */ }
     }
+    // 846 (aifa.dev, cmdfc, 2026-11-23): admitted while the agent's session runs without the channel — the bridge restarts the same
+    // conversation with the channel after the turn in flight; the poller never waits for it (a restart may wait hours for a quiet screen).
+    if (activated && !silentServer() && admittedFn()) {
+      void Promise.resolve(admittedFn()(service)).then((r) => { if (r?.did === 'restarted') console.log(`[telegram] ${service}: после допуска сессия перезапущена с каналом`) }).catch((e) => console.log(`[telegram] ${service}: перезапуск с каналом после допуска не удался — ${String(e?.message ?? e).slice(0, 160)}`))
+    }
     // 737-11a (владелец 2026-11-13: «После подтверждения сервер сразу стартует установленный на него Telegram»): бот выделенного сервера
     // во время репетиции впускает по ссылке и отвечает одной строкой — узел ещё живёт на компьютере человека, и ни один агент здесь не
     // стартует до переезда (замок `lib/agent-kit/mount.cjs` закрывает двери пробуждения, а этот — кнопки и «/on» самого бота).
@@ -879,6 +884,8 @@ const ASK = {
     ultraGo: 'Continue',
     modeIs: (m) => `Mode: ${m}.`,
     offEmpty: (a) => `Agent ${a} is off. Turn it on?`,
+    // 846: the session runs, but without the channel — «off» was a lie there (cmdfc, 2026-11-23 15:53, Telegram 1210).
+    deaf: (a) => `Agent ${a} is running without Telegram and cannot hear you. Restart it with Telegram (the conversation stays) and pass your message?`,
     ultraMissing: (a) => `Ultracode did not turn on for agent ${a}: Claude Code on this computer did not show it — it needs a fresh Claude Code and workflows allowed for your account. The agent works on Opus · max without workflows.`,
     noCalls: (c) => `Not now — ${c} gets a refusal`, noHuman: 'Not now',
     startedCalls: (a, c) => `Agent ${a} is on and answering ${c}.`,
@@ -939,6 +946,7 @@ const ASK = {
     ultraGo: 'Продолжить',
     modeIs: (m) => `Режим: ${m}.`,
     offEmpty: (a) => `Агент ${a} выключен. Включить его?`,
+    deaf: (a) => `Агент ${a} работает без Telegram и вас не слышит. Перезапустить его с Telegram (разговор сохранится) и передать сообщение?`,
     ultraMissing: (a) => `Ultracode у агента ${a} не включился: Claude Code на этом компьютере его не показал — нужна свежая версия Claude Code и разрешённые для вашей учётной записи рабочие процессы. Агент работает на Opus · max без рабочих процессов.`,
     noCalls: (c) => `Не сейчас — ${c} получит отказ`, noHuman: 'Не сейчас',
     startedCalls: (a, c) => `Агент ${a} включён и отвечает ${c}.`,
@@ -1106,9 +1114,11 @@ function askText(service, items, t) {
   }
   // Только сообщения человека — вопрос первой строкой, его сообщение под ним; есть вопросы агентов — вопрос о включении в конце.
   // 666: запроса нет вовсе (голый «/opus», затем «Выбрать другую модель») — просто «включить его?».
-  if (!calls.length) lines.push(human.length ? t.offHuman(a) : (t.offEmpty ?? ASK.en.offEmpty)(a))
+  // 846: a live session without the channel is not «off» — the press restarts it with the channel (bridge `closedForChannel`).
+  const deaf = Boolean(session.current(service)) && !running(service) ? (t.deaf ?? ASK.en.deaf)(a) : null
+  if (!calls.length) lines.push(deaf ?? (human.length ? t.offHuman(a) : (t.offEmpty ?? ASK.en.offEmpty)(a)))
   for (const it of human) lines.push(t.yourMessage(cutText(it.about, 300)))
-  if (calls.length) lines.push(t.offCalls(a))
+  if (calls.length) lines.push(deaf ?? t.offCalls(a))
   if (folderTrusted(service) === false) lines.push(t.trustLine ?? ASK.en.trustLine)
   return cutText(lines.join('\n'), 3500)
 }
@@ -1188,6 +1198,9 @@ async function askEffort(service) {
  *  this file, where the bridge never called setStarter — the poller kept that copy until the core restarted, and every «Включить» of a
  *  freshly connected bot found no starter. One process, one starter, whichever copy reads it. */
 function setStarter(fn) { globalThis.__web4TgStarter = fn }
+// 846: the bridge's «a person was admitted» — on globalThis for the same reason as the starter (a bundled second copy of this module).
+function setAdmitted(fn) { globalThis.__web4TgAdmitted = fn }
+const admittedFn = () => (typeof globalThis.__web4TgAdmitted === 'function' ? globalThis.__web4TgAdmitted : null)
 const starterFn = () => (typeof globalThis.__web4TgStarter === 'function' ? globalThis.__web4TgStarter : null)
 
 /**
@@ -1659,7 +1672,7 @@ module.exports = {
   // 552-6: помощники и правило имени для ячеек ботов (`telegram-slots.cjs`).
   tg, readJson, writeSecret, NODE_CODE, namedSuggestion, hasSkillGroups,
   PLUGIN, isService, stateDir, storedToken, saveToken, activationLink, saveMessages, channelLaunch,
-  running, channelState, startIdlePoller, connected, askToStart, setStarter, askToClose, personLang, setPersonLang, tellWaiting,
+  running, channelState, startIdlePoller, connected, askToStart, setStarter, setAdmitted, askToClose, personLang, setPersonLang, tellWaiting,
   // 597-4: the sleeping bot's decision — exported for the probe that checks it without a bot.
   idleDecision, thingOf,
   // 666: the effort after Opus, ultracode, the closing words — `onButton` and `askEffort` exported for the probe with a stub Bot API.
