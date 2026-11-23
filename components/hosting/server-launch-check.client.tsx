@@ -21,6 +21,10 @@ export function strategyOf(s: LaunchState): Strategy {
   if (s.launch?.state === "running" || s.probe?.fractera?.launching) return "running"
   if (s.relation?.kind === "unrelated") return "clear"
   const f = s.probe?.fractera
+  // ✗ 2026-11-23 (the owner, Telegram 1156: «установка закончена и тут же горит кнопка установить … я что зря ждал целый час»): the probe
+  // was taken before the install and still saw an empty server. A finished install is the newest version by itself, until a later
+  // check finds the fork ahead (`behind` > 0) — then «Обновить».
+  if (s.launch?.state === "done" && !(f?.head && (f.behind ?? 0) > 0)) return "latest"
   if (!f?.head) return "install"
   if (f.behind === 0 && s.mark?.phase === "live") return "latest"
   return "update"
