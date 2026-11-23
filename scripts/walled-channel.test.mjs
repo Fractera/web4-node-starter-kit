@@ -83,7 +83,7 @@ t('839-9: a plugin pid of another user (EPERM) is alive; no such process (ESRCH)
 // holds for this session»). Before every session the element's OWN home is marked — onboarding, theme, trust of its own two folders —
 // behind the wall as the element itself, keeping its account; never the node's home, never a file that does not parse.
 // mode: 'walled' — the helper runs it as the element; 'refused' — walled, the helper cannot; 'home' — a home computer (no wall).
-function markRun(mode, { file = JSON.stringify({ oauthAccount: { emailAddress: 'm@x.test' }, projects: {} }), configDir = null } = {}) {
+function markRun(mode, { file = JSON.stringify({ oauthAccount: { emailAddress: 'm@x.test' }, projects: {} }), configDir = null, unreadable = false } = {}) {
   const root = mkdtempSync(join(tmpdir(), 'walled-mark-'))
   mkdirSync(join(root, 'WEB4-ITEMS-REGISTRY'), { recursive: true })
   writeFileSync(join(root, 'WEB4-ITEMS-REGISTRY', 'web4-items.json'), JSON.stringify({ services: [{ id: 'shop', kind: 'user' }] }))
@@ -92,17 +92,21 @@ function markRun(mode, { file = JSON.stringify({ oauthAccount: { emailAddress: '
   mkdirSync(folder, { recursive: true })
   const home = configDir ? join(root, configDir) : join(data, 'claude')
   mkdirSync(home, { recursive: true })
-  writeFileSync(join(home, '.claude.json'), file, { mode: 0o600 })
+  writeFileSync(join(home, '.claude.json'), file, { mode: unreadable ? 0o000 : 0o600 })
   const code = `
     const calls = []
-    globalThis.__web4WalledSession = { walledAt: () => ${mode !== 'home'} }
+    // ✗ 839-12: the stub said \`true\`; the real walledAt (lib/agent-kit/walled-session.cjs) answers { id, dir, wall } or null — the stub
+    // keeps the real shape, or a check like \`=== true\` passes here and fails on every server
+    globalThis.__web4WalledSession = { walledAt: (root, cwd) => ${mode !== 'home' ? "({ id: 'shop', dir: cwd, wall: {} })" : 'null'} }
     // the fake helper: records the call and runs the program here (as «the element»); 'refused' — the helper cannot wrap it
     globalThis.__web4ElementWall = { asElement: (root, cwd, prog, args, env) => { calls.push({ prog, args: args.slice(0, 3), env }); return ${mode === 'refused' ? '{ cmd: prog, args }' : "{ cmd: process.execPath, args, wrapped: 'shop' }"} } }
     const kit = require(${JSON.stringify(KIT)})
     const said = kit.markOwnHome('shop', ${JSON.stringify(home)}, [${JSON.stringify(folder)}, ${JSON.stringify(data)}])
     const again = kit.markOwnHome('shop', ${JSON.stringify(home)}, [${JSON.stringify(folder)}, ${JSON.stringify(data)}])
     const install = kit.asWalled('shop', '/usr/local/lib/fractera/bin/claude', ['plugin', 'install', 'telegram@claude-plugins-official'], { CLAUDE_CONFIG_DIR: ${JSON.stringify(home)} })
-    process.stdout.write(JSON.stringify({ said, again, calls, install, raw: require('node:fs').readFileSync(${JSON.stringify(join(home, '.claude.json'))}, 'utf8') }))`
+    const fs = require('node:fs'), f = ${JSON.stringify(join(home, '.claude.json'))}
+    fs.chmodSync(f, 0o600)
+    process.stdout.write(JSON.stringify({ said, again, calls, install, raw: fs.readFileSync(f, 'utf8') }))`
   const r = spawnSync(process.execPath, ['-e', code], { cwd: root, encoding: 'utf8' })
   rmSync(root, { recursive: true, force: true })
   assert.equal(r.status, 0, r.stderr)
@@ -132,6 +136,12 @@ t('a home computer (no wall): the element\'s own home is marked by the node\'s u
   assert.equal(o.file.hasCompletedOnboarding, true); assert.equal(o.file.projects[o.data]?.hasTrustDialogAccepted, true)
   const n = markRun('home', { configDir: 'node-claude-home' })
   assert.equal(n.said, ''); assert.equal(n.file.hasCompletedOnboarding, undefined); assert.deepEqual(n.file.projects, {})
+})
+t('negative: the node\'s own run (no wall) never replaces a file it cannot read — the account inside stays (✗ 839-12 wrote its own over it)', () => {
+  if (typeof process.getuid === 'function' && process.getuid() === 0) return // root reads everything — the case cannot be made here
+  const o = markRun('home', { unreadable: true })
+  assert.match(o.said, /не прочитать/)
+  assert.equal(o.file.oauthAccount.emailAddress, 'm@x.test'); assert.equal(o.file.hasCompletedOnboarding, undefined)
 })
 t('negative: a file that does not parse (half-written) is left alone', () => {
   const o = markRun('walled', { file: '{"oauthAccount": {"emailAddress": "m@x.te' })

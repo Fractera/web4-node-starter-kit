@@ -76,6 +76,11 @@ LOGNAME, SHELL, NODE_OPTIONS.
   `projects[<its folder>]` and `projects[<its data folder>]` `hasTrustDialogAccepted` (measured on Claude Code 2.1.330 with a scratch
   home: the record removes the question, without it the question) — never the repository root. Rule: what Claude Code asks before its MCP
   servers start is settled in the element's own home before the session, or a Telegram wake never gets its channel.
+- 2026-11-23 839-13: 839-12 itself broke the element — `walledAt` answers `{ id, dir, wall }` or null, never `true`; compared with
+  `=== true` the node always took the element as unwalled, marked its 0600 `.claude.json` AS ITSELF, read EACCES as «empty» and wrote its own
+  file over it; the element could not read it and started fresh on the theme screen (found by the server's main agent, Telegram 1073).
+  The test's stub answered `true`. Fix: truthiness; the node's user never replaces a file it cannot read; stubs keep the real shape (a
+  negative proves the old check fails the test). Rule: a stub of a wall function returns what the real one returns.
 - 2026-11-22 839-10/11: a walled element's channel never came up — no MCP log after 18:11, `.claude.json` without onboarding and trusted
   folders: the NODE had run `claude plugin install` with the element's CLAUDE_CONFIG_DIR, could not read its 0600 `.claude.json` and wrote a
   fresh one over it; every session then stood on Claude Code's first-run screen before its MCP servers. Fix: behind the wall every `claude`

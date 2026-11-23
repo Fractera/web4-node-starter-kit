@@ -374,6 +374,30 @@ by the node itself: what an element owns (its Claude home, its bot's files, its 
 walled element ships to a server only after it ran as such an element on a scratch copy, and that proof is named in the update request.»
 AFTER the bot answers: write it (English, §6), `npm run check:instruction -- --seal`, commit, push with the next batch.
 
+**23:20 — 839-12 PUSHED:** fa869ee6 at 23:17:22 to origin and Fractera (ls-remote both fa869ee6); prebuild-839-12b RC=0. My «Проверить
+снова»: «5 изменений ждут этот узел», «Пробное слияние прошло». Telegram 1060: Roma's 1-2-3 (press «Обновить сборку ядра»; after my
+«сервер поднялся» write @etuf1_messenger_h2a_y853k_bot; silent → the server agent's grep + ls -la). The token is NOT lost: at 23:19 the
+etuf1 bot page on the server showed «токен …F3xw» (storedToken reads .token.node) — the server agent's «нет .env и .token.node» was most
+likely ls without -a; handEnvToElement recreates .env as the element from .token.node at the next launch. Watching /api/health for a
+build newer than 22:52:22 (background). FOLLOW-UP (not in this build, same class as the 839-11 trap): channel-health clearPoison writes
+the element's mcp-needs-auth-cache.json and settings.json AS THE NODE — behind the wall it must run as the element (the coming §6 law).
+
+**00:35 (11-23) — 839-12 BROKE etuf1, 839-13 fixing.** Roma 1062-1072 (furious: «двое суток», «ни дизайна», «все проекты упадут»). The
+server agent 1071/1073 found it exactly: markOwnHome compared walledAt(...) === true, but walledAt answers {id,dir,wall}|null → always
+false → the NODE wrote etuf1's 0600 .claude.json as itself (EACCES read as «empty») → the element could not read it → Claude started
+fresh (backup 137 B: installMethod/autoUpdates/firstStartTime) → theme screen «Syntax theme: Monokai Extended» → channel 30 s → closed.
+The test stub returned true. Also: the token files ARE there (the agent's ls without -a, corrected 1065); bun install as fe = exit 0.
+839-13 (uncommitted): Boolean(walledAt); the code's first arg «wall»|«node» — EACCES replaced ONLY by the element, the node never
+replaces a file it cannot read («unreadable»); test stubs return the real shape; new negative (node's run, unreadable file → untouched,
+account kept); negative control: the old === true fails the test («the marks are written by the element, not the node»), the fix 9/9.
+Kits synced, server-wall §5 trap. Prebuild → logs/prebuild-839-13.log. AFTER THE UPDATE, before Roma writes the bot: the server agent
+restores etuf1's own config AS THE ELEMENT from its 22:58:18 backup (6908 B, oauthAccount/userID/onboarding): sudo -n
+/usr/local/sbin/fractera-element run etuf1 -- /bin/cp <backup> $PWD/data/services/etuf1/claude/.claude.json. Then: Roma writes the bot;
+proof: «[agents] etuf1: … доверенными», owner fe-etuf1, oauthAccount kept, firstStartTime unchanged, bot.pid alive, the answer.
+QUEUE after the bot: (1) etuf1 Mini App rollout v0.3.238 on the server (template rollout + services:install --only etuf1, no core build);
+(2) the §6 law (Roma 1057); (3) 841-3 f2f-marketplace native element on fractera.ai with Roma (1076: «создать через меня и проверить
+существование … f2f-marketplace.fractera.ai … залил в него движок»), never built — the door answers 401; (4) clearPoison as the element.
+
 **DONE TODAY (pushed, live):** 840 Pult + subscription page + element doors (core 993c9b59, 73f43eaa on Fractera); custom template v0.3.238
 (Roma ran the release; pinned); 841 search + «Нативные элементы» + marketplace search v1 (`npm run market`, price) — the fractera.ai side NOT
 built: the server's agent got the 841-3 task (window cb7347b1 done 22:13); fractera.ai/api/marketplace/search → 401, /marketplace → 307

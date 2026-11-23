@@ -349,8 +349,8 @@ function asWalled(service, program, args, env = {}) {
  *   that would trust the whole node.
  * Behind the wall it runs AS the element (its own 0600 file; the helper cannot — nothing is written, never by the node); elsewhere (a home
  * computer, a native element) as the node's user, whose file it is. Only in the element's own home, never the node's `~/.claude`. A file
- * that exists but does not parse is left alone (a half-written file is never replaced); one the element cannot read was written by the node
- * (839-11's trap) and is replaced. Returns what was done, or ''.
+ * that exists but does not parse is left alone (a half-written file is never replaced); one the ELEMENT cannot read was written by the
+ * node (839-11's trap) and the element replaces it; the node's user never replaces a file it cannot read. Returns what was done, or ''.
  */
 function markOwnHome(service, configDir, folders = []) {
   if (!configDir || !service) return ''
@@ -362,7 +362,10 @@ function markOwnHome(service, configDir, folders = []) {
     const ws = globalThis.__web4WalledSession // mount.cjs — a computed require does not build in this module
     const dir = serviceDir(service)
     if (!dir || !ws || typeof ws.walledAt !== 'function') return ''
-    walledHere = ws.walledAt(process.cwd(), dir) === true
+    // ✗ 839-12 (the server's main agent, Telegram 1073): `walledAt` answers { id, dir, wall } or null, never `true` — compared with
+    // `=== true` it was always false, the node marked the element's file AS ITSELF, could not read the 0600 file, wrote its own over it,
+    // and the element started fresh on the theme screen. Truthiness, as every other caller.
+    walledHere = Boolean(ws.walledAt(process.cwd(), dir))
   } catch { return '' }
   const dirs = [...new Set(folders.filter(Boolean).flatMap((d) => {
     const both = [path.resolve(d)]
@@ -370,8 +373,11 @@ function markOwnHome(service, configDir, folders = []) {
     return both
   }))]
   const file = path.join(configDir, '.claude.json')
-  const code = "const fs=require('fs');const [f,...dirs]=process.argv.slice(1);let j={};" +
-    "try{j=JSON.parse(fs.readFileSync(f,'utf8'))}catch(e){if(!e||(e.code!=='ENOENT'&&e.code!=='EACCES')){process.stdout.write('unparsed');process.exit(0)}}" +
+  // who runs it is the first argument: «wall» — the element itself, which may replace a file of its home it cannot read (the node wrote
+  // it, 839-11's trap); «node» — the node's user, which NEVER replaces a file it cannot read (✗ 839-12: it did, as itself).
+  const code = "const fs=require('fs');const [who,f,...dirs]=process.argv.slice(1);let j={};" +
+    "try{j=JSON.parse(fs.readFileSync(f,'utf8'))}catch(e){const ok=e&&(e.code==='ENOENT'||(who==='wall'&&e.code==='EACCES'));" +
+    "if(!ok){process.stdout.write(e&&e.code==='EACCES'?'unreadable':'unparsed');process.exit(0)}}" +
     "if(!j||typeof j!=='object'||Array.isArray(j))j={};const did=[];" +
     "if(j.hasCompletedOnboarding!==true){j.hasCompletedOnboarding=true;did.push('onboarding')}if(!j.theme){j.theme='dark';did.push('theme')}" +
     "if(!j.projects||typeof j.projects!=='object')j.projects={};" +
@@ -379,12 +385,14 @@ function markOwnHome(service, configDir, folders = []) {
     "if(p.hasTrustDialogAccepted!==true){j.projects[d]=Object.assign({},p,{hasTrustDialogAccepted:true});did.push('trust')}}" +
     "if(!did.length){process.stdout.write('kept');process.exit(0)}" +
     "const t=f+'.fractera';fs.writeFileSync(t,JSON.stringify(j,null,2),{mode:0o600});fs.renameSync(t,f);process.stdout.write('marked:'+did.join(','))"
-  const args = ['-e', code, file, ...dirs]
-  const run = walledHere ? asWalled(service, 'node', args) : { cmd: process.execPath, args, env: { PATH: process.env.PATH ?? '' } }
+  const run = walledHere
+    ? asWalled(service, 'node', ['-e', code, 'wall', file, ...dirs])
+    : { cmd: process.execPath, args: ['-e', code, 'node', file, ...dirs], env: { PATH: process.env.PATH ?? '' } }
   if (!run) return ''
   try {
     const out = require('node:child_process').execFileSync(run.cmd, run.args, { env: run.env, timeout: 15_000, encoding: 'utf8' })
     if (out.includes('unparsed')) return 'файл Claude Code элемента не читается как JSON — оставлен как есть'
+    if (out.includes('unreadable')) return 'файл Claude Code элемента узлу не прочитать — оставлен как есть'
     if (!out.includes('marked:')) return ''
     const did = out.slice(out.indexOf('marked:') + 7)
     const said = []
