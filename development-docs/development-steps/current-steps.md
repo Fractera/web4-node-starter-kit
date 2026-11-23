@@ -470,6 +470,20 @@ over 30/min/IP, log = time + words + count, no IP; GET /marketplace (what it is,
 report. Core (uncommitted→committed below): the rung's own fallback when the marketplace does not answer is honest too — «не ответил»,
 items [], no example pages (fractera-market.mjs simulatedMarket; test 7/7; live: ===MARKET_SIMULATION=== «… сейчас не ответил …»).
 
+**01:27 — Roma 1095 (the owner's permission):** the f2f-marketplace (lidt5) code lives in a PRIVATE repository of the GitHub org Fractera,
+github.com/Fractera/f2f-marketplace — passed on (1096): after the task's proofs are green; a token with rights in the org; none on the
+server → say so, Roma enters it in the node's window (never the chat). Matches memory native-marketplace-concept (a native element sold
+f2f from a private repo).
+
+**01:45 — 841-3 f2f-marketplace LIVE (server agent 1097; my second plane from the Mac):** preview 196a7dc accepted; POST
+https://f2f-marketplace.fractera.ai/api/marketplace/search ru «монтаж видео» → 200 live, items [], honest summary; v 2 → 400 «v must be
+1»; /marketplace → 200; the server agent also: empty → 400, not JSON → 400, unknown slug → 404, 31 fast → 429, log without IP. The core's
+client from source: `npm run market -- "монтаж видео"` → ===MARKET_LIVE===. GitHub repo NOT made (Roma cancelled it to the server agent;
+a token had been pasted in a chat → told Roma to revoke it at github.com/settings/tokens and delete the message, 1100). Asked the
+marketplace agent (1101): v1 FIXED in its docs (a change = v2 beside v1), the door in its A2A card. NOW: final prebuild
+logs/prebuild-841-3.log → push (839-14 + market base + honest fallback) → «Проверить снова» → Roma presses update → he creates a new
+custom element → the walled bot test.
+
 **DONE TODAY (pushed, live):** 840 Pult + subscription page + element doors (core 993c9b59, 73f43eaa on Fractera); custom template v0.3.238
 (Roma ran the release; pinned); 841 search + «Нативные элементы» + marketplace search v1 (`npm run market`, price) — the fractera.ai side NOT
 built: the server's agent got the 841-3 task (window cb7347b1 done 22:13); fractera.ai/api/marketplace/search → 401, /marketplace → 307
