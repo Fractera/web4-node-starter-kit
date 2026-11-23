@@ -302,6 +302,14 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-23 ~15:15 UTC — reset at 55 %; Opus max)
 
+**21:45 UTC — 848 LIVE ON THE MAC, pushed:** core 59bf250f (builtAt 21:32) = origin = Fractera. Test element «Тест Mini App» fc4vk
+(v0.3.241, part of the project, --no-wake; the birth's admin window ef9374d3 waits Roma): `npm run pages -- fc4vk` answered every page
+with its lock (own admin elementAdmin003) + Mini App «6 items: stats, chat, schedule, nav, control, help»; eyes 390 px
+logs/eyes/2026-11-23T21-41-46-579Z.png (title «Тест Mini App», agent card answers, no console errors) and the drawer
+2026-11-23T21-42-03-253Z.png; surfaces card right. A first birth with --app own was refused (own apps only on a server) — no leftover.
+Window 49b6a095 for Roma: server update to 59bf250f → Diana «привет» (the wall gate) → a new element on the server, its bot, its Mini App.
+The batch's wall-touching files named to him (846 restart with channel; 847 my-agent door + personName reads; 848 surfaces card reads).
+
 **21:5x UTC — 848 BUILT IN CODE, the Mac core build starts (Roma 1227: non-stop, builds as needed).** Done: core 153c9006 (847: my-agent
 element door + guard over the template's keyed calls; the bot names elements by name.json → passport), 6e4a9e8f (848 core: law §6 + §2
 line, sealed 85259d2fd9ce; surfaces card in element prompts; npm run pages; core tree skips nav links), template v0.3.240 (aaa37f3: kinds,
