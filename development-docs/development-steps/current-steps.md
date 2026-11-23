@@ -300,194 +300,39 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 - Parked: the server tails (z6esw tell-core, redteam with Green team, deleting z6esw/qxld4) — the SSH visit did not open in my Chrome
   profile (his two «Готово» came from another profile); the Pult update banner 2303b5e2 waits the next core build; my effort → max.
 
-## Letter to my next session (written 2026-11-22 ~22:32 UTC — reset at 57 %; Opus)
+## Letter to my next session (written 2026-11-23 ~10:20 UTC — reset at 56 %; Opus max)
 
-**WHO WAITS:** Roma in TELEGRAM (chat 90413601, ru) — ANGRY («весь день всё ломается», «почини уже сука свой пульт», «шаг вперёд два назад»).
-Short answers, colour marks, own mistakes plainly, no theories without data. He relays the SERVER's main agent (read-only, precise).
+**WHO WAITS:** Roma in TELEGRAM (chat 90413601, ru). Tired and angry after two days of my breakages («двое суток», «все проекты упадут»).
+Short, numbered, colour marks, own mistakes plainly, never theories without data, never a blind build. He relays the SERVER's main agent.
+The session was cut ~02:00 (node down), resumed 10:17; I told him (1108) I am back and asked: «бот «test» ответил на первое слово?»
+— WAIT FOR THAT ANSWER (his 1107 «вроде бы у нас всё неплохо в этот раз» hints yes, unproven).
 
-**HIS LAST WORDS (1018–1022):** «А почему твой пульт опять сломан» · «Если у нас все работало почему с какого-то момента я перестала работать
-опять ответь мне на этот вопрос прежде чем что-то будешь делать и почини уже сука свой пульт» · «Ты помнишь хотя бы чтобы делал специальный
-навык который позволяет тебе преодолевать проблемы стены? … эволюционирующим» · «почини-то уже в конце концов я хочу усилия размышлений
-увидеть» · «какого хера у тебя весь день всё ломается». MY ANSWER 1023: why etuf1 broke (19:48 the node's own `claude plugin install` into the
-element's Claude home clobbered its .claude.json — no onboarding/trust → every session stalls on Claude Code's first-run screen before MCP);
-server-wall skill has the trap now; ASKED HIM FOR A SCREENSHOT of the broken Pult (server's or Mac's — unknown). «усилия размышлений» =
-probably the effort in the main agent's card / the model picker of the Pult — CHECK FIRST with his screenshot; the Pult code is
-lib/node/tg-app/page.cjs (840-2 changed: tile in mainAgent, element rows via tile()/glance()/rowTag(), words coding→работает, waiting→ждёт).
-A fixture preview renders fine (scratchpad 840/pult-preview.cjs) — the break is with REAL data or on the server (glanceOf → ownEmail per
-element per load → walledEmail runs the helper; a slow/failed door = «broken» Pult?).
+**SERVER (fractera.ai) now:** core bb9bb6f2 = 839-13 live. Custom elements: root («Главный сайт»), test (z8asv, born from custom
+v0.3.238, own Claude bo…@gmail.com, its bot Z8asv-messenger-h2a made via the Pult). Native f2f-marketplace (lidt5) at
+https://f2f-marketplace.fractera.ai — LIVE search v1 (honest «пока нет элемента», 400/429/404 proven, preview 196a7dc accepted).
+etuf1 deleted. The Pult (server main bot) works; the Mac's Pult is dead only because of the Spanish LaLiga Cloudflare IP block
+(memory spain-cloudflare-ip-blocks) — deferred by Roma.
 
-**UNPUSHED, UNBUILT on the Mac:** 10356db1 (839-10 the screen line in the channel-failure log), c1867ad0 (839-11: asWalled → plugin install
-+ bun install AS the element; seedOnboarding — hasCompletedOnboarding + theme in the element's own .claude.json as itself; samples
-walled-channel 6/6; server-wall trap). Core prebuild RC=0 before c1867ad0's test edits (rerun). NEXT after the Pult answer: fix the Pult if
-broken → ONE prebuild → push fork + Fractera (ls-remote) → Roma presses «Обновить сборку ядра» → the server agent starts etuf1 once and reads
-`logs/web4-out.log` (the screen line) and bot.pid. A trust question may still appear (projects empty) — the node handles trust (screen.cjs).
+**PUSHED, waiting for ONE server update (Roma presses «Обновить сборку ядра» AFTER the bot test — I told him so in 1105):** 0b1e26b5
+on origin + Fractera = 839-14 node-busy lock (birth ⟂ update) + clearPoison as the element + market base f2f-marketplace + honest
+«маркетплейс не ответил». «Проверить снова» showed 5 waiting, trial merge passed. NOT pushed yet: 99ad22d7 (the Pult bot window
+overflow fix, lib/node/tg-app/bot-setup.cjs, eyes-proven 390 px: 443→348 of 390). Push it before asking for the update (then press
+«Проверить снова» again through the extension: tab group via tabs_context_mcp createIfEmpty).
 
-**22:35–22:45 UTC — the Pult break SOLVED as a fact, deferred by Roma (1030, 1032: «сосредоточься на сервере, забудь про пульт на
-компьютере — это домен и блокировки Cloudflare»).** The broken Pult is the MAC's (the server's admin Pult works). The Mac's menu opens
-https://architect.throughsongs.com/api/node/tg-app (logs/tg-menu.json). Measured from the Mac: the zone's Cloudflare IPs 188.114.96.5 and
-188.114.97.5 do not open TCP 443 (timeout, any SNI); the same host through 104.16.230.132 / 104.21.48.1 (--resolve) → 200; the temporary
-address (104.16.x) → 200, and its POST reaches the signature check (401 no-data). The public tracker hayahora.futbol lists exactly
-188.114.96.5 / 188.114.97.5 among the IPs Spanish operators block on LaLiga's order (match days). Possible later fix (NOT ordered):
-tg-menu target() falls back to the live temporary address when the own domain does not answer from this computer, said aloud.
-
-**NOW (22:58): 839-10/11 LIVE on the server.** Roma's second press: server core 939f1a89 (builtAt 22:52:22, started 22:57:21); the
-strip «Узел обновлён: 4 изменений форка, ядро 939f1a89»; my «Проверить снова» after it — nothing waits. Telegram 1042 = the server
-agent's five checks (merge-base 36053916 → IN; npm run wake -- etuf1 once; web4-out.log «приветствие … отмечено», no «канал Telegram не
-встал» — if it is there, its «экран: «…»» part; stat .claude.json fe-etuf1 600 + grep -c hasCompletedOnboarding as the element = 1;
-channel/telegram/bot.pid alive) → then Roma writes etuf1's bot. WAITING for that report. Unpushed here: 0a7db2b9 + this state (push with
-the next batch). Mac Pult: deferred (LaLiga IP block), memory spain-cloudflare-ip-blocks.
-
-**23:03 — Roma 1044: «три обновления, до сих пор не отвечает»; 1046: «жди ответа от агента, не трать токены».** Seen through the
-extension (architect.fractera.ai/ru/etuf1/terminal, etuf1 = «marketplace»): the session RUNS, past onboarding (839-11 worked), and stands
-on Claude Code's add-dir trust question «Adding a new directory: …/data/services/etuf1 — part of the repository at
-/home/fractera/web4-node-starter-kit … ❯ No, exit / Yes, add it — Your answer holds for this session». screen.cjs knows the wording;
-bridge watchTrust presses only with trustOk (a Telegram-confirmed wake), else askTrust → «Разрешить? да» in the server's main bot / npm run
-trust -- etuf1. Told Roma (1047): answer «да» or the server agent runs npm run trust -- etuf1. 🔴 DURABLE: the add-dir answer is per
-session (walled Claude home never trusted the core repo; on the Mac the core folder is trusted, so no question) → every wake will ask
-again. Candidate fix (after the agent's report, NOT built): the element's own .claude.json gets projects[<cwd>] and projects[<own data>]
-hasTrustDialogAccepted as itself (the owner's 2026-11-12 rule: the node confirms the element's own folder) — prove first on a scratch
-CLAUDE_CONFIG_DIR that a projects entry for the add-dir path suppresses the question.
-
-**23:05 — owed from 840-5:** the marketplace element (etuf1) on the server is still on custom v0.3.237 (Roma's screenshot 1049: the old
-Mini App, no tiles, agent card «ядро сейчас не отвечает»). 840-5 planned «etuf1 on a server via update» — not done (my miss, said in
-1050). After the server agent's report: update etuf1 to v0.3.238 through the extension (its element page on architect.fractera.ai), then
-check the agent card's «ядро не отвечает» on the new version (door GET /api/node/my-agent across the wall), no guessing.
-
-**23:20 — 839-12 BUILT (uncommitted until the prebuild is green):** Roma 1051: «нормальное обновление и новая сборка ядра». The server
-agent's report 1054: core 939f1a89 has 36053916; onboarding marked ✅; fe-etuf1 600 ✅; the session stood on the add-dir trust question
-(answered by hand 23:03:27); NO bot.pid, NO .env and NO .token.node in channel/telegram (at 23:01 the page still showed «токен …F3xw»
-→ deleted 23:01–23:05, by whom unknown: the core's code deletes them only in removeBot; asked the server agent (1056) for the element
-agent's journal lines and the npm run task text). Fix: telegram.cjs seedOnboarding → markOwnHome(service, configDir, folders):
-onboarding + theme + projects[<its folder>] + projects[<its data folder>] hasTrustDialogAccepted, as the element behind the wall,
-as the node's user elsewhere, only in data/services/<id>/claude, a non-parsing file left alone; called by bridge spawnAgent before EVERY
-session with an own home (not only the channel launch). Proof 1: scratch probe on Claude Code 2.1.330 (scratchpad trust-probe/probe*.cjs):
-without the data record → «Is this a directory you created», with it → REPL, also with --add-dir channel/telegram below. Proof 2:
-walled-channel 8/8 (walled marks as the element; negative: helper refuses → untouched; home computer marks directly; negative: not the
-element's own home → untouched; negative: unparsed file left alone). Kits synced (12 groups), check:agent-kits ok, server-wall §5 trap.
-NEXT: prebuild RC=0 (logs/prebuild-839-12b.log) → commit (explicit paths) → push origin + Fractera → «Проверить снова» → Roma presses
-«Обновить сборку ядра» → Roma re-saves the marketplace bot token (Pult «Бот» or its Telegram-бот page step 2) → he writes the bot →
-proof: the server log «[agents] etuf1: … отмечены доверенными», bot.pid alive, the bot answers.
-
-**23:17 — Roma 1057 (the owner's word for sections 1–8, conditional):** «Если все заработает нужно будет обновить инструкцию чтоб более
-твёрдое запрещать подобные действия … целые сутки ремонтируют твои ошибки». Draft sent (1058) for CLAUDE.md §6: «The wall is never crossed
-by the node itself: what an element owns (its Claude home, its bot's files, its data) is changed only as the element; a change reaching a
-walled element ships to a server only after it ran as such an element on a scratch copy, and that proof is named in the update request.»
-AFTER the bot answers: write it (English, §6), `npm run check:instruction -- --seal`, commit, push with the next batch.
-
-**23:20 — 839-12 PUSHED:** fa869ee6 at 23:17:22 to origin and Fractera (ls-remote both fa869ee6); prebuild-839-12b RC=0. My «Проверить
-снова»: «5 изменений ждут этот узел», «Пробное слияние прошло». Telegram 1060: Roma's 1-2-3 (press «Обновить сборку ядра»; after my
-«сервер поднялся» write @etuf1_messenger_h2a_y853k_bot; silent → the server agent's grep + ls -la). The token is NOT lost: at 23:19 the
-etuf1 bot page on the server showed «токен …F3xw» (storedToken reads .token.node) — the server agent's «нет .env и .token.node» was most
-likely ls without -a; handEnvToElement recreates .env as the element from .token.node at the next launch. Watching /api/health for a
-build newer than 22:52:22 (background). FOLLOW-UP (not in this build, same class as the 839-11 trap): channel-health clearPoison writes
-the element's mcp-needs-auth-cache.json and settings.json AS THE NODE — behind the wall it must run as the element (the coming §6 law).
-
-**00:35 (11-23) — 839-12 BROKE etuf1, 839-13 fixing.** Roma 1062-1072 (furious: «двое суток», «ни дизайна», «все проекты упадут»). The
-server agent 1071/1073 found it exactly: markOwnHome compared walledAt(...) === true, but walledAt answers {id,dir,wall}|null → always
-false → the NODE wrote etuf1's 0600 .claude.json as itself (EACCES read as «empty») → the element could not read it → Claude started
-fresh (backup 137 B: installMethod/autoUpdates/firstStartTime) → theme screen «Syntax theme: Monokai Extended» → channel 30 s → closed.
-The test stub returned true. Also: the token files ARE there (the agent's ls without -a, corrected 1065); bun install as fe = exit 0.
-839-13 (uncommitted): Boolean(walledAt); the code's first arg «wall»|«node» — EACCES replaced ONLY by the element, the node never
-replaces a file it cannot read («unreadable»); test stubs return the real shape; new negative (node's run, unreadable file → untouched,
-account kept); negative control: the old === true fails the test («the marks are written by the element, not the node»), the fix 9/9.
-Kits synced, server-wall §5 trap. Prebuild → logs/prebuild-839-13.log. AFTER THE UPDATE, before Roma writes the bot: the server agent
-restores etuf1's own config AS THE ELEMENT from its 22:58:18 backup (6908 B, oauthAccount/userID/onboarding): sudo -n
-/usr/local/sbin/fractera-element run etuf1 -- /bin/cp <backup> $PWD/data/services/etuf1/claude/.claude.json. Then: Roma writes the bot;
-proof: «[agents] etuf1: … доверенными», owner fe-etuf1, oauthAccount kept, firstStartTime unchanged, bot.pid alive, the answer.
-QUEUE after the bot: (1) etuf1 Mini App rollout v0.3.238 on the server (template rollout + services:install --only etuf1, no core build);
-(2) the §6 law (Roma 1057); (3) 841-3 f2f-marketplace native element on fractera.ai with Roma (1076: «создать через меня и проверить
-существование … f2f-marketplace.fractera.ai … залил в него движок»), never built — the door answers 401; (4) clearPoison as the element.
-
-**00:31 — 839-13 PUSHED** 18ba9b22 (origin + Fractera, 00:29:23), prebuild-839-13 RC=0, «Проверить снова»: 1 change waits, trial merge
-passed. Telegram 1078: Roma forwards the restore block (etuf1's own 22:58:18 backup → .claude.json AS THE ELEMENT; check oauthAccount,
-onboarding, theme, fe-etuf1 600), presses «Обновить сборку ядра», writes the bot after my «сервер поднялся». Watching /api/health for a
-build newer than 23:29:07 (background b5swcwmbi).
-Prepared for later (NOT done): the etuf1 Mini App — NOT `template rollout` on the server (it writes the element's files and git AS THE
-NODE — the very class being forbidden); the element updates ITSELF: the server's main agent tasks etuf1's agent «git fetch --tags; merge
-v0.3.238 keeping your work; build; deploy (Preview → Accept)» as fe-etuf1. §6 law draft (English): «The wall is crossed only as the
-element: what an element owns — its Claude home, its bot's files, its data, its code — is written only by the element itself (on a
-server the helper's run); the node's user never writes, replaces or reinstalls inside it. A change that reaches a walled element ships to
-a server only with a proof that ran as such an element (the server's main agent, or a stub returning exactly what the real wall
-returns), named in the update request.» One later core build: the law + clearPoison as the element.
-
-**00:36 — Roma 1079: «без костылей … удаляю все кастомные на Fractera … новый кастомный шаблон абсолютно правильный, с правильным
-пультом … скажи когда могу повторить создание».** Server still on 88c0103c (839-12, broken) at 00:35. Telegram 1080: (1) delete (root
-= the fractera.ai site — warned); (2) BEFORE creating press «Обновить сборку ядра» (839-13 18ba9b22 waits); (3) create after my «сервер
-поднялся» — born from v0.3.238 (new Mini App). Then its own Claude sign-in, bot via the Pult «Бот», Start, first word — I watch its
-terminal screen and pages myself through his Chrome at each step. Said honestly: the walled bot path has never completed live. The etuf1
-restore block (1078) is moot if etuf1 is deleted.
-
-**00:56 — 839-13 LIVE on the server:** core bb9bb6f2 (builtAt 00:45:30, started 00:49:50), strip «Узел обновлён: 1 изменений форка,
-ядро bb9bb6f2» (the strip lagged «Узел обновляется · сборка ядра» ~6 min after the start — do not call «поднялся» before it turns), the
-main agent's bot banner gone. Menu: «Главный сайт» (root) still there, marketplace (etuf1) gone. Telegram 1081: «можно создавать».
-NEXT: Roma creates the new custom element (v0.3.238) → I watch through his Chrome: its pages, the Mini App, its sign-in (Подписка Claude
-Code), the bot via the Pult «Бот», Start, the first word; the server log lines «[agents] <id>: … доверенными», «[telegram] <id>: …», no
-«канал Telegram не встал». Then: the §6 law + clearPoison as the element (one build), 841-3 f2f-marketplace.
-
-**00:56 — two DEFECTS from the server agent's report (Telegram 1084), for the next core build (with the §6 law + clearPoison):**
-(a) a birth and a node update ran at once: jkz0e's birth build started ~00:37, the update's install built the same folder at 00:39 →
-«ENOENT …/.next-a/required-server-files.json», retry «Another next build process is already running» → BIRTH_FAILED. Fix: the update
-waits for a running birth (as it already waits for an element deploy, «идёт развёртывание элемента — повторите…») and a birth refuses to
-start during an update. (b) jkz0e was born from the NATIVE template (fractera-native-item-starter v0.1.81) yet recorded as custom and got
-a wall fe-jkz0e — check the panel's «Создать нативный элемент» path on a server (a native element runs as the node, never walled).
-Roma is creating the element again (1083: «повторяю … жди»).
-
-**01:10 — 839-14 BUILT, committed, NOT pushed (Roma tests a new element on bb9bb6f2):** (1) the «node busy» lock lib/deploy/node-busy.cjs —
-birthRunning (logs/birth-<id>.json pid alive, no verdict in its log, < 3 h) refuses scripts/node-update.mjs in its check before «fetch»
-(«рождается элемент «…» — повторите обновление…»); updateRunning (data/node/node-update.json running, pid alive, < 3 h) refuses
-startBirth («node-updating» → the birth door 400 + message shown in the birth window); test scripts/node-busy.test.mjs 7/7 in the prebuild
-(negatives: finished, dead, stale). (2) clearPoison AS THE ELEMENT behind the wall (telegram.cjs isWalled + clearPoisonAsElement, one key
-each, no node backup) — walled-channel 11/11. prebuild-839-14 RC=0. Push + «Проверить снова» + Roma's one press AFTER his element test,
-together with the §6 law if the bot works. Open question (not touched): a «native» birth is recorded kind 'user' → walled on a server.
-
-**01:05 — Roma 1087 (decision, his question «внутренние процессы всегда на английский?» answered yes, 1089):** an English project got
-the element birth's progress in Russian. Rule (my pick, sent): the stage lines of internal processes (birth, node update, deploy, build)
-— ALWAYS English, one source, no translations; what the person reads as an interface (buttons, windows, the Pult, the node's Telegram
-messages) — the person's language from the two dictionaries (ru for Russians, en for everyone else — his decision 2026-11-17); agents
-speak the person's language. A separate step AFTER the bot test: first the inventory of places (item-birth.mjs, node-update.mjs,
-deploy-elements.mjs, serve.mjs …, and the tests that match those Russian lines), shown to Roma, then the change.
-
-**01:15 — 841-3 f2f-marketplace: the element exists on the server (Roma 1089):** id lidt5, name f2f-marketplace, NATIVE, port 24684,
-address lidt5.fractera.ai (answers; f2f-marketplace.fractera.ai: DNS → 109.199.105.213 but TLS «unrecognized name» — no nginx/cert for
-that name), own Claude subscription connected. Telegram 1090: the build task for lidt5's agent (via the server's main agent, npm run task)
-— POST /api/marketplace/search public v1 (400 on v≠1/empty, simulation with two examples, base from its own public address, 30/min per
-IP, no query+IP stored), GET /marketplace (API standard page) + /marketplace/<slug>; proofs: v1 JSON, v2 → 400, /marketplace 200;
-deploy; report. AFTER it works: rename its address to f2f-marketplace (cert) and change the core's default market base
-(lib/web4-items/fractera-market.mjs: FRACTERA_MARKET_URL else https://fractera.ai) to that address — one line, rides in the next build.
-
-**01:20 — f2f-marketplace address LIVE:** Roma renamed lidt5's address → https://f2f-marketplace.fractera.ai, certificate CN=that name
-(notAfter 2027-02-21), / → 200, /api/marketplace/search → 401 (the door not built yet). Core (uncommitted): fractera-market.mjs MARKET_BASE
-= https://f2f-marketplace.fractera.ai (default of marketSearch and simulatedMarket; FRACTERA_MARKET_URL still overrides); test 7/7; live:
-`npm run market -- "монтаж видео"` → ===MARKET_SIMULATION=== with links on f2f-marketplace.fractera.ai. Correction sent (1092): the second
-example slug is example-custom (the core's simulation links /marketplace/example-native and /marketplace/example-custom).
-The next build carries: 839-14 (node-busy lock, poison as the element), the market base, and the §6 law if the bot works.
-
-**01:25 — Roma 1093: «реальную заглушку … честный ответ пусть и отрицательный … почему ты не создал задание».** The full task REPLACING
-1090/1092 sent as 1094 (for the server agent to pass to lidt5 unchanged): catalogue = one JSON file, empty; POST /api/marketplace/search
-public, live: mode "live", items [] and an honest summary ru/en («пока нет элемента для «…»»); 400 (not JSON, v≠1, empty, >300), 429
-over 30/min/IP, log = time + words + count, no IP; GET /marketplace (what it is, the API standard with 400/429 examples, «Пока ни одного
-элемента»), /marketplace/<slug> from the catalogue, unknown → 404; proofs on loopback (200/400/400/429) and from the internet; deploy;
-report. Core (uncommitted→committed below): the rung's own fallback when the marketplace does not answer is honest too — «не ответил»,
-items [], no example pages (fractera-market.mjs simulatedMarket; test 7/7; live: ===MARKET_SIMULATION=== «… сейчас не ответил …»).
-
-**01:27 — Roma 1095 (the owner's permission):** the f2f-marketplace (lidt5) code lives in a PRIVATE repository of the GitHub org Fractera,
-github.com/Fractera/f2f-marketplace — passed on (1096): after the task's proofs are green; a token with rights in the org; none on the
-server → say so, Roma enters it in the node's window (never the chat). Matches memory native-marketplace-concept (a native element sold
-f2f from a private repo).
-
-**01:45 — 841-3 f2f-marketplace LIVE (server agent 1097; my second plane from the Mac):** preview 196a7dc accepted; POST
-https://f2f-marketplace.fractera.ai/api/marketplace/search ru «монтаж видео» → 200 live, items [], honest summary; v 2 → 400 «v must be
-1»; /marketplace → 200; the server agent also: empty → 400, not JSON → 400, unknown slug → 404, 31 fast → 429, log without IP. The core's
-client from source: `npm run market -- "монтаж видео"` → ===MARKET_LIVE===. GitHub repo NOT made (Roma cancelled it to the server agent;
-a token had been pasted in a chat → told Roma to revoke it at github.com/settings/tokens and delete the message, 1100). Asked the
-marketplace agent (1101): v1 FIXED in its docs (a change = v2 beside v1), the door in its A2A card. NOW: final prebuild
-logs/prebuild-841-3.log → push (839-14 + market base + honest fallback) → «Проверить снова» → Roma presses update → he creates a new
-custom element → the walled bot test.
-
-**DONE TODAY (pushed, live):** 840 Pult + subscription page + element doors (core 993c9b59, 73f43eaa on Fractera); custom template v0.3.238
-(Roma ran the release; pinned); 841 search + «Нативные элементы» + marketplace search v1 (`npm run market`, price) — the fractera.ai side NOT
-built: the server's agent got the 841-3 task (window cb7347b1 done 22:13); fractera.ai/api/marketplace/search → 401, /marketplace → 307
-(told Roma 1011: the door must be public). Workshop faf5dc4 (Windows CI fix for tg:projects) waits the next template release.
+**NEXT, in order:**
+1. Roma's answer about the test bot. Yes → write the §6 law (his order 1057, draft in 1058; English text in the 00:31 block below) into
+   CLAUDE.md §6, `npm run check:instruction -- --seal`, commit. No → look at z8asv's terminal screen myself through his Chrome
+   (architect.fractera.ai/ru/z8asv/terminal, read .xterm-rows) and the server log via the server agent; fix in the CORE.
+2. TEMPLATE (custom workshop data/workshop/fractera-custom-item-starter): Roma 1107 (photo: the element Mini App page title
+   «Самосовершенствование» runs off the screen): «нужно нормальные отступы и чтобы длинные заголовки обрезались и добавлялось …».
+   The big serif H1 of the Mini App screens (tg/_components/tg-head.client.tsx most likely) → truncate with ellipsis, proper side
+   padding; check every Mini App screen title; eyes at 390 light/dark. Release v0.3.239 (skill release-template; also carries faf5dc4
+   the Windows CI fix), pin, push the core. Existing z8asv gets it by ITS OWN agent (task: fetch tags, merge v0.3.239, build, deploy)
+   — never `template rollout` on a server (writes the element's files as the node = the class the §6 law forbids).
+3. Then ONE server update for everything (0b1e26b5 + 99ad22d7 + law + pin).
+4. Queue after: internal process lines always English (Roma 1087; inventory first, show him); defect: a «native» birth is recorded
+   kind 'user' and walled on a server; 841-3 GitHub private repo for f2f-marketplace was CANCELLED by Roma (token pasted in a chat —
+   he revoked it, 1103).
 
 ## The person's decisions (verbatim)
 
