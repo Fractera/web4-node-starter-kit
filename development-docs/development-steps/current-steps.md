@@ -388,6 +388,11 @@ process lines always English (Roma 1087).
 
 ## The person's decisions (verbatim)
 
+- 2026-11-23 21:13 UTC, the owner (Telegram 1227–1229): «Всё давай иди в разработку нон-стоп и делай необходимые сборки я уже хочу на
+  следующей итерации увидеть новый кастомный элемент установить его в том числе на сервер и посмотреть интерфейс мини приложения
+  Telegram» · «Да» · «Давай сделай пожалуйста» → 848 in the plan's order, non-stop, builds as needed; the template release v0.3.240 with
+  the Mac's gh key (the answer to 1183). The goal of the iteration: a NEW custom element on the Mac and on the server, its Mini App seen.
+
 - 2026-11-21 15:40 UTC, the owner (Telegram 555): «другая технология быстрой установки на сервер … контейнер … это же не немыслимо вот
   так долго устанавливать» → no record of the earlier talk found (memory, diary, docs) — said so. My pick (556): step 827 «built once,
   downloaded everywhere» — every Fractera release (core + templates by tag) published as Linux build archives on GitHub, the installer
