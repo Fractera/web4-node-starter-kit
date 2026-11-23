@@ -324,7 +324,10 @@ CONFIG editor draws type «icons» disabled (components/element-settings/site/co
 fields.i18n.ts). Contract (git 23fb1ba7): upload POST /media/upload multipart field `file` + X-Data-Secret → {ok,item:{id,url}} (data's
 report 15:11); POST /media/generate-icons {media_id} → {id, files}; files served by the core's app/api/media/icons/[setId]/file/[name].
 data forwards /media/* to STORAGE before key checks — asked STORAGE (task storage --work, 15:13) who may call generate-icons and whether
-an element's own key reads a set made with the node's key. NEXT: read `npm run state -- storage` → build the door + the upload field +
+an element's own key reads a set made with the node's key. STORAGE ANSWERED 15:15 (from its code, not live): generate-icons takes BOTH keys; with X-Data-Secret the set is owner 'node' and ANY
+element reads it with its own X-Element-Key (media.mjs:523 refuses only owner≠element AND owner≠node) — the main risk is gone; answer
+200 {ok,id,files:{favicon_ico,favicon_16,favicon_32,apple_touch_icon,icon_192,icon_512,og_image,manifest}} values '<id>/<file name>',
+files at /media/icons/<id>/file/<name>; errors 400/404/500 {ok:false,error}. NEXT: build the door + the upload field +
 save iconSet into CONFIG app settings (the core's PATCH /api/node/element-settings path) + a test (head favicon new and 200 on root) →
 prebuild → ONE Mac build → push fork + Fractera → window for Roma «Обновить сборку ядра» → live checks: Pult on a domain switch, a rename
 of a test element, icons.
