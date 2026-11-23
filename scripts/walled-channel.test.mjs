@@ -147,4 +147,39 @@ t('negative: a file that does not parse (half-written) is left alone', () => {
   const o = markRun('walled', { file: '{"oauthAccount": {"emailAddress": "m@x.te' })
   assert.match(o.said, /не читается/); assert.equal(o.raw, '{"oauthAccount": {"emailAddress": "m@x.te')
 })
+// 839-14: the poison of 781-2 behind the wall — the element's own failure cache and settings are cleaned AS THE ELEMENT, one key each
+function poisonRun(walled) {
+  const root = mkdtempSync(join(tmpdir(), 'walled-poison-'))
+  mkdirSync(join(root, 'WEB4-ITEMS-REGISTRY'), { recursive: true })
+  writeFileSync(join(root, 'WEB4-ITEMS-REGISTRY', 'web4-items.json'), JSON.stringify({ services: [{ id: 'shop', kind: 'user' }] }))
+  mkdirSync(join(root, 'WEB4-ITEMS', 'user', 'shop'), { recursive: true })
+  const home = join(root, 'data', 'services', 'shop', 'claude')
+  mkdirSync(home, { recursive: true })
+  writeFileSync(join(home, 'mcp-needs-auth-cache.json'), JSON.stringify({ 'plugin:telegram:telegram': { at: 1 }, other: { at: 2 } }))
+  writeFileSync(join(home, 'settings.json'), JSON.stringify({ enabledPlugins: { 'telegram@claude-plugins-official': true, keep: true } }))
+  const code = `
+    const calls = []
+    globalThis.__web4WalledSession = { walledAt: (root, cwd) => ${walled ? "({ id: 'shop', dir: cwd, wall: {} })" : 'null'} }
+    globalThis.__web4ElementWall = { asElement: (root, cwd, prog, args, env) => { calls.push({ prog }); return { cmd: process.execPath, args, wrapped: 'shop' } } }
+    const kit = require(${JSON.stringify(KIT)})
+    const out = kit.clearPoisonAsElement('shop', ${JSON.stringify(home)})
+    const fs = require('node:fs')
+    process.stdout.write(JSON.stringify({ out, calls, cache: JSON.parse(fs.readFileSync(${JSON.stringify(join(home, 'mcp-needs-auth-cache.json'))}, 'utf8')), settings: JSON.parse(fs.readFileSync(${JSON.stringify(join(home, 'settings.json'))}, 'utf8')) }))`
+  const r = spawnSync(process.execPath, ['-e', code], { cwd: root, encoding: 'utf8' })
+  rmSync(root, { recursive: true, force: true })
+  assert.equal(r.status, 0, r.stderr)
+  return JSON.parse(r.stdout)
+}
+t('839-14: behind the wall the element cleans its own failure cache and turns the plugin off in its own settings — one key each, as itself', () => {
+  const o = poisonRun(true)
+  assert.deepEqual(o.out, { cache: 'removed', global: 'turned-off' })
+  assert.equal(o.calls[0]?.prog, 'node', 'the element runs it, not the node')
+  assert.equal('plugin:telegram:telegram' in o.cache, false); assert.equal(o.cache.other.at, 2)
+  assert.equal(o.settings.enabledPlugins['telegram@claude-plugins-official'], false); assert.equal(o.settings.enabledPlugins.keep, true)
+})
+t('negative: not walled (a home computer) — nothing runs as an element, the files are untouched (the node\'s own clearPoison serves there)', () => {
+  const o = poisonRun(false)
+  assert.deepEqual(o.out, { cache: 'none', global: 'none' }); assert.equal(o.calls.length, 0)
+  assert.equal('plugin:telegram:telegram' in o.cache, true); assert.equal(o.settings.enabledPlugins['telegram@claude-plugins-official'], true)
+})
 console.log(`===WALLED_CHANNEL_OK=== ${n} passed`)

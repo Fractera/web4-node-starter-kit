@@ -18,6 +18,14 @@ export const dynamic = "force-dynamic"
 
 const ROLES = ["architect", "admin"] as const
 
+// 839-14: a birth that waits for the node update is told in the birth window (400 + message, the window shows it); «running» stays 409.
+function refused(reason: string) {
+  if (reason === "node-updating") {
+    return NextResponse.json({ ok: false, reason, message: "Узел сейчас обновляется. Создайте элемент, когда обновление закончится: полоса вверху панели покажет «Узел обновлён»." }, { status: 400 })
+  }
+  return NextResponse.json({ ok: false, reason }, { status: reason === "running" ? 409 : 500 })
+}
+
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const denied = await requireRoles(req, ROLES)
   if (denied) return denied
@@ -28,7 +36,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   // 582: черновик нативного элемента рождается из нативного шаблона; вопрос и репозиторий у него не спрашиваются — он часть проекта.
   if (draft.native) {
     const n = startBirth(id, { native: true })
-    if (!n.ok) return NextResponse.json({ ok: false, reason: n.reason }, { status: n.reason === "running" ? 409 : 500 })
+    if (!n.ok) return refused(n.reason)
     return NextResponse.json({ ok: true, state: "running" }, { status: 202 })
   }
   // 804-2 (367 before): what the element will be — the person's answer in the birth window (`app`; an older page sends `look`, the
@@ -48,7 +56,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (!own.ok) return NextResponse.json({ ok: false, reason: own.reason, message: own.message }, { status: 400 })
   }
   const r = startBirth(id, { app, repo: source === "repo" ? repo : null })
-  if (!r.ok) return NextResponse.json({ ok: false, reason: r.reason }, { status: r.reason === "running" ? 409 : 500 })
+  if (!r.ok) return refused(r.reason)
   return NextResponse.json({ ok: true, state: "running" }, { status: 202 })
 }
 

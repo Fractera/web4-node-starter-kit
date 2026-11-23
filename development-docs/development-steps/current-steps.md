@@ -424,6 +424,22 @@ NEXT: Roma creates the new custom element (v0.3.238) → I watch through his Chr
 Code), the bot via the Pult «Бот», Start, the first word; the server log lines «[agents] <id>: … доверенными», «[telegram] <id>: …», no
 «канал Telegram не встал». Then: the §6 law + clearPoison as the element (one build), 841-3 f2f-marketplace.
 
+**00:56 — two DEFECTS from the server agent's report (Telegram 1084), for the next core build (with the §6 law + clearPoison):**
+(a) a birth and a node update ran at once: jkz0e's birth build started ~00:37, the update's install built the same folder at 00:39 →
+«ENOENT …/.next-a/required-server-files.json», retry «Another next build process is already running» → BIRTH_FAILED. Fix: the update
+waits for a running birth (as it already waits for an element deploy, «идёт развёртывание элемента — повторите…») and a birth refuses to
+start during an update. (b) jkz0e was born from the NATIVE template (fractera-native-item-starter v0.1.81) yet recorded as custom and got
+a wall fe-jkz0e — check the panel's «Создать нативный элемент» path on a server (a native element runs as the node, never walled).
+Roma is creating the element again (1083: «повторяю … жди»).
+
+**01:10 — 839-14 BUILT, committed, NOT pushed (Roma tests a new element on bb9bb6f2):** (1) the «node busy» lock lib/deploy/node-busy.cjs —
+birthRunning (logs/birth-<id>.json pid alive, no verdict in its log, < 3 h) refuses scripts/node-update.mjs in its check before «fetch»
+(«рождается элемент «…» — повторите обновление…»); updateRunning (data/node/node-update.json running, pid alive, < 3 h) refuses
+startBirth («node-updating» → the birth door 400 + message shown in the birth window); test scripts/node-busy.test.mjs 7/7 in the prebuild
+(negatives: finished, dead, stale). (2) clearPoison AS THE ELEMENT behind the wall (telegram.cjs isWalled + clearPoisonAsElement, one key
+each, no node backup) — walled-channel 11/11. prebuild-839-14 RC=0. Push + «Проверить снова» + Roma's one press AFTER his element test,
+together with the §6 law if the bot works. Open question (not touched): a «native» birth is recorded kind 'user' → walled on a server.
+
 **DONE TODAY (pushed, live):** 840 Pult + subscription page + element doors (core 993c9b59, 73f43eaa on Fractera); custom template v0.3.238
 (Roma ran the release; pinned); 841 search + «Нативные элементы» + marketplace search v1 (`npm run market`, price) — the fractera.ai side NOT
 built: the server's agent got the 841-3 task (window cb7347b1 done 22:13); fractera.ai/api/marketplace/search → 401, /marketplace → 307

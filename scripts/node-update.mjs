@@ -184,6 +184,16 @@ say(`обновляет: ${resolve(HERE, '..') === resolve(ROOT) ? 'сам уз�
 const origin = readJson(join(ROOT, 'logs', 'origin.json'))
 if (origin?.verdict !== 'fork') finish('refused', { reason: `это не форк (${origin?.verdict ?? 'проверки форка не было'}) — история этой копии своя, её обновляют git` })
 if (require('../lib/deploy/deploy-lock.cjs').isRunning()) finish('refused', { reason: 'идёт развёртывание элемента — повторите, когда оно закончится' })
+// 839-14 (the owner, Telegram 1085: «нужен какой-то сторож»): a birth builds its element's folder — the update's step «элементы» would
+// build the same one (✗ 2026-11-23 00:37–00:39 on the server: jkz0e BIRTH_FAILED). The update waits for the birth (lib/deploy/node-busy.cjs).
+{
+  const birth = require('../lib/deploy/node-busy.cjs').birthRunning(ROOT)
+  if (birth) {
+    let name = birth.id
+    try { name = require('../lib/web4-items/name-file.cjs').ownName(birth.id, ROOT) || birth.id } catch { /* the id is its name */ }
+    finish('refused', { reason: `рождается элемент «${name}» — повторите обновление, когда рождение закончится` })
+  }
+}
 if (git(['rev-parse', '-q', '--verify', 'MERGE_HEAD']).ok) finish('refused', { reason: 'в папке узла не закончено слияние git — сначала его нужно закончить или отменить' })
 const oldHead = must(git(['rev-parse', 'HEAD']), 'git rev-parse HEAD')
 

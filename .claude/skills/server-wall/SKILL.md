@@ -81,6 +81,7 @@ LOGNAME, SHELL, NODE_OPTIONS.
   file over it; the element could not read it and started fresh on the theme screen (found by the server's main agent, Telegram 1073).
   The test's stub answered `true`. Fix: truthiness; the node's user never replaces a file it cannot read; stubs keep the real shape (a
   negative proves the old check fails the test). Rule: a stub of a wall function returns what the real one returns.
+  839-14: the channel's poison cleanup (781-2: the failure cache entry, the plugin off in settings) runs AS THE ELEMENT behind the wall too.
 - 2026-11-22 839-10/11: a walled element's channel never came up — no MCP log after 18:11, `.claude.json` without onboarding and trusted
   folders: the NODE had run `claude plugin install` with the element's CLAUDE_CONFIG_DIR, could not read its 0600 `.claude.json` and wrote a
   fresh one over it; every session then stood on Claude Code's first-run screen before its MCP servers. Fix: behind the wall every `claude`

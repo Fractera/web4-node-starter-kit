@@ -3,6 +3,7 @@ import { closeSync, existsSync, mkdirSync, openSync, readFileSync, writeFileSync
 import { join } from "node:path"
 import nameFile from "@/lib/web4-items/name-file.cjs"
 import { birthArgs } from "@/lib/web4-items/birth-args.mjs"
+import nodeBusy from "@/lib/deploy/node-busy.cjs"
 
 // РОЖДЕНИЕ ЧЕРНОВИКА — ЗАПУСК И ХОД (узел, шаг 319-3). Сам путь рождения — `scripts/item-birth.mjs` (319-1); здесь только то,
 // что нужно кнопке: запустить его отдельным процессом и прочитать, как он идёт.
@@ -102,6 +103,9 @@ export type BirthPlan = { native: true } | { native?: false; app: BirthApp; repo
 /** Запустить рождение. Вызывающий уже проверил роли, черновик, что элемента ещё нет, `app` и адрес репозитория (`repo`). */
 export function startBirth(id: string, plan: BirthPlan): { ok: true } | { ok: false; reason: string } {
   if (birthState(id).state === "running") return { ok: false, reason: "running" }
+  // 839-14 (the owner, Telegram 1085): the node update builds the elements and then the core — a birth started now would build its folder
+  // beside it (✗ 2026-11-23 00:37 on the server: jkz0e BIRTH_FAILED). It waits for the update (lib/deploy/node-busy.cjs).
+  if (nodeBusy.updateRunning(process.cwd())) return { ok: false, reason: "node-updating" }
   mkdirSync(LOGS(), { recursive: true })
   const fd = openSync(logFile(id), "w")
   try {

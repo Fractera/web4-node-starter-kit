@@ -297,7 +297,10 @@ async function channelLaunch(service, env) {
   // 781-2 (✗ 2026-11-18 10:14: a Claude Code session in the home folder started the plugin enabled for the whole machine, it died without a
   // token, and the machine-wide failure cache made every launch skip it for 15 minutes): before every launch with the channel the poison
   // is taken out of this session's Claude home — the cache entry removed, the plugin off globally (614-2), one key each.
-  const poison = require('./channel-health.cjs').clearPoison(env, path.join(/* turbopackIgnore: true */ ROOT, 'data', 'node', 'claude-settings.backup.json'))
+  // 839-14: behind the wall the element's own Claude home is cleaned AS THE ELEMENT (what an element owns is written only by the element)
+  const poison = isWalled(service)
+    ? clearPoisonAsElement(service, env.CLAUDE_CONFIG_DIR)
+    : require('./channel-health.cjs').clearPoison(env, path.join(/* turbopackIgnore: true */ ROOT, 'data', 'node', 'claude-settings.backup.json'))
   if (poison.cache === 'removed' || poison.global === 'turned-off') console.log(`[telegram] ${service}: перед запуском канала — ${poison.cache === 'removed' ? 'запись об отказе плагина стёрта' : ''}${poison.cache === 'removed' && poison.global === 'turned-off' ? ', ' : ''}${poison.global === 'turned-off' ? 'плагин выключен для сессий вне узла' : ''}`)
   const pathKey = Object.keys(env).find((k) => k.toUpperCase() === 'PATH') || 'PATH'
   const dirs = [...extraBins(), ...String(env[pathKey] || '').split(path.delimiter).filter(Boolean)]
@@ -333,6 +336,36 @@ function asWalled(service, program, args, env = {}) {
     const w = wall.asElement(process.cwd(), dir, program, args, env)
     return w.wrapped ? { cmd: w.cmd, args: w.args, env: { PATH: '/usr/local/bin:/usr/bin:/bin' } } : null
   } catch { return null }
+}
+
+/** Is this element's folder walled here (a server, its own Linux user) — `walledAt` answers { id, dir, wall } or null (839-13). */
+function isWalled(service) {
+  try {
+    const ws = globalThis.__web4WalledSession // mount.cjs
+    const dir = serviceDir(service)
+    return Boolean(dir && ws && typeof ws.walledAt === 'function' && ws.walledAt(process.cwd(), dir))
+  } catch { return false }
+}
+
+/**
+ * 839-14 (the owner's §6 law of 2026-11-23: what an element owns is written only by the element itself): behind the wall the poison of
+ * 781-2 comes out of the element's OWN Claude home AS THE ELEMENT — the same two keys as `clearPoison` (the Telegram plugin's entry of the
+ * failure cache; the plugin off in its settings, the channel session turns it on for itself with `--settings`), and no backup into the
+ * node's data: the element's settings are its own. A file it cannot read as an object is left untouched. → { cache, global }
+ */
+function clearPoisonAsElement(service, configDir) {
+  const none = { cache: 'none', global: 'none' }
+  if (!configDir) return none
+  const health = require('./channel-health.cjs')
+  const code = "const fs=require('fs'),p=require('path');const [h,key,plug]=process.argv.slice(1);const o={cache:'none',global:'none'};" +
+    "const c=p.join(h,'mcp-needs-auth-cache.json');if(fs.existsSync(c)){try{const j=JSON.parse(fs.readFileSync(c,'utf8'));" +
+    "if(!j||typeof j!=='object'||Array.isArray(j))o.cache='unknown';else if(Object.prototype.hasOwnProperty.call(j,key)){delete j[key];fs.writeFileSync(c,JSON.stringify(j));o.cache='removed'}}catch(e){o.cache='unknown'}}" +
+    "const s=p.join(h,'settings.json');if(fs.existsSync(s)){try{const j=JSON.parse(fs.readFileSync(s,'utf8'));const e=j&&typeof j==='object'&&!Array.isArray(j)?j.enabledPlugins:null;" +
+    "if(e&&typeof e==='object'&&e[plug]===true){e[plug]=false;fs.writeFileSync(s,JSON.stringify(j,null,2)+'\\n');o.global='turned-off'}else if(e&&e[plug]===false)o.global='off'}catch(e){o.global='unknown'}}" +
+    "process.stdout.write(JSON.stringify(o))"
+  const as = asWalled(service, 'node', ['-e', code, configDir, health.CACHE_KEY, health.PLUGIN])
+  if (!as) return none
+  try { return { ...none, ...JSON.parse(require('node:child_process').execFileSync(as.cmd, as.args, { env: as.env, timeout: 15_000, encoding: 'utf8' }).trim() || '{}') } } catch { return none }
 }
 
 /**
@@ -1609,7 +1642,7 @@ module.exports = {
   // 839-8: what a walled session's channel needs from the node before it starts
   handEnvToElement, openForElement,
   // 839-11/12: behind the wall the element itself installs its plugin; its own Claude home is marked before every session
-  asWalled, markOwnHome,
+  asWalled, markOwnHome, clearPoisonAsElement,
   // the bot taken off the node — the danger zone of its page
   removeBot,
   // 639: итог остаётся, служебное исчезает; вопросы закрытой сессии исчезают.
