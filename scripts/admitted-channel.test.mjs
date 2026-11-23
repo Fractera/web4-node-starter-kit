@@ -91,5 +91,19 @@ await t('846 (Telegram 1209): «Включить» on a live session without the
   assert.ok(fn.indexOf('whenIdle(') < fn.indexOf('session.stop('), 'the turn in flight is never cut')
 })
 
+await t('847: the bot names the element by its name for people (name.json, as the menu and card), not by its id', async () => {
+  assert.equal(telegram.personName(EL), EL, 'no name given — its address')
+  put('WEB4-ITEMS-REGISTRY/web4-items.json', JSON.stringify({ services: [{ id: EL, kind: 'user', born: true }] }))
+  put(`WEB4-ITEMS/user/${EL}/OWN-SERVICE-PROPS/OWN-SERVICE-PROPS.json`, JSON.stringify({ id: EL, name: EL }))
+  assert.equal(telegram.personName(EL), EL, 'a passport that names only its id — still the address')
+  put(`WEB4-ITEMS/user/${EL}/OWN-SERVICE-PROPS/OWN-SERVICE-PROPS.json`, JSON.stringify({ id: EL, name: 'Diana (passport)' }))
+  assert.equal(telegram.personName(EL), 'Diana (passport)', 'the passport name when the core gave none')
+  put(`data/services/${EL}/name.json`, JSON.stringify({ name: 'Diana', at: new Date().toISOString() }))
+  assert.equal(telegram.personName(EL), 'Diana')
+  assert.equal(telegram.personName(`${EL}--work`), 'Diana', 'a work session of the element — the same name')
+  const src = readFileSync(join(SERVER, 'telegram.cjs'), 'utf8')
+  assert.equal((src.match(/shortName\(named\(/g) || []).length, 2, 'only personName itself and the line for the main agent (it needs the id) keep the address')
+})
+
 rmSync(tmp, { recursive: true, force: true })
 console.log(process.exitCode ? '\n===ADMITTED_CHANNEL_FAILED===' : `\n===ADMITTED_CHANNEL_OK=== ${passed} passed`)

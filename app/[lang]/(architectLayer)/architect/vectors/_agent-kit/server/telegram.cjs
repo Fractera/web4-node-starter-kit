@@ -582,7 +582,7 @@ function statusBody(text) {
 /** Состояние словами: подписка не подключена → сначала она; иначе — активен ли терминал. */
 async function statusMessage(service) {
   const m = { ...FALLBACK, ...readJson(messagesFile(service), {}) }
-  if (accountMissing(service)) return { text: failedWords(await askTable(service), shortName(named(service)), 'no-account', service), trouble: true }
+  if (accountMissing(service)) return { text: failedWords(await askTable(service), personName(service), 'no-account', service), trouble: true }
   if ((await claudeSignedIn(service)) === false) return { text: m.noSubscription, trouble: true }
   return { text: running(service) ? m.active : m.inactive, trouble: false }
 }
@@ -666,7 +666,7 @@ async function idleTick(service) {
     // the bot of an app of its own tells the person it just admitted whose bot it is — kept, it is the result of the admission.
     if (activated && service !== 'build' && ownAppOf(service)) {
       const t = await askTable(service)
-      await sendKept(token, { chat_id: msg.chat.id, text: (t.ownAppBot ?? ASK.en.ownAppBot)(shortName(named(service))), disable_web_page_preview: true })
+      await sendKept(token, { chat_id: msg.chat.id, text: (t.ownAppBot ?? ASK.en.ownAppBot)(personName(service)), disable_web_page_preview: true })
     }
     // 604: a folder trust question waits for this chat's «yes» — a short plain yes answers it here, with no agent turned on. Anything
     // else goes on as before, and the main agent, woken by it, reads the person's meaning (the pending question rides in its prompt).
@@ -691,7 +691,7 @@ async function idleTick(service) {
     }
     if (d.do !== 'status' && (await claudeSignedIn(service)) !== false) {
       const t = await askTable(service)
-      const a = shortName(named(service))
+      const a = personName(service)
       // Владелец 2026-10-06: «выключи» выключенному агенту — не повод его включать; ответ «уже выключен».
       if (d.do === 'already-off') {
         await sendVanishing(token, { chat_id: msg.chat.id, text: (t.alreadyOff ?? ASK.en.alreadyOff)(a) })
@@ -1092,6 +1092,30 @@ const allHuman = (items) => items.length > 0 && items.every((it) => it.kind === 
 const cutText = (t, n) => (t.length > n ? `${t.slice(0, n - 1)}…` : t)
 
 /** Имя элемента для человека: адрес без зоны узла (`roman`, а не `roman.throughsongs.com` и не id). */
+/**
+ * 847 (the aifa.dev server's agent, 2026-11-23 letter 1.3б: the bot said «Это бот «cmdfc»…», «Агент cmdfc сейчас выключен…» while the
+ * element is «Diana» in its passport and the panel's menu): the name for people, in the order of `lib/web4-items/name-file.cjs` (the
+ * menu and `card`) — the core's name (`data/services/<id>/name.json`) → the passport's `name` (not its id or address) → the short address.
+ */
+function personName(service) {
+  const base = String(service).split('--')[0]
+  try {
+    const n = JSON.parse(readFileSync(path.join(/* turbopackIgnore: true */ ROOT, 'data', 'services', base, 'name.json'), 'utf8')).name
+    if (typeof n === 'string' && n.trim()) return n.replace(/\s+/g, ' ').trim().slice(0, 60)
+  } catch { /* no name given by the core — the passport */ }
+  const address = shortName(named(service))
+  // the element's own passport `name` (the same order as `name-file.cjs` displayName): never its id or its address
+  const dir = serviceDir(base)
+  for (const rel of [['OWN-SERVICE-PROPS.json'], ['OWN-SERVICE-PROPS', 'OWN-SERVICE-PROPS.json']]) {
+    try {
+      const n = dir ? JSON.parse(readFileSync(path.join(dir, ...rel), 'utf8')).name : null
+      const c = typeof n === 'string' ? n.replace(/\s+/g, ' ').trim().slice(0, 60) : ''
+      if (c && c.toLowerCase() !== base.toLowerCase() && c.toLowerCase() !== address.toLowerCase()) return c
+    } catch { /* not this file */ }
+  }
+  return address
+}
+
 function shortName(nameOrAddress) {
   const s = String(nameOrAddress || '')
   let zone = ''
@@ -1103,7 +1127,7 @@ function shortName(nameOrAddress) {
 const callersOf = (items) => [...new Set(items.filter((it) => it.kind !== 'human').map((it) => shortName(it.from) || '?'))].join(', ')
 
 function askText(service, items, t) {
-  const a = shortName(named(service))
+  const a = personName(service)
   const calls = items.filter((it) => it.kind !== 'human').slice(-5)
   const human = items.filter((it) => it.kind === 'human').slice(-5)
   const lines = []
@@ -1188,7 +1212,7 @@ async function askEffort(service) {
   const token = storedToken(service)
   const p = readJson(pendingFile(service), null) ?? { id: randomBytes(6).toString('hex'), createdAt: new Date().toISOString(), items: [], asked: [] }
   const t = await askTable(service)
-  await moveAsk(service, token, p, t.effortAsk(shortName(named(service))), effortButtons(p, t))
+  await moveAsk(service, token, p, t.effortAsk(personName(service)), effortButtons(p, t))
   return { ok: true, pending: true, asked: p.asked.length }
 }
 
@@ -1268,7 +1292,7 @@ async function onButton(service, token, q) {
     return
   }
   const t = await askTable(service)
-  const a = shortName(named(service))
+  const a = personName(service)
   const c = callersOf(p.items)
   const human = allHuman(p.items) || p.items.length === 0
   // 666: шаги вопроса без запуска — следующий вопрос новым сообщением внизу.
@@ -1371,7 +1395,7 @@ async function askToClose(service, why, { reviewed = false } = {}) {
   if (!connected(service)) return { ok: true, asked: 0, reason: 'no-telegram' }
   const token = storedToken(service)
   const c = await closeTable(service)
-  const full = c[why === 'timeout' ? 'timeout' : 'done'](shortName(named(service)))
+  const full = c[why === 'timeout' ? 'timeout' : 'done'](personName(service))
   // После разбора в этой сессии — без второй строки (предложение разбора); строка «команды» (597-4) остаётся.
   const text = reviewed ? full.split('\n').filter((_, i) => i !== 1).join('\n') : full
   // 639: прежний вопрос «выключить?» этой сессии сменяется новым
@@ -1393,7 +1417,7 @@ async function tellUltraMissing(service) {
   const t = await askTable(service)
   let sent = 0
   for (const chat of access(service).allowed) {
-    const r = await sendKept(token, { chat_id: chat, text: (t.ultraMissing ?? ASK.en.ultraMissing)(shortName(named(service))), disable_web_page_preview: true }) // 639: остаётся — беда, которую человек должен знать
+    const r = await sendKept(token, { chat_id: chat, text: (t.ultraMissing ?? ASK.en.ultraMissing)(personName(service)), disable_web_page_preview: true }) // 639: остаётся — беда, которую человек должен знать
     if (r.ok) sent++
   }
   return { ok: true, sent }
@@ -1532,7 +1556,7 @@ async function tellWaiting(service) {
   if (!via) return { sent: 0 }
   const token = storedToken(via)
   const t = await askTable(via)
-  const a = shortName(named(service))
+  const a = personName(service)
   const link = `${coreOrigin()}/${personLang(via)}${sectionPaths(service).terminal}`
   const shown = []
   const chats = access(via).allowed
@@ -1556,7 +1580,7 @@ async function tellChannelFailed(service, waited) {
   if (!connected(service)) return { sent: 0 }
   const token = storedToken(service)
   const t = await askTable(service)
-  const text = (t.channelFailed ?? ASK.en.channelFailed)(shortName(named(service)), waited)
+  const text = (t.channelFailed ?? ASK.en.channelFailed)(personName(service), waited)
   let sent = 0
   const chats = access(service).allowed
   for (const chat of chats) {
@@ -1615,7 +1639,7 @@ async function tellTrust(key) {
   setTrustPending(map)
   const token = storedToken(MAIN_AGENT)
   const t = await askTable(MAIN_AGENT)
-  const a = shortName(named(element))
+  const a = personName(element)
   const asked = []
   const chats = access(MAIN_AGENT).allowed
   for (const chat of chats) {
@@ -1647,7 +1671,7 @@ async function answerTrustHere(service, token, chatId) {
   for (const key of trustWaitingVia(service)) {
     const out = typeof answer === 'function' ? await answer(key) : { ok: false, reason: 'not-mounted' }
     if (!out.ok) clearTrust(key)
-    const a = shortName(named(elementOf(key)))
+    const a = personName(elementOf(key))
     await sendVanishing(token, { chat_id: chatId, text: out.ok ? (t.trustDone ?? ASK.en.trustDone)(a) : (t.trustGone ?? ASK.en.trustGone)(a), disable_web_page_preview: true })
   }
 }
@@ -1675,6 +1699,8 @@ module.exports = {
   running, channelState, startIdlePoller, connected, askToStart, setStarter, setAdmitted, askToClose, personLang, setPersonLang, tellWaiting,
   // 597-4: the sleeping bot's decision — exported for the probe that checks it without a bot.
   idleDecision, thingOf,
+  // 847: the element's name for people in every line of its bot
+  personName,
   // 666: the effort after Opus, ultracode, the closing words — `onButton` and `askEffort` exported for the probe with a stub Bot API.
   EFFORTS, onButton, askEffort, tellClosed, tellUltraMissing,
 }

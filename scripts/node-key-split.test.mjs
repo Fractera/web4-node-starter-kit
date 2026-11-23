@@ -8,6 +8,7 @@
 // Negative controls: the comparison the doors had before 818-7 accepts what callerOf refuses; the guard finds a planted old door.
 import assert from 'node:assert/strict'
 import { createHmac } from 'node:crypto'
+import { execSync } from 'node:child_process'
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { createRequire } from 'node:module'
@@ -185,6 +186,24 @@ t('every door of the gate\'s list names its caller (the gate judges no key)', ()
     const files = routes(join(ROOT, 'app', p)).filter((f) => f === join('app', p, 'route.ts') || !ELEMENT_DOORS.some((q) => q !== p && q.startsWith(p + '/') && f.startsWith(join('app', q))))
     if (!files.length) lost.push(`${p}: no door`)
     for (const f of files) if (!readFileSync(join(ROOT, f), 'utf8').includes('callerOf(')) lost.push(`${f}: opened by the gate, names no caller`)
+  }
+  assert.deepEqual(lost, [])
+})
+// 847 (the aifa.dev server's agent, 2026-11-23 letter 1.3a: GET <element>/ru/tg/api/agent → 502 core-401 for s5f4u, ajd1u and cmdfc): the
+// template's Mini App asked the core's /api/node/my-agent with its own key, the door was in no list of the gate, and on a server (no owner
+// at the machine) the gate wanted a session. Every core door the custom template calls with its key must pass the gate by name.
+t('847 every core door the custom template calls with its own key passes the gate (element doors or public by name)', () => {
+  const W = join(ROOT, 'data', 'workshop', 'fractera-custom-item-starter')
+  if (!existsSync(W)) return
+  const src = readFileSync(join(ROOT, 'proxy', 'common.ts'), 'utf8')
+  const pub = [...src.slice(src.indexOf('const PUBLIC_API_PREFIXES = ['), src.indexOf(']', src.indexOf('const PUBLIC_API_PREFIXES = ['))).matchAll(/"(\/api\/[^"]+)"/g)].map((m) => m[1])
+  const passes = (p) => isElementDoor(p) || pub.some((q) => p === q || p.startsWith(q + '/'))
+  const files = execSync('git ls-files app lib scripts components', { cwd: W, encoding: 'utf8' }).split('\n').filter((f) => /\.(ts|tsx|mjs|cjs|js)$/.test(f))
+  const lost = []
+  for (const f of files) {
+    const text = readFileSync(join(W, f), 'utf8')
+    if (!/x-node-key|x-element-key/i.test(text)) continue
+    for (const m of text.matchAll(/\$\{core\}(\/api\/[a-z0-9/_-]+)/gi)) if (!passes(m[1].replace(/\/+$/, ''))) lost.push(`${f}: ${m[1]}`)
   }
   assert.deepEqual(lost, [])
 })
