@@ -302,6 +302,21 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-23 ~15:15 UTC — reset at 55 %; Opus max)
 
+**16:2x UTC — CORE BUILD STARTED ON THE MAC by Roma's word (Telegram 1212: «сделай сборку для теста потом зальем новую версию ядра и
+обновимся»).** Batch: 843/845 (0c1471be), 844 icons (7e184add), 846 deaf session restarted with the channel (23e55ec2), ANTI-PATTERNS
+server section (099d5aff). Started detached: `node scripts/spawn-free.mjs scripts/serve.mjs rebuild` → logs/core-build.log.
+CASE MATRIX (before-a-build) — after the build, cell by cell:
+| Cell | Proof after the build |
+| Mac, build | /api/health builtAt fresh, commit = HEAD; the core's static files 200; `npm run serve:status` all up |
+| Mac, my Telegram channel (telegram.cjs/bridge.cjs changed) | I come back and my bot replies reach Roma (main channel alive) |
+| Mac, 844 icons, a custom test element | POST a square PNG to localhost:<core>/api/architect/icons (item=<test element>) → ok+iconSet; the element's page head links /api/media/icons/<id>/file/… and that URL answers 200 FROM THE ELEMENT; negatives: a text file → 400 not-an-image; DELETE → head back to /api/config-image/icon-*; eyes of the field «Набор значков» |
+| Mac, 846 | covered by admitted-channel (5/5, negative control); no deaf session to reproduce on the Mac — named, not faked |
+| Server (wall), after Roma's «Обновить сборку ядра» | BEFORE = Diana (cmdfc) answers now (the server agent, 1208). AFTER = Roma writes «привет» to Diana's bot → it answers. 846 live shows on the next element whose bot is connected to a running session |
+| Server, 843 refreshAll / 845-B3 rename | not reproducible without a domain switch or a rename — named for Roma, not claimed |
+THEN: push origin + Fractera main (`git push origin main`, `git push fractera main` — check remotes), window for Roma «Обновить сборку ядра»
+on the server; never say «готово» before Diana answers after the update (memory walled-bot-regression-gate).
+
+
 **WHO WAITS:** Roma in TELEGRAM (chat 90413601, ru). Short, numbered, colour marks, own mistakes plainly, no blind build. The detailed
 log of today is in the dated blocks below this letter (10:25 … 14:45) — read them for clues.
 
