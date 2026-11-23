@@ -45,8 +45,8 @@ try {
   })
   t('the part rides in both prompt builders, after the chat rules and before the mode file', () => {
     const src = readFileSync(join(HERE, '..', 'lib', 'agent-kit', 'modes.cjs'), 'utf8')
-    assert.ok(/chatText\(mode\), ownAppText\(key\), file \?/.test(src), 'promptArgs')
-    assert.ok(/chatText\(modeOfKey\(key\)\), ownAppText\(key\), systemPart/.test(src), 'soulArgs')
+    assert.ok(/chatText\(mode\), ownAppText\(key\), surfacesText\(key, dir\), file \?/.test(src), 'promptArgs')
+    assert.ok(/chatText\(modeOfKey\(key\)\), ownAppText\(key\), surfacesText\(key, dir\), systemPart/.test(src), 'soulArgs')
   })
 } finally {
   process.chdir(here)

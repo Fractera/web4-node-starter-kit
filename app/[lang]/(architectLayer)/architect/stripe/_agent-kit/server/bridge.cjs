@@ -350,7 +350,7 @@ async function spawnAgent(service, notice = () => {}, wanted = () => true, first
   }
   // 591: душа узла (`lib/agent-kit/soul.md`) — в системной подсказке каждой сессии: у элемента с группами её кладёт `promptArgs`
   // первой, у остальных (главный агент, элемент старого шаблона) — здесь, одна.
-  if (!modes.hasGroups(cwd) && typeof modes.soulArgs === 'function') args = [...args, ...modes.soulArgs(path.join(process.cwd(), 'data', 'node', 'agent-prompts'), service)]
+  if (!modes.hasGroups(cwd) && typeof modes.soulArgs === 'function') args = [...args, ...modes.soulArgs(path.join(process.cwd(), 'data', 'node', 'agent-prompts'), service, cwd)]
   // 666: сессия подтверждённого ultracode знает это из своей подсказки: запрет на субагентов снят только в ней (`lib/agent-kit/ultracode.md`).
   if (ultra) args = markUltracode(args)
   // 426 (✗ 2026-10-07: первое сообщение из Telegram пропало целиком — вставка по «3 с тишины» ушла раньше, чем Claude Code начал

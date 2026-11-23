@@ -10,7 +10,7 @@ import { elementDir } from "@/lib/web4-items/element-github"
 // `GET /api/tg-menu` gives the same file to anyone else over loopback. An element without the file — no tree, one line why.
 
 type Words = { en: string; [lang: string]: string }
-type RawItem = { slug: string; title: Words; children?: Array<{ slug: string; title: Words }> }
+type RawItem = { slug: string; href?: string; title: Words; children?: Array<{ slug: string; title: Words }> }
 type RawMenu = { modes?: Array<{ id: string; title: Words; groups?: Array<{ items?: RawItem[] }> }>; common?: RawItem[] }
 
 export type TgTreeNode = { slug: string; title: string; children: TgTreeNode[] }
@@ -32,7 +32,8 @@ export function elementTgMenu(id: string, lang: string): TgMenu | null {
     title: pick(it.title, lang) || it.slug,
     children: (it.children ?? []).filter((c) => SLUG.test(c.slug ?? "x/") && c.slug).map((c) => ({ slug: c.slug, title: pick(c.title, lang) || c.slug, children: [] })),
   })
-  const ok = (it: RawItem) => SLUG.test(it.slug ?? "x/")
+  // 848: a `nav` item is a link to the element's real page (`href`), not a screen of its Mini App — the core's tree draws screens only.
+  const ok = (it: RawItem) => SLUG.test(it.slug ?? "x/") && typeof it.href !== "string"
   const modes = (raw.modes ?? []).map((m) => ({
     id: m.id,
     title: pick(m.title, lang) || m.id,

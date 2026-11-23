@@ -107,7 +107,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - GitHub: one fork, the token later, when needed; a repository for each element — by a button, one at a time; an element's token beats
   the shared one; the node is restored by cloning its own fork.
 - An element's Telegram bots — `npm run telegram`; write through the bot whose subject it is, and only when your task needs that
-  person.
+  person. Mini Apps: your bot's «Пульт» (autostart, channel, bot, power, model — `npm run tg-app`) and a custom element's own
+  `<its address>/tg` (its bot's menu button); what an element's pages are and who opens each — `npm run pages`.
 
 ## 3. Building blocks
 
@@ -349,6 +350,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   web search, a tool, a recurring job — lives in an element; find it or create it (native when the whole node needs it, e.g. web
   research with Exa or an analogue) and hand it the work; the element brings the result back.
 - Behaviour nobody ordered is never built: timers, polling, self-updating, automatic links — only by the architect's word.
+- **A Telegram Mini App is one person's remote** (the owner, 2026-11-23, step 848): navigation to the project's pages, a jump from a
+  section to a chat on its topic, short statistics, scheduled tasks and search; it grows by sections, analytics and build-control forms
+  and never copies a page, its mobile version or an app's function — the person acts on the real page, by role.
 - The machine lacks power — a consultation on moving to a stronger computer, never a refusal.
 - The person is never sent to the computer for what can be done from Telegram.
 - Your cost does not grow with the node; a live run of an agent is named with its price, a new resident process — with its price in
