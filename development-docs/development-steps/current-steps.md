@@ -462,6 +462,14 @@ deploy; report. AFTER it works: rename its address to f2f-marketplace (cert) and
 example slug is example-custom (the core's simulation links /marketplace/example-native and /marketplace/example-custom).
 The next build carries: 839-14 (node-busy lock, poison as the element), the market base, and the §6 law if the bot works.
 
+**01:25 — Roma 1093: «реальную заглушку … честный ответ пусть и отрицательный … почему ты не создал задание».** The full task REPLACING
+1090/1092 sent as 1094 (for the server agent to pass to lidt5 unchanged): catalogue = one JSON file, empty; POST /api/marketplace/search
+public, live: mode "live", items [] and an honest summary ru/en («пока нет элемента для «…»»); 400 (not JSON, v≠1, empty, >300), 429
+over 30/min/IP, log = time + words + count, no IP; GET /marketplace (what it is, the API standard with 400/429 examples, «Пока ни одного
+элемента»), /marketplace/<slug> from the catalogue, unknown → 404; proofs on loopback (200/400/400/429) and from the internet; deploy;
+report. Core (uncommitted→committed below): the rung's own fallback when the marketplace does not answer is honest too — «не ответил»,
+items [], no example pages (fractera-market.mjs simulatedMarket; test 7/7; live: ===MARKET_SIMULATION=== «… сейчас не ответил …»).
+
 **DONE TODAY (pushed, live):** 840 Pult + subscription page + element doors (core 993c9b59, 73f43eaa on Fractera); custom template v0.3.238
 (Roma ran the release; pinned); 841 search + «Нативные элементы» + marketplace search v1 (`npm run market`, price) — the fractera.ai side NOT
 built: the server's agent got the 841-3 task (window cb7347b1 done 22:13); fractera.ai/api/marketplace/search → 401, /marketplace → 307
