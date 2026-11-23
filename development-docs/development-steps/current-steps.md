@@ -398,6 +398,32 @@ QUEUE after the bot: (1) etuf1 Mini App rollout v0.3.238 on the server (template
 (2) the §6 law (Roma 1057); (3) 841-3 f2f-marketplace native element on fractera.ai with Roma (1076: «создать через меня и проверить
 существование … f2f-marketplace.fractera.ai … залил в него движок»), never built — the door answers 401; (4) clearPoison as the element.
 
+**00:31 — 839-13 PUSHED** 18ba9b22 (origin + Fractera, 00:29:23), prebuild-839-13 RC=0, «Проверить снова»: 1 change waits, trial merge
+passed. Telegram 1078: Roma forwards the restore block (etuf1's own 22:58:18 backup → .claude.json AS THE ELEMENT; check oauthAccount,
+onboarding, theme, fe-etuf1 600), presses «Обновить сборку ядра», writes the bot after my «сервер поднялся». Watching /api/health for a
+build newer than 23:29:07 (background b5swcwmbi).
+Prepared for later (NOT done): the etuf1 Mini App — NOT `template rollout` on the server (it writes the element's files and git AS THE
+NODE — the very class being forbidden); the element updates ITSELF: the server's main agent tasks etuf1's agent «git fetch --tags; merge
+v0.3.238 keeping your work; build; deploy (Preview → Accept)» as fe-etuf1. §6 law draft (English): «The wall is crossed only as the
+element: what an element owns — its Claude home, its bot's files, its data, its code — is written only by the element itself (on a
+server the helper's run); the node's user never writes, replaces or reinstalls inside it. A change that reaches a walled element ships to
+a server only with a proof that ran as such an element (the server's main agent, or a stub returning exactly what the real wall
+returns), named in the update request.» One later core build: the law + clearPoison as the element.
+
+**00:36 — Roma 1079: «без костылей … удаляю все кастомные на Fractera … новый кастомный шаблон абсолютно правильный, с правильным
+пультом … скажи когда могу повторить создание».** Server still on 88c0103c (839-12, broken) at 00:35. Telegram 1080: (1) delete (root
+= the fractera.ai site — warned); (2) BEFORE creating press «Обновить сборку ядра» (839-13 18ba9b22 waits); (3) create after my «сервер
+поднялся» — born from v0.3.238 (new Mini App). Then its own Claude sign-in, bot via the Pult «Бот», Start, first word — I watch its
+terminal screen and pages myself through his Chrome at each step. Said honestly: the walled bot path has never completed live. The etuf1
+restore block (1078) is moot if etuf1 is deleted.
+
+**00:56 — 839-13 LIVE on the server:** core bb9bb6f2 (builtAt 00:45:30, started 00:49:50), strip «Узел обновлён: 1 изменений форка,
+ядро bb9bb6f2» (the strip lagged «Узел обновляется · сборка ядра» ~6 min after the start — do not call «поднялся» before it turns), the
+main agent's bot banner gone. Menu: «Главный сайт» (root) still there, marketplace (etuf1) gone. Telegram 1081: «можно создавать».
+NEXT: Roma creates the new custom element (v0.3.238) → I watch through his Chrome: its pages, the Mini App, its sign-in (Подписка Claude
+Code), the bot via the Pult «Бот», Start, the first word; the server log lines «[agents] <id>: … доверенными», «[telegram] <id>: …», no
+«канал Telegram не встал». Then: the §6 law + clearPoison as the element (one build), 841-3 f2f-marketplace.
+
 **DONE TODAY (pushed, live):** 840 Pult + subscription page + element doors (core 993c9b59, 73f43eaa on Fractera); custom template v0.3.238
 (Roma ran the release; pinned); 841 search + «Нативные элементы» + marketplace search v1 (`npm run market`, price) — the fractera.ai side NOT
 built: the server's agent got the 841-3 task (window cb7347b1 done 22:13); fractera.ai/api/marketplace/search → 401, /marketplace → 307
