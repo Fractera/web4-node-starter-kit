@@ -302,6 +302,21 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-23 ~15:15 UTC — reset at 55 %; Opus max)
 
+**21:5x UTC — 848 BUILT IN CODE, the Mac core build starts (Roma 1227: non-stop, builds as needed).** Done: core 153c9006 (847: my-agent
+element door + guard over the template's keyed calls; the bot names elements by name.json → passport), 6e4a9e8f (848 core: law §6 + §2
+line, sealed 85259d2fd9ce; surfaces card in element prompts; npm run pages; core tree skips nav links), template v0.3.240 (aaa37f3: kinds,
+nav href, check:tg-menu warn, door /api/pages, element name at the top, purpose in instruction + skill, eed45ee + 7b32c1a) and v0.3.241
+(0d78e06: title skips the CONFIG name of a linked element) — released with Roma's gh key for one run (TEMPLATE_GITHUB_TOKEN), pinned
+778c5f4f, fork pushed. 848-6 NOT built: the chat jump already exists (821/840-4: Mini App closes, the context door, «Вы пришли из
+раздела»), so no /start t- prefix and no collision. 848-8 (a Mini App per person) — its own design later. Local tag v0.3.239 never
+reached GitHub — left as is.
+AFTER THE BUILD (proofs): serve:status + /api/health; my Telegram channel answers; a NEW test custom element on the Mac from v0.3.241
+(`npm run create … --no-wake`, skill create-element) → eyes of /ru/tg at 390 px (title = its name, drawer, kinds), `npm run pages --
+<id>` (pages with access + Mini App kinds), its surfaces card (data/node/agent-prompts/<id>.md after a wake — or modes.surfacesText);
+then push Fractera main, window for Roma «Обновить сборку ядра» on aifa.dev, Diana answers «привет» after (the wall gate), and Roma
+creates a new element on the server and opens its Mini App.
+
+
 **16:33 UTC — BUILT AND PUSHED:** core b9fa0bec live on the Mac (builtAt 16:24:51, serve:status all on except cache/stripe by default);
 origin and Fractera main = b9fa0bec. Icons on the Mac: text file → 400 not-an-image (negative ✓); PNG → upload+generate passed, the
 write refused honestly 409 template-older (cck60 carries f2f-marketplace code; root is CONFIG-linked, the tab shows «Из CONFIG», eyes
