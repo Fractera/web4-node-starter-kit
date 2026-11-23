@@ -440,6 +440,28 @@ startBirth («node-updating» → the birth door 400 + message shown in the birt
 each, no node backup) — walled-channel 11/11. prebuild-839-14 RC=0. Push + «Проверить снова» + Roma's one press AFTER his element test,
 together with the §6 law if the bot works. Open question (not touched): a «native» birth is recorded kind 'user' → walled on a server.
 
+**01:05 — Roma 1087 (decision, his question «внутренние процессы всегда на английский?» answered yes, 1089):** an English project got
+the element birth's progress in Russian. Rule (my pick, sent): the stage lines of internal processes (birth, node update, deploy, build)
+— ALWAYS English, one source, no translations; what the person reads as an interface (buttons, windows, the Pult, the node's Telegram
+messages) — the person's language from the two dictionaries (ru for Russians, en for everyone else — his decision 2026-11-17); agents
+speak the person's language. A separate step AFTER the bot test: first the inventory of places (item-birth.mjs, node-update.mjs,
+deploy-elements.mjs, serve.mjs …, and the tests that match those Russian lines), shown to Roma, then the change.
+
+**01:15 — 841-3 f2f-marketplace: the element exists on the server (Roma 1089):** id lidt5, name f2f-marketplace, NATIVE, port 24684,
+address lidt5.fractera.ai (answers; f2f-marketplace.fractera.ai: DNS → 109.199.105.213 but TLS «unrecognized name» — no nginx/cert for
+that name), own Claude subscription connected. Telegram 1090: the build task for lidt5's agent (via the server's main agent, npm run task)
+— POST /api/marketplace/search public v1 (400 on v≠1/empty, simulation with two examples, base from its own public address, 30/min per
+IP, no query+IP stored), GET /marketplace (API standard page) + /marketplace/<slug>; proofs: v1 JSON, v2 → 400, /marketplace 200;
+deploy; report. AFTER it works: rename its address to f2f-marketplace (cert) and change the core's default market base
+(lib/web4-items/fractera-market.mjs: FRACTERA_MARKET_URL else https://fractera.ai) to that address — one line, rides in the next build.
+
+**01:20 — f2f-marketplace address LIVE:** Roma renamed lidt5's address → https://f2f-marketplace.fractera.ai, certificate CN=that name
+(notAfter 2027-02-21), / → 200, /api/marketplace/search → 401 (the door not built yet). Core (uncommitted): fractera-market.mjs MARKET_BASE
+= https://f2f-marketplace.fractera.ai (default of marketSearch and simulatedMarket; FRACTERA_MARKET_URL still overrides); test 7/7; live:
+`npm run market -- "монтаж видео"` → ===MARKET_SIMULATION=== with links on f2f-marketplace.fractera.ai. Correction sent (1092): the second
+example slug is example-custom (the core's simulation links /marketplace/example-native and /marketplace/example-custom).
+The next build carries: 839-14 (node-busy lock, poison as the element), the market base, and the §6 law if the bot works.
+
 **DONE TODAY (pushed, live):** 840 Pult + subscription page + element doors (core 993c9b59, 73f43eaa on Fractera); custom template v0.3.238
 (Roma ran the release; pinned); 841 search + «Нативные элементы» + marketplace search v1 (`npm run market`, price) — the fractera.ai side NOT
 built: the server's agent got the 841-3 task (window cb7347b1 done 22:13); fractera.ai/api/marketplace/search → 401, /marketplace → 307

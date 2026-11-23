@@ -11,7 +11,7 @@ check('negative: a price in another currency or below zero is no price', marketA
 check('negative: another version is not a v1 answer', marketAnswer({ v: 2, summary: 's', items: [] }) === null, null)
 check('negative: no summary — not an answer', marketAnswer({ v: 1, items: [] }) === null, null)
 const sim = simulatedMarket('музыкальные клипы', 'ru')
-check('the stand-in says it is a simulation, in the person\'s language, with public pages', sim.mode === 'simulation' && sim.summary.includes('имитируется') && sim.items.every((x) => x.url.startsWith('https://fractera.ai/marketplace/')), sim)
+check('the stand-in says it is a simulation, in the person\'s language, with public pages', sim.mode === 'simulation' && sim.summary.includes('имитируется') && sim.items.every((x) => x.url.startsWith('https://f2f-marketplace.fractera.ai/marketplace/')), sim)
 const off = await marketSearch('video editing', { lang: 'en', base: 'http://127.0.0.1:9', timeoutMs: 1500 })
 check('negative: a silent marketplace gives the marked simulation, never an empty offer', off.mode === 'simulation' && off.items.length >= 2 && Boolean(off.why), off)
 
