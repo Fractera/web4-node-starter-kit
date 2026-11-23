@@ -319,6 +319,94 @@ on origin + Fractera = 839-14 node-busy lock (birth ⟂ update) + clearPoison as
 overflow fix, lib/node/tg-app/bot-setup.cjs, eyes-proven 390 px: 443→348 of 390). Push it before asking for the update (then press
 «Проверить снова» again through the extension: tab group via tabs_context_mcp createIfEmpty).
 
+**10:25 UTC (after the reset):** told Roma (1110) I am back, waiting for the bot answer. Push of 99ad22d7 was REFUSED by the
+auto-mode classifier — still unpushed, ask Roma / push with the release batch. Step 2 done in the workshop: eed45ee (TgHead H1
+truncate + back link max-w-full + line break-words); eyes 390 light/dark logs/eyes/2026-11-23T10-21-33-007Z.png, -37-919Z.png
+(box 68-374 «…»), negative (old code) 10-21-58-598Z.png the word past 390. Release v0.3.239: dry OK (every guard green), real release ===TEMPLATE_NO_RIGHT=== 403 on Fractera/fractera-custom-item-starter
+(the node's token has no write — likely the one Roma revoked, 1103). Asked Roma (1114): a new node GitHub key or push with the Mac's gh
+(Fractera, repo scope)? Also the bot question. A junk ask-person window «--help» (9ff0ba24) was put by mistake and dropped — never run
+ask-person with --help. Ready to ship on his answer: release v0.3.239, pin, push core (99ad22d7 + pin + this letter).
+
+**11:15–11:30 UTC:** Roma back (1115): throughsongs.com 200 / architect 200 via Cloudflare 188.114.97.5; www → 109.199.105.213 (a stray A
+record, offered to fix) — 1116. 1117: design tests on the Mac's node while its domain answers → yes (1118), Pult design first (his
+22.11: bolder colours, per element card: account, context fill, subscription use), picture before code — waits his «идёт».
+1119 (max thinking): switch the server from aifa-agi fork to a Fractera repository? Answered 1121 from code: the original itself is
+refused in 3 places (scripts/check-origin.mjs «Это сам оригинал», scripts/node-update.mjs:185 verdict!=fork, lib/hosting/server-repo.mjs
+'original'); a fork in a Fractera-owned account is lawful (808 own mode, launch.mjs:136 compares with repo.json) BUT no switch for an
+installed node: repo.json alone → relationOf other-fork → «unrelated» → set aside + reinstall. My pick: a new step «Сменить форк»
+(verify same commit, set origin + repo.json, recheck origin) — one server update. Asked: which GitHub account owns the server's fork.
+Server element repos «none per my records» — UNVERIFIED, check on the server before the switch.
+
+**11:20–11:40 UTC — Roma 1122: the server must create/delete repos (private too) and write; I write the element's code (f2f-marketplace),
+the server pulls and tests; red banner in its GitHub tab.** Found in code: create private per element EXISTS (POST /user/repos,
+lib/web4-items/element-github.ts, auto on key save + «Создать и выгрузить»), push by button EXISTS; DELETE not built; pulling an
+element's OWN repo not built (element-update.ts fetches only Fractera tags). Red banner = no working key (github-token-alarm). The Mac's
+key: aifa-agi, expires 2026-12-16, writes the fork; aifa-agi can NOT push the original (npm run owner → only gh/Fractera). GitHub docs
+(primary, docs.github.com REST repos): create private — classic `repo`; delete — classic `delete_repo`. Answered 1125: classic key of
+aifa-agi with repo, workflow, delete_repo pasted in the server's GitHub tab (window ad839d3d put); no fork switch needed. To build (one
+core step, on his yes): «Удалить репозиторий» (AppDialog; only a node-created repo) + «Забрать из GitHub» (ff-only, refuse on divergence,
+then Preview → Accept); my workshop clone of the element repo on the Mac. Asked: where is yesterday's repo (connect or let the node
+create). My Chrome profile is NOT signed in on architect.fractera.ai (saw «Войти»).
+
+**11:30–11:45 UTC — verified on the server through his Chrome (session admin@fractera.ai alive; JS fetch of the doors):** node key
+…4U7n = aifa-agi, canWrite fork, expires 2026-11-30 (7 days!). Repos job never ran: creation is a per-element button (381), saving the
+key does NOT start it — I was wrong in 1125, said so (1131). root, z8asv: repo=null (z8asv dirty=1). lidt5 f2f-marketplace (kind
+'user'): repo Fractera/f2f-marketpalce (typo), never pushed, last checked with the revoked Fractera key; his photo 1130: trial push 403.
+www.throughsongs.com → 109.199.105.213 = the fractera.ai SERVER's IP (not «foreign» as I said in 1116) — corrected in 1131.
+1133: the element's own FINE-GRAINED Fractera token, only that repo, Contents+Workflows RW (never a classic Fractera key: it opens the
+original) + rename to f2f-marketplace — window b5fe26e9. Asked his yes: build «Забрать из GitHub» + «Удалить репозиторий» and create
+repos for root and test. Window ad839d3d (server key) — done 11:29.
+
+**11:35 UTC — Roma 1134 (irritated): «отвали с репозиторием тест», only f2f-marketplace: fork to aifa-agi?** → 1137: no fork; my gh
+(Fractera) has push+admin on Fractera/f2f-marketpalce (gh api: public, EMPTY, created 01:31). Only the server lacks write: window
+91078b6b (fine-grained Fractera token, only that repo, Contents+Workflows RW, pasted in the marketplace's GitHub tab; no rename — dropped
+b5fe26e9). Then: the server uploads, I clone into a Mac workshop and push, I build «Забрать из GitHub» (his order 1122). Asked: make the
+repo PRIVATE before code goes there (his concept: sold f2f from a private repo). Drop root/test repo talk for good.
+
+**11:50 UTC — f2f-marketplace repo WORKS:** the element's own token …4p2L (Fractera, until 2026-12-23, canWrite; classic or fine-grained
+UNKNOWN — asked in 1142); Roma renamed the repo to Fractera/f2f-marketplace (the server still stores «f2f-marketpalce», GitHub redirects)
+and made it PRIVATE himself (1144). He pressed «Отправить в GitHub» 11:48:45 → 9b5c671 on GitHub (3 commits, 1079 files, only
+.env.example-like files). Mac workshop clone: data/workshop/f2f-marketplace (https + per-repo credential.helper «!gh auth git-credential»;
+ssh clone fails — no ssh key here), push dry-run OK. 1145: the server takes my commits today through the marketplace's own agent (its bot:
+«забери из GitHub и покажи предпросмотр»), later the «Забрать из GitHub» button (core); asked «пушь» (the classifier refused my push after
+the reset) and «с чего начинаем в маркетплейсе?».
+
+**11:55 UTC — Roma 1146: a native birth has no «start from a repository» window?** Confirmed from code: birth door
+(app/api/architect/drafts/[id]/birth/route.ts) — native (582) asks nothing, template only; custom own-app only (server only, 809-1) has
+source starter|repo, and repo-owner.mjs demands the node's account (server: aifa-agi → Fractera/… refused «сделайте Fork»). Workaround
+today: template birth → «Создать и выгрузить» → «Заменить код из другого репозитория» (import door, 374-6, needs a previous repo).
+1147 proposed ONE step: native birth window «Шаблон Fractera / Репозиторий + ключ» (check the key's access like import, not the owner)
++ «Забрать из GitHub»; plan first, then code; also named the known defect (native birth on a server recorded kind 'user', walled).
+Waits: his yes, «пушь».
+
+**12:46–13:00 UTC — Roma 1148: a minimal one-screen landing in the marketplace, ru+en, and how it reaches the server.** Done in the
+Mac workshop: home `_data/{en,ru}.json` → one section-hero-centered («F2F Marketplace» / «Маркетплейс F2F» + one line), `bare` dropped
+from meta.json (bare draws widgets only — the first eyes showed an empty main), the element's current-step.md noted; prebuild RC=0,
+eyes logs/eyes/2026-11-23T12-52-40-803Z.png (390 ru) and 12-52-46-636Z.png (1440 en dark), no console errors; commit fe9d4d7 PUSHED to
+Fractera/f2f-marketplace (push to the element repo passed the classifier). Window d9b70008: he asks the marketplace's agent on the server
+to pull fe9d4d7 + preview, then «Принять»; on «Готово» I check https://f2f-marketplace.fractera.ai (expect «Маркетплейс F2F»).
+1150 answered (1152): the marketplace is one native element, not a template; only in the Fractera server's registry (not the core's
+preinstalled set; foreign-born 784 drops it from fresh nodes); he talks mainly to its agent on the server, I orchestrate.
+
+**13:05 UTC — window d9b70008 «Готово» but NOT done:** live https://f2f-marketplace.fractera.ai still the old landing (/api/health
+builtAt 01:40:32); server lidt5 head 9b5c671, running 196a7dc, pending (the deploy door). Roma 1154 (photo of the element's «Предпросмотр
+и развёртывание»): a banner like the core's update banner instead of acting only through AI. 1155: agreed — on every element's Preview &
+Deploy page: «В GitHub новая версия: N коммитов» + «Проверить снова» (git fetch, no model) + «Забрать» (ff-only; refuse on divergence or
+uncommitted work) → the usual Preview / Deploy; replaces my «Забрать из GitHub» idea. Asked «да, пушь». Today's landing only via the
+marketplace's agent (one line to its bot).
+
+**13:10–13:45 UTC — Roma 1156 (photo: the Mac's server page after a NEW server install 12:34→13:03, version 7b3efca0, button
+«Установить» still lit):** cause — strategyOf took the probe made BEFORE the install (empty server); fix 1ce046ec (a done launch =
+latest until a check finds the fork ahead); told him (1159): do not press it, his next step is 6 «Telegram-бот сервера».
+**1157 «да, строишь баннер, привозишь … гарантируй стену» → step 842 built:** 6747b4ce + f06e9a69 (element-pull.mjs, door
+/api/architect/items/[id]/github/pull, banner element-pull.client.tsx above ElementDeploy, words element-pull.i18n.ts; the node's fetch
+with core.sharedRepository=group + --no-write-fetch-head + no gc, the merge as the element via asElement; test 22/22 with real git,
+positive + negative under umask 022; trap recorded in server-wall §5). Prebuild RC=0. NEXT: Mac core build (serve:rebuild:detached) →
+on return: serve:status, the Mac's hosting page no «Установить» for the finished install (his server), the door GET for root →
+not-connected (banner absent — the negative plane) → push fork + Fractera (his «привозишь» = yes) → «Проверить снова» on the server page
+via his Chrome → he presses «Обновить сборку ядра» → on the server: the marketplace page «Проверить снова» → «Забрать» fe9d4d7 → head
+moves, «Предпросмотр» builds → «Принять» → https://f2f-marketplace.fractera.ai shows «Маркетплейс F2F».
+
 **NEXT, in order:**
 1. Roma's answer about the test bot. Yes → write the §6 law (his order 1057, draft in 1058; English text in the 00:31 block below) into
    CLAUDE.md §6, `npm run check:instruction -- --seal`, commit. No → look at z8asv's terminal screen myself through his Chrome
