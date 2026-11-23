@@ -350,6 +350,14 @@ start. The agent reported no .env/.token.node (likely `ls -l` without -a). Share
 the process args (--channels), the tools. OWED FIX (offered, waits his yes): the node restarts an element's agent with the channel when
 its bot is admitted while a session runs without it.
 
+**16:25 — 846 COMMITTED 23e55ec2 (not built):** Diana works since the server agent's restart (main-agent-task; its 1208 letter: close+wake
+only ASKS the person for an element with a bot). Fix: bridge `channelAfterAdmission` (admission → restartSame after the turn) and
+`closedForChannel` in wake's live branch (the person's «Включить» on a deaf session → stop after the turn → same conversation with the
+channel + the words); askText says `deaf` instead of «выключен» (Roma 1209/1210 screenshot: «Агент cmdfc выключен» at 15:53 while the
+session ran). Test admitted-channel 5/5 in prebuild (negative control done), server-wall trap + silent-bot checklist, 12 kit copies
+synced. Not done: a wake flag for the main agent (server letter point 2). BATCH waiting Roma's «собирай»: 843/845 + 844 + 846. Proofs
+after: Mac — icons on a test element; server — Diana answers «привет» after the update (before = now).
+
 **OPEN with Roma:** the gh key for the template release (1183); the Mac twin cck60 «F2F-маркетплейс» still has the template's code —
 import needs «Создать и выгрузить» then «Заменить код из другого репозитория» Fractera/f2f-marketplace with a Fractera key (window), or
 build native-birth-from-repo (proposed in 1147, not ordered yet). Queue: the same class-A audit in the template workshops; internal
