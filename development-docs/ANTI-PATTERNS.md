@@ -106,3 +106,16 @@ warned earlier. The section stays short: a lesson that a guard or the code now h
 - **Outgoing connections take ports 32768–60999** (Windows from 49152): a permanent listener in that range fails unreproducibly. The node's
   ports stay in 24680–25679; 3000 is never taken — the person's own projects live there.
 - **Autostart is systemd;** `pm2 startup` needs sudo.
+
+## Server: the wall and the element bots (Linux, dedicated server)
+
+- **A core update reached the server and new elements' Telegram bots stopped answering — five times** (2026-11-18 … 2026-11-23, the owner
+  without sleep for four nights): each fix of a walled element's bot was followed by a core update that was never checked against the bot
+  — 839-6…8 (sign-in read as the node, `.env` chmod EPERM), 839-10/11 (the node's `claude plugin install` wrote over the element's
+  `.claude.json`), 839-12 (per-session trust question), 839-13 (the wall check `=== true` → the node overwrote the element's own file),
+  2026-11-23 the 842 update shipped unchecked and the new element cmdfc's bot was silent. Why: the traps lived only in the skill
+  `server-wall`, read after the failure, never before the update. What to do: before ANY core update bound for a server — read
+  `server-wall` §5–6 against every file of the batch, and a test element's bot behind the wall answers «привет» BEFORE the update and
+  AFTER it; without both answers the update is not proven and «готово» is never said. A batch that touches Telegram, an agent's start,
+  an element's Claude home or the channel is named to the owner file by file before he presses «Обновить». Guard: none yet — the step
+  that builds one is owed.
