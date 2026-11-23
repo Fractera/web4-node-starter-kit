@@ -302,6 +302,14 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 ## Letter to my next session (written 2026-11-23 ~15:15 UTC — reset at 55 %; Opus max)
 
+**16:33 UTC — BUILT AND PUSHED:** core b9fa0bec live on the Mac (builtAt 16:24:51, serve:status all on except cache/stripe by default);
+origin and Fractera main = b9fa0bec. Icons on the Mac: text file → 400 not-an-image (negative ✓); PNG → upload+generate passed, the
+write refused honestly 409 template-older (cck60 carries f2f-marketplace code; root is CONFIG-linked, the tab shows «Из CONFIG», eyes
+2026-11-23T16-31-38-200Z.png) — the field is seen live only on an app of its own: Diana on the server. FOUND: an orphan icon set stays in
+storage when the element cannot take it → next build: ask the element (declared iconSet, not linked) BEFORE the upload. Window 2f084901
+for Roma: «Проверить снова» → «Обновить сборку ядра» on architect.aifa.dev; AFTER: Diana answers «привет» (the wall gate), optionally
+the icon field on Diana. Telegram 1216 sent.
+
 **16:2x UTC — CORE BUILD STARTED ON THE MAC by Roma's word (Telegram 1212: «сделай сборку для теста потом зальем новую версию ядра и
 обновимся»).** Batch: 843/845 (0c1471be), 844 icons (7e184add), 846 deaf session restarted with the channel (23e55ec2), ANTI-PATTERNS
 server section (099d5aff). Started detached: `node scripts/spawn-free.mjs scripts/serve.mjs rebuild` → logs/core-build.log.
