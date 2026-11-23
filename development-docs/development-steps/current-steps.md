@@ -336,6 +336,12 @@ the agent with the channel itself at the bot's activation (offered for the batch
 server's agent read-only (wall trap). PROMISED (1189): a wall audit of the batch's three Telegram touches (843: main bot «Пульт» refresh
 at admission; refreshAll at domain activation; element-move rewrites address + refreshElement) before any build. NO BUILD without «собирай».
 
+**16:00:** Roma (1197, 1202): four nights without sleep; the file he made for my lessons is ANTI-PATTERNS.md — the walled-bot lesson
+written there (099d5aff) + memory walled-bot-regression-gate. cmdfc («Diana») agent restarted by him, bot still silent. I cannot see the
+server (no sign-in in my Chrome on architect.aifa.dev). Sent him (1205) a READ-ONLY question for the server's main agent: does cmdfc's
+agent have mcp__plugin_telegram_telegram__* tools; core pm2 «[telegram] cmdfc» lines; the element's telegram MCP log as the element;
+ls -l of its channel folder and plugin; fe-cmdfc processes; the core commit. NEXT: diagnose from the facts, no blind build.
+
 **OPEN with Roma:** the gh key for the template release (1183); the Mac twin cck60 «F2F-маркетплейс» still has the template's code —
 import needs «Создать и выгрузить» then «Заменить код из другого репозитория» Fractera/f2f-marketplace with a Fractera key (window), or
 build native-birth-from-repo (proposed in 1147, not ordered yet). Queue: the same class-A audit in the template workshops; internal
