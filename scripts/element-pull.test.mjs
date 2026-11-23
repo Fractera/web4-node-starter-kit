@@ -2,7 +2,7 @@
 // helper stubbed in its REAL shape (`asElement` returns `{ cmd, args, wrapped }`, server-wall trap 839-13), proving that only the move
 // of the working tree goes as the element. Run: node scripts/element-pull.test.mjs
 import { spawnSync } from 'node:child_process'
-import { mkdtempSync, rmSync, writeFileSync, readFileSync } from 'node:fs'
+import { mkdtempSync, rmSync, writeFileSync, readFileSync, existsSync, readdirSync, statSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import * as pull from '../lib/web4-items/element-pull.mjs'
@@ -37,8 +37,13 @@ try {
   // the workshop writes and pushes; the element asks GitHub
   writeFileSync(join(writer, 'page.json'), '{"title":"new"}\n')
   sh(writer, 'commit', '--quiet', '-am', 'landing'); sh(writer, 'push', '--quiet', 'origin', 'HEAD:main')
+  const objDirs = (repo) => readdirSync(join(repo, '.git', 'objects')).filter((d) => /^[0-9a-f]{2}$/.test(d))
+  const before = new Set(objDirs(el))
   const f = pull.fetchRemote(el, hub)
   check('fetch into its own ref', f.ok, JSON.stringify(f))
+  check('no FETCH_HEAD left by the node (the element\'s own fetch writes it in place)', !existsSync(join(el, '.git', 'FETCH_HEAD')))
+  const made = objDirs(el).filter((d) => !before.has(d)).map((d) => statSync(join(el, '.git', 'objects', d)).mode)
+  check('every object folder the fetch made is group-writable (the wall\'s ACL keeps the element rwX)', made.length > 0 && made.every((m) => (m & 0o020) !== 0), made.map((m) => (m & 0o777).toString(8)).join(','))
   const c = pull.counts(el)
   check('one commit behind, none ahead', c.fetched && c.behind === 1 && c.ahead === 0, JSON.stringify(c))
   check('origin untouched (the template ref stays where it was)', sh(el, 'rev-parse', 'origin/main') === born)
@@ -73,6 +78,13 @@ try {
   check('diverged counted', c2.ahead === 1 && c2.behind === 1, JSON.stringify(c2))
   const g = pull.fastForward('/node', el, { asElement })
   check('diverged refused', !g.ok && g.error === 'diverged', JSON.stringify(g))
+
+  // negative control for the permission check: a plain fetch (no shared flag) under umask 022 leaves folders without group write
+  sh(base, 'init', '--quiet', join(base, 'plain2'))
+  const p2 = join(base, 'plain2')
+  spawnSync('sh', ['-c', `umask 022 && git -C '${p2}' fetch --quiet '${hub}' +refs/heads/main:refs/remotes/x/main`])
+  const plainDirs = readdirSync(join(p2, '.git', 'objects')).filter((d) => /^[0-9a-f]{2}$/.test(d)).map((d) => statSync(join(p2, '.git', 'objects', d)).mode)
+  check('negative: a plain fetch under umask 022 makes folders the element could not write', plainDirs.length > 0 && plainDirs.some((m) => (m & 0o020) === 0), plainDirs.map((m) => (m & 0o777).toString(8)).join(','))
 
   // a wrong address — a machine word, no git output
   const bad = pull.fetchRemote(el, join(base, 'nowhere.git'))

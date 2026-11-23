@@ -69,6 +69,11 @@ LOGNAME, SHELL, NODE_OPTIONS.
 
 ## 5. Traps already paid for (newest first; add every new one here with its date and fix)
 
+- 2026-11-23 842 (caught before shipping, not paid): the node's `git fetch` into a walled element's folder would leave loose-object
+  folders 0755 (the node's umask 022 → the ACL mask r-x: the element's next commit into that folder fails) and a FETCH_HEAD written in
+  place (the element's own fetch → EACCES). Fix: the node's git writes in an element folder carry `-c core.sharedRepository=group`,
+  `--no-write-fetch-head`, no automatic gc; a token never rides a sudo command line (sudo logs it), so the fetch stays the node's and the
+  working-tree move goes as the element (`lib/web4-items/element-pull.mjs`, test with a negative under umask 022).
 - 2026-11-22 839-12: past the first-run marks a walled element's session stood on Claude Code's trust question for its data folder («Adding
   a new directory … Your answer holds for this session») — its own Claude home never trusted the node's repository, so the `--add-dir`
   of `data/services/<id>` asks on EVERY session, and the node's trust watcher answers once per session and only on a Telegram-confirmed
