@@ -26,6 +26,8 @@ import { elementGithubUi } from '../../../_i18n/element-github.i18n'
 import { elementDeploymentsUi } from '../../../_i18n/element-deployments.i18n'
 import { elementDeployUi, rejectTaskUi } from '../../../_i18n/element-deploy.i18n'
 import { ElementDeploy } from '../../../_components/element-deploy.client'
+import { ElementPull } from '../../../_components/element-pull.client'
+import { elementPullUi } from '../../../_i18n/element-pull.i18n'
 import { ElementRollback } from '../../../_components/element-rollback.client'
 import { elementCodeState } from '@/lib/web4-items/element-code-state'
 import { elementDir } from '@/lib/web4-items/element-github'
@@ -472,7 +474,9 @@ export default async function Page({ params }: { params: Promise<Params> }) {
     : null
 
   // 337-3/4: «Развернуть» и «Предпросмотр» — на своей странице элемента, а не только в ядре (слово владельца 2026-09-29).
-  const deployPanel = isDeployments && entry ? (
+  const deployPanel = isDeployments && entry ? (<>
+    {/* 842 (the owner, 2026-11-23, Telegram 1154): the element's GitHub commits taken by a button, above «Развернуть» */}
+    <ElementPull id={item} lang={lang} ui={elementPullUi(lang)} />
     <ElementDeploy
       id={item}
       lang={lang}
@@ -481,7 +485,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       // Терминал рождённого элемента — `<адрес>/terminal` (797), а не путь служб ядра (`terminalLink`): замерено 356-3, тот вёл на ошибку.
       reject={{ ui: rejectTaskUi(lang), dialogUi: appDialogUi(lang), keyHref: openAiKeyHref(item, lang), terminalPath: `/${lang}/architect/${slug}/terminal` }}
     />
-  ) : null
+  </>) : null
   // 344-3: итог последней выкладки копии публичных страниц в Cloudflare (`data/services/<id>/static-copy.json`); нет своего
   // домена или выкладок не было — строки нет.
   const copy = isDeployments && entry ? readStaticCopy(item) : null

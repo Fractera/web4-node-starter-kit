@@ -3037,6 +3037,7 @@
         ]
       },
       "usedBy": [
+        "app/[lang]/(architectLayer)/_components/element-pull.client.tsx",
         "components/architect/main-channel-band.client.tsx"
       ]
     },
@@ -3162,6 +3163,7 @@
         "app/[lang]/(architectLayer)/_components/element-messenger-settings.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-mini-app.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-power.client.tsx",
+        "app/[lang]/(architectLayer)/_components/element-pull.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-rollback.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-web4.client.tsx",
         "app/[lang]/(architectLayer)/_components/owner-band.client.tsx",
@@ -4362,6 +4364,7 @@
         "app/[lang]/(architectLayer)/_components/element-domain.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-github.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-mini-app.client.tsx",
+        "app/[lang]/(architectLayer)/_components/element-pull.client.tsx",
         "app/[lang]/(architectLayer)/_components/live-log.client.tsx",
         "app/[lang]/(architectLayer)/architect/[item]/_agent-kit/client/claude-subscription.client.tsx",
         "app/[lang]/(architectLayer)/architect/[item]/_agent-kit/client/telegram-channel.client.tsx",
@@ -4640,6 +4643,7 @@
         "app/[lang]/(architectLayer)/_components/element-github.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-messenger-settings.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-mini-app.client.tsx",
+        "app/[lang]/(architectLayer)/_components/element-pull.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-web4.client.tsx",
         "app/[lang]/(architectLayer)/_components/main-agent-elements.tsx",
         "app/[lang]/(architectLayer)/architect/[item]/_agent-kit/client/telegram-channel.client.tsx",

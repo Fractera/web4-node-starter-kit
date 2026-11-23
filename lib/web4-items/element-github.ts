@@ -5,6 +5,7 @@ import { join } from "node:path"
 import paths from "@/lib/web4-items/paths.cjs"
 import { machineArgs } from "@/lib/deploy/git-identity.mjs"
 import { NODE_WRITES } from "@/lib/web4-items/element-code-state"
+import * as pull from "@/lib/web4-items/element-pull.mjs"
 import { checkAccess } from "@/app/[lang]/(architectLayer)/architect/build/github/_github/server/github.cjs"
 import { SHAPE, storedToken } from "@/app/[lang]/(architectLayer)/architect/build/github/_github/server/token.cjs"
 
@@ -41,7 +42,7 @@ export type ElementGithubState = {
   activeTail: string | null
 }
 
-type Stored = { repo?: string; login?: string | null; expires?: string | null; lastPushedAt?: string; lastCommit?: string }
+type Stored = { repo?: string; login?: string | null; expires?: string | null; lastPushedAt?: string; lastCommit?: string; checkedAt?: string; lastPulledAt?: string }
 
 function readStored(id: string): Stored {
   try { return JSON.parse(readFileSync(stateFile(id), "utf8")) as Stored } catch { return {} }
@@ -431,4 +432,41 @@ export async function createAllElementRepos(onStep?: (id: string, done: number, 
     if (!st.repo) await new Promise((res) => setTimeout(res, 1500))
   }
   return { ok: results.every((r) => r.ok), results }
+}
+
+// ── TAKING GITHUB'S COMMITS BY A BUTTON (842) ───────────────────────────────────────────────────────────────────────────────
+// The owner, 2026-11-23 (Telegram 1154): a banner like the core's update banner instead of acting only through the element's agent.
+// 🔒 The same repository, token and uncommitted list as the push; asking GitHub writes only `.git` (as the node, like the push), the
+// move of the working tree goes as the element behind the wall (`element-pull.mjs`, skill server-wall). Network only on a person's press.
+export type PullVerdict = "none" | "ready" | "dirty" | "diverged"
+export type RemoteState = { ok: true; repo: string; fetched: boolean; behind: number; ahead: number; dirty: number; head: string | null; remoteHead: string | null; verdict: PullVerdict; checkedAt: string | null }
+
+/** Where the element stands against its repository; `ask` — ask GitHub first (the person pressed «Проверить снова»). */
+export function checkElementRemote(id: string, ask: boolean): RemoteState | { ok: false; error: string } {
+  const dir = elementDir(id)
+  if (!dir) return { ok: false, error: "not-born" }
+  const repo = readStored(id).repo
+  const { token } = tokenFor(id)
+  if (!repo || !token) return { ok: false, error: "not-connected" }
+  if (ask) {
+    const f = pull.fetchRemote(dir, `https://x-access-token:${token}@github.com/${repo}.git`) as { ok: boolean; error?: string }
+    if (!f.ok) return { ok: false, error: f.error ?? "fetch-failed" }
+    writeStored(id, { ...readStored(id), checkedAt: new Date().toISOString() })
+  }
+  const c = pull.counts(dir) as { fetched: boolean; ahead: number; behind: number; head: string | null; remoteHead: string | null }
+  const dirty = changes(dir).length
+  return { ok: true, repo, ...c, dirty, verdict: pull.pullVerdict({ ...c, dirty }) as PullVerdict, checkedAt: readStored(id).checkedAt ?? null }
+}
+
+/** «Забрать»: ask GitHub again, then fast-forward only; anything else is refused with its word and nothing is touched. */
+export function pullElement(id: string): { ok: true; state: RemoteState | { ok: false; error: string } } | { ok: false; error: string; state?: RemoteState } {
+  const s = checkElementRemote(id, true)
+  if (!s.ok) return s
+  if (s.verdict !== "ready") return { ok: false, error: s.verdict === "none" ? "nothing-new" : s.verdict, state: s }
+  const dir = elementDir(id)
+  if (!dir) return { ok: false, error: "not-born" }
+  const t = pull.fastForward(ROOT, dir) as { ok: boolean; error?: string }
+  if (!t.ok) return { ok: false, error: t.error ?? "pull-failed" }
+  writeStored(id, { ...readStored(id), lastPulledAt: new Date().toISOString() })
+  return { ok: true, state: checkElementRemote(id, false) }
 }
