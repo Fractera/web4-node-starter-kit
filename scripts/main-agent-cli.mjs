@@ -54,6 +54,14 @@ const jobs = require('../lib/web4-items/jobs.cjs')
 const elementApp = require('../lib/web4-items/element-app.cjs')
 // 603-1: самоописание элементов — паспорт и измеренное одним модулем (что это, где живёт, где данные, двери из кода, кто зависит).
 const self = require('../lib/a2a/self-description.cjs')
+// 849-1: an element's GitHub, measured — the core's door first (its token source and tail), the stored link and the git without it.
+const githubLine = require('../lib/web4-items/element-github-line.cjs')
+async function githubOf(id, dir) {
+  const m = githubLine.measure(ROOT, id, dir)
+  const r = await core(`/api/architect/items/${encodeURIComponent(id)}/github`, { timeout: 4000 }).catch(() => null)
+  if (r?.status === 200 && r.body?.ok) return githubLine.lineOf({ ...r.body, ahead: m.ahead })
+  return r?.status === 404 ? githubLine.lineOf(m) : `${githubLine.lineOf(m)} The core's door did not answer — the token is not shown.`
+}
 const nameFile = require('../lib/web4-items/name-file.cjs')
 const firstSession = require('../lib/web4-items/first-session.cjs')
 // 552-4: поручение главного агента элементу — строительный процесс; слово уже стоит (например, ответ ядра сессии рабочего процесса)
@@ -352,6 +360,7 @@ if (cmd === 'card') {
   const d = selfAll().find((x) => x.id === e.id)
   if (!d) fail(`${id}: no description`)
   console.log(self.cardText(d))
+  console.log(await githubOf(e.id, dir))
   if (!d.on) console.log(`Only the architect turns it on: after their «yes», npm run power -- ${e.id} on`)
   console.log(`Reach its agent: ${reachOf(e.id)}`)
   process.exit(0)
@@ -1050,6 +1059,8 @@ if (cmd === 'state') {
   const git = spawnSync('git', ['-C', dir, 'log', '--oneline', '-5'], { encoding: 'utf8', windowsHide: true })
   const sup = supervision.read(ROOT).elements[id]
   console.log(`Element ${id} (${addressOf(id)}) — role: ${role ?? 'none'}`)
+  // 849-1: measured now, before the element's own words below — where its documents say otherwise, they are stale.
+  console.log(`${await githubOf(id, dir)} Where current-step.md below says otherwise about GitHub, it is stale.`)
   console.log(`Led by: ${sup?.active ? (sup.by === 'main' ? `the main agent, cycle ${sup.cycles ?? 0} of ${sup.max}` : 'the architect') : 'the architect (no supervision record)'} · reach: ${reachOf(id)}`)
   console.log(`Intake: ${intake.length ? intake.join(', ') : 'empty'}`)
   // 548-20: результат проверки, которую ты поручил, — элемент сохраняет его `npm run reply-core` в своих данных.

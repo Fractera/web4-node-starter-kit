@@ -29,3 +29,28 @@ approved version a git tag `quiz-v<N>`, rollback = a new version.
   element + a node line to its agent, which proposes edits by number. Proof: upload → the line → a list of edits; a bad file refused.
 - **852-5 · Versions.** An approved version is the element's commit tagged `quiz-v<N>`; the page lists versions; «вернуться к версии N»
   makes a new one. Proof: v2 tag; rollback to v1 makes v3 equal to v1.
+
+## Added 2026-11-24 13:56 UTC — Roma 1299, verbatim (voice)
+
+«Зафиксируй что оба Telegram приложение должны иметь отдельно раздел Quiz который раскрывается и рассказывает о том какие визы были
+созданы напомни что визы у нас должны жить отдельно маршрутом … проверь чтобы там уже существовал Telegram в обоих местах и я думаю что там
+может существовать Quiz продуктовый то есть то самое дерево которое динамически создает маршруты и страница с минимальным интерфейсом
+скорее всего Markdown верстки предназначенные для работы с Quiz которые хранят версии этого Quiz которые хранятся в репозитории GitHub …
+мини приложения они получают доступ к той же самой ветке чтобы отображать динамическую структуру одновременно показывая количество
+вопросов ответов глубину и процент завершения … вверху определённый аналитический блок который показывает сколько веток какая глубина там
+же мы регулируем глубину, … уровень автоматизации там же мы можем получить доступ к незавершенным вопросам чтобы просто их прочитать но
+также погружаюсь в Quiz мы внутри мини приложения находим вкладку сайт и находим вкладку Telegram бот которая аналогичным образом передает
+путь и предустановленные сообщения также как у нас сейчас сделано для проектов. А соответственно для главного пульта в разделе Quiz у нас
+будет только общий список элементов который начали Quiz и возможность перейти по ссылке в соответствующий Telegram бот не более … ты здесь
+используешь то же самый навык который построил наши замечательные красивые Telegram приложения. Глубоко проработай задачи и добавляю её к
+общему списку».
+
+- **852-6 · The quiz is its own route in the element.** Every quiz of an element lives as a data route of its own (the tree that makes
+  routes dynamically, a minimal Markdown page per node of the quiz tree), its versions in the element's git (tags `quiz-v<N>`, 852-5);
+  checked first: where the element's page tree and its Telegram route already live in both templates.
+- **852-7 · The element's Mini App has a «Квиз» section.** It unfolds into the element's quizzes; one quiz opens with an analytics block
+  on top (branches, depth, questions, answers, % complete), the depth and F set there, the open questions readable, and the tabs «Сайт» and
+  «Telegram бот» that pass the path and preset messages the way the projects section does (skill telegram-mini-app). Proof: eyes at 390 px;
+  the numbers equal `quiz.json`; the bot tab opens the chat with the preset message.
+- **852-8 · The Pult has a «Квиз» section.** Only the list of elements that started a quiz and a link to each element's bot. Proof: eyes;
+  an element without a quiz is absent (negative).
