@@ -23,3 +23,5 @@ is a note.
   core's dashboard, limits on the native elements' doors (answer size, request time) — measured by 817 H3 (no limit, pids 9483).
 - **`scripts/launch-footprint.test.mjs` is red** (by hand, 744-8): it does not know the 784 trace `logs/launch-trace.jsonl`, and in
   A→B→A A's second state has no probe — red before 818 too; fix the test or the runner.
+
+- 2026-11-24 — Windows: `scripts/telegram-ready.mjs` cannot install Bun on the GitHub Windows runner («the installer ended with code 0», no bun) — migration 825-8 stays not done there; the three-os run was red from 2026-11-22 for it. Prove on a Windows machine, then fix the installer path.
