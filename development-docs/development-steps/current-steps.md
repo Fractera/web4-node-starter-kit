@@ -323,6 +323,17 @@ folder's `.claude/launch-effort.txt`); the switch for native elements comes with
 ONE core build for the core parts of 850, 851, 849-4b, 854, 852-2..5 (before-a-build); template releases for 852-1, 853.
 OWED from before: 844-orphan (icons door asks the element before uploading), 845 audit of class A, 848-8.
 
+**14:2x UTC — CORE BUILD ON THE MAC STARTED (prebuild RC=0)** with 99a3f1ad (850/851), 1ac125f9 (849), 8c03de50 (856), cd8bfbd4 (844
+icons asks first); none pushed yet. AFTER THE BUILD (matrix, cell by cell): (1) /api/health commit = HEAD, serve:status; (2) a main-agent
+task to fc4vk (`npm run task -- fc4vk "Working process: answer «ok» in one line, change nothing"`) → core log «работа началась (… запись
+журнала …)»; (3) 844: POST a square PNG for cck60 → 409 template-older and the media count unchanged (negative: no orphan); (4) card/state
+already live (runtime). THEN push origin + Fractera (`git push origin main`; `git push https://github.com/Fractera/web4-node-starter-kit.git
+main`), checklist to Roma, window «Обновить сборку ядра» on both servers; server proofs: lidt5 3 answers → `asked false`, one hint; a task to
+a walled element → no false not-started; card lidt5 GitHub line; Diana «привет» (wall gate, skill server-wall before the window).
+NEXT AFTER: 854 (menu + form, interface skills first), 852, 853, 855.
+
+**PROGRESS:** 850-1..3 + 851-1 CODED, committed LOCALLY 99a3f1ad (NOT pushed — push after the live proof of the core build): lib/agent-kit/journal-since.cjs + test (10 checks, in prebuild), bridge/screen/telegram masters + 12 kit copies (agent-kit:update). Live proof after the build: a main-agent task to a test element during its running turn is pasted after the turn; start log says «запись журнала». Found on the way: scripts/element-wall.test.mjs 811-2 regex vs prepare.sh apt-lock line fails (pre-existing, not in prebuild). NEXT: 849-1..4a (no build), then 854, 852 core parts, then ONE core build.
+
 **STATE:** core HEAD 57d55507+ (docs) on the Mac = origin; Fractera main = c9e6ca6d (soul v3). Servers rebuilt 00:32–00:33 UTC
 (fractera.ai bf75a3ef, aifa.dev 69a1d883; the server agent names its core e638fed7). Window aeba1605 («Проверить снова» + Diana «привет»)
 may be stale — check `npm run ask-person -- list`.
