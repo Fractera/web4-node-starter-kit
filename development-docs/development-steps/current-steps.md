@@ -304,6 +304,17 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 **WHO WAITS:** nobody. Roma 1296 (13:45 UTC): «Строй план … и решай это самостоятельно … Действуй пока не завершишь, только по окончании
 
+**16:2x UTC — 857 CODED IN BOTH WORKSHOPS, COMMITTED THERE, DRY RELEASES GREEN, NOT TAGGED.** native v0.1.82 (store-key.mjs: node key
+first else ELEMENT_KEY; data-service/remote-client/3 media routes/by-name/seed scripts on the one resolver; lib/db local file under
+SERVICE_DATA_DIR + one carry + loud «[db] remote key missing»; scripts/store-key.test.mjs 3 with negative, in prebuild) and custom v0.3.242
+(lib/db only). The real release: the node token gets 403 on Fractera's template repos; `TEMPLATE_GITHUB_TOKEN=$(gh auth token)` was refused
+by the auto-mode classifier without Roma's word in that turn → asked Roma in Telegram for «выпускай своим ключом». On his yes, IN THAT
+TURN: release native v0.1.82 and custom v0.3.242 with the message lines above, pin both, push core; rollout lib/db/index.ts (+ native:
+lib/fractera/*, lib/db/remote-client.ts, app/api/media/**, lib/media/by-name.ts, scripts/seed-media*.mjs, scripts/store-key.test.mjs,
+package.json?) — rollout --dry first; rebuild cck60 (`npm run services:install -- --only cck60`), prove: no «remote key missing» in its log,
+a db write/read through the data layer, no app.db in its build folder. Meanwhile 858-1 (core door takes an element's own key, itself only).
+Roma is updating both servers (window 0b780611).
+
 **16:0x UTC — 854 DONE AND PUSHED (8c74cd55 = origin = Fractera)**, core build 93c35036 live; summary completed-steps/854-main.md
 (eyes + door proofs, custom 404). fc4vk--work cut by the build had finished («ok») — nothing to re-hand. PLANNED: new-steps/857 (data road
 — every native born on a node is kind `user` and gets no DATA_SECRET; native template data-service must use ELEMENT_KEY; db outside the
