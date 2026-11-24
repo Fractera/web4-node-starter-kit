@@ -43,6 +43,13 @@ function questionOnScreen(stream) {
   return /Enter to confirm/.test(tail) && /Esc to (cancel|exit|go back)/.test(tail)
 }
 
+/**
+ * 850-3: a turn runs — Claude Code's spinner line says «esc to interrupt» in the last frame. The caller adds «printed within seconds»: the
+ * raw stream still holds the last spinner frame for a while after the turn ends.
+ */
+function turnOnScreen(stream) {
+  return /esc to interrupt/i.test(plainScreen(String(stream).slice(-1500)))
+}
 /** The words of the question on the screen, one short line — for the main agent, never a guess. */
 function questionLine(stream) {
   const tail = plainScreen(String(stream).slice(-3000))
@@ -68,4 +75,4 @@ function liveStream(s, trusted) {
   return after <= 0 ? '' : buffer.slice(-Math.min(after, buffer.length))
 }
 
-module.exports = { plainScreen, trustOnScreen, promptOnScreen, questionOnScreen, questionLine, liveStream, seenOf }
+module.exports = { plainScreen, trustOnScreen, promptOnScreen, questionOnScreen, turnOnScreen, questionLine, liveStream, seenOf }

@@ -23,7 +23,7 @@ const { channelLaunch } = telegram
 const health = require('./channel-health.cjs')
 // 829: what stands on the terminal's screen — the detectors, and the stream without a trust dialog Claude Code already recorded.
 const screen = require('./screen.cjs')
-const { trustOnScreen, promptOnScreen, questionOnScreen, questionLine } = screen
+const { trustOnScreen, promptOnScreen, questionOnScreen, turnOnScreen, questionLine } = screen
 const os = require('node:os')
 // 552-4: режимы сессии (первое слово запроса, группы навыков, ключ сессии) — один модуль ядра, общий с прибором `check:modes`.
 // Из корня узла, как `supervision.cjs`: у копий комплекта свой путь, а модуль один.
@@ -653,13 +653,27 @@ const startCheckMs = () => Number(process.env.AGENT_START_CHECK_MS) || 3 * 60_00
 const hhmm = (ms) => { const d = new Date(ms); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}` }
 
 
-/** Did the element's conversation take anything after `at` — Claude Code writes the transcript when a message is submitted. */
-function conversationSince(s, element, at) {
+/**
+ * 850-1 / 851-1: did the element's conversation take a prompt after `at` — by the journal's CONTENT (`lib/agent-kit/journal-since.cjs`),
+ * read AS the element where it is walled. ✗ 2026-11-24, fractera.ai (the server's main agent): the file's time said «работа началась»
+ * because the running turn and the person's queued channel messages were written into it, while three pasted tasks stood unsent; behind
+ * the wall the 0700 journal of fe-<id> could not be listed and a live task was called «not started». Unreadable — «unknown», never «not».
+ */
+function journalSince(s, element, at) {
+  const dir = path.join(ownClaudeDir(element) || path.join(os.homedir(), '.claude'), 'projects', String(s.cwd).replace(/[:\\/]/g, '-'))
   try {
-    const dir = path.join(ownClaudeDir(element) || path.join(os.homedir(), '.claude'), 'projects', String(s.cwd).replace(/[:\\/]/g, '-'))
-    return readdirSync(dir).some((f) => f.endsWith('.jsonl') && statSync(path.join(dir, f)).mtimeMs >= at - 1000)
-  } catch { return false }
+    const journal = require(path.join(process.cwd(), 'lib', 'agent-kit', 'journal-since.cjs'))
+    const run = telegram.asWalled(element, 'node', ['-e', journal.inlineCode(), dir, String(at)])
+    if (!run) return journal.scan(dir, at)
+    const out = require('node:child_process').execFileSync(run.cmd, run.args, { env: run.env, timeout: 15_000, encoding: 'utf8' })
+    return JSON.parse(out.slice(out.indexOf('{')))
+  } catch (e) {
+    return { state: 'unknown', tookAt: null, waiting: null, files: 0, why: String(e?.code ?? e?.message ?? e).slice(0, 80) }
+  }
 }
+
+/** 850-3: a turn of this session runs now — its spinner is on the screen and the screen printed within 3 s. */
+const turnRunning = (s) => Date.now() - (s.printedAt ?? 0) < 3000 && turnOnScreen(liveScreen(s))
 
 /** A line of the node to the main agent: pasted into its live session, or it is woken with it. */
 function tellMain(kind, element, words) {
@@ -679,10 +693,12 @@ function deliver(live, element, text, { confirmed, from, about } = {}) {
     console.log(`[agents/wake] ${live.service}: папка подтверждена — задача главного агента (736)`)
   }
   const at = Date.now()
-  void pasteWhenReady(live, text, { quietMs: 500, maxMs: byMain ? 10 * 60_000 : 120_000, ready: () => !questionOnScreen(liveScreen(live)) }).then((ok) => {
+  // 850-3: a task of the main agent is never pasted into a running turn — the person may be mid-dialogue in the element's bot.
+  void pasteWhenReady(live, text, { quietMs: 500, maxMs: byMain ? 10 * 60_000 : 120_000, ready: () => !questionOnScreen(liveScreen(live)), ...(byMain ? { busy: () => turnRunning(live) } : {}) }).then((ok) => {
     if (!byMain) return
     if (ok) return watchStart(live, element, at, about)
     if (session.current(live.service) !== live) return tellMain('not-started', element, `Узел: задача главного агента элементу ${element} («${about ?? ''}», ${hhmm(at)}) НЕ вставлена — его сессии больше нет. Разбуди его той же задачей: npm run task -- ${element} "<задача>".`)
+    if (live.notPasted === 'busy') return tellMain('not-started', element, `Узел: задача главного агента элементу ${element} («${about ?? ''}», ${hhmm(at)}) НЕ вставлена: его ход шёл все 30 мин, а в ход узел не вставляет (850-3). Дай задачу снова, когда он закончит: npm run task -- ${element} "<задача>".`)
     tellMain('not-started', element, `Узел: задача главного агента элементу ${element} («${about ?? ''}», ${hhmm(at)}) НЕ вставлена за 10 мин — на его экране вопрос: «${questionLine(liveScreen(live))}». Реши его (npm run permit — если это вопрос разрешения) и дай задачу снова: npm run task -- ${element} "<задача>".`)
   })
 }
@@ -693,15 +709,22 @@ function watchStart(s, element, at, about) {
     const same = session.current(s.service) === s
     // ✗ 2026-11-13 06:12 (D17): the agent did the task and was closed by the main agent before the check — «its session is gone» was a
     // false alarm. The conversation moved after the task — it started, whether the session still lives or not.
-    if (conversationSince(s, element, at)) return console.log(`[agents/start] ${s.service}: работа началась (задача ${hhmm(at)})`)
-    const why = !same ? 'его сессии больше нет' : questionOnScreen(liveScreen(s)) ? `на его экране вопрос: «${questionLine(liveScreen(s))}»` : 'задачи нет в его разговоре — ход не начался'
+    const j = journalSince(s, element, at)
+    if (j.state === 'took') return console.log(`[agents/start] ${s.service}: работа началась (задача ${hhmm(at)}, запись журнала ${hhmm(j.tookAt)})`)
+    const asked = same && questionOnScreen(liveScreen(s))
+    // 851-1: the journal could not be read (behind the wall) and no question stands on the screen — nothing is known to be wrong.
+    if (j.state === 'unknown' && !asked) return console.log(`[agents/start] ${s.service}: начало не проверить — журнал не прочитан (${j.why}); тревоги нет`)
+    // 850-2: the session holds messages in its queue — the person's words wait behind something on its input line.
+    const held = j.waiting && same ? `его сессия держит ${j.waiting.count} сообщ. в очереди с ${hhmm(j.waiting.since)}, ход не идёт; низ экрана: «${screen.plainScreen(String(liveScreen(s)).slice(-600)).trim().slice(-160)}»` : null
+    const why = !same ? 'его сессии больше нет' : asked ? `на его экране вопрос: «${questionLine(liveScreen(s))}»` : held ?? 'задачи нет в его разговоре — ход не начался'
     console.log(`[agents/start] ${s.service}: НЕ начал за ${Math.round(startCheckMs() / 60000)} мин — ${why}`)
-    tellMain('not-started', element, `Узел: агент элемента ${element} не начал работу через ${Math.round(startCheckMs() / 60000)} мин после твоей задачи («${about ?? ''}», ${hhmm(at)}): ${why}. Реши сейчас: вопрос разрешения — npm run permit; доверие папке — npm run trust -- ${element}; хода нет или сессии нет — npm run task -- ${element} "<задача>" ещё раз.`)
+    if (held) void telegram.tellHeld(element, hhmm(j.waiting.since)).catch(() => {})
+    tellMain('not-started', element, `Узел: агент элемента ${element} не начал работу через ${Math.round(startCheckMs() / 60000)} мин после твоей задачи («${about ?? ''}», ${hhmm(at)}): ${why}. Реши сейчас: вопрос разрешения — npm run permit; доверие папке — npm run trust -- ${element}; ${held ? `сообщения человека стоят за строкой ввода — npm run close -- ${element}, затем npm run task -- ${element} "<его сообщения дословно, они в журнале элемента: queue-operation enqueue>"` : `хода нет или сессии нет — npm run task -- ${element} "<задача>" ещё раз`}.`)
   }, startCheckMs())
   t.unref?.()
 }
 
-function pasteWhenReady(s, text, { quietMs = 3000, maxMs = 120_000, ready = null } = {}) {
+function pasteWhenReady(s, text, { quietMs = 3000, maxMs = 120_000, ready = null, busy = null, maxBusyMs = 30 * 60_000 } = {}) {
   return new Promise((resolve) => {
     const t0 = Date.now()
     let last = -1
@@ -715,8 +738,18 @@ function pasteWhenReady(s, text, { quietMs = 3000, maxMs = 120_000, ready = null
       if (len !== last) {
         last = len
         since = Date.now()
+        s.printedAt = since
       }
       const late = Date.now() - t0 > maxMs
+      // 850-3: a running turn (`busy`) is never pasted into — not when the screen pauses, not when `maxMs` passes; after `maxBusyMs`
+      // the paste is given up and the caller is told why (`notPasted`).
+      if (busy && busy()) {
+        if (Date.now() - t0 < maxBusyMs) return
+        clearInterval(timer)
+        s.notPasted = 'busy'
+        console.log(`[agents/wake] ${s.service}: поручение не вставлено — ${Math.round(maxBusyMs / 60000)} мин шёл ход`)
+        return resolve(false)
+      }
       if (late && ready && !ready()) {
         clearInterval(timer)
         console.log(`[agents/wake] ${s.service}: поручение не вставлено — ${Math.round(maxMs / 1000)} с на экране стоит вопрос`)

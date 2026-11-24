@@ -921,6 +921,7 @@ const ASK = {
     trustDone: (a) => `Done: agent ${a} works in its folder. This question will not come again.`,
     trustGone: (a) => `Agent ${a} is no longer waiting for this answer — it was answered or turned off.`,
     // 614-1: the session was born, but its Telegram channel did not come up — the node closed it and reads the bot again.
+    channelHeld: (a, since) => `Your message is waiting: agent ${a} has held its queue since ${since} and is not answering. The node has told the main agent, who will bring it back.`,
     channelFailed: (a, n) => `Sorry, agent ${a} could not start: its Telegram channel did not connect within ${n} seconds, so the agent is off again. Turn it on again in a couple of minutes.`,
     channelFailedKept: (a, n) => `Sorry, agent ${a} could not start: its Telegram channel did not connect within ${n} seconds, so the agent is off again. Your message is kept — press «Turn on» again in a couple of minutes.`,
     // 829: the agent is on, the message the person wrote while it slept did not reach it — said, never «got your message».
@@ -976,6 +977,7 @@ const ASK = {
     trustAsk: (a) => `Агент ${a} просит разрешения работать в своей папке на этом компьютере. Claude Code спрашивает об этом один раз для каждой папки. Разрешить? Ответьте «да».`,
     trustDone: (a) => `Готово: агент ${a} работает в своей папке. Больше этот вопрос не появится.`,
     trustGone: (a) => `Агент ${a} уже не ждёт этого ответа — вопрос закрыт или агент выключен.`,
+    channelHeld: (a, since) => `Ваше сообщение ждёт: агент ${a} с ${since} держит очередь и не отвечает. Узел уже сказал главному агенту, он вернёт его в строй.`,
     channelFailed: (a, n) => `Извините, агент ${a} не смог запуститься: его канал Telegram не подключился за ${n} секунд, поэтому агент снова выключен. Включите его ещё раз через пару минут.`,
     channelFailedKept: (a, n) => `Извините, агент ${a} не смог запуститься: его канал Telegram не подключился за ${n} секунд, поэтому агент снова выключен. Ваше сообщение сохранено — нажмите «Включить» ещё раз через пару минут.`,
     heldLost: (a) => `Агент ${a} включён, но ваше сообщение до него не дошло: на экране его терминала стоял вопрос. Напишите ещё раз — теперь оно придёт агенту напрямую.`,
@@ -1576,6 +1578,21 @@ async function tellWaiting(service) {
  * 614-1: канал сессии, разбуженной без кнопки Telegram (дверь, надзор главного агента, очередь прохода), не встал — узел её уже закрыл и
  * снова читает бота. Сказать людям бота словами; бота нет — молчать, как прежде.
  */
+/** 850-2: the element's session holds the person's messages in its queue — say so in its own bot; no bot — silence, as before. */
+async function tellHeld(service, since) {
+  if (!connected(service)) return { sent: 0 }
+  const token = storedToken(service)
+  const t = await askTable(service)
+  const text = (t.channelHeld ?? ASK.en.channelHeld)(personName(service), since)
+  let sent = 0
+  for (const chat of access(service).allowed) {
+    const r = await sendKept(token, { chat_id: chat, text, disable_web_page_preview: true }) // 639: беда — остаётся, пока её не сняли
+    if (r?.ok) sent++
+  }
+  console.log(`[telegram] ${service}: очередь стоит — человеку сказано ${sent}`)
+  return { sent }
+}
+
 async function tellChannelFailed(service, waited) {
   if (!connected(service)) return { sent: 0 }
   const token = storedToken(service)
@@ -1682,7 +1699,9 @@ module.exports = {
   // 839-8: what a walled session's channel needs from the node before it starts
   handEnvToElement, openForElement,
   // 839-11/12: behind the wall the element itself installs its plugin; its own Claude home is marked before every session
-  asWalled, markOwnHome, clearPoisonAsElement,
+  asWalled, markOwnHome,
+  // 850-2: the person hears that the session holds their messages
+  tellHeld, clearPoisonAsElement,
   // the bot taken off the node — the danger zone of its page
   removeBot,
   // 639: итог остаётся, служебное исчезает; вопросы закрытой сессии исчезают.
