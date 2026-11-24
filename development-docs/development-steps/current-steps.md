@@ -323,6 +323,13 @@ folder's `.claude/launch-effort.txt`); the switch for native elements comes with
 ONE core build for the core parts of 850, 851, 849-4b, 854, 852-2..5 (before-a-build); template releases for 852-1, 853.
 OWED from before: 844-orphan (icons door asks the element before uploading), 845 audit of class A, 848-8.
 
+**15:3x UTC — DONE ON THE MAC AND PUSHED (e08ab8c5 = origin = Fractera):** 849, 850, 851, 856, 844-orphan live (build 549ac246; the first
+build was refused by check-bundle-requires — a computed require in modes.cjs, fixed). Proofs in completed-steps/849|850|851|856-main.md,
+844-orphan.md. CI three-os was red since 2026-11-22 (Windows Bun installer, migration 825-8) — the test names it now (61d130f4), BACKLOG line.
+Window for Roma: both servers «Обновить сборку ядра» → then the server proofs (lidt5 `asked false` ×3 + one hint; no false not-started;
+card lidt5 GitHub; Diana «привет»). Plans 849–851, 856 stay in new-steps until the server proofs, then deleted with their summaries.
+NEXT: 854 (interface skills first), 852, 853, 855.
+
 **14:2x UTC — CORE BUILD ON THE MAC STARTED (prebuild RC=0)** with 99a3f1ad (850/851), 1ac125f9 (849), 8c03de50 (856), cd8bfbd4 (844
 icons asks first); none pushed yet. AFTER THE BUILD (matrix, cell by cell): (1) /api/health commit = HEAD, serve:status; (2) a main-agent
 task to fc4vk (`npm run task -- fc4vk "Working process: answer «ok» in one line, change nothing"`) → core log «работа началась (… запись
