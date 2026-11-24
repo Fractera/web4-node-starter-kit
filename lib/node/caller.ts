@@ -66,6 +66,14 @@ export function wakeAllowed(c: Caller | null, body: { service?: unknown; from?: 
   return body.service === "build" && (body.from === undefined || body.from === me)
 }
 
+/** 858: may this keyed caller start this deployment? An element — only its own ids (a deploy or a rollback of itself); the node key —
+ *  any element; neither the core's build nor the debug wake, which stay the architect's buttons. */
+export function deployAllowed(c: Caller | null, body: { ids?: unknown; rollback?: unknown; core?: unknown; debug?: unknown }): boolean {
+  if (!c || body.core !== undefined || body.debug !== undefined) return false
+  const asked: unknown[] = typeof body.rollback === "string" ? [body.rollback] : Array.isArray(body.ids) ? body.ids : []
+  return asked.length > 0 && (isNode(c) || asked.every((x) => actsFor(c, x)))
+}
+
 /**
  * An element's words for the main agent, marked with the caller the KEY named: its own «⟦…⟧» become «[…]», so it can never write a mark
  * of the node (`⟦node · permission …⟧`, `⟦node · context-reset …⟧`) — the main agent reads every «⟦node» line as the node's own.

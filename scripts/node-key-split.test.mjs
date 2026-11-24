@@ -17,7 +17,7 @@ import { fileURLToPath } from 'node:url'
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const { elementKeyOf } = createRequire(import.meta.url)('../lib/element-key.cjs')
-const { callerOf, isNode, callerElement, actsFor, refusal, wakeAllowed, markedFrom } = await import('../lib/node/caller.ts')
+const { callerOf, isNode, callerElement, actsFor, refusal, wakeAllowed, markedFrom, deployAllowed } = await import('../lib/node/caller.ts')
 const { ELEMENT_DOORS, isElementDoor, isKitDoor, fromInternet } = await import('../lib/node/element-doors.mjs')
 
 let passed = 0
@@ -87,6 +87,24 @@ t('acts for: the node for anyone, an element only for itself', () => {
 t('refusal: no key 401, an element outside its affairs 403', () => {
   assert.equal(refusal(null).status, 401)
   assert.equal(refusal(ROOT_).status, 403)
+})
+t('858 deploy: an element deploys or rolls back only itself; never a neighbour, the core or the debug wake; the node key — any element', () => {
+  assert.equal(deployAllowed(ROOT_, { ids: ['root'] }), true)
+  assert.equal(deployAllowed(ROOT_, { rollback: 'root' }), true)
+  assert.equal(deployAllowed(ROOT_, { ids: ['shop'] }), false, 'a neighbour')
+  assert.equal(deployAllowed(ROOT_, { ids: ['root', 'shop'] }), false, 'itself and a neighbour')
+  assert.equal(deployAllowed(ROOT_, { rollback: 'shop' }), false, 'a neighbour\'s rollback')
+  assert.equal(deployAllowed(ROOT_, { core: true }), false, 'the core build')
+  assert.equal(deployAllowed(ROOT_, { ids: ['root'], debug: 'root' }), false, 'the debug wake')
+  assert.equal(deployAllowed(ROOT_, { ids: [] }), false)
+  assert.equal(deployAllowed(null, { ids: ['root'] }), false, 'no key')
+  assert.equal(deployAllowed(NODE, { ids: ['shop', 'root'] }), true)
+  assert.equal(deployAllowed(NODE, { core: true }), false, 'the node key never builds the core through this door')
+})
+t('858 NEGATIVE CONTROL: «any keyed caller may deploy» lets one element deploy its neighbour', () => {
+  const before = (c, body) => Boolean(c) && Array.isArray(body.ids) && body.ids.length > 0
+  assert.equal(before(ROOT_, { ids: ['shop'] }), true)
+  assert.notEqual(before(ROOT_, { ids: ['shop'] }), deployAllowed(ROOT_, { ids: ['shop'] }))
 })
 t('wake: its own agent, or the main agent in its own name — never a neighbour, never a reason of the node', () => {
   assert.equal(wakeAllowed(NODE, { service: 'shop', reason: 'core-back' }), true)

@@ -22,6 +22,8 @@ the custom element.
    select → Web2 → «Далее» → form visible, console clean (logs/eyes/2026-11-24T15-51-31-177Z.png). Door: cck60 POST → kept,
    `mode: simulation`; fc4vk and config → `not-own-native`; GET returns the last one. The test line was removed afterwards.
 
+Surfaces seen: /ru/cck60/build/f2f (own native, eyes after the build: select → Web2 → «Далее» → the form, console clean — logs/eyes/2026-11-24T15-51-31-177Z.png); /ru/fc4vk/build/f2f 404 (custom, negative).
+
 ## Not proven
 
 - Servers: waits Roma's «Обновить сборку ядра» (lidt5 there is native-template born → it will see the section).

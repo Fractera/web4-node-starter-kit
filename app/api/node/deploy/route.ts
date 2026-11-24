@@ -5,6 +5,7 @@ import { join } from "node:path"
 import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
+import { callerOf, deployAllowed, refusal } from "@/lib/node/caller"
 import paths from "@/lib/web4-items/paths.cjs"
 import rollback from "@/lib/deploy/previous-version.cjs"
 import deployLock from "@/lib/deploy/deploy-lock.cjs"
@@ -171,14 +172,30 @@ async function debugWithMainAgent(target: string) {
   return NextResponse.json({ ok: r.ok, ...(r.pending ? { pending: true } : {}), ...(r.ok ? {} : { reason: r.reason }) }, { status: r.ok ? 200 : 503 })
 }
 
+// 🔒 858 (Roma 2026-11-24 via lidt5: «чтобы я мог попросить тебя активировать нажатие через чат»): an element's agent deploys or rolls
+// back ITSELF on its person's own word in its chat, with its OWN key (`X-Node-Key` = its ELEMENT_KEY, `lib/node/caller.ts`) — never a
+// neighbour (A's key for B → 403), never the core's build, never the debug wake. The person's word is the template's rule (skill
+// `deploy-element`); the door only holds who may act for whom. The node key acts for any element, still not for the core's build.
+// No key — the panel's way: the architect's or an admin's session.
 export async function POST(req: NextRequest) {
-  const denied = await requireRoles(req, ROLES)
-  if (denied) return denied
+  const keyed = !!req.headers.get("x-node-key")
+  const caller = keyed ? callerOf(req.headers) : null
+  if (keyed && !caller) return NextResponse.json({ ok: false, reason: refusal(null).reason }, { status: 401 })
+  if (!caller) {
+    const denied = await requireRoles(req, ROLES)
+    if (denied) return denied
+  }
   let body: { ids?: unknown; rollback?: unknown; core?: unknown; debug?: unknown } = {}
   try {
     body = (await req.json()) as { ids?: unknown; rollback?: unknown; core?: unknown; debug?: unknown }
   } catch {
     return NextResponse.json({ ok: false, reason: "bad-json" }, { status: 400 })
+  }
+  if (caller) {
+    if (!deployAllowed(caller, body)) {
+      const r = refusal(caller, "its own deployment only")
+      return NextResponse.json({ ok: false, reason: r.reason }, { status: r.status })
+    }
   }
   // Разбор — и во время другого развёртывания; всё остальное — одно развёртывание за раз.
   if (typeof body.debug === "string") return debugWithMainAgent(body.debug)
