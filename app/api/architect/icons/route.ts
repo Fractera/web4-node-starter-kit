@@ -5,7 +5,7 @@ import { requireRoles } from "@/lib/auth/require-roles"
 import { isTemporaryPublicAddress } from "@/lib/auth/temporary-address"
 import { dataUrl } from "@/lib/microservices/urls"
 import { idOfAddress } from "@/lib/web4-items/element-address"
-import { patchElementSettings } from "@/lib/web4-items/element-settings-door"
+import { elementTakes, patchElementSettings } from "@/lib/web4-items/element-settings-door"
 
 // НАБОР ЗНАЧКОВ ЭЛЕМЕНТА (узел, шаг 844; 845 класс A1 — дверь была названа в `lib/site-settings/fields.ts`, но не построена, и на
 // сайте оставался знак Fractera). Поле «Набор значков» вкладки «Настройки сайта» — не значение, а действие: человек даёт одну
@@ -61,6 +61,10 @@ export async function POST(req: NextRequest) {
   const file = form.get("file")
   if (!(file instanceof File) || !file.type.startsWith("image/")) return json({ ok: false, reason: "not-an-image" }, 400)
   if (file.size > MAX_BYTES) return json({ ok: false, reason: "too-large" }, 413)
+
+  // 844: the element is asked first — a set it cannot take is never made (no orphan in storage).
+  const takes = await elementTakes(element, "/api/settings/app", { iconSet: { id: "probe", files: {} } })
+  if (!takes.ok) return json({ ok: false, reason: takes.reason }, takes.status === 200 ? 409 : takes.status)
 
   const upload = new FormData()
   upload.append("file", file, file.name || "icon-source.png")

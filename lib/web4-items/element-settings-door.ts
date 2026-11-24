@@ -51,6 +51,19 @@ export type PatchResult =
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v)
 
 /**
+ * 844 (owed since 2026-11-23): would the element take this patch — its declaration read, nothing written. The icons door asks it BEFORE
+ * it uploads a picture: ✗ on the Mac the test element cck60 could not take a set, and the set stayed in storage with no owner.
+ */
+export async function elementTakes(id: string, door: string, patch: Record<string, unknown>): Promise<{ ok: true } | { ok: false; reason: string; status: number }> {
+  const read = await callElementDoor(id, door)
+  const bad = stateOf(read)
+  if (bad) return { ...bad, status: 200 }
+  const current = (read as { body: Record<string, unknown> }).body
+  if (!isObj(current.schema)) return { ok: false, reason: "template-older", status: 200 }
+  return settingsSchema.prunePatch(patch, settingsSchema.declaredFields(current.schema)) ? { ok: true } : { ok: false, reason: "not-declared", status: 409 }
+}
+
+/**
  * Записать заплату в файл настроек элемента (712-4; 844 — та же запись для двери значков).
  * 🔒 ОТСЕЧЕНИЕ ЗДЕСЬ, НА СЕРВЕРЕ ЯДРА: сначала объявление элемента, в файл — только объявленные пути верного типа (`prunePatch`); пустая
  * после отсечения заплата не уходит.
