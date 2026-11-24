@@ -33,7 +33,7 @@
     {
       "id": "auth",
       "repo": "https://github.com/Fractera/fractera-auth-starter.git",
-      "version": "v2.4.45",
+      "version": "v2.4.46",
       "port": 24681,
       "provides": [
         "session",
@@ -48,7 +48,7 @@
     {
       "id": "data",
       "repo": "https://github.com/Fractera/fractera-data-starter.git",
-      "version": "v2.2.34",
+      "version": "v2.2.35",
       "port": 24682,
       "provides": [
         "tables",
@@ -65,7 +65,7 @@
     {
       "id": "storage",
       "repo": "https://github.com/Fractera/fractera-storage-starter.git",
-      "version": "v1.1.54",
+      "version": "v1.1.55",
       "port": 24693,
       "provides": [
         "media"
@@ -78,7 +78,7 @@
     {
       "id": "vectors",
       "repo": "https://github.com/Fractera/fractera-vectors-starter.git",
-      "version": "v1.2.34",
+      "version": "v1.2.35",
       "port": 24694,
       "provides": [
         "vectors"
@@ -91,7 +91,7 @@
     {
       "id": "embeddings",
       "repo": "https://github.com/Fractera/fractera-embeddings-starter.git",
-      "version": "v0.1.35",
+      "version": "v0.1.36",
       "port": 24696,
       "provides": [
         "embeddings"
@@ -117,7 +117,7 @@
     {
       "id": "graph",
       "repo": "https://github.com/Fractera/fractera-graph-lightrag-starter.git",
-      "version": "v1.2.33",
+      "version": "v1.2.34",
       "provides": [
         "knowledge-graph"
       ],
@@ -130,7 +130,7 @@
     {
       "id": "cache",
       "repo": "https://github.com/Fractera/fractera-redis-cache-starter.git",
-      "version": "v0.1.47",
+      "version": "v0.1.48",
       "port": 24695,
       "provides": [
         "cache"
@@ -151,7 +151,7 @@
     {
       "id": "memory",
       "repo": "https://github.com/Fractera/fractera-memory-starter.git",
-      "version": "v2.2.54",
+      "version": "v2.2.55",
       "port": 24690,
       "provides": [
         "memory",
@@ -166,7 +166,7 @@
     {
       "id": "stripe",
       "repo": "https://github.com/Fractera/fractera-stripe-starter.git",
-      "version": "v1.3.46",
+      "version": "v1.3.47",
       "port": 24691,
       "provides": [
         "payments"
