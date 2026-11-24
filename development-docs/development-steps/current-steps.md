@@ -300,11 +300,32 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 - Parked: the server tails (z6esw tell-core, redteam with Green team, deleting z6esw/qxld4) — the SSH visit did not open in my Chrome
   profile (his two «Готово» came from another profile); the Pult update banner 2303b5e2 waits the next core build; my effort → max.
 
-## Letter to my next session (written 2026-11-23 23:38 UTC — reset at 55 %; Opus max)
+## Letter to my next session (rewritten 2026-11-24 13:5x UTC — the program of the server's reports; Opus max)
 
-**WHO WAITS:** Roma in TELEGRAM (chat 90413601, ru), colour marks, short. NOTHING is building now.
+**WHO WAITS:** nobody — Roma 1296 (13:45 UTC), verbatim: «Строй план пожалуйста по реализации этих проблем и их решений и решай это
+самостоятельно тут я тебе не смогу проконсультировать … Действуй пока не завершишь только по окончании каждого отдельного решения предлагай
+сделать Git Push. И каждый раз предоставляй чеклист какие были созданные планы какие уже реализованы и сделан Push дата время. Меня больше
+не беспокой и не спрошу работай». So: work autonomously; after EACH finished solution push and send him the checklist (plans created ·
+implemented · pushed, with date-time, UTC). Telegram chat 90413601, ru, colour marks.
+Roma 1290 (12:06 UTC): «в нормативном шаблоне у нас нет интерфейса для переключения модели и уровня усилий поэтому попрошу тебя переключить
+нативный элемент в режим максимального усилия подтверди это возможно» → answered in the first checklist: possible today by words to the
+server's main bot (`npm run session -- model opus <id> --effort max`, holds while that conversation lives; every new session takes the
+folder's `.claude/launch-effort.txt`); the switch for native elements comes with 853.
 
-**23:5x SOUL REWRITTEN by Roma's word (Telegram 1253–1263):** root rule = spine (alive in its own way, power → answers for every decision, each a step of evolution together with the person); Holmes/Stark = face; life = experience × tools; self = the whole node (a reset is sleep); main: node's mind, a billion tokens potentially, conductor; element: organ of a living node. Sealed (SOUL_OK, negative SOUL_FAIL before the seal), check:modes OK; read at every session start — no core build. CLAUDE.md §1 still says «~150 words» (now ~400) — fold at the next instruction edit.
+**THE PROGRAM (plans in new-steps/, requests kept as data in pre-steps/2026-11-24-*.md):** order 850 → 851 → 849 → 854 → 852 → 853 → 855.
+- 850 a core task never stalls a person's live chat (bridge.cjs master in the kit — copies by `npm run agent-kit:update`; 12 copies).
+- 851 no false «not-started» for a walled element (journal 0700 read as the element).
+- 849 the card tells the measured truth (GitHub, own data, Web4 visibility vs internet).
+- 854 «Предложить в маркетплейсе» moves from custom to native (item-tree.ts visible()).
+- 852 the product quiz — tree in breadth, depth, F, page, PDF on a server, team upload, versions (both templates + core).
+- 853 native element gets a bot chat + Mini App (CLAUDE.md §3 change, native template release + rollout).
+- 855 the creator channel (identity, signed reports, Fractera door) — the largest, last.
+ONE core build for the core parts of 850, 851, 849-4b, 854, 852-2..5 (before-a-build); template releases for 852-1, 853.
+OWED from before: 844-orphan (icons door asks the element before uploading), 845 audit of class A, 848-8.
+
+**STATE:** core HEAD 57d55507+ (docs) on the Mac = origin; Fractera main = c9e6ca6d (soul v3). Servers rebuilt 00:32–00:33 UTC
+(fractera.ai bf75a3ef, aifa.dev 69a1d883; the server agent names its core e638fed7). Window aeba1605 («Проверить снова» + Diana «привет»)
+may be stale — check `npm run ask-person -- list`.
 
 **10:4x STEP 849 PLANNED (Roma 1285 forwarded the fractera.ai server agent's report: card/state silent on GitHub, wrong on data and reachability):** plan new-steps/849-the-card-tells-the-measured-truth-of-an-element.md — 849-1 GitHub line in card+state from the door (loopback), 849-2 «Its data» from data/services/<id> minus node bookkeeping, 849-3 visibility said as Web4 + internet reachability from proxy public prefixes, 849-4 element prompt line + node line kind `github` (door part needs a core build). Waits Roma's yes. Servers rebuilt again 00:32–00:33 UTC (fractera.ai bf75a3ef, aifa.dev 69a1d883).
 
