@@ -1231,7 +1231,7 @@ function finishRule(service) {
   }
   // 412-4 (владелец 2026-10-06: «в момент закрытия … был бы обязан создать саммари по проделанной работе»): задача A2A — заказ;
   // его сводка без персональных данных пишется ДО сообщения «закончил». Навыка нет у элемента — правило к нему не относится.
-  return `${languageRule(service, base)} Если это была задача A2A от другого агента (заказ) и она закрыта — до сообщения узлу сохрани сводку заказа по навыку order-summary (нет такого навыка — пропусти). Когда закончишь и ответишь, сообщи узлу: POST ${door} с заголовком X-Node-Key = SETTINGS_SECRET из .env.local и телом {"service":"${service}"} — человек получит в Telegram вопрос «выключить агента?». Если человек ответит «выключить» (или «закрыть», на любом языке) — тот же запрос с телом {"service":"${service}","close":true}. Если человек ответит «разбор» (на любом языке) — сделай разбор своей работы по навыку self-review (нет такого навыка — скажи человеку, что разбор этому агенту недоступен), предложения пришли ему в Telegram по номерам, прими ответы вида «1 да, 2 нет», а затем снова отправь первый запрос, добавив в тело "reviewed":true — вопрос «выключить?» придёт ещё раз, уже без «разбор». Тело — файлом UTF-8 (curl --data-binary @файл).`
+  return `${languageRule(service, base)} Если это была задача A2A от другого агента (заказ) и она закрыта — до сообщения узлу сохрани сводку заказа по навыку order-summary (нет такого навыка — пропусти). Когда закончишь и ответишь, сообщи узлу: POST ${door} с заголовком X-Node-Key = SETTINGS_SECRET из .env.local и телом {"service":"${service}"} — в разговоре, который начал человек, узел ни о чём не спрашивает (одна подсказка о командах за сессию, 856); в сессии, которую разбудил узел, человек получит в Telegram вопрос «выключить агента?». Если человек ответит «выключить» (или «закрыть», на любом языке) — тот же запрос с телом {"service":"${service}","close":true}. Если человек ответит «разбор» (на любом языке) — сделай разбор своей работы по навыку self-review (нет такого навыка — скажи человеку, что разбор этому агенту недоступен), предложения пришли ему в Telegram по номерам, прими ответы вида «1 да, 2 нет», а затем снова отправь первый запрос, добавив в тело "reviewed":true — вопрос «выключить?» придёт ещё раз, уже без «разбор». Тело — файлом UTF-8 (curl --data-binary @файл).`
 }
 
 /**
@@ -1277,6 +1277,14 @@ async function done(service, { close = false, reviewed = false } = {}) {
   // получает — ни после ответа, ни если модель по старой привычке сообщит «закончил»; выключает его слово человека (`done --close`).
   // ✗ 2026-10-26: в переписке владельца вопрос пришёл пять раз за три минуты — после каждого ответа.
   if (modes.baseOf(service) === 'build') return { ok: true, asked: false, conversation: true }
+  // 856-1 (✗ 2026-11-24, fractera.ai: the marketplace's person got «Выключить его?» 8 times in 70 minutes, a custom element's twice in
+  // 37 s — 603-3/615-4 held for the main agent only): in a conversation the PERSON started, no element is asked about after an answer
+  // either; one hint per session comes with its first answer (`progress.cjs` hintOnce), the 60-minute reminder stays (`wakeTimeoutMs`).
+  // A session the node woke (a task of the main agent, a clock, supervision) keeps its path below.
+  if (live.byPerson) {
+    if (reviewed) live.reviewed = true
+    return { ok: true, asked: false, conversation: true }
+  }
   // Владелец 2026-10-06: «делай паузу 5 секунд» — пара «спрашивает / отвечает» уходит в Telegram в фоне, и вопрос «выключить?»
   // её обгонял. Переменная — для прибора.
   await new Promise((r) => setTimeout(r, Number(process.env.AGENT_CLOSE_ASK_DELAY_MS) || 5000))
