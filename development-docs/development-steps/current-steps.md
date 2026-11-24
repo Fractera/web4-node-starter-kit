@@ -304,6 +304,12 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 **WHO WAITS:** nobody. Roma 1296 (13:45 UTC): «Строй план … и решай это самостоятельно … Действуй пока не завершишь, только по окончании
 
+**16:0x UTC — 854 DONE AND PUSHED (8c74cd55 = origin = Fractera)**, core build 93c35036 live; summary completed-steps/854-main.md
+(eyes + door proofs, custom 404). fc4vk--work cut by the build had finished («ok») — nothing to re-hand. PLANNED: new-steps/857 (data road
+— every native born on a node is kind `user` and gets no DATA_SECRET; native template data-service must use ELEMENT_KEY; db outside the
+build folder; template releases) and 858 (deploy on the person's word: core door takes the element's own key for itself only, command,
+templates' deploy-element). NEXT: 857-1 (load release-template), then 858, then 852, 853, 855. Servers still wait Roma's update.
+
 **15:5x UTC — 854 CODED, COMMITTED 45f59ebf (not pushed), CORE BUILD STARTED.** Tree flag `ownNative` (native && registry `born`),
 Build → f2f = one page «Предложить в маркетплейсе» (Select Web2/Web4 → «Далее» → form), door /api/node/market-offer → data/node/f2f/offers.jsonl
 (never sent, said on the page). Prebuild RC=0 (item-tree 9, market-offer 3). Closed plans 849–851/856 deleted (check-steps refused them).
