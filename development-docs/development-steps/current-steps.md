@@ -304,6 +304,13 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 **WHO WAITS:** nobody. Roma 1296 (13:45 UTC): «Строй план … и решай это самостоятельно … Действуй пока не завершишь, только по окончании
 
+**17:1x UTC — AUTH v2.4.47 DONE (8d10ce7d pushed), CORE BUILD STARTED for 858 (prebuild RC=0).** AFTER THE BUILD: /api/health = HEAD;
+858 proofs — (a) negative from the wire: `curl -X POST localhost:<core>/api/node/deploy -H 'x-node-key: bogus' -d '{"ids":["cck60"]}'` → 401;
+(b) the element's own key for itself: task cck60 (it has deploy-self.mjs since ebb2d26; no npm script? it merged package.json — it said
+it added deploy:self) «Working process: run npm run deploy:self -- --word "<test word of the core>" --message core-858 … report» → started,
+then the deploy ends ok; (c) A for B: the same element with --ids of another — not possible through the script; covered by the
+node-key-split test (38). Then summaries 857/858, push, checklist, 859-1.
+
 **17:0x UTC — 857 PROVEN ON THE MAC; ROLLOUT DONE (60c8875 pushed); 859 PLANNED.** cck60 merged v0.1.82 itself (ebb2d26), deployed
 by me (97 s, .next-b), its check: storeScope element cck60, data 200 ×4, no app.db anywhere. Native rollout by Roma's script: 9 elements
 pinned; auth v2.4.46 got 3 of 13 files — window 7177998d (`bash <scratchpad>/rollout-857-auth.sh`: checkout the 9 + rm store-key.mjs, rollout
