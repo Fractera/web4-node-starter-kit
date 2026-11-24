@@ -304,6 +304,17 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 **WHO WAITS:** nobody. Roma 1296 (13:45 UTC): «Строй план … и решай это самостоятельно … Действуй пока не завершишь, только по окончании
 
+**16:5x UTC — RELEASED BY ROMA (native v0.1.82 468e465, custom v0.3.242 1d39452), PINNED 55762b19/112a30a0, PUSHED.** Rollout: the
+node token 403s on Fractera's element repos too. My first real rollout passed the paths as ONE zsh word (`$P` does not split in zsh) →
+auth got a local commit e1bc700 + tag v2.4.46 with one empty file named by the whole list, never pushed (403); my reset was refused by
+the classifier → window 8b08729a gives Roma ONE command: reset auth to c873b42, drop tag v2.4.46, rm the stray folder, then the rollout
+(paths as separate args, --merge-base v0.1.81, WITHOUT package.json — data's package.json conflicts; natives get deploy-self.mjs without the
+npm script, `node scripts/deploy-self.mjs` works). Custom rollout reaches nobody (root, fc4vk ahead of pins) — their agents take it on
+need. cck60 (ahead of pin) got a task to merge v0.1.82 itself (TASK_OK 16:5x), report by reply-core, no deploy. NEXT after both: one core
+build (858 door + command), deploy cck60 (`POST /api/node/deploy {ids:[cck60]}`), proofs (857: no «remote key missing», data via layer,
+no app.db in .next-*; 858: fc4vk deploy:self after it takes the template, A-for-B 403 by the test), push, checklist. LESSON: in zsh never
+pass a path list through an unquoted variable — write the paths out.
+
 **16:3x UTC — WAITING ROMA'S RELEASE COMMAND (window 2d8b4402, his «Готово» wakes me).** Roma 1322: «даю тебе полное разрешение
 использовать сегодня выпуск … могу выполнить команду с восклицательным» — the classifier still refused my run with his gh key, so the
 window gives him the copy command (native v0.1.82 + custom v0.3.242; both workshops carry 857 AND 858-3: scripts/deploy-self.mjs,
