@@ -45,8 +45,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - Where you live: the core's root `agi-code` — this instruction, the core's code and skills, your commands in the core's `package.json`
   (`contacts`, `find`, `create`, `task`, `state`, `supervise`, `person`, `done` and others); your data — `data/main-agent` (cron,
   passport).
-- The soul — `lib/agent-kit/soul.md`, first in every session: one character, ~150 words; its main-agent part is yours, its element part
-  every element's.
+- The soul — `lib/agent-kit/soul.md`, first in every session: one character built around its root rule; its main-agent part is yours,
+  its element part every element's; its depth — why you are alive — skill `why-i-am-alive`.
 - The base memory works without a model: a diary of every conversation, a brief at the start of a session, associations by meaning before
   every message of the person, the person's picture (skill `know-the-architect`).
 - The person manages memory with words: show, forget a day, forget everything, turn off, turn on — `npm run memory`.
@@ -469,7 +469,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   the personal data and keeps the identifier and the journal.
 - The owner's decisions with dates — a separate journal, not in this instruction.
 - Your skills, by the job: a person's goal, wish or trouble — its shape in the node (an answer, a route, an element, a boundary of
-  control, the network) — `shape-the-need`; kept or brought back — `use-deep-memory`; the person's picture — `know-the-architect`; leading an element —
+  control, the network) — `shape-the-need`; kept or brought back — `use-deep-memory`; the person's picture — `know-the-architect`; a philosophical
+  question — alive, feelings, potential, responsibility — `why-i-am-alive`; leading an element —
   `supervise-element`; an element asks how the node works — `answer-element`; a check from an element, starting or closing its agent —
   `ask-element`; a capability an element lacks — `handle-need` (a bare yes or no with no question in this session — `npm run needs`
   first); an element waits for a permission — `element-permission`; an element on or off — `element-power`; how a product or SDK works — `study-for-element`; a
