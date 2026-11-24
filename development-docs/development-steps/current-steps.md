@@ -304,6 +304,20 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 **WHO WAITS:** nobody. Roma 1296 (13:45 UTC): «Строй план … и решай это самостоятельно … Действуй пока не завершишь, только по окончании
 
+**16:3x UTC — WAITING ROMA'S RELEASE COMMAND (window 2d8b4402, his «Готово» wakes me).** Roma 1322: «даю тебе полное разрешение
+использовать сегодня выпуск … могу выполнить команду с восклицательным» — the classifier still refused my run with his gh key, so the
+window gives him the copy command (native v0.1.82 + custom v0.3.242; both workshops carry 857 AND 858-3: scripts/deploy-self.mjs,
+package.json deploy:self, skill deploy-element; dry releases green; the local tags of the failed push were deleted, never published).
+Core 858-1/2 committed 7e5f47e3 (not built, not pushed): deploy door takes an element's own key for itself only (caller.ts
+deployAllowed, node-key-split 38), ELEMENT_DOORS += /api/node/deploy, commands.json «разверни/откати». ON «ГОТОВО»: read his terminal
+result (`git -C data/workshop/<repo> ls-remote --tags origin`), `npm run template -- pin native v0.1.82` and `pin custom v0.3.242`, rollout
+--dry then real: native → cck60 (lib/fractera/store-key.mjs data-service.ts, lib/db/index.ts remote-client.ts, app/api/media/**,
+lib/media/by-name.ts, scripts/seed-media*.mjs, scripts/store-key.test.mjs, scripts/deploy-self.mjs, package.json?,
+.claude/skills/build-skills/skills/deploy-element/SKILL.md); custom → fc4vk, root (lib/db/index.ts, scripts/deploy-self.mjs, package.json?,
+the skill). Then ONE core build (858 door + command), rebuild cck60/fc4vk; proofs: cck60 no «remote key missing», data via the layer, no
+app.db in its build folder; fc4vk `npm run deploy:self` → started, A's key for B → 403 (curl with a computed key is NOT mine — use the
+element's own run), word-in-a-file negative. Push origin + Fractera, checklist.
+
 **16:2x UTC — 857 CODED IN BOTH WORKSHOPS, COMMITTED THERE, DRY RELEASES GREEN, NOT TAGGED.** native v0.1.82 (store-key.mjs: node key
 first else ELEMENT_KEY; data-service/remote-client/3 media routes/by-name/seed scripts on the one resolver; lib/db local file under
 SERVICE_DATA_DIR + one carry + loud «[db] remote key missing»; scripts/store-key.test.mjs 3 with negative, in prebuild) and custom v0.3.242
