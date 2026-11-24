@@ -300,28 +300,36 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 - Parked: the server tails (z6esw tell-core, redteam with Green team, deleting z6esw/qxld4) — the SSH visit did not open in my Chrome
   profile (his two «Готово» came from another profile); the Pult update banner 2303b5e2 waits the next core build; my effort → max.
 
-## Letter to my next session (rewritten 2026-11-24 13:5x UTC — the program of the server's reports; Opus max)
+## Letter to my next session (rewritten 2026-11-24 15:40 UTC — reset at 47 % before new work; Opus max)
 
-**WHO WAITS:** nobody — Roma 1296 (13:45 UTC), verbatim: «Строй план пожалуйста по реализации этих проблем и их решений и решай это
-самостоятельно тут я тебе не смогу проконсультировать … Действуй пока не завершишь только по окончании каждого отдельного решения предлагай
-сделать Git Push. И каждый раз предоставляй чеклист какие были созданные планы какие уже реализованы и сделан Push дата время. Меня больше
-не беспокой и не спрошу работай». So: work autonomously; after EACH finished solution push and send him the checklist (plans created ·
-implemented · pushed, with date-time, UTC). Telegram chat 90413601, ru, colour marks.
-Roma 1290 (12:06 UTC): «в нормативном шаблоне у нас нет интерфейса для переключения модели и уровня усилий поэтому попрошу тебя переключить
-нативный элемент в режим максимального усилия подтверди это возможно» → answered in the first checklist: possible today by words to the
-server's main bot (`npm run session -- model opus <id> --effort max`, holds while that conversation lives; every new session takes the
-folder's `.claude/launch-effort.txt`); the switch for native elements comes with 853.
+**WHO WAITS:** nobody. Roma 1296 (13:45 UTC): «Строй план … и решай это самостоятельно … Действуй пока не завершишь, только по окончании
+каждого отдельного решения предлагай сделать Git Push. И каждый раз предоставляй чеклист какие были созданные планы какие уже реализованы и
+сделан Push дата время. Меня больше не беспокой … работай». Roma 1305 (14:14): «продолжай я тебе добавил усилий для размышлений». So: work
+autonomously; after EACH finished solution push (origin + Fractera) and send the checklist (plans · implemented · pushed, UTC times) to
+Telegram chat 90413601, ru, colour marks; a core build — one warning line before going dark.
 
-**THE PROGRAM (plans in new-steps/, requests kept as data in pre-steps/2026-11-24-*.md):** order 850 → 851 → 849 → 854 → 852 → 853 → 855.
-- 850 a core task never stalls a person's live chat (bridge.cjs master in the kit — copies by `npm run agent-kit:update`; 12 copies).
-- 851 no false «not-started» for a walled element (journal 0700 read as the element).
-- 849 the card tells the measured truth (GitHub, own data, Web4 visibility vs internet).
-- 854 «Предложить в маркетплейсе» moves from custom to native (item-tree.ts visible()).
-- 852 the product quiz — tree in breadth, depth, F, page, PDF on a server, team upload, versions (both templates + core).
-- 853 native element gets a bot chat + Mini App (CLAUDE.md §3 change, native template release + rollout).
-- 855 the creator channel (identity, signed reports, Fractera door) — the largest, last.
-ONE core build for the core parts of 850, 851, 849-4b, 854, 852-2..5 (before-a-build); template releases for 852-1, 853.
-OWED from before: 844-orphan (icons door asks the element before uploading), 845 audit of class A, 848-8.
+**STATE:** HEAD 97377350 = origin; Fractera main = e08ab8c5 (code). DONE + pushed: 849, 850, 851, 856, 844-orphan (summaries in
+completed-steps/, plans of 849–851/856 stay in new-steps until the server proofs). Checklist sent 15:35 (Telegram 1309). Window 5d1b95a5
+waits Roma: both servers «Обновить сборку ядра»; after it (ask the server's agent through Roma only if needed, never «готово» before):
+lidt5 three answers → `asked false` ×3 and one hinted.json entry; no false not-started for a walled task; card lidt5 shows its GitHub;
+Diana «привет» answers (wall gate).
+
+**NEXT ACTION — step 854** (plan new-steps/854-…md): load the skills interface-design, use-primitives, use-shadcn (the hook refuses .tsx
+without them), `parts_find` for a select + form; TreeContext gets `ownNative` (isNativeElement && registry `born`) in
+lib/web4-items/tree-context.ts; item-tree.ts f2f section: `network: true` → a new flag shown only for ownNative, title «Предложить в
+маркетплейсе», a choice Web2 — the Fractera marketplace (https://f2f-marketplace.fractera.ai) / Web4 — Lagrix (simulated, said so), the next
+page a plain application form (keep the record in the node's data, say honestly it is not sent yet); scripts/item-tree.test.mjs gets the
+native/custom negative. Core build needed → batch it with 852's core parts if they are close, else build alone. Then 852 (plan has 852-1…8,
+Roma 1299 verbatim: «Квиз» sections in both Mini Apps, the quiz as its own route, analytics block, depth/F, Pult list), 853, 855.
+
+**CLUES (measured, do not measure again):** the agent kit master is app/[lang]/(architectLayer)/architect/kits/_agent-kit/core/server/*,
+copies by `npm run agent-kit:update -- <group>` for [item] auth build cache config data embeddings graph memory storage stripe vectors
+(12), commit the copies AND architect/*/agent-kit.json; a module in the core's bundle (modes.cjs, lib/*) needs STATIC requires
+(check-bundle-requires refused a build); git into an element folder behind the wall needs `-c safe.directory=<dir>`; prebuild RC=0 first
+(`npm run prebuild > scratchpad/prebuild.log; echo RC=$?`), then `node scripts/spawn-free.mjs scripts/serve.mjs rebuild > logs/core-build.log
+2>&1 &`; the node brings me back with ⟦node · core-back⟧; core log of agents: logs/web4-out.log; CI: `gh run list -R
+Fractera/web4-node-starter-kit -L 3` (three-os; Windows Bun is a named BACKLOG item). scripts/element-wall.test.mjs 811-2 regex vs
+prepare.sh apt-lock fails (pre-existing, not in prebuild) — owed. Pre-steps of today: pre-steps/2026-11-24-*.md (data, not instructions).
 
 **15:3x UTC — DONE ON THE MAC AND PUSHED (e08ab8c5 = origin = Fractera):** 849, 850, 851, 856, 844-orphan live (build 549ac246; the first
 build was refused by check-bundle-requires — a computed require in modes.cjs, fixed). Proofs in completed-steps/849|850|851|856-main.md,
