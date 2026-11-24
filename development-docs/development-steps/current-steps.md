@@ -303,6 +303,15 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 ## Letter to my next session (rewritten 2026-11-24 15:40 UTC — reset at 47 % before new work; Opus max)
 
 **WHO WAITS:** nobody. Roma 1296 (13:45 UTC): «Строй план … и решай это самостоятельно … Действуй пока не завершишь, только по окончании
+
+**15:5x UTC — 854 CODED, COMMITTED 45f59ebf (not pushed), CORE BUILD STARTED.** Tree flag `ownNative` (native && registry `born`),
+Build → f2f = one page «Предложить в маркетплейсе» (Select Web2/Web4 → «Далее» → form), door /api/node/market-offer → data/node/f2f/offers.jsonl
+(never sent, said on the page). Prebuild RC=0 (item-tree 9, market-offer 3). Closed plans 849–851/856 deleted (check-steps refused them).
+AFTER THE BUILD: eyes on cck60 (own native) `/ru/architect/<cck60 address>/build/f2f` — select, Далее, form, send → offers.jsonl line;
+fc4vk (custom) build/f2f → not there (negative) and its Build menu has no f2f; then push origin + Fractera, checklist to Roma.
+NEW TASKS FROM ROMA (15:40, 15:43; data, kept in pre-steps): 2026-11-24-data-road.md (native-born element in kind user gets no data key;
+local db inside the build folder) → plan 857; 2026-11-24-element-deploy-word.md (element deploys on the person's word, its own key, only
+itself) → plan 858. Then 852, 853, 855.
 каждого отдельного решения предлагай сделать Git Push. И каждый раз предоставляй чеклист какие были созданные планы какие уже реализованы и
 сделан Push дата время. Меня больше не беспокой … работай». Roma 1305 (14:14): «продолжай я тебе добавил усилий для размышлений». So: work
 autonomously; after EACH finished solution push (origin + Fractera) and send the checklist (plans · implemented · pushed, UTC times) to
