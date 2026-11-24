@@ -304,6 +304,14 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 **WHO WAITS:** nobody. Roma 1296 (13:45 UTC): «Строй план … и решай это самостоятельно … Действуй пока не завершишь, только по окончании
 
+**17:0x UTC — 857 PROVEN ON THE MAC; ROLLOUT DONE (60c8875 pushed); 859 PLANNED.** cck60 merged v0.1.82 itself (ebb2d26), deployed
+by me (97 s, .next-b), its check: storeScope element cck60, data 200 ×4, no app.db anywhere. Native rollout by Roma's script: 9 elements
+pinned; auth v2.4.46 got 3 of 13 files — window 7177998d (`bash <scratchpad>/rollout-857-auth.sh`: checkout the 9 + rm store-key.mjs, rollout
+--elements auth → v2.4.47). Servers rebuilt ~16:20 (fractera.ai 8f4d20aa, aifa.dev b5b9ec27); their proofs wait Roma's words (window
+0b780611). Server agent's report (pre-steps/2026-11-24-born-element-key.md) → plan new-steps/859 (a road for a born element to take the
+pinned template via its own agent; loud empty element key; vectors/graph cards). NEXT: after auth's «Готово» — ONE core build (858 door +
+command), then 858 proof (fc4vk takes the template via the 859 road or a task, deploy:self), 857/858 summaries, 859-1.
+
 **16:5x UTC — RELEASED BY ROMA (native v0.1.82 468e465, custom v0.3.242 1d39452), PINNED 55762b19/112a30a0, PUSHED.** Rollout: the
 node token 403s on Fractera's element repos too. My first real rollout passed the paths as ONE zsh word (`$P` does not split in zsh) →
 auth got a local commit e1bc700 + tag v2.4.46 with one empty file named by the whole list, never pushed (403); my reset was refused by
