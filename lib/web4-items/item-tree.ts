@@ -24,8 +24,12 @@ export type TreeWords = { title: string; lead: string }
 export type Messenger = "h2a" | "h2h" | "a2a"
 export type TreePage = {
   slug: string; words: Record<"en" | "ru", TreeWords>; pages?: TreePage[]; needs?: "catalog" | Messenger; unless?: Messenger
-  /** 544-3: страница сети Lagrix (заказы и работа для чужих агентов, отзывы, f2f, кошелёк, тариф первого контакта) — у нативного элемента её нет. */
+  /** 544-3: страница сети Lagrix (заказы и работа для чужих агентов, отзывы, кошелёк, тариф первого контакта) — у нативного элемента её нет. */
   network?: true
+  /** 854 (Roma 2026-11-24: «после того как пользователь создал свой собственный нативный шаблон … раздел предложить в маркетплейсе … по
+   *  ошибке это реализовано в кастомном шаблоне»): раздел только нативного элемента, рождённого на узле кнопкой «Создать нативный
+   *  элемент» (`ownNative`), — ни у кастомного, ни у предустановленных нативных. */
+  ownNative?: true
   /** 567-6 (владелец 2026-10-22, «Только A2A и «Отзывы»»): страница есть, только когда элемент в сети Web4 (паспорт `visibility: network`). */
   web4?: true
   /** 551-1 (владелец 2026-10-20: «всю вкладку рабочие процесс мы должны немедленно удалить из native element, он не может на техническом
@@ -91,13 +95,16 @@ export const MOVED_PAGES: Record<string, string> = {
   // 706-8: Web3-платёж закомментирован до запуска Lagrix — его адрес ведёт к платёжным элементам Web2.
   "settings/payments/web3": "settings/payments/web2",
   "web3-store": "build",
-  "web3-store/find": "build/f2f/find",
-  "web3-store/publish": "build/f2f/publish",
+  // 854: «Найти» и «Предложить» свёрнуты в одну страницу «Предложить в маркетплейсе» (`build/f2f`).
+  "web3-store/find": "build/f2f",
+  "web3-store/publish": "build/f2f",
+  "build/f2f/find": "build/f2f",
+  "build/f2f/publish": "build/f2f",
   "build/catalog": "build/i2i/catalog",
   "build/api": "build/i2i/api",
   "build/mcp": "build/i2i/mcp",
-  "build/find": "build/f2f/find",
-  "build/publish": "build/f2f/publish",
+  "build/find": "build/f2f",
+  "build/publish": "build/f2f",
   "h2a/native-chat": "telegram",
   // 538: два пункта переезда свёрнуты в «Реверс-инжиниринг».
   "build/product-design/from-nextjs": "product-design/reverse-engineering",
@@ -150,13 +157,14 @@ export function movedPage(path: string[]): string | null {
 }
 
 // 472: что у элемента есть — для условий `needs`/`unless`. Один ответ для меню, маршрута и списка страниц раздела.
-export type TreeContext = { catalog: boolean; messengers: Record<Messenger, boolean>; native?: boolean; app?: "project" | "own"; memory?: boolean; auth?: boolean; web4?: boolean; payment?: boolean; apex?: boolean }
+export type TreeContext = { catalog: boolean; messengers: Record<Messenger, boolean>; native?: boolean; ownNative?: boolean; app?: "project" | "own"; memory?: boolean; auth?: boolean; web4?: boolean; payment?: boolean; apex?: boolean }
 export function treeVisible(p: TreePage, c: TreeContext): boolean {
   if (p.project === false && c.app === "project") return false
   if (p.needs === "catalog" && !c.catalog) return false
   if (p.needs && p.needs !== "catalog" && !c.messengers[p.needs]) return false
   if (p.unless && c.messengers[p.unless]) return false
   if (p.network && c.native) return false
+  if (p.ownNative && !(c.native && c.ownNative)) return false
   if (p.web4 && c.web4 === false) return false
   if (p.custom && c.native && !((p.orPayment && c.payment) || (p.orAuth && c.auth) || (p.orMemory && c.memory))) return false
   if (p.memory && !c.memory) return false
@@ -487,44 +495,22 @@ export const ITEM_TREE: TreePage[] = [
           { slug: "catalog", words: w("Catalog", "The elements of this node in short, and what this element can give away — where i2i connectors start.", "Каталог", "Элементы этого узла коротко и что умеет отдать этот элемент — отсюда начинаются connector i2i.") },
         ],
       },
+      // 854 (Roma 2026-11-24, «по ошибке это реализовано в кастомном шаблоне»): f2f — раздел своего нативного элемента; одна страница:
+      // выбор маркетплейса (Web2 — Fractera, Web4 — Lagrix, пока имитация) и простая форма заявки, хранится на узле.
       {
         slug: "f2f",
-        network: true,
-        words: w("f2f: exchange with Fractera", "How whole elements travel between Fractera projects through Lagrix.", "f2f: обмен с Fractera", "Как элементы целиком переходят между проектами Fractera через Lagrix."),
+        ownNative: true,
+        words: w("Offer in the marketplace", "Offer this native element to other projects: choose the marketplace and send an application.", "Предложить в маркетплейсе", "Предложите этот нативный элемент другим проектам: выберите маркетплейс и отправьте заявку."),
         about: {
           en: [
-            "f2f is how Fractera projects exchange whole elements — a site, an app, an agent or a service with its code and design — so that a builder can take a ready element instead of building it again.",
-            "It goes through Lagrix, an open network with no central server. An element is announced there with a signed announcement, the same way agents are; independent super-nodes collect the announcements and build search results by open rules that are the same for everyone (Lagrix document 17).",
-            "What f2f adds is a technical card: what the element is made of, so that another project can install it — the starter and version it was born from, the framework, the services it needs, its doors, the names (never the values) of its environment variables, its licence and where its code is (Lagrix document 20). Keys, passwords and personal data never travel.",
-            "If an exchange is paid, Lagrix settles it like any deal: the money waits in an escrow contract, the provider receives 95% when the deal closes, 5% is the network fee (Lagrix document 04). Fractera has no advantage in Lagrix: for the network it is one project among others.",
-            "The pages here: find a ready element in other Fractera projects, or offer this one. Documents: https://github.com/lagrix-dev/lagrix",
+            "A native element you created serves your whole node — and other projects may need it too. Here you offer it whole, with its code and design; keys, passwords and personal data never travel.",
+            "Web2 is the Fractera marketplace (https://f2f-marketplace.fractera.ai): public pages of ready elements with a price. Web4 is Lagrix, an open network without a central server where agents find elements by a signed announcement (documents: https://github.com/lagrix-dev/lagrix); it has not launched yet.",
           ],
           ru: [
-            "f2f — это то, как проекты Fractera обмениваются элементами целиком — сайтом, приложением, агентом или службой с их кодом и оформлением, — чтобы строитель мог взять готовый элемент, а не строить его заново.",
-            "Обмен идёт через Lagrix — открытую сеть без центрального сервера. Элемент объявляется там подписанным объявлением, так же как агенты; независимые супер-узлы собирают объявления и строят выдачу по открытым правилам, одинаковым для всех (документ Lagrix 17).",
-            "f2f добавляет техническую карточку: из чего сделан элемент, чтобы другой проект мог его поставить, — стартовый шаблон и версия, из которых он рождён, фреймворк, нужные ему службы, его двери, имена (никогда не значения) переменных окружения, лицензия и где лежит код (документ Lagrix 20). Ключи, пароли и персональные данные не передаются никогда.",
-            "Если обмен платный, Lagrix рассчитывает его как любую сделку: деньги ждут в контракте условного депонирования, исполнитель получает 95 % при закрытии, 5 % — комиссия сети (документ Lagrix 04). У Fractera в Lagrix нет преимуществ: для сети это один проект среди других.",
-            "Страницы здесь: найти готовый элемент в других проектах Fractera или предложить этот. Документы: https://github.com/lagrix-dev/lagrix",
+            "Нативный элемент, который вы создали, служит всему вашему узлу — и может пригодиться другим проектам. Здесь вы предлагаете его целиком, с кодом и устройством; ключи, пароли и персональные данные не передаются никогда.",
+            "Web2 — маркетплейс Fractera (https://f2f-marketplace.fractera.ai): публичные страницы готовых элементов с ценой. Web4 — Lagrix, открытая сеть без центрального сервера, где агенты находят элементы по подписанному объявлению (документы: https://github.com/lagrix-dev/lagrix); она ещё не запущена.",
           ],
         },
-        pages: [
-          {
-            slug: "find",
-            words: w("Find a ready element", "Look for a ready element in other Fractera projects through Lagrix (f2f) before building your own.", "Найти готовый элемент", "Найти готовый элемент в других проектах Fractera через Lagrix (f2f), прежде чем строить свой."),
-            about: {
-              en: ["An element is looked for in two ways: through Lagrix discovery (f2f) — the same discovery as for agents, with the technical characteristics a build needs — and through AI search engines."],
-              ru: ["Элемент ищется двумя путями: через обнаружение Lagrix (f2f) — то же, что для агентов, плюс технические характеристики, нужные строительству, — и через ИИ-поисковики."],
-            },
-          },
-          {
-            slug: "publish",
-            words: w("Offer the element", "Offer this whole element to other Fractera projects through Lagrix (f2f): free or for money.", "Предложить элемент", "Предложить этот элемент целиком другим проектам Fractera через Lagrix (f2f): бесплатно или за деньги."),
-            about: {
-              en: ["Here the price of the element itself is set — the whole site, app or agent with its code and design. This is not the price of its skills: what the element's work costs others (an article, an image, a message in a dialog) is set in its capability cards («Working process → A2A: your work»)."],
-              ru: ["Здесь назначается цена самого элемента — сайта, приложения или агента целиком, с его кодом и устройством. Это не цена его навыков: сколько стоит работа элемента для других (статья, изображение, сообщение в диалоге), задаётся в его карточках возможностей («Рабочий процесс → A2A: ваша работа»)."],
-            },
-          },
-        ],
       },
       // 528-1 (владелец 2026-10-18): «В Строительство переносим документы».
       {

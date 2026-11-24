@@ -101,4 +101,24 @@ await t('802 negative control: the same tree without `ownDomain` on «Домен
   assert.ok(opens(old, 'settings/domain', { ...CTX.custom, apex: true }))
 })
 
+await t('854: «Предложить в маркетплейсе» (build/f2f) — only a native element born on the node; never a custom or a preinstalled one', () => {
+  const own = { ...CTX.config, ownNative: true }
+  assert.ok(opens(tree, 'build/f2f', own), 'an own native element does not open build/f2f')
+  assert.ok(listed(tree, 'build', own).includes('f2f'), 'an own native element does not list it')
+  assert.equal(tree.findTreePath(['build', 'f2f']).at(-1).words.ru.title, 'Предложить в маркетплейсе')
+  for (const [name, c] of [['custom', CTX.custom], ['preinstalled config', CTX.config], ['custom with a stray ownNative', { ...CTX.custom, ownNative: true }]]) {
+    assert.ok(!opens(tree, 'build/f2f', c), `${name} opens build/f2f`)
+    assert.ok(!listed(tree, 'build', c).includes('f2f'), `${name} lists it`)
+  }
+  for (const old of ['build/f2f/find', 'build/f2f/publish', 'web3-store/publish', 'build/find']) assert.equal(tree.movedPage(old.split('/')), 'build/f2f')
+})
+
+await t('854 negative control: the f2f section back on `network: true` shows it to a custom element and hides it from its own native', async () => {
+  const cut = SOURCE.replace('slug: "f2f",\n        ownNative: true,', 'slug: "f2f",\n        network: true,')
+  assert.notEqual(cut, SOURCE, '`ownNative: true` was not found on f2f to swap it')
+  const old = await load(cut)
+  assert.ok(opens(old, 'build/f2f', CTX.custom))
+  assert.ok(!opens(old, 'build/f2f', { ...CTX.config, ownNative: true }))
+})
+
 console.log(process.exitCode ? `===ITEM_TREE_TEST_FAILED=== ${passed} passed` : `===ITEM_TREE_TEST_OK=== ${passed} passed`)

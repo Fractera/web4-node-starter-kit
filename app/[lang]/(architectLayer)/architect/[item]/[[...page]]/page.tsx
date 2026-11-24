@@ -85,6 +85,8 @@ import { LagrixRating } from '@/components/element-docs/lagrix-rating'
 import { lagrixRatingUi } from '../../../_i18n/lagrix-rating.i18n'
 import { ElementMessengerSettings } from '../../../_components/element-messenger-settings.client'
 import { messengerSettingsUi } from '../../../_i18n/element-messenger-settings.i18n'
+import { ElementMarketOffer } from '../../../_components/element-market-offer.client'
+import { marketOfferUi } from '../../../_i18n/element-market-offer.i18n'
 import { PaymentElements } from '../../../_components/payment-elements.client'
 import { PaymentSelf } from '../../../_components/payment-self'
 import { paymentElementsUi } from '../../../_i18n/payment-elements.i18n'
@@ -524,7 +526,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   // 528-1: ключ — полный путь; витрина A2A стала «Карточками возможностей» в «A2A: ваша работа».
   const PASSPORT_VIEWS: Record<string, PassportView> = {
     'build/i2i/api': 'api', 'build/i2i/mcp': 'mcp', 'build/i2i/catalog': 'catalog',
-    'build/f2f/publish': 'publish', 'build/f2f/find': 'find', [SUBSCRIPTIONS]: 'subscriptions', 'workflow/process/cron': 'cron',
+    [SUBSCRIPTIONS]: 'subscriptions', 'workflow/process/cron': 'cron',
     [BACKUP_TOOLS]: 'subscriptions', 'workflow/backup/cron': 'cron',
     // 636: календарь нативного элемента — свой раздел «Крон события».
     'cron': 'cron',
@@ -547,6 +549,8 @@ export default async function Page({ params }: { params: Promise<Params> }) {
   const messengerSettings = key === 'messenger/settings'
     ? (entry ? <ElementMessengerSettings item={item} lang={lang} ui={messengerSettingsUi(lang)} /> : <p className="my-4 text-sm text-muted-foreground">{messengerSettingsUi(lang).notBorn}</p>)
     : null
+  // 854: «Строительство → Предложить в маркетплейсе» своего нативного элемента — выбор маркетплейса и форма заявки (хранится на узле).
+  const marketOffer = key === 'build/f2f' && entry ? <ElementMarketOffer item={item} lang={lang} ui={marketOfferUi(lang)} /> : null
   // 536-1 (владелец 2026-10-18): «Продуктовый квиз» — живое описание продукта из `development-docs/product/` элемента; страница
   // только читает, меняет квиз агент элемента в разговоре. 556-10: «Начать квиз», «Продолжить квиз» и 💬 открывают справа терминал
   // агента элемента (`_tools/terminal-drawer`); Telegram со страницы снят.
@@ -647,7 +651,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
       lead={words.lead}
       // 721-2: шапка страницы элемента (видна в компактном режиме) — его имя для людей, не адрес; найдено глазами после обновления.
       pageTitle={elementLabel(item, lang)}
-      widget={<>{offNote}{bar}{lagrix}{about}{list}{preview}{github}{deployPanel}{copyNote}{deploymentsNote}{environment}{domainSettings}{settings}{siteSettings}{designPage}{agent}{passport}{capabilities}{doc}{orders}{messengerSettings}{payments}{productQuiz}{reverseEngineering}{tools}{backupSettings}{providers}{users}{miniApp}</>}
+      widget={<>{offNote}{bar}{lagrix}{about}{list}{preview}{github}{deployPanel}{copyNote}{deploymentsNote}{environment}{domainSettings}{settings}{siteSettings}{designPage}{agent}{passport}{capabilities}{doc}{orders}{messengerSettings}{marketOffer}{payments}{productQuiz}{reverseEngineering}{tools}{backupSettings}{providers}{users}{miniApp}</>}
       children={[...dashboardBlocks, ...tables, ...providerItems]}
       tabs={providerTabs}
     />

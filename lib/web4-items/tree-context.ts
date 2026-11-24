@@ -6,6 +6,7 @@ import { AUTH_ELEMENT, MEMORY_ELEMENTS } from "@/lib/web4-items/built-in-element
 import web4 from "@/lib/web4-items/element-web4.cjs"
 import { paymentOf } from "@/lib/web4-items/payment-elements"
 import { holdsApex } from "@/lib/hosting/hostnames.mjs"
+import { getService } from "@/lib/microservices/registry"
 
 // КОНТЕКСТ ДЕРЕВА ЭЛЕМЕНТА — ОДНА СБОРКА ДЛЯ МЕНЮ, МАРШРУТА И СПИСКОВ (узел, шаг 553-6; прежде — четыре копии одной строки).
 //
@@ -21,10 +22,13 @@ export function effectiveMessengers(id: string): TreeContext["messengers"] {
 }
 
 export function treeContextOf(id: string): TreeContext {
+  const native = isNativeElement(id)
   return {
     catalog: hasCatalog(id),
     messengers: effectiveMessengers(id),
-    native: isNativeElement(id),
+    native,
+    // 854: a native element born on this node with «Создать нативный элемент» (registry `born`) — only it offers itself in a marketplace.
+    ownNative: native && !!(getService(id) as { born?: unknown } | null)?.born,
     app: elementApp.appOf(id, process.cwd()) as "project" | "own",
     memory: MEMORY_ELEMENTS.includes(id),
     auth: id === AUTH_ELEMENT,

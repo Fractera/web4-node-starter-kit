@@ -7,3 +7,8 @@ Lagrix) and `build/publish` (offer this whole element to them). Old addresses `w
 
 Step 528 (owner 2026-10-18): f2f is a subsection with its own address — `build/f2f` (how it works), `build/f2f/find`, `build/f2f/publish`;
 `build/find`, `build/publish` and `web3-store/*` redirect there (`movedPage()`).
+
+Step 854 (Roma 2026-11-24, «по ошибке это реализовано в кастомном шаблоне»): `build/f2f` is one page «Предложить в маркетплейсе» of an
+own native element only (born on the node, `ownNative` in the tree context) — a choice Web2 (the Fractera marketplace) / Web4 (Lagrix,
+simulated) and a plain application form kept in `data/node/f2f/offers.jsonl` (door `/api/node/market-offer`). `build/f2f/find`,
+`build/f2f/publish` and every older address redirect to `build/f2f`; a custom element has no f2f section.
