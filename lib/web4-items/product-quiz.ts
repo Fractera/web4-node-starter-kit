@@ -372,3 +372,15 @@ export function readProductQuiz(id: string): QuizRead {
   }
   return { quiz, problems, ledgers: readLedgers(dir, problems) }
 }
+
+/** 852-8: one element's quiz in a line for the Pult — only when its tree has started: nodes, filled (answered or by the agent), the
+ *  deepest level reached, the chosen depth and the share filled. */
+export type QuizGlance = { nodes: number; filled: number; level: number; depth: number; percent: number }
+export function quizGlance(id: string): QuizGlance | null {
+  const { quiz } = readProductQuiz(id)
+  if (!quiz || quiz.tree.length === 0) return null
+  let nodes = 0, filled = 0, level = 0
+  const walk = (list: QuizTreeNode[], l: number) => { for (const n of list) { nodes += 1; if (n.mark !== "open") filled += 1; level = Math.max(level, l); walk(n.children, l + 1) } }
+  walk(quiz.tree, 1)
+  return { nodes, filled, level, depth: quiz.depth, percent: Math.round((filled / nodes) * 100) }
+}

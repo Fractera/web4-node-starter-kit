@@ -2,6 +2,7 @@
 // проводить в Telegram …» — the node's own Mini App, opened by the main agent's bot. Read here, by code, no model: the requests waiting
 // for the person (the action window's, 761-16), every element with its power and where its development stands (the same records
 // `npm run where` reads), the subscription's limits. Never a value of a secret, never a full address of a tab, never the node's keys.
+import { quizGlance, type QuizGlance } from "@/lib/web4-items/product-quiz"
 import { existsSync, readFileSync, readdirSync } from "node:fs"
 import { join } from "node:path"
 import { homedir } from "node:os"
@@ -38,7 +39,7 @@ export type TgAsk = { id: string; text: string; why: string | null; hint: string
  * channel. `null` — not known yet (the default model, an agent that never ran).
  */
 export type TgAgent = { mode: "coding" | "waiting" | "sleeping"; model: string | null; effort: string | null; ultracode: boolean; account: "node" | "own" | null; email: string | null; bot: string | null; botReady: boolean }
-export type TgElement = { build: "building" | "queued" | null; serve: TgServe; claude: "own" | "node" | "none"; subscription: string | null; id: string; name: string; native: boolean; required: boolean; on: boolean; offReason: string | null; live: boolean; step: string | null; turn: { event: string; at: string; last: string | null } | null; agent: TgAgent ; description: string | null; site: string | null; botLink: string | null; glance: TgGlance }
+export type TgElement = { build: "building" | "queued" | null; serve: TgServe; claude: "own" | "node" | "none"; subscription: string | null; id: string; name: string; native: boolean; required: boolean; on: boolean; offReason: string | null; live: boolean; step: string | null; turn: { event: string; at: string; last: string | null } | null; agent: TgAgent ; description: string | null; site: string | null; botLink: string | null; glance: TgGlance; quiz: QuizGlance | null }
 /** 840-2 (the owner, Telegram 942: «на каждом элементе сразу видно его учетную запись … контекстного окна … расход подписки»). */
 export type TgGlance = { account: string | null; context: number | null; fiveHour: number | null }
 /**
@@ -258,6 +259,8 @@ function elementsOf(lang: Lang, builds: TgBuilds, procs: Map<string, string> | n
       site: e.kind === "user" ? siteOf(e.id) : null,
       botLink: null,
       glance: glanceOf(e),
+      // 852-8: the Pult lists only the elements whose quiz tree has started, with a link to each one's bot.
+      quiz: quizGlance(e.id),
     }
   }).map((x) => ({ ...x, botLink: x.agent.bot ? `https://t.me/${x.agent.bot}` : null }))
 }
