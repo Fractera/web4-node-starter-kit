@@ -304,6 +304,12 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 **WHO WAITS:** nobody. Roma 1296 (13:45 UTC): «Строй план … и решай это самостоятельно … Действуй пока не завершишь, только по окончании
 
+**2026-11-25 00:5x UTC — 852-3/4 LIVE on the Mac (core 1207b309, pushed).** PDF cck60 200 application/pdf 140 KB (installed Chrome; the
+headless-shell path = the server's proof); upload: .sh 400 bad-kind, unknown element 404, a .md for fc4vk → saved under its data with
+the Cyrillic name, woke true, and the main agent's task line ARRIVED (00:5x) — the chain proven; not passed on to fc4vk (my own test),
+the test upload removed. Eyes: logs/eyes/2026-11-25T00-49-18-574Z.png (dialog, disabled send until a file, console clean).
+NEXT: 852-5 (core: the page lists the element's quiz-v<N> tags; «вернуться к версии N» = a task through the main agent), then 852-6/7/8.
+
 **2026-11-25 00:5x UTC — 852-1 RELEASED by Roma (custom v0.3.243, native v0.1.83), pinned, pushed; cck60/fc4vk took them (00a59ad,
 4d8e568; taken 21cb090, 3416c35). Native rollout SKIPPED on purpose (auth's check-product conflicts; services don't run product quizzes).
 852-3/4 COMMITTED 8872e253, CORE BUILD STARTED (Roma asleep, «действуйте от моего лица»). AFTER THE BUILD: GET /api/node/product-quiz/pdf
