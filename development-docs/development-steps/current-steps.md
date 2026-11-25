@@ -318,6 +318,15 @@ quiz: /ru/tg/quiz 200, /1/2 200, /9 404, /v1 404; door: depth 1 → 409 shallow 
 numbers = quiz.json (6 questions, 3 answers, 50 %, depth 2/3); eyes logs/eyes/2026-11-25T01-40-56-116Z.png (390 light, full) and
 …01-41-00-650Z.png (node, dark), console clean. Test quiz and server removed.
 
+**02:2x UTC — 853 CORE DONE, d863d2b0, CORE BUILD STARTED.** Decided (and why): a native's Mini App is drawn BY THE CORE at
+`/api/node/tg-app?el=<id>` (three parts: context + 5h/week limits, «Перейти на сайт», «Перейти в чат» → its bot writes «📍 …» + came-from),
+NOT ported into the native template — ~40 files and a rollout into 9 natives whose merges already conflicted (auth/data); one core build,
+natives' folders untouched. Bot creation for natives stays on their own «Telegram-бот» page (the Pult's bot door is custom-only by
+design: natives' agent-kit copy). Law §2/§3 sealed (FAIL before seal, OK after). AFTER THE BUILD: /api/health = d863d2b0+; GET
+?el=vectors → 200 html; ?el=fc4vk → 404 (custom, negative); ?el=x!! → 404; POST ?el=vectors {state} → 409 no-bot (no native has a bot
+yet); eyes of the page (no initData → the page says the refusal). NOT PROVABLE tonight: a native's bot opening it — needs Roma to give
+a native a bot (BotFather is his act). Then push, 853 summary.
+
 **NEXT ACTION:** when Roma says he is at the Mac — window with `bash logs/release-852-b.sh` (release custom v0.3.244 + native v0.1.84;
 natives rollout skipped on purpose). On its «Готово» CHECK the tags on GitHub first (he presses from the phone), then `npm run template --
 pin custom v0.3.244`, `pin native v0.1.84`, push core; `npm run template -- offer custom fc4vk`; on its report `taken`, deploy fc4vk; PROOF
