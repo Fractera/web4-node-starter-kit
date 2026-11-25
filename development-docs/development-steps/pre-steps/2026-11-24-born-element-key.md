@@ -54,3 +54,14 @@ personal data in this file. The main agent never reads an element's environment 
 
 —
 No keys or personal data in this file.
+
+## 6. Update 2026-11-25 00:07 UTC — the key is there now
+
+- lidt5 to Roma in its bot (screenshot, 00:07 UTC): «ключ элемента появился ✅ — слой данных теперь пускает: тестовый запрос вернул 200;
+  векторы ключ принимают, но поисковый запрос ждёт другой формат».
+- The node update at 19:17 local (core 3b8c500f) re-ran the installer for every element (`logs/node-update.log` line 1189 names lidt5's
+  `.env.local`), so `ELEMENT_KEY` was written then. Whether it was empty before or the element misread it is not known; 859-2 (the
+  installer says an empty key aloud, the card says whether a key is present) is still worth it.
+- lidt5 still runs v0.1.81: its `lib/db` sends only `X-Data-Secret`, so its own code still needs 857's data-service — 859-1 stays needed.
+- 856 seen live in the same screenshot: its answer at 00:07 came with no «Выключить его?»; core log `01:07:15 [agents/done] lidt5
+  close=false → asked false`.
