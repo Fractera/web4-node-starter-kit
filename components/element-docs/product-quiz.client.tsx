@@ -11,8 +11,10 @@ import { TerminalDrawer } from "@/_tools/terminal-drawer/client/terminal-drawer.
 import type { TerminalDrawerWords, TerminalKit } from "@/_tools/terminal-drawer/types/terminal-drawer"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { H2, H3, P, Small } from "@/components/ui/typography"
 import type { ProductQuiz, QuizItem, QuizLedgers, QuizStepState, QuizWork } from "@/lib/web4-items/product-quiz"
+import { QuizTree, type QuizTreeWords } from "./quiz-tree"
 
 // ISLAND OF THE PRODUCT QUIZ (node step 536-1). The person, 2026-10-18: «А вверху инструкция если хотите что-то добавить перейдите
 // (ссылка на терминал) (ссылка на Telegram если он есть) и скажите что вы хотите продолжить развитие продуктового квизы».
@@ -84,6 +86,8 @@ export type ProductQuizWords = {
   start: string
   /** 536-2: the legend under the instruction and the words of the dot. */
   legend: Record<QuizWork, string>
+  /** 852-2: the tree walked in breadth, its depth, F and version. */
+  tree: QuizTreeWords
   /** What the dot says in words (its label and the head of the hover). «{step}» is replaced by the step numbers. */
   work: Record<QuizWork, string>
   stepState: Record<QuizStepState, string>
@@ -208,9 +212,16 @@ export function ProductQuizIsland({ item, lang, words, task }: { item: string; l
     setDrawer((d) => ({ n: (d?.n ?? 0) + 1, text }))
   }
   const askButton = (line: string, id: string) => (
-    <Button type="button" variant="ghost" size="icon-xs" aria-label={words.ask} title={words.ask} onClick={() => setAskLine(line)} data-quiz-ask={id}>
-      <MessageSquareText aria-hidden />
-    </Button>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button type="button" variant="ghost" size="icon-xs" aria-label={words.ask} onClick={() => setAskLine(line)} data-quiz-ask={id}>
+            <MessageSquareText aria-hidden />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>{words.ask}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   )
   const dialog = (
     <BlockTask
@@ -333,6 +344,8 @@ export function ProductQuizIsland({ item, lang, words, task }: { item: string; l
           </ul>
         </CardContent>
       </Card>
+
+      <QuizTree quiz={quiz} words={words.tree} />
 
       {read.problems.length > 0 && (
         <div className="flex flex-col gap-1 rounded-lg border border-destructive p-3" role="alert" data-quiz-problems>

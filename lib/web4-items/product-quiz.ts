@@ -52,8 +52,17 @@ export type QuizItem = {
   work: QuizWork
 }
 export type QuizModule = { slug: string; title: string; text: string; items: QuizItem[] }
+/** 852-2: the quiz as a tree walked in breadth (the element's skill product-quiz, its `scripts/quiz-tree.mjs`): numbered by place,
+ *  2–4 words each, marked by who filled it. */
+export type QuizTreeMark = "answered" | "agent" | "open"
+export type QuizTreeNode = { n: string; title: string; q: string; a: string; mark: QuizTreeMark; children: QuizTreeNode[] }
 export type ProductQuiz = {
   language: string
+  /** 852-2: level 1 = the modules; depth 1–5 (default 3), freedom F 0–100 % (default 75), the version of the quiz. */
+  tree: QuizTreeNode[]
+  depth: number
+  freedom: number
+  version: { n: number; date: string } | null
   vision: { text: string; status: QuizStatus }
   actors: { id: string; name: string; text: string }[]
   modules: QuizModule[]
@@ -294,8 +303,19 @@ export function readProductQuiz(id: string): QuizRead {
   }
 
   const vision = q.vision && typeof q.vision === "object" ? (q.vision as Record<string, unknown>) : {}
+  const treeOf = (v: unknown): QuizTreeNode[] => list(v).map((t) => ({
+    n: str(t.n), title: str(t.title), q: str(t.q), a: str(t.a),
+    mark: t.mark === "answered" || t.mark === "agent" ? t.mark : "open",
+    children: treeOf(t.children),
+  }))
+  const whole = (v: unknown, lo: number, hi: number, dflt: number) => (Number.isInteger(v) && (v as number) >= lo && (v as number) <= hi ? (v as number) : dflt)
+  const ver = q.version && typeof q.version === "object" ? (q.version as Record<string, unknown>) : null
   const quiz: ProductQuiz = {
     language: str(q.language) || "en",
+    tree: treeOf(q.tree),
+    depth: whole(q.depth, 1, 5, 3),
+    freedom: whole(q.freedom, 0, 100, 75),
+    version: ver && Number.isInteger(ver.n) ? { n: ver.n as number, date: str(ver.date) } : null,
     vision: { text: str(vision.text), status: status(vision.status) },
     actors: list(q.actors).map((a) => ({ id: str(a.id), name: str(a.name), text: str(a.text) })),
     modules,

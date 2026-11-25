@@ -669,7 +669,7 @@
         "en": "Product quiz",
         "ru": "Опрос продукта"
       },
-      "version": "1.0.0",
+      "version": "1.1.0",
       "parts": [
         {
           "id": "tool-block-task",
@@ -703,7 +703,8 @@
         "app/[lang]/(architectLayer)/architect/[item]/[[...page]]/page.tsx"
       ],
       "body": [
-        "components/element-docs/product-quiz.client.tsx"
+        "components/element-docs/product-quiz.client.tsx",
+        "components/element-docs/quiz-tree.tsx"
       ],
       "requires": [
         "components/dialog/app-dialog.i18n",
@@ -711,10 +712,11 @@
         "components/ui/button",
         "components/ui/card",
         "components/ui/popover",
+        "components/ui/tooltip",
         "components/ui/typography",
         "lib/web4-items/product-quiz"
       ],
-      "bodyHash": "3af875ac3a2a6f15"
+      "bodyHash": "583bb0a073c38dfc"
     },
     {
       "id": "remote-settings",
@@ -3088,6 +3090,7 @@
         "components/deploy/deploy-board.client.tsx",
         "components/element-design/design-status.tsx",
         "components/element-docs/product-quiz.client.tsx",
+        "components/element-docs/quiz-tree.tsx",
         "components/element-docs/reverse-engineering.client.tsx",
         "components/hosting/dns-records.tsx",
         "components/hosting/server-certificates.client.tsx",
@@ -3481,6 +3484,7 @@
         "components/dashboard/node-passport.client.tsx",
         "components/element-docs/lagrix-rating.tsx",
         "components/element-docs/product-quiz.client.tsx",
+        "components/element-docs/quiz-tree.tsx",
         "components/node-state/node-state.client.tsx",
         "components/official/official-account.client.tsx",
         "components/payments/stripe-keys.client.tsx",
@@ -4608,6 +4612,7 @@
         "components/element-design/design-track.client.tsx",
         "components/element-docs/indicator-hint.client.tsx",
         "components/element-docs/lagrix-rating.tsx",
+        "components/element-docs/product-quiz.client.tsx",
         "components/form/voice-control.client.tsx",
         "components/hosting/server-launch-end.client.tsx",
         "components/node-state/github-token-alarm.client.tsx",
@@ -4717,6 +4722,7 @@
         "components/element-docs/lagrix-rating.tsx",
         "components/element-docs/passport-door.client.tsx",
         "components/element-docs/product-quiz.client.tsx",
+        "components/element-docs/quiz-tree.tsx",
         "components/element-docs/reverse-engineering.client.tsx",
         "components/element-settings/brief-editor.client.tsx",
         "components/element-settings/remote-state.tsx",

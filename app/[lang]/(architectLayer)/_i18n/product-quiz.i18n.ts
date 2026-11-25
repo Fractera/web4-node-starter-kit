@@ -55,6 +55,14 @@ const DICT: Record<"en" | "ru", ProductQuizWords> = {
       "The agent asks you about the product for about fifteen minutes: who uses it, what each person does, which rules apply.",
     start: "Start the quiz",
     legend: { done: "done", "in-progress": "in progress", planned: "planned", none: "no steps yet" },
+    tree: {
+      title: "The quiz tree",
+      lead: "The agent goes in breadth: first every module of level 1 with you, then each branch one level deeper. Correct any point by its number: «for 2.3 add …».",
+      empty: "No tree yet: the agent builds it with the first turn of the quiz, starting with the modules of level 1.",
+      meta: "Depth {depth} · the agent's freedom F {freedom}% · version {version}",
+      level: "Level {level}: {nodes}",
+      marks: { answered: "answered by you", agent: "filled by the agent", open: "open" },
+    },
     work: {
       done: "Done",
       "in-progress": "In progress: step {step}",
@@ -123,6 +131,14 @@ const DICT: Record<"en" | "ru", ProductQuizWords> = {
       "Агент минут пятнадцать расспрашивает вас о продукте: кто им пользуется, что делает каждый и какие правила действуют.",
     start: "Начать квиз",
     legend: { done: "завершено", "in-progress": "в работе", planned: "запланировано", none: "шагов ещё нет" },
+    tree: {
+      title: "Дерево квиза",
+      lead: "Агент идёт в ширину: сначала вместе с вами все модули уровня 1, потом каждая ветвь на уровень глубже. Поправить можно любой пункт по номеру: «для 2.3 добавить …».",
+      empty: "Дерева пока нет: агент строит его первым же ходом квиза, начиная с модулей уровня 1.",
+      meta: "Глубина {depth} · свобода агента F {freedom}% · версия {version}",
+      level: "Уровень {level}: {nodes}",
+      marks: { answered: "ответили вы", agent: "заполнил агент", open: "открыто" },
+    },
     work: {
       done: "Завершено",
       "in-progress": "В работе: шаг {step}",
