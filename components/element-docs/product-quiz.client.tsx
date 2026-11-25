@@ -15,6 +15,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { H2, H3, P, Small } from "@/components/ui/typography"
 import type { ProductQuiz, QuizItem, QuizLedgers, QuizStepState, QuizWork } from "@/lib/web4-items/product-quiz"
 import { QuizTree, type QuizTreeWords } from "./quiz-tree"
+import { QuizFeedback, type QuizFeedbackWords } from "./quiz-feedback.client"
 
 // ISLAND OF THE PRODUCT QUIZ (node step 536-1). The person, 2026-10-18: «А вверху инструкция если хотите что-то добавить перейдите
 // (ссылка на терминал) (ссылка на Telegram если он есть) и скажите что вы хотите продолжить развитие продуктового квизы».
@@ -88,6 +89,8 @@ export type ProductQuizWords = {
   legend: Record<QuizWork, string>
   /** 852-2: the tree walked in breadth, its depth, F and version. */
   tree: QuizTreeWords
+  /** 852-4: «Загрузить результаты команды». */
+  feedback: QuizFeedbackWords
   /** What the dot says in words (its label and the head of the hover). «{step}» is replaced by the step numbers. */
   work: Record<QuizWork, string>
   stepState: Record<QuizStepState, string>
@@ -331,6 +334,7 @@ export function ProductQuizIsland({ item, lang, words, task }: { item: string; l
             >
               {words.pdf}
             </a>
+            <QuizFeedback item={item} words={words.feedback} dialogUi={task.dialogUi} />
           </div>
           <Small className="text-muted-foreground" data-quiz-counters>
             {fill(words.counters, { confirmed: confirmedCount, total: items.length, questions: quiz.openQuestions.length })}

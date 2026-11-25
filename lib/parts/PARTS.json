@@ -88,6 +88,7 @@
         "components/domain/domain-cards.client.tsx",
         "components/domain/domain-main.client.tsx",
         "components/element-design/design-flow.client.tsx",
+        "components/element-docs/quiz-feedback.client.tsx",
         "components/element-settings/site/editors/feature-switches.client.tsx",
         "components/environment/environment-panel.client.tsx",
         "components/hosting/server-busy.client.tsx",
@@ -669,7 +670,7 @@
         "en": "Product quiz",
         "ru": "Опрос продукта"
       },
-      "version": "1.1.0",
+      "version": "1.2.0",
       "parts": [
         {
           "id": "tool-block-task",
@@ -704,19 +705,24 @@
       ],
       "body": [
         "components/element-docs/product-quiz.client.tsx",
+        "components/element-docs/quiz-feedback.client.tsx",
         "components/element-docs/quiz-tree.tsx"
       ],
       "requires": [
+        "components/dialog/app-dialog.client",
         "components/dialog/app-dialog.i18n",
         "components/ui/badge",
         "components/ui/button",
         "components/ui/card",
+        "components/ui/field",
+        "components/ui/input",
         "components/ui/popover",
+        "components/ui/textarea",
         "components/ui/tooltip",
         "components/ui/typography",
         "lib/web4-items/product-quiz"
       ],
-      "bodyHash": "583bb0a073c38dfc"
+      "bodyHash": "d4899c2199b4ca6b"
     },
     {
       "id": "remote-settings",
@@ -3347,6 +3353,7 @@
         "components/element-design/step-parts.tsx",
         "components/element-docs/passport-door.client.tsx",
         "components/element-docs/product-quiz.client.tsx",
+        "components/element-docs/quiz-feedback.client.tsx",
         "components/element-docs/reverse-engineering.client.tsx",
         "components/element-settings/brief-editor.client.tsx",
         "components/element-settings/site/config/combo-field.client.tsx",
@@ -3768,6 +3775,7 @@
         "app/[lang]/(architectLayer)/_components/element-domain-ladder.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-market-offer.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-messenger-settings.client.tsx",
+        "components/element-docs/quiz-feedback.client.tsx",
         "components/element-settings/brief-editor.client.tsx",
         "components/form/voice-field.client.tsx",
         "components/form/voice-textarea.client.tsx",
@@ -3888,6 +3896,7 @@
         "components/domain/domain-pipeline.client.tsx",
         "components/element-design/design-reference.client.tsx",
         "components/element-design/design-search.client.tsx",
+        "components/element-docs/quiz-feedback.client.tsx",
         "components/element-docs/reverse-engineering.client.tsx",
         "components/element-settings/brief-editor.client.tsx",
         "components/element-settings/site/config/color-field.client.tsx",
@@ -4554,6 +4563,7 @@
         "_tools/voice-input/client/voice-input.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-market-offer.client.tsx",
         "app/[lang]/(architectLayer)/_components/element-messenger-settings.client.tsx",
+        "components/element-docs/quiz-feedback.client.tsx",
         "components/element-settings/brief-editor.client.tsx",
         "components/element-settings/site/config/field-row.client.tsx",
         "components/form/voice-control.client.tsx",
