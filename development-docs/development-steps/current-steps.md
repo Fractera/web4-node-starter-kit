@@ -318,6 +318,15 @@ quiz: /ru/tg/quiz 200, /1/2 200, /9 404, /v1 404; door: depth 1 → 409 shallow 
 numbers = quiz.json (6 questions, 3 answers, 50 %, depth 2/3); eyes logs/eyes/2026-11-25T01-40-56-116Z.png (390 light, full) and
 …01-41-00-650Z.png (node, dark), console clean. Test quiz and server removed.
 
+**09:4x UTC — Roma 1383 (away from the Mac): the native marketplace bot on fractera.ai never shows the live drafts / vanishing
+replies the main bot has.** Measured on the Mac: every agent-kit copy (natives too) installs progress.cjs hooks; the walled relay runs it.
+Likely cause: drafts went by `route()` → `ledByMain` (woken-by-main / supervise byMain) to the MAIN chat even when the person wrote
+in the element's own bot. Fixed 9df405b8 (615-7): the turn remembers its source (channel tag in the UserPromptSubmit prompt) → own bot;
+the main agent's task → main chat (test progress-route 4/4 in prebuild; old code fails it). Pushed to the fork; rides the window
+d375a33f's Fractera push and the server update. NOT measured on the server: whether its hooks run at all for that element (vanishing
+replies already went by its own bot) — if the drafts still do not show after the update, ask the server's main agent for
+data/node/progress/turn-<id>.json after a turn. Mac core build pending (f81d942a, 7f4fbab9, 9df405b8).
+
 **09:2x UTC — Roma (1380, from fractera.ai's native F2F-Marketplace bot): «получил обновление никакую кнопку не увидел».** Causes:
 (1) every commit since 470d0e69 went to origin = aifa-agi fork; Fractera main is 470d0e69, so the server never got 853; my push to
 Fractera was REFUSED by the classifier (publication — his key, his own run). (2) the build's end refreshed only the main bot's button —
