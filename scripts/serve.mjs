@@ -865,6 +865,12 @@ async function agentsBackAfter(root, { agentBack, buildWhat, buildSince, summary
       console.log(`[creator] ${JSON.stringify(Object.keys(out)[0] ?? "none")}`)
       if (out.queued) {
         await cc.copyToArchitect(root, JSON.parse(readFileSync(out.queued, "utf8")))
+        // aifa.dev 2026-11-25: nothing leaves before the architect saw a real report and allowed it — one window, «Готово» = allow
+        if (!cc.allowed(root)) {
+          try {
+            spawnSync(process.execPath, [path.join(root, "scripts", "ask-person.mjs"), "Разрешить узлу отправлять разработчику Fractera короткие отчёты о системных ошибках? Пример первого отчёта пришёл вам в Telegram. «Готово» — разрешить; не согласны — скажите главному агенту «выключи отчёты».", "--why", "Данные уходят с вашего узла наружу — даже вычищенные, только с вашего разрешения", "--hint", "После «Готово» главный агент выполнит npm run creator -- allow; выключить можно в любой момент: npm run creator -- off"], { cwd: root, stdio: "ignore", timeout: 20_000 })
+          } catch { /* the window is a courtesy; the queue waits either way */ }
+        }
         console.log(`[creator] ${JSON.stringify(await cc.flush(root))}`)
       }
     } catch { /* never holds the return of the agents */ }

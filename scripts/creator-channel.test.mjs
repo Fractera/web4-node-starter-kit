@@ -48,6 +48,14 @@ t('nothing private reaches the queue (tokens, keys, e-mail, phone, IP, the home 
   const s = JSON.parse(readFileSync(r.queued, 'utf8')).report.summary
   for (const bad of ['AAHdqTcv', 'sk-proj', 'ghp_', 'xyz', 'roma@', '612 345', '10.0.0.12', 'romanbolshiyanov']) assert.ok(!s.includes(bad), `${bad} leaked: ${s}`)
 })
+t('a Telegram chat id and a host with a person\'s name are cleaned; the node\'s own site and public services stay (aifa.dev 2026-11-25)', () => {
+  const r = cc.report(root, { ...fault, errorClass: 'hosts-test', summary: 'chat_id 90413601 user: 5551234; ryabusmarina.ru and shop.ryabusmarina.ru failed, ryabusmarina.ru again; fractera.ai and github.com fine; example.org is ours; file quiz.json' }, { commit: 'abc1234', site: 'https://example.org' })
+  const s = JSON.parse(readFileSync(r.queued, 'utf8')).report.summary
+  assert.ok(!s.includes('90413601') && !s.includes('5551234'), s)
+  assert.ok(!/ryabus/.test(s), s)
+  assert.match(s, /\[domain #1\] and \[domain #2\] failed, \[domain #1\] again/)
+  assert.match(s, /fractera\.ai and github\.com fine; example\.org is ours; file quiz\.json/)
+})
 t('the switch off — nothing is queued; on again — it is', () => {
   cc.setOn(root, false)
   assert.deepEqual(cc.report(root, { ...fault, errorClass: 'while-off' }), { off: true })
@@ -98,11 +106,25 @@ await (async () => {
   out = await cc.flush(other, { fetchImpl: async () => { called += 1; return { status: 202 } } })
   assert.equal(called, 0, 'off — not one call')
   cc.setOn(other, true)
+  out = await cc.flush(other, { fetchImpl: async () => { called += 1; return { status: 202 } } })
+  assert.equal(called, 0, 'on but never allowed by the architect — not one call (aifa.dev 2026-11-25)')
+  cc.allow(other)
   out = await cc.flush(other, { fetchImpl: async () => ({ status: 202 }) })
   assert.equal(out.sent, before)
   assert.equal(cc.waiting(other).length, 0)
-  console.log('  ✓ 855-4: flush — 404 keeps waiting, off sends nothing, 202 moves to sent/')
+  console.log('  ✓ 855-4: flush — 404 keeps waiting, off or not yet allowed sends nothing, allowed + 202 moves to sent/')
 })().catch((e) => { failed += 1; console.log(`  ✗ flush\n    ${e.message}`) })
+t('the way back: a sent report whose fingerprint Fractera\'s core lists as fixed shows as closed; an unlisted one does not (negative)', () => {
+  const sent = cc.closed(other)
+  assert.deepEqual(sent, [], 'no creator-fixed.json in this root — nothing closed')
+  const { mkdirSync: mk, writeFileSync: wr, readdirSync: rd } = createRequire(import.meta.url)('node:fs')
+  const one = JSON.parse(readFileSync(join(other, 'data', 'node', 'creator-reports', 'sent', rd(join(other, 'data', 'node', 'creator-reports', 'sent'))[0]), 'utf8'))
+  mk(join(other, 'lib', 'node'), { recursive: true })
+  wr(join(other, 'lib', 'node', 'creator-fixed.json'), JSON.stringify({ [one.report.fingerprint]: { commit: 'f00dcafe', step: '855' }, ffff: { commit: 'x' } }))
+  const c = cc.closed(other)
+  assert.equal(c.length, 1)
+  assert.equal(c[0].commit, 'f00dcafe')
+})
 rmSync(fractera, { recursive: true, force: true })
 
 rmSync(root, { recursive: true, force: true }); rmSync(other, { recursive: true, force: true })

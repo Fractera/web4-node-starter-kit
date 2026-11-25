@@ -3,6 +3,7 @@
 //
 //   npm run creator                          status: on or off, the node ID, the reports waiting
 //   npm run creator -- on | off              the architect's switch
+//   npm run creator -- allow                 the architect allowed sending (the first report's window: «Готово» = allow)
 //   npm run creator -- report --component <c> --class <error class> --summary "<short>" [--timeline …] [--expected …] [--got …]
 //                                            [--why …] [--fix …] [--element <id>]      the main agent's report (by: main-agent)
 //   npm run creator -- show                  the text of every waiting report, as the creator's chat will read it
@@ -34,7 +35,12 @@ export function nodeFacts(root = ROOT) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   if (!cmd || cmd === 'status') {
     const id = cc.identity(ROOT)
-    console.log(`===CREATOR=== ${cc.isOn(ROOT) ? 'on' : 'off'} · node ${id.id} · waiting ${cc.waiting(ROOT).length} · nothing is sent until Fractera's door exists (855-4)`)
+    const shut = cc.closed(ROOT)
+    console.log(`===CREATOR=== ${cc.isOn(ROOT) ? 'on' : 'off'} · ${cc.allowed(ROOT) ? 'allowed' : 'not yet allowed by the architect'} · node ${id.id} · waiting ${cc.waiting(ROOT).length} · closed by Fractera ${shut.length}`)
+    for (const c of shut) console.log(`  ✓ ${c.component} · ${c.errorClass} — fixed in ${c.commit ?? '?'}${c.step ? ` (step ${c.step})` : ''}`)
+  } else if (cmd === 'allow') {
+    cc.allow(ROOT)
+    console.log('===CREATOR_ALLOWED=== the architect allowed sending; the queue goes at the next trigger or `npm run creator -- send`')
   } else if (cmd === 'on' || cmd === 'off') {
     cc.setOn(ROOT, cmd === 'on')
     console.log(`===CREATOR_${cmd.toUpperCase()}===`)
@@ -48,7 +54,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   } else if (cmd === 'show') {
     for (const f of cc.waiting(ROOT)) console.log(`── ${f}\n${cc.text(JSON.parse(readFileSync(join(ROOT, 'data', 'node', 'creator-reports', f), 'utf8')).report)}\n`)
   } else {
-    console.log('===CREATOR_USAGE=== status | on | off | report --component … --class … --summary … | show | send')
+    console.log('===CREATOR_USAGE=== status | on | off | allow | report --component … --class … --summary … | show | send')
     process.exit(1)
   }
 }
