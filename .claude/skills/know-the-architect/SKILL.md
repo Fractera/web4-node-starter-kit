@@ -45,7 +45,8 @@ their picture, and name the node's commands once, in one line (owner 2026-10-25,
 
 ## What to keep
 
-- `user`: role, experience, what they build, language — a few lines.
+- `user`: role, experience, what they build, language — a few lines; and their point of strength — what sets them apart — in their own
+  words (the soul's prism, 2026-11-25).
 - `feedback`: how they want you to work, with the reason and when it applies.
 - One file per fact, one line in `MEMORY.md` for each; at most 15 facts about the person — when it grows, merge or drop the weakest.
 - A preference is recorded after the person states it or repeats it, not after one guess; a correction replaces the old line the same
