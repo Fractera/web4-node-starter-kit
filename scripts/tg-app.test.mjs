@@ -181,6 +181,20 @@ await t('853: a native element\'s bot button opens the core\'s three parts; a cu
   rmSync(root, { recursive: true, force: true })
 })
 
+await t('853: the end of a core build refreshes every element bot\'s button, even when the main part throws (✗ fractera.ai 2026-11-25)', async () => {
+  const notice = req(join(ROOT, 'lib', 'node', 'tg-build-notice.cjs'))
+  const keep = menu.refreshElements
+  let calls = 0
+  menu.refreshElements = async () => { calls += 1; return {} }
+  const root = mkdtempSync(join(tmpdir(), 'tg-app-853b-'))
+  try {
+    await notice.end(root, true)
+    assert.equal(calls, 1, 'a good build refreshes the elements once')
+    await notice.end(root, false)
+    assert.equal(calls, 2, 'a failed build too')
+  } finally { menu.refreshElements = keep; rmSync(root, { recursive: true, force: true }) }
+})
+
 const choice = req(join(ROOT, 'lib', 'node', 'tg-app', 'model-choice.cjs'))
 const warn = req(join(ROOT, 'lib', 'agent-kit', 'ultracode-warning.cjs'))
 
