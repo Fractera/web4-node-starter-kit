@@ -318,6 +318,12 @@ quiz: /ru/tg/quiz 200, /1/2 200, /9 404, /v1 404; door: depth 1 → 409 shallow 
 numbers = quiz.json (6 questions, 3 answers, 50 %, depth 2/3); eyes logs/eyes/2026-11-25T01-40-56-116Z.png (390 light, full) and
 …01-41-00-650Z.png (node, dark), console clean. Test quiz and server removed.
 
+**10:0x UTC — Roma ran `bash logs/morning-852-853.sh`:** Fractera main 470d0e69 → 90ab1ad8 (852 core, 853, the button refresh, the
+615-7 revert); tags custom v0.3.244 (da1dba5) and native v0.1.84 (d638f17) on GitHub. Pinned 827e424 / 1613027d, pushed to the fork only
+(Fractera gets the pins with his next push). `offer custom fc4vk` sent (v0.3.243 → v0.3.244, 26 paths). ON ITS REPORT: `taken custom
+fc4vk v0.3.244`, deploy fc4vk, then the 852 proofs on it: a tiny quiz → `quiz:version -- approve` twice + `restore 1` (v3 = v1), eyes
+/ru/tg/quiz at 390. Roma updates fractera.ai → the marketplace bot's «Приложение» (853) — ask him for a screenshot.
+
 **09:54 UTC — Roma 1393: «Задачи снято все работает».** The marketplace drafts question is CLOSED: nothing to fix, 615-7 stays
 reverted, wait for no answer. Open for him: window d375a33f (Fractera push + 852 releases), then the fractera.ai update (853 button).
 
