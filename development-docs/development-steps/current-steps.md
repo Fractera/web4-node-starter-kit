@@ -304,6 +304,13 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 **WHO WAITS:** nobody. Roma 1296 (13:45 UTC): «Строй план … и решай это самостоятельно … Действуй пока не завершишь, только по окончании
 
+**2026-11-25 00:5x UTC — 852-1 RELEASED by Roma (custom v0.3.243, native v0.1.83), pinned, pushed; cck60/fc4vk took them (00a59ad,
+4d8e568; taken 21cb090, 3416c35). Native rollout SKIPPED on purpose (auth's check-product conflicts; services don't run product quizzes).
+852-3/4 COMMITTED 8872e253, CORE BUILD STARTED (Roma asleep, «действуйте от моего лица»). AFTER THE BUILD: GET /api/node/product-quiz/pdf
+?item=cck60 → application/pdf (the Mac's installed Chrome — the shell path is the server's proof); upload a small .md for fc4vk → saved in
+data/services/fc4vk/quiz-feedback/<UTC>/ and woke true (the main agent's line arrives — answer it by tasking fc4vk only if cheap; else note);
+a .sh → 400 bad-kind. Then push; next 852-5 (versions: page lists quiz-v<N> tags) and 852-6/7/8 (template + Mini App), 853, 855.
+
 **2026-11-25 00:3x UTC — 852-2 COMMITTED 2a01eb92 (+ vectors/graph role lines), CORE BUILD STARTED.** 859-3 done by the elements: vectors
 1f27865, graph b841086 (both proved live, foreign key 401). 858 proven on a custom too (fc4vk deploy:self ok 96 s). 852-1 release NOT run:
 Roma pressed «Готово» twice from the phone (no tags v0.3.243 / v0.1.83) — waits «я у Mac», then window with `bash <scratchpad>/release-852.sh`.
