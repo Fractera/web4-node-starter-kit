@@ -30,7 +30,9 @@ export type QuizGit = {
 
 async function git(dir: string, args: string[]): Promise<string> {
   try {
-    const { stdout } = await run("git", ["-C", dir, ...args], { windowsHide: true, timeout: 15_000 })
+    // 852-5 (the 849 lesson, 811-6): behind the wall on a server the element's folder is fe-<id>'s — without safe.directory git refuses
+    // «dubious ownership» and this helper answered "" without a word (the PDF's git line and the versions came out empty).
+    const { stdout } = await run("git", ["-c", `safe.directory=${dir}`, "-C", dir, ...args], { windowsHide: true, timeout: 15_000 })
     return stdout.trim()
   } catch {
     return ""
@@ -193,4 +195,14 @@ ${list(w.notNow, quiz.notNow.map((n) => `<li>${esc(n.text)}</li>`))}
 ${list(w.decisions, quiz.decisions.map((d) => `<li><b>${esc(d.date)}</b> ${esc(d.gist || d.said)}</li>`))}
 ${shotsBlock}
 </body></html>`
+}
+
+/** 852-5: an approved version of the quiz is the element's commit tagged `quiz-v<N>` (its skill product-quiz); the newest first. */
+export type QuizVersion = { n: number; tag: string; date: string; subject: string; commit: string }
+export async function quizVersions(dir: string): Promise<QuizVersion[]> {
+  const out = await git(dir, ["for-each-ref", "refs/tags/quiz-v*", "--format=%(refname:short)|%(creatordate:iso-strict)|%(if)%(*objectname)%(then)%(*objectname:short)%(else)%(objectname:short)%(end)|%(contents:subject)"])
+  return out.split("\n").filter(Boolean).map((line) => {
+    const [tag, date, commit, ...subject] = line.split("|")
+    return { n: Number(/^quiz-v(\d+)$/.exec(tag)?.[1] ?? NaN), tag, date, commit: commit.slice(0, 7), subject: subject.join("|").slice(0, 200) }
+  }).filter((v) => Number.isInteger(v.n)).sort((a, b) => b.n - a.n)
 }

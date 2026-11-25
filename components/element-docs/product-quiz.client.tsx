@@ -16,6 +16,8 @@ import { H2, H3, P, Small } from "@/components/ui/typography"
 import type { ProductQuiz, QuizItem, QuizLedgers, QuizStepState, QuizWork } from "@/lib/web4-items/product-quiz"
 import { QuizTree, type QuizTreeWords } from "./quiz-tree"
 import { QuizFeedback, type QuizFeedbackWords } from "./quiz-feedback.client"
+import { QuizVersions, type QuizVersionsWords } from "./quiz-versions.client"
+import type { QuizVersion } from "@/lib/web4-items/product-quiz-pdf"
 
 // ISLAND OF THE PRODUCT QUIZ (node step 536-1). The person, 2026-10-18: «А вверху инструкция если хотите что-то добавить перейдите
 // (ссылка на терминал) (ссылка на Telegram если он есть) и скажите что вы хотите продолжить развитие продуктового квизы».
@@ -91,6 +93,8 @@ export type ProductQuizWords = {
   tree: QuizTreeWords
   /** 852-4: «Загрузить результаты команды». */
   feedback: QuizFeedbackWords
+  /** 852-5: the versions quiz-v<N> and «вернуться к версии N». */
+  versions: QuizVersionsWords
   /** What the dot says in words (its label and the head of the hover). «{step}» is replaced by the step numbers. */
   work: Record<QuizWork, string>
   stepState: Record<QuizStepState, string>
@@ -193,7 +197,7 @@ function ItemWork({ it, words }: { it: QuizItem; words: ProductQuizWords }) {
   )
 }
 
-type Read = { quiz: ProductQuiz | null; problems: string[]; ledgers: QuizLedgers }
+type Read = { quiz: ProductQuiz | null; problems: string[]; ledgers: QuizLedgers; versions: QuizVersion[] }
 
 const fill = (text: string, values: Record<string, string | number>) =>
   text.replace(/\{(\w+)\}/g, (all, key: string) => (key in values ? String(values[key]) : all))
@@ -248,13 +252,14 @@ export function ProductQuizIsland({ item, lang, words, task }: { item: string; l
     let live = true
     fetch(`${BASE}/api/node/product-quiz?item=${encodeURIComponent(item)}`, { cache: "no-store" })
       .then((r) => r.json())
-      .then((b: { ok?: boolean; quiz?: ProductQuiz | null; problems?: string[]; ledgers?: QuizLedgers }) => {
+      .then((b: { ok?: boolean; quiz?: ProductQuiz | null; problems?: string[]; ledgers?: QuizLedgers; versions?: QuizVersion[] }) => {
         if (!live) return
         if (b.ok) {
           setRead({
             quiz: b.quiz ?? null,
             problems: Array.isArray(b.problems) ? b.problems : [],
             ledgers: b.ledgers ?? { studies: 0, ledgers: 0, obligations: [] },
+            versions: Array.isArray(b.versions) ? b.versions : [],
           })
         } else setFailed(true)
       })
@@ -350,6 +355,7 @@ export function ProductQuizIsland({ item, lang, words, task }: { item: string; l
       </Card>
 
       <QuizTree quiz={quiz} words={words.tree} />
+      <QuizVersions item={item} versions={read.versions} words={words.versions} lang={lang} />
 
       {read.problems.length > 0 && (
         <div className="flex flex-col gap-1 rounded-lg border border-destructive p-3" role="alert" data-quiz-problems>

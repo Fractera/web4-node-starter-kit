@@ -670,7 +670,7 @@
         "en": "Product quiz",
         "ru": "Опрос продукта"
       },
-      "version": "1.2.0",
+      "version": "1.3.0",
       "parts": [
         {
           "id": "tool-block-task",
@@ -706,7 +706,8 @@
       "body": [
         "components/element-docs/product-quiz.client.tsx",
         "components/element-docs/quiz-feedback.client.tsx",
-        "components/element-docs/quiz-tree.tsx"
+        "components/element-docs/quiz-tree.tsx",
+        "components/element-docs/quiz-versions.client.tsx"
       ],
       "requires": [
         "components/dialog/app-dialog.client",
@@ -720,9 +721,10 @@
         "components/ui/textarea",
         "components/ui/tooltip",
         "components/ui/typography",
-        "lib/web4-items/product-quiz"
+        "lib/web4-items/product-quiz",
+        "lib/web4-items/product-quiz-pdf"
       ],
-      "bodyHash": "d4899c2199b4ca6b"
+      "bodyHash": "ce73618fc67cf7af"
     },
     {
       "id": "remote-settings",
@@ -3354,6 +3356,7 @@
         "components/element-docs/passport-door.client.tsx",
         "components/element-docs/product-quiz.client.tsx",
         "components/element-docs/quiz-feedback.client.tsx",
+        "components/element-docs/quiz-versions.client.tsx",
         "components/element-docs/reverse-engineering.client.tsx",
         "components/element-settings/brief-editor.client.tsx",
         "components/element-settings/site/config/combo-field.client.tsx",
@@ -3492,6 +3495,7 @@
         "components/element-docs/lagrix-rating.tsx",
         "components/element-docs/product-quiz.client.tsx",
         "components/element-docs/quiz-tree.tsx",
+        "components/element-docs/quiz-versions.client.tsx",
         "components/node-state/node-state.client.tsx",
         "components/official/official-account.client.tsx",
         "components/payments/stripe-keys.client.tsx",
@@ -4733,6 +4737,7 @@
         "components/element-docs/passport-door.client.tsx",
         "components/element-docs/product-quiz.client.tsx",
         "components/element-docs/quiz-tree.tsx",
+        "components/element-docs/quiz-versions.client.tsx",
         "components/element-docs/reverse-engineering.client.tsx",
         "components/element-settings/brief-editor.client.tsx",
         "components/element-settings/remote-state.tsx",

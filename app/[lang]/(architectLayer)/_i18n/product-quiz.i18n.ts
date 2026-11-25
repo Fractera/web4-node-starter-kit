@@ -79,6 +79,15 @@ const DICT: Record<"en" | "ru", ProductQuizWords> = {
       failed: "Not uploaded:",
       errors: { "bad-kind": "this kind of file is not taken", empty: "the file is empty", "too-big": "the file is over 10 MB", "bad-comment": "the comment is over 2,000 characters", "unknown-element": "the element is not found" },
     },
+    versions: {
+      title: "Versions of the quiz",
+      lead: "Every version you approve is a commit of the element tagged quiz-v<N>. Going back makes a new version equal to the old one; history is never rewritten.",
+      empty: "No approved version yet: the element's agent tags quiz-v1 after your yes.",
+      current: "current",
+      back: "Back to v{n}",
+      sent: "The main agent gives the element's agent the task: v{next} will equal v{n}.",
+      failed: "Not done:",
+    },
     work: {
       done: "Done",
       "in-progress": "In progress: step {step}",
@@ -170,6 +179,15 @@ const DICT: Record<"en" | "ru", ProductQuizWords> = {
       sentNoWake: "Загружено и сохранено. Главный агент сейчас не ответил — скажите ему в чате, что результаты пришли.",
       failed: "Не загружено:",
       errors: { "bad-kind": "такой вид файла не принимается", empty: "файл пустой", "too-big": "файл больше 10 МБ", "bad-comment": "комментарий длиннее 2 000 знаков", "unknown-element": "элемент не найден" },
+    },
+    versions: {
+      title: "Версии квиза",
+      lead: "Каждая утверждённая вами версия — коммит элемента с тегом quiz-v<N>. Возврат делает новую версию, равную старой; история не переписывается.",
+      empty: "Утверждённых версий пока нет: агент элемента ставит quiz-v1 после вашего «да».",
+      current: "текущая",
+      back: "Вернуться к v{n}",
+      sent: "Главный агент ставит задачу агенту элемента: v{next} будет равна v{n}.",
+      failed: "Не сделано:",
     },
     work: {
       done: "Завершено",
