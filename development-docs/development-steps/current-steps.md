@@ -318,6 +318,9 @@ quiz: /ru/tg/quiz 200, /1/2 200, /9 404, /v1 404; door: depth 1 → 409 shallow 
 numbers = quiz.json (6 questions, 3 answers, 50 %, depth 2/3); eyes logs/eyes/2026-11-25T01-40-56-116Z.png (390 light, full) and
 …01-41-00-650Z.png (node, dark), console clean. Test quiz and server removed.
 
+**09:54 UTC — Roma 1393: «Задачи снято все работает».** The marketplace drafts question is CLOSED: nothing to fix, 615-7 stays
+reverted, wait for no answer. Open for him: window d375a33f (Fractera push + 852 releases), then the fractera.ai update (853 button).
+
 **09:3x UTC — Roma 1386: «концепция похоже меня не устраивает ты задай вопрос Orchestrator Fractera … я тебе верну ответ».** 615-7
 REVERTED (ba4f22de) so the Fractera push of window d375a33f does not carry it. Question sent (Telegram 1387): six measurements on
 fractera.ai for the marketplace — kind/wall, progress hooks in its session and the relay, turn-<id>.json and draft files after a turn,
