@@ -318,6 +318,13 @@ quiz: /ru/tg/quiz 200, /1/2 200, /9 404, /v1 404; door: depth 1 → 409 shallow 
 numbers = quiz.json (6 questions, 3 answers, 50 %, depth 2/3); eyes logs/eyes/2026-11-25T01-40-56-116Z.png (390 light, full) and
 …01-41-00-650Z.png (node, dark), console clean. Test quiz and server removed.
 
+**12:0x UTC — 855 (Roma 1410 «разве тебе не поступала такая задача» → yes, 855) — node half and the door COMMITTED (c2c18e54, 68c6fb4b),
+pushed to the fork only, NOT BUILT.** Plan file has the progress. Live on this node: identity fr-bca37113836ff060, `npm run creator`.
+NEXT: ask Roma before the Mac core build (rides f81d942a words, 7f4fbab9 already built? no — 7f4fbab9 is a script lib, live at next
+build end; 855 door); then a window for the Fractera push; on fractera.ai: update + the owner writes data/node/creator-inbox.json
+{ token of the bot that writes to his chat, chat id } (his secret — `--secret` window kind on that server); proof: a forced failed build
+on a non-owner node → the report in his chat; the other triggers; the data-protection basis.
+
 **11:1x UTC — Roma ran release-852-c.sh: custom v0.3.245 (tag 647d4ba) released, pinned ad23116a; Fractera main = fork = ad23116a;
 Fractera pins custom v0.3.245, native v0.1.84 (checked by gh api).** Next for him: «Обновить сборку ядра» on fractera.ai (853 button +
 new elements born on the new templates), then «offer» to existing server elements through its main agent. fc4vk may take v0.3.245 later.

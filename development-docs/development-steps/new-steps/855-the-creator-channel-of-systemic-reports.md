@@ -38,6 +38,11 @@ users: the data-protection basis from its primary source.
   prebuild. Live: this node `fr-bca37113836ff060`, waiting 0.
 - **855-5 (first trigger):** a failed core build or node update queues a report (`serve.mjs` agentsBackAfter → `onBuildFailed`); skipped on
   the creator's own node (`knownOwner`) and when off.
-- **Open:** 855-4 the receiving door on Fractera's side (where: a native element of fractera.ai; it forwards to the creator's Telegram chat
-  — its bot token lives only there) and `flush`; the copy to the architect's own chat; the other triggers (guard refused twice, channel
+- **855-4 (68c6fb4b):** the door `POST /api/creator/report` lives in every core but is INERT (404) except where
+  `data/node/creator-inbox.json` { token, chat } exists — Fractera's node only (decided: no new element needed). It verifies the
+  signature, trusts a key on first use per node ID (a changed key → 409, kept in flagged/), 20 per node per day (429), folds a repeated
+  fingerprint (200), forwards Roma's text to the creator's chat. The node: `flush` (one attempt when asked: 202 → sent/, 4xx → refused/,
+  404/no answer/429/5xx → waits), `npm run creator -- send`, the architect's copy through the main bot; the build trigger queues, copies,
+  flushes once. Tests 12/12. NOT BUILT, NOT LIVE: needs a core build here and on fractera.ai, and Roma's inbox settings there.
+- **Open:** the other triggers (guard refused twice, channel
   down N times, wall deny); the main agent's rule in the system part; the data-protection basis before default-on beyond the early users.
