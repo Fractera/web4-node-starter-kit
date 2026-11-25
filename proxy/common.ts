@@ -87,6 +87,8 @@ const PUBLIC_API_PREFIXES = [
   "/api/node/secret-entry",
   // 771: «Пульт узла» in Telegram — the same nature: the phone opens it with no session, the door stands on the main bot's signature.
   "/api/node/tg-app",
+  // 855-4: the creator channel's receiving door — nodes everywhere post signed reports; inert (404) except on Fractera's own node.
+  "/api/creator/report",
 ];
 
 // Non-content root pages that live at the ROOT and never take a language prefix

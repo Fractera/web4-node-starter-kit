@@ -6,6 +6,7 @@
 //   npm run creator -- report --component <c> --class <error class> --summary "<short>" [--timeline …] [--expected …] [--got …]
 //                                            [--why …] [--fix …] [--element <id>]      the main agent's report (by: main-agent)
 //   npm run creator -- show                  the text of every waiting report, as the creator's chat will read it
+//   npm run creator -- send                  one attempt to post the waiting reports to Fractera's door (855-4)
 import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
@@ -41,10 +42,13 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const r = cc.report(ROOT, { component: arg('component'), errorClass: arg('class'), summary: arg('summary'), timeline: arg('timeline'), expected: arg('expected'), got: arg('got'), why: arg('why'), fix: arg('fix'), element: arg('element'), by: 'main-agent' }, nodeFacts())
     console.log(r.queued ? `===CREATOR_QUEUED=== ${r.fingerprint}` : r.folded ? `===CREATOR_FOLDED=== ${r.folded} (×${r.count} today)` : r.off ? '===CREATOR_OFF=== the architect switched the channel off — nothing queued' : `===CREATOR_REFUSED=== ${r.refused}`)
     if (r.refused) process.exit(1)
+  } else if (cmd === 'send') {
+    const r = await cc.flush(ROOT)
+    console.log(`===CREATOR_SEND=== sent ${r.sent} · refused ${r.refused} · still waiting ${r.waiting}`)
   } else if (cmd === 'show') {
     for (const f of cc.waiting(ROOT)) console.log(`── ${f}\n${cc.text(JSON.parse(readFileSync(join(ROOT, 'data', 'node', 'creator-reports', f), 'utf8')).report)}\n`)
   } else {
-    console.log('===CREATOR_USAGE=== status | on | off | report --component … --class … --summary … | show')
+    console.log('===CREATOR_USAGE=== status | on | off | report --component … --class … --summary … | show | send')
     process.exit(1)
   }
 }

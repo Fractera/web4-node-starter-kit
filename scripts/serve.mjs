@@ -860,8 +860,13 @@ async function agentsBackAfter(root, { agentBack, buildWhat, buildSince, summary
   if (failed) {
     try {
       const { nodeFacts } = await import("./creator.mjs")
-      const out = createRequire(import.meta.url)("../lib/node/creator-channel.cjs").onBuildFailed(root, { what: buildWhat, summary, facts: nodeFacts(root) })
+      const cc = createRequire(import.meta.url)("../lib/node/creator-channel.cjs")
+      const out = cc.onBuildFailed(root, { what: buildWhat, summary, facts: nodeFacts(root) })
       console.log(`[creator] ${JSON.stringify(Object.keys(out)[0] ?? "none")}`)
+      if (out.queued) {
+        await cc.copyToArchitect(root, JSON.parse(readFileSync(out.queued, "utf8")))
+        console.log(`[creator] ${JSON.stringify(await cc.flush(root))}`)
+      }
     } catch { /* never holds the return of the agents */ }
   }
   // 839-5: a failed build of an update is waited for even when nobody was working — the waiter wakes the main agent with the cause

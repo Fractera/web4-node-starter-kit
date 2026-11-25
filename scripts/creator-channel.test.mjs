@@ -72,6 +72,39 @@ t('855-5: a failed build on an ordinary node queues one report; on the creator\'
   if (owner) assert.deepEqual(cc.onBuildFailed(ROOT, { what: 'core', summary: 'x' }), { skipped: 'creator-node' })
 })
 
+const inbox = createRequire(import.meta.url)(join(dirname(fileURLToPath(import.meta.url)), '..', 'lib', 'node', 'creator-inbox.cjs'))
+const fractera = mkdtempSync(join(tmpdir(), 'creator-inbox-'))
+t('855-4: the door is inert without the inbox settings (every node but Fractera\'s)', () => {
+  assert.equal(inbox.config(fractera), null)
+})
+t('855-4: the door — accepts a signed report once, folds the repeat, refuses a forgery and a changed key (negatives)', () => {
+  const e = JSON.parse(readFileSync(join(other, 'data', 'node', 'creator-reports', cc.waiting(other)[0]), 'utf8'))
+  const ok = inbox.accept(fractera, e)
+  assert.equal(ok.status, 202)
+  assert.match(ok.forward, /^Я Fractera с ID: fr-/)
+  assert.equal(inbox.accept(fractera, e).status, 200, 'the same fingerprint folds')
+  assert.equal(inbox.accept(fractera, { ...e, report: { ...e.report, summary: 'forged' } }).status, 401)
+  const stranger = cc.identity(root)
+  const forgedKey = { report: { ...e.report, fingerprint: 'ffffffffffffffff' }, publicKey: stranger.publicKey, signature: cc.sign(root, { ...e.report, fingerprint: 'ffffffffffffffff' }) }
+  assert.equal(inbox.accept(fractera, forgedKey).status, 401, 'another key cannot speak for this node ID')
+  assert.equal(inbox.accept(fractera, { nope: 1 }).status, 400)
+})
+await (async () => {
+  const before = cc.waiting(other).length
+  let out = await cc.flush(other, { fetchImpl: async () => ({ status: 404 }) })
+  assert.equal(out.waiting, before, 'the door not there yet — everything waits')
+  cc.setOn(other, false)
+  let called = 0
+  out = await cc.flush(other, { fetchImpl: async () => { called += 1; return { status: 202 } } })
+  assert.equal(called, 0, 'off — not one call')
+  cc.setOn(other, true)
+  out = await cc.flush(other, { fetchImpl: async () => ({ status: 202 }) })
+  assert.equal(out.sent, before)
+  assert.equal(cc.waiting(other).length, 0)
+  console.log('  ✓ 855-4: flush — 404 keeps waiting, off sends nothing, 202 moves to sent/')
+})().catch((e) => { failed += 1; console.log(`  ✗ flush\n    ${e.message}`) })
+rmSync(fractera, { recursive: true, force: true })
+
 rmSync(root, { recursive: true, force: true }); rmSync(other, { recursive: true, force: true })
 if (failed) { console.log(`===TEST_CREATOR_CHANNEL_FAILED=== ${failed}`); process.exit(1) }
 console.log('===TEST_CREATOR_CHANNEL_OK===')
