@@ -318,6 +318,11 @@ quiz: /ru/tg/quiz 200, /1/2 200, /9 404, /v1 404; door: depth 1 → 409 shallow 
 numbers = quiz.json (6 questions, 3 answers, 50 %, depth 2/3); eyes logs/eyes/2026-11-25T01-40-56-116Z.png (390 light, full) and
 …01-41-00-650Z.png (node, dark), console clean. Test quiz and server removed.
 
+**09:3x UTC — Roma 1386: «концепция похоже меня не устраивает ты задай вопрос Orchestrator Fractera … я тебе верну ответ».** 615-7
+REVERTED (ba4f22de) so the Fractera push of window d375a33f does not carry it. Question sent (Telegram 1387): six measurements on
+fractera.ai for the marketplace — kind/wall, progress hooks in its session and the relay, turn-<id>.json and draft files after a turn,
+woken-by-main/supervision, its bot.pid and .token.node, message ids in reply's tool_response. WAIT for his forwarded answer; decide then.
+
 **09:4x UTC — Roma 1383 (away from the Mac): the native marketplace bot on fractera.ai never shows the live drafts / vanishing
 replies the main bot has.** Measured on the Mac: every agent-kit copy (natives too) installs progress.cjs hooks; the walled relay runs it.
 Likely cause: drafts went by `route()` → `ledByMain` (woken-by-main / supervise byMain) to the MAIN chat even when the person wrote
