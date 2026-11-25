@@ -28,6 +28,14 @@ and wait for the owner's «yes» before the first commit.
    those paths, its next patch tag, a push, and its pin; the node's state in the element stays uncommitted.
 6. `npm run node:readiness` — every repository of the node, one line each; a `✗` names its reason.
 
+## A born element takes the pinned template itself (859)
+An element born on a node is never rolled into (the rollout leaves an element ahead of its pin alone, the Update button is only for
+preinstalled ones) and the core never writes into its code. After a release is pinned: `npm run template -- offer <kind> <id> --dry`
+(what it would take: its last taken tag → the pin, the paths, the releases' subjects), then without `--dry` — its agent wakes with the
+merge task (its own commits stay, its prebuild, a commit, no deploy, `reply-core`). After its report: `npm run template -- taken <kind>
+<id> <tag>` (registry `templateTaken`, one commit), push the core, deploy it (`POST /api/node/deploy {ids}`) and prove it live. On a
+server without a workshop — `npm run template -- clone <kind>` first (the public template needs no token).
+
 ## Laws (each was paid for)
 - A tag is never moved; a broken release gets the next patch. Guards run after `git add` — they read the index.
 - A pin commits only its own file: someone's staged work and the node's state never ride along.

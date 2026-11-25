@@ -997,7 +997,11 @@ for (const entry of registry.services) {
     } else if (v.kind === 'element-key') {
       // 654-6: the element's own key — made from the node's DATA_SECRET (the same one every native element holds), never stored by the
       // node: it is computed again at every install, so a new DATA_SECRET gives every element its new key.
-      lines.push(`${v.name}=${elementKeyOf(entry.id, sharedSecret('DATA_SECRET')) ?? ''}`)
+      const key = elementKeyOf(entry.id, sharedSecret('DATA_SECRET')) ?? ''
+      // 859-2 (the fractera.ai server, 2026-11-24: lidt5 reported an empty ELEMENT_KEY and the install said nothing): a declared element key
+      // that comes out empty is said aloud — the element would reach no store, and its data road would fall to a local file.
+      if (!key) say(`  ⚠ ${v.name} of «${entry.id}» came out EMPTY (an id the key function refuses, or no DATA_SECRET on the node) — the element reaches no store with its own key`)
+      lines.push(`${v.name}=${key}`)
     } else if (v.kind === 'own') {
       const kept = readEnvFile(join(dir, envName)).get(v.name)
       // 324-9: набор языков, выбранный на странице «Настройки сайта» элемента (его APP-CONFIG → `languages`), сильнее

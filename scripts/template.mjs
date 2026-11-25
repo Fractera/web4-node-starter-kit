@@ -20,6 +20,13 @@
 //        next patch, push main + tag, then pin the new versions in the registry: the working lines and one commit of HEAD's file.
 //        --keep-own-rows <old tag>: for a Markdown table file — the element keeps its own rows (those not in the template's file at
 //        <old tag>); --also: files the element already changed itself that go into the same commit.
+//   offer <custom|native> <element id> [--dry]
+//        859: a BORN element of that template takes the pinned tag ITSELF — the core never writes into a born element (its code is its
+//        agent's). The core names the tag it last took (registry `templateTaken`, else `born.version`), the pinned tag and how many paths
+//        changed between them, and wakes its agent with the task: fetch the tag, merge those paths with git merge-file (base = the last
+//        taken tag; its own commits stay, a conflict is its own), run its prebuild, commit, report by reply-core; no deploy.
+//   taken <custom|native> <element id> <vX.Y.Z>
+//        after its report: the registry's `templateTaken` of that element — the working line and one commit of HEAD's file.
 //
 // Rights: a push needs the node's GitHub token (data/node/github/.env, GITHUB_TOKEN) with write access to the template's and the
 // elements' repositories — the owner's node has it; elsewhere the push stops at the dry push with ===TEMPLATE_NO_RIGHT=== (the right of
@@ -53,7 +60,7 @@ const mask = (text, t) => (t ? String(text).split(t).join('***') : String(text))
 const authUrl = (repo, t) => repo.replace(/^https:\/\/(?:[^@/]+@)?github\.com\//, `https://x-access-token:${t}@github.com/`)
 const nextPatch = (v) => { const m = /^v(\d+)\.(\d+)\.(\d+)$/.exec(v); return m ? `v${m[1]}.${m[2]}.${Number(m[3]) + 1}` : null }
 
-if (!cmd || !KINDS[kind]) fail('USAGE', 'npm run template -- clone|status|release|pin|rollout <custom|native> …')
+if (!cmd || !KINDS[kind]) fail('USAGE', 'npm run template -- clone|status|release|pin|rollout|offer|taken <custom|native> …')
 const pinFile = join(ROOT, 'WEB4-ITEMS-REGISTRY', KINDS[kind])
 const pin = readJson(pinFile, null)
 if (!pin) fail('FAIL', `no pin file ${pinFile}`)
@@ -326,4 +333,46 @@ if (cmd === 'rollout') {
   process.exit(0)
 }
 
-fail('USAGE', 'npm run template -- clone|status|release|pin|rollout <custom|native> …')
+// 859 (the fractera.ai server, 2026-11-24: «a born element cannot take the template update» — the Update button is only for preinstalled
+// elements, the rollout leaves an element ahead of its pin alone). The element's own agent merges; the core only names what and why.
+if (cmd === 'offer' || cmd === 'taken') {
+  const registryRel = 'WEB4-ITEMS-REGISTRY/web4-items.json'
+  const id = positional[0]
+  const entry = (readJson(join(ROOT, registryRel), { services: [] }).services ?? []).find((x) => x.id === id)
+  if (!entry) fail('FAIL', `no element «${id}» in the registry`)
+  if (!entry.born) fail('FAIL', `${id} is not born on this node — a preinstalled element takes a template by its Update button or a rollout`)
+  if (entry.born.from !== pin.from) fail('FAIL', `${id} was born from ${entry.born.from}, not from the ${kind} template ${pin.from}`)
+  if (cmd === 'taken') {
+    const tag = positional[1]
+    if (!/^v\d+\.\d+\.\d+$/.test(tag ?? '') || !gitOk(shop, ['rev-parse', `${tag}^{commit}`])) fail('USAGE', `taken ${kind} ${id} <a tag of the workshop>`)
+    const setTaken = (text) => { const j = JSON.parse(text.replace(/^\uFEFF/, '')); const e = j.services.find((x) => x.id === id); if (e) e.templateTaken = { version: tag, at: new Date().toISOString() }; return JSON.stringify(j, null, 2) + '\n' }
+    if (DRY) { console.log(`===TEMPLATE_DRY_OK=== ${id} would record ${tag}`); process.exit(0) }
+    writeFileSync(join(ROOT, registryRel), setTaken(readFileSync(join(ROOT, registryRel), 'utf8')))
+    const commit = commitOne(registryRel, setTaken(git(ROOT, ['show', `HEAD:${registryRel}`])), `${id} took the ${kind} template ${tag} (npm run template -- taken)`)
+    console.log(`===TEMPLATE_TAKEN=== ${id} ${tag} recorded in ${commit.slice(0, 7)} — push the core: git push origin main`)
+    process.exit(0)
+  }
+  const base = entry.templateTaken?.version ?? entry.born.version
+  const target = pin.version
+  if (!gitOk(shop, ['rev-parse', `${target}^{commit}`])) fail('FAIL', `the workshop has no tag ${target} — npm run template -- clone ${kind}`)
+  if (!gitOk(shop, ['rev-parse', `${base}^{commit}`])) fail('FAIL', `the workshop has no tag ${base} (the one ${id} took last)`)
+  if (base === target) { console.log(`===TEMPLATE_OFFER_NONE=== ${id} already took ${target}`); process.exit(0) }
+  const changed = git(shop, ['diff', '--name-only', base, target]).split('\n').filter(Boolean)
+  const subjects = git(shop, ['log', '--format=- %s', `${base}..${target}`]).split('\n').filter(Boolean).slice(0, 12).map((l) => l.slice(0, 160))
+  const text = [
+    `Build process: take the ${kind} template's pinned release ${target} into your folder — you were born from it and last took ${base}; the core never writes into a born element, so this merge is yours (core step 859).`,
+    `${changed.length} path(s) changed between them. What the releases bring:`,
+    ...subjects,
+    `How: git fetch ${pin.repo} tag ${base} tag ${target} --no-tags; then for every path of \`git diff --name-only ${base} ${target}\`: a path you never changed since ${base} — take the template's file; a path you changed — git merge-file (yours, base = ${base}, theirs = ${target}); a new file — add it; a deleted one — delete it unless you use it. Your own commits and your own work stay; resolve a conflict in your favour where it is your product, in the template's where it is the node's machinery, and name each one.`,
+    `Then run your prebuild (RC=0), commit in English «Take the ${kind} template ${target}», do NOT deploy. Report with npm run reply-core in at most 6 lines: the commit hash, the prebuild result, the conflicts and how you resolved them.`,
+  ].join('\n')
+  if (DRY) { console.log(text); console.log(`===TEMPLATE_DRY_OK=== offer ${id}: ${base} → ${target}, ${changed.length} path(s); nobody woken`); process.exit(0) }
+  try {
+    const out = execFileSync(process.execPath, [join(ROOT, 'scripts', 'main-agent-cli.mjs'), 'task', id, text], { cwd: ROOT, encoding: 'utf8', windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] })
+    console.log(out.trim().split('\n').pop())
+  } catch (e) { fail('FAIL', `the task did not reach ${id}: ${String(e.stdout || e.message).trim().split('\n').pop()}`) }
+  console.log(`===TEMPLATE_OFFERED=== ${id}: ${base} → ${target}, ${changed.length} path(s); after its report: npm run template -- taken ${kind} ${id} ${target}`)
+  process.exit(0)
+}
+
+fail('USAGE', 'npm run template -- clone|status|release|pin|rollout|offer|taken <custom|native> …')
