@@ -304,6 +304,12 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 **WHO WAITS:** nobody. Roma 1296 (13:45 UTC): «Строй план … и решай это самостоятельно … Действуй пока не завершишь, только по окончании
 
+**2026-11-25 00:4x UTC — 852-1 COMMITTED IN BOTH WORKSHOPS (custom 13d8d89, native e5e3783), dry releases green; window 1e98c92d =
+`bash <scratchpad>/release-852.sh` (release custom v0.3.243 + native v0.1.83 + rollout natives quiz files --merge-base v0.1.82). ON ITS
+«Готово»: pin both, push; `template -- offer custom fc4vk`, `offer native cck60` (both took .242/.82). fc4vk took v0.3.242 (531b18c),
+taken recorded 39f2e99; its deploy:self (858 on a custom) task sent — report pending. 859-3: tasks to vectors and graph agents to fix their
+cards (key, address, JSON) — reports pending. NOW: 852-2 (core quiz page renders tree, depth, F, version) → needs a core build; batch.
+
 **2026-11-25 00:2x UTC — 857 + 858 CLOSED (summaries, pushed 6596d915); fractera.ai CHECK ✓ (pre-steps/2026-11-25-server-check-fractera.md:
 build 3b8c500f holds all four commits; 849/851/854/858/857 ✓; 856 + Diana wait Roma's messages; aifa.dev answer not in yet). 859-1/2
 DONE, pushed 3b72f8d7 (no core build — CLI scripts): `npm run template -- offer|taken <kind> <id>`; cck60 taken v0.1.82 recorded
