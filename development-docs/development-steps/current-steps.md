@@ -318,6 +318,13 @@ quiz: /ru/tg/quiz 200, /1/2 200, /9 404, /v1 404; door: depth 1 → 409 shallow 
 numbers = quiz.json (6 questions, 3 answers, 50 %, depth 2/3); eyes logs/eyes/2026-11-25T01-40-56-116Z.png (390 light, full) and
 …01-41-00-650Z.png (node, dark), console clean. Test quiz and server removed.
 
+**10:4x UTC — fc4vk took v0.3.244 (269d52a, taken a46aef6), deployed by me ok 95 s; its /ru/tg/quiz 200, /1 404, /v9 404, eyes
+logs/eyes/2026-11-25T10-37-13-603Z.png: DEFECT — its draft quiz.json has no tree (older vision/stages form) and the screen said «На все
+вопросы есть ответ» over an empty tree. Fixed in the workshop 604c647 (tree not started → a note, dials kept, zeros hidden); proven on a
+test port: tree-less → «дерево ещё не начато», with a tree → «Открытые вопросы», «готово на 50%» (negative). Dry v0.3.245 green.
+Script logs/release-852-c.sh (release v0.3.245, pin, push the fork, ff Fractera) — a window when Roma is at the Mac. Versions live on
+fc4vk (approve twice + restore) wait its quiz tree; the script's own test proves the mechanism. fc4vk closed; supervision ended.
+
 **10:0x UTC — Roma ran `bash logs/morning-852-853.sh`:** Fractera main 470d0e69 → 90ab1ad8 (852 core, 853, the button refresh, the
 615-7 revert); tags custom v0.3.244 (da1dba5) and native v0.1.84 (d638f17) on GitHub. Pinned 827e424 / 1613027d, pushed to the fork only
 (Fractera gets the pins with his next push). `offer custom fc4vk` sent (v0.3.243 → v0.3.244, 26 paths). ON ITS REPORT: `taken custom
