@@ -307,7 +307,7 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 Telegram chat 90413601, ru, colour marks. Everything that needs HIS gh key (template releases, rollouts into element repos) waits for the
 morning as ONE list; a core build only when no window with a «!» command waits (memory no-build-while-person-command-runs).
 
-**STATE:** core 2953f62b built and pushed (origin = Fractera). Templates pinned: custom v0.3.243, native v0.1.83. DONE today (summaries
+**STATE:** core 2953f62b built and pushed to origin — ⚠ origin is the FORK aifa-agi, NOT Fractera (Fractera main stayed 470d0e69). Templates pinned: custom v0.3.243, native v0.1.83. DONE today (summaries
 in completed-steps/): 849 850 851 854 856 844 857 858 859 (859-main.md written 01:5x; its server proof waits Roma: update fractera.ai to
 ≥3b72f8d7 + his word to its agent «template clone native; offer native lidt5»). 852: 852-1..4, 852-8 done; 852-5 core page done.
 **852-5/6/7 TEMPLATE PART DONE 01:5x, NOT RELEASED:** custom workshop 4eed698 (quiz:version script + test; Mini App «Квиз»: widget
@@ -317,6 +317,14 @@ script + skill rule). Dry releases GREEN: custom v0.3.244, native v0.1.84. Next 
 quiz: /ru/tg/quiz 200, /1/2 200, /9 404, /v1 404; door: depth 1 → 409 shallow (reached 2), 7 / "a" / {} → 400, {3,50} → 200 written; page
 numbers = quiz.json (6 questions, 3 answers, 50 %, depth 2/3); eyes logs/eyes/2026-11-25T01-40-56-116Z.png (390 light, full) and
 …01-41-00-650Z.png (node, dark), console clean. Test quiz and server removed.
+
+**09:2x UTC — Roma (1380, from fractera.ai's native F2F-Marketplace bot): «получил обновление никакую кнопку не увидел».** Causes:
+(1) every commit since 470d0e69 went to origin = aifa-agi fork; Fractera main is 470d0e69, so the server never got 853; my push to
+Fractera was REFUSED by the classifier (publication — his key, his own run). (2) the build's end refreshed only the main bot's button —
+fixed 7f4fbab9 (tg-build-notice.end → tg-menu.refreshElements, test 20/20, negative by construction), pushed to the fork, not built
+here (no native bot on the Mac). WINDOW d375a33f: `bash logs/morning-852-853.sh` = ff-push HEAD to Fractera main + release-852-b.sh. ON
+«Готово»: check Fractera main sha = ours and tags v0.3.244 / v0.1.84 on GitHub; pin both; then Roma updates fractera.ai → its natives'
+bots get «Приложение» at the build's end; ask him for a screenshot. Mac core build later (rides f81d942a words + 7f4fbab9).
 
 **02:0x UTC — 853 CORE LIVE (build 46412b63, pushed f81d942a).** Proven: ?el=vectors 200 html, ?el=fc4vk 404 (custom, negative),
 ?el=x!! 404, POST state → 409 no-bot (no native has a bot); test 853 in tg-app.test (19/19, negative: a custom without /tg → null);
