@@ -300,9 +300,38 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 - Parked: the server tails (z6esw tell-core, redteam with Green team, deleting z6esw/qxld4) — the SSH visit did not open in my Chrome
   profile (his two «Готово» came from another profile); the Pult update banner 2303b5e2 waits the next core build; my effort → max.
 
-## Letter to my next session (rewritten 2026-11-24 15:40 UTC — reset at 47 % before new work; Opus max)
+## Letter to my next session (rewritten 2026-11-25 01:0x UTC — reset at 55 % mid-night; Opus max)
 
-**WHO WAITS:** nobody. Roma 1296 (13:45 UTC): «Строй план … и решай это самостоятельно … Действуй пока не завершишь, только по окончании
+**WHO WAITS:** nobody now. Roma 1369 (00:33 UTC): «Продолжайте работать я пошёл спать действуйте от моего лица настолько насколько это
+возможно. Увидимся завтра». Standing: Roma 1296 «решай самостоятельно … по окончании каждого решения … Git Push … чеклист … дата время».
+Telegram chat 90413601, ru, colour marks. Everything that needs HIS gh key (template releases, rollouts into element repos) waits for the
+morning as ONE list; a core build only when no window with a «!» command waits (memory no-build-while-person-command-runs).
+
+**STATE:** core 2953f62b built and pushed (origin = Fractera). Templates pinned: custom v0.3.243, native v0.1.83 (852-1 released by Roma
+00:2x). cck60 took v0.1.83 (00a59ad), fc4vk took v0.3.243 (4d8e568) — `taken` recorded. Natives rollout of 852-1 SKIPPED on purpose.
+DONE today (summaries in completed-steps/): 849 850 851 854 856 844 857 858; 859-1/2/3 done (no summary yet — write 859-main.md: offer/
+taken road proven on fc4vk + cck60, empty-key warning, vectors 1f27865 + graph b841086 cards and roles.json lines; server proof waits
+Roma: update fractera.ai to ≥3b72f8d7 and his word to its agent «template clone native; offer native lidt5»).
+852 progress: 852-1 (skill tree/breadth, quiz-tree.mjs, check-product) released; 852-2 tree card, 852-3 PDF print-browser (node's
+headless shell; server proof pending), 852-4 team upload door (proved: saved, woke, .sh 400, 404), 852-5 versions list + rollback door
+(proved: list empty, no-such-version 400, eyes logs/eyes/2026-11-25T01-04-24-918Z.png), 852-8 Pult «Квиз» (state quizGlance + page
+section; proof only when an element's tree starts) — all in core.
+
+**NEXT ACTION:** the TEMPLATE part of 852 in both workshops (data/workshop/fractera-{custom,native}-item-starter), batched for ONE morning
+release by Roma: (a) 852-5 skill product-quiz — an approved version = commit + tag `quiz-v<N>` + `version {n,date}` in quiz.json, push
+when its repo is connected, rollback = a new version; (b) 852-6 the quiz as its own route (read plan new-steps/852 «852-6»: check first
+where the page tree and the Telegram route live in the custom template); (c) 852-7 the element Mini App «Квиз» section (custom template
+`app/[lang]/(protectedLayer)/tg/`, skill telegram-mini-app; analytics block from quiz.json, depth/F, open questions, «Сайт» / «Telegram
+бот» tabs with path + preset message like projects). Dry-release both; put the script for Roma (like scratchpad/release-852.sh) but NO
+window until he says he is at the Mac. Then 852 summary; then 853 (native chat + Mini App), 855 (creator channel).
+
+**CLUES (measured, do not measure again):** `npm run template -- offer|taken <kind> <id>` = the born-element road; rollout leaves born /
+ahead-of-pin elements alone; data's and auth's package.json/check-product conflict in merges — leave those out. zsh never splits an
+unquoted $VAR path list — write paths out. build:parts-map over an uncommitted PARTS.json keeps the old hash: `git checkout
+lib/parts/PARTS.json` first, bump the part's version in its parts.json when its body changes. A door never wakes an element agent (law
+636): it wakes «build» via globalThis.__web4AgentWake with a task line. git into an element folder: `-c safe.directory=<dir>`. The
+classifier refuses my runs with `TEMPLATE_GITHUB_TOKEN=$(gh auth token)` even after Roma's word — his own «!» command is the way.
+Roma presses «Готово» from the phone without running the command — check tags on GitHub before trusting it.
 
 **2026-11-25 00:5x UTC — 852-3/4 LIVE on the Mac (core 1207b309, pushed).** PDF cck60 200 application/pdf 140 KB (installed Chrome; the
 headless-shell path = the server's proof); upload: .sh 400 bad-kind, unknown element 404, a .md for fc4vk → saved under its data with
