@@ -318,6 +318,10 @@ quiz: /ru/tg/quiz 200, /1/2 200, /9 404, /v1 404; door: depth 1 → 409 shallow 
 numbers = quiz.json (6 questions, 3 answers, 50 %, depth 2/3); eyes logs/eyes/2026-11-25T01-40-56-116Z.png (390 light, full) and
 …01-41-00-650Z.png (node, dark), console clean. Test quiz and server removed.
 
+**11:1x UTC — Roma ran release-852-c.sh: custom v0.3.245 (tag 647d4ba) released, pinned ad23116a; Fractera main = fork = ad23116a;
+Fractera pins custom v0.3.245, native v0.1.84 (checked by gh api).** Next for him: «Обновить сборку ядра» on fractera.ai (853 button +
+new elements born on the new templates), then «offer» to existing server elements through its main agent. fc4vk may take v0.3.245 later.
+
 **10:4x UTC — fc4vk took v0.3.244 (269d52a, taken a46aef6), deployed by me ok 95 s; its /ru/tg/quiz 200, /1 404, /v9 404, eyes
 logs/eyes/2026-11-25T10-37-13-603Z.png: DEFECT — its draft quiz.json has no tree (older vision/stages form) and the screen said «На все
 вопросы есть ответ» over an empty tree. Fixed in the workshop 604c647 (tree not started → a note, dials kept, zeros hidden); proven on a
