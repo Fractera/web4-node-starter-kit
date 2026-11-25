@@ -25,3 +25,19 @@ early ones — Roma); model-free triggers and the main agent's rule; one report 
 Proof: a forced failed build → a signed report in the creator chat and the copy to the architect; a wrong signature or a repeated
 fingerprint refused; the switch off → nothing leaves; the door down → it waits and goes later. Before the default «on» beyond the early
 users: the data-protection basis from its primary source.
+
+## Progress (2026-11-25, Roma 1410: «разве тебе не поступала такая задача» — yes, this step)
+
+- **855-1 (core part):** «Creator agent» in CLAUDE.md §7 with the one-way rule; sealed (FAIL before, OK after). The elements' instruction
+  and the panel glossary — with the next template release.
+- **855-2 + 855-3:** `lib/node/creator-channel.cjs` — Ed25519 identity in `data/node/identity/` (key 0600, born at first use, ID `fr-` +
+  16 hex of the public key), canonical-JSON signature and `verify`, `redact` (Telegram/API/GitHub tokens, private keys, NAME=secret,
+  e-mail, phone, IPv4/6, long hex, home-folder user), fingerprint (component|class|commit), one per day (folds the rest), the switch
+  `data/node/creator-channel.json` (on by default), the queue `data/node/creator-reports/`, Roma's text shape. `npm run creator` —
+  status · on · off · report (the main agent) · show. `contacts` discloses it. Test `creator-channel.test.mjs` 9/9 with negatives, in
+  prebuild. Live: this node `fr-bca37113836ff060`, waiting 0.
+- **855-5 (first trigger):** a failed core build or node update queues a report (`serve.mjs` agentsBackAfter → `onBuildFailed`); skipped on
+  the creator's own node (`knownOwner`) and when off.
+- **Open:** 855-4 the receiving door on Fractera's side (where: a native element of fractera.ai; it forwards to the creator's Telegram chat
+  — its bot token lives only there) and `flush`; the copy to the architect's own chat; the other triggers (guard refused twice, channel
+  down N times, wall deny); the main agent's rule in the system part; the data-protection basis before default-on beyond the early users.

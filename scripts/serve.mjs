@@ -856,6 +856,14 @@ async function agentsBackAfter(root, { agentBack, buildWhat, buildSince, summary
   // 771: the same Telegram message gets the result, the menu button is «Пульт» again.
   try { await buildNotice.end(root, !/FAILED|NOT deployed/.test(summary)) } catch { /* never holds the return of the agents */ }
   const failed = /FAILED|NOT deployed/.test(summary)
+  // 855-5: a failed build or update is a systemic report for Fractera's developer — queued, signed, cleaned (lib/node/creator-channel.cjs)
+  if (failed) {
+    try {
+      const { nodeFacts } = await import("./creator.mjs")
+      const out = createRequire(import.meta.url)("../lib/node/creator-channel.cjs").onBuildFailed(root, { what: buildWhat, summary, facts: nodeFacts(root) })
+      console.log(`[creator] ${JSON.stringify(Object.keys(out)[0] ?? "none")}`)
+    } catch { /* never holds the return of the agents */ }
+  }
   // 839-5: a failed build of an update is waited for even when nobody was working — the waiter wakes the main agent with the cause
   if (buildWhat === "update" && (agentBack || failed)) {
     spawnSync(process.execPath, [path.join(root, "scripts", "spawn-free.mjs"), path.join(root, "scripts", "agent-return.mjs"), "--after-update", String(buildSince)], { cwd: root, stdio: "ignore", windowsHide: true })
