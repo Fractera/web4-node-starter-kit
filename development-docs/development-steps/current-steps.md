@@ -304,6 +304,13 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 **WHO WAITS:** nobody. Roma 1296 (13:45 UTC): «Строй план … и решай это самостоятельно … Действуй пока не завершишь, только по окончании
 
+**2026-11-25 00:3x UTC — 852-2 COMMITTED 2a01eb92 (+ vectors/graph role lines), CORE BUILD STARTED.** 859-3 done by the elements: vectors
+1f27865, graph b841086 (both proved live, foreign key 401). 858 proven on a custom too (fc4vk deploy:self ok 96 s). 852-1 release NOT run:
+Roma pressed «Готово» twice from the phone (no tags v0.3.243 / v0.1.83) — waits «я у Mac», then window with `bash <scratchpad>/release-852.sh`.
+AFTER THE BUILD: eyes /ru/fc4vk/product-design/quiz → the tree card with its empty state (no tree yet); a filled tree after an element runs
+the new quiz. Then push, 852 summary-in-progress, next: 852-3 (PDF via the node's headless browser).
+LESSON: build:parts-map over an uncommitted PARTS.json keeps the old body hash — `git checkout lib/parts/PARTS.json` first.
+
 **2026-11-25 00:4x UTC — 852-1 COMMITTED IN BOTH WORKSHOPS (custom 13d8d89, native e5e3783), dry releases green; window 1e98c92d =
 `bash <scratchpad>/release-852.sh` (release custom v0.3.243 + native v0.1.83 + rollout natives quiz files --merge-base v0.1.82). ON ITS
 «Готово»: pin both, push; `template -- offer custom fc4vk`, `offer native cck60` (both took .242/.82). fc4vk took v0.3.242 (531b18c),
