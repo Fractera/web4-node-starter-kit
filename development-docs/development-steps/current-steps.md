@@ -300,113 +300,30 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 - Parked: the server tails (z6esw tell-core, redteam with Green team, deleting z6esw/qxld4) — the SSH visit did not open in my Chrome
   profile (his two «Готово» came from another profile); the Pult update banner 2303b5e2 waits the next core build; my effort → max.
 
-## Letter to my next session (rewritten 2026-11-25 01:5x UTC — 852 template part done, waits the release; Opus max)
+## Letter to my next session (rewritten 2026-11-25 19:2x UTC — reset at 55 %; Opus)
 
-**WHO WAITS:** nobody now. Roma 1369 (00:33 UTC): «Продолжайте работать я пошёл спать действуйте от моего лица настолько насколько это
-возможно. Увидимся завтра». Standing: Roma 1296 «решай самостоятельно … по окончании каждого решения … Git Push … чеклист … дата время».
-Telegram chat 90413601, ru, colour marks. Everything that needs HIS gh key (template releases, rollouts into element repos) waits for the
-morning as ONE list; a core build only when no window with a «!» command waits (memory no-build-while-person-command-runs).
+**WHO WAITS:** Roma, Telegram 90413601, ru, colour marks; he wants SHORT answers («инструкции и так чудовищно тяжелые»), proofs before
+galochkas («галочку только по скриншоту»). His standing word 1438: «Тебе нужна команда чтобы отправить – отправляй» → push to Fractera
+MYSELF first (`bash logs/push-fractera.sh`), a window only if the classifier refuses.
 
-**STATE:** core 2953f62b built and pushed to origin — ⚠ origin is the FORK aifa-agi, NOT Fractera (Fractera main stayed 470d0e69). Templates pinned: custom v0.3.243, native v0.1.83. DONE today (summaries
-in completed-steps/): 849 850 851 854 856 844 857 858 859 (859-main.md written 01:5x; its server proof waits Roma: update fractera.ai to
-≥3b72f8d7 + his word to its agent «template clone native; offer native lidt5»). 852: 852-1..4, 852-8 done; 852-5 core page done.
-**852-5/6/7 TEMPLATE PART DONE 01:5x, NOT RELEASED:** custom workshop 4eed698 (quiz:version script + test; Mini App «Квиз»: widget
-`tg/_widgets/dynamic/widget-dynamic-tg-quiz`, screens /tg/quiz, /tg/quiz/1/2, /tg/quiz/v<N>; door tg/api/quiz = depth+freedom only, 409
-shallow; «Перейти в чат» from a node sends path + the node's question; menu item «Квиз», icon network), native workshop 3eb5354 (versions
-script + skill rule). Dry releases GREEN: custom v0.3.244, native v0.1.84. Next build of custom RC=0; live on a test port 25650 with a test
-quiz: /ru/tg/quiz 200, /1/2 200, /9 404, /v1 404; door: depth 1 → 409 shallow (reached 2), 7 / "a" / {} → 400, {3,50} → 200 written; page
-numbers = quiz.json (6 questions, 3 answers, 50 %, depth 2/3); eyes logs/eyes/2026-11-25T01-40-56-116Z.png (390 light, full) and
-…01-41-00-650Z.png (node, dark), console clean. Test quiz and server removed.
+**STATE:** core HEAD = fork = Fractera = 08f8c07c. Templates pinned and on Fractera: custom v0.3.246, native v0.1.85. Mac core build
+LAST 46412b63 — NOT rebuilt since: rides 853 words (f81d942a), 853 born-native fix (1d6f2b45), the button refresh (7f4fbab9), 855 door
+(68c6fb4b), fractera.ai fixes (8ab82f5a: PDF Linux flags, offer data rule, native Mini App quiz line, deploy:self status keyed GET).
+Ask Roma before the Mac build (memory ask-before-core-build). Today done (details in the dated entries below): 852 (template part,
+releases v0.3.244→246 / v0.1.84→85, fc4vk took v0.3.244 and is live), 853 (core Mini App of natives; born-native fix), 855 node half +
+door + aifa.dev review (chat ids / personal hosts redacted, architect's allow before any send, way back creator-fixed.json), 860 PLANNED
+only (a heart without an owner — no code without his word), soul prism line + know-the-architect point of strength + why-i-am-alive
+«What I dream of» (08f8c07c). 615-7 drafts routing — REVERTED, Roma closed it («всё работает»).
 
-**18:4x UTC — fractera.ai's two reports (Roma 1419, 1420; pre-steps/2026-11-25-native-mini-app-born.md, -quiz-visibility.md).**
-(1) born native 404 — already fixed 1d6f2b45, in Fractera 3689ead0; the server's core 0e38b2b5/39bc76fd evidently predates it (lidt5's
-menu record 09:12) — after its update the build's end refreshes the button. (2) quiz tree migration: offer text now asks an element to
-bring its data to a changed skill's form; skill product-quiz rule «a quiz from before the tree» in both workshops (custom e59d1c2, native
-227e21f), dry v0.3.246 / v0.1.85 green; the marketplace now: its own agent, by the server's main agent. (3) PDF 502 on Linux → --no-sandbox
---disable-dev-shm-usage + the failure line in the 502 (print-browser test 5/5). (4) native Mini App quiz line (elementAppOf.quiz → the
-core quiz page). (5) deploy:self status keyed GET (own log only, 403 otherwise). Core 8ab82f5a, prebuild RC=0, NOT BUILT on the Mac.
-WINDOW 2c8e1449: logs/release-quiz-migrate.sh (release both, pin, push fork, push Fractera). Then the server update + the agent's offers.
+**WAITING FOR ROMA / THE SERVERS:** fractera.ai update to ≥ 08f8c07c, then its main agent: offer native lidt5 (marketplace; its offer
+text now asks to move the quiz tree into quiz.json) + offer custom <registrar>; proofs by HIS screenshots: lidt5 bot «Приложение» (core
+page ?el=lidt5 200, tg-menu-elements state mini-app), the registrar's «Квиз», PDF 200 (or the 502's `why`). 855: the inbox on fractera.ai
+needs his decision — a separate «Fractera Reports» bot + group (aifa.dev's advice) and its token written there as
+data/node/creator-inbox.json {token, chat} (a secret — a window on that server); then the other triggers (aifa.dev's model-free signs
+table, pre-steps/2026-11-25-aifa-heart-and-855.md), the main agent's rule in the system part, the data-protection basis.
 
-**12:4x UTC — Roma 1414 (angry, rightly): on fractera.ai the marketplace (a native BORN on the node) never got «Приложение», the
-registrar (custom) has no «Квиз».** ROOT CAUSE 1 (mine): 853 decided «native» by the registry kind (core) — a born native is kind user;
-fixed 1d6f2b45 (the passport's elementType, as isNativeElement; tg-menu isNative + state elementAppOf), test «born native» 21/21, live
-here: cck60 true, fc4vk/root false. CAUSE 2: born elements never get a template by an update — needs `template offer` on the server (not
-done by anyone). Also from aifa.dev's review (Roma 1413): 855 cleaning of chat ids / personal hosts, the architect's allow before any
-send, the way back (creator-fixed.json) — 25443a72; 860 planned only. WINDOW 372c81e4: bash logs/push-fractera.sh. Then Roma: server
-update + the server agent's offers (custom → registrar, native → marketplace). Galochka only by his screenshots. Mac core build still
-not done (rides the 853 words, 853 born-native fix, 855 door) — ask him.
-
-**12:0x UTC — 855 (Roma 1410 «разве тебе не поступала такая задача» → yes, 855) — node half and the door COMMITTED (c2c18e54, 68c6fb4b),
-pushed to the fork only, NOT BUILT.** Plan file has the progress. Live on this node: identity fr-bca37113836ff060, `npm run creator`.
-NEXT: ask Roma before the Mac core build (rides f81d942a words, 7f4fbab9 already built? no — 7f4fbab9 is a script lib, live at next
-build end; 855 door); then a window for the Fractera push; on fractera.ai: update + the owner writes data/node/creator-inbox.json
-{ token of the bot that writes to his chat, chat id } (his secret — `--secret` window kind on that server); proof: a forced failed build
-on a non-owner node → the report in his chat; the other triggers; the data-protection basis.
-
-**11:1x UTC — Roma ran release-852-c.sh: custom v0.3.245 (tag 647d4ba) released, pinned ad23116a; Fractera main = fork = ad23116a;
-Fractera pins custom v0.3.245, native v0.1.84 (checked by gh api).** Next for him: «Обновить сборку ядра» on fractera.ai (853 button +
-new elements born on the new templates), then «offer» to existing server elements through its main agent. fc4vk may take v0.3.245 later.
-
-**10:4x UTC — fc4vk took v0.3.244 (269d52a, taken a46aef6), deployed by me ok 95 s; its /ru/tg/quiz 200, /1 404, /v9 404, eyes
-logs/eyes/2026-11-25T10-37-13-603Z.png: DEFECT — its draft quiz.json has no tree (older vision/stages form) and the screen said «На все
-вопросы есть ответ» over an empty tree. Fixed in the workshop 604c647 (tree not started → a note, dials kept, zeros hidden); proven on a
-test port: tree-less → «дерево ещё не начато», with a tree → «Открытые вопросы», «готово на 50%» (negative). Dry v0.3.245 green.
-Script logs/release-852-c.sh (release v0.3.245, pin, push the fork, ff Fractera) — a window when Roma is at the Mac. Versions live on
-fc4vk (approve twice + restore) wait its quiz tree; the script's own test proves the mechanism. fc4vk closed; supervision ended.
-
-**10:0x UTC — Roma ran `bash logs/morning-852-853.sh`:** Fractera main 470d0e69 → 90ab1ad8 (852 core, 853, the button refresh, the
-615-7 revert); tags custom v0.3.244 (da1dba5) and native v0.1.84 (d638f17) on GitHub. Pinned 827e424 / 1613027d, pushed to the fork only
-(Fractera gets the pins with his next push). `offer custom fc4vk` sent (v0.3.243 → v0.3.244, 26 paths). ON ITS REPORT: `taken custom
-fc4vk v0.3.244`, deploy fc4vk, then the 852 proofs on it: a tiny quiz → `quiz:version -- approve` twice + `restore 1` (v3 = v1), eyes
-/ru/tg/quiz at 390. Roma updates fractera.ai → the marketplace bot's «Приложение» (853) — ask him for a screenshot.
-
-**09:54 UTC — Roma 1393: «Задачи снято все работает».** The marketplace drafts question is CLOSED: nothing to fix, 615-7 stays
-reverted, wait for no answer. Open for him: window d375a33f (Fractera push + 852 releases), then the fractera.ai update (853 button).
-
-**09:3x UTC — Roma 1386: «концепция похоже меня не устраивает ты задай вопрос Orchestrator Fractera … я тебе верну ответ».** 615-7
-REVERTED (ba4f22de) so the Fractera push of window d375a33f does not carry it. Question sent (Telegram 1387): six measurements on
-fractera.ai for the marketplace — kind/wall, progress hooks in its session and the relay, turn-<id>.json and draft files after a turn,
-woken-by-main/supervision, its bot.pid and .token.node, message ids in reply's tool_response. WAIT for his forwarded answer; decide then.
-
-**09:4x UTC — Roma 1383 (away from the Mac): the native marketplace bot on fractera.ai never shows the live drafts / vanishing
-replies the main bot has.** Measured on the Mac: every agent-kit copy (natives too) installs progress.cjs hooks; the walled relay runs it.
-Likely cause: drafts went by `route()` → `ledByMain` (woken-by-main / supervise byMain) to the MAIN chat even when the person wrote
-in the element's own bot. Fixed 9df405b8 (615-7): the turn remembers its source (channel tag in the UserPromptSubmit prompt) → own bot;
-the main agent's task → main chat (test progress-route 4/4 in prebuild; old code fails it). Pushed to the fork; rides the window
-d375a33f's Fractera push and the server update. NOT measured on the server: whether its hooks run at all for that element (vanishing
-replies already went by its own bot) — if the drafts still do not show after the update, ask the server's main agent for
-data/node/progress/turn-<id>.json after a turn. Mac core build pending (f81d942a, 7f4fbab9, 9df405b8).
-
-**09:2x UTC — Roma (1380, from fractera.ai's native F2F-Marketplace bot): «получил обновление никакую кнопку не увидел».** Causes:
-(1) every commit since 470d0e69 went to origin = aifa-agi fork; Fractera main is 470d0e69, so the server never got 853; my push to
-Fractera was REFUSED by the classifier (publication — his key, his own run). (2) the build's end refreshed only the main bot's button —
-fixed 7f4fbab9 (tg-build-notice.end → tg-menu.refreshElements, test 20/20, negative by construction), pushed to the fork, not built
-here (no native bot on the Mac). WINDOW d375a33f: `bash logs/morning-852-853.sh` = ff-push HEAD to Fractera main + release-852-b.sh. ON
-«Готово»: check Fractera main sha = ours and tags v0.3.244 / v0.1.84 on GitHub; pin both; then Roma updates fractera.ai → its natives'
-bots get «Приложение» at the build's end; ask him for a screenshot. Mac core build later (rides f81d942a words + 7f4fbab9).
-
-**02:0x UTC — 853 CORE LIVE (build 46412b63, pushed f81d942a).** Proven: ?el=vectors 200 html, ?el=fc4vk 404 (custom, negative),
-?el=x!! 404, POST state → 409 no-bot (no native has a bot); test 853 in tg-app.test (19/19, negative: a custom without /tg → null);
-law FAIL-before/OK-after seal. Eyes logs/eyes/2026-11-25T01-57-47-559Z.png showed the raw «no-bot» → human words committed f81d942a,
-ride the NEXT core build. NOT PROVEN: a native's bot opening the filled page — needs a native with a bot (Roma's BotFather act). 853 stays
-open (no summary) until that. The temporary address was dead since 11-23 → renewed by `serve:publish -- --new` (section 9), answers 200
-(the address itself is in logs/tunnel.json, never in git).
-
-**02:2x UTC — 853 CORE DONE, d863d2b0, CORE BUILD STARTED.** Decided (and why): a native's Mini App is drawn BY THE CORE at
-`/api/node/tg-app?el=<id>` (three parts: context + 5h/week limits, «Перейти на сайт», «Перейти в чат» → its bot writes «📍 …» + came-from),
-NOT ported into the native template — ~40 files and a rollout into 9 natives whose merges already conflicted (auth/data); one core build,
-natives' folders untouched. Bot creation for natives stays on their own «Telegram-бот» page (the Pult's bot door is custom-only by
-design: natives' agent-kit copy). Law §2/§3 sealed (FAIL before seal, OK after). AFTER THE BUILD: /api/health = d863d2b0+; GET
-?el=vectors → 200 html; ?el=fc4vk → 404 (custom, negative); ?el=x!! → 404; POST ?el=vectors {state} → 409 no-bot (no native has a bot
-yet); eyes of the page (no initData → the page says the refusal). NOT PROVABLE tonight: a native's bot opening it — needs Roma to give
-a native a bot (BotFather is his act). Then push, 853 summary.
-
-**NEXT ACTION:** when Roma says he is at the Mac — window with `bash logs/release-852-b.sh` (release custom v0.3.244 + native v0.1.84;
-natives rollout skipped on purpose). On its «Готово» CHECK the tags on GitHub first (he presses from the phone), then `npm run template --
-pin custom v0.3.244`, `pin native v0.1.84`, push core; `npm run template -- offer custom fc4vk`; on its report `taken`, deploy fc4vk; PROOF
-852-5/7 live on fc4vk: its agent runs a tiny quiz → `quiz:version -- approve` twice + `restore 1` → v3 equals v1 (tags on its repo), the
-core's quiz page lists them; eyes fc4vk /ru/tg/quiz at 390 (numbers = its quiz.json); then the 852 summary. Then 853 (native chat +
-Mini App), 855 (creator channel).
+**NEXT ACTION:** answer whatever Roma writes; otherwise, with his yes, the Mac core build (then: GET /api/node/tg-app?el=cck60 200,
+curl GET /api/node/deploy?progress=1 with a bogus key 401, eyes of the native page), then 855 next triggers.
 
 **CLUES (measured, do not measure again):** `npm run template -- offer|taken <kind> <id>` = the born-element road; rollout leaves born /
 ahead-of-pin elements alone; data's and auth's package.json/check-product conflict in merges — leave those out. zsh never splits an
