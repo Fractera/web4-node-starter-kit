@@ -181,6 +181,20 @@ await t('853: a native element\'s bot button opens the core\'s three parts; a cu
   rmSync(root, { recursive: true, force: true })
 })
 
+await t('853: a native BORN on the node (registry kind user, passport elementType native) is native; a custom one is not (✗ 2026-11-25 the marketplace)', () => {
+  const root = mkdtempSync(join(tmpdir(), 'tg-app-853c-'))
+  const props = req(join(ROOT, 'lib', 'web4-items', 'element-props.cjs'))
+  const put = (p, v) => { mkdirSync(dirname(join(root, p)), { recursive: true }); writeFileSync(join(root, p), JSON.stringify(v)) }
+  put('WEB4-ITEMS-REGISTRY/web4-items.json', { services: [{ id: 'mkt', kind: 'user' }, { id: 'shop', kind: 'user' }, { id: 'vectors', kind: 'core' }] })
+  put(`WEB4-ITEMS/user/mkt/${props.PASSPORT}`, { id: 'mkt', elementType: 'native' })
+  put(`WEB4-ITEMS/user/shop/${props.PASSPORT}`, { id: 'shop', elementType: 'custom' })
+  assert.equal(menu.isNative('mkt', root), true, 'the born native')
+  assert.equal(menu.isNative('vectors', root), true, 'a preinstalled native')
+  assert.equal(menu.isNative('shop', root), false, 'a custom element (negative)')
+  assert.equal(menu.isNative('ghost', root), false, 'unknown (negative)')
+  rmSync(root, { recursive: true, force: true })
+})
+
 await t('853: the end of a core build refreshes every element bot\'s button, even when the main part throws (✗ fractera.ai 2026-11-25)', async () => {
   const notice = req(join(ROOT, 'lib', 'node', 'tg-build-notice.cjs'))
   const keep = menu.refreshElements

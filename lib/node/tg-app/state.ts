@@ -13,6 +13,7 @@ import autostart from "@/lib/node/autostart.cjs"
 import power from "@/lib/web4-items/element-power.cjs"
 import paths from "@/lib/web4-items/paths.cjs"
 import { elementName } from "@/lib/web4-items/dashboard-rows"
+import { isNativeElement } from "@/lib/a2a/element-passport"
 import { list as sessions } from "@/app/[lang]/(architectLayer)/architect/[item]/_agent-kit/server/session.cjs"
 import contextWindow from "@/lib/agent-kit/context-window.cjs"
 import { primaryConnected, primaryDomain, zoneRootElement } from "@/lib/domain/node-domains"
@@ -146,7 +147,8 @@ export function ownAgentOf(id: string, lang: Lang = "en"): TgOwnAgent {
 export type TgElementApp = { id: string; name: string; site: string | null; live: boolean; agent: TgAgent; context: TgOwnAgent["context"]; limits: TgOwnLimits | null }
 export function elementAppOf(id: string, lang: Lang = "en"): TgElementApp | null {
   const e = (readJson<{ services?: Entry[] }>(paths.REGISTRY_FILE, {}).services ?? []).find((x) => x.id === id)
-  if (!e || e.kind === "user") return null
+  // ✗ 2026-11-25 (Roma: the marketplace has no button): a native BORN on the node is kind `user` — the passport decides, as everywhere
+  if (!e || !(e.kind === "core" || isNativeElement(id))) return null
   const own = ownAgentOf(id, lang)
   return { id, name: elementName(id, lang), site: siteOf(id), live: own.live, agent: own.agent, context: own.context, limits: own.limits }
 }
