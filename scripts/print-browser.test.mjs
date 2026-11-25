@@ -10,7 +10,7 @@ t('a dedicated server with no Chrome prints with the node\'s own headless shell,
   const fs = fake(['/root/.cache/ms-playwright/chromium_headless_shell-1187/chrome-linux/headless_shell',
     '/root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-headless-shell-linux64/chrome-headless-shell'])
   const b = printBrowser({ platform: 'linux', env: {}, home: '/root', ...fs })
-  assert.deepEqual(b, { path: '/root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-headless-shell-linux64/chrome-headless-shell', via: 'node-headless-shell', args: ['--headless'] })
+  assert.deepEqual(b, { path: '/root/.cache/ms-playwright/chromium_headless_shell-1200/chrome-headless-shell-linux64/chrome-headless-shell', via: 'node-headless-shell', args: ['--headless', '--no-sandbox', '--disable-dev-shm-usage'] }, 'on Linux the sandbox flags Playwright also uses (✗ fractera.ai 502, 2026-11-25)')
 })
 
 t('an installed Chrome comes before the cache; CHROME_PATH before everything', () => {
@@ -31,6 +31,11 @@ t('NEGATIVE CONTROL — the pre-852 rule (installed Chrome only) finds nothing o
   assert.equal(before, null)
   assert.notEqual(printBrowser({ platform: 'linux', env: {}, home: '/root', ...fs }), null)
   assert.equal(printBrowser({ platform: 'linux', env: {}, home: '/root', ...fake([]) }), null)
+})
+
+await t('the sandbox flags are Linux only — a Mac keeps its sandbox (negative)', () => {
+  assert.deepEqual(printBrowser({ platform: 'darwin', env: { CHROME_PATH: '/x' } }).args, ['--headless=new'])
+  assert.ok(printBrowser({ platform: 'linux', env: { CHROME_PATH: '/x' } }).args.includes('--no-sandbox'))
 })
 
 console.log(process.exitCode ? `===PRINT_BROWSER_TEST_FAILED=== ${passed} passed` : `===PRINT_BROWSER_TEST_OK=== ${passed} passed`)

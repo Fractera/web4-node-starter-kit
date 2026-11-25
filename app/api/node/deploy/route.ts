@@ -113,10 +113,21 @@ async function elements() {
 }
 
 export async function GET(req: NextRequest) {
-  const denied = await requireRoles(req, ROLES)
-  if (denied) return denied
   const logParam = req.nextUrl.searchParams.get("log")
   const logId = logParam && /^[a-z][a-z0-9-]{0,31}$/.test(logParam) ? logParam : null
+  // ✗ 2026-11-25 fractera.ai («for-mac-deploy-self-status-401»): `npm run deploy:self -- status` got 401 — the status had no keyed path.
+  // An element with its OWN key reads the deploy state and ITS OWN log only (`?progress=1&log=<its id>`), nothing of the core or others.
+  if (req.headers.get("x-node-key")) {
+    const caller = callerOf(req.headers)
+    if (!caller) return NextResponse.json({ ok: false, reason: refusal(null).reason }, { status: 401 })
+    const own = "element" in caller ? caller.element : null
+    if (!req.nextUrl.searchParams.get("progress") || req.nextUrl.searchParams.get("core") || (own && logId !== own)) {
+      return NextResponse.json({ ok: false, reason: "its own deploy status only: ?progress=1&log=<its id>" }, { status: 403 })
+    }
+    return NextResponse.json({ ok: true, deployment: deployLock.readState(), ...(logId ? { log: liveLog.tail(liveLog.logPath(ROOT, "deploy", logId)) } : {}) }, { headers: { "Cache-Control": "no-store" } })
+  }
+  const denied = await requireRoles(req, ROLES)
+  if (denied) return denied
   // 353-3: `?progress=1` — только ход и журнал, без состояния кода элементов (git на каждый элемент): страница спрашивает раз в
   // секунду, пока идёт работа, и не должна нагружать машину, которая в это время собирает.
   if (req.nextUrl.searchParams.get("progress")) {

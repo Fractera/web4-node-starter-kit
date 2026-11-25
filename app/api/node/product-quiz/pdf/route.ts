@@ -55,14 +55,19 @@ export async function GET(req: NextRequest) {
   await writeFile(htmlFile, html, "utf8")
   const env = {} as NodeJS.ProcessEnv
   for (const [k, v] of Object.entries(process.env)) if (v !== undefined && !/^(__NEXT|NEXT_|AGI_|PORT$|HOSTNAME$|NODE_ENV$)/.test(k)) env[k] = v
+  let why = ""
   try {
     await run(browser.path, [...browser.args, "--disable-gpu", "--no-first-run", "--no-default-browser-check", "--disable-extensions",
       `--user-data-dir=${join(work, "profile")}`, "--no-pdf-header-footer", `--print-to-pdf=${pdfFile}`, pathToFileURL(htmlFile).href],
       { windowsHide: true, timeout: 90_000, env })
-  } catch { /* Chrome may exit with a code after writing the file: the file decides below */ }
+  } catch (e) {
+    // Chrome may exit with a code after writing the file: the file decides below; its first error line names a failure
+    why = String((e as { stderr?: unknown })?.stderr ?? (e as Error)?.message ?? "").split("\n").map((l) => l.trim()).find((l) => /error|fatal|cannot|failed/i.test(l))?.slice(0, 200) ?? ""
+  }
   if (!existsSync(pdfFile)) {
     void rm(work, { recursive: true, force: true }).catch(() => {})
-    return NextResponse.json({ ok: false, error: "Chrome did not print the PDF" }, { status: 502 })
+    console.log(`[product-quiz/pdf] ${browser.via} did not print: ${why || "no error line"}`)
+    return NextResponse.json({ ok: false, error: "Chrome did not print the PDF", browser: browser.via, ...(why ? { why } : {}) }, { status: 502 })
   }
   const pdf = await readFile(pdfFile)
   void rm(work, { recursive: true, force: true }).catch(() => {})

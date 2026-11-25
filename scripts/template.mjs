@@ -364,6 +364,10 @@ if (cmd === 'offer' || cmd === 'taken') {
     `${changed.length} path(s) changed between them. What the releases bring:`,
     ...subjects,
     `How: git fetch ${pin.repo} tag ${base} tag ${target} --no-tags; then for every path of \`git diff --name-only ${base} ${target}\`: a path you never changed since ${base} — take the template's file; a path you changed — git merge-file (yours, base = ${base}, theirs = ${target}); a new file — add it; a deleted one — delete it unless you use it. Your own commits and your own work stay; resolve a conflict in your favour where it is your product, in the template's where it is the node's machinery, and name each one.`,
+    // ✗ 2026-11-25 fractera.ai (its agent, «for-mac-quiz-visibility» §1): a template carrying the quiz tree (852) reached the marketplace,
+    // but its tree stayed as text in current-step.md and quiz.json had no `tree` — the Pult and the bots saw no quiz. A changed skill asks
+    // the element to bring its own data to the skill's form in the same merge.
+    `A changed skill applies to your data now: read each skill this release changes; if it changes the form of your data (the product quiz's \`tree\` in development-docs/product/quiz.json is one), bring your existing data to that form in the same work — e.g. a quiz tree kept elsewhere moves into quiz.json \`tree\` with its numbers and marks as they are, then \`npm run quiz:tree\` must pass — and commit it separately «Bring <what> to the form of <skill>».`,
     `Then run your prebuild (RC=0), commit in English «Take the ${kind} template ${target}», do NOT deploy. Report with npm run reply-core in at most 6 lines: the commit hash, the prebuild result, the conflicts and how you resolved them.`,
   ].join('\n')
   if (DRY) { console.log(text); console.log(`===TEMPLATE_DRY_OK=== offer ${id}: ${base} → ${target}, ${changed.length} path(s); nobody woken`); process.exit(0) }

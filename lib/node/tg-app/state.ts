@@ -8,6 +8,7 @@ import { join } from "node:path"
 import { homedir } from "node:os"
 
 import asks from "@/lib/node/person-asks.cjs"
+import asksTg from "@/lib/node/person-asks-telegram.cjs"
 import mainChannel from "@/lib/node/main-channel.cjs"
 import autostart from "@/lib/node/autostart.cjs"
 import power from "@/lib/web4-items/element-power.cjs"
@@ -144,13 +145,18 @@ export function ownAgentOf(id: string, lang: Lang = "en"): TgOwnAgent {
 /** 853 (Roma 2026-11-24 via the fractera.ai server's agent, approved 1296): a NATIVE element's Mini App is the core's three parts — its
  *  agent's token use (context window and the account's limits), its site and the way back to its chat. Null for a custom element (its
  *  Mini App is its own `/tg`) and for an id the registry does not know. */
-export type TgElementApp = { id: string; name: string; site: string | null; live: boolean; agent: TgAgent; context: TgOwnAgent["context"]; limits: TgOwnLimits | null }
+export type TgElementApp = { id: string; name: string; site: string | null; live: boolean; agent: TgAgent; context: TgOwnAgent["context"]; limits: TgOwnLimits | null; quiz: (QuizGlance & { href: string | null }) | null }
 export function elementAppOf(id: string, lang: Lang = "en"): TgElementApp | null {
   const e = (readJson<{ services?: Entry[] }>(paths.REGISTRY_FILE, {}).services ?? []).find((x) => x.id === id)
   // ✗ 2026-11-25 (Roma: the marketplace has no button): a native BORN on the node is kind `user` — the passport decides, as everywhere
   if (!e || !(e.kind === "core" || isNativeElement(id))) return null
   const own = ownAgentOf(id, lang)
-  return { id, name: elementName(id, lang), site: siteOf(id), live: own.live, agent: own.agent, context: own.context, limits: own.limits }
+  // ✗ 2026-11-25 fractera.ai («for-mac-quiz-visibility» §3): a native's bot had no way to its product quiz — one line when its tree exists,
+  // leading to the quiz page on the node's HTTPS address (the Mini App law 848: navigation to the project's real pages)
+  const glance = quizGlance(id)
+  const base = (asksTg as { httpsBase: (root: string) => string | null }).httpsBase(ROOT)
+  const quiz = glance ? { ...glance, href: base ? `${base}/${lang}/${addressOf(id) ?? id}/product-design/quiz` : null } : null
+  return { id, name: elementName(id, lang), site: siteOf(id), live: own.live, agent: own.agent, context: own.context, limits: own.limits, quiz }
 }
 
 /** 841 (the owner, Telegram 963: «вкладку нативной элементы внутри кастомного элемента … показываем например два и пишем ещё»): the node's
