@@ -304,6 +304,15 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 
 **WHO WAITS:** nobody. Roma 1296 (13:45 UTC): «Строй план … и решай это самостоятельно … Действуй пока не завершишь, только по окончании
 
+**2026-11-25 00:2x UTC — 857 + 858 CLOSED (summaries, pushed 6596d915); fractera.ai CHECK ✓ (pre-steps/2026-11-25-server-check-fractera.md:
+build 3b8c500f holds all four commits; 849/851/854/858/857 ✓; 856 + Diana wait Roma's messages; aifa.dev answer not in yet). 859-1/2
+DONE, pushed 3b72f8d7 (no core build — CLI scripts): `npm run template -- offer|taken <kind> <id>`; cck60 taken v0.1.82 recorded
+(32d68a33); negatives refused (preinstalled data, wrong kind, bad tag); installer warns on an empty element key. LIVE: `offer custom fc4vk`
+sent 00:2x (v0.3.241 → v0.3.242, 4 paths) — on its report: `npm run template -- taken custom fc4vk v0.3.242`, push, deploy fc4vk, then
+858 on a custom element (task fc4vk `npm run deploy:self …` like cck60), 859 summary. SERVER (needs Roma's word to its agent + an update
+to 3b72f8d7): `npm run template -- clone native && npm run template -- offer native lidt5`, taken, deploy, lidt5 storeScope/migrate/vector/graph.
+859-3 (vectors/graph cards) — tasks to those elements. Then 852, 853, 855.
+
 **17:1x UTC — AUTH v2.4.47 DONE (8d10ce7d pushed), CORE BUILD STARTED for 858 (prebuild RC=0).** AFTER THE BUILD: /api/health = HEAD;
 858 proofs — (a) negative from the wire: `curl -X POST localhost:<core>/api/node/deploy -H 'x-node-key: bogus' -d '{"ids":["cck60"]}'` → 401;
 (b) the element's own key for itself: task cck60 (it has deploy-self.mjs since ebb2d26; no npm script? it merged package.json — it said
