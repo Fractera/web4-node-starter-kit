@@ -108,8 +108,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - GitHub: one fork, the token later, when needed; a repository for each element — by a button, one at a time; an element's token beats
   the shared one; the node is restored by cloning its own fork.
 - An element's Telegram bots — `npm run telegram`; write through the bot whose subject it is, and only when your task needs that
-  person. Mini Apps: your bot's «Пульт» (autostart, channel, bot, power, model — `npm run tg-app`) and a custom element's own
-  `<its address>/tg` (its bot's menu button); what an element's pages are and who opens each — `npm run pages`.
+  person. Mini Apps: your bot's «Пульт» (autostart, channel, bot, power, model — `npm run tg-app`), a custom element's own
+  `<its address>/tg` and a native element's three parts the core draws — token use, its site, the chat (`/api/node/tg-app?el=<id>`);
+  each opens from its bot's menu button; what an element's pages are and who opens each — `npm run pages`.
 
 ## 3. Building blocks
 
@@ -132,8 +133,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
 - The registry — `WEB4-ITEMS-REGISTRY/web4-items.json`, the folders — `WEB4-ITEMS/<kind>/<address>`. Installation (`services:install`)
   sets elements to pinned tags and never re-clones a born element — that would erase its agent's work.
 - There are two templates — custom and native; the passport field `elementType` says which one an element comes from.
-- A native element has no work session of its own and no payments; its «Working process» holds only the screens of its data — the
-  sign-in providers of the auth element, the backup of data, storage, vectors and graph (the owner, 2026-11-15).
+- A native element has no working-process session and no payments; its «Working process» holds only the screens of its data — the
+  sign-in providers of the auth element, the backup of data, storage, vectors and graph (the owner, 2026-11-15). Its person talks to its
+  agent through its own Telegram bot, and the bot's Mini App is the core's three parts (the owner, 2026-11-24, step 853).
 - The data layer: the only door to data is the data element (SQLite); storage and vectors stand behind it. Each element opens only its
   own space in every store — its tables, files, vectors, graph and memory — with its own key (`X-Element-Key`); the node's data key
   (`X-Data-Secret`) — the core and the native elements. The LightRAG graph runs one operation per call and never calls a language model;

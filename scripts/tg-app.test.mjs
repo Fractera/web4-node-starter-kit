@@ -166,6 +166,21 @@ await t('829-2: on the node\'s own domain an element\'s «Приложение»
   rmSync(root, { recursive: true, force: true })
 })
 
+await t('853: a native element\'s bot button opens the core\'s three parts; a custom one without /tg keeps the chat (negative)', () => {
+  const root = mkdtempSync(join(tmpdir(), 'tg-app-853-'))
+  mkdirSync(join(root, 'logs'), { recursive: true })
+  writeFileSync(join(root, 'logs', 'domain.json'), JSON.stringify({ zone: 'example.org', activatedAt: '2026-11-16T00:00:00Z' }))
+  const dirOf = (id) => join(root, 'items', id)
+  const nat = menu.elementTarget(root, 'vectors', dirOf, (id) => id === 'vectors')
+  assert.ok(nat && /^https:\/\/example\.org\/api\/node\/tg-app\?lang=(en|ru)&el=vectors$/.test(nat.url), `the core's page for a native: ${nat?.url}`)
+  assert.equal(menu.elementTarget(root, 'shop1', dirOf, () => false), null, 'a custom element without its own /tg gets no button')
+  const page = req(join(ROOT, 'lib', 'node', 'tg-app', 'element-page.cjs'))
+  const html = page.html('ru', 'vectors')
+  assert.ok(html.includes('Окно контекста') && html.includes('Перейти на сайт') && html.includes('Перейти в чат'), 'three parts')
+  assert.ok(!/Проект/.test(html), 'no projects section in a native\'s Mini App')
+  rmSync(root, { recursive: true, force: true })
+})
+
 const choice = req(join(ROOT, 'lib', 'node', 'tg-app', 'model-choice.cjs'))
 const warn = req(join(ROOT, 'lib', 'agent-kit', 'ultracode-warning.cjs'))
 

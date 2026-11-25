@@ -140,6 +140,17 @@ export function ownAgentOf(id: string, lang: Lang = "en"): TgOwnAgent {
   return { agent: { ...agent, email }, live, context: contextOf(id), limits: limitsFor(id, agent.account), asks: mine, natives: nativesOf(lang) }
 }
 
+/** 853 (Roma 2026-11-24 via the fractera.ai server's agent, approved 1296): a NATIVE element's Mini App is the core's three parts — its
+ *  agent's token use (context window and the account's limits), its site and the way back to its chat. Null for a custom element (its
+ *  Mini App is its own `/tg`) and for an id the registry does not know. */
+export type TgElementApp = { id: string; name: string; site: string | null; live: boolean; agent: TgAgent; context: TgOwnAgent["context"]; limits: TgOwnLimits | null }
+export function elementAppOf(id: string, lang: Lang = "en"): TgElementApp | null {
+  const e = (readJson<{ services?: Entry[] }>(paths.REGISTRY_FILE, {}).services ?? []).find((x) => x.id === id)
+  if (!e || e.kind === "user") return null
+  const own = ownAgentOf(id, lang)
+  return { id, name: elementName(id, lang), site: siteOf(id), live: own.live, agent: own.agent, context: own.context, limits: own.limits }
+}
+
 /** 841 (the owner, Telegram 963: «вкладку нативной элементы внутри кастомного элемента … показываем например два и пишем ещё»): the node's
  *  native elements — standard on every node, so nothing of this node's own composition leaks: the name, what it does, on or off. */
 function nativesOf(lang: Lang): TgNative[] {

@@ -13,6 +13,7 @@ import { closeAsk, saveSecret, type Ask } from "@/lib/node/person-secret-save"
 import { powerState, runElementPower } from "@/lib/web4-items/run-element-power"
 import autostartLib from "@/lib/node/autostart.cjs"
 import { botAction, guideFile } from "@/lib/node/tg-app/bot-door"
+import { elementAction, elementHtml, elementIdOk } from "@/lib/node/tg-app/element-door"
 
 // ПУЛЬТ УЗЛА В TELEGRAM (узел, шаг 771). Владелец, 2026-11-16: «раз уже я больше большую часть времени собираюсь проводить в Telegram»;
 // 23:13 — «Хорошо продолжай работать до конца». Кнопка меню бота главного агента (771-3) открывает GET — страницу; страница зовёт POST
@@ -36,12 +37,26 @@ export async function GET(req: NextRequest) {
     if (!g.ok) return new NextResponse(null, { status: g.status, headers: HEADERS })
     return new NextResponse(g.text, { headers: { ...HEADERS, "Content-Type": "text/plain; charset=utf-8", "Content-Disposition": `attachment; filename="${g.file}"` } })
   }
+  // 853: `?el=<id>` — a native element's Mini App, opened by ITS bot's menu button (lib/node/tg-app/element-door.ts)
+  const el = req.nextUrl.searchParams.get("el")
+  if (el !== null) {
+    const html = elementIdOk(el) ? elementHtml(el, langOf(req)) : null
+    if (!html) return new NextResponse(null, { status: 404, headers: HEADERS })
+    return new NextResponse(html, { headers: { ...HEADERS, "Content-Type": "text/html; charset=utf-8" } })
+  }
   return new NextResponse(page.html(langOf(req)), { headers: { ...HEADERS, "Content-Type": "text/html; charset=utf-8" } })
 }
 
 export async function POST(req: NextRequest) {
   if (!(req.headers.get("content-type") ?? "").toLowerCase().startsWith("application/json")) return no("json-only", 415)
   const body = (await req.json().catch(() => null)) as { initData?: unknown; action?: unknown; id?: unknown; secret?: unknown; admin?: unknown; skip?: unknown; power?: unknown; reason?: unknown; model?: unknown; effort?: unknown; ultracode?: unknown; confirmed?: unknown; text?: unknown } | null
+  // 853: a native element's Mini App — the lock is that element's own bot, never the main one
+  const el = req.nextUrl.searchParams.get("el")
+  if (el !== null) {
+    if (!elementIdOk(el)) return no("bad-element", 400)
+    const out = await elementAction(ROOT, el, langOf(req), body)
+    return out.ok ? NextResponse.json(out, { headers: HEADERS }) : no(out.reason, out.status)
+  }
   const bot = asksTg.bot(ROOT, "build")
   if (!bot) return no("no-bot", 409)
   const signed = webapp.check(typeof body?.initData === "string" ? body.initData : "", bot.token, { allow: bot.chats, maxAgeS: DAY_S })
