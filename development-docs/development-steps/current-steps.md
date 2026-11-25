@@ -318,6 +318,13 @@ quiz: /ru/tg/quiz 200, /1/2 200, /9 404, /v1 404; door: depth 1 → 409 shallow 
 numbers = quiz.json (6 questions, 3 answers, 50 %, depth 2/3); eyes logs/eyes/2026-11-25T01-40-56-116Z.png (390 light, full) and
 …01-41-00-650Z.png (node, dark), console clean. Test quiz and server removed.
 
+**02:0x UTC — 853 CORE LIVE (build 46412b63, pushed f81d942a).** Proven: ?el=vectors 200 html, ?el=fc4vk 404 (custom, negative),
+?el=x!! 404, POST state → 409 no-bot (no native has a bot); test 853 in tg-app.test (19/19, negative: a custom without /tg → null);
+law FAIL-before/OK-after seal. Eyes logs/eyes/2026-11-25T01-57-47-559Z.png showed the raw «no-bot» → human words committed f81d942a,
+ride the NEXT core build. NOT PROVEN: a native's bot opening the filled page — needs a native with a bot (Roma's BotFather act). 853 stays
+open (no summary) until that. The temporary address was dead since 11-23 → renewed by `serve:publish -- --new` (section 9), answers 200
+(the address itself is in logs/tunnel.json, never in git).
+
 **02:2x UTC — 853 CORE DONE, d863d2b0, CORE BUILD STARTED.** Decided (and why): a native's Mini App is drawn BY THE CORE at
 `/api/node/tg-app?el=<id>` (three parts: context + 5h/week limits, «Перейти на сайт», «Перейти в чат» → its bot writes «📍 …» + came-from),
 NOT ported into the native template — ~40 files and a rollout into 9 natives whose merges already conflicted (auth/data); one core build,
