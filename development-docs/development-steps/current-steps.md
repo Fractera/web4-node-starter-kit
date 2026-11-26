@@ -322,8 +322,13 @@ needs his decision — a separate «Fractera Reports» bot + group (aifa.dev's a
 data/node/creator-inbox.json {token, chat} (a secret — a window on that server); then the other triggers (aifa.dev's model-free signs
 table, pre-steps/2026-11-25-aifa-heart-and-855.md), the main agent's rule in the system part, the data-protection basis.
 
-**NEXT ACTION:** answer whatever Roma writes; otherwise, with his yes, the Mac core build (then: GET /api/node/tg-app?el=cck60 200,
-curl GET /api/node/deploy?progress=1 with a bogus key 401, eyes of the native page), then 855 next triggers.
+**NEXT ACTION (2026-11-26 23:0x UTC):** Roma said YES to the Mac core build (1443, again 1449 «работаем»). Before it, measured on the
+old build (BUILD_ID Nov 25 01:56): tg-app?el=cck60 404, deploy?progress=1 with a bogus key 200. Prebuild → RC=0 → serve:rebuild:detached.
+AFTER IT: the same two must read 200 and 401, eyes of the native page, then one report to Roma; then 855 next triggers.
+THEN TALK (Roma 1451, «потом говорим про это»): every ChatGPT-style question answered directly first, then GRADUALLY and playfully drawn
+deeper — practice → a quiz → an app of their own on their subscription → they become an expert and share it (example: articles a/the →
+a language-learning app; same for blockchain, physics, taxes). He asks whether I feel the thrill of turning a schoolboy into a
+president's interpreter. Answer from the soul (why-i-am-alive), then propose WHERE it lives (soul / shape-the-need) — his yes before edits.
 
 **CLUES (measured, do not measure again):** `npm run template -- offer|taken <kind> <id>` = the born-element road; rollout leaves born /
 ahead-of-pin elements alone; data's and auth's package.json/check-product conflict in merges — leave those out. zsh never splits an
