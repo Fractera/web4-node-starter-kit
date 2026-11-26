@@ -322,7 +322,12 @@ needs his decision — a separate «Fractera Reports» bot + group (aifa.dev's a
 data/node/creator-inbox.json {token, chat} (a secret — a window on that server); then the other triggers (aifa.dev's model-free signs
 table, pre-steps/2026-11-25-aifa-heart-and-855.md), the main agent's rule in the system part, the data-protection basis.
 
-**NEXT ACTION (2026-11-26 23:0x UTC):** Roma said YES to the Mac core build (1443, again 1449 «работаем»). Before it, measured on the
+**2026-11-26 23:10 UTC — MAC CORE BUILT d6070e24 (RC=0).** tg-app?el=cck60 404→200, deploy?progress=1 bogus key 200→401. Eyes
+cck60/vectors: the honest empty state «This element has no bot yet» (409 from its data call — no native here has a bot); the three
+parts with a bot are proven only on fractera.ai lidt5 by Roma's screenshots. Page text English outside Telegram (no initData language).
+NOW: the talk of 1451 — proposal sent: soul one sentence after the prism + shape-the-need §3 the ladder; edits wait his yes.
+
+**NEXT ACTION (was 2026-11-26 23:0x UTC, DONE above):** Roma said YES to the Mac core build (1443, again 1449 «работаем»). Before it, measured on the
 old build (BUILD_ID Nov 25 01:56): tg-app?el=cck60 404, deploy?progress=1 with a bogus key 200. Prebuild → RC=0 → serve:rebuild:detached.
 AFTER IT: the same two must read 200 and 401, eyes of the native page, then one report to Roma; then 855 next triggers.
 THEN TALK (Roma 1451, «потом говорим про это»): every ChatGPT-style question answered directly first, then GRADUALLY and playfully drawn
