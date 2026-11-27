@@ -630,7 +630,7 @@ console.log('737-8 the domain on the server: DNS, certificates, HTTPS, the five 
     } finally { door.close() }
   })
   t('864: the heal runs at the start and at the one end of every build (serve.mjs); negative: never before the edge is written', () => {
-    const serve = readFileSync(join(import.meta.dirname, 'serve.mjs'), 'utf8')
+    const serve = readFileSync(join(import.meta.dirname, 'serve.mjs'), 'utf8').replace(/\r\n/g, '\n') // a Windows checkout is CRLF
     assert.match(serve, /reapplyServerEdge\(\)\n  await healServerNames\(\)/, 'the start: the heal right after nginx')
     assert.match(serve, /async function agentsBackAfter\([^)]*\) \{\n(?:  \/\/[^\n]*\n)*  await healServerNames\(\)/, 'the end of every build')
     assert.equal((serve.match(/await healServerNames\(\)/g) ?? []).length, 2)

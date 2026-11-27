@@ -11,7 +11,8 @@ const t = (name, fn) => { try { fn(); passed += 1; console.log(`  ✓ ${name}`) 
 
 // the page's words, read from the TypeScript dictionary as text (no build): the `lines` object of each language
 const req = createRequire(import.meta.url)
-const src = req('node:fs').readFileSync(new URL('../components/hosting/server-launch.i18n.ts', import.meta.url), 'utf8')
+// ✗ Windows CI red all day 2026-11-27: git checks out CRLF there and the line patterns below never matched — line ends normalised first
+const src = req('node:fs').readFileSync(new URL('../components/hosting/server-launch.i18n.ts', import.meta.url), 'utf8').replace(/\r\n/g, '\n')
 const lineSets = [...src.matchAll(/lines: \{\n\s+active: "([^"]+)",\n\s+inactive: "([^"]+)",\n\s+noSubscription: "([^"]+)",\n\s+noPanel: "([^"]+)",/g)]
   // the source's «\n» escapes read as the string they are (the page sends real line breaks)
   .map((m) => Object.fromEntries(['active', 'inactive', 'noSubscription', 'noPanel'].map((k, i) => [k, m[i + 1].replace(/\\n/g, '\n')])))
