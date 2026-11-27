@@ -18,3 +18,10 @@ Intake `pre-steps/2026-11-27-milestone-catalogue-openai-search.md` (fractera.ai'
   flagged «outside the element's folder: <core>/lib/market/market.mjs», though from that file it resolves to the element's own
   `lib/market/`. Two permission questions for nothing (both allowed by me). Fix: resolve a path found in written text relative to the file
   being written, or ignore import strings inside written content. Proof: the same heredoc passes; a real `../../..` write outside still asks.
+- **865-5 · `npm run lend` accepts a lending on a walled server, and the element cannot start** (fractera.ai, 17:20 UTC, lidt5):
+  `lend -- lidt5 --cost 40` → `===LEND_OK===`, then `task -- lidt5` → `===TASK_FAIL=== no-account` (walled-session.cjs:13 forbids the
+  node's subscription behind the wall, Roma Telegram 128); `lend --return` cured it. Fix: `lend` refuses on a walled server with that
+  reason. Proof: `lend` on a server → a refusal line; the element still starts; `lend` on the Mac still lends.
+- **865-4 (widened, 17:20 UTC):** the same false «outside the element's folder» on fractera.ai for a Write's CONTENT and a heredoc's import
+  string (`../lib/marketplace/vectors.mjs` → lowercase `web4-items/user/…`, a folder that does not exist) — the fix covers Edit/Write
+  content as well as Bash text.

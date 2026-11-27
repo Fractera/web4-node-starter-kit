@@ -26,3 +26,11 @@ The client's «Покупки» reads the core's own records first; this door re
 at a reinstall). Build it after 4-5.
 
 No keys or personal data in this file.
+
+## Reconciled 2026-11-27 ~18:00 UTC (fractera.ai report 17:40, Roma 1600)
+- Another node's order and an unknown one answer the SAME **404** on order status and archive — never 403 `not-your-order`: a 403 tells
+  a stranger that an order id exists (v1 §3 stands; the Mac's 15:08 «foreign» probe was an unknown id). The project refuses any non-200.
+- A request with no envelope at all → 401 `unsigned` on every signed door (was 400) — taken.
+- Live since 17:34:50 UTC: 4-5 `apply` (signed; the store reads the tag without credentials, never runs its code) and 4-6 `orders`.
+- Open, Roma's word: how authorship of an applied repository is proven (proposal in the Mac's answer).
+
