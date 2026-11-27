@@ -4,6 +4,8 @@ import { featureOn } from "@/config/platform-config"
 import { getAvailableLanguages, DEFAULT_LANGUAGE } from "@/config/translations/translations.config"
 import { LANGUAGE_REGIONS } from "@/config/translations/language-metadata"
 import { accountLinks } from "@/lib/menu/account-links"
+import { marketLinkWords } from "@/lib/menu/market-links.i18n"
+import { MARKET_PAGES, marketClientId, marketLinkPath, type MarketPage } from "@/lib/web4-items/market-client"
 import { ARCHITECT_LAYER_ROLES } from "@/lib/roles"
 import { appShellAuthSide } from "@/components/menu/account/account-config"
 import { accountLabels } from "@/components/menu/account/account-menu.i18n"
@@ -41,6 +43,11 @@ export function coreShellData(lang: string): ShellData {
       // на нём список «что ждёт архитектора» (356-1).
       links: [
         ...accountLinks(lang).map((l) => ({ href: l.href, label: l.label, ...(l.roles ? { roles: [...l.roles] } : {}) })),
+        // 862-12 (Roma 2026-11-27, Telegram 1670): the marketplace client's three pages, when this project has a client (found by
+        // `provides`, never by id); each link goes through the core's door `market-link`, which picks the address by the caller's host.
+        ...(marketClientId()
+          ? (Object.keys(MARKET_PAGES) as MarketPage[]).map((p) => ({ href: marketLinkPath(p, lang), label: marketLinkWords(lang)[p], roles: [...ARCHITECT_LAYER_ROLES] }))
+          : []),
         { href: `/${lang}/architect`, label: top.architectGroup, roles: [...ARCHITECT_LAYER_ROLES] },
       ],
     },

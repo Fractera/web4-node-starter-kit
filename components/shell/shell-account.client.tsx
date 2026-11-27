@@ -80,14 +80,27 @@ function AccountDrawer({ side, labels, email, roles = [], links, logoutHref, att
                 ) : waiting && attention && attentionWords && /\/architect\/?$/.test(l.href) ? (
                   <ArchitectAttention key={l.href} href={l.href} label={l.label} attention={attention} words={attentionWords} onGo={() => setOpen(false)} />
                 ) : (
-                  <Link
-                    key={l.href}
-                    href={l.href}
-                    onClick={() => setOpen(false)}
-                    className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "w-full justify-start")}
-                  >
-                    {l.label}
-                  </Link>
+                  // 862-12: a link through a core door (`/api/…`, e.g. `market-link`) leaves for another address — a plain full navigation,
+                  // never the router's soft one or its prefetch.
+                  l.href.startsWith("/api/") ? (
+                    <a
+                      key={l.href}
+                      href={l.href}
+                      onClick={() => setOpen(false)}
+                      className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "w-full justify-start")}
+                    >
+                      {l.label}
+                    </a>
+                  ) : (
+                    <Link
+                      key={l.href}
+                      href={l.href}
+                      onClick={() => setOpen(false)}
+                      className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "w-full justify-start")}
+                    >
+                      {l.label}
+                    </Link>
+                  )
                 ))}
               </nav>
             )}
