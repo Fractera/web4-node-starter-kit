@@ -322,6 +322,9 @@ needs his decision — a separate «Fractera Reports» bot + group (aifa.dev's a
 data/node/creator-inbox.json {token, chat} (a secret — a window on that server); then the other triggers (aifa.dev's model-free signs
 table, pre-steps/2026-11-25-aifa-heart-and-855.md), the main agent's rule in the system part, the data-protection basis.
 
+**2026-11-27 08:3x UTC — 861 PLANNED (new-steps/861-…), Roma asked (1472) «беру так?»; no code before his yes.** Sources kept in
+data/services/build/channel/telegram/inbox (for-mac-quiz-pdf-marks.md ×3, for-mac-quiz-pdf-own-key.md).
+
 **2026-11-27 08:1x UTC — both servers updated by Roma (fractera.ai core d132c361 built 07:51; aifa.dev fe598a73 built 07:49 — local
 merges); from the internet both: tg-app 200, deploy?progress=1 bogus key 401. WAITING HIS TESTS (1465 «иду на тесты»): Diana «привет»
 (wall), 856 (2–3 messages to the marketplace bot), the fractera.ai main agent's offers lidt5 + registrar → three screenshots → close
