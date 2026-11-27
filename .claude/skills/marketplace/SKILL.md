@@ -65,7 +65,8 @@ person's own act in a window. Whoever pays buys for the whole project (the law o
 
 `references/store-contract-v1.md` — the signed envelope, search v2 (signed form and `history`), purchase, order status, archive,
 application, the limits; `references/store-contract-v1.1.md` — v1 plus one refusal: 503 `replay-check-unavailable` (the store's
-proposal, accepted 2026-11-27). Every call to the store is made by the core and signed with the node's identity; the store never calls a
+proposal, accepted 2026-11-27); `references/store-contract-v1.2.md` — the free path as the store built it (`cart: [{ slug }]`,
+`items`, `paid`, `already-ordered`, the archive by `slug`) and the new list of a node's orders. Every call to the store is made by the core and signed with the node's identity; the store never calls a
 project — the project pulls.
 
 ## 5a. Who builds what

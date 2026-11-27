@@ -338,6 +338,8 @@ waits Roma's word); released custom v0.3.248 / native v0.1.87, pinned. Repo Frac
 
 **14:43–14:46 UTC — market stage 0 LIVE:** its commit 38481d6 (doors recommend · recommendations · choice · cart · history, data in the data element, the v2 stub); deployed by me (POST /api/node/deploy, SERVICES_INSTALL_OK, built 14:43); live with the core's key (element-call-key keyFor, never printed): no key 401; history 0 → 1 on the second search; cart twice → one line, total 0 USD; «рекомендовано, ждёт решения человека». Three permission asks allowed (14:36–14:38, all the 865-4 false positive). Task sent: plan step 3 = stage 1 pages, «Оплатить» shown off («оплата скоро»). Stage 0 «done» in its quiz waits Roma's word.
 
+**15:08 UTC — the store's free path LIVE with this node (Roma 1592 forwarded fractera.ai: 4-2…4-4 deployed 14:57):** purchase cart [{slug}] → 200 paid free, order ord-9adb22acd9ead131be080c96 (this node now HOLDS fractera-test-post-starter — 862-4 installs it from this order); order status → tag v0.1.0, commit 146d3fa, sha256; archive {order, slug} → 200 gzip 6 919 443 bytes, sha256 = status = x-sha256; repeat → 409 already-ordered with the order; foreign order → 404. Shapes differ from v1 → standard v1.2 written (the store's shapes + the new signed `orders` list door, answering the store). Limit 5 h 94 % (reset 17:40).
+
 **NOW (11:18–11:24 UTC, after the reset):** Roma 1538 «Подожди что мне сейчас нужно сделать с серверами? Обновить ядро что ещё?» ·
 1542 «Пока ты думал сервер уже выполнил какие-то действия прочти его репорт и скажи конфликтует ли это с твоим планом да и вообще что
 мне делать ты мне так и не сказал». Measured 11:19: fractera.ai core 2c9a3c27 built 10:18:59 (= Fractera f0bda66d: 861 + store
