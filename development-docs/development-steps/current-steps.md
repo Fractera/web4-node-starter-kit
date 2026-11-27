@@ -306,6 +306,15 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 a checklist of tests before each step and marked after (memory test-plan-checklist-first). His act = a window (`npm run ask-person`),
 never a «!» line; he presses «Готово» from the phone without running — check the result (tags, commits) yourself.
 
+**2026-11-27 ~10:05 UTC — 862 PLANNED, waits Roma's yes (no code before it):** `new-steps/862-the-marketplace-client-purchase-and-install.md`
+(862-0 the store contract for lidt5 · 862-1 the client element `market` born + in Fractera's registry · 862-2 the ladder/bot search through
+it · 862-3 purchase: window + signed pull · 862-4 install from the store's archive · 862-5 the application from an own native). Inputs read:
+tree 1499, the full quiz PDF 1501 (inbox 1795772694054-…pdf; 1502 = the same printed by iOS, 8 blank pages — told him), the fractera.ai
+agent's layer-B draft 1506 → `pre-steps/2026-11-27-marketplace-layer-b-draft.md`. Measured: search v2 live (asks for the node id); Fractera's
+registry has no lidt5 (intake check 3 ✓ by construction). His asks: yes · the empty repo Fractera/fractera-market-client-starter (window) ·
+money picks (free starter skips payment, one payment per cart, consent line + Stripe terms box, no refund — his rule, failed install = free
+reinstall; the fractera.ai 14-day refund not taken).
+
 **THE ONE FOCUS NOW (Roma 1496, verbatim gist):** «Вся концентрация дальнейшей работы только на реализации маркетплейса». He sends the
 marketplace QUIZ — IT ARRIVED (Telegram 1499, 09:43 UTC, before the reset ended): `pre-steps/2026-11-27-marketplace-quiz-tree.txt` (lidt5's
 quiz tree). Read it whole FIRST, then: skills_find + shape-the-need, the variants with your pick, the plan with
