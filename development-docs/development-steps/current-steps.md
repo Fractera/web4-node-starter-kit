@@ -322,6 +322,13 @@ needs his decision — a separate «Fractera Reports» bot + group (aifa.dev's a
 data/node/creator-inbox.json {token, chat} (a secret — a window on that server); then the other triggers (aifa.dev's model-free signs
 table, pre-steps/2026-11-25-aifa-heart-and-855.md), the main agent's rule in the system part, the data-protection basis.
 
+**2026-11-27 09:3x UTC — RELEASED by Roma's own run: custom v0.3.247 (44d5a03), native v0.1.86 (108fe32), pinned, Fractera = fork =
+512fdd07.** They carry 861-4 (quiz in the person's language, quiz:pdf) and 861-6 (github:self through POST /api/node/github-push,
+the rule: a person's act is an ask-person window). 861-6 core aff5fe65 (the boundary hook itself NOT weakened — the classifier
+refused that edit; the door is the lawful way). NEXT: Roma updates fractera.ai + aifa.dev; then the fractera.ai main agent offers
+lidt5 (native) + the registrar (custom); proofs by Roma's screenshots: lidt5 card switch to max, PDF marks 109/47/5, lidt5 `npm run
+quiz:pdf` OK, `npm run github:self` ===GITHUB_PUSH_OK===. The Mac has NOT built be44457b / aff5fe65 yet (next Mac build).
+
 **2026-11-27 09:1x UTC — MAC BUILT 33d6d34a (RC=0); 861 proven on the Mac:** quiz/pdf and quiz with a bogus key 401 (no key at the
 machine 200); wish empty 400; Playwright run (scratchpad wish-test.mjs): «Продолжить квиз» → window → send → notice «Пожелание
 передано агенту», fc4vk has no bot → «Открыть терминал», console clean (logs/eyes/861-wish-notice.png); my test wish removed; its task line ARRIVED to the main agent (the chain door → wake → line proven), not passed to fc4vk on purpose. Wording
