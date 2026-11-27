@@ -322,6 +322,11 @@ needs his decision — a separate «Fractera Reports» bot + group (aifa.dev's a
 data/node/creator-inbox.json {token, chat} (a secret — a window on that server); then the other triggers (aifa.dev's model-free signs
 table, pre-steps/2026-11-25-aifa-heart-and-855.md), the main agent's rule in the system part, the data-protection basis.
 
+**2026-11-27 08:1x UTC — both servers updated by Roma (fractera.ai core d132c361 built 07:51; aifa.dev fe598a73 built 07:49 — local
+merges); from the internet both: tg-app 200, deploy?progress=1 bogus key 401. WAITING HIS TESTS (1465 «иду на тесты»): Diana «привет»
+(wall), 856 (2–3 messages to the marketplace bot), the fractera.ai main agent's offers lidt5 + registrar → three screenshots → close
+852 + 853. THE WALL WARNING DONE (Roma's yes 1465): create-element step 3, integrator step 2, server-wall pointer — 763d5c9d on Fractera.
+
 **2026-11-27 01:2x UTC — 1451 DONE (Roma's yes 1456): soul line after the prism + shape-the-need §3 «the ladder from a question to an
 expert», soul resealed, 332badf6 on the fork and on Fractera. Proof: soulText('build') and soulText('fc4vk'/none) both carry it — the
 bridge gives one soul to every session, so existing and future custom and native elements get it with no template release. Servers take
