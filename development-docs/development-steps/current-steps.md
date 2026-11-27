@@ -314,8 +314,10 @@ proven 19:2x: client key 200 verified:true, fc4vk's key 403, no key 401, orders 
 skill marketplace. 862-4 (install a bought starter) committed cc1573cd. 862-8 (instruction ladder live + the client bullet in the
 element instruction) core f732cf6f; templates workshops committed custom 67bf854 / native 0005b31 with LOCAL tags only.
 
+**19:3x UTC — 862-8 RELEASED (Roma ran it, window 47f5f088):** custom v0.3.249 tag 4f5b687 + native v0.1.88 tag d1885cf on GitHub, pins in registry, core 5d335c6c = fork = Fractera main (checked by me). CI three-os run 46057377536 in progress — check it (windows was red since 11-25). Wait 1 below is DONE.
+
 **OPEN NOW — two waits:**
-1. Window **e16d460b** = `! bash logs/release-862-8.sh` (Roma's gh key): releases custom v0.3.249 + native v0.1.88 (removes the local
+1. (DONE) Window **e16d460b** = `! bash logs/release-862-8.sh` (Roma's gh key): releases custom v0.3.249 + native v0.1.88 (removes the local
    dry-run tags first), pins both, pushes fork + Fractera (Fractera = d7030f8b, behind). On his «Готово» CHECK YOURSELF: `git ls-remote
    --tags` both tags on GitHub, `WEB4-ITEMS-REGISTRY/*-template.json` pins, `gh api repos/Fractera/web4-node-starter-kit/commits/main` =
    HEAD. He may press «Готово» without running (happened 12:06) — then ask again with a new window.
