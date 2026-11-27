@@ -514,7 +514,7 @@ function githubRule(service) {
     if (['node', 'main-agent'].includes(JSON.parse(readFileSync(manifestFile, 'utf8')).workspace)) return []
   } catch { /* общая копия [item] или служба без манифеста — элемент */ }
   const script = path.join(process.cwd(), 'scripts', 'element-github-push.mjs')
-  return ['--append-system-prompt', `GitHub rule of this WEB4 ITEM (node step 374). When a task comes through the Telegram channel, finish it, commit your changes and immediately send them to GitHub by running: node "${script}" ${service} — then tell the person the line it printed (===GITHUB_PUSH_OK=== or the reason). For a task typed in this terminal, commit as your instructions say and send to GitHub only when the person asks — with the same command.`]
+  return ['--append-system-prompt', `GitHub rule of this WEB4 ITEM (node step 374). When a task comes through the Telegram channel, finish it, commit your changes and immediately send them to GitHub by running, from your own folder: npm run github:self (861-6: the core's door with your own key, no boundary question; a template without that command — node "${script}" ${service}) — then tell the person the line it printed (===GITHUB_PUSH_OK=== or the reason). For a task typed in this terminal, commit as your instructions say and send to GitHub only when the person asks — with the same command. If the push cannot go and the person must act, never ask them to type a command with «!»: put a window — npm run ask-person -- "<what to do>" --copy "<the command>" — and say one line that it waits for them (Roma 2026-11-27).`]
 }
 
 // ── СИСТЕМНОЕ СООБЩЕНИЕ О СОСТОЯНИИ ───────────────────────────────────────────
