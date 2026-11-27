@@ -46,8 +46,17 @@ def stages(path):
     return [last[i] for i in order]
 
 def alive(pid):
+    # ✗ 2026-11-25…27, CI windows-latest red on every push: on Windows signal 0 IS CTRL_C_EVENT, and os.kill(0, 0) sent Ctrl+C to every
+    # process of the console — the test runner died with exit 1 and no line. No pid recorded keeps the old answer of kill(0, 0) on Linux
+    # (the group is alive); this script runs on the Ubuntu server, so on Windows (the CI's copy only) nothing is ever signalled.
     try:
-        os.kill(int(pid), 0)
+        pid = int(pid)
+    except Exception:
+        return False
+    if pid <= 0 or os.name == "nt":
+        return True
+    try:
+        os.kill(pid, 0)
         return True
     except Exception:
         return False

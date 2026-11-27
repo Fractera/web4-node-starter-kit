@@ -306,6 +306,8 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 a checklist of tests before each step and marked after (memory test-plan-checklist-first). His act = a window (`npm run ask-person`),
 never a «!» line; he presses «Готово» from the phone without running — check the result (tags, commits) yourself.
 
+**STOPPED 2026-11-27 ~10:30 UTC (usage limit) — NEXT, in order:** (1) the CI fix of state.sh is committed (pushed to the fork), NOT on Fractera: run the full prebuild RC=0 on HEAD, then `bash logs/push-fractera.sh`, then `gh run list -R Fractera/web4-node-starter-kit -L 3` must show windows-latest green (cause: Python os.kill(0,0) on Windows = CTRL_C_EVENT to the whole console, killed the test runner silently; red since 11-25). (2) Fractera main = f0bda66d carries skill `marketplace` + references/store-contract-v1.md — tell Roma: update fractera.ai core, say to its main agent «передай магазину стандарт из навыка marketplace» (skill §7). (3) 862-1: repo https://github.com/Fractera/fractera-market-client-starter CREATED (public, empty). Decision pending in my head: birth it from native template v0.1.86 (me: passport id market, port 24697, vector + quiz draft from lidt5 branch 9), push v0.1.0, registry entry, services:install; its FUNCTION built by its own agent (Roma 2026-11-23: develop an element with its own agent; CLAUDE.md §1) — check how services:install treats a pinned native whose HEAD is ahead (vectors/graph run v1.2.35-1 / v1.2.34-1 ahead of pins). (4) 862-6 element lens later.
+
 **2026-11-27 10:00 UTC — ROMA: «Да» (Telegram 1509) to 862 whole: the plan, the public repo Fractera/fractera-market-client-starter
 (I create it; refused → a window), and the money picks as written (free starter skips payment, one payment per cart, consent line + Stripe
 terms box, no refund, failed install = free reinstall). NOW: 862-0 the store contract → then 862-1.**
@@ -316,6 +318,7 @@ terms box, no refund, failed install = free reinstall). NOW: 862-0 the store con
 `references/store-contract-v1.md` (the 862-0 contract, moved there); handle-need §1b and use-i2i-a2a-f2f point to it. Guards green
 (headers 94, links, soul). NEXT: commit → push fork → full prebuild RC=0 → `bash logs/push-fractera.sh` → Roma: update fractera.ai's core,
 one line to its main agent «передай магазину стандарт из навыка marketplace» (skill §7). Then 862-1 (the repo, the client's birth).
+**10:2x: commit f0bda66d pushed to the fork; full prebuild running (scratchpad prebuild-f0bda66d.log); creating the repo Fractera/fractera-market-client-starter (public) with gh NOW.**
 
 **2026-11-27 ~10:05 UTC — 862 PLANNED, waits Roma's yes (no code before it):** `new-steps/862-the-marketplace-client-purchase-and-install.md`
 (862-0 the store contract for lidt5 · 862-1 the client element `market` born + in Fractera's registry · 862-2 the ladder/bot search through
