@@ -340,6 +340,8 @@ waits Roma's word); released custom v0.3.248 / native v0.1.87, pinned. Repo Frac
 
 **15:08 UTC — the store's free path LIVE with this node (Roma 1592 forwarded fractera.ai: 4-2…4-4 deployed 14:57):** purchase cart [{slug}] → 200 paid free, order ord-9adb22acd9ead131be080c96 (this node now HOLDS fractera-test-post-starter — 862-4 installs it from this order); order status → tag v0.1.0, commit 146d3fa, sha256; archive {order, slug} → 200 gzip 6 919 443 bytes, sha256 = status = x-sha256; repeat → 409 already-ordered with the order; foreign order → 404. Shapes differ from v1 → standard v1.2 written (the store's shapes + the new signed `orders` list door, answering the store). Limit 5 h 94 % (reset 17:40).
 
+**15:12 fractera.ai (Roma 1594 forwarded):** agrees with v1.2; the store's next — 4-5 application, then 4-6 the orders list; its task goes by itself at 18:45 (their limits 98 %/94 %, reset 18:40 there). My next: 862-4 install from order ord-9adb22acd9ead131be080c96 after my reset 17:40 UTC; market waits Roma's «этап 0 работает».
+
 **NOW (11:18–11:24 UTC, after the reset):** Roma 1538 «Подожди что мне сейчас нужно сделать с серверами? Обновить ядро что ещё?» ·
 1542 «Пока ты думал сервер уже выполнил какие-то действия прочти его репорт и скажи конфликтует ли это с твоим планом да и вообще что
 мне делать ты мне так и не сказал». Measured 11:19: fractera.ai core 2c9a3c27 built 10:18:59 (= Fractera f0bda66d: 861 + store
