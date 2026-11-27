@@ -15,7 +15,7 @@ const check = (label, ok, extra = '') => { if (!ok) failures++; console.log(`${o
 
 // A minimal ustar writer: [{ name, body?, link? }] → gzip bytes. Lets the test build members a normal tar would refuse to create.
 function tarGz(entries) {
-  const blocks = []
+  const chunks = []
   for (const e of entries) {
     const body = Buffer.from(e.body ?? '')
     const h = Buffer.alloc(512)
@@ -30,11 +30,11 @@ function tarGz(entries) {
     let sum = 0
     for (const b of h) sum += b
     h.write(`${sum.toString(8).padStart(6, '0')}\0 `, 148)
-    blocks.push(h)
-    if (!e.link && !e.dir) blocks.push(body, Buffer.alloc((512 - (body.length % 512)) % 512))
+    chunks.push(h)
+    if (!e.link && !e.dir) chunks.push(body, Buffer.alloc((512 - (body.length % 512)) % 512))
   }
-  blocks.push(Buffer.alloc(1024))
-  return gzipSync(Buffer.concat(blocks))
+  chunks.push(Buffer.alloc(1024))
+  return gzipSync(Buffer.concat(chunks))
 }
 const sha = (b) => createHash('sha256').update(b).digest('hex')
 
