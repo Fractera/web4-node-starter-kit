@@ -67,6 +67,11 @@ person's own act in a window. Whoever pays buys for the whole project (the law o
 application, the limits. Every call to the store is made by the core and signed with the node's identity; the store never calls a
 project — the project pulls.
 
+## 5a. Who builds what
+
+`references/who-builds-what.md` — the quartet (the creator agent who leads by Roma's word of 2026-11-27, the client, the main agent of
+fractera.ai, the store; the Stripe element of fractera.ai as a helper), who adds the test starters and where the test purchases run.
+
 ## 6. Four lenses of this map
 
 1. **The core** — this skill (the main agent).
