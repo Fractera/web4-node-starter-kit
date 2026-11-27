@@ -80,12 +80,18 @@ project — the project pulls.
 The store element cannot read the core's skills. When the person asks (one word is enough — «передай магазину стандарт»), hand it the
 standard with a build task: `npm run task -- <the store's id> "Build process: the store standard v1 of the core's skill marketplace —
 build the doors it names and answer which you take as written: <the text of references/store-contract-v1.md>"`, then bring its answer
-to the person. Never on your own initiative.
+to the person. Never on your own initiative. The standard is long: a task line was cut at §7 on 2026-11-27 — send it in parts (§0–§6,
+then §7–§8) and ask the store to confirm it holds every section. On that node the store takes no payment itself: it asks its node's
+Stripe element (the only holder of Stripe keys there) to create the checkout on Fractera's account and to say whether it is paid.
 
 ## 8. What works today (rewrite this section with every substep of 862)
 
 - 2026-11-27: the store's search v2 answers live, unsigned (`caller.verified: false`), the catalogue empty — measured from the creator's
   node. Search v1 and `npm run market` answer as before.
+- 2026-11-27 11:09 UTC (fractera.ai's report through Roma): the store took standard v1 as written — the envelope, signed search with
+  history, order status, archive, application, limits — as its own step 4 (its commit f07f449); 4-1 (the envelope and verified search)
+  approved; the purchase goes through fractera.ai's Stripe element. The first starters proposed: Fractera's two element templates at 0.
+- Every element holds this map from its side: the element skill `use-marketplace` (custom template v0.3.248, native v0.1.87).
 - Not built yet, say so plainly: the client element (862-1), search through it (862-2), purchase (862-3), install (862-4), applications
   sent to the store (862-5; the form keeps them on the node). The store's purchase, order, archive and apply doors wait its own stages.
 - Lagrix: simulated (`npm run lagrix`).
