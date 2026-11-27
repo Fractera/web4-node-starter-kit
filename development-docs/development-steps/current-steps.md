@@ -329,10 +329,26 @@ v1.2.35-1-g1f27865, graph v1.2.34-1-gb841086 run ahead) — so the agent's work 
 `862-1.md` (what, done-when, two planes with a negative, tasks/parts) BEFORE code; load interface-design, use-primitives, use-shadcn before
 any interface file.
 
+**NOW (11:18–11:24 UTC, after the reset):** Roma 1538 «Подожди что мне сейчас нужно сделать с серверами? Обновить ядро что ещё?» ·
+1542 «Пока ты думал сервер уже выполнил какие-то действия прочти его репорт и скажи конфликтует ли это с твоим планом да и вообще что
+мне делать ты мне так и не сказал». Measured 11:19: fractera.ai core 2c9a3c27 built 10:18:59 (= Fractera f0bda66d: 861 + store
+standard; lacks only the quartet, the pins v0.3.248/v0.1.87, state.sh, instruction build — no wall code); aifa.dev core fe598a73 built
+07:49 (lacks all 861 + 862 — telegram.cjs changed → Diana «привет» before/after). CI 2f910910: ubuntu ✅, windows running. Windows
+b2221475 (aifa.dev: Diana, «Проверить снова» → «Обновить сборку ядра», Diana, brief 861) and 1debeb3a (fractera.ai update). Answered
+1545/1546 with the brief attached; asked him to FORWARD the server's report (I cannot see chat history). Defect: `npm run ask-person --
+--help` PUTS a window with the text «--help» (dropped 881dec1b) — the script should refuse a text starting with «--».
+**11:23 Roma 1547 (decision):** «Давай из нашей работы сейчас полностью уберём aifa.dev зачем он нужен я пока не понимаю а нагрузки это
+увеличивает и расход токенов очень сильно не буду ничего ему отправлять работаем между Fractera и тобой». → both windows dropped
+(b2221475, 1debeb3a); NO server update now — the next fractera.ai update carries the quartet + pins + the «Маркетплейс» client at once;
+861 closes on the Mac's proofs (the server check named as not done, by his word). Told him 1550. His server report (1542) — not seen, asked to forward.
+**11:25 Roma 1551:** «Я запустил сборку ядра на Fractera там было 10 обновлений ждём результат» (crossed my 1550) → fractera.ai builds
+f0bda66d..2f910910 (quartet, pins, state.sh — no wall code); watcher bmil4zxho polls architect.fractera.ai/api/health until builtAt
+moves off 10:18:59; then tell him. Told 1552.
+
 **OPEN / QUEUED:** CI three-os on Fractera 2f910910 — windows must turn green (fix a9866308: Python os.kill(0,0) on Windows = CTRL_C_EVENT to
 the whole console; red since 11-25) — check `gh run list -R Fractera/web4-node-starter-kit -L 3`. 862-6 leftovers: born cck60 (native) and
 fc4vk (custom) take the template by `npm run template -- offer native cck60` / `offer custom fc4vk`; proof (2) one question to a born element
-«как купить стартер?». 863 (limit notice in Telegram) queued after the marketplace. **861 waits only aifa.dev's report, then CLOSE it** (Roma: «Когда сервер aifa.dev вернёт отчёт окончательно закроешь предыдущую разработку»): brief logs/for-aifa-check-861.md (9 checks, form aifa-861-report.md); each ✗ → a fix or a named defect; summary completed-steps/861-main.md with commits — core 20f621da, 40d11558, be44457b, aff5fe65, bf5b7136, 6f61153b; workshops custom eb78957+44d5a03 → v0.3.247, native d5dec40+108fe32 → v0.1.86; the plan file out of new-steps; one line to Roma. Not in focus (do not start): 855 (Reports bot — his decision), 860 (a heart without an owner — plan only), 852/853 server proofs. Mac core BUILD owed
+«как купить стартер?». 863 (limit notice in Telegram) queued after the marketplace. **861 CLOSED 2026-11-27 ~11:27 UTC** on the Mac's proofs (Roma 1547 dropped aifa.dev): summary completed-steps/861-main.md, the plan out of new-steps. Not in focus (do not start): 855 (Reports bot — his decision), 860 (a heart without an owner — plan only), 852/853 server proofs. Mac core BUILD owed
 (be44457b..now; skills need no build) — ask Roma before (memory ask-before-core-build).
 
 **CLUES (measured):** search v2 field is `request` (not `query`); node id fr-bca37113836ff060; v2 limits 20/min element, 60/min and 2000/day
