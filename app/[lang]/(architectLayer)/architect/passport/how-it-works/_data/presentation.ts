@@ -17,6 +17,7 @@ export type PresentationWords = { intro: string; card: PresentationCard; lagrixC
 
 import { MEMORY_SECTIONS } from './memory-sections'
 import { PLATFORM_SECTIONS } from './platforms-section'
+import { MARKETPLACE_SECTIONS } from './marketplace-section'
 
 const UI: Record<'en' | 'ru', PresentationWords> = {
   en: {
@@ -302,6 +303,7 @@ export function presentationWords(lang: string): PresentationWords {
   const base = lang === 'ru' ? UI.ru : UI.en
   // 600-1: разделы 5 и 6 («Глубокая память», «Непрерывная эволюция») переехали со входа — см. `memory-sections.ts`.
   // 688: раздел 7 «Fractera против платформ» — `platforms-section.ts`.
+  // 862-10: раздел 8 «f2f · Web2: маркетплейс стартеров» — `marketplace-section.ts`.
   const l = lang === 'ru' ? 'ru' : 'en'
-  return { ...base, sections: [...base.sections, ...MEMORY_SECTIONS[l], ...PLATFORM_SECTIONS[l]] }
+  return { ...base, sections: [...base.sections, ...MEMORY_SECTIONS[l], ...PLATFORM_SECTIONS[l], ...MARKETPLACE_SECTIONS[l]] }
 }
