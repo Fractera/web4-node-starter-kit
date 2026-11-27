@@ -10,6 +10,7 @@ import { promisify } from "node:util"
 import { NextRequest, NextResponse } from "next/server"
 
 import { requireRoles } from "@/lib/auth/require-roles"
+import { actsFor, callerOf, refusal } from "@/lib/node/caller"
 import { idOfAddress } from "@/lib/web4-items/element-address"
 import { elementDir } from "@/lib/web4-items/element-github"
 import { readProductQuiz } from "@/lib/web4-items/product-quiz"
@@ -30,8 +31,20 @@ const run = promisify(execFile)
 const ROLES = ["architect", "admin"] as const
 
 export async function GET(req: NextRequest) {
-  const denied = await requireRoles(req, ROLES)
-  if (denied) return denied
+  // 861-3 (fractera.ai via Roma 1471, need-20261127-3d1637): an element reads ITS OWN quiz with its own key (X-Node-Key) — to check what
+  // its person downloads before it says «done»; another element's quiz 403, a bogus key 401; the node key — the core and the natives.
+  // No key — the panel's roles, as before.
+  if (req.headers.get("x-node-key")) {
+    const caller = callerOf(req.headers)
+    const asked = idOfAddress(req.nextUrl.searchParams.get("item") ?? "")
+    if (!caller || !actsFor(caller, asked)) {
+      const r = refusal(caller, "its own product quiz only")
+      return NextResponse.json({ ok: false, reason: r.reason }, { status: r.status })
+    }
+  } else {
+    const denied = await requireRoles(req, ROLES)
+    if (denied) return denied
+  }
   const address = (req.nextUrl.searchParams.get("item") ?? "").trim()
   const id = idOfAddress(address)
   const dir = id ? elementDir(id) : null

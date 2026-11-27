@@ -89,6 +89,7 @@
         "components/domain/domain-main.client.tsx",
         "components/element-design/design-flow.client.tsx",
         "components/element-docs/quiz-feedback.client.tsx",
+        "components/element-docs/quiz-wish-notice.client.tsx",
         "components/element-settings/site/editors/feature-switches.client.tsx",
         "components/environment/environment-panel.client.tsx",
         "components/hosting/server-busy.client.tsx",
@@ -670,7 +671,7 @@
         "en": "Product quiz",
         "ru": "Опрос продукта"
       },
-      "version": "1.3.0",
+      "version": "1.4.0",
       "parts": [
         {
           "id": "tool-block-task",
@@ -707,7 +708,8 @@
         "components/element-docs/product-quiz.client.tsx",
         "components/element-docs/quiz-feedback.client.tsx",
         "components/element-docs/quiz-tree.tsx",
-        "components/element-docs/quiz-versions.client.tsx"
+        "components/element-docs/quiz-versions.client.tsx",
+        "components/element-docs/quiz-wish-notice.client.tsx"
       ],
       "requires": [
         "components/dialog/app-dialog.client",
@@ -724,7 +726,7 @@
         "lib/web4-items/product-quiz",
         "lib/web4-items/product-quiz-pdf"
       ],
-      "bodyHash": "ce73618fc67cf7af"
+      "bodyHash": "1dc77c1afa354162"
     },
     {
       "id": "remote-settings",
@@ -3357,6 +3359,7 @@
         "components/element-docs/product-quiz.client.tsx",
         "components/element-docs/quiz-feedback.client.tsx",
         "components/element-docs/quiz-versions.client.tsx",
+        "components/element-docs/quiz-wish-notice.client.tsx",
         "components/element-docs/reverse-engineering.client.tsx",
         "components/element-settings/brief-editor.client.tsx",
         "components/element-settings/site/config/combo-field.client.tsx",
@@ -4738,6 +4741,7 @@
         "components/element-docs/product-quiz.client.tsx",
         "components/element-docs/quiz-tree.tsx",
         "components/element-docs/quiz-versions.client.tsx",
+        "components/element-docs/quiz-wish-notice.client.tsx",
         "components/element-docs/reverse-engineering.client.tsx",
         "components/element-settings/brief-editor.client.tsx",
         "components/element-settings/remote-state.tsx",

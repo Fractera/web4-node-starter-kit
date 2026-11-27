@@ -17,6 +17,7 @@ import type { ProductQuiz, QuizItem, QuizLedgers, QuizStepState, QuizWork } from
 import { QuizTree, type QuizTreeWords } from "./quiz-tree"
 import { QuizFeedback, type QuizFeedbackWords } from "./quiz-feedback.client"
 import { QuizVersions, type QuizVersionsWords } from "./quiz-versions.client"
+import { QuizWishNotice, type QuizWishResult, type QuizWishWords } from "./quiz-wish-notice.client"
 import type { QuizVersion } from "@/lib/web4-items/product-quiz-pdf"
 
 // ISLAND OF THE PRODUCT QUIZ (node step 536-1). The person, 2026-10-18: «А вверху инструкция если хотите что-то добавить перейдите
@@ -109,6 +110,9 @@ export type ProductQuizWords = {
   askQuestion: string
   askContinue: string
   askStart: string
+  /** 861-1: the task line of the window «Continue the quiz» opens, and the notice after a wish. */
+  continueLine: string
+  wish: QuizWishWords
   /** 556-10: the drawer with the element's terminal. */
   drawer: TerminalDrawerWords
   /** 575: the PDF of the quiz with its version, dates, git commit and the screens of its references. */
@@ -214,10 +218,23 @@ export function ProductQuizIsland({ item, lang, words, task }: { item: string; l
   // A new number is a new drawer: the terminal reconnects with the new task, the agent's session keeps running.
   const [drawer, setDrawer] = useState<{ n: number; text: string } | null>(null)
 
-  function send(text: string) {
+  // 861-1 (Roma 2026-11-27, Telegram 1467: «добавляю задание и не вижу его ожидания»): a wish no longer goes into a terminal the person
+  // may not see (a phone) — the node keeps it and the main agent gives it to the element's agent; the notice says where it goes on.
+  const [wish, setWish] = useState<{ result: QuizWishResult; text: string } | null>(null)
+  const openTerminal = (text: string) => setDrawer((d) => ({ n: (d?.n ?? 0) + 1, text }))
+  async function send(text: string) {
     setAskLine(null)
-    setDrawer((d) => ({ n: (d?.n ?? 0) + 1, text }))
+    try {
+      const r = await fetch(`${BASE}/api/node/product-quiz/wish`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ item, text }) })
+      const j = (await r.json().catch(() => null)) as { ok?: boolean; error?: string; woke?: boolean; chat?: string | null } | null
+      setWish({ text, result: j?.ok ? { ok: true, chat: j.chat ?? null, woke: j.woke === true } : { ok: false, error: j?.error ?? String(r.status) } })
+    } catch {
+      setWish({ text, result: { ok: false, error: "network" } })
+    }
   }
+  const notice = (
+    <QuizWishNotice result={wish?.result ?? null} words={words.wish} dialogUi={task.dialogUi} onClose={() => setWish(null)} onTerminal={() => wish && openTerminal(wish.text)} />
+  )
   const askButton = (line: string, id: string) => (
     <TooltipProvider>
       <Tooltip>
@@ -270,7 +287,7 @@ export function ProductQuizIsland({ item, lang, words, task }: { item: string; l
   }, [item])
 
   const continueButton = (
-    <Button type="button" onClick={() => send(words.askContinue)} data-quiz-terminal>
+    <Button type="button" onClick={() => setAskLine(words.continueLine)} data-quiz-terminal>
       {words.continueQuiz}
     </Button>
   )
@@ -293,6 +310,7 @@ export function ProductQuizIsland({ item, lang, words, task }: { item: string; l
             </Button>
           </CardContent>
           {dialog}
+          {notice}
         </Card>
         {terminal}
       </div>
@@ -583,6 +601,7 @@ export function ProductQuizIsland({ item, lang, words, task }: { item: string; l
         </section>
       )}
       {dialog}
+      {notice}
     </div>
     {terminal}
     </div>

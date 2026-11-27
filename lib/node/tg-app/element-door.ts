@@ -1,6 +1,6 @@
 // A NATIVE ELEMENT'S MINI APP — THE DOOR'S HALF (node step 853; the page — lib/node/tg-app/element-page.cjs). Called by the Pult's door
 // `/api/node/tg-app?el=<id>`: the same public address the phone already reaches, so the proxy's lists stay as they are. The lock is THIS
-// element's bot: the launch data signed with its token, the person among the chats it admitted, data not older than a day. Two actions:
+// element's bot: the launch data signed with its token, the person among the chats it admitted, data not older than a day. Three actions:
 // `state` — the element's name, site, agent and token use (`elementAppOf`, natives only); `chat` — the bot writes the person one line and
 // the core's `came-from` hook tells the agent where they came from (`data/services/<id>/tg-context.json`, as a custom element's door does).
 import { mkdirSync, writeFileSync } from "node:fs"
@@ -9,6 +9,7 @@ import { join } from "node:path"
 import asksTg from "@/lib/node/person-asks-telegram.cjs"
 import webapp from "@/lib/node/telegram-webapp.cjs"
 import elementPage from "@/lib/node/tg-app/element-page.cjs"
+import choice from "@/lib/node/tg-app/model-choice.cjs"
 import { elementAppOf } from "@/lib/node/tg-app/state"
 
 type Lang = "en" | "ru"
@@ -23,7 +24,7 @@ export function elementHtml(id: string, lang: Lang): string | null {
   return elementAppOf(id, lang) ? elementPage.html(lang, id) : null
 }
 
-export async function elementAction(root: string, id: string, lang: Lang, body: { initData?: unknown; action?: unknown } | null): Promise<Out> {
+export async function elementAction(root: string, id: string, lang: Lang, body: { initData?: unknown; action?: unknown; model?: unknown; effort?: unknown } | null): Promise<Out> {
   const bot = asksTg.bot(root, id) as { token: string; chats: string[] } | null
   if (!bot) return { ok: false, reason: "no-bot", status: 409 }
   const signed = webapp.check(typeof body?.initData === "string" ? body.initData : "", bot.token, { allow: bot.chats, maxAgeS: DAY_S }) as { ok: boolean; user?: string; reason?: string }
@@ -46,6 +47,20 @@ export async function elementAction(root: string, id: string, lang: Lang, body: 
     }).then((x) => x.json() as Promise<{ ok?: boolean; description?: string }>).catch((e) => ({ ok: false, description: String(e) }))
     if (!r.ok) console.log(`[node/tg-app] ${id} chat line not sent — ${r.description ?? "?"}`)
     return { ok: true, line: r.ok === true }
+  }
+  // 861-5 (Roma 2026-11-27, Telegram 1475: «нету верхней карточки … на какой подписке … на какой модели с каким усилием»): the card switches
+  // THIS element's agent — Opus with its effort, Sonnet or Haiku on medium (`model-choice.cjs`), the act `npm run session -- model` does;
+  // Ultracode stays the bot's, behind its Telegram confirmation (as the custom element's own Mini App, 840-1). The bridge switches when
+  // the current turn ends and the conversation goes on; asleep → 409 `no-session`, the page says how to wake it.
+  if (body?.action === "model") {
+    const picked = choice.modelChoice({ model: body.model, effort: body.effort })
+    if (!picked.ok) return { ok: false, reason: picked.reason, status: 400 }
+    const command = (globalThis as { __web4AgentSession?: (service: string, opts: Record<string, unknown>) => Record<string, unknown> & { ok: boolean } }).__web4AgentSession
+    if (typeof command !== "function") return { ok: false, reason: "no-agent-kit", status: 503 }
+    const out = command(id, { action: "model", model: picked.model, effort: picked.effort })
+    console.log(`[node/tg-app] ${id} model ${picked.model} · ${picked.effort} from its Mini App → ${out.ok ? "scheduled" : out.reason}`)
+    if (!out.ok) return { ok: false, reason: String(out.reason ?? "refused"), status: out.reason === "no-session" ? 409 : 400 }
+    return { ok: true, model: picked.model, effort: picked.effort }
   }
   return { ok: false, reason: "unknown-action", status: 400 }
 }

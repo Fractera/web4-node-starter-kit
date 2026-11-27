@@ -12,7 +12,7 @@ import { readdir, readFile, stat } from "node:fs/promises"
 import { join } from "node:path"
 import { promisify } from "node:util"
 
-import type { ProductQuiz } from "@/lib/web4-items/product-quiz"
+import type { ProductQuiz, QuizTreeMark, QuizTreeNode } from "@/lib/web4-items/product-quiz"
 
 const run = promisify(execFile)
 const FOLDER = /^[0-9A-Za-z][0-9A-Za-z._-]{0,120}$/
@@ -119,6 +119,17 @@ export type QuizPdfWords = {
   screensNote: string
   draft: string
   confirmed: string
+  tree: string
+  language: string
+  depth: string
+  version: string
+  level: string
+  total: string
+  answered: string
+  agent: string
+  open: string
+  question: string
+  answer: string
 }
 
 const WORDS: Record<"en" | "ru", QuizPdfWords> = {
@@ -130,6 +141,9 @@ const WORDS: Record<"en" | "ru", QuizPdfWords> = {
     decisions: "Decisions", screens: "Screens of the studied products",
     screensNote: "Screens of a studied product, only to understand how it works. Not for copying its design.",
     draft: "draft", confirmed: "confirmed",
+    tree: "The quiz tree", language: "Language of the quiz", depth: "depth {d} · freedom {f}%", version: "version {n} · {date}",
+    level: "Level", total: "Items", answered: "decided by the person", agent: "filled by the agent", open: "open",
+    question: "Question", answer: "Answer",
   },
   ru: {
     title: "Продуктовый квиз", element: "Элемент", exported: "Выгружено", changed: "Квиз последний раз менялся", commit: "Git-коммит квиза",
@@ -139,7 +153,16 @@ const WORDS: Record<"en" | "ru", QuizPdfWords> = {
     decisions: "Решения", screens: "Экраны разобранных продуктов",
     screensNote: "Экран образца, только для понимания устройства — не для копирования оформления.",
     draft: "черновик", confirmed: "подтверждено",
+    tree: "Дерево квиза", language: "Язык квиза", depth: "глубина {d} · свобода {f}%", version: "версия {n} · {date}",
+    level: "Уровень", total: "Пунктов", answered: "решено человеком", agent: "заполнено агентом", open: "открыто",
+    question: "Вопрос", answer: "Ответ",
   },
+}
+
+/** 861-4: the quiz's language by name in the reader's language («русский»), the code when the name is unknown. */
+function langName(code: string, reader: string): string {
+  if (!code) return "—"
+  try { return new Intl.DisplayNames([reader], { type: "language" }).of(code) ?? code } catch { return code }
 }
 
 export function quizPdfWords(lang: string): QuizPdfWords {
@@ -168,6 +191,26 @@ export function quizPdfHtml(args: { item: string; name: string; lang: string; qu
     ? `<h2 class="page">${esc(w.screens)}</h2><p class="muted">${esc(w.screensNote)}</p>${shots.map((s) =>
         `<figure><img src="${s.data}" alt="${esc(s.name)}"><figcaption>${esc(s.product)} · ${esc(s.name)}</figcaption></figure>`).join("")}`
     : ""
+  // 861-2 (lidt5 via Roma 1468–1470: «невозможно ориентироваться что сделано что нет»): the tree with every node's mark. A mark is a SHAPE,
+  // not a glyph — a server's fonts may lack ✓ ◇ ○, and a shape survives black-and-white print: a filled circle (the person decided), a
+  // diamond (the agent filled it), a hollow circle (open). An open node prints its question (the agent's recommendation inside), a filled
+  // one its answer. The counts per level are the line `npm run quiz:tree` prints.
+  const mk = (m: QuizTreeMark) => `<span class="mk ${m}" aria-label="${esc(w[m])}"></span>`
+  const levels: Record<QuizTreeMark, number>[] = []
+  const count = (list: QuizTreeNode[], l: number) => { for (const t of list) { (levels[l] ??= { answered: 0, agent: 0, open: 0 })[t.mark] += 1; count(t.children, l + 1) } }
+  count(quiz.tree, 0)
+  const nodeHtml = (t: QuizTreeNode): string => {
+    const body = t.mark === "open" ? (t.q ? `<div class="qa"><b>${esc(w.question)}:</b> ${esc(t.q)}</div>` : "") : (t.a ? `<div class="qa"><b>${esc(w.answer)}:</b> ${esc(t.a)}</div>` : "")
+    return `<li class="node">${mk(t.mark)}<b>${esc(t.n)}</b> ${esc(t.title)}${body}${t.children.length ? `<ul class="tree">${t.children.map(nodeHtml).join("")}</ul>` : ""}</li>`
+  }
+  const treeBlock = quiz.tree.length
+    ? `<h2>${esc(w.tree)}</h2>
+<p class="muted">${esc(w.depth.replace("{d}", String(quiz.depth)).replace("{f}", String(quiz.freedom)))}${quiz.version ? ` · ${esc(w.version.replace("{n}", String(quiz.version.n)).replace("{date}", quiz.version.date))}` : ""}</p>
+<p class="legend">${(["answered", "agent", "open"] as QuizTreeMark[]).map((m) => `${mk(m)}${esc(w[m])}`).join(" &nbsp; ")}</p>
+<table class="lv"><tr><th>${esc(w.level)}</th><th>${esc(w.total)}</th><th>${mk("answered")}</th><th>${mk("agent")}</th><th>${mk("open")}</th></tr>${levels.map((c, i) =>
+  `<tr><td>L${i + 1}</td><td>${c.answered + c.agent + c.open}</td><td>${c.answered}</td><td>${c.agent}</td><td>${c.open}</td></tr>`).join("")}</table>
+<ul class="tree root">${quiz.tree.map(nodeHtml).join("")}</ul>`
+    : ""
   return `<!doctype html><html lang="${esc(args.lang)}"><head><meta charset="utf-8"><title>${esc(`${name} · ${w.title}`)}</title><style>
   @page { size: A4; margin: 16mm 14mm; }
   body { font: 11pt/1.45 "Segoe UI", system-ui, -apple-system, sans-serif; color: #111; }
@@ -178,16 +221,24 @@ export function quizPdfHtml(args: { item: string; name: string; lang: string; qu
   .badge { font-size: 8.5pt; border: 1px solid #999; border-radius: 8pt; padding: 0 5pt; color: #444; } .badge.ok { border-color: #2e7d32; color: #2e7d32; }
   .page { break-before: page; } figure { margin: 0 0 12pt; break-inside: avoid; } figure img { max-width: 100%; max-height: 230mm; border: 1px solid #ddd; }
   figcaption { font-size: 9pt; color: #555; margin-top: 3pt; }
+  .mk { display: inline-block; width: 8pt; height: 8pt; margin-right: 5pt; vertical-align: -0.5pt; border-radius: 50%; box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .mk.answered { background: #2e7d32; } .mk.agent { background: #d98e04; border-radius: 1pt; transform: rotate(45deg) scale(.85); } .mk.open { border: 1.5pt solid #888; }
+  .legend { margin: 4pt 0 6pt; } table.lv { border-collapse: collapse; margin: 4pt 0 10pt; font-variant-numeric: tabular-nums; }
+  table.lv th, table.lv td { border: 1px solid #ddd; padding: 2pt 8pt; text-align: center; } table.lv th .mk { margin: 0; }
+  ul.tree { list-style: none; padding-left: 14pt; } ul.tree.root { padding-left: 0; } li.node { margin: 3pt 0; break-inside: avoid; }
+  .qa { color: #444; font-size: 10pt; margin: 1pt 0 0 13pt; }
 </style></head><body>
 <h1>${esc(w.title)}</h1>
 <div class="head">
   <p><b>${esc(w.element)}:</b> ${esc(name)} (<code>${esc(item)}</code>)</p>
   <p><b>${esc(w.exported)}:</b> ${esc(at.toISOString().replace("T", " ").slice(0, 16))} UTC · <b>${esc(w.changed)}:</b> ${esc(day(g.date))}</p>
+  <p><b>${esc(w.language)}:</b> ${esc(langName(quiz.language, args.lang))}</p>
   ${gitBlock}
 </div>
+${treeBlock}
 ${quiz.vision.text ? `<h2>${esc(w.vision)}</h2><p>${esc(quiz.vision.text)} ${badge(quiz.vision.status)}</p>` : ""}
 ${list(w.actors, quiz.actors.map((a) => `<li><b>${esc(a.name)}</b>${a.text ? ` — ${esc(a.text)}` : ""}</li>`))}
-${quiz.modules.length ? `<h2>${esc(w.modules)}</h2>${modules}` : ""}
+${quiz.modules.length && !quiz.tree.length ? `<h2>${esc(w.modules)}</h2>${modules}` : ""}
 ${list(w.stages, stages)}
 ${list(w.references, refs)}
 ${list(w.openQuestions, quiz.openQuestions.map((q) => `<li>${esc(q.text)}</li>`))}
