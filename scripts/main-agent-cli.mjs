@@ -377,6 +377,67 @@ if (cmd === 'rename') {
   process.exit(0)
 }
 
+if (cmd === 'market' && rest[0] === 'install') {
+  // 862-4: the bought starter becomes an element of this node — `market install <order> [<slug>] [--again]`. The store is asked with the
+  // node's signature (`lib/web4-items/starter-fetch.mjs`: paid order → archive → sha256 against the order and the header → the kept copy
+  // in data/node/starters/<slug>/<tag>/), then the same birth as every element (`scripts/item-birth.mjs --starter`). `--again`: one more
+  // element from the kept copy, the store not asked (R-05: no second payment). Its agent is not woken: a bought starter is ready.
+  const order = rest[1] && !rest[1].startsWith('--') ? rest[1] : ''
+  const slugArg = rest[2] && !rest[2].startsWith('--') ? rest[2] : null
+  if (!order) fail('market install <order id> [<starter slug>] [--again]')
+  {
+    const local = spawnSync(process.execPath, [join(ROOT, 'scripts', 'check-local.mjs')], { cwd: ROOT, encoding: 'utf8', timeout: 30_000, windowsHide: true })
+    if (local.status !== 0) fail('this folder is not the installed node: a birth from here would run in the live node\'s processes — run it in the installed node\'s folder')
+  }
+  const sf = await import('../lib/web4-items/starter-fetch.mjs')
+  const already = registry().filter((s) => s.born?.from === 'starter' && s.born.order === order && (!slugArg || s.born.slug === slugArg))
+  if (already.length && !has('--again')) fail(`this order is already installed here: ${already.map((s) => `${s.id} (${s.born.slug} ${s.born.version})`).join(', ')} — one more element from the kept copy: add --again`)
+  let got
+  if (has('--again')) {
+    const slug = slugArg ?? already[0]?.born?.slug
+    if (!slug) fail('--again needs the starter: market install <order> <slug> --again')
+    got = sf.keptStarter(ROOT, slug)
+    if (!got.ok) fail(`no kept copy of ${slug} (${got.reason}) — run without --again to take it from the store`)
+    if (got.meta.order !== order) fail(`the kept copy of ${slug} came with order ${got.meta.order}, not ${order}`)
+    console.log(`kept copy: ${got.meta.slug} ${got.meta.tag} (sha256 ${got.meta.sha256.slice(0, 12)}…) — the store is not asked`)
+  } else {
+    got = await sf.fetchStarter(ROOT, { order, slug: slugArg })
+    if (!got.ok) fail(`===STARTER_REFUSED=== ${got.reason}`)
+    console.log(`kept: ${got.meta.slug} ${got.meta.tag}, sha256 ${got.meta.sha256.slice(0, 12)}… = the order = x-sha256, ${got.meta.size} bytes → ${got.path}`)
+  }
+  const props = require('../lib/web4-items/element-props.cjs').readElementProps(got.path) ?? {}
+  const native = props.elementType === 'native'
+  const display = (got.meta.name || props.name || got.meta.slug).replace(/\s+/g, ' ').trim().slice(0, 60)
+  const describe = `${(props.shortDescription || props.summary || display).replace(/\s+/g, ' ').trim().slice(0, 400)} Bought from the Fractera marketplace: ${got.meta.slug} ${got.meta.tag}, order ${order}.`
+  // The draft — the same rule of a name as `create` and the button «Создать WEB4 ITEM».
+  const RESERVED = new Set(['auth', 'build', 'config', 'data', 'hosting', 'kits', 'passport', 'root', 'admin', 'architect', 'api', 'www', 'mail', 'memory', 'telegram', 'store', 'items'])
+  const draftsFile = join(ROOT, 'data', 'web4-drafts.json')
+  const drafts = readJson(draftsFile, { drafts: [] }).drafts ?? []
+  const busy = new Set([...RESERVED, ...registry().map((s) => s.id), ...drafts.map((d) => d.id)])
+  const alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789'
+  let id = ''
+  for (let i = 0; i < 100 && (!id || busy.has(id)); i++) {
+    const b = randomBytes(5)
+    id = alphabet[b[0] % 26] + [1, 2, 3, 4].map((k) => alphabet[b[k] % 36]).join('')
+  }
+  if (busy.has(id)) fail('no free name')
+  const tmp = `${draftsFile}.${process.pid}.tmp`
+  writeFileSync(tmp, JSON.stringify({ drafts: [...drafts, { id, createdAt: new Date().toISOString(), ...(native ? { native: true } : {}) }] }, null, 2) + '\n', 'utf8')
+  renameSync(tmp, draftsFile)
+  console.log(`draft ${id} — birth from the starter starts (copy, install, build: a few minutes)`)
+  const birth = spawnSync(process.execPath, [join(ROOT, 'scripts', 'item-birth.mjs'), id, '--starter', got.path, ...(native ? ['--native'] : []), '--app', 'project', '--name', display, '--describe', describe], { cwd: ROOT, encoding: 'utf8', windowsHide: true, timeout: 20 * 60_000 })
+  const log = `${birth.stdout ?? ''}${birth.stderr ?? ''}`
+  if (!/===BIRTH_OK===/.test(log)) fail(`birth of ${id} from ${got.meta.slug} failed: ${log.trim().split(/\r?\n/).slice(-3).join(' | ')}`)
+  const rj = readJson(rolesFile, {})
+  rj[id] = describe
+  mkdirSync(dirname(rolesFile), { recursive: true })
+  writeFileSync(rolesFile, JSON.stringify(rj, null, 2) + '\n', 'utf8')
+  nameFile.writeName(id, display, ROOT)
+  const port = registry().find((s) => s.id === id)?.port ?? null
+  console.log(`===STARTER_INSTALLED=== ${id} «${display}» from ${got.meta.slug} ${got.meta.tag} · port ${port} · ${native ? 'native' : 'custom'} · its doors: npm run card -- ${id}`)
+  process.exit(0)
+}
+
 if (cmd === 'market') {
   // 841-2 (the owner, Telegram 984/985): the Fractera marketplace rung — search v1 (`lib/web4-items/fractera-market.mjs`): the summary and
   // links to public pages; a simulation until Fractera's side answers — said so. The rung before Lagrix on the ladder (skill handle-need).

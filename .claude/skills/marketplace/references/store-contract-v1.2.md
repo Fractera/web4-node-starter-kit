@@ -18,6 +18,7 @@ bytes }] }`. Another node's or an unknown order → 404.
 ## Archive (§4) — `POST /api/marketplace/archive`, signed
 `body: { node, at, nonce, order, slug }` (not `starter`) → `200 application/gzip`, headers `x-sha256`, `x-tag`, `x-commit`; the bytes'
 sha256 = the order's `sha256`. Another node's or an unknown order → 404; a slug outside the order → 400.
+The one top folder of the archive is named `<slug>-<tag>` (measured live 2026-11-27); the project reads it and v1's `<slug>`, nothing else.
 
 ## New — the list of a node's orders, `POST /api/marketplace/orders`, signed (the store's question, Roma 1592)
 `body: { node, at, nonce }` → `200 { v: 2, orders: [{ order, at, paid, items: [{ slug, tag, commit, sha256 }] }] }` — this node only.

@@ -15,7 +15,7 @@
 // 🔒 Процессы — `windowsHide: true` (закон 2026-09-18). Ничего не делается само: прибор запускает человек (или кнопка 319-3).
 // 🔒 Отказ до записи реестра не оставляет следов; отказ сборки оставляет папку и запись — повтор одной командой (печатается).
 
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { createRequire } from 'node:module'
@@ -104,15 +104,28 @@ if (repoUrl) {
   repoOwned = checkRepoOwner(repoUrl, ROOT)
   if (!repoOwned.ok) fail(repoOwned.message)
 }
-const origin = repoUrl ? { from: 'repository', version: repoUrl } : template
+// 862-4: an element born from a BOUGHT STARTER — the kept copy of the store's archive (`lib/web4-items/starter-fetch.mjs`,
+// data/node/starters/<slug>/<tag>/ with its record <tag>.json beside it). Copied, never cloned: the store gave a checked tree, no .git.
+const starterAt = process.argv.indexOf('--starter')
+const starterDir = starterAt > 0 ? process.argv[starterAt + 1] : null
+let starter = null
+if (starterAt > 0) {
+  if (!starterDir || starterDir.startsWith('--') || !existsSync(starterDir) || !existsSync(`${starterDir}.json`)) fail(`--starter <папка сохранённого стартера с записью <тег>.json рядом> — не найдено: ${starterDir ?? ''}`)
+  if (repoUrl) fail('--starter и --repo — разные источники, выберите один')
+  starter = JSON.parse(readFileSync(`${starterDir}.json`, 'utf8'))
+  if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(starter.slug ?? '') || !/^v\d+\.\d+\.\d+$/.test(starter.tag ?? '')) fail('запись стартера без slug или тега')
+}
+const origin = repoUrl ? { from: 'repository', version: repoUrl } : starter ? { from: `starter ${starter.slug}`, version: starter.tag } : template
 stage(`рождаю «${id}» из ${origin.from} ${origin.version}`)
 
-// 2. Код: шаблон по закреплённому тегу — или репозиторий человека целиком, с его историей.
+// 2. Код: шаблон по закреплённому тегу — или репозиторий человека целиком, с его историей — или купленный стартер (копия).
 const clone = repoUrl
   ? git(['clone', '--quiet', repoUrl, dir], ROOT)
-  : git(['clone', '--quiet', '--depth', '1', '--branch', template.version, template.repo, dir], ROOT)
-if (clone.rc !== 0) fail(`${repoUrl ? 'репозиторий' : 'шаблон'} не скачан: ${clone.out.trim().split('\n').slice(-1)[0]}`, dir)
-stage(repoUrl ? 'репозиторий скачан' : 'шаблон скачан')
+  : starter
+    ? (() => { try { cpSync(starterDir, dir, { recursive: true, verbatimSymlinks: true }); return { rc: 0, out: '' } } catch (e) { return { rc: 1, out: String(e?.message ?? e) } } })()
+    : git(['clone', '--quiet', '--depth', '1', '--branch', template.version, template.repo, dir], ROOT)
+if (clone.rc !== 0) fail(`${repoUrl ? 'репозиторий' : starter ? 'стартер' : 'шаблон'} не скачан: ${clone.out.trim().split('\n').slice(-1)[0]}`, dir)
+stage(repoUrl ? 'репозиторий скачан' : starter ? `стартер скопирован (${starter.slug} ${starter.tag}, sha256 ${String(starter.sha256 ?? '').slice(0, 12)}…)` : 'шаблон скачан')
 
 // 3. Своя история вместо истории шаблона (у репозитория человека история его — остаётся).
 if (!repoUrl) rmSync(join(dir, '.git'), { recursive: true, force: true })
@@ -228,7 +241,7 @@ const ident = machineArgs()
 // 367-4: у репозитория человека история его — один коммит с файлами узла поверх неё; у шаблона — своя история с нуля.
 const historySteps = repoUrl
   ? [['add', '-A'], [...ident, 'commit', '--quiet', '-m', 'Fractera: element files (passport, launcher, agent instruction)']]
-  : [['init', '--quiet', '-b', 'main'], ['add', '-A'], [...ident, 'commit', '--quiet', '-m', `born from ${template.from} ${template.version}`]]
+  : [['init', '--quiet', '-b', 'main'], ['add', '-A'], [...ident, 'commit', '--quiet', '-m', `born from ${origin.from} ${origin.version}`]]
 for (const step of historySteps) {
   const r = git(step, dir)
   if (r.rc !== 0) fail(`своя история не заведена (git ${step.filter((a) => !a.startsWith('user.')).join(' ')}): ${r.out.trim().split('\n').slice(-1)[0]}`, dir)
@@ -248,14 +261,20 @@ if (repoOwned?.ok) {
 registry.services.push({
   id,
   // Сторож реестра требует https-адрес с .git (repo-https); версия — коммит (исключение для born.from repository).
-  repo: repoUrl ? `${repoUrl.endsWith('/') ? repoUrl.slice(0, -1) : repoUrl}`.replace(/\.git$/, '') + '.git' : template.repo,
-  version: repoUrl ? git(['rev-parse', '--short', 'HEAD'], dir).out.trim() : template.version,
-  born: repoUrl ? { from: 'repository', url: repoUrl, version: 'repo', at: new Date().toISOString() } : { from: template.from, version: template.version, at: new Date().toISOString() },
+  // 862-4: a starter has no repository of the node's to point at (the author's stays private at Fractera) — `repo: null`, the guard's
+  // exception for `born.from === 'starter'`; the truth of origin is `born`: the slug, the tag, the commit, the sha256 and the order.
+  repo: repoUrl ? `${repoUrl.endsWith('/') ? repoUrl.slice(0, -1) : repoUrl}`.replace(/\.git$/, '') + '.git' : starter ? null : template.repo,
+  version: repoUrl ? git(['rev-parse', '--short', 'HEAD'], dir).out.trim() : starter ? starter.tag : template.version,
+  born: repoUrl
+    ? { from: 'repository', url: repoUrl, version: 'repo', at: new Date().toISOString() }
+    : starter
+      ? { from: 'starter', slug: starter.slug, version: starter.tag, commit: starter.commit ?? null, sha256: starter.sha256 ?? null, order: starter.order ?? null, at: new Date().toISOString() }
+      : { from: template.from, version: template.version, at: new Date().toISOString() },
   provides: ['element-site'],
   // 333-3: навык дизайна шаблона едет в реестр с рождения (паспорт шаблона `designSkill`); дальше его обновляет «Забрать в ядро».
   ...(typeof props.designSkill === 'string' && props.designSkill ? { designSkill: props.designSkill } : {}),
   required: false,
-  note: `Рождён из ${origin.from} ${origin.version} (319${repoUrl ? ', 367-4' : ''}). Самостоятельный проект: установщик его код не трогает.`,
+  note: `Рождён из ${origin.from} ${origin.version} (319${repoUrl ? ', 367-4' : starter ? ', 862-4' : ''}). Самостоятельный проект: установщик его код не трогает.`,
   kind: 'user',
   // 804-2: what the element is, answered once at its birth (`lib/web4-items/element-app.cjs`).
   app,

@@ -95,6 +95,9 @@ for (const [i, s] of reg.services.entries()) {
   // ── 4. repo-https. Порча: заменить адрес на ssh или на путь на диске.
   // 🔒 ДОЛГ, А НЕ ИСКЛЮЧЕНИЕ (закон трёх вердиктов): адрес назван, у долга есть дата и решающий, печатается каждый прогон.
   if (REPO_DEBTS[s.id] && s.repo === REPO_DEBTS[s.id].repo) { debts.push(`  ДОЛГ [repo-https] ${s.id}: ${REPO_DEBTS[s.id].why}`) }
+  // ИСКЛЮЧЕНИЕ (862-4): элемент из купленного стартера — репозитория у узла нет (авторский закрыт в Fractera), установщик его не клонирует;
+  // правда о происхождении — `born` (slug, тег, коммит, sha256, заказ). Без slug и sha256 исключение не действует.
+  else if (s.born?.from === 'starter' && s.repo === null && /^[a-z0-9][a-z0-9-]{0,63}$/.test(s.born.slug ?? '') && /^[0-9a-f]{64}$/.test(s.born.sha256 ?? '')) { /* исключение — см. выше */ }
   else if (typeof s.repo !== 'string' || !/^https:\/\/.+\.git$/.test(s.repo)) {
     fail('repo-https', `${where}: repo обязан быть https-адресом, оканчивающимся на .git — получено «${s.repo}»`)
   }
