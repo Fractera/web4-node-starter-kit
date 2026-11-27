@@ -49,14 +49,17 @@ fires after a window already put in the same turn — add «⟦без окна: 
   NOT changed (Roma 1684: natives need no market).
 
 **OPEN NOW:**
-1. **864 to the server** — Roma's window: `bash logs/push-864.sh` (fork → Fractera main), then on aifa.dev «Проверить снова» (me) →
+1. **864 to the server** — Roma's window 66de613f (put 23:56): `bash logs/push-864.sh` (fork → Fractera main), then on aifa.dev «Проверить снова» (me) →
    «Обновить сборку ядра» (his). The walled-bot gate (memory): a walled element's bot on aifa.dev answers «привет» before AND after.
    Live proof: `curl -sI https://market.aifa.dev/` → 2xx/3xx with nothing typed on the server (the heal at the build's end); then
    market v0.1.1 there. Server-wall review of the batch: it touches nginx/certs/the reach card/serve's build end — no Telegram, agent
    start, Claude home or element folder.
 2. **CI:** Fractera's three-os was red on Windows all day (server-telegram's line patterns vs a CRLF checkout) — fixed in 9cd911f0;
    read the next run after the push (`gh run list -R Fractera/web4-node-starter-kit -L 3`); a further Windows failure = the next fix.
-3. **Paid path — proposed in 1720, waits Roma's yes:** a third test starter (the image copy at $1) added by the store's side on
+3. **Paid path = 862-15 (plan new-steps/862/862-15.md), Roma's yes 1737.** 23:55 market tasked (its step 6: consent line, «Оплатить»,
+   «Ждём оплату», «Готово» → order → «Купленные»); the store's task sent to Roma as a file (Telegram 1744) to pass to fractera.ai; the
+   buyer is this Mac (no server update for the first paid test). Waits: market's report, the store's slug and its test order.
+   The earlier proposal (1720), kept for its detail: a third test starter (the image copy at $1) added by the store's side on
    fractera.ai; Stripe in TEST mode on fractera.ai; market adds «Оплатить» to the cart (the core's payer window with the checkout link
    exists, 862-4); the test buyer on aifa.dev pays with a test card; then live keys only by Roma's window. Payment only on the site,
    real money (Roma 1687) — never Stars.
