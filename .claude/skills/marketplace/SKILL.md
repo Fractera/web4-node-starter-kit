@@ -64,7 +64,8 @@ person's own act in a window. Whoever pays buys for the whole project (the law o
 ## 5. The standard
 
 `references/store-contract-v1.md` — the signed envelope, search v2 (signed form and `history`), purchase, order status, archive,
-application, the limits. Every call to the store is made by the core and signed with the node's identity; the store never calls a
+application, the limits; `references/store-contract-v1.1.md` — v1 plus one refusal: 503 `replay-check-unavailable` (the store's
+proposal, accepted 2026-11-27). Every call to the store is made by the core and signed with the node's identity; the store never calls a
 project — the project pulls.
 
 ## 5a. Who builds what
@@ -96,8 +97,16 @@ Stripe element (the only holder of Stripe keys there) to create the checkout on 
 - 2026-11-27 11:09 UTC (fractera.ai's report through Roma): the store took standard v1 as written — the envelope, signed search with
   history, order status, archive, application, limits — as its own step 4 (its commit f07f449); 4-1 (the envelope and verified search)
   approved; the purchase goes through fractera.ai's Stripe element. The first starters proposed: Fractera's two element templates at 0.
+- 2026-11-27 ~11:55 UTC (fractera.ai's status file through Roma): search v2 signed is live on the public address since the store's 4-1
+  (11:15) — a wrong signature → 401 `bad-signature`, a replayed envelope → 401 `replay`, a valid one → 200 `verified: true` (proven with
+  a throwaway key; a real node waits 862-2); purchase, order, archive and apply → 404 (not started); the catalogue is empty (the two
+  Fractera templates wait Roma's yes); the Stripe element of fractera.ai is off, no keys. The creator's decisions on its five conflicts,
+  sent through Roma (the operator deploys the store; native-ness by the passport; no refund unless the
+  law; the store pushes by `github:self` after taking native v0.1.87; catalogue → free path 4-2…4-4 → 4-5 → the paid path later).
+- The client «Маркетплейс» is born: `Fractera/fractera-market-client-starter` v0.1.0 (862-1), its section in the core; it enters every
+  project with the next core release.
 - Every element holds this map from its side: the element skill `use-marketplace` (custom template v0.3.248, native v0.1.87).
-- Not built yet, say so plainly: the client element (862-1), search through it (862-2), purchase (862-3), install (862-4), applications
+- Not built yet, say so plainly: the client's own function (its doors, lists and pages — its agent builds them), search through it (862-2), purchase (862-3), install (862-4), applications
   sent to the store (862-5; the form keeps them on the node). The store's purchase, order, archive and apply doors wait its own stages.
 - Lagrix: simulated (`npm run lagrix`).
 
