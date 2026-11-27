@@ -318,6 +318,8 @@ element instruction) core f732cf6f; templates workshops committed custom 67bf854
 
 **20:2x UTC — market step 3 CLOSED (f7637b1, live 3ec9ce8, supervision 10/10 ended):** pages Рекомендации/Корзина/Покупки work live through the core's doors — search live → cart → «Получить» → «Покупки» (eyes logs/eyes/2026-11-27T20-18-19-482Z.png). The order ord-9adb22 was installed earlier as mpso1 (my 862-4 proof; mpso1 public /api/health 200). Core fix 3e35b32f: installState reads «already installed here: X» as installed — WAITS THE NEXT CORE BUILD (ask Roma). market's backlog: sync with the core's orders, stage-0 stub rows, a texts pass; `eyes --click` closes before the request (its note). NEXT: Roma's walk in a window, the client release (v0.1.1), aifa.dev buyer test.
 
+**21:1x UTC — NEXT CORE BUILD carries (ask Roma's yes first, 1658 asked):** 3e35b32f install-state fix; the node id fr-… on the Passport, read-only + copy + one line «чем подписывается узел» (Roma 1662; answered 1663: id is a free Ed25519 key, not merged with the EVM wallet). market step 4 in progress: drawer tabs + «Купленные» live (b8bc8b3), the resizable table+card layout for all three (1654/1655) and «Как это работает» tab «f2f · Web2» with the marketplace text (1659) queued to its agent.
+
 **OPEN NOW — two waits:**
 1. (DONE) Window **e16d460b** = `! bash logs/release-862-8.sh` (Roma's gh key): releases custom v0.3.249 + native v0.1.88 (removes the local
    dry-run tags first), pins both, pushes fork + Fractera (Fractera = d7030f8b, behind). On his «Готово» CHECK YOURSELF: `git ls-remote
