@@ -326,6 +326,8 @@ waits Roma's word); released custom v0.3.248 / native v0.1.87, pinned. Repo Frac
 
 **12:4x UTC — after the limit reset (Roma re-logged):** Roma ran `bash logs/push-fractera.sh` → Fractera main = d7030f8b (checked), windows closed. 862-7 PUBLISHED: Fractera/fractera-test-post-starter main 146d3fa, tag v0.1.0; Fractera/fractera-test-image-starter main af896f0, tag v0.1.0 (public, gh repo create by his yes 1565). Roma 1574: «мы же с тобой не обсуждали как будет выглядеть процедура согласно которой эти два стартера сообщат своей готовности влиться в общая коллекция f2f MarketPlace … Эта часть была спроектирована в. Квиз?» → answer: designed — 862-5 / lidt5 quiz 2.2.1–2.2.4 (the native offer page of 854, application kept on the node sent:false → the store's apply door 4-5, signed by the core); now by hand to test the buy path first, then the same two starters prove the application road.
 
+**12:45 Roma 1576:** «Соглас согласен работаем» — yes to: by hand now, the application road later with the same two starters. Decisions file updated (published tags + the application road) and resent for him to forward. 862-7 waits the store's catalogue entries; 862-1 waits market's stage-0 «done» (supervision cycle 2).
+
 **NOW (11:18–11:24 UTC, after the reset):** Roma 1538 «Подожди что мне сейчас нужно сделать с серверами? Обновить ядро что ещё?» ·
 1542 «Пока ты думал сервер уже выполнил какие-то действия прочти его репорт и скажи конфликтует ли это с твоим планом да и вообще что
 мне делать ты мне так и не сказал». Measured 11:19: fractera.ai core 2c9a3c27 built 10:18:59 (= Fractera f0bda66d: 861 + store
