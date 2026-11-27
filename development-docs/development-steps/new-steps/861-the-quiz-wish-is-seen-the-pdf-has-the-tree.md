@@ -29,5 +29,13 @@ Status: PLAN — proposed to Roma 2026-11-27 08:2x UTC (Telegram 1472), waits hi
   (`person-lang`), the header names it; the agent rewrites its existing quiz once (numbers and marks unchanged). Releases by Roma's
   own command in a window.
 
+- **861-5 · A native element's Mini App gets the model and effort card** (lidt5 via Roma 1473, `for-mac-native-top-card.md`; Roma 08:35:
+  «чтобы можно было … перемещать усилия»). Today `lib/node/tg-app/element-page.cjs` shows «model · effort» read-only under the title
+  and the door `element-door.ts` knows only `state` and `chat`. Add the core Pult's card (`model-choice.cjs`: Opus with effort low…max,
+  Sonnet, Haiku, Ultracode only after the confirmation window) and an action `model` that switches THIS element's session — the same
+  act as `npm run session -- model <m> <id>`, the conversation goes on. The agent never switches itself; it reads its model and effort
+  from a line it can read (`passport -- me` or the door's state). Proof: the card switches lidt5 to max and its next turn runs at max;
+  negative — a launch signed by another bot, or Ultracode without confirmation, is refused.
+
 ## After
 One Mac core build, releases, one server update; lidt5's PDF counted by Roma's screenshot: 109 ✓ · 47 ◇ · 5 ○.
