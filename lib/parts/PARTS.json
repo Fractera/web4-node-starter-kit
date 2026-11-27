@@ -671,7 +671,7 @@
         "en": "Product quiz",
         "ru": "Опрос продукта"
       },
-      "version": "1.4.1",
+      "version": "1.4.2",
       "parts": [
         {
           "id": "tool-block-task",
@@ -726,7 +726,7 @@
         "lib/web4-items/product-quiz",
         "lib/web4-items/product-quiz-pdf"
       ],
-      "bodyHash": "95cbcdb265ef758b"
+      "bodyHash": "38f030122b6acf9f"
     },
     {
       "id": "remote-settings",

@@ -208,7 +208,7 @@ const fill = (text: string, values: Record<string, string | number>) =>
 
 const anchor = (id: string) => `quiz-${id}`
 // 861-4: the quiz's language by name in the page's language («русский»), the code when the browser does not know it.
-const langName = (code: string, lang: string) => { try { return (code && new Intl.DisplayNames([lang], { type: "language" }).of(code)) || code } catch { return code } }
+const langName = (code: string, lang: string) => { if (!code) return "—"; try { return new Intl.DisplayNames([lang], { type: "language" }).of(code) || code } catch { return code } }
 
 // 536-3 (the person, 2026-10-18): «напротив каждого абзаца иконка и инструкция например если хотите обратить внимание на этот часть
 // инструкции нажмите на иконку! Агент из искусственного интеллекта уточнит что вы имели в виду». The 💬 opens the block-task window in
