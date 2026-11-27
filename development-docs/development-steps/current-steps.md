@@ -328,6 +328,8 @@ waits Roma's word); released custom v0.3.248 / native v0.1.87, pinned. Repo Frac
 
 **12:45 Roma 1576:** «Соглас согласен работаем» — yes to: by hand now, the application road later with the same two starters. Decisions file updated (published tags + the application road) and resent for him to forward. 862-7 waits the store's catalogue entries; 862-1 waits market's stage-0 «done» (supervision cycle 2).
 
+**12:54 fractera.ai report (Roma 1579):** its core update dd3105e4 brought `market` — T2 PROVEN LIVE (https://market.fractera.ai/api/health 200 from the Mac 12:55). Defect: the new name got no certificate and the panel no button (repaired there by hand) → queued as step 864 (new-steps/864-…md, intake pre-steps/2026-11-27-new-name-no-cert.md).
+
 **NOW (11:18–11:24 UTC, after the reset):** Roma 1538 «Подожди что мне сейчас нужно сделать с серверами? Обновить ядро что ещё?» ·
 1542 «Пока ты думал сервер уже выполнил какие-то действия прочти его репорт и скажи конфликтует ли это с твоим планом да и вообще что
 мне делать ты мне так и не сказал». Measured 11:19: fractera.ai core 2c9a3c27 built 10:18:59 (= Fractera f0bda66d: 861 + store
