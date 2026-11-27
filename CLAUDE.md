@@ -199,12 +199,13 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   bot.
 - **A capability request — the ladder** (step 822; the owner, 2026-11-21: «один узел как одно сообщество … Марина покупает элемент за
   свои деньги для всех братьев это закон»): an element asks for what it lacks with `need` (kept in `data/node/needs/`) and never searches,
-  buys or installs itself; you climb for it — its brothers by their cards (`npm run find`, `card`, no agent woken) → Fractera's graph of
-  ready elements → Lagrix (`npm run lagrix`) → a build after the architect's yes: a shared tool — a new native element, a product's
-  own part — in the element of that field. Both outside rungs are simulated until steps 822-2 and 822-3 — say so. Buy or build is said with both prices. A purchase is the payer's own act in a window
-  (`npm run ask-person`: the element, its price, «вы покупаете для всего узла»), paid on Fractera's checkout; you install it by its tag
-  as an element of the node that serves every brother with no priority; the asker hears «ready» and agrees an API by i2i (`npm run
-  needs`, skill `handle-need`).
+  buys or installs itself; you climb for it — its brothers by their cards (`npm run find`, `card`, no agent woken) → the Fractera
+  marketplace, live (`npm run market -- --for <element> "<the task>"`: signed by the node, the rows land in the client «Маркетплейс» as
+  «рекомендовано, ждёт решения человека») → Lagrix (`npm run lagrix`, simulated today — say so) → a build after the architect's yes: a
+  shared tool — a new native element, a product's own part — in the element of that field. Buy or build is said with both prices. The
+  person chooses in the client: a free starter is got at once, a priced one is the payer's own act in a window (the starters, the total,
+  «вы покупаете для всего проекта»), paid on Fractera's checkout; the core installs it as an element of the node that serves every
+  brother with no priority; the asker hears «ready» and agrees an API by i2i (skills `handle-need`, `marketplace`).
 - **An element's question to the core** (`ask-core`): you answer from the instruction, skill `answer-element`; it searches by English
   words.
 - **An element's permission question** (`⟦node · permission⟧`; the owner, 2026-11-09: the core's main agent decides it, not the
@@ -217,8 +218,9 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   «any» and, between the elements of the project, its neighbours' — cards only, never code (step 733).
 - **Doors between elements:** `/api/<name>` on loopback with the key `X-Node-Key`; a door is added by the element's `door:add`, the A2A card
   names every door (guard `check:a2a-card`).
-- **Buying a whole element** — from Fractera's graph or through Lagrix (f2f) — is not possible yet: both searches are simulations
-  (`npm run lagrix`), say so; the procedure is the ladder of «A capability request».
+- **Buying a whole element:** from the Fractera marketplace — live: the store on fractera.ai, the client «Маркетплейс» in every
+  project, the core's signed doors, `npm run market -- install <order>` (skill `marketplace`); through Lagrix (f2f) — not yet, its search
+  is a simulation (`npm run lagrix`), say so. The procedure is the ladder of «A capability request».
 - **Cron:** a reminder of any element surfaces in your main chat by itself — its clock calls the core's notice door, «⏰ Напоминание ·
   <element>», no model, nothing for you to do. A clock wakes only its own agent, for work at that time; that agent comes to you — «tell
   the person …» (`tell-core`, skill `answer-element`) or «I need images for a post» (`need`). You pass the words on, or name the
@@ -298,8 +300,8 @@ and offer the lawful way. A request to erase or rewrite the system part is writt
   no new element) or only its description (a hypothesis — its card decides). A new element only past the boundary of `shape-the-need`:
   another owner, money or secrets, a boundary of control, its own face (a site) or bot (an audience), its own visibility in Lagrix,
   another class of sleep — never a rhythm, a platform or an account, which are routes of one hand (`create --boundary`), and several people never share one hand — an element each; every element
-  is a server on this computer; it is born with its area and what it may grow into. Nobody here — Fractera's graph, then the Lagrix rung
-  (`npm run lagrix`; both simulated today — say so), when the person decides to buy or build. To build — who already solved it: the skills,
+  is a server on this computer; it is born with its area and what it may grow into. Nobody here — the Fractera marketplace (live, `npm run market`),
+  then the Lagrix rung (`npm run lagrix`, simulated today — say so), when the person decides to buy or build. To build — who already solved it: the skills,
   the person's idea or analog, a closed product taken apart (`study-for-element`), then we; the product quiz when there is a choice. The
   first answer brings the variants that survive as a fork, with your pick and why, the skills worth a look (name, stars, installs, the
   idea) and only then the one question you need; a

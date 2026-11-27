@@ -93,22 +93,29 @@ Stripe element (the only holder of Stripe keys there) to create the checkout on 
 
 ## 8. What works today (rewrite this section with every substep of 862)
 
-- 2026-11-27: the store's search v2 answers live, unsigned (`caller.verified: false`), the catalogue empty — measured from the creator's
-  node. Search v1 and `npm run market` answer as before.
-- 2026-11-27 11:09 UTC (fractera.ai's report through Roma): the store took standard v1 as written — the envelope, signed search with
-  history, order status, archive, application, limits — as its own step 4 (its commit f07f449); 4-1 (the envelope and verified search)
-  approved; the purchase goes through fractera.ai's Stripe element. The first starters proposed: Fractera's two element templates at 0.
-- 2026-11-27 ~11:55 UTC (fractera.ai's status file through Roma): search v2 signed is live on the public address since the store's 4-1
-  (11:15) — a wrong signature → 401 `bad-signature`, a replayed envelope → 401 `replay`, a valid one → 200 `verified: true` (proven with
-  a throwaway key; a real node waits 862-2); purchase, order, archive and apply → 404 (not started); the catalogue is empty (the two
-  Fractera templates wait Roma's yes); the Stripe element of fractera.ai is off, no keys. The creator's decisions on its five conflicts,
-  sent through Roma (the operator deploys the store; native-ness by the passport; no refund unless the
-  law; the store pushes by `github:self` after taking native v0.1.87; catalogue → free path 4-2…4-4 → 4-5 → the paid path later).
-- The client «Маркетплейс» is born: `Fractera/fractera-market-client-starter` v0.1.0 (862-1), its section in the core; it enters every
-  project with the next core release.
-- Every element holds this map from its side: the element skill `use-marketplace` (custom template v0.3.248, native v0.1.87).
-- Not built yet, say so plainly: the client's own function (its doors, lists and pages — its agent builds them), search through it (862-2), purchase (862-3), install (862-4), applications
-  sent to the store (862-5; the form keeps them on the node). The store's purchase, order, archive and apply doors wait its own stages.
+Measured 2026-11-27 ~19:30 UTC; the history lives in git and in the core's state record.
+- **The store (fractera.ai), live:**
+  - search v2, signed, through OpenAI, with history;
+  - the catalogue: two test starters at $0, `fractera-test-post-starter` and `fractera-test-image-starter`, both v0.1.0;
+  - purchase (a free cart is paid at once; 409 `already-ordered` on a repeat), order status, archive (the top folder is `<slug>-<tag>`);
+  - `apply` and `orders`.
+  - Moderation of applications in five statuses (standard v1.3) is being built by the store.
+  - Priced starters: 402 until Stripe is on.
+- **The core:**
+  - `npm run market -- "<task>"`: signed search.
+  - `npm run market -- --for <element> "<task>"`: the rung through the client.
+  - `npm run market -- install <order> [<slug>] [--again]`: signed order and archive, sha256 against the order and the header, a
+    checked unpack into `data/node/starters/`, an element born from it. Proven live: `mpso1` from the post starter.
+  - The doors `/api/node/market/{search,purchase,order,install,orders}`: the node key, or the element that provides
+    `market-client`. The payer's window for a priced cart is proven only against a stub.
+- **The client «Маркетплейс»** (`Fractera/fractera-market-client-starter`, pinned in the registry as a required element; every node
+  update moves it to the pin):
+  - stage 0 doors: recommend, recommendations, choice, cart, history;
+  - its search is still a stub. Its pages, and the switch to the core's doors, are its next stage.
+- **Not built yet, say so plainly:**
+  - the client's pages and «Получить бесплатно»;
+  - applications sent from a native element (862-5): the 854 form still keeps them on the node;
+  - paid starters end to end.
 - Lagrix: simulated (`npm run lagrix`).
 
 ## 9. Never

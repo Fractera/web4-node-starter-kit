@@ -438,6 +438,28 @@ if (cmd === 'market' && rest[0] === 'install') {
   process.exit(0)
 }
 
+if (cmd === 'market' && has('--for')) {
+  // 862-8 (Roma 1620: «хвосты … надо быть точно уверенным что нету ничего что будет мешать»): an element's need climbs the Fractera rung
+  // THROUGH the client «Маркетплейс» — the element that provides `market-client`, found by what it provides, never by its id. Its door
+  // `POST /api/recommend { element, task, lang }` searches the store through the core's signed door and keeps the rows with the history of
+  // that task; the person decides in its pages. The asker hears «рекомендовано, ждёт решения человека», never «куплено».
+  const asker = flag('--for')
+  const task = rest.filter((w, i) => !w.startsWith('--') && !['--lang', '--for'].includes(rest[i - 1])).join(' ').trim()
+  if (!asker || !task) fail('market --for <the asking element> "<the task in plain words>" [--lang ru|en]')
+  const client = registry().find((s) => (s.provides ?? []).includes('market-client'))
+  if (!client?.port) fail('no element provides market-client on this node (the client «Маркетплейс» is not installed) — say so; the rung answers through `npm run market "<task>"` without the client')
+  const key = require('../lib/node/element-call-key.cjs').keyFor(client.id, { root: ROOT })
+  let r
+  try {
+    r = await fetch(`http://127.0.0.1:${client.port}/api/recommend`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-node-key': key }, body: JSON.stringify({ element: asker, task, lang: flag('--lang') || 'ru' }), signal: AbortSignal.timeout(30_000) })
+  } catch (e) { fail(`the client ${client.id} did not answer: ${String(e?.message ?? e).slice(0, 160)}`) }
+  const body = await r.json().catch(() => null)
+  if (!r.ok) fail(`the client ${client.id} answered ${r.status}: ${JSON.stringify(body).slice(0, 300)}`)
+  console.log(`===MARKET_RECOMMENDED=== for ${asker} through ${client.id} — «рекомендовано, ждёт решения человека» in its pages`)
+  console.log(JSON.stringify(body, null, 2).slice(0, 4000))
+  process.exit(0)
+}
+
 if (cmd === 'market') {
   // 841-2 (the owner, Telegram 984/985): the Fractera marketplace rung — search v1 (`lib/web4-items/fractera-market.mjs`): the summary and
   // links to public pages; a simulation until Fractera's side answers — said so. The rung before Lagrix on the ladder (skill handle-need).

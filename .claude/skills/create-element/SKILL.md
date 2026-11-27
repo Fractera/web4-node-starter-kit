@@ -1,6 +1,6 @@
 ---
 name: create-element
-description: Build process. Nobody in this node covers a need — search Lagrix for a whole element (f2f, simulated today), then create a new custom element with a role, put the task into its intake, wake its agent and tell the architect how to go on. Load it when the person asks for something no element of the node does, asks for a new element or service, brings a link, an SDK or a task with no clear result (a research, «look into X») worth keeping and growing rather than answering once in chat, or when an element's agent asks the core for a new element.
+description: Build process. Nobody in this node covers a need — look in the Fractera marketplace (live) and Lagrix (simulated) for a ready element, then create a new custom element with a role, put the task into its intake, wake its agent and tell the architect how to go on. Load it when the person asks for something no element of the node does, asks for a new element or service, brings a link, an SDK or a task with no clear result (a research, «look into X») worth keeping and growing rather than answering once in chat, or when an element's agent asks the core for a new element.
 ---
 
 # Create an element for a need nobody covers
@@ -28,10 +28,13 @@ The owner of Fractera, 2026-10-23: «не всегда в наш проект п
 1. **The node.** `npm run find -- <English words>` found nobody whose skill or AREA covers it (a candidate that «matches only its
    description» is not one — its card decides), and the job is past the boundary of `shape-the-need` §2a — otherwise it is a route in
    the element whose area covers it, built by its own agent.
-2. **The network.** `npm run lagrix -- <English words>` — a2a (an agent that sells the result of the work) and f2f (a whole element),
+2. **The Fractera marketplace.** `npm run market -- "<the task in plain words>"` (live, signed by the node): a starter that fits is
+   offered first with its page and price, beside the build's price — the person decides in the client «Маркетплейс» (skill
+   `marketplace`); a starter they take is installed, nothing is born by hand. «Nothing fits» from the store is said as it is.
+3. **The network.** `npm run lagrix -- <English words>` — a2a (an agent that sells the result of the work) and f2f (a whole element),
    one contract (670-6). Today both are simulated and always empty — tell the person so in one line: «в сети Lagrix подходящих агентов
    и элементов не найдено (поиск в сети пока имитируется)».
-3. **Agree these things with the person:**
+4. **Agree these things with the person:**
    - the **role** — one sentence, what the element will do for the node («Removes the background from product photos and
      returns a PNG link.»);
    - the **area** — the field it will be the home for, and 2–5 jobs it may grow into (`--area`, `--grows`): the next job of that field

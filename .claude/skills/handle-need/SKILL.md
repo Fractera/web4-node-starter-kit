@@ -35,28 +35,30 @@ A hint, not a law. Owner of the node, 2026-10-24: «Получив на уров
 4. Before you close: `npm run needs` — a need still «requested» came while you worked: handle it the same way. Then
    `npm run done -- --close`.
 
-## 1b. Nobody here — Fractera's graph, Lagrix, then a build (step 822)
+## 1b. Nobody here — the Fractera marketplace, Lagrix, then a build (steps 822, 862)
 
 The whole map of the marketplace — the store on fractera.ai, the client «Маркетплейс» in every project, the core's window and install,
-the standard v1 and what works today — is skill `marketplace` (step 862); this section is its first rung.
+the standard (v1 → v1.3) and what works today — is skill `marketplace` (step 862); this section is its first rung.
 
 The owner, 2026-11-21 (Telegram 447): «надо рассматривать один узел как одно сообщество в котором существует правила мы вместе строим
 один общий проект и каждый вкладывает то что считает необходимым. С этой точки зрения Марина покупает элемент за свои деньги для всех
 братьев это закон».
 
-1. Before you ask about a build, the outside rungs in this order: the Fractera marketplace (`npm run market -- "<the task>"`, search v1:
-   a short summary and, per element, what it does, its PUBLIC page and its price — step 841-2, the owner's 984/985/991), then Lagrix (`npm run lagrix`).
-   Pass the links on as they came; the procedure (buy, f2f) is agreed after the person read the pages. The marketplace answers from
-   Fractera's own server at Fractera's cost (the owner, 987); until it answers in the v1 shape both rungs are simulated — the line says
-   `===MARKET_SIMULATION===` — and the architect hears «simulated», never a simulated offer as a real one.
-2. A ready element found (once the rungs live): one question where the architect reads you — the element, what it does, its price,
-   the build's price beside it (tokens and days), and the law: «whoever pays buys it for every element of the node, no priority».
-3. The payer is a person, and paying is their own act: a window — `npm run ask-person -- "<pay for X on Fractera>" --href <Fractera's
-   checkout> --why "платит только человек"` with «вы покупаете для всего узла» in its words; never your click, never the node's Stripe
-   element (it receives the node's own sales). Their «Готово» wakes you: check the right to install yourself.
-4. Install it by its tag as an element of the node (its registry entry, `services:install`, the birth checks) → read its card → tell
-   the asker «ready — element <x>, its doors; agree an API once with skill use-i2i» → `npm run needs -- answer <need> --told`. The other
-   brothers find it by its card on their own `need`; nobody is told unasked.
+1. Before you ask about a build, the outside rungs in this order. The Fractera marketplace, live: `npm run market -- --for <the asking
+   element> "<the task>"` — through the client «Маркетплейс» (the element that provides `market-client`): the store's search v2,
+   signed by the node, with the history of that task; the rows land in the client's «Рекомендации» with their «why», page and price.
+   No client on the node → `npm run market -- "<the task>"` and pass the links on as they came. Then Lagrix (`npm run lagrix`,
+   simulated today — say so). `===MARKET_SIMULATION===` means the store did not answer — say exactly that, never an offer.
+2. Tell the asker «рекомендовано, ждёт решения человека» with the links — never «куплено» — and the architect one line where they read
+   you: what fits, its price, the build's price beside it (tokens and days), and the law: «whoever pays buys it for every element of the
+   node, no priority». The choice is theirs, in the client's pages (keep, delete, «В корзину»).
+3. The cart: a free starter is got at once (the client's «Получить бесплатно» → the core's purchase door); a priced one is the payer's
+   own act — the core puts the payer's window with Fractera's Checkout link, «вы покупаете для всего проекта» and the consent line;
+   never your click, never the node's Stripe element (it receives the node's own sales). The core pulls the order's status itself.
+4. Paid → the core installs it (`npm run market -- install <order> <slug>`, or the client through the core's install door): the archive
+   signed and checked by sha256, an element born from it → read its card → tell the asker «ready — element <x>, its doors; agree an
+   API once with skill use-i2i» → `npm run needs -- answer <need> --told`. The other brothers find it by its card on their own `need`;
+   nobody is told unasked.
 5. Nothing anywhere, or the architect prefers a build → §1, point 3 (missing → the owner element → §2).
 
 ## 2. The architect's answer
