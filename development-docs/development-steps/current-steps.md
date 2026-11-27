@@ -307,7 +307,8 @@ a checklist of tests before each step and marked after (memory test-plan-checkli
 never a «!» line; he presses «Готово» from the phone without running — check the result (tags, commits) yourself.
 
 **THE ONE FOCUS NOW (Roma 1496, verbatim gist):** «Вся концентрация дальнейшей работы только на реализации маркетплейса». He sends the
-marketplace QUIZ in his next message — read it whole, then: skills_find + shape-the-need, the variants with your pick, the plan with
+marketplace QUIZ — IT ARRIVED (Telegram 1499, 09:43 UTC, before the reset ended): `pre-steps/2026-11-27-marketplace-quiz-tree.txt` (lidt5's
+quiz tree). Read it whole FIRST, then: skills_find + shape-the-need, the variants with your pick, the plan with
 substeps (a checklist of proofs), his yes, then code. He may ask questions about the Fractera servers through you.
 - Intake already here: `pre-steps/2026-11-27-marketplace-client.md` (lidt5 = the Fractera store on fractera.ai, his decisions 09:33–09:37
   UTC): (1) a NEW native element in the build set — «marketplace-client» (working name): the buyer's recommendations, the cart, search in

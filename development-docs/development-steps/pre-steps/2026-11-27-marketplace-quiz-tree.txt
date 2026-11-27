@@ -1,0 +1,204 @@
+✓ 1 Customers
+  ✓ 1.1 People with a task
+    ◇ 1.1.1 The architect
+    ◇ 1.1.2 A site guest
+  ✓ 1.2 Agents of elements
+    ✓ 1.2.1 Registrar agent
+    ✓ 1.2.2 Executor agent
+    ◇ 1.2.3 The core's main agent
+  ◇ 1.3 Where they come from
+    ◇ 1.3.1 The core's search ladder
+    ◇ 1.3.2 The store's page
+    ◇ 1.3.3 The search door
+  ✓ 1.4 What they ask
+    ✓ 1.4.1 How others solved it
+    ✓ 1.4.2 What came of it
+    ✓ 1.4.3 What it costs
+    ✓ 1.4.4 The alternatives
+✓ 2 Authors and solutions
+  ✓ 2.1 Starters only
+    ✓ 2.1.1 One's own element template
+    ✓ 2.1.2 Never a ready solution
+    ◇ 2.1.3 Skills elsewhere
+    ✓ 2.1.4 Minimum sufficient function
+    ✓ 2.1.5 Told plainly
+  ✓ 2.2 The application path
+    ✓ 2.2.1 The «Computer» tab
+    ✓ 2.2.2 Web2 or Web4
+    ◇ 2.2.3 Answer with reason
+    ✓ 2.2.4 Built into every starter
+  ✓ 2.3 The application form
+  ✓ 2.4 The author mark
+    ◇ 2.4.1 The author's page
+  ✓ 2.5 Updates of a solution
+    ✓ 2.5.1 Every update researched
+    ◇ 2.5.2 Buyers are told
+    ◇ 2.5.3 Withdrawal from sale
+  ✓ 2.6 The author's duties
+    ✓ 2.6.1 Access to its agent
+    ✓ 2.6.2 Research at author's expense
+    ✓ 2.6.3 Truthful project page
+✓ 3 Trust
+  ✓ 3.1 The creator's check
+    ✓ 3.1.1 Personally, no rules yet
+    ✓ 3.1.2 His testing vector
+    ◇ 3.1.3 The queue of applications
+  ✓ 3.2 Rules of checks (N-02)
+  ✓ 3.3 Usefulness per context
+    ✓ 3.3.1 Score out of 10
+    ✓ 3.3.2 Shown in the answer
+    ◇ 3.3.3 Shared list of contexts
+  ✓ 3.4 Order of results
+    ✓ 3.4.1 Closeness by meaning
+    ✓ 3.4.2 Creator's usefulness
+    ✓ 3.4.3 Cheaper ranks higher
+    ✓ 3.4.4 The three weigh equally
+    ◇ 3.4.5 Sales and refunds
+  ◇ 3.5 Honest «nothing yet»
+    ◇ 3.5.1 No look-alike instead
+    ◇ 3.5.2 Unmet demand counted
+  ✓ 3.6 Architecture research
+    ✓ 3.6.1 Strongest model, API
+    ✓ 3.6.2 Exhaustive report, logs
+    ✓ 3.6.3 Report names model
+    ○ 3.6.4 The core's OpenAI key
+  ✓ 3.7 Guarantee limits
+    ✓ 3.7.1 No wider than report
+    ✓ 3.7.2 Report before purchase
+    ✓ 3.7.3 Then buyer's responsibility
+    ◇ 3.7.4 Terms checked by lawyer
+  ✓ 3.8 The validator's requirements
+    ✓ 3.8.1 Name ends «starter»
+    ✓ 3.8.2 Repository ends «starter»
+    ✓ 3.8.3 Fractera build structure
+✓ 4 The consultant
+  ✓ 4.1 The customer chat
+    ✓ 4.1.1 A chat per customer
+    ✓ 4.1.2 Memory of past offers
+    ◇ 4.1.3 Forgotten on request
+  ✓ 4.2 Storage and search
+    ✓ 4.2.1 Shared node embeddings
+    ◇ 4.2.2 Deep memory
+    ◇ 4.2.3 Shared knowledge graph
+    ◇ 4.2.4 File, then data layer
+    ◇ 4.2.5 Nothing duplicated inside
+  ✓ 4.3 Alternatives
+    ✓ 4.3.1 From a parallel plane
+    ◇ 4.3.2 Marked here or outside
+  ✓ 4.4 Narrow or wide
+    ✓ 4.4.1 The store's agent decides
+    ✓ 4.4.2 By the chat's history
+✓ 5 Money
+  ✓ 5.1 Price
+    ✓ 5.1.1 The author sets it
+    ✓ 5.1.2 Once only, no subscription
+    ✓ 5.1.3 Free solutions exist
+  ✓ 5.2 Payment
+    ✓ 5.2.1 USDC through Lagrix
+    ✓ 5.2.2 A card through Stripe
+    ✓ 5.2.3 Payer's window (core)
+  ✓ 5.3 Shares
+    ✓ 5.3.1 The author 50%
+    ✓ 5.3.2 Fractera 50%
+    ○ 5.3.3 Payout to author
+  ✓ 5.4 Refund
+    ✓ 5.4.1 No refund
+    ✓ 5.4.2 The law prevails
+    ○ 5.4.3 Consent before paying
+    ◇ 5.4.4 Creator decides disputes
+  ✓ 5.5 The research costs
+    ✓ 5.5.1 Listing fee right
+    ✓ 5.5.2 Advance from $10
+    ✓ 5.5.3 Overrun from sales
+    ✓ 5.5.4 Updates are always paid
+✓ 6 Delivery
+  ✓ 6.1 Storage
+    ◇ 6.1.1 Repository tag
+    ✓ 6.1.2 The author's private repository
+    ✓ 6.1.3 Fine-grained token
+    ◇ 6.1.4 Kept while on sale
+  ✓ 6.2 Versions
+    ◇ 6.2.1 A version number
+    ◇ 6.2.2 Old versions stay
+    ✓ 6.2.3 Validated version sold
+  ◇ 6.3 Install
+    ◇ 6.3.1 The install manifest
+    ✓ 6.3.2 Install (core)
+  ◇ 6.4 Rollback
+    ◇ 6.4.1 Bad release withdrawn
+    ✓ 6.4.2 Buyer-side rollback (core)
+✓ 7 Links
+  ✓ 7.1 Buyer side (N-01)
+  ◇ 7.2 Lagrix
+    ✓ 7.2.1 The Web4 path
+    ◇ 7.2.2 Refusal is not end
+    ◇ 7.2.3 Simulated today
+  ◇ 7.3 The store's doors
+    ◇ 7.3.1 Search v1, works
+    ◇ 7.3.2 A solution's card
+    ○ 7.3.3 Price and terms
+    ✓ 7.3.4 Purchase
+    ✓ 7.3.5 Search v2 (E-01)
+✓ 8 Storefront
+  ✓ 8.1 The storefront's home
+    ✓ 8.1.1 Search by words
+    ◇ 8.1.2 Starter cards
+    ○ 8.1.3 Filters: context, price
+  ✓ 8.2 The starter's page
+    ◇ 8.2.1 Usefulness and the report
+    ✓ 8.2.2 Marked a starter (R-01)
+    ✓ 8.2.3 Buy in own node
+  ✓ 8.3 Favourites
+    ✓ 8.3.1 Sign-in on Fractera
+    ✓ 8.3.2 Add to favourites
+    ✓ 8.3.3 Favourites first (S-02)
+    ◇ 8.3.4 Core linked to account
+  ✓ 8.4 Purchase
+    ✓ 8.4.1 Own node only (R-03)
+    ✓ 8.4.2 Payer's window (N-01)
+  ✓ 8.5 Design
+    ◇ 8.5.1 Passport design skill
+    ◇ 8.5.2 Separate design pass
+    ◇ 8.5.3 Static pages, islands
+✓ 9 Buyer side
+  ✓ 9.1 Recommendations
+    ✓ 9.1.1 Background by the builder
+    ✓ 9.1.2 Free search in Telegram
+    ✓ 9.1.3 Favourites, then fit
+    ◇ 9.1.4 When the builder asks
+    ◇ 9.1.5 The store and Lagrix
+    ◇ 9.1.6 Named in the plan
+  ✓ 9.2 The recommendations list
+    ✓ 9.2.1 Link to the page
+    ✓ 9.2.2 Keep, delete, to cart
+    ◇ 9.2.3 What a row shows
+    ◇ 9.2.4 Grouped by task
+    ◇ 9.2.5 Deleted stays deleted
+    ✓ 9.2.6 History of choices
+    ◇ 9.2.7 What leaves the project
+  ✓ 9.3 The cart
+    ✓ 9.3.1 One copy only
+    ✓ 9.3.2 Remove and clear
+    ◇ 9.3.3 Bought shows «bought»
+    ○ 9.3.4 Free starters
+    ○ 9.3.5 The total
+  ✓ 9.4 Payment
+    ✓ 9.4.1 Card through Stripe
+    ✓ 9.4.2 Payer's window (core)
+    ○ 9.4.3 One payment per cart
+    ○ 9.4.4 A failed payment
+  ✓ 9.5 Installing the starter
+    ✓ 9.5.1 Taken safely
+    ✓ 9.5.2 Into the templates
+    ✓ 9.5.3 Built and set up
+    ◇ 9.5.4 The new element
+    ◇ 9.5.5 If the install fails
+  ✓ 9.6 Purchases
+    ✓ 9.6.1 Not now
+    ◇ 9.6.2 Install again
+  ◇ 9.7 Who builds it
+    ✓ 9.7.1 A native client element
+    ✓ 9.7.2 The core's parts
+depth 3 · F 75%
+L1: 9 (9✓ 0◇ 0○) · L2: 46 (39✓ 7◇ 0○) · L3: 146 (86✓ 51◇ 9○)
+✓ answered by the person · ◇ filled by the agent · ○ open
