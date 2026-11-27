@@ -324,7 +324,7 @@ table, pre-steps/2026-11-25-aifa-heart-and-855.md), the main agent's rule in the
 
 **2026-11-27 09:1x UTC — MAC BUILT 33d6d34a (RC=0); 861 proven on the Mac:** quiz/pdf and quiz with a bogus key 401 (no key at the
 machine 200); wish empty 400; Playwright run (scratchpad wish-test.mjs): «Продолжить квиз» → window → send → notice «Пожелание
-передано агенту», fc4vk has no bot → «Открыть терминал», console clean (logs/eyes/861-wish-notice.png); my test wish removed. Wording
+передано агенту», fc4vk has no bot → «Открыть терминал», console clean (logs/eyes/861-wish-notice.png); my test wish removed; its task line ARRIVED to the main agent (the chain door → wake → line proven), not passed to fc4vk on purpose. Wording
 fixes be44457b (window text, «язык квиза: русский») — NOT on the Mac build yet, ride the server update / the next Mac build. Window
 e84d7a10 = `! bash logs/release-861.sh` for Roma. The temporary address died at the build; `serve:publish -- --new` was refused by the
 classifier — own domain throughsongs.com answers; told Roma. Next on «Готово»: check tags v0.3.247 / v0.1.86 on GitHub, pins, Fractera;
