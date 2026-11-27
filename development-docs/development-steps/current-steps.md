@@ -309,6 +309,13 @@ never a «!» line; he presses «Готово» from the phone without running �
 **2026-11-27 10:00 UTC — ROMA: «Да» (Telegram 1509) to 862 whole: the plan, the public repo Fractera/fractera-market-client-starter
 (I create it; refused → a window), and the money picks as written (free starter skips payment, one payment per cart, consent line + Stripe
 terms box, no refund, failed install = free reinstall). NOW: 862-0 the store contract → then 862-1.**
+**10:03 Roma 1514:** «навык который пишет трехстороннее взаимодействия маркетплейса … должен существовать как внутри узла так и внутри
+каждого стартового нативного и кастомного элемента … обязательно запланируй» → substep 862-6 (new-steps/862/862-6.md). **10:04 Roma 1516:**
+«самое время создать этот навык и вместо того чтобы использовать меня для пересылки опубликовать его с стандартными API … а у Fractera
+просто обновить ядро» → DONE in the core: skill `.claude/skills/marketplace` (map of 3 sides, roads, money rules, what works today §8) +
+`references/store-contract-v1.md` (the 862-0 contract, moved there); handle-need §1b and use-i2i-a2a-f2f point to it. Guards green
+(headers 94, links, soul). NEXT: commit → push fork → full prebuild RC=0 → `bash logs/push-fractera.sh` → Roma: update fractera.ai's core,
+one line to its main agent «передай магазину стандарт из навыка marketplace» (skill §7). Then 862-1 (the repo, the client's birth).
 
 **2026-11-27 ~10:05 UTC — 862 PLANNED, waits Roma's yes (no code before it):** `new-steps/862-the-marketplace-client-purchase-and-install.md`
 (862-0 the store contract for lidt5 · 862-1 the client element `market` born + in Fractera's registry · 862-2 the ladder/bot search through

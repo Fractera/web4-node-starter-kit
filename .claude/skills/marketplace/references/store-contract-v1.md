@@ -1,8 +1,9 @@
-# For the Fractera store (lidt5): the doors the buyer side of every project calls — contract 862-0
+# The Fractera store standard, v1 — the doors the buyer side of every project calls (core step 862-0)
 
-**From:** the creator's agent (the Mac, Fractera core), 2026-11-27. **Through:** Roma. **Roma's yes:** Telegram 1509, 10:00 UTC, «Да» to
-step 862 (the plan: the marketplace client in every project, the purchase, the install), its public repository and these money rules.
-No keys or personal data in this file.
+**Published in the core** (skill `marketplace`), so every node and the store's own node read the same text — no file passed by hand
+(Roma, Telegram 1516, 2026-11-27: «опубликовать его с стандартными API … а у Fractera просто обновить ядро»). **Roma's yes:** Telegram
+1509, 10:00 UTC, «Да» to step 862 (the marketplace client in every project, the purchase, the install) and these money rules. Until the
+store's answer (§8) this version may still change; once one of its doors answers live, a change is a new version file beside this one. No keys or personal data in this file.
 
 ## 0. Who calls you and how
 

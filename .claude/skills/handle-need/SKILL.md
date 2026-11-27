@@ -37,6 +37,9 @@ A hint, not a law. Owner of the node, 2026-10-24: «Получив на уров
 
 ## 1b. Nobody here — Fractera's graph, Lagrix, then a build (step 822)
 
+The whole map of the marketplace — the store on fractera.ai, the client «Маркетплейс» in every project, the core's window and install,
+the standard v1 and what works today — is skill `marketplace` (step 862); this section is its first rung.
+
 The owner, 2026-11-21 (Telegram 447): «надо рассматривать один узел как одно сообщество в котором существует правила мы вместе строим
 один общий проект и каждый вкладывает то что считает необходимым. С этой точки зрения Марина покупает элемент за свои деньги для всех
 братьев это закон».

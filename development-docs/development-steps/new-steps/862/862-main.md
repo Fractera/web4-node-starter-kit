@@ -1,7 +1,7 @@
 # 862 — the marketplace in every project: the client element, the purchase, the install
 
 State: APPROVED — Roma, Telegram 1509, 2026-11-27 10:00 UTC, verbatim: «Да» (to the plan, the public repository, the money picks).
-Substeps unfold into `862-<k>.md` as each starts. 862-0 — `862-0.md`, the store contract sent as `for-the-store-862-0.md`.
+Substeps unfold into `862-<k>.md` as each starts. 862-0 — `862-0.md`; the store standard is published in the core: skill `marketplace`, `references/store-contract-v1.md` (Roma 1516).
 
 ## Roma's words
 
@@ -93,6 +93,11 @@ second payment (R-05).
 The page «Предложить в маркетплейсе» of an own native element (854; today the application stays on the node, `sent: false`) sends it to
 the store's apply door, signed. The native template gets `npm run market:offer` for its agent (2.2.4). Custom elements do not get it
 (Roma's 854 word). This waits for the store's apply door (its stage 3).
+
+### 862-6 The marketplace skill — one map in four lenses (Roma, Telegram 1514, 10:03 UTC)
+
+The core's `marketplace` skill (the whole map), one element lens `use-marketplace` written into both templates from one source in the
+core (no drift; replaces the custom `use-f2f`), the client's own skill, the store's lens sent to fractera.ai. Plan: `862-6.md`.
 
 ## Builds and releases
 
