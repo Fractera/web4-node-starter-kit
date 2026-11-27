@@ -185,6 +185,19 @@
       }
     },
     {
+      "id": "market",
+      "repo": "https://github.com/Fractera/fractera-market-client-starter.git",
+      "version": "v0.1.0",
+      "port": 24697,
+      "provides": [
+        "market-client"
+      ],
+      "required": true,
+      "note": "Маркетплейс (862): сторона покупателя магазина Fractera в каждом проекте — рекомендации стартеров под задачи человека и элементов, корзина с одним экземпляром стартера, история выбора. Подпись запросов к магазину, окно плательщика и установка купленного — у ядра (находит элемент по provides market-client). Около 115–150 МБ в работе; может спать и просыпаться по вызову.",
+      "kind": "core",
+      "address": "market"
+    },
+    {
       "id": "root",
       "repo": "https://github.com/Fractera/fractera-root-starter.git",
       "version": "v3.0.70",
