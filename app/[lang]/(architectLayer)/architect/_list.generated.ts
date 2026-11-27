@@ -12,11 +12,12 @@ import { data as p6 } from './embeddings/_data'
 import { data as p7 } from './graph/_data'
 import { data as p8 } from './hosting/_data'
 import { data as p9 } from './main-telegram/_data'
-import { data as p10 } from './memory/_data'
-import { data as p11 } from './passport/_data'
-import { data as p12 } from './storage/_data'
-import { data as p13 } from './stripe/_data'
-import { data as p14 } from './vectors/_data'
+import { data as p10 } from './market/_data'
+import { data as p11 } from './memory/_data'
+import { data as p12 } from './passport/_data'
+import { data as p13 } from './storage/_data'
+import { data as p14 } from './stripe/_data'
+import { data as p15 } from './vectors/_data'
 import { PAGES as c0, TREE as t0 } from './auth/_list.generated'
 import { PAGES as c1, TREE as t1 } from './build/_list.generated'
 import { PAGES as c2, TREE as t2 } from './cache/_list.generated'
@@ -26,13 +27,14 @@ import { PAGES as c5, TREE as t5 } from './data/_list.generated'
 import { PAGES as c6, TREE as t6 } from './embeddings/_list.generated'
 import { PAGES as c7, TREE as t7 } from './graph/_list.generated'
 import { PAGES as c8, TREE as t8 } from './hosting/_list.generated'
-import { PAGES as c10, TREE as t10 } from './memory/_list.generated'
-import { PAGES as c11, TREE as t11 } from './passport/_list.generated'
-import { PAGES as c12, TREE as t12 } from './storage/_list.generated'
-import { PAGES as c13, TREE as t13 } from './stripe/_list.generated'
-import { PAGES as c14, TREE as t14 } from './vectors/_list.generated'
+import { PAGES as c10, TREE as t10 } from './market/_list.generated'
+import { PAGES as c11, TREE as t11 } from './memory/_list.generated'
+import { PAGES as c12, TREE as t12 } from './passport/_list.generated'
+import { PAGES as c13, TREE as t13 } from './storage/_list.generated'
+import { PAGES as c14, TREE as t14 } from './stripe/_list.generated'
+import { PAGES as c15, TREE as t15 } from './vectors/_list.generated'
 
-export const PAGES: WorkspacePageData[] = [p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14]
+export const PAGES: WorkspacePageData[] = [p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15]
 
 /** Each child together with its own children — see the law in the generator. */
 export const TREE: CollectionBranch[] = [
@@ -51,4 +53,5 @@ export const TREE: CollectionBranch[] = [
   { page: p12, children: c12, branches: t12 },
   { page: p13, children: c13, branches: t13 },
   { page: p14, children: c14, branches: t14 },
+  { page: p15, children: c15, branches: t15 },
 ]

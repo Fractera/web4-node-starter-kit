@@ -27,7 +27,8 @@ own word — he does. Money, publication and secrets stay Roma's at every step.
 2. **The test buyer is the Mac** — the creator's node. Its client «Маркетплейс» finds the free custom template, the core orders it,
    pulls «paid», takes the archive, checks its sha256 and births a new element from it here. fractera.ai never installs a buyer-side test
    element: it is the store's node.
-3. **The second buyer is aifa.dev**, after it updates its core: the same free starter installed behind a server's wall (811).
+3. **The second buyer** — a node behind a server's wall (811), the same free starter, when Roma names one. Not aifa.dev: Roma took it
+   out of the work on 2026-11-27 (Telegram 1547: «полностью уберём aifa.dev … работаем между Fractera и тобой»).
 4. **A paid test starter** comes later, in Stripe's test mode on fractera.ai — Roma's own word on when and at what price.
 
 ## Order and channels

@@ -1,0 +1,1562 @@
+// МОСТ ТЕРМИНАЛА СЛУЖБЫ (267-1, перенос `fractera-memory-starter/server.mjs:613–900`; в маршруте службы — 271).
+//
+// 🔒 СОКЕТ УЗЛА ПРИНАДЛЕЖИТ НЕ МОСТУ, А ОБЩЕМУ ПОДКЛЮЧЕНИЮ `lib/agent-kit/mount.cjs`: событие `upgrade` одно на
+// процесс, а копий комплекта столько, сколько служб. Подключение принимает `/pty/<служба>` и отдаёт сокет
+// сюда — `onConnection(ws, service)`. Служба приходит из АДРЕСА, а не из сообщения браузера.
+//
+// 🔒 СПИСОК РЕЖИМОВ ЗАКРЫТЫЙ, СВОБОДНОЙ КОМАНДЫ ПО ПРОВОДУ НЕТ: браузер выбирает режим по имени, а что
+// набрать в оболочке, решает сервер.
+//
+// 🛑 `node-pty` — НАТИВНЫЙ МОДУЛЬ, ЕГО ОТКАЗ ГРОМКИЙ. Сайт поднимается и без терминала, но причина
+// печатается в журнал и в сам терминал: молча пропавший терминал читается как «сломали вход в подписку».
+// Измерено 2026-09-22: у `node-pty@1.1.0` готовые сборки есть под Windows и macOS, под Linux — нет.
+
+const { existsSync, mkdirSync, readFileSync, readdirSync, statSync, unlinkSync, writeFileSync } = require('node:fs')
+const path = require('node:path')
+const { redeemGrant } = require('./ticket.cjs')
+const session = require('./session.cjs')
+const { serviceDir, ownClaudeDir, onLoan } = require('./workspace.cjs')
+const { claudeBin, claudeEfforts, resolveBin, shellCandidates, loginShellArgs } = require('./claude-cli.cjs')
+const telegram = require('./telegram.cjs')
+const { channelLaunch } = telegram
+// 781-1/3: does the bot hear — the plugin's pid, the poison out, the state file for the panel and the Pult.
+const health = require('./channel-health.cjs')
+// 829: what stands on the terminal's screen — the detectors, and the stream without a trust dialog Claude Code already recorded.
+const screen = require('./screen.cjs')
+const { trustOnScreen, promptOnScreen, questionOnScreen, turnOnScreen, questionLine } = screen
+const os = require('node:os')
+// 552-4: режимы сессии (первое слово запроса, группы навыков, ключ сессии) — один модуль ядра, общий с прибором `check:modes`.
+// Из корня узла, как `supervision.cjs`: у копий комплекта свой путь, а модуль один.
+const modes = require(path.join(process.cwd(), 'lib', 'agent-kit', 'modes.cjs'))
+// 708: разговор, оборванный случайно, продолжается — его номер задаёт узел (`--session-id`), продолжение — `--resume` (`lib/agent-kit/resume.cjs`).
+const resume = require(path.join(process.cwd(), 'lib', 'agent-kit', 'resume.cjs'))
+// 811-5b: a custom element's agent on a dedicated server runs as its own Linux user (`lib/agent-kit/walled-session.cjs`).
+const walledSession = () => require(path.join(process.cwd(), 'lib', 'agent-kit', 'walled-session.cjs'))
+const ownAppOf = (id) => { try { return require(path.join(process.cwd(), 'lib', 'web4-items', 'element-app.cjs')).isOwnApp(id, process.cwd()) } catch { return false } }
+// 837-0e: whose Claude account an element runs on, and its own folder made when it may run only on its own (lib/agent-kit/claude-account.cjs)
+const ownAccountRule = () => require(path.join(process.cwd(), 'lib', 'agent-kit', 'claude-account.cjs'))
+const { randomUUID } = require('node:crypto')
+// 624-1: доступная память — один модуль ядра; `os.freemem()` на macOS видит только пустые страницы (свободно 114 МБ при 79% свободной).
+const { availableMb, topApps } = require(path.join(process.cwd(), 'lib', 'free-memory.cjs'))
+
+const INIT_DEADLINE_MS = 10_000
+const CLOSE_POLICY = 1008
+/** 551-7: длина задачи из ссылки — та же, что у окна вставки (`core/client/terminal-paste.mjs`, PASTE_LIMIT). */
+const TASK_LIMIT = 20_000
+/**
+ * 614-1: сколько сессия, разбуженная с ботом, ждёт свой канал Telegram — столько же, сколько сам Claude Code ждёт подключения сервера
+ * MCP (30 с, журнал `--debug mcp`, см. `telegram.cjs` `preparePlugin`); подключение плагина замерено на +1,1…+7,3 с. Переменная — для прибора.
+ */
+const channelWaitMs = () => Number(process.env.AGENT_CHANNEL_WAIT_MS) || 30_000
+
+let pty = null
+let ptyLoadError = ''
+try {
+  pty = require('node-pty')
+} catch (err) {
+  ptyLoadError = err instanceof Error ? err.message : String(err)
+  console.error(`[pty] МОДУЛЬ НЕ ЗАГРУЖЕН: ${ptyLoadError}\n[pty] сайт работает, терминал будет отказывать. Лечение: npm rebuild node-pty`)
+}
+
+/**
+ * Команда, которую сервер набирает в оболочке короткого терминала. `\r` — Enter и для cmd.exe, и для bash.
+ * Агента здесь нет: он запускается файлом `claude` напрямую, без оболочки (см. `startAgent`); личность ему
+ * даёт сама папка, а не добавленный промпт.
+ */
+const MODES = {
+  // 🔒 `claude auth login` — ПОДКОМАНДА, А НЕ `/login` ВНУТРИ ИНТЕРФЕЙСА (измерено у чата, 114-2): набирать
+  // команду в полноэкранном интерфейсе значило бы зависеть от раскладки. Начинает обмен безусловно — даже
+  // у вошедшего, поэтому кнопка на странице зовётся «войти заново», когда вход уже есть.
+  login: (bin) => `${bin} auth login\r`,
+}
+
+/**
+ * Коротких терминалов входа — ОДИН на узел. Каждый `claude auth login` на этой машине сам открывает
+ * вкладку в браузере; два входа разом дали бы две вкладки и два кода, из которых годен один
+ * (владелец 2026-09-22: «открывается много вкладок на авторизацию»).
+ */
+const MAX_EPHEMERAL = 1
+let ephemeral = 0
+/** Службы, чей агент сейчас запускается (ставятся зависимости плагина): второй запуск той же службы отказывает, а не двоит сессию. */
+const starting = new Set()
+
+function shellPath() {
+  if (process.env.PTY_SHELL) return process.env.PTY_SHELL
+  // 837-0b: one rule for the core and every element — bash on Linux (a walled element's `/bin/bash -l`), zsh on macOS (claude-cli.cjs)
+  const candidates = shellCandidates()
+  for (const c of candidates) if (c && existsSync(c)) return c
+  return candidates[candidates.length - 1]
+}
+
+// 🔒 ОКРУЖЕНИЕ ОБОЛОЧКИ — БЕЗ СЕКРЕТОВ УЗЛА. Next загружает `.env.local` узла в `process.env`, и там лежат
+// ключ Cloudflare, секреты входа и данных. Целиком наследовать нельзя, а собрать с нуля, как в памяти на
+// Linux, нельзя тоже: на Windows `claude` ищет вход в `USERPROFILE`, `APPDATA`, `LOCALAPPDATA`, и
+// обрезанное окружение даёт агента, который «не вошёл». Поэтому снимается ровно то, что похоже на секрет.
+const SECRET = /(SECRET|TOKEN|PASSWORD|PASSWD|PRIVATE|API_KEY|_KEY$|^DATABASE_URL$|^AUTH_)/i
+// Метки чужой сессии Claude Code — см. `lib/channel/telegram.cjs` (оплачено живым прогоном 2026-09-22):
+// с ними `claude` считает себя вложенной сессией и не поднимает серверы плагинов.
+const INHERITED_SESSION = /^(CLAUDECODE|CLAUDE_CODE_.*|CLAUDE_PID|CLAUDE_EFFORT)$/i
+
+function shellEnv(shell) {
+  const env = {}
+  for (const [k, v] of Object.entries(process.env)) {
+    if (typeof v === 'string' && !SECRET.test(k) && !INHERITED_SESSION.test(k)) env[k] = v
+  }
+  // Сервер сайта работает в продакшне; агенту и его сборкам это знание чужое.
+  delete env.NODE_ENV
+  delete env.PORT
+  env.TERM = 'xterm-256color'
+  if (process.platform !== 'win32') env.SHELL = shell
+  return env
+}
+
+/**
+ * РОДИТЬ СЕССИЮ АГЕНТА СЛУЖБЫ — одна функция для кнопки в окне терминала и для пробуждения без браузера (узел, шаг 409-1;
+ * владелец: «агент должен уметь запускать собственный терминал»). `notice` — строки человеку (в окно терминала или никуда),
+ * `wanted` — нужен ли ещё запуск после установки плагина канала (окно закрыли — не рождать).
+ */
+// ── 587-5: ПЕРВОЕ ЗАДАНИЕ УЗЛА ДЛЯ ГЛАВНОГО АГЕНТА ─────────────────────────────────────────────────────────────────────────────
+// Пишет его ядро (`lib/web4-items/first-task.ts`, дверь `/api/node/first-task`); здесь — только «забрать». Служба главного агента — `build`.
+const MAIN_AGENT = 'build'
+const FIRST_TASK = () => path.join(process.cwd(), 'data', 'node', 'first-task.json')
+
+function takeFirstTask() {
+  try {
+    const raw = JSON.parse(readFileSync(FIRST_TASK(), 'utf8'))
+    const text = typeof raw.text === 'string' ? raw.text.replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, '').trim() : ''
+    try { unlinkSync(FIRST_TASK()) } catch { /* уже забрано */ }
+    return text || null
+  } catch {
+    return null
+  }
+}
+
+/** Первое поручение: в терминале — само задание; в сессии с ботом Telegram — сначала вопрос человеку в Telegram. */
+function firstTaskPrompt(task, viaChannel) {
+  if (!viaChannel) return `The person wrote this task on the home page of the node's site. Do it:\n\n${task}`
+  return `The person wrote this task on the home page of the node's site before connecting Telegram:\n\n${task}\n\n` +
+    `First write to the person in Telegram, in their language: «Вы просили: «<the task in short>». Запускаем его в работу?» ` +
+    `Start the work only after they answer yes.`
+}
+
+/**
+ * 615-1: хук сторожа медленного поиска главного агента (`lib/agent-kit/guard-search.cjs`) — exec-видом, как хуки памяти: путь с пробелом
+ * не ломается. Корень узла — аргументом: по нему сторож узнаёт тяжёлые места (корень, WEB4-ITEMS, node_modules).
+ */
+function guardHook() {
+  const file = path.join(process.cwd(), 'lib', 'agent-kit', 'guard-search.cjs')
+  if (!existsSync(file)) return null
+  return { matcher: 'Bash|PowerShell', hooks: [{ type: 'command', command: process.execPath, args: [file.replace(/\\/g, '/'), process.cwd().replace(/\\/g, '/')], timeout: 10 }] }
+}
+
+/**
+ * 615-2: ход работы в Telegram (`lib/agent-kit/progress.cjs`) — фоновые хуки (`async`): каждое действие — строка черновика в чате бота,
+ * ответ `reply` закрывает черновик. Агента не задерживают.
+ */
+function progressHooks(element) {
+  const file = path.join(process.cwd(), 'lib', 'agent-kit', 'progress.cjs')
+  if (!existsSync(file)) return null
+  const run = { type: 'command', command: process.execPath, args: [file.replace(/\\/g, '/'), process.cwd().replace(/\\/g, '/'), element], async: true, timeout: 30 }
+  // 639: UserPromptSubmit и Stop — границы хода: в ходе остаётся последний ответ в Telegram, ранние исчезают через 30 с (`progress.cjs`).
+  return { PreToolUse: [{ matcher: '*', hooks: [run] }], PostToolUse: [{ matcher: 'mcp__plugin_telegram_telegram__reply', hooks: [run] }], UserPromptSubmit: [{ hooks: [run] }], Stop: [{ hooks: [run] }] }
+}
+
+// ── 666: УСИЛИЯ СЕССИИ И ULTRACODE ─────────────────────────────────────────────────────────────────────────────────────────────────
+// Владелец 2026-11-06: «если пользователь выбрал опус то следом должен выпасть второй список … усилия … включая ультра код»; «После того как
+// пользователь подтвердил что он собирается оставить режим ultracode ты вынужден отменить запрет в архитектуре на использование суб агентов»;
+// «когда пользователь говорит выключить … переключаешь архитектуру в режим усилия Medium, и отключаешь режим workFlow».
+// Замерено на Claude Code 2.1.319 (его код и запуск настоящего TUI без запроса, план 666): ultracode — «standing dynamic-workflow
+// orchestration at any effort level»; ему нужны dynamic workflows (`enableWorkflows`; на Pro они по умолчанию ВЫКЛЮЧЕНЫ, на прочих
+// подписках включены) и модель с уровнем xhigh. `--model opus --effort max --settings {"enableWorkflows":true,"ultracode":true}` →
+// «◈ max · ultracode»; без `enableWorkflows` на Pro — «◈ max» без ultracode; `--effort ultracode` один — xhigh без ultracode.
+// 🔒 Поэтому КАЖДАЯ сессия узла несёт усилия явно (свои усилия папки из `.claude/launch-effort.txt` — у главного агента high, шаг 674 —
+// иначе medium, если человек не выбрал другие) и `enableWorkflows: false, ultracode: false` —
+// рабочие процессы есть только у сессии, где человек подтвердил ultracode в Telegram; что бы ни лежало в настройках Claude Code человека,
+// сессию узла решают флаги запуска. У папки со своим списком инструментов (главный агент) ultracode добавляет `Agent,Workflow`.
+const EFFORTS = ['low', 'medium', 'high', 'xhigh', 'max']
+const DEFAULT_EFFORT = 'medium'
+const SUBAGENT_TOOLS = ['Agent', 'Workflow']
+const modeFile = (element) => path.join(process.cwd(), 'data', 'services', element, 'session-mode.json')
+/** Запись режима сессии элемента: с чем родилась (`spawnAgent`) и что после её конца — снова medium без рабочих процессов. */
+function writeMode(element, rec) {
+  try {
+    mkdirSync(path.dirname(modeFile(element)), { recursive: true })
+    writeFileSync(modeFile(element), JSON.stringify({ ...rec, at: new Date().toISOString() }, null, 2) + '\n', 'utf8')
+  } catch { /* запись — сведение, не условие запуска */ }
+}
+// 708-1: номер разговора переживает конец сессии — по нему кнопка «Продолжить разговор» и /on берут именно его.
+const resetMode = (element, why) => writeMode(element, { running: false, effort: DEFAULT_EFFORT, ultracode: false, workflows: false, why, conversation: resume.readMode(process.cwd(), element)?.conversation ?? null })
+/** Через сколько после старта проверяется, что Claude Code показал ultracode; переменная — для прибора. */
+const ultraCheckMs = () => Number(process.env.AGENT_ULTRA_CHECK_MS) || 30_000
+/** Отметка ultracode в системной подсказке сессии: тот же файл подсказки, что уже собрали `promptArgs`/`soulArgs`, — без новых флагов. */
+function markUltracode(args) {
+  let text = ''
+  try { text = readFileSync(path.join(process.cwd(), 'lib', 'agent-kit', 'ultracode.md'), 'utf8').replace(/\r\n/g, '\n').trim() } catch { return args }
+  text = text.replace('{at}', new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC')
+  const i = args.indexOf('--append-system-prompt-file')
+  if (i >= 0 && args[i + 1]) {
+    try { writeFileSync(args[i + 1], `${readFileSync(args[i + 1], 'utf8')}\n\n${text}\n`, 'utf8'); return args } catch { /* ниже — строкой */ }
+  }
+  const j = args.indexOf('--append-system-prompt')
+  if (j >= 0 && typeof args[j + 1] === 'string') return [...args.slice(0, j + 1), `${args[j + 1]}\n\n${text}`, ...args.slice(j + 2)]
+  return [...args, '--append-system-prompt', text]
+}
+
+async function spawnAgent(service, notice = () => {}, wanted = () => true, firstPrompt = '', { answerTrust = false, pass = 'main', model: chosen, effort: chosenEffort, ultracode = false, hold = false, callerTells = false, continueLast = false } = {}) {
+  if (!pty) {
+    notice(`[терминал недоступен: node-pty не загружен — ${ptyLoadError}]`)
+    return { ok: false, reason: 'pty-unavailable' }
+  }
+  if (starting.has(service)) return { ok: false, reason: 'starting' }
+  const existing = session.current(service)
+  if (existing) return { ok: true, session: existing, already: true }
+  // 552-4: `service` — ключ сессии; у сессии рабочего процесса это `<id>--work`, а папка, данные и бот — элемента `<id>`.
+  const element = modes.baseOf(service)
+  const mode = modes.modeOfKey(service)
+  const cwd = serviceDir(element)
+  if (!cwd) {
+    notice(`[папка агента не найдена: службы «${String(service ?? '').slice(0, 40)}» нет в реестре узла или на диске]`)
+    return { ok: false, reason: 'no-agent-dir' }
+  }
+  // 666: ultracode — только подтверждённый человеком в Telegram и никогда у сессии рабочего процесса; его усилия — max («с максимальной
+  // эффективностью размышлений»). Иначе — выбранные усилия, свои усилия папки (674: `.claude/launch-effort.txt`, у главного агента
+  // high — и при смене модели) или medium.
+  const ultra = ultracode === true && mode !== 'work'
+  const ownEffort = typeof modes.launchEffort === 'function' ? modes.launchEffort(cwd) : null
+  const effort = ultra ? 'max' : EFFORTS.includes(chosenEffort) ? chosenEffort : (ownEffort ?? DEFAULT_EFFORT)
+  // 🛑 АГЕНТ ЗАПУСКАЕТСЯ ФАЙЛОМ `claude`, А НЕ НАБИРАЕТСЯ В ОБОЛОЧКЕ. ✗ Оплачено владельцем 2026-09-22:
+  // на вопросе о доверии он нажал Enter, выбор по умолчанию был «No, exit», `claude` вышел — а оболочка
+  // `cmd.exe` осталась жить, индикатор горел «Работает», и слова человека уходили в командную строку
+  // Windows («'hello' is not recognized…»). Без оболочки выход агента и есть конец сессии: страница
+  // говорит «Агент завершил работу» и снова даёт кнопку запуска.
+  const shell = shellPath()
+  let env = shellEnv(shell)
+  // 689: элемент на подписке своего человека — вся его сессия идёт через его папку Claude Code (`CLAUDE_CONFIG_DIR`), до запуска канала,
+  // чтобы и он видел ту же папку. Нет папки — подписка узла, как прежде.
+  // 811-5b (the owner, Telegram 128): on a server the element's agent runs only on its own Claude account — never on the node's token.
+  const walled = walledSession().walledAt(process.cwd(), cwd)
+  let ownHome = ownClaudeDir(element)
+  // 837-0e (the owner, Telegram 845: «терминал … должна работать независимо от подписки»): an own-only element gets its own folder here
+  // instead of a refusal — before sign-in Claude shows its own login in the terminal; the node's login is still never its login.
+  if ((walled || ownAppOf(element)) && !ownHome && ownAccountRule().ensureOwnHome(process.cwd(), element).ok) ownHome = ownClaudeDir(element)
+  if (ownHome) env = { ...env, CLAUDE_CONFIG_DIR: ownHome }
+  // 834-10 (the owner, Telegram 662): an app of its own runs only on its own account on any node — the node's subscription is never its own.
+  if ((walled || ownAppOf(element)) && !ownHome) {
+    notice('[⟦node · no-account⟧ агент элемента работает только на своём аккаунте Claude — войдите в кабинете администратора элемента; до входа работу делает главный агент]')
+    return { ok: false, reason: 'no-account' }
+  }
+  // 839-12 (Roma, Telegram 1051; the server's main agent, 1054): an element's own Claude home is marked before EVERY session — the first-run
+  // screens and trust of its own two folders (its folder; its data folder, the `--add-dir` below) — or a session woken from Telegram stands
+  // on Claude Code's question and its channel never comes up (`telegram.markOwnHome`; behind the wall as the element itself).
+  if (ownHome) {
+    const marked = telegram.markOwnHome(element, ownHome, [cwd, path.join(process.cwd(), 'data', 'services', element)])
+    if (marked) console.log(`[agents] ${element}: ${marked}`)
+  }
+  const bin = resolveBin('claude', env.PATH || env.Path)
+  if (!bin) {
+    notice('[claude не найден ни в PATH, ни в ~/.local/bin — установите Claude Code]')
+    return { ok: false, reason: 'no-claude' }
+  }
+  // 🔒 БОТ TELEGRAM РАБОТАЕТ В ЭТОЙ ЖЕ СЕССИИ (решение владельца 2026-09-22): бот подключён — `claude`
+  // запускается с каналом, и всё, что человек пишет в Telegram, видно здесь. Первый запуск ставит
+  // зависимости плагина — это может занять минуту, и человек видит, чего ждёт.
+  let args = []
+  starting.add(service)
+  notice('[запускаю агента…]')
+  // 552-4: бот элемента — только у сессии строительства; опрашивать бота может один процесс (409), а мессенджер до 552-6 живёт там.
+  // 686-6: на одолженной подписке узла сессию ведёт руководитель — канал Telegram человека элемента не подключается до возврата.
+  const loaned = onLoan(element)
+  if (loaned) notice('[подписка узла в долг: работу ведёт главный агент, Telegram человека этого элемента подключится после возврата]')
+  const launch = mode === 'work' || loaned ? null : await channelLaunch(element, env).catch((err) => ({ ok: false, error: err instanceof Error ? err.message : String(err) }))
+  starting.delete(service)
+  if (launch && !launch.ok) {
+    notice(`[бот Telegram не подключится: ${launch.error}]\r\n[агент запускается без него]`)
+  } else if (launch) {
+    env = launch.env
+    args = launch.args
+  }
+  if (ownHome) {
+    env = { ...env, CLAUDE_CONFIG_DIR: ownHome }
+    notice('[подписка своего человека: этот элемент входит в Claude Code своей папкой]')
+  }
+  if (!wanted() || session.current(service)) return { ok: false, reason: 'gone' }
+  const viaChannel = args.length > 0
+  // 548-7: свои данные службы (`data/services/<id>`) — рабочая папка агента всегда, с ботом и без: изоляция элемента
+  // (`scripts/element-isolate.mjs`) закрывает чтение вне рабочих папок, а здесь живут его заказы, журналы и вложения.
+  // 🛑 `--add-dir` забирает ВСЕ следующие аргументы как папки: в конце списка он съел бы первое поручение агенту (✗ замерено
+  // 2026-10-20 на erpxd: пустой ввод, журнала нет). Поэтому — первым, и за ним всегда другой флаг.
+  // 595-5: the agent's native memory lives in the node (`modes.memoryDir`: data/services/<id>/memory); creating it here also makes the
+  // service's own data folder exist, so the --add-dir below covers it and writing a memory asks nothing.
+  const memDir = typeof modes.memoryDir === 'function' ? modes.memoryDir(element) : null
+  // 595-6: the diary hooks (Stop, SessionEnd) ride in the same --settings; a working-process session gets none.
+  const memHooks = typeof modes.memoryHooks === 'function' ? modes.memoryHooks(element, mode) : null
+  // 615-1 (✗ 2026-10-30 13:22: `find .` из корня ядра — 2 минуты молчания в Telegram): главному агенту — сторож медленного поиска.
+  const guard = element === MAIN_AGENT ? guardHook() : null
+  // 615-2: ход работы в Telegram (владелец: «буквально потри слова на каждое событие с временем»). 615-3: всем сессиям, кроме рабочего
+  // процесса, — куда писать (свой бот, чат главного агента для элемента, которого он ведёт, или никуда), хук решает при событии: запись
+  // «включил главный агент» появляется уже после рождения сессии.
+  const progress = mode !== 'work' ? progressHooks(element) : null
+  const extra = { PreToolUse: [...(guard ? [guard] : []), ...(progress?.PreToolUse ?? [])], PostToolUse: progress?.PostToolUse ?? [], UserPromptSubmit: progress?.UserPromptSubmit ?? [], Stop: progress?.Stop ?? [] }
+  let hooks = memHooks
+  // 686-2: пульс — каждой сессии, и рабочей тоже: как закончился ход, записанное кодом (`lib/agent-kit/pulse.cjs`).
+  const pulse = typeof modes.pulseHooks === 'function' ? modes.pulseHooks(element) : null
+  if (pulse) for (const [event, list] of Object.entries(pulse)) hooks = { ...(hooks ?? {}), [event]: [...(hooks?.[event] ?? []), ...list] }
+  for (const [event, list] of Object.entries(extra)) if (list.length) hooks = { ...(hooks ?? {}), [event]: [...(hooks?.[event] ?? []), ...list] }
+  // 686-2: строка состояния каждой сессии пишет остаток лимита подписки (`lib/agent-kit/limits.cjs`).
+  const line = typeof modes.limitsLine === 'function' ? modes.limitsLine(element) : null
+  // 700-4 (владелец 2026-11-08: «стратегия при переполнении контекста … создавать компакт … самая отвратительная функция»): сжатие
+  // выключено в каждой сессии узла — `autoCompactEnabled: false` гасит и автоматическое, и сжатие в простое (code.claude.com/docs/en/
+  // settings-reference, прочитано 2026-11-08); окно считает строка состояния, сбрасывается агент сам письмом (700-1…3).
+  const mem = { autoCompactEnabled: false, ...(memDir ? { autoMemoryDirectory: memDir } : {}), ...(hooks ? { hooks } : {}), ...(line ? { statusLine: line } : {}) }
+  const ownData = path.join(process.cwd(), 'data', 'services', element)
+  if (existsSync(ownData) && !args.includes(ownData)) args = ['--add-dir', ownData, ...(args.length ? args : ['--permission-mode', 'auto'])]
+  // 569-3: свои встроенные инструменты папки агента (`.claude/launch-tools.txt`, `lib/agent-kit/modes.cjs`). 🛑 `--tools` забирает СПИСОК
+  // значений, как `--add-dir`: первым, и за ним всегда другой флаг — иначе съел бы первое поручение.
+  const own = typeof modes.launchTools === 'function' ? modes.launchTools(cwd) : null
+  // 666: у подтверждённого ultracode список инструментов папки получает субагентов и рабочие процессы — без них ему нечем работать.
+  const tools = own && ultra ? [...new Set([...own.split(','), ...SUBAGENT_TOOLS])].join(',') : own
+  if (tools) args = ['--tools', tools, ...(args.length ? args : ['--permission-mode', 'auto'])]
+  // 548-20 (✗ 2026-10-20: Telegram молчал у разбуженных сессий): у Claude Code ОДИН на машину кэш неудачных подключений MCP
+  // (`~/.claude/mcp-needs-auth-cache.json`, ключ — имя сервера, 15 минут). Плагин канала включён у человека глобально и стартует в
+  // любой сессии; без бота токена нет — он падает, и 15 минут ВСЕ сессии машины пишут «Skipping connection (recent failure cached…)»
+  // и живут без Telegram (замерено: падение y7jos без бота 02:30:33Z; erpxd 23:48:48Z → «Skipping» у главного агента 23:49:28Z).
+  // Поэтому сессия без канала запускается с плагином, выключенным на этот запуск, — падать нечему. После `--add-dir`: тот забирает
+  // папки до следующего флага, а `viaChannel` уже посчитан.
+  // 552-4: у элемента с группами навыков `--settings` несёт и группы режима (`lib/agent-kit/modes.cjs`); у остальных — как прежде.
+  // 614-2 (✗ 2026-10-30: сессия Claude Code, открытая человеком в другой папке, уронила глобально включённый плагин без токена — и
+  // главный агент час жил без канала): плагин у человека выключен глобально, а сессия С каналом включает его себе явно. Проба 614-2:
+  // `--settings` включает плагин, выключенный ниже по приоритету; один `--channels` — нет.
+  const plug = { [telegram.PLUGIN]: viaChannel }
+  // 552-5: системная подсказка сессии — фраза режима и, если у элемента есть `.claude/modes/<режим>.md`, законы режима (одним файлом).
+  // 590-5: у сессии строительства — свой проход (`main` · `design` · `texts`): свои вендорные навыки, файл законов прохода, модель.
+  // 594-4: у прохода study — сервер MCP REA на эту сессию (`modes.mcpArgs`); перед `--settings`: `--mcp-config` забирает список значений.
+  const mcp = typeof modes.mcpArgs === 'function' ? modes.mcpArgs(cwd, mode, path.join(process.cwd(), 'data', 'node', 'agent-prompts'), service, pass) : []
+  // 636-7 (✗ 2026-11-03 19:18 на узле владельца): после первого ответа Claude Code показывает свой диалог «Teach auto mode about your
+  // environment?», вставка узла попадает в него, и Enter выбирает «Yes». Claude Code 2.1.317 не показывает его, когда
+  // `skillOverrides["auto-mode-setup"]` равно "off" (прочитано в его коде) — у каждой сессии узла.
+  const NO_SETUP = { 'auto-mode-setup': 'off' }
+  if (modes.hasGroups(cwd)) {
+    // 666: рабочие процессы и ultracode — только у подтверждённого ultracode; у всех остальных сессий явно выключены.
+    const settings = { ...modes.modeSettings(cwd, mode, plug, pass), ...mem, enableWorkflows: ultra, ultracode: ultra }
+    settings.skillOverrides = { ...(settings.skillOverrides ?? {}), ...NO_SETUP }
+    args = [...args, ...mcp, '--settings', JSON.stringify(settings), ...modes.promptArgs(cwd, mode, path.join(process.cwd(), 'data', 'node', 'agent-prompts'), service, pass)]
+  }
+  else {
+    // 595-4: the skills memory (skills_find) also for the main agent and an element of the old template; the soul's
+    // --append-system-prompt-file below always follows, so the list flag never eats the first task (548-13).
+    if (mcp.length) args = [...args, ...mcp]
+    // 595-5: one --settings per session; 614-2: it always says whether the Telegram plugin runs in it.
+    args = [...args, '--settings', JSON.stringify({ enabledPlugins: plug, ...mem, skillOverrides: NO_SETUP, enableWorkflows: ultra, ultracode: ultra })]
+  }
+  // 591: душа узла (`lib/agent-kit/soul.md`) — в системной подсказке каждой сессии: у элемента с группами её кладёт `promptArgs`
+  // первой, у остальных (главный агент, элемент старого шаблона) — здесь, одна.
+  if (!modes.hasGroups(cwd) && typeof modes.soulArgs === 'function') args = [...args, ...modes.soulArgs(path.join(process.cwd(), 'data', 'node', 'agent-prompts'), service, cwd)]
+  // 666: сессия подтверждённого ultracode знает это из своей подсказки: запрет на субагентов снят только в ней (`lib/agent-kit/ultracode.md`).
+  if (ultra) args = markUltracode(args)
+  // 426 (✗ 2026-10-07: первое сообщение из Telegram пропало целиком — вставка по «3 с тишины» ушла раньше, чем Claude Code начал
+  // принимать ввод, пока грузился плагин каналов): первое поручение новой сессии — аргументом запуска. `claude "<запрос>"` в
+  // интерактивном режиме берёт его первым, когда готов, — момент готовности не угадывается. Многострочный текст с кавычками и
+  // кириллицей доходит через node-pty байт в байт (замерено тем же днём).
+  // 551-7: поручение, начатое с «-», `claude` прочёл бы флагом — пробел впереди оставляет его текстом.
+  // 570: модель по роду работы (`lib/agent-kit/modes.cjs` `launchModel`) — один флаг с одним значением, до поручения.
+  // 611: модель с кнопки Telegram сильнее модели папки и рода работы — только из закрытого списка.
+  // 666: ultracode — всегда Opus; усилия — всегда явным флагом, чтобы сессию узла не решали настройки Claude Code человека.
+  const model = ultra ? 'opus' : ['opus', 'sonnet', 'haiku'].includes(chosen) ? chosen : typeof modes.launchModel === 'function' ? modes.launchModel(cwd, mode, pass) : null
+  if (model) args = [...args, '--model', model]
+  // 666: только уровень, который знает Claude Code этой машины (`claude --help`); у старого CLI без `--effort` флаг не передаётся —
+  // с незнакомым флагом не запустилась бы ни одна сессия. Незнакомый уровень — ближайший ниже из знакомых.
+  const levels = claudeEfforts(bin)
+  const effortArg = levels === null ? null : levels.includes(effort) ? effort : EFFORTS.slice(0, EFFORTS.indexOf(effort) + 1).reverse().find((e) => levels.includes(e)) ?? null
+  if (effortArg) args = [...args, '--effort', effortArg]
+  else console.log(`[agents] ${service}: этот Claude Code не знает --effort ${effort} — сессия на своих усилиях по умолчанию`)
+  // 620: смена модели командой сессии — тот же разговор на другой модели. 708: продолжение — записанный разговор этой службы
+  // (`--resume <номер>`); записи нет (сессия старше 708) — прежний `--continue`. Новая сессия (не рабочая) получает свой номер.
+  const known = continueLast && mode !== 'work' ? resume.resumable(process.cwd(), element, cwd, ownHome) : null
+  // 708-6: `--continue` без записи — записать номер разговора, который он берёт (самый новый в папке), чтобы следующий обрыв тоже продолжился.
+  const conversation = mode === 'work' ? null : continueLast ? (known ?? resume.newest(cwd, ownHome)) : randomUUID()
+  if (continueLast) args = [...args, ...(known ? ['--resume', known] : ['--continue'])]
+  else if (conversation) args = [...args, '--session-id', conversation]
+  // 590-5: команда элемента `npm run pass` узнаёт проход своей сессии из окружения и не переключает сессию на тот же проход.
+  if (modes.hasGroups(cwd) && mode === 'build') env = { ...env, FRACTERA_PASS: pass }
+  // 587-5 (владелец 2026-10-24): «если пользователь авторизуется в Claude Code Agent а затем придёт терминал … если есть такая запись то
+  // подставить её как в техническое задание в терминал, сразу после подтверждения папки. Если же пользователь активировать Telegram …
+  // сразу же отправляются это задание с текстом … запускаем его в работу?». Первое задание узла (главная root → `data/node/first-task.json`)
+  // забирает первая сессия главного агента, начатая без своего поручения: запись стирается, второй путь её уже не видит. Вопрос доверия
+  // папке остаётся человеку — поручение `claude` берёт после него.
+  if (!firstPrompt && element === MAIN_AGENT) {
+    const task = takeFirstTask()
+    if (task) firstPrompt = firstTaskPrompt(task, viaChannel)
+  }
+  // 614-1: у сессии, разбуженной с ботом, первое поручение ждёт её канал (`watchChannel`): аргументом оно ушло бы раньше плагина.
+  const holdFirst = hold && viaChannel
+  if (firstPrompt && !holdFirst) args = [...args, firstPrompt.startsWith('-') ? ` ${firstPrompt}` : firstPrompt]
+  const t0 = Date.now()
+  // 811-5b: walled — the same session through the root helper as fe-<id>: hooks by the relay, files copied into its data folder, only
+  // its own environment (`walled-session.cjs`).
+  let run = { cmd: bin, args, env, stop: null }
+  if (walled) {
+    const key = require(path.join(process.cwd(), 'lib', 'element-key.cjs')).elementKeyOf(walled.id, process.env.DATA_SECRET ?? '')
+    if (!key) {
+      notice('[агент элемента не запущен: у узла нет DATA_SECRET — ключ элемента для его хуков не выводится]')
+      return { ok: false, reason: 'no-key' }
+    }
+    try {
+      run = walledSession().walledLaunch({ root: process.cwd(), id: walled.id, key, args, env, port: Number(process.env.PORT) || 24680, node: process.execPath, mode })
+    } catch (err) {
+      notice(`[агент элемента не запущен: ${err instanceof Error ? err.message : String(err)}]`)
+      return { ok: false, reason: 'spawn-failed' }
+    }
+    if (run.dropped.length) console.log(`[agents] ${service}: на сервере без ${run.dropped.join(', ')}`)
+  }
+  let child
+  try {
+    child = pty.spawn(run.cmd, run.args, { cols: 120, rows: 32, cwd, env: run.env, name: 'xterm-256color' })
+  } catch (err) {
+    notice(`[claude не запустился: ${err instanceof Error ? err.message : String(err)}]`)
+    return { ok: false, reason: 'spawn-failed' }
+  }
+  // 548-13: канал — это аргументы плагина Telegram, а не любые аргументы (поручение и `--add-dir` каналом не делают).
+  const born = session.register({ service, pid: child.pid, proc: child, cwd, channel: viaChannel })
+  if (run.stop) born.wallStop = run.stop
+  born.taskUrls = new Set()
+  born.pass = pass
+  // 666: с чем родилась сессия — Telegram называет это человеку («Режим: Opus · max · ultracode»), запись — для узла и агента.
+  born.mode = { model: model ?? null, effort: effortArg ?? 'default', ultracode: ultra }
+  if (mode !== 'work') writeMode(element, { running: true, service, model: model ?? null, effort: effortArg ?? 'default', ultracode: ultra, workflows: ultra, conversation, continued: Boolean(continueLast) })
+  // 666: человек выбрал ultracode, прочитав о цене, — правда о нём обязательна. Claude Code показывает его в строке состояния («◈ max ·
+  // ultracode», замер 2.1.319); через 30 с его нет на экране — в журнал и человеку: агент работает на Opus без рабочих процессов
+  // (старый Claude Code или политика организации). Одна проверка на сессию, не опрос.
+  if (ultra) {
+    const t = setTimeout(() => {
+      if (session.current(service) !== born) return
+      const seen = /ultracode/i.test(String(born.buffer).replace(/\x1b\[[0-9;?]*[ -/]*[@-~]/g, ''))
+      console.log(`[agents] ${service}: ultracode ${seen ? 'на экране Claude Code' : 'НЕ показан Claude Code за 30 с'}`)
+      if (!seen) void telegram.tellUltraMissing(element).catch(() => {})
+    }, ultraCheckMs())
+    t.unref?.()
+  }
+  // 615-6: кто родил сессию — человек (страница терминала, кнопка или «включить» Telegram) или узел (`wake` с `from`, ставит `wake`).
+  born.byPerson = true
+  // 551-7: запуск со страницы с задачей из ссылки — вопрос доверия папке отвечает мост; согласие — нажатие, которое привело сюда.
+  if (answerTrust) {
+    born.answerTrust = true
+    born.trustOk = true
+  }
+  child.onData((data) => {
+    session.remember(born, data)
+    for (const client of born.clients) if (client.readyState === client.OPEN) client.send(data)
+    watchPrompt(born)
+    watchTrust(born)
+    watchAsk(born)
+  })
+  child.onExit(() => {
+    // 818 (✗ 2026-11-20 23:34, the owner, Telegram 352: «пульт говорит что ты спишь … почему пульт врёт?»): a model switch or a clear stops
+    // this session and starts the next one of the same service 1.5 s later; this process often exits after that. Its «running: false ·
+    // medium» and «asleep» belong to it alone — never written over the session that already replaced it.
+    const now = session.current(service)
+    const replaced = Boolean(now && now !== born)
+    session.exited(born)
+    // 666: сессии нет — следующая родится на medium без рабочих процессов, если человек снова не выберет другое.
+    // 708-1: причина остановки (`session.stop`) или «вышла сама»; закрытие человеком/агентом — чистый конец, остальное предложит продолжить.
+    if (mode !== 'work' && !replaced) resetMode(element, born.endReason ?? 'exited')
+    // 781-1: no session — «спит»; a session the node closed for its channel keeps «failed» (the panel and the Pult show it until a wake).
+    if (born.channel && mode !== 'work' && !replaced && born.endReason !== 'channel-failed' && born.endReason !== 'channel-heal') health.writeState(process.cwd(), element, { state: 'asleep', service, why: born.endReason ?? 'exited' })
+    // 639: «выключить?» и «ждёт ответа в терминале» этой сессии потеряли смысл — исчезают через 30 с
+    telegram.sessionEnded(service)
+    startQueuedPass(element)
+  })
+  // 781-1 (✗ 2026-11-18 10:21: a start from the terminal page with the plugin skipped was counted as hearing — nobody read the bot):
+  // every session launched with the channel is watched — a held first task by `watchChannel`, any other start by `watchHearing` itself.
+  if (holdFirst) watchChannel(born, element, firstPrompt, { t0, callerTells })
+  else if (viaChannel) watchHearing(born, element, { t0, heard: false })
+  // The log names who started it: the node's wakes say so themselves; the terminal page, a session command and a heal did not (10:21).
+  if (!holdFirst) console.log(`[agents/start] ${service}: сессия запущена${viaChannel ? ' с каналом Telegram' : ''}${continueLast ? ', тот же разговор' : ''}`)
+  return { ok: true, session: born }
+}
+
+// ── ПРОХОДЫ: ОЧЕРЕДЬ ВМЕСТО УБИЙСТВА ЖИВОЙ СЕССИИ (590-5) ─────────────────────────────────────────────────────────────────────────
+// Запрос другого прохода, пока идёт сессия строительства, не убивает её: проход ждёт здесь и рождается, когда та закроется (агент
+// закрывает себя сам командой `npm run pass`, записав `current-step.md`). Таймеров нет: очередь проверяется только при выходе сессии;
+// запись старше получаса там же снимается со строкой в журнале — выход сессии на другой день не родит забытый проход.
+const queuedPass = new Map()
+const QUEUE_TTL_MS = 30 * 60 * 1000
+
+function startQueuedPass(element) {
+  const next = queuedPass.get(element)
+  if (!next) return
+  queuedPass.delete(element)
+  if (Date.now() - next.at > QUEUE_TTL_MS) {
+    console.log(`[agents/wake] ${element}: проход ${next.pass} ждал дольше получаса — снят, не рождаю`)
+    return
+  }
+  // Переключение просил человек (агент исполнил его слова) — вопроса в Telegram и вопроса доверия папке не нужно.
+  wake(element, { text: next.text, confirmed: true })
+    .then((r) => console.log(`[agents/wake] ${element}: проход ${next.pass} из очереди → ${r.ok ? (r.started ? 'started' : r.queued ? 'queued again' : 'ok') : r.reason}`))
+    .catch((err) => console.error(`[agents/wake] ${element}: проход ${next.pass} из очереди — ${err instanceof Error ? err.message : err}`))
+}
+
+// ── ВОПРОС-РАЗРЕШЕНИЕ НА ЭКРАНЕ → ЗАДАЧА A2A «ЖДЁТ ЧЕЛОВЕКА» (418-4; владелец 2026-10-07: «to do it now») ──────────────────────
+// Агент, разбуженный задачей A2A, может встать на вопросе Claude Code «разрешить?» — и до ответа человека не делает ничего, а
+// задача у вызывающего выглядит «работает». Здесь экран читается после затишья: вопрос есть — каждой задаче этой сессии уходит
+// `{ state: "input-required" }`, вопрос ушёл — `{ state: "working" }`. Только переходы, без таймеров опроса: проверка идёт по
+// выводу самого терминала. Признаки — из строк самой программы `claude.exe` (2026-10-07): у каждого диалога разрешения вопрос
+// «Do you want to …» и вариант «No, and tell Claude what to do differently»; «Yes, and don't ask again for» — у большинства.
+// 🛑 Ink рисует пробелы сдвигом курсора (`ESC[nC`): он заменяется пробелом до снятия управляющих последовательностей.
+const PROMPT_QUIET_MS = 800
+/**
+ * 829: has Claude Code recorded this session's folder as trusted — `.claude.json` of the session's Claude home (689: an element on its
+ * person's subscription has its own), `projects[<folder>].hasTrustDialogAccepted`. `null` — unknown (no file, another format, no access).
+ */
+function cwdTrusted(s) {
+  const home = ownClaudeDir(String(s.service).replace(/--.*$/, ''))
+  try {
+    const projects = JSON.parse(readFileSync(home ? path.join(home, '.claude.json') : path.join(os.homedir(), '.claude.json'), 'utf8')).projects ?? {}
+    const entry = projects[String(s.cwd).replace(/\\/g, '/')] ?? projects[s.cwd]
+    return entry ? entry.hasTrustDialogAccepted === true : false
+  } catch { return null }
+}
+/** 829: the stream every «is a question on the screen» reads — without the trust dialog Claude Code has recorded as answered. */
+const liveScreen = (s) => screen.liveStream(s, () => cwdTrusted(s))
+/**
+ * 547 (владелец 2026-10-19: «ты активируешь папку также как и запускаешь агента то есть прямо из чата»): у пробуждённого агента
+ * вопрос доверия папке отвечается так, как ответил бы человек, — стрелка вниз на «Yes, I trust this folder» и Enter, — но только
+ * когда включение подтверждено кнопкой в Telegram (`trustOk`; вопрос с кнопками говорит и о папке). Иначе бот зовёт человека в
+ * терминал (`telegram.tellWaiting`). Один раз на сессию; запуск со страницы терминала кнопкой не трогается — человек видит вопрос
+ * сам. 551-7 (владелец 2026-10-20: «при таком переходе активировать терминал и подтверждается папка»): у запуска со страницы с
+ * задачей из ссылки (`answerTrust`) вопрос отвечается так же, без Telegram.
+ */
+function watchTrust(s) {
+  if (!(s.viaWake || s.answerTrust) || s.trustDone) return
+  clearTimeout(s.trustTimer)
+  s.trustTimer = setTimeout(() => {
+    if (session.current(s.service) !== s || s.trustDone || !trustOnScreen(liveScreen(s))) return
+    s.trustDone = true
+    // 604: без согласия — вопрос в чат главного агента («Разрешить? да»), а не ссылка на терминал; ответ — `answerTrust`.
+    if (!s.trustOk) { void askTrust(s).catch(() => {}); return }
+    pressTrust(s)
+  }, PROMPT_QUIET_MS)
+  s.trustTimer.unref?.()
+}
+
+/** Нажать «Yes, I trust this folder» — стрелка вниз и Enter, как человек в терминале. */
+function pressTrust(s) {
+  try { s.proc.write('\x1b[B') } catch { return false }
+  // 829: the moment of the node's Enter — once Claude Code records the trust, the stream before it is no longer read (`screen.cjs`).
+  setTimeout(() => { try { s.trustEnterAt = screen.seenOf(s); s.proc.write('\r') } catch { /* процесс завершён */ } }, 250)
+  return true
+}
+
+/**
+ * 604: спросить человека в чате главного агента. Главный агент сейчас работает — его бота читает плагин канала, и «да» придёт его
+ * модели: в его сессию вставляется строка узла, что за вопрос задан и какой командой ответить. Спящего главного агента «да» ловит
+ * его бот (`telegram.cjs`, `idleTick`), а другие слова будят его с той же строкой в тексте пробуждения.
+ */
+async function askTrust(s) {
+  const out = await telegram.tellTrust(s.service)
+  if (!out || !out.trust) {
+    // 736 (✗ 2026-11-12 23:42, «Хранилище картинок»): a node without the main agent's Telegram bot — the question went nowhere and the
+    // agent stood on it for 7 minutes while the main agent reported it working. The main agent hears it in any case.
+    if (modes.baseOf(s.service) !== MAIN_AGENT) tellMain('trust', s.service.replace(/--.*$/, ''), `Узел: агент элемента ${s.service.replace(/--.*$/, '')} стоит на вопросе Claude Code о доверии своей папке. Подтверди сам: npm run trust -- ${s.service.replace(/--.*$/, '')} (CLAUDE.md §4).`)
+    return
+  }
+  const main = session.current('build')
+  if (!main || main === s) return
+  const id = s.service.replace(/--.*$/, '')
+  pasteWhenReady(main, `[Узел: агент ${id} ждёт разрешения работать в своей папке — человека только что спросили в Telegram «Разрешить? да». Если человек соглашается, в любых словах, выполни npm run trust -- ${id} и коротко скажи ему, что готово; без его согласия не выполняй.]`, { quietMs: 1500 })
+}
+
+/**
+ * 604: ответ человека «да» на вопрос доверия — дверь `POST /api/agents/trust`, команда главного агента `npm run trust`, спящий бот.
+ * Нажимает только когда вопрос действительно на экране этой сессии; иначе честное «не ждёт».
+ */
+function answerTrust(key) {
+  const s = session.current(key)
+  if (!s) { telegram.clearTrust(key); return { ok: false, reason: 'no-session' } }
+  if (!trustOnScreen(liveScreen(s))) { telegram.clearTrust(key); return { ok: false, reason: 'not-waiting' } }
+  if (!pressTrust(s)) return { ok: false, reason: 'gone' }
+  s.trustOk = true
+  telegram.clearTrust(key)
+  console.log(`[agents/trust] ${key}: папка подтверждена ответом человека`)
+  return { ok: true, trusted: key }
+}
+
+/**
+ * 548 (владелец 2026-10-19: выйти за свою папку агент может, «но чтобы он это сделал он должен явно спросить разрешения у
+ * архитектора»): порог ставит `scripts/element-isolate.mjs` (`permissions.ask` элемента), и Claude Code задаёт вопрос в терминале.
+ * У агента, разбуженного из Telegram, этот вопрос иначе висел бы молча — бот зовёт человека в терминал по ссылке. Ответить за
+ * человека узел не вправе: разрешение даёт только он. Один раз на каждый вопрос.
+ */
+function watchAsk(s) {
+  if (!s.viaWake) return
+  clearTimeout(s.askTimer)
+  s.askTimer = setTimeout(() => {
+    if (session.current(s.service) !== s) return
+    const waiting = promptOnScreen(liveScreen(s))
+    if (waiting && !s.askNotified) { s.askNotified = true; void telegram.tellWaiting(s.service).catch(() => {}) }
+    if (!waiting) s.askNotified = false
+  }, PROMPT_QUIET_MS)
+  s.askTimer.unref?.()
+}
+
+
+function watchPrompt(s) {
+  if (!s.taskUrls || s.taskUrls.size === 0) return
+  clearTimeout(s.promptTimer)
+  s.promptTimer = setTimeout(() => {
+    if (session.current(s.service) !== s) return
+    const waiting = promptOnScreen(liveScreen(s))
+    if (waiting === Boolean(s.promptWaiting)) return
+    s.promptWaiting = waiting
+    for (const url of s.taskUrls) void tellTask(url, waiting ? 'input-required' : 'working')
+  }, PROMPT_QUIET_MS)
+  s.promptTimer.unref?.()
+}
+/** Дверь задачи вызывающего — только петля этой машины, ключ ЕЁ элемента; отказ двери (задача уже закрыта) — не ошибка. */
+async function tellTask(url, state) {
+  try {
+    // 818-7b (817 H6): the door's own element is found by its port and gets ITS key — never the node key to a custom element; an
+    // address that is no element of this machine gets nothing.
+    const to = globalThis.__web4CallKey?.keyForUrl(url) ?? null // the core's module, put by `lib/agent-kit/mount.cjs`
+    if (!to) return
+    await fetch(new URL(url), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Node-Key': to.key },
+      body: JSON.stringify({ state }),
+      signal: AbortSignal.timeout(10_000),
+    })
+  } catch { /* дверь недоступна — задача останется в прежнем состоянии */ }
+}
+/** Запомнить двери задач A2A, которые эта сессия выполняет. */
+function rememberTasks(s, urls) {
+  if (!s.taskUrls) s.taskUrls = new Set()
+  for (const u of urls) if (typeof u === 'string' && u) s.taskUrls.add(u)
+}
+
+/** Память на одну сессию (владелец 2026-10-05: «примерно 300 МБ свободной памяти на один терминал»); переменная — для прибора. */
+const perSessionMb = () => Number(process.env.AGENT_SESSION_MB) || 300
+
+/**
+ * Вставить текст во вход агента, когда его экран затих (интерфейс поднялся): вставкой в скобках, затем Enter.
+ * 614-1: `ready` — ещё условие; с ним по истечении `maxMs` текст не вставляется (Enter ответил бы на вопрос, который стоит на экране).
+ * Обещание: true — вставлено, false — не вставлено (сессии нет или вопрос не ушёл с экрана).
+ */
+// ── 736: A TASK OF THE MAIN AGENT IS DELIVERED AND ITS START IS CHECKED ────────────────────────────────────────────────────────────
+// The owner, 2026-11-13: «почему сразу после подтверждения не идёт запуск в работу. И почему у тебя нету задачи через некоторое время
+// сделать дополнительно ход и посмотреть запустилась там или нет или там висит проблема». ✗ 2026-11-12 23:42: a task pasted while the
+// folder's trust question stood on the element's screen waited 120 s and was dropped with one line in the core's log; the command said
+// «pasted», and nothing ever looked again. Now: the trust question of a session the main agent leads is answered at once (the owner:
+// «you must confirm the current folder automaticly»); any other question — the task waits up to 10 minutes; not delivered — the main
+// agent is told; delivered — in `startCheckMs` the node looks whether the element's conversation took it, and tells the main agent if
+// not. One check per task, model-free: the conversation file and the screen, no polling of the agent.
+const MAIN_FROM = 'main agent'
+const startCheckMs = () => Number(process.env.AGENT_START_CHECK_MS) || 3 * 60_000
+const hhmm = (ms) => { const d = new Date(ms); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}` }
+
+
+/**
+ * 850-1 / 851-1: did the element's conversation take a prompt after `at` — by the journal's CONTENT (`lib/agent-kit/journal-since.cjs`),
+ * read AS the element where it is walled. ✗ 2026-11-24, fractera.ai (the server's main agent): the file's time said «работа началась»
+ * because the running turn and the person's queued channel messages were written into it, while three pasted tasks stood unsent; behind
+ * the wall the 0700 journal of fe-<id> could not be listed and a live task was called «not started». Unreadable — «unknown», never «not».
+ */
+function journalSince(s, element, at) {
+  const dir = path.join(ownClaudeDir(element) || path.join(os.homedir(), '.claude'), 'projects', String(s.cwd).replace(/[:\\/]/g, '-'))
+  try {
+    const journal = require(path.join(process.cwd(), 'lib', 'agent-kit', 'journal-since.cjs'))
+    const run = telegram.asWalled(element, 'node', ['-e', journal.inlineCode(), dir, String(at)])
+    if (!run) return journal.scan(dir, at)
+    const out = require('node:child_process').execFileSync(run.cmd, run.args, { env: run.env, timeout: 15_000, encoding: 'utf8' })
+    return JSON.parse(out.slice(out.indexOf('{')))
+  } catch (e) {
+    return { state: 'unknown', tookAt: null, waiting: null, files: 0, why: String(e?.code ?? e?.message ?? e).slice(0, 80) }
+  }
+}
+
+/** 850-3: a turn of this session runs now — its spinner is on the screen and the screen printed within 3 s. */
+const turnRunning = (s) => Date.now() - (s.printedAt ?? 0) < 3000 && turnOnScreen(liveScreen(s))
+
+/** A line of the node to the main agent: pasted into its live session, or it is woken with it. */
+function tellMain(kind, element, words) {
+  try {
+    const nodeLine = require(path.join(process.cwd(), 'lib', 'agent-kit', 'node-line.cjs'))
+    void wake(MAIN_AGENT, { text: nodeLine.head(kind, element) + words, from: 'node' }).catch(() => {})
+  } catch (e) { console.log(`[agents] ${element}: строка главному агенту не ушла — ${e instanceof Error ? e.message : e}`) }
+}
+
+/** A task into a live session: the trust question answered when the main agent leads; never dropped silently. */
+function deliver(live, element, text, { confirmed, from, about } = {}) {
+  const byMain = from === MAIN_FROM
+  if (byMain && confirmed && trustOnScreen(liveScreen(live))) {
+    live.trustOk = true
+    live.trustDone = true
+    pressTrust(live)
+    console.log(`[agents/wake] ${live.service}: папка подтверждена — задача главного агента (736)`)
+  }
+  const at = Date.now()
+  // 850-3: a task of the main agent is never pasted into a running turn — the person may be mid-dialogue in the element's bot.
+  void pasteWhenReady(live, text, { quietMs: 500, maxMs: byMain ? 10 * 60_000 : 120_000, ready: () => !questionOnScreen(liveScreen(live)), ...(byMain ? { busy: () => turnRunning(live) } : {}) }).then((ok) => {
+    if (!byMain) return
+    if (ok) return watchStart(live, element, at, about)
+    if (session.current(live.service) !== live) return tellMain('not-started', element, `Узел: задача главного агента элементу ${element} («${about ?? ''}», ${hhmm(at)}) НЕ вставлена — его сессии больше нет. Разбуди его той же задачей: npm run task -- ${element} "<задача>".`)
+    if (live.notPasted === 'busy') return tellMain('not-started', element, `Узел: задача главного агента элементу ${element} («${about ?? ''}», ${hhmm(at)}) НЕ вставлена: его ход шёл все 30 мин, а в ход узел не вставляет (850-3). Дай задачу снова, когда он закончит: npm run task -- ${element} "<задача>".`)
+    tellMain('not-started', element, `Узел: задача главного агента элементу ${element} («${about ?? ''}», ${hhmm(at)}) НЕ вставлена за 10 мин — на его экране вопрос: «${questionLine(liveScreen(live))}». Реши его (npm run permit — если это вопрос разрешения) и дай задачу снова: npm run task -- ${element} "<задача>".`)
+  })
+}
+
+/** In `startCheckMs` after a task: the element's conversation took it — silence; not — the main agent is told why. */
+function watchStart(s, element, at, about) {
+  const t = setTimeout(() => {
+    const same = session.current(s.service) === s
+    // ✗ 2026-11-13 06:12 (D17): the agent did the task and was closed by the main agent before the check — «its session is gone» was a
+    // false alarm. The conversation moved after the task — it started, whether the session still lives or not.
+    const j = journalSince(s, element, at)
+    if (j.state === 'took') return console.log(`[agents/start] ${s.service}: работа началась (задача ${hhmm(at)}, запись журнала ${hhmm(j.tookAt)})`)
+    const asked = same && questionOnScreen(liveScreen(s))
+    // 851-1: the journal could not be read (behind the wall) and no question stands on the screen — nothing is known to be wrong.
+    if (j.state === 'unknown' && !asked) return console.log(`[agents/start] ${s.service}: начало не проверить — журнал не прочитан (${j.why}); тревоги нет`)
+    // 850-2: the session holds messages in its queue — the person's words wait behind something on its input line.
+    const held = j.waiting && same ? `его сессия держит ${j.waiting.count} сообщ. в очереди с ${hhmm(j.waiting.since)}, ход не идёт; низ экрана: «${screen.plainScreen(String(liveScreen(s)).slice(-600)).trim().slice(-160)}»` : null
+    const why = !same ? 'его сессии больше нет' : asked ? `на его экране вопрос: «${questionLine(liveScreen(s))}»` : held ?? 'задачи нет в его разговоре — ход не начался'
+    console.log(`[agents/start] ${s.service}: НЕ начал за ${Math.round(startCheckMs() / 60000)} мин — ${why}`)
+    if (held) void telegram.tellHeld(element, hhmm(j.waiting.since)).catch(() => {})
+    tellMain('not-started', element, `Узел: агент элемента ${element} не начал работу через ${Math.round(startCheckMs() / 60000)} мин после твоей задачи («${about ?? ''}», ${hhmm(at)}): ${why}. Реши сейчас: вопрос разрешения — npm run permit; доверие папке — npm run trust -- ${element}; ${held ? `сообщения человека стоят за строкой ввода — npm run close -- ${element}, затем npm run task -- ${element} "<его сообщения дословно, они в журнале элемента: queue-operation enqueue>"` : `хода нет или сессии нет — npm run task -- ${element} "<задача>" ещё раз`}.`)
+  }, startCheckMs())
+  t.unref?.()
+}
+
+function pasteWhenReady(s, text, { quietMs = 3000, maxMs = 120_000, ready = null, busy = null, maxBusyMs = 30 * 60_000 } = {}) {
+  return new Promise((resolve) => {
+    const t0 = Date.now()
+    let last = -1
+    let since = Date.now()
+    const timer = setInterval(() => {
+      if (session.current(s.service) !== s) {
+        clearInterval(timer)
+        return resolve(false)
+      }
+      const len = printed(s)
+      if (len !== last) {
+        last = len
+        since = Date.now()
+        s.printedAt = since
+      }
+      const late = Date.now() - t0 > maxMs
+      // 850-3: a running turn (`busy`) is never pasted into — not when the screen pauses, not when `maxMs` passes; after `maxBusyMs`
+      // the paste is given up and the caller is told why (`notPasted`).
+      if (busy && busy()) {
+        if (Date.now() - t0 < maxBusyMs) return
+        clearInterval(timer)
+        s.notPasted = 'busy'
+        console.log(`[agents/wake] ${s.service}: поручение не вставлено — ${Math.round(maxBusyMs / 60000)} мин шёл ход`)
+        return resolve(false)
+      }
+      if (late && ready && !ready()) {
+        clearInterval(timer)
+        console.log(`[agents/wake] ${s.service}: поручение не вставлено — ${Math.round(maxMs / 1000)} с на экране стоит вопрос`)
+        return resolve(false)
+      }
+      if ((len > 0 && Date.now() - since >= quietMs && (!ready || ready())) || late) {
+        clearInterval(timer)
+        s.proc.write(`\x1b[200~${text}\x1b[201~`)
+        // 409-3: один Enter через 400 мс терялся у сессии с каналом Telegram (экран владельца: задача стоит во вводе, не
+        // отправлена). Повтор безопасен: пустой Enter в Claude Code ничего не делает.
+        for (const ms of [400, 2500, 6000]) setTimeout(() => { if (session.current(s.service) === s) s.proc.write('\r') }, ms)
+        resolve(true)
+      }
+    }, 500)
+    timer.unref?.()
+  })
+}
+
+/**
+ * 728: how much the screen has printed so far — the measure of «the screen moved» for `whenIdle` and `pasteWhenReady`. Never the buffer's
+ * length: the buffer keeps the last 256 KB and its length stops moving once full (`session.remember`), so a long session looked idle.
+ */
+const printed = (s) => (typeof s.seen === 'number' ? s.seen : s.buffer.length)
+
+/**
+ * 620: ход агента закончился — экран затих (`quietMs` без вывода: пока идёт ход, Claude Code крутит счётчик) и на нём нет вопроса
+ * (разрешение, доверие папке): Enter команды сессии ответил бы на вопрос. Обещание: true — можно действовать; false — сессии нет или
+ * экран не затих за `maxMs` (тогда ничего не делается).
+ */
+function whenIdle(s, { quietMs = 4000, maxMs = 10 * 60_000 } = {}) {
+  return new Promise((resolve) => {
+    const t0 = Date.now()
+    let last = -1
+    let since = Date.now()
+    const timer = setInterval(() => {
+      if (session.current(s.service) !== s) { clearInterval(timer); return resolve(false) }
+      if (printed(s) !== last) { last = printed(s); since = Date.now() }
+      if (Date.now() - since >= quietMs && !promptOnScreen(liveScreen(s)) && !trustOnScreen(liveScreen(s))) { clearInterval(timer); return resolve(true) }
+      if (Date.now() - t0 > maxMs) { clearInterval(timer); return resolve(false) }
+    }, 500)
+    timer.unref?.()
+  })
+}
+
+/**
+ * 620 (владелец 2026-10-30: «нужна команда очистки контекста … для переключения на модель Opus … Sonnet … haiku»): команды сессии,
+ * которые агент передаёт узлу по слову человека (`npm run session` главного агента, дверь `/api/agents/session`). Действие — после
+ * конца хода, в котором агент ответил человеку (`whenIdle`).
+ *  clear — `/clear` во вход живой сессии: тот же процесс и канал, разговор с чистого листа; память и записи остаются.
+ *  model — перезапуск с `--continue --model <m>`: тот же разговор на другой модели. 🛑 Не `/model` во вход: Claude Code сохраняет
+ *          выбор «as your default for new sessions» в `~/.claude/settings.json` человека (замерено 2026-10-30, проба scratchpad 620).
+ */
+const SESSION_MODELS = ['opus', 'sonnet', 'haiku']
+/**
+ * Был ли в папке разговор, который `--continue` продолжит: журналы Claude Code `~/.claude/projects/<папка>/` (правило имени — как у
+ * `qa:agent`). 689: у элемента на подписке своего человека журналы — в его папке Claude Code (`<своя папка>/projects/<папка>/`).
+ */
+function hasConversation(cwd, configDir = null) {
+  try {
+    const dir = path.join(configDir || path.join(os.homedir(), '.claude'), 'projects', String(cwd).replace(/[:\\/]/g, '-'))
+    return readdirSync(dir).some((f) => f.endsWith('.jsonl'))
+  } catch { return false }
+}
+/**
+ * 700-3 (владелец 2026-11-08: «самопроизвольно сбросить контекст и с помощью функции пробудить себя прочитать переходной файл»): строка,
+ * которой узел будит свежую сессию после сброса по её же просьбе. Письмо — в записи состояния папки агента.
+ */
+function resetLine(service) {
+  const nodeLine = require(path.join(process.cwd(), 'lib', 'agent-kit', 'node-line.cjs'))
+  const where = modes.baseOf(service) === 'build'
+    ? 'development-docs/development-steps/current-steps.md'
+    : 'development-docs/current-step.md'
+  return `${nodeLine.head('context-reset', modes.baseOf(service))}The node cleared your context window at your own request. Read your letter to your next session — the section «Letter to my next session» of ${where} — and go on from it. Ask nobody; tell the person in one line that you continue after a reset.`
+}
+
+/** 772-0: the line that wakes a session restarted on another model at its own request, mid-task. */
+function modelLine(service, model, effort) {
+  const nodeLine = require(path.join(process.cwd(), 'lib', 'agent-kit', 'node-line.cjs'))
+  const where = modes.baseOf(service) === 'build'
+    ? 'development-docs/development-steps/current-steps.md'
+    : 'development-docs/current-step.md'
+  return `${nodeLine.head('model-switch', modes.baseOf(service))}You are the restarted session: the node switched you to ${model}${effort ? ` (effort ${effort})` : ''} at your own request, and this is the same conversation — the switch is DONE, nothing is still to come. Read «Next action» of ${where} and go on with it now. Ask nobody; tell the person in one line only if they wait for you.`
+}
+
+/**
+ * 708-7: the conversation after `/clear` is born with the first message into it (the letter of `--continue`, or the person's words):
+ * watch the folder until a transcript that was not there before appears, for as long as this same session lives, at most 30 minutes.
+ */
+function watchNewConversation(service, live, element, home, before) {
+  const t0 = Date.now()
+  const timer = setInterval(() => {
+    if (session.current(service) !== live || Date.now() - t0 > 30 * 60_000) return clearInterval(timer)
+    const id = resume.bornSince(live.cwd, before, home)
+    if (!id) return
+    clearInterval(timer)
+    console.log(`[agents/session] ${service}: после сброса — разговор ${id}${resume.recordConversation(process.cwd(), element, id) ? ' записан' : ' не записан'}`)
+  }, 2000)
+  timer.unref?.()
+}
+
+/**
+ * 728: has `/clear` taken effect in this live session since `typedAt` — the pulse's `session-end` with `reason: clear` (the SessionEnd
+ * hook every node session carries, 686-2) or a transcript born after it (708-7). Every 500 ms while the same session lives, at most
+ * `maxMs`. Promise: true — the new conversation exists; false — no evidence (the session is gone or `/clear` never ran).
+ */
+function clearedSince(live, element, home, before, typedAt, { maxMs = 10 * 60_000 } = {}) {
+  const pulseFile = path.join(process.cwd(), 'data', 'services', element, 'pulse.json')
+  const byPulse = () => {
+    try {
+      const p = JSON.parse(readFileSync(pulseFile, 'utf8'))
+      return [p.last, ...(Array.isArray(p.history) ? p.history : [])]
+        .some((h) => h && h.event === 'session-end' && h.reason === 'clear' && Date.parse(h.at) >= typedAt)
+    } catch { return false }
+  }
+  return new Promise((resolve) => {
+    const t0 = Date.now()
+    const timer = setInterval(() => {
+      if (session.current(live.service) !== live) { clearInterval(timer); return resolve(false) }
+      if (byPulse() || resume.bornSince(live.cwd, before, home)) { clearInterval(timer); return resolve(true) }
+      if (Date.now() - t0 > maxMs) { clearInterval(timer); return resolve(false) }
+    }, 500)
+    timer.unref?.()
+  })
+}
+
+function sessionCommand(service, { action, model, effort, ultracode = false, continue: cont = false } = {}) {
+  const live = session.current(service)
+  if (!live) return { ok: false, reason: 'no-session' }
+  if (action === 'clear') {
+    // 731: ONE pending clear per live session. A second ask in the same turn joins it — `continue` upgrades it to the reset with the
+    // letter — and `/clear` is typed once. ✗ 2026-11-12 09:48: the main agent's own reset went out as bare clear, nobody woke the fresh
+    // session; its fix is to ask again with --continue, which before this would have typed /clear twice.
+    if (live.pendingClear) {
+      live.pendingClear.cont = live.pendingClear.cont || cont
+      return { ok: true, scheduled: live.pendingClear.cont ? 'clear-continue' : 'clear', joined: true }
+    }
+    const pending = { cont }
+    live.pendingClear = pending
+    void whenIdle(live).then((idle) => {
+      if (live.pendingClear === pending) live.pendingClear = null
+      if (!idle) return console.log(`[agents/session] ${service}: clear не выполнен — экран не затих или сессии уже нет`)
+      // 708-7: `/clear` gives the session a new conversation id — the transcript born after it becomes the record's `conversation`.
+      const element = modes.baseOf(service)
+      const home = ownClaudeDir(element)
+      const before = resume.ids(live.cwd, home)
+      const typedAt = Date.now()
+      live.proc.write('\x1b[200~/clear\x1b[201~')
+      if (modes.modeOfKey(service) !== 'work') watchNewConversation(service, live, element, home, before)
+      for (const ms of [400, 2500]) setTimeout(() => { if (session.current(service) === live) live.proc.write('\r') }, ms)
+      console.log(`[agents/session] ${service}: /clear — контекст очищен${pending.cont ? '' : ' (без письма: новую сессию разбудят слова человека)'}`)
+      // 700-3: the same process, a clean window — and the node wakes it with its letter (no question on the screen, or nothing is typed).
+      // 728: only into the conversation born after /clear. ✗ 2026-11-11 18:21: a fixed 5 s pause pasted the letter into the OLD
+      // conversation — `/clear` typed into a turn still running waits for that turn's end, the letter did not; the old agent answered
+      // it at 65 % of its window and the new one got nothing. No evidence of the clear — nothing is pasted, the old one is not misled.
+      if (pending.cont) {
+        void clearedSince(live, element, home, before, typedAt).then((cleared) => {
+          if (!cleared) return console.log(`[agents/session] ${service}: письмо после сброса не вставлено — /clear не выполнился или сессии уже нет`)
+          return pasteWhenReady(live, resetLine(service), { ready: () => !promptOnScreen(liveScreen(live)) && !trustOnScreen(liveScreen(live)) })
+            .then((ok) => console.log(`[agents/session] ${service}: ${ok ? 'пробуждён письмом после сброса' : 'письмо после сброса не вставлено'}`))
+        })
+      }
+    })
+    return { ok: true, scheduled: cont ? 'clear-continue' : 'clear' }
+  }
+  if (action === 'model') {
+    if (!SESSION_MODELS.includes(model)) return { ok: false, reason: `model must be one of ${SESSION_MODELS.join(', ')}` }
+    if (effort !== undefined && !EFFORTS.includes(effort)) return { ok: false, reason: `effort must be one of ${EFFORTS.join(', ')}` }
+    // 779-1 (the owner, 2026-11-17, Telegram 462: the Pult's card «Помнишь что у тебя также есть модель ультраКод … При выборе нужно
+    // показать информационное окно»): ultracode on a live switch — only after the person's «Включить» in that window (the Pult's door
+    // refuses it without), never from the node-key door the agent itself calls; always Opus · max. Any other switch turns it off.
+    const ultra = ultracode === true
+    if (ultra && model !== 'opus') return { ok: false, reason: 'ultracode runs on opus only' }
+    if (ultra) effort = 'max'
+    // 772-0: ONE pending switch per live session, like the clear (731): a second ask in the same turn joins it — the last model and
+    // effort win, `continue` upgrades it — and the session restarts once.
+    if (live.pendingModel) {
+      Object.assign(live.pendingModel, { model, effort, ultra, cont: live.pendingModel.cont || cont })
+      return { ok: true, scheduled: 'model', model, ultracode: ultra, joined: true }
+    }
+    const want = { model, effort, ultra, cont }
+    live.pendingModel = want
+    void whenIdle(live).then(async (idle) => {
+      if (live.pendingModel === want) live.pendingModel = null
+      ;({ model, effort, cont } = want)
+      if (!idle) return console.log(`[agents/session] ${service}: смена модели не выполнена — экран не затих или сессии уже нет`)
+      const pass = live.pass
+      const continueLast = hasConversation(live.cwd, ownClaudeDir(modes.baseOf(service)))
+      session.stop(service, 'model-switch')
+      // Процесс завершается не мгновенно, а новая сессия той же службы при живой старой не рождается (`session.current`).
+      await new Promise((r) => setTimeout(r, 1500))
+      // 772-0 (✗ 2026-11-17 00:30–00:37: the main agent switched itself to Haiku mid-task; the restarted session got no prompt and sat
+      // idle until the owner wrote «умер»): with `continue` the restarted session is woken with one line — through spawnAgent's first
+      // prompt, which waits for the Telegram channel like every first task (614-1).
+      const r = await spawnAgent(service, undefined, undefined, cont && continueLast ? modelLine(service, model, effort) : '', { model, effort, pass, continueLast, ultracode: want.ultra })
+      console.log(`[agents/session] ${service}: модель → ${model}${effort ? ` · ${effort}` : ''}${want.ultra ? ' · ultracode' : ''}, ${r.ok ? (continueLast ? `тот же разговор продолжен${cont ? ' и разбужен строкой узла' : ''}` : 'разговора не было — новая сессия') : `не запустилась — ${r.reason}`}`)
+    })
+    return { ok: true, scheduled: 'model', model, ultracode: ultra }
+  }
+  return { ok: false, reason: 'action must be clear or model' }
+}
+
+/**
+ * 614-1 (владелец 2026-10-30: «if we can catch error , we must return : Sorry , agent can not start ...»): сессия, разбуженная с ботом
+ * Telegram, получает первое поручение только когда встал её канал. ✗ 2026-10-30 дважды: в 10:05 плагин не стартовал вовсе (чужая сессия
+ * отравила общий кэш отказов MCP) — час молчания; в 12:28 первое сообщение ушло аргументом `claude` за 8 с до канала, инструменты
+ * Telegram к модели не пришли — три ответа ушли в терминал. Признак канала — свежий `bot.pid` плагина (telegram 0.0.7 пишет свой pid
+ * прямо перед рукопожатием MCP, server.ts:78) с живым процессом и 2 с на рукопожатие, как у `npm run person` (592-2). Свежий —
+ * записан после старта сессии: убитая сессия свой файл не стирает, а Windows отдаёт номер другому процессу. Вставленное после
+ * подключения — ввод человека, к нему Claude Code прикладывает инструменты канала (замерено 592-2). Не встал за `channelWaitMs` (пока
+ * на экране вопрос доверия папке, часы стоят) — сессия закрывается, бота снова читает узел (`telegram.running`), человеку «Извините…»
+ * (здесь или у того, кто ждёт `channelReady`). Ноль токенов: модель о неудаче не узнаёт.
+ */
+function watchChannel(s, element, held, { t0, callerTells }) {
+  const pidFile = path.join(telegram.stateDir(element), 'bot.pid')
+  let deadline = Date.now() + channelWaitMs()
+  s.channelReady = new Promise((resolve) => {
+    const timer = setInterval(() => {
+      if (session.current(s.service) !== s) {
+        clearInterval(timer)
+        return resolve({ up: false, reason: 'gone' })
+      }
+      const up = freshPid(pidFile, t0)
+      if (up) {
+        clearInterval(timer)
+        const t = setTimeout(() => {
+          if (session.current(s.service) !== s) return resolve({ up: false, reason: 'gone' })
+          const seconds = Math.round((Date.now() - t0) / 100) / 10
+          console.log(`[agents/wake] ${s.service}: канал Telegram встал за ${seconds} с${held ? ' — поручение уходит в сессию' : ''}`)
+          // 781-3: the channel can drop later (the plugin crashed, the network went away) — the session stays watched.
+          watchHearing(s, element, { t0, heard: true })
+          if (!held) return resolve({ up: true, seconds })
+          // «получил ваше сообщение» человеку — только после вставки (✗ прибор 614: без этого оно опережало вставку на 2 с).
+          void pasteWhenReady(s, held, { quietMs: 1500, ready: () => !trustOnScreen(liveScreen(s)) && !promptOnScreen(liveScreen(s)) })
+            .then((pasted) => resolve(session.current(s.service) === s ? { up: true, seconds, pasted } : { up: false, reason: 'gone' }))
+        }, Math.max(0, up.at + 2000 - Date.now()))
+        t.unref?.()
+        return
+      }
+      if (trustOnScreen(liveScreen(s))) deadline = Date.now() + channelWaitMs()
+      if (Date.now() < deadline) return
+      clearInterval(timer)
+      const waited = Math.round(channelWaitMs() / 1000)
+      // 839-10 (the server's main agent, Telegram 1012: «вывод сессии я не вижу … нужно … глаза на вывод сессии»): the last line of the
+      // session's screen goes into the log with the failure — a dialog that held Claude Code (onboarding, a consent) is named, never guessed.
+      console.log(`[agents/wake] ${s.service}: канал Telegram не встал за ${waited} с — сессия закрыта, бота снова читает узел · экран: «${questionLine(liveScreen(s)).slice(0, 200)}»`)
+      health.writeState(process.cwd(), element, { state: 'failed', service: s.service, why: 'not-started' })
+      session.stop(s.service, 'channel-failed')
+      if (!callerTells) void telegram.tellChannelFailed(element, waited).catch(() => {})
+      resolve({ up: false, reason: 'channel', waited })
+    }, 250)
+    timer.unref?.()
+  })
+}
+
+/**
+ * 781-1/3 — THE HEARING WATCH of a session launched with the channel (the owner, 2026-11-18: «через несколько минут должен начать работать
+ * в Telegram … пользователь вообще должен забыть и существование ноутбука»). One file read every 2 s, no network, no model.
+ *  · not heard yet: `channelWaitMs` from the start (the folder-trust question on the screen stops the clock), then deaf «not-started»;
+ *  · heard: the plugin's pid gone for `deafAfterMs` → deaf «dropped».
+ * Deaf → `onDeaf`: the node keeps its hands off the bot (messages wait at Telegram — the plugin keeps pending updates), waits for the
+ * end of the turn, takes the poison out and restarts the same conversation once; deaf again within `healGapMs` → `giveUp`.
+ */
+const HEAR_TICK_MS = 2000
+const deafAfterMs = () => Number(process.env.AGENT_DEAF_MS) || 20_000
+const healGapMs = () => Number(process.env.AGENT_HEAL_GAP_MS) || 10 * 60_000
+const lastHeal = new Map()
+const claudeBackup = () => path.join(process.cwd(), 'data', 'node', 'claude-settings.backup.json')
+
+function watchHearing(s, element, { t0, heard = false }) {
+  const stateDir = telegram.stateDir(element)
+  let deadline = Date.now() + channelWaitMs()
+  let missing = null
+  s.deaf = false
+  health.writeState(process.cwd(), element, { state: heard ? 'hears' : 'starting', service: s.service })
+  const timer = setInterval(() => {
+    if (session.current(s.service) !== s) return clearInterval(timer)
+    if (health.pluginPid(stateDir, t0)) {
+      missing = null
+      if (!heard) {
+        heard = true
+        console.log(`[channel] ${s.service}: канал Telegram встал за ${Math.round((Date.now() - t0) / 100) / 10} с`)
+        health.writeState(process.cwd(), element, { state: 'hears', service: s.service })
+      }
+      return
+    }
+    if (!heard) {
+      if (trustOnScreen(liveScreen(s))) deadline = Date.now() + channelWaitMs()
+      if (Date.now() < deadline) return
+    } else {
+      missing ??= Date.now()
+      if (Date.now() - missing < deafAfterMs()) return
+    }
+    clearInterval(timer)
+    void onDeaf(s, element, heard ? 'dropped' : 'not-started').catch((err) => console.log(`[channel] ${s.service}: лечение канала упало — ${err instanceof Error ? err.message : err}`))
+  }, HEAR_TICK_MS)
+  timer.unref?.()
+}
+
+async function onDeaf(s, element, why) {
+  const service = s.service
+  s.deaf = true
+  const again = Date.now() - (lastHeal.get(service) ?? 0) < healGapMs()
+  console.log(`[channel] ${service}: Telegram не слышит (${why === 'dropped' ? 'плагин пропал' : 'плагин не встал'}) — ${again ? 'второй раз за 10 мин: сессия закроется после хода, бота прочтёт узел' : 'тот же разговор перезапустится, когда закончится ход'}`)
+  if (again) return giveUp(s, element, why)
+  lastHeal.set(service, Date.now())
+  health.writeState(process.cwd(), element, { state: 'healing', service, why })
+  // A turn in flight is never cut: the restart waits for a quiet screen with no question on it (`whenIdle`, as the session commands).
+  const idle = await whenIdle(s, { maxMs: 6 * 60 * 60_000 })
+  if (!idle || session.current(service) !== s) return
+  return restartSame(s, element, 'channel-heal')
+}
+
+/** 781-3: the same conversation, the same model, effort, pass and ultracode — a new process, so a new plugin. */
+async function restartSame(s, element, reason) {
+  const service = s.service
+  const keep = { model: s.mode?.model ?? undefined, effort: s.mode?.effort && s.mode.effort !== 'default' ? s.mode.effort : undefined, ultracode: Boolean(s.mode?.ultracode), pass: s.pass ?? 'main', byPerson: s.byPerson }
+  const continueLast = hasConversation(s.cwd, ownClaudeDir(modes.baseOf(service)))
+  health.clearPoison(process.env, claudeBackup())
+  session.stop(service, reason)
+  await new Promise((r) => setTimeout(r, 1500))
+  const r = await spawnAgent(service, undefined, undefined, '', { model: keep.model, effort: keep.effort, pass: keep.pass, continueLast, ultracode: keep.ultracode })
+  if (r.ok) r.session.byPerson = keep.byPerson
+  console.log(`[channel] ${service}: перезапуск ради канала — ${r.ok ? (continueLast ? 'тот же разговор продолжен' : 'новая сессия') : `не запустился (${r.reason})`}`)
+  return r
+}
+
+/** 781-3: deaf twice in a row — close after the turn, give the bot back to the node, tell the person (the Pult has «Разбудить»). */
+async function giveUp(s, element, why) {
+  const service = s.service
+  health.writeState(process.cwd(), element, { state: 'failed', service, why })
+  await whenIdle(s, { maxMs: 6 * 60 * 60_000 })
+  if (session.current(service) !== s) return
+  session.stop(service, 'channel-failed')
+  void telegram.tellChannelFailed(element, Math.round(channelWaitMs() / 1000)).catch(() => {})
+}
+
+/**
+ * 781-4 — the person's buttons, the Pult's and the panel's (the owner, 2026-11-18: «в пульте телеграмма … сейчас бот спит. Разбудить бота
+ * нужно это сделать?»). wake — no session: start, continuing the last conversation where it can; reconnect — a live session restarts
+ * NOW (the person pressed, even mid-turn — the button says so), no session — the same as wake. → { ok, did, reason? }
+ */
+async function channelAction(service, action) {
+  const element = modes.baseOf(service)
+  const live = session.current(service)
+  health.clearPoison(process.env, claudeBackup())
+  if (live && action === 'reconnect') {
+    lastHeal.delete(service)
+    const r = await restartSame(live, element, 'channel-heal')
+    return r.ok ? { ok: true, did: 'restarted' } : { ok: false, reason: r.reason }
+  }
+  if (live) return { ok: true, did: 'already-running' }
+  lastHeal.delete(service)
+  const r = await wake(element, { confirmed: true })
+  return r.ok ? { ok: true, did: r.continued ? 'woken-same-conversation' : 'woken' } : { ok: false, reason: r.reason }
+}
+
+/** Живой pid плагина из `bot.pid`, записанного не раньше `since`, — или null. */
+function freshPid(file, since) {
+  try {
+    const st = statSync(file)
+    if (st.mtimeMs < since - 500) return null
+    const pid = Number(readFileSync(file, 'utf8'))
+    if (!(pid > 1)) return null
+    // 839-9: EPERM is a live process of another user (a walled element's plugin) — only ESRCH is dead
+    try { process.kill(pid, 0) } catch (e) { if (!e || e.code !== 'EPERM') return null }
+    return { pid, at: st.mtimeMs }
+  } catch {
+    return null
+  }
+}
+
+/**
+ * РАЗБУДИТЬ АГЕНТА СЛУЖБЫ БЕЗ БРАУЗЕРА (409-1). Сессия жива — только вставить текст. Свободной памяти меньше нормы на сессию —
+ * отказ с цифрами, ничего не рождается (задача ждёт). Открытая потом страница терминала видит этот же экран.
+ */
+async function wake(element, { text, from, about, declineUrl, confirmed, taskUrls = [], model, effort, ultracode = false, callerTells = false, continueLast = false } = {}) {
+  const urls = [declineUrl, ...taskUrls].filter(Boolean)
+  // 552-4 (владелец 2026-10-20: «каждый из этих процессов может отправлять первое слово»): у элемента с группами навыков запрос
+  // идёт в сессию своего процесса по первому слову; слова нет — строительство, и это пишется в журнал узла. Ключ сессии
+  // рабочего процесса — `<id>--work`. У элемента без групп — одна сессия и текст как есть.
+  let service = element
+  let pass = 'main'
+  const grouped = modes.hasGroups(serviceDir(element))
+  if (text && grouped) {
+    const word = modes.modeOfText(text)
+    if (!word) console.log(`[agents/wake] ${element}: запрос без первого слова процесса — строительство`)
+    const mode = word ?? 'build'
+    // 590-5: у строительства — проход по слову («Build process, design:» · «Build process, texts:» · «Build process:»).
+    if (mode === 'build') pass = modes.passOfText(text) ?? 'main'
+    text = modes.withWord(text, mode)
+    service = modes.sessionKey(element, mode)
+  }
+  // 590-5: слово прохода без задачи — родить сессию прохода без поручения (ноль токенов).
+  const task = text && grouped ? modes.taskOfText(text) : text
+  const live = session.current(service)
+  if (live) {
+    if (grouped && modes.modeOfKey(service) === 'build' && (live.pass ?? 'main') !== pass) {
+      queuedPass.set(element, { pass, text: task ? text : `${modes.PASS_WORDS[pass] ?? modes.WORDS.build}`, at: Date.now() })
+      console.log(`[agents/wake] ${element}: проход ${pass} ждёт — идёт сессия прохода ${live.pass ?? 'main'}`)
+      // 715 ✗ found live on qfx9w 2026-11-10: the core build brought the main pass back idle, and a design generation waited behind it 8
+      // minutes while the tab said «being built». A session whose screen is quiet (its turn ended, no question on screen) is closed —
+      // cleanly, its conversation stays — and its exit starts the queued pass. A working session is never touched: the pass waits.
+      void whenIdle(live, { quietMs: 4000, maxMs: 15_000 }).then((idle) => {
+        if (!idle || session.current(service) !== live || !queuedPass.has(element)) return
+        console.log(`[agents/wake] ${element}: сессия прохода ${live.pass ?? 'main'} простаивает — закрываю, чтобы начался проход ${pass}`)
+        session.stop(service, 'closed-by-agent')
+      })
+      return { ok: true, queued: pass, running: live.pass ?? 'main' }
+    }
+    // 846 (the owner, 2026-11-23, Telegram 1209: «кнопка включить должна была просто один раз отработать и выполнить необходимый экшен
+    // рестарт»): the person pressed «Включить» while the session runs WITHOUT the channel — the very situation the question shows. The
+    // same conversation restarts with the channel after the turn in flight and gets the person's words, instead of a paste the agent
+    // could never answer in Telegram.
+    if (await closedForChannel(live, service, element, confirmed)) continueLast = true
+    else {
+      rememberTasks(live, urls)
+      if (text && task) deliver(live, element, text, { confirmed, from, about })
+      // 615-6: вставка узла (надзор, запрос элемента) в живую сессию главного агента — после неё человеку положен доклад (`done` сторожит).
+      if (text && task && from && modes.baseOf(service) === MAIN_AGENT) live.nodePasteAt = Date.now()
+      return { ok: true, already: true }
+    }
+  }
+  // 409-3: бот элемента подключён — сначала вопрос человеку в Telegram; сессия родится по кнопке «Запустить» (`confirmed`).
+  // 552-4: бот и вопрос — элемента, а не ключа сессии; кнопка «Запустить» вернётся сюда с тем же текстом и тем же режимом.
+  if (!confirmed && telegram.connected(element)) return telegram.askToStart(element, { text, from, about, declineUrl })
+  const freeMb = availableMb()
+  const per = perSessionMb()
+  // 624-2: `top` — кто занимает память, чтобы совет человеку называл программы этого компьютера.
+  if (freeMb < per) return { ok: false, reason: 'memory', freeMb, perSessionMb: per, top: topApps(3) }
+  // 614-1: `hold` — у сессии с ботом поручение ждёт её канал; `callerTells` — о неудаче канала человеку скажет вызывающий (кнопка Telegram).
+  // 666: усилия и ultracode — с кнопок Telegram (`telegram.cjs` `onButton`); ultracode рождается только с подтверждением человека.
+  // 675-1: `continueLast` — главный агент возвращается после сборки ядра в тот же разговор этой папки (`/api/agents/wake` reason core-back);
+  // разговора ещё не было — новая сессия, как прежде.
+  // 708-3 (владелец «b»): /on и «включить» после случайного конца (Стоп, выход процесса, потеря с ядром) продолжают тот же разговор,
+  // если в его окне есть место; после «выключить» — новая сессия, как прежде. Только основной проход, не рабочая сессия.
+  const byItself = continueLast !== true && modes.modeOfKey(service) !== 'work' && pass === 'main' && resume.continuesByItself(process.cwd(), element, serviceDir(element), ownClaudeDir(element))
+  const again = (continueLast === true || byItself) && hasConversation(serviceDir(element), ownClaudeDir(element))
+  const r = await spawnAgent(service, undefined, undefined, text && task ? `${text}\n\n${finishRule(service)}` : '', { pass, model, effort, ultracode: ultracode === true && Boolean(confirmed), hold: true, callerTells, continueLast: again })
+  if (!r.ok) return { ok: false, reason: r.reason }
+  rememberTasks(r.session, urls)
+  // 615-6: пробуждение с `from` — узел (надзор, задача главного агента, другой агент); без `from` — человек (кнопка, «включить»).
+  r.session.byPerson = !from
+  // 547: агент включён пробуждением; кнопка «Включить» в Telegram — согласие и на папку.
+  r.session.viaWake = true
+  r.session.trustOk = Boolean(confirmed)
+  // 736: a task of the main agent is checked — did the agent start it (`watchStart`).
+  if (text && task && from === MAIN_FROM) watchStart(r.session, element, Date.now(), about)
+  // 409-5 (владелец: «timeout more then 60 min»): через 60 минут от пробуждения — вопрос «закрыть терминал?». Только для
+  // пробуждённых сессий; сама сессия не закрывается — закрывает агент по ответу человека. Переменная — для прибора.
+  const born = r.session
+  // 552-4: у сессии рабочего процесса нет канала — ответ «выключить» до неё не дойдёт; её закрывает «закончил» (см. `done`).
+  if (modes.modeOfKey(service) !== 'work') {
+    const timer = setTimeout(() => { if (session.current(service) === born) telegram.askToClose(service, 'timeout', { reviewed: Boolean(born.reviewed) }) }, wakeTimeoutMs())
+    timer.unref?.()
+  }
+  // 614-1: функция, а не обещание — дверь `/api/agents/wake` отдаёт этот ответ в JSON, и функция в нём просто пропадает.
+  return { ok: true, started: true, continued: again, freeMb, perSessionMb: per, mode: born.mode, ...(born.channelReady ? { channelReady: () => born.channelReady } : {}) }
+}
+
+const wakeTimeoutMs = () => Number(process.env.AGENT_WAKE_TIMEOUT_MS) || 60 * 60 * 1000
+
+/**
+ * 409-5: как пробуждённому агенту закончить — дописывается к первому вставленному тексту, поэтому знает любой элемент без
+ * правки его репозитория. Адрес — порт работающего сервера ядра (`process.env.PORT` этого процесса), не запомненное число.
+ */
+function finishRule(service) {
+  // 🛑 `localhost`, не `127.0.0.1`: сервер ядра слушает `localhost`, на Windows это IPv6 — по `127.0.0.1` вызов агента в 409-5
+  // отказал (curl, код 7), агент нашёл адрес сам в `logs/runtime.json` (закон проекта «хост подписки — тот, что слушает сервер»).
+  const base = `http://localhost:${process.env.PORT || 24680}/api/agents`
+  const door = `${base}/done`
+  // 552-4 (владелец 2026-10-20: «Узел закрывает её сам»): сессия рабочего процесса без Telegram — «закончил» её и закрывает.
+  if (modes.modeOfKey(service) === 'work') {
+    return `${languageRule(modes.baseOf(service), base)} Это сессия рабочего процесса. Если это была задача A2A от другого агента (заказ) и она закрыта — до сообщения узлу сохрани сводку заказа по навыку order-summary (нет такого навыка — пропусти). Когда ответишь, сообщи узлу: POST ${door} с заголовком X-Node-Key = SETTINGS_SECRET из .env.local и телом {"service":"${service}"} — узел закроет эту сессию сам. Тело — файлом UTF-8 (curl --data-binary @файл).`
+  }
+  // 603-3 (владелец 2026-10-26, выключение главного агента в разговоре: «Только по слову «выключить» (Рекомендую)»): разговор с человеком
+  // не кончается ответом — «закончил» после ответа не нужен; разбудил элемент или узел — закрыться, когда работа сделана.
+  if (modes.baseOf(service) === 'build') {
+    return `${languageRule('build', base)} Разговор с человеком не заканчивается твоим ответом: после ответа узлу «закончил» не сообщай, человек выключит тебя сам словом «выключить» (тогда npm run done -- --close). Если тебя разбудил элемент или узел (запрос возможности, отчёт, надзор) — когда работа сделана, npm run done -- --close.`
+  }
+  // 412-4 (владелец 2026-10-06: «в момент закрытия … был бы обязан создать саммари по проделанной работе»): задача A2A — заказ;
+  // его сводка без персональных данных пишется ДО сообщения «закончил». Навыка нет у элемента — правило к нему не относится.
+  return `${languageRule(service, base)} Если это была задача A2A от другого агента (заказ) и она закрыта — до сообщения узлу сохрани сводку заказа по навыку order-summary (нет такого навыка — пропусти). Когда закончишь и ответишь, сообщи узлу: POST ${door} с заголовком X-Node-Key = SETTINGS_SECRET из .env.local и телом {"service":"${service}"} — в разговоре, который начал человек, узел ни о чём не спрашивает (одна подсказка о командах за сессию, 856); в сессии, которую разбудил узел, человек получит в Telegram вопрос «выключить агента?». Если человек ответит «выключить» (или «закрыть», на любом языке) — тот же запрос с телом {"service":"${service}","close":true}. Если человек ответит «разбор» (на любом языке) — сделай разбор своей работы по навыку self-review (нет такого навыка — скажи человеку, что разбор этому агенту недоступен), предложения пришли ему в Telegram по номерам, прими ответы вида «1 да, 2 нет», а затем снова отправь первый запрос, добавив в тело "reviewed":true — вопрос «выключить?» придёт ещё раз, уже без «разбор». Тело — файлом UTF-8 (curl --data-binary @файл).`
+}
+
+/**
+ * 411-4 (владелец 2026-10-06: «в своем чате я вижу на своем языке … перешёл на Украинский … следовать продолжать на Украинский но
+ * точно не по-китайски»): язык человека — из `person.json` бота элемента; агент пишет человеку на нём и сообщает узлу, когда
+ * человек перешёл на другой язык (дверь `person-lang`) — с этого момента и вопросы ядра идут на новом языке.
+ */
+function languageRule(service, base) {
+  const code = telegram.personLang(service)
+  let name = code
+  try { name = new Intl.DisplayNames(['ru'], { type: 'language' }).of(code) || code } catch { /* код как есть */ }
+  return `Язык человека: ${name} (${code}). Всё, что пишешь человеку — в этом терминале, в Telegram и в отчёте ядру, — на этом языке, на каком бы языке ни пришла задача (694); коммиты и документы разработки — по-английски. Если человек стал писать тебе на другом языке — сообщи узлу: POST ${base}/person-lang с тем же заголовком и телом {"service":"${service}","lang":"<код BCP 47, например uk>"} — и дальше пиши ему на новом языке.`
+}
+
+/**
+ * АГЕНТ СООБЩИЛ «РАБОТА ЗАКОНЧЕНА» (409-5). Без `close` — человеку в Telegram «Агент <имя> закончил. Выключить его? Ответьте
+ * «выключить»» (решение владельца «Ответ текстом»: пока терминал запущен, бота читает плагин и чужие кнопки выбрасывает). С `close`
+ * — агент получил «закрыть» от человека и закрывает свой терминал; остановка — после ответа двери, чтобы агент его увидел.
+ */
+async function done(service, { close = false, reviewed = false } = {}) {
+  const live = session.current(service)
+  if (!live) return { ok: false, reason: 'no-session' }
+  // 615-6 (✗ 2026-10-30 14:42: главный агент в разговоре выключил себя, не доложив ответ storage): в разговоре с человеком закрыться
+  // нельзя, пока после вставки узла не было ответа в Telegram. Время ответа пишет хук хода (`progress.cjs`, PostToolUse reply).
+  if (close && modes.baseOf(service) === MAIN_AGENT && live.byPerson && live.nodePasteAt && lastReplyAt(MAIN_AGENT) < live.nodePasteAt) {
+    console.log(`[agents/done] ${service}: закрытие отклонено — человек ждёт доклада после вставки узла`)
+    return { ok: false, reason: 'report-first: the architect is waiting in Telegram for your report on what the element did — send it with the reply tool first; you are in a conversation, only the word «выключить» turns you off' }
+  }
+  // 552-4 (владелец 2026-10-20: «Узел закрывает её сам»): сессия рабочего процесса закрывается по «закончил», без вопроса.
+  if (close || modes.modeOfKey(service) === 'work') {
+    // 666: «выключить» — после остановки процесса (запись режима сбрасывает его выход) человеку слова владельца: контекст сброшен, усилия
+    // medium, рабочие процессы выключены. У сессии рабочего процесса бота нет — ей некому.
+    const words = close && modes.modeOfKey(service) !== 'work'
+    const t = setTimeout(() => {
+      if (session.current(service) !== live) return
+      session.stop(service, 'closed-by-agent')
+      if (words) void telegram.tellClosed(service).catch(() => {})
+    }, 1500)
+    t.unref?.()
+    return { ok: true, closing: true }
+  }
+  // 603-3 (владелец 2026-10-26: «Только по слову «выключить» (Рекомендую)»): главному агенту в разговоре человек «Выключить его?» не
+  // получает — ни после ответа, ни если модель по старой привычке сообщит «закончил»; выключает его слово человека (`done --close`).
+  // ✗ 2026-10-26: в переписке владельца вопрос пришёл пять раз за три минуты — после каждого ответа.
+  if (modes.baseOf(service) === 'build') return { ok: true, asked: false, conversation: true }
+  // 856-1 (✗ 2026-11-24, fractera.ai: the marketplace's person got «Выключить его?» 8 times in 70 minutes, a custom element's twice in
+  // 37 s — 603-3/615-4 held for the main agent only): in a conversation the PERSON started, no element is asked about after an answer
+  // either; one hint per session comes with its first answer (`progress.cjs` hintOnce), the 60-minute reminder stays (`wakeTimeoutMs`).
+  // A session the node woke (a task of the main agent, a clock, supervision) keeps its path below.
+  if (live.byPerson) {
+    if (reviewed) live.reviewed = true
+    return { ok: true, asked: false, conversation: true }
+  }
+  // Владелец 2026-10-06: «делай паузу 5 секунд» — пара «спрашивает / отвечает» уходит в Telegram в фоне, и вопрос «выключить?»
+  // её обгонял. Переменная — для прибора.
+  await new Promise((r) => setTimeout(r, Number(process.env.AGENT_CLOSE_ASK_DELAY_MS) || 5000))
+  // 414 (владелец 2026-10-06: «Он сначала мне предлагает закончить разговор а потом кидает ответы»): 5 с — только чтобы рассылка
+  // успела начаться; дальше порядок по событию — ждём, пока пара разговора с этим элементом уйдёт в Telegram (перевод занимает
+  // десятки секунд), не дольше 2 минут. Реестр пишет `lib/a2a/telegram-relay.ts` ядра.
+  const relay = globalThis.__web4RelayPending?.get(service)
+  if (relay) await Promise.race([relay, new Promise((r) => setTimeout(r, 120_000))])
+  if (session.current(service) !== live) return { ok: false, reason: 'no-session' }
+  // Владелец 2026-10-06: «второй раз не предлагать разбор после первого» — разбор в этой сессии был, строки «разбор» больше нет.
+  if (reviewed) live.reviewed = true
+  // 548-20 (владелец 2026-10-20: «Ты что считаешь что пользователя нужно каждый раз дёргать»): элемент под надзором главного агента
+  // выключит главный агент (`npm run close`) — человеку не пишется «Выключить его?». Его «закончил» по-прежнему будит главного агента.
+  try {
+    if (require(path.join(process.cwd(), 'lib', 'web4-items', 'supervision.cjs')).byMain(service)) return { ok: true, asked: false, ledByMain: true }
+  } catch { /* нет записи надзора — спросить, как прежде */ }
+  // 592-3 (план шага 592, согласованный владельцем 2026-10-24): сессию, которую включил главный агент (`npm run task` → запись в
+  // `data/node/woken-by-main.json`), у элемента без бота закрывает её же «закончил»: спросить «выключить?» некого, а живая сессия
+  // держит ~300 МБ памяти человека. ✗ 589: reverse после ответа ядра остался включённым. Терминал открыт — кто-то смотрит, сессия
+  // остаётся; у элемента с ботом и у включённой человеком — прежний вопрос.
+  const id = modes.baseOf(service)
+  if (!telegram.connected(id) && live.clients.size === 0 && wokenByMain(id)) {
+    forgetWokenByMain(id)
+    const t = setTimeout(() => { if (session.current(service) === live) session.stop(service, 'closed-woken-by-main') }, 1500)
+    t.unref?.()
+    return { ok: true, closing: true, wokenByMain: true }
+  }
+  return telegram.askToClose(service, 'done', { reviewed: Boolean(live.reviewed) })
+}
+
+/** 615-6: когда агент последний раз ответил человеку в Telegram — пишет хук хода (`lib/agent-kit/progress.cjs`); нет записи — 0. */
+function lastReplyAt(element) {
+  try { return Number(JSON.parse(readFileSync(path.join(process.cwd(), 'data', 'node', 'progress', `replied-${element}.json`), 'utf8')).at) || 0 } catch { return 0 }
+}
+
+/** 592-3: агентов, которых включил главный агент, записывает его команда `task` (`scripts/main-agent-cli.mjs`, `markWoken`). */
+const wokenFile = () => path.join(process.cwd(), 'data', 'node', 'woken-by-main.json')
+function wokenByMain(id) {
+  try { return Object.prototype.hasOwnProperty.call(JSON.parse(readFileSync(wokenFile(), 'utf8')), id) } catch { return false }
+}
+function forgetWokenByMain(id) {
+  try {
+    const j = JSON.parse(readFileSync(wokenFile(), 'utf8'))
+    delete j[id]
+    writeFileSync(wokenFile(), JSON.stringify(j, null, 2) + '\n', 'utf8')
+  } catch { /* записи нет — стирать нечего */ }
+}
+
+// 409-3: кнопка «Запустить» в Telegram рождает сессию этим же путём, уже с подтверждением.
+// 614-1: и о неудаче канала человеку говорит она же (`telegram.cjs`, `onButton` и «включить»), поэтому `callerTells`.
+telegram.setStarter((service, opts) => wake(service, { ...opts, confirmed: true, callerTells: true }))
+telegram.setAdmitted((service) => channelAfterAdmission(service))
+
+/**
+ * 846 (the aifa.dev server's agent, 2026-11-23, Telegram 1208 — cmdfc «Diana»: its session started 15:44 UTC without a bot, the bot was
+ * connected 15:53, the session stayed deaf until a hand restarted it; the node only drew a banner): a person admitted to the bot while
+ * the element's build session runs WITHOUT the channel → after the turn in flight (never cut) the same conversation restarts with the
+ * channel (`restartSame`). A work session (`--work`) and a loaned subscription stay as they are: both run without the person's channel
+ * by design (552-4, 686-6). → { did: 'none' | 'restarted' | 'gone', reason? }
+ */
+async function channelAfterAdmission(service) {
+  const element = modes.baseOf(service)
+  const live = session.current(service)
+  if (!live || live.channel || starting.has(service)) return { did: 'none' }
+  if (modes.modeOfKey(service) === 'work' || onLoan(element)) return { did: 'none', reason: 'no-channel-by-design' }
+  console.log(`[channel] ${service}: человек допущен к боту, а сессия идёт без канала — перезапущу тот же разговор с каналом после хода`)
+  const idle = await whenIdle(live, { maxMs: 6 * 60 * 60_000 })
+  if (!idle || session.current(service) !== live || live.channel) return { did: 'gone' }
+  lastHeal.delete(service)
+  const r = await restartSame(live, element, 'channel-after-bot')
+  return r?.ok ? { did: 'restarted' } : { did: 'none', reason: r?.reason ?? 'not-started' }
+}
+
+/**
+ * 846: a person's press on a session without the channel — close it after its turn so `wake` starts the same conversation with the
+ * channel. Only the person's press (`confirmed`), only a session that should carry the channel (not `--work`, not on a loan), only an
+ * element whose bot is connected. → true when the session was closed for the restart.
+ */
+async function closedForChannel(live, service, element, confirmed) {
+  if (!confirmed || live.channel || modes.modeOfKey(service) === 'work' || onLoan(element) || !telegram.connected(element)) return false
+  console.log(`[channel] ${service}: «Включить» при сессии без канала — тот же разговор перезапустится с каналом после хода`)
+  const idle = await whenIdle(live, { maxMs: 10 * 60_000 })
+  if (!idle || session.current(service) !== live || live.channel) return false
+  health.clearPoison(process.env, claudeBackup())
+  lastHeal.delete(service)
+  session.stop(service, 'channel-on-press')
+  await new Promise((r) => setTimeout(r, 1500))
+  return true
+}
+
+/** Принять сокет службы — его отдаёт общее подключение узла (`lib/agent-kit/mount.cjs`). */
+function onConnection(ws, service) {
+  {
+    let attached = null
+    let started = false
+
+    const deadline = setTimeout(() => {
+      if (!started) ws.close(CLOSE_POLICY, 'no-init')
+    }, INIT_DEADLINE_MS)
+
+    function fail(reason) {
+      clearTimeout(deadline)
+      console.error(`[pty] отказ: ${reason}`)
+      ws.close(CLOSE_POLICY, reason)
+    }
+
+    /**
+     * Подключиться к живой сессии агента или родить её — только по явному запуску.
+     * 🛑 Подключение без `start` к спящей сессии ничего не рождает и закрывается с причиной `not-running`:
+     * страница, открытая «просто посмотреть», не имеет права поднять процесс.
+     */
+    async function startAgent(service, wantStart, task = '', again = false) {
+      if (!pty) {
+        ws.send(`\r\n[терминал недоступен: node-pty не загружен — ${ptyLoadError}]\r\n`)
+        fail('pty-unavailable')
+        return
+      }
+      if (starting.has(service)) {
+        fail('starting')
+        return
+      }
+      let s = session.current(service)
+      if (!s) {
+        if (!wantStart) {
+          started = true
+          clearTimeout(deadline)
+          ws.close(1000, 'not-running')
+          return
+        }
+        started = true
+        clearTimeout(deadline)
+        // 409-1: запуск — общая функция с пробуждением без браузера (`spawnAgent` выше). 551-7: задача из ссылки — первым поручением.
+        // 552-4: терминал страницы — сессия строительства; задача из ссылки у элемента с группами открывается словом своего процесса.
+        const first = task && modes.hasGroups(serviceDir(service)) ? modes.withWord(task, 'build') : task
+        // 590-5: задача из ссылки со словом прохода рождает сессию этого прохода; кнопка без задачи — основной проход.
+        const pass = first && modes.hasGroups(serviceDir(service)) ? (modes.passOfText(first) ?? 'main') : 'main'
+        // 708-2: «Продолжить разговор» — записанный разговор этой службы, только у основного прохода и без задачи из ссылки.
+        const continueLast = again === true && !first && pass === 'main' && Boolean(resume.resumable(process.cwd(), modes.baseOf(service), serviceDir(service), ownClaudeDir(modes.baseOf(service))))
+        const r = await spawnAgent(service, (line) => ws.send(`\r\n${line}\r\n`), () => ws.readyState === ws.OPEN, first, { answerTrust: Boolean(task), pass, continueLast })
+        if (!r.ok) {
+          fail(r.reason)
+          return
+        }
+        s = r.session
+      } else if (task) {
+        // 551-7: агент успел запуститься другим путём — задача не вставляется сама (на экране может стоять вопрос, Enter ответил бы
+        // на него): браузер подключится заново, задача ждёт в окне вставки.
+        started = true
+        fail('already-running')
+        return
+      } else if (s.buffer) {
+        // Возврат на страницу показывает прежний экран: сначала накопленное, потом живой поток.
+        ws.send(s.buffer)
+      }
+      s.clients.add(ws)
+      attached = s
+      started = true
+      clearTimeout(deadline)
+    }
+
+    /**
+     * Короткий терминал входа в подписку (267-2): живёт ровно столько, сколько сокет.
+     * 🔒 В отличие от агента, он не переживает уход со страницы: вход — разовое действие, и оставленный
+     * без присмотра `claude auth login` просто ждал бы кода вечно.
+     */
+    let own = null
+    function startLogin(service) {
+      if (!pty) {
+        ws.send(`\r\n[терминал недоступен: node-pty не загружен — ${ptyLoadError}]\r\n`)
+        fail('pty-unavailable')
+        return
+      }
+      if (ephemeral >= MAX_EPHEMERAL) {
+        fail('too-many-sessions')
+        return
+      }
+      const shell = shellPath()
+      // 689: у элемента на подписке своего человека `claude auth login` пишет вход в ЕГО папку, а вход узла не трогает.
+      // 837-0e: an own-only element's login writes into its own folder — made first, so the walled shell finds it
+      if (serviceDir(service) && ownAccountRule().ownOnly(process.cwd(), service)) ownAccountRule().ensureOwnHome(process.cwd(), service)
+      const home = ownClaudeDir(service)
+      // 811-5c: on a server the element's shell is its own user's (`!` there sees only its folder), never the node's
+      const walled = serviceDir(service) ? walledSession().walledAt(process.cwd(), serviceDir(service)) : null
+      const ws_ = walled ? walledSession().walledShell({ root: process.cwd(), id: walled.id, home: home ?? require('./workspace.cjs').ownClaudeHome(service) }) : null
+      try {
+        own = ws_
+          ? pty.spawn(ws_.cmd, ws_.args, { cols: 100, rows: 24, cwd: serviceDir(service), env: ws_.env, name: 'xterm-256color' })
+          // 837-0b: bash -l like a walled element's; a zsh with no start-up file -f, else Debian's new-user menu eats the typed command
+          : pty.spawn(shell, loginShellArgs(shell), { cols: 100, rows: 24, cwd: serviceDir(service) || os.homedir(), env: home ? { ...shellEnv(shell), CLAUDE_CONFIG_DIR: home } : shellEnv(shell), name: 'xterm-256color' })
+        if (ws_) own.wallStop = ws_.stop
+      } catch (err) {
+        ws.send(`\r\n[оболочка ${shell} не запустилась: ${err instanceof Error ? err.message : String(err)}]\r\n`)
+        fail('spawn-failed')
+        return
+      }
+      ephemeral += 1
+      started = true
+      clearTimeout(deadline)
+      const child = own
+      child.onData((data) => {
+        if (ws.readyState === ws.OPEN) ws.send(data)
+      })
+      child.onExit(() => {
+        if (own === child) own = null
+        ephemeral = Math.max(0, ephemeral - 1)
+        if (ws.readyState === ws.OPEN) ws.close(1000, 'exited')
+      })
+      setTimeout(() => {
+        try { child.write(MODES.login(claudeBin())) } catch { /* оболочка уже закрыта */ }
+      }, 800)
+    }
+
+    ws.on('message', (raw) => {
+      let msg = null
+      try { msg = JSON.parse(raw.toString()) } catch { return }
+      if (!msg || typeof msg !== 'object') return
+
+      if (msg.type === 'init') {
+        if (started) return
+        // Билет одноразовый и живёт минуту; его выдала дверь под ролью архитектора.
+        const grant = redeemGrant(msg.ticket, service) // 834-2: only a ticket of THIS element
+        if (!grant) {
+          fail('bad-ticket')
+          return
+        }
+        // 834-7: an element's own admin works only on the element's OWN Claude account — never signs in or spends the node's
+        if (grant.ownOnly && !ownClaudeDir(String(service).replace(/--.*$/, ''))) {
+          fail('own-account-needed')
+          return
+        }
+        if (msg.mode === 'agent') {
+          // 551-7: задача приходит только с запуском; предел и чистка — как у окна вставки (`terminal-paste.mjs`, PASTE_LIMIT).
+          const task = msg.start === true && typeof msg.task === 'string'
+            ? msg.task.replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, '').slice(0, TASK_LIMIT).trim()
+            : ''
+          startAgent(service, msg.start === true, task, msg.resume === true)
+          return
+        }
+        if (msg.mode === 'login') {
+          startLogin(service)
+          return
+        }
+        fail('unknown-mode')
+        return
+      }
+      const target = attached ? attached.proc : own
+      if (!target) return
+      if (msg.type === 'stdin' && typeof msg.data === 'string') {
+        try { target.write(msg.data) } catch { /* процесс завершён */ }
+        return
+      }
+      if (msg.type === 'resize' && msg.cols && msg.rows) {
+        try { target.resize(Number(msg.cols), Number(msg.rows)) } catch { /* процесс завершён */ }
+      }
+    })
+
+    ws.on('close', () => {
+      clearTimeout(deadline)
+      // Короткий терминал входа умирает вместе с сокетом.
+      if (own) {
+        const child = own
+        own = null
+        try { child.kill() } catch { /* уже мёртв */ }
+        try { child.wallStop?.() } catch { /* 811-5c: the unit is gone */ }
+      }
+      // Уход со страницы отключает, но не убивает.
+      if (attached) {
+        attached.clients.delete(ws)
+        attached = null
+      }
+    })
+  }
+}
+
+module.exports = { onConnection, spawnAgent, wake, done, answerTrust, sessionCommand, channelAction, finishRule, shellPath, shellEnv, ptyLoadError: () => ptyLoadError, hasPty: () => pty !== null }
