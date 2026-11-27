@@ -322,6 +322,14 @@ needs his decision — a separate «Fractera Reports» bot + group (aifa.dev's a
 data/node/creator-inbox.json {token, chat} (a secret — a window on that server); then the other triggers (aifa.dev's model-free signs
 table, pre-steps/2026-11-25-aifa-heart-and-855.md), the main agent's rule in the system part, the data-protection basis.
 
+**2026-11-27 09:1x UTC — MAC BUILT 33d6d34a (RC=0); 861 proven on the Mac:** quiz/pdf and quiz with a bogus key 401 (no key at the
+machine 200); wish empty 400; Playwright run (scratchpad wish-test.mjs): «Продолжить квиз» → window → send → notice «Пожелание
+передано агенту», fc4vk has no bot → «Открыть терминал», console clean (logs/eyes/861-wish-notice.png); my test wish removed. Wording
+fixes be44457b (window text, «язык квиза: русский») — NOT on the Mac build yet, ride the server update / the next Mac build. Window
+e84d7a10 = `! bash logs/release-861.sh` for Roma. The temporary address died at the build; `serve:publish -- --new` was refused by the
+classifier — own domain throughsongs.com answers; told Roma. Next on «Готово»: check tags v0.3.247 / v0.1.86 on GitHub, pins, Fractera;
+then Roma updates the servers; offers lidt5 + registrar; his screenshots.
+
 **2026-11-27 09:0x UTC — 861 CODE DONE, Roma's yes 1477 (+ his 1475 reproach: 853 promised the model/effort switch, I built only a grey
 line — owned). Core commits: 861 core + gate fix (/api/node/product-quiz/pdf in ELEMENT_DOORS — guard 847 caught it). Workshops
 committed: custom eb78957, native d5dec40, dry releases v0.3.247 / v0.1.86 GREEN. Proofs so far: eyes of the PDF fixture
