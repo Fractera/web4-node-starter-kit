@@ -1,5 +1,5 @@
 // Samples of the Fractera marketplace rung, search v1 (node step 841-2, `lib/web4-items/fractera-market.mjs`): exit code 1 on any miss.
-import { marketAnswer, marketSearch, priceText, simulatedMarket } from '../lib/web4-items/fractera-market.mjs'
+import { marketAnswer, marketAnswerV2, marketSearch, priceText, simulatedMarket } from '../lib/web4-items/fractera-market.mjs'
 
 let bad = 0
 const check = (name, ok, got) => { console.log(`${ok ? '✓' : '✗'} ${name}`); if (!ok) { bad++; console.log('   got:', JSON.stringify(got)) } }
@@ -15,5 +15,8 @@ check('no answer is said honestly, in the person\'s language, with no invented e
 const off = await marketSearch('video editing', { lang: 'en', base: 'http://127.0.0.1:9', timeoutMs: 1500 })
 check('negative: a silent marketplace never invents an offer — the marked «did not answer», no items, its reason kept', off.mode === 'simulation' && off.items.length === 0 && Boolean(off.why), off)
 
-console.log(bad ? `===MARKET_TEST_FAILED=== ${bad}` : '===MARKET_TEST_OK=== 7 passed')
+const v2 = marketAnswerV2({ v: 2, mode: 'live', caller: { verified: true }, summary: 'One fits.', items: [{ name: 'Тестовый пост', slug: 'fractera-test-post-starter', page: 'https://f2f-marketplace.fractera.ai/s/post', description: 'A post by its title', price: { amount: 0, currency: 'USD', per: 'once' }, whyFits: { context: 'a post of the asked length' } }, { name: 'bad', page: 'http://evil.test/p' }] })
+check('862-2: a v2 answer — verified, one item with its page, price and «why»; an http page is dropped (negative)', v2?.verified === true && v2.items.length === 1 && v2.items[0].why === 'a post of the asked length' && v2.items[0].url.startsWith('https://'), v2)
+check('862-2 negative: a v1 body is not a v2 answer', marketAnswerV2({ v: 1, summary: 's', items: [] }) === null, null)
+console.log(bad ? `===MARKET_TEST_FAILED=== ${bad}` : '===MARKET_TEST_OK=== 9 passed')
 process.exit(bad ? 1 : 0)

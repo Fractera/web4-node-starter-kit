@@ -383,9 +383,10 @@ if (cmd === 'market') {
   const words = rest.filter((w, i) => !w.startsWith('--') && rest[i - 1] !== '--lang').join(' ').trim()
   if (!words) fail('market "<plain words of what the person looks for>" [--lang ru|en]')
   const { marketSearch, priceText } = await import('../lib/web4-items/fractera-market.mjs')
-  const out = await marketSearch(words, { lang: flag('--lang') || 'ru', dataDir: join(ROOT, 'data', 'node') })
-  console.log(`===MARKET_${out.mode === 'live' ? 'LIVE' : 'SIMULATION'}=== ${out.summary}`)
-  for (const x of out.items) console.log(`- ${x.title} (${x.kind}) — ${x.summary} · ${priceText(x.price, flag('--lang') || 'ru')} · ${x.url}`)
+  // 862-2: signed by the node (search v2 with the client's id); the store says whether it recognised the signature.
+  const out = await marketSearch(words, { lang: flag('--lang') || 'ru', dataDir: join(ROOT, 'data', 'node'), root: ROOT, element: flag('--element') || 'market' })
+  console.log(`===MARKET_${out.mode === 'live' ? 'LIVE' : 'SIMULATION'}=== ${out.summary}${out.signed ? ` (signed by this node, verified: ${out.verified === true})` : out.why ? ` (unsigned: ${out.why})` : ''}`)
+  for (const x of out.items) console.log(`- ${x.title} (${x.kind}) — ${x.summary} · ${priceText(x.price, flag('--lang') || 'ru')} · ${x.url}${x.why ? ` · why: ${x.why}` : ''}`)
   process.exit(0)
 }
 

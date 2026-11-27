@@ -334,6 +334,8 @@ waits Roma's word); released custom v0.3.248 / native v0.1.87, pinned. Repo Frac
 
 **14:34 fractera.ai milestone (Roma 1585/1586):** both test starters in the catalogue ($0, tags checked), search v2 through OpenAI (gpt-6-luna, signed callers only, caps $0.50/day, 10 checks/pair/hour). My Mac checks via `npm run market`: post only / image only / «видеомонтаж» nothing → **862-7 CLOSED** (completed-steps/862-7.md). Store next: 4-2 purchase, 4-3 order, 4-4 archive, then 4-5. Defects queued as 865 (OpenAI key road for elements, not-started false alarms, weak vectors); the wall EACCES in 863.
 
+**14:4x UTC — 862-2 part 1 LIVE (no build needed):** lib/web4-items/store-call.mjs (storeEnvelope/storeCall, the node's 855 identity), marketSearch speaks search v2 signed (`npm run market`, --element), fallback to v1 said aloud; tests store-call 6 + fractera-market 9 (both in prebuild). LIVE from the Mac: this node fr-bca37113836ff060 → 200 verified:true, the post starter with its why; the same envelope again → 401 replay; a body changed after signing → 401 bad-signature; «видеомонтаж» → nothing. Market agent resumed at 14:3x (it stopped at 12:10 on the limit). NEXT for 862-2: the core door POST /api/node/market/search (client key only, by provides) — rides the next core build with 862-3/862-4.
+
 **NOW (11:18–11:24 UTC, after the reset):** Roma 1538 «Подожди что мне сейчас нужно сделать с серверами? Обновить ядро что ещё?» ·
 1542 «Пока ты думал сервер уже выполнил какие-то действия прочти его репорт и скажи конфликтует ли это с твоим планом да и вообще что
 мне делать ты мне так и не сказал». Measured 11:19: fractera.ai core 2c9a3c27 built 10:18:59 (= Fractera f0bda66d: 861 + store
