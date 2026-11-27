@@ -300,27 +300,38 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 - Parked: the server tails (z6esw tell-core, redteam with Green team, deleting z6esw/qxld4) — the SSH visit did not open in my Chrome
   profile (his two «Готово» came from another profile); the Pult update banner 2303b5e2 waits the next core build; my effort → max.
 
-## Letter to my next session (rewritten 2026-11-25 19:2x UTC — reset at 55 %; Opus)
+## Letter to my next session (rewritten 2026-11-27 09:5x UTC — reset at Roma's word 1496; Opus, effort raised by Roma)
 
-**WHO WAITS:** Roma, Telegram 90413601, ru, colour marks; he wants SHORT answers («инструкции и так чудовищно тяжелые»), proofs before
-galochkas («галочку только по скриншоту»). His standing word 1438: «Тебе нужна команда чтобы отправить – отправляй» → push to Fractera
-MYSELF first (`bash logs/push-fractera.sh`), a window only if the classifier refuses.
+**WHO WAITS:** Roma, Telegram 90413601, ru, colour marks (🟡🟢🟠🔴), SHORT answers, proofs before a ✓ («галочку только по скриншоту»),
+a checklist of tests before each step and marked after (memory test-plan-checklist-first). His act = a window (`npm run ask-person`),
+never a «!» line; he presses «Готово» from the phone without running — check the result (tags, commits) yourself.
 
-**STATE:** core HEAD = fork = Fractera = 08f8c07c. Templates pinned and on Fractera: custom v0.3.246, native v0.1.85. Mac core build
-LAST 46412b63 — NOT rebuilt since: rides 853 words (f81d942a), 853 born-native fix (1d6f2b45), the button refresh (7f4fbab9), 855 door
-(68c6fb4b), fractera.ai fixes (8ab82f5a: PDF Linux flags, offer data rule, native Mini App quiz line, deploy:self status keyed GET).
-Ask Roma before the Mac build (memory ask-before-core-build). Today done (details in the dated entries below): 852 (template part,
-releases v0.3.244→246 / v0.1.84→85, fc4vk took v0.3.244 and is live), 853 (core Mini App of natives; born-native fix), 855 node half +
-door + aifa.dev review (chat ids / personal hosts redacted, architect's allow before any send, way back creator-fixed.json), 860 PLANNED
-only (a heart without an owner — no code without his word), soul prism line + know-the-architect point of strength + why-i-am-alive
-«What I dream of» (08f8c07c). 615-7 drafts routing — REVERTED, Roma closed it («всё работает»).
+**THE ONE FOCUS NOW (Roma 1496, verbatim gist):** «Вся концентрация дальнейшей работы только на реализации маркетплейса». He sends the
+marketplace QUIZ in his next message — read it whole, then: skills_find + shape-the-need, the variants with your pick, the plan with
+substeps (a checklist of proofs), his yes, then code. He may ask questions about the Fractera servers through you.
+- Intake already here: `pre-steps/2026-11-27-marketplace-client.md` (lidt5 = the Fractera store on fractera.ai, his decisions 09:33–09:37
+  UTC): (1) a NEW native element in the build set — «marketplace-client» (working name): the buyer's recommendations, the cart, search in
+  its own bot, asks of other elements' builders, favourites, the history of choices; asks the store (`POST /api/marketplace/search`, v2 =
+  E-01) and Lagrix; the core keeps the payer's window (Stripe, card only) and the install after payment; it returns at every reinstall
+  like auth/data/config; (2) every native element starter (custom too, if Roma confirms) gets «Offer in the marketplace» → Web2
+  (Fractera) / Web4 (Lagrix) → the application form (lidt5 quiz 2.2.1–2.2.4); (3) decide lidt5's own type (passport says native, yet it is
+  the single public store — must NOT be installed into new projects). Its need on fractera.ai: need-20261127-ed8dcd.
+- Context: memory native-marketplace-concept; step 841-3 (new-steps/841-3-…: the store element, search v1 `lib/web4-items/fractera-market.mjs`,
+  `npm run market`), 854 (the «Предложить в маркетплейсе» page of an own native, done), CLAUDE.md §4 «A capability request — the ladder».
+  A native element is born with `npm run create -- --native` (skill create-element); it ships in the build set via the registry and
+  `services:install` (pins) — read how auth/config come with a fresh install before designing it.
 
-**WAITING FOR ROMA / THE SERVERS:** fractera.ai update to ≥ 08f8c07c, then its main agent: offer native lidt5 (marketplace; its offer
-text now asks to move the quiz tree into quiz.json) + offer custom <registrar>; proofs by HIS screenshots: lidt5 bot «Приложение» (core
-page ?el=lidt5 200, tg-menu-elements state mini-app), the registrar's «Квиз», PDF 200 (or the 502's `why`). 855: the inbox on fractera.ai
-needs his decision — a separate «Fractera Reports» bot + group (aifa.dev's advice) and its token written there as
-data/node/creator-inbox.json {token, chat} (a secret — a window on that server); then the other triggers (aifa.dev's model-free signs
-table, pre-steps/2026-11-25-aifa-heart-and-855.md), the main agent's rule in the system part, the data-protection basis.
+**861 — waits only aifa.dev's report, then CLOSE IT:** Roma: «Когда сервер aifa.dev вернёт отчёт окончательно закроешь предыдущую
+разработку». The brief `logs/for-aifa-check-861.md` (9 checks, report form `aifa-861-report.md`); fractera.ai is NOT touched (in
+development). On the report: each ✗ → a fix or a named defect; then the summary `completed-steps/861-main.md` (commits: 861 core
+20f621da, 40d11558, be44457b, aff5fe65, bf5b7136, 6f61153b; workshops custom eb78957+44d5a03 → v0.3.247, native d5dec40+108fe32 →
+v0.1.86), the plan file moved out of new-steps, one line to Roma. The Mac core build still owes be44457b..6f61153b (wording, github-push
+door, review fixes) — ride it with the first marketplace build, ask Roma first (memory ask-before-core-build).
+
+**STATE:** core HEAD = fork; Fractera main = 6f61153b (code) — later commits are state only. Templates pinned: custom v0.3.247, native
+v0.1.86. Mac running build 33d6d34a. The temporary address is dead (serve:publish --new refused by the classifier); own domain
+throughsongs.com answers. Old open items NOT in focus now (do not start them): 855 (Fractera Reports bot — his decision), 860 (a heart
+without an owner — plan only), 852/853 server proofs on fractera.ai (that server is his now).
 
 **2026-11-27 09:4x UTC — Roma: fractera.ai is in development, NOT touched; 861 is checked on aifa.dev only.** Brief sent to him (1493/1494):
 logs/for-aifa-check-861.md — 9 checks + the report form `aifa-861-report.md`. Agent-kit copies fixed by agent-kit:update (bf5b7136),
