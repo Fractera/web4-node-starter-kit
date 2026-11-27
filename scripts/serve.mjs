@@ -64,6 +64,27 @@ function reapplyServerEdge() {
   const a = spawnSync('sudo', ['-n', '/usr/local/sbin/fractera-root', 'nginx-apply'], { encoding: 'utf8', timeout: 60_000 })
   console.log(a.status === 0 ? "741-1: the server's nginx re-applied from the core's generator" : `741-1: nginx NOT applied, the previous file stays — ${last(a)}`)
 }
+
+// 864 (Roma, 2026-11-27, Telegram 1733: «я хочу системное решение я хочу эту проблему закрыть если она существует») — A NAME ON A SERVER
+// WITH ITS DOMAIN ON GETS ITS CERTIFICATE BY ITSELF. ✗ Paid twice on 2026-11-27: the node update gave birth to the native element
+// «Маркетплейс» (`services-install`), nginx learned its name with 503 «being connected», and nothing issued its certificate — a birth
+// through the element-address door starts `name-up.mjs`, a birth by an update never did. Every start and the end of every build on a
+// live server now asks `namesToHeal` (the domain on, a required name without a certificate, not failed in the last hour, no run working)
+// and starts `name-up.mjs` detached: nginx, public DNS, a certificate for every name pointing here, the HTTPS check. The start is the
+// event — no timer. On a computer (no server phase) nothing happens; a failure is said, never fatal.
+async function healServerNames() {
+  try {
+    const { nodePhase } = createRequire(import.meta.url)('../lib/hosting/phase.cjs')
+    if (nodePhase(root) !== 'live') return
+    const { domainState, namesToHeal } = await import('../lib/hosting/server-domain.mjs')
+    const hosts = namesToHeal(domainState(root))
+    if (hosts.length === 0) return
+    const r = spawnSync(process.execPath, [path.join(root, 'scripts', 'spawn-free.mjs'), path.join(root, 'scripts', 'dedicated-server', 'name-up.mjs')], { cwd: root, stdio: 'ignore', timeout: 10_000, windowsHide: true })
+    console.log(r.status === 0
+      ? `864: ${hosts.join(', ')} — no certificate yet: it is being issued now (npm run server -- domain shows the run)`
+      : `864: ${hosts.join(', ')} — no certificate, and its run did not start — npm run server -- certs`)
+  } catch (e) { console.log(`864: the names' certificates were not checked — ${e instanceof Error ? e.message : e}`) }
+}
 const runtimeFile = path.join(root, 'logs', 'runtime.json')
 const ecosystem = path.join(root, 'ecosystem.config.cjs')
 const tunnelFile = path.join(root, 'logs', 'tunnel.json')
@@ -223,6 +244,7 @@ async function start() {
     await publish({ quietPrice: true })
   }
   reapplyServerEdge()
+  await healServerNames()
   // 🪦 551-5 «при первом запуске рождаются два платёжных кастомных элемента» снято шагом 573-2 (владелец 2026-10-22: «платёжный шлюз в
   // страйп сделать нативного элементом доступным по умолчанию … По умолчанию … он остается выключен»): Stripe — нативный элемент реестра,
   // его ставит установщик выключенным; второй платёжный элемент владелец удаляет сам.
@@ -853,6 +875,8 @@ async function rebuild() {
 // 675-1, 707: конец сборки — любой. Обновление узла ещё не кончилось (каталог, навыки или его запись об отказе) — его итог дождётся ждун
 // вне дерева ядра; своя сборка — будим сразу. Никто не работал — только отложенное главному агенту (696).
 async function agentsBackAfter(root, { agentBack, buildWhat, buildSince, summary }) {
+  // 864: the one end of every build, good or not — the node runs again here; a name an update gave birth to gets its certificate
+  await healServerNames()
   // 771: the same Telegram message gets the result, the menu button is «Пульт» again.
   try { await buildNotice.end(root, !/FAILED|NOT deployed/.test(summary)) } catch { /* never holds the return of the agents */ }
   const failed = /FAILED|NOT deployed/.test(summary)

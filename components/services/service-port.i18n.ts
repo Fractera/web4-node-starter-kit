@@ -52,6 +52,12 @@ export type ServicePortWords = {
     /** 2026-10-01: Cloudflare отказал ключу узла в доступе к туннелю (1001 Not authorized) — объяснение и путь к замене ключа. */
     connectNoTunnel: string
     connectKeyLink: string
+    /** 864: on a server the name points here, yet it holds no certificate — HTTPS cannot answer. */
+    noCert: string
+    /** 864: the button that issues the name's certificate (nginx, public DNS, Let's Encrypt, the HTTPS check). */
+    issue: string
+    /** 864: a certificate run of the server is working right now. */
+    issuing: string
   }
 }
 
@@ -91,6 +97,9 @@ const DICT: Record<string, ServicePortWords> = {
       connectFailed: "Could not connect: {reason}.",
       connectNoTunnel: "Could not connect: the node's Cloudflare key cannot manage the tunnel. Replace the key — the screen shows how.",
       connectKeyLink: "Open Hosting → Domain",
+      noCert: "The name leads to the server, but it has no certificate yet — HTTPS cannot answer.",
+      issue: "Issue the certificate",
+      issuing: "The certificate is being issued — about a minute…",
     },
   },
   ru: {
@@ -123,6 +132,9 @@ const DICT: Record<string, ServicePortWords> = {
       connectFailed: "Подключить не удалось: {reason}.",
       connectNoTunnel: "Подключить не удалось: ключ Cloudflare узла не может управлять туннелем. Замените ключ — экран покажет как.",
       connectKeyLink: "Открыть «Хостинг → Домен»",
+      noCert: "Имя ведёт на сервер, но сертификата у него ещё нет — HTTPS не может ответить.",
+      issue: "Выпустить сертификат",
+      issuing: "Выпускаю сертификат — около минуты…",
     },
   },
 }

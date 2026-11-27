@@ -12,6 +12,8 @@ import { addressOf } from "@/lib/web4-items/address-file.mjs"
 import { startStaticCopy } from "@/lib/web4-items/static-copy-start.cjs"
 import { roadOf } from "@/lib/domain/reach-road.mjs"
 import { placeKind } from "@/lib/hosting/place.mjs"
+import { coverage } from "@/lib/hosting/certs.mjs"
+import { alive, certList, readSide } from "@/lib/hosting/server-domain.mjs"
 
 // АДРЕС СЛУЖБЫ В ИНТЕРНЕТЕ (шаг 289-2).
 //
@@ -125,7 +127,7 @@ async function measure(id: string) {
   // there is no tunnel route to ask. «Подключить» is the same POST (`serverReach`, 737-16).
   if (road === "server") {
     const [ip, status] = await Promise.all([publicIp(hostname), answers(url)])
-    return { ok: true, service: id, port, mode: "server" as const, domain: true, zone: d.zone, hostname, url, dns: ip !== null, answers: status }
+    return { ok: true, service: id, port, mode: "server" as const, domain: true, zone: d.zone, hostname, url, dns: ip !== null, answers: status, ...serverCert(hostname) }
   }
   const cf = await cloudflare(d)
   if ("reason" in cf) return { ok: true, service: id, port, mode: "cloudflare" as const, zone: d.zone, hostname, url, reason: cf.reason }
@@ -142,6 +144,18 @@ async function measure(id: string) {
     dns: dns.ok ? dns.result : null,
     answers: status,
   }
+}
+
+// 864 (Roma, 2026-11-27, Telegram 1733): on a server the name's certificate is the root helper's fact (`cert-list`, asked at every read),
+// and a certificate run at work is the server's own record (`server-side/certs.json`, its process alive). ✗ 2026-11-27 (fractera.ai):
+// this card said «the address does not answer (code —)» for a name without a certificate and offered nothing to press.
+function serverCert(host: string): { cert: "ok" | "expiring" | "missing" | "unknown"; issuing: boolean } {
+  const run = readSide(ROOT, "certs") as { running?: boolean; pid?: number } | null
+  const issuing = Boolean(run?.running) && alive(Number(run?.pid))
+  const list = certList()
+  if (!list) return { cert: "unknown", issuing }
+  const state = coverage({ rows: [{ host, optional: false }] }, list)[0]?.state
+  return { cert: state === "ok" || state === "expiring" || state === "missing" ? state : "unknown", issuing }
 }
 
 function serviceId(raw: string | null): string | null {

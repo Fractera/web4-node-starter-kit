@@ -18,8 +18,14 @@ import type { ServicePortWords } from "@/components/services/service-port.i18n"
 // Домина у него нет. Что за бред?»): третий режим — «server». Домен держит nginx выделенного сервера: имя ссылкой, «есть ли запись A» и
 // ответ из интернета; «Подключить» пишет запись (или называет её для регистратора — строка `add`) и учит nginx имени. Сервер ещё без
 // домена — своя фраза, без localhost: на сервере «эта машина» — не машина человека.
+// 864 (Рома, 2026-11-27, Telegram 1733: «я хочу системное решение»): на сервере имя может вести сюда и не иметь сертификата — карточка
+// говорит это словами и даёт одну кнопку «Выпустить сертификат» (тот же POST, что «Подключить»: nginx, DNS, сертификат, проверка), затем
+// следит за выпуском как продолжением нажатия — не дольше 3 минут, после ничего не работает. Сам узел выпускает его при старте и после
+// сборки (`scripts/serve.mjs` healServerNames) — кнопка нужна, когда выпуск сорвался или сертификат пропал.
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
+/** Адрес ответил из интернета: любой код ниже 400 (редирект входа тоже). */
+const answeringNow = (x: Reach) => typeof x.answers === "number" && x.answers > 0 && x.answers < 400
 
 type Reach = {
   ok?: boolean
@@ -33,6 +39,9 @@ type Reach = {
   routed?: boolean | null
   answers?: number | null
   reason?: string
+  /** 864: on a server — the name's certificate as the root helper sees it, and whether a certificate run works right now. */
+  cert?: "ok" | "expiring" | "missing" | "unknown"
+  issuing?: boolean
 }
 
 type State = { phase: "asking" } | { phase: "denied" } | { phase: "failed" } | { phase: "known"; reach: Reach }
@@ -73,8 +82,18 @@ export function ServiceReach({ serviceId, words }: { serviceId: string; words: S
       const body = (await r.json().catch(() => ({}))) as Reach & { server?: boolean; add?: Added }
       // 749-3: узел на выделенном сервере — запись A написана (или названа для регистратора), nginx узнаёт имя, сертификат догонит сам.
       if (body.server) {
-        if (!r.ok || !body.ok) setConnectError(words.connectFailed.replace("{reason}", body.reason ?? String(r.status)))
-        else { setAdd(body.add ?? null); load() }
+        if (!r.ok || !body.ok) { setConnectError(words.connectFailed.replace("{reason}", body.reason ?? String(r.status))); return }
+        setAdd(body.add ?? null)
+        // 864: выпуск идёт отсоединённо (минуты) — карточка спрашивает дверь каждые 5 с, пока адрес не ответит или выпуск не кончится
+        for (let i = 0; i < 36; i++) {
+          await new Promise((res) => setTimeout(res, 5000))
+          const g = await fetch(`${BASE}/api/node/reach?service=${encodeURIComponent(serviceId)}`, { cache: "no-store" }).catch(() => null)
+          if (!g?.ok) continue
+          const m = (await g.json()) as Reach
+          setState({ phase: "known", reach: m })
+          // после 15 с без работающего выпуска — он кончился (удачно или нет); строка карточки говорит итог
+          if (answeringNow(m) || (i >= 3 && !m.issuing)) break
+        }
         return
       }
       const noTunnel = !body.ok && /not authorized|1001/i.test(body.reason ?? "")
@@ -86,8 +105,7 @@ export function ServiceReach({ serviceId, words }: { serviceId: string; words: S
         // 551-6: сразу после записи DNS адрес снаружи ещё не отвечает, и единственный замер оставлял карточку красной до «Проверить».
         // Проверка — продолжение нажатия человека: по факту, не дольше 30 × 3 с, и ничего не остаётся работать после.
         let m = body
-        const answering = (x: Reach) => typeof x.answers === "number" && x.answers > 0 && x.answers < 400
-        for (let i = 0; i < 30 && !answering(m); i++) {
+        for (let i = 0; i < 30 && !answeringNow(m); i++) {
           await new Promise((res) => setTimeout(res, 3000))
           const g = await fetch(`${BASE}/api/node/reach?service=${encodeURIComponent(serviceId)}`, { cache: "no-store" }).catch(() => null)
           if (g?.ok) { m = (await g.json()) as Reach; setState({ phase: "known", reach: m }) }
@@ -108,7 +126,10 @@ export function ServiceReach({ serviceId, words }: { serviceId: string; words: S
   // 749-3: своё имя в интернете есть у туннеля Cloudflare и у сервера с доменом; его и проверяют.
   const named = cloud || (server && r?.domain !== false)
   const missing = r && named ? [r.dns === false ? words.noDns : null, cloud && r.routed === false ? words.noRoute : null].filter(Boolean) : []
-  const live = !!r && named && !r.reason && missing.length === 0 && typeof r.answers === "number" && r.answers > 0 && r.answers < 400
+  const live = !!r && named && !r.reason && missing.length === 0 && answeringNow(r)
+  // 864: имя сервера ведёт сюда, а сертификата нет (или он выпускается прямо сейчас)
+  const issuing = server && named && !live && r?.issuing === true
+  const noCert = server && named && !live && missing.length === 0 && r?.cert === "missing"
   const big = named ? r?.hostname : !server && r?.port ? `localhost:${r.port}` : null
 
   let line: React.ReactNode
@@ -120,6 +141,8 @@ export function ServiceReach({ serviceId, words }: { serviceId: string; words: S
   else if (r?.reason) line = words.cannotCheck.replace("{reason}", r.reason)
   else if (missing.length > 0) line = `${words.notConnected} ${missing.join(", ")}.`
   else if (live) line = words.live
+  else if (issuing) line = words.issuing
+  else if (noCert) line = words.noCert
   else line = words.notAnswering.replace("{code}", String(r?.answers ?? "—"))
 
   return (
@@ -151,8 +174,8 @@ export function ServiceReach({ serviceId, words }: { serviceId: string; words: S
         {state.phase === "known" && named ? (
           <div className="flex flex-wrap gap-2">
             <Button variant="outline" size="sm" onClick={load}>{words.check}</Button>
-            {missing.length > 0 && !r?.reason ? (
-              <Button size="sm" onClick={connect} disabled={connecting}>{connecting ? words.connecting : words.connect}</Button>
+            {(missing.length > 0 || noCert) && !issuing && !r?.reason ? (
+              <Button size="sm" onClick={connect} disabled={connecting}>{connecting ? words.connecting : missing.length > 0 ? words.connect : words.issue}</Button>
             ) : null}
           </div>
         ) : null}

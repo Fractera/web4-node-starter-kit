@@ -197,7 +197,8 @@ t('prepare.sh (DRY_RUN): acl, the group, both helpers in one sudoers line, root\
   for (const f of ['prepare.sh', 'stages.sh', 'fractera-root.sh', 'fractera-element.sh']) cpSync(join(DS, f), join(d, f))
   const r = spawnSync('bash', [join(d, 'prepare.sh'), 'fractera', 'node', '22'], { encoding: 'utf8', env: { PATH: process.env.PATH, DRY_RUN: '1' } })
   assert.equal(r.status, 0, r.stderr)
-  assert.match(r.stdout, /DRY apt: .*psmisc acl'?$/m)
+  // 864 on the way: ✗ stale since 825-8 (efb105b0) — Bun brought `unzip` after `acl`; the wall needs `acl` in the line, not at its end
+  assert.match(r.stdout, /DRY apt: .*\bpsmisc acl\b/m)
   assert.match(r.stdout, /DRY element-group: getent group fractera-el \S+ \|\| groupadd --system fractera-el/)
   assert.match(r.stdout, /install -m 0755 -o root -g root '\S+fractera-element\.sh' \/usr\/local\/sbin\/fractera-element/)
   assert.match(r.stdout, /NOPASSWD: \/usr\/local\/sbin\/fractera-root, \/usr\/local\/sbin\/fractera-element/)

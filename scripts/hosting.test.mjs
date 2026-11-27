@@ -547,11 +547,94 @@ console.log('737-8 the domain on the server: DNS, certificates, HTTPS, the five 
     assert.equal(r.status, 0, r.stderr + r.stdout)
     const run = dom.readSide(root, 'certs')
     assert.equal(run.running, false)
-    assert.equal(run.commands[0], 'fractera-root nginx-apply')
-    assert.equal(run.commands.at(-1), 'fractera-root nginx-apply')
+    // 864: public DNS first, HTTPS last — «check and add» means it
+    assert.deepEqual(run.commands.slice(0, 2), ['dns-check', 'fractera-root nginx-apply'])
+    assert.deepEqual(run.commands.slice(-2), ['fractera-root nginx-apply', 'https-check'])
     assert.ok(run.commands.includes('fractera-root cert-issue example.org'))
     assert.ok(!run.commands.some((c) => c.includes('auth.example.org')), 'issued for a name that points elsewhere')
     assert.ok(run.hosts.every((h) => h.state === 'done'))
+    // negative: the caller that has just asked DNS and checks HTTPS itself (names-ready → name-up) gets neither twice
+    const fresh = spawnSync(process.execPath, [join(import.meta.dirname, 'dedicated-server', 'certs.mjs'), '--dry', '--dns-fresh', '--no-check', '--root', root], { encoding: 'utf8' })
+    assert.equal(fresh.status, 0, fresh.stderr + fresh.stdout)
+    const again = dom.readSide(root, 'certs')
+    assert.equal(again.commands[0], 'fractera-root nginx-apply')
+    assert.ok(!again.commands.includes('dns-check') && !again.commands.includes('https-check'), again.commands.join(' | '))
+  })
+  t('864: a required name without a certificate is «uncertified»; negatives: an optional name, a covered one, an expiring one', () => {
+    const rows = [
+      { host: 'market.example.org', optional: false, cert: 'missing' },
+      { host: 'extra.example.org', optional: true, cert: 'missing' },
+      { host: 'example.org', optional: false, cert: 'ok' },
+      { host: 'auth.example.org', optional: false, cert: 'expiring' },
+    ]
+    assert.deepEqual(dom.uncertified(rows), ['market.example.org'])
+  })
+  t('864: a start heals the uncertified names of an active domain; negatives: the domain off, no helper, a run at work, a failure within the hour', () => {
+    const DAY = 24 * 60 * 60 * 1000
+    const root = serverRoot({ domainActive: true })
+    const born = 'data.example.org'
+    const list = nodeNames({ root }).rows.filter((r) => r.host !== born)
+      .map((r) => ({ name: r.host, source: 'letsencrypt', fullchain: '/f', privkey: '/k', notAfter: Date.now() + 80 * DAY, sans: [r.host] }))
+    const st = () => dom.domainState(root, { certs: list })
+    assert.deepEqual(st().uncertified, [born])
+    assert.deepEqual(dom.namesToHeal(st()), [born])
+    // negative: the domain is not switched on yet — the launch's own certificate step decides, the start does not
+    const off = serverRoot()
+    const offList = nodeNames({ root: off }).rows.filter((r) => r.host !== born)
+      .map((r) => ({ name: r.host, source: 'letsencrypt', fullchain: '/f', privkey: '/k', notAfter: Date.now() + 80 * DAY, sans: [r.host] }))
+    assert.deepEqual(dom.domainState(off, { certs: offList }).uncertified, [born])
+    assert.deepEqual(dom.namesToHeal(dom.domainState(off, { certs: offList })), [])
+    // negative: no root helper (not a prepared server) — nothing to run
+    assert.deepEqual(dom.namesToHeal(dom.domainState(root, { certs: null })), [])
+    // negative: a certificate run works right now — never doubled
+    dom.writeSide(root, 'certs', { running: true, pid: process.pid, hosts: [] })
+    assert.deepEqual(dom.namesToHeal(st()), [])
+    // negative: this name failed ten minutes ago — Let's Encrypt's hourly limit of failures waits; two hours ago it is tried again
+    const failed = (minutes) => dom.writeSide(root, 'certs', { running: false, endedAt: new Date(Date.now() - minutes * 60_000).toISOString(), hosts: [{ host: born, state: 'failed' }] })
+    failed(10)
+    assert.deepEqual(dom.namesToHeal(st()), [])
+    failed(120)
+    assert.deepEqual(dom.namesToHeal(st()), [born])
+    // and a name covered by every certificate is never healed
+    assert.deepEqual(dom.namesToHeal(dom.domainState(root, { certs: [...list, { ...list[0], name: born, sans: [born] }] })), [])
+  })
+  await ta('864: `server -- domain` says «не закончено» for an uncertified name, a real process over a door; negative: all certified → ok', async () => {
+    const http = await import('node:http')
+    let answer = null
+    const door = http.createServer((req, res) => { res.setHeader('content-type', 'application/json'); res.end(JSON.stringify(answer)) })
+    await new Promise((r) => door.listen(0, 'localhost', r))
+    try {
+      const root = fixture({ services: SERVICES, runtime: { port: door.address().port } })
+      const steps = { domain: true, dns: true, certs: false, check: false, active: true }
+      const row = (host, cert) => ({ host, dns: 'ok', cert, daysLeft: cert === 'ok' ? 80 : null, https: cert === 'ok' ? true : null, status: cert === 'ok' ? 200 : null, optional: false })
+      const cli = async () => {
+        const { spawn } = await import('node:child_process')
+        const c = spawn(process.execPath, [join(import.meta.dirname, 'server.mjs'), 'domain', '--root', root])
+        let out = ''
+        c.stdout.on('data', (d) => { out += d })
+        c.stderr.on('data', (d) => { out += d })
+        await new Promise((r) => c.on('close', r))
+        return out
+      }
+      answer = { ok: true, phase: 'live', zone: 'example.org', ip: IP, rows: [row('example.org', 'ok'), row('market.example.org', 'missing')], steps, uncertified: ['market.example.org'], certsRun: null }
+      let out = await cli()
+      assert.match(out, /не закончено: без сертификата — market\.example\.org — npm run server -- certs/)
+      assert.match(out, /===SERVER_DOMAIN=== unfinished domain,dns,active uncertified market\.example\.org/)
+      answer = { ...answer, certsRun: { running: true, hosts: [{ host: 'market.example.org', state: 'running' }] } }
+      assert.match(await cli(), /===SERVER_DOMAIN=== issuing /)
+      // negative: every required name certified — the old verdict, no «не закончено»
+      answer = { ...answer, rows: [row('example.org', 'ok'), row('market.example.org', 'ok')], steps: { ...steps, certs: true, check: true }, uncertified: [], certsRun: null }
+      out = await cli()
+      assert.ok(!out.includes('не закончено'), out)
+      assert.match(out, /===SERVER_DOMAIN=== ok domain,dns,certs,check,active\n/)
+    } finally { door.close() }
+  })
+  t('864: the heal runs at the start and at the one end of every build (serve.mjs); negative: never before the edge is written', () => {
+    const serve = readFileSync(join(import.meta.dirname, 'serve.mjs'), 'utf8')
+    assert.match(serve, /reapplyServerEdge\(\)\n  await healServerNames\(\)/, 'the start: the heal right after nginx')
+    assert.match(serve, /async function agentsBackAfter\([^)]*\) \{\n(?:  \/\/[^\n]*\n)*  await healServerNames\(\)/, 'the end of every build')
+    assert.equal((serve.match(/await healServerNames\(\)/g) ?? []).length, 2)
+    assert.ok(!/await healServerNames\(\)\n\s*reapplyServerEdge\(\)/.test(serve), 'healed before nginx learned the names')
   })
 }
 

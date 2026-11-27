@@ -139,7 +139,12 @@ function domainStep(action) {
     for (const h of s.certsRun?.hosts ?? []) if (h.state !== 'done') console.log(`  сертификат ${h.host}: ${h.state}${h.detail ? ` — ${h.detail}` : ''}`)
     const steps = s.steps ?? {}
     console.log(Object.entries(STEP_WORDS).map(([k, w]) => `${steps[k] ? '✓' : '·'} ${w}`).join('   '))
-    console.log(`===SERVER_DOMAIN=== ${r.ok ? (s.reason ?? 'ok') : `refused ${s.reason ?? r.status}`} ${Object.keys(STEP_WORDS).filter((k) => steps[k]).join(',') || 'none'}`)
+    // 864: ✗ 2026-11-27 (fractera.ai) a born name without a certificate under «✓ включён … ok domain,active» read as finished
+    const left = Array.isArray(s.uncertified) ? s.uncertified : []
+    const issuing = Boolean(s.certsRun?.running)
+    if (left.length) console.log(`не закончено: без сертификата — ${left.join(', ')}${issuing ? ' (выпуск идёт)' : ' — npm run server -- certs'}`)
+    const verdict = !r.ok ? `refused ${s.reason ?? r.status}` : left.length ? (issuing ? 'issuing' : 'unfinished') : (s.reason ?? 'ok')
+    console.log(`===SERVER_DOMAIN=== ${verdict} ${Object.keys(STEP_WORDS).filter((k) => steps[k]).join(',') || 'none'}${left.length ? ` uncertified ${left.join(',')}` : ''}`)
     if (!r.ok) process.exit(1)
   }
 }
@@ -221,7 +226,8 @@ async function windowVerb() {
 
 const verbs = {
   names, dns, nginx, phase, window: windowVerb,
-  domain: args[1] ? domainStep('domain') : domainStep('show'),
+  // 864: a flag is never a domain name (`domain --root <folder>` read «--root» as the name to set)
+  domain: args[1] && !args[1].startsWith('--') ? domainStep('domain') : domainStep('show'),
   'dns-check': domainStep('dns-check'), certs: domainStep('certs'), check: domainStep('check'), activate: domainStep('activate'), deactivate: domainStep('deactivate'),
 }
 if (!verbs[verb]) {

@@ -6,11 +6,14 @@
 // 🔒 ONE NAME FAILING NEVER STOPS THE OTHERS (the old wizard issued all names in one certificate, and one bad DNS record failed them
 // all). Each name says its own result and the tail of certbot's words.
 // 🔒 ROOT ONLY THROUGH THE HELPER (`fractera-root cert-issue|nginx-apply`, fixed verbs, `sudo -n`): this runner runs as the node's user.
+// 🔒 864: PUBLIC DNS IS ASKED FIRST, HTTPS AFTER — «check and add» means it. ✗ 2026-11-27 (fractera.ai): a name born after the last DNS
+// check read «unchecked», this runner issued nothing for it, and only a hand-run `dns-check` before `certs` helped. `--dns-fresh` — the
+// caller has just asked DNS (`names-ready.mjs`); `--no-check` — the caller checks HTTPS itself (`name-up.mjs`).
 // `--dry` — no command runs; each would-be command is recorded (the tests).
 import { spawnSync } from 'node:child_process'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { alive, domainState, HELPER, namesToIssue, readSide, writeSide } from '../../lib/hosting/server-domain.mjs'
+import { alive, domainState, HELPER, namesToIssue, readSide, runDnsCheck, runHttpsCheck, writeSide } from '../../lib/hosting/server-domain.mjs'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const args = process.argv.slice(2)
@@ -39,6 +42,10 @@ if (prev?.running && alive(prev.pid) && prev.pid !== process.pid) {
   process.exit(2)
 }
 
+if (!args.includes('--dns-fresh')) {
+  commands.push('dns-check')
+  if (!dry) await runDnsCheck(root).catch((e) => console.log(`DNS was not asked: ${e?.message ?? e} — the last check decides`))
+}
 const state = domainState(root, dry ? { certs: [] } : {})
 if (!dry && !state.helper) {
   writeSide(root, 'certs', { running: false, endedAt: now(), ok: false, detail: 'no-helper', hosts: [] })
@@ -67,6 +74,10 @@ for (const h of hosts) {
 }
 const after = nginx()
 const ok = after.ok && hosts.every((h) => h.state === 'done')
+if (!args.includes('--no-check') && hosts.length > 0) {
+  commands.push('https-check')
+  if (!dry) await runHttpsCheck(root).catch((e) => console.log(`HTTPS was not checked: ${e?.message ?? e}`))
+}
 save({ running: false, endedAt: now(), ok, detail: after.ok ? '' : `nginx: ${after.out.slice(-300)}`, ...(dry ? { commands } : {}) })
 console.log(`===CERTS_${ok ? 'DONE' : 'FAILED'}=== ${hosts.filter((h) => h.state === 'done').length}/${hosts.length} issued${after.ok ? '' : ', nginx refused'}`)
 process.exit(ok ? 0 : 1)

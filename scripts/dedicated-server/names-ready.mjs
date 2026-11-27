@@ -20,7 +20,8 @@ if (!state.zone) { console.log(JSON.stringify(empty)); process.exit(0) }
 if (!dry) await runDnsCheck(root)
 state = domainState(root, dry ? { certs: [] } : {})
 if (!dry && state.rows.some((r) => r.dns === 'ok' && (r.cert === 'missing' || r.cert === 'expiring'))) {
-  spawnSync(process.execPath, [path.join(here, 'certs.mjs')], { cwd: root, stdio: 'ignore', timeout: 40 * 60_000 })
+  // 864: DNS was asked a line above, and the caller (`name-up.mjs`) checks HTTPS after — the runner does neither twice
+  spawnSync(process.execPath, [path.join(here, 'certs.mjs'), '--dns-fresh', '--no-check'], { cwd: root, stdio: 'ignore', timeout: 40 * 60_000 })
   state = domainState(root)
 }
 console.log(JSON.stringify(readiness(state)))
