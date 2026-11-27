@@ -207,6 +207,8 @@ const fill = (text: string, values: Record<string, string | number>) =>
   text.replace(/\{(\w+)\}/g, (all, key: string) => (key in values ? String(values[key]) : all))
 
 const anchor = (id: string) => `quiz-${id}`
+// 861-4: the quiz's language by name in the page's language («русский»), the code when the browser does not know it.
+const langName = (code: string, lang: string) => { try { return (code && new Intl.DisplayNames([lang], { type: "language" }).of(code)) || code } catch { return code } }
 
 // 536-3 (the person, 2026-10-18): «напротив каждого абзаца иконка и инструкция например если хотите обратить внимание на этот часть
 // инструкции нажмите на иконку! Агент из искусственного интеллекта уточнит что вы имели в виду». The 💬 opens the block-task window in
@@ -362,7 +364,7 @@ export function ProductQuizIsland({ item, lang, words, task }: { item: string; l
           <Small className="text-muted-foreground" data-quiz-counters>
             {fill(words.counters, { confirmed: confirmedCount, total: items.length, questions: quiz.openQuestions.length })}
             {" · "}
-            {fill(words.language, { lang: quiz.language })}
+            {fill(words.language, { lang: langName(quiz.language, lang) })}
           </Small>
           <ul className="flex flex-wrap gap-x-4 gap-y-1" data-quiz-legend>
             {(["done", "in-progress", "planned", "none"] as const).map((w) => (

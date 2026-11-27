@@ -14,7 +14,7 @@ const DICT: Record<"en" | "ru", ProductQuizWords> = {
       "Press «Continue the quiz» or 💬 next to an item. The agent changes the quiz only after your «yes».",
     continueQuiz: "Continue the quiz",
     counters: "Confirmed {confirmed} of {total} · open questions {questions}",
-    language: "written in the element's default language ({lang})",
+    language: "the quiz language: {lang}",
     vision: "Vision",
     actors: "Who uses it",
     openQuestions: "Open questions",
@@ -126,7 +126,7 @@ const DICT: Record<"en" | "ru", ProductQuizWords> = {
       "Нажмите «Продолжить квиз» или 💬 у пункта. Агент поправит квиз только после вашего «да».",
     continueQuiz: "Продолжить квиз",
     counters: "Подтверждено {confirmed} из {total} · открытых вопросов {questions}",
-    language: "написан на языке элемента по умолчанию ({lang})",
+    language: "язык квиза: {lang}",
     vision: "Замысел",
     actors: "Кто пользуется",
     openQuestions: "Открытые вопросы",
@@ -236,7 +236,7 @@ const DICT: Record<"en" | "ru", ProductQuizWords> = {
 const QUIZ_TASK: Record<"en" | "ru", Partial<BlockTaskUi>> = {
   en: {
     title: "What should the agent do with this?",
-    description: "The task goes to the element's agent, in the terminal on the right.",
+    description: "The node passes it to the element's agent; it goes on in its chat.",
     block: "Task for the agent",
     details: "What you want",
     detailsPlaceholder: "Add, change, remove or ask, in your own words…",
@@ -245,7 +245,7 @@ const QUIZ_TASK: Record<"en" | "ru", Partial<BlockTaskUi>> = {
   },
   ru: {
     title: "Что сделать агенту с этим?",
-    description: "Задача уйдёт агенту элемента, в терминал справа.",
+    description: "Узел передаст это агенту элемента — он продолжит в своём чате.",
     block: "Задача агенту",
     details: "Что вы хотите",
     detailsPlaceholder: "Добавить, изменить, убрать или спросить — своими словами…",
