@@ -13,3 +13,8 @@ Intake `pre-steps/2026-11-27-milestone-catalogue-openai-search.md` (fractera.ai'
 - **865-3 · The node's vectors cannot say «nothing fits»** — MiniLM-L12 scores unrelated short Russian queries 0.20–0.30 against true
   matches ~0.30. Research a stronger multilingual model in the native `embeddings` with its memory price said aloud (owner's decision —
   every stored vector is recounted). Proof: the same 10 queries with a clear gap between matches and non-matches.
+- **865-4 · The boundary guard reads a relative import string from the session folder, not from the file that holds it** (met on the Mac
+  2026-11-27 14:36 and 14:38, market): a heredoc writing `app/api/<n>/<n>.mjs` with `import … from '../../../lib/market/market.mjs'` was
+  flagged «outside the element's folder: <core>/lib/market/market.mjs», though from that file it resolves to the element's own
+  `lib/market/`. Two permission questions for nothing (both allowed by me). Fix: resolve a path found in written text relative to the file
+  being written, or ignore import strings inside written content. Proof: the same heredoc passes; a real `../../..` write outside still asks.
