@@ -322,6 +322,12 @@ needs his decision — a separate «Fractera Reports» bot + group (aifa.dev's a
 data/node/creator-inbox.json {token, chat} (a secret — a window on that server); then the other triggers (aifa.dev's model-free signs
 table, pre-steps/2026-11-25-aifa-heart-and-855.md), the main agent's rule in the system part, the data-protection basis.
 
+**2026-11-27 09:4x UTC — Roma: fractera.ai is in development, NOT touched; 861 is checked on aifa.dev only.** Brief sent to him (1493/1494):
+logs/for-aifa-check-861.md — 9 checks + the report form `aifa-861-report.md`. Agent-kit copies fixed by agent-kit:update (bf5b7136),
+review fixes 6f61153b (limit «reached» only before its reset; «—» for a quiz without language); full prebuild RC=0; Fractera = 6f61153b.
+Memory: prebuild-before-fractera-push. Roma asked about the top card (1492): custom has it since 840-4 (tg-home-agent), native since
+861-5 — answered (1495). WAIT: his Diana before/after, aifa.dev update, the report. Mac build still owes be44457b..6f61153b.
+
 **2026-11-27 09:3x UTC — RELEASED by Roma's own run: custom v0.3.247 (44d5a03), native v0.1.86 (108fe32), pinned, Fractera = fork =
 512fdd07.** They carry 861-4 (quiz in the person's language, quiz:pdf) and 861-6 (github:self through POST /api/node/github-push,
 the rule: a person's act is an ask-person window). 861-6 core aff5fe65 (the boundary hook itself NOT weakened — the classifier
