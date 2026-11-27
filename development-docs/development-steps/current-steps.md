@@ -322,6 +322,16 @@ needs his decision — a separate «Fractera Reports» bot + group (aifa.dev's a
 data/node/creator-inbox.json {token, chat} (a secret — a window on that server); then the other triggers (aifa.dev's model-free signs
 table, pre-steps/2026-11-25-aifa-heart-and-855.md), the main agent's rule in the system part, the data-protection basis.
 
+**2026-11-27 09:0x UTC — 861 CODE DONE, Roma's yes 1477 (+ his 1475 reproach: 853 promised the model/effort switch, I built only a grey
+line — owned). Core commits: 861 core + gate fix (/api/node/product-quiz/pdf in ELEMENT_DOORS — guard 847 caught it). Workshops
+committed: custom eb78957, native d5dec40, dry releases v0.3.247 / v0.1.86 GREEN. Proofs so far: eyes of the PDF fixture
+(logs/eyes/2026-11-27T08-43-09-636Z.png: shapes, legend, L1/L2 counts, «Язык квиза: русский»; no-tree quiz prints old modules, no
+table), eyes of the native Mini App card with a stubbed state (08-45-46-172Z.png), quiz-feedback 5 tests (empty / too-long wish refused).
+NEXT: prebuild RC=0 → serve:rebuild:detached → after it: POST /api/node/product-quiz/wish empty → 400 (signed-in? owner at machine),
+bogus key on quiz/pdf → 401, eyes of /ru/fc4vk/product-design/quiz «Продолжить квиз» → window → send → notice; THEN window with
+`bash logs/release-861.sh` (Roma's own run: release + pins + Fractera); then a server update, offers to lidt5 + registrar, Roma's
+screenshots (card switch to max on lidt5; PDF 109 ✓ / 47 ◇ / 5 ○; lidt5 runs npm run quiz:pdf). Checklist sent to Roma (1476).
+
 **2026-11-27 08:3x UTC — 861 PLANNED (new-steps/861-…), Roma asked (1472) «беру так?»; no code before his yes.** Sources kept in
 data/services/build/channel/telegram/inbox (for-mac-quiz-pdf-marks.md ×3, for-mac-quiz-pdf-own-key.md).
 
