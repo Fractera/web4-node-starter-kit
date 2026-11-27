@@ -41,7 +41,21 @@ function AccountDrawer({ side, labels, email, roles = [], links, logoutHref, att
   const isArchitect = roles.includes("architect") || roles.includes("admin")
   const { attention, refresh } = useAttention(isArchitect ? attentionUrl : undefined)
   const waiting = hasAttention(attention) && !!attentionWords
-  const openDrawer = () => { setOpen(true); refresh() }
+  // 862-12 (Roma 2026-11-27, Telegram 1670): on an element's page (this drawer is the core's shell kit there) the shared entries of the
+  // node — the marketplace client's three pages — come from the element's own door `/api/account-links` when the drawer opens, only for
+  // the project's people (architect, admin, an element's admin). The core's own drawer already carries them (core-shell-data) and asks nothing.
+  const [shared, setShared] = useState<{ key: string; label: string; href: string }[]>([])
+  const forProject = roles.some((r) => r === "architect" || r === "admin" || /^elementAdmin\d+$/.test(r))
+  const hasShared = links.some((l) => l.href.includes("/api/node/market-link"))
+  const askShared = () => {
+    if (!forProject || hasShared) return
+    const lang = (typeof document !== "undefined" && document.documentElement.lang) || "en"
+    fetch(`/api/account-links?lang=${encodeURIComponent(lang)}`, { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((b: { links?: { key: string; label: string; href: string }[] } | null) => setShared(Array.isArray(b?.links) ? b.links : []))
+      .catch(() => setShared([]))
+  }
+  const openDrawer = () => { setOpen(true); refresh(); askShared() }
 
   return (
     <>
@@ -101,6 +115,16 @@ function AccountDrawer({ side, labels, email, roles = [], links, logoutHref, att
                       {l.label}
                     </Link>
                   )
+                ))}
+              </nav>
+            )}
+            {shared.length > 0 && (
+              <nav className="mt-2 flex flex-col gap-0.5 border-t border-border pt-2" data-block="shell-account-shared">
+                {shared.map((l) => (
+                  // a link through the core's door leaves for another address — a plain full navigation
+                  <a key={l.key} href={l.href} onClick={() => setOpen(false)} className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "w-full justify-start")}>
+                    {l.label}
+                  </a>
                 ))}
               </nav>
             )}
