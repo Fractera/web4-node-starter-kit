@@ -34,7 +34,8 @@ One person who can drive the node is enough; everyone else only talks.
 
 ## How the work runs once the shape is chosen — one person at a time
 1. **Who and what for**, in the architect's words: the person, what their agent should do for them, in which language.
-2. **The rules first**, in two sentences — the subscription and the age, from the facts above.
+2. **The rules first**, in two sentences — the subscription and the age, from the facts above; on a node without a wall, the third —
+   the wall warning of `create-element` step 3, said before anything is born.
 3. **The own domain first**, when the person must register.
 4. **Whatever is new is born** — `npm run find`, then `npm run create` (skill `create-element`) with the person's role and job in the
    brief.

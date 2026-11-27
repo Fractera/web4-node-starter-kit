@@ -31,7 +31,7 @@ The owner of Fractera, 2026-10-23: «не всегда в наш проект п
 2. **The network.** `npm run lagrix -- <English words>` — a2a (an agent that sells the result of the work) and f2f (a whole element),
    one contract (670-6). Today both are simulated and always empty — tell the person so in one line: «в сети Lagrix подходящих агентов
    и элементов не найдено (поиск в сети пока имитируется)».
-3. **Agree five things with the person:**
+3. **Agree these things with the person:**
    - the **role** — one sentence, what the element will do for the node («Removes the background from product photos and
      returns a PNG link.»);
    - the **area** — the field it will be the home for, and 2–5 jobs it may grow into (`--area`, `--grows`): the next job of that field
@@ -48,6 +48,14 @@ The owner of Fractera, 2026-10-23: «не всегда в наш проект п
      client's site or a separate product (a clip studio, a client's shop); nothing of the project changes it, and it has its own owner
      whom its own agent gets to know. Chosen once: the app's people live apart — nothing switches it later. Your pick and why. `--app
      project|own` (required; `--look-like <id>` starts an app of its own from a sibling's look).
+   - **the wall warning** (the owner, 2026-11-27, Telegram 1462/1465) — when the element is for another person (an app of its own,
+     another owner, a member of a family or a team) and the node runs on a person's own computer, not on a dedicated server: say it
+     before the birth, in the person's words. Here every element runs as one user of the system; an element's agent is kept in its
+     folder only by its hook — a rule for an honest agent, not protection — so one element's code can technically read another's
+     files and keys, and through them its people's data. Confidentiality here rests on trust: fine for a family, one's own team or a
+     company's server where all the data is the company's anyway; strangers, clients, money or personal data — recommend a dedicated
+     server (skill `dedicated-server`), where every element lives as its own user behind the wall (skill `server-wall`). The birth
+     goes on after the person's answer; never a refusal.
    Custom by default — the person's products. Native (`--native`) for a job of the node itself that is never sold and never leaves it,
    and for a heavy shared tool many elements use — image generation, a music clip, video editing, mailings (the owner, 2026-11-21:
    «все это должно уходить в группу нативных элементов»; CLAUDE.md §3).

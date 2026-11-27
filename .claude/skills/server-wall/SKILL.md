@@ -9,7 +9,8 @@ The owner, 2026-11-22 (Telegram 849): «Ты построил стену для 
 отдельные исследования … добавь навык … В случае появления проблем связанных с этой стеной обновляет этот навык». Sources: step 811
 (`development-docs/development-steps/new-steps/811-a-wall-per-element-on-a-server.md`), 812, 818, 833–837. **A home computer has no wall:
 one person, one user — and the «owner at the machine» rule there lets through what a server refuses. A change proven only on the Mac is
-not proven for a server.**
+not proven for a server.** The person hears it too: an element for another person on such a computer is born only after the wall
+warning of `create-element` (the owner, 2026-11-27).
 
 ## 1. Who runs as whom
 
