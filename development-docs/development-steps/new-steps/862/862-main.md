@@ -1,6 +1,7 @@
 # 862 — the marketplace in every project: the client element, the purchase, the install
 
-State: PLANNED 2026-11-27 ~10:05 UTC; waits Roma's yes. No code before it.
+State: APPROVED — Roma, Telegram 1509, 2026-11-27 10:00 UTC, verbatim: «Да» (to the plan, the public repository, the money picks).
+Substeps unfold into `862-<k>.md` as each starts. 862-0 — `862-0.md`, the store contract sent as `for-the-store-862-0.md`.
 
 ## Roma's words
 

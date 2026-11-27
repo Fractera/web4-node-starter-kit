@@ -306,6 +306,10 @@ release push (v0.3.219 dry green) + pin, the core push, ONE server update, then 
 a checklist of tests before each step and marked after (memory test-plan-checklist-first). His act = a window (`npm run ask-person`),
 never a «!» line; he presses «Готово» from the phone without running — check the result (tags, commits) yourself.
 
+**2026-11-27 10:00 UTC — ROMA: «Да» (Telegram 1509) to 862 whole: the plan, the public repo Fractera/fractera-market-client-starter
+(I create it; refused → a window), and the money picks as written (free starter skips payment, one payment per cart, consent line + Stripe
+terms box, no refund, failed install = free reinstall). NOW: 862-0 the store contract → then 862-1.**
+
 **2026-11-27 ~10:05 UTC — 862 PLANNED, waits Roma's yes (no code before it):** `new-steps/862-the-marketplace-client-purchase-and-install.md`
 (862-0 the store contract for lidt5 · 862-1 the client element `market` born + in Fractera's registry · 862-2 the ladder/bot search through
 it · 862-3 purchase: window + signed pull · 862-4 install from the store's archive · 862-5 the application from an own native). Inputs read:
