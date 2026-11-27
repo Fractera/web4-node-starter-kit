@@ -322,6 +322,11 @@ needs his decision — a separate «Fractera Reports» bot + group (aifa.dev's a
 data/node/creator-inbox.json {token, chat} (a secret — a window on that server); then the other triggers (aifa.dev's model-free signs
 table, pre-steps/2026-11-25-aifa-heart-and-855.md), the main agent's rule in the system part, the data-protection basis.
 
+**2026-11-27 01:2x UTC — 1451 DONE (Roma's yes 1456): soul line after the prism + shape-the-need §3 «the ladder from a question to an
+expert», soul resealed, 332badf6 on the fork and on Fractera. Proof: soulText('build') and soulText('fc4vk'/none) both carry it — the
+bridge gives one soul to every session, so existing and future custom and native elements get it with no template release. Servers take
+it with their next core update (Roma: «ядро обновим на серверах»). Mac needs no build: the bridge reads soul.md at every session start.
+
 **2026-11-26 23:10 UTC — MAC CORE BUILT d6070e24 (RC=0).** tg-app?el=cck60 404→200, deploy?progress=1 bogus key 200→401. Eyes
 cck60/vectors: the honest empty state «This element has no bot yet» (409 from its data call — no native here has a bot); the three
 parts with a bot are proven only on fractera.ai lidt5 by Roma's screenshots. Page text English outside Telegram (no initData language).
