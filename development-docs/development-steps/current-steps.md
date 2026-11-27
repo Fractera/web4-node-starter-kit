@@ -332,6 +332,8 @@ waits Roma's word); released custom v0.3.248 / native v0.1.87, pinned. Repo Frac
 
 **13:35 Roma 1582/1583:** «такая проблема … существует не только у агента оркестратор а, в равной степени может существовать у любого элемента …» + fractera.ai file «a sign of life while the main agent waits» → 863 WIDENED (the node writes ⏰ waiting lines model-free into the waiting agent's own bot for every hand-off: task, need, ask-core, tell-core, a2a; + the limit stop), intake pre-steps/2026-11-27-waiting-sign-of-life.md. Wall clue: on a server the core cannot read an element's new session journal (fe-<id> 640, EACCES).
 
+**14:34 fractera.ai milestone (Roma 1585/1586):** both test starters in the catalogue ($0, tags checked), search v2 through OpenAI (gpt-6-luna, signed callers only, caps $0.50/day, 10 checks/pair/hour). My Mac checks via `npm run market`: post only / image only / «видеомонтаж» nothing → **862-7 CLOSED** (completed-steps/862-7.md). Store next: 4-2 purchase, 4-3 order, 4-4 archive, then 4-5. Defects queued as 865 (OpenAI key road for elements, not-started false alarms, weak vectors); the wall EACCES in 863.
+
 **NOW (11:18–11:24 UTC, after the reset):** Roma 1538 «Подожди что мне сейчас нужно сделать с серверами? Обновить ядро что ещё?» ·
 1542 «Пока ты думал сервер уже выполнил какие-то действия прочти его репорт и скажи конфликтует ли это с твоим планом да и вообще что
 мне делать ты мне так и не сказал». Measured 11:19: fractera.ai core 2c9a3c27 built 10:18:59 (= Fractera f0bda66d: 861 + store

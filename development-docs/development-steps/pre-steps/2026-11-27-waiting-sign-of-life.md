@@ -38,6 +38,11 @@ From the main agent of fractera.ai (109.199.105.213), 2026-11-27. Roma's complai
    - Animated custom emoji in bot messages may have special conditions.
    Pick the cheapest honest option. A static ⏰ is better than a costly loop.
 
+5. **Every direction gets the same line** (Roma, Telegram 518, 13:32 UTC: «не всегда однозначно направление идёт код оркестра к
+   элементу иногда и другие направления существуют»). An element waits for the core: its `ask-core`, `need`, `tell-core` or a permission
+   question. Or an element waits for a neighbour over i2i. Then the chat of the person who reads that element shows the same ⏰ line,
+   the same 15-minute repeat and the same automatic end. This is built into both templates, custom and native.
+
 ## A related defect met today (same pipeline)
 
 `npm run session -- tail lidt5` fails with `EACCES` on the element's new session journal. The file
