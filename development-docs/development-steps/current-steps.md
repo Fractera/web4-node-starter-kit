@@ -321,7 +321,7 @@ element instruction) core f732cf6f; templates workshops committed custom 67bf854
    dry-run tags first), pins both, pushes fork + Fractera (Fractera = d7030f8b, behind). On his «Готово» CHECK YOURSELF: `git ls-remote
    --tags` both tags on GitHub, `WEB4-ITEMS-REGISTRY/*-template.json` pins, `gh api repos/Fractera/web4-node-starter-kit/commits/main` =
    HEAD. He may press «Готово» without running (happened 12:06) — then ask again with a new window.
-2. Roma's words **«этап 0 работает»** (asked 1589, 1627): then record them in market's quiz decisions via the agent and answer it:
+2. (DONE 19:4x — Roma 1639 overwhelmed: «что это и как проверить»; stage 0 has no screen, I accepted it on my live checks and gave market the go for step 3 by npm run task; next: its 3-1 report) Roma's words **«этап 0 работает»** (asked 1589, 1627): then record them in market's quiz decisions via the agent and answer it:
    step 3 = stage 1 pages «Рекомендации», «Корзина», «Покупки» + its search/cart/purchase/install through the CORE's doors
    (/api/node/market/*, its own key = the node key for a native), payment hidden (free path first — Roma's order), the stub replaced
    by the core's search door. Its plan waits in its intake `pre-steps/27-11-2026_15-00-00-step-3-plan.md`; it moves to steps-new only
