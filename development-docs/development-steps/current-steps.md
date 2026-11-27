@@ -7,12 +7,14 @@ long or irreversible operation (before it), a changed next action. A section tha
 history of this file is git (`git log -p -- development-docs/development-steps/current-steps.md`; the last long version before the trim
 is commit `dc95a10c`). How steps are planned, proven and closed — skill `use-development-steps`.
 
-**Active steps:** 862 — the Fractera marketplace (plan new-steps/862/862-main.md; substeps 862-0, -2, -6, -12 as files there). Next:
-864 (a name born on a server gets its certificate — it blocks the buyer test on aifa.dev now) and the PAID purchase path (proposed,
-waits Roma's yes). 58 older plans wait in new-steps/ — none is active; one review with Roma decides each (his word, 1732).
+**Active steps:** 864 — a name of an active server domain gets its certificate by itself (plan new-steps/864/, substeps 864-1, 864-2;
+code f7b28fef + 9cd911f0 on the fork, waits Roma's push to Fractera and aifa.dev's update for the live proof). 862 — the Fractera
+marketplace (new-steps/862/); next in it: the PAID path (Roma 1737, 23:18: «Следом после этого создавай … покупку элементов. Для этого
+один из элементов сделать платным например один доллар попробуем его покупить через тестовой аккаунт Страйп»). 58 older plans wait in
+new-steps/ — one review with Roma decides each (his word, 1732).
 
-**Last change:** 2026-11-27 ~23:25 UTC — this file trimmed from 850 lines to the open work (Roma 1731); aifa.dev's second update to
-Fractera eb14d9c9 is building.
+**Last change:** 2026-11-27 23:50 UTC — 864 committed (f7b28fef the heal + CLI + card, 9cd911f0 the Windows CI fix), pushed to the
+fork; aifa.dev runs core 871c63d6 (its merge of eb14d9c9, built 23:12); market.aifa.dev still has no certificate (curl 35, 23:17).
 
 ## How Roma and I talk (a standing part of every letter — read it before the first word to him)
 
@@ -47,26 +49,27 @@ fires after a window already put in the same turn — add «⟦без окна: 
   NOT changed (Roma 1684: natives need no market).
 
 **OPEN NOW:**
-1. **aifa.dev second update** (window 0fee5c08 pressed 23:06) — it was on bbb30a5a (carries 2dedd62f); check
-   `curl https://architect.aifa.dev/api/health` commit is new (the server's merge of eb14d9c9), then whether market v0.1.1 is up there.
-2. **market.aifa.dev has no certificate** (TLS «unrecognized name») = step 864. Roma 1733 (23:15): «Блин я не хочу частный случай я
-   хочу системное решение я хочу эту проблему закрыть если она существует» → NO manual repair as the answer: build 864 itself (plan
-   new-steps/864-…: a name born on an active server domain starts `certs` + `check` by itself; `server -- domain` says «unfinished» for
-   a required name without a certificate; the panel's «Выпустить сертификат»), load dedicated-server, server-wall, before-a-build
-   first; proof = a name born on a server reaches HTTPS 200 with no manual command + a negative. aifa.dev's market name is its live
-   case (on fractera.ai the same was repaired by hand: `server -- dns-check` → `certs` → `check`).
+1. **864 to the server** — Roma's window: `bash logs/push-864.sh` (fork → Fractera main), then on aifa.dev «Проверить снова» (me) →
+   «Обновить сборку ядра» (his). The walled-bot gate (memory): a walled element's bot on aifa.dev answers «привет» before AND after.
+   Live proof: `curl -sI https://market.aifa.dev/` → 2xx/3xx with nothing typed on the server (the heal at the build's end); then
+   market v0.1.1 there. Server-wall review of the batch: it touches nginx/certs/the reach card/serve's build end — no Telegram, agent
+   start, Claude home or element folder.
+2. **CI:** Fractera's three-os was red on Windows all day (server-telegram's line patterns vs a CRLF checkout) — fixed in 9cd911f0;
+   read the next run after the push (`gh run list -R Fractera/web4-node-starter-kit -L 3`); a further Windows failure = the next fix.
 3. **Paid path — proposed in 1720, waits Roma's yes:** a third test starter (the image copy at $1) added by the store's side on
    fractera.ai; Stripe in TEST mode on fractera.ai; market adds «Оплатить» to the cart (the core's payer window with the checkout link
    exists, 862-4); the test buyer on aifa.dev pays with a test card; then live keys only by Roma's window. Payment only on the site,
    real money (Roma 1687) — never Stars.
-4. **The state file, systemically (Roma 1733, the same words):** the trim above is the one-off; the system = a guard that refuses a
-   build when this file passes ~150 lines (the core's `scripts/check-steps.mjs`, in prebuild) and the same for every element's
-   `development-docs/current-step.md` (the templates' `scripts/check-dev-docs.mjs`, a template release), with the rule in the skill
-   `use-development-steps` / the template's `use-development-docs`: rewrite in place, old letters live in git. Plan it with 864 in one
-   core build. The 58 old plans — a review with Roma later, his word per plan.
+4. **The state file, systemically (Roma 1733, the same words) = step 867, not planned yet.** My correction of the earlier idea: a guard
+   that REFUSES a build on a long state file would also fail every node's update (prebuild runs in `node:update`) — a doc must never
+   block an update. The system instead: a hook on writes to `current-steps.md` / an element's `development-docs/current-step.md` that
+   tells the writing agent at once «N lines > 150 — rewrite in place, old letters live in git», `check-steps.mjs` warning (never
+   failing) in prebuild, the rule in `use-development-steps` and the template's `use-development-docs` (a template release). The 58 old
+   plans — a review with Roma later, his word per plan.
 
-**QUEUE (in this order unless Roma says otherwise):** 864 automation (a name born on an active server domain starts certs itself;
-the panel's «Выпустить сертификат»), the paid path, then generation of Roma's starters «от лица Fractera»; 862-14 the Mini App card
+**QUEUE (in this order unless Roma says otherwise):** 864 live proof, the paid path (862-15: market's «Оплатить» for a priced cart —
+the core's purchase door and payer window exist; the store's $1 test starter and Stripe TEST mode on fractera.ai — a file for Roma to
+pass there), then generation of Roma's starters «от лица Fractera»; 862-14 the Mini App card
 «Маркет» in the main bot's Pult on market's `/api/summary` (core) and one line in custom elements' Mini Apps (template); the authors'
 offer wire (form «Предложить в маркетплейсе» → the store's application door v1.3) — deferred by Roma 1717; 863 limit notice in
 Telegram; 865 (OpenAI key road, not-started false alarms, the boundary guard's false alarm on import strings 865-4 — five element
